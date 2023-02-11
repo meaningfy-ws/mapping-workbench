@@ -1,7 +1,7 @@
 import pytest
 
-from ted_sws.core.model.manifestation import METSManifestation
-from ted_sws.notice_publisher.adapters.s3_notice_publisher import S3Publisher
+from mapping_workbench.core.model.manifestation import METSManifestation
+from mapping_workbench.notice_publisher.adapters.s3_notice_publisher import S3Publisher
 
 
 @pytest.fixture

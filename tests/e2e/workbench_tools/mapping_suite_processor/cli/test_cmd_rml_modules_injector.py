@@ -2,7 +2,7 @@ import shutil
 import tempfile
 from pathlib import Path
 
-from ted_sws.workbench_tools.mapping_suite_processor.entrypoints.cli.cmd_rml_modules_injector import main as cli_main
+from mapping_workbench.workbench_tools.mapping_suite_processor.entrypoints.cli.cmd_rml_modules_injector import main as cli_main
 
 
 def test_rml_modules_injector(cli_runner, fake_mapping_suite_id, file_system_repository_path, rml_modules_path):

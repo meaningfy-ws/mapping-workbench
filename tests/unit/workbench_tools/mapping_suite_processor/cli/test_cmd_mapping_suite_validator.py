@@ -2,8 +2,8 @@ import shutil
 import tempfile
 from pathlib import Path
 
-from ted_sws.data_manager.adapters.mapping_suite_repository import MS_TRANSFORM_FOLDER_NAME, MS_MAPPINGS_FOLDER_NAME
-from ted_sws.workbench_tools.mapping_suite_processor.entrypoints.cli.cmd_mapping_suite_validator import main as cli_main, \
+from mapping_workbench.data_manager.adapters.mapping_suite_repository import MS_TRANSFORM_FOLDER_NAME, MS_MAPPINGS_FOLDER_NAME
+from mapping_workbench.workbench_tools.mapping_suite_processor.entrypoints.cli.cmd_mapping_suite_validator import main as cli_main, \
     MS_VALIDATOR_ERROR_EXIT_CODE
 from tests import TEST_DATA_PATH
 

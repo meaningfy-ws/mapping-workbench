@@ -2,7 +2,7 @@ import os
 import shutil
 import tempfile
 from pathlib import Path
-from ted_sws.workbench_tools.notice_validator.cli.cmd_validation_summary_runner import main as cli_main, \
+from mapping_workbench.workbench_tools.notice_validator.cli.cmd_validation_summary_runner import main as cli_main, \
     DEFAULT_OUTPUT_PATH, DEFAULT_TEST_SUITE_REPORT_FOLDER
 
 

@@ -2,8 +2,8 @@ import mongomock
 import pymongo
 import pytest
 
-from ted_sws.data_manager.adapters.mapping_suite_repository import MappingSuiteRepositoryInFileSystem
-from ted_sws.core.model.transform import MappingSuite
+from mapping_workbench.data_manager.adapters.mapping_suite_repository import MappingSuiteRepositoryInFileSystem
+from mapping_workbench.core.model.transform import MappingSuite
 from tests import TEST_DATA_PATH
 from pathlib import Path
 

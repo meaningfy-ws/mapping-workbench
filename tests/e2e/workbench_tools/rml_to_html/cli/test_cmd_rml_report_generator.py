@@ -1,6 +1,6 @@
 import os
 
-from ted_sws.workbench_tools.rml_to_html.cli.cmd_rml_report_generator import main as cli_main, \
+from mapping_workbench.workbench_tools.rml_to_html.cli.cmd_rml_report_generator import main as cli_main, \
     DEFAULT_OUTPUT_PATH, HTML_REPORT
 
 

@@ -1,4 +1,4 @@
-from ted_sws.workbench_tools.notice_validator.cli.cmd_shacl_runner import main as cli_main
+from mapping_workbench.workbench_tools.notice_validator.cli.cmd_shacl_runner import main as cli_main
 from tests.unit.workbench_tools.notice_validator.cli import post_process
 
 

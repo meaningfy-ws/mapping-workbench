@@ -3,7 +3,7 @@ import pathlib
 import shutil
 import tempfile
 
-from ted_sws import RUN_ENV_NAME, RUN_TEST_ENV_VAL
+from mapping_workbench import RUN_ENV_NAME, RUN_TEST_ENV_VAL
 
 os.environ[RUN_ENV_NAME] = RUN_TEST_ENV_VAL
 

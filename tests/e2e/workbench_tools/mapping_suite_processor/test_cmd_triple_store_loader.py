@@ -1,5 +1,5 @@
-from ted_sws.workbench_tools.mapping_suite_processor.entrypoints.cli.cmd_triple_store_loader import main as cli_main
-from ted_sws.mapping_suite_processor.services.load_mapping_suite_output_into_triple_store import repository_exists
+from mapping_workbench.workbench_tools.mapping_suite_processor.entrypoints.cli.cmd_triple_store_loader import main as cli_main
+from mapping_workbench.mapping_suite_processor.services.load_mapping_suite_output_into_triple_store import repository_exists
 
 
 def test_triple_store_loader(cli_runner, fake_mapping_suite_id, file_system_repository_path, fuseki_triple_store):
