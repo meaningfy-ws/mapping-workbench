@@ -40,12 +40,12 @@ def open_local(paths, mode="r", encoding="utf8"):
 with open_local(["README.md"], encoding="utf-8") as readme:
     long_description = readme.read()
 
-version = find_version("ted_sws/__init__.py")
+version = find_version("mapping_workbench/__init__.py")
 
 packages = find_packages(exclude=("examples*", "tests*", "dags*", "notebooks*", "infra*", "docs*"))
 
 setup(
-    name="ted_sws",
+    name="mapping_workbench",
     version=version,
     description="TED SWS is an awesome system",
     author="Meaningfy",
@@ -74,28 +74,28 @@ setup(
     packages=packages,
     entry_points={
         "console_scripts": [
-            "resources_injector = ted_sws.mapping_suite_processor.entrypoints.cli.cmd_resources_injector:main",
-            "rml_modules_injector = ted_sws.mapping_suite_processor.entrypoints.cli.cmd_rml_modules_injector:main",
-            "sparql_generator = ted_sws.mapping_suite_processor.entrypoints.cli.cmd_sparql_generator:main",
-            "rml_report_generator = ted_sws.rml_to_html.entrypoints.cli.cmd_rml_report_generator:main",
-            "mapping_runner = ted_sws.notice_transformer.entrypoints.cli.cmd_mapping_runner:main",
-            "xpath_coverage_runner = ted_sws.notice_validator.entrypoints.cli.cmd_xpath_coverage_runner:main",
-            "sparql_runner = ted_sws.notice_validator.entrypoints.cli.cmd_sparql_runner:main",
-            "shacl_runner = ted_sws.notice_validator.entrypoints.cli.cmd_shacl_runner:main",
-            "validation_summary_runner = ted_sws.notice_validator.entrypoints.cli.cmd_validation_summary_runner:main",
-            "triple_store_loader = ted_sws.mapping_suite_processor.entrypoints.cli.cmd_triple_store_loader:main",
-            "mapping_suite_validator = ted_sws.mapping_suite_processor.entrypoints.cli.cmd_mapping_suite_validator:main",
-            "metadata_generator = ted_sws.mapping_suite_processor.entrypoints.cli.cmd_metadata_generator:main",
-            "conceptual_mapping_differ = ted_sws.mapping_suite_processor.entrypoints.cli.cmd_conceptual_mapping_differ:main",
-            "rdf_differ = ted_sws.rdf_differ.entrypoints.cli.cmd_rdf_differ:main",
-            "mapping_suite_processor = ted_sws.mapping_suite_processor.entrypoints.cli.cmd_mapping_suite_processor:main",
-            "yarrrml2rml_converter = ted_sws.mapping_suite_processor.entrypoints.cli.cmd_yarrrml2rml_converter:main",
-            "normalisation_resource_generator = ted_sws.data_manager.entrypoints.cli.cmd_generate_mapping_resources:main",
-            "s3_rdf_publisher = ted_sws.notice_publisher.entrypoints.cli.cmd_s3_rdf_publisher:main",
-            "bulk_packager = ted_sws.notice_packager.entrypoints.cli.cmd_bulk_packager:main",
-            "api-digest_service-start-server = ted_sws.notice_transformer.entrypoints.api.digest_service.server:api_server_start",
-            "rdf_component_detector = ted_sws.rdf_component_detector.entrypoints.cli.cmd_rdf_component_detector:main",
-            "export_notices_from_mongodb = ted_sws.data_manager.entrypoints.cli.cmd_export_notices_from_mongodb:main",
+            "resources_injector = mapping_workbench.mapping_suite_processor.entrypoints.cli.cmd_resources_injector:main",
+            "rml_modules_injector = mapping_workbench.mapping_suite_processor.entrypoints.cli.cmd_rml_modules_injector:main",
+            "sparql_generator = mapping_workbench.mapping_suite_processor.entrypoints.cli.cmd_sparql_generator:main",
+            "rml_report_generator = mapping_workbench.rml_to_html.entrypoints.cli.cmd_rml_report_generator:main",
+            "mapping_runner = mapping_workbench.notice_transformer.entrypoints.cli.cmd_mapping_runner:main",
+            "xpath_coverage_runner = mapping_workbench.notice_validator.entrypoints.cli.cmd_xpath_coverage_runner:main",
+            "sparql_runner = mapping_workbench.notice_validator.entrypoints.cli.cmd_sparql_runner:main",
+            "shacl_runner = mapping_workbench.notice_validator.entrypoints.cli.cmd_shacl_runner:main",
+            "validation_summary_runner = mapping_workbench.notice_validator.entrypoints.cli.cmd_validation_summary_runner:main",
+            "triple_store_loader = mapping_workbench.mapping_suite_processor.entrypoints.cli.cmd_triple_store_loader:main",
+            "mapping_suite_validator = mapping_workbench.mapping_suite_processor.entrypoints.cli.cmd_mapping_suite_validator:main",
+            "metadata_generator = mapping_workbench.mapping_suite_processor.entrypoints.cli.cmd_metadata_generator:main",
+            "conceptual_mapping_differ = mapping_workbench.mapping_suite_processor.entrypoints.cli.cmd_conceptual_mapping_differ:main",
+            "rdf_differ = mapping_workbench.rdf_differ.entrypoints.cli.cmd_rdf_differ:main",
+            "mapping_suite_processor = mapping_workbench.mapping_suite_processor.entrypoints.cli.cmd_mapping_suite_processor:main",
+            "yarrrml2rml_converter = mapping_workbench.mapping_suite_processor.entrypoints.cli.cmd_yarrrml2rml_converter:main",
+            "normalisation_resource_generator = mapping_workbench.data_manager.entrypoints.cli.cmd_generate_mapping_resources:main",
+            "s3_rdf_publisher = mapping_workbench.notice_publisher.entrypoints.cli.cmd_s3_rdf_publisher:main",
+            "bulk_packager = mapping_workbench.notice_packager.entrypoints.cli.cmd_bulk_packager:main",
+            "api-digest_service-start-server = mapping_workbench.notice_transformer.entrypoints.api.digest_service.server:api_server_start",
+            "rdf_component_detector = mapping_workbench.rdf_component_detector.entrypoints.cli.cmd_rdf_component_detector:main",
+            "export_notices_from_mongodb = mapping_workbench.data_manager.entrypoints.cli.cmd_export_notices_from_mongodb:main",
         ],
     },
     include_package_data=True,

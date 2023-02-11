@@ -3,7 +3,7 @@ import shutil
 import tempfile
 from pathlib import Path
 
-from ted_sws.workbench_tools.data_manager.entrypoints.cli.cmd_generate_mapping_resources import run as cli_run, \
+from mapping_workbench.workbench_tools.data_manager.entrypoints.cli.cmd_generate_mapping_resources import run as cli_run, \
     main as cli_main
 from tests.fakes.fake_triple_store import FakeTripleStoreEndpoint
 

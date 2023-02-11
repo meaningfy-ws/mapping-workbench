@@ -1,4 +1,4 @@
-from ted_sws.workbench_tools.notice_publisher.cli.cmd_s3_rdf_publisher import main as cli_main, run as cli_run
+from mapping_workbench.workbench_tools.notice_publisher.cli.cmd_s3_rdf_publisher import main as cli_main, run as cli_run
 
 
 def test_cmd_s3_rdf_publisher(cli_runner, fake_mapping_suite_id, fake_repository_path, notice_rdf_s3_bucket_name,

@@ -2,7 +2,7 @@ import shutil
 import tempfile
 from pathlib import Path
 
-from ted_sws.workbench_tools.mapping_suite_processor.entrypoints.cli.cmd_yarrrml2rml_converter import main as cli_main
+from mapping_workbench.workbench_tools.mapping_suite_processor.entrypoints.cli.cmd_yarrrml2rml_converter import main as cli_main
 
 
 def test_cmd_converter(cli_runner, fake_test_mapping_suite_id, file_system_repository_path):
