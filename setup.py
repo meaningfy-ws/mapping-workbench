@@ -16,13 +16,12 @@ from pkg_resources import parse_requirements
 from setuptools import setup, find_packages
 
 kwargs = {}
-
+#
 with pathlib.Path('requirements.txt').open() as requirements:
-    kwargs["install_requires"] = [str(requirement) for requirement in parse_requirements(requirements)]
+      kwargs["install_requires"] = [str(requirement) for requirement in parse_requirements(requirements)]
 
 kwargs["tests_require"] = []
-kwargs["extras_require"] = {
-}
+kwargs["extras_require"] = {}
 
 def find_version(filename):
     _version_re = re.compile(r'__version__ = "(.*)"')
@@ -42,7 +41,7 @@ with open_local(["README.md"], encoding="utf-8") as readme:
 
 version = find_version("mapping_workbench/__init__.py")
 
-packages = find_packages(exclude=("examples*", "tests*", "dags*", "notebooks*", "infra*", "docs*"))
+packages = find_packages(exclude=("examples*", "tests*", "infra*"))
 
 
 CONSOLE_SCRIPTS_PATH = "mapping_workbench.workbench_tools"
@@ -55,7 +54,7 @@ setup(
     author_email="eugen@meaningfy.ws",
     maintainer="Meaningfy Team",
     maintainer_email="ted-sws@meaningfy.ws",
-    url="https://github.com/OP-TED/ted-rdf-conversion-pipeline",
+    url="https://github.com/meaningfy-ws/mapping-workbench",
     license="Apache License 2.0",
     platforms=["any"],
     python_requires=">=3.7",

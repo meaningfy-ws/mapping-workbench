@@ -1,2 +1,3 @@
 # Project dependecies
-git+https://github.com/OP-TED/ted-rdf-conversion-pipeline@main#egg=ted-sws
+ted-sws @ git+https://github.com/OP-TED/ted-rdf-conversion-pipeline.git
+
