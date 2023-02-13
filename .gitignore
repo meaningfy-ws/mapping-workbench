@@ -130,3 +130,5 @@ dmypy.json
 .idea/
 venv_activation.sh
 junit_report.xml
+.idea/mapping-workbench.iml
+.idea/workspace.xml
