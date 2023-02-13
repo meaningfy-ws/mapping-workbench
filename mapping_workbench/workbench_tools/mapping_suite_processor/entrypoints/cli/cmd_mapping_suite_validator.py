@@ -5,8 +5,8 @@ import os
 
 import click
 
-from mapping_workbench.core.adapters.cmd_runner import CmdRunnerForMappingSuite as BaseCmdRunner, DEFAULT_MAPPINGS_PATH
-from mapping_workbench.mapping_suite_processor.services.mapping_suite_validation_service import validate_mapping_suite
+from ted_sws.core.adapters.cmd_runner import CmdRunnerForMappingSuite as BaseCmdRunner, DEFAULT_MAPPINGS_PATH
+from ted_sws.mapping_suite_processor.services.mapping_suite_validation_service import validate_mapping_suite
 
 CMD_NAME = "CMD_MAPPING_SUITE_VALIDATOR"
 MS_VALIDATOR_ERROR_EXIT_CODE = os.EX_CONFIG

@@ -1,8 +1,8 @@
 import pathlib
 import pytest
 
-from mapping_workbench import config
-from mapping_workbench.notice_transformer.adapters.rml_mapper import RMLMapperABC, SerializationFormat as RMLSerializationFormat
+from ted_sws import config
+from ted_sws.notice_transformer.adapters.rml_mapper import RMLMapperABC, SerializationFormat as RMLSerializationFormat
 from tests import TEST_DATA_PATH
 from tests.fakes.fake_rml_mapper import FakeRMLMapper
 

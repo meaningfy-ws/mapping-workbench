@@ -1,5 +1,5 @@
-from mapping_workbench.core.model.notice import Notice
-from mapping_workbench.core.model.manifestation import XMLManifestation
+from ted_sws.core.model.notice import Notice
+from ted_sws.core.model.manifestation import XMLManifestation
 
 
 class FakeNotice(Notice):

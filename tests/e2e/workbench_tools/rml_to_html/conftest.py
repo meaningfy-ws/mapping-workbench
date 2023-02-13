@@ -1,6 +1,6 @@
 import pytest
 
-from mapping_workbench.core.model.transform import FileResource
+from ted_sws.core.model.transform import FileResource
 from tests import TEST_DATA_PATH
 
 

@@ -8,17 +8,17 @@ import pytest
 from click.testing import CliRunner
 from mongomock.gridfs import enable_gridfs_integration
 
-from mapping_workbench.core.model.manifestation import XMLManifestation, RDFManifestation
-from mapping_workbench.core.model.metadata import TEDMetadata, LanguageTaggedString, NormalisedMetadata, XMLMetadata
-from mapping_workbench.core.model.notice import Notice, NoticeStatus
-from mapping_workbench.data_manager.adapters.notice_repository import NoticeRepositoryInFileSystem
-from mapping_workbench.notice_metadata_processor.services.metadata_normalizer import TITLE_KEY, LONG_TITLE_KEY, NOTICE_TYPE_KEY, \
+from ted_sws.core.model.manifestation import XMLManifestation, RDFManifestation
+from ted_sws.core.model.metadata import TEDMetadata, LanguageTaggedString, NormalisedMetadata, XMLMetadata
+from ted_sws.core.model.notice import Notice, NoticeStatus
+from ted_sws.data_manager.adapters.notice_repository import NoticeRepositoryInFileSystem
+from ted_sws.notice_metadata_processor.services.metadata_normalizer import TITLE_KEY, LONG_TITLE_KEY, NOTICE_TYPE_KEY, \
     NOTICE_NUMBER_KEY, OJS_TYPE_KEY, OJS_NUMBER_KEY, LANGUAGE_KEY, EU_INSTITUTION_KEY, SENT_DATE_KEY, DEADLINE_DATE_KEY, \
     BUYER_COUNTRY_KEY, BUYER_NAME_KEY, BUYER_CITY_KEY, PUBLICATION_DATE_KEY, FORM_NUMBER_KEY, \
     FORM_TYPE_KEY, LEGAL_BASIS_DIRECTIVE_KEY, EXTRACTED_LEGAL_BASIS_KEY, \
     PLACE_OF_PERFORMANCE_KEY, E_FORMS_SUBTYPE_KEY, XSD_VERSION_KEY
-from mapping_workbench.notice_fetcher.adapters.ted_api import TedAPIAdapter
-from mapping_workbench.notice_fetcher.services.notice_fetcher import NoticeFetcher
+from ted_sws.notice_fetcher.adapters.ted_api import TedAPIAdapter
+from ted_sws.notice_fetcher.services.notice_fetcher import NoticeFetcher
 from tests import TEST_DATA_PATH
 from tests.fakes.fake_repository import FakeNoticeRepository
 from tests.fakes.fake_ted_api import FakeRequestAPI

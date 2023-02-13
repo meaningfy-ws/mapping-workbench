@@ -1,9 +1,9 @@
 import tempfile
 from pathlib import Path
 
-from mapping_workbench import config
-from mapping_workbench.data_manager.adapters.notice_repository import NoticeRepository
-from mapping_workbench.data_manager.services.export_notice_from_mongodb import export_notice_by_id
+from ted_sws import config
+from ted_sws.data_manager.adapters.notice_repository import NoticeRepository
+from ted_sws.data_manager.services.export_notice_from_mongodb import export_notice_by_id
 from mapping_workbench.workbench_tools.data_manager.entrypoints.cli.cmd_export_notices_from_mongodb import main as cli_main, run as cli_run
 
 

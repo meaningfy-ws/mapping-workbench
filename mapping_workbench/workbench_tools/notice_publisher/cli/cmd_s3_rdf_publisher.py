@@ -6,14 +6,14 @@ from urllib.parse import urljoin, urlparse
 
 import click
 
-from mapping_workbench.core.adapters.cmd_runner import CmdRunnerForMappingSuite as BaseCmdRunner, DEFAULT_MAPPINGS_PATH, \
+from ted_sws.core.adapters.cmd_runner import CmdRunnerForMappingSuite as BaseCmdRunner, DEFAULT_MAPPINGS_PATH, \
     DEFAULT_OUTPUT_PATH
-from mapping_workbench.core.model.manifestation import RDFManifestation
-from mapping_workbench.event_manager.adapters.log import LOG_INFO_TEXT, LOG_WARN_TEXT
-from mapping_workbench.notice_publisher.adapters.s3_notice_publisher import S3Publisher
-from mapping_workbench.notice_publisher.services.notice_publisher import publish_notice_rdf_content_into_s3
+from ted_sws.core.model.manifestation import RDFManifestation
+from ted_sws.event_manager.adapters.log import LOG_INFO_TEXT, LOG_WARN_TEXT
+from ted_sws.notice_publisher.adapters.s3_notice_publisher import S3Publisher
+from ted_sws.notice_publisher.services.notice_publisher import publish_notice_rdf_content_into_s3
 
-from mapping_workbench.notice_transformer.services.notice_transformer import DEFAULT_TRANSFORMATION_FILE_EXTENSION
+from ted_sws.notice_transformer.services.notice_transformer import DEFAULT_TRANSFORMATION_FILE_EXTENSION
 
 CMD_NAME = "CMD_S3_RDF_PUBLISHER"
 DEFAULT_NOTICE_RDF_S3_BUCKET_NAME = "notice-rdf"

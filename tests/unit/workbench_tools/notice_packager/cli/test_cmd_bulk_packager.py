@@ -3,7 +3,7 @@ import shutil
 import tempfile
 from pathlib import Path
 
-from mapping_workbench.data_manager.adapters.notice_repository import NoticeRepository
+from ted_sws.data_manager.adapters.notice_repository import NoticeRepository
 from mapping_workbench.workbench_tools.notice_packager.cli.cmd_bulk_packager import main as cli_main, run as cli_run
 
 

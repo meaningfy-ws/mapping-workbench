@@ -3,7 +3,7 @@ import json
 from datetime import date
 from typing import List
 
-from mapping_workbench.notice_fetcher.adapters.ted_api_abc import TedAPIAdapterABC, RequestAPI
+from ted_sws.notice_fetcher.adapters.ted_api_abc import TedAPIAdapterABC, RequestAPI
 from tests import TEST_DATA_PATH
 
 

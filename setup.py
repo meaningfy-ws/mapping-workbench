@@ -4,7 +4,7 @@
 # Date:  07/02/2022
 # Author: Eugeniu Costetchi
 # Email: costezki.eugen@gmail.com
-# Package PIP install location: https://github.com/OP-TED/ted-rdf-conversion-pipeline/archive/main.zip
+# Package PIP install location: https://github.com/meaningfy-ws/mapping-workbench/archive/main.zip
 """ """
 
 import codecs
@@ -44,10 +44,13 @@ version = find_version("mapping_workbench/__init__.py")
 
 packages = find_packages(exclude=("examples*", "tests*", "dags*", "notebooks*", "infra*", "docs*"))
 
+
+CONSOLE_SCRIPTS_PATH = "mapping_workbench.workbench_tools"
+
 setup(
     name="mapping_workbench",
     version=version,
-    description="TED SWS is an awesome system",
+    description="Mapping Workbench is an awesome system",
     author="Meaningfy",
     author_email="eugen@meaningfy.ws",
     maintainer="Meaningfy Team",
@@ -74,28 +77,28 @@ setup(
     packages=packages,
     entry_points={
         "console_scripts": [
-            "resources_injector = mapping_workbench.mapping_suite_processor.entrypoints.cli.cmd_resources_injector:main",
-            "rml_modules_injector = mapping_workbench.mapping_suite_processor.entrypoints.cli.cmd_rml_modules_injector:main",
-            "sparql_generator = mapping_workbench.mapping_suite_processor.entrypoints.cli.cmd_sparql_generator:main",
-            "rml_report_generator = mapping_workbench.rml_to_html.entrypoints.cli.cmd_rml_report_generator:main",
-            "mapping_runner = mapping_workbench.notice_transformer.entrypoints.cli.cmd_mapping_runner:main",
-            "xpath_coverage_runner = mapping_workbench.notice_validator.entrypoints.cli.cmd_xpath_coverage_runner:main",
-            "sparql_runner = mapping_workbench.notice_validator.entrypoints.cli.cmd_sparql_runner:main",
-            "shacl_runner = mapping_workbench.notice_validator.entrypoints.cli.cmd_shacl_runner:main",
-            "validation_summary_runner = mapping_workbench.notice_validator.entrypoints.cli.cmd_validation_summary_runner:main",
-            "triple_store_loader = mapping_workbench.mapping_suite_processor.entrypoints.cli.cmd_triple_store_loader:main",
-            "mapping_suite_validator = mapping_workbench.mapping_suite_processor.entrypoints.cli.cmd_mapping_suite_validator:main",
-            "metadata_generator = mapping_workbench.mapping_suite_processor.entrypoints.cli.cmd_metadata_generator:main",
-            "conceptual_mapping_differ = mapping_workbench.mapping_suite_processor.entrypoints.cli.cmd_conceptual_mapping_differ:main",
-            "rdf_differ = mapping_workbench.rdf_differ.entrypoints.cli.cmd_rdf_differ:main",
-            "mapping_suite_processor = mapping_workbench.mapping_suite_processor.entrypoints.cli.cmd_mapping_suite_processor:main",
-            "yarrrml2rml_converter = mapping_workbench.mapping_suite_processor.entrypoints.cli.cmd_yarrrml2rml_converter:main",
-            "normalisation_resource_generator = mapping_workbench.data_manager.entrypoints.cli.cmd_generate_mapping_resources:main",
-            "s3_rdf_publisher = mapping_workbench.notice_publisher.entrypoints.cli.cmd_s3_rdf_publisher:main",
-            "bulk_packager = mapping_workbench.notice_packager.entrypoints.cli.cmd_bulk_packager:main",
-            "api-digest_service-start-server = mapping_workbench.notice_transformer.entrypoints.api.digest_service.server:api_server_start",
-            "rdf_component_detector = mapping_workbench.rdf_component_detector.entrypoints.cli.cmd_rdf_component_detector:main",
-            "export_notices_from_mongodb = mapping_workbench.data_manager.entrypoints.cli.cmd_export_notices_from_mongodb:main",
+            f"resources_injector = {CONSOLE_SCRIPTS_PATH}.mapping_suite_processor.entrypoints.cli.cmd_resources_injector:main",
+            f"rml_modules_injector = {CONSOLE_SCRIPTS_PATH}.mapping_suite_processor.entrypoints.cli.cmd_rml_modules_injector:main",
+            f"sparql_generator = {CONSOLE_SCRIPTS_PATH}.mapping_suite_processor.entrypoints.cli.cmd_sparql_generator:main",
+            f"rml_report_generator = {CONSOLE_SCRIPTS_PATH}.rml_to_html.entrypoints.cli.cmd_rml_report_generator:main",
+            f"mapping_runner = {CONSOLE_SCRIPTS_PATH}.notice_transformer.entrypoints.cli.cmd_mapping_runner:main",
+            f"xpath_coverage_runner = {CONSOLE_SCRIPTS_PATH}.notice_validator.entrypoints.cli.cmd_xpath_coverage_runner:main",
+            f"sparql_runner = {CONSOLE_SCRIPTS_PATH}.notice_validator.entrypoints.cli.cmd_sparql_runner:main",
+            f"shacl_runner = {CONSOLE_SCRIPTS_PATH}.notice_validator.entrypoints.cli.cmd_shacl_runner:main",
+            f"validation_summary_runner = {CONSOLE_SCRIPTS_PATH}.notice_validator.entrypoints.cli.cmd_validation_summary_runner:main",
+            f"triple_store_loader = {CONSOLE_SCRIPTS_PATH}.mapping_suite_processor.entrypoints.cli.cmd_triple_store_loader:main",
+            f"mapping_suite_validator = {CONSOLE_SCRIPTS_PATH}.mapping_suite_processor.entrypoints.cli.cmd_mapping_suite_validator:main",
+            f"metadata_generator = {CONSOLE_SCRIPTS_PATH}.mapping_suite_processor.entrypoints.cli.cmd_metadata_generator:main",
+            f"conceptual_mapping_differ = {CONSOLE_SCRIPTS_PATH}.mapping_suite_processor.entrypoints.cli.cmd_conceptual_mapping_differ:main",
+            f"rdf_differ = {CONSOLE_SCRIPTS_PATH}.rdf_differ.entrypoints.cli.cmd_rdf_differ:main",
+            f"mapping_suite_processor = {CONSOLE_SCRIPTS_PATH}.mapping_suite_processor.entrypoints.cli.cmd_mapping_suite_processor:main",
+            f"yarrrml2rml_converter = {CONSOLE_SCRIPTS_PATH}.mapping_suite_processor.entrypoints.cli.cmd_yarrrml2rml_converter:main",
+            f"normalisation_resource_generator = {CONSOLE_SCRIPTS_PATH}.data_manager.entrypoints.cli.cmd_generate_mapping_resources:main",
+            f"s3_rdf_publisher = {CONSOLE_SCRIPTS_PATH}.notice_publisher.entrypoints.cli.cmd_s3_rdf_publisher:main",
+            f"bulk_packager = {CONSOLE_SCRIPTS_PATH}.notice_packager.entrypoints.cli.cmd_bulk_packager:main",
+            # f"api-digest_service-start-server = {CONSOLE_SCRIPTS_PATH}.notice_transformer.entrypoints.api.digest_service.server:api_server_start",
+            f"rdf_component_detector = {CONSOLE_SCRIPTS_PATH}.rdf_component_detector.entrypoints.cli.cmd_rdf_component_detector:main",
+            f"export_notices_from_mongodb = {CONSOLE_SCRIPTS_PATH}.data_manager.entrypoints.cli.cmd_export_notices_from_mongodb:main",
         ],
     },
     include_package_data=True,

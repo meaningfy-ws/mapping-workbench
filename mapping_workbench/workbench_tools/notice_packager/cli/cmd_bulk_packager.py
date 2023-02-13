@@ -16,16 +16,16 @@ from typing import List
 import click
 from pymongo import MongoClient
 
-from mapping_workbench import config
-from mapping_workbench.core.adapters.cmd_runner import CmdRunner as BaseCmdRunner
-from mapping_workbench.core.model.manifestation import XMLManifestation
-from mapping_workbench.core.model.notice import Notice
-from mapping_workbench.data_manager.adapters.notice_repository import NoticeRepository
-from mapping_workbench.event_manager.adapters.log import LOG_WARN_TEXT
-from mapping_workbench.notice_metadata_processor.services.xml_manifestation_metadata_extractor import \
+from ted_sws import config
+from ted_sws.core.adapters.cmd_runner import CmdRunner as BaseCmdRunner
+from ted_sws.core.model.manifestation import XMLManifestation
+from ted_sws.core.model.notice import Notice
+from ted_sws.data_manager.adapters.notice_repository import NoticeRepository
+from ted_sws.event_manager.adapters.log import LOG_WARN_TEXT
+from ted_sws.notice_metadata_processor.services.xml_manifestation_metadata_extractor import \
     XMLManifestationMetadataExtractor
-from mapping_workbench.notice_packager.services.metadata_transformer import MetadataTransformer
-from mapping_workbench.notice_packager.services.notice_packager import create_notice_package, package_notice_and_save_to
+from ted_sws.notice_packager.services.metadata_transformer import MetadataTransformer
+from ted_sws.notice_packager.services.notice_packager import create_notice_package, package_notice_and_save_to
 
 CMD_NAME = "CMD_BULK_PACKAGER"
 DEFAULT_FILES_COUNT: int = 3000

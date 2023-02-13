@@ -6,13 +6,13 @@ from typing import List
 
 import click
 
-from mapping_workbench import config
-from mapping_workbench.core.adapters.cmd_runner import CmdRunnerForMappingSuite as BaseCmdRunner, DEFAULT_MAPPINGS_PATH, \
+from ted_sws import config
+from ted_sws.core.adapters.cmd_runner import CmdRunnerForMappingSuite as BaseCmdRunner, DEFAULT_MAPPINGS_PATH, \
     DEFAULT_OUTPUT_PATH
-from mapping_workbench.data_manager.adapters.mapping_suite_repository import MappingSuiteRepositoryInFileSystem
-from mapping_workbench.notice_transformer.adapters.rml_mapper import RMLMapper, SerializationFormat as RMLSerializationFormat, \
+from ted_sws.data_manager.adapters.mapping_suite_repository import MappingSuiteRepositoryInFileSystem
+from ted_sws.notice_transformer.adapters.rml_mapper import RMLMapper, SerializationFormat as RMLSerializationFormat, \
     TURTLE_SERIALIZATION_FORMAT
-from mapping_workbench.notice_transformer.services.notice_transformer import transform_test_data
+from ted_sws.notice_transformer.services.notice_transformer import transform_test_data
 
 CMD_NAME = "CMD_MAPPING_RUNNER"
 

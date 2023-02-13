@@ -2,10 +2,10 @@ from pathlib import Path
 
 import pytest
 
-from mapping_workbench.core.model.manifestation import RDFManifestation, XMLManifestation, XPATHCoverageValidationReport, \
+from ted_sws.core.model.manifestation import RDFManifestation, XMLManifestation, XPATHCoverageValidationReport, \
     XPATHCoverageValidationResult, SHACLTestSuiteValidationReport, SPARQLTestSuiteValidationReport
-from mapping_workbench.core.model.notice import NoticeStatus, Notice
-from mapping_workbench.core.model.transform import FileResource, SPARQLTestSuite, MetadataConstraints, TransformationRuleSet, \
+from ted_sws.core.model.notice import NoticeStatus, Notice
+from ted_sws.core.model.transform import FileResource, SPARQLTestSuite, MetadataConstraints, TransformationRuleSet, \
     SHACLTestSuite, TransformationTestData, MappingSuite
 from tests import TEST_DATA_PATH
 

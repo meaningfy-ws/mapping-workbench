@@ -1,6 +1,6 @@
 import pandas as pd
 import rdflib
-from mapping_workbench.data_manager.adapters.sparql_endpoint import TripleStoreEndpointABC
+from ted_sws.data_manager.adapters.sparql_endpoint import TripleStoreEndpointABC
 
 
 class FakeTripleStoreEndpoint(TripleStoreEndpointABC):
