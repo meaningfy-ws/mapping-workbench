@@ -2,7 +2,7 @@ import click
 from pathlib import Path
 
 from mapping_workbench.workbench_tools.rdf_component_detector.services.detect_graph_component import detect_graph_components
-from mapping_workbench.core.adapters.cmd_runner import CmdRunner as BaseCmdRunner
+from ted_sws.core.adapters.cmd_runner import CmdRunner as BaseCmdRunner
 
 CMD_NAME = "CMD_RDF_COMPONENT_DETECTOR"
 

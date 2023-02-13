@@ -6,8 +6,8 @@ from typing import Tuple, List, Dict
 import click
 from ordered_set import OrderedSet
 
-from mapping_workbench.core.adapters.cmd_runner import CmdRunnerForMappingSuite as BaseCmdRunner, DEFAULT_MAPPINGS_PATH
-from mapping_workbench.event_manager.adapters.log import SeverityLevelType, LOG_WARN_TEXT
+from ted_sws.core.adapters.cmd_runner import CmdRunnerForMappingSuite as BaseCmdRunner, DEFAULT_MAPPINGS_PATH
+from ted_sws.event_manager.adapters.log import SeverityLevelType, LOG_WARN_TEXT
 from mapping_workbench.workbench_tools.mapping_suite_processor.entrypoints.cli import cmd_resources_injector, cmd_sparql_generator, cmd_triple_store_loader, \
     cmd_mapping_suite_validator
 from mapping_workbench.workbench_tools.mapping_suite_processor.entrypoints.cli import cmd_rml_modules_injector, cmd_metadata_generator

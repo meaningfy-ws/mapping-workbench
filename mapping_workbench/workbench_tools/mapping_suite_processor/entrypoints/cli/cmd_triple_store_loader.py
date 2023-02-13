@@ -3,9 +3,9 @@ from pathlib import Path
 
 import click
 
-from mapping_workbench.core.adapters.cmd_runner import CmdRunner as BaseCmdRunner, DEFAULT_MAPPINGS_PATH
-from mapping_workbench.event_manager.adapters.log import LOG_INFO_TEXT
-from mapping_workbench.mapping_suite_processor.services.load_mapping_suite_output_into_triple_store import \
+from ted_sws.core.adapters.cmd_runner import CmdRunner as BaseCmdRunner, DEFAULT_MAPPINGS_PATH
+from ted_sws.event_manager.adapters.log import LOG_INFO_TEXT
+from ted_sws.mapping_suite_processor.services.load_mapping_suite_output_into_triple_store import \
     load_mapping_suite_output_into_fuseki_triple_store
 
 DEFAULT_PACKAGE_FOLDER = '{mappings_path}/{mapping_suite_id}'

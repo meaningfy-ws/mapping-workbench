@@ -7,16 +7,16 @@ from typing import List
 
 import click
 
-from mapping_workbench.core.adapters.cmd_runner import CmdRunnerForMappingSuite as BaseCmdRunner, DEFAULT_MAPPINGS_PATH, \
+from ted_sws.core.adapters.cmd_runner import CmdRunnerForMappingSuite as BaseCmdRunner, DEFAULT_MAPPINGS_PATH, \
     DEFAULT_OUTPUT_PATH
-from mapping_workbench.core.model.manifestation import XMLManifestation
-from mapping_workbench.core.model.notice import Notice
-from mapping_workbench.data_manager.adapters.mapping_suite_repository import MappingSuiteRepositoryInFileSystem
-from mapping_workbench.event_manager.adapters.log import LOG_INFO_TEXT
+from ted_sws.core.model.manifestation import XMLManifestation
+from ted_sws.core.model.notice import Notice
+from ted_sws.data_manager.adapters.mapping_suite_repository import MappingSuiteRepositoryInFileSystem
+from ted_sws.event_manager.adapters.log import LOG_INFO_TEXT
 from mapping_workbench.workbench_tools.mapping_suite_processor.entrypoints.cli import CONCEPTUAL_MAPPINGS_FILE_TEMPLATE
-from mapping_workbench.notice_validator.adapters.xpath_coverage_runner import CoverageRunner
+from ted_sws.notice_validator.adapters.xpath_coverage_runner import CoverageRunner
 from mapping_workbench.workbench_tools.notice_validator.cli import DEFAULT_TEST_SUITE_REPORT_FOLDER
-from mapping_workbench.notice_validator.services.xpath_coverage_runner import coverage_notice_xpath_report, \
+from ted_sws.notice_validator.services.xpath_coverage_runner import coverage_notice_xpath_report, \
     xpath_coverage_html_report, xpath_coverage_json_report
 
 OUTPUT_FOLDER = '{mappings_path}/{mapping_suite_id}/' + DEFAULT_OUTPUT_PATH

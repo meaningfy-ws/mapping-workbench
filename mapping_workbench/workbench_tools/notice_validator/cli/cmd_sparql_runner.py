@@ -6,15 +6,15 @@ from typing import List
 
 import click
 
-from mapping_workbench.core.adapters.cmd_runner import CmdRunnerForMappingSuite as BaseCmdRunner, DEFAULT_MAPPINGS_PATH
-from mapping_workbench.core.model.manifestation import RDFManifestation, XMLManifestation
-from mapping_workbench.core.model.manifestation import XPATHCoverageValidationReport
-from mapping_workbench.data_manager.adapters.mapping_suite_repository import MappingSuiteRepositoryInFileSystem
-from mapping_workbench.event_manager.adapters.log import LOG_INFO_TEXT
+from ted_sws.core.adapters.cmd_runner import CmdRunnerForMappingSuite as BaseCmdRunner, DEFAULT_MAPPINGS_PATH
+from ted_sws.core.model.manifestation import RDFManifestation, XMLManifestation
+from ted_sws.core.model.manifestation import XPATHCoverageValidationReport
+from ted_sws.data_manager.adapters.mapping_suite_repository import MappingSuiteRepositoryInFileSystem
+from ted_sws.event_manager.adapters.log import LOG_INFO_TEXT
 from mapping_workbench.workbench_tools.notice_validator.cli import DEFAULT_RDF_FOLDER
 from mapping_workbench.workbench_tools.notice_validator.cli.cmd_xpath_coverage_runner import JSON_REPORT_FILE as XPATH_JSON_FILE, \
     DEFAULT_TEST_SUITE_REPORT_FOLDER
-from mapping_workbench.notice_validator.services.sparql_test_suite_runner import SPARQLTestSuiteRunner, SPARQLReportBuilder, \
+from ted_sws.notice_validator.services.sparql_test_suite_runner import SPARQLTestSuiteRunner, SPARQLReportBuilder, \
     SPARQLTestSuiteValidationReport
 
 JSON_VALIDATIONS_REPORT = "sparql_validations.json"

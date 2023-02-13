@@ -4,7 +4,7 @@
 # Date:  07/02/2022
 # Author: Eugeniu Costetchi
 # Email: costezki.eugen@gmail.com
-# Package PIP install location: https://github.com/OP-TED/ted-rdf-conversion-pipeline/archive/main.zip
+# Package PIP install location: https://github.com/meaningfy-ws/mapping-workbench/archive/main.zip
 """ """
 
 import codecs

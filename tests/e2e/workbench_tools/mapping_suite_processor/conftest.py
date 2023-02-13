@@ -1,6 +1,6 @@
 import pytest
 
-from mapping_workbench.data_manager.adapters.triple_store import RDF_MIME_TYPES
+from ted_sws.data_manager.adapters.triple_store import RDF_MIME_TYPES
 from tests import TEST_DATA_PATH
 
 

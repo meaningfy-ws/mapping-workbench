@@ -4,11 +4,11 @@ from pathlib import Path
 
 import click
 
-from mapping_workbench.core.adapters.cmd_runner import CmdRunner as BaseCmdRunner, DEFAULT_MAPPINGS_PATH
-from mapping_workbench.data_manager.adapters.mapping_suite_repository import MS_TRANSFORM_FOLDER_NAME, \
+from ted_sws.core.adapters.cmd_runner import CmdRunner as BaseCmdRunner, DEFAULT_MAPPINGS_PATH
+from ted_sws.data_manager.adapters.mapping_suite_repository import MS_TRANSFORM_FOLDER_NAME, \
     MS_MAPPINGS_FOLDER_NAME
 from mapping_workbench.workbench_tools.mapping_suite_processor.entrypoints.cli import CONCEPTUAL_MAPPINGS_FILE_TEMPLATE
-from mapping_workbench.mapping_suite_processor.services.conceptual_mapping_files_injection import \
+from ted_sws.mapping_suite_processor.services.conceptual_mapping_files_injection import \
     mapping_suite_processor_inject_rml_modules as inject_rml_modules
 
 DEFAULT_OUTPUT_PATH = '{mappings_path}/{mapping_suite_id}/' + MS_TRANSFORM_FOLDER_NAME + '/' + MS_MAPPINGS_FOLDER_NAME

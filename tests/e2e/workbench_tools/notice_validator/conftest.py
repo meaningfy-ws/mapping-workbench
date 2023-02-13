@@ -1,7 +1,7 @@
 import pytest
 
-from mapping_workbench.core.model.manifestation import XMLManifestation, RDFManifestation
-from mapping_workbench.core.model.notice import Notice
+from ted_sws.core.model.manifestation import XMLManifestation, RDFManifestation
+from ted_sws.core.model.notice import Notice
 from tests import TEST_DATA_PATH
 
 
