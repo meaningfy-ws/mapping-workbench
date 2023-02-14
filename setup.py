@@ -95,7 +95,7 @@ setup(
             f"normalisation_resource_generator = {CONSOLE_SCRIPTS_PATH}.data_manager.entrypoints.cli.cmd_generate_mapping_resources:main",
             f"s3_rdf_publisher = {CONSOLE_SCRIPTS_PATH}.notice_publisher.entrypoints.cli.cmd_s3_rdf_publisher:main",
             f"bulk_packager = {CONSOLE_SCRIPTS_PATH}.notice_packager.entrypoints.cli.cmd_bulk_packager:main",
-            # f"api-digest_service-start-server = {CONSOLE_SCRIPTS_PATH}.notice_transformer.entrypoints.api.digest_service.server:api_server_start",
+            f"api-digest_service-start-server = ted_sws.notice_transformer.entrypoints.api.digest_service.server:api_server_start",
             f"rdf_component_detector = {CONSOLE_SCRIPTS_PATH}.rdf_component_detector.entrypoints.cli.cmd_rdf_component_detector:main",
             f"export_notices_from_mongodb = {CONSOLE_SCRIPTS_PATH}.data_manager.entrypoints.cli.cmd_export_notices_from_mongodb:main",
         ],
