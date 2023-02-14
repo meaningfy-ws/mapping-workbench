@@ -98,6 +98,7 @@ setup(
             f"api-digest_service-start-server = ted_sws.notice_transformer.entrypoints.api.digest_service.server:api_server_start",
             f"rdf_component_detector = {CONSOLE_SCRIPTS_PATH}.rdf_component_detector.entrypoints.cli.cmd_rdf_component_detector:main",
             f"export_notices_from_mongodb = {CONSOLE_SCRIPTS_PATH}.data_manager.entrypoints.cli.cmd_export_notices_from_mongodb:main",
+            f"shacl_summary_generator = {CONSOLE_SCRIPTS_PATH}.shacl_summary.cli.cmd_shacl_summary_generator:main"
         ],
     },
     include_package_data=True,
