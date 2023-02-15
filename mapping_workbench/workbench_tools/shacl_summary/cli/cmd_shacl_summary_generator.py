@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import pathlib
 
 import click
 
@@ -6,7 +7,7 @@ from ted_sws.core.adapters.cmd_runner import CmdRunner as BaseCmdRunner
 
 from mapping_workbench.workbench_tools.shacl_summary.services.shacl_summary_generator import generate_shacl_summary
 
-CMD_NAME = "Example_CMD"
+CMD_NAME = "SHACL_SUMMARY_CMD"
 
 
 class CmdRunner(BaseCmdRunner):
@@ -16,33 +17,33 @@ class CmdRunner(BaseCmdRunner):
 
     def __init__(
             self,
-            some_text: str
+            packages_dir_path: pathlib.Path
     ):
         super().__init__(name=CMD_NAME)
-        self.some_text = some_text
+        self.packages_dir_path = packages_dir_path
 
     def run_cmd(self):
         error = None
         try:
-            generate_shacl_summary(some_text=self.some_text)
+            generate_shacl_summary(packages_dir_path=self.packages_dir_path)
         except Exception as e:
             error = e
 
         return self.run_cmd_result(error)
 
 
-def run(some_text: str):
-    cmd = CmdRunner(some_text=some_text)
+def run(packages_dir_path: str):
+    cmd = CmdRunner(packages_dir_path=pathlib.Path(packages_dir_path))
     cmd.run()
 
 
 @click.command()
-@click.argument('some_text', nargs=1, required=True)
-def main(some_text):
+@click.argument('packages_dir_path', nargs=1, required=True)
+def main(packages_dir_path):
     """
     Generates RML modules report file for Mapping Suite.
     """
-    run(some_text=some_text)
+    run(packages_dir_path=packages_dir_path)
 
 
 if __name__ == '__main__':

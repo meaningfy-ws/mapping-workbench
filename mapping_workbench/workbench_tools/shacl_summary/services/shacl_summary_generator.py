@@ -1,58 +1,27 @@
-import os, json
-from pathlib import Path
+import json
+import pathlib
+from typing import List, Tuple
 
-def Remove(duplicate):
-    final = []
-    for num in duplicate:
-        if num not in final:
-            final.append(num)
-    return final
 
-def readFilename(names, number):
-    for name in names:
-        if "." not in name:
-            os.chdir("/home/valexande/work/repos/mapping-workbench/mapping_workbench/workbench_tools/shacl_summary/services/packages/package_F" + str(number) +  "/output/" + str(name) + "/test_suite_report")
-            f = open("shacl_validations.json")
-            data = json.load(f)
-            newName = name + ".json"
-            os.chdir("/home/valexande/work/repos/mapping-workbench/mapping_workbench/workbench_tools/shacl_summary/services/shaclValidationF" + str(number))
-            with open(newName, "w") as outfile:
-                json.dump(data, outfile)
+def clean_uries(input_uri) -> str:
+    if "http://data.europa.eu/a4g/ontology#" in str(input_uri):
+        input_uri = str(input_uri).replace("http://data.europa.eu/a4g/ontology#", "epo:")
+    elif "http://www.w3.org/ns/locn#" in str(input_uri):
+        input_uri = str(input_uri).replace("http://www.w3.org/ns/locn#", "locn:")
+    return input_uri
 
-    return 1
 
-def readJson(names, formNumber):
-    os.chdir("/home/valexande/work/repos/mapping-workbench/mapping_workbench/workbench_tools/shacl_summary/services/shaclValidationF" + formNumber)
+def clean_message(message: str) -> str:
+    return message.split(" on ")[0]
 
-    listError = []
-    for name in names:
-        f = open(name)
-        if "shacl" not in name:
-            name = "shacl_violation_" + name
-        data = json.load(f)
-        for error in data[0]["validation_results"]["results_dict"]["results"]["bindings"]:
-            listError.append((error['message']['value'], error['resultPath']['value'], name.split("_")[2].replace(".json", "")))
-    return listError
 
-def processError(listError, formNumber):
+def process_shacl_error(error_list: List, group_label: str):
     errorHash = {}
-    for error in listError:
-        if "http://data.europa.eu/a4g/ontology#" in str(error[1]):
-            k = str(error[1]).replace("http://data.europa.eu/a4g/ontology#", "epo:")
-        elif "http://www.w3.org/ns/locn#" in str(error[1]):
-            k = str(error[1]).replace("http://www.w3.org/ns/locn#", "locn:")
-        if errorHash.get(k) == None:
-            if " on " in str(error[1]):
-                problem = str(error[0].split(" on ")[0])
-            else:
-                problem = str(error[0].split(" on ")[0])
-            errorHash.setdefault(k, []).append((problem, error[2]))
+    for message, property_uri, notice_id in error_list:
+        if property_uri not in errorHash.keys():
+            errorHash.setdefault(property_uri, []).append((message, notice_id))
         else:
-            if " on " in str(error[1]):
-                problem = str(error[0].split(" on ")[0])
-            else:
-                problem = str(error[0].split(" on ")[0])
-            errorHash[k].append((problem, error[2]))
+            errorHash[property_uri].append((message, notice_id))
 
     finalHash = {}
     for error in errorHash:
@@ -63,73 +32,93 @@ def processError(listError, formNumber):
             else:
                 helperHash[ent[0]].append(ent[1])
 
-        for property in helperHash:
-            if finalHash.get(error) == None:
-                finalHash.setdefault(error, []).append({"message": property, "notices": Remove(helperHash[property]), "notice_count": len(Remove(helperHash[property]))})
+        for prop in helperHash:
+            group_elements = list(set((helperHash[prop])))
+            new_item = {"message": prop, group_label: group_elements,
+                        f"{group_label}_count": len(group_elements)}
+
+            if error not in finalHash.keys():
+                finalHash.setdefault(error, []).append(new_item)
             else:
-                finalHash[error].append({"message": property, "notices": Remove(helperHash[property]), "notice_count": len(Remove(helperHash[property]))})
+                finalHash[error].append(new_item)
+    return finalHash
 
 
-    with open("/home/valexande/work/repos/mapping-workbench/mapping_workbench/workbench_tools/shacl_summary/services/shaclMetadata/shaclValidationF" + formNumber + ".json", "w") as outfile:
-        json.dump(finalHash, outfile, sort_keys=True, indent=4)
 
-    return 1
-
-def readMetadata(names):
-    os.chdir("/home/valexande/work/repos/mapping-workbench/mapping_workbench/workbench_tools/shacl_summary/services/shaclMetadata")
-
-    listProblem = []
-    for name in names:
-        f = open(name)
-        data = json.load(f)
-        for error in data:
-            for o in data[error]:
-                listProblem.append((error, o["message"], name))
-
-
-    return listProblem
-
-def processProblem(listProblem):
+def process_packages_errors(list_of_packages_errors: List):
+    list_of_packages_errors = list(set(list_of_packages_errors))
     errorHash = {}
 
-    for error in listProblem:
-        if errorHash.get(str(error[0]) + "**" + str(error[1])) == None:
-            errorHash.setdefault(str(error[0]) + "**" + str(error[1]), []).append(error[2])
+    for prop, message, package_id in list_of_packages_errors:
+        key = str(prop) + "**" + str(message)
+        if key not in errorHash.keys():
+            errorHash.setdefault(key, []).append(package_id)
         else:
-            errorHash[str(error[0]) + "**" + str(error[1])].append(error[2])
+            errorHash[key].append(package_id)
 
     finalHash = {}
-    for error in errorHash:
-        k = error.split("**")
-        print(k, errorHash[error])
-        helper = [i.replace("shaclValidation", "package_").replace(".json", "") for i in errorHash[error]]
-        if finalHash.get(k[0]) == None:
-            finalHash.setdefault(k[0], []).append({"message": k[1], "mapping_suits": helper})
+    for key, package_ids in errorHash.items():
+        prop, message = key.split("**")
+        new_item = {"message": message, "mapping_suits": package_ids}
+        if prop not in finalHash.keys():
+            finalHash.setdefault(prop, []).append(new_item)
         else:
-            finalHash[k[0]].append({"message": k[1], "mapping_suits": helper})
+            finalHash[prop].append(new_item)
+
+    return finalHash
 
 
-    with open("summary.json", "w") as outfile:
-        json.dump(finalHash, outfile, sort_keys=True, indent=4)
-    return 1
+def extract_shacl_validation_metadata(shacl_validations: list, notice_id: str, package_id: str) -> Tuple[list, list]:
+    notice_list_of_errors = []
+    package_list_of_errors = []
 
-def generate_shacl_summary(some_text: str) -> str:
-    formStandar = ["03", "06", "13", "20", "21", "22", "23", "25"]
+    for shacl_validation in shacl_validations:
+        errors = shacl_validation["validation_results"]["results_dict"]["results"]["bindings"]
+        for error in errors:
+            property_uri = clean_uries(error['resultPath']['value'])
+            error_message = clean_message(error['message']['value'])
+            notice_list_of_errors.append((error_message, property_uri, notice_id))
+            package_list_of_errors.append((property_uri, error_message, package_id))
+    return package_list_of_errors, notice_list_of_errors
 
-    for number in formStandar:
-        names = os.listdir("/home/valexande/work/repos/mapping-workbench/mapping_workbench/workbench_tools/shacl_summary/services/packages/package_F" + str(number) + "/output")
-        flagRead = readFilename(names, number)
-    for formNumber in formStandar:
-        names = dir_list = os.listdir("/home/valexande/work/repos/mapping-workbench/mapping_workbench/workbench_tools/shacl_summary/services/shaclValidationF" + formNumber)
-        listError = readJson(names, formNumber)
-        flagProcess = processError(listError, formNumber)
 
-    names = os.listdir("/home/valexande/work/repos/mapping-workbench/mapping_workbench/workbench_tools/shacl_summary/services/shaclMetadata")
-    listProblem = readMetadata(names)
-    print(listProblem)
-    listProblem = Remove(listProblem)
-    flagProccessed = processProblem(listProblem)
+def generate_shacl_summary(packages_dir_path: pathlib.Path) -> dict:
+    packages = {}
+    errors_per_package = {}
+    packages_list_of_errors = []
+    if packages_dir_path.is_dir():
+        for package_path in packages_dir_path.iterdir():
+            if package_path.is_dir() and package_path.name.startswith("package_F"):
+                packages[package_path.name] = {}
+                notices_output_path = package_path / "output"
+                if notices_output_path.exists():
+                    errors_per_package[package_path.name] = None
+                    for notice_path in notices_output_path.iterdir():
+                        if notice_path.is_dir():
+                            shacl_validation_path = notice_path / "test_suite_report" / "shacl_validations.json"
+                            if shacl_validation_path.exists() and shacl_validation_path.is_file():
+                                shacl_validation_content = shacl_validation_path.read_text(encoding="utf-8")
+                                shacl_validation_json = json.loads(shacl_validation_content)
+                                package_list_of_errors, notice_list_of_errors = extract_shacl_validation_metadata(
+                                    shacl_validation_json,
+                                    notice_path.name,
+                                    package_path.name
+                                )
+                                packages_list_of_errors += package_list_of_errors
+                                errors_per_package[package_path.name] = process_shacl_error(notice_list_of_errors,
+                                                                                            group_label="notices")
 
-    msg = f"Hey! I received: {some_text}"
-    print(msg)
-    return flagProccessed
+                    if errors_per_package[package_path.name]:
+                        package_shacl_summary_file_path = notices_output_path / "shacl_summary_validation.json"
+                        package_shacl_summary_file_path.write_text(json.dumps(errors_per_package[package_path.name]),
+                                                                   encoding="utf-8"
+                                                                   )
+
+        summary_result = process_packages_errors(list_of_packages_errors=packages_list_of_errors)
+        packages_shacl_summary_file_path = packages_dir_path / "packages_shacl_summary_validation.json"
+        packages_shacl_summary_file_path.write_text(json.dumps(summary_result), encoding="utf-8")
+        return summary_result
+    else:
+        print("Invalid packages dir path!")
+
+    return None

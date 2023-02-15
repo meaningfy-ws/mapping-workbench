@@ -1,0 +1,58 @@
+{
+  "epo:signedBySignatory": [
+    {
+      "message": "Less than 1 values",
+      "mapping_suits": [
+        "package_F03_demo"
+      ]
+    }
+  ],
+  "epo:isSubjectToLotSpecificTerm": [
+    {
+      "message": "Value does not have class :LotSpecificTerm",
+      "mapping_suits": [
+        "package_F03_demo"
+      ]
+    }
+  ],
+  "epo:foreseesContractSpecificTerm": [
+    {
+      "message": "Value does not have class :ContractSpecificTerm",
+      "mapping_suits": [
+        "package_F03_demo"
+      ]
+    }
+  ],
+  "epo:hasBuyerProfile": [
+    {
+      "message": "Value is not Literal with datatype xsd:anyURI",
+      "mapping_suits": [
+        "package_F03_demo"
+      ]
+    }
+  ],
+  "epo:refersToRole": [
+    {
+      "message": "Value does not have class :AgentInRole",
+      "mapping_suits": [
+        "package_F03_demo"
+      ]
+    }
+  ],
+  "epo:hasInternetAddress": [
+    {
+      "message": "Value is not Literal with datatype xsd:anyURI",
+      "mapping_suits": [
+        "package_F03_demo"
+      ]
+    }
+  ],
+  "epo:announcesRole": [
+    {
+      "message": "Value does not have class :AgentInRole",
+      "mapping_suits": [
+        "package_F03_demo"
+      ]
+    }
+  ]
+}
