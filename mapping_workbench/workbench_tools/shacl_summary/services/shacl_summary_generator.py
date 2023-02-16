@@ -83,6 +83,7 @@ def extract_shacl_validation_metadata(shacl_validations: list, notice_id: str, p
 
 
 def generate_shacl_summary(packages_dir_path: pathlib.Path) -> dict:
+
     packages = {}
     errors_per_package = {}
     packages_list_of_errors = []
