@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-from mapping_workbench.workbench_tools.notice_transformer.cli.cmd_mapping_runner import run as cli_run
+from mapping_workbench.workbench_tools.notice_transformer.entrypoints.cli.cmd_mapping_runner import run as cli_run
 
 
 def post_process(fake_repository_path, fake_mapping_suite_id):

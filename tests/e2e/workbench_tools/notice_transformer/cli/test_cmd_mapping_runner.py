@@ -1,4 +1,4 @@
-from mapping_workbench.workbench_tools.notice_transformer.cli.cmd_mapping_runner import main as cli_main
+from mapping_workbench.workbench_tools.notice_transformer.entrypoints.cli.cmd_mapping_runner import main as cli_main
 from tests.unit.workbench_tools.notice_transformer.cli.test_cmd_mapping_runner import post_process
 
 

@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from mapping_workbench.workbench_tools.notice_validator.cli.cmd_xpath_coverage_runner import run as cli_run, \
+from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli import run as cli_run, \
     DEFAULT_OUTPUT_PATH, DEFAULT_TEST_SUITE_REPORT_FOLDER
 
 

@@ -15,7 +15,7 @@ from ted_sws.data_manager.adapters.mapping_suite_repository import MappingSuiteR
 from ted_sws.event_manager.adapters.log import LOG_INFO_TEXT
 from mapping_workbench.workbench_tools.mapping_suite_processor.entrypoints.cli import CONCEPTUAL_MAPPINGS_FILE_TEMPLATE
 from ted_sws.notice_validator.adapters.xpath_coverage_runner import CoverageRunner
-from mapping_workbench.workbench_tools.notice_validator.cli import DEFAULT_TEST_SUITE_REPORT_FOLDER
+from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli import DEFAULT_TEST_SUITE_REPORT_FOLDER
 from ted_sws.notice_validator.services.xpath_coverage_runner import coverage_notice_xpath_report, \
     xpath_coverage_html_report, xpath_coverage_json_report
 

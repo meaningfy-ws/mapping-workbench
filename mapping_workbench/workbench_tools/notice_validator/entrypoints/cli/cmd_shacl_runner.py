@@ -10,7 +10,7 @@ from ted_sws.core.adapters.cmd_runner import CmdRunnerForMappingSuite as BaseCmd
 from ted_sws.core.model.manifestation import RDFManifestation, SHACLTestSuiteValidationReport
 from ted_sws.data_manager.adapters.mapping_suite_repository import MappingSuiteRepositoryInFileSystem
 from ted_sws.event_manager.adapters.log import LOG_INFO_TEXT
-from mapping_workbench.workbench_tools.notice_validator.cli import DEFAULT_RDF_FOLDER, DEFAULT_TEST_SUITE_REPORT_FOLDER
+from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli import DEFAULT_RDF_FOLDER, DEFAULT_TEST_SUITE_REPORT_FOLDER
 from ted_sws.notice_validator.services.shacl_test_suite_runner import SHACLTestSuiteRunner, generate_shacl_report
 
 HTML_REPORT = "shacl_{id}.html"
