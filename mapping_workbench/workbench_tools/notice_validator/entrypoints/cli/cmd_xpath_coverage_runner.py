@@ -8,7 +8,7 @@ from typing import List
 import click
 from ted_sws.core.adapters.cmd_runner import CmdRunnerForMappingSuite as BaseCmdRunner, DEFAULT_MAPPINGS_PATH, \
     DEFAULT_OUTPUT_PATH
-from ted_sws.core.model.report import ReportNotice
+from ted_sws.core.model.validation_report import ReportNotice
 from ted_sws.data_manager.adapters.mapping_suite_repository import MappingSuiteRepositoryInFileSystem
 from ted_sws.data_manager.services.mapping_suite_resource_manager import mapping_suite_notices_grouped_by_path
 from ted_sws.event_manager.adapters.log import LOG_INFO_TEXT
