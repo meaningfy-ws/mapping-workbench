@@ -5,14 +5,14 @@ from typing import List
 from urllib.parse import urljoin, urlparse
 
 import click
-
 from ted_sws.core.adapters.cmd_runner import CmdRunnerForMappingSuite as BaseCmdRunner, DEFAULT_MAPPINGS_PATH, \
     DEFAULT_OUTPUT_PATH
 from ted_sws.core.model.manifestation import RDFManifestation
+from ted_sws.data_manager.services.mapping_suite_resource_manager import read_flat_file_resources, \
+    file_resource_output_path
 from ted_sws.event_manager.adapters.log import LOG_INFO_TEXT, LOG_WARN_TEXT
 from ted_sws.notice_publisher.adapters.s3_notice_publisher import S3Publisher
 from ted_sws.notice_publisher.services.notice_publisher import publish_notice_rdf_content_into_s3
-
 from ted_sws.notice_transformer.services.notice_transformer import DEFAULT_TRANSFORMATION_FILE_EXTENSION
 
 CMD_NAME = "CMD_S3_RDF_PUBLISHER"
@@ -39,7 +39,7 @@ class CmdRunner(BaseCmdRunner):
             bucket_name: str,
             object_names: List[str],
             mappings_path,
-            s3_publisher: S3Publisher
+            s3_publisher: S3Publisher = None
     ):
         super().__init__(name=CMD_NAME)
         self.rdf_files = []
@@ -50,16 +50,22 @@ class CmdRunner(BaseCmdRunner):
             self.mappings_path = mappings_path
             self.output_folder = OUTPUT_FOLDER.format(mappings_path=self.mappings_path,
                                                       mapping_suite_id=self.mapping_suite_id)
-            if not self.notice_ids:
-                for notice_id in Path(self.output_folder).glob("*"):
-                    if notice_id.is_dir() and notice_id.name not in self.skip_notice_ids:
-                        self.notice_ids.append(notice_id.name)
+            output_path = Path(self.output_folder)
+            file_resources = read_flat_file_resources(output_path, extension=DEFAULT_TRANSFORMATION_FILE_EXTENSION)
 
-            for notice_id in self.notice_ids:
-                rdf_file_name = notice_id + DEFAULT_TRANSFORMATION_FILE_EXTENSION
-                rdf_path = Path(self.output_folder) / notice_id / rdf_file_name
-                if rdf_path.is_file():
-                    self.rdf_files.append(rdf_path)
+            if not self.notice_ids and self.skip_notice_ids:
+                for file_resource in file_resources:
+                    notice_id = file_resource.parents[-1]
+                    if notice_id not in self.skip_notice_ids:
+                        self.notice_ids.append(notice_id)
+
+            for file_resource in file_resources:
+                notice_id = file_resource.parents[-1]
+                if notice_id in self.notice_ids:
+                    rdf_file_name = notice_id + DEFAULT_TRANSFORMATION_FILE_EXTENSION
+                    rdf_path = file_resource_output_path(file_resource, output_path) / rdf_file_name
+                    if rdf_path.is_file():
+                        self.rdf_files.append(str(rdf_path))
 
         self.rdf_files += self._init_list_input_opts_split(rdf_files)
 
@@ -103,8 +109,9 @@ class CmdRunner(BaseCmdRunner):
 
 
 def run(rdf_file=None, mapping_suite_id=None, notice_id=None, skip_notice_id=None,
-        bucket_name=DEFAULT_NOTICE_RDF_S3_BUCKET_NAME, object_name=None, mappings_folder=DEFAULT_MAPPINGS_PATH,
-        s3_publisher: S3Publisher = S3Publisher()):
+        bucket_name=DEFAULT_NOTICE_RDF_S3_BUCKET_NAME, object_name=None, mappings_folder=DEFAULT_MAPPINGS_PATH
+        , s3_publisher: S3Publisher = S3Publisher()
+        ):
     cmd = CmdRunner(
         rdf_files=list(rdf_file or []),
         mapping_suite_id=mapping_suite_id,
