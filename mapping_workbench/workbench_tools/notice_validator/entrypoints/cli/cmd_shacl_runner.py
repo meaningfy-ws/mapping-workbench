@@ -88,6 +88,7 @@ class CmdRunner(BaseCmdRunner):
         try:
             rdf_path = Path(DEFAULT_RDF_FOLDER.format(mappings_path=self.mappings_path,
                                                       mapping_suite_id=self.mapping_suite_id))
+            assert rdf_path.is_dir()
             file_resources = read_flat_file_resources(rdf_path, extension=DEFAULT_TRANSFORMATION_FILE_EXTENSION)
             for file_resource in file_resources:
                 notice_id = file_resource.parents[-1]

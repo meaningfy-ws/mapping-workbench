@@ -7,12 +7,14 @@ from mapping_workbench.workbench_tools.notice_transformer.entrypoints.cli.cmd_ma
 def post_process(fake_repository_path, fake_mapping_suite_id):
     output_dir_path = fake_repository_path / fake_mapping_suite_id / "output"
     for r in os.listdir(output_dir_path):
-        output_notice_dir_path = output_dir_path / r
+        output_notice_group_path = output_dir_path / r
+        output_notice_dir_path = output_notice_group_path / "notice"
         output_notice_path = output_notice_dir_path / "notice.ttl"
         assert os.path.isdir(output_notice_dir_path)
         assert os.path.isfile(output_notice_path)
         os.remove(output_notice_path)
         os.rmdir(output_notice_dir_path)
+        os.rmdir(output_notice_group_path)
 
 
 def test_cmd_mapping_runner(caplog, fake_rml_mapper, fake_mapping_suite_id,

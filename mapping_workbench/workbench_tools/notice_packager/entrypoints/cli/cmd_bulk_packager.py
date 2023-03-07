@@ -9,6 +9,7 @@
 This module provides functionalities to generate bulk/multiple notice packages for test purposes.
 """
 import base64
+import json
 import os
 from pathlib import Path
 from typing import List
@@ -18,14 +19,15 @@ from pymongo import MongoClient
 
 from ted_sws import config
 from ted_sws.core.adapters.cmd_runner import CmdRunner as BaseCmdRunner
-from ted_sws.core.model.manifestation import XMLManifestation
-from ted_sws.core.model.notice import Notice
+from ted_sws.core.model.manifestation import XMLManifestation, RDFManifestation
+from ted_sws.core.model.notice import Notice, NoticeStatus
 from ted_sws.data_manager.adapters.notice_repository import NoticeRepository
 from ted_sws.event_manager.adapters.log import LOG_WARN_TEXT
 from ted_sws.notice_metadata_processor.services.xml_manifestation_metadata_extractor import \
     XMLManifestationMetadataExtractor
-from ted_sws.notice_packager.services.metadata_transformer import MetadataTransformer
-from ted_sws.notice_packager.services.notice_packager import create_notice_package, package_notice_and_save_to
+from ted_sws.notice_packager.services.metadata_transformer import MetadataTransformer, DENORMALIZED_SEPARATOR, \
+    NORMALIZED_SEPARATOR
+from ted_sws.notice_packager.services.notice_packager import package_notice
 
 CMD_NAME = "CMD_BULK_PACKAGER"
 DEFAULT_FILES_COUNT: int = 3000
@@ -69,8 +71,7 @@ class CmdRunner(BaseCmdRunner):
             if self.notices:
                 self.log("Saving packages to " + str(self.output_path))
                 for notice in self.notices:
-                    package_notice_and_save_to(notice=notice,
-                                               save_to=self.output_path)
+                    package_notice(notice=notice)
             else:
                 rdf_files = [Path(str(f_path)) for f in os.listdir(self.rdf_files_path) if
                              os.path.isfile(f_path := os.path.join(self.rdf_files_path, f))]
@@ -93,24 +94,19 @@ class CmdRunner(BaseCmdRunner):
 
         with open(rdf_file_path, "r") as f:
             rdf_content = f.read()
-
             encoded_rdf_content = base64.b64encode(bytes(rdf_content, 'utf-8'))
 
             notice = PackageNotice(ted_id=notice_id)
-            notice_metadata = XMLManifestationMetadataExtractor(
-                xml_manifestation=notice.xml_manifestation).to_metadata()
-            notice_metadata.notice_publication_number = MetadataTransformer.denormalize_value(notice_id)
-
-            create_notice_package(
-                notice_metadata,
-                rdf_content=encoded_rdf_content,
-                save_to=output_path
-            )
+            notice._status = NoticeStatus.VALIDATED
+            notice.set_rdf_manifestation(RDFManifestation(object_data=encoded_rdf_content))
+            notice.set_distilled_rdf_manifestation(RDFManifestation(object_data=encoded_rdf_content))
+            notice._status = NoticeStatus.ELIGIBLE_FOR_PUBLISHING
+            package_notice(notice)
 
 
-def run(rdf_files_count=None, output_folder=None, pkgs_count=None, notice_id=None,
+def run(rdf_files_folder=None, output_folder=None, pkgs_count=None, notice_id=None,
         mongodb_client=MongoClient(config.MONGO_DB_AUTH_URL)):
-    cmd = CmdRunner(rdf_files_count, output_folder, pkgs_count, list(notice_id or []), mongodb_client)
+    cmd = CmdRunner(rdf_files_folder, output_folder, pkgs_count, list(notice_id or []), mongodb_client)
     cmd.run()
 
 

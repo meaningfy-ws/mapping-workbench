@@ -4,7 +4,8 @@ import tempfile
 from pathlib import Path
 
 from ted_sws.data_manager.adapters.notice_repository import NoticeRepository
-from mapping_workbench.workbench_tools.notice_packager.entrypoints.cli import main as cli_main, run as cli_run
+from mapping_workbench.workbench_tools.notice_packager.entrypoints.cli.cmd_bulk_packager import main as cli_main, \
+    run as cli_run
 
 
 def test_bulk_packager(cli_runner, rdf_files_path):
