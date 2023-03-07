@@ -9,7 +9,8 @@ from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli.cmd_xpat
 def post_process(fake_repository_path, fake_mapping_suite_id):
     base_path = fake_repository_path / fake_mapping_suite_id / DEFAULT_OUTPUT_PATH
 
-    notice_report_path = base_path / "1" / "notice" / DEFAULT_TEST_SUITE_REPORT_FOLDER
+    notice_group_report_path = base_path / "1"
+    notice_report_path = notice_group_report_path / "notice" / DEFAULT_TEST_SUITE_REPORT_FOLDER
     assert os.path.isdir(notice_report_path)
     report_files = []
     for filename in os.listdir(notice_report_path):
@@ -20,6 +21,17 @@ def post_process(fake_repository_path, fake_mapping_suite_id):
             os.remove(f)
     assert len(report_files) == 2
     os.rmdir(notice_report_path)
+    os.rmdir(notice_group_report_path / "notice")
+
+    report_files = []
+    for filename in os.listdir(notice_group_report_path):
+        if filename.startswith("xpath_cov"):
+            report_files.append(filename)
+            f = os.path.join(notice_group_report_path, filename)
+            assert os.path.isfile(f)
+            os.remove(f)
+    assert len(report_files) == 2
+    os.rmdir(notice_group_report_path)
 
     report_files = []
     for filename in os.listdir(base_path):
