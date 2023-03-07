@@ -12,11 +12,10 @@ from mapping_workbench.workbench_tools.mapping_suite_processor.entrypoints.cli i
     cmd_mapping_suite_validator
 from mapping_workbench.workbench_tools.mapping_suite_processor.entrypoints.cli import cmd_rml_modules_injector, cmd_metadata_generator
 from mapping_workbench.workbench_tools.mapping_suite_processor.entrypoints.cli.cmd_rml_modules_injector import DEFAULT_RML_MODULES_PATH
-from mapping_workbench.workbench_tools.notice_transformer.cli import cmd_mapping_runner
-from mapping_workbench.workbench_tools.notice_validator.cli import cmd_xpath_coverage_runner, cmd_sparql_runner, \
-    cmd_validation_summary_runner
-from mapping_workbench.workbench_tools.notice_validator.cli import cmd_shacl_runner
-from mapping_workbench.workbench_tools.rml_to_html.cli import cmd_rml_report_generator
+from mapping_workbench.workbench_tools.notice_transformer.entrypoints.cli import cmd_mapping_runner
+from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli import cmd_sparql_runner, \
+    cmd_validation_summary_runner, cmd_xpath_coverage_runner, cmd_shacl_runner
+from mapping_workbench.workbench_tools.rml_to_html.entrypoints.cli import cmd_rml_report_generator
 
 MAPPING_SUITE_VALIDATOR = "mapping_suite_validator"
 METADATA_GENERATOR = "metadata_generator"

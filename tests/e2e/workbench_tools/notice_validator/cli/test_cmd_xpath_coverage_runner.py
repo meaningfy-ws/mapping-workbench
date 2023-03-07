@@ -1,4 +1,5 @@
-from mapping_workbench.workbench_tools.notice_validator.cli.cmd_xpath_coverage_runner import main as cli_main
+from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli.cmd_xpath_coverage_runner import \
+    main as cli_main
 from tests.unit.workbench_tools.notice_validator.cli.test_cmd_xpath_coverage_runner import post_process
 
 

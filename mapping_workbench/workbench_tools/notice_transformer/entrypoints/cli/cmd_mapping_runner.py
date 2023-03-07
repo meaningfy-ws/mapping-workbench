@@ -85,6 +85,7 @@ class CmdRunner(BaseCmdRunner):
 
             transform_test_data(mapping_suite=mapping_suite, rml_mapper=rml_mapper, output_path=fs_output_path,
                                 notice_ids=self.notice_ids, logger=self.get_logger())
+
         except Exception as e:
             error = e
 

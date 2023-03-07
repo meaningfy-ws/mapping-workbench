@@ -128,6 +128,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .idea/*
+*.iml
 venv_activation.sh
 junit_report.xml
 .idea/mapping-workbench.iml

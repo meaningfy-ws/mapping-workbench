@@ -5,13 +5,17 @@ from pathlib import Path
 from typing import List
 
 import click
-
 from ted_sws.core.adapters.cmd_runner import CmdRunnerForMappingSuite as BaseCmdRunner, DEFAULT_MAPPINGS_PATH
 from ted_sws.core.model.manifestation import RDFManifestation, SHACLTestSuiteValidationReport
 from ted_sws.data_manager.adapters.mapping_suite_repository import MappingSuiteRepositoryInFileSystem
+from ted_sws.data_manager.services.mapping_suite_resource_manager import read_flat_file_resources, \
+    mapping_suite_skipped_notice, file_resource_output_path
 from ted_sws.event_manager.adapters.log import LOG_INFO_TEXT
-from mapping_workbench.workbench_tools.notice_validator.cli import DEFAULT_RDF_FOLDER, DEFAULT_TEST_SUITE_REPORT_FOLDER
+from ted_sws.notice_transformer.services import DEFAULT_TRANSFORMATION_FILE_EXTENSION
 from ted_sws.notice_validator.services.shacl_test_suite_runner import SHACLTestSuiteRunner, generate_shacl_report
+
+from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli import DEFAULT_RDF_FOLDER, \
+    DEFAULT_TEST_SUITE_REPORT_FOLDER
 
 HTML_REPORT = "shacl_{id}.html"
 JSON_VALIDATIONS_REPORT = "shacl_validations.json"
@@ -51,8 +55,9 @@ class CmdRunner(BaseCmdRunner):
         with open(report_path / report_name, "w+") as f:
             f.write(content)
 
-    def validate(self, rdf_file, base_report_path, notice_ids: List[str] = None):
-        self.log("Validating " + LOG_INFO_TEXT.format(rdf_file.name) + " ... ")
+    def validate(self, rdf_resource, base_report_path, notice_ids: List[str] = None):
+        self.log("Validating " + LOG_INFO_TEXT.format(rdf_resource.file_name) + " ... ")
+        rdf_file = Path(base_report_path / rdf_resource.file_name)
         rdf_manifestation = RDFManifestation(object_data=rdf_file.read_text(encoding="utf-8"))
 
         report_path = base_report_path / DEFAULT_TEST_SUITE_REPORT_FOLDER
@@ -83,15 +88,14 @@ class CmdRunner(BaseCmdRunner):
         try:
             rdf_path = Path(DEFAULT_RDF_FOLDER.format(mappings_path=self.mappings_path,
                                                       mapping_suite_id=self.mapping_suite_id))
-            for d in rdf_path.iterdir():
-                if d.is_dir():
-                    notice_id = d.name
-                    if self.skip_notice(notice_id):
-                        continue
-                    base_report_path = rdf_path / notice_id
-                    for f in d.iterdir():
-                        if f.is_file():
-                            self.validate(rdf_file=f, base_report_path=base_report_path, notice_ids=[notice_id])
+            assert rdf_path.is_dir()
+            file_resources = read_flat_file_resources(rdf_path, extension=DEFAULT_TRANSFORMATION_FILE_EXTENSION)
+            for file_resource in file_resources:
+                notice_id = file_resource.parents[-1]
+                if mapping_suite_skipped_notice(notice_id, self.notice_ids):
+                    continue
+                base_report_path = file_resource_output_path(file_resource, rdf_path)
+                self.validate(rdf_resource=file_resource, base_report_path=base_report_path, notice_ids=[notice_id])
         except Exception as e:
             error = e
 

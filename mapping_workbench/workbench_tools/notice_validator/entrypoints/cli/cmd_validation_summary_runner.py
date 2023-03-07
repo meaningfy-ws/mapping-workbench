@@ -5,16 +5,22 @@ from pathlib import Path
 from typing import List, Dict
 
 import click
-
 from ted_sws.core.adapters.cmd_runner import CmdRunner as BaseCmdRunner, DEFAULT_MAPPINGS_PATH, DEFAULT_OUTPUT_PATH
 from ted_sws.core.model.manifestation import XMLManifestation, RDFManifestation, XPATHCoverageValidationReport, \
     SPARQLTestSuiteValidationReport, SHACLTestSuiteValidationReport, ValidationSummaryReport
 from ted_sws.core.model.notice import Notice
-from mapping_workbench.workbench_tools.notice_validator.cli import DEFAULT_TEST_SUITE_REPORT_FOLDER
-from mapping_workbench.workbench_tools.notice_validator.cli.cmd_shacl_runner import JSON_VALIDATIONS_REPORT as JSON_SHACL_REPORT
-from mapping_workbench.workbench_tools.notice_validator.cli.cmd_sparql_runner import JSON_VALIDATIONS_REPORT as JSON_SPARQL_REPORT
-from mapping_workbench.workbench_tools.notice_validator.cli.cmd_xpath_coverage_runner import JSON_REPORT_FILE as XPATH_COV_REPORT
+from ted_sws.data_manager.services.mapping_suite_resource_manager import read_flat_file_resources, \
+    file_resource_output_path, mapping_suite_skipped_notice
+from ted_sws.notice_transformer.services import DEFAULT_TRANSFORMATION_FILE_EXTENSION
 from ted_sws.notice_validator.services.validation_summary_runner import generate_validation_summary_report_notices
+
+from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli import DEFAULT_TEST_SUITE_REPORT_FOLDER
+from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli.cmd_shacl_runner import \
+    JSON_VALIDATIONS_REPORT as JSON_SHACL_REPORT
+from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli.cmd_sparql_runner import \
+    JSON_VALIDATIONS_REPORT as JSON_SPARQL_REPORT
+from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli.cmd_xpath_coverage_runner import \
+    JSON_REPORT_FILE as XPATH_COV_REPORT
 
 OUTPUT_FOLDER = '{mappings_path}/{mapping_suite_id}/' + DEFAULT_OUTPUT_PATH
 
@@ -50,14 +56,17 @@ class CmdRunner(BaseCmdRunner):
         self.notice_aggregate = notice_aggregate
         self.output_path = Path(OUTPUT_FOLDER.format(mappings_path=self.mappings_path,
                                                      mapping_suite_id=self.mapping_suite_id))
+
+        self.file_resources = read_flat_file_resources(self.output_path,
+                                                       extension=DEFAULT_TRANSFORMATION_FILE_EXTENSION)
         if notice_id and len(notice_id) > 0:
             self.notice_ids = notice_id
         else:
             self.for_mapping_suite = True
-            self.notice_ids = self._read_output_notice_ids()
+            self.notice_ids = []
 
-    def _notice_output_report_folder(self, notice_id) -> Path:
-        return self.output_path / notice_id / DEFAULT_TEST_SUITE_REPORT_FOLDER
+    def _notice_output_report_folder(self, notice_path) -> Path:
+        return notice_path / DEFAULT_TEST_SUITE_REPORT_FOLDER
 
     def generate_notice(self, resource) -> Notice:
         """
@@ -65,7 +74,7 @@ class CmdRunner(BaseCmdRunner):
         :return:
         """
         notice_id = resource.stem
-        report_folder = self._notice_output_report_folder(notice_id)
+        report_folder = self._notice_output_report_folder(resource)
         shacl_validations = self._read_report(report_folder, JSON_SHACL_REPORT)
         sparql_validations = self._read_report(report_folder, JSON_SPARQL_REPORT)
         xpath_coverage_validation = self._read_report(report_folder, XPATH_COV_REPORT)
@@ -132,14 +141,20 @@ class CmdRunner(BaseCmdRunner):
         """
         """
 
-        for notice_id in self.notice_ids:
-            notice_path = self.output_path / notice_id
+        for file_resource in self.file_resources:
+            notice_id = file_resource.parents[-1]
+            if mapping_suite_skipped_notice(notice_id, self.notice_ids):
+                continue
+
+            base_report_path = file_resource_output_path(file_resource, self.output_path)
+            notice_path = base_report_path
             notice = self.generate_notice(notice_path)
+
             if self.for_mapping_suite or self.notice_aggregate:
                 self.notices.append(notice)
             if not self.for_mapping_suite or self.notice_aggregate:
                 self._generate_report([notice], "Notice(" + notice.ted_id + ")",
-                                      self._notice_output_report_folder(notice.ted_id))
+                                      self._notice_output_report_folder(notice_path))
 
         if self.notices and len(self.notices) > 0:
             self._generate_report(self.notices, "MappingSuite(" + self.mapping_suite_id + ")", self.output_path)

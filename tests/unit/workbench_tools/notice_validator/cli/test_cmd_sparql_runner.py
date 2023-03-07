@@ -1,4 +1,4 @@
-from mapping_workbench.workbench_tools.notice_validator.cli.cmd_sparql_runner import main as cli_main
+from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli.cmd_sparql_runner import main as cli_main
 from tests.unit.workbench_tools.notice_validator.cli import post_process
 
 
