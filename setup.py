@@ -78,6 +78,7 @@ setup(
         "console_scripts": [
             f"resources_injector = {CONSOLE_SCRIPTS_PATH}.mapping_suite_processor.entrypoints.cli.cmd_resources_injector:main",
             f"rml_modules_injector = {CONSOLE_SCRIPTS_PATH}.mapping_suite_processor.entrypoints.cli.cmd_rml_modules_injector:main",
+            f"sparql_queries_injector = {CONSOLE_SCRIPTS_PATH}.mapping_suite_processor.entrypoints.cli.cmd_sparql_queries_injector:main",
             f"sparql_generator = {CONSOLE_SCRIPTS_PATH}.mapping_suite_processor.entrypoints.cli.cmd_sparql_generator:main",
             f"rml_report_generator = {CONSOLE_SCRIPTS_PATH}.rml_to_html.entrypoints.cli.cmd_rml_report_generator:main",
             f"mapping_runner = {CONSOLE_SCRIPTS_PATH}.notice_transformer.entrypoints.cli.cmd_mapping_runner:main",
