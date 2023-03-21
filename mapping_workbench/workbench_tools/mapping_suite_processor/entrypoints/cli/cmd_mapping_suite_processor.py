@@ -8,10 +8,15 @@ from ordered_set import OrderedSet
 
 from ted_sws.core.adapters.cmd_runner import CmdRunnerForMappingSuite as BaseCmdRunner, DEFAULT_MAPPINGS_PATH
 from ted_sws.event_manager.adapters.log import SeverityLevelType, LOG_WARN_TEXT
-from mapping_workbench.workbench_tools.mapping_suite_processor.entrypoints.cli import cmd_resources_injector, cmd_sparql_generator, cmd_triple_store_loader, \
+from mapping_workbench.workbench_tools.mapping_suite_processor.entrypoints.cli import cmd_resources_injector, \
+    cmd_sparql_generator, cmd_triple_store_loader, \
     cmd_mapping_suite_validator
-from mapping_workbench.workbench_tools.mapping_suite_processor.entrypoints.cli import cmd_rml_modules_injector, cmd_metadata_generator
-from mapping_workbench.workbench_tools.mapping_suite_processor.entrypoints.cli.cmd_rml_modules_injector import DEFAULT_RML_MODULES_PATH
+from mapping_workbench.workbench_tools.mapping_suite_processor.entrypoints.cli import cmd_rml_modules_injector, \
+    cmd_metadata_generator, cmd_sparql_queries_injector
+from mapping_workbench.workbench_tools.mapping_suite_processor.entrypoints.cli.cmd_rml_modules_injector import \
+    DEFAULT_RML_MODULES_PATH
+from mapping_workbench.workbench_tools.mapping_suite_processor.entrypoints.cli.cmd_sparql_queries_injector import \
+    SRC_SPARQL_QUERIES_PATH
 from mapping_workbench.workbench_tools.notice_transformer.entrypoints.cli import cmd_mapping_runner
 from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli import cmd_sparql_runner, \
     cmd_validation_summary_runner, cmd_xpath_coverage_runner, cmd_shacl_runner
@@ -29,11 +34,13 @@ RML_REPORT_GENERATOR = "rml_report_generator"
 SPARQL_GENERATOR = "sparql_generator"
 RML_MODULES_INJECTOR = "rml_modules_injector"
 RESOURCES_INJECTOR = "resources_injector"
+SPARQL_QUERIES_INJECTOR = "sparql_queries_injector"
 
 DEFAULT_COMMANDS: Tuple = (
     RESOURCES_INJECTOR,
     RML_MODULES_INJECTOR,
     SPARQL_GENERATOR,
+    SPARQL_QUERIES_INJECTOR,
     RML_REPORT_GENERATOR,
     MAPPING_RUNNER,
     XPATH_COVERAGE_RUNNER,
@@ -45,14 +52,15 @@ DEFAULT_COMMANDS: Tuple = (
     MAPPING_SUITE_VALIDATOR
 )
 DEFAULT_GROUPS: Dict = {
-    "inject_resources": [RESOURCES_INJECTOR, RML_MODULES_INJECTOR],
+    "inject_resources": [RESOURCES_INJECTOR, RML_MODULES_INJECTOR, SPARQL_QUERIES_INJECTOR],
     "generate_resources": [SPARQL_GENERATOR, RML_REPORT_GENERATOR],
-    "update_resources": [RESOURCES_INJECTOR, RML_MODULES_INJECTOR, SPARQL_GENERATOR, RML_REPORT_GENERATOR],
+    "update_resources": None,
     "transform_notices": [MAPPING_RUNNER],
     "validate_notices": [XPATH_COVERAGE_RUNNER, SPARQL_RUNNER, SHACL_RUNNER, VALIDATION_SUMMARY_RUNNER],
     "upload_notices": [TRIPLE_STORE_LOADER],
     "validate_mapping_suite": [MAPPING_SUITE_VALIDATOR]
 }
+DEFAULT_GROUPS['update_resources'] = DEFAULT_GROUPS['inject_resources'] + DEFAULT_GROUPS['generate_resources']
 CMD_NAME = "CMD_MAPPING_SUITE_PROCESSOR"
 
 """
@@ -75,6 +83,7 @@ class CmdRunner(BaseCmdRunner):
             notice_ids: List[str],
             mappings_path,
             rml_modules_folder,
+            sparql_queries_folder,
             commands: List[str] = None,
             groups: List[str] = None
     ):
@@ -84,6 +93,7 @@ class CmdRunner(BaseCmdRunner):
         self.notice_ids = self._init_list_input_opts(notice_ids)
         self.mappings_path = mappings_path
         self.rml_modules_folder = rml_modules_folder
+        self.sparql_queries_folder = sparql_queries_folder
 
         if not groups:
             self.commands = self._valid_cmds(self._init_list_input_opts(commands or DEFAULT_COMMANDS))
@@ -111,6 +121,12 @@ class CmdRunner(BaseCmdRunner):
                 mapping_suite_id=self.mapping_suite_id,
                 opt_mappings_folder=self.mappings_path,
                 opt_rml_modules_folder=self.rml_modules_folder
+            )
+        elif cmd == SPARQL_QUERIES_INJECTOR:
+            cmd_sparql_queries_injector.run(
+                mapping_suite_id=self.mapping_suite_id,
+                opt_mappings_folder=self.mappings_path,
+                opt_sparql_queries_folder=self.sparql_queries_folder
             )
         elif cmd == SPARQL_GENERATOR:
             cmd_sparql_generator.run(
@@ -213,14 +229,16 @@ class CmdRunner(BaseCmdRunner):
 
 
 def run(mapping_suite_id, notice_id, command=DEFAULT_COMMANDS,
-        group=None, opt_mappings_folder=DEFAULT_MAPPINGS_PATH, opt_rml_modules_folder=DEFAULT_RML_MODULES_PATH):
+        group=None, opt_mappings_folder=DEFAULT_MAPPINGS_PATH, opt_rml_modules_folder=DEFAULT_RML_MODULES_PATH,
+        opt_sparql_queries_folder=SRC_SPARQL_QUERIES_PATH):
     cmd = CmdRunner(
         mapping_suite_id=mapping_suite_id,
         notice_ids=list(notice_id or []),
         commands=list(command),
         groups=list(group or []),
         mappings_path=opt_mappings_folder,
-        rml_modules_folder=opt_rml_modules_folder
+        rml_modules_folder=opt_rml_modules_folder,
+        sparql_queries_folder=opt_sparql_queries_folder
     )
     cmd.run()
 
@@ -233,7 +251,9 @@ def run(mapping_suite_id, notice_id, command=DEFAULT_COMMANDS,
 @click.option('-g', '--group', multiple=True, help=",".join(tuple(DEFAULT_GROUPS)))
 @click.option('-m', '--opt-mappings-folder', default=DEFAULT_MAPPINGS_PATH)
 @click.option('-r', '--opt-rml-modules-folder', default=str(DEFAULT_RML_MODULES_PATH))
-def main(mapping_suite_id, notice_id, command, group, opt_mappings_folder, opt_rml_modules_folder):
+@click.option('-sq', '--opt-sparql-queries-folder', default=str(SRC_SPARQL_QUERIES_PATH))
+def main(mapping_suite_id, notice_id, command, group, opt_mappings_folder, opt_rml_modules_folder,
+         opt_sparql_queries_folder):
     """
     Processes Mapping Suite (identified by mapping-suite-id):\n
     - by commands:\n
@@ -250,15 +270,16 @@ def main(mapping_suite_id, notice_id, command, group, opt_mappings_folder, opt_r
         --- metadata_generator\n
         --- mapping_suite_validator\n
     - by groups:\n
-        --- "inject_resources": ["resources_injector", "rml_modules_injector"]\n
+        --- "inject_resources": ["resources_injector", "rml_modules_injector", "sparql_queries_injector"]\n
         --- "generate_resources": ["sparql_generator", "rml_report_generator"]\n
-        --- "update_resources": ["resources_injector", "rml_modules_injector", "sparql_generator", "rml_report_generator"]\n
+        --- "update_resources": ["resources_injector", "rml_modules_injector", "sparql_queries_injector", "sparql_generator", "rml_report_generator"]\n
         --- "transform_notices": ["mapping_runner"]\n
         --- "validate_notices": ["xpath_coverage_runner", "sparql_runner", "shacl_runner", "validation_summary_runner"]\n
         --- "upload_notices": ["triple_store_loader"]\n
         --- "validate_mapping_suite": ["mapping_suite_validator"]
     """
-    run(mapping_suite_id, notice_id, command, group, opt_mappings_folder, opt_rml_modules_folder)
+    run(mapping_suite_id, notice_id, command, group, opt_mappings_folder, opt_rml_modules_folder,
+        opt_sparql_queries_folder)
 
 
 if __name__ == '__main__':
