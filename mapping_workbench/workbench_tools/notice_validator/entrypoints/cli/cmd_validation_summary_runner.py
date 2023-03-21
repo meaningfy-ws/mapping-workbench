@@ -9,10 +9,8 @@ from ted_sws.core.adapters.cmd_runner import CmdRunner as BaseCmdRunner, DEFAULT
 from ted_sws.core.model.manifestation import XMLManifestation, RDFManifestation, XPATHCoverageValidationReport, \
     SPARQLTestSuiteValidationReport, SHACLTestSuiteValidationReport, ValidationSummaryReport
 from ted_sws.core.model.notice import Notice
-from ted_sws.core.model.report import ReportNotice, ReportNoticeMetadata
-from ted_sws.core.model.transform import FileResource
+from ted_sws.core.model.validation_report import ReportNotice
 from ted_sws.data_manager.services.mapping_suite_resource_manager import read_flat_file_resources, \
-    file_resource_output_path, mapping_suite_skipped_notice, file_resource_path, mapping_suite_files_grouped_by_path, \
     mapping_suite_notices_grouped_by_path
 from ted_sws.notice_transformer.services import DEFAULT_TRANSFORMATION_FILE_EXTENSION
 from ted_sws.notice_validator.services.validation_summary_runner import generate_validation_summary_report_notices
