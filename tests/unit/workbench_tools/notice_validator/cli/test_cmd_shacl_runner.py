@@ -7,6 +7,13 @@ def test_cmd_shacl_runner(cli_runner, fake_mapping_suite_id, fake_repository_pat
                                  [fake_mapping_suite_id, "--opt-mappings-folder", fake_repository_path])
     assert response.exit_code == 0
     assert "SUCCESS" in response.output
+    assert "notice" in response.output
+    response = cli_runner.invoke(cli_main,
+                                 [fake_mapping_suite_id, "--opt-mappings-folder", fake_repository_path, "--notice-id",
+                                  "include-notice"])
+    assert response.exit_code == 0
+    assert "SUCCESS" in response.output
+    assert "['include-notice']" in response.output
     post_process(fake_repository_path, fake_mapping_suite_id)
 
 

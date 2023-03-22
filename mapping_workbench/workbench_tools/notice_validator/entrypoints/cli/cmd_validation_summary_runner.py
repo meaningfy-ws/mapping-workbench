@@ -9,8 +9,9 @@ from ted_sws.core.adapters.cmd_runner import CmdRunner as BaseCmdRunner, DEFAULT
 from ted_sws.core.model.manifestation import XMLManifestation, RDFManifestation, XPATHCoverageValidationReport, \
     SPARQLTestSuiteValidationReport, SHACLTestSuiteValidationReport, ValidationSummaryReport
 from ted_sws.core.model.notice import Notice
+from ted_sws.core.model.validation_report import ReportNotice
 from ted_sws.data_manager.services.mapping_suite_resource_manager import read_flat_file_resources, \
-    file_resource_output_path, mapping_suite_skipped_notice
+    mapping_suite_notices_grouped_by_path
 from ted_sws.notice_transformer.services import DEFAULT_TRANSFORMATION_FILE_EXTENSION
 from ted_sws.notice_validator.services.validation_summary_runner import generate_validation_summary_report_notices
 
@@ -45,7 +46,7 @@ class CmdRunner(BaseCmdRunner):
     def __init__(
             self,
             mapping_suite_id,
-            notice_id: List[str],
+            notice_ids: List[str],
             notice_aggregate: bool,
             mappings_path
     ):
@@ -57,15 +58,24 @@ class CmdRunner(BaseCmdRunner):
         self.output_path = Path(OUTPUT_FOLDER.format(mappings_path=self.mappings_path,
                                                      mapping_suite_id=self.mapping_suite_id))
 
+        self.package_output_path = self.output_path.resolve()
+
         self.file_resources = read_flat_file_resources(self.output_path,
                                                        extension=DEFAULT_TRANSFORMATION_FILE_EXTENSION)
-        if notice_id and len(notice_id) > 0:
-            self.notice_ids = notice_id
+
+        if notice_ids:
+            self.notice_ids = notice_ids
         else:
             self.for_mapping_suite = True
             self.notice_ids = []
 
-    def _notice_output_report_folder(self, notice_path) -> Path:
+        self.grouped_notices = mapping_suite_notices_grouped_by_path(file_resources=self.file_resources,
+                                                                     with_content=False,
+                                                                     notice_ids=self.notice_ids,
+                                                                     group_depth=1)
+
+    @classmethod
+    def _notice_output_report_folder(cls, notice_path) -> Path:
         return notice_path / DEFAULT_TEST_SUITE_REPORT_FOLDER
 
     def generate_notice(self, resource) -> Notice:
@@ -116,22 +126,13 @@ class CmdRunner(BaseCmdRunner):
     def _read_report(cls, report_folder: Path, report_file: str) -> Dict:
         return json.load((report_folder / report_file).open())
 
-    def _read_output_notice_ids(self) -> List[str]:
-        """
-        """
-        notice_ids: List[str] = []
-
-        for resource in self.output_path.iterdir():
-            if resource.is_dir():
-                notice_id = resource.stem
-                notice_ids.append(notice_id)
-
-        return notice_ids
-
-    def _generate_report(self, notices: List[Notice], label: str, output_path: Path):
+    def _generate_report(self, notices: List[ReportNotice], label: str, output_path: Path):
         self.log("Generating validation summary report for {label} ... ".format(label=label))
 
-        report: ValidationSummaryReport = generate_validation_summary_report_notices(notices, with_html=self.with_html)
+        template_metadata = {"package_output_path": self.package_output_path}
+        report: ValidationSummaryReport = \
+            generate_validation_summary_report_notices(notices, with_html=self.with_html,
+                                                       template_metadata=template_metadata)
 
         self.save_html_report(output_path, report.object_data)
         del report.object_data
@@ -140,24 +141,27 @@ class CmdRunner(BaseCmdRunner):
     def _generate_reports(self):
         """
         """
+        notices: List[ReportNotice] = []
+        for group_path in self.grouped_notices:
+            report_notices = self.grouped_notices.get(group_path)
+            group_notices: List[ReportNotice] = []
 
-        for file_resource in self.file_resources:
-            notice_id = file_resource.parents[-1]
-            if mapping_suite_skipped_notice(notice_id, self.notice_ids):
-                continue
+            for report_notice in report_notices:
+                notice_report_path = self.output_path / report_notice.metadata.path
+                notice = self.generate_notice(notice_report_path)
+                report_notice.notice = notice
 
-            base_report_path = file_resource_output_path(file_resource, self.output_path)
-            notice_path = base_report_path
-            notice = self.generate_notice(notice_path)
+                if self.for_mapping_suite or self.notice_aggregate:
+                    notices.append(report_notice)
+                if not self.for_mapping_suite or self.notice_aggregate:
+                    group_notices.append(report_notice)
+                    self._generate_report([report_notice], "Notice(" + notice.ted_id + ")",
+                                          self._notice_output_report_folder(notice_report_path))
+            if group_notices:
+                self._generate_report(group_notices, "Group[" + str(group_path) + "]", self.output_path / group_path)
 
-            if self.for_mapping_suite or self.notice_aggregate:
-                self.notices.append(notice)
-            if not self.for_mapping_suite or self.notice_aggregate:
-                self._generate_report([notice], "Notice(" + notice.ted_id + ")",
-                                      self._notice_output_report_folder(notice_path))
-
-        if self.notices and len(self.notices) > 0:
-            self._generate_report(self.notices, "MappingSuite(" + self.mapping_suite_id + ")", self.output_path)
+        if notices:
+            self._generate_report(notices, "MappingSuite(" + self.mapping_suite_id + ")", self.output_path)
 
     def run_cmd(self):
         self.validation_summary()
@@ -167,7 +171,7 @@ class CmdRunner(BaseCmdRunner):
 def run(mapping_suite_id=None, notice_id=None, notice_aggregate=True, opt_mappings_folder=DEFAULT_MAPPINGS_PATH):
     cmd = CmdRunner(
         mapping_suite_id=mapping_suite_id,
-        notice_id=notice_id,
+        notice_ids=notice_id,
         notice_aggregate=notice_aggregate,
         mappings_path=opt_mappings_folder
     )

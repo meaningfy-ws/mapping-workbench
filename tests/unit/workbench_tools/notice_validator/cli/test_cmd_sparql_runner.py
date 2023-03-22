@@ -7,6 +7,12 @@ def test_cmd_sparql_runner(cli_runner, fake_sparql_mapping_suite_id, fake_reposi
                                  [fake_sparql_mapping_suite_id, "--opt-mappings-folder", fake_repository_path])
     assert response.exit_code == 0
     assert "SUCCESS" in response.output
+    response = cli_runner.invoke(cli_main,
+                                 [fake_sparql_mapping_suite_id, "--opt-mappings-folder", fake_repository_path,
+                                  "--notice-id", "include-notice"])
+    assert response.exit_code == 0
+    assert "SUCCESS" in response.output
+    assert "['include-notice']" in response.output
 
     post_process(fake_repository_path, fake_sparql_mapping_suite_id, "sparql_", False)
 
