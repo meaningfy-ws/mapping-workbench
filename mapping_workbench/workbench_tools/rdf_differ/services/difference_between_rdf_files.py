@@ -16,10 +16,10 @@ def generate_rdf_differ_html_report(first_rml_file: str, second_rml_file: str) -
                 <html lang="en">
                     <head>
                         <meta charset="utf-8">
-                        <title>Differences between rdf files</title>
+                        <title>RDF Differences</title>
                     </head>
                     <body>
-                        <h1>Differences between rdf files</h1>
+                        <h1>Differences between RDF files</h1>
                         <hr>
                         '''
     if not is_equal_graph:
