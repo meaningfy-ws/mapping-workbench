@@ -14,6 +14,7 @@ from ted_sws.data_manager.services.mapping_suite_resource_manager import read_fl
     mapping_suite_notices_grouped_by_path
 from ted_sws.notice_transformer.services import DEFAULT_TRANSFORMATION_FILE_EXTENSION
 from ted_sws.notice_validator.services.validation_summary_runner import generate_validation_summary_report_notices
+from ted_sws.notice_validator.services.xpath_coverage_runner import NOTICE_GROUPING_KEY
 
 from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli import DEFAULT_TEST_SUITE_REPORT_FOLDER
 from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli.cmd_shacl_runner import \
@@ -61,7 +62,8 @@ class CmdRunner(BaseCmdRunner):
         self.package_output_path = self.output_path.resolve()
 
         self.file_resources = read_flat_file_resources(self.output_path,
-                                                       extension=DEFAULT_TRANSFORMATION_FILE_EXTENSION)
+                                                       extension=DEFAULT_TRANSFORMATION_FILE_EXTENSION,
+                                                       with_content=False)
 
         if notice_ids:
             self.notice_ids = notice_ids
@@ -78,12 +80,12 @@ class CmdRunner(BaseCmdRunner):
     def _notice_output_report_folder(cls, notice_path) -> Path:
         return notice_path / DEFAULT_TEST_SUITE_REPORT_FOLDER
 
-    def generate_notice(self, resource) -> Notice:
+    def generate_notice(self, resource: Path) -> Notice:
         """
 
         :return:
         """
-        notice_id = resource.stem
+        notice_id = resource.parts[-1]
         report_folder = self._notice_output_report_folder(resource)
         shacl_validations = self._read_report(report_folder, JSON_SHACL_REPORT)
         sparql_validations = self._read_report(report_folder, JSON_SPARQL_REPORT)
@@ -126,10 +128,12 @@ class CmdRunner(BaseCmdRunner):
     def _read_report(cls, report_folder: Path, report_file: str) -> Dict:
         return json.load((report_folder / report_file).open())
 
-    def _generate_report(self, notices: List[ReportNotice], label: str, output_path: Path):
+    def _generate_report(self, notices: List[ReportNotice], label: str, output_path: Path, metadata: dict = None):
         self.log("Generating validation summary report for {label} ... ".format(label=label))
 
         template_metadata = {"package_output_path": self.package_output_path}
+        if metadata:
+            template_metadata.update(metadata)
         report: ValidationSummaryReport = \
             generate_validation_summary_report_notices(notices, with_html=self.with_html,
                                                        template_metadata=template_metadata)
@@ -146,8 +150,12 @@ class CmdRunner(BaseCmdRunner):
             report_notices = self.grouped_notices.get(group_path)
             group_notices: List[ReportNotice] = []
 
+            metadata = {
+                NOTICE_GROUPING_KEY: group_path
+            }
+
             for report_notice in report_notices:
-                notice_report_path = self.output_path / report_notice.metadata.path
+                notice_report_path: Path = self.output_path / report_notice.metadata.path
                 notice = self.generate_notice(notice_report_path)
                 report_notice.notice = notice
 
@@ -156,9 +164,11 @@ class CmdRunner(BaseCmdRunner):
                 if not self.for_mapping_suite or self.notice_aggregate:
                     group_notices.append(report_notice)
                     self._generate_report([report_notice], "Notice(" + notice.ted_id + ")",
-                                          self._notice_output_report_folder(notice_report_path))
+                                          self._notice_output_report_folder(notice_report_path),
+                                          metadata=metadata)
             if group_notices:
-                self._generate_report(group_notices, "Group[" + str(group_path) + "]", self.output_path / group_path)
+                self._generate_report(group_notices, "Group[" + str(group_path) + "]", self.output_path / group_path,
+                                      metadata=metadata)
 
         if notices:
             self._generate_report(notices, "MappingSuite(" + self.mapping_suite_id + ")", self.output_path)

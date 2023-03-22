@@ -103,12 +103,14 @@ class CmdRunner(BaseCmdRunner):
                 self.coverage_report(notices=[report_notice], output_path=report_path, label=notice_id,
                                      metadata=metadata)
                 group_notices.append(report_notice)
-            self.coverage_report(notices=group_notices, output_path=output_path / group_path / report_file,
-                                 label='Group[' + str(group_path) + ']', metadata=metadata)
-            notices += group_notices
+            if group_notices:
+                self.coverage_report(notices=group_notices, output_path=output_path / group_path / report_file,
+                                     label='Group[' + str(group_path) + ']', metadata=metadata)
+                notices += group_notices
 
-        self.coverage_report(notices=notices, output_path=output_path / report_file,
-                             label='MappingSuite[' + self.mapping_suite_id + ']')
+        if notices:
+            self.coverage_report(notices=notices, output_path=output_path / report_file,
+                                 label='MappingSuite[' + self.mapping_suite_id + ']')
 
         return self.run_cmd_result()
 
