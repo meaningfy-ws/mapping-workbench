@@ -1,13 +1,14 @@
 #!/usr/bin/python3
 
 import os
+import shutil
 from pathlib import Path
 
 import click
 
 from ted_sws.core.adapters.cmd_runner import CmdRunner as BaseCmdRunner, DEFAULT_MAPPINGS_PATH
 from ted_sws.data_manager.adapters.mapping_suite_repository import MS_VALIDATE_FOLDER_NAME, \
-    MS_SPARQL_FOLDER_NAME
+    MS_SPARQL_FOLDER_NAME, MappingSuiteRepositoryInFileSystem
 from ted_sws.event_manager.adapters.log import LOG_INFO_TEXT
 from mapping_workbench.workbench_tools.mapping_suite_processor.entrypoints.cli import CONCEPTUAL_MAPPINGS_FILE_TEMPLATE
 from ted_sws.mapping_suite_processor.services.conceptual_mapping_generate_sparql_queries import \
@@ -44,6 +45,9 @@ class CmdRunner(BaseCmdRunner):
             self.log_failed_msg(error_msg)
             raise FileNotFoundError(error_msg)
 
+        mapping_suite_repository = MappingSuiteRepositoryInFileSystem(repository_path=repository_path)
+        self.mapping_suite = mapping_suite_repository.get(reference=self.mapping_suite_id)
+
     def run_cmd(self):
         self.generate(self.conceptual_mappings_file_path, self.output_sparql_queries_folder_path, self.rq_name)
 
@@ -55,6 +59,7 @@ class CmdRunner(BaseCmdRunner):
 
         error = None
         try:
+            shutil.rmtree(output_sparql_queries_folder_path, ignore_errors=True)
             generate_sparql_queries(conceptual_mappings_file_path, output_sparql_queries_folder_path, rq_name)
         except Exception as e:
             error = e
