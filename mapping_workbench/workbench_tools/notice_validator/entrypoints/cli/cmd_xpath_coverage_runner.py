@@ -1,13 +1,11 @@
 #!/usr/bin/python3
 
 import json
-import os
 from pathlib import Path
 from typing import List
 
 import click
-from ted_sws.core.adapters.cmd_runner import CmdRunnerForMappingSuite as BaseCmdRunner, DEFAULT_MAPPINGS_PATH, \
-    DEFAULT_OUTPUT_PATH
+from ted_sws.core.adapters.cmd_runner import CmdRunnerForMappingSuite as BaseCmdRunner, DEFAULT_MAPPINGS_PATH
 from ted_sws.core.model.validation_report import ReportNotice
 from ted_sws.data_manager.adapters.mapping_suite_repository import MappingSuiteRepositoryInFileSystem
 from ted_sws.data_manager.services.mapping_suite_resource_manager import mapping_suite_notices_grouped_by_path
@@ -15,10 +13,8 @@ from ted_sws.event_manager.adapters.log import LOG_INFO_TEXT
 from ted_sws.notice_validator.services.xpath_coverage_runner import xpath_coverage_html_report, \
     xpath_coverage_json_report, validate_xpath_coverage_notices, NOTICE_GROUPING_KEY
 
-from mapping_workbench.workbench_tools.mapping_suite_processor.entrypoints.cli import CONCEPTUAL_MAPPINGS_FILE_TEMPLATE
-from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli import DEFAULT_TEST_SUITE_REPORT_FOLDER
+from mapping_workbench.workbench_tools.mapping_suite_processor import OUTPUT_FOLDER, DEFAULT_TEST_SUITE_REPORT_FOLDER
 
-OUTPUT_FOLDER = '{mappings_path}/{mapping_suite_id}/' + DEFAULT_OUTPUT_PATH
 REPORT_FILE = "xpath_coverage_validation"
 JSON_REPORT_FILE = REPORT_FILE + ".json"
 CMD_NAME = "CMD_XPATH_COVERAGE_RUNNER"
@@ -51,7 +47,6 @@ class CmdRunner(BaseCmdRunner):
         self.package_output_path = Path(self.output_folder).resolve()
 
         repository_path = Path(self.mappings_path)
-
         mapping_suite_repository = MappingSuiteRepositoryInFileSystem(repository_path=repository_path)
         self.mapping_suite = mapping_suite_repository.get(reference=self.mapping_suite_id)
 

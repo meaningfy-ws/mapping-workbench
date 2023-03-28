@@ -5,8 +5,7 @@ from typing import List
 from urllib.parse import urljoin, urlparse
 
 import click
-from ted_sws.core.adapters.cmd_runner import CmdRunnerForMappingSuite as BaseCmdRunner, DEFAULT_MAPPINGS_PATH, \
-    DEFAULT_OUTPUT_PATH
+from ted_sws.core.adapters.cmd_runner import CmdRunnerForMappingSuite as BaseCmdRunner, DEFAULT_MAPPINGS_PATH
 from ted_sws.core.model.manifestation import RDFManifestation
 from ted_sws.data_manager.services.mapping_suite_resource_manager import read_flat_file_resources, \
     file_resource_output_path
@@ -15,9 +14,10 @@ from ted_sws.notice_publisher.adapters.s3_notice_publisher import S3Publisher
 from ted_sws.notice_publisher.services.notice_publisher import publish_notice_rdf_content_into_s3
 from ted_sws.notice_transformer.services.notice_transformer import DEFAULT_TRANSFORMATION_FILE_EXTENSION
 
+from mapping_workbench.workbench_tools.mapping_suite_processor import OUTPUT_FOLDER
+
 CMD_NAME = "CMD_S3_RDF_PUBLISHER"
 DEFAULT_NOTICE_RDF_S3_BUCKET_NAME = "notice-rdf"
-OUTPUT_FOLDER = '{mappings_path}/{mapping_suite_id}/' + DEFAULT_OUTPUT_PATH
 
 """
 USAGE:
