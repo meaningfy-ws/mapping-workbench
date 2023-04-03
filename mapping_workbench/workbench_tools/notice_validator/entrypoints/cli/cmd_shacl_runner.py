@@ -8,7 +8,7 @@ import click
 from ted_sws.core.adapters.cmd_runner import CmdRunnerForMappingSuite as BaseCmdRunner, DEFAULT_MAPPINGS_PATH
 from ted_sws.core.model.manifestation import RDFManifestation
 from ted_sws.core.model.notice import Notice, NoticeStatus
-from ted_sws.core.model.report import ReportNotice
+from ted_sws.core.model.validation_report import ReportNotice
 from ted_sws.core.model.transform import FileResource, MappingSuite
 from ted_sws.core.model.validation_report import SHACLValidationSummaryReport
 from ted_sws.data_manager.adapters.mapping_suite_repository import MappingSuiteRepositoryInFileSystem

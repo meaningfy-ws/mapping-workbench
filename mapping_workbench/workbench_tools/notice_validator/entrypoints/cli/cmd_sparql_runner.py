@@ -9,7 +9,7 @@ from ted_sws.core.adapters.cmd_runner import CmdRunnerForMappingSuite as BaseCmd
 from ted_sws.core.model.manifestation import RDFManifestation, XMLManifestation
 from ted_sws.core.model.manifestation import XPATHCoverageValidationReport
 from ted_sws.core.model.notice import Notice, NoticeStatus
-from ted_sws.core.model.report import ReportNotice
+from ted_sws.core.model.validation_report import ReportNotice
 from ted_sws.core.model.transform import MappingSuite, FileResource
 from ted_sws.core.model.validation_report import SPARQLValidationSummaryReport
 from ted_sws.data_manager.adapters.mapping_suite_repository import MappingSuiteRepositoryInFileSystem
