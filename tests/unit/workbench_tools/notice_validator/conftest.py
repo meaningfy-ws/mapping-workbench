@@ -289,6 +289,11 @@ def fake_mapping_suite_id() -> str:
 
 
 @pytest.fixture
+def fake_mapping_suite2_id() -> str:
+    return "test_package2"
+
+
+@pytest.fixture
 def fake_sparql_mapping_suite_id() -> str:
     return "test_sparql_package"
 

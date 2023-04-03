@@ -6,7 +6,7 @@ from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli.cmd_shac
 from tests.unit.workbench_tools.notice_validator.cli import post_process
 
 
-def test_cmd_shacl_runner(cli_runner, fake_mapping_suite_id, fake_mapping_suite_F03_id, fake_repository_path,
+def test_cmd_shacl_runner(cli_runner, fake_mapping_suite_id, fake_mapping_suite2_id, fake_repository_path,
                           fake_rml_mapper):
     with tempfile.TemporaryDirectory() as temp_folder:
         temp_mapping_suite_path = Path(temp_folder)
@@ -17,7 +17,7 @@ def test_cmd_shacl_runner(cli_runner, fake_mapping_suite_id, fake_mapping_suite_
         assert "SUCCESS" in response.output
         assert "notice" in response.output
         response = cli_runner.invoke(cli_main,
-                                     ["--ms-id", fake_mapping_suite_id, "--ms-id", fake_mapping_suite_F03_id,
+                                     ["--ms-id", fake_mapping_suite_id, "--ms-id", fake_mapping_suite2_id,
                                       "--only-inner-overall", True, "--output", temp_mapping_suite_path,
                                       "--opt-mappings-folder", temp_mapping_suite_path])
         assert response.exit_code == 0
