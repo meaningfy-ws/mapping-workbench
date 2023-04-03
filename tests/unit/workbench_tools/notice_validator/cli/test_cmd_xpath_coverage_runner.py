@@ -1,7 +1,9 @@
 import os
 
-from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli.cmd_xpath_coverage_runner import main as cli_main, \
-    DEFAULT_OUTPUT_PATH, DEFAULT_TEST_SUITE_REPORT_FOLDER
+from mapping_workbench.workbench_tools.mapping_suite_processor import DEFAULT_OUTPUT_PATH, \
+    DEFAULT_TEST_SUITE_REPORT_FOLDER
+from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli.cmd_xpath_coverage_runner import \
+    main as cli_main
 
 
 def post_process(fake_repository_path, fake_mapping_suite_id):
