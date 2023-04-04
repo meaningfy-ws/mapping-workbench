@@ -1,6 +1,7 @@
 import os
 
-from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli import DEFAULT_TEST_SUITE_REPORT_FOLDER, DEFAULT_OUTPUT_PATH
+from mapping_workbench.workbench_tools.mapping_suite_processor import DEFAULT_TEST_SUITE_REPORT_FOLDER, \
+    DEFAULT_OUTPUT_PATH
 
 
 def post_process(fake_repository_path, fake_mapping_suite_id, file_mask=None, remove_dir=True):

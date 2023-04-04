@@ -8,17 +8,21 @@ import click
 from ted_sws.core.adapters.cmd_runner import CmdRunnerForMappingSuite as BaseCmdRunner, DEFAULT_MAPPINGS_PATH
 from ted_sws.core.model.manifestation import RDFManifestation, XMLManifestation
 from ted_sws.core.model.manifestation import XPATHCoverageValidationReport
+from ted_sws.core.model.notice import Notice, NoticeStatus
+from ted_sws.core.model.validation_report import ReportNotice
+from ted_sws.core.model.transform import MappingSuite, FileResource
+from ted_sws.core.model.validation_report import SPARQLValidationSummaryReport
 from ted_sws.data_manager.adapters.mapping_suite_repository import MappingSuiteRepositoryInFileSystem
 from ted_sws.data_manager.services.mapping_suite_resource_manager import read_flat_file_resources, \
-    file_resource_output_path, mapping_suite_skipped_notice
+    mapping_suite_notices_grouped_by_path
 from ted_sws.event_manager.adapters.log import LOG_INFO_TEXT
 from ted_sws.notice_transformer.services import DEFAULT_TRANSFORMATION_FILE_EXTENSION
-from ted_sws.notice_validator.services.sparql_test_suite_runner import SPARQLTestSuiteRunner, SPARQLReportBuilder, \
-    SPARQLTestSuiteValidationReport
+from ted_sws.notice_validator.services.sparql_test_suite_runner import validate_notice_with_sparql_suite, \
+    generate_sparql_validation_summary_report
 
-from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli import DEFAULT_RDF_FOLDER
+from mapping_workbench.workbench_tools.mapping_suite_processor import OUTPUT_FOLDER, DEFAULT_TEST_SUITE_REPORT_FOLDER
 from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli.cmd_xpath_coverage_runner import \
-    JSON_REPORT_FILE as XPATH_JSON_FILE, DEFAULT_TEST_SUITE_REPORT_FOLDER
+    JSON_REPORT_FILE as XPATH_JSON_FILE
 
 JSON_VALIDATIONS_REPORT = "sparql_validations.json"
 HTML_REPORT = "sparql_{id}.html"
@@ -35,21 +39,60 @@ class CmdRunner(BaseCmdRunner):
     Keeps the logic to be used by SPARQL Runner
     """
 
+    notice_ids: List[str] = []
+
     def __init__(
             self,
-            mapping_suite_id,
+            mapping_suite_ids: List[str],
             notice_ids: List[str],
-            mappings_path
+            mappings_path,
+            output=".",
+            only_inner_overall=False
     ):
         super().__init__(name=CMD_NAME)
         self.with_html = True
-        self.mapping_suite_id = mapping_suite_id
+        self.mapping_suite_ids = self._init_list_input_opts(mapping_suite_ids)
         self.notice_ids = self._init_list_input_opts(notice_ids)
         self.mappings_path = mappings_path
+        self.output = output
 
+        self.only_inner_overall = only_inner_overall
+        self.is_for_inner_packages = len(self.mapping_suite_ids) > 1 and self.only_inner_overall
+        self.is_notice_report = not self.only_inner_overall
+        self.is_group_report = not self.only_inner_overall
+        self.is_mapping_suite_report = not self.only_inner_overall
+
+    def get_output_path(self, mapping_suite_id=None):
+        if mapping_suite_id:
+            return Path(OUTPUT_FOLDER.format(mappings_path=self.mappings_path, mapping_suite_id=mapping_suite_id))
+        else:
+            return Path(self.output)
+
+    @classmethod
+    def get_abs_output_path(cls, output_path: Path):
+        return output_path.resolve()
+
+    def get_mapping_suite(self, mapping_suite_id) -> MappingSuite:
         repository_path = Path(self.mappings_path)
         mapping_suite_repository = MappingSuiteRepositoryInFileSystem(repository_path=repository_path)
-        self.mapping_suite = mapping_suite_repository.get(reference=self.mapping_suite_id)
+        return mapping_suite_repository.get(reference=mapping_suite_id)
+
+    @classmethod
+    def get_file_resources(cls, path: Path, file_resources: List[FileResource] = None):
+        return read_flat_file_resources(
+            path=path,
+            file_resources=file_resources,
+            extension=DEFAULT_TRANSFORMATION_FILE_EXTENSION,
+            with_content=False
+        )
+
+    def get_grouped_notices(self, file_resources: List[FileResource]):
+        return mapping_suite_notices_grouped_by_path(
+            file_resources=file_resources,
+            with_content=False,
+            notice_ids=self.notice_ids,
+            group_depth=1
+        )
 
     @classmethod
     def save_report(cls, report_path, report_name, report_id, content):
@@ -58,80 +101,177 @@ class CmdRunner(BaseCmdRunner):
         with open(report_path / report_name, "w+") as f:
             f.write(content)
 
-    def validate(self, rdf_resource, xpath_report, base_report_path, notice_ids: List[str] = None):
-        self.log("Validating " + LOG_INFO_TEXT.format(rdf_resource.file_name) + " ... ")
-        rdf_file = Path(base_report_path / rdf_resource.file_name)
-        rdf_manifestation = RDFManifestation(object_data=rdf_file.read_text(encoding="utf-8"))
-        xml_manifestation = None
-        if xpath_report:
-            xml_manifestation = XMLManifestation(object_data="",
-                                                 xpath_coverage_validation=XPATHCoverageValidationReport(
-                                                     **xpath_report))
+    def sparql_validation_summary_report(self, report_notices: List[ReportNotice], mapping_suite: MappingSuite,
+                                         report: SPARQLValidationSummaryReport = None, metadata: dict = None) -> \
+            SPARQLValidationSummaryReport:
+        return generate_sparql_validation_summary_report(
+            report_notices=report_notices,
+            mapping_suite_package=mapping_suite,
+            report=report,
+            with_html=self.with_html,
+            metadata=metadata
+        )
 
+    def validate_notices(self, output_path: Path, label: str, report: SPARQLValidationSummaryReport):
+        self.log("Validating " + LOG_INFO_TEXT.format(label) + " ... ")
+
+        output_path.mkdir(parents=True, exist_ok=True)
+
+        self.save_report(output_path, HTML_REPORT, "validations", report.object_data)
+
+        del report.object_data
+        self.save_report(
+            output_path,
+            JSON_VALIDATIONS_REPORT, None,
+            json.dumps(report, default=lambda o: o.dict(), sort_keys=True, indent=4)
+        )
+
+    def validate_notice(self, report_notice: ReportNotice, mapping_suite: MappingSuite, base_report_path: Path):
+        notice: Notice = report_notice.notice
+        self.log("Validating " + LOG_INFO_TEXT.format("Notice[" + notice.ted_id + "]") + " ... ")
+
+        validate_notice_with_sparql_suite(
+            notice=notice,
+            mapping_suite_package=mapping_suite,
+            with_html=self.with_html
+        )
         report_path = base_report_path / DEFAULT_TEST_SUITE_REPORT_FOLDER
         report_path.mkdir(parents=True, exist_ok=True)
+        sparql_validations = notice.rdf_manifestation.sparql_validations
+        for report in sparql_validations:
+            self.save_report(report_path, HTML_REPORT, report.test_suite_identifier, report.object_data)
+            del report.object_data
 
-        sparql_validations: List[SPARQLTestSuiteValidationReport] = []
-        sparql_test_suites = self.mapping_suite.sparql_test_suites
-        for sparql_test_suite in sparql_test_suites:
-            test_suite_execution = SPARQLTestSuiteRunner(rdf_manifestation=rdf_manifestation,
-                                                         xml_manifestation=xml_manifestation,
-                                                         sparql_test_suite=sparql_test_suite,
-                                                         mapping_suite=self.mapping_suite).execute_test_suite()
+        self.save_report(
+            report_path,
+            JSON_VALIDATIONS_REPORT, None,
+            json.dumps(sparql_validations, default=lambda o: o.dict(), sort_keys=True, indent=4)
+        )
 
-            report_builder = SPARQLReportBuilder(sparql_test_suite_execution=test_suite_execution,
-                                                 notice_ids=notice_ids, with_html=self.with_html)
-            report: SPARQLTestSuiteValidationReport = report_builder.generate_report()
+    @classmethod
+    def generate_notice(cls, notice_id, base_report_path) -> Notice:
+        xpath_file = base_report_path / DEFAULT_TEST_SUITE_REPORT_FOLDER / XPATH_JSON_FILE
+        xpath_report = json.load(open(xpath_file, "r")) if xpath_file.exists() else None
 
-            suite_id = sparql_test_suite.identifier
-            self.save_report(report_path, HTML_REPORT, suite_id, report.object_data)
-            report.object_data = "SPARQLTestSuiteValidationReport"
-            sparql_validations.append(report)
+        notice: Notice = Notice(ted_id=notice_id)
+        notice._status = NoticeStatus.TRANSFORMED
+        if xpath_report:
+            notice.set_xml_manifestation(XMLManifestation(
+                object_data="",
+                xpath_coverage_validation=XPATHCoverageValidationReport(**xpath_report))
+            )
+        rdf_file = Path(base_report_path / Path(notice_id + DEFAULT_TRANSFORMATION_FILE_EXTENSION))
+        notice.set_rdf_manifestation(RDFManifestation(object_data=rdf_file.read_text(encoding="utf-8")))
+        notice.set_distilled_rdf_manifestation(notice.rdf_manifestation)
 
-        self.save_report(report_path, JSON_VALIDATIONS_REPORT, None,
-                         json.dumps(sparql_validations, default=lambda o: o.dict(), sort_keys=True, indent=4))
+        return notice
+
+    def generate_reports(self):
+        notices: List[ReportNotice] = []
+        mapping_suite: MappingSuite
+        template_metadata = {"output_path": self.get_abs_output_path(Path("."))}
+        overall_report: SPARQLValidationSummaryReport
+        if self.is_for_inner_packages:
+            overall_report = SPARQLValidationSummaryReport(object_data="")
+        for mapping_suite_id in self.mapping_suite_ids:
+            rdf_path = self.get_output_path(mapping_suite_id=mapping_suite_id)
+            assert rdf_path.is_dir()
+
+            mapping_suite = self.get_mapping_suite(mapping_suite_id=mapping_suite_id)
+
+            ms_notices: List[ReportNotice] = []
+            file_resources = self.get_file_resources(path=rdf_path)
+            grouped_notices = self.get_grouped_notices(file_resources=file_resources)
+            for group_path in grouped_notices:
+                report_notices = grouped_notices.get(group_path)
+                group_notices: List[ReportNotice] = []
+
+                for report_notice in report_notices:
+                    base_report_path = rdf_path / report_notice.metadata.path
+                    notice: Notice = self.generate_notice(
+                        notice_id=report_notice.notice.ted_id,
+                        base_report_path=base_report_path
+                    )
+                    report_notice.notice = notice
+                    if self.is_notice_report:
+                        self.validate_notice(report_notice=report_notice, mapping_suite=mapping_suite,
+                                             base_report_path=base_report_path)
+                    group_notices.append(report_notice)
+
+                if group_notices:
+                    if self.is_group_report:
+                        self.validate_notices(
+                            output_path=rdf_path / group_path,
+                            label='Group[' + str(group_path) + ']',
+                            report=self.sparql_validation_summary_report(
+                                report_notices=group_notices,
+                                mapping_suite=mapping_suite,
+                                metadata=template_metadata
+                            )
+                        )
+                    ms_notices += group_notices
+
+            if ms_notices:
+                if self.is_mapping_suite_report:
+                    self.validate_notices(
+                        output_path=rdf_path,
+                        label='MappingSuite[' + mapping_suite_id + ']',
+                        report=self.sparql_validation_summary_report(
+                            report_notices=ms_notices,
+                            mapping_suite=mapping_suite,
+                            metadata=template_metadata
+                        )
+                    )
+                if self.is_for_inner_packages:
+                    overall_report = self.sparql_validation_summary_report(
+                        report_notices=ms_notices,
+                        mapping_suite=mapping_suite,
+                        report=overall_report,
+                        metadata=template_metadata
+                    )
+                    notices += ms_notices
+        if self.is_for_inner_packages and notices:
+            self.validate_notices(
+                output_path=self.get_output_path(),
+                label='Overall[' + ", ".join(self.mapping_suite_ids) + ']',
+                report=overall_report
+            )
 
     def run_cmd(self):
         super().run_cmd()
 
         error = None
         try:
-            rdf_path = Path(DEFAULT_RDF_FOLDER.format(mappings_path=self.mappings_path,
-                                                      mapping_suite_id=self.mapping_suite_id))
-            assert rdf_path.is_dir()
-            file_resources = read_flat_file_resources(rdf_path, extension=DEFAULT_TRANSFORMATION_FILE_EXTENSION)
-            for file_resource in file_resources:
-                notice_id = file_resource.parents[-1]
-                if mapping_suite_skipped_notice(notice_id, self.notice_ids):
-                    continue
-                base_report_path = file_resource_output_path(file_resource, rdf_path)
-                xpath_file = base_report_path / DEFAULT_TEST_SUITE_REPORT_FOLDER / XPATH_JSON_FILE
-                xpath_report = json.load(open(xpath_file, "r")) if xpath_file.exists() else None
-                self.validate(rdf_resource=file_resource, xpath_report=xpath_report,
-                              base_report_path=base_report_path, notice_ids=[notice_id])
+            self.generate_reports()
         except Exception as e:
             error = e
         return self.run_cmd_result(error)
 
 
-def run(mapping_suite_id=None, notice_id=None, opt_mappings_folder=DEFAULT_MAPPINGS_PATH):
+def run(mapping_suite_id=None, ms_id=None, notice_id=None, opt_mappings_folder=DEFAULT_MAPPINGS_PATH, output=".",
+        only_inner_overall=False):
     cmd = CmdRunner(
-        mapping_suite_id=mapping_suite_id,
+        mapping_suite_ids=[mapping_suite_id] if mapping_suite_id else list(ms_id),
         notice_ids=list(notice_id or []),
-        mappings_path=opt_mappings_folder
+        mappings_path=opt_mappings_folder,
+        output=output,
+        only_inner_overall=only_inner_overall
     )
     cmd.run()
 
 
 @click.command()
 @click.argument('mapping-suite-id', nargs=1, required=False)
+@click.option('-ms-id', '--ms-id', required=False, multiple=True, default=None)
 @click.option('--notice-id', required=False, multiple=True, default=None)
 @click.option('-m', '--opt-mappings-folder', default=DEFAULT_MAPPINGS_PATH)
-def main(mapping_suite_id, notice_id, opt_mappings_folder):
+@click.option('-o', '--output', default=".")
+@click.option('-ioa', '--only-inner-overall', required=False, default=False, type=click.BOOL)
+def main(mapping_suite_id, ms_id, notice_id, opt_mappings_folder, output, only_inner_overall):
     """
     Generates SPARQL Validation Reports for RDF files
     """
-    run(mapping_suite_id, notice_id, opt_mappings_folder)
+    run(mapping_suite_id, ms_id, notice_id, opt_mappings_folder, output, only_inner_overall)
 
 
 if __name__ == '__main__':

@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import List, Dict
 
 import click
-from ted_sws.core.adapters.cmd_runner import CmdRunner as BaseCmdRunner, DEFAULT_MAPPINGS_PATH, DEFAULT_OUTPUT_PATH
+from ted_sws.core.adapters.cmd_runner import CmdRunner as BaseCmdRunner, DEFAULT_MAPPINGS_PATH
 from ted_sws.core.model.manifestation import XMLManifestation, RDFManifestation, XPATHCoverageValidationReport, \
     SPARQLTestSuiteValidationReport, SHACLTestSuiteValidationReport, ValidationSummaryReport
 from ted_sws.core.model.notice import Notice
@@ -16,15 +16,13 @@ from ted_sws.notice_transformer.services import DEFAULT_TRANSFORMATION_FILE_EXTE
 from ted_sws.notice_validator.services.validation_summary_runner import generate_validation_summary_report_notices
 from ted_sws.notice_validator.services.xpath_coverage_runner import NOTICE_GROUPING_KEY
 
-from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli import DEFAULT_TEST_SUITE_REPORT_FOLDER
+from mapping_workbench.workbench_tools.mapping_suite_processor import OUTPUT_FOLDER, DEFAULT_TEST_SUITE_REPORT_FOLDER
 from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli.cmd_shacl_runner import \
     JSON_VALIDATIONS_REPORT as JSON_SHACL_REPORT
 from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli.cmd_sparql_runner import \
     JSON_VALIDATIONS_REPORT as JSON_SPARQL_REPORT
 from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli.cmd_xpath_coverage_runner import \
     JSON_REPORT_FILE as XPATH_COV_REPORT
-
-OUTPUT_FOLDER = '{mappings_path}/{mapping_suite_id}/' + DEFAULT_OUTPUT_PATH
 
 REPORT_FILE = "validation_summary_report"
 CMD_NAME = "CMD_VALIDATION_SUMMARY_RUNNER"
@@ -41,7 +39,6 @@ class CmdRunner(BaseCmdRunner):
     """
 
     notice_ids: List[str] = []
-    notices: List[Notice] = []
     for_mapping_suite: bool = False
 
     def __init__(
