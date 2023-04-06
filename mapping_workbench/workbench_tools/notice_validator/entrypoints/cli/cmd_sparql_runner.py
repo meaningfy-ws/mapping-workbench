@@ -197,7 +197,6 @@ class CmdRunner(BaseCmdRunner):
                         notice_id=report_notice.notice.ted_id,
                         base_report_path=base_report_path
                     )
-                    print("K :: ", notice, report_notice)
                     sparql_report_notice = self.generate_sparql_report_notice(
                         notice=notice,
                         report_notice=report_notice,
