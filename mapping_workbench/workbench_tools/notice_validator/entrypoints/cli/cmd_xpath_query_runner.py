@@ -10,13 +10,14 @@ from ted_sws.core.model.transform import MappingSuite
 from ted_sws.core.model.validation_report import ReportNotice, ReportNoticeMetadata
 from ted_sws.data_manager.adapters.mapping_suite_repository import MappingSuiteRepositoryInFileSystem
 from ted_sws.data_manager.services.mapping_suite_resource_manager import file_resource_path, file_resource_output_path
+from ted_sws.event_manager.adapters.log import LOG_INFO_TEXT
 
 from mapping_workbench.workbench_tools.mapping_suite_processor import OUTPUT_FOLDER, DEFAULT_TEST_SUITE_REPORT_FOLDER
 from mapping_workbench.workbench_tools.notice_validator.services.xpath_query import \
     generate_xpaths_queries_for_notice_report
 
-REPORT_FILE = "xpath_query_report"
-JSON_REPORT_FILE = REPORT_FILE + ".json"
+REPORT_FILE = "xpath_query_validation"
+XPATH_QUERY_JSON_REPORT_FILE = REPORT_FILE + ".json"
 CMD_NAME = "CMD_XPATH_QUERY_RUNNER"
 
 
@@ -58,6 +59,7 @@ class CmdRunner(BaseCmdRunner):
         notice: Notice
         for notice_resource in mapping_suite.transformation_test_data.test_data:
             notice_id = Path(notice_resource.file_name).stem
+            self.log("Querying " + LOG_INFO_TEXT.format(f"Notice[{notice_id}]") + " ... ")
             notice = Notice(ted_id=notice_id)
             notice.set_xml_manifestation(xml_manifestation=XMLManifestation(
                 object_data=notice_resource.file_content
@@ -68,7 +70,8 @@ class CmdRunner(BaseCmdRunner):
             base_report_path = file_resource_output_path(notice_resource,
                                                          output_path) / notice_id / DEFAULT_TEST_SUITE_REPORT_FOLDER
             base_report_path.mkdir(parents=True, exist_ok=True)
-            self.save_report(base_report_path, JSON_REPORT_FILE, json.dumps(report.dict(), sort_keys=True, indent=4))
+            self.save_report(base_report_path, XPATH_QUERY_JSON_REPORT_FILE,
+                             json.dumps(report.dict(), sort_keys=True, indent=4))
 
         return self.run_cmd_result()
 

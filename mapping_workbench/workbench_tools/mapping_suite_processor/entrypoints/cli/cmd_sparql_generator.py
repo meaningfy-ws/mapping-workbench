@@ -45,9 +45,6 @@ class CmdRunner(BaseCmdRunner):
             self.log_failed_msg(error_msg)
             raise FileNotFoundError(error_msg)
 
-        mapping_suite_repository = MappingSuiteRepositoryInFileSystem(repository_path=repository_path)
-        self.mapping_suite = mapping_suite_repository.get(reference=self.mapping_suite_id)
-
     def run_cmd(self):
         self.generate(self.conceptual_mappings_file_path, self.output_sparql_queries_folder_path, self.rq_name)
 
