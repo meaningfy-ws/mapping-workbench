@@ -9,7 +9,8 @@ from ted_sws.core.model.notice import Notice
 from ted_sws.core.model.transform import MappingSuite
 from ted_sws.core.model.validation_report import ReportNotice, ReportNoticeMetadata
 from ted_sws.data_manager.adapters.mapping_suite_repository import MappingSuiteRepositoryInFileSystem
-from ted_sws.data_manager.services.mapping_suite_resource_manager import file_resource_path, file_resource_output_path
+from ted_sws.data_manager.services.mapping_suite_resource_manager import file_resource_path, file_resource_output_path, \
+    mapping_suite_skipped_notice
 from ted_sws.event_manager.adapters.log import LOG_INFO_TEXT
 
 from mapping_workbench.workbench_tools.mapping_suite_processor import OUTPUT_FOLDER, DEFAULT_TEST_SUITE_REPORT_FOLDER
@@ -59,6 +60,8 @@ class CmdRunner(BaseCmdRunner):
         notice: Notice
         for notice_resource in mapping_suite.transformation_test_data.test_data:
             notice_id = Path(notice_resource.file_name).stem
+            if mapping_suite_skipped_notice(notice_id, self.notice_ids):
+                continue
             self.log("Querying " + LOG_INFO_TEXT.format(f"Notice[{notice_id}]") + " ... ")
             notice = Notice(ted_id=notice_id)
             notice.set_xml_manifestation(xml_manifestation=XMLManifestation(

@@ -36,10 +36,6 @@ def get_xpath_query_tree_namespaces(tree: XPATHQueryTree):
     return namespaces
 
 
-def run_xpath_query_for_notice(xpath_expression: str, notice: Notice) -> XPATHQueryResult:
-    return run_xpath_query_for_tree(xpath_expression, get_xpath_query_tree_for_notice(notice))
-
-
 def generate_xpaths_queries_for_notice_report(cm_xpaths: List[ConceptualMappingXPATH],
                                               report_notice: ReportNotice) -> XPATHQueryReport:
     tree = get_xpath_query_tree_for_notice(report_notice.notice)

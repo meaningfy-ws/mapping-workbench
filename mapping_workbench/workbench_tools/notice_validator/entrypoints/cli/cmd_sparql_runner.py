@@ -148,8 +148,11 @@ class CmdRunner(BaseCmdRunner):
     @classmethod
     def notice_xpath_query_report(cls, base_report_path) -> XPATHQueryReport:
         xpath_query_file = base_report_path / DEFAULT_TEST_SUITE_REPORT_FOLDER / XPATH_QUERY_JSON_REPORT_FILE
-        xpath_report = json.load(open(xpath_query_file, "r")) if xpath_query_file.exists() else None
-        return XPATHQueryReport(**xpath_report)
+        if xpath_query_file.exists():
+            xpath_report = json.load(open(xpath_query_file, "r")) if xpath_query_file.exists() else None
+            return XPATHQueryReport(**xpath_report)
+        else:
+            return XPATHQueryReport()
 
     @classmethod
     def generate_notice(cls, notice_id, base_report_path) -> Notice:
