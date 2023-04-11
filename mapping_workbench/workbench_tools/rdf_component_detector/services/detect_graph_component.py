@@ -38,4 +38,3 @@ def detect_graph_components(file_path: Path) -> None:
     to_html = network.generate_html()
     with (file_path.parent / f"{report_name}.html").open(mode='w', encoding='utf-8') as f:
         f.write(to_html)
-    # network.write_html(f"{file_path.parent / report_name}.html", notebook=False)
