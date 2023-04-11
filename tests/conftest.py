@@ -256,3 +256,8 @@ def notice_with_rdf_manifestation():
 def transformed_complete_notice():
     test_notice_repository = NoticeRepositoryInFileSystem(repository_path=TEST_DATA_PATH / "notices")
     return test_notice_repository.get("396207_2018")
+
+
+@pytest.fixture
+def mapping_suite_id():
+    return "package_F03_demo"
