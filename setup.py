@@ -83,6 +83,7 @@ setup(
             f"rml_report_generator = {CONSOLE_SCRIPTS_PATH}.rml_to_html.entrypoints.cli.cmd_rml_report_generator:main",
             f"mapping_runner = {CONSOLE_SCRIPTS_PATH}.notice_transformer.entrypoints.cli.cmd_mapping_runner:main",
             f"xpath_coverage_runner = {CONSOLE_SCRIPTS_PATH}.notice_validator.entrypoints.cli.cmd_xpath_coverage_runner:main",
+            f"xpath_query_runner = {CONSOLE_SCRIPTS_PATH}.notice_validator.entrypoints.cli.cmd_xpath_query_runner:main",
             f"sparql_runner = {CONSOLE_SCRIPTS_PATH}.notice_validator.entrypoints.cli.cmd_sparql_runner:main",
             f"shacl_runner = {CONSOLE_SCRIPTS_PATH}.notice_validator.entrypoints.cli.cmd_shacl_runner:main",
             f"validation_summary_runner = {CONSOLE_SCRIPTS_PATH}.notice_validator.entrypoints.cli.cmd_validation_summary_runner:main",

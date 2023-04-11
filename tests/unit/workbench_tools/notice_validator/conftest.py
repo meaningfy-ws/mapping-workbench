@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import pytest
@@ -7,6 +8,9 @@ from ted_sws.core.model.manifestation import RDFManifestation, XMLManifestation,
 from ted_sws.core.model.notice import NoticeStatus, Notice
 from ted_sws.core.model.transform import FileResource, SPARQLTestSuite, MetadataConstraints, TransformationRuleSet, \
     SHACLTestSuite, TransformationTestData, MappingSuite
+
+from mapping_workbench.workbench_tools.notice_validator.model.sparql_report_notice import SPARQLReportNotice
+from mapping_workbench.workbench_tools.notice_validator.model.xpath_query_report import XPATHQueryReport
 from tests import TEST_DATA_PATH
 
 
@@ -492,3 +496,18 @@ def fake_validation_notice():
     notice._rdf_manifestation = rdf_manifestation
     notice._distilled_rdf_manifestation = rdf_manifestation
     return notice
+
+
+@pytest.fixture
+def report_notice_for_sparql_runner():
+    package_path = TEST_DATA_PATH / "notice_validator" / "validation_repository" / "validation_package"
+    notice_path = package_path / "output" / "292288-2021"
+    rdf_path = notice_path / "292288-2021.ttl"
+    xpath_report_path = notice_path / "test_suite_report" / "xpath_query_validation.json"
+    notice = Notice(ted_id="notice_id")
+    notice._rdf_manifestation = RDFManifestation(object_data=rdf_path.read_text())
+    notice._distilled_rdf_manifestation = notice.rdf_manifestation
+    return SPARQLReportNotice(
+        notice=notice,
+        xpath_query_report=XPATHQueryReport(**json.load(open(xpath_report_path, "r")))
+    )
