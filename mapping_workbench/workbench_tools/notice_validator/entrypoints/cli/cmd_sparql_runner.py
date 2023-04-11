@@ -6,23 +6,23 @@ from typing import List
 
 import click
 from ted_sws.core.adapters.cmd_runner import CmdRunnerForMappingSuite as BaseCmdRunner, DEFAULT_MAPPINGS_PATH
-from ted_sws.core.model.manifestation import RDFManifestation, XMLManifestation
-from ted_sws.core.model.manifestation import XPATHCoverageValidationReport
+from ted_sws.core.model.manifestation import RDFManifestation
 from ted_sws.core.model.notice import Notice, NoticeStatus
-from ted_sws.core.model.validation_report import ReportNotice
 from ted_sws.core.model.transform import MappingSuite, FileResource
-from ted_sws.core.model.validation_report import SPARQLValidationSummaryReport
+from ted_sws.core.model.validation_report import SPARQLValidationSummaryReport, ReportNotice
 from ted_sws.data_manager.adapters.mapping_suite_repository import MappingSuiteRepositoryInFileSystem
 from ted_sws.data_manager.services.mapping_suite_resource_manager import read_flat_file_resources, \
     mapping_suite_notices_grouped_by_path
 from ted_sws.event_manager.adapters.log import LOG_INFO_TEXT
 from ted_sws.notice_transformer.services import DEFAULT_TRANSFORMATION_FILE_EXTENSION
-from ted_sws.notice_validator.services.sparql_test_suite_runner import validate_notice_with_sparql_suite, \
-    generate_sparql_validation_summary_report
 
 from mapping_workbench.workbench_tools.mapping_suite_processor import OUTPUT_FOLDER, DEFAULT_TEST_SUITE_REPORT_FOLDER
-from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli.cmd_xpath_coverage_runner import \
-    JSON_REPORT_FILE as XPATH_JSON_FILE
+from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli.cmd_xpath_query_runner import \
+    XPATH_QUERY_JSON_REPORT_FILE
+from mapping_workbench.workbench_tools.notice_validator.model.sparql_report_notice import SPARQLReportNotice
+from mapping_workbench.workbench_tools.notice_validator.model.xpath_query_report import XPATHQueryReport
+from mapping_workbench.workbench_tools.notice_validator.services.sparql_with_xpath_query import \
+    validate_notice_with_sparql_suite, generate_sparql_validation_summary_report
 
 JSON_VALIDATIONS_REPORT = "sparql_validations.json"
 HTML_REPORT = "sparql_{id}.html"
@@ -50,7 +50,6 @@ class CmdRunner(BaseCmdRunner):
             only_inner_overall=False
     ):
         super().__init__(name=CMD_NAME)
-        self.with_html = True
         self.mapping_suite_ids = self._init_list_input_opts(mapping_suite_ids)
         self.notice_ids = self._init_list_input_opts(notice_ids)
         self.mappings_path = mappings_path
@@ -101,14 +100,13 @@ class CmdRunner(BaseCmdRunner):
         with open(report_path / report_name, "w+") as f:
             f.write(content)
 
-    def sparql_validation_summary_report(self, report_notices: List[ReportNotice], mapping_suite: MappingSuite,
+    def sparql_validation_summary_report(self, report_notices: List[SPARQLReportNotice], mapping_suite: MappingSuite,
                                          report: SPARQLValidationSummaryReport = None, metadata: dict = None) -> \
             SPARQLValidationSummaryReport:
         return generate_sparql_validation_summary_report(
             report_notices=report_notices,
             mapping_suite_package=mapping_suite,
             report=report,
-            with_html=self.with_html,
             metadata=metadata
         )
 
@@ -126,14 +124,13 @@ class CmdRunner(BaseCmdRunner):
             json.dumps(report, default=lambda o: o.dict(), sort_keys=True, indent=4)
         )
 
-    def validate_notice(self, report_notice: ReportNotice, mapping_suite: MappingSuite, base_report_path: Path):
+    def validate_notice(self, report_notice: SPARQLReportNotice, mapping_suite: MappingSuite, base_report_path: Path):
         notice: Notice = report_notice.notice
         self.log("Validating " + LOG_INFO_TEXT.format("Notice[" + notice.ted_id + "]") + " ... ")
-
         validate_notice_with_sparql_suite(
             notice=notice,
             mapping_suite_package=mapping_suite,
-            with_html=self.with_html
+            xpath_query_report=report_notice.xpath_query_report
         )
         report_path = base_report_path / DEFAULT_TEST_SUITE_REPORT_FOLDER
         report_path.mkdir(parents=True, exist_ok=True)
@@ -149,25 +146,36 @@ class CmdRunner(BaseCmdRunner):
         )
 
     @classmethod
-    def generate_notice(cls, notice_id, base_report_path) -> Notice:
-        xpath_file = base_report_path / DEFAULT_TEST_SUITE_REPORT_FOLDER / XPATH_JSON_FILE
-        xpath_report = json.load(open(xpath_file, "r")) if xpath_file.exists() else None
+    def notice_xpath_query_report(cls, base_report_path) -> XPATHQueryReport:
+        xpath_query_file = base_report_path / DEFAULT_TEST_SUITE_REPORT_FOLDER / XPATH_QUERY_JSON_REPORT_FILE
+        if xpath_query_file.exists():
+            xpath_report = json.load(open(xpath_query_file, "r")) if xpath_query_file.exists() else None
+            return XPATHQueryReport(**xpath_report)
+        else:
+            return XPATHQueryReport()
 
+    @classmethod
+    def generate_notice(cls, notice_id, base_report_path) -> Notice:
         notice: Notice = Notice(ted_id=notice_id)
         notice._status = NoticeStatus.TRANSFORMED
-        if xpath_report:
-            notice.set_xml_manifestation(XMLManifestation(
-                object_data="",
-                xpath_coverage_validation=XPATHCoverageValidationReport(**xpath_report))
-            )
+
         rdf_file = Path(base_report_path / Path(notice_id + DEFAULT_TRANSFORMATION_FILE_EXTENSION))
         notice.set_rdf_manifestation(RDFManifestation(object_data=rdf_file.read_text(encoding="utf-8")))
         notice.set_distilled_rdf_manifestation(notice.rdf_manifestation)
 
         return notice
 
+    @classmethod
+    def generate_sparql_report_notice(cls, notice: Notice, report_notice: ReportNotice,
+                                      base_report_path) -> SPARQLReportNotice:
+        sparql_report_notice = SPARQLReportNotice(**report_notice.dict())
+        sparql_report_notice.notice = notice
+        sparql_report_notice.xpath_query_report = cls.notice_xpath_query_report(base_report_path=base_report_path)
+
+        return sparql_report_notice
+
     def generate_reports(self):
-        notices: List[ReportNotice] = []
+        notices: List[SPARQLReportNotice] = []
         mapping_suite: MappingSuite
         template_metadata = {"output_path": self.get_abs_output_path(Path("."))}
         overall_report: SPARQLValidationSummaryReport
@@ -179,12 +187,12 @@ class CmdRunner(BaseCmdRunner):
 
             mapping_suite = self.get_mapping_suite(mapping_suite_id=mapping_suite_id)
 
-            ms_notices: List[ReportNotice] = []
+            ms_notices: List[SPARQLReportNotice] = []
             file_resources = self.get_file_resources(path=rdf_path)
             grouped_notices = self.get_grouped_notices(file_resources=file_resources)
             for group_path in grouped_notices:
                 report_notices = grouped_notices.get(group_path)
-                group_notices: List[ReportNotice] = []
+                group_notices: List[SPARQLReportNotice] = []
 
                 for report_notice in report_notices:
                     base_report_path = rdf_path / report_notice.metadata.path
@@ -192,11 +200,15 @@ class CmdRunner(BaseCmdRunner):
                         notice_id=report_notice.notice.ted_id,
                         base_report_path=base_report_path
                     )
-                    report_notice.notice = notice
+                    sparql_report_notice = self.generate_sparql_report_notice(
+                        notice=notice,
+                        report_notice=report_notice,
+                        base_report_path=base_report_path
+                    )
                     if self.is_notice_report:
-                        self.validate_notice(report_notice=report_notice, mapping_suite=mapping_suite,
+                        self.validate_notice(report_notice=sparql_report_notice, mapping_suite=mapping_suite,
                                              base_report_path=base_report_path)
-                    group_notices.append(report_notice)
+                    group_notices.append(sparql_report_notice)
 
                 if group_notices:
                     if self.is_group_report:

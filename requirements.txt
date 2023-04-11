@@ -1,3 +1,6 @@
 # Project dependecies
 ted-sws @ git+https://github.com/OP-TED/ted-rdf-conversion-pipeline.git
+lxml~=4.9.2
+elementpath~=4.1.0
+
 
