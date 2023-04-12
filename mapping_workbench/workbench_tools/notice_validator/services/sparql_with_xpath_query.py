@@ -33,9 +33,10 @@ class SPARQLWithXPATHQueryRunner(SPARQLTestSuiteRunner):
             SPARQLQueryRefinedResultType.VALID.value if ask_answer else SPARQLQueryRefinedResultType.INVALID.value
 
         if self.xpath_query_report:
-            sparql_query_result.fields_covered = any(
+            sparql_query_result.fields_covered = not sparql_query.xpath or any(
                 map(lambda v: v in self.xpath_query_report.covered_xpaths, sparql_query.xpath)
             )
+
             unknown_xpath_results = [x for x in self.xpath_query_report.query_results if
                                      (x.xpath_expression in sparql_query.xpath) and (
                                              x.result == XPATHQueryResultValue.UNKNOWN.value)]
