@@ -2,7 +2,7 @@ from pathlib import Path
 
 import click
 from ted_sws.core.adapters.cmd_runner import CmdRunner as BaseCmdRunner
-
+from ted_sws.core.adapters.cmd_runner import DEFAULT_OUTPUT_PATH
 from mapping_workbench.workbench_tools.rdf_component_detector.services.detect_graph_component import \
     detect_graph_components
 
@@ -24,7 +24,7 @@ class CmdRunner(BaseCmdRunner):
         self.log(f"Running RDF Component detector for {self.package_name.name}")
         error = None
         try:
-            rdf_files_paths = list((self.package_name / "output").glob("*/*.ttl"))
+            rdf_files_paths = list((self.package_name / DEFAULT_OUTPUT_PATH).rglob("*.ttl"))
             for rdf_file_path in rdf_files_paths:
                 self.log(f"Detecting components for {rdf_file_path.name}")
                 detect_graph_components(rdf_file_path)

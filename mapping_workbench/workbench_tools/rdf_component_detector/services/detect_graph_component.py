@@ -5,6 +5,8 @@ import pandas as pd
 import rdflib
 from pyvis.network import Network
 
+from mapping_workbench.workbench_tools.mapping_suite_processor import DEFAULT_TEST_SUITE_REPORT_FOLDER
+
 MAX_STRING_LENGTH_DRAW = 50
 
 
@@ -36,5 +38,6 @@ def detect_graph_components(file_path: Path) -> None:
     network.show_buttons(filter_=['physics'])
 
     to_html = network.generate_html()
-    with (file_path.parent / "test_suite_report" / f"component_detector({report_name}).html").open(mode='w', encoding='utf-8') as f:
+    with (file_path.parent / DEFAULT_TEST_SUITE_REPORT_FOLDER / f"component_detector_{report_name}.html").open(mode='w',
+                                                                                                               encoding='utf-8') as f:
         f.write(to_html)
