@@ -1,31 +1,40 @@
 from pathlib import Path
 
 import networkx as nx
-from rdflib import Graph
-from rdflib.extras.external_graph_libs import rdflib_to_networkx_graph
+import pandas as pd
+import rdflib
+from pyvis.network import Network
 
-NR_OF_LINE_SEPARATORS = 40
+MAX_STRING_LENGTH_DRAW = 50
 
 
-def detect_graph_components(file_path: Path) -> str:
+def detect_graph_components(file_path: Path) -> None:
     """
         Given a rdf file path (.ttl), detect if notice as graph is connected, else printing connected components without
         the larges one.
     :param file_path: Path to notice file
     """
-    rdf_graph = Graph().parse(file_path, format="turtle")
-    networkx_graph = rdflib_to_networkx_graph(rdf_graph)
-    result_log = ''
-    if nx.is_connected(networkx_graph):
-        result_log += f"Graph {file_path.name} is fully connected."
-    else:
-        result_log += f"Graph {file_path.name} is not fully connected. Printing connected components, with the " \
-                      f"exception of the largest one.\n "
-        graph_components = list(nx.connected_components(networkx_graph))
-        graph_components.pop(0)
-        for i, elem in enumerate(graph_components):
-            result_log += "-" * NR_OF_LINE_SEPARATORS + f"Component nr {i + 1}" + "-" * NR_OF_LINE_SEPARATORS + "\n"
-            result_log += '\n'.join(elem)
-            result_log += "\n" + "-" * NR_OF_LINE_SEPARATORS + f"End component nr {i + 1}" + \
-                          "-" * NR_OF_LINE_SEPARATORS + "\n"
-    return result_log
+    graph = rdflib.Graph()
+    graph.parse(file_path, format="turtle")
+
+    triples_df = pd.DataFrame(graph.triples(triple=(None, None, None)), columns=["subject", "predicate", "object"])
+    so_df = triples_df[["subject", "object"]].drop_duplicates()
+
+    report_name = 'is_not_connected'
+    if nx.is_connected(nx.from_pandas_edgelist(so_df, "subject", "object")):
+        report_name = 'is_connected'
+
+    network = Network('1000px', '100%', directed=True, notebook=True, cdn_resources="remote",
+                      neighborhood_highlight=True, filter_menu=True, select_menu=True)
+    for subject in triples_df["subject"].unique():
+        network.add_node(str(subject), label=subject)
+    for object in triples_df["object"].unique():
+        network.add_node(str(object), label=f"{object[:MAX_STRING_LENGTH_DRAW]}..." if len(
+            object) > MAX_STRING_LENGTH_DRAW else object)
+    for index, row in triples_df.iterrows():
+        network.add_edge(str(row["subject"]), str(row["object"]), label=row["predicate"], title=row["predicate"])
+    network.show_buttons(filter_=['physics'])
+
+    to_html = network.generate_html()
+    with (file_path.parent / "test_suite_report" / f"component_detector({report_name}).html").open(mode='w', encoding='utf-8') as f:
+        f.write(to_html)
