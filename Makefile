@@ -146,3 +146,9 @@ rml-mapper-path-add-dotenv-file:
 
 refresh-mapping-files:
 	@ python -m ted_sws.data_manager.entrypoints.cli.cmd_generate_mapping_resources
+
+install-local:
+	@ echo -e "$(BUILD_PRINT)Installing the local requirements$(END_BUILD_PRINT)"
+	@ pip install --upgrade --force-reinstall --no-deps ../ted-rdf-conversion-pipeline
+
+

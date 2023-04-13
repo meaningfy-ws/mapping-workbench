@@ -2,8 +2,11 @@ import os
 import shutil
 import tempfile
 from pathlib import Path
-from mapping_workbench.workbench_tools.notice_validator.cli.cmd_validation_summary_runner import main as cli_main, \
-    DEFAULT_OUTPUT_PATH, DEFAULT_TEST_SUITE_REPORT_FOLDER
+
+from mapping_workbench.workbench_tools.mapping_suite_processor import DEFAULT_OUTPUT_PATH, \
+    DEFAULT_TEST_SUITE_REPORT_FOLDER
+from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli.cmd_validation_summary_runner import \
+    main as cli_main
 
 
 def post_process_for_notice(fake_repository_path, fake_mapping_suite_id, fake_validation_notice_id):

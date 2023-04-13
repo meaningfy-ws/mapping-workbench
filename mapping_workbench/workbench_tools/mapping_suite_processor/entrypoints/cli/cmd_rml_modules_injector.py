@@ -30,8 +30,7 @@ class CmdRunner(BaseCmdRunner):
             self,
             conceptual_mappings_file,
             rml_modules_folder,
-            output_folder,
-            clean
+            output_folder
     ):
         super().__init__(name=CMD_NAME)
         self.conceptual_mappings_file_path = Path(os.path.realpath(conceptual_mappings_file))
@@ -42,12 +41,6 @@ class CmdRunner(BaseCmdRunner):
             error_msg = f"No such file :: [{conceptual_mappings_file}]"
             self.log_failed_msg(error_msg)
             raise FileNotFoundError(error_msg)
-
-        if clean and os.path.exists(self.output_folder_path):
-            for filename in os.listdir(self.output_folder_path):
-                f = os.path.join(self.output_folder_path, filename)
-                if os.path.isfile(f):
-                    os.remove(f)
 
     def run_cmd(self):
         error = None
@@ -67,7 +60,6 @@ class CmdRunner(BaseCmdRunner):
 def run(mapping_suite_id=None,
         opt_conceptual_mappings_file: str = None,
         opt_output_folder: str = None,
-        opt_clean: bool = True,
         opt_rml_modules_folder: str = str(DEFAULT_RML_MODULES_PATH),
         opt_mappings_folder=DEFAULT_MAPPINGS_PATH
         ):
@@ -76,7 +68,6 @@ def run(mapping_suite_id=None,
     :param mapping_suite_id:
     :param opt_conceptual_mappings_file:
     :param opt_output_folder:
-    :param opt_clean:
     :param opt_rml_modules_folder:
     :param opt_mappings_folder:
     :return:
@@ -102,8 +93,7 @@ def run(mapping_suite_id=None,
     cmd = CmdRunner(
         conceptual_mappings_file=conceptual_mappings_file,
         rml_modules_folder=rml_modules_folder,
-        output_folder=output_folder,
-        clean=opt_clean
+        output_folder=output_folder
     )
     cmd.run()
 
@@ -112,15 +102,14 @@ def run(mapping_suite_id=None,
 @click.argument('mapping-suite-id', nargs=1, required=False)
 @click.option('-i', '--opt-conceptual-mappings-file', help="Use to overwrite default INPUT")
 @click.option('-o', '--opt-output-folder', help="Use to overwrite default OUTPUT")
-@click.option('-c', '--opt-clean', type=click.BOOL, default=True, help="Use to clean the OUTPUT folder")
 @click.option('-r', '--opt-rml-modules-folder', default=str(DEFAULT_RML_MODULES_PATH))
 @click.option('-m', '--opt-mappings-folder', default=DEFAULT_MAPPINGS_PATH)
-def main(mapping_suite_id, opt_conceptual_mappings_file, opt_output_folder, opt_clean, opt_rml_modules_folder,
+def main(mapping_suite_id, opt_conceptual_mappings_file, opt_output_folder, opt_rml_modules_folder,
          opt_mappings_folder):
     """
     Injects the requested RML modules from Conceptual Mappings into the MappingSuite.
     """
-    run(mapping_suite_id, opt_conceptual_mappings_file, opt_output_folder, opt_clean, opt_rml_modules_folder,
+    run(mapping_suite_id, opt_conceptual_mappings_file, opt_output_folder, opt_rml_modules_folder,
         opt_mappings_folder)
 
 

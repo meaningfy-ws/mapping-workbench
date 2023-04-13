@@ -8,15 +8,17 @@ from ordered_set import OrderedSet
 
 from ted_sws.core.adapters.cmd_runner import CmdRunnerForMappingSuite as BaseCmdRunner, DEFAULT_MAPPINGS_PATH
 from ted_sws.event_manager.adapters.log import SeverityLevelType, LOG_WARN_TEXT
-from mapping_workbench.workbench_tools.mapping_suite_processor.entrypoints.cli import cmd_resources_injector, cmd_sparql_generator, cmd_triple_store_loader, \
+from mapping_workbench.workbench_tools.mapping_suite_processor.entrypoints.cli import cmd_resources_injector, \
+    cmd_sparql_generator, cmd_triple_store_loader, \
     cmd_mapping_suite_validator
-from mapping_workbench.workbench_tools.mapping_suite_processor.entrypoints.cli import cmd_rml_modules_injector, cmd_metadata_generator
-from mapping_workbench.workbench_tools.mapping_suite_processor.entrypoints.cli.cmd_rml_modules_injector import DEFAULT_RML_MODULES_PATH
-from mapping_workbench.workbench_tools.notice_transformer.cli import cmd_mapping_runner
-from mapping_workbench.workbench_tools.notice_validator.cli import cmd_xpath_coverage_runner, cmd_sparql_runner, \
-    cmd_validation_summary_runner
-from mapping_workbench.workbench_tools.notice_validator.cli import cmd_shacl_runner
-from mapping_workbench.workbench_tools.rml_to_html.cli import cmd_rml_report_generator
+from mapping_workbench.workbench_tools.mapping_suite_processor.entrypoints.cli import cmd_rml_modules_injector, \
+    cmd_metadata_generator
+from mapping_workbench.workbench_tools.mapping_suite_processor.entrypoints.cli.cmd_rml_modules_injector import \
+    DEFAULT_RML_MODULES_PATH
+from mapping_workbench.workbench_tools.notice_transformer.entrypoints.cli import cmd_mapping_runner
+from mapping_workbench.workbench_tools.notice_validator.entrypoints.cli import cmd_sparql_runner, \
+    cmd_validation_summary_runner, cmd_xpath_coverage_runner, cmd_xpath_query_runner, cmd_shacl_runner
+from mapping_workbench.workbench_tools.rml_to_html.entrypoints.cli import cmd_rml_report_generator
 
 MAPPING_SUITE_VALIDATOR = "mapping_suite_validator"
 METADATA_GENERATOR = "metadata_generator"
@@ -25,6 +27,7 @@ VALIDATION_SUMMARY_RUNNER = "validation_summary_runner"
 SHACL_RUNNER = "shacl_runner"
 SPARQL_RUNNER = "sparql_runner"
 XPATH_COVERAGE_RUNNER = "xpath_coverage_runner"
+XPATH_QUERY_RUNNER = "xpath_query_runner"
 MAPPING_RUNNER = "mapping_runner"
 RML_REPORT_GENERATOR = "rml_report_generator"
 SPARQL_GENERATOR = "sparql_generator"
@@ -38,6 +41,7 @@ DEFAULT_COMMANDS: Tuple = (
     RML_REPORT_GENERATOR,
     MAPPING_RUNNER,
     XPATH_COVERAGE_RUNNER,
+    XPATH_QUERY_RUNNER,
     SPARQL_RUNNER,
     SHACL_RUNNER,
     VALIDATION_SUMMARY_RUNNER,
@@ -50,7 +54,8 @@ DEFAULT_GROUPS: Dict = {
     "generate_resources": [SPARQL_GENERATOR, RML_REPORT_GENERATOR],
     "update_resources": [RESOURCES_INJECTOR, RML_MODULES_INJECTOR, SPARQL_GENERATOR, RML_REPORT_GENERATOR],
     "transform_notices": [MAPPING_RUNNER],
-    "validate_notices": [XPATH_COVERAGE_RUNNER, SPARQL_RUNNER, SHACL_RUNNER, VALIDATION_SUMMARY_RUNNER],
+    "validate_notices": [XPATH_COVERAGE_RUNNER, XPATH_QUERY_RUNNER, SPARQL_RUNNER, SHACL_RUNNER,
+                         VALIDATION_SUMMARY_RUNNER],
     "upload_notices": [TRIPLE_STORE_LOADER],
     "validate_mapping_suite": [MAPPING_SUITE_VALIDATOR]
 }
@@ -131,6 +136,12 @@ class CmdRunner(BaseCmdRunner):
             )
         elif cmd == XPATH_COVERAGE_RUNNER:
             cmd_xpath_coverage_runner.run(
+                mapping_suite_id=self.mapping_suite_id,
+                notice_id=self.notice_ids,
+                opt_mappings_folder=self.mappings_path
+            )
+        elif cmd == XPATH_QUERY_RUNNER:
+            cmd_xpath_query_runner.run(
                 mapping_suite_id=self.mapping_suite_id,
                 notice_id=self.notice_ids,
                 opt_mappings_folder=self.mappings_path
@@ -244,6 +255,7 @@ def main(mapping_suite_id, notice_id, command, group, opt_mappings_folder, opt_r
         --- rml_report_generator\n
         --- mapping_runner\n
         --- xpath_coverage_runner\n
+        --- xpath_query_runner\n
         --- sparql_runner\n
         --- shacl_runner\n
         --- validation_summary_runner\n
@@ -255,7 +267,7 @@ def main(mapping_suite_id, notice_id, command, group, opt_mappings_folder, opt_r
         --- "generate_resources": ["sparql_generator", "rml_report_generator"]\n
         --- "update_resources": ["resources_injector", "rml_modules_injector", "sparql_generator", "rml_report_generator"]\n
         --- "transform_notices": ["mapping_runner"]\n
-        --- "validate_notices": ["xpath_coverage_runner", "sparql_runner", "shacl_runner", "validation_summary_runner"]\n
+        --- "validate_notices": ["xpath_coverage_runner", "xpath_query_runner", "sparql_runner", "shacl_runner", "validation_summary_runner"]\n
         --- "upload_notices": ["triple_store_loader"]\n
         --- "validate_mapping_suite": ["mapping_suite_validator"]
     """

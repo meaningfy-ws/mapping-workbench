@@ -28,11 +28,6 @@ def invalid_repository_path() -> str:
 
 
 @pytest.fixture
-def mapping_suite_id():
-    return "package_F03_demo"
-
-
-@pytest.fixture
 def package_folder_path_for_validator(mapping_suite_id):
     return TEST_DATA_PATH / mapping_suite_id
 
