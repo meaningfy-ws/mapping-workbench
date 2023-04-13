@@ -92,9 +92,13 @@ class CmdRunner(BaseCmdRunner):
 
         rdf_manifestation: RDFManifestation = RDFManifestation(object_data="")
         for validation in shacl_validations:
-            rdf_manifestation.add_validation(SHACLTestSuiteValidationReport(**validation))
+            rdf_manifestation.add_validation(SHACLTestSuiteValidationReport(
+                **dict(validation, object_data="SHACLTestSuiteValidationReport"))
+            )
         for validation in sparql_validations:
-            rdf_manifestation.add_validation(SPARQLTestSuiteValidationReport(**validation))
+            rdf_manifestation.add_validation(SPARQLTestSuiteValidationReport(
+                **dict(validation, object_data="SPARQLTestSuiteValidationReport"))
+            )
         notice._rdf_manifestation = rdf_manifestation
         notice._distilled_rdf_manifestation = rdf_manifestation
 
