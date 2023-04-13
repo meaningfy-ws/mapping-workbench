@@ -136,7 +136,7 @@ class CmdRunner(BaseCmdRunner):
                                                        template_metadata=template_metadata)
 
         self.save_html_report(output_path, report.object_data)
-        del report.object_data
+        report.object_data = "ValidationSummaryReport"
         self.save_json_report(output_path, report.dict())
 
     def _generate_reports(self):
