@@ -44,7 +44,6 @@ def process_shacl_error(error_list: List, group_label: str):
     return finalHash
 
 
-
 def process_packages_errors(list_of_packages_errors: List):
     list_of_packages_errors = list(set(list_of_packages_errors))
     errorHash = {}
@@ -83,7 +82,6 @@ def extract_shacl_validation_metadata(shacl_validations: list, notice_id: str, p
 
 
 def generate_shacl_summary(packages_dir_path: pathlib.Path) -> dict:
-
     packages = {}
     errors_per_package = {}
     packages_list_of_errors = []
@@ -94,7 +92,9 @@ def generate_shacl_summary(packages_dir_path: pathlib.Path) -> dict:
                 notices_output_path = package_path / "output"
                 if notices_output_path.exists():
                     errors_per_package[package_path.name] = None
-                    for notice_path in notices_output_path.iterdir():
+                    notices_rdf_files_paths = [path for path in notices_output_path.rglob("*.ttl") if path.is_file()]
+                    for notice_rdf_path in notices_rdf_files_paths:
+                        notice_path = notice_rdf_path.parent
                         if notice_path.is_dir():
                             shacl_validation_path = notice_path / "test_suite_report" / "shacl_validations.json"
                             if shacl_validation_path.exists() and shacl_validation_path.is_file():
@@ -120,6 +120,5 @@ def generate_shacl_summary(packages_dir_path: pathlib.Path) -> dict:
         packages_shacl_summary_file_path.write_text(json.dumps(summary_result), encoding="utf-8")
         return summary_result
     else:
-        print("Invalid packages dir path!")
+        raise Exception("Invalid packages dir path!")
 
-    return None
