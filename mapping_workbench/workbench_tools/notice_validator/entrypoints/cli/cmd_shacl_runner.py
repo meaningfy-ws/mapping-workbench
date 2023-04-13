@@ -115,7 +115,7 @@ class CmdRunner(BaseCmdRunner):
 
         self.save_report(output_path, HTML_REPORT, "validations", report.object_data)
 
-        del report.object_data
+        report.object_data = "SHACLValidationSummaryReport"
         self.save_report(
             output_path,
             JSON_VALIDATIONS_REPORT, None,
@@ -136,7 +136,7 @@ class CmdRunner(BaseCmdRunner):
         shacl_validations = notice.rdf_manifestation.shacl_validations
         for report in shacl_validations:
             self.save_report(report_path, HTML_REPORT, report.test_suite_identifier, report.object_data)
-            del report.object_data
+            report.object_data = "SHACLTestSuiteValidationReport"
 
         self.save_report(
             report_path,

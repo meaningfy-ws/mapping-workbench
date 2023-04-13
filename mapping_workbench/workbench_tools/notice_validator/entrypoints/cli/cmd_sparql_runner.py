@@ -117,7 +117,7 @@ class CmdRunner(BaseCmdRunner):
 
         self.save_report(output_path, HTML_REPORT, "validations", report.object_data)
 
-        del report.object_data
+        report.object_data = "SPARQLValidationSummaryReport"
         self.save_report(
             output_path,
             JSON_VALIDATIONS_REPORT, None,
@@ -137,7 +137,7 @@ class CmdRunner(BaseCmdRunner):
         sparql_validations = notice.rdf_manifestation.sparql_validations
         for report in sparql_validations:
             self.save_report(report_path, HTML_REPORT, report.test_suite_identifier, report.object_data)
-            del report.object_data
+            report.object_data = "SPARQLTestSuiteValidationReport"
 
         self.save_report(
             report_path,
