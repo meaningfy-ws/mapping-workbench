@@ -1,5 +1,5 @@
 from mapping_workbench.toolchain.notice_transformer.entrypoints.cli.cmd_mapping_runner import main as cli_main
-from tests.unit.toolchain.notice_transformer.cli.test_cmd_mapping_runner import post_process
+from tests.unit.backend.toolchain.notice_transformer.cli.test_cmd_mapping_runner import post_process
 
 
 def test_cmd_mapping_runner(cli_runner, fake_mapping_suite_id, fake_repository_path):

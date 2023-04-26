@@ -3,7 +3,7 @@ import tempfile
 from pathlib import Path
 
 from mapping_workbench.toolchain.notice_validator.entrypoints.cli.cmd_shacl_runner import main as cli_main
-from tests.unit.toolchain.notice_validator.cli import post_process
+from tests.unit.backend.toolchain.notice_validator.cli import post_process
 
 
 def test_cmd_shacl_runner(cli_runner, fake_mapping_suite_id, fake_mapping_suite2_id, fake_repository_path,
