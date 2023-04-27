@@ -37,7 +37,7 @@ build-frontend:
 
 start-frontend:
 	@ echo "Starting FRONTEND"
-	@ cd ${FRONTEND_HOME} && ${PM2_SCRIPT} start npm --name ${NAME} -- run start --watch --ignore-watch="node_modules"
+	@ cd ${FRONTEND_HOME} && ${PM2_SCRIPT} start npm --name ${NAME} -- run start
 
 stop-frontend:
 	@ echo "Stoping FRONTEND"
