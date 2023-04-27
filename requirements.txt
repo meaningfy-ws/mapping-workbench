@@ -5,3 +5,5 @@ pyvis~=0.3.2
 rdflib~=6.1.1
 lxml~=4.9.2
 elementpath~=4.1.0
+fastapi
+graphene
