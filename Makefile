@@ -1,7 +1,10 @@
-PACKAGE_NAME := mapping_workbench
-FRONTEND_HOME := ${PACKAGE_NAME}/frontend
+PROJECT_PATH = $(shell pwd)
+
+NAME := mapping_workbench
+FRONTEND_HOME := ${NAME}/frontend
 FRONTEND_DEVELOPMENT_ENV_FILE := ${FRONTEND_HOME}/.env.development
 FRONTEND_DEVELOPMENT_PORT := 3001
+PM2_SCRIPT := ${PROJECT_PATH}/${FRONTEND_HOME}/node_modules/pm2/bin/pm2
 
 # include .env files if they exist
 -include .env
@@ -22,10 +25,11 @@ install-dev-backend:
 
 install-frontend:
 	@ echo "Installing FRONTEND requirements"
-	@ cd ${FRONTEND_HOME} && npm install
+	@ cd ${FRONTEND_HOME} && npm install --production
 
 install-dev-frontend:
 	@ echo "Installing dev FRONTEND requirements"
+	@ cd ${FRONTEND_HOME} && npm install --only=dev
 
 build-frontend:
 	@ echo "Building FRONTEND"
@@ -33,7 +37,11 @@ build-frontend:
 
 start-frontend:
 	@ echo "Starting FRONTEND"
-	@ cd ${FRONTEND_HOME} && npm run start
+	@ cd ${FRONTEND_HOME} && ${PM2_SCRIPT} start npm --name ${NAME} -- run start --watch --ignore-watch="node_modules"
+
+stop-frontend:
+	@ echo "Stoping FRONTEND"
+	@ cd ${FRONTEND_HOME} && ${PM2_SCRIPT} delete ${NAME}
 
 init-frontend-env-development:
 	@ echo "Init FRONTEND .env.development"
