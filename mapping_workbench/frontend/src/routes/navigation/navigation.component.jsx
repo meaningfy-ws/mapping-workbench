@@ -36,6 +36,7 @@ const Navigation = () => {
     
     const signOutUserAndRedirect = () => {
         signOutUser();
+        setInput('');
         navigate("/auth");
     }
 
@@ -43,13 +44,13 @@ const Navigation = () => {
         setInput(e.target.value);
         switch (e.target.value) {
             case 'ted-rdf-mapping':
-                console.log('ted-rdf-mapping');
+                navigate("/project-management/ted-rdf-mapping");
                 break;
             case 'rdf-fingerprinter-ws':
-                console.log('rdf-fingerprinter-ws');
+                navigate("/project-management/rdf-fingerprinter-ws");
                 break;
             case 'mapping-workbench':
-                console.log('mapping-workbench');
+                navigate("/project-management/mapping-workbench");
                 break;
             case 'CREATE NEW PROJECT':
                 navigate("/project-management/new-project");

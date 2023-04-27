@@ -59,7 +59,7 @@ const SignInForm = () => {
             resetFormFields();
             setTimeout(function() {
                 navigate("/project-management");
-            }, 3000);                        
+            }, 2000);                        
         } catch (error) {
             switch(error.code) {
                 case 'auth/wrong-password':
@@ -119,7 +119,7 @@ const SignInForm = () => {
             </Snackbar>
             }
             {
-            <Snackbar open={openS} autoHideDuration={2000} anchorOrigin={{ vertical: "bottom", horizontal: "left" }} message={successMessage} onClose={handleClose}>
+            <Snackbar open={openS} autoHideDuration={1000} anchorOrigin={{ vertical: "bottom", horizontal: "left" }} message={successMessage} onClose={handleClose}>
                 <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
                     {successMessage}
                 </Alert>

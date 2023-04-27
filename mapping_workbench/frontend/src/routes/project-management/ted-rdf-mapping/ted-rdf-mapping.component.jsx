@@ -1,11 +1,33 @@
 import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-//import Button from '@mui/material/Button';
+import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
-import './new-project.component.scss';   
+import './ted-rdf-mapping.component.scss';
 
-const NewProject = () => {
+    const objTest = {
+        "title": "ted-rdf-mapping",
+        "description": "Transformation rules and other artefacts for the TED Semantic Web Services",
+        "version": "1.0.0",
+        "source_schema":{
+        "title": "Schema Title",
+        "description": "Schema Description...",
+        "version": "2.0.0",
+        "type": "xml/json"
+        },
+        "target_ontology":{
+        "title": "ePO",
+        "description": "Description of ePO...",
+        "version": "3.1.0",
+        "uri": "http://data.europa.eu/a4g/ontology"
+        }
+    };
+
+    const sourceSchema = objTest.source_schema;
+    const targetOntology = objTest.target_ontology;
+
+const TedRdfMapping = () => {
 
 return (
     <div className="new-project-container">
@@ -15,7 +37,7 @@ return (
                 Title: 
             </div>
             <div className="project-meta-value">
-                    
+                    {objTest.title}
             </div>
         </div>
         <div className="project-meta-field">
@@ -23,7 +45,7 @@ return (
                 Description: 
             </div>
             <div className="project-meta-value">
-                
+                {objTest.description}
             </div>
         </div>
         <div className="project-meta-field">
@@ -31,7 +53,7 @@ return (
                 Version: 
             </div>
             <div className="project-meta-value">
-                
+                {objTest.version}
             </div>
         </div>
       
@@ -44,18 +66,21 @@ return (
                             <b>Source Schema</b>
                         </Typography>
                         <Typography variant="h6">
-                            Title: 
+                            Title: {sourceSchema.title}
                         </Typography>
                         <Typography variant="h6">
-                            Description: 
+                            Description: {sourceSchema.description}
                         </Typography>
                         <Typography variant="h6">
-                            Version: 
+                            Version: {sourceSchema.version}
                         </Typography>
                         <Typography variant="h6">
-                            Type: 
+                            Type: {sourceSchema.type}
                         </Typography>
                     </CardContent>
+                    <CardActions>
+                        <Button size="small">Learn More</Button>
+                    </CardActions>
                 </Card>
             </div>
             
@@ -66,18 +91,21 @@ return (
                                 <b>Target Ontology</b>
                             </Typography>
                             <Typography variant="h6">
-                                Title: 
+                                Title: {targetOntology.title}
                             </Typography>
                             <Typography variant="h6">
-                                Description: 
+                                Description: {targetOntology.description}
                             </Typography>
                             <Typography variant="h6">
-                                Version: 
+                                Version: {targetOntology.version}
                             </Typography>
                             <Typography variant="h6">
-                                Uri: 
+                                Uri: {targetOntology.uri}
                             </Typography>
                         </CardContent>
+                        <CardActions>
+                            <Button size="small">Learn More</Button>
+                        </CardActions>
                     </Card>
             </div>
 
@@ -88,4 +116,4 @@ return (
 
 }
 
-export default NewProject;
+export default TedRdfMapping;

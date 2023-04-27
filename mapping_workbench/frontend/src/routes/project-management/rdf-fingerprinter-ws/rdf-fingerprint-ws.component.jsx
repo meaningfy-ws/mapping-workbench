@@ -3,9 +3,30 @@ import CardContent from '@mui/material/CardContent';
 //import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
-import './new-project.component.scss';   
+import './rdf-fingerprint-ws.component.scss';
 
-const NewProject = () => {
+    const objTest = {
+        "title": "rdf-fingerprint-ws",
+        "description": "Description of rdfFingerprinterWs as mock data",
+        "version": "1.1.0",
+        "source_schema":{
+        "title": "Schema Title Fingerprinter",
+        "description": "Schema Description Fingerprinter...",
+        "version": "2.0.0",
+        "type": "xml/json"
+        },
+        "target_ontology":{
+        "title": "ePO1",
+        "description": "Description of ePO1...",
+        "version": "3.1.2",
+        "uri": "http://data.europa.eu/a4g/ontology"
+        }
+    };
+
+    const sourceSchema = objTest.source_schema;
+    const targetOntology = objTest.target_ontology;
+
+const RdfFingerPrintWS = () => {
 
 return (
     <div className="new-project-container">
@@ -15,7 +36,7 @@ return (
                 Title: 
             </div>
             <div className="project-meta-value">
-                    
+                    {objTest.title}
             </div>
         </div>
         <div className="project-meta-field">
@@ -23,7 +44,7 @@ return (
                 Description: 
             </div>
             <div className="project-meta-value">
-                
+                {objTest.description}
             </div>
         </div>
         <div className="project-meta-field">
@@ -31,7 +52,7 @@ return (
                 Version: 
             </div>
             <div className="project-meta-value">
-                
+                {objTest.version}
             </div>
         </div>
       
@@ -44,16 +65,16 @@ return (
                             <b>Source Schema</b>
                         </Typography>
                         <Typography variant="h6">
-                            Title: 
+                            Title: {sourceSchema.title}
                         </Typography>
                         <Typography variant="h6">
-                            Description: 
+                            Description: {sourceSchema.description}
                         </Typography>
                         <Typography variant="h6">
-                            Version: 
+                            Version: {sourceSchema.version}
                         </Typography>
                         <Typography variant="h6">
-                            Type: 
+                            Type: {sourceSchema.type}
                         </Typography>
                     </CardContent>
                 </Card>
@@ -66,16 +87,16 @@ return (
                                 <b>Target Ontology</b>
                             </Typography>
                             <Typography variant="h6">
-                                Title: 
+                                Title: {targetOntology.title}
                             </Typography>
                             <Typography variant="h6">
-                                Description: 
+                                Description: {targetOntology.description}
                             </Typography>
                             <Typography variant="h6">
-                                Version: 
+                                Version: {targetOntology.version}
                             </Typography>
                             <Typography variant="h6">
-                                Uri: 
+                                Uri: {targetOntology.uri}
                             </Typography>
                         </CardContent>
                     </Card>
@@ -88,4 +109,4 @@ return (
 
 }
 
-export default NewProject;
+export default RdfFingerPrintWS;

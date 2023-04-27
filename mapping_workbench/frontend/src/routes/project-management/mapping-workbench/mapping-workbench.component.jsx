@@ -3,9 +3,30 @@ import CardContent from '@mui/material/CardContent';
 //import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
-import './new-project.component.scss';   
+import './mapping-workbench.component.scss';
 
-const NewProject = () => {
+    const objTest = {
+        "title": "mapping-workbench",
+        "description": "Transformation rules and other artefacts for the MWB Web Services",
+        "version": "2.1.2",
+        "source_schema":{
+        "title": "Schema Title MWB",
+        "description": "Schema Description Mwb...",
+        "version": "4.3.0",
+        "type": "xml/json"
+        },
+        "target_ontology":{
+        "title": "ePO",
+        "description": "Description of ePO...",
+        "version": "3.1.0",
+        "uri": "http://data.europa.eu/a4g/ontology"
+        }
+    };
+
+    const sourceSchema = objTest.source_schema;
+    const targetOntology = objTest.target_ontology;
+
+const MWB = () => {
 
 return (
     <div className="new-project-container">
@@ -15,7 +36,7 @@ return (
                 Title: 
             </div>
             <div className="project-meta-value">
-                    
+                    {objTest.title}
             </div>
         </div>
         <div className="project-meta-field">
@@ -23,7 +44,7 @@ return (
                 Description: 
             </div>
             <div className="project-meta-value">
-                
+                {objTest.description}
             </div>
         </div>
         <div className="project-meta-field">
@@ -31,7 +52,7 @@ return (
                 Version: 
             </div>
             <div className="project-meta-value">
-                
+                {objTest.version}
             </div>
         </div>
       
@@ -44,16 +65,16 @@ return (
                             <b>Source Schema</b>
                         </Typography>
                         <Typography variant="h6">
-                            Title: 
+                            Title: {sourceSchema.title}
                         </Typography>
                         <Typography variant="h6">
-                            Description: 
+                            Description: {sourceSchema.description}
                         </Typography>
                         <Typography variant="h6">
-                            Version: 
+                            Version: {sourceSchema.version}
                         </Typography>
                         <Typography variant="h6">
-                            Type: 
+                            Type: {sourceSchema.type}
                         </Typography>
                     </CardContent>
                 </Card>
@@ -66,16 +87,16 @@ return (
                                 <b>Target Ontology</b>
                             </Typography>
                             <Typography variant="h6">
-                                Title: 
+                                Title: {targetOntology.title}
                             </Typography>
                             <Typography variant="h6">
-                                Description: 
+                                Description: {targetOntology.description}
                             </Typography>
                             <Typography variant="h6">
-                                Version: 
+                                Version: {targetOntology.version}
                             </Typography>
                             <Typography variant="h6">
-                                Uri: 
+                                Uri: {targetOntology.uri}
                             </Typography>
                         </CardContent>
                     </Card>
@@ -88,4 +109,4 @@ return (
 
 }
 
-export default NewProject;
+export default MWB;
