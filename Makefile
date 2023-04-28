@@ -23,6 +23,16 @@ install-dev-backend:
 	@ pip install --upgrade pip
 	@ pip install --no-cache-dir -r requirements.dev.txt --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.5.1/constraints-no-providers-3.8.txt"
 
+install-all-backend: install-frontend install-dev-frontend
+
+start-backend:
+	@ echo "Starting BACKEND"
+	@ uvicorn --host localhost --port 8000 mapping_workbench.core.entrypoints.api.main:app --reload
+
+stop-backend:
+	@ echo "Stopping BACKEND"
+	@ cd ${FRONTEND_HOME} && ${PM2_SCRIPT} delete ${NAME}
+
 install-frontend:
 	@ echo "Installing FRONTEND requirements"
 	@ cd ${FRONTEND_HOME} && npm install --production
@@ -30,6 +40,8 @@ install-frontend:
 install-dev-frontend:
 	@ echo "Installing dev FRONTEND requirements"
 	@ cd ${FRONTEND_HOME} && npm install --only=dev
+
+install-all-frontend: install-frontend install-dev-frontend
 
 build-frontend:
 	@ echo "Building FRONTEND"
@@ -40,7 +52,7 @@ start-frontend:
 	@ cd ${FRONTEND_HOME} && ${PM2_SCRIPT} start npm --name ${NAME} -- run start
 
 stop-frontend:
-	@ echo "Stoping FRONTEND"
+	@ echo "Stopping FRONTEND"
 	@ cd ${FRONTEND_HOME} && ${PM2_SCRIPT} delete ${NAME}
 
 init-frontend-env-development:
@@ -67,3 +79,6 @@ test-e2e-backend:
 
 test-e2e-frontend:
 	@ echo "E2E Testing FRONTEND ... "
+
+start-backend-dev-api:
+	uvicorn mapping_workbench.core.entrypoints.api.main:app --reload

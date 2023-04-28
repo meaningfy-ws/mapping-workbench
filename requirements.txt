@@ -5,5 +5,9 @@ pyvis~=0.3.2
 rdflib~=6.1.1
 lxml~=4.9.2
 elementpath~=4.1.0
-fastapi
-graphene
+pydantic~=1.9.2
+fastapi~=0.95.1
+pymongo~=4.3.3
+graphene~=3.2.2
+sqlalchemy~=2.0.11
+graphene-sqlalchemy~=2.3.0
