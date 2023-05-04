@@ -112,14 +112,14 @@ const SignInForm = () => {
                 </div>
             </form>
             {
-            <Snackbar open={open} autoHideDuration={6000} anchorOrigin={{ vertical: "bottom", horizontal: "left" }} message={errorMessage} onClose={handleClose}>
+            <Snackbar open={open} autoHideDuration={6000} anchorOrigin={{ vertical: "bottom", horizontal: "right" }} message={errorMessage} onClose={handleClose}>
                 <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
                     {errorMessage}
                 </Alert>
             </Snackbar>
             }
             {
-            <Snackbar open={openS} autoHideDuration={1000} anchorOrigin={{ vertical: "bottom", horizontal: "left" }} message={successMessage} onClose={handleClose}>
+            <Snackbar open={openS} autoHideDuration={1000} anchorOrigin={{ vertical: "bottom", horizontal: "right" }} message={successMessage} onClose={handleClose}>
                 <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
                     {successMessage}
                 </Alert>
