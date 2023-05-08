@@ -1,12 +1,11 @@
 import { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import Button from '../../../components/button/button.component';
-import { Box, FormLabel, ListItem, MenuItem, Modal, TextField } from '@mui/material';
+import { Box, Drawer, FormLabel, List, ListItem, ListItemButton, ListItemText, MenuItem, Modal, TextField } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-//import { Drawer } from '@mui/material';
-//import { List } from '@mui/material';
-//import { TextField } from '@mui/material';
 import Typography from '@mui/material/Typography';
+
 
 
 import './ted-rdf-mapping.component.scss';
@@ -40,19 +39,38 @@ import './ted-rdf-mapping.component.scss';
         }
         ];
 
-    //const arrMenuOptions = ['PACKAGES', 'TEST DATA', 'RESOURCES', 'SHACL UT', 'SPARQL UT'];
+    const arrMenuOptions = ['PACKAGES', 'TEST DATA', 'RESOURCES', 'SHACL UT', 'SPARQL UT'];
 
     const sourceSchema = objTest.source_schema;
-    const targetOntology = objTest.target_ontology;
+    const targetOntology = objTest.target_ontology;    
 
 const TedRdfMapping = () => {
-const [open, setOpen] = useState(false);
-//const [edit, setEdit] = useState(false);    
+
+    const [open, setOpen] = useState(false);    
+
+    const navigate = useNavigate();
+
+    const handleMenuClick = (menuOption) => {
+    
+        switch(menuOption) {
+            case 'RESOURCES':
+                navigate("/project-management/resources");
+                    
+                break;
+            case 'TEST DATA':
+                navigate("/project-management/test-data");
+                
+                
+                break;
+            default:
+                break;                    
+        }
+    }
 
 return (
     <div className="new-project-container">
         <div className='project-metadata-fields cardStyle'>
-            <Card sx={{ minWidth: 275, bgcolor: '#eee' }}>
+            <Card sx={{ minWidth: 275, bgcolor: '#E2DFD2' }}>
                 <CardContent>
                     <Typography variant="h5" component="div">
                         <b>Project</b>
@@ -72,7 +90,7 @@ return (
         </div>    
         <div className='cards-container'>
             <div className='project-source-scheme-fields cardStyle'>
-                <Card sx={{ minWidth: 275, bgcolor: '#eee' }}>
+                <Card sx={{ minWidth: 275, bgcolor: '#E2DFD2' }}>
                     <CardContent>
                         <Typography variant="h5" component="div">
                             <b>Source Schema</b>
@@ -94,7 +112,7 @@ return (
                 </Card>
             </div>            
             <div className='project-target-ontology-fields cardStyle'>
-                <Card sx={{ minWidth: 275, bgcolor: '#eee' }}>
+                <Card sx={{ minWidth: 275, bgcolor: '#E2DFD2' }}>
                         <CardContent>
                             <Typography variant="h5" component="div">
                                 <b>Target Ontology</b>
@@ -240,10 +258,7 @@ return (
                         </ListItem>
                     </div>
                     
-                </Box>
-
-
-                
+                </Box>               
 
                 
                 <Box sx={{ 
@@ -260,7 +275,47 @@ return (
                 </Box>
 
             </Box>
+            
         </Modal>
+
+        <Box sx={{ overflow: 'auto', zIndex: '1' }}>
+            <Drawer
+                    anchor='left' 
+                    variant='permanent'
+                    sx={{ 
+                        justifyContent: 'center',
+                        [`& .MuiDrawer-paper`]: {
+                            display: 'flex', 
+                            width: '200px',
+                            alignItems: 'center',                            
+                            backgroundColor: '#F9F6EE' 
+                        }
+                    }}                    
+                >
+                    <List>
+                        {
+                            arrMenuOptions.map((elm) => (
+                                <ListItemButton key={elm}>
+                                <ListItemText 
+                                    key={elm}
+                                    disableTypography 
+                                    primary={<Typography 
+                                                variant="body1" 
+                                                style={{
+                                                        fontSize: '18px',
+                                                        fontWeight:'700' 
+                                                    }}
+                                            >
+                                                {elm}
+                                            </Typography>} onClick={(e) => handleMenuClick(elm)} />
+                                
+        
+                                </ListItemButton>
+                            ))
+                        }
+                    </List>
+                </Drawer>
+            </Box>
         
     </div>
 );
