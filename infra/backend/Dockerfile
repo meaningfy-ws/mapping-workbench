@@ -4,8 +4,8 @@ EXPOSE 8000
 RUN apt update && apt install -y make nodejs npm
 
 ## working in the /usr/src/mapping_workbench/app
-WORKDIR /usr/src/mapping_workbench
-COPY mapping_workbench app
+WORKDIR /usr/src/backend
+COPY mapping_workbench .
 COPY requirements.backend.txt .
 COPY Makefile .
 
