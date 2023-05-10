@@ -1,10 +1,4 @@
-from datetime import datetime
-
 from pydantic import BaseModel
-from sqlalchemy import Column, String
-from sqlalchemy.ext.declarative import declarative_base
-
-BaseORM = declarative_base()
 
 
 class BaseEntity(BaseModel):
