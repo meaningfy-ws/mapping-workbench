@@ -6,30 +6,42 @@ FRONTEND_DEVELOPMENT_ENV_FILE := ${FRONTEND_HOME}/.env.development
 FRONTEND_DEVELOPMENT_PORT := 3001
 PM2_SCRIPT := ${PROJECT_PATH}/${FRONTEND_HOME}/node_modules/pm2/bin/pm2
 
+ENV_FILE := .env
+
 # include .env files if they exist
 -include .env
 
-install: install-backend install-frontend
+install: install-toolchain install-backend install-frontend
 
-install-dev: install-dev-backend install-dev-frontend
+install-dev: install-dev-toolchain install-dev-backend install-dev-frontend
+
+install-toolchain:
+	@ echo "Installing TOOLCHAIN requirements"
+	@ pip install --upgrade pip
+	@ pip install --no-cache-dir -r requirements.toolchain.txt
+
+install-dev-toolchain:
+	@ echo "Installing dev TOOLCHAIN requirements"
+	@ pip install --upgrade pip
+	@ pip install --no-cache-dir -r requirements.toolchain.dev.txt
 
 install-backend:
 	@ echo "Installing BACKEND requirements"
 	@ pip install --upgrade pip
-	@ pip install --no-cache-dir -r requirements.txt --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.5.1/constraints-no-providers-3.8.txt"
+	@ pip install --no-cache-dir -r requirements.backend.txt
 
 install-dev-backend:
 	@ echo "Installing dev BACKEND requirements"
 	@ pip install --upgrade pip
-	@ pip install --no-cache-dir -r requirements.dev.txt --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.5.1/constraints-no-providers-3.8.txt"
+	@ pip install --no-cache-dir -r requirements.backend.dev.txt
 
-install-all-backend: install-frontend install-dev-frontend
+install-all-backend: install-backend install-dev-backend
 
-start-backend:
+start-dev-backend:
 	@ echo "Starting BACKEND"
 	@ uvicorn --host localhost --port 8000 mapping_workbench.core.entrypoints.api.main:app --reload
 
-stop-backend:
+stop-dev-backend:
 	@ echo "Stopping BACKEND"
 	@ cd ${FRONTEND_HOME} && ${PM2_SCRIPT} delete ${NAME}
 
@@ -43,15 +55,15 @@ install-dev-frontend:
 
 install-all-frontend: install-frontend install-dev-frontend
 
-build-frontend:
+build-dev-frontend:
 	@ echo "Building FRONTEND"
 	@ cd ${FRONTEND_HOME} && npm run build
 
-start-frontend:
+start-dev-frontend:
 	@ echo "Starting FRONTEND"
 	@ cd ${FRONTEND_HOME} && ${PM2_SCRIPT} start npm --name ${NAME} -- run start
 
-stop-frontend:
+stop-dev-frontend:
 	@ echo "Stopping FRONTEND"
 	@ cd ${FRONTEND_HOME} && ${PM2_SCRIPT} delete ${NAME}
 
@@ -82,3 +94,49 @@ test-e2e-frontend:
 
 start-backend-dev-api:
 	uvicorn mapping_workbench.core.entrypoints.api.main:app --reload
+
+
+dev-dotenv-file:
+	@ echo "Creating DEV .env file ... "
+	@ echo VAULT_ADDR=${VAULT_ADDR} > .env
+	@ echo VAULT_TOKEN=${VAULT_TOKEN} >> .env
+	@ echo DOMAIN=localhost >> .env
+	@ echo ENVIRONMENT=dev >> .env
+	@ echo SUBDOMAIN= >> .env
+	@ vault kv get -format="json" mapping-workbench/dev | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> .env
+
+staging-dotenv-file:
+	@ echo "Creating STAGING .env file ... "
+	@ echo VAULT_ADDR=${VAULT_ADDR} > .env
+	@ echo VAULT_TOKEN=${VAULT_TOKEN} >> .env
+	@ echo ENVIRONMENT=dev >> .env
+	@ vault kv get -format="json" mapping-workbench/staging | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> .env
+
+clear-frontend:
+	@ cd ${FRONTEND_HOME} && rm -rf build && rm -rf node_modules && rm -f .env* &&  rm -f package-lock.json
+
+build-backend:
+	@ echo "Building the BACKEND"
+	@ docker-compose -p ${ENVIRONMENT} --file ./infra/backend/docker-compose.yml --env-file ${ENV_FILE} build --no-cache --force-rm
+	@ docker-compose -p ${ENVIRONMENT} --file ./infra/backend/docker-compose.yml --env-file ${ENV_FILE} up -d --force-recreate
+
+start-backend:
+	@ echo "Starting the BACKEND"
+	@ docker-compose -p ${ENVIRONMENT} --file ./infra/backend/docker-compose.yml --env-file ${ENV_FILE} up -d
+
+stop-backend:
+	@ echo "Stopping the BACKEND"
+	@ docker-compose -p ${ENVIRONMENT} --file ./infra/backend/docker-compose.yml --env-file ${ENV_FILE} down
+
+build-frontend:
+	@ echo "Building the FRONTEND"
+	@ docker-compose -p ${ENVIRONMENT} --file ./infra/frontend/docker-compose.yml --env-file ${ENV_FILE} build --no-cache --force-rm
+	@ docker-compose -p ${ENVIRONMENT} --file ./infra/frontend/docker-compose.yml --env-file ${ENV_FILE} up -d --force-recreate
+
+start-frontend:
+	@ echo "Starting the FRONTEND"
+	@ docker-compose -p ${ENVIRONMENT} --file ./infra/frontend/docker-compose.yml --env-file ${ENV_FILE} up -d
+
+stop-frontend:
+	@ echo "Stopping the FRONTEND"
+	@ docker-compose -p ${ENVIRONMENT} --file ./infra/frontend/docker-compose.yml --env-file ${ENV_FILE} down
