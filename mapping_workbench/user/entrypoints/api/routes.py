@@ -1,4 +1,3 @@
-from typing import Annotated
 
 from fastapi import Depends, APIRouter
 
@@ -31,11 +30,11 @@ def fake_decode_token(token):
     )
 
 
-async def get_current_user(token: Annotated[str, Depends(auth_scheme)]):
-    user = fake_decode_token(token)
+async def get_current_user():
+    user = fake_decode_token()
     return user
 
 
 @router.get("/users/me")
-async def read_users_me(current_user: Annotated[User, Depends(get_current_user)]):
+async def read_users_me(current_user):
     return current_user

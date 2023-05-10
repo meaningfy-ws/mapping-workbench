@@ -1,8 +1,6 @@
 from typing import Optional
 
 from mapping_workbench.core.models.base_entity import BaseEntity
-from beanie import Document
-# from fastapi_users.db import BeanieBaseUser, BeanieUserDatabase
 
 
 class User(BaseEntity):

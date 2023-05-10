@@ -1,8 +1,6 @@
-from typing import Annotated
 from typing import List
 
 from fastapi import APIRouter, Body, status, Request
-from fastapi import Depends
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
@@ -14,8 +12,9 @@ TAG = "projects"
 
 sub_router = APIRouter()
 
+
 @sub_router.get("", description="List all projects")
-async def get_projects(token: Annotated[str, Depends(auth_scheme)]) -> List[Project]:
+async def get_projects() -> List[Project]:
     return [Project.from_orm(MappingSuiteORM(**item)) for item in collection.find({})]
 
 

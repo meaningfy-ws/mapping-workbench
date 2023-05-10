@@ -1,9 +1,7 @@
 from fastapi import FastAPI
 from pymongo import MongoClient
-from starlette.responses import JSONResponse
 
 from mapping_workbench.config import settings
-from beanie import init_beanie
 
 from mapping_workbench.user.models.user import User
 
