@@ -1,6 +1,5 @@
 FROM docker.io/python:3.10-slim-buster
 EXPOSE 8000
-EXPOSE 3000
 
 RUN apt update && apt install -y make nodejs npm
 
