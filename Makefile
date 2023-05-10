@@ -109,7 +109,6 @@ staging-dotenv-file:
 	@ echo "Creating STAGING .env file ... "
 	@ echo VAULT_ADDR=${VAULT_ADDR} > .env
 	@ echo VAULT_TOKEN=${VAULT_TOKEN} >> .env
-	@ echo ENVIRONMENT=dev >> .env
 	@ vault kv get -format="json" mapping-workbench-staging/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> .env
 
 clear-frontend:
