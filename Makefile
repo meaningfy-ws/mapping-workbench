@@ -103,14 +103,14 @@ dev-dotenv-file:
 	@ echo DOMAIN=localhost >> .env
 	@ echo ENVIRONMENT=dev >> .env
 	@ echo SUBDOMAIN= >> .env
-	@ vault kv get -format="json" mapping-workbench/dev | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> .env
+	@ vault kv get -format="json" mapping-workbench-dev | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> .env
 
 staging-dotenv-file:
 	@ echo "Creating STAGING .env file ... "
 	@ echo VAULT_ADDR=${VAULT_ADDR} > .env
 	@ echo VAULT_TOKEN=${VAULT_TOKEN} >> .env
 	@ echo ENVIRONMENT=dev >> .env
-	@ vault kv get -format="json" mapping-workbench/staging | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> .env
+	@ vault kv get -format="json" mapping-workbench-staging | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> .env
 
 clear-frontend:
 	@ cd ${FRONTEND_HOME} && rm -rf build && rm -rf node_modules && rm -f .env* &&  rm -f package-lock.json
