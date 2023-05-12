@@ -7,8 +7,7 @@ install-prod-frontend-deps:
 	@ npm install --production
 
 install-frontend:
-#	@ npm install -g serve && npm run build && rm -fr node_modules
-	@ npm install -g serve && npm run build
+	@ npm install -g serve && npm run build && rm -fr node_modules
 
 install-dev-frontend: install-dev-frontend-deps install-frontend
 	@ echo "Installing DEV FRONTEND"
