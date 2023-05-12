@@ -51,9 +51,6 @@ services:
       - "traefik.http.routers.api.middlewares=auth"
       - "traefik.http.middlewares.auth.basicauth.users=admin:$$apr1$$PTMvJPGu$$PrhB1Rbu8eCY2.ElsfJre0"
 
-
-
-
 networks:
   proxy-net:
     external: true

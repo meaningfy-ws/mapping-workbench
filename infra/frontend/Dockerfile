@@ -32,4 +32,4 @@ RUN echo "NODE_ENV=${ENVIRONMENT}" > ${ENV_FILE} \
 RUN make install-${ENVIRONMENT}-frontend
 
 # Start the app using serve command
-CMD [ "serve", "-s", "build" ]
+# CMD [ "serve", "-s", "build" ]
