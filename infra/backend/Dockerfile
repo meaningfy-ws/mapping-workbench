@@ -1,14 +1,23 @@
 FROM docker.io/python:3.10-slim-buster
-EXPOSE 8000
 
-RUN apt update && apt install -y make nodejs npm
+ARG ENVIRONMENT
+ARG HOST
+ARG PORT
 
-## working in the /usr/src/mapping_workbench/app
-WORKDIR /usr/src/app
-COPY mapping_workbench mapping_workbench
-COPY requirements.backend.txt .
-COPY Makefile .
+EXPOSE ${PORT}
+
+RUN apt update && apt install -y make
+
+# Create an application directory
+RUN mkdir -p /app
+
+# Set the /app directory as the working directory for any command that follows
+WORKDIR /app
+
+COPY ./mapping_workbench/backend ./mapping_workbench/backend
+COPY ./requirements.backend.txt ./
+COPY ./Makefile ./
 
 RUN make install-backend
 
-ENTRYPOINT uvicorn --host 0.0.0.0 --port 8000 mapping_workbench.core.entrypoints.api.main:app --reload
+ENTRYPOINT uvicorn --host ${HOST} --port ${PORT} mapping_workbench.backend.core.entrypoints.api.main:app --reload

@@ -2,11 +2,22 @@
 # Use a Node 18 base image
 FROM node:18-alpine
 
+ARG ENV_FILE
+ARG ENVIRONMENT
+ARG HOST
+ARG PORT
+
+EXPOSE ${PORT}
+
+RUN apk add make
+
 # Create an application directory
 RUN mkdir -p /app
 
 # Set the /app directory as the working directory for any command that follows
 WORKDIR /app
+
+COPY Makefile ./
 
 # Copy the local app package and package-lock.json file to the container
 COPY package*.json ./
@@ -15,14 +26,10 @@ COPY package*.json ./
 COPY ./src ./src
 COPY ./public ./public
 
-# Install node packages, install serve, build the app, and remove dependencies at the end
-RUN npm install \
-    && npm install -g serve \
-    && npm run build \
-    && rm -fr node_modules
+RUN echo "NODE_ENV=${ENVIRONMENT}" > ${ENV_FILE}
+RUN echo "PORT=${PORT}" >> ${ENV_FILE}
 
-# Specify that the application in the container listens on port 3000
-EXPOSE 3000
+RUN make install-${ENVIRONMENT}-frontend
 
 # Start the app using serve command
 CMD [ "serve", "-s", "build" ]
