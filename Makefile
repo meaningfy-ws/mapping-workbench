@@ -39,35 +39,10 @@ install-dev-backend:
 
 install-all-backend: install-backend install-dev-backend
 
-start-dev-backend:
-	@ echo "Starting BACKEND"
-	@ uvicorn --host localhost --port 8000 mapping_workbench.core.entrypoints.api.main:app --reload
-
-stop-dev-backend:
-	@ echo "Stopping BACKEND"
-	@ cd ${FRONTEND_HOME} && ${PM2_SCRIPT} delete ${NAME}
-
 install-frontend:
 	@ cd ${FRONTEND_HOME} && make install-${ENVIRONMENT}-frontend
 
 install-all-frontend: install-frontend
-
-build-dev-frontend:
-	@ echo "Building FRONTEND"
-	@ cd ${FRONTEND_HOME} && npm run build
-
-start-dev-frontend:
-	@ echo "Starting FRONTEND"
-	@ cd ${FRONTEND_HOME} && ${PM2_SCRIPT} start npm --name ${NAME} -- run start
-
-stop-dev-frontend:
-	@ echo "Stopping FRONTEND"
-	@ cd ${FRONTEND_HOME} && ${PM2_SCRIPT} delete ${NAME}
-
-frontend-dotenv-file:
-	@ echo "Creating FRONTEND .env file ... "
-	@ echo "NODE_ENV=${ENVIRONMENT}" > ${FRONTEND_ENV_FILE}
-	@ echo "PORT=${MW_FRONTEND_SERVER_PORT}" >> ${FRONTEND_ENV_FILE}
 
 test: test-unit
 test-unit: test-unit-backend test-unit-frontend
