@@ -26,8 +26,8 @@ COPY package*.json ./
 COPY ./src ./src
 COPY ./public ./public
 
-RUN echo "NODE_ENV=${ENVIRONMENT}" > ${ENV_FILE}
-RUN echo "PORT=${PORT}" >> ${ENV_FILE}
+RUN echo "NODE_ENV=${ENVIRONMENT}" > ${ENV_FILE} \
+    && echo "PORT=${PORT}" >> ${ENV_FILE}
 
 RUN make install-${ENVIRONMENT}-frontend
 
