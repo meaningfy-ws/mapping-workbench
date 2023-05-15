@@ -13,6 +13,8 @@ services:
         - ENVIRONMENT=${ENVIRONMENT}
         - HOST=${MW_BACKEND_SERVER_HOST}
         - PORT=${MW_BACKEND_SERVER_PORT}
+    ports:
+      - ${MW_BACKEND_SERVER_PORT}:${MW_BACKEND_SERVER_PORT}
     networks:
       - proxy-net
     labels:
@@ -28,10 +30,10 @@ services:
     volumes:
       - ${BACKEND_INFRA_FOLDER}:/app/mapping_workbench/backend
       - type: bind
-        source: ./requirements.backend.txt
+        source: ./../../requirements.backend.txt
         target: /app/requirements.backend.txt
       - type: bind
-        source: ./Makefile
+        source: ./../../Makefile
         target: /app/Makefile
 
 networks:

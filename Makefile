@@ -74,6 +74,7 @@ dev-dotenv-file:
 	@ echo VAULT_TOKEN=${VAULT_TOKEN} >> .env
 	@ echo BACKEND_INFRA_FOLDER=${BACKEND_INFRA_FOLDER} >> .env
 	@ echo FRONTEND_INFRA_FOLDER=${FRONTEND_INFRA_FOLDER} >> .env
+	@ echo NODE_ENV=development >> .env
 	@ vault kv get -format="json" mapping-workbench-dev/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> .env
 
 staging-dotenv-file:
@@ -82,6 +83,7 @@ staging-dotenv-file:
 	@ echo VAULT_TOKEN=${VAULT_TOKEN} >> .env
 	@ echo BACKEND_INFRA_FOLDER=${BACKEND_INFRA_FOLDER} >> .env
 	@ echo FRONTEND_INFRA_FOLDER=${FRONTEND_INFRA_FOLDER} >> .env
+	@ echo NODE_ENV=development >> .env
 	@ vault kv get -format="json" mapping-workbench-staging/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> .env
 
 prod-dotenv-file:
@@ -90,6 +92,7 @@ prod-dotenv-file:
 	@ echo VAULT_TOKEN=${VAULT_TOKEN} >> .env
 	@ echo BACKEND_INFRA_FOLDER=${BACKEND_INFRA_FOLDER} >> .env
 	@ echo FRONTEND_INFRA_FOLDER=${FRONTEND_INFRA_FOLDER} >> .env
+	@ echo NODE_ENV=production >> .env
 	@ vault kv get -format="json" mapping-workbench-prod/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> .env
 
 clear-frontend:
@@ -97,13 +100,13 @@ clear-frontend:
 
 
 create-env-backend:
-	@ echo "Create BACKEND env"
+	@ echo "Creating BACKEND env"
 	@ echo "${BACKEND_INFRA_FOLDER} ${ENVIRONMENT}"
 #	@ ln -s -f -n ${PROJECT_PATH}/mapping_workbench/backend ${AIRFLOW_INFRA_FOLDER}/mapping_workbench/backend
 
 build-backend: create-env-backend
 	@ echo "Building the BACKEND"
-	@ docker-compose -p ${NAME} --file ./infra/backend/docker-compose.yml --env-file ${ENV_FILE} build --no-cache --force-rm
+	@ docker-compose -p ${NAME} --file ./infra/backend/docker-compose.yml --env-file ${ENV_FILE} build --progress plain --no-cache --force-rm
 	@ docker-compose -p ${NAME} --file ./infra/backend/docker-compose.yml --env-file ${ENV_FILE} up -d --force-recreate
 
 start-backend:
@@ -116,7 +119,7 @@ stop-backend:
 
 build-frontend:
 	@ echo "Building the FRONTEND"
-	@ docker-compose -p ${NAME} --file ./infra/frontend/docker-compose.yml --env-file ${ENV_FILE} build --no-cache --force-rm
+	@ docker-compose -p ${NAME} --file ./infra/frontend/docker-compose.yml --env-file ${ENV_FILE} build --progress plain --no-cache --force-rm
 	@ docker-compose -p ${NAME} --file ./infra/frontend/docker-compose.yml --env-file ${ENV_FILE} up -d --force-recreate
 
 start-frontend:

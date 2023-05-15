@@ -1,19 +1,26 @@
-from typing import Optional
+from beanie import PydanticObjectId
+from fastapi_users import schemas
+from pydantic import BaseModel
 
-from mapping_workbench.backend.core.models.base_entity import BaseEntity
+
+class UserRead(schemas.BaseUser[PydanticObjectId]):
+    pass
 
 
-class User(BaseEntity):
+class UserCreate(schemas.BaseUserCreate):
+    pass
+
+
+class UserUpdate(schemas.BaseUserUpdate):
+    pass
+
+
+class User(BaseModel):
     username: str
-    email: Optional[str]
-    full_name: Optional[str]
-    disabled: Optional[bool]
+    email: str | None = None
+    full_name: str | None = None
+    disabled: bool | None = None
 
-#
-# class UserORM(BaseORM):
-#     __tablename__ = 'mapping_suites'
-#     _id = Column(String, primary_key=True, nullable=False)
-#     identifier = Column(String, nullable=False, unique=True)
-#     title = Column(String, index=True, nullable=False, unique=True)
-#     version = Column(String)
-#     description = Column(Text)
+
+class UserInDB(User):
+    hashed_password: str

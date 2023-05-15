@@ -1,6 +1,6 @@
 import { Fragment, useContext, useState } from "react";
 import { Outlet, Link, useNavigate } from "react-router-dom";
-import { Avatar, Box, Divider, FormControl, IconButton, InputLabel, ListItemIcon, Menu, MenuItem, Select,Tooltip, Typography } from '@mui/material';
+import { Avatar, Box, Divider, FormControl, IconButton, InputLabel, ListItemIcon, Menu, MenuItem, Select,Tooltip } from '@mui/material';
 import { PersonAdd, Settings, Logout } from '@mui/icons-material';
 import { ReactComponent as MappingWorkbench } from '../../assets/mapping-workbench-logo.svg';
 import { UserContext } from "../../contexts/user.context";

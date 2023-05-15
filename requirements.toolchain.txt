@@ -1,4 +1,4 @@
-# TOOLCHAIN dependecies
+# TOOLCHAIN dependencies
 ted-sws @ git+https://github.com/OP-TED/ted-rdf-conversion-pipeline.git
 networkx~=3.1
 pyvis~=0.3.2

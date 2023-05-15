@@ -6,8 +6,7 @@ ARG ENV_FILE
 ARG ENVIRONMENT
 ARG HOST
 ARG PORT
-
-EXPOSE ${PORT}
+ARG NODE_ENV
 
 RUN apk add make
 
@@ -26,10 +25,11 @@ COPY package*.json ./
 COPY ./src ./src
 COPY ./public ./public
 
-RUN echo "NODE_ENV=${ENVIRONMENT}" > ${ENV_FILE} \
+RUN echo "NODE_ENV=${NODE_ENV}" > ${ENV_FILE} \
     && echo "PORT=${PORT}" >> ${ENV_FILE}
 
 RUN make install-${ENVIRONMENT}-frontend
 
-# Start the app using serve command
-# CMD [ "serve", "-s", "build" ]
+EXPOSE ${PORT}
+
+CMD make start-${ENVIRONMENT}-frontend

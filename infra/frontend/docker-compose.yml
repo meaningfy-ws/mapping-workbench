@@ -14,6 +14,9 @@ services:
         - ENVIRONMENT=${ENVIRONMENT}
         - HOST=${MW_FRONTEND_SERVER_HOST}
         - PORT=${MW_FRONTEND_SERVER_PORT}
+        - NODE_ENV=${NODE_ENV}
+    ports:
+      - ${MW_FRONTEND_SERVER_PORT}:${MW_FRONTEND_SERVER_PORT}
     networks:
       - proxy-net
     labels:

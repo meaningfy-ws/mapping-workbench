@@ -6,14 +6,13 @@ services:
     container_name: traefik
     ports:
       - "80:80" # <== http
-      - "8080:8080" # <== :8080 is where the dashboard runs on
       - "443:443" # <== https
-#      - "5432:5432" # PostgreSQL port
-#      - "6379:6379" # Redis port
+#      - "8000:8000" # BACKEND port
+#      - "3000:3000" # FRONTEND port
     volumes:
       - ./letsencrypt:/letsencrypt # <== Volume for certs (TLS)
-      - /var/run/docker.sock:/var/run/docker.sock # <== Volume for docker admin
-      - ./dynamic.yaml:/dynamic.yaml # <== Volume for dynamic conf file, **ref: line 27
+      - /var/run/docker.sock:/var/run/docker.sock:ro # <== Volume for docker admin
+      - ./dynamic.yaml:/dynamic.yaml:ro # <== Volume for dynamic conf file, **ref: line 27
 #      - ./certs:/etc/certs # <== Volume for certs (TLS)
     networks:
       - proxy-net
@@ -34,8 +33,8 @@ services:
       - --entrypoints.web.address=:80 # <== Defining an entrypoint for port :80 named web
       - --entrypoints.web-secured.address=:443 # <== Defining an entrypoint for https on port :443 named web-secured
       - --entrypoints.mongo.address=:27017 # <== Defining an entrypoint for mongo on port :27017 named mongo
-      - --entrypoints.postgres.address=:5432 # PostgreSQL endpoint
-      - --entrypoints.redis.address=:6379 # Redis endpoint
+      - --entrypoints.backend.address=:8000 # BACKEND endpoint
+      - --entrypoints.frontend.address=:3000 # FRONTEND endpoint
       ## Certificate Settings (Let's Encrypt) -  https://docs.traefik.io/https/acme/#configuration-examples ##
       - --certificatesresolvers.mytlschallenge.acme.tlschallenge=true # <== Enable TLS-ALPN-01 to generate and renew ACME certs
       - --certificatesresolvers.mytlschallenge.acme.email=dragos.paun0000@gmail.com # <== Setting email for certs
@@ -54,5 +53,3 @@ services:
 networks:
   proxy-net:
     external: true
-
-

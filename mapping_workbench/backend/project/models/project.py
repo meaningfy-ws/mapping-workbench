@@ -13,7 +13,3 @@ class Project(BaseEntity):
     class Settings:
         table_name = "projects"
         exclude_none_from_dict = True
-
-    class Config(BaseEntity.Config):
-        ...
-

@@ -1,24 +1,21 @@
-init-dev-frontend-deps:
-	@ npm install && npm run build
-
-init-staging-frontend-deps: install-dev-frontend-deps
-
-init-prod-frontend-deps:
-	@ npm install --production && npm install -g serve && npm run build && rm -fr node_modules
-
 start-dev-frontend:
+	@ echo "Starting DEV FRONTEND"
 	@ npm run start
 
 start-staging-frontend: start-dev-frontend
 
 start-prod-frontend:
+	@ echo "Starting PROD FRONTEND"
 	serve -s build
 
-install-dev-frontend: init-dev-frontend-deps start-dev-frontend
+install-dev-frontend:
 	@ echo "Installing DEV FRONTEND"
+	@ npm install
 
-install-staging-frontend: init-staging-frontend-deps start-staging-frontend
+install-staging-frontend:
 	@ echo "Installing STAGING FRONTEND"
+	@ npm install
 
-install-prod-frontend: init-prod-frontend-deps start-prod-frontend
+install-prod-frontend:
 	@ echo "Installing PROD FRONTEND"
+	@ npm install --production && npm install -g serve && npm run build && rm -fr node_modules

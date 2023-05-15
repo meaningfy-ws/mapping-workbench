@@ -4,7 +4,8 @@ ARG ENVIRONMENT
 ARG HOST
 ARG PORT
 
-EXPOSE ${PORT}
+ENV HOST=$HOST
+ENV PORT=$PORT
 
 RUN apt update && apt install -y make
 
@@ -19,5 +20,7 @@ COPY ./requirements.backend.txt ./
 COPY ./Makefile ./
 
 RUN make install-backend
+
+EXPOSE ${PORT}
 
 ENTRYPOINT uvicorn --host ${HOST} --port ${PORT} mapping_workbench.backend.core.entrypoints.api.main:app --reload

@@ -50,16 +50,21 @@ const SignInForm = () => {
         event.preventDefault();
 
         try {
-            await signInAuthUserWithEmailAndPassword(
-                email,
-                password
-                );
-            setOpenS(true);
-            setSuccessMessage('User SIGNED IN successfull !');
-            resetFormFields();
-            setTimeout(function() {
-                navigate("/project-management");
-            }, 2000);                        
+            fetch("http://localhost:8000/api/v1/projects", {
+                method: "GET",
+                headers: { "Content-Type": "application/json" },
+                //body: JSON.stringify(newTodo)
+            })
+            // await signInAuthUserWithEmailAndPassword(
+            //     email,
+            //     password
+            //     );
+            // setOpenS(true);
+            // setSuccessMessage('User SIGNED IN successfull !');
+            // resetFormFields();
+            // setTimeout(function() {
+            //     navigate("/project-management");
+            // }, 2000);
         } catch (error) {
             switch(error.code) {
                 case 'auth/wrong-password':
@@ -73,7 +78,7 @@ const SignInForm = () => {
                     //alert('No user associated with this email');
                     break;
                 default:
-                    setErrorMessage(error);                    
+                    setErrorMessage(error);
             }
         }
     }
@@ -86,14 +91,14 @@ const SignInForm = () => {
 
     return (
         <div className="sign-up-container">
-            <h2>Already have an account2?</h2>
+            <h2>Already have an account?</h2>
             <span>Sign in with your email and password</span>
             <form onSubmit={handleSubmit}>                              
                 <FormInput
                     label="Email"
                     type="email" 
                     required 
-                    onChange={handleChange} 
+                    onChange={handleChange}
                     name="email" 
                     value={email} 
                 />

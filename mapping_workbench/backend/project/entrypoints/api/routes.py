@@ -1,11 +1,8 @@
-from typing import List
-
 from fastapi import APIRouter, Body, status, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
 from mapping_workbench.backend.project.models.project import Project
-from mapping_workbench.backend.security.services.authentication import auth_scheme
 
 ROUTE_PREFIX = "/projects"
 TAG = "projects"
@@ -14,8 +11,8 @@ sub_router = APIRouter()
 
 
 @sub_router.get("", description="List all projects")
-async def get_projects() -> List[Project]:
-    return [Project.from_orm(MappingSuiteORM(**item)) for item in collection.find({})]
+async def get_projects() -> JSONResponse:
+    return JSONResponse(content=[Project(name="ASSA").dict()])
 
 
 @sub_router.post("", description="Add new project")
