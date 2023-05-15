@@ -4,18 +4,18 @@ import { Avatar, Box, Divider, FormControl, IconButton, InputLabel, ListItemIcon
 import { PersonAdd, Settings, Logout } from '@mui/icons-material';
 import { ReactComponent as MappingWorkbench } from '../../assets/mapping-workbench-logo.svg';
 import { UserContext } from "../../contexts/user.context";
-​
+
 import { signOutUser } from '../../utils/firebase/firebase.utils';
 //import { getAuth } from "firebase/auth";
 import './navigation.component.scss';
-​
+
 const Navigation = () => {
     const { currentUser } = useContext(UserContext);
     const [anchorEl, setAnchorEl] = useState(null);
-​
+
     const navigate = useNavigate();
     const [input, setInput] = useState('');
-​
+
     const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -23,18 +23,18 @@ const Navigation = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-​
+
     //const auth = getAuth();
-​
+
     //const user = auth.currentUser;
     //console.log('USER:', auth);
-​
+
     //console.log('currentUser:', currentUser);
-​
+
     const CustomLink = ({to, children }) => {
         //const resolvedPath = useResolvedPath(to);
         //const isActive = useMatch({ path: resolvedPath.pathname, end: true});
-​
+
         return (
             <Link className={'nav-link'} to={to}>
                 {children}
@@ -48,7 +48,7 @@ const Navigation = () => {
         navigate("/auth");
         handleClose();
     }
-​
+
     const handleChange = (e) => {
         setInput(e.target.value);
         switch (e.target.value) {
@@ -69,7 +69,7 @@ const Navigation = () => {
                 console.log('switch default reached!')    
         }
     }
-​
+
     return (
       <Fragment>
         <div className="navigation">
@@ -172,5 +172,5 @@ const Navigation = () => {
       </Fragment>
     )
   }
-​
+
   export default Navigation;
