@@ -1,226 +1,304 @@
 import { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import Button from '../../../components/button/button.component';
-import { Box, FormLabel, ListItemButton, ListItemText, ListItem } from '@mui/material';
+import { Box, Drawer, FormLabel, List, ListItem, ListItemButton, ListItemText, MenuItem, Modal, TextField } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import { Drawer } from '@mui/material';
-import { List } from '@mui/material';
-import { TextField } from '@mui/material';
 import Typography from '@mui/material/Typography';
 
 
-import './new-project.component.scss'; 
 
+import './new-project.component.scss';
     
+
     const arrMenuOptions = ['PACKAGES', 'TEST DATA', 'RESOURCES', 'SHACL UT', 'SPARQL UT'];
-
     
+    const sourceSchemaTypes = [
+        {
+            value: '1',
+            label: 'JSON'
+        },
+        {
+            value: '2',
+            label: 'CSV'
+        }
+        ];
 
 const NewProject = () => {
-const [open, setOpen] = useState(false);
-const [edit, setEdit] = useState(false);    
+
+    const [open, setOpen] = useState(false);    
+
+    const navigate = useNavigate();
+
+    const handleMenuClick = (menuOption) => {
+    
+        switch(menuOption) {
+            case 'RESOURCES':
+                navigate("/project-management/resources");
+                    
+                break;
+            case 'TEST DATA':
+                navigate("/project-management/test-data");                
+                
+                break;
+            case 'PACKAGES':
+                navigate("/project-management/packages");
+                
+                break;
+            default:
+                break;                    
+        }
+    }
 
 return (
     <div className="new-project-container">
-
-        <Box>
-            <div className='drawerButtons'>
-                <Button
-                    onClick={() => setOpen(true)}>
-                        workbench menu
-                </Button>
-                <Button
-                    onClick={() => setEdit(true)}>
-                        edit
-                </Button>
-            </div>
-
-            <Drawer
-                anchor='right' 
-                open={edit}
-                sx={{ justifyContent: 'center', marginLeft: 'auto', marginRight: 'auto' }}
-                onClose={() => setEdit(false)}
-            >
-                <FormLabel sx={{
-                                marginLeft: "auto",
-                                marginRight: "auto",
-                                marginBottom: "20px",
-                                fontWeight: "bold"
-                                }}
-                >
-                    Main Project Metadata
-                </FormLabel>
-                <div className='editFormContainer'>    
-                    <ListItem >                       
-                        <TextField placeholder="Title" variant='standard' />
-                    </ListItem>
-                    <ListItem >                       
-                        <TextField placeholder="Description" variant='standard' />
-                    </ListItem>
-                    <ListItem >                       
-                        <TextField placeholder="Version" variant='standard' />
-                    </ListItem>
-                </div>
-
-                <FormLabel sx={{
-                                marginLeft: "auto",
-                                marginRight: "auto",
-                                marginBottom: "20px",
-                                marginTop: "20px",
-                                fontWeight: "bold"
-                                }}
-                >
-                    Source Schema
-                </FormLabel>
-                <div className='editFormContainer'>    
-                    <ListItem >                       
-                        <TextField placeholder="Title" variant='standard' />
-                    </ListItem>
-                    <ListItem >                       
-                        <TextField placeholder="Description" variant='standard' />
-                    </ListItem>
-                    <ListItem >                       
-                        <TextField placeholder="Version" variant='standard' />
-                    </ListItem>
-                    <ListItem >                       
-                        <TextField placeholder="Type" variant='standard' />
-                    </ListItem>
-                </div>
-
-                <FormLabel sx={{
-                                marginLeft: "auto",
-                                marginRight: "auto",
-                                marginBottom: "20px",
-                                marginTop: "20px",
-                                fontWeight: "bold"
-                                }}
-                >
-                    Target Ontology
-                </FormLabel>
-                <div className='editFormContainer'>    
-                    <ListItem >                       
-                        <TextField placeholder="Title" variant='standard' />
-                    </ListItem>
-                    <ListItem >                       
-                        <TextField placeholder="Description" variant='standard' />
-                    </ListItem>
-                    <ListItem >                       
-                        <TextField placeholder="Version" variant='standard' />
-                    </ListItem>
-                    <ListItem >                       
-                        <TextField placeholder="Uri" variant='standard' />
-                    </ListItem>
-                </div>
-                
-                <Box 
-                    sx={{ 
-                        marginLeft: 'auto',
-                        marginRight: 'auto',
-                        marginTop: '20px' 
-                    }}
-                >
-                    <Button 
-                        type='submit'
-                        onClick={() => setEdit(false)}
-                    >
-                        Submit
-                    </Button>
-                </Box>
-                        
-                
-            </Drawer>
-
-            <Drawer
-                anchor='left' 
-                open={open}
-                sx={{ justifyContent: 'center' }}
-                onClose={() => setOpen(false)}>
-                <List>
-                    {
-                        arrMenuOptions.map((elm) => (
-                            <ListItemButton onClick={() => setOpen(false)}>
-                                <ListItemText primary={elm} />
-                            </ListItemButton>
-                        ))
-                    }
-                </List>
-            </Drawer>
-        </Box>
-                
-        <div className="project-meta-field">
-            <div className="project-meta-label">
-                Title: 
-            </div>
-            <div className="project-meta-value">
-                    
-            </div>
-        </div>
-        <div className="project-meta-field">
-            <div className="project-meta-label">
-                Description: 
-            </div>
-            <div className="project-meta-value">
-                
-            </div>
-        </div>
-        <div className="project-meta-field">
-            <div className="project-meta-label">
-                Version: 
-            </div>
-            <div className="project-meta-value">
-                
-            </div>
-        </div>
-      
+        <div className='project-metadata-fields cardStyle'>
+            <Card sx={{ minWidth: 275, bgcolor: '#E2DFD2' }}>
+                <CardContent>
+                    <Typography variant="h5" component="div">
+                        <b>Project</b>
+                    </Typography>
+                    <br/>
+                    <Typography variant="h6">
+                        <b>Title:</b> 
+                    </Typography>
+                    <Typography variant="h6">
+                        <b>Description:</b> 
+                    </Typography>
+                    <Typography variant="h6">
+                        <b>Version:</b> 
+                    </Typography>
+                </CardContent>                    
+            </Card>
+        </div>    
         <div className='cards-container'>
-
             <div className='project-source-scheme-fields cardStyle'>
-                <Card sx={{ minWidth: 275, bgcolor: '#eee' }}>
+                <Card sx={{ minWidth: 275, bgcolor: '#E2DFD2' }}>
                     <CardContent>
                         <Typography variant="h5" component="div">
                             <b>Source Schema</b>
                         </Typography>
+                        <br/>
                         <Typography variant="h6">
-                            Title: 
+                            <b>Title:</b> 
                         </Typography>
                         <Typography variant="h6">
-                            Description: 
+                            <b>Description:</b> 
                         </Typography>
                         <Typography variant="h6">
-                            Version: 
+                            <b>Version:</b> 
                         </Typography>
                         <Typography variant="h6">
-                            Type: 
+                            <b>Type:</b> 
                         </Typography>
                     </CardContent>                    
                 </Card>
-            </div>
-            
+            </div>            
             <div className='project-target-ontology-fields cardStyle'>
-                <Card sx={{ minWidth: 275, bgcolor: '#eee' }}>
+                <Card sx={{ minWidth: 275, bgcolor: '#E2DFD2' }}>
                         <CardContent>
                             <Typography variant="h5" component="div">
                                 <b>Target Ontology</b>
                             </Typography>
+                            <br/>
                             <Typography variant="h6">
-                                Title: 
+                                <b>Title:</b> 
                             </Typography>
                             <Typography variant="h6">
-                                Description: 
+                                <b>Description:</b> 
                             </Typography>
                             <Typography variant="h6">
-                                Version: 
+                                <b>Version:</b> 
                             </Typography>
                             <Typography variant="h6">
-                                Uri: 
+                                <b>URI:</b> 
                             </Typography>
                         </CardContent>
                     </Card>
             </div>
-
         </div>
 
+        <div className='editButtonContainer'>    
+            <Button onClick={() => setOpen(true) }>Create Project</Button>            
+        </div>
+
+        <Modal open={open} onClose={() => setOpen(false)}>               
+            <Box 
+                position="absolute"
+                top="10%"
+                left="10%"
+                sx={{ 
+                    bgcolor: "white",
+                    minWidth: "80%",
+                    minHeight: "80%",
+                    borderRadius: "20px",
+                    padding: "60px",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between"                    
+                }}
+            >
+                <Box>
+                    <Typography sx={{
+                        marginTop: "20px",
+                        fontSize: "24px",
+                        fontWeight: "bold",
+                        display: "flex",
+                        justifyContent: "center",                                    
+                    }}
+                    >
+                        Create Project
+                    </Typography>
+                </Box>
+
+                
+
+                <Box sx={{ 
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent:"space-between",                        
+                        }}>
+                        
+                    <div className='editFormContainer'> 
+                        <FormLabel sx={{
+                                    marginLeft: "20px",                                
+                                    marginBottom: "20px",
+                                    fontWeight: "bold",
+                                    fontSize: "20px"
+                                    }}
+                        >
+                            Project
+                        </FormLabel>   
+                        <ListItem>                                                   
+                            <TextField style={{ minWidth: "220px" }} label="Title" variant='outlined' />
+                        </ListItem>
+                        <ListItem >                       
+                            <TextField style={{ minWidth: "220px" }}  label="Description" multiline maxRows={5} variant='outlined' />
+                        </ListItem>
+                        <ListItem >                       
+                            <TextField style={{ minWidth: "220px" }}  label="Version" variant='outlined' />
+                        </ListItem>
+                    </div>
+                    
+
+                    
+                        
+                    <div className='editFormContainer'> 
+                        <FormLabel sx={{
+                                    marginLeft: "20px",                                
+                                    marginBottom: "20px",
+                                    fontWeight: "bold",
+                                    fontSize: "20px",
+                                    width: "220px"
+                                    }}
+                        >
+                            Source Schema
+                        </FormLabel>   
+                        <ListItem>                                                   
+                            <TextField style={{ minWidth: "220px" }}  label="Title" variant='outlined' />
+                        </ListItem>
+                        <ListItem >                       
+                            <TextField style={{ minWidth: "220px" }}  label="Description" multiline maxRows={5} variant='outlined' />
+                        </ListItem>
+                        <ListItem >                       
+                            <TextField style={{ minWidth: "220px" }}  label="Version" variant='outlined' />
+                        </ListItem>
+                        <ListItem >                       
+                            <TextField style={{ minWidth: "220px" }}  label="Type" defaultValue="JSON" select variant='outlined'>
+                                { sourceSchemaTypes.map((sourceSchemaTypes) => (
+                                    <MenuItem key={sourceSchemaTypes.value} value={sourceSchemaTypes.value}>
+                                        {sourceSchemaTypes.label}
+                                  </MenuItem>
+                                ))}
+                            </TextField>
+                        </ListItem>
+                    </div>
+                    
+
+                    
+                        
+                    <div className='editFormContainer'> 
+                        <FormLabel sx={{
+                                    marginLeft: "20px",                                
+                                    marginBottom: "20px",
+                                    fontWeight: "bold",
+                                    fontSize: "20px"
+                                    }}
+                        >
+                            Target Ontology
+                        </FormLabel>   
+                        <ListItem>                                                   
+                            <TextField style={{ minWidth: "220px" }}  label="Title" variant='outlined' />
+                        </ListItem>
+                        <ListItem >                       
+                            <TextField style={{ minWidth: "220px" }}  label="Description" multiline maxRows={5} variant='outlined' />
+                        </ListItem>
+                        <ListItem >                       
+                            <TextField style={{ minWidth: "220px" }}  label="Version" variant='outlined' />
+                        </ListItem>
+                        <ListItem >                       
+                            <TextField style={{ minWidth: "220px" }}  label="URI" variant='outlined' />
+                        </ListItem>
+                    </div>
+                    
+                </Box>               
+
+                
+                <Box sx={{ 
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent:"space-between",                        
+                        }}>
+                    <Button onClick={() => setOpen(false)}>
+                        Submit
+                    </Button>                            
+                    <Button onClick={() => setOpen(false)}>
+                        Close
+                    </Button>
+                </Box>
+
+            </Box>
+            
+        </Modal>
+
+        <Box sx={{ overflow: 'auto', zIndex: '1' }}>
+            <Drawer
+                    anchor='left' 
+                    variant='permanent'
+                    sx={{ 
+                        justifyContent: 'center',
+                        [`& .MuiDrawer-paper`]: {
+                            display: 'flex', 
+                            width: '200px',
+                            alignItems: 'center',                            
+                            backgroundColor: '#F9F6EE' 
+                        }
+                    }}                    
+                >
+                    <List>
+                        {
+                            arrMenuOptions.map((elm) => (
+                                <ListItemButton key={elm}>
+                                <ListItemText 
+                                    key={elm}
+                                    disableTypography 
+                                    primary={<Typography 
+                                                variant="body1" 
+                                                style={{
+                                                        fontSize: '18px',
+                                                        fontWeight:'700' 
+                                                    }}
+                                            >
+                                                {elm}
+                                            </Typography>} onClick={(e) => handleMenuClick(elm)} />
+                                
         
+                                </ListItemButton>
+                            ))
+                        }
+                    </List>
+                </Drawer>
+            </Box>
         
     </div>
 );

@@ -1,4 +1,8 @@
 .mapping-workbench-resources {
     display: flex;
-    flex-direction: column;    
+    flex-direction: column;
+    
+    .resourceListBoxes {
+        display: flex;
+    }
 }

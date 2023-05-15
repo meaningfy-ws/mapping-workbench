@@ -2,9 +2,7 @@ import { Outlet } from 'react-router-dom';
 import './project-management.component.scss';
 
 
-const ProjectManagement = () => {    
-
-    
+const ProjectManagement = () => {        
 
     return (
 

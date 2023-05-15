@@ -10,10 +10,15 @@ import './test-data.component.scss';
 
 const arrMenuOptions = ['PACKAGES', 'TEST DATA', 'RESOURCES', 'SHACL UT', 'SPARQL UT'];
 let arrayOfUploadedFiles = ['TestData1', 'TestData2', 'TestData3', 'TestData4', 'TestData5'];
+let testData1 = ['file1.xml', 'file2.xml', 'file3.xml', 'file4.xml', 'file5.xml'];
+let testData2 = ['file1.xml', 'file2.xml'];
+let testData3 = ['file1.xml', 'file2.xml', 'file3.xml'];
+let testData4 = ['file1.xml', 'file2.xml', 'file3.xml', 'file4.xml'];
+let testData5 = ['file1.xml'];
 
 const TestData = () => {  
     
-    const [file, setFile] = useState();
+    //const [file, setFile] = useState();
     const navigate = useNavigate();  
 
     const handleMenuClick = (menuOption) => {
@@ -24,17 +29,44 @@ const TestData = () => {
                     
                 break;
             case 'TEST DATA':
-                navigate("/project-management/test-data");
-                
+                navigate("/project-management/test-data");                
                 
                 break;
+            case 'PACKAGES':
+                navigate("/project-management/packages");                
+                        
+                break;    
             default:
                 break;                    
         }
     }
 
-    const handleDocumentClick = (listElem) => {
-        console.log("List Element: ", listElem);
+    let handleDocumentClick = (fileElem) => {        
+
+        switch(fileElem) {
+            case 'TestData1':
+                console.log('TestData1');                
+                
+                break;
+            case 'TestData2':
+                console.log('TestData2');                
+
+                break;
+            case 'TestData3':
+                console.log('TestData3');               
+                      
+                break;
+            case 'TestData4':
+                console.log('TestData4');                
+                            
+                break;
+            case 'TestData5':
+                console.log('TestData5');                
+                             
+                break;    
+            default:
+                break;                      
+        }
     }
 
     const handleDeleteClick = (listElem) => {
@@ -44,7 +76,7 @@ const TestData = () => {
     const handleFileChange = (e) => {
         if (e.target.files) {
             console.log("FILE: ", e.target.files);
-          //setFile(e.target.files[0]);
+            //setFile(e.target.files[0]);
         }
     }
 
@@ -73,58 +105,91 @@ const TestData = () => {
 
             <h2 className='page-title'>Test Data</h2>
 
-            <Box sx={{ 
-                    display: "flex",
-                    flexDirection: "column",
-                    border: "1px solid rgba(0, 0, 0, 0.12)",
-                    borderRadius: "20px",
-                    backgroundColor: "#F9F6EE",
-                    padding: "20px",                    
-                    marginLeft: "auto",
-                    marginRight: "auto" 
-                    }}
-            >
-                <List>
-                    {arrayOfUploadedFiles.map((listElem) => (
-                        <ListItem key={listElem}>
-                            <ListItemButton sx={{ display: "flex", justifyContent: "flex-start" }} onClick={(e)=>handleDocumentClick(listElem)} >                                
-                                <ListItemText primary={listElem} />
-                            </ListItemButton>
-                            <ListItemButton sx={{ display: "flex", justifyContent: "flex-end" }} onClick={(e) => handleDeleteClick(listElem)}>                                
-                                <DeleteIcon />                                
-                            </ListItemButton>
-                        </ListItem>
-                    ))}                    
-                </List>
+            <div className='resourceListBoxes'>
 
+                <Box sx={{ 
+                        display: "flex",
+                        flexDirection: "column",
+                        border: "1px solid rgba(0, 0, 0, 0.12)",
+                        borderRadius: "20px",
+                        backgroundColor: "#F9F6EE",
+                        padding: "20px",                    
+                        marginLeft: "auto",
+                        marginRight: "auto" 
+                        }}
+                >
+                    <List>
+                        {arrayOfUploadedFiles.map((listElem) => (
+                            <ListItem key={listElem}>
+                                <ListItemButton sx={{ display: "flex", justifyContent: "flex-start" }} onClick={(e)=>handleDocumentClick(listElem)} >                                
+                                    <ListItemText primary={listElem} />
+                                </ListItemButton>
+                                <ListItemButton sx={{ display: "flex", justifyContent: "flex-end" }} onClick={(e) => handleDeleteClick(listElem)}>                                
+                                    <DeleteIcon />                                
+                                </ListItemButton>
+                            </ListItem>
+                        ))}                    
+                    </List>                
+                    
+                    <input
+                        accept=".csv, .json"                
+                        style={{ display: 'none' }}
+                        id="raised-button-file"
+                        multiple
+                        type="file"
+                        onChange={handleFileChange}
+                    />
+                    <label htmlFor="raised-button-file">                    
+                        <Button 
+                            sx={{ display: "flex" }}
+                            variant="contained" 
+                            component="span"                       
+                        >
+                            <UploadFileIcon sx={{ marginRight: "10px" }} />
+                            Upload test data
+                        </Button>                    
+                    </label>
+
+                    <Button sx={{ display: "flex", marginTop: "20px" }} variant="contained" 
+                            component="span">
+                            <NoteAddIcon sx={{ marginRight: "10px" }} />
+                            Create new test set
+                        </Button>
                 
-                <input
-                    accept=".csv, .json"                
-                    style={{ display: 'none' }}
-                    id="raised-button-file"
-                    multiple
-                    type="file"
-                    onChange={handleFileChange}
-                />
-                <label htmlFor="raised-button-file">                    
-                    <Button 
-                        sx={{ display: "flex" }}
-                        variant="contained" 
-                        component="span"                       
-                    >
-                        <UploadFileIcon sx={{ marginRight: "10px" }} />
-                        Upload test data
-                    </Button>                    
-                </label>
+                </Box>
 
-                <Button sx={{ display: "flex", marginTop: "20px" }} variant="contained" 
-                        component="span">
-                        <NoteAddIcon sx={{ marginRight: "10px" }} />
-                        Create new test set
-                    </Button>
-            
-            </Box>
-            
+
+                <Box sx={{ 
+                        display: "flex",
+                        flexDirection: "column",
+                        border: "1px solid rgba(0, 0, 0, 0.12)",
+                        borderRadius: "20px",
+                        backgroundColor: "#F9F6EE",
+                        padding: "20px",                    
+                        marginLeft: "auto",
+                        marginRight: "auto" 
+                        }}
+                >
+                    <List>
+                    {                    
+                    testData1.map((listDoc) => (
+                            <ListItem key={listDoc}>
+                                <ListItemButton sx={{ display: "flex", justifyContent: "flex-start" }} onClick={(e)=>handleDocumentClick(listDoc)} >                                
+                                    <ListItemText primary={listDoc} />
+                                </ListItemButton>
+                                <ListItemButton sx={{ display: "flex", justifyContent: "flex-end" }} onClick={(e) => handleDeleteClick(listDoc)}>                                
+                                    <DeleteIcon />                                
+                                </ListItemButton>
+                            </ListItem>
+                        )
+                    )}                    
+                    </List>               
+
+                    
+                
+                </Box>
+
+            </div>
             
 
             <Box sx={{ overflow: 'auto', zIndex: '1', display: 'flex', justifyContent: 'center' }}>

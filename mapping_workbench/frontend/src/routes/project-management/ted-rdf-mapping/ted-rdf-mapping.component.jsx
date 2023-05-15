@@ -58,8 +58,11 @@ const TedRdfMapping = () => {
                     
                 break;
             case 'TEST DATA':
-                navigate("/project-management/test-data");
+                navigate("/project-management/test-data");                
                 
+                break;
+            case 'PACKAGES':
+                navigate("/project-management/packages");
                 
                 break;
             default:

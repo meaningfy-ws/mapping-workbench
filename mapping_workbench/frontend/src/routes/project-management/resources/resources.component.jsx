@@ -11,7 +11,7 @@ let arrayOfUploadedFiles = ['firstDoc.csv', 'secondDoc.csv', 'thirdDoc.json', 'f
 
 const Resources = () => {  
     
-    const [file, setFile] = useState();
+    //const [file, setFile] = useState();
     const navigate = useNavigate();  
 
     const handleMenuClick = (menuOption) => {
@@ -22,10 +22,13 @@ const Resources = () => {
                     
                 break;
             case 'TEST DATA':
-                navigate("/project-management/test-data");
-                
+                navigate("/project-management/test-data");                
                 
                 break;
+            case 'PACKAGES':
+                navigate("/project-management/packages");                
+                        
+                break;    
             default:
                 break;                    
         }
