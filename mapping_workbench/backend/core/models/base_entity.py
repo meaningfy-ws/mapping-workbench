@@ -1,57 +1,37 @@
 from datetime import datetime
 from typing import Optional
 
-from bson import ObjectId
-from pydantic import BaseModel, Field
+from beanie import Document, Link
+from bson import DBRef
+
+from mapping_workbench.backend.user.models.user import User
 
 
-class ObjectIdField:
-    @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
-
-    @classmethod
-    def validate(cls, value):
-        if not ObjectId.is_valid(value):
-            raise ValueError("Invalid Id")
-
-        return ObjectId(value)
-
-    @classmethod
-    def __modify_schema__(cls, field_schema):
-        field_schema.update(type="string")
-
-
-class BaseEntity(BaseModel):
+class BaseEntity(Document):
     """
     The general model for entities
     """
-    # id: Optional[ObjectIdField]
-    created_at: datetime = datetime.now().replace(microsecond=0).isoformat()
-    updated_at: datetime = datetime.now().replace(microsecond=0).isoformat()
+    created_at: datetime = datetime.now()
+    updated_at: datetime = datetime.now()
+    created_by: Optional[Link[User]]
+    updated_by: Optional[Link[User]]
 
-    __settings__ = None
+    # @before_event(Insert)
+    # async def set_created_by(self):
+    #     self.created_by = await current_active_user()
+    #
+    # @before_event(Update)
+    # async def set_updated_by(self):
+    #     self.updated_by = await current_active_user()
 
-    @property
-    def settings(self):
-        if self.__settings__ is None:
-            self.__settings__ = self.Settings()
-        return self.__settings__
+    def dict_for_update(self):
+        return self.dict(exclude_unset=True)
 
-    def dict(self, **kwargs):
-        return super().dict(exclude_none=self.settings.exclude_none_from_dict, **kwargs)
+    def on_create(self, user: User):
+        self.created_by = User.link_from_id(user.id)
 
-    # extra settings
+    def on_update(self, user: User):
+        self.updated_by = User.link_from_id(user.id)
+
     class Settings:
-        # collection name of the entity
-        table_name = None
-        exclude_none_from_dict = False
-
-    class Config:
-        # pydantic properties
-        validate_assignment = True
-        # orm_mode = True
-        allow_population_by_field_name = True
-        underscore_attrs_are_private = True
-        arbitrary_types_allowed = True
-        json_encoders = {ObjectId: str}
+        validate_on_save = True

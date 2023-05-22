@@ -1,4 +1,3 @@
-from abc import ABC
 from typing import Optional
 
 from beanie import PydanticObjectId
@@ -11,12 +10,17 @@ from fastapi_users.authentication import (
 )
 from fastapi_users.db import BeanieUserDatabase, ObjectIDIDMixin
 
-from app.db import User, get_user_db
+from mapping_workbench.backend.security.adapters.user_session import get_user_db
+from mapping_workbench.backend.user.models.user import User
 
-SECRET = "SECRET"
+SECRET = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRy" \
+         + "dWUsImlhdCI6MTUxNjIzOTAyMn0.NHVaYe26MbtOYhSKkoKYdFVomg4i8ZJd8_-RU8VNbftc4TSMb4bXP3l3YlNWACwyXPGffz5" \
+         + "aXHc6lty1Y2t4SWRqGteragsVdZufDn5BlnJl9pdR_kdVFUsra2rWKEofkZeIC4yWytE58sMIihvo9H1ScmmVwBcQP6XETqYd0a" \
+         + "SHp1gOa9RdUPDvoXQ5oqygTqVtxaDr6wUFKrKItgBMzWIdNZ6y7O9E0DhEPTbE9rfBo6KTFsHAZnMg4k68CDp2woYIaXbmYTWcv" \
+         + "bzIuHO7_37GT79XdIwkm95QJ7hYC9RiwrV7mesbY4PAahERJawntho0my942XheVLmGwLMBkQ"
 
 
-class UserManager(ABC, ObjectIDIDMixin, BaseUserManager[User, PydanticObjectId]):
+class UserManager(ObjectIDIDMixin, BaseUserManager[User, PydanticObjectId]):
     reset_password_token_secret = SECRET
     verification_token_secret = SECRET
 

@@ -7,7 +7,11 @@ TAG = "settings"
 
 sub_router = APIRouter()
 
-@sub_router.get("/metadata")
+
+@sub_router.get(
+    "/metadata",
+    name="settings:metadata"
+)
 async def metadata() -> JSONResponse:
     return JSONResponse(content={
         "app_name": settings.APP_NAME

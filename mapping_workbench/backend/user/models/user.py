@@ -1,6 +1,21 @@
+from typing import List
+
+from beanie import Document
 from beanie import PydanticObjectId
 from fastapi_users import schemas
-from pydantic import BaseModel
+from fastapi_users.db import BaseOAuthAccount, BeanieBaseUser
+from pydantic import Field
+
+
+class OAuthAccount(BaseOAuthAccount):
+    pass
+
+
+class User(BeanieBaseUser, Document):
+    oauth_accounts: List[OAuthAccount] = Field(default_factory=list)
+
+    class Settings(BeanieBaseUser.Settings):
+        name = "users"
 
 
 class UserRead(schemas.BaseUser[PydanticObjectId]):
@@ -13,14 +28,3 @@ class UserCreate(schemas.BaseUserCreate):
 
 class UserUpdate(schemas.BaseUserUpdate):
     pass
-
-
-class User(BaseModel):
-    username: str
-    email: str | None = None
-    full_name: str | None = None
-    disabled: bool | None = None
-
-
-class UserInDB(User):
-    hashed_password: str

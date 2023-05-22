@@ -1,16 +1,23 @@
-from fastapi import FastAPI, APIRouter
+from beanie import init_beanie
+from fastapi import FastAPI, APIRouter, Depends
 from fastapi.middleware.cors import CORSMiddleware
-#from motor.motor_asyncio import AsyncIOMotorClient
+from httpx_oauth.clients.google import GoogleOAuth2
 
 from mapping_workbench.backend.config import settings
 from mapping_workbench.backend.config.entrypoints.api import routes as config_routes
 from mapping_workbench.backend.core.entrypoints.api import routes as core_routes
-from mapping_workbench.backend.project.entrypoints.api import routes as mapping_suite_routes
+from mapping_workbench.backend.database.adapters.mongodb import DB
+from mapping_workbench.backend.project.entrypoints.api import routes as project_routes
+from mapping_workbench.backend.project.models.project import Project
 from mapping_workbench.backend.user.entrypoints.api import routes as user_routes
-#from mapping_workbench.database.adapters.mongodb import client as mongodb_client, database as mongodb_database
-
+from mapping_workbench.backend.user.models.user import User
+from mapping_workbench.backend.security.models.security import AccessToken
+from mapping_workbench.backend.security.entrypoints.api import routes as security_routes
+from mapping_workbench.backend.security.services.user_manager import current_active_user
 
 ROOT_API_PATH = "/api/v1"
+
+google_oauth_client = GoogleOAuth2("CLIENT_ID", "CLIENT_SECRET")
 
 app = FastAPI(
     title="Mapping Workbench",
@@ -20,33 +27,41 @@ app = FastAPI(
     swagger_ui_oauth2_redirect_url=f"{ROOT_API_PATH}/docs/oauth2-redirect"
 )
 
-# origins = [f"{settings.HOST}:{settings.PORT}"]
+origins = [f"{settings.HOST}:{settings.PORT}"]
 
 app.add_middleware(
     CORSMiddleware,
-    #allow_origins=origins,
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=['*'],
     allow_headers=['*']
 )
 
-app.mongodb_client = None
-#
-#
-# @app.on_event("startup")
-# async def startup_db_client():
-#     app.mongodb_client = mongodb_client
-#     app.mongodb = mongodb_database
-#
-#
-# @app.on_event("shutdown")
-# async def shutdown_db_client():
-#     app.mongodb_client.close()
+
+@app.on_event("startup")
+async def on_startup():
+    await init_beanie(
+        database=DB.get_database(),
+        document_models=[
+            User,
+            AccessToken,
+            Project
+        ],
+    )
 
 
 app_router = APIRouter()
-app_router.include_router(core_routes.router, tags=["default"])
-app_router.include_router(config_routes.router)
-app_router.include_router(mapping_suite_routes.router)
-app_router.include_router(user_routes.router, tags=["users"])
+
+app_public_router = APIRouter()
+app_router.include_router(app_public_router)
+
+app_secured_router = APIRouter(dependencies=[Depends(current_active_user)])
+app_secured_router.include_router(core_routes.router)
+app_secured_router.include_router(project_routes.router)
+app_secured_router.include_router(config_routes.router)
+app_router.include_router(app_secured_router)
+
+app_router.include_router(security_routes.router)
+app_router.include_router(user_routes.router)
+
 app.include_router(app_router, prefix=ROOT_API_PATH)

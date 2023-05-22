@@ -3,8 +3,9 @@ graphene~=3.2.2
 python-multipart~=0.0.6
 motor~=3.1.2
 python-dotenv~=1.0.0
-fastapi
-fastapi-users[beanie]
+beanie~=1.19.0
+fastapi~=0.95.2
+fastapi-users[beanie,oauth]~=11.0.0
 uvicorn[standard]
 
 

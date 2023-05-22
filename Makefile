@@ -65,7 +65,7 @@ test-e2e-frontend:
 	@ echo "E2E Testing FRONTEND ... "
 
 start-backend-dev-api:
-	uvicorn mapping_workbench.core.entrypoints.api.main:app --reload
+	uvicorn mapping_workbench.backend.core.entrypoints.api.main:app --reload
 
 
 dev-dotenv-file:
@@ -145,3 +145,11 @@ start-traefik: build-externals
 stop-traefik:
 	@ echo "Stopping the Traefik services"
 	@ docker-compose -p common --file ./infra/traefik/docker-compose.yml --env-file ${ENV_FILE} down
+
+start-mongo: build-externals
+	@ echo "Starting the Mongo services"
+	@ docker-compose -p ${NAME} --file ./infra/mongodb/docker-compose.yml --env-file ${ENV_FILE} up -d
+
+stop-mongo:
+	@ echo "Stopping the Mongo services"
+	@ docker-compose -p ${NAME} --file ./infra/mongodb/docker-compose.yml --env-file ${ENV_FILE} down
