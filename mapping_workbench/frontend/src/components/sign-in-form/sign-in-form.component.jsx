@@ -1,5 +1,6 @@
 import { useState, forwardRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { TextField, Card, CardContent } from '@mui/material';
 
 import FormInput from '../form-input/form-input.component';
 import Button from "../button/button.component";
@@ -85,32 +86,32 @@ const SignInForm = () => {
     }
 
     return (
-        <div className="sign-up-container">
-            <h2>Already have an account?</h2>
-            <span>Sign in with your email and password</span>
-            <form onSubmit={handleSubmit}>                              
-                <FormInput
-                    label="Email"
-                    type="email" 
-                    required 
-                    onChange={handleChange} 
-                    name="email" 
-                    value={email} 
-                />
+        <div className="sign-up-container">            
+
+            <Card sx={{ minWidth: 500, bgcolor: 'white', borderRadius: "20px" }}>
+                <CardContent>
+                    <h2>Log in</h2>
+
+                    <p>
+                        Don't have an account ?
+
+                        <a className="registerLink" href="/auth"> Register </a>
+                    </p>
+
+                    <form onSubmit={handleSubmit}>
+                        <TextField onChange={handleChange} style={{ width: "100%", marginTop: "20px", marginBottom: "10px" }} label="Email adress" type="email" name="email" value={email} required variant='outlined' />                                                                   
+                        <TextField onChange={handleChange} style={{ width: "100%", marginTop: "10px", marginBottom: "20px" }} label="Password" type="password" name="password" value={password} required variant='outlined' />
                 
-                <FormInput
-                    label="Password" 
-                    type="password" 
-                    required 
-                    onChange={handleChange} 
-                    name="password" 
-                    value={password} 
-                />
-                <div className="buttons-container">            
-                    <Button type="submit">Sign In</Button>
-                    <Button type="button" buttonType='google' onClick={signInWithGoogle}>Google sign in</Button>
-                </div>
-            </form>
+
+                        <div className="buttons-container">            
+                            <Button sx={{ width: '100%' }} type="submit">Log In</Button>                    
+                        </div>
+                    </form>
+                </CardContent>                    
+            </Card>
+
+                
+            
             {
             <Snackbar open={open} autoHideDuration={6000} anchorOrigin={{ vertical: "bottom", horizontal: "right" }} message={errorMessage} onClose={handleClose}>
                 <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>

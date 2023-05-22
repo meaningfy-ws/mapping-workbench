@@ -73,7 +73,7 @@ const Navigation = () => {
     return (
       <Fragment>
         <div className="navigation">
-            <CustomLink className="logo-container" to='/'>
+            <CustomLink className="logo-container" to='/project-management/ted-rdf-mapping'>
                 <MappingWorkbench className='logo' />
             </CustomLink> 
             <div className="nav-links-container">
@@ -113,7 +113,7 @@ const Navigation = () => {
                               aria-haspopup="true"
                               aria-expanded={open ? 'true' : undefined}
                             >
-                              <Avatar sx={{ width: 32, height: 32 }}>J</Avatar>
+                              <Avatar sx={{ width: 32, height: 32, bgcolor: '#111927' }}>J</Avatar>
                             </IconButton>
                           </Tooltip>
                         </Box>

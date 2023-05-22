@@ -3,8 +3,7 @@
     flex-direction: column;
     margin-left: auto;
     margin-right: auto;
-    width: 60%;
-    margin-top: 50px;
+    width: 60%;    
 
     .edit-project-content {
         display: flex!important;
@@ -23,6 +22,7 @@
 
     .editButtonContainer {
         margin-top: 40px;
+        margin-bottom: 40px;
         display: flex;
         justify-content: center;
     }
@@ -35,6 +35,8 @@
     .project-metadata-fields {
         margin-left: auto;
         margin-right: auto;
+        margin-top: 20px;
+        
     }
 
     .submitButton {
@@ -62,8 +64,8 @@
     
     .cards-container {
         margin-top: 50px;
-        display: inline-flex;
-        justify-content: space-between;
+        display: flex;
+        flex-direction: column;
     }
 
     .project-meta-field {
@@ -85,7 +87,7 @@
     }    
 
     .cardStyle {
-        width: 45%;
+        width: 100%;
     }
 
     .drawerPaper {

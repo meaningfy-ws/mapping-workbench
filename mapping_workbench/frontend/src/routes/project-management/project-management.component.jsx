@@ -7,7 +7,7 @@ const ProjectManagement = () => {
     return (
 
         <div className="mapping-workbench-projectManagement-container">
-            <h1 className='page-title'>Project Management Test</h1>
+            <h1 className='page-title'>Project Management</h1>
             <Outlet />            
         </div>
     )

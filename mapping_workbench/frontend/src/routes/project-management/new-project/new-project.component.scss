@@ -3,13 +3,12 @@
     flex-direction: column;
     margin-left: auto;
     margin-right: auto;
-    width: 80%;
-    margin-top: 50px;
-    
-    .cards-container {
-        margin-top: 50px;
-        display: inline-flex;
-        justify-content: space-between;
+    width: 80%;   
+
+    .project-metadata-fields {
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 20px;
     }
 
     .project-meta-field {
@@ -30,6 +29,6 @@
     }
 
     .cardStyle {
-        width: 45%;
+        width: 100%;
     }
 }

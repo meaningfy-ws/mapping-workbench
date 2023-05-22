@@ -35,11 +35,11 @@ import './ted-rdf-mapping.component.scss';
         },
         {
             value: '2',
-            label: 'CSV'
+            label: 'XSD'
         }
         ];
 
-    const arrMenuOptions = ['PACKAGES', 'TEST DATA', 'RESOURCES', 'SHACL UT', 'SPARQL UT'];
+    const arrMenuOptions = ['Packages', 'Resources', 'Test Data', 'Shacl UT', 'Sparql UT'];
 
     const sourceSchema = objTest.source_schema;
     const targetOntology = objTest.target_ontology;    
@@ -53,15 +53,15 @@ const TedRdfMapping = () => {
     const handleMenuClick = (menuOption) => {
     
         switch(menuOption) {
-            case 'RESOURCES':
+            case 'Resources':
                 navigate("/project-management/resources");
                     
                 break;
-            case 'TEST DATA':
+            case 'Test Data':
                 navigate("/project-management/test-data");                
                 
                 break;
-            case 'PACKAGES':
+            case 'Packages':
                 navigate("/project-management/packages");
                 
                 break;
@@ -73,7 +73,7 @@ const TedRdfMapping = () => {
 return (
     <div className="new-project-container">
         <div className='project-metadata-fields cardStyle'>
-            <Card sx={{ minWidth: 275, bgcolor: '#E2DFD2' }}>
+            <Card sx={{ minWidth: 500, bgcolor: '#EBEFFF' }}>
                 <CardContent>
                     <Typography variant="h5" component="div">
                         <b>Project</b>
@@ -91,52 +91,53 @@ return (
                 </CardContent>                    
             </Card>
         </div>    
-        <div className='cards-container'>
-            <div className='project-source-scheme-fields cardStyle'>
-                <Card sx={{ minWidth: 275, bgcolor: '#E2DFD2' }}>
-                    <CardContent>
-                        <Typography variant="h5" component="div">
-                            <b>Source Schema</b>
-                        </Typography>
-                        <br/>
-                        <Typography variant="h6">
-                            <b>Title:</b> {sourceSchema.title}
-                        </Typography>
-                        <Typography variant="h6">
-                            <b>Description:</b> {sourceSchema.description}
-                        </Typography>
-                        <Typography variant="h6">
-                            <b>Version:</b> {sourceSchema.version}
-                        </Typography>
-                        <Typography variant="h6">
-                            <b>Type:</b> {sourceSchema.type}
-                        </Typography>
-                    </CardContent>                    
-                </Card>
-            </div>            
-            <div className='project-target-ontology-fields cardStyle'>
-                <Card sx={{ minWidth: 275, bgcolor: '#E2DFD2' }}>
-                        <CardContent>
-                            <Typography variant="h5" component="div">
-                                <b>Target Ontology</b>
-                            </Typography>
-                            <br/>
-                            <Typography variant="h6">
-                                <b>Title:</b> {targetOntology.title}
-                            </Typography>
-                            <Typography variant="h6">
-                                <b>Description:</b> {targetOntology.description}
-                            </Typography>
-                            <Typography variant="h6">
-                                <b>Version:</b> {targetOntology.version}
-                            </Typography>
-                            <Typography variant="h6">
-                                <b>URI:</b> {targetOntology.uri}
-                            </Typography>
-                        </CardContent>
-                    </Card>
-            </div>
+        
+        <div className='project-metadata-fields cardStyle'>
+            <Card sx={{ minWidth: 500, bgcolor: '#EBEFFF' }}>
+                <CardContent>
+                    <Typography variant="h5" component="div">
+                        <b>Source Schema</b>
+                    </Typography>
+                    <br/>
+                    <Typography variant="h6">
+                        <b>Title:</b> {sourceSchema.title}
+                    </Typography>
+                    <Typography variant="h6">
+                        <b>Description:</b> {sourceSchema.description}
+                    </Typography>
+                    <Typography variant="h6">
+                        <b>Version:</b> {sourceSchema.version}
+                    </Typography>
+                    <Typography variant="h6">
+                        <b>Type:</b> {sourceSchema.type}
+                    </Typography>
+                </CardContent>                    
+            </Card>
         </div>
+
+        <div className='project-metadata-fields cardStyle'>
+            <Card sx={{ minWidth: 500, bgcolor: '#EBEFFF' }}>
+                <CardContent>
+                    <Typography variant="h5" component="div">
+                        <b>Target Ontology</b>
+                    </Typography>
+                    <br/>
+                    <Typography variant="h6">
+                        <b>Title:</b> {targetOntology.title}
+                    </Typography>
+                    <Typography variant="h6">
+                        <b>Description:</b> {targetOntology.description}
+                    </Typography>
+                    <Typography variant="h6">
+                        <b>Version:</b> {targetOntology.version}
+                    </Typography>
+                    <Typography variant="h6">
+                        <b>URI:</b> {targetOntology.uri}
+                    </Typography>
+                </CardContent>
+            </Card>
+        </div>
+        
 
         <div className='editButtonContainer'>    
             <Button onClick={() => setOpen(true) }>Edit Project</Button>            
@@ -148,7 +149,7 @@ return (
                 top="10%"
                 left="10%"
                 sx={{ 
-                    bgcolor: "white",
+                    bgcolor: "#ebefff",
                     minWidth: "80%",
                     minHeight: "80%",
                     borderRadius: "20px",
@@ -289,13 +290,22 @@ return (
                         justifyContent: 'center',
                         [`& .MuiDrawer-paper`]: {
                             display: 'flex', 
-                            width: '200px',
-                            alignItems: 'center',                            
-                            backgroundColor: '#F9F6EE' 
+                            width: '279px',
+                            alignItems: 'center',
+                            color: '#9DA4AE',                            
+                            backgroundColor: '#111927' 
                         }
                     }}                    
                 >
                     <List>
+                        <Typography variant='body1' style={{
+                                                        fontSize: '18px',
+                                                        fontWeight:'700',
+                                                        borderBottom: '1px solid #9da4ae' 
+                                                    }}>
+                            Project Management
+                        </Typography>
+                        <br/>
                         {
                             arrMenuOptions.map((elm) => (
                                 <ListItemButton key={elm}>

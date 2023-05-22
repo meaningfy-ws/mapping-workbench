@@ -1,10 +1,11 @@
-
-import { Avatar, Button, Box, Drawer, List, ListItemButton, ListItemText, ListItemAvatar, Typography, ListItemIcon, ListItem } from '@mui/material';
+import { useState } from 'react';
+import { Box, Divider, Drawer, FormLabel, List, ListItemButton, ListItemText, Modal, Typography, TextField, ListItem } from '@mui/material';
+import Button from '../../../components/button/button.component';
 import { DataGrid } from '@mui/x-data-grid';
 import { useNavigate } from "react-router-dom";
 import './packages.component.scss';
 
-const arrMenuOptions = ['PACKAGES', 'TEST DATA', 'RESOURCES', 'SHACL UT', 'SPARQL UT'];
+const arrMenuOptions = ['Packages', 'Resources', 'Test Data', 'Shacl UT', 'Sparql UT'];
 
 const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
@@ -73,20 +74,22 @@ const Packages = () => {
 
     const navigate = useNavigate();
 
+    const [open, setOpen] = useState(false);
+
     const handleMenuClick = (menuOption) => {
     
         switch(menuOption) {
-            case 'RESOURCES':
+            case 'Resources':
                 navigate("/project-management/resources");
                     
                 break;
-            case 'TEST DATA':
+            case 'Test Data':
                 navigate("/project-management/test-data");                
                 
                 break;
-            case 'PACKAGES':
-                navigate("/project-management/packages");                
-                    
+            case 'Packages':
+                navigate("/project-management/packages");
+                
                 break;
             default:
                 break;                    
@@ -99,14 +102,114 @@ const Packages = () => {
             <h2 className='page-title'>Packages</h2>
 
 
-            <Box sx={{ height: 'auto', width: '75%', marginLeft: 'auto', marginRight: 'auto', backgroundColor: '#F9F6EE' }}>
+            <Box sx={{ height: 'auto', width: '75%', marginLeft: 'auto', marginRight: 'auto', marginTop: '20px', backgroundColor: '#EBEFFF', borderRadius: '20px' }}>
                 <DataGrid
+                    sx={{borderRadius: '20px'}}
                     rows={rows}
                     columns={columns}                    
                     checkboxSelection
                     disableRowSelectionOnClick
                 />
             </Box>
+
+            <div className='editButtonContainer'>    
+                <Button onClick={() => setOpen(true) }>Create New Package</Button>
+                <Button >Select packages</Button>            
+            </div>
+
+            <Modal open={open} onClose={() => setOpen(false)}>               
+            <Box 
+                position="absolute"
+                top="5%"
+                left="20%"
+                sx={{ 
+                    bgcolor: "#ebefff",
+                    minWidth: "60%",
+                    minHeight: "90%",
+                    borderRadius: "20px",
+                    padding: "60px",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between"                    
+                }}
+            >
+                <Box>
+                    <Typography sx={{
+                        marginTop: "20px",
+                        fontSize: "24px",
+                        fontWeight: "bold",
+                        display: "flex",
+                        justifyContent: "center",                                    
+                    }}
+                    >
+                        New Package
+                    </Typography>
+                </Box>
+
+                
+
+                <Box sx={{ 
+                        display: "flex",                        
+                        justifyContent:"center",                        
+                        }}>
+                        
+                    <div className='editFormContainer'> 
+                        <FormLabel sx={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    marginLeft: "20px",                                
+                                    marginBottom: "20px",
+                                    fontWeight: "bold",
+                                    fontSize: "20px"
+                                    }}
+                        >
+                            
+                        </FormLabel>   
+                        <ListItem>                                                   
+                            <TextField style={{ minWidth: "300px" }} label="ID" variant='outlined' />
+                        </ListItem>
+                        <ListItem>                                                   
+                            <TextField style={{ minWidth: "300px" }} label="Package title" variant='outlined' />
+                        </ListItem>
+                        <ListItem>                                                   
+                            <TextField style={{ minWidth: "300px" }} label="Package description" multiline maxRows={5} variant='outlined' />
+                        </ListItem>
+                        <ListItem>                                                   
+                            <TextField style={{ minWidth: "300px" }} label="Form type(s)" variant='outlined' />
+                        </ListItem>
+                        <ListItem>                                                   
+                            <TextField style={{ minWidth: "300px" }} label="Min date" variant='outlined' />
+                        </ListItem>
+                        <ListItem>                                                   
+                            <TextField style={{ minWidth: "300px" }} label="Max date" variant='outlined' />
+                        </ListItem>
+                        <ListItem >                       
+                            <TextField style={{ minWidth: "300px" }}  label="Min version" multiline maxRows={5} variant='outlined' />
+                        </ListItem>
+                        <ListItem >                       
+                            <TextField style={{ minWidth: "300px" }}  label="Max version" variant='outlined' />
+                        </ListItem>
+                    </div>           
+                    
+                </Box>               
+
+                
+                <Box sx={{ 
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent:"space-between",                        
+                        }}>
+                    <Button onClick={() => setOpen(false)}>
+                        Submit
+                    </Button>                            
+                    <Button onClick={() => setOpen(false)}>
+                        Close
+                    </Button>
+                </Box>
+
+            </Box>
+            
+        </Modal>
 
 
             <Box sx={{ overflow: 'auto', zIndex: '1', display: 'flex', justifyContent: 'center' }}>
@@ -117,16 +220,25 @@ const Packages = () => {
                         justifyContent: 'center',
                         [`& .MuiDrawer-paper`]: {
                             display: 'flex', 
-                            width: '200px',
+                            width: '279px',
                             alignItems: 'center',                            
-                            backgroundColor: '#F9F6EE' 
+                            color: '#9DA4AE',                            
+                            backgroundColor: '#111927' 
                         }
                     }}                                        
                 >
                     <List>
+                        <Typography variant='body1' style={{
+                                                        fontSize: '18px',
+                                                        fontWeight:'700',
+                                                        borderBottom: '1px solid #9da4ae' 
+                                                    }}>
+                            Project Management
+                        </Typography>
+                        <br/>
                         {
-                            arrMenuOptions.map((elm) => (
-                                <ListItemButton key={elm}>
+                            arrMenuOptions.map((elm) => (                                
+                                <ListItemButton key={elm}>                                    
                                 <ListItemText 
                                     
                                     disableTypography 

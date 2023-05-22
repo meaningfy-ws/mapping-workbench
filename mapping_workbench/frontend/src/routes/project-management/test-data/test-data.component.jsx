@@ -8,7 +8,7 @@ import NoteAddIcon from '@mui/icons-material/NoteAdd';
 
 import './test-data.component.scss';
 
-const arrMenuOptions = ['PACKAGES', 'TEST DATA', 'RESOURCES', 'SHACL UT', 'SPARQL UT'];
+const arrMenuOptions = ['Packages', 'Resources', 'Test Data', 'Shacl UT', 'Sparql UT'];
 let arrayOfUploadedFiles = ['TestData1', 'TestData2', 'TestData3', 'TestData4', 'TestData5'];
 let testData1 = ['file1.xml', 'file2.xml', 'file3.xml', 'file4.xml', 'file5.xml'];
 let testData2 = ['file1.xml', 'file2.xml'];
@@ -24,18 +24,18 @@ const TestData = () => {
     const handleMenuClick = (menuOption) => {
     
         switch(menuOption) {
-            case 'RESOURCES':
+            case 'Resources':
                 navigate("/project-management/resources");
                     
                 break;
-            case 'TEST DATA':
+            case 'Test Data':
                 navigate("/project-management/test-data");                
                 
                 break;
-            case 'PACKAGES':
-                navigate("/project-management/packages");                
-                        
-                break;    
+            case 'Packages':
+                navigate("/project-management/packages");
+                
+                break;
             default:
                 break;                    
         }
@@ -200,13 +200,22 @@ const TestData = () => {
                         justifyContent: 'center',
                         [`& .MuiDrawer-paper`]: {
                             display: 'flex', 
-                            width: '200px',
+                            width: '279px',
                             alignItems: 'center',                            
-                            backgroundColor: '#F9F6EE' 
+                            color: '#9DA4AE',                            
+                            backgroundColor: '#111927' 
                         }
                     }}                                        
                 >
                     <List>
+                        <Typography variant='body1' style={{
+                                                        fontSize: '18px',
+                                                        fontWeight:'700',
+                                                        borderBottom: '1px solid #9da4ae' 
+                                                    }}>
+                            Project Management
+                        </Typography>
+                        <br/>
                         {
                             arrMenuOptions.map((elm) => (
                                 <ListItemButton key={elm}>
