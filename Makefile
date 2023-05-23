@@ -67,6 +67,18 @@ test-e2e-frontend:
 start-backend-dev-api:
 	uvicorn mapping_workbench.backend.core.entrypoints.api.main:app --reload
 
+build-frontend-dev:
+	@ echo "Building FRONTEND"
+	@ cd ${FRONTEND_HOME} && npm run build
+
+start-frontend-dev:
+	@ echo "Starting FRONTEND"
+	@ cd ${FRONTEND_HOME} && ${PM2_SCRIPT} start npm --name ${NAME} -- run start
+
+stop-frontend-dev:
+	@ echo "Stopping FRONTEND"
+	@ cd ${FRONTEND_HOME} && ${PM2_SCRIPT} delete ${NAME}
+
 
 dev-dotenv-file:
 	@ echo "Creating DEV .env file ... "
