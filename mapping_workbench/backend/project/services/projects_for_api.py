@@ -20,9 +20,8 @@ async def update_project(id: PydanticObjectId, data: Dict, user: User):
     project: Project = await Project.get(id)
     if not project:
         raise ResourceNotFoundException()
-    project_data: Project = Project(**data)
-    project_data.on_update(user=user)
-    return await project.set(project_data.dict_for_update())
+    update_data = Project(**data).on_update(user=user).dict_for_update()
+    return await project.set(update_data)
 
 
 async def get_project(id: PydanticObjectId) -> Project:
