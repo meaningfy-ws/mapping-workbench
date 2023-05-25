@@ -1,80 +1,57 @@
 import { useState } from 'react';
-import { Box, Divider, Drawer, FormLabel, List, ListItemButton, ListItemText, Modal, Typography, TextField, ListItem } from '@mui/material';
-import Button from '../../../components/button/button.component';
-import { DataGrid } from '@mui/x-data-grid';
+import { Button, Box, Divider, Drawer, FormLabel, List, ListItemButton, ListItemText, Modal, TextField, Typography, ListItem } from '@mui/material';
 import { useNavigate } from "react-router-dom";
-import './packages.component.scss';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import FolderIcon from '@mui/icons-material/Folder';
+import DeleteIcon from '@mui/icons-material/Delete';
+import './sparqlUT.component.scss';
 
 const arrMenuOptions = ['Packages', 'Resources', 'Test Data', 'Shacl UT', 'Sparql UT'];
+let arrayOfUploadedFiles = [
+    {
+        id: 1,
+        name: 'firstDoc.csv',
+        description: 'This is the description for firstDoc.csv'
+    },
+    {
+        id: 2,
+        name: 'secondDoc.csv',
+        description: 'This is the description for secondDoc.csv'
+    },
+    {
+        id: 3,
+        name: 'thirdDoc.json',
+        description: 'This is the description for thirdDoc.json'
+    },
+    {
+        id: 4,
+        name: 'fourthDoc.csv',
+        description: 'This is the description for fourthDoc.csv'
+    },
+    {
+        id: 5,
+        name: 'fiftDoc.json',
+        description: 'This is the description for fiftDoc.json'
+    },
+    {
+        id: 6,
+        name: 'sixtDoc.csv',
+        description: 'This is the description for sixtDoc.csv'
+    },
+    {
+        id: 7,
+        name: 'seventhDoc.csv',
+        description: 'This is the description for firstDoc.csv'
+    }   
+];
 
-const columns = [
-    { field: 'id', headerName: 'ID', width: 90 },
-    {
-      field: 'packageTitle',
-      headerName: 'Package title',
-      width: 150,
-      editable: true,
-    },
-    {
-      field: 'packageDescription',
-      headerName: 'Package description',
-      width: 150,
-      editable: true,
-    },
-    {
-      field: 'formType',
-      headerName: 'Form type(s)',
-      type: 'number',
-      width: 150,
-      editable: true,
-    },
-    {
-      field: 'minDate',
-      headerName: 'Min date',
-      type: 'date',            
-      width: 160,
-      valueGetter: ({ value }) => value && new Date(value),
-      editable: true,      
-    },
-    {
-        field: 'maxDate',
-        headerName: 'Max date',
-        type: 'date',            
-        width: 160,
-        valueGetter: ({ value }) => value && new Date(value),
-        editable: true,      
-    },
-    {
-        field: 'minVersion',
-        headerName: 'Min version',
-        width: 150,
-        editable: true,
-    },
-    {
-        field: 'maxVersion',
-        headerName: 'Max version',
-        width: 150,
-        editable: true,
-    },
-  ];
-  
-  const rows = [
-    { id: 1, packageDescription: 'Des03', packageTitle: 'F03', formType: 35, minDate: 19811125, maxDate: 30041999, minVersion: 'R2.08.55', maxVersion: 'R2.09.66' },
-    { id: 2, packageDescription: 'Des02', packageTitle: 'F02', formType: 42, minDate: 25041990, maxDate: 30041999, minVersion: 'R2.08.55', maxVersion: 'R2.09.66' },
-    { id: 3, packageDescription: 'Des01', packageTitle: 'F01', formType: 45, minDate: 25041990, maxDate: 30041999, minVersion: 'R2.08.55', maxVersion: 'R2.09.66' },
-    { id: 4, packageDescription: 'Des04', packageTitle: 'F04', formType: 16, minDate: 25041990, maxDate: 30041999, minVersion: 'R2.08.55', maxVersion: 'R2.09.66' },
-    { id: 5, packageDescription: 'Des05', packageTitle: 'F05', formType: 11, minDate: 25041990, maxDate: 30041999, minVersion: 'R2.08.55', maxVersion: 'R2.09.66' },
-    { id: 6, packageDescription: 'Des06', packageTitle: 'F06', formType: 150, minDate: 25041990, maxDate: 30041999, minVersion: 'R2.08.55', maxVersion: 'R2.09.66' },
-    { id: 7, packageDescription: 'Des07', packageTitle: 'F07', formType: 44, minDate: 25041990, maxDate: 30041999, minVersion: 'R2.08.55', maxVersion: 'R2.09.66' },
-    { id: 8, packageDescription: 'Des08', packageTitle: 'F08', formType: 36, minDate: 25041990, maxDate: 30041999, minVersion: 'R2.08.55', maxVersion: 'R2.09.66' },
-    { id: 9, packageDescription: 'Des09', packageTitle: 'F09', formType: 65, minDate: 25041990, maxDate: 30041999, minVersion: 'R2.08.55', maxVersion: 'R2.09.66' },
-  ];
 
-const Packages = () => {    
 
-    const navigate = useNavigate();
-
+const SparqlUT = () => {  
+    
+    //const [file, setFile] = useState();
     const [open, setOpen] = useState(false);
+    const navigate = useNavigate();  
 
     const handleMenuClick = (menuOption) => {
     
@@ -88,7 +65,7 @@ const Packages = () => {
                 
                 break;
             case 'Packages':
-                navigate("/project-management/packages"); 
+                navigate("/project-management/packages");
                 
                 break;
             case 'Shacl UT':
@@ -104,36 +81,108 @@ const Packages = () => {
         }
     }
 
+    const handleDocumentClick = (listElem) => {
+        console.log("List Element: ", listElem);
+        setOpen(true);
+    }
+
+    const handleDeleteClick = (listElem) => {
+        console.log("List Element for deletion:", listElem );       
+    }
+
+    const handleFileChange = (e) => {
+        if (e.target.files) {
+            console.log("FILE: ", e.target.files);
+          //setFile(e.target.files[0]);
+        }
+    }
+
+    // const handleUploadClick = () => {
+    //     if (!file) {
+    //       return;
+    //     }    
+        
+    //     fetch('https://httpbin.org/post', {
+    //       method: 'POST',
+    //       body: file,
+    //       // Set headers manually for single file upload
+    //       headers: {
+    //         'content-type': file.type,
+    //         'content-length': `${file.size}`, // Headers need to be a string
+    //       },
+    //     })
+    //       .then((res) => res.json())
+    //       .then((data) => console.log(data))
+    //       .catch((err) => console.error(err));
+    // }
+
     return (
 
-        <div className="mapping-workbench-projectManagement-packages">
-            <h2 className='page-title'>Packages</h2>
+        <div className="mapping-workbench-resources">
 
+            <h2 className='page-title'>Sparql UT</h2>
 
-            <Box sx={{ height: 'auto', width: '75%', marginLeft: 'auto', marginRight: 'auto', marginTop: '20px', backgroundColor: '#EBEFFF', borderRadius: '20px' }}>
-                <DataGrid
-                    sx={{borderRadius: '20px'}}
-                    rows={rows}
-                    columns={columns}                    
-                    checkboxSelection
-                    disableRowSelectionOnClick
+            <Box sx={{ 
+                    display: "flex",
+                    flexDirection: "column",
+                    border: "1px solid rgba(0, 0, 0, 0.12)",
+                    borderRadius: "20px",
+                    backgroundColor: "#ebefff",
+                    padding: "20px",                    
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                    minWidth: "50%",
+                    marginBottom: "50px" 
+                    }}
+            >
+                <List>
+                    {arrayOfUploadedFiles.map((listElem) => (
+                        <ListItem sx={{ border: "1px solid #9da4ae", borderRadius: '20px', marginTop: '10px'}} key={listElem.id}>
+                            <ListItemButton sx={{ display: "flex", justifyContent: "flex-start", flexDirection: "column" }} onClick={(e)=>handleDocumentClick(listElem)} >                                
+                                <ListItemText primary={listElem.name} /> 
+                                <ListItemText secondary={listElem.description} />                               
+                            </ListItemButton>                               
+                            
+                            <ListItemButton sx={{ display: "flex", justifyContent: "flex-end" }} onClick={(e) => handleDeleteClick(listElem)}>                                
+                                <DeleteIcon />                                
+                            </ListItemButton>
+                            <Divider/>                            
+                        </ListItem>
+                        
+                    ))}                    
+                </List>
+
+                
+                <input
+                    accept=".csv, .json"                
+                    style={{ display: 'none' }}
+                    id="raised-button-file"
+                    multiple
+                    type="file"
+                    onChange={handleFileChange}
                 />
+                <label htmlFor="raised-button-file">                    
+                    <Button 
+                        sx={{ display: "flex" }}
+                        variant="contained" 
+                        component="span"                       
+                    >
+                        <UploadFileIcon sx={{ marginRight: "10px" }} />
+                        Upload resource file
+                    </Button>
+                </label>
+            
             </Box>
-
-            <div className='editButtonContainer'>    
-                <Button onClick={() => setOpen(true) }>Create New Package</Button>
-                <Button >Select packages</Button>            
-            </div>
 
             <Modal open={open} onClose={() => setOpen(false)}>               
             <Box 
                 position="absolute"
-                top="5%"
-                left="20%"
+                top="25%"
+                left="30%"
                 sx={{ 
                     bgcolor: "#ebefff",
-                    minWidth: "60%",
-                    minHeight: "90%",
+                    minWidth: "40%",
+                    minHeight: "50%",
                     borderRadius: "20px",
                     padding: "60px",
                     display: "flex",
@@ -150,7 +199,7 @@ const Packages = () => {
                         justifyContent: "center",                                    
                     }}
                     >
-                        New Package
+                        Resource Details
                     </Typography>
                 </Box>
 
@@ -174,29 +223,11 @@ const Packages = () => {
                             
                         </FormLabel>   
                         <ListItem>                                                   
-                            <TextField style={{ minWidth: "300px" }} label="ID" variant='outlined' />
+                            <TextField style={{ minWidth: "300px" }} label="Resource name" variant='outlined' />
                         </ListItem>
                         <ListItem>                                                   
-                            <TextField style={{ minWidth: "300px" }} label="Package title" variant='outlined' />
-                        </ListItem>
-                        <ListItem>                                                   
-                            <TextField style={{ minWidth: "300px" }} label="Package description" multiline maxRows={5} variant='outlined' />
-                        </ListItem>
-                        <ListItem>                                                   
-                            <TextField style={{ minWidth: "300px" }} label="Form type(s)" variant='outlined' />
-                        </ListItem>
-                        <ListItem>                                                   
-                            <TextField style={{ minWidth: "300px" }} label="Min date" variant='outlined' />
-                        </ListItem>
-                        <ListItem>                                                   
-                            <TextField style={{ minWidth: "300px" }} label="Max date" variant='outlined' />
-                        </ListItem>
-                        <ListItem >                       
-                            <TextField style={{ minWidth: "300px" }}  label="Min version" multiline maxRows={5} variant='outlined' />
-                        </ListItem>
-                        <ListItem >                       
-                            <TextField style={{ minWidth: "300px" }}  label="Max version" variant='outlined' />
-                        </ListItem>
+                            <TextField style={{ minWidth: "300px" }} label="Resource description" multiline maxRows={5} variant='outlined' />
+                        </ListItem>                        
                     </div>           
                     
                 </Box>               
@@ -207,18 +238,17 @@ const Packages = () => {
                         flexDirection: "row",
                         justifyContent:"space-between",                        
                         }}>
-                    <Button onClick={() => setOpen(false)}>
+                    <Button className='button-container' onClick={() => setOpen(false)}>
                         Submit
                     </Button>                            
-                    <Button onClick={() => setOpen(false)}>
+                    <Button className='button-container' onClick={() => setOpen(false)}>
                         Close
                     </Button>
                 </Box>
 
             </Box>
             
-        </Modal>
-
+        </Modal>           
 
             <Box sx={{ overflow: 'auto', zIndex: '1', display: 'flex', justifyContent: 'center' }}>
                 <Drawer
@@ -245,8 +275,8 @@ const Packages = () => {
                         </Typography>
                         <br/>
                         {
-                            arrMenuOptions.map((elm) => (                                
-                                <ListItemButton key={elm}>                                    
+                            arrMenuOptions.map((elm) => (
+                                <ListItemButton key={elm}>
                                 <ListItemText 
                                     
                                     disableTypography 
@@ -272,4 +302,4 @@ const Packages = () => {
     )
 }
 
-export default Packages;
+export default SparqlUT;

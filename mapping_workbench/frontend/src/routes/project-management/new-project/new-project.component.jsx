@@ -45,6 +45,14 @@ const NewProject = () => {
                 navigate("/project-management/packages");
                 
                 break;
+            case 'Shacl UT':
+                    navigate("/project-management/shacl");
+                    
+                    break;
+            case 'Sparql UT':
+                navigate("/project-management/sparql");
+                
+                break;    
             default:
                 break;                    
         }
