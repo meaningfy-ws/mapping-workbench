@@ -120,7 +120,7 @@ const ShaclUT = () => {
 
         <div className="mapping-workbench-resources">
 
-            <h2 className='page-title'>Shacl UT aaa</h2>
+            <h2 className='page-title'>Shacl UT</h2>
 
             <Box sx={{ 
                     display: "flex",
