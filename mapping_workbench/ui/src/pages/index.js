@@ -1,6 +1,6 @@
 import { Seo } from 'src/components/seo';
 import { usePageView } from 'src/hooks/use-page-view';
-import { Layout as MarketingLayout } from 'src/layouts/marketing';
+import { Layout as AppLayout } from 'src/layouts/app';
 import { HomeCta } from 'src/sections/home/home-cta';
 import { HomeFaqs } from 'src/sections/home/home-faqs';
 import { HomeFeatures } from 'src/sections/home/home-features';
@@ -27,9 +27,9 @@ const Page = () => {
 };
 
 Page.getLayout = (page) => (
-  <MarketingLayout>
+  <AppLayout>
     {page}
-  </MarketingLayout>
+  </AppLayout>
 );
 
-export default withAuthGuard(Page);
+export default Page;

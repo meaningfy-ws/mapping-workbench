@@ -5,7 +5,7 @@ import axios from 'axios';
 import {users} from './data';
 
 const STORAGE_KEY = 'users';
-const API_HOST = process.env.API_HOST;
+const API_ADDRESS = process.env.API_ADDRESS;
 
 // NOTE: We use sessionStorage since memory storage is lost after page reload.
 //  This should be replaced with a server call that returns DB persisted data.
@@ -41,20 +41,18 @@ class AuthApi {
 
         await wait(500);
 
-        const params = new URLSearchParams();
-        params.append('username', username);
-        params.append('password', password);
-
         const config = {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         }
         return axios
-            .post(`${API_HOST}/api/v1/auth/jwt/login`, params, config)
+            .post(`${API_ADDRESS}/auth/jwt/login`, {
+                "username": username,
+                "password": password
+            }, config)
             .then(function (response) {
                 let accessToken = response.data.access_token;
-                console.log("K0 :: ", accessToken);
                 return {accessToken};
             })
             .catch(function (error) {
@@ -133,38 +131,53 @@ class AuthApi {
     me(request) {
         const {accessToken} = request;
 
-        return new Promise((resolve, reject) => {
-            try {
-                // Decode access token
-                const decodedToken = decode(accessToken);
-
-                // Merge static users (data file) with persisted users (browser storage)
-                const mergedUsers = [
-                    ...users,
-                    ...getPersistedUsers()
-                ];
-
-                // Find the user
-                const {userId} = decodedToken;
-                const user = mergedUsers.find((user) => user.id === userId);
-
-                if (!user) {
-                    reject(new Error('Invalid authorization token'));
-                    return;
-                }
-
-                resolve({
-                    id: user.id,
-                    avatar: user.avatar,
-                    username: user.username,
-                    name: user.name,
-                    plan: user.plan
-                });
-            } catch (err) {
-                console.error('[Auth Api]: ', err);
-                reject(new Error('Internal server error'));
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
             }
-        });
+        }
+        return axios
+            .get(`${API_ADDRESS}/users/me`, config)
+            .then(function (response) {
+                console.log("K :: ", response);
+                return response.data;
+            })
+            .catch(function (error) {
+                console.log(error, "error");
+            });
+
+        // return new Promise((resolve, reject) => {
+        //     try {
+        //         // Decode access token
+        //         const decodedToken = decode(accessToken);
+        //
+        //         // Merge static users (data file) with persisted users (browser storage)
+        //         const mergedUsers = [
+        //             ...users,
+        //             ...getPersistedUsers()
+        //         ];
+        //
+        //         // Find the user
+        //         const {userId} = decodedToken;
+        //         const user = mergedUsers.find((user) => user.id === userId);
+        //
+        //         if (!user) {
+        //             reject(new Error('Invalid authorization token'));
+        //             return;
+        //         }
+        //
+        //         resolve({
+        //             id: user.id,
+        //             avatar: user.avatar,
+        //             username: user.username,
+        //             name: user.name,
+        //             plan: user.plan
+        //         });
+        //     } catch (err) {
+        //         console.error('[Auth Api]: ', err);
+        //         reject(new Error('Internal server error'));
+        //     }
+        // });
     }
 }
 
