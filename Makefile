@@ -4,6 +4,8 @@ ENV_FILE := .env
 
 NAME := mapping_workbench
 BACKEND_INFRA_FOLDER := ${PROJECT_PATH}/${NAME}/backend
+UI_HOME := ${NAME}/ui
+UI_ENV_FILE := ${UI_HOME}/${ENV_FILE}
 FRONTEND_HOME := ${NAME}/frontend
 FRONTEND_INFRA_FOLDER := ${PROJECT_PATH}/${FRONTEND_HOME}
 FRONTEND_ENV_FILE := ${FRONTEND_HOME}/${ENV_FILE}
@@ -36,6 +38,9 @@ install-dev-backend:
 	@ echo "Installing dev BACKEND requirements"
 	@ pip install --upgrade pip
 	@ pip install --no-cache-dir -r requirements.backend.dev.txt
+
+install-ui-dev:
+	@ cd ${UI_HOME} && make install-${ENVIRONMENT}-frontend
 
 install-all-backend: install-backend install-dev-backend
 
@@ -78,6 +83,14 @@ start-frontend-dev:
 stop-frontend-dev:
 	@ echo "Stopping FRONTEND"
 	@ cd ${FRONTEND_HOME} && ${PM2_SCRIPT} delete ${NAME}
+
+start-ui-dev:
+	@ echo "Starting UI"
+	@ cd ${UI_HOME} && ${PM2_SCRIPT} start npm --name ${NAME}-ui -- run dev
+
+stop-ui-dev:
+	@ echo "Stopping UI"
+	@ cd ${UI_HOME} && ${PM2_SCRIPT} delete ${NAME}-ui
 
 
 dev-dotenv-file:
