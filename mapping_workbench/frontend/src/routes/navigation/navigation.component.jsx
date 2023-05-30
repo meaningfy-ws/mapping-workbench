@@ -1,7 +1,7 @@
 import { Fragment, useContext, useState } from "react";
 import { Outlet, Link, useNavigate } from "react-router-dom";
-import { Avatar, Box, Divider, FormControl, IconButton, InputLabel, ListItemIcon, Menu, MenuItem, Select,Tooltip, Typography } from '@mui/material';
-import { PersonAdd, Settings, Logout } from '@mui/icons-material';
+import { Avatar, Box, Divider, FormControl, IconButton, InputLabel, ListItemIcon, Menu, MenuItem, Select,Tooltip } from '@mui/material';
+import { Logout } from '@mui/icons-material';
 import { ReactComponent as MappingWorkbench } from '../../assets/mapping-workbench-logo.svg';
 import { UserContext } from "../../contexts/user.context";
 
@@ -54,13 +54,7 @@ const Navigation = () => {
         switch (e.target.value) {
             case 'ted-rdf-mapping':
                 navigate("/project-management/ted-rdf-mapping");
-                break;
-            case 'rdf-fingerprinter-ws':
-                navigate("/project-management/rdf-fingerprinter-ws");
-                break;
-            case 'mapping-workbench':
-                navigate("/project-management/mapping-workbench");
-                break;
+                break;            
             case 'CREATE NEW PROJECT':
                 navigate("/project-management/new-project");
                 //console.log('CREATE NEW PROJECT');

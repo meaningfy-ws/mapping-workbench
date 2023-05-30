@@ -1,11 +1,19 @@
 import { useState } from 'react';
-import { Box, Divider, Drawer, FormLabel, List, ListItemButton, ListItemText, Modal, Typography, TextField, ListItem } from '@mui/material';
+import { Box, Drawer, FormLabel, List, ListItemButton, ListItemIcon, ListItemText, Modal, Typography, TextField, ListItem } from '@mui/material';
+// import CircularProgress from '@mui/material/CircularProgress';
+import FlareIcon from '@mui/icons-material/Flare';
+import BiotechIcon from '@mui/icons-material/Biotech';
+import HubIcon from '@mui/icons-material/Hub';
+import ContentCutIcon from '@mui/icons-material/ContentCut';
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+import HiveIcon from '@mui/icons-material/Hive';
+
 import Button from '../../../components/button/button.component';
 import { DataGrid } from '@mui/x-data-grid';
 import { useNavigate } from "react-router-dom";
 import './packages.component.scss';
 
-const arrMenuOptions = ['Packages', 'Resources', 'Test Data', 'Shacl UT', 'Sparql UT'];
+//const arrMenuOptions = ['Packages', 'Resources', 'Test Data', 'Shacl UT', 'Sparql UT'];
 
 const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
@@ -88,7 +96,7 @@ const Packages = () => {
                 
                 break;
             case 'Packages':
-                navigate("/project-management/packages"); 
+                navigate("/project-management/packages");
                 
                 break;
             case 'Shacl UT':
@@ -98,6 +106,10 @@ const Packages = () => {
             case 'Sparql UT':
                 navigate("/project-management/sparql");
                 
+                break;
+            case 'Target Ontology':
+                navigate("/project-management/target-ontology");
+                    
                 break;    
             default:
                 break;                    
@@ -108,6 +120,9 @@ const Packages = () => {
 
         <div className="mapping-workbench-projectManagement-packages">
             <h2 className='page-title'>Packages</h2>
+            {/* <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                <CircularProgress />
+            </Box> */}
 
 
             <Box sx={{ height: 'auto', width: '75%', marginLeft: 'auto', marginRight: 'auto', marginTop: '20px', backgroundColor: '#EBEFFF', borderRadius: '20px' }}>
@@ -220,8 +235,8 @@ const Packages = () => {
         </Modal>
 
 
-            <Box sx={{ overflow: 'auto', zIndex: '1', display: 'flex', justifyContent: 'center' }}>
-                <Drawer
+        <Box sx={{ overflow: 'auto', zIndex: '1' }}>            
+            <Drawer
                     anchor='left' 
                     variant='permanent'
                     sx={{ 
@@ -233,37 +248,67 @@ const Packages = () => {
                             color: '#9DA4AE',                            
                             backgroundColor: '#111927' 
                         }
-                    }}                                        
-                >
+                    }}                    
+                >                    
                     <List>
-                        <Typography variant='body1' style={{
-                                                        fontSize: '18px',
-                                                        fontWeight:'700',
-                                                        borderBottom: '1px solid #9da4ae' 
-                                                    }}>
+                        <Typography variant='body1' style={{fontSize: '18px', fontWeight:'700', borderBottom: '1px solid #9da4ae' }}>
                             Project Management
                         </Typography>
                         <br/>
-                        {
-                            arrMenuOptions.map((elm) => (                                
-                                <ListItemButton key={elm}>                                    
-                                <ListItemText 
-                                    
-                                    disableTypography 
-                                    primary={<Typography 
-                                                variant="body1" 
-                                                style={{
-                                                        fontSize: '18px',
-                                                        fontWeight:'700' 
-                                                    }}
-                                            >
-                                                {elm}
-                                            </Typography>} onClick={(e) => handleMenuClick(elm)} />
-                                
-        
-                                </ListItemButton>
-                            ))
-                        }
+                        <ListItemButton onClick={(e) => handleMenuClick('Packages')}>                                    
+                            <ListItemIcon>
+                                <FolderOpenIcon style={{ color: "#9da4ae" }} />                                
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px', fontWeight:'700' }}>
+                                    Packages
+                                </Typography>}/>
+                        </ListItemButton>
+                        <ListItemButton onClick={(e) => handleMenuClick('Resources')}>                                    
+                            <ListItemIcon>                                
+                                <HubIcon style={{ color: "#9da4ae" }} />                                
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700' }}>
+                                    Resources
+                                </Typography>}/>       
+                        </ListItemButton>
+                        <ListItemButton onClick={(e) => handleMenuClick('Target Ontology')}>                                    
+                            <ListItemIcon>                                
+                                <HiveIcon style={{ color: "#9da4ae" }} />                                
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700' }}>
+                                    Target Ontology
+                                </Typography>}/>       
+                        </ListItemButton>
+                        <ListItemButton onClick={(e) => handleMenuClick('Test Data')}>                                    
+                            <ListItemIcon>                               
+                                <BiotechIcon style={{ color: "#9da4ae" }} />                                
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700'}}>
+                                    Test Data
+                                </Typography>}/>
+                        </ListItemButton>
+                        <ListItemButton onClick={(e) => handleMenuClick('Shacl UT')}>                                    
+                            <ListItemIcon>                                
+                                <ContentCutIcon style={{ color: "#9da4ae" }} />                                
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700' }}>
+                                    Shacl UT
+                                </Typography>}/>
+                        </ListItemButton>
+                        <ListItemButton onClick={(e) => handleMenuClick('Sparql UT')}>                                    
+                            <ListItemIcon>                                
+                                <FlareIcon style={{ color: "#9da4ae" }}/>
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700'}}>
+                                    Sparql UT
+                                </Typography>}/>
+                        </ListItemButton>                            
                     </List>
                 </Drawer>
             </Box>

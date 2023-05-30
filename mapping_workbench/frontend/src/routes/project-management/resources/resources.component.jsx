@@ -1,12 +1,32 @@
 import { useState } from 'react';
-import { Button, Box, Divider, Drawer, FormLabel, List, ListItemButton, ListItemText, Modal, TextField, Typography, ListItem } from '@mui/material';
+import { Button, Box, Chip, Divider, Drawer, FormLabel, FormControl, InputLabel, List, ListItemButton, ListItemIcon, ListItemText, Modal, MenuItem, OutlinedInput, Select, TextField, Typography, ListItem } from '@mui/material';
+
+import { useTheme } from '@mui/material/styles';
+
+import FlareIcon from '@mui/icons-material/Flare';
+import BiotechIcon from '@mui/icons-material/Biotech';
+import HubIcon from '@mui/icons-material/Hub';
+import ContentCutIcon from '@mui/icons-material/ContentCut';
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+import HiveIcon from '@mui/icons-material/Hive';
 import { useNavigate } from "react-router-dom";
 import UploadFileIcon from '@mui/icons-material/UploadFile';
-import FolderIcon from '@mui/icons-material/Folder';
 import DeleteIcon from '@mui/icons-material/Delete';
 import './resources.component.scss';
 
-const arrMenuOptions = ['Packages', 'Resources', 'Test Data', 'Shacl UT', 'Sparql UT'];
+//const arrMenuOptions = ['Packages', 'Resources', 'Test Data', 'Shacl UT', 'Sparql UT'];
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,      
+    },
+  },
+};
+
 let arrayOfUploadedFiles = [
     {
         id: 1,
@@ -22,64 +42,71 @@ let arrayOfUploadedFiles = [
         id: 3,
         name: 'thirdDoc.json',
         description: 'This is the description for thirdDoc.json'
-    },
-    {
-        id: 4,
-        name: 'fourthDoc.csv',
-        description: 'This is the description for fourthDoc.csv'
-    },
-    {
-        id: 5,
-        name: 'fiftDoc.json',
-        description: 'This is the description for fiftDoc.json'
-    },
-    {
-        id: 6,
-        name: 'sixtDoc.csv',
-        description: 'This is the description for sixtDoc.csv'
-    },
-    {
-        id: 7,
-        name: 'seventhDoc.csv',
-        description: 'This is the description for firstDoc.csv'
-    }   
+    },       
 ];
 
+const testCollections = [ 'Collection1', 'Collection2', 'Collection3', 'Collection4', 'Collection5', 'Collection6', 'Collection7', 'Collection8', 'Collection9', 'Collection10' ];
 
+function getStyles(name, personName, theme) {
+    return {
+      fontWeight:
+        personName.indexOf(name) === -1
+          ? theme.typography.fontWeightRegular
+          : theme.typography.fontWeightMedium,
+    };
+  }
 
 const Resources = () => {  
     
     //const [file, setFile] = useState();
     const [open, setOpen] = useState(false);
-    const navigate = useNavigate();  
+    const navigate = useNavigate();
+    const theme = useTheme();
+  const [personName, setPersonName] = useState([]);
 
-    const handleMenuClick = (menuOption) => {
+  const handleChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setPersonName(
+      // On autofill we get a stringified value.
+      typeof value === 'string' ? value.split(',') : value,
+    );
+
     
-        switch(menuOption) {
-            case 'Resources':
-                navigate("/project-management/resources");
-                    
-                break;
-            case 'Test Data':
-                navigate("/project-management/test-data");                
+  };  
+
+  const handleMenuClick = (menuOption) => {
+    
+    switch(menuOption) {
+        case 'Resources':
+            navigate("/project-management/resources");
                 
-                break;
-            case 'Packages':
-                navigate("/project-management/packages");
+            break;
+        case 'Test Data':
+            navigate("/project-management/test-data");                
+            
+            break;
+        case 'Packages':
+            navigate("/project-management/packages");
+            
+            break;
+        case 'Shacl UT':
+            navigate("/project-management/shacl");
                 
-                break;
-            case 'Shacl UT':
-                navigate("/project-management/shacl");
-                    
-                break;
-            case 'Sparql UT':
-                navigate("/project-management/sparql");
+            break;
+        case 'Sparql UT':
+            navigate("/project-management/sparql");
+            
+            break;
+        case 'Target Ontology':
+            navigate("/project-management/target-ontology");
                 
-                break;    
-            default:
-                break;                    
-        }
+            break;    
+        default:
+            break;                    
     }
+ }
 
     const handleDocumentClick = (listElem) => {
         console.log("List Element: ", listElem);
@@ -121,6 +148,36 @@ const Resources = () => {
         <div className="mapping-workbench-resources">
 
             <h2 className='page-title'>Resources</h2>
+
+            <FormControl sx={{ m: 1, width: 350, marginLeft: 'auto', marginRight: 'auto', marginTop: '10px', marginBottom: '40px' }}>
+                <InputLabel id="demo-multiple-chip-label">Collections</InputLabel>
+                <Select
+                    labelId="demo-multiple-chip-label"
+                    id="demo-multiple-chip"
+                    multiple
+                    value={personName}
+                    onChange={handleChange}
+                    input={<OutlinedInput id="select-multiple-chip" label="Collection" />}
+                    renderValue={(selected) => (
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                            {selected.map((value) => (
+                                <Chip key={value} label={value} />
+                            ))}
+                        </Box>
+                    )}
+                MenuProps={MenuProps}
+                >
+          {testCollections.map((name) => (
+            <MenuItem
+              key={name}
+              value={name}
+              style={getStyles(name, personName, theme)}
+            >
+              {name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
 
             <Box sx={{ 
                     display: "flex",
@@ -250,8 +307,8 @@ const Resources = () => {
             
         </Modal>           
 
-            <Box sx={{ overflow: 'auto', zIndex: '1', display: 'flex', justifyContent: 'center' }}>
-                <Drawer
+        <Box sx={{ overflow: 'auto', zIndex: '1' }}>
+            <Drawer
                     anchor='left' 
                     variant='permanent'
                     sx={{ 
@@ -263,37 +320,67 @@ const Resources = () => {
                             color: '#9DA4AE',                            
                             backgroundColor: '#111927' 
                         }
-                    }}                                        
-                >
+                    }}                    
+                >                    
                     <List>
-                        <Typography variant='body1' style={{
-                                                        fontSize: '18px',
-                                                        fontWeight:'700',
-                                                        borderBottom: '1px solid #9da4ae' 
-                                                    }}>
+                        <Typography variant='body1' style={{fontSize: '18px', fontWeight:'700', borderBottom: '1px solid #9da4ae' }}>
                             Project Management
                         </Typography>
                         <br/>
-                        {
-                            arrMenuOptions.map((elm) => (
-                                <ListItemButton key={elm}>
-                                <ListItemText 
-                                    
-                                    disableTypography 
-                                    primary={<Typography 
-                                                variant="body1" 
-                                                style={{
-                                                        fontSize: '18px',
-                                                        fontWeight:'700' 
-                                                    }}
-                                            >
-                                                {elm}
-                                            </Typography>} onClick={(e) => handleMenuClick(elm)} />
-                                
-        
-                                </ListItemButton>
-                            ))
-                        }
+                        <ListItemButton onClick={(e) => handleMenuClick('Packages')}>                                    
+                            <ListItemIcon>
+                                <FolderOpenIcon style={{ color: "#9da4ae" }} />                                
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px', fontWeight:'700' }}>
+                                    Packages
+                                </Typography>}/>
+                        </ListItemButton>
+                        <ListItemButton onClick={(e) => handleMenuClick('Resources')}>                                    
+                            <ListItemIcon>                                
+                                <HubIcon style={{ color: "#9da4ae" }} />                                
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700' }}>
+                                    Resources
+                                </Typography>}/>       
+                        </ListItemButton>
+                        <ListItemButton onClick={(e) => handleMenuClick('Target Ontology')}>                                    
+                            <ListItemIcon>                                
+                                <HiveIcon style={{ color: "#9da4ae" }} />                                
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700' }}>
+                                    Target Ontology
+                                </Typography>}/>       
+                        </ListItemButton>
+                        <ListItemButton onClick={(e) => handleMenuClick('Test Data')}>                                    
+                            <ListItemIcon>                               
+                                <BiotechIcon style={{ color: "#9da4ae" }} />                                
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700'}}>
+                                    Test Data
+                                </Typography>}/>
+                        </ListItemButton>
+                        <ListItemButton onClick={(e) => handleMenuClick('Shacl UT')}>                                    
+                            <ListItemIcon>                                
+                                <ContentCutIcon style={{ color: "#9da4ae" }} />                                
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700' }}>
+                                    Shacl UT
+                                </Typography>}/>
+                        </ListItemButton>
+                        <ListItemButton onClick={(e) => handleMenuClick('Sparql UT')}>                                    
+                            <ListItemIcon>                                
+                                <FlareIcon style={{ color: "#9da4ae" }}/>
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700'}}>
+                                    Sparql UT
+                                </Typography>}/>
+                        </ListItemButton>                            
                     </List>
                 </Drawer>
             </Box>

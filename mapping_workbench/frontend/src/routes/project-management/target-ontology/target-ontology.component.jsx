@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { Button, Box, Chip, Divider, Drawer, FormLabel, FormControl, InputLabel, List, ListItemButton, ListItemIcon, ListItemText, Modal, MenuItem, OutlinedInput, Select, TextField, Typography, ListItem } from '@mui/material';
+
 import { useTheme } from '@mui/material/styles';
-import { Button, Box, Chip, Divider, Drawer, FormLabel, FormControl, InputLabel, List, ListItemButton, ListItemIcon, ListItemText, MenuItem, Modal, OutlinedInput, Select, TextField, Typography, ListItem } from '@mui/material';
+
 import FlareIcon from '@mui/icons-material/Flare';
 import BiotechIcon from '@mui/icons-material/Biotech';
 import HubIcon from '@mui/icons-material/Hub';
@@ -10,8 +12,9 @@ import HiveIcon from '@mui/icons-material/Hive';
 import { useNavigate } from "react-router-dom";
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import DeleteIcon from '@mui/icons-material/Delete';
-import './sparqlUT.component.scss';
+import './target-ontology.component.scss';
 
+//const arrMenuOptions = ['Packages', 'Resources', 'Test Data', 'Shacl UT', 'Sparql UT'];
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -24,29 +27,12 @@ const MenuProps = {
   },
 };
 
-//const arrMenuOptions = ['Packages', 'Resources', 'Test Data', 'Shacl UT', 'Sparql UT'];
-
 let arrayOfUploadedFiles = [
     {
         id: 1,
         name: 'firstDoc.csv',
         description: 'This is the description for firstDoc.csv'
-    },
-    {
-        id: 2,
-        name: 'secondDoc.csv',
-        description: 'This is the description for secondDoc.csv'
-    },
-    {
-        id: 3,
-        name: 'thirdDoc.json',
-        description: 'This is the description for thirdDoc.json'
-    },
-    {
-        id: 4,
-        name: 'fourthDoc.csv',
-        description: 'This is the description for fourthDoc.csv'
-    }       
+    },           
 ];
 
 const testCollections = [ 'Collection1', 'Collection2', 'Collection3', 'Collection4', 'Collection5', 'Collection6', 'Collection7', 'Collection8', 'Collection9', 'Collection10' ];
@@ -60,25 +46,25 @@ function getStyles(name, personName, theme) {
     };
   }
 
-const TestData = () => {  
+const TargetOntology = () => {  
     
     //const [file, setFile] = useState();
     const [open, setOpen] = useState(false);
     const navigate = useNavigate();
     const theme = useTheme();
-    const [personName, setPersonName] = useState([]);
+  const [personName, setPersonName] = useState([]);
 
-    const handleChange = (event) => {
-        const {
-          target: { value },
-        } = event;
-        setPersonName(
-          // On autofill we get a stringified value.
-          typeof value === 'string' ? value.split(',') : value,
-        );
+  const handleChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setPersonName(
+      // On autofill we get a stringified value.
+      typeof value === 'string' ? value.split(',') : value,
+    );
+
     
-        
-      };
+  };  
 
     const handleMenuClick = (menuOption) => {
     
@@ -151,7 +137,7 @@ const TestData = () => {
 
         <div className="mapping-workbench-resources">
 
-            <h2 className='page-title'>Sparql UT</h2>
+            <h2 className='page-title'>Target Ontology</h2>
 
             <FormControl sx={{ m: 1, width: 350, marginLeft: 'auto', marginRight: 'auto', marginTop: '10px', marginBottom: '40px' }}>
                 <InputLabel id="demo-multiple-chip-label">Collections</InputLabel>
@@ -229,7 +215,7 @@ const TestData = () => {
                         component="span"                       
                     >
                         <UploadFileIcon sx={{ marginRight: "10px" }} />
-                        Upload sparql file
+                        Upload ontology file
                     </Button>
                 </label>
             
@@ -260,7 +246,7 @@ const TestData = () => {
                         justifyContent: "center",                                    
                     }}
                     >
-                        Sparql File Details
+                        Target Ontology Details
                     </Typography>
                 </Box>
 
@@ -331,43 +317,43 @@ const TestData = () => {
                             Project Management
                         </Typography>
                         <br/>
-                        <ListItemButton  onClick={(e) => handleMenuClick('Packages')}>                                    
+                        <ListItemButton onClick={(e) => handleMenuClick('Packages')}>                                    
                             <ListItemIcon>
                                 <FolderOpenIcon style={{ color: "#9da4ae" }} />                                
                             </ListItemIcon>                                                                    
                             <ListItemText disableTypography primary={
                                 <Typography variant="body1" style={{fontSize: '18px', fontWeight:'700' }}>
                                     Packages
-                                </Typography>} />
-                        </ListItemButton >
-                        <ListItemButton  onClick={(e) => handleMenuClick('Resources')}>                                    
+                                </Typography>}/>
+                        </ListItemButton>
+                        <ListItemButton onClick={(e) => handleMenuClick('Resources')}>                                    
                             <ListItemIcon>                                
                                 <HubIcon style={{ color: "#9da4ae" }} />                                
                             </ListItemIcon>                                                                    
                             <ListItemText disableTypography primary={
                                 <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700' }}>
                                     Resources
-                                </Typography>} />       
+                                </Typography>}/>       
                         </ListItemButton>
                         <ListItemButton onClick={(e) => handleMenuClick('Target Ontology')}>                                    
                             <ListItemIcon>                                
-                                <HiveIcon style={{ color: "#9da4ae" }} />                               
+                                <HiveIcon style={{ color: "#9da4ae" }} />                                
                             </ListItemIcon>                                                                    
                             <ListItemText disableTypography primary={
                                 <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700' }}>
                                     Target Ontology
                                 </Typography>}/>       
                         </ListItemButton>
-                        <ListItemButton  onClick={(e) => handleMenuClick('Test Data')}>                                    
+                        <ListItemButton onClick={(e) => handleMenuClick('Test Data')}>                                    
                             <ListItemIcon>                               
                                 <BiotechIcon style={{ color: "#9da4ae" }} />                                
                             </ListItemIcon>                                                                    
                             <ListItemText disableTypography primary={
                                 <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700'}}>
                                     Test Data
-                                </Typography>} />
+                                </Typography>}/>
                         </ListItemButton>
-                        <ListItemButton  onClick={(e) => handleMenuClick('Shacl UT')}>                                    
+                        <ListItemButton onClick={(e) => handleMenuClick('Shacl UT')}>                                    
                             <ListItemIcon>                                
                                 <ContentCutIcon style={{ color: "#9da4ae" }} />                                
                             </ListItemIcon>                                                                    
@@ -376,7 +362,7 @@ const TestData = () => {
                                     Shacl UT
                                 </Typography>}/>
                         </ListItemButton>
-                        <ListItemButton  onClick={(e) => handleMenuClick('Sparql UT')}>                                    
+                        <ListItemButton onClick={(e) => handleMenuClick('Sparql UT')}>                                    
                             <ListItemIcon>                                
                                 <FlareIcon style={{ color: "#9da4ae" }}/>
                             </ListItemIcon>                                                                    
@@ -393,4 +379,4 @@ const TestData = () => {
     )
 }
 
-export default TestData;
+export default TargetOntology;

@@ -1,7 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import Button from '../../../components/button/button.component';
-import { Box, Drawer, FormLabel, List, ListItem, ListItemButton, ListItemText, MenuItem, Modal, TextField } from '@mui/material';
+import { Box, Drawer, FormLabel, List, ListItem, ListItemButton, ListItemIcon, ListItemText, MenuItem, Modal, TextField } from '@mui/material';
+import FlareIcon from '@mui/icons-material/Flare';
+import BiotechIcon from '@mui/icons-material/Biotech';
+import HubIcon from '@mui/icons-material/Hub';
+import ContentCutIcon from '@mui/icons-material/ContentCut';
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+import HiveIcon from '@mui/icons-material/Hive';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
@@ -39,7 +45,7 @@ import './ted-rdf-mapping.component.scss';
         }
         ];
 
-    const arrMenuOptions = ['Packages', 'Resources', 'Test Data', 'Shacl UT', 'Sparql UT'];
+    // const arrMenuOptions = ['Packages', 'Resources', 'Test Data', 'Shacl UT', 'Sparql UT'];
 
     const sourceSchema = objTest.source_schema;
     const targetOntology = objTest.target_ontology;    
@@ -67,10 +73,14 @@ const TedRdfMapping = () => {
                 break;
             case 'Shacl UT':
                 navigate("/project-management/shacl");
-                        
+                    
                 break;
             case 'Sparql UT':
                 navigate("/project-management/sparql");
+                
+                break;
+            case 'Target Ontology':
+                navigate("/project-management/target-ontology");
                     
                 break;    
             default:
@@ -299,41 +309,71 @@ return (
                         [`& .MuiDrawer-paper`]: {
                             display: 'flex', 
                             width: '279px',
-                            alignItems: 'center',
+                            alignItems: 'center',                            
                             color: '#9DA4AE',                            
                             backgroundColor: '#111927' 
                         }
                     }}                    
-                >
+                >                    
                     <List>
-                        <Typography variant='body1' style={{
-                                                        fontSize: '18px',
-                                                        fontWeight:'700',
-                                                        borderBottom: '1px solid #9da4ae' 
-                                                    }}>
+                        <Typography variant='body1' style={{fontSize: '18px', fontWeight:'700', borderBottom: '1px solid #9da4ae' }}>
                             Project Management
                         </Typography>
                         <br/>
-                        {
-                            arrMenuOptions.map((elm) => (
-                                <ListItemButton key={elm}>
-                                <ListItemText 
-                                    key={elm}
-                                    disableTypography 
-                                    primary={<Typography 
-                                                variant="body1" 
-                                                style={{
-                                                        fontSize: '18px',
-                                                        fontWeight:'700' 
-                                                    }}
-                                            >
-                                                {elm}
-                                            </Typography>} onClick={(e) => handleMenuClick(elm)} />
-                                
-        
-                                </ListItemButton>
-                            ))
-                        }
+                        <ListItemButton  onClick={(e) => handleMenuClick('Packages')}>                                    
+                            <ListItemIcon>
+                                <FolderOpenIcon style={{ color: "#9da4ae" }} />                                
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px', fontWeight:'700' }}>
+                                    Packages
+                                </Typography>} />
+                        </ListItemButton>
+                        <ListItemButton  onClick={(e) => handleMenuClick('Resources')}>                                    
+                            <ListItemIcon>                                
+                                <HubIcon style={{ color: "#9da4ae" }} />                                
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700' }}>
+                                    Resources
+                                </Typography>}/>       
+                        </ListItemButton>
+                        <ListItemButton onClick={(e) => handleMenuClick('Target Ontology')}>                                    
+                            <ListItemIcon>                                
+                                <HiveIcon style={{ color: "#9da4ae" }} />                                
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700' }}>
+                                    Target Ontology
+                                </Typography>}/>       
+                        </ListItemButton>
+                        <ListItemButton onClick={(e) => handleMenuClick('Test Data')}>                                    
+                            <ListItemIcon>                               
+                                <BiotechIcon style={{ color: "#9da4ae" }} />                                
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700'}}>
+                                    Test Data
+                                </Typography>}/>
+                        </ListItemButton>
+                        <ListItemButton  onClick={(e) => handleMenuClick('Shacl UT')}>                                    
+                            <ListItemIcon>                                
+                                <ContentCutIcon style={{ color: "#9da4ae" }} />                                
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700' }}>
+                                    Shacl UT
+                                </Typography>}/>
+                        </ListItemButton>
+                        <ListItemButton  onClick={(e) => handleMenuClick('Sparql UT')}>                                    
+                            <ListItemIcon>                                
+                                <FlareIcon style={{ color: "#9da4ae" }}/>
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700'}}>
+                                    Sparql UT
+                                </Typography>}/>
+                        </ListItemButton>                            
                     </List>
                 </Drawer>
             </Box>
