@@ -12,6 +12,7 @@ import ShaclUT from './routes/project-management/shaclUT/shaclUT.component';
 import SparqlUT from './routes/project-management/sparqlUT/sparqlUT.component';
 import TestData from './routes/project-management/test-data/test-data.component';
 import Packages from './routes/project-management/packages/packages.component';
+import ConceptualMapping from './routes/project-management/conceptual-mapping/conceptual-mapping.component';
 
 const App = () => {
   
@@ -29,6 +30,7 @@ const App = () => {
           <Route path='ted-rdf-mapping' element={<TedRdfMapping />}/>
           <Route path='packages' element={<Packages />}/>          
           <Route path='new-project' element={<NewProject />}/>
+          <Route path='conceptual-mapping' element={<ConceptualMapping />}/>
         </Route>
       </Route>
            
