@@ -10,8 +10,8 @@ class BaseEntity(Document):
     """
     The general model for entities
     """
-    created_at: datetime = datetime.now()
-    updated_at: datetime = datetime.now()
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]
     created_by: Optional[Link[User]]
     updated_by: Optional[Link[User]]
 
@@ -28,14 +28,18 @@ class BaseEntity(Document):
         return list(cls.schema(alias).get("properties").keys())
 
     def dict_for_update(self) -> dict:
-        return self.dict(exclude_unset=True)
+        data = self.dict(exclude_unset=True)
+        data.pop('id', None)
+        return data
 
     def on_create(self, user: User):
         self.created_by = User.link_from_id(user.id)
+        self.created_at = datetime.now()
         return self
 
     def on_update(self, user: User):
         self.updated_by = User.link_from_id(user.id)
+        self.updated_at = datetime.now()
         return self
 
     class Settings:

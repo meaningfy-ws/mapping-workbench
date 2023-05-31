@@ -52,4 +52,10 @@ export const en = {
   [tokens.nav.admin]: 'Admin',
   [tokens.nav.users]: 'Users',
   [tokens.nav.projects]: 'Projects',
+  [tokens.nav.sections]: 'Sections',
+  [tokens.nav.test_data_suites]: 'Test Data Suites',
+  [tokens.nav.sparql_test_suites]: 'SPARQL Test Suites',
+  [tokens.nav.shacl_test_suites]: 'SHACL Test Suites',
+  [tokens.nav.ontology_file_collections]: 'Ontology Collections',
+  [tokens.nav.resource_collections]: 'Resource Collections',
 };

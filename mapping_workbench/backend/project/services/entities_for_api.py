@@ -3,7 +3,7 @@ from typing import List, Dict
 from beanie import PydanticObjectId
 
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
-from mapping_workbench.backend.project.models.project import Project
+from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.user.models.user import User
 
 

@@ -8,7 +8,13 @@ from mapping_workbench.backend.config.entrypoints.api import routes as config_ro
 from mapping_workbench.backend.core.entrypoints.api import routes as core_routes
 from mapping_workbench.backend.database.adapters.mongodb import DB
 from mapping_workbench.backend.project.entrypoints.api import routes as project_routes
-from mapping_workbench.backend.project.models.project import Project
+from mapping_workbench.backend.project.models.entity import Project
+from mapping_workbench.backend.test_data_suite.entrypoints.api import routes as test_data_suite_routes
+from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite
+from mapping_workbench.backend.test_data_suite.models.file_resource import TestDataFileResource
+from mapping_workbench.backend.sparql_test_suite.entrypoints.api import routes as sparql_test_suite_routes
+from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuite
+from mapping_workbench.backend.sparql_test_suite.models.file_resource import SPARQLTestFileResource
 from mapping_workbench.backend.user.entrypoints.api import routes as user_routes
 from mapping_workbench.backend.user.models.user import User
 from mapping_workbench.backend.security.models.security import AccessToken
@@ -27,7 +33,7 @@ app = FastAPI(
     swagger_ui_oauth2_redirect_url=f"{ROOT_API_PATH}/docs/oauth2-redirect"
 )
 
-origins = [f"{settings.HOST}:{settings.PORT}", "http://localhost:3000"]
+origins = [f"{settings.HOST}:{settings.PORT}", "http://localhost:3000", "*"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -45,7 +51,11 @@ async def on_startup():
         document_models=[
             User,
             AccessToken,
-            Project
+            Project,
+            TestDataSuite,
+            TestDataFileResource,
+            SPARQLTestSuite,
+            SPARQLTestFileResource
         ],
     )
 
@@ -58,6 +68,8 @@ app_router.include_router(app_public_router)
 app_secured_router = APIRouter(dependencies=[Depends(current_active_user)])
 app_secured_router.include_router(core_routes.router)
 app_secured_router.include_router(project_routes.router)
+app_secured_router.include_router(test_data_suite_routes.router)
+app_secured_router.include_router(sparql_test_suite_routes.router)
 app_secured_router.include_router(config_routes.router)
 app_router.include_router(app_secured_router)
 

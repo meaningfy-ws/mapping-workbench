@@ -51,12 +51,45 @@ export const paths = {
     projects: {
       index: '/app/projects',
       create: '/app/projects/create',
-      edit: '/app/projects/edit'
+      edit: '/app/projects/[id]/edit',
+      view: '/app/projects/[id]/view'
     },
+    test_data_suites: {
+      index: '/app/test-data-suites',
+      create: '/app/test-data-suites/create',
+      edit: '/app/test-data-suites/[id]/edit',
+      view: '/app/test-data-suites/[id]/view'
+    },
+    sparql_test_suites: {
+      index: '/app/sparql-test-suites',
+      create: '/app/sparql-test-suites/create',
+      edit: '/app/sparql-test-suites/[id]/edit',
+      view: '/app/sparql-test-suites/[id]/view',
+      file_manager: '/app/sparql-test-suites/[id]/file-manager'
+    },
+    shacl_test_suites: {
+      index: '/app/shacl-test-suites',
+      create: '/app/shacl-test-suites/create',
+      edit: '/app/shacl-test-suites/[id]/edit',
+      view: '/app/shacl-test-suites/[id]/view'
+    },
+    ontology_file_collections: {
+      index: '/app/ontology-file-collections',
+      create: '/app/ontology-file-collections/create',
+      edit: '/app/ontology-file-collections/[id]/edit',
+      view: '/app/ontology-file-collections/[id]/view'
+    },
+    resource_collections: {
+      index: '/app/resource-collections',
+      create: '/app/resource-collections/create',
+      edit: '/app/resource-collections/[id]/edit',
+      view: '/app/resource-collections/[id]/view'
+    },
+    fileManager: '/app/file-manager',
     users: {
       index: '/app/users',
-      details: '/app/users/:customerId',
-      edit: '/app/users/:customerId/edit'
+      edit: '/app/users/[id]/edit',
+      view: '/app/users/[id]/view'
     },
   },
   dashboard: {
@@ -138,3 +171,19 @@ export const paths = {
   notFound: '/404',
   serverError: '/500'
 };
+
+
+export const apiPaths = {
+  projects: {
+    items: '/projects',
+    item: '/projects/:id'
+  },
+  test_data_suites: {
+    items: '/test_data_suites',
+    item: '/test_data_suites/:id'
+  },
+  sparql_test_suites: {
+    items: '/sparql_test_suites',
+    item: '/sparql_test_suites/:id'
+  }
+}

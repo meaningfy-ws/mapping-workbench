@@ -283,7 +283,7 @@ export const SideNav = (props) => {
               }
             }}
           >
-            Devias Kit <span>PRO</span>
+            Mapping <span>Workbench</span>
           </Box>
         </Stack>
       </Box>

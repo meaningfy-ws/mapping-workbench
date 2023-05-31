@@ -5,9 +5,9 @@ from fastapi import APIRouter, status, Depends
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
-from mapping_workbench.backend.core.models.api_response import JSONEmptyContentWithId
-from mapping_workbench.backend.project.models.project import Project
-from mapping_workbench.backend.project.services.projects_for_api import (
+from mapping_workbench.backend.core.models.api_response import JSONEmptyContentWithId, JSONPagedReponse
+from mapping_workbench.backend.project.models.entity import Project
+from mapping_workbench.backend.project.services.entities_for_api import (
     list_projects as list_projects_for_api,
     create_project as create_project_for_api,
     update_project as update_project_for_api,
@@ -30,9 +30,9 @@ sub_router = APIRouter()
     response_model=List[Project]
 )
 async def list_projects() -> JSONResponse:
-    data = await list_projects_for_api()
+    items = await list_projects_for_api()
     return JSONResponse(
-        content=jsonable_encoder(data)
+        content=jsonable_encoder(JSONPagedReponse(items=items, count=len(items)))
     )
 
 
@@ -56,7 +56,7 @@ async def create_project(
 @sub_router.patch(
     "/{id}",
     name="projects:update_project",
-    response_model=JSONEmptyContentWithId
+    response_model=Project
 )
 async def update_project(
         id: PydanticObjectId,
@@ -64,9 +64,10 @@ async def update_project(
         user: User = Depends(current_active_user)
 ) -> JSONResponse:
     await update_project_for_api(id, data, user=user)
+    data = await get_project_for_api(id)
     return JSONResponse(
         status_code=status.HTTP_200_OK,
-        content=jsonable_encoder(JSONEmptyContentWithId(id=id))
+        content=jsonable_encoder(data)
     )
 
 
@@ -93,7 +94,7 @@ async def delete_project(id: PydanticObjectId):
     await delete_project_for_api(id)
     return JSONResponse(
         status_code=status.HTTP_200_OK,
-        content=jsonable_encoder(JSONEmptyContentWithId(id=id))
+        content=jsonable_encoder(JSONEmptyContentWithId(_id=id))
     )
 
 

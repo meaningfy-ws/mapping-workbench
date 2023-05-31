@@ -5,7 +5,7 @@ import { authApi } from 'src/api/auth';
 import { Issuer } from 'src/utils/auth';
 import { AuthContext, initialState } from './auth-context';
 
-const STORAGE_KEY = 'accessToken';
+export const STORAGE_KEY = 'accessToken';
 
 var ActionType;
 (function (ActionType) {
@@ -130,6 +130,7 @@ export const AuthProvider = (props) => {
 
   const signOut = useCallback(async () => {
     sessionStorage.removeItem(STORAGE_KEY);
+
     dispatch({ type: ActionType.SIGN_OUT });
   }, [dispatch]);
 
