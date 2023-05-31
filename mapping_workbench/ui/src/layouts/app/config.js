@@ -18,7 +18,7 @@ export const useSections = () => {
         items: [
           {
             title: t(tokens.nav.overview),
-            path: paths.dashboard.index,
+            path: paths.app.index,
             icon: (
               <SvgIcon fontSize="small">
                 <HomeSmileIcon />
@@ -37,7 +37,7 @@ export const useSections = () => {
         ]
       },
       {
-        subheader: t(tokens.nav.concepts),
+        subheader: t(tokens.nav.sections),
         items: [
           {
             title: t(tokens.nav.projects),
@@ -59,8 +59,103 @@ export const useSections = () => {
             ]
           },
           {
+            title: t(tokens.nav.test_data_suites),
+            path: paths.app.test_data_suites.index,
+            icon: (
+                <SvgIcon fontSize="small">
+                  <Upload04Icon />
+                </SvgIcon>
+            ),
+            items: [
+              {
+                title: t(tokens.nav.list),
+                path: paths.app.test_data_suites.index
+              },
+              {
+                title: t(tokens.nav.create),
+                path: paths.app.test_data_suites.create
+              }
+            ]
+          },
+          {
+            title: t(tokens.nav.sparql_test_suites),
+            path: paths.app.sparql_test_suites.index,
+            icon: (
+                <SvgIcon fontSize="small">
+                  <Upload04Icon />
+                </SvgIcon>
+            ),
+            items: [
+              {
+                title: t(tokens.nav.list),
+                path: paths.app.sparql_test_suites.index
+              },
+              {
+                title: t(tokens.nav.create),
+                path: paths.app.sparql_test_suites.create
+              }
+            ]
+          },
+          {
+            title: t(tokens.nav.shacl_test_suites),
+            path: paths.app.shacl_test_suites.index,
+            icon: (
+                <SvgIcon fontSize="small">
+                  <Upload04Icon />
+                </SvgIcon>
+            ),
+            items: [
+              {
+                title: t(tokens.nav.list),
+                path: paths.app.shacl_test_suites.index
+              },
+              {
+                title: t(tokens.nav.create),
+                path: paths.app.shacl_test_suites.create
+              }
+            ]
+          },
+          {
+            title: t(tokens.nav.ontology_file_collections),
+            path: paths.app.ontology_file_collections.index,
+            icon: (
+                <SvgIcon fontSize="small">
+                  <Upload04Icon />
+                </SvgIcon>
+            ),
+            items: [
+              {
+                title: t(tokens.nav.list),
+                path: paths.app.ontology_file_collections.index
+              },
+              {
+                title: t(tokens.nav.create),
+                path: paths.app.ontology_file_collections.create
+              }
+            ]
+          },
+          {
+            title: t(tokens.nav.resource_collections),
+            path: paths.app.resource_collections.index,
+            icon: (
+                <SvgIcon fontSize="small">
+                  <Upload04Icon />
+                </SvgIcon>
+            ),
+            items: [
+              {
+                title: t(tokens.nav.list),
+                path: paths.app.resource_collections.index
+              },
+              {
+                title: t(tokens.nav.create),
+                path: paths.app.resource_collections.create
+              }
+            ]
+          },
+          {
             title: t(tokens.nav.fileManager),
-            path: paths.dashboard.fileManager,
+            path: paths.app.fileManager,
             icon: (
               <SvgIcon fontSize="small">
                 <Upload04Icon />

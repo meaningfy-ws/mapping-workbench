@@ -1,8 +1,8 @@
 import {createResourceId} from 'src/utils/create-resource-id';
-import {decode, JWT_EXPIRES_IN, JWT_SECRET, sign} from 'src/utils/jwt';
+import {JWT_EXPIRES_IN, JWT_SECRET, sign} from 'src/utils/jwt';
 import {wait} from 'src/utils/wait';
-import axios from 'axios';
 import {users} from './data';
+import {appApi} from "../app";
 
 const STORAGE_KEY = 'users';
 const API_ADDRESS = process.env.API_ADDRESS;
@@ -37,27 +37,7 @@ const persistUser = (user) => {
 
 class AuthApi {
     async signIn(request) {
-        const {username, password} = request;
-
-        await wait(500);
-
-        const config = {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
-        }
-        return axios
-            .post(`${API_ADDRESS}/auth/jwt/login`, {
-                "username": username,
-                "password": password
-            }, config)
-            .then(function (response) {
-                let accessToken = response.data.access_token;
-                return {accessToken};
-            })
-            .catch(function (error) {
-                console.log(error, "error");
-            });
+        return appApi.signIn(request);
         return null;
         return new Promise((resolve, reject) => {
             try {
@@ -129,22 +109,7 @@ class AuthApi {
     }
 
     me(request) {
-        const {accessToken} = request;
-
-        const config = {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            }
-        }
-        return axios
-            .get(`${API_ADDRESS}/users/me`, config)
-            .then(function (response) {
-                console.log("K :: ", response);
-                return response.data;
-            })
-            .catch(function (error) {
-                console.log(error, "error");
-            });
+        return appApi.get('/users/me');
 
         // return new Promise((resolve, reject) => {
         //     try {

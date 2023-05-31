@@ -53,7 +53,7 @@ export const Layout = (props) => {
             sx={{ mb: 1 }}
             variant="h4"
           >
-            Welcome to Devias Kit PRO
+            Welcome to Mapping Workbench
           </Typography>
           <Typography
             color="text.secondary"

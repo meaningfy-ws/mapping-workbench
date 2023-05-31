@@ -4,13 +4,12 @@ from typing import Optional
 from mapping_workbench.backend.file_resource.models.file_resource import FileResource
 
 
-class TestDataFileResourceFormat(Enum):
-    XML = "XML"
-    JSON = "JSON"
+class SPARQLTestFileResourceFormat(Enum):
+    RQ = "RQ"
 
 
-class TestDataFileResource(FileResource):
-    format: Optional[TestDataFileResourceFormat]
+class SPARQLTestFileResource(FileResource):
+    format: Optional[SPARQLTestFileResourceFormat]
 
     class Settings(FileResource.Settings):
-        name = "test_data_file_resources"
+        name = "sparql_test_file_resources"

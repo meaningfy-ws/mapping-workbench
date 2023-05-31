@@ -45,7 +45,7 @@ const CustomApp = (props) => {
     <CacheProvider value={emotionCache}>
       <Head>
         <title>
-          Devias Kit PRO
+          Mapping Workbench
         </title>
         <meta
           name="viewport"
