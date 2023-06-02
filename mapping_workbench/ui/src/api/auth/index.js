@@ -38,32 +38,6 @@ const persistUser = (user) => {
 class AuthApi {
     async signIn(request) {
         return appApi.signIn(request);
-        return null;
-        return new Promise((resolve, reject) => {
-            try {
-                // Merge static users (data file) with persisted users (browser storage)
-                const mergedUsers = [
-                    ...users,
-                    ...getPersistedUsers()
-                ];
-
-                // Find the user
-                const user = mergedUsers.find((user) => user.username === username);
-
-                if (!user || (user.password !== password)) {
-                    reject(new Error('Please check your username and password'));
-                    return;
-                }
-
-                // Create the access token
-                const accessToken = sign({userId: user.id}, JWT_SECRET, {expiresIn: JWT_EXPIRES_IN});
-
-                resolve({accessToken});
-            } catch (err) {
-                console.error('[Auth Api]: ', err);
-                reject(new Error('Internal server error'));
-            }
-        });
     }
 
     async signUp(request) {
@@ -108,41 +82,9 @@ class AuthApi {
         });
     }
 
-    me(request) {
-        return appApi.get('/users/me');
-
-        // return new Promise((resolve, reject) => {
-        //     try {
-        //         // Decode access token
-        //         const decodedToken = decode(accessToken);
-        //
-        //         // Merge static users (data file) with persisted users (browser storage)
-        //         const mergedUsers = [
-        //             ...users,
-        //             ...getPersistedUsers()
-        //         ];
-        //
-        //         // Find the user
-        //         const {userId} = decodedToken;
-        //         const user = mergedUsers.find((user) => user.id === userId);
-        //
-        //         if (!user) {
-        //             reject(new Error('Invalid authorization token'));
-        //             return;
-        //         }
-        //
-        //         resolve({
-        //             id: user.id,
-        //             avatar: user.avatar,
-        //             username: user.username,
-        //             name: user.name,
-        //             plan: user.plan
-        //         });
-        //     } catch (err) {
-        //         console.error('[Auth Api]: ', err);
-        //         reject(new Error('Internal server error'));
-        //     }
-        // });
+    async me(request) {
+        console.log("AUTH :: ME");
+        return await appApi.get('/users/me');
     }
 }
 

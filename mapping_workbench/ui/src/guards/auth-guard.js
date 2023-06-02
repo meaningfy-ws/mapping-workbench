@@ -1,15 +1,12 @@
-import { useCallback, useEffect, useState } from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 
-import { useAuth } from 'src/hooks/use-auth';
-import { useRouter } from 'src/hooks/use-router';
-import { paths } from 'src/paths';
-import { Issuer } from 'src/utils/auth';
+import {useAuth} from 'src/hooks/use-auth';
+import {useRouter} from 'src/hooks/use-router';
+import {paths} from 'src/paths';
+import {Issuer} from 'src/utils/auth';
 
 const loginPaths = {
-  [Issuer.Amplify]: paths.auth.amplify.login,
-  [Issuer.Auth0]: paths.auth.auth0.login,
-  [Issuer.Firebase]: paths.auth.firebase.login,
   [Issuer.JWT]: paths.auth.jwt.login
 };
 

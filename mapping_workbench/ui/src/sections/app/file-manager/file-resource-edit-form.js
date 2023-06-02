@@ -20,7 +20,6 @@ import FormLabel from "@mui/material/FormLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import {fileResourcesApi} from "../../../api/file-collections/file-resources";
 
 
 export const FileResourceEditForm = (props) => {
@@ -31,6 +30,7 @@ export const FileResourceEditForm = (props) => {
     const sectionApi = itemctx.api;
     const item = itemctx.data;
 
+    console.log("COLLECTION :: ", collection_id);
     const initFormValues = (data) => {
         return {
             title: data.title || '',
@@ -58,6 +58,7 @@ export const FileResourceEditForm = (props) => {
                 .required('Format is required'),
         }),
         onSubmit: async (values, helpers) => {
+            console.log("ASSA");
             try {
                 let response;
                 let formData = values;
@@ -158,13 +159,18 @@ export const FileResourceEditForm = (props) => {
                                     Format
                                 </FormLabel>
                                 <Select
+                                    name="format"
+                                    error={!!(formik.touched.format && formik.errors.format)}
                                     fullWidth
+                                    helperText={formik.touched.format && formik.errors.format}
                                     value={formik.values.format}
                                     onChange={handleChangeFormat}
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
                                 >
                                     {Object.keys(sectionApi.FILE_RESOURCE_FORMATS).map((key) => {
                                         return (
-                                            <MenuItem value={key}>
+                                            <MenuItem value={key} key={key}>
                                                 {sectionApi.FILE_RESOURCE_FORMATS[key]}
                                             </MenuItem>
                                         )
@@ -239,10 +245,7 @@ export const FileResourceEditForm = (props) => {
                         color="inherit"
                         component={RouterLink}
                         disabled={formik.isSubmitting}
-                        href={{
-                            pathname: paths.app[sectionApi.section].file_manager.index,
-                            query: {id: collection_id}
-                        }}
+                        href={paths.app[sectionApi.section].index}
                     >
                         Cancel
                     </Button>

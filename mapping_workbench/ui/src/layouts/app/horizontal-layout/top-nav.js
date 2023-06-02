@@ -16,10 +16,8 @@ import {usePathname} from 'src/hooks/use-pathname';
 import {paths} from 'src/paths';
 
 import {AccountButton} from '../account-button';
-import {ContactsButton} from '../contacts-button';
 import {LanguageSwitch} from '../language-switch';
 import {NotificationsButton} from '../notifications-button';
-import {TenantSwitch} from '../tenant-switch';
 import {TopNavSection} from './top-nav-section';
 
 const useCssVars = (color) => {
@@ -221,7 +219,6 @@ export const TopNav = (props) => {
         >
           <LanguageSwitch />
           <NotificationsButton />
-          <ContactsButton />
           <AccountButton />
         </Stack>
       </Stack>

@@ -1,8 +1,18 @@
 import {AuthGuard} from 'src/guards/auth-guard';
-import {AuthProvider} from "../contexts/auth/jwt";
+import {authApi} from "src/api/auth";
 
 export const withAuthGuard = (Component) => {
-    //TODO: here a call must be provided to API endpoints users/me to check that the authenticated user is active
+    // let userResult = null;
+    // authApi.me().then(result => {
+    //     userResult = result;
+    //     console.log("K :: ", userResult);
+    // }).catch(function (error) {
+    //     console.log(error);
+    //     throw new Error(error.message);
+    // });
+    //
+    // console.log("USER :: ", userResult);
+
     return function WithAuthGuard(props) {
         return (
             <AuthGuard>

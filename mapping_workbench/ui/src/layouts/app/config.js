@@ -24,15 +24,6 @@ export const useSections = () => {
                 <HomeSmileIcon />
               </SvgIcon>
             )
-          },
-          {
-            title: t(tokens.nav.analytics),
-            path: paths.dashboard.analytics,
-            icon: (
-              <SvgIcon fontSize="small">
-                <BarChartSquare02Icon />
-              </SvgIcon>
-            )
           }
         ]
       },

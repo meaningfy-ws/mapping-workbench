@@ -125,7 +125,7 @@ const Page = () => {
                                     <Link
                                         color="text.primary"
                                         component={RouterLink}
-                                        href={paths.app.index}
+                                        href={paths.index}
                                         variant="subtitle2"
                                     >
                                         App

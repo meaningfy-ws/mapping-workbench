@@ -1,7 +1,7 @@
 from datetime import datetime
-from typing import Optional, Dict
+from typing import Optional
 
-from beanie import Document, Link, Indexed
+from beanie import Document, Link
 
 from mapping_workbench.backend.user.models.user import User
 
@@ -46,9 +46,3 @@ class BaseEntity(Document):
         validate_on_save = True
         use_state_management = True
 
-
-class BaseNamedEntity(BaseEntity):
-    name: Indexed(str, unique=True)
-
-    class Settings(BaseEntity.Settings):
-        ...

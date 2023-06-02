@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import {useCallback} from 'react';
 import PropTypes from 'prop-types';
 import toast from 'react-hot-toast';
 import CreditCard01Icon from '@untitled-ui/icons-react/build/esm/CreditCard01';
@@ -14,39 +14,22 @@ import Popover from '@mui/material/Popover';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import { RouterLink } from 'src/components/router-link';
-import { useAuth } from 'src/hooks/use-auth';
-import { useMockedUser } from 'src/hooks/use-mocked-user';
-import { useRouter } from 'src/hooks/use-router';
-import { paths } from 'src/paths';
-import { Issuer } from 'src/utils/auth';
+import {RouterLink} from 'src/components/router-link';
+import {useAuth} from 'src/hooks/use-auth';
+import {useRouter} from 'src/hooks/use-router';
+import {paths} from 'src/paths';
+import {Issuer} from 'src/utils/auth';
 
 export const AccountPopover = (props) => {
   const { anchorEl, onClose, open, ...other } = props;
   const router = useRouter();
   const auth = useAuth();
-  const user = useMockedUser();
 
   const handleLogout = useCallback(async () => {
     try {
       onClose?.();
 
       switch (auth.issuer) {
-        case Issuer.Amplify: {
-          await auth.signOut();
-          break;
-        }
-
-        case Issuer.Auth0: {
-          await auth.logout();
-          break;
-        }
-
-        case Issuer.Firebase: {
-          await auth.signOut();
-          break;
-        }
-
         case Issuer.JWT: {
           await auth.signOut();
           break;
@@ -78,7 +61,7 @@ export const AccountPopover = (props) => {
       {...other}>
       <Box sx={{ p: 2 }}>
         <Typography variant="body1">
-          {user.name}
+          USERNAME
         </Typography>
         <Typography
           color="text.secondary"
@@ -91,7 +74,7 @@ export const AccountPopover = (props) => {
       <Box sx={{ p: 1 }}>
         <ListItemButton
           component={RouterLink}
-          href={paths.dashboard.social.profile}
+          href={paths.app.account}
           onClick={onClose}
           sx={{
             borderRadius: 1,
@@ -114,7 +97,7 @@ export const AccountPopover = (props) => {
         </ListItemButton>
         <ListItemButton
           component={RouterLink}
-          href={paths.dashboard.account}
+          href={paths.app.account}
           onClick={onClose}
           sx={{
             borderRadius: 1,
@@ -131,29 +114,6 @@ export const AccountPopover = (props) => {
             primary={(
               <Typography variant="body1">
                 Settings
-              </Typography>
-            )}
-          />
-        </ListItemButton>
-        <ListItemButton
-          component={RouterLink}
-          href={paths.dashboard.index}
-          onClick={onClose}
-          sx={{
-            borderRadius: 1,
-            px: 1,
-            py: 0.5
-          }}
-        >
-          <ListItemIcon>
-            <SvgIcon fontSize="small">
-              <CreditCard01Icon />
-            </SvgIcon>
-          </ListItemIcon>
-          <ListItemText
-            primary={(
-              <Typography variant="body1">
-                Billing
               </Typography>
             )}
           />

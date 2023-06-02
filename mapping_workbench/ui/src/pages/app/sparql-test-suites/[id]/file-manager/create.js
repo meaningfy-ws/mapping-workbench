@@ -15,8 +15,6 @@ import {paths} from 'src/paths';
 import {FileResourceEditForm} from 'src/sections/app/file-manager/file-resource-edit-form';
 import {ForItemCreateForm} from "src/contexts/app/section/for-item-form";
 import {useRouter} from "src/hooks/use-router";
-
-
 const Page = () => {
     const router = useRouter();
     if (!router.isReady) return;
