@@ -9,11 +9,12 @@ export class ForItemForm {
 }
 
 export class ForItemEditForm extends ForItemForm {
-    constructor(data, api, setState) {
+    constructor(data, api, setState, schema = null) {
         super(ACTION.EDIT, data, api);
         this.setState = setState;
         this.isNew = false;
         this.isStateable = true;
+        this.schema = schema;
     }
 }
 

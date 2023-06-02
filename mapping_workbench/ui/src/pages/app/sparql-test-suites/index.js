@@ -18,8 +18,8 @@ import {useMounted} from 'src/hooks/use-mounted';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
-import {FileCollectionListSearch} from 'src/sections/app/file-collection/file-collection-list-search';
-import {FileCollectionListTable} from 'src/sections/app/file-collection/file-collection-list-table';
+import {FileCollectionListSearch} from 'src/sections/app/file-manager/file-collection-list-search';
+import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
 
 const useItemsSearch = () => {
     const [state, setState] = useState({

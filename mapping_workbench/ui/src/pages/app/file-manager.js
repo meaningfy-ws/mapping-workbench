@@ -161,7 +161,7 @@ const Page = () => {
 
   return (
     <>
-      <Seo title="Dashboard: File Manager" />
+      <Seo title="App: File Manager" />
       <Box
         component="main"
         sx={{

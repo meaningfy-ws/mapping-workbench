@@ -1,8 +1,6 @@
-import {SectionApi} from "../section";
-import {paths} from "../../paths";
-import {appApi} from "../app";
+import {FileCollectionsApi} from "../file-collections";
 
-class SPARQLTestSuitesApi extends SectionApi {
+class SPARQLTestSuitesApi extends FileCollectionsApi {
     get SECTION_TITLE() {
         return "SPARQL Test Suites";
     }

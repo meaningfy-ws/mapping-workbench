@@ -33,7 +33,7 @@ const Page = () => {
 
   return (
     <>
-      <Seo title="Dashboard: Overview" />
+      <Seo title="App: Overview" />
       <Box
         component="main"
         sx={{

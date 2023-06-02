@@ -54,11 +54,11 @@ class AppApi {
         }
     }
 
-    async request(method, endpoint, data = null) {
+    async request(method, endpoint, data = null, headers = null) {
         const config = {
             method: method,
             url: this.url(endpoint),
-            headers: this.addAuth()
+            headers: this.addAuth(headers)
         }
         if (data !== null) {
             config.data = data;
@@ -80,20 +80,20 @@ class AppApi {
         return this.request(METHOD.GET, endpoint);
     }
 
-    async post(endpoint, data) {
-        return this.request(METHOD.POST, endpoint, data);
+    async post(endpoint, data, headers = null) {
+        return this.request(METHOD.POST, endpoint, data, headers);
     }
 
-    async create(endpoint, data) {
-        return this.post(endpoint, data);
+    async create(endpoint, data, headers = null) {
+        return this.post(endpoint, data, headers);
     }
 
-    async patch(endpoint, data) {
-        return this.request(METHOD.PATCH, endpoint, data);
+    async patch(endpoint, data, headers = {}) {
+        return this.request(METHOD.PATCH, endpoint, data, headers);
     }
 
-    async update(endpoint, data) {
-        return this.patch(endpoint, data);
+    async update(endpoint, data, headers = {}) {
+        return this.patch(endpoint, data, headers);
     }
 
     async delete(endpoint) {

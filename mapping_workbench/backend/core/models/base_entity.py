@@ -44,6 +44,7 @@ class BaseEntity(Document):
 
     class Settings:
         validate_on_save = True
+        use_state_management = True
 
 
 class BaseNamedEntity(BaseEntity):

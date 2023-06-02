@@ -20,7 +20,12 @@ class DatabaseSettings(BaseSettings):
     DATABASE_NAME: str = os.getenv('MW_MONGODB_DATABASE_NAME')
 
 
-class Settings(AppSettings, ServerSettings, DatabaseSettings):
+class SecuritySettings(BaseSettings):
+    JWT_SECRET: str = os.getenv('JWT_SECRET')
+    JWT_EXPIRES_IN: int = int(os.getenv('JWT_EXPIRES_IN', 3600))
+
+
+class Settings(AppSettings, ServerSettings, DatabaseSettings, SecuritySettings):
     pass
 
 

@@ -9,7 +9,6 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import SvgIcon from '@mui/material/SvgIcon';
 import Tooltip from '@mui/material/Tooltip';
-import Link from 'next/link';
 
 
 import {usePopover} from 'src/hooks/use-popover';
@@ -26,7 +25,7 @@ export const ListFileCollectionActions = (props) => {
 
     const handleFileManagerAction = useCallback(async () => {
         router.push({
-            pathname: paths.app[itemctx.api.section].file_manager,
+            pathname: paths.app[itemctx.api.section].file_manager.index,
             query: {id: itemctx.id}
         });
 

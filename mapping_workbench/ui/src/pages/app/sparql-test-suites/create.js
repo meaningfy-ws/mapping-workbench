@@ -12,7 +12,7 @@ import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
-import {FileCollectionEditForm} from 'src/sections/app/file-collection/file-collection-edit-form';
+import {FileCollectionEditForm} from 'src/sections/app/file-manager/file-collection-edit-form';
 import {ForItemCreateForm} from "src/contexts/app/section/for-item-form";
 
 

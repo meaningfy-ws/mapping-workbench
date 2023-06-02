@@ -55,7 +55,7 @@ const Page = () => {
 
   return (
     <>
-      <Seo title="Dashboard: Customer Edit" />
+      <Seo title="App: Customer Edit" />
       <Box
         component="main"
         sx={{
