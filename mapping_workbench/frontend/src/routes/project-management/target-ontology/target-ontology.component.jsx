@@ -9,6 +9,9 @@ import HubIcon from '@mui/icons-material/Hub';
 import ContentCutIcon from '@mui/icons-material/ContentCut';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import HiveIcon from '@mui/icons-material/Hive';
+import MapIcon from '@mui/icons-material/Map';
+import SchemaIcon from '@mui/icons-material/Schema';
+
 import { useNavigate } from "react-router-dom";
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -66,37 +69,45 @@ const TargetOntology = () => {
     
   };  
 
-    const handleMenuClick = (menuOption) => {
+  const handleMenuClick = (menuOption) => {
     
-        switch(menuOption) {
-            case 'Resources':
-                navigate("/project-management/resources");
-                    
-                break;
-            case 'Test Data':
-                navigate("/project-management/test-data");                
+    switch(menuOption) {
+        case 'Resources':
+            navigate("/project-management/resources");
                 
-                break;
-            case 'Packages':
-                navigate("/project-management/packages");
+            break;
+        case 'Test Data':
+            navigate("/project-management/test-data");                
+            
+            break;
+        case 'Packages':
+            navigate("/project-management/packages");
+            
+            break;
+        case 'Shacl UT':
+            navigate("/project-management/shacl");
                 
-                break;
-            case 'Shacl UT':
-                navigate("/project-management/shacl");
-                    
-                break;
-            case 'Sparql UT':
-                navigate("/project-management/sparql");
+            break;
+        case 'Sparql UT':
+            navigate("/project-management/sparql");
+            
+            break;
+        case 'Target Ontology':
+            navigate("/project-management/target-ontology");
                 
-                break;
-            case 'Target Ontology':
-                navigate("/project-management/target-ontology");
+            break;
+        case 'Conceptual Mapping':
+            navigate("/project-management/conceptual-mapping");
                     
-                break;    
-            default:
-                break;                    
-        }
+            break;
+        case 'Triple Map Fragment Management':
+            navigate("/project-management/triple-map-fragment-management/generic-fragments");
+                
+            break;
+        default:
+            break;                    
     }
+}
 
     const handleDocumentClick = (listElem) => {
         console.log("List Element: ", listElem);
@@ -297,7 +308,7 @@ const TargetOntology = () => {
             
         </Modal>           
 
-        <Box sx={{ overflow: 'auto', zIndex: '1' }}>
+        <Box sx={{ overflow: 'auto', zIndex: '1' }}>            
             <Drawer
                     anchor='left' 
                     variant='permanent'
@@ -369,6 +380,25 @@ const TargetOntology = () => {
                             <ListItemText disableTypography primary={
                                 <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700'}}>
                                     Sparql UT
+                                </Typography>}/>
+                        </ListItemButton>
+                        <br />
+                        <ListItemButton onClick={(e) => handleMenuClick('Conceptual Mapping')}>                                    
+                            <ListItemIcon>                                
+                                <MapIcon style={{ color: "#9da4ae" }}/>
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700'}}>
+                                    Conceptual Mapping
+                                </Typography>}/>
+                        </ListItemButton>
+                        <ListItemButton onClick={(e) => handleMenuClick('Triple Map Fragment Management')}>                                    
+                            <ListItemIcon>                                
+                                <SchemaIcon style={{ color: "#9da4ae" }}/>
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700'}}>
+                                    Triple Map Fragment Management
                                 </Typography>}/>
                         </ListItemButton>                            
                     </List>

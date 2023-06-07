@@ -13,6 +13,9 @@ import SparqlUT from './routes/project-management/sparqlUT/sparqlUT.component';
 import TestData from './routes/project-management/test-data/test-data.component';
 import Packages from './routes/project-management/packages/packages.component';
 import ConceptualMapping from './routes/project-management/conceptual-mapping/conceptual-mapping.component';
+import TripleMapFragManag from './routes/project-management/triple-map-fragment-management/triple-map-fragment-management.component';
+import GenericFragments from './routes/project-management/triple-map-fragment-management/generic-fragments/generic-fragments.component';
+import SpecificFragments from './routes/project-management/triple-map-fragment-management/specific-fragments/specific-fragments.component';
 
 const App = () => {
   
@@ -31,6 +34,10 @@ const App = () => {
           <Route path='packages' element={<Packages />}/>          
           <Route path='new-project' element={<NewProject />}/>
           <Route path='conceptual-mapping' element={<ConceptualMapping />}/>
+          <Route path='triple-map-fragment-management' element={<TripleMapFragManag />}>
+            <Route path='generic-fragments' element={<GenericFragments />}/>
+            <Route path='specific-fragments' element={<SpecificFragments />}/>
+          </Route>
         </Route>
       </Route>
            

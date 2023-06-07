@@ -8,9 +8,11 @@
     position: fixed;
     z-index:2;    
   
-    .logo-container {
+    .nav-link {
+      display: flex;
+      justify-content: center;
       height: 70px;
-      width: 200px;      
+      width: 279px;            
     }
   
     .nav-links-container {

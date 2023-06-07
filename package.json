@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "@mui/lab": "^5.0.0-alpha.130"
+    "@mui/lab": "^5.0.0-alpha.130",
+    "prismjs": "^1.29.0"
   }
 }

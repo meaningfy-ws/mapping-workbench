@@ -9,6 +9,8 @@ import HubIcon from '@mui/icons-material/Hub';
 import ContentCutIcon from '@mui/icons-material/ContentCut';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import HiveIcon from '@mui/icons-material/Hive';
+import MapIcon from '@mui/icons-material/Map';
+import SchemaIcon from '@mui/icons-material/Schema';
 
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -64,7 +66,15 @@ const NewProject = () => {
             case 'Target Ontology':
                 navigate("/project-management/target-ontology");
                     
-                break;    
+                break;
+            case 'Conceptual Mapping':
+                navigate("/project-management/conceptual-mapping");
+                        
+                break;
+            case 'Triple Map Fragment Management':
+                navigate("/project-management/triple-map-fragment-management/generic-fragments");
+                                
+                break;
             default:
                 break;                    
         }
@@ -281,7 +291,7 @@ return (
             
         </Modal>
 
-        <Box sx={{ overflow: 'auto', zIndex: '1' }}>
+        <Box sx={{ overflow: 'auto', zIndex: '1' }}>            
             <Drawer
                     anchor='left' 
                     variant='permanent'
@@ -353,6 +363,25 @@ return (
                             <ListItemText disableTypography primary={
                                 <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700'}}>
                                     Sparql UT
+                                </Typography>}/>
+                        </ListItemButton>
+                        <br />
+                        <ListItemButton onClick={(e) => handleMenuClick('Conceptual Mapping')}>                                    
+                            <ListItemIcon>                                
+                                <MapIcon style={{ color: "#9da4ae" }}/>
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700'}}>
+                                    Conceptual Mapping
+                                </Typography>}/>
+                        </ListItemButton>
+                        <ListItemButton onClick={(e) => handleMenuClick('Triple Map Fragment Management')}>                                    
+                            <ListItemIcon>                                
+                                <SchemaIcon style={{ color: "#9da4ae" }}/>
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700'}}>
+                                    Triple Map Fragment Management
                                 </Typography>}/>
                         </ListItemButton>                            
                     </List>

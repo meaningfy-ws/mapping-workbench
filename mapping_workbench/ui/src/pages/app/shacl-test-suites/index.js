@@ -180,6 +180,269 @@ const Page = () => {
                     </Stack>
                 </Container>
             </Box>
+            
+            
+
+            {/* <div className="mapping-workbench-resources">
+
+            <h2 className='page-title'>Shacl UT</h2>
+
+            <FormControl sx={{ m: 1, width: 350, marginLeft: 'auto', marginRight: 'auto', marginTop: '10px', marginBottom: '40px' }}>
+                <InputLabel id="demo-multiple-chip-label">Collections</InputLabel>
+                <Select
+                    labelId="demo-multiple-chip-label"
+                    id="demo-multiple-chip"
+                    multiple
+                    value={personName}
+                    onChange={handleChange}
+                    input={<OutlinedInput id="select-multiple-chip" label="Collection" />}
+                    renderValue={(selected) => (
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                            {selected.map((value) => (
+                                <Chip key={value} label={value} />
+                            ))}
+                        </Box>
+                    )}
+                MenuProps={MenuProps}
+                >
+          {testCollections.map((name) => (
+            <MenuItem
+              key={name}
+              value={name}
+              style={getStyles(name, personName, theme)}
+            >
+              {name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
+            <Box sx={{ 
+                    display: "flex",
+                    flexDirection: "column",
+                    border: "1px solid rgba(0, 0, 0, 0.12)",
+                    borderRadius: "20px",
+                    backgroundColor: "#ebefff",
+                    padding: "20px",                    
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                    minWidth: "50%",
+                    marginBottom: "50px" 
+                    }}
+            >
+                <List>
+                    {arrayOfUploadedFiles.map((listElem) => (
+                        <ListItem sx={{ border: "1px solid #9da4ae", borderRadius: '20px', marginTop: '10px'}} key={listElem.id}>
+                            <ListItemButton sx={{ display: "flex", justifyContent: "flex-start", flexDirection: "column" }} onClick={(e)=>handleDocumentClick(listElem)} >                                
+                                <ListItemText primary={listElem.name} /> 
+                                <ListItemText secondary={listElem.description} />                               
+                            </ListItemButton>                               
+                            
+                            <ListItemButton sx={{ display: "flex", justifyContent: "flex-end" }} onClick={(e) => handleDeleteClick(listElem)}>                                
+                                <DeleteIcon />                                
+                            </ListItemButton>
+                            <Divider/>                            
+                        </ListItem>
+                        
+                    ))}                    
+                </List>
+
+                
+                <input
+                    accept=".csv, .json"                
+                    style={{ display: 'none' }}
+                    id="raised-button-file"
+                    multiple
+                    type="file"
+                    onChange={handleFileChange}
+                />
+                <label htmlFor="raised-button-file">                    
+                    <Button 
+                        sx={{ display: "flex" }}
+                        variant="contained" 
+                        component="span"                       
+                    >
+                        <UploadFileIcon sx={{ marginRight: "10px" }} />
+                        Upload shacl file
+                    </Button>
+                </label>
+            
+            </Box>
+
+            <Modal open={open} onClose={() => setOpen(false)}>               
+            <Box 
+                position="absolute"
+                top="25%"
+                left="30%"
+                sx={{ 
+                    bgcolor: "#ebefff",
+                    minWidth: "40%",
+                    minHeight: "50%",
+                    borderRadius: "20px",
+                    padding: "60px",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between"                    
+                }}
+            >
+                <Box>
+                    <Typography sx={{
+                        marginTop: "20px",
+                        fontSize: "24px",
+                        fontWeight: "bold",
+                        display: "flex",
+                        justifyContent: "center",                                    
+                    }}
+                    >
+                        Shacl File Details
+                    </Typography>
+                </Box>
+
+                
+
+                <Box sx={{ 
+                        display: "flex",                        
+                        justifyContent:"center",                        
+                        }}>
+                        
+                    <div className='editFormContainer'> 
+                        <FormLabel sx={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    marginLeft: "20px",                                
+                                    marginBottom: "20px",
+                                    fontWeight: "bold",
+                                    fontSize: "20px"
+                                    }}
+                        >
+                            
+                        </FormLabel>   
+                        <ListItem>                                                   
+                            <TextField style={{ minWidth: "300px" }} label="Resource name" variant='outlined' />
+                        </ListItem>
+                        <ListItem>                                                   
+                            <TextField style={{ minWidth: "300px" }} label="Resource description" multiline maxRows={5} variant='outlined' />
+                        </ListItem>                        
+                    </div>           
+                    
+                </Box>               
+
+                
+                <Box sx={{ 
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent:"space-between",                        
+                        }}>
+                    <Button className='button-container' onClick={() => setOpen(false)}>
+                        Submit
+                    </Button>                            
+                    <Button className='button-container' onClick={() => setOpen(false)}>
+                        Close
+                    </Button>
+                </Box>
+
+            </Box>
+            
+        </Modal>           
+
+        <Box sx={{ overflow: 'auto', zIndex: '1' }}>            
+            <Drawer
+                    anchor='left' 
+                    variant='permanent'
+                    sx={{ 
+                        justifyContent: 'center',
+                        [`& .MuiDrawer-paper`]: {
+                            display: 'flex', 
+                            width: '279px',
+                            alignItems: 'center',                            
+                            color: '#9DA4AE',                            
+                            backgroundColor: '#111927' 
+                        }
+                    }}                    
+                >                    
+                    <List>
+                        <Typography variant='body1' style={{fontSize: '18px', fontWeight:'700', borderBottom: '1px solid #9da4ae' }}>
+                            Project Management
+                        </Typography>
+                        <br/>
+                        <ListItemButton onClick={(e) => handleMenuClick('Packages')}>                                    
+                            <ListItemIcon>
+                                <FolderOpenIcon style={{ color: "#9da4ae" }} />                                
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px', fontWeight:'700' }}>
+                                    Packages
+                                </Typography>}/>
+                        </ListItemButton>
+                        <ListItemButton onClick={(e) => handleMenuClick('Resources')}>                                    
+                            <ListItemIcon>                                
+                                <HubIcon style={{ color: "#9da4ae" }} />                                
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700' }}>
+                                    Resources
+                                </Typography>}/>       
+                        </ListItemButton>
+                        <ListItemButton onClick={(e) => handleMenuClick('Target Ontology')}>                                    
+                            <ListItemIcon>                                
+                                <HiveIcon style={{ color: "#9da4ae" }} />                                
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700' }}>
+                                    Target Ontology
+                                </Typography>}/>       
+                        </ListItemButton>
+                        <ListItemButton onClick={(e) => handleMenuClick('Test Data')}>                                    
+                            <ListItemIcon>                               
+                                <BiotechIcon style={{ color: "#9da4ae" }} />                                
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700'}}>
+                                    Test Data
+                                </Typography>}/>
+                        </ListItemButton>
+                        <ListItemButton onClick={(e) => handleMenuClick('Shacl UT')}>                                    
+                            <ListItemIcon>                                
+                                <ContentCutIcon style={{ color: "#9da4ae" }} />                                
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700' }}>
+                                    Shacl UT
+                                </Typography>}/>
+                        </ListItemButton>
+                        <ListItemButton onClick={(e) => handleMenuClick('Sparql UT')}>                                    
+                            <ListItemIcon>                                
+                                <FlareIcon style={{ color: "#9da4ae" }}/>
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700'}}>
+                                    Sparql UT
+                                </Typography>}/>
+                        </ListItemButton>
+                        <br />
+                        <ListItemButton onClick={(e) => handleMenuClick('Conceptual Mapping')}>                                    
+                            <ListItemIcon>                                
+                                <MapIcon style={{ color: "#9da4ae" }}/>
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700'}}>
+                                    Conceptual Mapping
+                                </Typography>}/>
+                        </ListItemButton>
+                        <ListItemButton onClick={(e) => handleMenuClick('Triple Map Fragment Management')}>                                    
+                            <ListItemIcon>                                
+                                <SchemaIcon style={{ color: "#9da4ae" }}/>
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700'}}>
+                                    Triple Map Fragment Management
+                                </Typography>}/>
+                        </ListItemButton>                            
+                    </List>
+                </Drawer>
+            </Box>
+                     
+        </div> */}
         </>
     );
 };

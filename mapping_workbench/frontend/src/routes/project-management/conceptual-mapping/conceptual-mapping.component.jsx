@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Drawer, FormLabel, List, ListItemButton, ListItemIcon, ListItemText, Modal, Typography, TextField, ListItem } from '@mui/material';
+import { Box, Chip, Drawer, FormControl, FormLabel, InputLabel, List, ListItemButton, ListItemIcon, ListItemText, MenuItem, Modal, OutlinedInput, Select, Typography, TextField, ListItem } from '@mui/material';
 // import CircularProgress from '@mui/material/CircularProgress';
 import FlareIcon from '@mui/icons-material/Flare';
 import BiotechIcon from '@mui/icons-material/Biotech';
@@ -8,6 +8,9 @@ import ContentCutIcon from '@mui/icons-material/ContentCut';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import HiveIcon from '@mui/icons-material/Hive';
 import MapIcon from '@mui/icons-material/Map';
+import SchemaIcon from '@mui/icons-material/Schema';
+
+import { useTheme } from '@mui/material/styles';
 
 import Button from '../../../components/button/button.component';
 import { DataGrid } from '@mui/x-data-grid';
@@ -15,6 +18,17 @@ import { useNavigate } from "react-router-dom";
 import './conceptual-mapping.component.scss';
 
 //const arrMenuOptions = ['Packages', 'Resources', 'Test Data', 'Shacl UT', 'Sparql UT'];
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,      
+    },
+  },
+};
 
 const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
@@ -63,11 +77,38 @@ const columns = [
     { id: 10, businessTitle: 'Business Title 10', businessDescription: 'Business Description 10', sourceXpath: 'Source Xpath 1', targetClassPath: 'Target Class Path 10', targetPropertyPath: 'Target Property Path 10'},  
   ];
 
+  const testCollections = [ 'MRRegistry1', 'MRRegistry2', 'MRRegistry3', 'MRRegistry4', 'MRRegistry5',
+   'MRRegistry6', 'MRRegistry7', 'MRRegistry8', 'MRRegistry9', 'MRRegistry10' ];
+
+function getStyles(name, personName, theme) {
+    return {
+      fontWeight:
+        personName.indexOf(name) === -1
+          ? theme.typography.fontWeightRegular
+          : theme.typography.fontWeightMedium,
+    };
+  }
+
 const ConceptualMapping = () => {    
 
     const navigate = useNavigate();
 
     const [open, setOpen] = useState(false);
+    const theme = useTheme();
+    const [personName, setPersonName] = useState([]);
+
+    const handleChange = (event) => {
+        const {
+            target: { value },
+        } = event;
+    setPersonName(
+      // On autofill we get a stringified value.
+      typeof value === 'string' ? value.split(',') : value,
+    );
+
+    
+  };
+
 
     const handleMenuClick = (menuOption) => {
     
@@ -97,9 +138,13 @@ const ConceptualMapping = () => {
                     
                 break;
             case 'Conceptual Mapping':
-                navigate("/project-management/conceptual-mapping");
+                navigate("/project-management/conceptual-mapping");   
                         
                 break;
+            case 'Triple Map Fragment Management':
+                navigate("/project-management/triple-map-fragment-management/generic-fragments");
+                
+                break; 
             default:
                 break;                    
         }
@@ -113,6 +158,36 @@ const ConceptualMapping = () => {
                 <CircularProgress />
             </Box> */}
 
+            <FormControl sx={{ m: 1, width: 380, marginLeft: 'auto', marginRight: 'auto', marginTop: '10px', marginBottom: '40px' }}>
+                <InputLabel id="demo-multiple-chip-label">MRRegistry</InputLabel>
+                <Select
+                    labelId="demo-multiple-chip-label"
+                    id="demo-multiple-chip"
+                    multiple
+                    value={personName}
+                    onChange={handleChange}
+                    input={<OutlinedInput id="select-multiple-chip" label="Collection" />}
+                    renderValue={(selected) => (
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                            {selected.map((value) => (
+                                <Chip key={value} label={value} />
+                            ))}
+                        </Box>
+                    )}
+                MenuProps={MenuProps}
+                >
+                    {testCollections.map((name) => (
+                    <MenuItem
+                        key={name}
+                        value={name}
+                        style={getStyles(name, personName, theme)}
+                    >
+                        {name}
+                    </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+
 
             <Box sx={{ height: 'auto', width: '75%', marginLeft: 'auto', marginRight: 'auto', marginTop: '20px', backgroundColor: '#EBEFFF', borderRadius: '20px' }}>
                 <DataGrid
@@ -125,7 +200,8 @@ const ConceptualMapping = () => {
             </Box>
 
             <div className='editButtonContainer'>    
-                <Button onClick={() => setOpen(true) }>Create New Conceptual Mapping</Button>                            
+                <Button onClick={() => setOpen(true) }>Create New Conceptual Mapping</Button>
+                <Button >Delete selected conceptual mapping</Button>                            
             </div>
 
             <Modal open={open} onClose={() => setOpen(false)}>               
@@ -299,6 +375,15 @@ const ConceptualMapping = () => {
                             <ListItemText disableTypography primary={
                                 <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700'}}>
                                     Conceptual Mapping
+                                </Typography>}/>
+                        </ListItemButton>
+                        <ListItemButton onClick={(e) => handleMenuClick('Triple Map Fragment Management')}>                                    
+                            <ListItemIcon>                                
+                                <SchemaIcon style={{ color: "#9da4ae" }}/>
+                            </ListItemIcon>                                                                    
+                            <ListItemText disableTypography primary={
+                                <Typography variant="body1" style={{fontSize: '18px',fontWeight:'700'}}>
+                                    Triple Map Fragment Management
                                 </Typography>}/>
                         </ListItemButton>                            
                     </List>
