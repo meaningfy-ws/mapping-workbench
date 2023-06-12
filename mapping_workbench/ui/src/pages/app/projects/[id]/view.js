@@ -48,7 +48,7 @@ const Page = () => {
 
   if (!item) {
     return;
-  }
+  }  
 
   return (
     <>
@@ -148,7 +148,7 @@ const Page = () => {
                     lg={12}
                   >
                     <ProjectBasicDetails
-                      id={item.id}
+                      id={item._id}
                       name={item.name}
                       title={item.title}
                       description={item.description}

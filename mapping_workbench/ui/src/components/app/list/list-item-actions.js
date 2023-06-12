@@ -9,8 +9,6 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import SvgIcon from '@mui/material/SvgIcon';
 import Tooltip from '@mui/material/Tooltip';
-import Link from 'next/link';
-
 
 import {usePopover} from 'src/hooks/use-popover';
 import {useCallback} from "react";
@@ -41,10 +39,12 @@ export const ListItemActions = (props) => {
 
     const handleDeleteAction = useCallback(async () => {
         const response = await itemctx.api.deleteItem(itemctx.id);
+        console.log("delete pathname: ", itemctx.api.section);
+        
         router.push({
             pathname: paths.app[itemctx.api.section].index
         });
-
+        window.location.reload();
     }, [router, itemctx]);
 
     return (

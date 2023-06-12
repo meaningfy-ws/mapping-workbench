@@ -11,12 +11,18 @@ import {paths} from "../../../paths";
 import {useRouter} from "../../../hooks/use-router";
 
 export const ProjectBasicDetails = (props) => {
-  const { id, name, title, description, version, ...other } = props;
+  const { id, name, title, description, version, ...other } = props;  
   const router = useRouter();
+  
+    
+  console.log("props: ", props);
+  console.log("pathname: ", paths.app.projects.edit);
+
 
   const handleEditAction = useCallback(async () => {
     router.push({
-      pathname: paths.app[item.api.section].edit,
+      //pathname: paths.app[item.api.section].edit,
+      pathname: paths.app.projects.edit,
       query: {id: id}
     });
 

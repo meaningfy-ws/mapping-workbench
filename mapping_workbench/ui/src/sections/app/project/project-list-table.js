@@ -40,6 +40,9 @@ export const ProjectListTable = (props) => {
         rowsPerPage = 0,
         sectionApi
     } = props;
+
+    console.log("PROJECT PROPS: ", props);
+
     const [currentItem, setCurrentItem] = useState(null);
 
     const handleItemToggle = useCallback((itemId) => {
@@ -52,18 +55,19 @@ export const ProjectListTable = (props) => {
         });
     }, []);
 
-    const handleItemClose = useCallback(() => {
-        setCurrentItem(null);
-    }, []);
+    // const handleItemClose = useCallback(() => {
+    //     setCurrentItem(null);
+    // }, []);
 
-    const handleItemUpdate = useCallback(() => {
-        setCurrentItem(null);
-        toast.success('Item updated');
-    }, []);
+    // const handleItemUpdate = useCallback(() => {
+    //     setCurrentItem(null);
+    //     toast.success('Item updated');
+    // }, []);
 
-    const handleItemDelete = useCallback(() => {
-        toast.error('Item cannot be deleted');
-    }, []);
+    // const handleItemDelete = useCallback(() => {
+        
+    //     toast.error('Item cannot be deleted');
+    // }, []);
 
     return (
         <div>
@@ -299,41 +303,7 @@ export const ProjectListTable = (props) => {
                                                         </Grid>
                                                     </Grid>
                                                 </CardContent>
-                                                <Divider/>
-                                                <Stack
-                                                    alignItems="center"
-                                                    direction="row"
-                                                    justifyContent="space-between"
-                                                    sx={{p: 2}}
-                                                >
-                                                    <Stack
-                                                        alignItems="center"
-                                                        direction="row"
-                                                        spacing={2}
-                                                    >
-                                                        <Button
-                                                            onClick={handleItemUpdate}
-                                                            type="submit"
-                                                            variant="contained"
-                                                        >
-                                                            Update
-                                                        </Button>
-                                                        <Button
-                                                            color="inherit"
-                                                            onClick={handleItemClose}
-                                                        >
-                                                            Cancel
-                                                        </Button>
-                                                    </Stack>
-                                                    <div>
-                                                        <Button
-                                                            onClick={handleItemDelete}
-                                                            color="error"
-                                                        >
-                                                            Delete item
-                                                        </Button>
-                                                    </div>
-                                                </Stack>
+                                                <Divider/>                                                
                                             </TableCell>
                                         </TableRow>
                                     )}

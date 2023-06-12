@@ -21,6 +21,8 @@ export const ProjectEditForm = (props) => {
     const router = useRouter();
     const sectionApi = itemctx.api;
     const item = itemctx.data;
+    
+    console.log("EDIT PROPS: ", props);
 
     let initialValues = {
         name: item.name || '',
@@ -81,6 +83,8 @@ export const ProjectEditForm = (props) => {
                     } else if (itemctx.isStateable) {
                         itemctx.setState(response);
                     }
+                    await wait(500);
+                    router.push({pathname: paths.app.projects.index });
                 }
             } catch (err) {
                 console.error(err);
@@ -344,7 +348,7 @@ export const ProjectEditForm = (props) => {
                         color="inherit"
                         component={RouterLink}
                         disabled={formik.isSubmitting}
-                        href={paths.app[sectionApi.section].view}
+                        href={paths.app.projects.index}
                     >
                         Cancel
                     </Button>
