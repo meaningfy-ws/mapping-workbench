@@ -153,6 +153,14 @@ const Page = () => {
                       title={item.title}
                       description={item.description}
                       version={item.version}
+                      ssTitle={item.source_schema.title}
+                      ssDescription={item.source_schema.description}
+                      ssVersion={item.source_schema.version}
+                      ssType={item.source_schema.type}
+                      toTitle={item.target_ontology.title}
+                      toDescription={item.target_ontology.description}
+                      toVersion={item.target_ontology.version}
+                      toUri={item.target_ontology.uri}
                     />
                   </Grid>
                 </Grid>

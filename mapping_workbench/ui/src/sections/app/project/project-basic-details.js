@@ -11,7 +11,10 @@ import {paths} from "../../../paths";
 import {useRouter} from "../../../hooks/use-router";
 
 export const ProjectBasicDetails = (props) => {
-  const { id, name, title, description, version, ...other } = props;  
+  const { id, name, title, description, version,
+     ssTitle, ssDescription, ssVersion, ssType, 
+     toTitle, toDescription, toVersion, toUri, ...other } = props;
+
   const router = useRouter();
   
     
@@ -29,14 +32,10 @@ export const ProjectBasicDetails = (props) => {
   }, [router]);
 
   return (
-    <Card {...other}>
-      <CardHeader title="Basic Details" />
-      <PropertyList>
-        <PropertyListItem
-          divider
-          label="Name"
-          value={name}
-        />
+    
+    <Card>
+      <CardHeader title="Details" />
+      <PropertyList>        
         <PropertyListItem
           divider
           label="Title"
@@ -53,6 +52,55 @@ export const ProjectBasicDetails = (props) => {
           value={version}
         />
       </PropertyList>
+
+      <CardHeader title="Source Schema" />
+      <PropertyList>
+        <PropertyListItem
+          divider
+          label="Title"
+          value={ssTitle}
+        />
+        <PropertyListItem
+          divider
+          label="Description"
+          value={ssDescription}
+        />
+        <PropertyListItem
+          divider
+          label="Version"
+          value={ssVersion}
+        />
+        <PropertyListItem
+          divider
+          label="Type"
+          value={ssType}
+        />
+      </PropertyList>
+
+      <CardHeader title="Target Ontology" />
+      <PropertyList>
+        <PropertyListItem
+          divider
+          label="Title"
+          value={toTitle}
+        />
+        <PropertyListItem
+          divider
+          label="Description"
+          value={toDescription}
+        />
+        <PropertyListItem
+          divider
+          label="Version"
+          value={toVersion}
+        />
+        <PropertyListItem
+          divider
+          label="URI"
+          value={toUri}
+        />
+      </PropertyList>
+
       <CardActions>
         <Button
             color="inherit"
@@ -63,6 +111,8 @@ export const ProjectBasicDetails = (props) => {
         </Button>
       </CardActions>
     </Card>
+    
+    
   );
 };
 

@@ -11,12 +11,55 @@ import {paths} from "../../../paths";
 import {useRouter} from "../../../hooks/use-router";
 
 export const FileCollectionBasicDetails = (props) => {
-  const { id, name, title, description, version, ...other } = props;
+  const { id, name, title, description, sectionApi, version, ...other } = props;
   const router = useRouter();
+  const section = props.sectionApi;
+  let customPathName = "";
+  console.log("section: ", section);
+  console.log("ID: ", id);
+  
+  switch(section) {
+            case 'test_data_suites':
+              customPathName = paths.app.test_data_suites.edit;
+                    
+            break;
+            case 'sparql_test_suites':
+              customPathName = paths.app.sparql_test_suites.edit;
+                    
+            break;
+            case 'shacl_test_suites':
+              customPathName = paths.app.shacl_test_suites.edit;
+                    
+            break;
+            case 'ontology_file_collections':
+              customPathName = paths.app.ontology_file_collections.edit;
+                    
+            break;
+            case 'resource_collections':
+              customPathName = paths.app.resource_collections.edit;
+                    
+            break;
+            
+            
+            default:
+                break;                    
+  }
 
-  const handleEditAction = useCallback(async () => {
+  // const handleEditAction = useCallback(async () => {
+  //   router.push({
+  //     //pathname: paths.app[item.api.section].edit,
+  //     pathname: paths.app.projects.edit,
+  //     query: {id: id}
+  //   });
+
+  // }, [router]);
+
+  
+
+  const handleEditAction = useCallback(async () => {       
+
     router.push({
-      pathname: paths.app[item.api.section].edit,
+      pathname: customPathName,
       query: {id: id}
     });
 

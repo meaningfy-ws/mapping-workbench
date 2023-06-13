@@ -21,12 +21,42 @@ export const FileCollectionEditForm = (props) => {
     const router = useRouter();
     const sectionApi = itemctx.api;
     const item = itemctx.data;
+    let customPathName = "";
+
+    console.log("sectionApi: ", sectionApi.section);
 
     let initialValues = {
         title: item.title || '',
         description: item.description || '',
         submit: null
     };
+
+    switch(sectionApi.section) {
+        case 'test_data_suites':
+          customPathName = paths.app.test_data_suites.index;
+                
+        break;
+        case 'sparql_test_suites':
+          customPathName = paths.app.sparql_test_suites.index;
+                
+        break;
+        case 'shacl_test_suites':
+          customPathName = paths.app.shacl_test_suites.index;
+                
+        break;
+        case 'ontology_file_collections':
+          customPathName = paths.app.ontology_file_collections.index;
+                
+        break;
+        case 'resource_collections':
+          customPathName = paths.app.resource_collections.index;
+                
+        break;
+        
+        
+        default:
+            break;                    
+    }
 
     const formik = useFormik({
         initialValues: initialValues,
@@ -59,6 +89,8 @@ export const FileCollectionEditForm = (props) => {
                     } else if (itemctx.isStateable) {
                         itemctx.setState(response);
                     }
+                    await wait(500);
+                    router.push({pathname: customPathName });
                 }
             } catch (err) {
                 console.error(err);

@@ -52,7 +52,7 @@ export const ListFileCollectionActions = (props) => {
         router.push({
             pathname: paths.app[itemctx.api.section].index
         });
-
+        window.location.reload();
     }, [router, itemctx]);
 
     return (

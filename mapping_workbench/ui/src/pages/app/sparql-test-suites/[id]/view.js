@@ -37,7 +37,7 @@ const Page = () => {
   }
 
   const formState = useItem(sectionApi, id);
-  const item = formState.item;
+  const item = formState.item;  
 
   usePageView();
   const [currentTab, setCurrentTab] = useState('details');
@@ -145,9 +145,10 @@ const Page = () => {
                     lg={12}
                   >
                     <FileCollectionBasicDetails
-                      id={item.id}
+                      id={item._id}
                       title={item.title}
                       description={item.description}
+                      sectionApi={sectionApi.section}
                     />
                   </Grid>
                 </Grid>

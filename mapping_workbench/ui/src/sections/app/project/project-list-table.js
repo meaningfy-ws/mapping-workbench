@@ -20,6 +20,8 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { PropertyList } from 'src/components/property-list';
+import { PropertyListItem } from 'src/components/property-list-item';
 
 import {Scrollbar} from 'src/components/scrollbar';
 import {SeverityPill} from 'src/components/severity-pill';
@@ -76,7 +78,7 @@ export const ProjectListTable = (props) => {
                     <TableHead>
                         <TableRow>
                             <TableCell/>
-                            <TableCell width="25%">
+                            {/* <TableCell width="25%">
                                 <Tooltip
                                     enterDelay={300}
                                     title="Sort"
@@ -87,7 +89,7 @@ export const ProjectListTable = (props) => {
                                         Name
                                     </TableSortLabel>
                                 </Tooltip>
-                            </TableCell>
+                            </TableCell> */}
                             <TableCell width="25%">
                                 <Tooltip
                                     enterDelay={300}
@@ -115,9 +117,9 @@ export const ProjectListTable = (props) => {
                                     </TableSortLabel>
                                 </Tooltip>
                             </TableCell>
-                            <TableCell>
+                            {/* <TableCell>
                                 Status
-                            </TableCell>
+                            </TableCell> */}
                             <TableCell align="left">
                                 <Tooltip
                                     enterDelay={300}
@@ -172,7 +174,7 @@ export const ProjectListTable = (props) => {
                                                 </SvgIcon>
                                             </IconButton>
                                         </TableCell>
-                                        <TableCell width="25%">
+                                        {/* <TableCell width="25%">
                                             <Box
                                                 sx={{
                                                     alignItems: 'center',
@@ -190,7 +192,7 @@ export const ProjectListTable = (props) => {
                                                     </Typography>
                                                 </Box>
                                             </Box>
-                                        </TableCell>
+                                        </TableCell> */}
                                         <TableCell width="25%">
                                             <Typography variant="subtitle2">
                                                 {item.title}
@@ -202,11 +204,11 @@ export const ProjectListTable = (props) => {
                                         <TableCell>
                                             {item.version}
                                         </TableCell>
-                                        <TableCell>
+                                        {/* <TableCell>
                                             <SeverityPill color={statusColor}>
                                                 {item.status}
                                             </SeverityPill>
-                                        </TableCell>
+                                        </TableCell> */}
                                         <TableCell align="left">
                                             {item.created_at}
                                         </TableCell>
@@ -242,11 +244,8 @@ export const ProjectListTable = (props) => {
                                                             item
                                                             md={12}
                                                             xs={12}
-                                                        >
-                                                            <Typography variant="h6">
-                                                                Basic details
-                                                            </Typography>
-                                                            <Divider sx={{my: 2}}/>
+                                                        >                                                            
+                                                            
                                                             <Grid
                                                                 container
                                                                 spacing={3}
@@ -256,48 +255,84 @@ export const ProjectListTable = (props) => {
                                                                     md={6}
                                                                     xs={12}
                                                                 >
-                                                                    <TextField
-                                                                        defaultValue={item.name}
-                                                                        fullWidth
-                                                                        label="Name"
-                                                                        name="name"
-                                                                    />
-                                                                </Grid>
-                                                                <Grid
-                                                                    item
-                                                                    md={6}
-                                                                    xs={12}
-                                                                >
-                                                                    <TextField
+                                                                    <Typography variant="h6">
+                                                                        Source Schema
+                                                                    </Typography>
+                                                                    <Divider sx={{my: 2}}/>                                                                    
+                                                                    {/* <TextField
                                                                         defaultValue={item.title}
                                                                         fullWidth
                                                                         label="Title"
                                                                         name="title"
-                                                                    />
+                                                                    /> */}
+                                                                    <PropertyList>        
+                                                                        <PropertyListItem
+                                                                            divider
+                                                                            label="Title"
+                                                                            value={item.source_schema.title}
+                                                                        />
+                                                                        <PropertyListItem
+                                                                            divider
+                                                                            label="Description"
+                                                                            value={item.source_schema.description}
+                                                                        />
+                                                                        <PropertyListItem
+                                                                            divider
+                                                                            label="Version"
+                                                                            value={item.source_schema.version}
+                                                                        />
+                                                                        <PropertyListItem
+                                                                            divider
+                                                                            label="Type"
+                                                                            value={item.source_schema.type}
+                                                                        />
+                                                                    </PropertyList>    
                                                                 </Grid>
                                                                 <Grid
                                                                     item
                                                                     md={6}
                                                                     xs={12}
                                                                 >
-                                                                    <TextField
-                                                                        defaultValue={item.description}
-                                                                        fullWidth
-                                                                        label="Description"
-                                                                        name="description"
-                                                                    />
-                                                                </Grid>
+                                                                    <Typography variant="h6">
+                                                                        Target Ontology
+                                                                    </Typography>
+                                                                    <Divider sx={{my: 2}}/>                                                                   
+                                                                    
+                                                                    <PropertyList>        
+                                                                        <PropertyListItem
+                                                                            divider
+                                                                            label="Title"
+                                                                            value={item.target_ontology.title}
+                                                                        />
+                                                                        <PropertyListItem
+                                                                            divider
+                                                                            label="Description"
+                                                                            value={item.target_ontology.description}
+                                                                        />
+                                                                        <PropertyListItem
+                                                                            divider
+                                                                            label="Version"
+                                                                            value={item.target_ontology.version}
+                                                                        />
+                                                                        <PropertyListItem
+                                                                            divider
+                                                                            label="URI"
+                                                                            value={item.target_ontology.uri}
+                                                                        />
+                                                                    </PropertyList> 
+                                                                    
+                                                                </Grid>                                                                
                                                                 <Grid
                                                                     item
                                                                     md={6}
                                                                     xs={12}
                                                                 >
-                                                                    <TextField
+                                                                    {/* <TextField
                                                                         defaultValue={item.version}
                                                                         fullWidth
                                                                         label="Version"
                                                                         name="version"
-                                                                    />
+                                                                    /> */}
                                                                 </Grid>
                                                             </Grid>
                                                         </Grid>

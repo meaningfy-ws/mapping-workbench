@@ -107,7 +107,7 @@ export const ProjectEditForm = (props) => {
                         container
                         spacing={3}
                     >
-                        <Grid
+                        {/* <Grid
                             xs={12}
                             md={12}
                         >
@@ -122,7 +122,7 @@ export const ProjectEditForm = (props) => {
                                 required
                                 value={formik.values.name}
                             />
-                        </Grid>
+                        </Grid> */}
                         <Grid
                             xs={12}
                             md={12}

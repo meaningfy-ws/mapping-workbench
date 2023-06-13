@@ -86,9 +86,9 @@ export const FileCollectionListTable = (props) => {
                             <TableCell>
                                 Description
                             </TableCell>
-                            <TableCell>
+                            {/* <TableCell>
                                 Status
-                            </TableCell>
+                            </TableCell> */}
                             <TableCell align="left">
                                 <Tooltip
                                     enterDelay={300}
@@ -151,11 +151,11 @@ export const FileCollectionListTable = (props) => {
                                         <TableCell>
                                             {item.description}
                                         </TableCell>
-                                        <TableCell>
+                                        {/* <TableCell>
                                             <SeverityPill color={statusColor}>
                                                 {item.status}
                                             </SeverityPill>
-                                        </TableCell>
+                                        </TableCell> */}
                                         <TableCell align="left">
                                             {item.created_at}
                                         </TableCell>
@@ -228,41 +228,7 @@ export const FileCollectionListTable = (props) => {
                                                         </Grid>
                                                     </Grid>
                                                 </CardContent>
-                                                <Divider/>
-                                                <Stack
-                                                    alignItems="center"
-                                                    direction="row"
-                                                    justifyContent="space-between"
-                                                    sx={{p: 2}}
-                                                >
-                                                    <Stack
-                                                        alignItems="center"
-                                                        direction="row"
-                                                        spacing={2}
-                                                    >
-                                                        <Button
-                                                            onClick={handleItemUpdate}
-                                                            type="submit"
-                                                            variant="contained"
-                                                        >
-                                                            Update
-                                                        </Button>
-                                                        <Button
-                                                            color="inherit"
-                                                            onClick={handleItemClose}
-                                                        >
-                                                            Cancel
-                                                        </Button>
-                                                    </Stack>
-                                                    <div>
-                                                        <Button
-                                                            onClick={handleItemDelete}
-                                                            color="error"
-                                                        >
-                                                            Delete item
-                                                        </Button>
-                                                    </div>
-                                                </Stack>
+                                                <Divider/>                                                
                                             </TableCell>
                                         </TableRow>
                                     )}
