@@ -255,7 +255,7 @@ export const ProjectListTable = (props) => {
                                                                     md={6}
                                                                     xs={12}
                                                                 >
-                                                                    <Typography variant="h6">
+                                                                    <Typography sx={{ paddingLeft: "24px" }} variant="h6">
                                                                         Source Schema
                                                                     </Typography>
                                                                     <Divider sx={{my: 2}}/>                                                                    
@@ -293,7 +293,7 @@ export const ProjectListTable = (props) => {
                                                                     md={6}
                                                                     xs={12}
                                                                 >
-                                                                    <Typography variant="h6">
+                                                                    <Typography sx={{ paddingLeft: "24px" }} variant="h6">
                                                                         Target Ontology
                                                                     </Typography>
                                                                     <Divider sx={{my: 2}}/>                                                                   

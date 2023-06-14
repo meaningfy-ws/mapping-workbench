@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
 import Button from '@mui/material/Button';
+import { MenuItem } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
@@ -21,6 +22,15 @@ export const ProjectEditForm = (props) => {
     const router = useRouter();
     const sectionApi = itemctx.api;
     const item = itemctx.data;
+
+    const sourceSchemaTypes = [
+        {
+            value: 'JSON'
+        },
+        {
+            value: 'XSD'
+        }
+    ];
     
     console.log("EDIT PROPS: ", props);
 
@@ -240,14 +250,23 @@ export const ProjectEditForm = (props) => {
                             >
                                 <TextField
                                     //error={!!(formik.touched.source_schema && formik.touched.source_schema.type && formik.errors.source_schema.type)}
+                                    id="ssType"
                                     fullWidth
+                                    select
+                                    defaultValue="JSON"
                                     //helperText={formik.touched.source_schema && formik.touched.source_schema.type && formik.errors.source_schema.type}
                                     label="Type"
                                     name="source_schema.type"
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
                                     value={formik.values.source_schema.type}
-                                />
+                                >
+                                    {sourceSchemaTypes.map((option) => (
+                                        <MenuItem key={option.value} value={option.value}>
+                                            {option.value}
+                                        </MenuItem>
+                                    ))}
+                                </TextField>
                             </Grid>
                         </CardContent>
                     </Card>

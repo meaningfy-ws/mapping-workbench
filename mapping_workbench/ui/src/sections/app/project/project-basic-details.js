@@ -18,9 +18,9 @@ export const ProjectBasicDetails = (props) => {
   const router = useRouter();
   
     
-  console.log("props: ", props);
-  console.log("pathname: ", paths.app.projects.edit);
-
+  //console.log("props: ", props);
+  //console.log("pathname: ", paths.app.projects.edit);
+  
 
   const handleEditAction = useCallback(async () => {
     router.push({
@@ -30,10 +30,39 @@ export const ProjectBasicDetails = (props) => {
     });
 
   }, [router]);
+  
+//   const handleDeleteAction = useCallback(async () => {
+//     const response = await itemctx.api.deleteItem(itemctx.id);
+//     console.log("delete pathname: ", itemctx.api.section);
+    
+//     router.push({
+//         pathname: paths.app[itemctx.api.section].index
+//     });
+//     window.location.reload();
+// }, [router, itemctx]);
 
   return (
     
     <Card>
+      <CardActions sx={{ justifyContent: "end" }}>
+        <Button
+            variant="contained"            
+            size="large"
+            onClick={handleEditAction}
+            sx={{ color: "#ffffff",backgroundColor: "#2970FF", boxShadow: "0px 1px 5px rgba(0, 0, 0, 0.08)", borderRadius: "12px", minWidth: "100px" }}
+        >
+          Edit
+        </Button>
+        <Button
+            variant="contained"            
+            size="large"
+            color="error"
+            onClick={handleEditAction}
+            sx={{  boxShadow: "0px 1px 5px rgba(0, 0, 0, 0.08)", borderRadius: "12px", minWidth: "100px" }}
+        >
+          Delete
+        </Button>
+      </CardActions>
       <CardHeader title="Details" />
       <PropertyList>        
         <PropertyListItem
@@ -99,17 +128,7 @@ export const ProjectBasicDetails = (props) => {
           label="URI"
           value={toUri}
         />
-      </PropertyList>
-
-      <CardActions>
-        <Button
-            color="inherit"
-            size="small"
-            onClick={handleEditAction}
-        >
-          Edit
-        </Button>
-      </CardActions>
+      </PropertyList>      
     </Card>
     
     

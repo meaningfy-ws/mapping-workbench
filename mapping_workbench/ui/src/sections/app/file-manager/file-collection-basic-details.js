@@ -81,10 +81,11 @@ export const FileCollectionBasicDetails = (props) => {
         />
       </PropertyList>
       <CardActions>
-        <Button
-            color="inherit"
-            size="small"
+      <Button
+            variant="contained"            
+            size="large"
             onClick={handleEditAction}
+            sx={{ color: "#ffffff",backgroundColor: "#2970FF", boxShadow: "0px 1px 5px rgba(0, 0, 0, 0.08)", borderRadius: "12px", marginLeft: "12px", minWidth: "100px" }}
         >
           Edit
         </Button>

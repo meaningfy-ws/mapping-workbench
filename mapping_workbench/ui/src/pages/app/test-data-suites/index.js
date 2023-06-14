@@ -71,20 +71,23 @@ const useItemsStore = (searchState) => {
 
     const handleItemsGet = useCallback(async () => {
         try {
-            const response = await sectionApi.getItems(searchState);
+            const response = await sectionApi.getItems(searchState);           
+
             if (isMounted()) {
                 setState({
                     items: response.items,
                     itemsCount: response.count
                 });
-            }
+                
+            }            
+
         } catch (err) {
             console.error(err);
         }
-    }, [searchState, isMounted]);
+    }, [searchState, isMounted]);    
 
     useEffect(() => {
-            handleItemsGet();
+            handleItemsGet();            
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [searchState]);
@@ -96,7 +99,7 @@ const useItemsStore = (searchState) => {
 
 const Page = () => {
     const itemsSearch = useItemsSearch();
-    const itemsStore = useItemsStore(itemsSearch.state);
+    const itemsStore = useItemsStore(itemsSearch.state);    
 
     usePageView();
 

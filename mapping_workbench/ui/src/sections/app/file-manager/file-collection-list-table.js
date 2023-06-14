@@ -26,6 +26,7 @@ import {SeverityPill} from 'src/components/severity-pill';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import Tooltip from "@mui/material/Tooltip";
 import {ListFileCollectionActions} from "src/components/app/list/list-file-collection-actions";
+import { PropertyListItem } from 'src/components/property-list-item';
 
 
 export const FileCollectionListTable = (props) => {
@@ -38,7 +39,8 @@ export const FileCollectionListTable = (props) => {
         page = 0,
         rowsPerPage = 0,
         sectionApi
-    } = props;
+    } = props;    
+
     const [currentItem, setCurrentItem] = useState(null);
 
     const handleItemToggle = useCallback((itemId) => {
@@ -192,8 +194,8 @@ export const FileCollectionListTable = (props) => {
                                                             md={12}
                                                             xs={12}
                                                         >
-                                                            <Typography variant="h6">
-                                                                Basic details
+                                                            <Typography sx={{ paddingLeft: "0"}} variant="h6">
+                                                                Details
                                                             </Typography>
                                                             <Divider sx={{my: 2}}/>
                                                             <Grid
@@ -205,23 +207,32 @@ export const FileCollectionListTable = (props) => {
                                                                     md={6}
                                                                     xs={12}
                                                                 >
-                                                                    <TextField
+                                                                    {/* <TextField
                                                                         defaultValue={item.title}
                                                                         fullWidth
                                                                         label="Title"
                                                                         name="title"
+                                                                    /> */}
+                                                                    <PropertyListItem 
+                                                                    label="Title"
+                                                                    value={item.title}
                                                                     />
+                                                                    
                                                                 </Grid>
                                                                 <Grid
                                                                     item
                                                                     md={6}
                                                                     xs={12}
                                                                 >
-                                                                    <TextField
+                                                                    {/* <TextField
                                                                         defaultValue={item.description}
                                                                         fullWidth
                                                                         label="Description"
                                                                         name="description"
+                                                                    /> */}
+                                                                    <PropertyListItem 
+                                                                    label="Description"
+                                                                    value={item.description}
                                                                     />
                                                                 </Grid>
                                                             </Grid>

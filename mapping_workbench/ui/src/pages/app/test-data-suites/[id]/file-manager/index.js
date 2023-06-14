@@ -135,7 +135,7 @@ const Page = () => {
             pathname: paths.app[sectionApi.section].file_manager.create,
             query: {id: id}
         });
-
+        
     }, [router, sectionApi]);
 
     const settings = useSettings();

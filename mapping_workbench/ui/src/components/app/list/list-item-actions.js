@@ -21,6 +21,8 @@ export const ListItemActions = (props) => {
     const {itemctx} = props;
     const popover = usePopover();
 
+    console.log("itemctx: ", itemctx);
+
     const handleViewAction = useCallback(async () => {
         router.push({
             pathname: paths.app[itemctx.api.section].view,
