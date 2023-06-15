@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
+import { ForListItemAction } from 'src/contexts/app/section/for-list-item-action';
+import { projectsApi } from 'src/api/projects';
 
 import {PropertyList} from 'src/components/property-list';
 import {PropertyListItem} from 'src/components/property-list-item';
@@ -16,10 +18,10 @@ export const ProjectBasicDetails = (props) => {
      toTitle, toDescription, toVersion, toUri, ...other } = props;
 
   const router = useRouter();
-  
+  const itemctx = new ForListItemAction(id, projectsApi);
     
-  //console.log("props: ", props);
-  //console.log("pathname: ", paths.app.projects.edit);
+  console.log("props: ", props);
+  console.log("intemctx: ", typeof(itemctx));
   
 
   const handleEditAction = useCallback(async () => {
@@ -31,15 +33,14 @@ export const ProjectBasicDetails = (props) => {
 
   }, [router]);
   
-//   const handleDeleteAction = useCallback(async () => {
-//     const response = await itemctx.api.deleteItem(itemctx.id);
-//     console.log("delete pathname: ", itemctx.api.section);
+  const handleDeleteAction = useCallback(async () => {
+    const response = await itemctx.api.deleteItem(id);    
     
-//     router.push({
-//         pathname: paths.app[itemctx.api.section].index
-//     });
-//     window.location.reload();
-// }, [router, itemctx]);
+    router.push({
+        pathname: paths.app.projects.index
+    });
+    //window.location.reload();
+}, [router, itemctx]);
 
   return (
     
@@ -57,7 +58,7 @@ export const ProjectBasicDetails = (props) => {
             variant="contained"            
             size="large"
             color="error"
-            onClick={handleEditAction}
+            onClick={handleDeleteAction}
             sx={{  boxShadow: "0px 1px 5px rgba(0, 0, 0, 0.08)", borderRadius: "12px", minWidth: "100px" }}
         >
           Delete

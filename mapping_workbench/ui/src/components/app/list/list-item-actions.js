@@ -21,7 +21,7 @@ export const ListItemActions = (props) => {
     const {itemctx} = props;
     const popover = usePopover();
 
-    console.log("itemctx: ", itemctx);
+    console.log("itemctx: ", itemctx);    
 
     const handleViewAction = useCallback(async () => {
         router.push({
