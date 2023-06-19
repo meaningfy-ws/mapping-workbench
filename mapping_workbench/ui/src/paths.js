@@ -74,6 +74,20 @@ export const paths = {
         view: '/app/resource-collections/[id]/file-manager/[fid]/view',
       }
     },
+
+    package_collections: {
+      index: '/app/package_collections',
+      create: '/app/package_collections/create',
+      edit: '/app/package_collections/[id]/edit',
+      view: '/app/package_collections/[id]/view',
+      file_manager: {
+        index: '/app/package_collections/[id]/file-manager',
+        create: '/app/package_collections/[id]/file-manager/create',
+        edit: '/app/package_collections/[id]/file-manager/[fid]/edit',
+        view: '/app/package_collections/[id]/file-manager/[fid]/view',
+      }
+    },
+
     users: {
       index: '/app/users',
       edit: '/app/users/[id]/edit',
@@ -122,5 +136,13 @@ export const apiPaths = {
     item: '/resource_collections/:id',
     file_resources: '/resource_collections/:id/file_resources',
     file_resource: '/resource_collections/file_resources/:id',
+  },
+
+  package_collections: {
+    items: '/package_collections',
+    item: '/package_collections/:id',
+    file_resources: '/package_collections/:id/file_resources',
+    file_resource: '/package_collections/file_resources/:id',
   }
+
 }

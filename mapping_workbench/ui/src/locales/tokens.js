@@ -57,6 +57,9 @@ export const tokens = {
     shacl_test_suites: 'nav.shacl_test_suites',
     ontology_file_collections: 'nav.ontology_file_collections',
     resource_collections: 'nav.resource_collections',
+
+    package_collections: 'nav.package_collections',
+
     admin: 'nav.admin',
     users: 'nav.users',
   }

@@ -144,6 +144,27 @@ export const useSections = () => {
               }
             ]
           },
+
+          {
+            title: t(tokens.nav.package_collections),
+            path: paths.app.package_collections.index,
+            icon: (
+                <SvgIcon fontSize="small">
+                  <Upload04Icon />
+                </SvgIcon>
+            ),
+            items: [
+              {
+                title: t(tokens.nav.list),
+                path: paths.app.package_collections.index
+              },
+              {
+                title: t(tokens.nav.create),
+                path: paths.app.package_collections.create
+              }
+            ]
+          },
+
           {
             title: t(tokens.nav.fileManager),
             path: paths.app.fileManager,

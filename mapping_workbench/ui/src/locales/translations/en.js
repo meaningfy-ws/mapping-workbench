@@ -58,4 +58,5 @@ export const en = {
   [tokens.nav.shacl_test_suites]: 'SHACL Test Suites',
   [tokens.nav.ontology_file_collections]: 'Ontology Collections',
   [tokens.nav.resource_collections]: 'Resource Collections',
+  [tokens.nav.package_collections]: 'Package Collections',
 };

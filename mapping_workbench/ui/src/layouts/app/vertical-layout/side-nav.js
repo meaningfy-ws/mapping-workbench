@@ -148,6 +148,9 @@ export const SideNav = (props) => {
   const pathname = usePathname();
   const cssVars = useCssVars(color);
 
+  console.log("menuProps: ", props);
+  console.log("sections: ", sections);
+
   return (
     <Drawer
       anchor="left"
