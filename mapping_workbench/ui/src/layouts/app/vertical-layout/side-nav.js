@@ -13,7 +13,7 @@ import {usePathname} from 'src/hooks/use-pathname';
 import {paths} from 'src/paths';
 import {SideNavSection} from './side-nav-section';
 
-const SIDE_NAV_WIDTH = 280;
+const SIDE_NAV_WIDTH = 300;
 
 const useCssVars = (color) => {
   const theme = useTheme();
@@ -148,8 +148,8 @@ export const SideNav = (props) => {
   const pathname = usePathname();
   const cssVars = useCssVars(color);
 
-  console.log("menuProps: ", props);
-  console.log("sections: ", sections);
+  //console.log("menuProps: ", props);
+  //console.log("sections: ", sections);
 
   return (
     <Drawer

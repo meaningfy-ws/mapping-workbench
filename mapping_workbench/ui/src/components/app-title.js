@@ -10,7 +10,7 @@ export const AppTitle = (props) => {
             spacing={2}
             {...props}>
             <Typography variant="h6">
-                MW
+                Mapping Workbench
             </Typography>
         </Stack>
     );

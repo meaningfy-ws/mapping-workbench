@@ -88,6 +88,19 @@ export const paths = {
       }
     },
 
+    conceptual_mapping_collections: {
+      index: '/app/conceptual_mapping_collections',
+      create: '/app/conceptual_mapping_collections/create',
+      edit: '/app/conceptual_mapping_collections/[id]/edit',
+      view: '/app/conceptual_mapping_collections/[id]/view',
+      file_manager: {
+        index: '/app/conceptual_mapping_collections/[id]/file-manager',
+        create: '/app/conceptual_mapping_collections/[id]/file-manager/create',
+        edit: '/app/conceptual_mapping_collections/[id]/file-manager/[fid]/edit',
+        view: '/app/conceptual_mapping_collections/[id]/file-manager/[fid]/view',
+      }
+    },
+
     users: {
       index: '/app/users',
       edit: '/app/users/[id]/edit',
@@ -143,6 +156,13 @@ export const apiPaths = {
     item: '/package_collections/:id',
     file_resources: '/package_collections/:id/file_resources',
     file_resource: '/package_collections/file_resources/:id',
+  },
+
+  conceptual_mapping_collections: {
+    items: '/conceptual_mapping_collections',
+    item: '/conceptual_mapping_collections/:id',
+    file_resources: '/conceptual_mapping_collections/:id/file_resources',
+    file_resource: '/conceptual_mapping_collections/file_resources/:id',
   }
 
 }

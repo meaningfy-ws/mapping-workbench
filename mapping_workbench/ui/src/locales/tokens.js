@@ -59,6 +59,7 @@ export const tokens = {
     resource_collections: 'nav.resource_collections',
 
     package_collections: 'nav.package_collections',
+    conceptual_mapping_collections: 'nav.conceptual_mapping_collections',
 
     admin: 'nav.admin',
     users: 'nav.users',

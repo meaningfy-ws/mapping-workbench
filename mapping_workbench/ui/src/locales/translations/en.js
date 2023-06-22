@@ -59,4 +59,5 @@ export const en = {
   [tokens.nav.ontology_file_collections]: 'Ontology Collections',
   [tokens.nav.resource_collections]: 'Resource Collections',
   [tokens.nav.package_collections]: 'Package Collections',
+  [tokens.nav.conceptual_mapping_collections]: 'C. Mapping Collections',
 };

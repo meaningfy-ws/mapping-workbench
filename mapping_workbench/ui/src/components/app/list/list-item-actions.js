@@ -1,3 +1,4 @@
+import { Button } from '@mui/material';
 import EditIcon from '@untitled-ui/icons-react/build/esm/Edit02';
 import Eye from '@untitled-ui/icons-react/build/esm/Eye';
 import DotsHorizontalIcon from '@untitled-ui/icons-react/build/esm/DotsHorizontal';
@@ -51,7 +52,36 @@ export const ListItemActions = (props) => {
 
     return (
         <>
-            <Tooltip title="More options">
+        <div className='newActionButtons' sx={{ display: "flex", flexDirection: "inline", justifyContent: "space-evenly"}}>
+            <Button
+                variant="contained"            
+                size="large"
+                onClick={handleViewAction}
+                sx={{ color: "#ffffff",backgroundColor: "#2970FF", boxShadow: "0px 1px 5px rgba(0, 0, 0, 0.08)", borderRadius: "12px", minWidth: "80px" }}
+            >
+            View
+            </Button>
+            <Button
+                variant="contained"            
+                size="large"
+                color="success"
+                onClick={handleEditAction}
+                sx={{  boxShadow: "0px 1px 5px rgba(0, 0, 0, 0.08)", borderRadius: "12px", minWidth: "80px", marginLeft: "10px"  }}
+            >
+            Edit
+            </Button>
+            <Button
+                variant="contained"            
+                size="large"
+                color="error"
+                onClick={handleDeleteAction}
+                sx={{  boxShadow: "0px 1px 5px rgba(0, 0, 0, 0.08)", borderRadius: "12px", minWidth: "80px", marginLeft: "10px" }}
+            >
+            Delete
+            </Button>
+        </div>
+
+            {/* <Tooltip title="More options">
                 <IconButton
                     onClick={popover.handleOpen}
                     ref={popover.anchorRef}
@@ -104,7 +134,7 @@ export const ListItemActions = (props) => {
                     </ListItemIcon>
                     <ListItemText primary="Delete"/>
                 </MenuItem>
-            </Menu>
+            </Menu> */}
         </>
     );
 };

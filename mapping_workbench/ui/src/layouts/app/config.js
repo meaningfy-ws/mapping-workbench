@@ -166,6 +166,26 @@ export const useSections = () => {
           },
 
           {
+            title: t(tokens.nav.conceptual_mapping_collections),
+            path: paths.app.conceptual_mapping_collections.index,
+            icon: (
+                <SvgIcon fontSize="small">
+                  <Upload04Icon />
+                </SvgIcon>
+            ),
+            items: [
+              {
+                title: t(tokens.nav.list),
+                path: paths.app.conceptual_mapping_collections.index
+              },
+              {
+                title: t(tokens.nav.create),
+                path: paths.app.conceptual_mapping_collections.create
+              }
+            ]
+          },
+
+          {
             title: t(tokens.nav.fileManager),
             path: paths.app.fileManager,
             icon: (
