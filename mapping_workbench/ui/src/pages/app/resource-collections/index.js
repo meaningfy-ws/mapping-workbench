@@ -9,7 +9,6 @@ import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
-
 import {resourceCollectionsApi as sectionApi} from 'src/api/resource-collections';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {RouterLink} from 'src/components/router-link';
@@ -20,6 +19,17 @@ import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
 import {FileCollectionListSearch} from 'src/sections/app/file-manager/file-collection-list-search';
 import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
+
+
+const mockDataPackages = {
+    title:"F03",
+    description:"Des03",
+	formType:"35",   
+    minDate: "01/06/2023",
+    maxDate: "23/06/2023",
+    minVersion: "R2.08.55",
+    maxVersion: "R2.09.66",
+};
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -179,7 +189,11 @@ const Page = () => {
                         </Card>
                     </Stack>
                 </Container>
-            </Box>            
+            </Box>
+
+
+
+            
         </>
     );
 };

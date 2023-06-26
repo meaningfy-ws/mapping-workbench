@@ -17,19 +17,26 @@ const reduceChildRoutes = ({ acc, depth, item, pathname }) => {
   const partialMatch = checkPath ? pathname.includes(item.path) : false;
   const exactMatch = checkPath ? pathname === item.path : false;
 
+
+  //console.log("acc: ", acc);
+  //console.log("depth: ", depth);
+  //console.log("item: ", item);
+
+
   if (item.items) {
     acc.push(
       <SideNavItem
-        active={partialMatch}
+        active={exactMatch}
         depth={depth}
         disabled={item.disabled}
         icon={item.icon}
         key={item.title}
         label={item.label}
-        open={partialMatch}
+        open={exactMatch}
         title={item.title}
+        path={item.path}
       >
-        <Stack
+        {/* <Stack
           component="ul"
           spacing={0.5}
           sx={{
@@ -43,7 +50,7 @@ const reduceChildRoutes = ({ acc, depth, item, pathname }) => {
             items: item.items,
             pathname
           })}
-        </Stack>
+        </Stack> */}
       </SideNavItem>
     );
   } else {
@@ -67,6 +74,8 @@ const reduceChildRoutes = ({ acc, depth, item, pathname }) => {
 
 export const SideNavSection = (props) => {
   const { items = [], pathname, subheader = '', ...other } = props;
+
+  //console.log("SideNavSection props:", props);
 
   return (
     <Stack

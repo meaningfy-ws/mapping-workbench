@@ -2,6 +2,17 @@ import {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import SvgIcon from '@mui/material/SvgIcon';
 import BarChartSquare02Icon from 'src/icons/ui/duocolor/bar-chart-square-02';
+
+import FlareIcon from '@mui/icons-material/Flare';
+import BiotechIcon from '@mui/icons-material/Biotech';
+import HubIcon from '@mui/icons-material/Hub';
+import ContentCutIcon from '@mui/icons-material/ContentCut';
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+import HiveIcon from '@mui/icons-material/Hive';
+import MapIcon from '@mui/icons-material/Map';
+import SchemaIcon from '@mui/icons-material/Schema';
+import FilePresentIcon from '@mui/icons-material/FilePresent';
+
 import HomeSmileIcon from 'src/icons/ui/duocolor/home-smile';
 import LayoutAlt02 from 'src/icons/ui/duocolor/layout-alt-02';
 import Upload04Icon from 'src/icons/ui/duocolor/upload-04';
@@ -54,7 +65,7 @@ export const useSections = () => {
             path: paths.app.test_data_suites.index,
             icon: (
                 <SvgIcon fontSize="small">
-                  <Upload04Icon />
+                  <BiotechIcon />
                 </SvgIcon>
             ),
             items: [
@@ -73,7 +84,7 @@ export const useSections = () => {
             path: paths.app.sparql_test_suites.index,
             icon: (
                 <SvgIcon fontSize="small">
-                  <Upload04Icon />
+                  <FlareIcon />
                 </SvgIcon>
             ),
             items: [
@@ -92,7 +103,7 @@ export const useSections = () => {
             path: paths.app.shacl_test_suites.index,
             icon: (
                 <SvgIcon fontSize="small">
-                  <Upload04Icon />
+                  <ContentCutIcon />
                 </SvgIcon>
             ),
             items: [
@@ -111,7 +122,7 @@ export const useSections = () => {
             path: paths.app.ontology_file_collections.index,
             icon: (
                 <SvgIcon fontSize="small">
-                  <Upload04Icon />
+                  <SchemaIcon />
                 </SvgIcon>
             ),
             items: [
@@ -130,7 +141,7 @@ export const useSections = () => {
             path: paths.app.resource_collections.index,
             icon: (
                 <SvgIcon fontSize="small">
-                  <Upload04Icon />
+                  <HubIcon />
                 </SvgIcon>
             ),
             items: [
@@ -150,7 +161,7 @@ export const useSections = () => {
             path: paths.app.package_collections.index,
             icon: (
                 <SvgIcon fontSize="small">
-                  <Upload04Icon />
+                  <FolderOpenIcon />
                 </SvgIcon>
             ),
             items: [
@@ -170,7 +181,7 @@ export const useSections = () => {
             path: paths.app.conceptual_mapping_collections.index,
             icon: (
                 <SvgIcon fontSize="small">
-                  <Upload04Icon />
+                  <MapIcon />
                 </SvgIcon>
             ),
             items: [
@@ -190,7 +201,7 @@ export const useSections = () => {
             path: paths.app.fileManager,
             icon: (
               <SvgIcon fontSize="small">
-                <Upload04Icon />
+                <FilePresentIcon />
               </SvgIcon>
             )
           }

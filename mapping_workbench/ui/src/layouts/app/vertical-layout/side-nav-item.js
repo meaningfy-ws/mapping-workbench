@@ -30,6 +30,8 @@ export const SideNavItem = (props) => {
 
   // Icons can be defined at top level only, deep levels have bullets instead of actual icons.
 
+  //console.log("SideNavItem icon:", icon);
+
   let startIcon;
 
   if (depth === 0) {

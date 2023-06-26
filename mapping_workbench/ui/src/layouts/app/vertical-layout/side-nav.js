@@ -149,7 +149,7 @@ export const SideNav = (props) => {
   const cssVars = useCssVars(color);
 
   //console.log("menuProps: ", props);
-  //console.log("sections: ", sections);
+  console.log("sections: ", sections);  
 
   return (
     <Drawer

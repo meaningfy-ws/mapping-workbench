@@ -43,7 +43,7 @@ export const ProjectListTable = (props) => {
         sectionApi
     } = props;
 
-    console.log("PROJECT PROPS: ", props);
+    //console.log("PROJECT PROPS: ", props);
 
     const [currentItem, setCurrentItem] = useState(null);
 

@@ -12,6 +12,14 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
+
+import { Card } from '@mui/material';
+import List from '@mui/material';
+import ListItem from '@mui/material';
+import ListItemText from '@mui/material';
+import CardHeader from '@mui/material';
+
+
 import {resourceCollectionsApi as sectionApi} from 'src/api/resource-collections';
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
@@ -21,6 +29,32 @@ import {paths} from 'src/paths';
 import {FileCollectionBasicDetails} from 'src/sections/app/file-manager/file-collection-basic-details';
 import {useRouter} from "src/hooks/use-router";
 import {useItem} from "src/contexts/app/section/for-item-data-state";
+import { packageCollectionsApi } from 'src/api/package-collections';
+import { conceptualMappingCollectionsApi } from 'src/api/conceptual-mapping-collections';
+
+const mockDataPackages = {
+  title:"F03",
+  description:"Des03",
+  formType:"35",   
+  minDate: "01/06/2023",
+  maxDate: "23/06/2023",
+  minVersion: "R2.08.55",
+  maxVersion: "R2.09.66",
+};
+
+const mockDataConceptual = {
+	title: "Conceptual Mapping Title",
+	description: "Conceptual Mapping Description",
+	sourceXpath: "Conceptual Mapping Source Xpath",
+	targetClassPath: "Conceptual Mapping Source Xpath",
+	targetPropertyPath: "Conceptual Mapping Target Property",
+	testCollections: [
+		"MRRegistry1",
+		"MRRegistry2",
+		"MRRegistry3",
+		"MRRegistry4"
+	]
+};
 
 const tabs = [
   { label: 'Details', value: 'details' }
@@ -156,7 +190,8 @@ const Page = () => {
             )}
           </Stack>
         </Container>
-      </Box>
+      </Box>     
+
     </>
   );
 };
