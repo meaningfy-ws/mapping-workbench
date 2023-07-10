@@ -108,6 +108,8 @@ const Page = () => {
     const itemsSearch = useItemsSearch();
     const itemsStore = useItemsStore(itemsSearch.state);
 
+    console.log("itemsStore: ", itemsStore);
+
     usePageView();
 
     return (

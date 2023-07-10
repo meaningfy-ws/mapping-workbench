@@ -210,7 +210,7 @@ export const ProjectListTable = (props) => {
                                             </SeverityPill>
                                         </TableCell> */}
                                         <TableCell align="left">
-                                            {item.created_at}
+                                        {(item.created_at).replace("T", " ").split(".")[0]}                                            
                                         </TableCell>
                                         <TableCell align="right">
                                             <ListItemActions

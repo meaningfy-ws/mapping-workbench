@@ -25,9 +25,7 @@ export const ItemList = (props) => {
         view = 'grid'
     } = props;
 
-    let content;
-
-    console.log("itemListProps: ", props);
+    let content;    
 
     if (view === 'grid') {
         content = (

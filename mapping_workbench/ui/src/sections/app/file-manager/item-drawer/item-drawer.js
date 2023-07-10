@@ -25,10 +25,14 @@ export const ItemDrawer = (props) => {
 
   let content = null;
 
+ 
+
   if (item) {
     const size = bytesToSize(item.size);
     const createdAt = item.createdAt && format(item.createdAt, 'MMM dd, yyyy HH:mm');
-    const updatedAt = item.updatedAt && format(item.updatedAt, 'MMM dd, yyyy HH:mm');
+    const updatedAt = item.updatedAt && format(item.updatedAt, 'MMM dd, yyyy HH:mm');    
+
+    console.log("item", item);
 
     content = (
       <div>
@@ -241,7 +245,7 @@ export const ItemDrawer = (props) => {
         </Box>
       </div>
     );
-  }
+  }  
 
   return (
     <Drawer

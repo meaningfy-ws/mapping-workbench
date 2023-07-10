@@ -19,6 +19,7 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { format } from 'date-fns';
 
 import {Scrollbar} from 'src/components/scrollbar';
 import {SeverityPill} from 'src/components/severity-pill';
@@ -65,6 +66,12 @@ export const FileCollectionListTable = (props) => {
     const handleItemDelete = useCallback(() => {
         toast.error('Item cannot be deleted');
     }, []);
+
+    //console.log("date before: ", items);
+    //console.log(" items[0].created_at ",(items[0].created_at).replace("T", " ").split(".")[0]);
+
+    
+    
 
     return (
         <div>
@@ -158,8 +165,8 @@ export const FileCollectionListTable = (props) => {
                                                 {item.status}
                                             </SeverityPill>
                                         </TableCell> */}
-                                        <TableCell align="left">
-                                            {item.created_at}
+                                        <TableCell align="left">                                        
+                                            {(item.created_at).replace("T", " ").split(".")[0]}
                                         </TableCell>
                                         <TableCell align="right">
                                             <ListFileCollectionActions
