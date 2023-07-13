@@ -31,6 +31,8 @@ const mockDataPackages = {
     maxVersion: "R2.09.66",
 };
 
+const collectionsID = [];
+
 const useItemsSearch = () => {
     const [state, setState] = useState({
         filters: {
@@ -78,37 +80,118 @@ const useItemsStore = (searchState) => {
         items: [],
         itemsCount: 0
     });
+    const [stateFile, setStateFile] = useState({        
+        items: [],
+        itemsCount: 0
+    });    
 
     const handleItemsGet = useCallback(async () => {
         try {
-            const response = await sectionApi.getItems(searchState);
+            const response = await sectionApi.getItems(searchState);                       
+            
             if (isMounted()) {
                 setState({
                     items: response.items,
                     itemsCount: response.count
-                });
+                });                           
             }
         } catch (err) {
             console.error(err);
         }
     }, [searchState, isMounted]);
 
+    const handleItemsGetFiles = useCallback(async () => {
+        try {
+            const response2 = await sectionApi.getFileResources(id);
+            //const collection = await sectionApi.getItem(id);
+
+           
+            //console.log("response2: ", response);
+            //console.log("collection: ", collection);
+
+           
+                setStateFile({
+                    //collection: collection,
+                    itemsF: response2.items,
+                    itemsFCount: response2.count
+                });
+                //console.log("collections: ", collection);
+                console.log("response2: ", response2);
+            
+        } catch (err) {
+            console.error(err);
+        }
+    }, []);
+
     useEffect(() => {
-            handleItemsGet();
+            handleItemsGet().then(response => {
+                console.log("RESPONSE: ", response);
+            });
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState]);
+        [searchState]);    
 
     return {
-        ...state
+        ...state       
     };
 };
+
+///////////////////////////////////////////////////
+
+const useItemsStoreFiles = (id) => {
+    
+    const [stateFile, setStateFile] = useState({        
+        items: [],
+        itemsCount: 0
+    });   
+
+    const handleItemsGetFiles = useCallback(async () => {
+        try {
+            const response2 = await sectionApi.getFileResources(id);
+            //const collection = await sectionApi.getItem(id);
+
+           
+            //console.log("response2: ", response);
+            //console.log("collection: ", collection);
+
+           
+                setStateFile({
+                    //collection: collection,
+                    itemsF: response2.items,
+                    itemsFCount: response2.count
+                });
+                //console.log("collections: ", collection);
+                console.log("response2: ", response2);
+            
+        } catch (err) {
+            console.error(err);
+        }
+    }, []);
+
+    useEffect(() => {
+        handleItemsGet();            
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        []);
+
+    return {
+        ...stateFile
+    };
+};
+
+///////////////////////////////////////////////////
 
 const Page = () => {
     const itemsSearch = useItemsSearch();
     const itemsStore = useItemsStore(itemsSearch.state);
+    
+    //console.log("itemsStoreCollection ID: ", itemsStore.items[0]._id)
+    
 
-    console.log("itemsStore: ", itemsStore);
+    //console.log("itemsStore: ", itemsStore);
+    //console.log("itemsStoreCollection ID: ", itemsStore.items[0]._id);
+    //const itemsStoreFiles = useItemsStoreFiles("648b05000cf7d4c31a8a4b1d");
+    //console.log("itemsStoreFiles: ", itemsStoreFiles);      
 
     usePageView();
 

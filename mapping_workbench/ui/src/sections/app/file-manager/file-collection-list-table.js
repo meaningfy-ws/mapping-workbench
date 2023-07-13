@@ -20,6 +20,7 @@ import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { format } from 'date-fns';
+import {useMounted} from 'src/hooks/use-mounted';
 
 import {Scrollbar} from 'src/components/scrollbar';
 import {SeverityPill} from 'src/components/severity-pill';
@@ -29,8 +30,7 @@ import Tooltip from "@mui/material/Tooltip";
 import {ListFileCollectionActions} from "src/components/app/list/list-file-collection-actions";
 import { PropertyListItem } from 'src/components/property-list-item';
 
-
-export const FileCollectionListTable = (props) => {
+export const FileCollectionListTable = (props) => {    
     const {
         count = 0,
         items = [],
@@ -43,6 +43,14 @@ export const FileCollectionListTable = (props) => {
     } = props;    
 
     const [currentItem, setCurrentItem] = useState(null);
+    const isMounted = useMounted();
+
+    // if(isMounted()){
+    //     console.log("itemsWEneed: ", items[0]._id);
+    //     const itemFileCollection = useItemsStoreFiles(items[0]._id);
+    // }
+    //const itemFileCollection = useItemsStoreFiles(items[0]._id);
+    //console.log("itemFileCollection: ", itemFileCollection);
 
     const handleItemToggle = useCallback((itemId) => {
         setCurrentItem((prevItemId) => {
@@ -52,6 +60,7 @@ export const FileCollectionListTable = (props) => {
 
             return itemId;
         });
+        //useItemsStoreFiles(itemId);
     }, []);
 
     const handleItemClose = useCallback(() => {
@@ -69,7 +78,7 @@ export const FileCollectionListTable = (props) => {
 
     //console.log("date before: ", items);
     //console.log(" items[0].created_at ",(items[0].created_at).replace("T", " ").split(".")[0]);
-
+    
     
     
 
@@ -191,6 +200,10 @@ export const FileCollectionListTable = (props) => {
                                                     }
                                                 }}
                                             >
+
+
+
+
                                                 <CardContent>
                                                     <Grid
                                                         container
@@ -246,6 +259,10 @@ export const FileCollectionListTable = (props) => {
                                                         </Grid>
                                                     </Grid>
                                                 </CardContent>
+
+
+
+
                                                 <Divider/>                                                
                                             </TableCell>
                                         </TableRow>

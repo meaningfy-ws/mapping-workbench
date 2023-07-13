@@ -92,6 +92,8 @@ const useItemsStore = (id, searchState) => {
                     items: response.items,
                     itemsCount: response.count
                 });
+                console.log("collections: ", collection);
+                console.log("response: ", response);
             }
         } catch (err) {
             console.error(err);

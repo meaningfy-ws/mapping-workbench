@@ -37,7 +37,7 @@ const Page = () => {
   }
 
   const formState = useItem(sectionApi, id);
-  const item = formState.item;
+  const item = formState.item; 
 
   usePageView();
   const [currentTab, setCurrentTab] = useState('details');
