@@ -3,12 +3,13 @@ from typing import List, Dict
 from beanie import PydanticObjectId
 
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
-from mapping_workbench.backend.ontology_file_collection.models.entity import OntologyFileCollection, OntologyFileResource
+from mapping_workbench.backend.ontology_file_collection.models.entity import OntologyFileCollection, \
+    OntologyFileResource, OntologyFileCollectionOut
 from mapping_workbench.backend.user.models.user import User
 
 
-async def list_ontology_file_collections() -> List[OntologyFileCollection]:
-    return await OntologyFileCollection.find(fetch_links=False).to_list()
+async def list_ontology_file_collections() -> List[OntologyFileCollectionOut]:
+    return await OntologyFileCollection.find(fetch_links=False).project(OntologyFileCollectionOut).to_list()
 
 
 async def create_ontology_file_collection(ontology_file_collection: OntologyFileCollection, user: User) -> OntologyFileCollection:

@@ -1,7 +1,7 @@
-from typing import Dict, List
+from typing import Dict, List, Annotated
 
 from beanie import PydanticObjectId
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, status, Depends, Security
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from starlette.requests import Request
@@ -28,23 +28,29 @@ from mapping_workbench.backend.user.models.user import User
 ROUTE_PREFIX = "/ontology_file_collections"
 TAG = "ontology_file_collections"
 
-sub_router = APIRouter()
+router = APIRouter(
+    prefix=ROUTE_PREFIX,
+    tags=[TAG]
+)
 
 
-@sub_router.get(
+@router.get(
     "",
     description="List Ontology file collections",
     name="ontology_file_collections:list",
     response_model=List[OntologyFileCollection]
 )
-async def list_ontology_file_collections() -> JSONResponse:
+async def list_ontology_file_collections(
+        user: Annotated[User, Security(current_active_user, scopes=["items"])]
+) -> JSONResponse:
     items = await list_ontology_file_collections_for_api()
+    print("K ::", items, await items[0].created_by.fetch())
     return JSONResponse(
-        content=jsonable_encoder(JSONPagedReponse(items=items, count=len(items)))
+        content=JSONPagedReponse(items=[items[0].created_by], count=len(items))
     )
 
 
-@sub_router.post(
+@router.post(
     "",
     description="Add new Ontology file collection",
     name="ontology_file_collections:create_ontology_file_collection",
@@ -61,7 +67,7 @@ async def create_ontology_file_collection(
     )
 
 
-@sub_router.patch(
+@router.patch(
     "/{id}",
     name="ontology_file_collections:update_ontology_file_collection",
     response_model=OntologyFileCollection
@@ -79,7 +85,7 @@ async def update_ontology_file_collection(
     )
 
 
-@sub_router.get(
+@router.get(
     "/{id}",
     name="ontology_file_collections:get_ontology_file_collection",
     response_model=OntologyFileCollection
@@ -93,7 +99,7 @@ async def get_ontology_file_collection(id: PydanticObjectId) -> JSONResponse:
     )
 
 
-@sub_router.delete(
+@router.delete(
     "/{id}",
     name="ontology_file_collections:delete_ontology_file_collection",
     response_model=JSONEmptyContentWithId
@@ -106,7 +112,7 @@ async def delete_ontology_file_collection(id: PydanticObjectId):
     )
 
 
-@sub_router.get(
+@router.get(
     "/{id}/file_resources",
     description="List Ontology file collection file resources",
     name="ontology_file_collections:list_ontology_file_collection_file_resources",
@@ -121,7 +127,7 @@ async def list_ontology_file_collection_file_resources(
     )
 
 
-@sub_router.post(
+@router.post(
     "/{id}/file_resources",
     description="Add new Ontology file collection file resource",
     name="ontology_file_collections:create_ontology_file_collection_file_resources",
@@ -143,7 +149,7 @@ async def create_ontology_file_collection_file_resources(
     )
 
 
-@sub_router.patch(
+@router.patch(
     "/file_resources/{id}",
     name="ontology_file_collections:update_ontology_file_resource",
     response_model=OntologyFileResource
@@ -162,7 +168,7 @@ async def update_ontology_file_collection(
     )
 
 
-@sub_router.get(
+@router.get(
     "/file_resources/{id}",
     name="ontology_file_collections:get_ontology_file_resource",
     response_model=OntologyFileResource
@@ -176,7 +182,7 @@ async def get_ontology_file_resource(id: PydanticObjectId) -> JSONResponse:
     )
 
 
-@sub_router.delete(
+@router.delete(
     "/file_resources/{id}",
     name="ontology_file_collections:delete_ontology_file_resource",
     response_model=OntologyFileResource
@@ -188,6 +194,3 @@ async def delete_ontology_file_resource(id: PydanticObjectId):
         content=jsonable_encoder(JSONEmptyContentWithId(_id=id))
     )
 
-
-router = APIRouter()
-router.include_router(sub_router, prefix=ROUTE_PREFIX, tags=[TAG])

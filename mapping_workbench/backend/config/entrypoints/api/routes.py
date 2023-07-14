@@ -5,10 +5,13 @@ from mapping_workbench.backend.config import settings
 ROUTE_PREFIX = "/settings"
 TAG = "settings"
 
-sub_router = APIRouter()
+router = APIRouter(
+    prefix=ROUTE_PREFIX,
+    tags=[TAG]
+)
 
 
-@sub_router.get(
+@router.get(
     "/metadata",
     name="settings:metadata"
 )
@@ -17,5 +20,3 @@ async def metadata() -> JSONResponse:
         "app_name": settings.APP_NAME
     })
 
-router = APIRouter()
-router.include_router(sub_router, prefix=ROUTE_PREFIX, tags=[TAG])

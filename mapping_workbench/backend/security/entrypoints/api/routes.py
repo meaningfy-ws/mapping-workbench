@@ -6,24 +6,24 @@ from mapping_workbench.backend.security.services.user_manager import auth_backen
 ROUTE_PREFIX = "/auth"
 TAGS = ["auth"]
 
-router = APIRouter()
-router.include_router(
-    fastapi_users.get_auth_router(auth_backend), prefix=f"{ROUTE_PREFIX}/jwt", tags=TAGS
+router = APIRouter(
+    prefix=ROUTE_PREFIX,
+    tags=TAGS
 )
 router.include_router(
-    fastapi_users.get_register_router(UserRead, UserCreate),
-    prefix=ROUTE_PREFIX,
-    tags=TAGS,
+    fastapi_users.get_auth_router(auth_backend), prefix="/jwt"
 )
+
 router.include_router(
-    fastapi_users.get_reset_password_router(),
-    prefix=ROUTE_PREFIX,
-    tags=TAGS,
+    fastapi_users.get_register_router(UserRead, UserCreate)
 )
+
 router.include_router(
-    fastapi_users.get_verify_router(UserRead),
-    prefix=ROUTE_PREFIX,
-    tags=TAGS,
+    fastapi_users.get_reset_password_router()
+)
+
+router.include_router(
+    fastapi_users.get_verify_router(UserRead)
 )
 
 

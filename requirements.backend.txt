@@ -1,11 +1,9 @@
 # BACKEND dependencies
-graphene~=3.2.2
 python-multipart~=0.0.6
-motor~=3.1.2
+motor~=3.2.0
 python-dotenv~=1.0.0
-beanie~=1.19.0
-fastapi~=0.95.2
-fastapi-users[beanie,oauth]~=11.0.0
+pydantic~=1.10.11
+beanie==1.20.0
+fastapi~=0.99.1
+fastapi-users[beanie,oauth]==12.1.0
 uvicorn[standard]
-
-

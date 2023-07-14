@@ -28,10 +28,13 @@ from mapping_workbench.backend.user.models.user import User
 ROUTE_PREFIX = "/resource_collections"
 TAG = "resource_collections"
 
-sub_router = APIRouter()
+router = APIRouter(
+    prefix=ROUTE_PREFIX, 
+    tags=[TAG]
+)
 
 
-@sub_router.get(
+@router.get(
     "",
     description="List Resource collections",
     name="resource_collections:list",
@@ -44,7 +47,7 @@ async def list_resource_collections() -> JSONResponse:
     )
 
 
-@sub_router.post(
+@router.post(
     "",
     description="Add new Resource collection",
     name="resource_collections:create_resource_collection",
@@ -61,7 +64,7 @@ async def create_resource_collection(
     )
 
 
-@sub_router.patch(
+@router.patch(
     "/{id}",
     name="resource_collections:update_resource_collection",
     response_model=ResourceCollection
@@ -79,7 +82,7 @@ async def update_resource_collection(
     )
 
 
-@sub_router.get(
+@router.get(
     "/{id}",
     name="resource_collections:get_resource_collection",
     response_model=ResourceCollection
@@ -93,7 +96,7 @@ async def get_resource_collection(id: PydanticObjectId) -> JSONResponse:
     )
 
 
-@sub_router.delete(
+@router.delete(
     "/{id}",
     name="resource_collections:delete_resource_collection",
     response_model=JSONEmptyContentWithId
@@ -106,7 +109,7 @@ async def delete_resource_collection(id: PydanticObjectId):
     )
 
 
-@sub_router.get(
+@router.get(
     "/{id}/file_resources",
     description="List Resource collection file resources",
     name="resource_collections:list_resource_collection_file_resources",
@@ -121,7 +124,7 @@ async def list_resource_collection_file_resources(
     )
 
 
-@sub_router.post(
+@router.post(
     "/{id}/file_resources",
     description="Add new Resource collection file resource",
     name="resource_collections:create_resource_collection_file_resources",
@@ -143,7 +146,7 @@ async def create_resource_collection_file_resources(
     )
 
 
-@sub_router.patch(
+@router.patch(
     "/file_resources/{id}",
     name="resource_collections:update_resource_file",
     response_model=ResourceFile
@@ -162,7 +165,7 @@ async def update_resource_collection(
     )
 
 
-@sub_router.get(
+@router.get(
     "/file_resources/{id}",
     name="resource_collections:get_resource_file",
     response_model=ResourceFile
@@ -176,7 +179,7 @@ async def get_resource_file(id: PydanticObjectId) -> JSONResponse:
     )
 
 
-@sub_router.delete(
+@router.delete(
     "/file_resources/{id}",
     name="resource_collections:delete_resource_file",
     response_model=ResourceFile
@@ -187,7 +190,3 @@ async def delete_resource_file(id: PydanticObjectId):
         status_code=status.HTTP_200_OK,
         content=jsonable_encoder(JSONEmptyContentWithId(_id=id))
     )
-
-
-router = APIRouter()
-router.include_router(sub_router, prefix=ROUTE_PREFIX, tags=[TAG])

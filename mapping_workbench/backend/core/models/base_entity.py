@@ -1,7 +1,8 @@
 from datetime import datetime
 from typing import Optional
 
-from beanie import Document, Link
+from beanie import Document, Link, PydanticObjectId
+from pydantic import BaseModel, Field
 
 from mapping_workbench.backend.user.models.user import User
 
@@ -24,6 +25,10 @@ class BaseEntity(Document):
     #     self.updated_by = await current_active_user()
 
     @classmethod
+    def from_data_in(cls, data_in: BaseModel):
+        return cls(**dict(data_in))
+
+    @classmethod
     def get_field_names(cls, alias=False):
         return list(cls.schema(alias).get("properties").keys())
 
@@ -38,7 +43,7 @@ class BaseEntity(Document):
         return self
 
     def on_update(self, user: User):
-        self.updated_by = User.link_from_id(user.id)
+        self.updated_by = user.id
         self.updated_at = datetime.now()
         return self
 
@@ -46,3 +51,9 @@ class BaseEntity(Document):
         validate_on_save = True
         use_state_management = True
 
+
+class BaseModelOut(BaseModel):
+    id: Optional[PydanticObjectId] = Field(alias='_id')
+
+    class Config(BaseModel.Config):
+        allow_population_by_field_name = True

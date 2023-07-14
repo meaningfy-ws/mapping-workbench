@@ -28,10 +28,13 @@ from mapping_workbench.backend.user.models.user import User
 ROUTE_PREFIX = "/shacl_test_suites"
 TAG = "shacl_test_suites"
 
-sub_router = APIRouter()
+router = APIRouter(
+    prefix=ROUTE_PREFIX,
+    tags=[TAG]
+)
 
 
-@sub_router.get(
+@router.get(
     "",
     description="List SHACL test suites",
     name="shacl_test_suites:list",
@@ -44,7 +47,7 @@ async def list_shacl_test_suites() -> JSONResponse:
     )
 
 
-@sub_router.post(
+@router.post(
     "",
     description="Add new SHACL test suite",
     name="shacl_test_suites:create_shacl_test_suite",
@@ -61,7 +64,7 @@ async def create_shacl_test_suite(
     )
 
 
-@sub_router.patch(
+@router.patch(
     "/{id}",
     name="shacl_test_suites:update_shacl_test_suite",
     response_model=SHACLTestSuite
@@ -79,7 +82,7 @@ async def update_shacl_test_suite(
     )
 
 
-@sub_router.get(
+@router.get(
     "/{id}",
     name="shacl_test_suites:get_shacl_test_suite",
     response_model=SHACLTestSuite
@@ -93,7 +96,7 @@ async def get_shacl_test_suite(id: PydanticObjectId) -> JSONResponse:
     )
 
 
-@sub_router.delete(
+@router.delete(
     "/{id}",
     name="shacl_test_suites:delete_shacl_test_suite",
     response_model=JSONEmptyContentWithId
@@ -106,7 +109,7 @@ async def delete_shacl_test_suite(id: PydanticObjectId):
     )
 
 
-@sub_router.get(
+@router.get(
     "/{id}/file_resources",
     description="List SHACL test suite file resources",
     name="shacl_test_suites:list_shacl_test_suite_file_resources",
@@ -121,7 +124,7 @@ async def list_shacl_test_suite_file_resources(
     )
 
 
-@sub_router.post(
+@router.post(
     "/{id}/file_resources",
     description="Add new SHACL test suite file resource",
     name="shacl_test_suites:create_shacl_test_suite_file_resources",
@@ -143,7 +146,7 @@ async def create_shacl_test_suite_file_resources(
     )
 
 
-@sub_router.patch(
+@router.patch(
     "/file_resources/{id}",
     name="shacl_test_suites:update_shacl_test_file_resource",
     response_model=SHACLTestFileResource
@@ -162,7 +165,7 @@ async def update_shacl_test_suite(
     )
 
 
-@sub_router.get(
+@router.get(
     "/file_resources/{id}",
     name="shacl_test_suites:get_shacl_test_file_resource",
     response_model=SHACLTestFileResource
@@ -176,7 +179,7 @@ async def get_shacl_test_file_resource(id: PydanticObjectId) -> JSONResponse:
     )
 
 
-@sub_router.delete(
+@router.delete(
     "/file_resources/{id}",
     name="shacl_test_suites:delete_shacl_test_file_resource",
     response_model=SHACLTestFileResource
@@ -188,6 +191,3 @@ async def delete_shacl_test_file_resource(id: PydanticObjectId):
         content=jsonable_encoder(JSONEmptyContentWithId(_id=id))
     )
 
-
-router = APIRouter()
-router.include_router(sub_router, prefix=ROUTE_PREFIX, tags=[TAG])
