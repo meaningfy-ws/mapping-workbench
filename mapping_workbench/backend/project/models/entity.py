@@ -1,11 +1,12 @@
 from enum import Enum
 from typing import Optional, List
 
-from beanie import Link, Indexed, PydanticObjectId
-from pydantic import BaseModel, Field
+from beanie import Link, Indexed
+from pydantic import BaseModel
 
-from mapping_workbench.backend.core.models.api_entity import ApiEntity, ApiEntityMeta
-from mapping_workbench.backend.core.models.base_entity import BaseEntity, BaseModelOut
+from mapping_workbench.backend.core.models.api_entity import ApiEntity, ApiEntityMeta, ApiEntitySettings
+from mapping_workbench.backend.core.models.base_entity import BaseEntity, BaseEntityInSchema, BaseEntityOutSchema, \
+    BaseTitledEntityListFiltersSchema
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 
 
@@ -31,15 +32,22 @@ class TargetOntology(BaseModel):
     uri: Optional[str]
 
 
-class ProjectIn(BaseModel):
-    title: str
+class ProjectIn(BaseEntityInSchema):
     description: Optional[str]
     version: Optional[str]
     source_schema: Optional[SourceSchema]
     target_ontology: Optional[TargetOntology]
 
 
-class ProjectOut(BaseModelOut):
+class ProjectCreateIn(ProjectIn):
+    title: str
+
+
+class ProjectUpdateIn(ProjectIn):
+    title: Optional[str]
+
+
+class ProjectOut(BaseEntityOutSchema):
     title: Optional[str]
     description: Optional[str]
     version: Optional[str]
@@ -47,8 +55,8 @@ class ProjectOut(BaseModelOut):
     target_ontology: Optional[TargetOntology]
 
 
-class ProjectFilters(BaseModel):
-    title: str
+class ProjectListFilters(BaseTitledEntityListFiltersSchema):
+    pass
 
 
 class Project(BaseEntity, ApiEntity):
@@ -61,12 +69,14 @@ class Project(BaseEntity, ApiEntity):
 
     class Settings(BaseEntity.Settings):
         name = "projects"
+        use_state_management = True
 
-    class ApiSettings(BaseModel):
-        model_in = ProjectIn
-        model_out = ProjectOut
-        model_filters = ProjectFilters
-        meta = ApiEntityMeta(
+    class ApiSettings(ApiEntitySettings):
+        model_create_in: type[BaseModel] = ProjectCreateIn
+        model_update_in: type[BaseModel] = ProjectUpdateIn
+        model_out: type[BaseModel] = ProjectOut
+        model_list_filters: type[BaseModel] = ProjectListFilters
+        meta: ApiEntityMeta = ApiEntityMeta(
             route_prefix="/projects",
             route_tags=["projects"],
             name_for_one="project",

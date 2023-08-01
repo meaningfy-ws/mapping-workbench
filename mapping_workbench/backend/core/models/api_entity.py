@@ -1,19 +1,23 @@
-from typing import Optional, List, Any, ClassVar
+from typing import Optional, List
 
 from pydantic import BaseModel
 
 
 class ApiEntityMeta(BaseModel):
-    route_prefix: Optional[str]
-    route_tags: Optional[List[str]]
-    name_for_one: Optional[str]
-    name_for_many: Optional[str]
+    route_prefix: Optional[str] = None
+    route_tags: Optional[List[str]] = None
+    name_for_one: Optional[str] = None
+    name_for_many: Optional[str] = None
 
 
 class ApiEntitySettings(BaseModel):
-    model_in: type[Optional[BaseModel]]
-    model_out: type[Optional[BaseModel]]
-    model_filters: type[Optional[BaseModel]]
+    model_in: type[BaseModel] = None
+    model_create_in: type[BaseModel] = None
+    model_update_in: type[BaseModel] = None
+    model_out: type[BaseModel] = None
+    model_create_out: type[BaseModel] = None
+    model_update_out: type[BaseModel] = None
+    model_list_filters: type[BaseModel] = None
     meta: Optional[ApiEntityMeta]
 
 
@@ -31,4 +35,3 @@ class ApiEntity(BaseModel):
 
     class ApiSettings(ApiEntitySettings):
         pass
-

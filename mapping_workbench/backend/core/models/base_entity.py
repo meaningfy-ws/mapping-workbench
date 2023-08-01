@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Dict
 
 from beanie import Document, Link, PydanticObjectId
 from pydantic import BaseModel, Field
@@ -15,6 +15,7 @@ class BaseEntity(Document):
     updated_at: Optional[datetime]
     created_by: Optional[Link[User]]
     updated_by: Optional[Link[User]]
+    is_deleted: bool = False
 
     # @before_event(Insert)
     # async def set_created_by(self):
@@ -24,36 +25,48 @@ class BaseEntity(Document):
     # async def set_updated_by(self):
     #     self.updated_by = await current_active_user()
 
-    @classmethod
-    def from_data_in(cls, data_in: BaseModel):
-        return cls(**dict(data_in))
-
-    @classmethod
-    def get_field_names(cls, alias=False):
-        return list(cls.schema(alias).get("properties").keys())
-
-    def dict_for_update(self) -> dict:
-        data = self.dict(exclude_unset=True)
-        data.pop('id', None)
-        return data
-
     def on_create(self, user: User):
         self.created_by = User.link_from_id(user.id)
         self.created_at = datetime.now()
         return self
 
-    def on_update(self, user: User):
-        self.updated_by = user.id
-        self.updated_at = datetime.now()
-        return self
+    @classmethod
+    def on_update_data(cls, data: Dict, user: User) -> Dict:
+        data[BaseEntity.updated_by] = User.link_from_id(user.id)
+        data.updated_at = datetime.now()
+        return data
 
     class Settings:
         validate_on_save = True
         use_state_management = True
 
 
-class BaseModelOut(BaseModel):
+class BaseEntityOutSchema(BaseModel):
     id: Optional[PydanticObjectId] = Field(alias='_id')
+    is_deleted: Optional[bool]
+    #    created_by: Optional[Any]
+    #    updated_by: Optional[Any]
+    updated_at: Optional[datetime]
 
     class Config(BaseModel.Config):
         allow_population_by_field_name = True
+
+
+class BaseEntityInSchema(BaseModel):
+    pass
+
+
+class BaseEntityImmutableFiltersSchema(BaseModel):
+    is_deleted: bool = False
+
+
+class BaseEntityFiltersSchema(BaseEntityImmutableFiltersSchema):
+    pass
+
+
+class BaseEntityListFiltersSchema(BaseEntityFiltersSchema):
+    pass
+
+
+class BaseTitledEntityListFiltersSchema(BaseEntityListFiltersSchema):
+    title: Optional[str]
