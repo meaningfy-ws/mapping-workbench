@@ -1,2 +1,0 @@
-class InvalidMappingPackagesForSpecificTripleMapFragment(Exception):
-    pass

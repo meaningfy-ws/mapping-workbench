@@ -28,13 +28,10 @@ from mapping_workbench.backend.user.models.user import User
 ROUTE_PREFIX = "/test_data_suites"
 TAG = "test_data_suites"
 
-router = APIRouter(
-    prefix=ROUTE_PREFIX,
-    tags=[TAG]
-)
+sub_router = APIRouter()
 
 
-@router.get(
+@sub_router.get(
     "",
     description="List Test data suites",
     name="test_data_suites:list",
@@ -47,7 +44,7 @@ async def list_test_data_suites() -> JSONResponse:
     )
 
 
-@router.post(
+@sub_router.post(
     "",
     description="Add new Test data suite",
     name="test_data_suites:create_test_data_suite",
@@ -64,7 +61,7 @@ async def create_test_data_suite(
     )
 
 
-@router.patch(
+@sub_router.patch(
     "/{id}",
     name="test_data_suites:update_test_data_suite",
     response_model=TestDataSuite
@@ -82,7 +79,7 @@ async def update_test_data_suite(
     )
 
 
-@router.get(
+@sub_router.get(
     "/{id}",
     name="test_data_suites:get_test_data_suite",
     response_model=TestDataSuite
@@ -96,7 +93,7 @@ async def get_test_data_suite(id: PydanticObjectId) -> JSONResponse:
     )
 
 
-@router.delete(
+@sub_router.delete(
     "/{id}",
     name="test_data_suites:delete_test_data_suite",
     response_model=JSONEmptyContentWithId
@@ -109,7 +106,7 @@ async def delete_test_data_suite(id: PydanticObjectId):
     )
 
 
-@router.get(
+@sub_router.get(
     "/{id}/file_resources",
     description="List Test data suite file resources",
     name="test_data_suites:list_test_data_suite_file_resources",
@@ -124,7 +121,7 @@ async def list_test_data_suite_file_resources(
     )
 
 
-@router.post(
+@sub_router.post(
     "/{id}/file_resources",
     description="Add new Test data suite file resource",
     name="test_data_suites:create_test_data_suite_file_resources",
@@ -146,7 +143,7 @@ async def create_test_data_suite_file_resources(
     )
 
 
-@router.patch(
+@sub_router.patch(
     "/file_resources/{id}",
     name="test_data_suites:update_test_data_file_resource",
     response_model=TestDataFileResource
@@ -165,7 +162,7 @@ async def update_test_data_suite(
     )
 
 
-@router.get(
+@sub_router.get(
     "/file_resources/{id}",
     name="test_data_suites:get_test_data_file_resource",
     response_model=TestDataFileResource
@@ -179,7 +176,7 @@ async def get_test_data_file_resource(id: PydanticObjectId) -> JSONResponse:
     )
 
 
-@router.delete(
+@sub_router.delete(
     "/file_resources/{id}",
     name="test_data_suites:delete_test_data_file_resource",
     response_model=TestDataFileResource
@@ -190,3 +187,7 @@ async def delete_test_data_file_resource(id: PydanticObjectId):
         status_code=status.HTTP_200_OK,
         content=jsonable_encoder(JSONEmptyContentWithId(_id=id))
     )
+
+
+router = APIRouter()
+router.include_router(sub_router, prefix=ROUTE_PREFIX, tags=[TAG])

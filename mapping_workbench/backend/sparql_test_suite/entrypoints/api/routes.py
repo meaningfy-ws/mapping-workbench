@@ -28,13 +28,10 @@ from mapping_workbench.backend.user.models.user import User
 ROUTE_PREFIX = "/sparql_test_suites"
 TAG = "sparql_test_suites"
 
-router = APIRouter(
-    prefix=ROUTE_PREFIX,
-    tags=[TAG]
-)
+sub_router = APIRouter()
 
 
-@router.get(
+@sub_router.get(
     "",
     description="List SPARQL test suites",
     name="sparql_test_suites:list",
@@ -47,7 +44,7 @@ async def list_sparql_test_suites() -> JSONResponse:
     )
 
 
-@router.post(
+@sub_router.post(
     "",
     description="Add new SPARQL test suite",
     name="sparql_test_suites:create_sparql_test_suite",
@@ -64,7 +61,7 @@ async def create_sparql_test_suite(
     )
 
 
-@router.patch(
+@sub_router.patch(
     "/{id}",
     name="sparql_test_suites:update_sparql_test_suite",
     response_model=SPARQLTestSuite
@@ -82,7 +79,7 @@ async def update_sparql_test_suite(
     )
 
 
-@router.get(
+@sub_router.get(
     "/{id}",
     name="sparql_test_suites:get_sparql_test_suite",
     response_model=SPARQLTestSuite
@@ -96,7 +93,7 @@ async def get_sparql_test_suite(id: PydanticObjectId) -> JSONResponse:
     )
 
 
-@router.delete(
+@sub_router.delete(
     "/{id}",
     name="sparql_test_suites:delete_sparql_test_suite",
     response_model=JSONEmptyContentWithId
@@ -109,7 +106,7 @@ async def delete_sparql_test_suite(id: PydanticObjectId):
     )
 
 
-@router.get(
+@sub_router.get(
     "/{id}/file_resources",
     description="List SPARQL test suite file resources",
     name="sparql_test_suites:list_sparql_test_suite_file_resources",
@@ -124,7 +121,7 @@ async def list_sparql_test_suite_file_resources(
     )
 
 
-@router.post(
+@sub_router.post(
     "/{id}/file_resources",
     description="Add new SPARQL test suite file resource",
     name="sparql_test_suites:create_sparql_test_suite_file_resources",
@@ -146,7 +143,7 @@ async def create_sparql_test_suite_file_resources(
     )
 
 
-@router.patch(
+@sub_router.patch(
     "/file_resources/{id}",
     name="sparql_test_suites:update_sparql_test_file_resource",
     response_model=SPARQLTestFileResource
@@ -165,7 +162,7 @@ async def update_sparql_test_suite(
     )
 
 
-@router.get(
+@sub_router.get(
     "/file_resources/{id}",
     name="sparql_test_suites:get_sparql_test_file_resource",
     response_model=SPARQLTestFileResource
@@ -179,7 +176,7 @@ async def get_sparql_test_file_resource(id: PydanticObjectId) -> JSONResponse:
     )
 
 
-@router.delete(
+@sub_router.delete(
     "/file_resources/{id}",
     name="sparql_test_suites:delete_sparql_test_file_resource",
     response_model=SPARQLTestFileResource
@@ -191,3 +188,6 @@ async def delete_sparql_test_file_resource(id: PydanticObjectId):
         content=jsonable_encoder(JSONEmptyContentWithId(_id=id))
     )
 
+
+router = APIRouter()
+router.include_router(sub_router, prefix=ROUTE_PREFIX, tags=[TAG])

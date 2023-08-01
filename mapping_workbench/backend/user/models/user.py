@@ -16,7 +16,6 @@ class Settings(BaseModel):
 
 
 class User(BeanieBaseUser, Document):
-    name: Optional[str]
     oauth_accounts: List[OAuthAccount] = Field(default_factory=list)
     settings: Optional[Settings]
 

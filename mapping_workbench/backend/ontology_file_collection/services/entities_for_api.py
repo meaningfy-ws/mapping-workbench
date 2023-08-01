@@ -3,9 +3,39 @@ from typing import List, Dict
 from beanie import PydanticObjectId
 
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
-from mapping_workbench.backend.ontology_file_collection.models.entity import OntologyFileCollection, \
-    OntologyFileResource
+from mapping_workbench.backend.ontology_file_collection.models.entity import OntologyFileCollection, OntologyFileResource
 from mapping_workbench.backend.user.models.user import User
+
+
+async def list_ontology_file_collections() -> List[OntologyFileCollection]:
+    return await OntologyFileCollection.find(fetch_links=False).to_list()
+
+
+async def create_ontology_file_collection(ontology_file_collection: OntologyFileCollection, user: User) -> OntologyFileCollection:
+    ontology_file_collection.on_create(user=user)
+    return await ontology_file_collection.create()
+
+
+async def update_ontology_file_collection(id: PydanticObjectId, data: Dict, user: User):
+    ontology_file_collection: OntologyFileCollection = await OntologyFileCollection.get(id)
+    if not ontology_file_collection:
+        raise ResourceNotFoundException()
+    update_data = OntologyFileCollection(**data).on_update(user=user).dict_for_update()
+    return await ontology_file_collection.set(update_data)
+
+
+async def get_ontology_file_collection(id: PydanticObjectId) -> OntologyFileCollection:
+    ontology_file_collection = await OntologyFileCollection.get(id)
+    if not ontology_file_collection:
+        raise ResourceNotFoundException()
+    return ontology_file_collection
+
+
+async def delete_ontology_file_collection(id: PydanticObjectId):
+    ontology_file_collection: OntologyFileCollection = await OntologyFileCollection.get(id)
+    if not ontology_file_collection:
+        raise ResourceNotFoundException()
+    return await ontology_file_collection.delete()
 
 
 async def list_ontology_file_collection_file_resources(

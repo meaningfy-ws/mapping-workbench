@@ -10,13 +10,10 @@ from fastapi.encoders import jsonable_encoder
 ROUTE_PREFIX = "/users"
 TAGS = ["users"]
 
-router = APIRouter(
-    prefix=ROUTE_PREFIX, 
-    tags=TAGS
-)
+sub_router = APIRouter()
 
 
-@router.get(
+@sub_router.get(
     "",
     name="users:list",
     dependencies=[Depends(current_active_user)]
@@ -32,7 +29,10 @@ async def list_users(
     return JSONResponse(content=jsonable_encoder(users_data))
 
 
+router = APIRouter()
 router.include_router(
-    fastapi_users.get_users_router(UserRead, UserUpdate)
+    fastapi_users.get_users_router(UserRead, UserUpdate),
+    prefix=ROUTE_PREFIX,
+    tags=TAGS,
 )
-
+router.include_router(sub_router, prefix=ROUTE_PREFIX, tags=TAGS)
