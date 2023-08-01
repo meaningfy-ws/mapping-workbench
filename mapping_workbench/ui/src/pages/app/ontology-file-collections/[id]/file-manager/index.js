@@ -253,7 +253,7 @@ const Page = () => {
                 onClose={uploadDialog.handleClose}
                 open={uploadDialog.open}
                 collectionId={id}
-                sectionApi={sectionApi}
+                sectionApi={fileResourcesApi}
             />
         </>
     );

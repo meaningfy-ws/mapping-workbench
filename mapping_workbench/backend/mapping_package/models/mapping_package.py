@@ -6,8 +6,7 @@ from mapping_workbench.backend.core.models.base_entity import BaseEntity
 
 
 class MappingPackage(BaseEntity):
-    name: Indexed(str, unique=True)
-    title: Optional[str]
+    title: Indexed(str, unique=True)
     description: Optional[str]
     identifier: Optional[str]
     subtype: Optional[List[str]]
@@ -18,4 +17,3 @@ class MappingPackage(BaseEntity):
 
     class Settings(BaseEntity.Settings):
         name = "mapping_packages"
-        is_root: bool = True

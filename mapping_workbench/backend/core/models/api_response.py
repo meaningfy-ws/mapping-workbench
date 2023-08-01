@@ -12,6 +12,6 @@ class JSONEmptyContentWithId(BaseModel):
         fields = {'id': '_id'}
 
 
-class JSONPagedReponse(BaseModel):
+class JSONPagedResponse(BaseModel):
     items: List
     count: int

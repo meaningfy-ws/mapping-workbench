@@ -14,6 +14,8 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import {sparqlTestFileResourcesApi as sectionApi} from 'src/api/sparql-test-suites/file-resources';
+
 
 import { FileIcon } from 'src/components/file-icon';
 import { bytesToSize } from 'src/utils/bytes-to-size';
@@ -23,7 +25,6 @@ export const FileDropzone = (props) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone(other);
 
   const hasAnyFiles = files.length > 0;
-
   return (
     <div>
       <Box

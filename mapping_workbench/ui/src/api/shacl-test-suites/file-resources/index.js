@@ -11,7 +11,7 @@ class SHACLTestFileResourcesApi extends FileResourcesApi {
 
     get FILE_RESOURCE_FORMATS() {
         return {
-            "SHACL_TTL": "SHACL.TTL"
+            "SHACL.TTL": "SHACL.TTL"
         };
     }
 

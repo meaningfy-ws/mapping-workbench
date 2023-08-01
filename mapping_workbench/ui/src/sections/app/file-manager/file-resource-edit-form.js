@@ -58,7 +58,6 @@ export const FileResourceEditForm = (props) => {
                 .required('Format is required'),
         }),
         onSubmit: async (values, helpers) => {
-            console.log("ASSA");
             try {
                 let response;
                 let formData = values;

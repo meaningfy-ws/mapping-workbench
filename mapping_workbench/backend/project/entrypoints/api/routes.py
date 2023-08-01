@@ -1,12 +1,12 @@
-from typing import Dict, List
+from typing import List
 
 from beanie import PydanticObjectId
 from fastapi import APIRouter, status, Depends
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
-from mapping_workbench.backend.core.models.api_response import JSONEmptyContentWithId, JSONPagedReponse
-from mapping_workbench.backend.project.models.entity import Project
+from mapping_workbench.backend.core.models.api_response import JSONEmptyContentWithId, JSONPagedResponse
+from mapping_workbench.backend.project.models.entity import ProjectOut, ProjectCreateIn, ProjectUpdateIn
 from mapping_workbench.backend.project.services.entities_for_api import (
     list_projects as list_projects_for_api,
     create_project as create_project_for_api,
@@ -19,62 +19,67 @@ from mapping_workbench.backend.user.models.user import User
 
 ROUTE_PREFIX = "/projects"
 TAG = "projects"
+NAME_FOR_MANY = "projects"
+NAME_FOR_ONE = "project"
 
-sub_router = APIRouter()
+router = APIRouter(
+    prefix=ROUTE_PREFIX,
+    tags=[TAG]
+)
 
 
-@sub_router.get(
+@router.get(
     "",
     description="List projects",
-    name="projects:list",
-    response_model=List[Project]
+    name=f"{NAME_FOR_MANY}:list",
+    response_model=List[ProjectOut]
 )
 async def list_projects() -> JSONResponse:
     items = await list_projects_for_api()
     return JSONResponse(
-        content=jsonable_encoder(JSONPagedReponse(items=items, count=len(items)))
+        content=jsonable_encoder(JSONPagedResponse(items=items, count=len(items)))
     )
 
 
-@sub_router.post(
+@router.post(
     "",
     description="Add new project",
-    name="projects:create_project",
-    response_model=Project
+    name=f"{NAME_FOR_MANY}:create_{NAME_FOR_ONE}",
+    response_model=ProjectOut
 )
 async def create_project(
-        project: Project,
+        project: ProjectCreateIn,
         user: User = Depends(current_active_user)
 ) -> JSONResponse:
-    data = await create_project_for_api(project=project, user=user)
+    data = await create_project_for_api(project_data=project, user=user)
     return JSONResponse(
         status_code=status.HTTP_201_CREATED,
         content=jsonable_encoder(data)
     )
 
 
-@sub_router.patch(
+@router.patch(
     "/{id}",
-    name="projects:update_project",
-    response_model=Project
+    name=f"{NAME_FOR_MANY}:update_{NAME_FOR_ONE}",
+    response_model=ProjectOut
 )
 async def update_project(
         id: PydanticObjectId,
-        data: Dict,
+        project: ProjectUpdateIn,
         user: User = Depends(current_active_user)
 ) -> JSONResponse:
-    await update_project_for_api(id, data, user=user)
-    data = await get_project_for_api(id)
+    await update_project_for_api(id, project, user=user)
+    project: ProjectOut = await get_project_for_api(id)
     return JSONResponse(
         status_code=status.HTTP_200_OK,
-        content=jsonable_encoder(data)
+        content=jsonable_encoder(project)
     )
 
 
-@sub_router.get(
+@router.get(
     "/{id}",
-    name="projects:get_project",
-    response_model=Project
+    name=f"{NAME_FOR_MANY}:get_{NAME_FOR_ONE}",
+    response_model=ProjectOut
 )
 async def get_project(id: PydanticObjectId) -> JSONResponse:
     data = await get_project_for_api(id)
@@ -85,9 +90,9 @@ async def get_project(id: PydanticObjectId) -> JSONResponse:
     )
 
 
-@sub_router.delete(
+@router.delete(
     "/{id}",
-    name="projects:delete_project",
+    name=f"{NAME_FOR_MANY}:delete_{NAME_FOR_ONE}",
     response_model=JSONEmptyContentWithId
 )
 async def delete_project(id: PydanticObjectId):
@@ -96,7 +101,3 @@ async def delete_project(id: PydanticObjectId):
         status_code=status.HTTP_200_OK,
         content=jsonable_encoder(JSONEmptyContentWithId(_id=id))
     )
-
-
-router = APIRouter()
-router.include_router(sub_router, prefix=ROUTE_PREFIX, tags=[TAG])

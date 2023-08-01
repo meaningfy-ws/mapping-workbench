@@ -78,9 +78,6 @@ export const FileCollectionListTable = (props) => {
 
     //console.log("date before: ", items);
     //console.log(" items[0].created_at ",(items[0].created_at).replace("T", " ").split(".")[0]);
-    
-    
-    
 
     return (
         <div>
@@ -200,10 +197,6 @@ export const FileCollectionListTable = (props) => {
                                                     }
                                                 }}
                                             >
-
-
-
-
                                                 <CardContent>
                                                     <Grid
                                                         container
@@ -263,7 +256,7 @@ export const FileCollectionListTable = (props) => {
 
 
 
-                                                <Divider/>                                                
+                                                <Divider/>
                                             </TableCell>
                                         </TableRow>
                                     )}

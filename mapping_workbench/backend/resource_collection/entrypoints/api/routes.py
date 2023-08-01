@@ -6,10 +6,9 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from starlette.requests import Request
 
-from mapping_workbench.backend.core.models.api_response import JSONEmptyContentWithId, JSONPagedReponse
+from mapping_workbench.backend.core.models.api_response import JSONEmptyContentWithId, JSONPagedResponse
 from mapping_workbench.backend.file_resource.services.file_resource_form_data import \
     file_resource_data_from_form_request
-from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.resource_collection.models.entity import ResourceCollection, ResourceFile
 from mapping_workbench.backend.resource_collection.services.entities_for_api import (
     list_resource_collections as list_resource_collections_for_api,
@@ -23,6 +22,7 @@ from mapping_workbench.backend.resource_collection.services.entities_for_api imp
     get_resource_file as get_resource_file_for_api,
     delete_resource_file as delete_resource_file_for_api
 )
+from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.user.models.user import User
 
 ROUTE_PREFIX = "/resource_collections"
@@ -40,7 +40,7 @@ sub_router = APIRouter()
 async def list_resource_collections() -> JSONResponse:
     items = await list_resource_collections_for_api()
     return JSONResponse(
-        content=jsonable_encoder(JSONPagedReponse(items=items, count=len(items)))
+        content=jsonable_encoder(JSONPagedResponse(items=items, count=len(items)))
     )
 
 
@@ -117,7 +117,7 @@ async def list_resource_collection_file_resources(
 ) -> JSONResponse:
     items = await list_resource_collection_file_resources_for_api(id)
     return JSONResponse(
-        content=jsonable_encoder(JSONPagedReponse(items=items, count=len(items)))
+        content=jsonable_encoder(JSONPagedResponse(items=items, count=len(items)))
     )
 
 

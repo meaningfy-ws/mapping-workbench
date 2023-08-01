@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import {toast} from 'react-hot-toast';
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CardContent from '@mui/material/CardContent';
 import Divider from '@mui/material/Divider';
@@ -20,18 +19,21 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { PropertyList } from 'src/components/property-list';
-import { PropertyListItem } from 'src/components/property-list-item';
+import { format } from 'date-fns';
+import {useMounted} from 'src/hooks/use-mounted';
 
 import {Scrollbar} from 'src/components/scrollbar';
 import {SeverityPill} from 'src/components/severity-pill';
-import {ListItemActions} from 'src/components/app/list/list-item-actions';
 
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import Tooltip from "@mui/material/Tooltip";
+import {ListFileCollectionActions} from "src/components/app/list/list-file-collection-actions";
+import { PropertyListItem } from 'src/components/property-list-item';
+import {FileCollectionListSearch} from "./file-collection-list-search";
+import {sparqlTestSuitesApi as sectionApi} from "../../../api/sparql-test-suites";
+import Card from "@mui/material/Card";
 
-
-export const ProjectListTable = (props) => {
+export const CollectionFiles = (props) => {
     const {
         count = 0,
         items = [],
@@ -43,9 +45,15 @@ export const ProjectListTable = (props) => {
         sectionApi
     } = props;
 
-    //console.log("PROJECT PROPS: ", props);
-
     const [currentItem, setCurrentItem] = useState(null);
+    const isMounted = useMounted();
+
+    // if(isMounted()){
+    //     console.log("itemsWEneed: ", items[0]._id);
+    //     const itemFileCollection = useItemsStoreFiles(items[0]._id);
+    // }
+    //const itemFileCollection = useItemsStoreFiles(items[0]._id);
+    //console.log("itemFileCollection: ", itemFileCollection);
 
     const handleItemToggle = useCallback((itemId) => {
         setCurrentItem((prevItemId) => {
@@ -55,21 +63,24 @@ export const ProjectListTable = (props) => {
 
             return itemId;
         });
+        //useItemsStoreFiles(itemId);
     }, []);
 
-    // const handleItemClose = useCallback(() => {
-    //     setCurrentItem(null);
-    // }, []);
+    const handleItemClose = useCallback(() => {
+        setCurrentItem(null);
+    }, []);
 
-    // const handleItemUpdate = useCallback(() => {
-    //     setCurrentItem(null);
-    //     toast.success('Item updated');
-    // }, []);
+    const handleItemUpdate = useCallback(() => {
+        setCurrentItem(null);
+        toast.success('Item updated');
+    }, []);
 
-    // const handleItemDelete = useCallback(() => {
-        
-    //     toast.error('Item cannot be deleted');
-    // }, []);
+    const handleItemDelete = useCallback(() => {
+        toast.error('Item cannot be deleted');
+    }, []);
+
+    //console.log("date before: ", items);
+    //console.log(" items[0].created_at ",(items[0].created_at).replace("T", " ").split(".")[0]);
 
     return (
         <div>
@@ -78,18 +89,6 @@ export const ProjectListTable = (props) => {
                     <TableHead>
                         <TableRow>
                             <TableCell/>
-                            {/* <TableCell width="25%">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        Name
-                                    </TableSortLabel>
-                                </Tooltip>
-                            </TableCell> */}
                             <TableCell width="25%">
                                 <Tooltip
                                     enterDelay={300}
@@ -104,18 +103,6 @@ export const ProjectListTable = (props) => {
                             </TableCell>
                             <TableCell>
                                 Description
-                            </TableCell>
-                            <TableCell>
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        Version
-                                    </TableSortLabel>
-                                </Tooltip>
                             </TableCell>
                             {/* <TableCell>
                                 Status
@@ -174,25 +161,6 @@ export const ProjectListTable = (props) => {
                                                 </SvgIcon>
                                             </IconButton>
                                         </TableCell>
-                                        {/* <TableCell width="25%">
-                                            <Box
-                                                sx={{
-                                                    alignItems: 'center',
-                                                    display: 'flex'
-                                                }}
-                                            >
-                                                <Box
-                                                    sx={{
-                                                        cursor: 'pointer',
-                                                        ml: 2
-                                                    }}
-                                                >
-                                                    <Typography variant="subtitle2">
-                                                        {item.name}
-                                                    </Typography>
-                                                </Box>
-                                            </Box>
-                                        </TableCell> */}
                                         <TableCell width="25%">
                                             <Typography variant="subtitle2">
                                                 {item.title}
@@ -201,19 +169,16 @@ export const ProjectListTable = (props) => {
                                         <TableCell>
                                             {item.description}
                                         </TableCell>
-                                        <TableCell>
-                                            {item.version}
-                                        </TableCell>
                                         {/* <TableCell>
                                             <SeverityPill color={statusColor}>
                                                 {item.status}
                                             </SeverityPill>
                                         </TableCell> */}
                                         <TableCell align="left">
-                                        {(item.created_at).replace("T", " ").split(".")[0]}                                            
+                                            {(item.created_at).replace("T", " ").split(".")[0]}
                                         </TableCell>
                                         <TableCell align="right">
-                                            <ListItemActions
+                                            <ListFileCollectionActions
                                                 itemctx={new ForListItemAction(item_id, sectionApi)}/>
                                         </TableCell>
                                     </TableRow>
@@ -244,8 +209,11 @@ export const ProjectListTable = (props) => {
                                                             item
                                                             md={12}
                                                             xs={12}
-                                                        >                                                            
-                                                            
+                                                        >
+                                                            <Typography sx={{ paddingLeft: "0"}} variant="h6">
+                                                                Details
+                                                            </Typography>
+                                                            <Divider sx={{my: 2}}/>
                                                             <Grid
                                                                 container
                                                                 spacing={3}
@@ -255,90 +223,51 @@ export const ProjectListTable = (props) => {
                                                                     md={6}
                                                                     xs={12}
                                                                 >
-                                                                    <Typography sx={{ paddingLeft: "24px" }} variant="h6">
-                                                                        Source Schema
-                                                                    </Typography>
-                                                                    <Divider sx={{my: 2}}/>                                                                    
                                                                     {/* <TextField
                                                                         defaultValue={item.title}
                                                                         fullWidth
                                                                         label="Title"
                                                                         name="title"
                                                                     /> */}
-                                                                    {item.source_schema && <PropertyList>
-                                                                        <PropertyListItem
-                                                                            divider
-                                                                            label="Title"
-                                                                            value={item.source_schema.title}
-                                                                        />
-                                                                        <PropertyListItem
-                                                                            divider
-                                                                            label="Description"
-                                                                            value={item.source_schema.description}
-                                                                        />
-                                                                        <PropertyListItem
-                                                                            divider
-                                                                            label="Version"
-                                                                            value={item.source_schema.version}
-                                                                        />
-                                                                        <PropertyListItem
-                                                                            divider
-                                                                            label="Type"
-                                                                            value={item.source_schema.type}
-                                                                        />
-                                                                    </PropertyList>}
-                                                                </Grid>
-                                                                <Grid
-                                                                    item
-                                                                    md={6}
-                                                                    xs={12}
-                                                                >
-                                                                    <Typography sx={{ paddingLeft: "24px" }} variant="h6">
-                                                                        Target Ontology
-                                                                    </Typography>
-                                                                    <Divider sx={{my: 2}}/>
+                                                                    <PropertyListItem
+                                                                        label="Title"
+                                                                        value={item.title}
+                                                                    />
 
-                                                                    {item.target_ontology && <PropertyList>
-                                                                        <PropertyListItem
-                                                                            divider
-                                                                            label="Title"
-                                                                            value={item.target_ontology.title}
-                                                                        />
-                                                                        <PropertyListItem
-                                                                            divider
-                                                                            label="Description"
-                                                                            value={item.target_ontology.description}
-                                                                        />
-                                                                        <PropertyListItem
-                                                                            divider
-                                                                            label="Version"
-                                                                            value={item.target_ontology.version}
-                                                                        />
-                                                                        <PropertyListItem
-                                                                            divider
-                                                                            label="URI"
-                                                                            value={item.target_ontology.uri}
-                                                                        />
-                                                                    </PropertyList>}
-                                                                    
-                                                                </Grid>                                                                
+                                                                </Grid>
                                                                 <Grid
                                                                     item
                                                                     md={6}
                                                                     xs={12}
                                                                 >
                                                                     {/* <TextField
-                                                                        defaultValue={item.version}
+                                                                        defaultValue={item.description}
                                                                         fullWidth
-                                                                        label="Version"
-                                                                        name="version"
+                                                                        label="Description"
+                                                                        name="description"
                                                                     /> */}
+                                                                    <PropertyListItem
+                                                                        label="Description"
+                                                                        value={item.description}
+                                                                    />
                                                                 </Grid>
                                                             </Grid>
                                                         </Grid>
                                                     </Grid>
                                                 </CardContent>
-                                                <Divider/>                                                
+                                                <Divider/>
+                                                <Card>
+                                                    <FileCollectionListTable
+                                                        onPageChange={itemsSearch.handlePageChange}
+                                                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                                                        page={itemsSearch.state.page}
+                                                        items={itemsStore.items}
+                                                        count={itemsStore.itemsCount}
+                                                        rowsPerPage={itemsSearch.state.rowsPerPage}
+                                                        sectionApi={sectionApi}
+                                                    />
+                                                </Card>
+                                                <Divider/>
                                             </TableCell>
                                         </TableRow>
                                     )}
@@ -361,7 +290,7 @@ export const ProjectListTable = (props) => {
     );
 };
 
-ProjectListTable.propTypes = {
+FileCollectionListTable.propTypes = {
     count: PropTypes.number,
     items: PropTypes.array,
     onPageChange: PropTypes.func,

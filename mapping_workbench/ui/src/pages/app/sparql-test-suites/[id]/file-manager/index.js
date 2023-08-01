@@ -23,7 +23,6 @@ import {ItemList} from 'src/sections/app/file-manager/item-list';
 import {ItemSearch} from 'src/sections/app/file-manager/item-search';
 import {useRouter} from "src/hooks/use-router";
 import {paths} from "../../../../../paths";
-import {sparqlTestFileResourcesApi} from "../../../../../api/sparql-test-suites/file-resources";
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -254,7 +253,7 @@ const Page = () => {
                 onClose={uploadDialog.handleClose}
                 open={uploadDialog.open}
                 collectionId={id}
-                sectionApi={sectionApi}
+                sectionApi={fileResourcesApi}
             />
         </>
     );

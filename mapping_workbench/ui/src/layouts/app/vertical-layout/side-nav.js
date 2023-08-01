@@ -13,7 +13,7 @@ import {usePathname} from 'src/hooks/use-pathname';
 import {paths} from 'src/paths';
 import {SideNavSection} from './side-nav-section';
 
-const SIDE_NAV_WIDTH = 300;
+const SIDE_NAV_WIDTH = 280;
 
 const useCssVars = (color) => {
   const theme = useTheme();

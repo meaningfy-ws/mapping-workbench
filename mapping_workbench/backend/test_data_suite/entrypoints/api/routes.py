@@ -6,7 +6,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from starlette.requests import Request
 
-from mapping_workbench.backend.core.models.api_response import JSONEmptyContentWithId, JSONPagedReponse
+from mapping_workbench.backend.core.models.api_response import JSONEmptyContentWithId, JSONPagedResponse
 from mapping_workbench.backend.file_resource.services.file_resource_form_data import \
     file_resource_data_from_form_request
 from mapping_workbench.backend.security.services.user_manager import current_active_user
@@ -40,7 +40,7 @@ sub_router = APIRouter()
 async def list_test_data_suites() -> JSONResponse:
     items = await list_test_data_suites_for_api()
     return JSONResponse(
-        content=jsonable_encoder(JSONPagedReponse(items=items, count=len(items)))
+        content=jsonable_encoder(JSONPagedResponse(items=items, count=len(items)))
     )
 
 
@@ -117,7 +117,7 @@ async def list_test_data_suite_file_resources(
 ) -> JSONResponse:
     items = await list_test_data_suite_file_resources_for_api(id)
     return JSONResponse(
-        content=jsonable_encoder(JSONPagedReponse(items=items, count=len(items)))
+        content=jsonable_encoder(JSONPagedResponse(items=items, count=len(items)))
     )
 
 

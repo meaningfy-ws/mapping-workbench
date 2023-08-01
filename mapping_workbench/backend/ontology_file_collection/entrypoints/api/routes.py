@@ -6,11 +6,11 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from starlette.requests import Request
 
-from mapping_workbench.backend.core.models.api_response import JSONEmptyContentWithId, JSONPagedReponse
+from mapping_workbench.backend.core.models.api_response import JSONEmptyContentWithId, JSONPagedResponse
 from mapping_workbench.backend.file_resource.services.file_resource_form_data import \
     file_resource_data_from_form_request
-from mapping_workbench.backend.security.services.user_manager import current_active_user
-from mapping_workbench.backend.ontology_file_collection.models.entity import OntologyFileCollection, OntologyFileResource
+from mapping_workbench.backend.ontology_file_collection.models.entity import OntologyFileCollection, \
+    OntologyFileResource
 from mapping_workbench.backend.ontology_file_collection.services.entities_for_api import (
     list_ontology_file_collections as list_ontology_file_collections_for_api,
     create_ontology_file_collection as create_ontology_file_collection_for_api,
@@ -23,6 +23,7 @@ from mapping_workbench.backend.ontology_file_collection.services.entities_for_ap
     get_ontology_file_resource as get_ontology_file_resource_for_api,
     delete_ontology_file_resource as delete_ontology_file_resource_for_api
 )
+from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.user.models.user import User
 
 ROUTE_PREFIX = "/ontology_file_collections"
@@ -40,7 +41,7 @@ sub_router = APIRouter()
 async def list_ontology_file_collections() -> JSONResponse:
     items = await list_ontology_file_collections_for_api()
     return JSONResponse(
-        content=jsonable_encoder(JSONPagedReponse(items=items, count=len(items)))
+        content=jsonable_encoder(JSONPagedResponse(items=items, count=len(items)))
     )
 
 
@@ -117,7 +118,7 @@ async def list_ontology_file_collection_file_resources(
 ) -> JSONResponse:
     items = await list_ontology_file_collection_file_resources_for_api(id)
     return JSONResponse(
-        content=jsonable_encoder(JSONPagedReponse(items=items, count=len(items)))
+        content=jsonable_encoder(JSONPagedResponse(items=items, count=len(items)))
     )
 
 

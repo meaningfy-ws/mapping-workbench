@@ -31,11 +31,8 @@ export const ProjectEditForm = (props) => {
             value: 'XSD'
         }
     ];
-    
-    console.log("EDIT PROPS: ", props);
 
     let initialValues = {
-        name: item.name || '',
         title: item.title || '',
         description: item.description || '',
         version: item.version || '',
@@ -43,7 +40,7 @@ export const ProjectEditForm = (props) => {
             title: item.source_schema && item.source_schema.title || '',
             description: item.source_schema && item.source_schema.description || '',
             version: item.source_schema && item.source_schema.version || '',
-            type: item.source_schema && item.source_schema.type || ''
+            type: item.source_schema && item.source_schema.type || 'JSON'
         },
         target_ontology: {
             title: item.target_ontology && item.target_ontology.title || '',
@@ -57,7 +54,6 @@ export const ProjectEditForm = (props) => {
     const formik = useFormik({
         initialValues: initialValues,
         validationSchema: Yup.object({
-            name: Yup.string().max(255),
             title: Yup
                 .string()
                 .max(255)
@@ -117,22 +113,6 @@ export const ProjectEditForm = (props) => {
                         container
                         spacing={3}
                     >
-                        {/* <Grid
-                            xs={12}
-                            md={12}
-                        >
-                            <TextField
-                                error={!!(formik.touched.name && formik.errors.name)}
-                                fullWidth
-                                helperText={formik.touched.name && formik.errors.name}
-                                label="Name"
-                                name="name"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                required
-                                value={formik.values.name}
-                            />
-                        </Grid> */}
                         <Grid
                             xs={12}
                             md={12}
@@ -249,12 +229,12 @@ export const ProjectEditForm = (props) => {
                                 md={12}
                             >
                                 <TextField
-                                    //error={!!(formik.touched.source_schema && formik.touched.source_schema.type && formik.errors.source_schema.type)}
+                                    error={!!(formik.touched.source_schema && formik.touched.source_schema.type && formik.errors.source_schema && formik.errors.source_schema.type)}
                                     id="ssType"
                                     fullWidth
                                     select
                                     defaultValue="JSON"
-                                    //helperText={formik.touched.source_schema && formik.touched.source_schema.type && formik.errors.source_schema.type}
+                                    helperText={formik.touched.source_schema && formik.touched.source_schema.type && formik.errors.source_schema && formik.errors.source_schema.type}
                                     label="Type"
                                     name="source_schema.type"
                                     onBlur={formik.handleBlur}
