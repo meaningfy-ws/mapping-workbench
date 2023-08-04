@@ -1,12 +1,11 @@
 from enum import Enum
-from typing import Optional, List
+from typing import Optional
 
-from beanie import Link, Indexed
+from beanie import Indexed
 from pydantic import BaseModel
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntity, BaseEntityInSchema, BaseEntityOutSchema, \
     BaseTitledEntityListFiltersSchema
-from mapping_workbench.backend.mapping_package.models.mapping_package import MappingPackage
 
 
 class SourceSchemaType(Enum):
@@ -64,7 +63,6 @@ class Project(BaseEntity):
     version: Optional[str]
     source_schema: Optional[SourceSchema]
     target_ontology: Optional[TargetOntology]
-    mapping_packages: Optional[List[Link[MappingPackage]]]
 
     class Settings(BaseEntity.Settings):
         name = "projects"

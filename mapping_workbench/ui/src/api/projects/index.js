@@ -1,6 +1,4 @@
 import {SectionApi} from "../section";
-import {paths} from "../../paths";
-import {appApi} from "../app";
 
 class ProjectsApi extends SectionApi {
     get SECTION_TITLE() {

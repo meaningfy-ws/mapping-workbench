@@ -1,7 +1,5 @@
-import {useCallback, useEffect, useState} from 'react';
 import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
 import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
@@ -11,12 +9,10 @@ import Typography from '@mui/material/Typography';
 import {projectsApi as sectionApi} from 'src/api/projects';
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
-import {useMounted} from 'src/hooks/use-mounted';
 import {usePageView} from 'src/hooks/use-page-view';
-import {useRouter} from 'src/hooks/use-router';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
-import {ProjectEditForm} from 'src/sections/app/project/project-edit-form';
+import {EditForm} from 'src/sections/app/project/edit-form';
 import {ForItemCreateForm} from "src/contexts/app/section/for-item-form";
 
 
@@ -58,7 +54,7 @@ const Page = () => {
                                 </Link>
                             </div>
                         </Stack>
-                        <ProjectEditForm itemctx={new ForItemCreateForm(item, sectionApi)}/>
+                        <EditForm itemctx={new ForItemCreateForm(item, sectionApi)}/>
                     </Stack>
                 </Container>
             </Box>

@@ -48,6 +48,12 @@ class AppApi {
         return headers;
     }
 
+    addRequestContentType(headers = null) {
+        headers = headers || {};
+        headers['Content-Type'] = 'application/json';
+        return headers;
+    }
+
     processError(error) {
         if (error.response && error.response.status == 401) {
             this.removeAccessToken();
@@ -55,10 +61,12 @@ class AppApi {
     }
 
     async request(method, endpoint, data = null, headers = null) {
+        headers = this.addAuth(headers);
+
         const config = {
             method: method,
             url: this.url(endpoint),
-            headers: this.addAuth(headers)
+            headers: headers
         }
         if (data !== null) {
             config.data = data;

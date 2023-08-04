@@ -23,7 +23,7 @@ import {FileCollectionEditForm} from 'src/sections/app/file-manager/file-collect
 import {ForItemEditForm} from "src/contexts/app/section/for-item-form";
 import {useItem} from "src/contexts/app/section/for-item-data-state";
 import {useRouter} from "src/hooks/use-router";
-import { packageCollectionsApi } from 'src/api/package-collections';
+import { packageCollectionsApi } from 'src/api/mapping-packages';
 import { conceptualMappingCollectionsApi } from 'src/api/conceptual-mapping-collections';
 
 const mockDataPackages = {

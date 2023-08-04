@@ -157,8 +157,8 @@ export const useSections = () => {
           },
 
           {
-            title: t(tokens.nav.package_collections),
-            path: paths.app.package_collections.index,
+            title: t(tokens.nav.mapping_packages),
+            path: paths.app.mapping_packages.index,
             icon: (
                 <SvgIcon fontSize="small">
                   <FolderOpenIcon />
@@ -167,18 +167,18 @@ export const useSections = () => {
             items: [
               {
                 title: t(tokens.nav.list),
-                path: paths.app.package_collections.index
+                path: paths.app.mapping_packages.index
               },
               {
                 title: t(tokens.nav.create),
-                path: paths.app.package_collections.create
+                path: paths.app.mapping_packages.create
               }
             ]
           },
 
           {
-            title: t(tokens.nav.conceptual_mapping_collections),
-            path: paths.app.conceptual_mapping_collections.index,
+            title: t(tokens.nav.conceptual_mapping_rules),
+            path: paths.app.conceptual_mapping_rules.index,
             icon: (
                 <SvgIcon fontSize="small">
                   <MapIcon />
@@ -187,11 +187,31 @@ export const useSections = () => {
             items: [
               {
                 title: t(tokens.nav.list),
-                path: paths.app.conceptual_mapping_collections.index
+                path: paths.app.conceptual_mapping_rules.index
               },
               {
                 title: t(tokens.nav.create),
-                path: paths.app.conceptual_mapping_collections.create
+                path: paths.app.conceptual_mapping_rules.create
+              }
+            ]
+          },
+
+          {
+            title: t(tokens.nav.triple_map_fragments),
+            path: paths.app.triple_map_fragments.index,
+            icon: (
+                <SvgIcon fontSize="small">
+                  <HiveIcon />
+                </SvgIcon>
+            ),
+            items: [
+              {
+                title: t(tokens.nav.list),
+                path: paths.app.triple_map_fragments.index
+              },
+              {
+                title: t(tokens.nav.create),
+                path: paths.app.triple_map_fragments.create
               }
             ]
           },

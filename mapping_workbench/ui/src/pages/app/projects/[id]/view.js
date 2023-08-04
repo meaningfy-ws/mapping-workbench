@@ -18,7 +18,7 @@ import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
-import {ProjectBasicDetails} from 'src/sections/app/project/project-basic-details';
+import {BasicDetails} from 'src/sections/app/project/basic-details';
 import {useRouter} from "src/hooks/use-router";
 import {useItem} from "src/contexts/app/section/for-item-data-state";
 
@@ -149,7 +149,7 @@ const Page = () => {
                     xs={12}
                     lg={12}
                   >
-                    <ProjectBasicDetails
+                    <BasicDetails
                       id={item._id}
                       name={item.name}
                       title={item.title}

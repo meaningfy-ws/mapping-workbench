@@ -18,8 +18,8 @@ import {useMounted} from 'src/hooks/use-mounted';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
-import {ProjectListSearch} from 'src/sections/app/project/project-list-search';
-import {ProjectListTable} from 'src/sections/app/project/project-list-table';
+import {ListSearch} from 'src/sections/app/project/list-search';
+import {ListTable} from 'src/sections/app/project/list-table';
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -166,8 +166,8 @@ const Page = () => {
                             </Stack>
                         </Stack>
                         <Card>
-                            <ProjectListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
-                            <ProjectListTable
+                            <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
+                            <ListTable
                                 onPageChange={itemsSearch.handlePageChange}
                                 onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                                 page={itemsSearch.state.page}

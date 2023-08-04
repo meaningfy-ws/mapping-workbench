@@ -14,6 +14,7 @@ import {RouterLink} from 'src/components/router-link';
 import {paths} from 'src/paths';
 import {wait} from 'src/utils/wait';
 import {useRouter} from 'src/hooks/use-router';
+import {useCallback} from "react";
 
 
 export const FileCollectionEditForm = (props) => {
@@ -24,6 +25,14 @@ export const FileCollectionEditForm = (props) => {
     let customPathName = "";
 
     console.log("sectionApi: ", sectionApi.section);
+
+    const handleFileManagerAction = useCallback(async () => {
+        router.push({
+            pathname: paths.app[itemctx.api.section].file_manager.index,
+            query: {id: item._id}
+        });
+
+    }, [router, itemctx]);
 
     let initialValues = {
         title: item.title || '',
@@ -167,6 +176,13 @@ export const FileCollectionEditForm = (props) => {
                     >
                         {itemctx.isNew ? 'Create' : 'Update'}
                     </Button>
+                    {!itemctx.isNew && <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={handleFileManagerAction}
+                    >
+                        File Manager
+                    </Button>}
                     <Button
                         color="inherit"
                         component={RouterLink}

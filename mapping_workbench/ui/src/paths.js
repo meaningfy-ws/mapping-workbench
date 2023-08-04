@@ -75,30 +75,25 @@ export const paths = {
       }
     },
 
-    package_collections: {
-      index: '/app/package_collections',
-      create: '/app/package_collections/create',
-      edit: '/app/package_collections/[id]/edit',
-      view: '/app/package_collections/[id]/view',
-      file_manager: {
-        index: '/app/package_collections/[id]/file-manager',
-        create: '/app/package_collections/[id]/file-manager/create',
-        edit: '/app/package_collections/[id]/file-manager/[fid]/edit',
-        view: '/app/package_collections/[id]/file-manager/[fid]/view',
-      }
+    mapping_packages: {
+      index: '/app/mapping-packages',
+      create: '/app/mapping-packages/create',
+      edit: '/app/mapping-packages/[id]/edit',
+      view: '/app/mapping-packages/[id]/view'
     },
 
-    conceptual_mapping_collections: {
-      index: '/app/conceptual_mapping_collections',
-      create: '/app/conceptual_mapping_collections/create',
-      edit: '/app/conceptual_mapping_collections/[id]/edit',
-      view: '/app/conceptual_mapping_collections/[id]/view',
-      file_manager: {
-        index: '/app/conceptual_mapping_collections/[id]/file-manager',
-        create: '/app/conceptual_mapping_collections/[id]/file-manager/create',
-        edit: '/app/conceptual_mapping_collections/[id]/file-manager/[fid]/edit',
-        view: '/app/conceptual_mapping_collections/[id]/file-manager/[fid]/view',
-      }
+    conceptual_mapping_rules: {
+      index: '/app/conceptual-mapping-rules',
+      create: '/app/conceptual-mapping-rules/create',
+      edit: '/app/conceptual-mapping-rules/[id]/edit',
+      view: '/app/conceptual-mapping-rules/[id]/view'
+    },
+
+    triple_map_fragments: {
+      index: '/app/triple-map-fragments',
+      create: '/app/triple-map-fragments/create',
+      edit: '/app/triple-map-fragments/[id]/edit',
+      view: '/app/triple-map-fragments/[id]/view'
     },
 
     users: {
@@ -151,18 +146,18 @@ export const apiPaths = {
     file_resource: '/resource_collections/file_resources/:id',
   },
 
-  package_collections: {
-    items: '/package_collections',
-    item: '/package_collections/:id',
-    file_resources: '/package_collections/:id/file_resources',
-    file_resource: '/package_collections/file_resources/:id',
+  mapping_packages: {
+    items: '/mapping_packages',
+    item: '/mapping_packages/:id'
   },
 
-  conceptual_mapping_collections: {
-    items: '/conceptual_mapping_collections',
-    item: '/conceptual_mapping_collections/:id',
-    file_resources: '/conceptual_mapping_collections/:id/file_resources',
-    file_resource: '/conceptual_mapping_collections/file_resources/:id',
-  }
+  conceptual_mapping_rules: {
+    items: '/conceptual_mapping_rules',
+    item: '/conceptual_mapping_rules/:id'
+  },
 
+  triple_map_fragments: {
+    items: '/triple_map_fragments',
+    item: '/triple_map_fragments/:id'
+  }
 }

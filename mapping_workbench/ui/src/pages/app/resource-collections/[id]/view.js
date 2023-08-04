@@ -29,7 +29,7 @@ import {paths} from 'src/paths';
 import {FileCollectionBasicDetails} from 'src/sections/app/file-manager/file-collection-basic-details';
 import {useRouter} from "src/hooks/use-router";
 import {useItem} from "src/contexts/app/section/for-item-data-state";
-import { packageCollectionsApi } from 'src/api/package-collections';
+import { packageCollectionsApi } from 'src/api/mapping-packages';
 import { conceptualMappingCollectionsApi } from 'src/api/conceptual-mapping-collections';
 
 const mockDataPackages = {

@@ -58,8 +58,9 @@ export const tokens = {
     ontology_file_collections: 'nav.ontology_file_collections',
     resource_collections: 'nav.resource_collections',
 
-    package_collections: 'nav.package_collections',
-    conceptual_mapping_collections: 'nav.conceptual_mapping_collections',
+    mapping_packages: 'nav.mapping_packages',
+    conceptual_mapping_rules: 'nav.conceptual_mapping_rules',
+    triple_map_fragments: 'nav.triple_map_fragments',
 
     admin: 'nav.admin',
     users: 'nav.users',

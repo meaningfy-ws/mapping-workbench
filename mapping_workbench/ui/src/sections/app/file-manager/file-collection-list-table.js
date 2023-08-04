@@ -3,12 +3,10 @@ import PropTypes from 'prop-types';
 import {toast} from 'react-hot-toast';
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
-import Button from '@mui/material/Button';
 import CardContent from '@mui/material/CardContent';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
-import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -17,18 +15,16 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { format } from 'date-fns';
 import {useMounted} from 'src/hooks/use-mounted';
 
 import {Scrollbar} from 'src/components/scrollbar';
-import {SeverityPill} from 'src/components/severity-pill';
 
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import Tooltip from "@mui/material/Tooltip";
 import {ListFileCollectionActions} from "src/components/app/list/list-file-collection-actions";
-import { PropertyListItem } from 'src/components/property-list-item';
+import {PropertyListItem} from 'src/components/property-list-item';
+import {PropertyList} from "../../../components/property-list";
 
 export const FileCollectionListTable = (props) => {    
     const {
@@ -98,12 +94,6 @@ export const FileCollectionListTable = (props) => {
                                     </TableSortLabel>
                                 </Tooltip>
                             </TableCell>
-                            <TableCell>
-                                Description
-                            </TableCell>
-                            {/* <TableCell>
-                                Status
-                            </TableCell> */}
                             <TableCell align="left">
                                 <Tooltip
                                     enterDelay={300}
@@ -163,14 +153,6 @@ export const FileCollectionListTable = (props) => {
                                                 {item.title}
                                             </Typography>
                                         </TableCell>
-                                        <TableCell>
-                                            {item.description}
-                                        </TableCell>
-                                        {/* <TableCell>
-                                            <SeverityPill color={statusColor}>
-                                                {item.status}
-                                            </SeverityPill>
-                                        </TableCell> */}
                                         <TableCell align="left">                                        
                                             {(item.created_at).replace("T", " ").split(".")[0]}
                                         </TableCell>
@@ -198,57 +180,18 @@ export const FileCollectionListTable = (props) => {
                                                 }}
                                             >
                                                 <CardContent>
-                                                    <Grid
-                                                        container
-                                                        spacing={3}
-                                                    >
+                                                    <Grid container>
                                                         <Grid
                                                             item
                                                             md={12}
                                                             xs={12}
                                                         >
-                                                            <Typography sx={{ paddingLeft: "0"}} variant="h6">
-                                                                Details
-                                                            </Typography>
-                                                            <Divider sx={{my: 2}}/>
-                                                            <Grid
-                                                                container
-                                                                spacing={3}
-                                                            >
-                                                                <Grid
-                                                                    item
-                                                                    md={6}
-                                                                    xs={12}
-                                                                >
-                                                                    {/* <TextField
-                                                                        defaultValue={item.title}
-                                                                        fullWidth
-                                                                        label="Title"
-                                                                        name="title"
-                                                                    /> */}
-                                                                    <PropertyListItem 
-                                                                    label="Title"
-                                                                    value={item.title}
-                                                                    />
-                                                                    
-                                                                </Grid>
-                                                                <Grid
-                                                                    item
-                                                                    md={6}
-                                                                    xs={12}
-                                                                >
-                                                                    {/* <TextField
-                                                                        defaultValue={item.description}
-                                                                        fullWidth
-                                                                        label="Description"
-                                                                        name="description"
-                                                                    /> */}
-                                                                    <PropertyListItem 
+                                                            <PropertyList>
+                                                                <PropertyListItem
                                                                     label="Description"
                                                                     value={item.description}
-                                                                    />
-                                                                </Grid>
-                                                            </Grid>
+                                                                />
+                                                            </PropertyList>
                                                         </Grid>
                                                     </Grid>
                                                 </CardContent>

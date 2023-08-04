@@ -13,7 +13,7 @@ import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
-import {ProjectEditForm} from 'src/sections/app/project/project-edit-form';
+import {EditForm} from 'src/sections/app/project/edit-form';
 import {ForItemEditForm} from "src/contexts/app/section/for-item-form";
 import {useItem} from "src/contexts/app/section/for-item-data-state";
 import {useRouter} from "src/hooks/use-router";
@@ -93,9 +93,6 @@ const Page = () => {
                                             direction="row"
                                             spacing={1}
                                         >
-                                            <Typography variant="subtitle2">
-                                                {item.name}:
-                                            </Typography>
                                             <Chip
                                                 label={item._id}
                                                 size="small"
@@ -105,7 +102,7 @@ const Page = () => {
                                 </Stack>
                             </Stack>
                         </Stack>
-                        <ProjectEditForm itemctx={new ForItemEditForm(item, sectionApi, formState.setState)}/>
+                        <EditForm itemctx={new ForItemEditForm(item, sectionApi, formState.setState)}/>
                     </Stack>
                 </Container>
             </Box>

@@ -58,6 +58,7 @@ export const en = {
   [tokens.nav.shacl_test_suites]: 'SHACL Test Suites',
   [tokens.nav.ontology_file_collections]: 'Ontologys',
   [tokens.nav.resource_collections]: 'Resources',
-  [tokens.nav.package_collections]: 'Packages',
-  [tokens.nav.conceptual_mapping_collections]: 'Conceptual Mappings',
+  [tokens.nav.mapping_packages]: 'Packages',
+  [tokens.nav.conceptual_mapping_rules]: 'Conceptual Mappings',
+  [tokens.nav.triple_map_fragments]: 'Triple Maps',
 };
