@@ -9,6 +9,7 @@ from mapping_workbench.backend.config.entrypoints.api import routes as config_ro
 from mapping_workbench.backend.core.entrypoints.api import routes as core_routes
 from mapping_workbench.backend.database.adapters.mongodb import DB
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
+from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingRuleRegistry
 from mapping_workbench.backend.project.entrypoints.api import routes as project_routes
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.entrypoints.api import routes as security_routes
@@ -24,11 +25,14 @@ from mapping_workbench.backend.shacl_test_suite.entrypoints.api import routes as
 from mapping_workbench.backend.resource_collection.models.entity import ResourceCollection, ResourceFile
 from mapping_workbench.backend.resource_collection.entrypoints.api import routes as resource_collection_routes
 from mapping_workbench.backend.mapping_package.entrypoints.api import routes as mapping_package_routes
+from mapping_workbench.backend.mapping_rule_registry.entrypoints.api import routes as mapping_rule_registry_routes
 from mapping_workbench.backend.conceptual_mapping_rule.entrypoints.api import routes as conceptual_mapping_rule_routes
+from mapping_workbench.backend.triple_map_registry.entrypoints.api import routes as triple_map_registry_routes
 from mapping_workbench.backend.triple_map_fragment.entrypoints.api import routes as triple_map_fragment_routes
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource
 from mapping_workbench.backend.test_data_suite.entrypoints.api import routes as test_data_suite_routes
 from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragment
+from mapping_workbench.backend.triple_map_registry.models.entity import TripleMapRegistry
 
 from mapping_workbench.backend.user.entrypoints.api import routes as user_routes
 from mapping_workbench.backend.user.models.user import User
@@ -75,7 +79,9 @@ async def on_startup():
             TestDataSuite,
             TestDataFileResource,
             MappingPackage,
+            MappingRuleRegistry,
             ConceptualMappingRule,
+            TripleMapRegistry,
             TripleMapFragment
         ],
     )
@@ -95,7 +101,9 @@ app_secured_router.include_router(shacl_test_suite_routes.router)
 app_secured_router.include_router(ontology_file_collection_routes.router)
 app_secured_router.include_router(resource_collection_routes.router)
 app_secured_router.include_router(mapping_package_routes.router)
+app_secured_router.include_router(mapping_rule_registry_routes.router)
 app_secured_router.include_router(conceptual_mapping_rule_routes.router)
+app_secured_router.include_router(triple_map_registry_routes.router)
 app_secured_router.include_router(triple_map_fragment_routes.router)
 app_secured_router.include_router(config_routes.router)
 app_router.include_router(app_secured_router)

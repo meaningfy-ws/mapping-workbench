@@ -1,11 +1,10 @@
 from datetime import date, datetime
 from typing import Optional, List
 
-from beanie import Indexed, Link
+from beanie import Indexed
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntity, BaseEntityInSchema, BaseEntityOutSchema, \
     BaseTitledEntityListFiltersSchema
-from mapping_workbench.backend.project.models.entity import Project
 
 
 class MappingPackageIn(BaseEntityInSchema):
@@ -50,7 +49,6 @@ class MappingPackage(BaseEntity):
     end_date: Optional[date]
     min_xsd_version: Optional[str]
     max_xsd_version: Optional[str]
-    refers_to_projects: Optional[List[Link[Project]]]
 
     class Settings(BaseEntity.Settings):
         name = "mapping_packages"

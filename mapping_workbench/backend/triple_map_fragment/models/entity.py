@@ -22,17 +22,17 @@ class TripleMapFragmentUpdateIn(TripleMapFragmentIn):
 class TripleMapFragmentOut(BaseEntityOutSchema):
     triple_map_uri: Optional[str]
     triple_map_content: Optional[str]
-    refers_to_mapping_packages: Optional[List[Link["MappingPackage"]]]
+    belongs_to_mapping_packages: Optional[List[Link["MappingPackage"]]]
 
 
 class TripleMapFragment(BaseEntity):
     triple_map_uri: Optional[str]
     triple_map_content: Optional[str]
-    refers_to_mapping_packages: Optional[List[Link["MappingPackage"]]]
+    belongs_to_mapping_packages: Optional[List[Link["MappingPackage"]]]
 
     @property
     def is_specific(self):
-        return len(self.refers_to_mapping_packages) > 0
+        return len(self.belongs_to_mapping_packages) > 0
 
     class Settings(BaseEntity.Settings):
         name = "triple_map_fragments"

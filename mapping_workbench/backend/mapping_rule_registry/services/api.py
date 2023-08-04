@@ -1,0 +1,57 @@
+from typing import List
+
+from beanie import PydanticObjectId
+from pymongo.errors import DuplicateKeyError
+
+from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
+from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException, DuplicateKeyException
+from mapping_workbench.backend.core.services.request import request_update_data, request_create_data, \
+    api_entity_is_found
+from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingRuleRegistry, \
+    MappingRuleRegistryCreateIn, MappingRuleRegistryUpdateIn, MappingRuleRegistryOut
+from mapping_workbench.backend.user.models.user import User
+
+
+async def list_mapping_rule_registries(filters=None) -> List[MappingRuleRegistryOut]:
+    query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
+    return await MappingRuleRegistry.find(
+        query_filters,
+        projection_model=MappingRuleRegistryOut,
+        fetch_links=False
+    ).to_list()
+
+
+async def create_mapping_rule_registry(mapping_rule_registry_data: MappingRuleRegistryCreateIn,
+                                         user: User) -> MappingRuleRegistryOut:
+    mapping_rule_registry: MappingRuleRegistry = MappingRuleRegistry(
+        **request_create_data(mapping_rule_registry_data)).on_create(user=user)
+    try:
+        await mapping_rule_registry.create()
+    except DuplicateKeyError as e:
+        raise DuplicateKeyException(e)
+    return MappingRuleRegistryOut(**mapping_rule_registry.dict())
+
+
+async def update_mapping_rule_registry(id: PydanticObjectId,
+                                         mapping_rule_registry_data: MappingRuleRegistryUpdateIn, user: User):
+    mapping_rule_registry: MappingRuleRegistry = await MappingRuleRegistry.get(id)
+    if not api_entity_is_found(mapping_rule_registry):
+        raise ResourceNotFoundException()
+
+    request_data = request_update_data(mapping_rule_registry_data)
+    update_data = request_update_data(MappingRuleRegistry(**request_data).on_update(user=user))
+    return await mapping_rule_registry.set(update_data)
+
+
+async def get_mapping_rule_registry(id: PydanticObjectId) -> MappingRuleRegistryOut:
+    mapping_rule_registry: MappingRuleRegistry = await MappingRuleRegistry.get(id)
+    if not api_entity_is_found(mapping_rule_registry):
+        raise ResourceNotFoundException()
+    return MappingRuleRegistryOut(**mapping_rule_registry.dict(by_alias=False))
+
+
+async def delete_mapping_rule_registry(id: PydanticObjectId):
+    mapping_rule_registry: MappingRuleRegistry = await MappingRuleRegistry.get(id)
+    if not api_entity_is_found(mapping_rule_registry):
+        raise ResourceNotFoundException()
+    return await mapping_rule_registry.delete()
