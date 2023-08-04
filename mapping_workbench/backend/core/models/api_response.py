@@ -1,10 +1,10 @@
 from typing import List
 
 from beanie import PydanticObjectId
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
-class JSONEmptyContentWithId(BaseModel):
+class APIEmptyContentWithIdResponse(BaseModel):
     id: PydanticObjectId
 
     class Config:
@@ -12,6 +12,6 @@ class JSONEmptyContentWithId(BaseModel):
         fields = {'id': '_id'}
 
 
-class JSONPagedResponse(BaseModel):
+class APIListPaginatedResponse(BaseModel):
     items: List
     count: int

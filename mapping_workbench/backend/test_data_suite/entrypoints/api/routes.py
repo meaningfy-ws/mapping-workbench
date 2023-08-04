@@ -1,193 +1,171 @@
-from typing import Dict, List
+from typing import List
 
 from beanie import PydanticObjectId
 from fastapi import APIRouter, status, Depends
-from fastapi.encoders import jsonable_encoder
-from fastapi.responses import JSONResponse
 from starlette.requests import Request
 
-from mapping_workbench.backend.core.models.api_response import JSONEmptyContentWithId, JSONPagedResponse
+from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
 from mapping_workbench.backend.file_resource.services.file_resource_form_data import \
     file_resource_data_from_form_request
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource
-from mapping_workbench.backend.test_data_suite.services.entities_for_api import (
-    list_test_data_suites as list_test_data_suites_for_api,
-    create_test_data_suite as create_test_data_suite_for_api,
-    update_test_data_suite as update_test_data_suite_for_api,
-    get_test_data_suite as get_test_data_suite_for_api,
-    delete_test_data_suite as delete_test_data_suite_for_api,
-    list_test_data_suite_file_resources as list_test_data_suite_file_resources_for_api,
-    create_test_data_suite_file_resource as create_test_data_suite_file_resource_for_api,
-    update_test_data_file_resource as update_test_data_file_resource_for_api,
-    get_test_data_file_resource as get_test_data_file_resource_for_api,
-    delete_test_data_file_resource as delete_test_data_file_resource_for_api
+from mapping_workbench.backend.test_data_suite.models.entity_api_response import \
+    APIListTestDataSuitesPaginatedResponse, APIListTestDataFileResourcesPaginatedResponse
+from mapping_workbench.backend.test_data_suite.services.api import (
+    list_test_data_suites,
+    create_test_data_suite,
+    update_test_data_suite,
+    get_test_data_suite,
+    delete_test_data_suite,
+    list_test_data_suite_file_resources,
+    create_test_data_suite_file_resource,
+    update_test_data_file_resource,
+    get_test_data_file_resource,
+    delete_test_data_file_resource
 )
 from mapping_workbench.backend.user.models.user import User
 
 ROUTE_PREFIX = "/test_data_suites"
 TAG = "test_data_suites"
+NAME_FOR_MANY = "test_data_suites"
+NAME_FOR_ONE = "test_data_suite"
+FILE_RESOURCE_NAME_FOR_MANY = "test_data_file_resources"
+FILE_RESOURCE_NAME_FOR_ONE = "test_data_file_resource"
 
-sub_router = APIRouter()
-
-
-@sub_router.get(
-    "",
-    description="List Test data suites",
-    name="test_data_suites:list",
-    response_model=List[TestDataSuite]
+router = APIRouter(
+    prefix=ROUTE_PREFIX,
+    tags=[TAG]
 )
-async def list_test_data_suites() -> JSONResponse:
-    items = await list_test_data_suites_for_api()
-    return JSONResponse(
-        content=jsonable_encoder(JSONPagedResponse(items=items, count=len(items)))
-    )
 
 
-@sub_router.post(
+@router.get(
     "",
-    description="Add new Test data suite",
-    name="test_data_suites:create_test_data_suite",
-    response_model=TestDataSuite
+    description=f"List {NAME_FOR_MANY}",
+    name=f"{NAME_FOR_MANY}:list",
+    response_model=APIListTestDataSuitesPaginatedResponse
 )
-async def create_test_data_suite(
+async def route_list_test_data_suites():
+    items: List[TestDataSuite] = await list_test_data_suites()
+    return APIListTestDataSuitesPaginatedResponse(items=items, count=len(items))
+
+
+@router.post(
+    "",
+    description=f"Create {NAME_FOR_ONE}",
+    name=f"{NAME_FOR_MANY}:create_{NAME_FOR_ONE}",
+    response_model=TestDataSuite,
+    status_code=status.HTTP_201_CREATED
+)
+async def route_create_test_data_suite(
         test_data_suite: TestDataSuite,
         user: User = Depends(current_active_user)
-) -> JSONResponse:
-    data = await create_test_data_suite_for_api(test_data_suite=test_data_suite, user=user)
-    return JSONResponse(
-        status_code=status.HTTP_201_CREATED,
-        content=jsonable_encoder(data)
-    )
+):
+    return await create_test_data_suite(test_data_suite=test_data_suite, user=user)
 
 
-@sub_router.patch(
+@router.patch(
     "/{id}",
-    name="test_data_suites:update_test_data_suite",
+    description=f"Update {NAME_FOR_ONE}",
+    name=f"{NAME_FOR_MANY}:update_{NAME_FOR_ONE}",
     response_model=TestDataSuite
 )
-async def update_test_data_suite(
+async def route_update_test_data_suite(
         id: PydanticObjectId,
-        data: Dict,
+        test_data_suite_data: TestDataSuite,
         user: User = Depends(current_active_user)
-) -> JSONResponse:
-    await update_test_data_suite_for_api(id, data, user=user)
-    data = await get_test_data_suite_for_api(id)
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=jsonable_encoder(data)
-    )
+):
+    await update_test_data_suite(id=id, test_data_suite_data=test_data_suite_data, user=user)
+    return await get_test_data_suite(id)
 
 
-@sub_router.get(
+@router.get(
     "/{id}",
-    name="test_data_suites:get_test_data_suite",
+    description=f"Get {NAME_FOR_ONE}",
+    name=f"{NAME_FOR_MANY}:get_{NAME_FOR_ONE}",
     response_model=TestDataSuite
 )
-async def get_test_data_suite(id: PydanticObjectId) -> JSONResponse:
-    data = await get_test_data_suite_for_api(id)
-
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=jsonable_encoder(data)
-    )
+async def route_get_test_data_suite(test_data_suite: TestDataSuite = Depends(get_test_data_suite)):
+    return test_data_suite
 
 
-@sub_router.delete(
+@router.delete(
     "/{id}",
-    name="test_data_suites:delete_test_data_suite",
-    response_model=JSONEmptyContentWithId
+    description=f"Delete {NAME_FOR_ONE}",
+    name=f"{NAME_FOR_MANY}:delete_{NAME_FOR_ONE}",
+    response_model=APIEmptyContentWithIdResponse
 )
-async def delete_test_data_suite(id: PydanticObjectId):
-    await delete_test_data_suite_for_api(id)
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=jsonable_encoder(JSONEmptyContentWithId(_id=id))
-    )
+async def route_delete_test_data_suite(id: PydanticObjectId):
+    await delete_test_data_suite(id)
+    APIEmptyContentWithIdResponse(_id=id)
 
 
-@sub_router.get(
+@router.get(
     "/{id}/file_resources",
-    description="List Test data suite file resources",
-    name="test_data_suites:list_test_data_suite_file_resources",
-    response_model=List[TestDataFileResource]
+    description=f"List {FILE_RESOURCE_NAME_FOR_MANY}",
+    name=f"{FILE_RESOURCE_NAME_FOR_MANY}:list_{FILE_RESOURCE_NAME_FOR_MANY}",
+    response_model=APIListTestDataFileResourcesPaginatedResponse
 )
-async def list_test_data_suite_file_resources(
+async def route_list_test_data_suite_file_resources(
         id: PydanticObjectId = None
-) -> JSONResponse:
-    items = await list_test_data_suite_file_resources_for_api(id)
-    return JSONResponse(
-        content=jsonable_encoder(JSONPagedResponse(items=items, count=len(items)))
-    )
+):
+    items: List[TestDataFileResource] = await list_test_data_suite_file_resources(id)
+    return APIListTestDataFileResourcesPaginatedResponse(items=items, count=len(items))
 
 
-@sub_router.post(
+@router.post(
     "/{id}/file_resources",
-    description="Add new Test data suite file resource",
-    name="test_data_suites:create_test_data_suite_file_resources",
-    response_model=TestDataFileResource
+    description=f"Create {FILE_RESOURCE_NAME_FOR_ONE}",
+    name=f"{FILE_RESOURCE_NAME_FOR_MANY}:create_{FILE_RESOURCE_NAME_FOR_ONE}",
+    response_model=TestDataFileResource,
+    status_code=status.HTTP_201_CREATED
 )
-async def create_test_data_suite_file_resources(
+async def route_create_test_data_suite_file_resources(
         id: PydanticObjectId,
         req: Request,
         user: User = Depends(current_active_user)
-) -> JSONResponse:
+):
     test_data_file_resource = TestDataFileResource(**await file_resource_data_from_form_request(req))
-    data = await create_test_data_suite_file_resource_for_api(
+    return await create_test_data_suite_file_resource(
         id=id,
         test_data_file_resource=test_data_file_resource,
-        user=user)
-    return JSONResponse(
-        status_code=status.HTTP_201_CREATED,
-        content=jsonable_encoder(data)
+        user=user
     )
 
 
-@sub_router.patch(
+@router.patch(
     "/file_resources/{id}",
-    name="test_data_suites:update_test_data_file_resource",
+    description=f"Update {FILE_RESOURCE_NAME_FOR_ONE}",
+    name=f"{FILE_RESOURCE_NAME_FOR_MANY}:update_{FILE_RESOURCE_NAME_FOR_ONE}",
     response_model=TestDataFileResource
 )
-async def update_test_data_suite(
+async def route_update_test_data_file_resource(
         id: PydanticObjectId,
         req: Request,
         user: User = Depends(current_active_user)
-) -> JSONResponse:
-    data = await file_resource_data_from_form_request(req)
-    await update_test_data_file_resource_for_api(id, data, user=user)
-    data = await get_test_data_file_resource_for_api(id)
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=jsonable_encoder(data)
-    )
+):
+    data = TestDataFileResource(**(await file_resource_data_from_form_request(req)))
+    await update_test_data_file_resource(id, data, user=user)
+    return await get_test_data_file_resource(id)
 
 
-@sub_router.get(
+@router.get(
     "/file_resources/{id}",
-    name="test_data_suites:get_test_data_file_resource",
+    description=f"Get {FILE_RESOURCE_NAME_FOR_ONE}",
+    name=f"{FILE_RESOURCE_NAME_FOR_MANY}:get_{FILE_RESOURCE_NAME_FOR_ONE}",
     response_model=TestDataFileResource
 )
-async def get_test_data_file_resource(id: PydanticObjectId) -> JSONResponse:
-    data = await get_test_data_file_resource_for_api(id)
-
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=jsonable_encoder(data)
-    )
+async def route_get_test_data_file_resource(
+        test_data_file_resource: TestDataFileResource = Depends(get_test_data_file_resource)
+):
+    return test_data_file_resource
 
 
-@sub_router.delete(
+@router.delete(
     "/file_resources/{id}",
-    name="test_data_suites:delete_test_data_file_resource",
-    response_model=TestDataFileResource
+    description=f"Delete {FILE_RESOURCE_NAME_FOR_ONE}",
+    name=f"{FILE_RESOURCE_NAME_FOR_MANY}:delete_{FILE_RESOURCE_NAME_FOR_ONE}",
+    response_model=APIEmptyContentWithIdResponse
 )
-async def delete_test_data_file_resource(id: PydanticObjectId):
-    await delete_test_data_file_resource_for_api(id)
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=jsonable_encoder(JSONEmptyContentWithId(_id=id))
-    )
-
-
-router = APIRouter()
-router.include_router(sub_router, prefix=ROUTE_PREFIX, tags=[TAG])
+async def route_delete_test_data_file_resource(id: PydanticObjectId):
+    await delete_test_data_file_resource(id)
+    return APIEmptyContentWithIdResponse(_id=id)

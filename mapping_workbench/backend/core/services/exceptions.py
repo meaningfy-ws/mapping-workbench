@@ -1,6 +1,7 @@
 from typing import Any, Optional, Dict
 
 from fastapi import HTTPException, status
+from pymongo.errors import DuplicateKeyError
 
 
 class ResourceNotFoundException(HTTPException):
@@ -17,3 +18,12 @@ class ResourceNotFoundException(HTTPException):
         )
 
 
+class DuplicateKeyException(HTTPException):
+    def __init__(
+            self,
+            e: DuplicateKeyError = None
+    ) -> None:
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Duplicate key: {e.details['keyValue']}!"
+        )

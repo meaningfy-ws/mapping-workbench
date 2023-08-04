@@ -14,7 +14,6 @@ class OntologyFileCollection(BaseEntity):
 
     class Settings(BaseEntity.Settings):
         name = "ontology_file_collections"
-        use_state_management = True
 
 
 class OntologyFileResourceFormat(Enum):

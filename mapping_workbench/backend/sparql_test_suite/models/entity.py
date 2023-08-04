@@ -14,7 +14,6 @@ class SPARQLTestSuite(BaseEntity):
 
     class Settings(BaseEntity.Settings):
         name = "sparql_test_suites"
-        use_state_management = True
 
 
 class SPARQLTestFileResourceFormat(Enum):

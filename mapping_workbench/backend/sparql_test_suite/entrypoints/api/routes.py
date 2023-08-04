@@ -1,193 +1,171 @@
-from typing import Dict, List
+from typing import List
 
 from beanie import PydanticObjectId
 from fastapi import APIRouter, status, Depends
-from fastapi.encoders import jsonable_encoder
-from fastapi.responses import JSONResponse
 from starlette.requests import Request
 
-from mapping_workbench.backend.core.models.api_response import JSONEmptyContentWithId, JSONPagedResponse
+from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
 from mapping_workbench.backend.file_resource.services.file_resource_form_data import \
     file_resource_data_from_form_request
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuite, SPARQLTestFileResource
-from mapping_workbench.backend.sparql_test_suite.services.entities_for_api import (
-    list_sparql_test_suites as list_sparql_test_suites_for_api,
-    create_sparql_test_suite as create_sparql_test_suite_for_api,
-    update_sparql_test_suite as update_sparql_test_suite_for_api,
-    get_sparql_test_suite as get_sparql_test_suite_for_api,
-    delete_sparql_test_suite as delete_sparql_test_suite_for_api,
-    list_sparql_test_suite_file_resources as list_sparql_test_suite_file_resources_for_api,
-    create_sparql_test_suite_file_resource as create_sparql_test_suite_file_resource_for_api,
-    update_sparql_test_file_resource as update_sparql_test_file_resource_for_api,
-    get_sparql_test_file_resource as get_sparql_test_file_resource_for_api,
-    delete_sparql_test_file_resource as delete_sparql_test_file_resource_for_api
+from mapping_workbench.backend.sparql_test_suite.models.entity_api_response import \
+    APIListSPARQLTestSuitesPaginatedResponse, APIListSPARQLTestFileResourcesPaginatedResponse
+from mapping_workbench.backend.sparql_test_suite.services.api import (
+    list_sparql_test_suites,
+    create_sparql_test_suite,
+    update_sparql_test_suite,
+    get_sparql_test_suite,
+    delete_sparql_test_suite,
+    list_sparql_test_suite_file_resources,
+    create_sparql_test_suite_file_resource,
+    update_sparql_test_file_resource,
+    get_sparql_test_file_resource,
+    delete_sparql_test_file_resource
 )
 from mapping_workbench.backend.user.models.user import User
 
 ROUTE_PREFIX = "/sparql_test_suites"
 TAG = "sparql_test_suites"
+NAME_FOR_MANY = "sparql_test_suites"
+NAME_FOR_ONE = "sparql_test_suite"
+FILE_RESOURCE_NAME_FOR_MANY = "sparql_test_file_resources"
+FILE_RESOURCE_NAME_FOR_ONE = "sparql_test_file_resource"
 
-sub_router = APIRouter()
-
-
-@sub_router.get(
-    "",
-    description="List SPARQL test suites",
-    name="sparql_test_suites:list",
-    response_model=List[SPARQLTestSuite]
+router = APIRouter(
+    prefix=ROUTE_PREFIX,
+    tags=[TAG]
 )
-async def list_sparql_test_suites() -> JSONResponse:
-    items = await list_sparql_test_suites_for_api()
-    return JSONResponse(
-        content=jsonable_encoder(JSONPagedResponse(items=items, count=len(items)))
-    )
 
 
-@sub_router.post(
+@router.get(
     "",
-    description="Add new SPARQL test suite",
-    name="sparql_test_suites:create_sparql_test_suite",
-    response_model=SPARQLTestSuite
+    description=f"List {NAME_FOR_MANY}",
+    name=f"{NAME_FOR_MANY}:list",
+    response_model=APIListSPARQLTestSuitesPaginatedResponse
 )
-async def create_sparql_test_suite(
+async def route_list_sparql_test_suites():
+    items: List[SPARQLTestSuite] = await list_sparql_test_suites()
+    return APIListSPARQLTestSuitesPaginatedResponse(items=items, count=len(items))
+
+
+@router.post(
+    "",
+    description=f"Create {NAME_FOR_ONE}",
+    name=f"{NAME_FOR_MANY}:create_{NAME_FOR_ONE}",
+    response_model=SPARQLTestSuite,
+    status_code=status.HTTP_201_CREATED
+)
+async def route_create_sparql_test_suite(
         sparql_test_suite: SPARQLTestSuite,
         user: User = Depends(current_active_user)
-) -> JSONResponse:
-    data = await create_sparql_test_suite_for_api(sparql_test_suite=sparql_test_suite, user=user)
-    return JSONResponse(
-        status_code=status.HTTP_201_CREATED,
-        content=jsonable_encoder(data)
-    )
+):
+    return await create_sparql_test_suite(sparql_test_suite=sparql_test_suite, user=user)
 
 
-@sub_router.patch(
+@router.patch(
     "/{id}",
-    name="sparql_test_suites:update_sparql_test_suite",
+    description=f"Update {NAME_FOR_ONE}",
+    name=f"{NAME_FOR_MANY}:update_{NAME_FOR_ONE}",
     response_model=SPARQLTestSuite
 )
-async def update_sparql_test_suite(
+async def route_update_sparql_test_suite(
         id: PydanticObjectId,
-        data: Dict,
+        sparql_test_suite_data: SPARQLTestSuite,
         user: User = Depends(current_active_user)
-) -> JSONResponse:
-    await update_sparql_test_suite_for_api(id, data, user=user)
-    data = await get_sparql_test_suite_for_api(id)
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=jsonable_encoder(data)
-    )
+):
+    await update_sparql_test_suite(id=id, sparql_test_suite_data=sparql_test_suite_data, user=user)
+    return await get_sparql_test_suite(id)
 
 
-@sub_router.get(
+@router.get(
     "/{id}",
-    name="sparql_test_suites:get_sparql_test_suite",
+    description=f"Get {NAME_FOR_ONE}",
+    name=f"{NAME_FOR_MANY}:get_{NAME_FOR_ONE}",
     response_model=SPARQLTestSuite
 )
-async def get_sparql_test_suite(id: PydanticObjectId) -> JSONResponse:
-    data = await get_sparql_test_suite_for_api(id)
-
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=jsonable_encoder(data)
-    )
+async def route_get_sparql_test_suite(sparql_test_suite: SPARQLTestSuite = Depends(get_sparql_test_suite)):
+    return sparql_test_suite
 
 
-@sub_router.delete(
+@router.delete(
     "/{id}",
-    name="sparql_test_suites:delete_sparql_test_suite",
-    response_model=JSONEmptyContentWithId
+    description=f"Delete {NAME_FOR_ONE}",
+    name=f"{NAME_FOR_MANY}:delete_{NAME_FOR_ONE}",
+    response_model=APIEmptyContentWithIdResponse
 )
-async def delete_sparql_test_suite(id: PydanticObjectId):
-    await delete_sparql_test_suite_for_api(id)
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=jsonable_encoder(JSONEmptyContentWithId(_id=id))
-    )
+async def route_delete_sparql_test_suite(id: PydanticObjectId):
+    await delete_sparql_test_suite(id)
+    APIEmptyContentWithIdResponse(_id=id)
 
 
-@sub_router.get(
+@router.get(
     "/{id}/file_resources",
-    description="List SPARQL test suite file resources",
-    name="sparql_test_suites:list_sparql_test_suite_file_resources",
-    response_model=List[SPARQLTestFileResource]
+    description=f"List {FILE_RESOURCE_NAME_FOR_MANY}",
+    name=f"{FILE_RESOURCE_NAME_FOR_MANY}:list_{FILE_RESOURCE_NAME_FOR_MANY}",
+    response_model=APIListSPARQLTestFileResourcesPaginatedResponse
 )
-async def list_sparql_test_suite_file_resources(
+async def route_list_sparql_test_suite_file_resources(
         id: PydanticObjectId = None
-) -> JSONResponse:
-    items = await list_sparql_test_suite_file_resources_for_api(id)
-    return JSONResponse(
-        content=jsonable_encoder(JSONPagedResponse(items=items, count=len(items)))
-    )
+):
+    items: List[SPARQLTestFileResource] = await list_sparql_test_suite_file_resources(id)
+    return APIListSPARQLTestFileResourcesPaginatedResponse(items=items, count=len(items))
 
 
-@sub_router.post(
+@router.post(
     "/{id}/file_resources",
-    description="Add new SPARQL test suite file resource",
-    name="sparql_test_suites:create_sparql_test_suite_file_resources",
-    response_model=SPARQLTestFileResource
+    description=f"Create {FILE_RESOURCE_NAME_FOR_ONE}",
+    name=f"{FILE_RESOURCE_NAME_FOR_MANY}:create_{FILE_RESOURCE_NAME_FOR_ONE}",
+    response_model=SPARQLTestFileResource,
+    status_code=status.HTTP_201_CREATED
 )
-async def create_sparql_test_suite_file_resources(
+async def route_create_sparql_test_suite_file_resources(
         id: PydanticObjectId,
         req: Request,
         user: User = Depends(current_active_user)
-) -> JSONResponse:
+):
     sparql_test_file_resource = SPARQLTestFileResource(**await file_resource_data_from_form_request(req))
-    data = await create_sparql_test_suite_file_resource_for_api(
+    return await create_sparql_test_suite_file_resource(
         id=id,
         sparql_test_file_resource=sparql_test_file_resource,
-        user=user)
-    return JSONResponse(
-        status_code=status.HTTP_201_CREATED,
-        content=jsonable_encoder(data)
+        user=user
     )
 
 
-@sub_router.patch(
+@router.patch(
     "/file_resources/{id}",
-    name="sparql_test_suites:update_sparql_test_file_resource",
+    description=f"Update {FILE_RESOURCE_NAME_FOR_ONE}",
+    name=f"{FILE_RESOURCE_NAME_FOR_MANY}:update_{FILE_RESOURCE_NAME_FOR_ONE}",
     response_model=SPARQLTestFileResource
 )
-async def update_sparql_test_suite(
+async def route_update_sparql_test_file_resource(
         id: PydanticObjectId,
         req: Request,
         user: User = Depends(current_active_user)
-) -> JSONResponse:
-    data = await file_resource_data_from_form_request(req)
-    await update_sparql_test_file_resource_for_api(id, data, user=user)
-    data = await get_sparql_test_file_resource_for_api(id)
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=jsonable_encoder(data)
-    )
+):
+    data = SPARQLTestFileResource(**(await file_resource_data_from_form_request(req)))
+    await update_sparql_test_file_resource(id, data, user=user)
+    return await get_sparql_test_file_resource(id)
 
 
-@sub_router.get(
+@router.get(
     "/file_resources/{id}",
-    name="sparql_test_suites:get_sparql_test_file_resource",
+    description=f"Get {FILE_RESOURCE_NAME_FOR_ONE}",
+    name=f"{FILE_RESOURCE_NAME_FOR_MANY}:get_{FILE_RESOURCE_NAME_FOR_ONE}",
     response_model=SPARQLTestFileResource
 )
-async def get_sparql_test_file_resource(id: PydanticObjectId) -> JSONResponse:
-    data = await get_sparql_test_file_resource_for_api(id)
-
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=jsonable_encoder(data)
-    )
+async def route_get_sparql_test_file_resource(
+        sparql_test_file_resource: SPARQLTestFileResource = Depends(get_sparql_test_file_resource)
+):
+    return sparql_test_file_resource
 
 
-@sub_router.delete(
+@router.delete(
     "/file_resources/{id}",
-    name="sparql_test_suites:delete_sparql_test_file_resource",
-    response_model=SPARQLTestFileResource
+    description=f"Delete {FILE_RESOURCE_NAME_FOR_ONE}",
+    name=f"{FILE_RESOURCE_NAME_FOR_MANY}:delete_{FILE_RESOURCE_NAME_FOR_ONE}",
+    response_model=APIEmptyContentWithIdResponse
 )
-async def delete_sparql_test_file_resource(id: PydanticObjectId):
-    await delete_sparql_test_file_resource_for_api(id)
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=jsonable_encoder(JSONEmptyContentWithId(_id=id))
-    )
-
-
-router = APIRouter()
-router.include_router(sub_router, prefix=ROUTE_PREFIX, tags=[TAG])
+async def route_delete_sparql_test_file_resource(id: PydanticObjectId):
+    await delete_sparql_test_file_resource(id)
+    return APIEmptyContentWithIdResponse(_id=id)
