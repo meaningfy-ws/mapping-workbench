@@ -8,11 +8,9 @@ import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Grid from '@mui/material/Unstable_Grid2';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 
 import {RouterLink} from 'src/components/router-link';
 import {paths} from 'src/paths';
-import {wait} from 'src/utils/wait';
 import {useRouter} from 'src/hooks/use-router';
 import {useCallback} from "react";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -20,6 +18,8 @@ import FormLabel from "@mui/material/FormLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
+import {FormTextArea} from "../../../components/app/form/text-area";
+import {FormTextField} from "../../../components/app/form/text-field";
 
 
 export const FileResourceEditForm = (props) => {
@@ -30,15 +30,13 @@ export const FileResourceEditForm = (props) => {
     const sectionApi = itemctx.api;
     const item = itemctx.data;
 
-    console.log("COLLECTION :: ", collection_id);
     const initFormValues = (data) => {
         return {
             title: data.title || '',
             description: data.description || '',
             format: data.format || '',
             content: data.content || '',
-            file: null,
-            submit: null
+            file: null
         }
     }
 
@@ -59,6 +57,7 @@ export const FileResourceEditForm = (props) => {
         }),
         onSubmit: async (values, helpers) => {
             try {
+                console.log(values);
                 let response;
                 let formData = values;
                 if (itemctx.isNew) {
@@ -66,7 +65,7 @@ export const FileResourceEditForm = (props) => {
                 } else {
                     response = await sectionApi.updateFileResource(item._id, formData);
                 }
-                await wait(500);
+
                 helpers.setStatus({success: true});
                 helpers.setSubmitting(false);
                 toast.success(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "created" : "updated"));
@@ -92,11 +91,7 @@ export const FileResourceEditForm = (props) => {
 
     const handleFile = useCallback((e) => {
         formik.values.file = e.target.files[0];
-    }, []);
-
-    const handleChangeFormat = useCallback((e) => {
-        formik.values.format = e.target.value;
-    }, []);
+    }, [formik]);
 
     return (
         <form encType="multipart/form-data"
@@ -110,44 +105,13 @@ export const FileResourceEditForm = (props) => {
                         container
                         spacing={3}
                     >
-                        <Grid
-                            xs={12}
-                            md={12}
-                        >
-                            <TextField
-                                error={!!(formik.touched.title && formik.errors.title)}
-                                fullWidth
-                                helperText={formik.touched.title && formik.errors.title}
-                                label="Title"
-                                name="title"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                required
-                                value={formik.values.title}
-                            />
+                        <Grid xs={12} md={12}>
+                            <FormTextField formik={formik} name="title" label="Title" required={true}/>
                         </Grid>
-                        <Grid
-                            xs={12}
-                            md={12}
-                        >
-                            <TextField
-                                error={!!(formik.touched.description && formik.errors.description)}
-                                minRows={5}
-                                maxRows={10}
-                                multiline
-                                fullWidth
-                                helperText={formik.touched.description && formik.errors.description}
-                                label="Description"
-                                name="description"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                value={formik.values.description}
-                            />
+                        <Grid xs={12} md={12}>
+                            <FormTextArea formik={formik} name="description" label="Description"/>
                         </Grid>
-                        <Grid
-                            xs={12}
-                            md={12}
-                        >
+                        <Grid xs={12} md={12}>
                             <FormControl fullWidth>
                                 <FormLabel
                                     sx={{
@@ -163,7 +127,6 @@ export const FileResourceEditForm = (props) => {
                                     fullWidth
                                     helperText={formik.touched.format && formik.errors.format}
                                     value={formik.values.format}
-                                    onChange={handleChangeFormat}
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
                                 >
@@ -177,31 +140,11 @@ export const FileResourceEditForm = (props) => {
                                 </Select>
                             </FormControl>
                         </Grid>
-                        <Grid
-                            xs={12}
-                            md={12}
-                        >
-                            <TextField
-                                error={!!(formik.touched.content && formik.errors.content)}
-                                minRows={5}
-                                multiline
-                                fullWidth
-                                helperText={formik.touched.content && formik.errors.content}
-                                label="Content"
-                                name="content"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                value={formik.values.content}
-                            />
+                        <Grid xs={12} md={12}>
+                            <FormTextArea formik={formik} name="content" label="Content"/>
                         </Grid>
-                        <Grid
-                            xs={12}
-                            md={12}
-                        >
-                            <Button
-                                variant="contained"
-                                component="label"
-                            >
+                        <Grid xs={12} md={12}>
+                            <Button variant="contained" component="label">
                                 Upload File
                                 <input type="file" name="file" onChange={handleFile}/>
                             </Button>

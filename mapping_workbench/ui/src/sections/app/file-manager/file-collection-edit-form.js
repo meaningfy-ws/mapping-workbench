@@ -85,7 +85,7 @@ export const FileCollectionEditForm = (props) => {
                     values['id'] = item._id;
                     response = await sectionApi.updateItem(values);
                 }
-                await wait(500);
+
                 helpers.setStatus({success: true});
                 helpers.setSubmitting(false);
                 toast.success(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "created" : "updated"));
@@ -98,7 +98,6 @@ export const FileCollectionEditForm = (props) => {
                     } else if (itemctx.isStateable) {
                         itemctx.setState(response);
                     }
-                    await wait(500);
                     router.push({pathname: customPathName });
                 }
             } catch (err) {

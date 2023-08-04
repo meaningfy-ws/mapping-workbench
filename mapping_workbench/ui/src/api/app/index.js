@@ -111,8 +111,6 @@ class AppApi {
     async signIn(request) {
         const {username, password} = request;
 
-        await wait(500);
-
         const config = {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
