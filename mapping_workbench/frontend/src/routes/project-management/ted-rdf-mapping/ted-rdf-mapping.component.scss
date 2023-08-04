@@ -1,0 +1,96 @@
+.new-project-container {
+    display: flex;
+    flex-direction: column;
+    margin-left: auto;
+    margin-right: auto;
+    width: 60%;    
+
+    .edit-project-content {
+        display: flex!important;
+        width: 30%;
+
+        .edit-card {
+            width: 30%;
+        }
+    }
+    
+    .buttons-modal-container {
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-between;
+    }   
+
+    .editButtonContainer {
+        margin-top: 40px;
+        margin-bottom: 40px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .poject-modal-title {
+        padding-top: 20px;
+        color: red;
+    }
+
+    .project-metadata-fields {
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 20px;
+        
+    }
+
+    .submitButton {
+        display: flex;
+        align-content: center;
+    }
+    .editFormContainer {
+        display: flex;
+        flex-direction: column;
+               
+        .editDrawerTitles {
+           margin-left: auto;
+           margin-right: auto;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+    }
+    
+
+    .drawerButtons {
+        width: 100%;
+        display: inline-flex;
+        justify-content: space-between;
+    }
+    
+    .cards-container {
+        margin-top: 50px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .project-meta-field {
+        display: inline-flex;
+        justify-content:center;
+        margin-top: 20px;
+        margin-bottom:20px;
+        //border-bottom: 1px solid black;
+
+        .project-meta-label {
+            font-size: 24px;
+            font-weight: bold;
+            width: 20%;
+        }
+        .project-meta-value{
+            font-size: 24px;
+            width: 80%;
+        }
+    }    
+
+    .cardStyle {
+        width: 100%;
+    }
+
+    .drawerPaper {
+        justify-content: center;
+    }
+}

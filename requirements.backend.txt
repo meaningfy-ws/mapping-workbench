@@ -1,0 +1,9 @@
+# BACKEND dependencies
+python-multipart~=0.0.6
+motor~=3.2.0
+python-dotenv~=1.0.0
+pydantic~=1.10.11
+beanie==1.20.0
+fastapi~=0.99.1
+fastapi-users[beanie,oauth]==12.1.0
+uvicorn[standard]

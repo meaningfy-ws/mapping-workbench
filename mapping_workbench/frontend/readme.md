@@ -1,1 +1,0 @@
-= The place for the JS client development

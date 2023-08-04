@@ -1,0 +1,45 @@
+version: '3.10'
+
+services:
+  mw-frontend:
+    image: mw-frontend-${ENVIRONMENT}
+    container_name: mw-frontend-${ENVIRONMENT}
+    env_file:
+      - ../../.env
+    build:
+      context: ./../../mapping_workbench/frontend
+      dockerfile: ./../../infra/frontend/Dockerfile
+      args:
+        - ENV_FILE=.env
+        - ENVIRONMENT=${ENVIRONMENT}
+        - HOST=${MW_FRONTEND_SERVER_HOST}
+        - PORT=${MW_FRONTEND_SERVER_PORT}
+        - NODE_ENV=${NODE_ENV}
+    ports:
+      - ${MW_FRONTEND_SERVER_PORT}:${MW_FRONTEND_SERVER_PORT}
+    networks:
+      - proxy-net
+    labels:
+      #### Labels define the behavior and rules of the traefik proxy for this container ####
+      - "traefik.enable=true" # <== Enable traefik to proxy this container
+      #### FRONTEND rules
+      - "traefik.http.routers.mw-frontend-${ENVIRONMENT}.rule=Host(`mw.${SUBDOMAIN}${DOMAIN}`)" # <== Your Domain Name goes here for the http rule
+      - "traefik.http.routers.mw-frontend-${ENVIRONMENT}.entrypoints=web" # <== Defining the entrypoint for http, **ref: line 30
+      - "traefik.http.routers.mw-frontend-${ENVIRONMENT}.middlewares=redirect@file" # <== This is a middleware to redirect to https
+      - "traefik.http.routers.mw-frontend-${ENVIRONMENT}-secured.rule=Host(`mw.${SUBDOMAIN}${DOMAIN}`)" # <== Your Domain Name for the https rule
+      - "traefik.http.routers.mw-frontend-${ENVIRONMENT}-secured.entrypoints=web-secured" # <== Defining entrypoint for https, **ref: line 31
+      - "traefik.http.routers.mw-frontend-${ENVIRONMENT}-secured.tls=true"
+    volumes:
+      - ${FRONTEND_INFRA_FOLDER}/src:/app/src
+      - ${FRONTEND_INFRA_FOLDER}/public:/app/public
+      - type: bind
+        source: ${FRONTEND_INFRA_FOLDER}/package.json
+        target: /app/package.json
+      - type: bind
+        source: ${FRONTEND_INFRA_FOLDER}/Makefile
+        target: /app/Makefile
+
+networks:
+  proxy-net:
+    external:
+      name: proxy-net
