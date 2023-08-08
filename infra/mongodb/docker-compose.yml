@@ -32,7 +32,7 @@ services:
     depends_on:
       - mongodb
     networks:
-      - mongodb-net
+      - mongodb-mw-net
       - proxy-net
     healthcheck:
       test: wget --quiet --tries=3 --spider http://${ME_CONFIG_BASICAUTH_USERNAME}:${ME_CONFIG_BASICAUTH_PASSWORD}@mongo-express-${ENVIRONMENT}:8081 || exit 1
@@ -53,12 +53,12 @@ services:
 
 volumes:
   mongodb-data:
-    name: mongodb-data-${ENVIRONMENT}
+    name: mongodb-data-mw-${ENVIRONMENT}
 
 networks:
   mongodb-net:
     internal: false
-    name: mongodb-net-${ENVIRONMENT}
+    name: mongodb-net-mw-${ENVIRONMENT}
   proxy-net:
     external:
       name: proxy-net
