@@ -26,7 +26,8 @@ COPY ./src ./src
 COPY ./public ./public
 
 RUN echo "NODE_ENV=${NODE_ENV}" > ${ENV_FILE} \
-    && echo "PORT=${PORT}" >> ${ENV_FILE}
+    && echo "PORT=${PORT}" > ${ENV_FILE} \
+    && echo "NODE_PATH=/app" >> ${ENV_FILE}
 
 RUN make install-${ENVIRONMENT}-frontend
 
