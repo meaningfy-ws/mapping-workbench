@@ -15,13 +15,7 @@ const METHOD = {
 
 class AppApi {
 
-    constructor(overrides) {
-        this.config = {
-            ...config,
-            ...overrides,
-        }
-
-        this.apiClient = this.getApiClient(this.config)  // 2
+    constructor() {
         this.address = apiAddress;
     }
 
