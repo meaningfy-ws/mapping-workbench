@@ -13,6 +13,8 @@ class AppSettings(BaseSettings):
 class ServerSettings(BaseSettings):
     HOST: str = os.getenv('MW_BACKEND_SERVER_HOST')
     PORT: int = int(os.getenv('MW_BACKEND_SERVER_PORT'))
+    DOMAIN: str = os.getenv('DOMAIN')
+    SUBDOMAIN: str = os.getenv('SUBDOMAIN')
 
 
 class DatabaseSettings(BaseSettings):
