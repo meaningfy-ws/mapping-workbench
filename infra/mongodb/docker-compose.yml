@@ -52,11 +52,11 @@ services:
 
 
 volumes:
-  mongodb-data:
+  mongodb-mw-data:
     name: mongodb-data-mw-${ENVIRONMENT}
 
 networks:
-  mongodb-net:
+  mongodb-mw-net:
     internal: false
     name: mongodb-net-mw-${ENVIRONMENT}
   proxy-net:
