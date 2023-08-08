@@ -22,6 +22,7 @@ class AppApi {
         }
 
         this.apiClient = this.getApiClient(this.config)  // 2
+        this.address = config.API_ADDRESS;
     }
 
     sessionStorage() {
