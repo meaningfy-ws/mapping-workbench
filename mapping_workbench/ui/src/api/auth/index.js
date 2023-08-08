@@ -5,7 +5,6 @@ import {users} from './data';
 import {appApi} from "../app";
 
 const STORAGE_KEY = 'users';
-const API_ADDRESS = process.env.API_ADDRESS;
 
 // NOTE: We use sessionStorage since memory storage is lost after page reload.
 //  This should be replaced with a server call that returns DB persisted data.
