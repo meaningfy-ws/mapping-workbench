@@ -52,8 +52,8 @@ app = FastAPI(
 origins = [f"{settings.HOST}:{settings.PORT}", f"*.mw.{settings.SUBDOMAIN}{settings.DOMAIN}", "*"]
 
 app.add_middleware(
-    # CORSMiddleware,
-    # allow_origins=origins,
+    CORSMiddleware,
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=['*'],
     allow_headers=['*']
