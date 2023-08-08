@@ -151,7 +151,7 @@ const Page = () => {
                 <Link
                   color="text.primary"
                   component={RouterLink}
-                  href={paths.dashboard.customers.index}
+                  href={paths.app.customers.index}
                   sx={{
                     alignItems: 'center',
                     display: 'inline-flex',
@@ -215,7 +215,7 @@ const Page = () => {
                         <Edit02Icon />
                       </SvgIcon>
                     }
-                    href={paths.dashboard.customers.edit}
+                    href={paths.app.customers.edit}
                   >
                     Edit
                   </Button>

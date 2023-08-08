@@ -60,7 +60,7 @@ const Page = () => {
         await signInWithEmailAndPassword(values.email, values.password);
 
         if (isMounted()) {
-          router.push(returnTo || paths.dashboard.index);
+          router.push(returnTo || paths.app.index);
         }
       } catch (err) {
         console.error(err);
@@ -79,7 +79,7 @@ const Page = () => {
       await signInWithGoogle();
 
       if (isMounted()) {
-        router.push(returnTo || paths.dashboard.index);
+        router.push(returnTo || paths.app.index);
       }
     } catch (err) {
       console.error(err);

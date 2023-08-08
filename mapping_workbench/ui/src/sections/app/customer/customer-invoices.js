@@ -54,7 +54,7 @@ export const CustomerInvoices = (props) => {
                   <TableCell align="right">
                     <IconButton
                       component={RouterLink}
-                      href={paths.dashboard.invoices.details}
+                      href={paths.app.invoices.details}
                     >
                       <SvgIcon>
                         <ArrowRightIcon />

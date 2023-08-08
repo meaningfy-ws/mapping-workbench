@@ -72,7 +72,7 @@ const Page = () => {
                 <Link
                   color="text.primary"
                   component={RouterLink}
-                  href={paths.dashboard.customers.index}
+                  href={paths.app.customers.index}
                   sx={{
                     alignItems: 'center',
                     display: 'inline-flex',
