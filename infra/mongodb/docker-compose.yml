@@ -7,9 +7,9 @@ services:
         - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
         - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
     volumes:
-      - mongodb-data:/data/db
+      - mongodb-mw-data:/data/db
     networks:
-      - mongodb-net
+      - mongodb-mw-net
       - common-ext
     ports:
       - ${MONGO_DB_PORT}:27017
@@ -28,7 +28,7 @@ services:
       - ME_CONFIG_BASICAUTH_USERNAME=${ME_CONFIG_BASICAUTH_USERNAME}
       - ME_CONFIG_BASICAUTH_PASSWORD=${ME_CONFIG_BASICAUTH_PASSWORD}
     volumes:
-      - mongodb-data:/data/db
+      - mongodb-mw-data:/data/db
     depends_on:
       - mongodb
     networks:
