@@ -21,20 +21,20 @@ import { RouterLink } from 'src/components/router-link';
 import { Seo } from 'src/components/seo';
 import { useMounted } from 'src/hooks/use-mounted';
 import { usePageView } from 'src/hooks/use-page-view';
-import { Layout as AppLayout } from 'src/layouts/app';
+import { Layout as DashboardLayout } from 'src/layouts/dashboard';
 import { paths } from 'src/paths';
-import { CustomerBasicDetails } from 'src/sections/app/customer/customer-basic-details';
-import { CustomerDataManagement } from 'src/sections/app/customer/customer-data-management';
-import { CustomerEmailsSummary } from 'src/sections/app/customer/customer-emails-summary';
-import { CustomerInvoices } from 'src/sections/app/customer/customer-invoices';
-import { CustomerPayment } from 'src/sections/app/customer/customer-payment';
-import { CustomerLogs } from 'src/sections/app/customer/customer-logs';
+import { CustomerBasicDetails } from 'src/sections/dashboard/customer/customer-basic-details';
+import { CustomerDataManagement } from 'src/sections/dashboard/customer/customer-data-management';
+import { CustomerEmailsSummary } from 'src/sections/dashboard/customer/customer-emails-summary';
+import { CustomerInvoices } from 'src/sections/dashboard/customer/customer-invoices';
+import { CustomerPayment } from 'src/sections/dashboard/customer/customer-payment';
+import { CustomerLogs } from 'src/sections/dashboard/customer/customer-logs';
 import { getInitials } from 'src/utils/get-initials';
 
 const tabs = [
   { label: 'Details', value: 'details' },
   { label: 'Invoices', value: 'invoices' },
-  { label: 'Logs', value: 'logs' }
+  { label: 'Logs', value: 'logs' },
 ];
 
 const useCustomer = () => {
@@ -53,11 +53,13 @@ const useCustomer = () => {
     }
   }, [isMounted]);
 
-  useEffect(() => {
+  useEffect(
+    () => {
       handleCustomerGet();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []);
+    []
+  );
 
   return customer;
 };
@@ -78,11 +80,13 @@ const useInvoices = () => {
     }
   }, [isMounted]);
 
-  useEffect(() => {
+  useEffect(
+    () => {
       handleInvoicesGet();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []);
+    []
+  );
 
   return invoices;
 };
@@ -103,11 +107,13 @@ const useLogs = () => {
     }
   }, [isMounted]);
 
-  useEffect(() => {
+  useEffect(
+    () => {
       handleLogsGet();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []);
+    []
+  );
 
   return logs;
 };
@@ -135,7 +141,7 @@ const Page = () => {
         component="main"
         sx={{
           flexGrow: 1,
-          py: 8
+          py: 8,
         }}
       >
         <Container maxWidth="xl">
@@ -145,26 +151,24 @@ const Page = () => {
                 <Link
                   color="text.primary"
                   component={RouterLink}
-                  href={paths.app.customers.index}
+                  href={paths.dashboard.customers.index}
                   sx={{
                     alignItems: 'center',
-                    display: 'inline-flex'
+                    display: 'inline-flex',
                   }}
                   underline="hover"
                 >
                   <SvgIcon sx={{ mr: 1 }}>
                     <ArrowLeftIcon />
                   </SvgIcon>
-                  <Typography variant="subtitle2">
-                    Customers
-                  </Typography>
+                  <Typography variant="subtitle2">Customers</Typography>
                 </Link>
               </div>
               <Stack
                 alignItems="flex-start"
                 direction={{
                   xs: 'column',
-                  md: 'row'
+                  md: 'row',
                 }}
                 justifyContent="space-between"
                 spacing={4}
@@ -178,23 +182,19 @@ const Page = () => {
                     src={customer.avatar}
                     sx={{
                       height: 64,
-                      width: 64
+                      width: 64,
                     }}
                   >
                     {getInitials(customer.name)}
                   </Avatar>
                   <Stack spacing={1}>
-                    <Typography variant="h4">
-                      {customer.email}
-                    </Typography>
+                    <Typography variant="h4">{customer.email}</Typography>
                     <Stack
                       alignItems="center"
                       direction="row"
                       spacing={1}
                     >
-                      <Typography variant="subtitle2">
-                        user_id:
-                      </Typography>
+                      <Typography variant="subtitle2">user_id:</Typography>
                       <Chip
                         label={customer.id}
                         size="small"
@@ -210,21 +210,21 @@ const Page = () => {
                   <Button
                     color="inherit"
                     component={RouterLink}
-                    endIcon={(
+                    endIcon={
                       <SvgIcon>
                         <Edit02Icon />
                       </SvgIcon>
-                    )}
-                    href={paths.app.customers.edit}
+                    }
+                    href={paths.dashboard.customers.edit}
                   >
                     Edit
                   </Button>
                   <Button
-                    endIcon={(
+                    endIcon={
                       <SvgIcon>
                         <ChevronDownIcon />
                       </SvgIcon>
-                    )}
+                    }
                     variant="contained"
                   >
                     Actions
@@ -294,10 +294,6 @@ const Page = () => {
   );
 };
 
-Page.getLayout = (page) => (
-  <AppLayout>
-    {page}
-  </AppLayout>
-);
+Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default Page;
