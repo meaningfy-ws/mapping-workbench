@@ -1,6 +1,6 @@
 start-dev-frontend:
 	@ echo "Starting DEV UI"
-	@ npm run start
+	@ npm run dev
 
 start-staging-frontend: start-dev-frontend
 
