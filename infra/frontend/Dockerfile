@@ -30,7 +30,7 @@ COPY ./public ./public
 RUN echo "NODE_ENV=${NODE_ENV}" > ${ENV_FILE} \
     && echo "PORT=${PORT}" >> ${ENV_FILE} \
     && echo "NODE_PATH=/app" >> ${ENV_FILE} \
-    && echo "API_ADDRESS=api.mw.${SUBDOMAIN}${DOMAIN}" >> ${ENV_FILE}
+    && echo "API_ADDRESS=https://api.mw.${SUBDOMAIN}${DOMAIN}/api/v1" >> ${ENV_FILE}
 
 RUN make install-${ENVIRONMENT}-frontend
 
