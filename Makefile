@@ -95,30 +95,30 @@ stop-ui-dev:
 
 dev-dotenv-file:
 	@ echo "Creating DEV .env file ... "
-	@ echo VAULT_ADDR=${VAULT_ADDR} > .env
-	@ echo VAULT_TOKEN=${VAULT_TOKEN} >> .env
-	@ echo BACKEND_INFRA_FOLDER=${BACKEND_INFRA_FOLDER} >> .env
-	@ echo FRONTEND_INFRA_FOLDER=${FRONTEND_INFRA_FOLDER} >> .env
-	@ echo NODE_ENV=development >> .env
-	@ vault kv get -format="json" mapping-workbench-dev/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> .env
+	@ echo VAULT_ADDR=${VAULT_ADDR} > ${ENV_FILE}
+	@ echo VAULT_TOKEN=${VAULT_TOKEN} >> ${ENV_FILE}
+	@ echo BACKEND_INFRA_FOLDER=${BACKEND_INFRA_FOLDER} >> ${ENV_FILE}
+	@ echo FRONTEND_INFRA_FOLDER=${FRONTEND_INFRA_FOLDER} >> ${ENV_FILE}
+	@ echo NODE_ENV=development >> ${ENV_FILE}
+	@ vault kv get -format="json" mapping-workbench-dev/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> ${ENV_FILE}
 
 staging-dotenv-file:
 	@ echo "Creating STAGING .env file ... "
-	@ echo VAULT_ADDR=${VAULT_ADDR} > .env
-	@ echo VAULT_TOKEN=${VAULT_TOKEN} >> .env
-	@ echo BACKEND_INFRA_FOLDER=${BACKEND_INFRA_FOLDER} >> .env
-	@ echo FRONTEND_INFRA_FOLDER=${FRONTEND_INFRA_FOLDER} >> .env
-	@ echo NODE_ENV=development >> .env
-	@ vault kv get -format="json" mapping-workbench-staging/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> .env
+	@ echo VAULT_ADDR=${VAULT_ADDR} > ${ENV_FILE}
+	@ echo VAULT_TOKEN=${VAULT_TOKEN} >> ${ENV_FILE}
+	@ echo BACKEND_INFRA_FOLDER=${BACKEND_INFRA_FOLDER} >> ${ENV_FILE}
+	@ echo FRONTEND_INFRA_FOLDER=${FRONTEND_INFRA_FOLDER} >> ${ENV_FILE}
+	@ echo NODE_ENV=development >> ${ENV_FILE}
+	@ vault kv get -format="json" mapping-workbench-staging/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> ${ENV_FILE}
 
 prod-dotenv-file:
 	@ echo "Creating PROD .env file ... "
-	@ echo VAULT_ADDR=${VAULT_ADDR} > .env
-	@ echo VAULT_TOKEN=${VAULT_TOKEN} >> .env
-	@ echo BACKEND_INFRA_FOLDER=${BACKEND_INFRA_FOLDER} >> .env
-	@ echo FRONTEND_INFRA_FOLDER=${FRONTEND_INFRA_FOLDER} >> .env
-	@ echo NODE_ENV=production >> .env
-	@ vault kv get -format="json" mapping-workbench-prod/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> .env
+	@ echo VAULT_ADDR=${VAULT_ADDR} > ${ENV_FILE}
+	@ echo VAULT_TOKEN=${VAULT_TOKEN} >> ${ENV_FILE}
+	@ echo BACKEND_INFRA_FOLDER=${BACKEND_INFRA_FOLDER} >> ${ENV_FILE}
+	@ echo FRONTEND_INFRA_FOLDER=${FRONTEND_INFRA_FOLDER} >> ${ENV_FILE}
+	@ echo NODE_ENV=production >> ${ENV_FILE}
+	@ vault kv get -format="json" mapping-workbench-prod/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> ${ENV_FILE}
 
 clear-frontend:
 	@ cd ${FRONTEND_HOME} && rm -rf build && rm -rf node_modules && rm -f .env* &&  rm -f package-lock.json

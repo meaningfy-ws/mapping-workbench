@@ -19,7 +19,7 @@ services:
 
   mongo-express:
     image: mongo-express
-    container_name: mongo-express-${ENVIRONMENT}
+    container_name: mongo-express-mw-${ENVIRONMENT}
     environment:
       - ME_CONFIG_MONGODB_SERVER=mw-mongodb-${ENVIRONMENT}
       - ME_CONFIG_MONGODB_ENABLE_ADMIN=${ME_CONFIG_MONGODB_ENABLE_ADMIN}
