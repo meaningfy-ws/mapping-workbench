@@ -34,11 +34,11 @@ services:
     networks:
       - mongodb-mw-net
       - proxy-net
-    healthcheck:
-      test: wget --quiet --tries=3 --spider http://${ME_CONFIG_BASICAUTH_USERNAME}:${ME_CONFIG_BASICAUTH_PASSWORD}@mongo-express-${ENVIRONMENT}:8081 || exit 1
-      interval: 30s
-      timeout: 10s
-      retries: 3
+#    healthcheck:
+#      test: wget --quiet --tries=3 --spider http://${ME_CONFIG_BASICAUTH_USERNAME}:${ME_CONFIG_BASICAUTH_PASSWORD}@mongo-express-${ENVIRONMENT}:8081 || exit 1
+#      interval: 30s
+#      timeout: 10s
+#      retries: 3
     restart: unless-stopped
     labels:
       #### Labels define the behavior and rules of the traefik proxy for this container ####
