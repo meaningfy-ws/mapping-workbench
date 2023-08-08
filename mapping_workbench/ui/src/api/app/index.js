@@ -1,5 +1,5 @@
 import axios from "axios";
-import config from 'src/config';
+import {apiAddress} from 'src/config';
 import {STORAGE_KEY as ACCESS_TOKEN_STORAGE_KEY} from 'src/contexts/auth/jwt/auth-provider';
 
 const LOGIN_ENDPOINT = "/auth/jwt/login";
@@ -22,7 +22,7 @@ class AppApi {
         }
 
         this.apiClient = this.getApiClient(this.config)  // 2
-        this.address = config.API_ADDRESS;
+        this.address = apiAddress;
     }
 
     sessionStorage() {
