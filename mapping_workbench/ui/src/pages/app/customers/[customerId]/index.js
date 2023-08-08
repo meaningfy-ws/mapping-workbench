@@ -21,14 +21,14 @@ import { RouterLink } from 'src/components/router-link';
 import { Seo } from 'src/components/seo';
 import { useMounted } from 'src/hooks/use-mounted';
 import { usePageView } from 'src/hooks/use-page-view';
-import { Layout as DashboardLayout } from 'src/layouts/dashboard';
+import { Layout as AppLayout } from 'src/layouts/app';
 import { paths } from 'src/paths';
-import { CustomerBasicDetails } from 'src/sections/dashboard/customer/customer-basic-details';
-import { CustomerDataManagement } from 'src/sections/dashboard/customer/customer-data-management';
-import { CustomerEmailsSummary } from 'src/sections/dashboard/customer/customer-emails-summary';
-import { CustomerInvoices } from 'src/sections/dashboard/customer/customer-invoices';
-import { CustomerPayment } from 'src/sections/dashboard/customer/customer-payment';
-import { CustomerLogs } from 'src/sections/dashboard/customer/customer-logs';
+import { CustomerBasicDetails } from 'src/sections/app/customer/customer-basic-details';
+import { CustomerDataManagement } from 'src/sections/app/customer/customer-data-management';
+import { CustomerEmailsSummary } from 'src/sections/app/customer/customer-emails-summary';
+import { CustomerInvoices } from 'src/sections/app/customer/customer-invoices';
+import { CustomerPayment } from 'src/sections/app/customer/customer-payment';
+import { CustomerLogs } from 'src/sections/app/customer/customer-logs';
 import { getInitials } from 'src/utils/get-initials';
 
 const tabs = [
@@ -294,6 +294,6 @@ const Page = () => {
   );
 };
 
-Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
+Page.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default Page;

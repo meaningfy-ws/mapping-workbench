@@ -15,11 +15,11 @@ import { useMounted } from 'src/hooks/use-mounted';
 import { usePageView } from 'src/hooks/use-page-view';
 import { useSettings } from 'src/hooks/use-settings';
 import { Layout as AppLayout } from 'src/layouts/app';
-import { FileUploader } from 'src/sections/dashboard/file-manager/file-uploader';
-import { ItemDrawer } from 'src/sections/dashboard/file-manager/item-drawer';
-import { ItemList } from 'src/sections/dashboard/file-manager/item-list';
-import { ItemSearch } from 'src/sections/dashboard/file-manager/item-search';
-import { StorageStats } from 'src/sections/dashboard/file-manager/storage-stats';
+import { FileUploader } from 'src/sections/app/file-manager/file-uploader';
+import { ItemDrawer } from 'src/sections/app/file-manager/item-drawer';
+import { ItemList } from 'src/sections/app/file-manager/item-list';
+import { ItemSearch } from 'src/sections/app/file-manager/item-search';
+import { StorageStats } from 'src/sections/app/file-manager/storage-stats';
 
 const useItemsSearch = () => {
   const [state, setState] = useState({

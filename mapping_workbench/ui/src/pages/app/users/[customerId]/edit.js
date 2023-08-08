@@ -16,7 +16,7 @@ import { useMounted } from 'src/hooks/use-mounted';
 import { usePageView } from 'src/hooks/use-page-view';
 import { Layout as AppLayout } from 'src/layouts/app';
 import { paths } from 'src/paths';
-import { CustomerEditForm } from 'src/sections/dashboard/customer/customer-edit-form';
+import { CustomerEditForm } from 'src/sections/app/customer/customer-edit-form';
 import { getInitials } from 'src/utils/get-initials';
 
 const useCustomer = () => {

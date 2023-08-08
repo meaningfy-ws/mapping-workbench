@@ -15,9 +15,9 @@ import { Seo } from 'src/components/seo';
 import { useMounted } from 'src/hooks/use-mounted';
 import { usePageView } from 'src/hooks/use-page-view';
 import { useSelection } from 'src/hooks/use-selection';
-import { Layout as DashboardLayout } from 'src/layouts/dashboard';
-import { CustomerListSearch } from 'src/sections/dashboard/customer/customer-list-search';
-import { CustomerListTable } from 'src/sections/dashboard/customer/customer-list-table';
+import { Layout as AppLayout } from 'src/layouts/app';
+import { CustomerListSearch } from 'src/sections/app/customer/customer-list-search';
+import { CustomerListTable } from 'src/sections/app/customer/customer-list-table';
 
 const useCustomersSearch = () => {
   const [state, setState] = useState({
@@ -213,6 +213,6 @@ const Page = () => {
   );
 };
 
-Page.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
+Page.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default Page;
