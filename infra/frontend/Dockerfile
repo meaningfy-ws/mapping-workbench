@@ -7,8 +7,8 @@ ARG ENVIRONMENT
 ARG HOST
 ARG PORT
 ARG NODE_ENV
-ARG DOMAIN
-ARG SUBDOMAIN
+ARG NODE_PATH
+ARG API_ADDRESS
 
 RUN apk add make
 
@@ -29,8 +29,8 @@ COPY ./public ./public
 
 RUN echo "NODE_ENV=${NODE_ENV}" > ${ENV_FILE} \
     && echo "PORT=${PORT}" >> ${ENV_FILE} \
-    && echo "NODE_PATH=/app" >> ${ENV_FILE} \
-    && echo "API_ADDRESS=https://api.mw.${SUBDOMAIN}${DOMAIN}/api/v1" >> ${ENV_FILE}
+    && echo "NODE_PATH=${NODE_PATH}" >> ${ENV_FILE} \
+    && echo "API_ADDRESS=${API_ADDRESS}" >> ${ENV_FILE}
 
 RUN make install-${ENVIRONMENT}-frontend
 

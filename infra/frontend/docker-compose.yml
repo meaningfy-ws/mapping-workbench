@@ -15,8 +15,8 @@ services:
         - HOST=${MW_FRONTEND_SERVER_HOST}
         - PORT=${MW_FRONTEND_SERVER_PORT}
         - NODE_ENV=${NODE_ENV}
-        - DOMAIN=${DOMAIN}
-        - SUBDOMAIN=${SUBDOMAIN}
+        - NODE_PATH=/app
+        - API_ADDRESS=https://api.mw.${SUBDOMAIN}${DOMAIN}/api/v1
     ports:
       - ${MW_FRONTEND_SERVER_PORT}:${MW_FRONTEND_SERVER_PORT}
     networks:
@@ -40,6 +40,9 @@ services:
       - type: bind
         source: ${FRONTEND_INFRA_FOLDER}/Makefile
         target: /app/Makefile
+      - type: bind
+        source: ${FRONTEND_INFRA_FOLDER}/next.config.js
+        target: /app/next.config.js
 
 networks:
   proxy-net:
