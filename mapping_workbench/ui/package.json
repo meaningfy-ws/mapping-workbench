@@ -5,7 +5,7 @@
   "homepage": "https://devias.io",
   "private": true,
   "scripts": {
-    "dev": "next",
+    "dev": "next dev",
     "build": "next build",
     "react-build": "react-scripts build",
     "start": "next start",
