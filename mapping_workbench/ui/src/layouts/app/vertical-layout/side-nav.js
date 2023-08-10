@@ -1,4 +1,4 @@
-import {useMemo} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -6,12 +6,17 @@ import Stack from '@mui/material/Stack';
 import {useTheme} from '@mui/material/styles';
 
 import {Logo} from 'src/components/logo';
-import {AppTitle} from 'src/components/app-title';
 import {RouterLink} from 'src/components/router-link';
 import {Scrollbar} from 'src/components/scrollbar';
 import {usePathname} from 'src/hooks/use-pathname';
 import {paths} from 'src/paths';
 import {SideNavSection} from './side-nav-section';
+import TextField from "@mui/material";
+import {useMounted} from "../../../hooks/use-mounted";
+import {projectsApi as sectionApi} from "../../../api/projects";
+import * as Yup from "yup";
+import {useFormik} from "formik";
+import MenuItem from "@mui/material/MenuItem";
 
 const SIDE_NAV_WIDTH = 280;
 
@@ -143,13 +148,66 @@ const useCssVars = (color) => {
   }, [theme, color]);
 };
 
+const useProjectsStore = () => {
+  const isMounted = useMounted();
+  const [state, setState] = useState({
+    items: []
+  });
+
+  const handleProjectGet = useCallback(async () => {
+    try {
+      const response = await sectionApi.getItems();
+      if (isMounted()) {
+        setState({
+          items: response.items,
+        });
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, [isMounted]);
+
+  useEffect(() => {
+        handleProjectGet();
+      },
+      []);
+
+  return {
+    ...state
+  };
+};
+
 export const SideNav = (props) => {
   const { color = 'evident', sections = [] } = props;
   const pathname = usePathname();
   const cssVars = useCssVars(color);
 
+  //const projectsStore = useProjectsStore();
+
   //console.log("menuProps: ", props);
-  //console.log("sections: ", sections);  
+  //console.log("sections: ", sections);
+
+  const initialValues = {
+    project: ''
+  };
+
+  const validationSchema = Yup.object({
+    project: Yup.string().max(255).required()
+  });
+
+  const formik = useFormik({
+    initialValues,
+    validationSchema,
+    onSubmit: async (values, helpers) => {
+      try {
+        // NOTE: Make API request
+        toast.success('Project chosen');
+      } catch (err) {
+        console.error(err);
+        toast.error('Something went wrong!');
+      }
+    },
+  });
 
   return (
     <Drawer
@@ -202,7 +260,26 @@ export const SideNav = (props) => {
             >
               <Logo />
             </Box>
-            <AppTitle />
+            {/*<AppTitle />*/}
+            <TextField
+                error={!!(formik.touched.project && formik.errors.project)}
+                fullWidth
+                label="Project"
+                name="project"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                select
+                value={formik.values.project}
+            >
+              {projectsStore.items.map((project) => (
+                  <MenuItem
+                      key={project._id}
+                      value={project.title}
+                  >
+                    {project.title}
+                  </MenuItem>
+              ))}
+            </TextField>
           </Stack>
           <Stack
             component="nav"
