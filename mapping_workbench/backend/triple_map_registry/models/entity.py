@@ -2,11 +2,12 @@ from typing import Optional, List
 
 from beanie import Link, Indexed
 
-from mapping_workbench.backend.core.models.base_entity import BaseEntity, BaseEntityInSchema, BaseEntityOutSchema
+from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
+    BaseProjectResourceEntityOutSchema, BaseProjectResourceEntityInSchema
 from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragment
 
 
-class TripleMapRegistryIn(BaseEntityInSchema):
+class TripleMapRegistryIn(BaseProjectResourceEntityInSchema):
     pass
 
 
@@ -18,14 +19,14 @@ class TripleMapRegistryUpdateIn(TripleMapRegistryIn):
     title: Optional[str]
 
 
-class TripleMapRegistryOut(BaseEntityOutSchema):
+class TripleMapRegistryOut(BaseProjectResourceEntityOutSchema):
     title: Optional[str]
     triple_map_fragments: Optional[List[Link[TripleMapFragment]]]
 
 
-class TripleMapRegistry(BaseEntity):
+class TripleMapRegistry(BaseProjectResourceEntity):
     title: Indexed(str, unique=True)
     triple_map_fragments: Optional[List[Link[TripleMapFragment]]]
 
-    class Settings(BaseEntity.Settings):
+    class Settings(BaseProjectResourceEntity.Settings):
         name = "triple_map_registries"

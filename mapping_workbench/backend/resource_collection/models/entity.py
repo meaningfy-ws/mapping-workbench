@@ -3,16 +3,16 @@ from typing import Optional, List
 
 from beanie import Link
 
-from mapping_workbench.backend.core.models.base_entity import BaseEntity
+from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
 from mapping_workbench.backend.file_resource.models.file_resource import FileResource
 
 
-class ResourceCollection(BaseEntity):
+class ResourceCollection(BaseProjectResourceEntity):
     title: Optional[str]
     description: Optional[str]
     file_resources: Optional[List[Link["ResourceFile"]]] = []
 
-    class Settings(BaseEntity.Settings):
+    class Settings(BaseProjectResourceEntity.Settings):
         name = "resource_collections"
         use_state_management = True
 

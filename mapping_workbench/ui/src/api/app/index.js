@@ -1,6 +1,7 @@
 import axios from "axios";
-import {apiAddress} from 'src/config';
+import {api as apiConfig} from 'src/config';
 import {STORAGE_KEY as ACCESS_TOKEN_STORAGE_KEY} from 'src/contexts/auth/jwt/auth-provider';
+import {localStorageTokenInterceptor} from './security';
 
 const LOGIN_ENDPOINT = "/auth/jwt/login";
 const LOGOUT_ENDPOINT = "/auth/jwt/logout";
@@ -16,7 +17,8 @@ const METHOD = {
 class AppApi {
 
     constructor() {
-        this.address = apiAddress;
+        this.config = apiConfig;
+        this.apiClient = this.getApiClient(this.config);
     }
 
     sessionStorage() {
@@ -28,7 +30,7 @@ class AppApi {
     }
 
     url(endpoint) {
-        return `${this.address}${endpoint}`;
+        return `${this.config.address}${this.config.baseUrl}${endpoint}`;
     }
 
     getAccessToken() {
@@ -56,17 +58,17 @@ class AppApi {
     }
 
     processError(error) {
-        if (error.response && error.response.status == 401) {
+        if (error.response && error.response.status === 401) {
             this.removeAccessToken();
         }
     }
 
     getApiClient(config) {
         let initialConfig = {
-            baseURL: `${this.address}`,  // 3
+            baseURL: `${config.address}${config.baseUrl}`
         }
         let client = axios.create(initialConfig)
-        //client.interceptors.request.use(localStorageTokenInterceptor)  // 4
+        client.interceptors.request.use(localStorageTokenInterceptor)
         return client
     }
 

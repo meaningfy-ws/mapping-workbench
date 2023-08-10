@@ -16,7 +16,8 @@ services:
         - PORT=${MW_FRONTEND_SERVER_PORT}
         - NODE_ENV=${NODE_ENV}
         - NODE_PATH=/app
-        - API_ADDRESS=http://api.mw.${SUBDOMAIN}${DOMAIN}/api/v1
+        - API_ADDRESS=http://api.mw.${SUBDOMAIN}${DOMAIN}
+        - API_BASE_URL=/api/v1
     ports:
       - ${MW_FRONTEND_SERVER_PORT}:${MW_FRONTEND_SERVER_PORT}
     networks:

@@ -2,6 +2,7 @@ from enum import Enum
 from typing import Optional
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntity
+from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
 
 
 class FileResourceFormat(Enum):
@@ -14,7 +15,7 @@ class FileResourceFormat(Enum):
     CSV = "CSV"
 
 
-class FileResource(BaseEntity):
+class FileResource(BaseProjectResourceEntity):
     title: Optional[str]
     description: Optional[str]
     filename: Optional[str]

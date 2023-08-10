@@ -9,7 +9,8 @@ const config = {
     return config;
   },
   env: {
-    API_ADDRESS: process.env.API_ADDRESS
+    API_ADDRESS: process.env.API_ADDRESS,
+    API_BASE_URL: process.env.API_BASE_URL
   }
 };
 
