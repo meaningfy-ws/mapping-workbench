@@ -12,7 +12,7 @@ const Page = () => {
     const searchParams = new URLSearchParams(window.location.search);
     const returnTo = searchParams.get('returnTo');
     await loginWithRedirect({
-      returnTo: returnTo || paths.dashboard.index
+      returnTo: returnTo || paths.app.index
     });
   }, [loginWithRedirect]);
 

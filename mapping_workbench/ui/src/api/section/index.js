@@ -1,5 +1,6 @@
 import {appApi} from "../app";
 import {apiPaths} from "../../paths";
+import {sessionApi} from "../session";
 
 export const ACTION = {
     LIST: 'list',
@@ -9,6 +10,8 @@ export const ACTION = {
 };
 
 export class SectionApi {
+    isProjectResource;
+
     get sectionTitle() {
         return "Items";
     }
@@ -24,7 +27,10 @@ export class SectionApi {
 
     async getItems(request = {}) {
         const {filters, page, rowsPerPage} = request;
-        return await appApi.get(this.paths['items']);
+        if (this.isProjectResource) {
+            filters['project'] = sessionApi.getSessionProject();
+        }
+        return await appApi.get(this.paths['items'], filters);
     }
 
     async getItem(id) {

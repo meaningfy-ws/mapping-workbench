@@ -14,6 +14,8 @@ import {paths} from 'src/paths';
 import {useRouter} from 'src/hooks/use-router';
 import {FormTextField} from "../../../components/app/form/text-field";
 import {FormTextArea} from "../../../components/app/form/text-area";
+import {FormDateField} from "../../../components/app/form/date-field";
+import {sessionApi} from "../../../api/session";
 
 
 export const EditForm = (props) => {
@@ -51,6 +53,7 @@ export const EditForm = (props) => {
                 values['start_date'] = values['start_date'] || null;
                 values['end_date'] = values['end_date'] || null;
                 let response;
+                values['project'] = sessionApi.getSessionProject();
                 if (itemctx.isNew) {
                     response = await sectionApi.createItem(values);
                 } else {
@@ -99,16 +102,16 @@ export const EditForm = (props) => {
                         <Grid xs={12} md={12}>
                             <FormTextField formik={formik} name="subtype" label="Sub-type"/>
                         </Grid>
-                        <Grid xs={12} md={12}>
-                            <FormTextField type="date" formik={formik} name="start_date" label="Start Date"/>
+                        <Grid xs={12} md={6}>
+                            <FormDateField formik={formik} name="start_date" label="Start Date"/>
                         </Grid>
-                        <Grid xs={12} md={12}>
-                            <FormTextField type="date" formik={formik} name="end_date" label="End Date"/>
+                        <Grid xs={12} md={6}>
+                            <FormDateField formik={formik} name="end_date" label="End Date"/>
                         </Grid>
-                        <Grid xs={12} md={12}>
+                        <Grid xs={12} md={6}>
                             <FormTextField formik={formik} name="min_xsd_version" label="Min XSD Version"/>
                         </Grid>
-                        <Grid xs={12} md={12}>
+                        <Grid xs={12} md={6}>
                             <FormTextField formik={formik} name="max_xsd_version" label="Max XSD Version"/>
                         </Grid>
                     </Grid>

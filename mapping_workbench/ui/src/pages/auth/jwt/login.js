@@ -59,7 +59,7 @@ const Page = () => {
         await signIn(values.username, values.password);
 
         if (isMounted()) {
-          router.push(returnTo || paths.dashboard.index);
+          router.push(returnTo || paths.app.index);
         }
       } catch (err) {
         console.error(err);

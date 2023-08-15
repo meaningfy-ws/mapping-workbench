@@ -15,6 +15,7 @@ import {paths} from 'src/paths';
 import {wait} from 'src/utils/wait';
 import {useRouter} from 'src/hooks/use-router';
 import {useCallback} from "react";
+import {sessionApi} from "../../../api/session";
 
 
 export const FileCollectionEditForm = (props) => {
@@ -40,31 +41,25 @@ export const FileCollectionEditForm = (props) => {
         submit: null
     };
 
-    switch(sectionApi.section) {
+    switch (sectionApi.section) {
         case 'test_data_suites':
-          customPathName = paths.app.test_data_suites.index;
-                
-        break;
+            customPathName = paths.app.test_data_suites.index;
+            break;
         case 'sparql_test_suites':
-          customPathName = paths.app.sparql_test_suites.index;
-                
-        break;
+            customPathName = paths.app.sparql_test_suites.index;
+            break;
         case 'shacl_test_suites':
-          customPathName = paths.app.shacl_test_suites.index;
-                
-        break;
+            customPathName = paths.app.shacl_test_suites.index;
+            break;
         case 'ontology_file_collections':
-          customPathName = paths.app.ontology_file_collections.index;
-                
-        break;
+            customPathName = paths.app.ontology_file_collections.index;
+            break;
         case 'resource_collections':
-          customPathName = paths.app.resource_collections.index;
-                
-        break;
-        
-        
+            customPathName = paths.app.resource_collections.index;
+            break;
+
         default:
-            break;                    
+            break;
     }
 
     const formik = useFormik({
@@ -79,6 +74,7 @@ export const FileCollectionEditForm = (props) => {
         onSubmit: async (values, helpers) => {
             try {
                 let response;
+                values['project'] = sessionApi.getSessionProject();
                 if (itemctx.isNew) {
                     response = await sectionApi.createItem(values);
                 } else {
@@ -98,7 +94,7 @@ export const FileCollectionEditForm = (props) => {
                     } else if (itemctx.isStateable) {
                         itemctx.setState(response);
                     }
-                    router.push({pathname: customPathName });
+                    router.push({pathname: customPathName});
                 }
             } catch (err) {
                 console.error(err);

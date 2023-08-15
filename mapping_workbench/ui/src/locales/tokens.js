@@ -51,6 +51,7 @@ export const tokens = {
     verifyCode: 'nav.verifyCode',
 
     sections: 'nav.sections',
+    resources: 'nav.resources',
     projects: 'nav.projects',
     test_data_suites: 'nav.test_data_suites',
     sparql_test_suites: 'nav.sparql_test_suites',

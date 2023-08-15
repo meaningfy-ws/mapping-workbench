@@ -14,6 +14,7 @@ import {paths} from 'src/paths';
 import {useRouter} from 'src/hooks/use-router';
 import {FormTextField} from "../../../components/app/form/text-field";
 import {FormTextArea} from "../../../components/app/form/text-area";
+import {sessionApi} from "../../../api/session";
 
 
 export const EditForm = (props) => {
@@ -49,6 +50,7 @@ export const EditForm = (props) => {
                     values['source_xpath'].split(',').map(s => s.trim()) : values['source_xpath'];
 
                 let response;
+                values['project'] = sessionApi.getSessionProject();
                 if (itemctx.isNew) {
                     response = await sectionApi.createItem(values);
                 } else {

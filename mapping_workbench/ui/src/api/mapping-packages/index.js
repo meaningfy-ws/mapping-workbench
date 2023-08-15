@@ -11,6 +11,7 @@ class MappingPackagesApi extends SectionApi {
 
     constructor() {
         super("mapping_packages");
+        this.isProjectResource = true;
     }
 }
 

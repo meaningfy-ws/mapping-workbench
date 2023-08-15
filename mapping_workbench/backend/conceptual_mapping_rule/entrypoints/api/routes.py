@@ -16,6 +16,7 @@ from mapping_workbench.backend.conceptual_mapping_rule.services.api import (
     get_conceptual_mapping_rule,
     delete_conceptual_mapping_rule
 )
+from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.user.models.user import User
 
@@ -36,8 +37,13 @@ router = APIRouter(
     name=f"{NAME_FOR_MANY}:list",
     response_model=APIListConceptualMappingRulesPaginatedResponse
 )
-async def route_list_conceptual_mapping_rules():
-    items: List[ConceptualMappingRuleOut] = await list_conceptual_mapping_rules()
+async def route_list_conceptual_mapping_rules(
+        project: PydanticObjectId = None
+):
+    filters: dict = {}
+    if project:
+        filters['project'] = Project.link_from_id(project)
+    items: List[ConceptualMappingRuleOut] = await list_conceptual_mapping_rules(filters)
     return APIListConceptualMappingRulesPaginatedResponse(
         items=items,
         count=len(items)

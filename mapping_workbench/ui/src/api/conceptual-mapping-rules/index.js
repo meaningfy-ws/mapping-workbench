@@ -11,6 +11,7 @@ class ConceptualMappingRulesApi extends SectionApi {
 
     constructor() {
         super("conceptual_mapping_rules");
+        this.isProjectResource = true;
     }
 }
 

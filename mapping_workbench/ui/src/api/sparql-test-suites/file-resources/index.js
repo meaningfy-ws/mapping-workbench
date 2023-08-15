@@ -15,8 +15,22 @@ class SPARQLTestFileResourcesApi extends FileResourcesApi {
         };
     }
 
+    get FILE_RESOURCE_DEFAULT_FORMAT() {
+        return "RQ";
+    }
+
+    get FILE_RESOURCE_CODE() {
+        return {
+            "RQ": {
+                "grammar": "sparql",
+                "language": "sparql"
+            }
+        };
+    }
+
     constructor() {
         super("sparql_test_suites");
+        this.isProjectResource = true;
     }
 }
 

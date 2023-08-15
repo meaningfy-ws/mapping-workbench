@@ -166,7 +166,7 @@ export const CustomerListTable = (props) => {
                         <Link
                           color="inherit"
                           component={RouterLink}
-                          href={paths.dashboard.customers.details}
+                          href={paths.app.customers.details}
                           variant="subtitle2"
                         >
                           {customer.name}
@@ -194,7 +194,7 @@ export const CustomerListTable = (props) => {
                   <TableCell align="right">
                     <IconButton
                       component={RouterLink}
-                      href={paths.dashboard.customers.edit}
+                      href={paths.app.customers.edit}
                     >
                       <SvgIcon>
                         <Edit02Icon />
@@ -202,7 +202,7 @@ export const CustomerListTable = (props) => {
                     </IconButton>
                     <IconButton
                       component={RouterLink}
-                      href={paths.dashboard.customers.details}
+                      href={paths.app.customers.details}
                     >
                       <SvgIcon>
                         <ArrowRightIcon />

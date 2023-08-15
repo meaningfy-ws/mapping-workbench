@@ -11,7 +11,11 @@ from mapping_workbench.backend.user.models.user import User
 
 async def list_resource_collections(filters=None) -> List[ResourceCollection]:
     query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
-    return await ResourceCollection.find(query_filters, projection_model=ResourceCollection, fetch_links=False).to_list()
+    return await ResourceCollection.find(
+        query_filters,
+        projection_model=ResourceCollection,
+        fetch_links=False
+    ).to_list()
 
 
 async def create_resource_collection(resource_collection: ResourceCollection, user: User) -> ResourceCollection:
@@ -45,7 +49,7 @@ async def delete_resource_collection(id: PydanticObjectId):
 
 async def list_resource_collection_file_resources(
         id: PydanticObjectId = None,
-        filters = None
+        filters=None
 ) -> List[ResourceFile]:
     query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
     return await ResourceFile.find(

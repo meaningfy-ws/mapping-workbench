@@ -23,6 +23,7 @@ from mapping_workbench.backend.ontology_file_collection.services.api import (
     get_ontology_file_resource,
     delete_ontology_file_resource
 )
+from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.user.models.user import User
 
@@ -45,8 +46,13 @@ router = APIRouter(
     name=f"{NAME_FOR_MANY}:list",
     response_model=APIListOntologyFileCollectionsPaginatedResponse
 )
-async def route_list_ontology_file_collections():
-    items: List[OntologyFileCollection] = await list_ontology_file_collections()
+async def route_list_ontology_file_collections(
+        project: PydanticObjectId = None
+):
+    filters: dict = {}
+    if project:
+        filters['project'] = Project.link_from_id(project)
+    items: List[OntologyFileCollection] = await list_ontology_file_collections(filters)
     return APIListOntologyFileCollectionsPaginatedResponse(items=items, count=len(items))
 
 

@@ -71,14 +71,6 @@ export const CustomerInvoices = (props) => {
                     </SeverityPill>
                   </TableCell>
                   <TableCell align="right">
-                    <IconButton
-                      component={RouterLink}
-                      href={paths.dashboard.invoices.details}
-                    >
-                      <SvgIcon>
-                        <ArrowRightIcon />
-                      </SvgIcon>
-                    </IconButton>
                   </TableCell>
                 </TableRow>
               );

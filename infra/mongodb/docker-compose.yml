@@ -7,9 +7,9 @@ services:
         - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
         - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
     volumes:
-      - mongodb-data:/data/db
+      - mongodb-mw-data:/data/db
     networks:
-      - mongodb-net
+      - mongodb-mw-net
       - common-ext
     ports:
       - ${MONGO_DB_PORT}:27017
@@ -19,26 +19,26 @@ services:
 
   mongo-express:
     image: mongo-express
-    container_name: mongo-express-${ENVIRONMENT}
+    container_name: mongo-express-mw-${ENVIRONMENT}
     environment:
-      - ME_CONFIG_MONGODB_SERVER=mongodb-${ENVIRONMENT}
+      - ME_CONFIG_MONGODB_SERVER=mw-mongodb-${ENVIRONMENT}
       - ME_CONFIG_MONGODB_ENABLE_ADMIN=${ME_CONFIG_MONGODB_ENABLE_ADMIN}
       - ME_CONFIG_MONGODB_ADMINUSERNAME=${ME_CONFIG_MONGODB_ADMINUSERNAME}
       - ME_CONFIG_MONGODB_ADMINPASSWORD=${ME_CONFIG_MONGODB_ADMINPASSWORD}
       - ME_CONFIG_BASICAUTH_USERNAME=${ME_CONFIG_BASICAUTH_USERNAME}
       - ME_CONFIG_BASICAUTH_PASSWORD=${ME_CONFIG_BASICAUTH_PASSWORD}
     volumes:
-      - mongodb-data:/data/db
+      - mongodb-mw-data:/data/db
     depends_on:
       - mongodb
     networks:
-      - mongodb-net
+      - mongodb-mw-net
       - proxy-net
-    healthcheck:
-      test: wget --quiet --tries=3 --spider http://${ME_CONFIG_BASICAUTH_USERNAME}:${ME_CONFIG_BASICAUTH_PASSWORD}@mongo-express-${ENVIRONMENT}:8081 || exit 1
-      interval: 30s
-      timeout: 10s
-      retries: 3
+#    healthcheck:
+#      test: wget --quiet --tries=3 --spider http://${ME_CONFIG_BASICAUTH_USERNAME}:${ME_CONFIG_BASICAUTH_PASSWORD}@mongo-express-${ENVIRONMENT}:8081 || exit 1
+#      interval: 30s
+#      timeout: 10s
+#      retries: 3
     restart: unless-stopped
     labels:
       #### Labels define the behavior and rules of the traefik proxy for this container ####
@@ -52,13 +52,13 @@ services:
 
 
 volumes:
-  mongodb-data:
-    name: mongodb-data-${ENVIRONMENT}
+  mongodb-mw-data:
+    name: mongodb-data-mw-${ENVIRONMENT}
 
 networks:
-  mongodb-net:
+  mongodb-mw-net:
     internal: false
-    name: mongodb-net-${ENVIRONMENT}
+    name: mongodb-net-mw-${ENVIRONMENT}
   proxy-net:
     external:
       name: proxy-net

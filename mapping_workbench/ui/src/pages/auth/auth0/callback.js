@@ -29,7 +29,7 @@ const Page = () => {
 
       if (isMounted()) {
         // returnTo could be an absolute path
-        window.location.replace(appState?.returnTo || paths.dashboard.index);
+        window.location.replace(appState?.returnTo || paths.app.index);
       }
     } catch (err) {
       console.error(err);

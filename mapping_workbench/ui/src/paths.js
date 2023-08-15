@@ -101,6 +101,11 @@ export const paths = {
       edit: '/app/users/[id]/edit',
       view: '/app/users/[id]/view'
     },
+    customers: {
+      index: '/app/customers',
+      details: '/app/customers/:customerId',
+      edit: '/app/customers/:customerId/edit',
+    },
     account: '/app/account',
   },
   docs: 'https://material-kit-pro-react-docs.devias.io',

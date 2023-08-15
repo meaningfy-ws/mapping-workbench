@@ -1,9 +1,10 @@
 from typing import Optional, List
 
-from mapping_workbench.backend.core.models.base_entity import BaseEntity, BaseEntityInSchema, BaseEntityOutSchema
+from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
+    BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
 
 
-class ConceptualMappingRuleIn(BaseEntityInSchema):
+class ConceptualMappingRuleIn(BaseProjectResourceEntityInSchema):
     business_id: Optional[str]
     business_title: Optional[str]
     business_description: Optional[str]
@@ -20,7 +21,7 @@ class ConceptualMappingRuleUpdateIn(ConceptualMappingRuleIn):
     pass
 
 
-class ConceptualMappingRuleOut(BaseEntityOutSchema):
+class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema):
     business_id: Optional[str]
     business_title: Optional[str]
     business_description: Optional[str]
@@ -29,7 +30,7 @@ class ConceptualMappingRuleOut(BaseEntityOutSchema):
     target_property_path: Optional[str]
 
 
-class ConceptualMappingRule(BaseEntity):
+class ConceptualMappingRule(BaseProjectResourceEntity):
     business_id: Optional[str]
     business_title: Optional[str]
     business_description: Optional[str]
@@ -37,6 +38,6 @@ class ConceptualMappingRule(BaseEntity):
     target_class_path: Optional[str]
     target_property_path: Optional[str]
 
-    class Settings(BaseEntity.Settings):
+    class Settings(BaseProjectResourceEntity.Settings):
         name = "conceptual_mapping_rules"
 

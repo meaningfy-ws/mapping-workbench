@@ -16,8 +16,26 @@ class ResourceFilesApi extends FileResourcesApi {
         };
     }
 
+    get FILE_RESOURCE_DEFAULT_FORMAT() {
+        return "JSON";
+    }
+
+    get FILE_RESOURCE_CODE() {
+        return {
+            "CSV": {
+                "grammar": "csv",
+                "language": "csv"
+            },
+            "JSON": {
+                "grammar": "json",
+                "language": "json"
+            }
+        };
+    }
+
     constructor() {
         super("resource_collections");
+        this.isProjectResource = true;
     }
 }
 

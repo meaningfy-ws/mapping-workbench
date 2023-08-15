@@ -4,6 +4,7 @@ from beanie import PydanticObjectId
 from fastapi import APIRouter, Depends, status
 
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
+from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragmentOut, \
     TripleMapFragmentCreateIn, TripleMapFragmentUpdateIn
 from mapping_workbench.backend.triple_map_fragment.models.entity_api_response import \
@@ -35,8 +36,13 @@ router = APIRouter(
     name=f"{NAME_FOR_MANY}:list",
     response_model=APIListTripleMapFragmentsPaginatedResponse
 )
-async def route_list_triple_map_fragments():
-    items: List[TripleMapFragmentOut] = await list_triple_map_fragments()
+async def route_list_triple_map_fragments(
+        project: PydanticObjectId = None
+):
+    filters: dict = {}
+    if project:
+        filters['project'] = Project.link_from_id(project)
+    items: List[TripleMapFragmentOut] = await list_triple_map_fragments(filters)
     return APIListTripleMapFragmentsPaginatedResponse(
         items=items,
         count=len(items)

@@ -20,7 +20,8 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import {FormTextArea} from "../../../components/app/form/text-area";
 import {FormTextField} from "../../../components/app/form/text-field";
-
+import {sessionApi} from "../../../api/session";
+import {FormCodeTextArea} from "../../../components/app/form/code-text-area";
 
 export const FileResourceEditForm = (props) => {
     const router = useRouter();
@@ -34,7 +35,7 @@ export const FileResourceEditForm = (props) => {
         return {
             title: data.title || '',
             description: data.description || '',
-            format: data.format || '',
+            format: data.format || sectionApi.FILE_RESOURCE_DEFAULT_FORMAT || '',
             content: data.content || '',
             file: null
         }
@@ -57,8 +58,8 @@ export const FileResourceEditForm = (props) => {
         }),
         onSubmit: async (values, helpers) => {
             try {
-                console.log(values);
                 let response;
+                values['project'] = sessionApi.getSessionProject();
                 let formData = values;
                 if (itemctx.isNew) {
                     response = await sectionApi.createCollectionFileResource(collection_id, formData);
@@ -141,7 +142,13 @@ export const FileResourceEditForm = (props) => {
                             </FormControl>
                         </Grid>
                         <Grid xs={12} md={12}>
-                            <FormTextArea formik={formik} name="content" label="Content"/>
+                            <FormCodeTextArea
+                                formik={formik}
+                                name="content"
+                                label="Content"
+                                grammar={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['grammar']}
+                                language={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['language']}
+                            />
                         </Grid>
                         <Grid xs={12} md={12}>
                             <Button variant="contained" component="label">

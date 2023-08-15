@@ -5,7 +5,7 @@
   "homepage": "https://devias.io",
   "private": true,
   "scripts": {
-    "dev": "next",
+    "dev": "next dev",
     "build": "next build",
     "react-build": "react-scripts build",
     "start": "next start",
@@ -44,13 +44,16 @@
     "formik": "2.2.9",
     "gray-matter": "4.0.3",
     "i18next": "22.4.15",
+    "jwt-decode": "^3.1.2",
     "lodash.debounce": "4.0.8",
     "lodash.isequal": "4.5.0",
     "mapbox-gl": "2.14.1",
+    "moment": "^2.29.4",
     "mui-one-time-password-input": "1.1.0",
     "next": "13.4.2",
     "nprogress": "0.2.0",
     "numeral": "2.0.6",
+    "prismjs": "^1.29.0",
     "prop-types": "15.8.1",
     "react": "18.2.0",
     "react-apexcharts": "1.4.0",
@@ -64,6 +67,7 @@
     "react-markdown": "8.0.7",
     "react-quill": "2.0.0",
     "react-redux": "8.0.5",
+    "react-simple-code-editor": "^0.13.1",
     "react-slick": "0.29.0",
     "react-syntax-highlighter": "15.5.0",
     "redux": "4.2.1",
@@ -92,6 +96,7 @@
     "@types/react-syntax-highlighter": "15.5.6",
     "eslint": "8.40.0",
     "eslint-config-next": "13.4.2",
+    "sass": "^1.65.1",
     "typescript": "5.0.4"
   }
 }

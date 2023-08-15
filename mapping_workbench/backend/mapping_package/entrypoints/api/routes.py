@@ -4,7 +4,8 @@ from beanie import PydanticObjectId
 from fastapi import APIRouter, Depends, status
 
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
-from mapping_workbench.backend.mapping_package.models.entity import MappingPackageOut, MappingPackageCreateIn, MappingPackageUpdateIn
+from mapping_workbench.backend.mapping_package.models.entity import MappingPackageOut, MappingPackageCreateIn, \
+    MappingPackageUpdateIn
 from mapping_workbench.backend.mapping_package.models.entity_api_response import APIListMappingPackagesPaginatedResponse
 from mapping_workbench.backend.mapping_package.services.api import (
     list_mapping_packages,
@@ -13,6 +14,7 @@ from mapping_workbench.backend.mapping_package.services.api import (
     get_mapping_package,
     delete_mapping_package
 )
+from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.user.models.user import User
 
@@ -33,8 +35,13 @@ router = APIRouter(
     name=f"{NAME_FOR_MANY}:list",
     response_model=APIListMappingPackagesPaginatedResponse
 )
-async def route_list_mapping_packages():
-    items: List[MappingPackageOut] = await list_mapping_packages()
+async def route_list_mapping_packages(
+        project: PydanticObjectId = None
+):
+    filters: dict = {}
+    if project:
+        filters['project'] = Project.link_from_id(project)
+    items: List[MappingPackageOut] = await list_mapping_packages(filters)
     return APIListMappingPackagesPaginatedResponse(
         items=items,
         count=len(items)

@@ -3,16 +3,16 @@ from typing import Optional, List
 
 from beanie import Link
 
-from mapping_workbench.backend.core.models.base_entity import BaseEntity
+from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
 from mapping_workbench.backend.file_resource.models.file_resource import FileResource
 
 
-class SPARQLTestSuite(BaseEntity):
+class SPARQLTestSuite(BaseProjectResourceEntity):
     title: Optional[str]
     description: Optional[str]
     file_resources: Optional[List[Link["SPARQLTestFileResource"]]] = []
 
-    class Settings(BaseEntity.Settings):
+    class Settings(BaseProjectResourceEntity.Settings):
         name = "sparql_test_suites"
 
 

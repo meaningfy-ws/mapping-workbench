@@ -23,12 +23,12 @@ import { useMounted } from 'src/hooks/use-mounted';
 import { usePageView } from 'src/hooks/use-page-view';
 import { Layout as AppLayout } from 'src/layouts/app';
 import { paths } from 'src/paths';
-import { CustomerBasicDetails } from 'src/sections/dashboard/customer/customer-basic-details';
-import { CustomerDataManagement } from 'src/sections/dashboard/customer/customer-data-management';
-import { CustomerEmailsSummary } from 'src/sections/dashboard/customer/customer-emails-summary';
-import { CustomerInvoices } from 'src/sections/dashboard/customer/customer-invoices';
-import { CustomerPayment } from 'src/sections/dashboard/customer/customer-payment';
-import { CustomerLogs } from 'src/sections/dashboard/customer/customer-logs';
+import { CustomerBasicDetails } from 'src/sections/app/customer/customer-basic-details';
+import { CustomerDataManagement } from 'src/sections/app/customer/customer-data-management';
+import { CustomerEmailsSummary } from 'src/sections/app/customer/customer-emails-summary';
+import { CustomerInvoices } from 'src/sections/app/customer/customer-invoices';
+import { CustomerPayment } from 'src/sections/app/customer/customer-payment';
+import { CustomerLogs } from 'src/sections/app/customer/customer-logs';
 import { getInitials } from 'src/utils/get-initials';
 
 const tabs = [
@@ -145,7 +145,7 @@ const Page = () => {
                 <Link
                   color="text.primary"
                   component={RouterLink}
-                  href={paths.dashboard.customers.index}
+                  href={paths.app.customers.index}
                   sx={{
                     alignItems: 'center',
                     display: 'inline-flex'
@@ -215,7 +215,7 @@ const Page = () => {
                         <Edit02Icon />
                       </SvgIcon>
                     )}
-                    href={paths.dashboard.customers.edit}
+                    href={paths.app.customers.edit}
                   >
                     Edit
                   </Button>

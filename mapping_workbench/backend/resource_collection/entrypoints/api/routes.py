@@ -2,6 +2,8 @@ from typing import List
 
 from beanie import PydanticObjectId
 from fastapi import APIRouter, status, Depends
+
+from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.resource_collection.services.api import (
     list_resource_collections,
     create_resource_collection,
@@ -44,8 +46,13 @@ router = APIRouter(
     name=f"{NAME_FOR_MANY}:list",
     response_model=APIListResourceCollectionsPaginatedResponse
 )
-async def route_list_resource_collections():
-    items: List[ResourceCollection] = await list_resource_collections()
+async def route_list_resource_collections(
+        project: PydanticObjectId = None
+):
+    filters: dict = {}
+    if project:
+        filters['project'] = Project.link_from_id(project)
+    items: List[ResourceCollection] = await list_resource_collections(filters)
     return APIListResourceCollectionsPaginatedResponse(items=items, count=len(items))
 
 

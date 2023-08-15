@@ -19,242 +19,244 @@ import Upload04Icon from 'src/icons/ui/duocolor/upload-04';
 import Users03Icon from 'src/icons/ui/duocolor/users-03';
 import {tokens} from 'src/locales/tokens';
 import {paths} from 'src/paths';
+import {sessionApi} from "../../api/session";
+
 
 export const useSections = () => {
-  const { t } = useTranslation();
-
-  return useMemo(() => {
-    return [
-      {
-        items: [
-          {
-            title: t(tokens.nav.overview),
-            path: paths.app.index,
-            icon: (
-              <SvgIcon fontSize="small">
-                <HomeSmileIcon />
-              </SvgIcon>
-            )
-          }
-        ]
-      },
-      {
-        subheader: t(tokens.nav.sections),
-        items: [
-          {
+    const {t} = useTranslation();
+    let items = {
+        projects: [],
+        resources: [],
+        admin: []
+    };
+    items.projects.push({
+        items: [{
             title: t(tokens.nav.projects),
             path: paths.app.projects.index,
             icon: (
-              <SvgIcon fontSize="small">
-                <LayoutAlt02 />
-              </SvgIcon>
-            ),
-            items: [
-              {
-                title: t(tokens.nav.list),
-                path: paths.app.projects.index
-              },
-              {
-                title: t(tokens.nav.create),
-                path: paths.app.projects.create
-              }
-            ]
-          },
-          {
-            title: t(tokens.nav.test_data_suites),
-            path: paths.app.test_data_suites.index,
-            icon: (
                 <SvgIcon fontSize="small">
-                  <BiotechIcon />
+                    <LayoutAlt02/>
                 </SvgIcon>
             ),
             items: [
-              {
-                title: t(tokens.nav.list),
-                path: paths.app.test_data_suites.index
-              },
-              {
-                title: t(tokens.nav.create),
-                path: paths.app.test_data_suites.create
-              }
+                {
+                    title: t(tokens.nav.list),
+                    path: paths.app.projects.index
+                },
+                {
+                    title: t(tokens.nav.create),
+                    path: paths.app.projects.create
+                }
             ]
-          },
-          {
-            title: t(tokens.nav.sparql_test_suites),
-            path: paths.app.sparql_test_suites.index,
-            icon: (
-                <SvgIcon fontSize="small">
-                  <FlareIcon />
-                </SvgIcon>
-            ),
-            items: [
-              {
-                title: t(tokens.nav.list),
-                path: paths.app.sparql_test_suites.index
-              },
-              {
-                title: t(tokens.nav.create),
-                path: paths.app.sparql_test_suites.create
-              }
-            ]
-          },
-          {
-            title: t(tokens.nav.shacl_test_suites),
-            path: paths.app.shacl_test_suites.index,
-            icon: (
-                <SvgIcon fontSize="small">
-                  <ContentCutIcon />
-                </SvgIcon>
-            ),
-            items: [
-              {
-                title: t(tokens.nav.list),
-                path: paths.app.shacl_test_suites.index
-              },
-              {
-                title: t(tokens.nav.create),
-                path: paths.app.shacl_test_suites.create
-              }
-            ]
-          },
-          {
-            title: t(tokens.nav.ontology_file_collections),
-            path: paths.app.ontology_file_collections.index,
-            icon: (
-                <SvgIcon fontSize="small">
-                  <SchemaIcon />
-                </SvgIcon>
-            ),
-            items: [
-              {
-                title: t(tokens.nav.list),
-                path: paths.app.ontology_file_collections.index
-              },
-              {
-                title: t(tokens.nav.create),
-                path: paths.app.ontology_file_collections.create
-              }
-            ]
-          },
-          {
-            title: t(tokens.nav.resource_collections),
-            path: paths.app.resource_collections.index,
-            icon: (
-                <SvgIcon fontSize="small">
-                  <HubIcon />
-                </SvgIcon>
-            ),
-            items: [
-              {
-                title: t(tokens.nav.list),
-                path: paths.app.resource_collections.index
-              },
-              {
-                title: t(tokens.nav.create),
-                path: paths.app.resource_collections.create
-              }
-            ]
-          },
-
-          {
-            title: t(tokens.nav.mapping_packages),
-            path: paths.app.mapping_packages.index,
-            icon: (
-                <SvgIcon fontSize="small">
-                  <FolderOpenIcon />
-                </SvgIcon>
-            ),
-            items: [
-              {
-                title: t(tokens.nav.list),
-                path: paths.app.mapping_packages.index
-              },
-              {
-                title: t(tokens.nav.create),
-                path: paths.app.mapping_packages.create
-              }
-            ]
-          },
-
-          {
-            title: t(tokens.nav.conceptual_mapping_rules),
-            path: paths.app.conceptual_mapping_rules.index,
-            icon: (
-                <SvgIcon fontSize="small">
-                  <MapIcon />
-                </SvgIcon>
-            ),
-            items: [
-              {
-                title: t(tokens.nav.list),
-                path: paths.app.conceptual_mapping_rules.index
-              },
-              {
-                title: t(tokens.nav.create),
-                path: paths.app.conceptual_mapping_rules.create
-              }
-            ]
-          },
-
-          {
-            title: t(tokens.nav.triple_map_fragments),
-            path: paths.app.triple_map_fragments.index,
-            icon: (
-                <SvgIcon fontSize="small">
-                  <HiveIcon />
-                </SvgIcon>
-            ),
-            items: [
-              {
-                title: t(tokens.nav.list),
-                path: paths.app.triple_map_fragments.index
-              },
-              {
-                title: t(tokens.nav.create),
-                path: paths.app.triple_map_fragments.create
-              }
-            ]
-          },
-
-          {
-            title: t(tokens.nav.fileManager),
-            path: paths.app.fileManager,
-            icon: (
-              <SvgIcon fontSize="small">
-                <FilePresentIcon />
-              </SvgIcon>
-            )
-          }
-        ]
-      },
-      {
-        subheader: t(tokens.nav.admin),
+        }]
+    });
+    items.resources.push({
         items: [
-          {
-            title: t(tokens.nav.users),
-            path: paths.app.users.index,
-            icon: (
-                <SvgIcon fontSize="small">
-                  <Users03Icon />
-                </SvgIcon>
-            ),
-            items: [
-              {
-                title: t(tokens.nav.list),
-                path: paths.app.users.index
-              },
-              {
-                title: t(tokens.nav.details),
-                path: paths.app.users.details
-              },
-              {
-                title: t(tokens.nav.edit),
-                path: paths.app.users.edit
-              }
-            ]
-          }
+            {
+                title: t(tokens.nav.overview),
+                path: paths.app.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <HomeSmileIcon/>
+                    </SvgIcon>
+                )
+            }
         ]
-      }
-    ];
-  }, [t]);
-};
+    });
+
+    let sections = {
+        subheader: t(tokens.nav.resources),
+        items: []
+    };
+
+    let sessionProject = sessionApi.getSessionProject();
+    if (sessionProject && sessionProject !== 'null') {
+        sections.items.push(
+            {
+                title: t(tokens.nav.test_data_suites),
+                path: paths.app.test_data_suites.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <BiotechIcon/>
+                    </SvgIcon>
+                ),
+                items: [
+                    {
+                        title: t(tokens.nav.list),
+                        path: paths.app.test_data_suites.index
+                    },
+                    {
+                        title: t(tokens.nav.create),
+                        path: paths.app.test_data_suites.create
+                    }
+                ]
+            },
+            {
+                title: t(tokens.nav.sparql_test_suites),
+                path: paths.app.sparql_test_suites.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <FlareIcon/>
+                    </SvgIcon>
+                ),
+                items: [
+                    {
+                        title: t(tokens.nav.list),
+                        path: paths.app.sparql_test_suites.index
+                    },
+                    {
+                        title: t(tokens.nav.create),
+                        path: paths.app.sparql_test_suites.create
+                    }
+                ]
+            },
+            {
+                title: t(tokens.nav.shacl_test_suites),
+                path: paths.app.shacl_test_suites.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <ContentCutIcon/>
+                    </SvgIcon>
+                ),
+                items: [
+                    {
+                        title: t(tokens.nav.list),
+                        path: paths.app.shacl_test_suites.index
+                    },
+                    {
+                        title: t(tokens.nav.create),
+                        path: paths.app.shacl_test_suites.create
+                    }
+                ]
+            },
+            {
+                title: t(tokens.nav.ontology_file_collections),
+                path: paths.app.ontology_file_collections.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <SchemaIcon/>
+                    </SvgIcon>
+                ),
+                items: [
+                    {
+                        title: t(tokens.nav.list),
+                        path: paths.app.ontology_file_collections.index
+                    },
+                    {
+                        title: t(tokens.nav.create),
+                        path: paths.app.ontology_file_collections.create
+                    }
+                ]
+            },
+            {
+                title: t(tokens.nav.resource_collections),
+                path: paths.app.resource_collections.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <HubIcon/>
+                    </SvgIcon>
+                ),
+                items: [
+                    {
+                        title: t(tokens.nav.list),
+                        path: paths.app.resource_collections.index
+                    },
+                    {
+                        title: t(tokens.nav.create),
+                        path: paths.app.resource_collections.create
+                    }
+                ]
+            },
+
+            {
+                title: t(tokens.nav.mapping_packages),
+                path: paths.app.mapping_packages.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <FolderOpenIcon/>
+                    </SvgIcon>
+                ),
+                items: [
+                    {
+                        title: t(tokens.nav.list),
+                        path: paths.app.mapping_packages.index
+                    },
+                    {
+                        title: t(tokens.nav.create),
+                        path: paths.app.mapping_packages.create
+                    }
+                ]
+            },
+
+            {
+                title: t(tokens.nav.conceptual_mapping_rules),
+                path: paths.app.conceptual_mapping_rules.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <MapIcon/>
+                    </SvgIcon>
+                ),
+                items: [
+                    {
+                        title: t(tokens.nav.list),
+                        path: paths.app.conceptual_mapping_rules.index
+                    },
+                    {
+                        title: t(tokens.nav.create),
+                        path: paths.app.conceptual_mapping_rules.create
+                    }
+                ]
+            },
+
+            {
+                title: t(tokens.nav.triple_map_fragments),
+                path: paths.app.triple_map_fragments.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <HiveIcon/>
+                    </SvgIcon>
+                ),
+                items: [
+                    {
+                        title: t(tokens.nav.list),
+                        path: paths.app.triple_map_fragments.index
+                    },
+                    {
+                        title: t(tokens.nav.create),
+                        path: paths.app.triple_map_fragments.create
+                    }
+                ]
+            });
+    }
+    items.resources.push(sections);
+    items.admin.push(
+        {
+            subheader: t(tokens.nav.admin),
+            items: [
+                {
+                    title: t(tokens.nav.users),
+                    path: paths.app.users.index,
+                    icon: (
+                        <SvgIcon fontSize="small">
+                            <Users03Icon/>
+                        </SvgIcon>
+                    ),
+                    items: [
+                        {
+                            title: t(tokens.nav.list),
+                            path: paths.app.users.index
+                        },
+                        {
+                            title: t(tokens.nav.details),
+                            path: paths.app.users.details
+                        },
+                        {
+                            title: t(tokens.nav.edit),
+                            path: paths.app.users.edit
+                        }
+                    ]
+                }
+            ]
+        });
+    return items;
+}

@@ -11,6 +11,7 @@ class OntologyFileCollectionsApi extends FileCollectionsApi {
 
     constructor() {
         super("ontology_file_collections");
+        this.isProjectResource = true;
     }
 }
 

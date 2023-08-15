@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
+const path = require('path')
+
 const config = {
   reactStrictMode: false,
   webpack(config) {
@@ -9,7 +11,11 @@ const config = {
     return config;
   },
   env: {
-    API_ADDRESS: process.env.API_ADDRESS
+    API_ADDRESS: process.env.API_ADDRESS,
+    API_BASE_URL: process.env.API_BASE_URL
+  },
+  sassOptions: {
+    includePaths: [path.join(__dirname, 'styles')],
   }
 };
 

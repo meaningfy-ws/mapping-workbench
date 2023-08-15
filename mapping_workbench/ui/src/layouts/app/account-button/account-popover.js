@@ -40,7 +40,7 @@ export const AccountPopover = (props) => {
         }
       }
 
-      router.push(paths.index);
+      router.reload();
     } catch (err) {
       console.error(err);
       toast.error('Something went wrong!');

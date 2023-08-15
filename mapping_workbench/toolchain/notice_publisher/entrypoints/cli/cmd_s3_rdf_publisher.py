@@ -142,7 +142,7 @@ def main(rdf_file, mapping_suite_id, notice_id, skip_notice_id, bucket_name, obj
     Publish RDF content to S3 bucket.
     --rdf-file[list] OR --mapping-suite-id[value] OR (--mapping-suite-id[value] AND --notice-id[list]) must be provided!
 
-    Make sure to have set up these variables in .env file:\n
+    Make sure to have set up these variables.code-text-area.module.scss in .env file:\n
     S3_PUBLISH_HOST,
     S3_PUBLISH_NOTICE_RDF_BUCKET (this will be overwritten by CLI option, if provided),
     S3_PUBLISH_USER,

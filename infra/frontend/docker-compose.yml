@@ -7,7 +7,7 @@ services:
     env_file:
       - ../../.env
     build:
-      context: ./../../mapping_workbench/frontend
+      context: ./../../mapping_workbench/ui
       dockerfile: ./../../infra/frontend/Dockerfile
       args:
         - ENV_FILE=.env
@@ -15,6 +15,9 @@ services:
         - HOST=${MW_FRONTEND_SERVER_HOST}
         - PORT=${MW_FRONTEND_SERVER_PORT}
         - NODE_ENV=${NODE_ENV}
+        - NODE_PATH=/app
+        - API_ADDRESS=http://api.mw.${SUBDOMAIN}${DOMAIN}
+        - API_BASE_URL=/api/v1
     ports:
       - ${MW_FRONTEND_SERVER_PORT}:${MW_FRONTEND_SERVER_PORT}
     networks:
@@ -25,7 +28,7 @@ services:
       #### FRONTEND rules
       - "traefik.http.routers.mw-frontend-${ENVIRONMENT}.rule=Host(`mw.${SUBDOMAIN}${DOMAIN}`)" # <== Your Domain Name goes here for the http rule
       - "traefik.http.routers.mw-frontend-${ENVIRONMENT}.entrypoints=web" # <== Defining the entrypoint for http, **ref: line 30
-      - "traefik.http.routers.mw-frontend-${ENVIRONMENT}.middlewares=redirect@file" # <== This is a middleware to redirect to https
+      #- "traefik.http.routers.mw-frontend-${ENVIRONMENT}.middlewares=redirect@file" # <== This is a middleware to redirect to https
       - "traefik.http.routers.mw-frontend-${ENVIRONMENT}-secured.rule=Host(`mw.${SUBDOMAIN}${DOMAIN}`)" # <== Your Domain Name for the https rule
       - "traefik.http.routers.mw-frontend-${ENVIRONMENT}-secured.entrypoints=web-secured" # <== Defining entrypoint for https, **ref: line 31
       - "traefik.http.routers.mw-frontend-${ENVIRONMENT}-secured.tls=true"
@@ -38,6 +41,9 @@ services:
       - type: bind
         source: ${FRONTEND_INFRA_FOLDER}/Makefile
         target: /app/Makefile
+      - type: bind
+        source: ${FRONTEND_INFRA_FOLDER}/next.config.js
+        target: /app/next.config.js
 
 networks:
   proxy-net:

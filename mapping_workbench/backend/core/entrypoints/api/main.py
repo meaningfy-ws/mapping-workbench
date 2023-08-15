@@ -49,7 +49,7 @@ app = FastAPI(
     swagger_ui_oauth2_redirect_url=f"{ROOT_API_PATH}/docs/oauth2-redirect"
 )
 
-origins = [f"{settings.HOST}:{settings.PORT}", "http://localhost:3000", "*"]
+origins = [f"{settings.HOST}:{settings.PORT}", f"*.mw.{settings.SUBDOMAIN}{settings.DOMAIN}", "*"]
 
 app.add_middleware(
     CORSMiddleware,
