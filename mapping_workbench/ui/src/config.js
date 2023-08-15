@@ -3,5 +3,3 @@ export const api = {
     address: process.env.API_ADDRESS,
     baseUrl: process.env.API_BASE_URL
 }
-
-console.log("K :: ", api)

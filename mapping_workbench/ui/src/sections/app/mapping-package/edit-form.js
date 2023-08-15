@@ -15,6 +15,7 @@ import {useRouter} from 'src/hooks/use-router';
 import {FormTextField} from "../../../components/app/form/text-field";
 import {FormTextArea} from "../../../components/app/form/text-area";
 import {FormDateField} from "../../../components/app/form/date-field";
+import {sessionApi} from "../../../api/session";
 
 
 export const EditForm = (props) => {
@@ -47,12 +48,12 @@ export const EditForm = (props) => {
         }),
         onSubmit: async (values, helpers) => {
             try {
-                console.log("K :: ", values);
                 values['subtype'] = (typeof values['subtype'] == 'string') ?
                     values['subtype'].split(',').map(s => s.trim()) : values['subtype'];
                 values['start_date'] = values['start_date'] || null;
                 values['end_date'] = values['end_date'] || null;
                 let response;
+                values['project'] = sessionApi.getSessionProject();
                 if (itemctx.isNew) {
                     response = await sectionApi.createItem(values);
                 } else {

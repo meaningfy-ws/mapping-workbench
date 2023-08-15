@@ -29,6 +29,7 @@ import {createEmotionCache} from 'src/utils/create-emotion-cache';
 // Remove if locales are not used
 import 'src/locales/i18n';
 
+
 const clientSideEmotionCache = createEmotionCache();
 
 const CustomApp = (props) => {

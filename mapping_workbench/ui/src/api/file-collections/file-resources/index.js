@@ -2,6 +2,15 @@ import {SectionApi} from "src/api/section";
 import {appApi} from "src/api/app";
 
 export class FileResourcesApi extends SectionApi {
+    get FILE_RESOURCE_FORMATS() {
+        return {};
+    }
+
+    get FILE_RESOURCE_DEFAULT_FORMAT() {
+        return (this.FILE_RESOURCE_FORMATS && this.FILE_RESOURCE_FORMATS[0]) || '';
+    }
+
+
     async createCollectionFileResource(collection_id, request) {
         try {
             let endpoint = this.paths['file_resources'].replace(':id', collection_id);

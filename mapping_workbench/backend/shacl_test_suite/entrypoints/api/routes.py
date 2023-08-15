@@ -7,6 +7,7 @@ from starlette.requests import Request
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
 from mapping_workbench.backend.file_resource.services.file_resource_form_data import \
     file_resource_data_from_form_request
+from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestFileResource
 from mapping_workbench.backend.shacl_test_suite.models.entity_api_response import \
@@ -44,8 +45,13 @@ router = APIRouter(
     name=f"{NAME_FOR_MANY}:list",
     response_model=APIListSHACLTestSuitesPaginatedResponse
 )
-async def route_list_shacl_test_suites():
-    items: List[SHACLTestSuite] = await list_shacl_test_suites()
+async def route_list_shacl_test_suites(
+        project: PydanticObjectId = None
+):
+    filters: dict = {}
+    if project:
+        filters['project'] = Project.link_from_id(project)
+    items: List[SHACLTestSuite] = await list_shacl_test_suites(filters)
     return APIListSHACLTestSuitesPaginatedResponse(items=items, count=len(items))
 
 

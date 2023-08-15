@@ -1,11 +1,12 @@
 import jwtDecode from "jwt-decode"
 import * as moment from "moment"
 import {STORAGE_KEY as ACCESS_TOKEN_STORAGE_KEY} from 'src/contexts/auth/jwt/auth-provider';
+import {sessionApi} from "../session";
 
 // every request is intercepted and has auth header injected.
-export function localStorageTokenInterceptor(config) {
+export function sessionStorageTokenInterceptor(config) {
     let headers = {}
-    const tokenString = localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY)
+    const tokenString = sessionApi.getStorage().getItem(ACCESS_TOKEN_STORAGE_KEY)
 
     if (tokenString) {
         const token = JSON.parse(tokenString)

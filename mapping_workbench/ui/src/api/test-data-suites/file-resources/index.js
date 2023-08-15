@@ -16,8 +16,26 @@ class TestDataFileResourcesApi extends FileResourcesApi {
         };
     }
 
+    get FILE_RESOURCE_DEFAULT_FORMAT() {
+        return "XML";
+    }
+
+    get FILE_RESOURCE_CODE() {
+        return {
+            "XML": {
+                "grammar": "markup",
+                "language": "xml"
+            },
+            "JSON": {
+                "grammar": "json",
+                "language": "json"
+            }
+        };
+    }
+
     constructor() {
         super("test_data_suites");
+        this.isProjectResource = true;
     }
 }
 

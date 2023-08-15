@@ -11,6 +11,7 @@ class ResourceCollectionsApi extends FileCollectionsApi {
 
     constructor() {
         super("resource_collections");
+        this.isProjectResource = true;
     }
 }
 

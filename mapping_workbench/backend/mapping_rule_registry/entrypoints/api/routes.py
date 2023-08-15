@@ -15,6 +15,7 @@ from mapping_workbench.backend.mapping_rule_registry.services.api import (
     get_mapping_rule_registry,
     delete_mapping_rule_registry
 )
+from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.user.models.user import User
 
@@ -35,8 +36,13 @@ router = APIRouter(
     name=f"{NAME_FOR_MANY}:list",
     response_model=APIListMappingRuleRegistriesPaginatedResponse
 )
-async def route_list_mapping_rule_registries():
-    items: List[MappingRuleRegistryOut] = await list_mapping_rule_registries()
+async def route_list_mapping_rule_registries(
+        project: PydanticObjectId = None
+):
+    filters: dict = {}
+    if project:
+        filters['project'] = Project.link_from_id(project)
+    items: List[MappingRuleRegistryOut] = await list_mapping_rule_registries(filters)
     return APIListMappingRuleRegistriesPaginatedResponse(
         items=items,
         count=len(items)

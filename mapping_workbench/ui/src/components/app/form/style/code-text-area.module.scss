@@ -1,0 +1,13 @@
+@import 'variables.code-text-area.module';
+
+.form-control-code-textarea {
+  .code-textarea-pre {
+    min-height: #{$code-textarea-height - 23}px;
+  }
+
+  .code-textarea {
+    outline: none;
+    min-height: #{$code-textarea-height}px;
+    box-sizing: border-box;
+  }
+}

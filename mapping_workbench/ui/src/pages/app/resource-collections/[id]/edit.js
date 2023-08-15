@@ -8,10 +8,6 @@ import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
 // to be deleted after demo
-import { Card, Input } from '@mui/material';
-import CardContent from '@mui/material';
-import Grid from '@mui/material';
-import TextField from '@mui/material';
 
 import {resourceCollectionsApi as sectionApi} from 'src/api/resource-collections';
 import {RouterLink} from 'src/components/router-link';
@@ -23,32 +19,6 @@ import {FileCollectionEditForm} from 'src/sections/app/file-manager/file-collect
 import {ForItemEditForm} from "src/contexts/app/section/for-item-form";
 import {useItem} from "src/contexts/app/section/for-item-data-state";
 import {useRouter} from "src/hooks/use-router";
-import { packageCollectionsApi } from 'src/api/mapping-packages';
-import { conceptualMappingCollectionsApi } from 'src/api/conceptual-mapping-collections';
-
-const mockDataPackages = {
-    title:"F03",
-    description:"Des03",
-    formType:"35",   
-    minDate: "01/06/2023",
-    maxDate: "23/06/2023",
-    minVersion: "R2.08.55",
-    maxVersion: "R2.09.66",
-  };
-
-  const mockDataConceptual = {
-	title: "Conceptual Mapping Title",
-	description: "Conceptual Mapping Description",
-	sourceXpath: "Conceptual Mapping Source Xpath",
-	targetClassPath: "Conceptual Mapping Source Xpath",
-	targetPropertyPath: "Conceptual Mapping Target Property",
-	testCollections: [
-		"MRRegistry1",
-		"MRRegistry2",
-		"MRRegistry3",
-		"MRRegistry4"
-	]
-};
 
 
 const Page = () => {

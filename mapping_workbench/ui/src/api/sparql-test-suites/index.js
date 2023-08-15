@@ -11,6 +11,7 @@ class SPARQLTestSuitesApi extends FileCollectionsApi {
 
     constructor() {
         super("sparql_test_suites");
+        this.isProjectResource = true;
     }
 }
 

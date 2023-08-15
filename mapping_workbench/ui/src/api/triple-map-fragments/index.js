@@ -11,6 +11,7 @@ class TripleMapFragmentsApi extends SectionApi {
 
     constructor() {
         super("triple_map_fragments");
+        this.isProjectResource = true;
     }
 }
 

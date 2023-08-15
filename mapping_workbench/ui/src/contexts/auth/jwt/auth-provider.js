@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import { authApi } from 'src/api/auth';
 import { Issuer } from 'src/utils/auth';
 import { AuthContext, initialState } from './auth-context';
+import {SESSION_PROJECT_KEY} from "../../../api/projects";
+import {sessionApi} from "../../../api/session";
 
 export const STORAGE_KEY = 'accessToken';
 
@@ -61,7 +63,7 @@ export const AuthProvider = (props) => {
 
   const initialize = useCallback(async () => {
     try {
-      const accessToken = window.sessionStorage.getItem(STORAGE_KEY);
+      const accessToken = sessionApi.getStorage().getItem(STORAGE_KEY);
 
       if (accessToken) {
         const user = await authApi.me({ accessToken });
@@ -103,8 +105,8 @@ export const AuthProvider = (props) => {
   const signIn = useCallback(async (username, password) => {
     const { accessToken } = await authApi.signIn({ username, password });
     const user = await authApi.me({ accessToken });
-
-    sessionStorage.setItem(STORAGE_KEY, accessToken);
+    sessionApi.getStorage().setItem(STORAGE_KEY, accessToken);
+    sessionApi.getStorage().setItem(SESSION_PROJECT_KEY, user.settings.session.project);
 
     dispatch({
       type: ActionType.SIGN_IN,
@@ -118,7 +120,7 @@ export const AuthProvider = (props) => {
     const { accessToken } = await authApi.signUp({ username, name, password });
     const user = await authApi.me({ accessToken });
 
-    sessionStorage.setItem(STORAGE_KEY, accessToken);
+    sessionApi.getStorage().setItem(STORAGE_KEY, accessToken);
 
     dispatch({
       type: ActionType.SIGN_UP,
@@ -129,7 +131,7 @@ export const AuthProvider = (props) => {
   }, [dispatch]);
 
   const signOut = useCallback(async () => {
-    sessionStorage.removeItem(STORAGE_KEY);
+    sessionApi.getStorage().removeItem(STORAGE_KEY);
 
     dispatch({ type: ActionType.SIGN_OUT });
   }, [dispatch]);

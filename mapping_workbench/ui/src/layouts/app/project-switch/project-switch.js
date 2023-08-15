@@ -1,19 +1,13 @@
 import PropTypes from 'prop-types';
-import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
-import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
-import Stack from '@mui/material/Stack';
-import SvgIcon from '@mui/material/SvgIcon';
-import Typography from '@mui/material/Typography';
-
-import {usePopover} from 'src/hooks/use-popover';
-
-import {ProjectPopover} from './project-popover';
 import {useCallback, useEffect, useState} from "react";
-import {projectsApi as sectionApi} from "../../../api/projects";
+import {projectsApi} from "../../../api/projects";
+import {sessionApi} from "../../../api/session";
 import {useMounted} from "../../../hooks/use-mounted";
-
-const projects = ['Devias', 'Acme Corp'];
+import * as Yup from "yup";
+import {useFormik} from "formik";
+import MenuItem from "@mui/material/MenuItem";
+import TextField from "@mui/material/TextField";
+import {useRouter} from "../../../hooks/use-router";
 
 const useProjectsStore = () => {
     const isMounted = useMounted();
@@ -23,10 +17,10 @@ const useProjectsStore = () => {
 
     const handleProjectGet = useCallback(async () => {
         try {
-            const response = await sectionApi.getItems();
+            const projects = await projectsApi.getSessionProjects();
             if (isMounted()) {
                 setState({
-                    items: response.items,
+                    items: projects,
                 });
             }
         } catch (err) {
@@ -45,47 +39,59 @@ const useProjectsStore = () => {
 };
 
 export const ProjectSwitch = (props) => {
-    const popover = usePopover();
-
+    const router = useRouter();
     const projectsStore = useProjectsStore();
+
+    const initialValues = {
+        sessionProject: sessionApi.getSessionProject() || ''
+    };
+
+    const validationSchema = Yup.object({
+        sessionProject: Yup.string().max(255).required()
+    });
+
+    const formik = useFormik({
+        initialValues,
+        validationSchema,
+        onSubmit: async (values, helpers) => {
+            try {
+                // NOTE: Make API request
+                toast.success('Project chosen');
+            } catch (err) {
+                console.error(err);
+                toast.error('Something went wrong!');
+            }
+        },
+    });
+
+    const handleSessionProjectChange = useCallback(async (event) => {
+        let value = event.target.value;
+        await sessionApi.setSessionProject(value);
+        formik.setFieldValue('sessionProject', value);
+        router.reload();
+    }, [formik])
 
     return (
         <>
-            <Stack
-                alignItems="center"
-                direction="row"
-                spacing={2}
-                {...props}>
-                <Box sx={{flexGrow: 1}}>
-                    <Typography
-                        color="inherit"
-                        variant="h6"
+            <TextField
+                error={!!(formik.touched.sessionProject && formik.errors.sessionProject)}
+                fullWidth
+                label="Project"
+                name="sessionProject"
+                onBlur={formik.handleBlur}
+                onChange={handleSessionProjectChange}
+                select
+                value={formik.values.sessionProject}
+            >
+                {projectsStore.items.map((project) => (
+                    <MenuItem
+                        key={project.id}
+                        value={project.id}
                     >
-                        Mapping Workbench
-                    </Typography>
-                    <Typography
-                        color="neutral.400"
-                        variant="body2"
-                    >
-                        Choose a project
-                    </Typography>
-                </Box>
-                <IconButton
-                    onClick={popover.handleOpen}
-                    ref={popover.anchorRef}
-                >
-                    <SvgIcon sx={{fontSize: 16}}>
-                        <ChevronDownIcon/>
-                    </SvgIcon>
-                </IconButton>
-            </Stack>
-            <ProjectPopover
-                anchorEl={popover.anchorRef.current}
-                onChange={popover.handleClose}
-                onClose={popover.handleClose}
-                open={popover.open}
-                projects={projectsStore.items}
-            />
+                        {project.title}
+                    </MenuItem>
+                ))}
+            </TextField>
         </>
     );
 };

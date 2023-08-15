@@ -5,21 +5,28 @@ from beanie import PydanticObjectId
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
 from mapping_workbench.backend.core.services.request import request_update_data, api_entity_is_found
-from mapping_workbench.backend.ontology_file_collection.models.entity import OntologyFileCollection, OntologyFileResource
+from mapping_workbench.backend.ontology_file_collection.models.entity import OntologyFileCollection, \
+    OntologyFileResource
 from mapping_workbench.backend.user.models.user import User
 
 
 async def list_ontology_file_collections(filters=None) -> List[OntologyFileCollection]:
     query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
-    return await OntologyFileCollection.find(query_filters, projection_model=OntologyFileCollection, fetch_links=False).to_list()
+    return await OntologyFileCollection.find(
+        query_filters,
+        projection_model=OntologyFileCollection,
+        fetch_links=False
+    ).to_list()
 
 
-async def create_ontology_file_collection(ontology_file_collection: OntologyFileCollection, user: User) -> OntologyFileCollection:
+async def create_ontology_file_collection(ontology_file_collection: OntologyFileCollection,
+                                          user: User) -> OntologyFileCollection:
     ontology_file_collection.on_create(user=user)
     return await ontology_file_collection.create()
 
 
-async def update_ontology_file_collection(id: PydanticObjectId, ontology_file_collection_data: OntologyFileCollection, user: User):
+async def update_ontology_file_collection(id: PydanticObjectId, ontology_file_collection_data: OntologyFileCollection,
+                                          user: User):
     ontology_file_collection: OntologyFileCollection = await OntologyFileCollection.get(id)
     if not api_entity_is_found(ontology_file_collection):
         raise ResourceNotFoundException()
@@ -45,7 +52,7 @@ async def delete_ontology_file_collection(id: PydanticObjectId):
 
 async def list_ontology_file_collection_file_resources(
         id: PydanticObjectId = None,
-        filters = None
+        filters=None
 ) -> List[OntologyFileResource]:
     query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
     return await OntologyFileResource.find(

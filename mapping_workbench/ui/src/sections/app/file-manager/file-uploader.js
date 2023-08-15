@@ -13,7 +13,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import {useRouter} from 'src/hooks/use-router';
 import nProgress from 'nprogress';
-import {wait} from "../../../utils/wait";
+import {sessionApi} from "../../../api/session";
 
 
 export const FileUploader = (props) => {
@@ -21,7 +21,7 @@ export const FileUploader = (props) => {
 
     const {onClose, open = false, collectionId, sectionApi} = props;
 
-    const defaultFormatValue = Object.keys(sectionApi.FILE_RESOURCE_FORMATS)[0];
+    const defaultFormatValue = sectionApi.FILE_RESOURCE_DEFAULT_FORMAT;
 
     const [files, setFiles] = useState([]);
     const [format, setFormat] = useState(defaultFormatValue);
@@ -38,6 +38,7 @@ export const FileUploader = (props) => {
             formData.append("title", file.name);
             formData.append("format", format);
             formData.append("file", file);
+            formData.append("project", sessionApi.getSessionProject());
             await sectionApi.createCollectionFileResource(collectionId, formData);
             nProgress.inc(incStep);
         }

@@ -3,6 +3,7 @@ import {JWT_EXPIRES_IN, JWT_SECRET, sign} from 'src/utils/jwt';
 import {wait} from 'src/utils/wait';
 import {users} from './data';
 import {appApi} from "../app";
+import {sessionApi} from "../session";
 
 const STORAGE_KEY = 'users';
 
@@ -11,7 +12,7 @@ const STORAGE_KEY = 'users';
 
 const getPersistedUsers = () => {
     try {
-        const data = sessionStorage.getItem(STORAGE_KEY);
+        const data = sessionApi.getStorage().getItem(STORAGE_KEY);
 
         if (!data) {
             return [];
@@ -28,7 +29,7 @@ const persistUser = (user) => {
     try {
         const users = getPersistedUsers();
         const data = JSON.stringify([...users, user]);
-        sessionStorage.setItem(STORAGE_KEY, data);
+        sessionApi.getStorage().setItem(STORAGE_KEY, data);
     } catch (err) {
         console.error(err);
     }
@@ -82,7 +83,6 @@ class AuthApi {
     }
 
     async me(request) {
-        console.log("AUTH :: ME");
         return await appApi.get('/users/me');
     }
 }

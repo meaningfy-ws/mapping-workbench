@@ -15,8 +15,22 @@ class SHACLTestFileResourcesApi extends FileResourcesApi {
         };
     }
 
+    get FILE_RESOURCE_DEFAULT_FORMAT() {
+        return "SHACL.TTL";
+    }
+
+    get FILE_RESOURCE_CODE() {
+        return {
+            "SHACL.TTL": {
+                "grammar": "turtle",
+                "language": "turtle"
+            }
+        };
+    }
+
     constructor() {
         super("shacl_test_suites");
+        this.isProjectResource = true;
     }
 }
 
