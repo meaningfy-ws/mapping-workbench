@@ -26,7 +26,7 @@ export class SectionApi {
     }
 
     async getItems(request = {}) {
-        const {filters, page, rowsPerPage} = request;
+        const {filters={}, page, rowsPerPage} = request;
         if (this.isProjectResource) {
             filters['project'] = sessionApi.getSessionProject();
         }

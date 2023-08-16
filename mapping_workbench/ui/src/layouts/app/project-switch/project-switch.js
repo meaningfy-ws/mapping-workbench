@@ -15,7 +15,7 @@ const useProjectsStore = () => {
         items: []
     });
 
-    const handleProjectGet = useCallback(async () => {
+    const handleProjectsGet = useCallback(async () => {
         try {
             const projects = await projectsApi.getSessionProjects();
             if (isMounted()) {
@@ -29,7 +29,7 @@ const useProjectsStore = () => {
     }, [isMounted]);
 
     useEffect(() => {
-            handleProjectGet();
+            handleProjectsGet();
         },
         []);
 

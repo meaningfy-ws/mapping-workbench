@@ -13,6 +13,13 @@ class MappingPackagesApi extends SectionApi {
         super("mapping_packages");
         this.isProjectResource = true;
     }
+
+    async getProjectPackages(request = {}) {
+        let mappingPackagesStore = await this.getItems();
+        return mappingPackagesStore.items.map(
+            mappingPackage => ({id: mappingPackage._id, title: mappingPackage.title})
+        ).sort((a, b) => a.title.localeCompare(b.title));
+    }
 }
 
 export const mappingPackagesApi = new MappingPackagesApi();
