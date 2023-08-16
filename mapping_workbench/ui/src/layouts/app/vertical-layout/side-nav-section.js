@@ -36,7 +36,7 @@ const reduceChildRoutes = ({ acc, depth, item, pathname }) => {
         title={item.title}
         path={item.path}
       >
-        {/* <Stack
+        {<Stack
           component="ul"
           spacing={0.5}
           sx={{
@@ -50,7 +50,7 @@ const reduceChildRoutes = ({ acc, depth, item, pathname }) => {
             items: item.items,
             pathname
           })}
-        </Stack> */}
+        </Stack>}
       </SideNavItem>
     );
   } else {
@@ -74,8 +74,6 @@ const reduceChildRoutes = ({ acc, depth, item, pathname }) => {
 
 export const SideNavSection = (props) => {
   const { items = [], pathname, subheader = '', ...other } = props;
-
-  //console.log("SideNavSection props:", props);
 
   return (
     <Stack

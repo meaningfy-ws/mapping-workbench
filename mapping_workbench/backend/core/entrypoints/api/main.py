@@ -28,10 +28,14 @@ from mapping_workbench.backend.mapping_package.entrypoints.api import routes as 
 from mapping_workbench.backend.mapping_rule_registry.entrypoints.api import routes as mapping_rule_registry_routes
 from mapping_workbench.backend.conceptual_mapping_rule.entrypoints.api import routes as conceptual_mapping_rule_routes
 from mapping_workbench.backend.triple_map_registry.entrypoints.api import routes as triple_map_registry_routes
-from mapping_workbench.backend.triple_map_fragment.entrypoints.api import routes as triple_map_fragment_routes
+from mapping_workbench.backend.triple_map_fragment.entrypoints.api import \
+    routes_for_specific as specific_triple_map_fragment_routes
+from mapping_workbench.backend.triple_map_fragment.entrypoints.api import \
+    routes_for_generic as generic_triple_map_fragment_routes
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource
 from mapping_workbench.backend.test_data_suite.entrypoints.api import routes as test_data_suite_routes
-from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragment
+from mapping_workbench.backend.triple_map_fragment.models.entity import SpecificTripleMapFragment, \
+    GenericTripleMapFragment
 from mapping_workbench.backend.triple_map_registry.models.entity import TripleMapRegistry
 
 from mapping_workbench.backend.user.entrypoints.api import routes as user_routes
@@ -82,7 +86,8 @@ async def on_startup():
             MappingRuleRegistry,
             ConceptualMappingRule,
             TripleMapRegistry,
-            TripleMapFragment
+            SpecificTripleMapFragment,
+            GenericTripleMapFragment
         ],
     )
 
@@ -93,19 +98,27 @@ app_public_router = APIRouter()
 app_router.include_router(app_public_router)
 
 app_secured_router = APIRouter(dependencies=[Depends(current_active_user)])
-app_secured_router.include_router(core_routes.router)
-app_secured_router.include_router(project_routes.router)
-app_secured_router.include_router(test_data_suite_routes.router)
-app_secured_router.include_router(sparql_test_suite_routes.router)
-app_secured_router.include_router(shacl_test_suite_routes.router)
-app_secured_router.include_router(ontology_file_collection_routes.router)
-app_secured_router.include_router(resource_collection_routes.router)
-app_secured_router.include_router(mapping_package_routes.router)
-app_secured_router.include_router(mapping_rule_registry_routes.router)
-app_secured_router.include_router(conceptual_mapping_rule_routes.router)
-app_secured_router.include_router(triple_map_registry_routes.router)
-app_secured_router.include_router(triple_map_fragment_routes.router)
-app_secured_router.include_router(config_routes.router)
+
+secured_routers: list = [
+    core_routes.router,
+    project_routes.router,
+    test_data_suite_routes.router,
+    sparql_test_suite_routes.router,
+    shacl_test_suite_routes.router,
+    ontology_file_collection_routes.router,
+    resource_collection_routes.router,
+    mapping_package_routes.router,
+    mapping_rule_registry_routes.router,
+    conceptual_mapping_rule_routes.router,
+    triple_map_registry_routes.router,
+    specific_triple_map_fragment_routes.router,
+    generic_triple_map_fragment_routes.router,
+    config_routes.router
+]
+
+for secured_router in secured_routers:
+    app_secured_router.include_router(secured_router)
+
 app_router.include_router(app_secured_router)
 
 app_router.include_router(security_routes.router)

@@ -1,8 +1,13 @@
 from typing import List
 
 from mapping_workbench.backend.core.models.api_response import APIListPaginatedResponse
-from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragmentOut
+from mapping_workbench.backend.triple_map_fragment.models.entity import SpecificTripleMapFragmentOut, \
+    GenericTripleMapFragmentOut
 
 
-class APIListTripleMapFragmentsPaginatedResponse(APIListPaginatedResponse):
-    items: List[TripleMapFragmentOut]
+class APIListSpecificTripleMapFragmentsPaginatedResponse(APIListPaginatedResponse):
+    items: List[SpecificTripleMapFragmentOut]
+
+
+class APIListGenericTripleMapFragmentsPaginatedResponse(APIListPaginatedResponse):
+    items: List[GenericTripleMapFragmentOut]

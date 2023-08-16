@@ -96,6 +96,20 @@ export const paths = {
       view: '/app/triple-map-fragments/[id]/view'
     },
 
+    generic_triple_map_fragments: {
+      index: '/app/generic-triple-map-fragments',
+      create: '/app/generic-triple-map-fragments/create',
+      edit: '/app/generic-triple-map-fragments/[id]/edit',
+      view: '/app/generic-triple-map-fragments/[id]/view'
+    },
+
+    specific_triple_map_fragments: {
+      index: '/app/specific-triple-map-fragments',
+      create: '/app/specific-triple-map-fragments/create',
+      edit: '/app/specific-triple-map-fragments/[id]/edit',
+      view: '/app/specific-triple-map-fragments/[id]/view'
+    },
+
     users: {
       index: '/app/users',
       edit: '/app/users/[id]/edit',
@@ -164,5 +178,15 @@ export const apiPaths = {
   triple_map_fragments: {
     items: '/triple_map_fragments',
     item: '/triple_map_fragments/:id'
+  },
+
+  generic_triple_map_fragments: {
+    items: '/generic_triple_map_fragments',
+    item: '/generic_triple_map_fragments/:id'
+  },
+
+  specific_triple_map_fragments: {
+    items: '/specific_triple_map_fragments',
+    item: '/specific_triple_map_fragments/:id'
   }
 }

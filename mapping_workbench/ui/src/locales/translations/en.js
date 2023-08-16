@@ -62,4 +62,6 @@ export const en = {
   [tokens.nav.mapping_packages]: 'Packages',
   [tokens.nav.conceptual_mapping_rules]: 'Conceptual Mappings',
   [tokens.nav.triple_map_fragments]: 'Triple Maps',
+  [tokens.nav.specific_triple_map_fragments]: 'Specific Triple Maps',
+  [tokens.nav.generic_triple_map_fragments]: 'Generic Triple Maps',
 };

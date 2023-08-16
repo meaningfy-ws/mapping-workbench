@@ -218,12 +218,12 @@ export const useSections = () => {
                 ),
                 items: [
                     {
-                        title: t(tokens.nav.list),
-                        path: paths.app.triple_map_fragments.index
+                        title: t(tokens.nav.generic_triple_map_fragments),
+                        path: paths.app.generic_triple_map_fragments.index
                     },
                     {
-                        title: t(tokens.nav.create),
-                        path: paths.app.triple_map_fragments.create
+                        title: t(tokens.nav.specific_triple_map_fragments),
+                        path: paths.app.specific_triple_map_fragments.index
                     }
                 ]
             });
