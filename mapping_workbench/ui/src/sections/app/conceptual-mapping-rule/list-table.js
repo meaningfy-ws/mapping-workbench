@@ -39,19 +39,21 @@ import {
 
 export const ListTableTripleMapFragments = (props) => {
     const {
-        item
+        item,
+        initProjectTripleMapFragments = []
     } = props;
 
-    const [tripleMapFragments, setTripleMapFragments] = useState(item.triple_map_fragments.map(x => x._id));
-    const [projectTripleMapFragments, setProjectTripleMapFragments] = useState([]);
+    const [tripleMapFragments, setTripleMapFragments] = useState(item.triple_map_fragments.map(x => x.id));
+    const [projectTripleMapFragments, setProjectTripleMapFragments] = useState(initProjectTripleMapFragments);
 
     useEffect(() => {
         (async () => {
-            setProjectTripleMapFragments(await genericTripleMapFragmentsApi.getProjectTripleMapFragments());
+            if (initProjectTripleMapFragments.length === 0) {
+                setProjectTripleMapFragments(await genericTripleMapFragmentsApi.getProjectTripleMapFragments());
+            }
         })()
     }, [genericTripleMapFragmentsApi])
 
-    console.log(projectTripleMapFragments, tripleMapFragments);
     const tripleMapFragmentsDialog = useDialog();
 
     const handleTripleMapFragmentssUpdate = useCallback(async () => {
@@ -115,15 +117,18 @@ export const ListTableTripleMapFragments = (props) => {
 
 export const ListTableMappingPackages = (props) => {
     const {
-        item
+        item,
+        initProjectMappingPackages = []
     } = props;
 
-    const [mappingPackages, setMappingPackages] = useState(item.mapping_packages.map(x => x._id));
-    const [projectMappingPackages, setProjectMappingPackages] = useState([]);
+    const [mappingPackages, setMappingPackages] = useState(item.mapping_packages.map(x => x.id));
+    const [projectMappingPackages, setProjectMappingPackages] = useState(initProjectMappingPackages);
 
     useEffect(() => {
         (async () => {
-            setProjectMappingPackages(await mappingPackagesApi.getProjectPackages());
+            if (initProjectMappingPackages.length === 0) {
+                setProjectMappingPackages(await mappingPackagesApi.getProjectPackages());
+            }
         })()
     }, [mappingPackagesApi])
 
@@ -193,7 +198,9 @@ export const ListTableRow = (props) => {
         item_id,
         isCurrent,
         handleItemToggle,
-        sectionApi
+        sectionApi,
+        initProjectTripleMapFragments = [],
+        initProjectMappingPackages = []
     } = props;
 
     return (
@@ -245,12 +252,18 @@ export const ListTableRow = (props) => {
                     {item.target_property_path}
                 </TableCell>
                 <TableCell>
-                    <ListTableTripleMapFragments item={item}
-                                              ruleTripleMapFragments={item.triple_map_fragments}/>
+                    <ListTableTripleMapFragments
+                        item={item}
+                        ruleTripleMapFragments={item.triple_map_fragments}
+                        initProjectTripleMapFragments={initProjectTripleMapFragments}
+                    />
                 </TableCell>
                 <TableCell>
-                    <ListTableMappingPackages item={item}
-                                              ruleMappingPackages={item.mapping_packages}/>
+                    <ListTableMappingPackages
+                        item={item}
+                        ruleMappingPackages={item.mapping_packages}
+                        initProjectMappingPackages={initProjectMappingPackages}
+                    />
                 </TableCell>
                 <TableCell align="left">
                     {(item.created_at).replace("T", " ").split(".")[0]}
@@ -315,9 +328,24 @@ export const ListTable = (props) => {
         sectionApi
     } = props;
 
-    //console.log("PROJECT PROPS: ", props);
 
     const [currentItem, setCurrentItem] = useState(null);
+
+    const [projectTripleMapFragments, setProjectTripleMapFragments] = useState([]);
+
+    useEffect(() => {
+        (async () => {
+            setProjectTripleMapFragments(await genericTripleMapFragmentsApi.getProjectTripleMapFragments());
+        })()
+    }, [genericTripleMapFragmentsApi])
+
+    const [projectMappingPackages, setProjectMappingPackages] = useState([]);
+
+    useEffect(() => {
+        (async () => {
+            setProjectMappingPackages(await mappingPackagesApi.getProjectPackages());
+        })()
+    }, [mappingPackagesApi])
 
     const handleItemToggle = useCallback((itemId) => {
         setCurrentItem((prevItemId) => {
@@ -458,8 +486,12 @@ export const ListTable = (props) => {
                             const isCurrent = item_id === currentItem;
 
                             return (
-                                <ListTableRow item_id={item_id} item={item} isCurrent={isCurrent}
-                                              handleItemToggle={handleItemToggle} sectionApi={sectionApi}/>
+                                <ListTableRow
+                                    item_id={item_id} item={item} isCurrent={isCurrent}
+                                    handleItemToggle={handleItemToggle} sectionApi={sectionApi}
+                                    initProjectMappingPackages={projectMappingPackages}
+                                    initProjectTripleMapFragments={projectTripleMapFragments}
+                                />
                             )
                         })}
                     </TableBody>

@@ -4,7 +4,11 @@ import Switch from "@mui/material/Switch";
 
 
 export const MappingPackageCheckboxListItem = (props) => {
-    const {mappingPackage, mappingPackages, ...other} = props;
+    const {
+        mappingPackage, mappingPackages,
+        updateMappingPackages,
+        ...other
+    } = props;
     const isChecked = mappingPackages?.includes(mappingPackage.id);
 
     const [checked, setChecked] = useState(isChecked);
@@ -19,9 +23,9 @@ export const MappingPackageCheckboxListItem = (props) => {
         } else if (_checked) {
             mappingPackages.push(_value)
         }
-
+        updateMappingPackages(mappingPackages);
         setChecked(_checked);
-    }, []);
+    }, [mappingPackages, updateMappingPackages]);
 
     useEffect(() => {
             setChecked(isChecked);

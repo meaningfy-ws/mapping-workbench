@@ -38,11 +38,6 @@ class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema):
     triple_map_fragments: Optional[List[Link[GenericTripleMapFragment]]]
 
 
-class ConceptualMappingRuleOutForList(ConceptualMappingRuleOut):
-    mapping_packages: Optional[List[MappingPackage]]
-    triple_map_fragments: Optional[List[GenericTripleMapFragment]]
-
-
 class ConceptualMappingRule(BaseProjectResourceEntity):
     business_id: Optional[str]
     business_title: Optional[str]

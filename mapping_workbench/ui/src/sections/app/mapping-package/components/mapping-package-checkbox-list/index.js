@@ -9,7 +9,7 @@ import {setState} from "@aws-amplify/auth/lib/OAuth/oauthStorage";
 
 
 export const MappingPackageCheckboxList = (props) => {
-    const {mappingPackages = [], initProjectMappingPackages = [],...other} = props;
+    const {mappingPackages = [], initProjectMappingPackages = [], ...other} = props;
 
     const [projectMappingPackages, setProjectMappingPackages] = useState(initProjectMappingPackages);
 
@@ -22,7 +22,7 @@ export const MappingPackageCheckboxList = (props) => {
     }, [mappingPackagesApi])
 
 
-    const [checked, setChecked] = useState(false);
+    const [allChecked, setAllChecked] = useState(false);
 
     const handleAllMappingPackagesChange = useCallback((event) => {
         let _checked = event.target.checked;
@@ -34,13 +34,20 @@ export const MappingPackageCheckboxList = (props) => {
             }
         }
 
-        setChecked(_checked);
+        setAllChecked(_checked);
+    }, [projectMappingPackages]);
+
+    const setAllCheckedCallback = useCallback((values) => {
+        setAllChecked((projectMappingPackages.filter(x => !values.includes(x.id))).length === 0);
     }, [projectMappingPackages]);
 
     useEffect(() => {
-            setChecked((projectMappingPackages.filter(x => !mappingPackages.includes(x.id))).length === 0);
-        },
-        [projectMappingPackages, mappingPackages]);
+        setAllCheckedCallback(mappingPackages);
+    }, []);
+
+    const updateMappingPackages = useCallback((values) => {
+        setAllCheckedCallback(values);
+    }, []);
 
     return (
         <>
@@ -52,7 +59,7 @@ export const MappingPackageCheckboxList = (props) => {
                         }}
                         control={
                             <Switch
-                                checked={checked}
+                                checked={allChecked}
                                 onChange={handleAllMappingPackagesChange}
                             />
                         }
@@ -69,6 +76,7 @@ export const MappingPackageCheckboxList = (props) => {
                                 xs={12}
                                 mappingPackage={project_mapping_package}
                                 mappingPackages={mappingPackages}
+                                updateMappingPackages={updateMappingPackages}
                             />
                         </MenuItem>
                     </MenuList>

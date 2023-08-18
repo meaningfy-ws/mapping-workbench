@@ -3,10 +3,9 @@ from typing import List
 from beanie import PydanticObjectId
 from fastapi import APIRouter, Depends, status
 
-from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRuleOut, \
     ConceptualMappingRuleCreateIn, \
-    ConceptualMappingRuleUpdateIn, ConceptualMappingRuleOutForList
+    ConceptualMappingRuleUpdateIn
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity_api_response import \
     APIListConceptualMappingRulesPaginatedResponse
 from mapping_workbench.backend.conceptual_mapping_rule.services.api import (
@@ -16,6 +15,7 @@ from mapping_workbench.backend.conceptual_mapping_rule.services.api import (
     get_conceptual_mapping_rule,
     delete_conceptual_mapping_rule
 )
+from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.user.models.user import User
@@ -42,8 +42,8 @@ async def route_list_conceptual_mapping_rules(
 ):
     filters: dict = {}
     if project:
-        filters['project._id'] = project
-    items: List[ConceptualMappingRuleOutForList] = await list_conceptual_mapping_rules(filters)
+        filters['project'] = Project.link_from_id(project)
+    items: List[ConceptualMappingRuleOut] = await list_conceptual_mapping_rules(filters)
     return APIListConceptualMappingRulesPaginatedResponse(
         items=items,
         count=len(items)
