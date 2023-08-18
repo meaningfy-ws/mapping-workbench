@@ -15,11 +15,16 @@ import {useRouter} from 'src/hooks/use-router';
 import {FormTextField} from "../../../components/app/form/text-field";
 import {FormTextArea} from "../../../components/app/form/text-area";
 import {sessionApi} from "../../../api/session";
+import {MappingPackageCheckboxList} from "../mapping-package/components/mapping-package-checkbox-list";
+import {
+    GenericTripleMapFragmentListSelector
+} from "../generic-triple-map-fragment/components/generic-triple-map-fragment-list-selector";
 
 
 export const EditForm = (props) => {
     const {itemctx, ...other} = props;
     const router = useRouter();
+
     const sectionApi = itemctx.api;
     const item = itemctx.data;
 
@@ -29,7 +34,9 @@ export const EditForm = (props) => {
         business_description: item.business_description || '',
         source_xpath: item.source_xpath || '',
         target_class_path: item.target_class_path || '',
-        target_property_path: item.target_property_path || ''
+        target_property_path: item.target_property_path || '',
+        mapping_packages: (item.mapping_packages || []).map(x => x.id),
+        triple_map_fragments: (item.triple_map_fragments || []).map(x => x.id)
     };
 
     const formik = useFormik({
@@ -48,7 +55,6 @@ export const EditForm = (props) => {
             try {
                 values['source_xpath'] = (typeof values['source_xpath'] == 'string') ?
                     values['source_xpath'].split(',').map(s => s.trim()) : values['source_xpath'];
-
                 let response;
                 values['project'] = sessionApi.getSessionProject();
                 if (itemctx.isNew) {
@@ -62,7 +68,6 @@ export const EditForm = (props) => {
                 toast.success(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "created" : "updated"));
                 if (response) {
                     if (itemctx.isNew) {
-                        console.log(response);
                         router.push({
                             pathname: paths.app[sectionApi.section].edit,
                             query: {id: response._id}
@@ -108,6 +113,28 @@ export const EditForm = (props) => {
                     </Grid>
                 </CardContent>
             </Card>
+            <Card sx={{mt: 3}}>
+                <CardHeader title="RML Triple Maps"/>
+                <CardContent sx={{pt: 0}}>
+                    <Grid container spacing={3}>
+                        <Grid xs={12} md={12}>
+                            <GenericTripleMapFragmentListSelector
+                                tripleMapFragments={formik.values.triple_map_fragments}/>
+                        </Grid>
+                    </Grid>
+                </CardContent>
+            </Card>
+            <Card sx={{mt: 3}}>
+                <CardHeader title="Mapping Packages"/>
+                <CardContent sx={{pt: 0}}>
+                    <Grid container spacing={3}>
+                        <Grid xs={12} md={12}>
+                            <MappingPackageCheckboxList mappingPackages={formik.values.mapping_packages}/>
+                        </Grid>
+                    </Grid>
+                </CardContent>
+            </Card>
+
 
             <Card sx={{mt: 3}}>
                 <Stack

@@ -3,7 +3,6 @@ from typing import List
 from beanie import PydanticObjectId
 from fastapi import APIRouter, Depends, status
 
-from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRuleOut, \
     ConceptualMappingRuleCreateIn, \
     ConceptualMappingRuleUpdateIn
@@ -16,6 +15,7 @@ from mapping_workbench.backend.conceptual_mapping_rule.services.api import (
     get_conceptual_mapping_rule,
     delete_conceptual_mapping_rule
 )
+from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.user.models.user import User

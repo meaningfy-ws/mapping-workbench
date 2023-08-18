@@ -3,12 +3,12 @@ from typing import List
 from beanie import PydanticObjectId
 from pymongo.errors import DuplicateKeyError
 
+from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule, \
+    ConceptualMappingRuleCreateIn, ConceptualMappingRuleUpdateIn, ConceptualMappingRuleOut
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException, DuplicateKeyException
 from mapping_workbench.backend.core.services.request import request_update_data, request_create_data, \
     api_entity_is_found
-from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule, \
-    ConceptualMappingRuleCreateIn, ConceptualMappingRuleUpdateIn, ConceptualMappingRuleOut
 from mapping_workbench.backend.user.models.user import User
 
 
@@ -16,9 +16,8 @@ async def list_conceptual_mapping_rules(filters=None) -> List[ConceptualMappingR
     query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
     return await ConceptualMappingRule.find(
         query_filters,
-        projection_model=ConceptualMappingRuleOut,
         fetch_links=False
-    ).to_list()
+    ).project(ConceptualMappingRuleOut).to_list()
 
 
 async def create_conceptual_mapping_rule(conceptual_mapping_rule_data: ConceptualMappingRuleCreateIn,

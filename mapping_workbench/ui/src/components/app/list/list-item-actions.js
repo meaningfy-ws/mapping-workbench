@@ -15,6 +15,7 @@ import {usePopover} from 'src/hooks/use-popover';
 import {useCallback} from "react";
 import {paths} from 'src/paths';
 import {useRouter} from "../../../hooks/use-router";
+import {Box} from "@mui/system";
 
 export const ListItemActions = (props) => {
     const router = useRouter();
@@ -52,18 +53,19 @@ export const ListItemActions = (props) => {
 
     return (
         <>
-        <div className='newActionButtons' sx={{ display: "flex", flexDirection: "inline", justifyContent: "space-evenly"}}>
+        <Box className="newActionButtons" /*sx={{ display: "flex", flexDirection: "inline", justifyContent: "space-evenly"}}*/>
             <Button
-                variant="contained"            
-                size="large"
+                variant="text"
+                size="small"
+                color="info"
                 onClick={handleViewAction}
-                sx={{ color: "#ffffff",backgroundColor: "#2970FF", boxShadow: "0px 1px 5px rgba(0, 0, 0, 0.08)", borderRadius: "12px", minWidth: "80px" }}
+                sx={{ boxShadow: "0px 1px 5px rgba(0, 0, 0, 0.08)", borderRadius: "12px", minWidth: "80px" }}
             >
             View
             </Button>
             <Button
-                variant="contained"            
-                size="large"
+                variant="text"
+                size="small"
                 color="success"
                 onClick={handleEditAction}
                 sx={{  boxShadow: "0px 1px 5px rgba(0, 0, 0, 0.08)", borderRadius: "12px", minWidth: "80px", marginLeft: "10px"  }}
@@ -71,15 +73,15 @@ export const ListItemActions = (props) => {
             Edit
             </Button>
             <Button
-                variant="contained"            
-                size="large"
+                variant="text"
+                size="small"
                 color="error"
                 onClick={handleDeleteAction}
                 sx={{  boxShadow: "0px 1px 5px rgba(0, 0, 0, 0.08)", borderRadius: "12px", minWidth: "80px", marginLeft: "10px" }}
             >
             Delete
             </Button>
-        </div>
+        </Box>
 
             {/* <Tooltip title="More options">
                 <IconButton
