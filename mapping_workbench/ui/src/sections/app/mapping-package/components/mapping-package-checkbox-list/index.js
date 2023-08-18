@@ -60,7 +60,7 @@ export const MappingPackageCheckboxList = (props) => {
             }
         }
 
-        setAllChecked(_checked);
+        setAllCheckedCallback(mappingPackages);
     }, [projectMappingPackages  ]);
 
     const setAllCheckedCallback = useCallback((values) => {
