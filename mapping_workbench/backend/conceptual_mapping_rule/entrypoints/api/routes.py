@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, status
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRuleOut, \
     ConceptualMappingRuleCreateIn, \
-    ConceptualMappingRuleUpdateIn
+    ConceptualMappingRuleUpdateIn, ConceptualMappingRuleOutForList
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity_api_response import \
     APIListConceptualMappingRulesPaginatedResponse
 from mapping_workbench.backend.conceptual_mapping_rule.services.api import (
@@ -42,8 +42,8 @@ async def route_list_conceptual_mapping_rules(
 ):
     filters: dict = {}
     if project:
-        filters['project'] = Project.link_from_id(project)
-    items: List[ConceptualMappingRuleOut] = await list_conceptual_mapping_rules(filters)
+        filters['project._id'] = project
+    items: List[ConceptualMappingRuleOutForList] = await list_conceptual_mapping_rules(filters)
     return APIListConceptualMappingRulesPaginatedResponse(
         items=items,
         count=len(items)
