@@ -5,49 +5,77 @@ import {MappingPackageCheckboxListItem} from "./checkbox-list-item";
 import MenuList from "@mui/material/MenuList";
 import Switch from "@mui/material/Switch";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import {setState} from "@aws-amplify/auth/lib/OAuth/oauthStorage";
+import {useMounted} from "../../../../../hooks/use-mounted";
 
+
+const useMappingPackagesStore = (initProjectMappingPackages = []) => {
+    const isMounted = useMounted();
+    const [state, setState] = useState({
+        items: initProjectMappingPackages
+    });
+
+    const handleMappingPackagesGet = useCallback(async () => {
+        try {
+            let mappingPackages = initProjectMappingPackages;
+            if (mappingPackages.length === 0) {
+                mappingPackages = (await mappingPackagesApi.getProjectPackages());
+            }
+            if (isMounted()) {
+                setState({
+                    items: mappingPackages
+                });
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }, [isMounted]);
+
+    useEffect(() => {
+        handleMappingPackagesGet();
+    }, []);
+
+    return {
+        ...state
+    };
+};
 
 export const MappingPackageCheckboxList = (props) => {
     const {mappingPackages = [], initProjectMappingPackages = [], ...other} = props;
 
-    const [projectMappingPackages, setProjectMappingPackages] = useState(initProjectMappingPackages);
-
-    useEffect(() => {
-        (async () => {
-            if (initProjectMappingPackages.length === 0) {
-                setProjectMappingPackages(await mappingPackagesApi.getProjectPackages());
-            }
-        })()
-    }, [mappingPackagesApi])
-
-
     const [allChecked, setAllChecked] = useState(false);
+    const [projectMappingPackages, setProjectMappingPackages] = useState([]);
+
+    const mappingPackagesStore = useMappingPackagesStore(initProjectMappingPackages)
+    useEffect(() => {
+        setProjectMappingPackages(mappingPackagesStore.items);
+    }, [mappingPackagesStore]);
 
     const handleAllMappingPackagesChange = useCallback((event) => {
         let _checked = event.target.checked;
 
         mappingPackages.length = 0;
-        if (_checked)  {
+        if (_checked) {
             for (let _value of projectMappingPackages.map(x => x.id)) {
                 mappingPackages.push(_value);
             }
         }
 
         setAllChecked(_checked);
-    }, [projectMappingPackages]);
+    }, [projectMappingPackages  ]);
 
     const setAllCheckedCallback = useCallback((values) => {
-        setAllChecked((projectMappingPackages.filter(x => !values.includes(x.id))).length === 0);
+        setAllChecked(
+            (projectMappingPackages.filter(x => !values.includes(x.id))).length === 0
+        );
     }, [projectMappingPackages]);
 
     useEffect(() => {
         setAllCheckedCallback(mappingPackages);
-    }, []);
+    }, [projectMappingPackages]);
 
     const updateMappingPackages = useCallback((values) => {
         setAllCheckedCallback(values);
-    }, []);
+    }, [projectMappingPackages]);
 
     return (
         <>
