@@ -1,7 +1,7 @@
-from typing import List
+from typing import List, Annotated
 
 from beanie import PydanticObjectId
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, status, Depends, Query
 from starlette.requests import Request
 
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
@@ -46,11 +46,14 @@ router = APIRouter(
     response_model=APIListSHACLTestSuitesPaginatedResponse
 )
 async def route_list_shacl_test_suites(
-        project: PydanticObjectId = None
+        project: PydanticObjectId = None,
+        ids: Annotated[List[PydanticObjectId | str] | None, Query()] = None
 ):
     filters: dict = {}
     if project:
         filters['project'] = Project.link_from_id(project)
+    if ids is not None:
+        filters['_id'] = {"$in": ids}
     items: List[SHACLTestSuite] = await list_shacl_test_suites(filters)
     return APIListSHACLTestSuitesPaginatedResponse(items=items, count=len(items))
 

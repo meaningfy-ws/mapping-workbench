@@ -25,12 +25,12 @@ export class SectionApi {
         this.paths = apiPaths[section];
     }
 
-    async getItems(request = {}) {
-        const {filters={}, page, rowsPerPage} = request;
+    async getItems(request = {}, path = 'items') {
+        const {filters = {}, page, rowsPerPage} = request;
         if (this.isProjectResource) {
             filters['project'] = sessionApi.getSessionProject();
         }
-        return await appApi.get(this.paths['items'], filters);
+        return await appApi.get(this.paths[path], filters);
     }
 
     async getItem(id) {
@@ -53,5 +53,14 @@ export class SectionApi {
     async createItem(request) {
         let endpoint = this.paths['items'];
         return await appApi.create(endpoint, request);
+    }
+
+    async update(forQuery = {}, setValues = {}) {
+        let endpoint = this.paths['items'];
+        let request = {
+            for_query: forQuery,
+            set_values: setValues
+        }
+        return await appApi.update(endpoint, request);
     }
 }

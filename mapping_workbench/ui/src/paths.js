@@ -19,11 +19,11 @@ export const paths = {
       create: '/app/test-data-suites/create',
       edit: '/app/test-data-suites/[id]/edit',
       view: '/app/test-data-suites/[id]/view',
-      file_manager: {
-        index: '/app/test-data-suites/[id]/file-manager',
-        create: '/app/test-data-suites/[id]/file-manager/create',
-        edit: '/app/test-data-suites/[id]/file-manager/[fid]/edit',
-        view: '/app/test-data-suites/[id]/file-manager/[fid]/view',
+      resource_manager: {
+        index: '/app/test-data-suites/[id]/resource-manager',
+        create: '/app/test-data-suites/[id]/resource-manager/create',
+        edit: '/app/test-data-suites/[id]/resource-manager/[fid]/edit',
+        view: '/app/test-data-suites/[id]/resource-manager/[fid]/view',
       }
     },
     sparql_test_suites: {
@@ -31,11 +31,11 @@ export const paths = {
       create: '/app/sparql-test-suites/create',
       edit: '/app/sparql-test-suites/[id]/edit',
       view: '/app/sparql-test-suites/[id]/view',
-      file_manager: {
-        index: '/app/sparql-test-suites/[id]/file-manager',
-        create: '/app/sparql-test-suites/[id]/file-manager/create',
-        edit: '/app/sparql-test-suites/[id]/file-manager/[fid]/edit',
-        view: '/app/sparql-test-suites/[id]/file-manager/[fid]/view',
+      resource_manager: {
+        index: '/app/sparql-test-suites/[id]/resource-manager',
+        create: '/app/sparql-test-suites/[id]/resource-manager/create',
+        edit: '/app/sparql-test-suites/[id]/resource-manager/[fid]/edit',
+        view: '/app/sparql-test-suites/[id]/resource-manager/[fid]/view',
       }
     },
     shacl_test_suites: {
@@ -43,11 +43,11 @@ export const paths = {
       create: '/app/shacl-test-suites/create',
       edit: '/app/shacl-test-suites/[id]/edit',
       view: '/app/shacl-test-suites/[id]/view',
-      file_manager: {
-        index: '/app/shacl-test-suites/[id]/file-manager',
-        create: '/app/shacl-test-suites/[id]/file-manager/create',
-        edit: '/app/shacl-test-suites/[id]/file-manager/[fid]/edit',
-        view: '/app/shacl-test-suites/[id]/file-manager/[fid]/view',
+      resource_manager: {
+        index: '/app/shacl-test-suites/[id]/resource-manager',
+        create: '/app/shacl-test-suites/[id]/resource-manager/create',
+        edit: '/app/shacl-test-suites/[id]/resource-manager/[fid]/edit',
+        view: '/app/shacl-test-suites/[id]/resource-manager/[fid]/view',
       }
     },
     ontology_file_collections: {
@@ -55,11 +55,11 @@ export const paths = {
       create: '/app/ontology-file-collections/create',
       edit: '/app/ontology-file-collections/[id]/edit',
       view: '/app/ontology-file-collections/[id]/view',
-      file_manager: {
-        index: '/app/ontology-file-collections/[id]/file-manager',
-        create: '/app/ontology-file-collections/[id]/file-manager/create',
-        edit: '/app/ontology-file-collections/[id]/file-manager/[fid]/edit',
-        view: '/app/ontology-file-collections/[id]/file-manager/[fid]/view',
+      resource_manager: {
+        index: '/app/ontology-file-collections/[id]/resource-manager',
+        create: '/app/ontology-file-collections/[id]/resource-manager/create',
+        edit: '/app/ontology-file-collections/[id]/resource-manager/[fid]/edit',
+        view: '/app/ontology-file-collections/[id]/resource-manager/[fid]/view',
       }
     },
     resource_collections: {
@@ -67,11 +67,11 @@ export const paths = {
       create: '/app/resource-collections/create',
       edit: '/app/resource-collections/[id]/edit',
       view: '/app/resource-collections/[id]/view',
-      file_manager: {
-        index: '/app/resource-collections/[id]/file-manager',
-        create: '/app/resource-collections/[id]/file-manager/create',
-        edit: '/app/resource-collections/[id]/file-manager/[fid]/edit',
-        view: '/app/resource-collections/[id]/file-manager/[fid]/view',
+      resource_manager: {
+        index: '/app/resource-collections/[id]/resource-manager',
+        create: '/app/resource-collections/[id]/resource-manager/create',
+        edit: '/app/resource-collections/[id]/resource-manager/[fid]/edit',
+        view: '/app/resource-collections/[id]/resource-manager/[fid]/view',
       }
     },
 
@@ -145,6 +145,7 @@ export const apiPaths = {
     item: '/sparql_test_suites/:id',
     file_resources: '/sparql_test_suites/:id/file_resources',
     file_resource: '/sparql_test_suites/file_resources/:id',
+    free_file_resources: '/sparql_test_suites/free/file_resources',
   },
   shacl_test_suites: {
     items: '/shacl_test_suites',

@@ -9,9 +9,24 @@ class SPARQLTestSuitesApi extends FileCollectionsApi {
         return "SPARQL Test Suite";
     }
 
+    get FILE_COLLECTION_TYPES() {
+        return {
+            "cm_assertion": "CM Assertions",
+            "integration_test": "Integration Tests"
+        };
+    }
+
     constructor() {
         super("sparql_test_suites");
         this.isProjectResource = true;
+        this.hasFileCollectionType = true;
+    }
+
+    async getValuesForSelector(request = {}) {
+        let valuesStore = await this.getItems();
+        return valuesStore.items.map(
+            value => ({id: value._id, title: value.title})
+        ).sort((a, b) => a.title.localeCompare(b.title));
     }
 }
 

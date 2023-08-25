@@ -43,9 +43,19 @@ async def delete_sparql_test_suite(id: PydanticObjectId):
     return await sparql_test_suite.delete()
 
 
+async def list_sparql_test_file_resources(
+        filters=None
+) -> List[SPARQLTestFileResource]:
+    query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
+    return await SPARQLTestFileResource.find(
+        query_filters,
+        fetch_links=False
+    ).to_list()
+
+
 async def list_sparql_test_suite_file_resources(
         id: PydanticObjectId = None,
-        filters = None
+        filters=None
 ) -> List[SPARQLTestFileResource]:
     query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
     return await SPARQLTestFileResource.find(

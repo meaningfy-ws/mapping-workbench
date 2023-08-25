@@ -5,7 +5,6 @@ export const withAuthGuard = (Component) => {
     // let userResult = null;
     // authApi.me().then(result => {
     //     userResult = result;
-    //     console.log("K :: ", userResult);
     // }).catch(function (error) {
     //     console.log(error);
     //     throw new Error(error.message);

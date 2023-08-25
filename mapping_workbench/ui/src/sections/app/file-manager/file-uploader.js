@@ -14,6 +14,8 @@ import Select from "@mui/material/Select";
 import {useRouter} from 'src/hooks/use-router';
 import nProgress from 'nprogress';
 import {sessionApi} from "../../../api/session";
+import TextField from "@mui/material/TextField";
+import * as React from "react";
 
 
 export const FileUploader = (props) => {
@@ -45,7 +47,7 @@ export const FileUploader = (props) => {
         nProgress.done();
         onClose();
         // router.push({
-        //     pathname: paths.app[sectionApi.section].file_manager.index,
+        //     pathname: paths.app[sectionApi.section].resource_manager.index,
         //     query: {id: collection_id}
         // });
         router.reload();
@@ -97,20 +99,21 @@ export const FileUploader = (props) => {
                 </IconButton>
             </Stack>
             <DialogContent>
-                <Select
-                    name="format"
+                <TextField
                     fullWidth
+                    label="Format"
                     onChange={e => setFormat(e.target.value)}
+                    select
+                    required
                     value={format}
+                    sx={{mb: 3}}
                 >
-                    {Object.keys(sectionApi.FILE_RESOURCE_FORMATS).map((key) => {
-                        return (
-                            <MenuItem value={key} key={key}>
-                                {sectionApi.FILE_RESOURCE_FORMATS[key]}
-                            </MenuItem>
-                        )
-                    })}
-                </Select>
+                    {Object.keys(sectionApi.FILE_RESOURCE_FORMATS).map((key) => (
+                        <MenuItem key={key} value={key}>
+                            {sectionApi.FILE_RESOURCE_FORMATS[key]}
+                        </MenuItem>
+                    ))}
+                </TextField>
                 <FileDropzone
                     accept={{'*/*': []}}
                     caption="Max file size is 3 MB"

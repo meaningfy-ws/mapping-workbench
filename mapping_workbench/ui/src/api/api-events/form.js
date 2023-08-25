@@ -34,8 +34,6 @@ export const onFormCreateResponse = (response, formHelpers, sectionApi, itemCtx,
             query: {id: response._id}
         });
     }).catch((err) => {
-        console.log("K1 :: ", err)
-
         onApiFormError(err, formHelpers);
     });
 }

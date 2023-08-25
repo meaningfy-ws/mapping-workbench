@@ -5,6 +5,7 @@ from beanie import Link
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
+from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResource
 from mapping_workbench.backend.triple_map_fragment.models.entity import GenericTripleMapFragment
 
 
@@ -16,7 +17,8 @@ class ConceptualMappingRuleIn(BaseProjectResourceEntityInSchema):
     target_class_path: Optional[str]
     target_property_path: Optional[str]
     mapping_packages: Optional[List[Link[MappingPackage]]]
-    triple_map_fragments: Optional[List[Link[GenericTripleMapFragment]]]
+    triple_map_fragment: Optional[Link[GenericTripleMapFragment]]
+    sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]]
 
 
 class ConceptualMappingRuleCreateIn(ConceptualMappingRuleIn):
@@ -35,7 +37,8 @@ class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema):
     target_class_path: Optional[str]
     target_property_path: Optional[str]
     mapping_packages: Optional[List[Link[MappingPackage]]]
-    triple_map_fragments: Optional[List[Link[GenericTripleMapFragment]]]
+    triple_map_fragment: Optional[Link[GenericTripleMapFragment]]
+    sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]]
 
 
 class ConceptualMappingRule(BaseProjectResourceEntity):
@@ -46,7 +49,8 @@ class ConceptualMappingRule(BaseProjectResourceEntity):
     target_class_path: Optional[str]
     target_property_path: Optional[str]
     mapping_packages: Optional[List[Link[MappingPackage]]]
-    triple_map_fragments: Optional[List[Link[GenericTripleMapFragment]]]
+    triple_map_fragment: Optional[Link[GenericTripleMapFragment]]
+    sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]]
 
     class Settings(BaseProjectResourceEntity.Settings):
         name = "conceptual_mapping_rules"

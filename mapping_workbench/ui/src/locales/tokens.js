@@ -24,6 +24,7 @@ export const tokens = {
     error: 'nav.error',
     feed: 'nav.feed',
     fileManager: 'nav.fileManager',
+    resourceManager: 'nav.resourceManager',
     files: 'nav.files',
     finance: 'nav.finance',
     fleet: 'nav.fleet',

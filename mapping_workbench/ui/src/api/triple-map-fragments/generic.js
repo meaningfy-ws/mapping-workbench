@@ -1,6 +1,6 @@
-import {SectionApi} from "../section";
+import {TripleMapFragmentsApi} from "./index";
 
-class GenericTripleMapFragmentsApi extends SectionApi {
+class GenericTripleMapFragmentsApi extends TripleMapFragmentsApi {
     get SECTION_TITLE() {
         return "Generic Triple Map Fragments";
     }
@@ -11,14 +11,6 @@ class GenericTripleMapFragmentsApi extends SectionApi {
 
     constructor() {
         super("generic_triple_map_fragments");
-        this.isProjectResource = true;
-    }
-
-    async getProjectTripleMapFragments(request = {}) {
-        let tripleMapFragmentsStore = await this.getItems();
-        return tripleMapFragmentsStore.items.map(
-            tripleMapFragment => ({id: tripleMapFragment._id, uri: tripleMapFragment.triple_map_uri})
-        ).sort((a, b) => a.uri.localeCompare(b.uri));
     }
 }
 

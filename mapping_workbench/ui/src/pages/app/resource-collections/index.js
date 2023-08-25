@@ -22,9 +22,9 @@ import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collec
 
 
 const mockDataPackages = {
-    title:"F03",
-    description:"Des03",
-	formType:"35",   
+    title: "F03",
+    description: "Des03",
+    formType: "35",
     minDate: "01/06/2023",
     maxDate: "23/06/2023",
     minVersion: "R2.08.55",
@@ -80,20 +80,20 @@ const useItemsStore = (searchState) => {
         items: [],
         itemsCount: 0
     });
-    const [stateFile, setStateFile] = useState({        
+    const [stateFile, setStateFile] = useState({
         items: [],
         itemsCount: 0
-    });    
+    });
 
     const handleItemsGet = useCallback(async () => {
         try {
-            const response = await sectionApi.getItems(searchState);                       
-            
+            const response = await sectionApi.getItems(searchState);
+
             if (isMounted()) {
                 setState({
                     items: response.items,
                     itemsCount: response.count
-                });                           
+                });
             }
         } catch (err) {
             console.error(err);
@@ -105,19 +105,17 @@ const useItemsStore = (searchState) => {
             const response2 = await sectionApi.getFileResources(id);
             //const collection = await sectionApi.getItem(id);
 
-           
+
             //console.log("response2: ", response);
             //console.log("collection: ", collection);
 
-           
-                setStateFile({
-                    //collection: collection,
-                    itemsF: response2.items,
-                    itemsFCount: response2.count
-                });
-                //console.log("collections: ", collection);
-                console.log("response2: ", response2);
-            
+
+            setStateFile({
+                //collection: collection,
+                itemsF: response2.items,
+                itemsFCount: response2.count
+            });
+
         } catch (err) {
             console.error(err);
         }
@@ -129,47 +127,42 @@ const useItemsStore = (searchState) => {
             });
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState]);    
+        [searchState]);
 
     return {
-        ...state       
+        ...state
     };
 };
 
 ///////////////////////////////////////////////////
 
 const useItemsStoreFiles = (id) => {
-    
-    const [stateFile, setStateFile] = useState({        
+
+    const [stateFile, setStateFile] = useState({
         items: [],
         itemsCount: 0
-    });   
+    });
 
     const handleItemsGetFiles = useCallback(async () => {
         try {
             const response2 = await sectionApi.getFileResources(id);
             //const collection = await sectionApi.getItem(id);
 
-           
-            //console.log("response2: ", response);
-            //console.log("collection: ", collection);
+            setStateFile({
+                //collection: collection,
+                itemsF: response2.items,
+                itemsFCount: response2.count
+            });
+            //console.log("collections: ", collection);
+            console.log("response2: ", response2);
 
-           
-                setStateFile({
-                    //collection: collection,
-                    itemsF: response2.items,
-                    itemsFCount: response2.count
-                });
-                //console.log("collections: ", collection);
-                console.log("response2: ", response2);
-            
         } catch (err) {
             console.error(err);
         }
     }, []);
 
     useEffect(() => {
-        handleItemsGet();            
+            handleItemsGet();
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
         []);
@@ -184,9 +177,9 @@ const useItemsStoreFiles = (id) => {
 const Page = () => {
     const itemsSearch = useItemsSearch();
     const itemsStore = useItemsStore(itemsSearch.state);
-    
+
     //console.log("itemsStoreCollection ID: ", itemsStore.items[0]._id)
-    
+
 
     //console.log("itemsStore: ", itemsStore);
     //console.log("itemsStoreCollection ID: ", itemsStore.items[0]._id);
@@ -214,7 +207,7 @@ const Page = () => {
                         >
                             <Stack spacing={1}>
                                 <Typography variant="h4">
-                                    { sectionApi.SECTION_TITLE }
+                                    {sectionApi.SECTION_TITLE}
                                 </Typography>
                                 <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
                                     <Link
@@ -231,7 +224,7 @@ const Page = () => {
                                         href={paths.app[sectionApi.section].index}
                                         variant="subtitle2"
                                     >
-                                        { sectionApi.SECTION_TITLE }
+                                        {sectionApi.SECTION_TITLE}
                                     </Link>
                                     <Typography
                                         color="text.secondary"
@@ -277,8 +270,6 @@ const Page = () => {
             </Box>
 
 
-
-            
         </>
     );
 };

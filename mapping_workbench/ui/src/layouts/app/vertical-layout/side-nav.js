@@ -253,5 +253,5 @@ export const SideNav = (props) => {
 
 SideNav.propTypes = {
     color: PropTypes.oneOf(['blend-in', 'discrete', 'evident']),
-    sections: PropTypes.array
+    sections: PropTypes.object
 };

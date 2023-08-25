@@ -7,9 +7,14 @@ from mapping_workbench.backend.core.models.base_project_resource_entity import B
 from mapping_workbench.backend.file_resource.models.file_resource import FileResource
 
 
+class SPARQLQueryValidationType(Enum):
+    CM_ASSERTION = "cm_assertion"
+    INTEGRATION_TEST = "integration_test"
+
 class SPARQLTestSuite(BaseProjectResourceEntity):
     title: Optional[str]
     description: Optional[str]
+    type: Optional[SPARQLQueryValidationType]
     file_resources: Optional[List[Link["SPARQLTestFileResource"]]] = []
 
     class Settings(BaseProjectResourceEntity.Settings):
@@ -22,6 +27,7 @@ class SPARQLTestFileResourceFormat(Enum):
 
 class SPARQLTestFileResource(FileResource):
     format: Optional[SPARQLTestFileResourceFormat]
+    type: Optional[SPARQLQueryValidationType]
     sparql_test_suite: Optional[Link[SPARQLTestSuite]]
 
     class Settings(FileResource.Settings):

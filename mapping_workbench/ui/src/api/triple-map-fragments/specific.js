@@ -1,6 +1,7 @@
-import {SectionApi} from "../section";
+import {TripleMapFragmentsApi} from "./index";
+import {appApi} from "../app";
 
-class SpecificTripleMapFragmentsApi extends SectionApi {
+class SpecificTripleMapFragmentsApi extends TripleMapFragmentsApi {
     get SECTION_TITLE() {
         return "Specific Triple Map Fragments";
     }
@@ -11,7 +12,15 @@ class SpecificTripleMapFragmentsApi extends SectionApi {
 
     constructor() {
         super("specific_triple_map_fragments");
-        this.isProjectResource = true;
+    }
+
+    async update_specific_mapping_package(mapping_package, triple_map_fragments) {
+        let endpoint = this.paths['items'] + '/update_specific_mapping_package';
+        let request = {
+            mapping_package: mapping_package,
+            triple_map_fragments: triple_map_fragments
+        }
+        return await appApi.update(endpoint, request);
     }
 }
 

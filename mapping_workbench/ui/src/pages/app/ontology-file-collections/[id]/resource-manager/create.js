@@ -49,7 +49,7 @@ const Page = () => {
                                     color="text.primary"
                                     component={RouterLink}
                                     href={{
-                                        pathname: paths.app[sectionApi.section].file_manager.index,
+                                        pathname: paths.app[sectionApi.section].resource_manager.index,
                                         query: {id: id}
                                     }}
                                     sx={{

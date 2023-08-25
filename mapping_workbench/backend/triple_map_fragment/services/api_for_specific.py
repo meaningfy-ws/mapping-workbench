@@ -3,6 +3,7 @@ from typing import List
 from beanie import PydanticObjectId
 from pymongo.errors import DuplicateKeyError
 
+from mapping_workbench.backend.core.models.api_request import APIRequestForUpdateMany
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException, DuplicateKeyException
 from mapping_workbench.backend.core.services.request import request_update_data, request_create_data, \
@@ -22,7 +23,7 @@ async def list_specific_triple_map_fragments(filters=None) -> List[SpecificTripl
 
 
 async def create_specific_triple_map_fragment(specific_triple_map_fragment_data: SpecificTripleMapFragmentCreateIn,
-                                         user: User) -> SpecificTripleMapFragmentOut:
+                                              user: User) -> SpecificTripleMapFragmentOut:
     specific_triple_map_fragment: SpecificTripleMapFragment = SpecificTripleMapFragment(
         **request_create_data(specific_triple_map_fragment_data)).on_create(user=user)
     try:
@@ -32,8 +33,19 @@ async def create_specific_triple_map_fragment(specific_triple_map_fragment_data:
     return SpecificTripleMapFragmentOut(**specific_triple_map_fragment.dict())
 
 
-async def update_specific_triple_map_fragment(id: PydanticObjectId,
-                                         specific_triple_map_fragment_data: SpecificTripleMapFragmentUpdateIn, user: User):
+async def update_specific_triple_map_fragments(
+        request: APIRequestForUpdateMany,
+        user: User
+):
+    print(request)
+    return await SpecificTripleMapFragment.find_many(request.for_query).update_many({'$set': request.set_values})
+
+
+async def update_specific_triple_map_fragment(
+        id: PydanticObjectId,
+        specific_triple_map_fragment_data: SpecificTripleMapFragmentUpdateIn,
+        user: User
+):
     specific_triple_map_fragment: SpecificTripleMapFragment = await SpecificTripleMapFragment.get(id)
     if not api_entity_is_found(specific_triple_map_fragment):
         raise ResourceNotFoundException()

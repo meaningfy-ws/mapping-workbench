@@ -196,6 +196,11 @@ export const ListTable = (props) => {
                                                                 <PropertyListItem
                                                                     label="Description"
                                                                     value={item.description}
+                                                                    sx={{
+                                                                        whiteSpace: "pre-wrap",
+                                                                        px: 3,
+                                                                        py: 1.5
+                                                                    }}
                                                                 />
                                                             </PropertyList>
                                                         </Grid>

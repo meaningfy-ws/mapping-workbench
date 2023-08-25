@@ -24,7 +24,7 @@ export const ItemListRow = (props) => {
 
     const handleEdit = useCallback(async () => {
         router.push({
-            pathname: paths.app[sectionApi.section].file_manager.edit,
+            pathname: paths.app[sectionApi.section].resource_manager.edit,
             query: {id: collection._id, fid: item._id}
         });
 
@@ -34,7 +34,7 @@ export const ItemListRow = (props) => {
         const response = await fileResourcesApi.deleteFileResource(item._id);
         router.reload();
         router.push({
-            pathname: paths.app[sectionApi.section].file_manager.index,
+            pathname: paths.app[sectionApi.section].resource_manager.index,
             query: {
                 id: collection._id,
                 refreshed: Date.now()

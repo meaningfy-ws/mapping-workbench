@@ -1,7 +1,7 @@
-from typing import List
+from typing import List, Annotated
 
 from beanie import PydanticObjectId
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, status, Depends, Query
 from starlette.requests import Request
 
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
@@ -22,7 +22,7 @@ from mapping_workbench.backend.sparql_test_suite.services.api import (
     create_sparql_test_suite_file_resource,
     update_sparql_test_file_resource,
     get_sparql_test_file_resource,
-    delete_sparql_test_file_resource
+    delete_sparql_test_file_resource, list_sparql_test_file_resources
 )
 from mapping_workbench.backend.user.models.user import User
 
@@ -46,11 +46,14 @@ router = APIRouter(
     response_model=APIListSPARQLTestSuitesPaginatedResponse
 )
 async def route_list_sparql_test_suites(
-        project: PydanticObjectId = None
+        project: PydanticObjectId = None,
+        ids: Annotated[List[PydanticObjectId | str] | None, Query()] = None
 ):
     filters: dict = {}
     if project:
         filters['project'] = Project.link_from_id(project)
+    if ids is not None:
+        filters['_id'] = {"$in": ids}
     items: List[SPARQLTestSuite] = await list_sparql_test_suites(filters)
     return APIListSPARQLTestSuitesPaginatedResponse(items=items, count=len(items))
 
@@ -103,6 +106,23 @@ async def route_get_sparql_test_suite(sparql_test_suite: SPARQLTestSuite = Depen
 async def route_delete_sparql_test_suite(id: PydanticObjectId):
     await delete_sparql_test_suite(id)
     APIEmptyContentWithIdResponse(_id=id)
+
+
+@router.get(
+    "/free/file_resources",
+    description=f"List all {FILE_RESOURCE_NAME_FOR_MANY}",
+    name=f"{FILE_RESOURCE_NAME_FOR_MANY}:list_all_{FILE_RESOURCE_NAME_FOR_MANY}",
+    response_model=APIListSPARQLTestFileResourcesPaginatedResponse
+)
+async def route_list_sparql_test_file_resources(
+        type: str = None
+):
+    filters: dict = {}
+    if type:
+        filters['type'] = type
+    items: List[SPARQLTestFileResource] = await list_sparql_test_file_resources(filters)
+    return APIListSPARQLTestFileResourcesPaginatedResponse(items=items, count=len(items))
+
 
 
 @router.get(

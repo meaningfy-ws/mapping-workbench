@@ -22,6 +22,8 @@ import {FormTextArea} from "../../../components/app/form/text-area";
 import {FormTextField} from "../../../components/app/form/text-field";
 import {sessionApi} from "../../../api/session";
 import {FormCodeTextArea} from "../../../components/app/form/code-text-area";
+import TextField from "@mui/material/TextField";
+import * as React from "react";
 
 export const FileResourceEditForm = (props) => {
     const router = useRouter();
@@ -42,6 +44,10 @@ export const FileResourceEditForm = (props) => {
     }
 
     let initialValues = initFormValues(item);
+
+    if (sectionApi.hasFileResourceType) {
+        initialValues['type'] = item.type || '';
+    }
 
     const formik = useFormik({
         initialValues: initialValues,
@@ -73,7 +79,7 @@ export const FileResourceEditForm = (props) => {
                 if (response) {
                     if (itemctx.isNew) {
                         router.push({
-                            pathname: paths.app[sectionApi.section].file_manager.edit,
+                            pathname: paths.app[sectionApi.section].resource_manager.edit,
                             query: {id: collection_id, fid: response._id}
                         });
                     } else {
@@ -109,37 +115,52 @@ export const FileResourceEditForm = (props) => {
                         <Grid xs={12} md={12}>
                             <FormTextField formik={formik} name="title" label="Title" required={true}/>
                         </Grid>
+                        {sectionApi.hasFileResourceType && (
+                            <Grid xs={12} md={12}>
+                                <TextField
+                                    error={!!(formik.touched.type && formik.errors.type)}
+                                    fullWidth
+                                    helperText={formik.touched.type && formik.errors.type}
+                                    onBlur={formik.handleBlur}
+                                    label="Type"
+                                    onChange={e => {
+                                        formik.setFieldValue("type", e.target.value);
+                                    }}
+                                    select
+                                    value={formik.values.type}
+                                >
+                                    <MenuItem key="" value={null}>&nbsp;</MenuItem>
+                                    {Object.keys(sectionApi.FILE_RESOURCE_TYPES).map((key) => (
+                                        <MenuItem key={key} value={key}>
+                                            {sectionApi.FILE_RESOURCE_TYPES[key]}
+                                        </MenuItem>
+                                    ))}
+                                </TextField>
+                            </Grid>
+                        )}
                         <Grid xs={12} md={12}>
                             <FormTextArea formik={formik} name="description" label="Description"/>
                         </Grid>
                         <Grid xs={12} md={12}>
-                            <FormControl fullWidth>
-                                <FormLabel
-                                    sx={{
-                                        color: 'text.primary',
-                                        mb: 1
-                                    }}
-                                >
-                                    Format
-                                </FormLabel>
-                                <Select
-                                    name="format"
-                                    error={!!(formik.touched.format && formik.errors.format)}
-                                    fullWidth
-                                    helperText={formik.touched.format && formik.errors.format}
-                                    value={formik.values.format}
-                                    onBlur={formik.handleBlur}
-                                    onChange={formik.handleChange}
-                                >
-                                    {Object.keys(sectionApi.FILE_RESOURCE_FORMATS).map((key) => {
-                                        return (
-                                            <MenuItem value={key} key={key}>
-                                                {sectionApi.FILE_RESOURCE_FORMATS[key]}
-                                            </MenuItem>
-                                        )
-                                    })}
-                                </Select>
-                            </FormControl>
+                            <TextField
+                                error={!!(formik.touched.format && formik.errors.format)}
+                                fullWidth
+                                helperText={formik.touched.format && formik.errors.format}
+                                onBlur={formik.handleBlur}
+                                label="Format"
+                                onChange={e => {
+                                    formik.setFieldValue("format", e.target.value);
+                                }}
+                                select
+                                required
+                                value={formik.values.format}
+                            >
+                                {Object.keys(sectionApi.FILE_RESOURCE_FORMATS).map((key) => (
+                                    <MenuItem key={key} value={key}>
+                                        {sectionApi.FILE_RESOURCE_FORMATS[key]}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
                         </Grid>
                         <Grid xs={12} md={12}>
                             <FormCodeTextArea

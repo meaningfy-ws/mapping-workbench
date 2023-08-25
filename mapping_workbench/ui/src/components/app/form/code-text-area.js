@@ -1,4 +1,4 @@
-import {useCallback, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import Editor from 'react-simple-code-editor';
 import {highlight, languages} from 'prismjs/components/prism-core';
 import 'prismjs/components/prism-turtle';
@@ -6,6 +6,7 @@ import 'prismjs/components/prism-sparql';
 import 'prismjs/components/prism-markup';
 import 'prismjs/components/prism-csv';
 import 'prismjs/components/prism-json';
+import 'prismjs/components/prism-yaml';
 import 'prismjs/plugins/line-numbers/prism-line-numbers';
 import 'prismjs/plugins/toolbar/prism-toolbar';
 import 'prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard';
@@ -16,6 +17,7 @@ import FormControl from "@mui/material/FormControl";
 import {Box} from '@mui/system';
 import styles from './style/code-text-area.module.scss';
 import variables from './style/variables.code-text-area.module.scss';
+import {genericTripleMapFragmentsApi} from "../../../api/triple-map-fragments/generic";
 
 const DEFAULT_GRAMMAR = 'text';
 const DEFAULT_LANGUAGE = 'none';
@@ -27,9 +29,13 @@ export const FormCodeTextArea = (props) => {
         grammar = null, language = null
     } = props;
 
-    const [content, setContent] = useState(
-        formik.values[name] || ''
-    );
+    const [content, setContent] = useState('');
+
+    useEffect(() => {
+        (async () => {
+            await setContent(formik.values[name] || '');
+        })()
+    }, [formik])
 
     const handleContent = useCallback((content) => {
         setContent(content)

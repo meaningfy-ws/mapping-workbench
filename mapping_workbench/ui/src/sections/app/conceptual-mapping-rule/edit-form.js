@@ -16,9 +16,14 @@ import {FormTextField} from "../../../components/app/form/text-field";
 import {FormTextArea} from "../../../components/app/form/text-area";
 import {sessionApi} from "../../../api/session";
 import {MappingPackageCheckboxList} from "../mapping-package/components/mapping-package-checkbox-list";
-import {
-    GenericTripleMapFragmentListSelector
-} from "../generic-triple-map-fragment/components/generic-triple-map-fragment-list-selector";
+import {genericTripleMapFragmentsApi} from "../../../api/triple-map-fragments/generic";
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import * as React from "react";
+import {useCallback, useEffect, useState} from "react";
+import {sparqlTestFileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
+import {ListSelectorSelect as ResourceListSelector} from "../../../components/app/list-selector/select";
 
 
 export const EditForm = (props) => {
@@ -28,15 +33,20 @@ export const EditForm = (props) => {
     const sectionApi = itemctx.api;
     const item = itemctx.data;
 
+    const prepareTextareaListValue = (value) => {
+        return (value && (value.join('\n') + ['\n'])) || ''
+    }
+
     let initialValues = {
         business_id: item.business_id || '',
         business_title: item.business_title || '',
         business_description: item.business_description || '',
-        source_xpath: item.source_xpath || '',
+        source_xpath: prepareTextareaListValue(item.source_xpath),
         target_class_path: item.target_class_path || '',
         target_property_path: item.target_property_path || '',
         mapping_packages: (item.mapping_packages || []).map(x => x.id),
-        triple_map_fragments: (item.triple_map_fragments || []).map(x => x.id)
+        sparql_assertions: (item.sparql_assertions || []).map(x => x.id),
+        triple_map_fragment: (item.triple_map_fragment && item.triple_map_fragment.id) || null
     };
 
     const formik = useFormik({
@@ -54,7 +64,7 @@ export const EditForm = (props) => {
         onSubmit: async (values, helpers) => {
             try {
                 values['source_xpath'] = (typeof values['source_xpath'] == 'string') ?
-                    values['source_xpath'].split(',').map(s => s.trim()) : values['source_xpath'];
+                    values['source_xpath'].split('\n').map(s => s.trim()).filter(s => s !== '') : values['source_xpath'];
                 let response;
                 values['project'] = sessionApi.getSessionProject();
                 if (itemctx.isNew) {
@@ -74,6 +84,7 @@ export const EditForm = (props) => {
                         });
                     } else if (itemctx.isStateable) {
                         itemctx.setState(response);
+                        formik.values.source_xpath = prepareTextareaListValue(response['source_xpath']);
                     }
                 }
             } catch (err) {
@@ -85,6 +96,29 @@ export const EditForm = (props) => {
             }
         }
     });
+
+    const [projectTripleMapFragments, setProjectTripleMapFragments] = useState([]);
+    useEffect(() => {
+        (async () => {
+            setProjectTripleMapFragments(await genericTripleMapFragmentsApi.getValuesForSelector());
+        })()
+    }, [genericTripleMapFragmentsApi])
+
+    const [projectSPARQLResources, setProjectSPARQLResources] = useState([]);
+    useEffect(() => {
+        (async () => {
+            setProjectSPARQLResources(await sparqlTestFileResourcesApi.getMappingRuleResources());
+        })()
+    }, [sparqlTestFileResourcesApi])
+
+    const handleTripleMapFragmentSelect = useCallback((e) => {
+        let value = e.target.value;
+        formik.setFieldValue('triple_map_fragment', value);
+    }, [formik]);
+
+    const sparqlResourcesForSelector = function(filters = {}) {
+        return sparqlTestFileResourcesApi.getMappingRuleResources(filters);
+    }
 
     return (
         <form onSubmit={formik.handleSubmit} {...other}>
@@ -102,7 +136,7 @@ export const EditForm = (props) => {
                             <FormTextArea formik={formik} name="business_description" label="Business Description"/>
                         </Grid>
                         <Grid xs={12} md={12}>
-                            <FormTextField formik={formik} name="source_xpath" label="Source XPath"/>
+                            <FormTextArea formik={formik} name="source_xpath" label="Source XPaths"/>
                         </Grid>
                         <Grid xs={12} md={12}>
                             <FormTextField formik={formik} name="target_class_path" label="Target Class Path"/>
@@ -114,12 +148,24 @@ export const EditForm = (props) => {
                 </CardContent>
             </Card>
             <Card sx={{mt: 3}}>
-                <CardHeader title="RML Triple Maps"/>
+                <CardHeader title="RML Triple Map"/>
                 <CardContent sx={{pt: 0}}>
                     <Grid container spacing={3}>
                         <Grid xs={12} md={12}>
-                            <GenericTripleMapFragmentListSelector
-                                tripleMapFragments={formik.values.triple_map_fragments}/>
+                            <FormControl sx={{my: 2, width: '100%'}}>
+                                <TextField
+                                    fullWidth
+                                    label={genericTripleMapFragmentsApi.SECTION_ITEM_TITLE}
+                                    onChange={handleTripleMapFragmentSelect}
+                                    select
+                                    value={formik.values.triple_map_fragment}
+                                >
+                                    <MenuItem key="" value={null}>&nbsp;</MenuItem>
+                                    {projectTripleMapFragments.map((x) => (
+                                        <MenuItem key={x.id} value={x.id}>{x.uri}</MenuItem>
+                                    ))}
+                                </TextField>
+                            </FormControl>
                         </Grid>
                     </Grid>
                 </CardContent>
@@ -130,6 +176,22 @@ export const EditForm = (props) => {
                     <Grid container spacing={3}>
                         <Grid xs={12} md={12}>
                             <MappingPackageCheckboxList mappingPackages={formik.values.mapping_packages}/>
+                        </Grid>
+                    </Grid>
+                </CardContent>
+            </Card>
+            <Card sx={{mt: 3}}>
+                <CardHeader title="SPARQL Assertions"/>
+                <CardContent sx={{pt: 0}}>
+                    <Grid container spacing={3}>
+                        <Grid xs={12} md={12}>
+                            <ResourceListSelector
+                                valuesApi={sparqlTestFileResourcesApi}
+                                listValues={formik.values.sparql_assertions}
+                                initProjectValues={projectSPARQLResources}
+                                titleField="title"
+                                valuesForSelector={sparqlResourcesForSelector}
+                            />
                         </Grid>
                     </Grid>
                 </CardContent>

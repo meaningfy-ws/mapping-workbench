@@ -1,7 +1,7 @@
-from typing import List
+from typing import List, Annotated
 
 from beanie import PydanticObjectId
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Query
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRuleOut, \
     ConceptualMappingRuleCreateIn, \
@@ -16,6 +16,7 @@ from mapping_workbench.backend.conceptual_mapping_rule.services.api import (
     delete_conceptual_mapping_rule
 )
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
+from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.user.models.user import User
@@ -38,11 +39,15 @@ router = APIRouter(
     response_model=APIListConceptualMappingRulesPaginatedResponse
 )
 async def route_list_conceptual_mapping_rules(
-        project: PydanticObjectId = None
+        project: PydanticObjectId = None,
+        mapping_packages: Annotated[List[PydanticObjectId | str] | None, Query()] = None
 ):
     filters: dict = {}
     if project:
         filters['project'] = Project.link_from_id(project)
+    if mapping_packages is not None:
+        filters['mapping_packages'] = {"$in": list(map(lambda x: MappingPackage.link_from_id(x), mapping_packages))}
+
     items: List[ConceptualMappingRuleOut] = await list_conceptual_mapping_rules(filters)
     return APIListConceptualMappingRulesPaginatedResponse(
         items=items,

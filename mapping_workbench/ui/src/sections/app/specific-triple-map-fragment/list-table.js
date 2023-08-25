@@ -1,4 +1,4 @@
-import {Fragment, useCallback, useState} from 'react';
+import {Fragment, useCallback, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
@@ -23,6 +23,7 @@ import {ListItemActions} from 'src/components/app/list/list-item-actions';
 
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import Tooltip from "@mui/material/Tooltip";
+import {mappingPackagesApi} from "../../../api/mapping-packages";
 
 
 export const ListTable = (props) => {
@@ -51,6 +52,24 @@ export const ListTable = (props) => {
         });
     }, []);
 
+    const [projectMappingPackages, setProjectMappingPackages] = useState([]);
+    useEffect(() => {
+        (async () => {
+            setProjectMappingPackages(await mappingPackagesApi.getProjectPackages());
+        })()
+    }, [mappingPackagesApi])
+
+    const [projectMappingPackagesMap, setProjectMappingPackagesMap] = useState({});
+
+    useEffect(() => {
+        (() => {
+            setProjectMappingPackagesMap(projectMappingPackages.reduce((a, b) => {
+                a[b['id']] = b['title'];
+                return a
+            }, {}));
+        })()
+    }, [projectMappingPackages])
+
     // const handleItemClose = useCallback(() => {
     //     setCurrentItem(null);
     // }, []);
@@ -61,7 +80,7 @@ export const ListTable = (props) => {
     // }, []);
 
     // const handleItemDelete = useCallback(() => {
-        
+
     //     toast.error('Item cannot be deleted');
     // }, []);
 
@@ -81,6 +100,18 @@ export const ListTable = (props) => {
                                         direction="asc"
                                     >
                                         URI
+                                    </TableSortLabel>
+                                </Tooltip>
+                            </TableCell>
+                            <TableCell>
+                                <Tooltip
+                                    enterDelay={300}
+                                    title="Sort"
+                                >
+                                    <TableSortLabel
+                                        direction="asc"
+                                    >
+                                        Package
                                     </TableSortLabel>
                                 </Tooltip>
                             </TableCell>
@@ -143,8 +174,11 @@ export const ListTable = (props) => {
                                                 {item.triple_map_uri}
                                             </Typography>
                                         </TableCell>
+                                        <TableCell>
+                                            {projectMappingPackagesMap[item.mapping_package.id]}
+                                        </TableCell>
                                         <TableCell align="left">
-                                        {(item.created_at).replace("T", " ").split(".")[0]}                                            
+                                            {(item.created_at).replace("T", " ").split(".")[0]}
                                         </TableCell>
                                         <TableCell align="right">
                                             <ListItemActions
@@ -180,6 +214,11 @@ export const ListTable = (props) => {
                                                                 <PropertyListItem
                                                                     label="Content"
                                                                     value={item.triple_map_content}
+                                                                    sx={{
+                                                                        whiteSpace: "pre-wrap",
+                                                                        px: 3,
+                                                                        py: 1.5
+                                                                    }}
                                                                 />
                                                             </PropertyList>
                                                         </Grid>

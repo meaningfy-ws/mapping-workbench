@@ -59,7 +59,6 @@ export const ListItemActions = (props) => {
                 size="small"
                 color="info"
                 onClick={handleViewAction}
-                sx={{ boxShadow: "0px 1px 5px rgba(0, 0, 0, 0.08)", borderRadius: "12px", minWidth: "80px" }}
             >
             View
             </Button>
@@ -68,7 +67,6 @@ export const ListItemActions = (props) => {
                 size="small"
                 color="success"
                 onClick={handleEditAction}
-                sx={{  boxShadow: "0px 1px 5px rgba(0, 0, 0, 0.08)", borderRadius: "12px", minWidth: "80px", marginLeft: "10px"  }}
             >
             Edit
             </Button>
@@ -77,7 +75,6 @@ export const ListItemActions = (props) => {
                 size="small"
                 color="error"
                 onClick={handleDeleteAction}
-                sx={{  boxShadow: "0px 1px 5px rgba(0, 0, 0, 0.08)", borderRadius: "12px", minWidth: "80px", marginLeft: "10px" }}
             >
             Delete
             </Button>

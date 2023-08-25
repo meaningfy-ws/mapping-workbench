@@ -1,3 +1,4 @@
+import * as React from 'react';
 import {Fragment, useCallback, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
@@ -22,8 +23,8 @@ import {ListItemActions} from 'src/components/app/list/list-item-actions';
 
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import Tooltip from "@mui/material/Tooltip";
-import {Box} from "@mui/system";
-import {Button} from "@mui/material";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import {MappingPackageCheckboxList} from "../mapping-package/components/mapping-package-checkbox-list";
 import Dialog from "@mui/material/Dialog";
 import {useDialog} from "../../../hooks/use-dialog";
@@ -32,93 +33,256 @@ import toast from "react-hot-toast";
 import {conceptualMappingRulesApi} from "../../../api/conceptual-mapping-rules";
 import {mappingPackagesApi} from "../../../api/mapping-packages";
 import {genericTripleMapFragmentsApi} from "../../../api/triple-map-fragments/generic";
+import Divider from "@mui/material/Divider";
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import FormLabel from "@mui/material/FormLabel";
+import Select from "@mui/material/Select";
+import {FormCodeTextArea} from "../../../components/app/form/code-text-area";
+import {useFormik} from "formik";
+import * as Yup from "yup";
+import Switch from "@mui/material/Switch";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import {testDataSuitesApi} from "../../../api/test-data-suites";
 import {
-    GenericTripleMapFragmentListSelector
-} from "../generic-triple-map-fragment/components/generic-triple-map-fragment-list-selector";
+    ListSelectorSelect,
+    ListSelectorSelect as ResourceListSelector
+} from "../../../components/app/list-selector/select";
+import {sparqlTestFileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
 
-
-export const ListTableTripleMapFragments = (props) => {
+export const ListTableTripleMapFragment = (props) => {
     const {
-        item,
-        initProjectTripleMapFragments = []
+        item, initProjectTripleMapFragments = []
     } = props;
 
-    const [tripleMapFragments, setTripleMapFragments] = useState(item.triple_map_fragments.map(x => x.id));
-    const [projectTripleMapFragments, setProjectTripleMapFragments] = useState(initProjectTripleMapFragments);
 
+    const [tripleMapFragment, setTripleMapFragment] = useState({});
+    const triple_map_fragment_id = item.triple_map_fragment && item.triple_map_fragment.id;
     useEffect(() => {
         (async () => {
-            if (initProjectTripleMapFragments.length === 0) {
-                setProjectTripleMapFragments(await genericTripleMapFragmentsApi.getProjectTripleMapFragments());
+            if (triple_map_fragment_id) {
+                setTripleMapFragment(await genericTripleMapFragmentsApi.getItem(triple_map_fragment_id));
             }
         })()
     }, [genericTripleMapFragmentsApi])
 
-    const tripleMapFragmentsDialog = useDialog();
+    const [ruleTripleMapFragment, setRuleTripleMapFragment] = useState(triple_map_fragment_id);
 
-    const handleTripleMapFragmentssUpdate = useCallback(async () => {
+    const [projectTripleMapFragments, setProjectTripleMapFragments] = useState(initProjectTripleMapFragments);
+
+    useEffect(() => {
+        (async () => {
+            await setProjectTripleMapFragments(await genericTripleMapFragmentsApi.getValuesForSelector());
+        })()
+    }, [genericTripleMapFragmentsApi])
+
+    let initialValues = {
+        triple_map_uri: tripleMapFragment.triple_map_uri || '',
+        triple_map_content: tripleMapFragment.triple_map_content || '',
+        format: tripleMapFragment.format || genericTripleMapFragmentsApi.FILE_RESOURCE_DEFAULT_FORMAT || '',
+    };
+
+    const formik = useFormik({
+        enableReinitialize: true,
+        initialValues: initialValues,
+        validationSchema: Yup.object({
+            triple_map_uri: Yup
+                .string()
+                .max(255)
+                .required('URI is required'),
+            triple_map_content: Yup.string().max(2048),
+            format: Yup
+                .string()
+                .max(255)
+                .required('Format is required')
+        }),
+        onSubmit: async (values, helpers) => {
+        }
+    });
+
+    const tripleMapFragmentDialog = useDialog();
+
+    const [updateContent, setUpdateContent] = useState(false);
+
+    const handleTripleMapFragmentDialogOpen = useCallback(async () => {
+        setUpdateContent(false);
+        const tripleMapFragmentData = ruleTripleMapFragment ?
+            await genericTripleMapFragmentsApi.getItem(ruleTripleMapFragment) : null;
+        setTripleMapFragment(tripleMapFragmentData || {});
+        tripleMapFragmentDialog.handleOpen();
+    }, [tripleMapFragmentDialog, ruleTripleMapFragment]);
+
+    const handleTripleMapFragmentDialogClose = useCallback(async () => {
+        tripleMapFragmentDialog.handleClose();
+        setUpdateContent(false);
+        setTripleMapFragment({});
+    }, [tripleMapFragmentDialog]);
+
+    const handleTripleMapFragmentUpdate = useCallback(async () => {
         let values = {}
         values['id'] = item._id;
-        values['triple_map_fragments'] = tripleMapFragments;
+        values['triple_map_fragment'] = tripleMapFragment._id;
         await conceptualMappingRulesApi.updateItem(values);
+        setRuleTripleMapFragment(tripleMapFragment._id);
         toast.success(conceptualMappingRulesApi.SECTION_ITEM_TITLE + ' updated');
-        tripleMapFragmentsDialog.handleClose();
-    }, []);
 
-    return (
-        <>
-            {projectTripleMapFragments.filter(x => tripleMapFragments.includes(x.id)).map(x => (
-                <Box>{x.uri}</Box>
+        if (updateContent) {
+            let contentValues = {
+                id: tripleMapFragment._id,
+                format: formik.values.format,
+                triple_map_content: formik.values.triple_map_content
+            }
+            await genericTripleMapFragmentsApi.updateItem(contentValues);
+            toast.success(genericTripleMapFragmentsApi.SECTION_ITEM_TITLE + ' updated');
+        }
+        handleTripleMapFragmentDialogClose();
+    }, [tripleMapFragment, updateContent, handleTripleMapFragmentDialogClose, formik]);
+
+    const handleTripleMapFragmentSelect = useCallback(async (e) => {
+        setUpdateContent(false);
+        await setTripleMapFragment(await genericTripleMapFragmentsApi.getItem(e.target.value));
+    }, [formik, tripleMapFragment]);
+
+
+    return (<>
+        <Box sx={{mb: 1}}>
+            {projectTripleMapFragments.filter(x => ruleTripleMapFragment === x.id).map(x => (
+                <Box sx={{whiteSpace: "nowrap"}} key={"triple_map_fragment_" + x.id}>{x.uri}</Box>
             ))}
+        </Box>
+        <Divider/>
+        <Box>
             <Button
-                aria-describedby={"triple_map_fragments_" + item._id}
-                variant="contained"
+                aria-describedby={"triple_map_fragment_dialog_" + item._id}
+                variant="text"
                 size="small"
                 color="success"
-                onClick={tripleMapFragmentsDialog.handleOpen}
+                fullWidth
+                onClick={handleTripleMapFragmentDialogOpen}
+                sx={{mt: 1}}
             >
                 Edit
             </Button>
-            <Dialog
-                id={"triple_map_fragments_" + item._id}
-                onClose={tripleMapFragmentsDialog.handleClose}
-                open={tripleMapFragmentsDialog.open}
-                fullWidth
-                maxWidth="sm"
+        </Box>
+        <Dialog
+            id={"triple_map_fragment_dialog_" + item._id}
+            onClose={handleTripleMapFragmentDialogClose}
+            open={tripleMapFragmentDialog.open}
+            fullWidth
+            maxWidth="sm"
+        >
+            <Stack
+                spacing={3}
+                sx={{
+                    px: 3, py: 2
+                }}
             >
-                <Stack
-                    spacing={3}
-                    sx={{
-                        px: 3,
-                        py: 2
-                    }}
-                >
+                <form onSubmit={formik.handleSubmit}>
                     <Typography variant="h6">
-                        Mapping Rule Triple Map Fragments
+                        Mapping Rule Triple Map Fragment
                     </Typography>
                     <Box container spacing={3}>
-                        <GenericTripleMapFragmentListSelector
-                            tripleMapFragments={tripleMapFragments}
-                            initProjectTripleMapFragments={projectTripleMapFragments}/>
+                        <FormControl sx={{my: 2, width: '100%'}}>
+                            <TextField
+                                fullWidth
+                                label={genericTripleMapFragmentsApi.SECTION_ITEM_TITLE}
+                                onChange={handleTripleMapFragmentSelect}
+                                select
+                                value={tripleMapFragment._id}
+                            >
+                                <MenuItem key="" value={null}>&nbsp;</MenuItem>
+                                {projectTripleMapFragments.map((x) => (
+                                    <MenuItem key={x.id} value={x.id}>{x.uri}</MenuItem>
+                                ))}
+                            </TextField>
+                        </FormControl>
                     </Box>
+                    {tripleMapFragment._id && (
+                        <>
+                            <Box>
+                                <Grid xs={12} md={12} pb={2}>
+                                    <FormControlLabel
+                                        sx={{
+                                            width: '100%'
+                                        }}
+                                        control={
+                                            <Switch
+                                                checked={updateContent}
+                                                onChange={e =>
+                                                    setUpdateContent(e.target.checked)}
+                                            />
+                                        }
+                                        label="Update content"
+                                        value="updateContent"
+                                    />
+                                </Grid>
+                            </Box>
+                            {updateContent && (<Box>
+                                    <Grid container>
+                                        <Grid xs={12} md={12}>
+                                            <FormControl fullWidth>
+                                                <FormLabel
+                                                    sx={{
+                                                        color: 'text.primary',
+                                                        mb: 1
+                                                    }}
+                                                >
+                                                    Format
+                                                </FormLabel>
+                                                <Select
+                                                    name="format"
+                                                    error={!!(formik.touched.format && formik.errors.format)}
+                                                    fullWidth
+                                                    helperText={formik.touched.format && formik.errors.format}
+                                                    value={formik.values.format}
+                                                    onBlur={formik.handleBlur}
+                                                    onChange={formik.handleChange}
+                                                >
+                                                    {Object.keys(genericTripleMapFragmentsApi.FILE_RESOURCE_FORMATS).map((key) => {
+                                                        return (
+                                                            <MenuItem value={key} key={key}>
+                                                                {genericTripleMapFragmentsApi.FILE_RESOURCE_FORMATS[key]}
+                                                            </MenuItem>
+                                                        )
+                                                    })}
+                                                </Select>
+                                            </FormControl>
+                                        </Grid>
+                                        <Grid xs={12} md={12} py={2}>
+                                            <FormCodeTextArea
+                                                formik={formik}
+                                                name="triple_map_content"
+                                                label="Content"
+                                                grammar={genericTripleMapFragmentsApi.FILE_RESOURCE_CODE[formik.values.format]['grammar']}
+                                                language={genericTripleMapFragmentsApi.FILE_RESOURCE_CODE[formik.values.format]['language']}
+                                            />
+                                        </Grid>
+                                    </Grid>
+                                </Box>
+                            )}
+                        </>
+                    )}
                     <Button
                         variant="contained"
+                        fullWidth
                         size="small"
                         color="success"
-                        onClick={handleTripleMapFragmentssUpdate}
+                        disabled={formik.isSubmitting}
+                        onClick={handleTripleMapFragmentUpdate}
                     >
                         Update
                     </Button>
-                </Stack>
-            </Dialog>
-        </>
-    )
+                </form>
+            </Stack>
+        </Dialog>
+    </>)
 }
 
 export const ListTableMappingPackages = (props) => {
     const {
-        item,
-        initProjectMappingPackages = []
+        item, initProjectMappingPackages = [], onPackagesUpdate = () => {
+        }
     } = props;
 
     const [mappingPackages, setMappingPackages] = useState(item.mapping_packages.map(x => x.id));
@@ -141,26 +305,113 @@ export const ListTableMappingPackages = (props) => {
         await conceptualMappingRulesApi.updateItem(values);
         toast.success(conceptualMappingRulesApi.SECTION_ITEM_TITLE + ' updated');
         mappingPackagesDialog.handleClose();
+        onPackagesUpdate()
+    }, [item, onPackagesUpdate]);
+
+    return (<>
+        <Box sx={{mb: 1}}>
+            {projectMappingPackages.filter(x => mappingPackages.includes(x.id)).map(x => (
+                <Box sx={{whiteSpace: "nowrap"}} key={"mapping_package_" + x.id}>{x.title}</Box>
+            ))}
+        </Box>
+        <Divider/>
+        <Box>
+            <Button
+                aria-describedby={"mapping_packages_dialog_" + item._id}
+                variant="text"
+                size="small"
+                color="success"
+                fullWidth
+                onClick={mappingPackagesDialog.handleOpen}
+                sx={{mt: 1}}
+            >
+                Edit
+            </Button>
+        </Box>
+        <Dialog
+            id={"mapping_packages_dialog_" + item._id}
+            onClose={mappingPackagesDialog.handleClose}
+            open={mappingPackagesDialog.open}
+            fullWidth
+            maxWidth="sm"
+        >
+            <Stack
+                spacing={3}
+                sx={{
+                    px: 3, py: 2
+                }}
+            >
+                <Typography variant="h6">
+                    Mapping Rule Packages
+                </Typography>
+                <Box container spacing={3}>
+                    <MappingPackageCheckboxList
+                        mappingPackages={mappingPackages} initProjectMappingPackages={projectMappingPackages}/>
+                </Box>
+                <Button
+                    variant="contained"
+                    size="small"
+                    color="success"
+                    onClick={handleMappingPackagesUpdate}
+                >
+                    Update
+                </Button>
+            </Stack>
+        </Dialog>
+    </>)
+}
+
+export const ListTableSPARQLAssertions = (props) => {
+    const {
+        item,
+        initProjectSPARQLResources = []
+    } = props;
+
+    const [sparqlResources, setSparqlResources] = useState((item.sparql_assertions || []).map(x => x.id));
+    const [projectSPARQLResources, setProjectSPARQLResources] = useState(initProjectSPARQLResources);
+
+    useEffect(() => {
+        (async () => {
+            if (initProjectSPARQLResources.length === 0) {
+                setProjectSPARQLResources(await sparqlTestFileResourcesApi.getMappingRuleResources());
+            }
+        })()
+    }, [sparqlTestFileResourcesApi])
+
+    const sparqlTestFileResourcesDialog = useDialog();
+
+    const handleSparqlTestFileResourcesUpdate = useCallback(async () => {
+        let values = {}
+        values['id'] = item._id;
+        values['sparql_assertions'] = sparqlResources;
+        await conceptualMappingRulesApi.updateItem(values);
+        toast.success(conceptualMappingRulesApi.SECTION_ITEM_TITLE + ' updated');
+        sparqlTestFileResourcesDialog.handleClose();
     }, []);
+
+    const sparqlResourcesForSelector = function(filters = {}) {
+        return sparqlTestFileResourcesApi.getMappingRuleResources(filters);
+    }
 
     return (
         <>
-            {projectMappingPackages.filter(x => mappingPackages.includes(x.id)).map(x => (
+            {projectSPARQLResources.filter(x => sparqlResources.includes(x.id)).map(x => (
                 <Box>{x.title}</Box>
             ))}
             <Button
-                aria-describedby={"mapping_packages_" + item._id}
-                variant="contained"
+                aria-describedby={"sparql_assertions_" + item._id}
+                variant="text"
+                fullWidth
                 size="small"
                 color="success"
-                onClick={mappingPackagesDialog.handleOpen}
+                onClick={sparqlTestFileResourcesDialog.handleOpen}
             >
                 Edit
             </Button>
             <Dialog
-                id={"mapping_packages_" + item._id}
-                onClose={mappingPackagesDialog.handleClose}
-                open={mappingPackagesDialog.open}
+                id={"sparql_assertions_" + item._id}
+                onClose={sparqlTestFileResourcesDialog.handleClose}
+                open={sparqlTestFileResourcesDialog.open}
                 fullWidth
                 maxWidth="sm"
             >
@@ -172,17 +423,22 @@ export const ListTableMappingPackages = (props) => {
                     }}
                 >
                     <Typography variant="h6">
-                        Mapping Rule Packages
+                        SPARQL Assertions
                     </Typography>
                     <Box container spacing={3}>
-                        <MappingPackageCheckboxList
-                            mappingPackages={mappingPackages} initProjectMappingPackages={projectMappingPackages}/>
+                        <ResourceListSelector
+                            valuesApi={sparqlTestFileResourcesApi}
+                            listValues={sparqlResources}
+                            initProjectValues={projectSPARQLResources}
+                            titleField="title"
+                            valuesForSelector={sparqlResourcesForSelector}
+                        />
                     </Box>
                     <Button
                         variant="contained"
                         size="small"
                         color="success"
-                        onClick={handleMappingPackagesUpdate}
+                        onClick={handleSparqlTestFileResourcesUpdate}
                     >
                         Update
                     </Button>
@@ -200,152 +456,199 @@ export const ListTableRow = (props) => {
         handleItemToggle,
         sectionApi,
         initProjectTripleMapFragments = [],
-        initProjectMappingPackages = []
+        initProjectMappingPackages = [],
+        initProjectSPARQLResources = [],
+        onPackagesUpdate = () => {
+        }
     } = props;
 
-    return (
-        <Fragment key={item_id}>
-            <TableRow
-                hover
-                key={item_id}
-                sx={{verticalAlign: 'top'}}
+    const TRUNCATE_LENGTH = 30;
+
+    return (<Fragment key={item_id}>
+        <TableRow
+            hover
+            key={"rule_" + item_id}
+            sx={{verticalAlign: 'top'}}
+        >
+            <TableCell
+                padding="checkbox"
+                sx={{
+                    ...(isCurrent && {
+                        position: 'relative', '&:after': {
+                            position: 'absolute',
+                            content: '" "',
+                            top: 0,
+                            left: 0,
+                            backgroundColor: 'primary.main',
+                            width: 3,
+                            height: 'calc(100% + 1px)'
+                        }
+                    })
+                }}
             >
-                <TableCell
-                    padding="checkbox"
-                    sx={{
-                        ...(isCurrent && {
-                            position: 'relative',
-                            '&:after': {
-                                position: 'absolute',
-                                content: '" "',
-                                top: 0,
-                                left: 0,
-                                backgroundColor: 'primary.main',
-                                width: 3,
-                                height: 'calc(100% + 1px)'
-                            }
-                        })
-                    }}
-                    width="25%"
-                >
-                    <IconButton onClick={() => handleItemToggle(item_id)}>
-                        <SvgIcon>
-                            {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
-                        </SvgIcon>
-                    </IconButton>
-                </TableCell>
-                <TableCell width="25%">
-                    <Typography variant="subtitle2">
-                        <Box>{item.business_id}</Box>
-                        <Box>{item.business_title}</Box>
-                    </Typography>
-                </TableCell>
-                <TableCell>
-                    {item.source_xpath.map(x => (
-                        <Box>{x}</Box>
-                    ))}
-                </TableCell>
-                <TableCell>
-                    {item.target_class_path}
-                </TableCell>
-                <TableCell>
-                    {item.target_property_path}
-                </TableCell>
-                <TableCell>
-                    <ListTableTripleMapFragments
-                        item={item}
-                        ruleTripleMapFragments={item.triple_map_fragments}
-                        initProjectTripleMapFragments={initProjectTripleMapFragments}
-                    />
-                </TableCell>
-                <TableCell>
-                    <ListTableMappingPackages
-                        item={item}
-                        ruleMappingPackages={item.mapping_packages}
-                        initProjectMappingPackages={initProjectMappingPackages}
-                    />
-                </TableCell>
-                <TableCell align="left">
-                    {(item.created_at).replace("T", " ").split(".")[0]}
-                </TableCell>
-                <TableCell align="right">
-                    <ListItemActions
-                        itemctx={new ForListItemAction(item_id, sectionApi)}/>
-                </TableCell>
-            </TableRow>
-            {
-                isCurrent && (
-                    <TableRow>
-                        <TableCell
-                            colSpan={7}
-                            sx={{
-                                p: 0,
-                                position: 'relative',
-                                '&:after': {
-                                    position: 'absolute',
-                                    content: '" "',
-                                    top: 0,
-                                    left: 0,
-                                    backgroundColor: 'primary.main',
-                                    width: 3,
-                                    height: 'calc(100% + 1px)'
-                                }
-                            }}
+                <IconButton onClick={() => handleItemToggle(item_id)}>
+                    <SvgIcon>
+                        {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
+                    </SvgIcon>
+                </IconButton>
+            </TableCell>
+            <TableCell>
+                <Typography variant="subtitle2">
+                    <Box>{item.business_id}</Box>
+                    <Box>{item.business_title}</Box>
+                </Typography>
+            </TableCell>
+            <TableCell>
+                {item.source_xpath.map(
+                    x => (
+                        <Box title={x} sx={{whiteSpace: "nowrap"}}>
+                            {x.length > TRUNCATE_LENGTH && "..."}{x.substring(x.length - TRUNCATE_LENGTH)}
+                        </Box>
+                    )
+                )}
+            </TableCell>
+            <TableCell>
+                <Box title={item.target_class_path} sx={{whiteSpace: "wrap"}}>
+                    {item.target_class_path.length > TRUNCATE_LENGTH && "..."}
+                    {item.target_class_path.substring(item.target_class_path.length - TRUNCATE_LENGTH)}
+                </Box>
+            </TableCell>
+            <TableCell>
+                <Box title={item.target_property_path} sx={{whiteSpace: "wrap"}}>
+                    {item.target_property_path.length > TRUNCATE_LENGTH && "..."}
+                    {item.target_property_path.substring(item.target_property_path.length - TRUNCATE_LENGTH)}
+                </Box>
+            </TableCell>
+            <TableCell>
+                <ListTableTripleMapFragment
+                    item={item}
+                    initProjectTripleMapFragments={initProjectTripleMapFragments}
+                />
+            </TableCell>
+            <TableCell>
+                <ListTableMappingPackages
+                    item={item}
+                    initProjectMappingPackages={initProjectMappingPackages}
+                    onPackagesUpdate={onPackagesUpdate}
+                />
+            </TableCell>
+            <TableCell>
+                <ListTableSPARQLAssertions
+                    item={item}
+                    initProjectSPARQLResources={initProjectSPARQLResources}
+                />
+            </TableCell>
+            {/*<TableCell align="left">
+                {(item.created_at).replace("T", " ").split(".")[0]}
+            </TableCell>*/}
+            <TableCell align="right">
+                <ListItemActions
+                    itemctx={new ForListItemAction(item_id, sectionApi)}/>
+            </TableCell>
+        </TableRow>
+        {isCurrent && (<TableRow>
+            <TableCell
+                colSpan={7}
+                sx={{
+                    p: 0, position: 'relative', '&:after': {
+                        position: 'absolute',
+                        content: '" "',
+                        top: 0,
+                        left: 0,
+                        backgroundColor: 'primary.main',
+                        width: 3,
+                        height: 'calc(100% + 1px)'
+                    }
+                }}
+            >
+                <CardContent>
+                    <Grid container>
+                        <Grid
+                            item
+                            md={12}
+                            xs={12}
                         >
-                            <CardContent>
-                                <Grid container>
-                                    <Grid
-                                        item
-                                        md={12}
-                                        xs={12}
-                                    >
-                                        <PropertyList>
-                                            <PropertyListItem
-                                                label="Description"
-                                                value={item.business_description}
-                                            />
-                                        </PropertyList>
-                                    </Grid>
-                                </Grid>
-                            </CardContent>
-                        </TableCell>
-                    </TableRow>
-                )
-            }
-        </Fragment>
-    )
+                            <PropertyList>
+                                {item.business_id && (<PropertyListItem
+                                    key="business_id"
+                                    label="Business ID"
+                                    value={item.business_id}
+                                />)}
+                                {item.business_title && (<PropertyListItem
+                                    key="business_title"
+                                    label="Business Title"
+                                    value={item.business_title}
+                                />)}
+                                {item.business_description && (<PropertyListItem
+                                    key="description"
+                                    label="Description"
+                                    value={item.business_description}
+                                    sx={{
+                                        whiteSpace: "pre-wrap",
+                                        px: 3,
+                                        py: 1.5
+                                    }}
+                                />)}
+                                {item.source_xpath && (<PropertyListItem
+                                    key="source_xpath"
+                                    label="Source XPath"
+                                    value={item.source_xpath.map(
+                                        x => (
+                                            <Box title={x} sx={{whiteSpace: "nowrap"}}>
+                                                {x}
+                                            </Box>
+                                        )
+                                    )}
+                                />)}
+                                {item.target_class_path && (<PropertyListItem
+                                    key="target_class_path"
+                                    label="Ontology Fragment Class path"
+                                    value={item.target_class_path}
+                                />)}
+                                {item.target_property_path && (<PropertyListItem
+                                    key="target_property_path"
+                                    label="Ontology Fragment Property path"
+                                    value={item.target_property_path}
+                                />)}
+
+                            </PropertyList>
+                        </Grid>
+                    </Grid>
+                </CardContent>
+            </TableCell>
+        </TableRow>)}
+    </Fragment>)
 }
 
 export const ListTable = (props) => {
     const {
-        count = 0,
-        items = [],
-        onPageChange = () => {
-        },
-        onRowsPerPageChange,
-        page = 0,
-        rowsPerPage = 0,
-        sectionApi
+        count = 0, items = [], onPageChange = () => {
+        }, onRowsPerPageChange, page = 0, rowsPerPage = 0, sectionApi, onPackagesUpdate = () => {
+        }
     } = props;
-
 
     const [currentItem, setCurrentItem] = useState(null);
 
     const [projectTripleMapFragments, setProjectTripleMapFragments] = useState([]);
-
     useEffect(() => {
         (async () => {
-            setProjectTripleMapFragments(await genericTripleMapFragmentsApi.getProjectTripleMapFragments());
+            setProjectTripleMapFragments(await genericTripleMapFragmentsApi.getValuesForSelector());
         })()
     }, [genericTripleMapFragmentsApi])
 
     const [projectMappingPackages, setProjectMappingPackages] = useState([]);
-
     useEffect(() => {
         (async () => {
             setProjectMappingPackages(await mappingPackagesApi.getProjectPackages());
         })()
     }, [mappingPackagesApi])
+
+    const [projectSPARQLResources, setProjectSPARQLResources] = useState([]);
+    useEffect(() => {
+        (async () => {
+            setProjectSPARQLResources(await sparqlTestFileResourcesApi.getMappingRuleResources());
+        })()
+    }, [sparqlTestFileResourcesApi])
 
     const handleItemToggle = useCallback((itemId) => {
         setCurrentItem((prevItemId) => {
@@ -371,14 +674,13 @@ export const ListTable = (props) => {
     //     toast.error('Item cannot be deleted');
     // }, []);
 
-    return (
-        <div>
-            <Scrollbar>
-                <Table sx={{minWidth: 1200}}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell/>
-                            {/* <TableCell width="25%">
+    return (<div>
+        <Scrollbar>
+            <Table sx={{minWidth: 1200}}>
+                <TableHead>
+                    <TableRow>
+                        <TableCell/>
+                        {/* <TableCell>
                                 <Tooltip
                                     enterDelay={300}
                                     title="Sort"
@@ -390,124 +692,135 @@ export const ListTable = (props) => {
                                     </TableSortLabel>
                                 </Tooltip>
                             </TableCell> */}
-                            <TableCell width="25%">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
+                        <TableCell>
+                            <Tooltip
+                                enterDelay={300}
+                                title="Sort"
+                            >
+                                <TableSortLabel
+                                    direction="asc"
                                 >
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        Conceptual Field/Group
-                                    </TableSortLabel>
-                                </Tooltip>
-                            </TableCell>
-                            <TableCell>
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
+                                    Conceptual Field/Group
+                                </TableSortLabel>
+                            </Tooltip>
+                        </TableCell>
+                        <TableCell>
+                            <Tooltip
+                                enterDelay={300}
+                                title="Sort"
+                            >
+                                <TableSortLabel
+                                    direction="asc"
                                 >
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        Source XPath
-                                    </TableSortLabel>
-                                </Tooltip>
-                            </TableCell>
-                            <TableCell>
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
+                                    Source XPath
+                                </TableSortLabel>
+                            </Tooltip>
+                        </TableCell>
+                        <TableCell>
+                            <Tooltip
+                                enterDelay={300}
+                                title="Sort"
+                            >
+                                <TableSortLabel
+                                    direction="asc"
                                 >
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        Ontology Fragment Class path
-                                    </TableSortLabel>
-                                </Tooltip>
-                            </TableCell>
-                            <TableCell>
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
+                                    Ontology Fragment Class path
+                                </TableSortLabel>
+                            </Tooltip>
+                        </TableCell>
+                        <TableCell>
+                            <Tooltip
+                                enterDelay={300}
+                                title="Sort"
+                            >
+                                <TableSortLabel
+                                    direction="asc"
                                 >
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        Ontology Fragment Property path
-                                    </TableSortLabel>
-                                </Tooltip>
-                            </TableCell>
-                            <TableCell>
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
+                                    Ontology Fragment Property path
+                                </TableSortLabel>
+                            </Tooltip>
+                        </TableCell>
+                        <TableCell>
+                            <Tooltip
+                                enterDelay={300}
+                                title="Sort"
+                            >
+                                <TableSortLabel
+                                    direction="asc"
                                 >
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        RML Triple Map
-                                    </TableSortLabel>
-                                </Tooltip>
-                            </TableCell>
-                            <TableCell>
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
+                                    RML Triple Map
+                                </TableSortLabel>
+                            </Tooltip>
+                        </TableCell>
+                        <TableCell>
+                            <Tooltip
+                                enterDelay={300}
+                                title="Sort"
+                            >
+                                <TableSortLabel
+                                    direction="asc"
                                 >
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        SPARQL assertions
-                                    </TableSortLabel>
-                                </Tooltip>
-                            </TableCell>
-                            <TableCell align="left">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
+                                    Mapping Package
+                                </TableSortLabel>
+                            </Tooltip>
+                        </TableCell>
+                        <TableCell>
+                            <Tooltip
+                                enterDelay={300}
+                                title="Sort"
+                            >
+                                <TableSortLabel
+                                    direction="asc"
                                 >
-                                    <TableSortLabel
-                                        active
-                                        direction="desc"
-                                    >
-                                        Created
-                                    </TableSortLabel>
-                                </Tooltip>
-                            </TableCell>
-                            <TableCell align="right">
-                                Actions
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {items.map((item) => {
-                            const item_id = item._id;
-                            const isCurrent = item_id === currentItem;
+                                    SPARQL assertions
+                                </TableSortLabel>
+                            </Tooltip>
+                        </TableCell>
+                        {/*<TableCell align="left">
+                            <Tooltip
+                                enterDelay={300}
+                                title="Sort"
+                            >
+                                <TableSortLabel
+                                    active
+                                    direction="desc"
+                                >
+                                    Created
+                                </TableSortLabel>
+                            </Tooltip>
+                        </TableCell>*/}
+                        <TableCell align="right">
+                            Actions
+                        </TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {items.map((item) => {
+                        const item_id = item._id;
+                        const isCurrent = item_id === currentItem;
 
-                            return (
-                                <ListTableRow
-                                    item_id={item_id} item={item} isCurrent={isCurrent}
-                                    handleItemToggle={handleItemToggle} sectionApi={sectionApi}
-                                    initProjectMappingPackages={projectMappingPackages}
-                                    initProjectTripleMapFragments={projectTripleMapFragments}
-                                />
-                            )
-                        })}
-                    </TableBody>
-                </Table>
-            </Scrollbar>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={[5, 10, 25]}
-            />
-        </div>
-    );
+                        return (<ListTableRow
+                            item_id={item_id} item={item} isCurrent={isCurrent}
+                            handleItemToggle={handleItemToggle} sectionApi={sectionApi}
+                            initProjectMappingPackages={projectMappingPackages}
+                            initProjectTripleMapFragments={projectTripleMapFragments}
+                            initProjectSPARQLResources={projectSPARQLResources}
+                            onPackagesUpdate={onPackagesUpdate}
+                        />)
+                    })}
+                </TableBody>
+            </Table>
+        </Scrollbar>
+        <TablePagination
+            component="div"
+            count={count}
+            onPageChange={onPageChange}
+            onRowsPerPageChange={onRowsPerPageChange}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={[5, 10, 25]}
+        />
+    </div>);
 };
 
 ListTable.propTypes = {

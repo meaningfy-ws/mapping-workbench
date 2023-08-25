@@ -6,7 +6,7 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {resourceFilesApi as sectionApi} from 'src/api/resource-collections/file-resources';
+import {testDataFileResourcesApi as sectionApi} from 'src/api/test-data-suites/file-resources';
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
@@ -49,7 +49,7 @@ const Page = () => {
                                     color="text.primary"
                                     component={RouterLink}
                                     href={{
-                                        pathname: paths.app[sectionApi.section].file_manager.index,
+                                        pathname: paths.app[sectionApi.section].resource_manager.index,
                                         query: {id: id}
                                     }}
                                     sx={{

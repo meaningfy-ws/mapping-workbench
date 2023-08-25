@@ -1,5 +1,7 @@
 import {FileResourcesApi} from "../../file-collections/file-resources";
 
+const FILE_RESOURCE_TYPE_INTEGRATION_TEST_VALUE = "integration_test";
+
 class SPARQLTestFileResourcesApi extends FileResourcesApi {
     get SECTION_TITLE() {
         return "SPARQL Test File Resources";
@@ -28,9 +30,33 @@ class SPARQLTestFileResourcesApi extends FileResourcesApi {
         };
     }
 
+    get FILE_RESOURCE_TYPES() {
+        let types = {
+            "cm_assertion": "CM Assertion"
+        }
+        types[FILE_RESOURCE_TYPE_INTEGRATION_TEST_VALUE] = "Integration Test";
+        return types;
+    }
+
     constructor() {
         super("sparql_test_suites");
         this.isProjectResource = true;
+        this.hasFileResourceType = true;
+    }
+
+    async getMappingRuleResources(request = {}) {
+        request['filters'] = {
+            type: FILE_RESOURCE_TYPE_INTEGRATION_TEST_VALUE
+        };
+        let sparqlTestFileResourcesStore = await this.getItems(request, "free_file_resources");
+        return sparqlTestFileResourcesStore.items.map(
+            sparqlTestFileResource => ({
+                id: sparqlTestFileResource._id,
+                title: sparqlTestFileResource.title + (
+                    sparqlTestFileResource.filename ? " (" + sparqlTestFileResource.filename + ")" : ""
+                )
+            })
+        ).sort((a, b) => a.title.localeCompare(b.title));
     }
 }
 

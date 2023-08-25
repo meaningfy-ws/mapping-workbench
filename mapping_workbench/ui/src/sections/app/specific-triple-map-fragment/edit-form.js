@@ -13,9 +13,15 @@ import {RouterLink} from 'src/components/router-link';
 import {paths} from 'src/paths';
 import {useRouter} from 'src/hooks/use-router';
 import {FormTextField} from "../../../components/app/form/text-field";
-import {FormTextArea} from "../../../components/app/form/text-area";
 import {sessionApi} from "../../../api/session";
 import {MappingPackageFormSelect} from "../mapping-package/components/mapping-package-form-select";
+import {FormCodeTextArea} from "../../../components/app/form/code-text-area";
+import FormControl from "@mui/material/FormControl";
+import FormLabel from "@mui/material/FormLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import TextField from "@mui/material/TextField";
+import * as React from "react";
 
 
 export const EditForm = (props) => {
@@ -27,6 +33,7 @@ export const EditForm = (props) => {
     let initialValues = {
         triple_map_uri: item.triple_map_uri || '',
         triple_map_content: item.triple_map_content || '',
+        format: item.format || sectionApi.FILE_RESOURCE_DEFAULT_FORMAT || '',
         mapping_package: (item.mapping_package && item.mapping_package.id) || ''
     };
 
@@ -87,7 +94,34 @@ export const EditForm = (props) => {
                             <FormTextField formik={formik} name="triple_map_uri" label="URI" required={true}/>
                         </Grid>
                         <Grid xs={12} md={12}>
-                            <FormTextArea formik={formik} name="triple_map_content" label="Content"/>
+                            <TextField
+                                error={!!(formik.touched.format && formik.errors.format)}
+                                fullWidth
+                                helperText={formik.touched.format && formik.errors.format}
+                                onBlur={formik.handleBlur}
+                                label="Format"
+                                onChange={e => {
+                                    formik.setFieldValue("format", e.target.value);
+                                }}
+                                select
+                                required
+                                value={formik.values.format}
+                            >
+                                {Object.keys(sectionApi.FILE_RESOURCE_FORMATS).map((key) => (
+                                    <MenuItem key={key} value={key}>
+                                        {sectionApi.FILE_RESOURCE_FORMATS[key]}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                        </Grid>
+                        <Grid xs={12} md={12}>
+                            <FormCodeTextArea
+                                formik={formik}
+                                name="triple_map_content"
+                                label="Content"
+                                grammar={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['grammar']}
+                                language={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['language']}
+                            />
                         </Grid>
                     </Grid>
                 </CardContent>
@@ -114,7 +148,7 @@ export const EditForm = (props) => {
                         color="inherit"
                         component={RouterLink}
                         disabled={formik.isSubmitting}
-                        href={paths.app.triple_map_fragments.index}
+                        href={paths.app.specific_triple_map_fragments.index}
                     >
                         Cancel
                     </Button>

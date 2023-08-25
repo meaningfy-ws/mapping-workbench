@@ -16,8 +16,9 @@ async def list_conceptual_mapping_rules(filters=None) -> List[ConceptualMappingR
     query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
     return await ConceptualMappingRule.find(
         query_filters,
+        projection_model=ConceptualMappingRuleOut,
         fetch_links=False
-    ).project(ConceptualMappingRuleOut).to_list()
+    ).to_list()
 
 
 async def create_conceptual_mapping_rule(conceptual_mapping_rule_data: ConceptualMappingRuleCreateIn,

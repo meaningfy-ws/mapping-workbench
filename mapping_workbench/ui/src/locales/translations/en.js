@@ -24,6 +24,7 @@ export const en = {
   [tokens.nav.error]: 'Error',
   [tokens.nav.feed]: 'Feed',
   [tokens.nav.fileManager]: 'File Manager',
+  [tokens.nav.resourceManager]: 'Resource Manager',
   [tokens.nav.finance]: 'Finance',
   [tokens.nav.fleet]: 'Fleet',
   [tokens.nav.forgotPassword]: 'Forgot Password',

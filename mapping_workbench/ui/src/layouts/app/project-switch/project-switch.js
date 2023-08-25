@@ -47,7 +47,7 @@ export const ProjectSwitch = (props) => {
     };
 
     const validationSchema = Yup.object({
-        sessionProject: Yup.string().max(255).required()
+        sessionProject: Yup.string().required()
     });
 
     const formik = useFormik({
@@ -80,7 +80,7 @@ export const ProjectSwitch = (props) => {
                 name="sessionProject"
                 onBlur={formik.handleBlur}
                 onChange={handleSessionProjectChange}
-                select
+                select={true}
                 value={formik.values.sessionProject}
             >
                 {projectsStore.items.map((project) => (
