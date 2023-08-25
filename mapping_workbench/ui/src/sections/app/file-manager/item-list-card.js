@@ -15,17 +15,16 @@ import {ItemIcon} from './item-icon';
 import {ItemMenu} from './item-menu';
 import {paths} from "../../../paths";
 import {useRouter} from "src/hooks/use-router";
-import { v4 as uuid } from 'uuid';
 
 export const ItemListCard = (props) => {
     const router = useRouter();
     const {item, collection, sectionApi, fileResourcesApi} = props;
     const popover = usePopover();
 
-    const handleEdit = useCallback(async () => {
+    const handleEdit = useCallback(async (item_id) => {
         router.push({
-            pathname: paths.app[sectionApi.section].file_manager.edit,
-            query: {id: collection._id, fid: item._id}
+            pathname: paths.app[sectionApi.section].resource_manager.edit,
+            query: {id: collection._id, fid: item_id}
         });
 
     }, [router, item, collection, sectionApi]);
@@ -34,7 +33,7 @@ export const ItemListCard = (props) => {
         const response = await fileResourcesApi.deleteFileResource(item._id);
         router.reload();
         router.push({
-            pathname: paths.app[sectionApi.section].file_manager.index,
+            pathname: paths.app[sectionApi.section].resource_manager.index,
             query: {
                 id: collection._id,
                 refreshed: Date.now()
@@ -46,7 +45,7 @@ export const ItemListCard = (props) => {
     return (
         <>
             <Card
-                key={item.id}
+                key={item._id}
                 sx={{
                     backgroundColor: 'transparent',
                     boxShadow: 0,
@@ -72,7 +71,7 @@ export const ItemListCard = (props) => {
                     }}
                 >
                     <Typography
-                        onClick={() => handleEdit?.(item.id)}
+                        onClick={() => handleEdit?.(item._id)}
                         sx={{cursor: 'pointer'}}
                         variant="subtitle2"
                     >
@@ -95,7 +94,7 @@ export const ItemListCard = (props) => {
                         }}
                     >
                         <Box
-                            onClick={() => handleEdit?.(item.id)}
+                            onClick={() => handleEdit?.(item._id)}
                             sx={{
                                 display: 'inline-flex',
                                 cursor: 'pointer'

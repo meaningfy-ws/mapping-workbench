@@ -12,10 +12,15 @@ import TextField from '@mui/material/TextField';
 
 import {RouterLink} from 'src/components/router-link';
 import {paths} from 'src/paths';
-import {wait} from 'src/utils/wait';
 import {useRouter} from 'src/hooks/use-router';
 import {useCallback} from "react";
 import {sessionApi} from "../../../api/session";
+import FormControl from "@mui/material/FormControl";
+import {genericTripleMapFragmentsApi} from "../../../api/triple-map-fragments/generic";
+import MenuItem from "@mui/material/MenuItem";
+import * as React from "react";
+import FormLabel from "@mui/material/FormLabel";
+import Select from "@mui/material/Select";
 
 
 export const FileCollectionEditForm = (props) => {
@@ -25,11 +30,9 @@ export const FileCollectionEditForm = (props) => {
     const item = itemctx.data;
     let customPathName = "";
 
-    console.log("sectionApi: ", sectionApi.section);
-
-    const handleFileManagerAction = useCallback(async () => {
+    const handleResourceManagerAction = useCallback(async () => {
         router.push({
-            pathname: paths.app[itemctx.api.section].file_manager.index,
+            pathname: paths.app[itemctx.api.section].resource_manager.index,
             query: {id: item._id}
         });
 
@@ -40,6 +43,10 @@ export const FileCollectionEditForm = (props) => {
         description: item.description || '',
         submit: null
     };
+
+    if (sectionApi.hasFileCollectionType) {
+        initialValues['type'] = item.type || '';
+    }
 
     switch (sectionApi.section) {
         case 'test_data_suites':
@@ -94,7 +101,7 @@ export const FileCollectionEditForm = (props) => {
                     } else if (itemctx.isStateable) {
                         itemctx.setState(response);
                     }
-                    router.push({pathname: customPathName});
+                    //router.push({pathname: customPathName});
                 }
             } catch (err) {
                 console.error(err);
@@ -133,6 +140,29 @@ export const FileCollectionEditForm = (props) => {
                                 value={formik.values.title}
                             />
                         </Grid>
+                        {sectionApi.hasFileCollectionType && (
+                            <Grid xs={12} md={12}>
+                                <TextField
+                                    error={!!(formik.touched.type && formik.errors.type)}
+                                    fullWidth
+                                    helperText={formik.touched.type && formik.errors.type}
+                                    onBlur={formik.handleBlur}
+                                    label="Type"
+                                    onChange={e => {
+                                        formik.setFieldValue("type", e.target.value);
+                                    }}
+                                    select
+                                    value={formik.values.type}
+                                >
+                                    <MenuItem key="" value={null}>&nbsp;</MenuItem>
+                                    {Object.keys(sectionApi.FILE_COLLECTION_TYPES).map((key) => (
+                                        <MenuItem key={key} value={key}>
+                                            {sectionApi.FILE_COLLECTION_TYPES[key]}
+                                        </MenuItem>
+                                    ))}
+                                </TextField>
+                            </Grid>
+                        )}
                         <Grid
                             xs={12}
                             md={12}
@@ -173,10 +203,10 @@ export const FileCollectionEditForm = (props) => {
                     </Button>
                     {!itemctx.isNew && <Button
                         variant="contained"
-                        color="secondary"
-                        onClick={handleFileManagerAction}
+                        color="info"
+                        onClick={handleResourceManagerAction}
                     >
-                        File Manager
+                        Resources
                     </Button>}
                     <Button
                         color="inherit"

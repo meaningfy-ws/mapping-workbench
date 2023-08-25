@@ -6,7 +6,7 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {testDataFileResourcesApi as sectionApi} from 'src/api/test-data-suites/file-resources';
+import {sparqlTestFileResourcesApi as sectionApi} from 'src/api/sparql-test-suites/file-resources';
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
@@ -15,8 +15,6 @@ import {paths} from 'src/paths';
 import {FileResourceEditForm} from 'src/sections/app/file-manager/file-resource-edit-form';
 import {ForItemCreateForm} from "src/contexts/app/section/for-item-form";
 import {useRouter} from "src/hooks/use-router";
-
-
 const Page = () => {
     const router = useRouter();
     if (!router.isReady) return;
@@ -49,7 +47,7 @@ const Page = () => {
                                     color="text.primary"
                                     component={RouterLink}
                                     href={{
-                                        pathname: paths.app[sectionApi.section].file_manager.index,
+                                        pathname: paths.app[sectionApi.section].resource_manager.index,
                                         query: {id: id}
                                     }}
                                     sx={{

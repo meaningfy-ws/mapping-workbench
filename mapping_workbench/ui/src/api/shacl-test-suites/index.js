@@ -13,6 +13,13 @@ class SHACLTestSuitesApi extends FileCollectionsApi {
         super("shacl_test_suites");
         this.isProjectResource = true;
     }
+
+    async getValuesForSelector(request = {}) {
+        let valuesStore = await this.getItems();
+        return valuesStore.items.map(
+            value => ({id: value._id, title: value.title})
+        ).sort((a, b) => a.title.localeCompare(b.title));
+    }
 }
 
 export const shaclTestSuitesApi = new SHACLTestSuitesApi();

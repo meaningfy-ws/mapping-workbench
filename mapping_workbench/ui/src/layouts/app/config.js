@@ -1,7 +1,5 @@
-import {useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import SvgIcon from '@mui/material/SvgIcon';
-import BarChartSquare02Icon from 'src/icons/ui/duocolor/bar-chart-square-02';
 
 import FlareIcon from '@mui/icons-material/Flare';
 import BiotechIcon from '@mui/icons-material/Biotech';
@@ -11,11 +9,9 @@ import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import HiveIcon from '@mui/icons-material/Hive';
 import MapIcon from '@mui/icons-material/Map';
 import SchemaIcon from '@mui/icons-material/Schema';
-import FilePresentIcon from '@mui/icons-material/FilePresent';
 
 import HomeSmileIcon from 'src/icons/ui/duocolor/home-smile';
 import LayoutAlt02 from 'src/icons/ui/duocolor/layout-alt-02';
-import Upload04Icon from 'src/icons/ui/duocolor/upload-04';
 import Users03Icon from 'src/icons/ui/duocolor/users-03';
 import {tokens} from 'src/locales/tokens';
 import {paths} from 'src/paths';

@@ -7,7 +7,7 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {sparqlTestFileResourcesApi as sectionApi} from 'src/api/sparql-test-suites/file-resources';
+import {ontologyFileResourcesApi as sectionApi} from 'src/api/ontology-file-collections/file-resources';
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
@@ -81,7 +81,7 @@ const Page = () => {
                                     color="text.primary"
                                     component={RouterLink}
                                     href={{
-                                        pathname: paths.app[sectionApi.section].file_manager.index,
+                                        pathname: paths.app[sectionApi.section].resource_manager.index,
                                         query: {id: id}
                                     }}
                                     sx={{

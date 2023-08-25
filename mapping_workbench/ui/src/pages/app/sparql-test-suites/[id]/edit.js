@@ -50,7 +50,7 @@ const Page = () => {
             >
                 <Container maxWidth="xl">
                     <Stack spacing={4}>
-                        <Stack spacing={4}>
+                        <Stack spacing={2}>
                             <div>
                                 <Link
                                     color="text.primary"

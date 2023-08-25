@@ -9,8 +9,8 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {testDataSuitesApi as sectionApi} from 'src/api/test-data-suites';
-import {testDataFileResourcesApi as fileResourcesApi} from 'src/api/test-data-suites/file-resources';
+import {sparqlTestSuitesApi as sectionApi} from 'src/api/sparql-test-suites';
+import {sparqlTestFileResourcesApi as fileResourcesApi} from 'src/api/sparql-test-suites/file-resources';
 import {Seo} from 'src/components/seo';
 import {useDialog} from 'src/hooks/use-dialog';
 import {useMounted} from 'src/hooks/use-mounted';
@@ -23,7 +23,6 @@ import {ItemList} from 'src/sections/app/file-manager/item-list';
 import {ItemSearch} from 'src/sections/app/file-manager/item-search';
 import {useRouter} from "src/hooks/use-router";
 import {paths} from "../../../../../paths";
-import {sparqlTestFileResourcesApi} from "../../../../../api/sparql-test-suites/file-resources";
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -132,10 +131,10 @@ const Page = () => {
 
     const handleCreate = useCallback(async () => {
         router.push({
-            pathname: paths.app[sectionApi.section].file_manager.create,
+            pathname: paths.app[sectionApi.section].resource_manager.create,
             query: {id: id}
         });
-        
+
     }, [router, sectionApi]);
 
     const settings = useSettings();
@@ -150,7 +149,7 @@ const Page = () => {
 
     return (
         <>
-            <Seo title="App: File Manager"/>
+            <Seo title="App: Resource Manager"/>
             <Box
                 component="main"
                 sx={{
@@ -177,7 +176,7 @@ const Page = () => {
                                         {itemsStore.collection.title}
                                     </Typography>
                                     <Typography variant="h5">
-                                        File Manager
+                                        Resource Manager
                                     </Typography>
                                 </div>
                                 <Stack

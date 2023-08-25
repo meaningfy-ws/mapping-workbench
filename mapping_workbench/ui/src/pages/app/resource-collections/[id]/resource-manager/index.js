@@ -9,8 +9,8 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {shaclTestSuitesApi as sectionApi} from 'src/api/shacl-test-suites';
-import {shaclTestFileResourcesApi as fileResourcesApi} from 'src/api/shacl-test-suites/file-resources';
+import {resourceCollectionsApi as sectionApi} from 'src/api/resource-collections';
+import {resourceFilesApi as fileResourcesApi} from 'src/api/resource-collections/file-resources';
 import {Seo} from 'src/components/seo';
 import {useDialog} from 'src/hooks/use-dialog';
 import {useMounted} from 'src/hooks/use-mounted';
@@ -131,7 +131,7 @@ const Page = () => {
 
     const handleCreate = useCallback(async () => {
         router.push({
-            pathname: paths.app[sectionApi.section].file_manager.create,
+            pathname: paths.app[sectionApi.section].resource_manager.create,
             query: {id: id}
         });
 
@@ -149,7 +149,7 @@ const Page = () => {
 
     return (
         <>
-            <Seo title="App: File Manager"/>
+            <Seo title="App: Resource Manager"/>
             <Box
                 component="main"
                 sx={{
@@ -176,7 +176,7 @@ const Page = () => {
                                         {itemsStore.collection.title}
                                     </Typography>
                                     <Typography variant="h5">
-                                        File Manager
+                                        Resource Manager
                                     </Typography>
                                 </div>
                                 <Stack

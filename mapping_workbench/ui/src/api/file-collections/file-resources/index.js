@@ -10,7 +10,6 @@ export class FileResourcesApi extends SectionApi {
         return (this.FILE_RESOURCE_FORMATS && this.FILE_RESOURCE_FORMATS[0]) || '';
     }
 
-
     async createCollectionFileResource(collection_id, request) {
         try {
             let endpoint = this.paths['file_resources'].replace(':id', collection_id);

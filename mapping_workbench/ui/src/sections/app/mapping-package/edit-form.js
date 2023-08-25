@@ -16,6 +16,10 @@ import {FormTextField} from "../../../components/app/form/text-field";
 import {FormTextArea} from "../../../components/app/form/text-area";
 import {FormDateField} from "../../../components/app/form/date-field";
 import {sessionApi} from "../../../api/session";
+import {testDataSuitesApi} from "../../../api/test-data-suites";
+import {sparqlTestSuitesApi} from "../../../api/sparql-test-suites";
+import {shaclTestSuitesApi} from "../../../api/shacl-test-suites";
+import {ListSelectorSelect as ResourceListSelector} from "src/components/app/list-selector/select";
 
 
 export const EditForm = (props) => {
@@ -23,17 +27,19 @@ export const EditForm = (props) => {
     const router = useRouter();
     const sectionApi = itemctx.api;
     const item = itemctx.data;
-
+    console.log(item);
     let initialValues = {
         title: item.title || '',
         description: item.description || '',
         identifier: item.identifier || '',
         subtype: item.subtype || '',
-        start_date: item.start_date || '',
-        end_date: item.end_date || '',
+        start_date: item.start_date && new Date(item.start_date) || '',
+        end_date: item.end_date && new Date(item.end_date) || '',
         min_xsd_version: item.min_xsd_version || '',
         max_xsd_version: item.max_xsd_version || '',
-
+        test_data_suites: (item.test_data_suites || []).map(x => x.id),
+        sparql_test_suites: (item.sparql_test_suites || []).map(x => x.id),
+        shacl_test_suites: (item.shacl_test_suites || []).map(x => x.id)
     };
 
     const formik = useFormik({
@@ -113,6 +119,42 @@ export const EditForm = (props) => {
                         </Grid>
                         <Grid xs={12} md={6}>
                             <FormTextField formik={formik} name="max_xsd_version" label="Max XSD Version"/>
+                        </Grid>
+                    </Grid>
+                </CardContent>
+            </Card>
+            <Card sx={{mt: 3}}>
+                <CardHeader title={testDataSuitesApi.SECTION_TITLE}/>
+                <CardContent sx={{pt: 0}}>
+                    <Grid container spacing={3}>
+                        <Grid xs={12} md={12}>
+                            <ResourceListSelector
+                                valuesApi={testDataSuitesApi}
+                                listValues={formik.values.test_data_suites}/>
+                        </Grid>
+                    </Grid>
+                </CardContent>
+            </Card>
+            <Card sx={{mt: 3}}>
+                <CardHeader title={sparqlTestSuitesApi.SECTION_TITLE}/>
+                <CardContent sx={{pt: 0}}>
+                    <Grid container spacing={3}>
+                        <Grid xs={12} md={12}>
+                            <ResourceListSelector
+                                valuesApi={sparqlTestSuitesApi}
+                                listValues={formik.values.sparql_test_suites}/>
+                        </Grid>
+                    </Grid>
+                </CardContent>
+            </Card>
+            <Card sx={{mt: 3}}>
+                <CardHeader title={shaclTestSuitesApi.SECTION_TITLE}/>
+                <CardContent sx={{pt: 0}}>
+                    <Grid container spacing={3}>
+                        <Grid xs={12} md={12}>
+                            <ResourceListSelector
+                                valuesApi={shaclTestSuitesApi}
+                                listValues={formik.values.shacl_test_suites}/>
                         </Grid>
                     </Grid>
                 </CardContent>

@@ -58,5 +58,5 @@ export const VerticalLayout = (props) => {
 VerticalLayout.propTypes = {
   children: PropTypes.node,
   navColor: PropTypes.oneOf(['blend-in', 'discrete', 'evident']),
-  sections: PropTypes.array
+  sections: PropTypes.object
 };

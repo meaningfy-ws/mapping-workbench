@@ -179,6 +179,11 @@ export const ListTable = (props) => {
                                                                 <PropertyListItem
                                                                     label="Content"
                                                                     value={item.triple_map_content}
+                                                                    sx={{
+                                                                        whiteSpace: "pre-wrap",
+                                                                        px: 3,
+                                                                        py: 1.5
+                                                                    }}
                                                                 />
                                                             </PropertyList>
                                                         </Grid>

@@ -1,22 +1,10 @@
-import { Button } from '@mui/material';
-import EditIcon from '@untitled-ui/icons-react/build/esm/Edit02';
-import Eye from '@untitled-ui/icons-react/build/esm/Eye';
-import DotsHorizontalIcon from '@untitled-ui/icons-react/build/esm/DotsHorizontal';
-import DeleteIcon from '@untitled-ui/icons-react/build/esm/Delete';
-import IconButton from '@mui/material/IconButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import SvgIcon from '@mui/material/SvgIcon';
-import Tooltip from '@mui/material/Tooltip';
+import {Button} from '@mui/material';
 
 
 import {usePopover} from 'src/hooks/use-popover';
 import {useCallback} from "react";
 import {paths} from 'src/paths';
 import {useRouter} from "../../../hooks/use-router";
-import {FileAttachment04} from "@untitled-ui/icons-react";
 
 export const ListFileCollectionActions = (props) => {
     const router = useRouter();
@@ -24,9 +12,9 @@ export const ListFileCollectionActions = (props) => {
     const {itemctx} = props;
     const popover = usePopover();
 
-    const handleFileManagerAction = useCallback(async () => {
+    const handleResourceManagerAction = useCallback(async () => {
         router.push({
-            pathname: paths.app[itemctx.api.section].file_manager.index,
+            pathname: paths.app[itemctx.api.section].resource_manager.index,
             query: {id: itemctx.id}
         });
 
@@ -48,7 +36,6 @@ export const ListFileCollectionActions = (props) => {
     }, [router, itemctx]);
 
     const handleDeleteAction = useCallback(async () => {
-        console.log([router, itemctx]);
         const response = await itemctx.api.deleteItem(itemctx.id);
         router.push({
             pathname: paths.app[itemctx.api.section].index
@@ -59,38 +46,35 @@ export const ListFileCollectionActions = (props) => {
     return (
         <>
             <div className='newActionButtons' sx={{ display: "flex", flexDirection: "inline", justifyContent: "space-evenly"}}>
-                <Button
-                    variant="contained"            
-                    size="large"
+                {/*<Button
+                    variant="text"
+                    size="small"
                     color="secondary"
-                    onClick={handleFileManagerAction}
-                    sx={{  boxShadow: "0px 1px 5px rgba(0, 0, 0, 0.08)", borderRadius: "12px", minWidth: "80px" }}
-                >
-                File Manager
-                </Button>
-                <Button
-                    variant="contained"            
-                    size="large"
                     onClick={handleViewAction}
-                    sx={{ color: "#ffffff",backgroundColor: "#2970FF", boxShadow: "0px 1px 5px rgba(0, 0, 0, 0.08)", borderRadius: "12px", minWidth: "80px", marginLeft: "10px" }}
                 >
                 View
+                </Button>*/}
+                <Button
+                    variant="text"
+                    size="small"
+                    color="info"
+                    onClick={handleResourceManagerAction}
+                >
+                Resources
                 </Button>
                 <Button
-                    variant="contained"            
-                    size="large"
+                    variant="text"
+                    size="small"
                     color="success"
                     onClick={handleEditAction}
-                    sx={{  boxShadow: "0px 1px 5px rgba(0, 0, 0, 0.08)", borderRadius: "12px", minWidth: "80px", marginLeft: "10px"  }}
                 >
                 Edit
                 </Button>
                 <Button
-                    variant="contained"            
-                    size="large"
+                    variant="text"
+                    size="small"
                     color="error"
                     onClick={handleDeleteAction}
-                    sx={{  boxShadow: "0px 1px 5px rgba(0, 0, 0, 0.08)", borderRadius: "12px", minWidth: "80px", marginLeft: "10px" }}
                 >
                 Delete
                 </Button>
@@ -124,7 +108,7 @@ export const ListFileCollectionActions = (props) => {
                     vertical: 'top'
                 }}
             >
-                <MenuItem onClick={handleFileManagerAction}>
+                <MenuItem onClick={handleResourceManagerAction}>
                     <ListItemIcon>
                         <SvgIcon>
                             <FileAttachment04/>

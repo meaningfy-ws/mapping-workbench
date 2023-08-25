@@ -13,6 +13,13 @@ class TestDataSuitesApi extends FileCollectionsApi {
         super("test_data_suites");
         this.isProjectResource = true;
     }
+
+    async getValuesForSelector(request = {}) {
+        let valuesStore = await this.getItems();
+        return valuesStore.items.map(
+            value => ({id: value._id, title: value.title})
+        ).sort((a, b) => a.title.localeCompare(b.title));
+    }
 }
 
 export const testDataSuitesApi = new TestDataSuitesApi();

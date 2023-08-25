@@ -80,7 +80,7 @@ export const MappingPackageCheckboxList = (props) => {
     return (
         <>
             <MenuList>
-                <MenuItem>
+                <MenuItem key={0}>
                     <FormControlLabel
                         sx={{
                             width: '100%'
@@ -99,7 +99,7 @@ export const MappingPackageCheckboxList = (props) => {
             {projectMappingPackages.map((project_mapping_package) => {
                 return (
                     <MenuList>
-                        <MenuItem>
+                        <MenuItem key={project_mapping_package.id}>
                             <MappingPackageCheckboxListItem
                                 xs={12}
                                 mappingPackage={project_mapping_package}

@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Optional, List
 
 from beanie import Link
@@ -7,9 +8,15 @@ from mapping_workbench.backend.core.models.base_project_resource_entity import B
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 
 
+class TripleMapFragmentFormat(Enum):
+    TTL = "TTL"
+    YAML = "YAML"
+
+
 class SpecificTripleMapFragmentIn(BaseProjectResourceEntityInSchema):
     triple_map_uri: Optional[str]
     triple_map_content: Optional[str]
+    format: Optional[TripleMapFragmentFormat]
     mapping_package: Optional[Link[MappingPackage]]
 
 
@@ -24,12 +31,14 @@ class SpecificTripleMapFragmentUpdateIn(SpecificTripleMapFragmentIn):
 class SpecificTripleMapFragmentOut(BaseProjectResourceEntityOutSchema):
     triple_map_uri: Optional[str]
     triple_map_content: Optional[str]
+    format: Optional[TripleMapFragmentFormat]
     mapping_package: Optional[Link[MappingPackage]]
 
 
 class GenericTripleMapFragmentIn(BaseProjectResourceEntityInSchema):
     triple_map_uri: Optional[str]
     triple_map_content: Optional[str]
+    format: Optional[TripleMapFragmentFormat]
 
 
 class GenericTripleMapFragmentCreateIn(GenericTripleMapFragmentIn):
@@ -43,11 +52,13 @@ class GenericTripleMapFragmentUpdateIn(GenericTripleMapFragmentIn):
 class GenericTripleMapFragmentOut(BaseProjectResourceEntityOutSchema):
     triple_map_uri: Optional[str]
     triple_map_content: Optional[str]
+    format: Optional[TripleMapFragmentFormat]
 
 
 class TripleMapFragment(BaseProjectResourceEntity):
     triple_map_uri: Optional[str]
     triple_map_content: Optional[str]
+    format: Optional[TripleMapFragmentFormat]
 
 
 class SpecificTripleMapFragment(TripleMapFragment):
