@@ -1,0 +1,26 @@
+name: CI/CD pipeline
+
+on:
+  push:
+    branches: [ feature/* , hotfix/*]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: pyTest
+    runs-on: ubuntu-latest
+    environment: staging
+
+    steps:
+    - name: install ssh keys
+      run: |
+        install -m 600 -D /dev/null ~/.ssh/id_rsa
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+    - name: connect and pull
+      run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd work && mkdir test-github && exit"
+    - name: cleanup
+      run: rm -rf ~/.ssh
