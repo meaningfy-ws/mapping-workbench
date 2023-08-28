@@ -1,8 +1,7 @@
 {
-  "name": "@devias-kit-pro/next-pages",
-  "version": "6.4.0",
-  "author": "Devias",
-  "homepage": "https://devias.io",
+  "name": "@meaningfy/mapping-workebench-frontend",
+  "version": "0.0.1",
+  "author": "Meaningfy",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -13,6 +12,9 @@
     "lint": "next lint",
     "lint-fix": "next lint --fix",
     "test": ""
+  },
+  "engines": {
+    "node": ">=12.x"
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "2.0.4",
@@ -51,7 +53,7 @@
     "mapbox-gl": "2.14.1",
     "moment": "^2.29.4",
     "mui-one-time-password-input": "1.1.0",
-    "next": "13.4.2",
+    "next": "13.4.19",
     "nprogress": "0.2.0",
     "numeral": "2.0.6",
     "prismjs": "^1.29.0",
@@ -95,6 +97,7 @@
     "@types/react-redux": "7.1.25",
     "@types/react-slick": "0.23.10",
     "@types/react-syntax-highlighter": "15.5.6",
+    "babel-plugin-prismjs": "^2.1.0",
     "eslint": "8.40.0",
     "eslint-config-next": "13.4.2",
     "sass": "^1.65.1",

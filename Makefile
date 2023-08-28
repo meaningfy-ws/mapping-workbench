@@ -15,7 +15,7 @@ PM2_SCRIPT := ${PROJECT_PATH}/${FRONTEND_HOME}/node_modules/pm2/bin/pm2
 
 install: install-backend install-frontend
 
-install-dev: install-dev-backend install-dev-frontend
+install-dev: install-dev-backend install-frontend-dev
 
 install-backend:
 	@ echo "Installing BACKEND requirements"
