@@ -4,9 +4,7 @@ ENV_FILE := .env
 
 NAME := mapping_workbench
 BACKEND_INFRA_FOLDER := ${PROJECT_PATH}/${NAME}/backend
-UI_HOME := ${NAME}/ui
-UI_ENV_FILE := ${UI_HOME}/${ENV_FILE}
-FRONTEND_HOME := ${NAME}/ui
+FRONTEND_HOME := ${NAME}/frontend
 FRONTEND_INFRA_FOLDER := ${PROJECT_PATH}/${FRONTEND_HOME}
 FRONTEND_ENV_FILE := ${FRONTEND_HOME}/${ENV_FILE}
 PM2_SCRIPT := ${PROJECT_PATH}/${FRONTEND_HOME}/node_modules/pm2/bin/pm2
@@ -15,39 +13,27 @@ PM2_SCRIPT := ${PROJECT_PATH}/${FRONTEND_HOME}/node_modules/pm2/bin/pm2
 # include .env files if they exist
 -include ${ENV_FILE}
 
-install: install-toolchain install-backend install-frontend
+install: install-backend install-frontend
 
-install-dev: install-dev-toolchain install-dev-backend install-dev-frontend
-
-install-toolchain:
-	@ echo "Installing TOOLCHAIN requirements"
-	@ pip install --upgrade pip
-	@ pip install --no-cache-dir -r requirements.toolchain.txt
-
-install-dev-toolchain:
-	@ echo "Installing dev TOOLCHAIN requirements"
-	@ pip install --upgrade pip
-	@ pip install --no-cache-dir -r requirements.toolchain.dev.txt
+install-dev: install-dev-backend install-frontend-dev
 
 install-backend:
 	@ echo "Installing BACKEND requirements"
 	@ pip install --upgrade pip
-	@ pip install --no-cache-dir -r requirements.backend.txt
+	@ pip install --no-cache-dir -r requirements.txt
 
 install-dev-backend:
 	@ echo "Installing dev BACKEND requirements"
 	@ pip install --upgrade pip
-	@ pip install --no-cache-dir -r requirements.backend.dev.txt
+	@ pip install --no-cache-dir -r requirements.dev.txt
 
-install-ui-dev:
-	@ cd ${UI_HOME} && make install-${ENVIRONMENT}-frontend
+install-frontend-dev:
+	@ cd ${FRONTEND_HOME} && make install-${ENVIRONMENT}-frontend
 
 install-all-backend: install-backend install-dev-backend
 
 install-frontend:
 	@ cd ${FRONTEND_HOME} && make install-${ENVIRONMENT}-frontend
-
-install-all-frontend: install-frontend
 
 test: test-unit
 test-unit: test-unit-backend test-unit-frontend
@@ -55,7 +41,7 @@ test-e2e: test-e2e-backend test-e2e-frontend
 
 test-unit-backend:
 	@ echo "UNIT Testing BACKEND ... "
-	@ tox -e unit backend
+	@ tox -e unit -- backend
 
 test-unit-frontend:
 	@ echo "UNIT Testing FRONTEND ... "
@@ -64,7 +50,7 @@ test-unit-frontend:
 
 test-e2e-backend:
 	@ echo "E2E Testing BACKEND ... "
-	@ tox -e e2e backend
+	@ tox -e e2e -- backend
 
 test-e2e-frontend:
 	@ echo "E2E Testing FRONTEND ... "
@@ -78,19 +64,7 @@ build-frontend-dev:
 
 start-frontend-dev:
 	@ echo "Starting FRONTEND"
-	@ cd ${FRONTEND_HOME} && ${PM2_SCRIPT} start npm --name ${NAME} -- run start
-
-stop-frontend-dev:
-	@ echo "Stopping FRONTEND"
-	@ cd ${FRONTEND_HOME} && ${PM2_SCRIPT} delete ${NAME}
-
-start-ui-dev:
-	@ echo "Starting UI"
-	@ cd ${UI_HOME} && ${PM2_SCRIPT} start npm --name ${NAME}-ui -- run dev
-
-stop-ui-dev:
-	@ echo "Stopping UI"
-	@ cd ${UI_HOME} && ${PM2_SCRIPT} delete ${NAME}-ui
+	@ cd ${FRONTEND_HOME} && make start-dev-frontend
 
 
 dev-dotenv-file:

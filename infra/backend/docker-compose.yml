@@ -30,8 +30,8 @@ services:
     volumes:
       - ${BACKEND_INFRA_FOLDER}:/app/mapping_workbench/backend
       - type: bind
-        source: ./../../requirements.backend.txt
-        target: /app/requirements.backend.txt
+        source: ./../../requirements.txt
+        target: /app/requirements.txt
       - type: bind
         source: ./../../Makefile
         target: /app/Makefile
