@@ -11,7 +11,8 @@
     "start": "next start",
     "export": "next export",
     "lint": "next lint",
-    "lint-fix": "next lint --fix"
+    "lint-fix": "next lint --fix",
+    "test": ""
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "2.0.4",

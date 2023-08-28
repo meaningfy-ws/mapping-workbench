@@ -41,7 +41,7 @@ test-e2e: test-e2e-backend test-e2e-frontend
 
 test-unit-backend:
 	@ echo "UNIT Testing BACKEND ... "
-	@ tox -e unit backend
+	@ tox -e unit -- backend
 
 test-unit-frontend:
 	@ echo "UNIT Testing FRONTEND ... "
@@ -50,7 +50,7 @@ test-unit-frontend:
 
 test-e2e-backend:
 	@ echo "E2E Testing BACKEND ... "
-	@ tox -e e2e backend
+	@ tox -e e2e -- backend
 
 test-e2e-frontend:
 	@ echo "E2E Testing FRONTEND ... "
@@ -64,7 +64,7 @@ build-frontend-dev:
 
 start-frontend-dev:
 	@ echo "Starting FRONTEND"
-	@ cd ${FRONTEND_HOME} && npm run dev
+	@ cd ${FRONTEND_HOME} && make start-dev-frontend
 
 
 dev-dotenv-file:
