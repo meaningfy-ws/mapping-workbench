@@ -7,7 +7,7 @@ services:
     env_file:
       - ../../.env
     build:
-      context: ./../../mapping_workbench/ui
+      context: ./../../mapping_workbench/frontend
       dockerfile: ./../../infra/frontend/Dockerfile
       args:
         - ENV_FILE=.env
