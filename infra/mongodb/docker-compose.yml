@@ -10,8 +10,8 @@ services:
       - mongodb-mw-data:/data/db
     networks:
       - mw-net
-#    ports:
-#      - ${MONGO_DB_PORT}:27017
+    ports:
+      - ${MONGO_DB_PORT}:27017
     restart: unless-stopped
     labels:
       - 'traefik.enable=false'

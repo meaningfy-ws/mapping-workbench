@@ -16,7 +16,7 @@ install-dev-frontend:
 
 install-staging-frontend:
 	@ echo "Installing STAGING FRONTEND"
-	@ npm install --production && npm install -g serve && npm run build && rm -fr node_modules
+	@ npm install
 
 install-prod-frontend:
 	@ echo "Installing PROD FRONTEND"
