@@ -15,6 +15,10 @@ jobs:
     environment: staging
 
     steps:
+    - name: Extract branch name
+      shell: bash
+      run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+      id: extract_branch
     - name: install ssh keys
       run: |
         install -m 600 -D /dev/null ~/.ssh/id_rsa
@@ -23,17 +27,16 @@ jobs:
 
     - name: connect and pull
       run: |
-        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
-        cd ${{ secrets.WORK_DIR }}
+        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git checkout ${{ steps.extract_branch.outputs.branch }} && git status && exit"
 
-    - name: Checkout
-      uses: actions/checkout@v2
-
-    - name: git status
-      run: git status
-
-    - name: exit ssh
-      run: exit
+#    - name: Checkout
+#      uses: actions/checkout@v2
+#
+#    - name: git status
+#      run: git status
+#
+#    - name: exit ssh
+#      run: exit
 
     - name: cleanup
       run: rm -rf ~/.ssh
