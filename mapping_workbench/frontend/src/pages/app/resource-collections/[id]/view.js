@@ -13,13 +13,6 @@ import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
 
-import { Card } from '@mui/material';
-import List from '@mui/material';
-import ListItem from '@mui/material';
-import ListItemText from '@mui/material';
-import CardHeader from '@mui/material';
-
-
 import {resourceCollectionsApi as sectionApi} from 'src/api/resource-collections';
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
@@ -29,8 +22,6 @@ import {paths} from 'src/paths';
 import {FileCollectionBasicDetails} from 'src/sections/app/file-manager/file-collection-basic-details';
 import {useRouter} from "src/hooks/use-router";
 import {useItem} from "src/contexts/app/section/for-item-data-state";
-import { packageCollectionsApi } from 'src/api/mapping-packages';
-import { conceptualMappingCollectionsApi } from 'src/api/conceptual-mapping-collections';
 
 const mockDataPackages = {
   title:"F03",
