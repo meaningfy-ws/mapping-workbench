@@ -2,7 +2,9 @@ start-dev-frontend:
 	@ echo "Starting DEV FRONTEND"
 	@ npm run dev
 
-start-staging-frontend: start-dev-frontend
+start-staging-frontend:
+	@ echo "Starting STAGING FRONTEND"
+	serve -s build
 
 start-prod-frontend:
 	@ echo "Starting PROD FRONTEND"
@@ -14,7 +16,7 @@ install-dev-frontend:
 
 install-staging-frontend:
 	@ echo "Installing STAGING FRONTEND"
-	@ npm install
+	@ npm install --production && npm install -g serve && npm run build && rm -fr node_modules
 
 install-prod-frontend:
 	@ echo "Installing PROD FRONTEND"

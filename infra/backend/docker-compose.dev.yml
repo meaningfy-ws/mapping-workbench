@@ -13,6 +13,8 @@ services:
         - ENVIRONMENT=${ENVIRONMENT}
         - HOST=${MW_BACKEND_SERVER_HOST}
         - PORT=${MW_BACKEND_SERVER_PORT}
+    ports:
+      - ${MW_BACKEND_SERVER_PORT}:${MW_BACKEND_SERVER_PORT}
     networks:
       - proxy-net
       - mw-net
@@ -26,7 +28,14 @@ services:
       - "traefik.http.routers.mw-backend-${ENVIRONMENT}-secured.rule=Host(`api.mw.${SUBDOMAIN}${DOMAIN}`)" # <== Your Domain Name for the https rule
       - "traefik.http.routers.mw-backend-${ENVIRONMENT}-secured.entrypoints=web-secured" # <== Defining entrypoint for https, **ref: line 31
       - "traefik.http.routers.mw-backend-${ENVIRONMENT}-secured.tls=true"
-
+    volumes:
+      - ${BACKEND_INFRA_FOLDER}:/app/mapping_workbench/backend
+      - type: bind
+        source: ./../../requirements.txt
+        target: /app/requirements.txt
+      - type: bind
+        source: ./../../Makefile
+        target: /app/Makefile
 
 networks:
   proxy-net:
