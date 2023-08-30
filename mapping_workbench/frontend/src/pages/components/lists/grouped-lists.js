@@ -5,7 +5,6 @@ import Stack from '@mui/material/Stack';
 import { Seo } from 'src/components/seo';
 import { usePageView } from 'src/hooks/use-page-view';
 import { Layout as ComponentsLayout } from 'src/layouts/components';
-import { Layout as MarketingLayout } from 'src/layouts/marketing';
 import { Previewer } from 'src/sections/components/previewer';
 import { GroupedList1 } from 'src/sections/components/grouped-lists/grouped-list-1';
 import { GroupedList2 } from 'src/sections/components/grouped-lists/grouped-list-2';
@@ -99,9 +98,7 @@ const Page = () => {
 };
 
 Page.getLayout = (page) => (
-  <MarketingLayout>
     {page}
-  </MarketingLayout>
 );
 
 export default Page;

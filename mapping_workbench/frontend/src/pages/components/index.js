@@ -12,7 +12,6 @@ import { useTheme } from '@mui/material/styles';
 import { RouterLink } from 'src/components/router-link';
 import { Seo } from 'src/components/seo';
 import { usePageView } from 'src/hooks/use-page-view';
-import { Layout as MarketingLayout } from 'src/layouts/marketing';
 import { paths } from 'src/paths';
 
 const getSections = (paletteMode) => ([
@@ -267,9 +266,7 @@ const Page = () => {
 };
 
 Page.getLayout = (page) => (
-  <MarketingLayout>
     {page}
-  </MarketingLayout>
 );
 
 export default Page;

@@ -5,7 +5,6 @@ import Stack from '@mui/material/Stack';
 import { Seo } from 'src/components/seo';
 import { usePageView } from 'src/hooks/use-page-view';
 import { Layout as ComponentsLayout } from 'src/layouts/components';
-import { Layout as MarketingLayout } from 'src/layouts/marketing';
 import { Previewer } from 'src/sections/components/previewer';
 import { QuickStats1 } from 'src/sections/components/quick-stats/quick-stats-1';
 import { QuickStats2 } from 'src/sections/components/quick-stats/quick-stats-2';
@@ -89,9 +88,7 @@ const Page = () => {
 };
 
 Page.getLayout = (page) => (
-  <MarketingLayout>
     {page}
-  </MarketingLayout>
 );
 
 export default Page;
