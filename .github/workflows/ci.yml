@@ -27,8 +27,7 @@ jobs:
 
     - name: connect, pull and build
       run: |
-        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
-        "cd ${{ secrets.WORK_DIR }} && git pull && git checkout ${{ steps.extract_branch.outputs.branch }} && make build-frontend && make build-backend && exit"
+        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git pull && git checkout ${{ steps.extract_branch.outputs.branch }} && make build-frontend && make build-backend && exit"
 
 #    - name: Checkout
 #      uses: actions/checkout@v2
