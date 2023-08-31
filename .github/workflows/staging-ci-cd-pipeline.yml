@@ -1,12 +1,8 @@
-name: CI/CD pipeline
+name: staging CI/CD pipeline
 
 on:
   pull_request:
   workflow_dispatch:
-    inputs:
-      branch:
-        description: 'The branch to build'
-        required: true
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
