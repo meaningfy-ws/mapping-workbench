@@ -19,15 +19,16 @@ jobs:
       shell: bash
       run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
       id: extract_branch
-    - name: install ssh keys
+    - name: Install ssh keys
       run: |
         install -m 600 -D /dev/null ~/.ssh/id_rsa
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
 
-    - name: connect and pull
+    - name: connect, pull and build
       run: |
-        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git checkout ${{ steps.extract_branch.outputs.branch }} && git status && exit"
+        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
+        "cd ${{ secrets.WORK_DIR }} && git pull && git checkout ${{ steps.extract_branch.outputs.branch }} && make build-frontend && make build-backend && exit"
 
 #    - name: Checkout
 #      uses: actions/checkout@v2
