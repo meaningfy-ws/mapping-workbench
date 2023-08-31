@@ -27,6 +27,7 @@ COPY package*.json ./
 # Copy local directories to the working directory of our docker image (/app)
 COPY ./src ./src
 COPY ./public ./public
+COPY next.config.js ./
 
 RUN echo "NODE_ENV=${NODE_ENV}" > ${ENV_FILE} \
     && echo "PORT=${PORT}" >> ${ENV_FILE} \

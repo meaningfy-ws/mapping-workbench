@@ -16,7 +16,7 @@ RUN mkdir -p /app
 WORKDIR /app
 
 COPY ./mapping_workbench/backend ./mapping_workbench/backend
-COPY ./requirements.backend.txt ./
+COPY ./requirements.txt ./
 COPY ./Makefile ./
 
 RUN make install-backend

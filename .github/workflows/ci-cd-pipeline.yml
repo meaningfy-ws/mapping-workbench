@@ -1,17 +1,19 @@
-name: Tests on push
+name: CI/CD pipeline
 
 on:
-  push:
-    branches: [ feature/* , main, hotfix/*, release/* ]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'The branch to build'
+        required: true
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
-env:
-  ENVIRONMENT: staging
 jobs:
-  run_tests_on_push:
+  run_tests:
     name: Running tests
     runs-on: ubuntu-latest
 
@@ -27,6 +29,7 @@ jobs:
         run: |
           python -m pip install --upgrade setuptools pip wheel
           make install-dev-backend
+#          make install
 #          make install-dev
       - name: Make envfile
         uses: SpicyPizza/create-envfile@v1
@@ -49,3 +52,27 @@ jobs:
           env_vars: OS,PYTHON
           name: codecov-umbrella
           fail_ci_if_error: true
+
+  deploy_and_build:
+    needs: run_tests
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    environment: staging
+
+    steps:
+    - name: Extract branch name
+      shell: bash
+      run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+      id: extract_branch
+    - name: Install ssh keys
+      run: |
+        install -m 600 -D /dev/null ~/.ssh/id_rsa
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+
+    - name: connect, pull and build
+      run: |
+        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && git pull && git checkout ${{ steps.extract_branch.outputs.branch }} && make build-frontend && make build-backend && exit"
+
+    - name: cleanup
+      run: rm -rf ~/.ssh
