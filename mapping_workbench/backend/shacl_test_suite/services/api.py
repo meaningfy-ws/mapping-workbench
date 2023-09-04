@@ -4,8 +4,10 @@ from beanie import PydanticObjectId
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
-from mapping_workbench.backend.core.services.request import request_update_data, api_entity_is_found
-from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestFileResource
+from mapping_workbench.backend.core.services.request import request_update_data, api_entity_is_found, \
+    request_create_data
+from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestFileResource, \
+    SHACLTestFileResourceCreateIn, SHACLTestFileResourceUpdateIn
 from mapping_workbench.backend.user.models.user import User
 
 
@@ -56,24 +58,22 @@ async def list_shacl_test_suite_file_resources(
 
 
 async def create_shacl_test_suite_file_resource(
-        id: PydanticObjectId,
-        shacl_test_file_resource: SHACLTestFileResource,
+        shacl_test_suite: SHACLTestSuite,
+        data: SHACLTestFileResourceCreateIn,
         user: User
 ) -> SHACLTestFileResource:
-    shacl_test_file_resource.shacl_test_suite = SHACLTestSuite.link_from_id(id)
-    shacl_test_file_resource.on_create(user=user)
+    data.shacl_test_suite = shacl_test_suite
+    shacl_test_file_resource = SHACLTestFileResource(**request_create_data(data)).on_create(user=user)
     return await shacl_test_file_resource.create()
 
 
 async def update_shacl_test_file_resource(
-        id: PydanticObjectId,
-        shacl_test_file_resource_data: SHACLTestFileResource,
-        user: User):
-    shacl_test_file_resource: SHACLTestFileResource = await SHACLTestFileResource.get(id)
-    if not api_entity_is_found(shacl_test_file_resource):
-        raise ResourceNotFoundException()
-    request_data = request_update_data(shacl_test_file_resource_data)
-    update_data = request_update_data(SHACLTestFileResource(**request_data).on_update(user=user))
+        shacl_test_file_resource: SHACLTestFileResource,
+        data: SHACLTestFileResourceUpdateIn,
+        user: User) -> SHACLTestFileResource:
+    update_data = request_update_data(
+        SHACLTestFileResource(**request_update_data(data)).on_update(user=user)
+    )
     return await shacl_test_file_resource.set(update_data)
 
 

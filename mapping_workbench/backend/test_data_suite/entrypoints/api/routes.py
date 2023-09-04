@@ -9,7 +9,8 @@ from mapping_workbench.backend.file_resource.services.file_resource_form_data im
     file_resource_data_from_form_request
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
-from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource
+from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
+    TestDataFileResourceUpdateIn, TestDataFileResourceCreateIn
 from mapping_workbench.backend.test_data_suite.models.entity_api_response import \
     APIListTestDataSuitesPaginatedResponse, APIListTestDataFileResourcesPaginatedResponse
 from mapping_workbench.backend.test_data_suite.services.api import (
@@ -20,9 +21,8 @@ from mapping_workbench.backend.test_data_suite.services.api import (
     delete_test_data_suite,
     list_test_data_suite_file_resources,
     create_test_data_suite_file_resource,
-    update_test_data_file_resource,
     get_test_data_file_resource,
-    delete_test_data_file_resource
+    delete_test_data_file_resource, update_test_data_file_resource
 )
 from mapping_workbench.backend.user.models.user import User
 
@@ -129,14 +129,14 @@ async def route_list_test_data_suite_file_resources(
     status_code=status.HTTP_201_CREATED
 )
 async def route_create_test_data_suite_file_resources(
-        id: PydanticObjectId,
         req: Request,
+        test_data_suite: TestDataSuite = Depends(get_test_data_suite),
         user: User = Depends(current_active_user)
 ):
-    test_data_file_resource = TestDataFileResource(**await file_resource_data_from_form_request(req))
+    data = TestDataFileResourceCreateIn(**(await file_resource_data_from_form_request(req)))
     return await create_test_data_suite_file_resource(
-        id=id,
-        test_data_file_resource=test_data_file_resource,
+        test_data_suite=test_data_suite,
+        data=data,
         user=user
     )
 
@@ -148,13 +148,12 @@ async def route_create_test_data_suite_file_resources(
     response_model=TestDataFileResource
 )
 async def route_update_test_data_file_resource(
-        id: PydanticObjectId,
         req: Request,
+        test_data_file_resource: TestDataFileResource = Depends(get_test_data_file_resource),
         user: User = Depends(current_active_user)
 ):
-    data = TestDataFileResource(**(await file_resource_data_from_form_request(req)))
-    await update_test_data_file_resource(id, data, user=user)
-    return await get_test_data_file_resource(id)
+    data = TestDataFileResourceUpdateIn(**(await file_resource_data_from_form_request(req)))
+    return await update_test_data_file_resource(test_data_file_resource, data, user=user)
 
 
 @router.get(

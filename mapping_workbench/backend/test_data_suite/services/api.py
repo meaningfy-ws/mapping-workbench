@@ -4,8 +4,10 @@ from beanie import PydanticObjectId
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
-from mapping_workbench.backend.core.services.request import request_update_data, api_entity_is_found
-from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource
+from mapping_workbench.backend.core.services.request import request_update_data, api_entity_is_found, \
+    request_create_data
+from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
+    TestDataFileResourceUpdateIn, TestDataFileResourceCreateIn
 from mapping_workbench.backend.user.models.user import User
 
 
@@ -45,7 +47,7 @@ async def delete_test_data_suite(id: PydanticObjectId):
 
 async def list_test_data_suite_file_resources(
         id: PydanticObjectId = None,
-        filters = None
+        filters=None
 ) -> List[TestDataFileResource]:
     query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
     return await TestDataFileResource.find(
@@ -56,24 +58,22 @@ async def list_test_data_suite_file_resources(
 
 
 async def create_test_data_suite_file_resource(
-        id: PydanticObjectId,
-        test_data_file_resource: TestDataFileResource,
+        test_data_suite: TestDataSuite,
+        data: TestDataFileResourceCreateIn,
         user: User
 ) -> TestDataFileResource:
-    test_data_file_resource.test_data_suite = TestDataSuite.link_from_id(id)
-    test_data_file_resource.on_create(user=user)
+    data.test_data_suite = test_data_suite
+    test_data_file_resource = TestDataFileResource(**request_create_data(data)).on_create(user=user)
     return await test_data_file_resource.create()
 
 
 async def update_test_data_file_resource(
-        id: PydanticObjectId,
-        test_data_file_resource_data: TestDataFileResource,
-        user: User):
-    test_data_file_resource: TestDataFileResource = await TestDataFileResource.get(id)
-    if not api_entity_is_found(test_data_file_resource):
-        raise ResourceNotFoundException()
-    request_data = request_update_data(test_data_file_resource_data)
-    update_data = request_update_data(TestDataFileResource(**request_data).on_update(user=user))
+        test_data_file_resource: TestDataFileResource,
+        data: TestDataFileResourceUpdateIn,
+        user: User) -> TestDataFileResource:
+    update_data = request_update_data(
+        TestDataFileResource(**request_update_data(data)).on_update(user=user)
+    )
     return await test_data_file_resource.set(update_data)
 
 

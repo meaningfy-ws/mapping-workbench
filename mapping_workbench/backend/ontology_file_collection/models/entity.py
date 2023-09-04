@@ -4,12 +4,11 @@ from typing import Optional, List
 from beanie import Link
 
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
-from mapping_workbench.backend.file_resource.models.file_resource import FileResource
+from mapping_workbench.backend.file_resource.models.file_resource import FileResource, FileResourceCollection, \
+    FileResourceIn
 
 
-class OntologyFileCollection(BaseProjectResourceEntity):
-    title: Optional[str]
-    description: Optional[str]
+class OntologyFileCollection(FileResourceCollection):
     file_resources: Optional[List[Link["OntologyFileResource"]]] = []
 
     class Settings(BaseProjectResourceEntity.Settings):
@@ -19,6 +18,18 @@ class OntologyFileCollection(BaseProjectResourceEntity):
 class OntologyFileResourceFormat(Enum):
     OWL = "OWL"
     RDF = "RDF"
+
+
+class OntologyFileResourceIn(FileResourceIn):
+    format: Optional[OntologyFileResourceFormat]
+
+
+class OntologyFileResourceCreateIn(OntologyFileResourceIn):
+    ontology_file_collection: Optional[Link[OntologyFileCollection]]
+
+
+class OntologyFileResourceUpdateIn(OntologyFileResourceIn):
+    pass
 
 
 class OntologyFileResource(FileResource):

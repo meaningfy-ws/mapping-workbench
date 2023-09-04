@@ -4,22 +4,32 @@ from typing import Optional, List
 from beanie import Link
 
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
-from mapping_workbench.backend.file_resource.models.file_resource import FileResource
+from mapping_workbench.backend.file_resource.models.file_resource import FileResource, FileResourceCollection, \
+    FileResourceIn
 
 
-class ResourceCollection(BaseProjectResourceEntity):
-    title: Optional[str]
-    description: Optional[str]
+class ResourceCollection(FileResourceCollection):
     file_resources: Optional[List[Link["ResourceFile"]]] = []
 
     class Settings(BaseProjectResourceEntity.Settings):
         name = "resource_collections"
-        use_state_management = True
 
 
 class ResourceFileFormat(Enum):
     CSV = "CSV"
     JSON = "JSON"
+
+
+class ResourceFileIn(FileResourceIn):
+    format: Optional[ResourceFileFormat]
+
+
+class ResourceFileCreateIn(ResourceFileIn):
+    resource_collection: Optional[Link[ResourceCollection]]
+
+
+class ResourceFileUpdateIn(ResourceFileIn):
+    pass
 
 
 class ResourceFile(FileResource):

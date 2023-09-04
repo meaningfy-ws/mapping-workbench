@@ -4,8 +4,10 @@ from beanie import PydanticObjectId
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
-from mapping_workbench.backend.core.services.request import request_update_data, api_entity_is_found
-from mapping_workbench.backend.resource_collection.models.entity import ResourceCollection, ResourceFile
+from mapping_workbench.backend.core.services.request import request_update_data, api_entity_is_found, \
+    request_create_data
+from mapping_workbench.backend.resource_collection.models.entity import ResourceCollection, ResourceFile, \
+    ResourceFileUpdateIn, ResourceFileCreateIn
 from mapping_workbench.backend.user.models.user import User
 
 
@@ -60,24 +62,22 @@ async def list_resource_collection_file_resources(
 
 
 async def create_resource_collection_file_resource(
-        id: PydanticObjectId,
-        resource_file: ResourceFile,
+        resource_collection: ResourceCollection,
+        data: ResourceFileCreateIn,
         user: User
 ) -> ResourceFile:
-    resource_file.resource_collection = ResourceCollection.link_from_id(id)
-    resource_file.on_create(user=user)
+    data.resource_collection = resource_collection
+    resource_file = ResourceFile(**request_create_data(data)).on_create(user=user)
     return await resource_file.create()
 
 
 async def update_resource_file(
-        id: PydanticObjectId,
-        resource_file_data: ResourceFile,
-        user: User):
-    resource_file: ResourceFile = await ResourceFile.get(id)
-    if not api_entity_is_found(resource_file):
-        raise ResourceNotFoundException()
-    request_data = request_update_data(resource_file_data)
-    update_data = request_update_data(ResourceFile(**request_data).on_update(user=user))
+        resource_file: ResourceFile,
+        data: ResourceFileUpdateIn,
+        user: User) -> ResourceFile:
+    update_data = request_update_data(
+        ResourceFile(**request_update_data(data)).on_update(user=user)
+    )
     return await resource_file.set(update_data)
 
 
