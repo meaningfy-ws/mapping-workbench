@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, status
 
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
 from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingRuleRegistryOut, \
-    MappingRuleRegistryCreateIn, MappingRuleRegistryUpdateIn
+    MappingRuleRegistryCreateIn, MappingRuleRegistryUpdateIn, MappingRuleRegistry
 from mapping_workbench.backend.mapping_rule_registry.models.entity_api_response import \
     APIListMappingRuleRegistriesPaginatedResponse
 from mapping_workbench.backend.mapping_rule_registry.services.api import (
@@ -13,7 +13,7 @@ from mapping_workbench.backend.mapping_rule_registry.services.api import (
     create_mapping_rule_registry,
     update_mapping_rule_registry,
     get_mapping_rule_registry,
-    delete_mapping_rule_registry
+    delete_mapping_rule_registry, get_mapping_rule_registry_out
 )
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
@@ -75,7 +75,7 @@ async def route_update_mapping_rule_registry(
         user: User = Depends(current_active_user)
 ):
     await update_mapping_rule_registry(id=id, mapping_rule_registry_data=mapping_rule_registry_data, user=user)
-    return await get_mapping_rule_registry(id)
+    return await get_mapping_rule_registry_out(id)
 
 
 @router.get(
@@ -85,7 +85,7 @@ async def route_update_mapping_rule_registry(
     response_model=MappingRuleRegistryOut
 )
 async def route_get_mapping_rule_registry(
-        mapping_rule_registry: MappingRuleRegistryOut = Depends(get_mapping_rule_registry)):
+        mapping_rule_registry: MappingRuleRegistryOut = Depends(get_mapping_rule_registry_out)):
     return mapping_rule_registry
 
 
@@ -95,6 +95,7 @@ async def route_get_mapping_rule_registry(
     name=f"{NAME_FOR_MANY}:delete_{NAME_FOR_ONE}",
     response_model=APIEmptyContentWithIdResponse
 )
-async def route_delete_mapping_rule_registry(id: PydanticObjectId):
-    await delete_mapping_rule_registry(id)
-    return APIEmptyContentWithIdResponse(_id=id)
+async def route_delete_mapping_rule_registry(
+        mapping_rule_registry: MappingRuleRegistry = Depends(get_mapping_rule_registry)):
+    await delete_mapping_rule_registry(mapping_rule_registry)
+    return APIEmptyContentWithIdResponse(_id=mapping_rule_registry.id)

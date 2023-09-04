@@ -104,9 +104,9 @@ async def route_get_shacl_test_suite(shacl_test_suite: SHACLTestSuite = Depends(
     name=f"{NAME_FOR_MANY}:delete_{NAME_FOR_ONE}",
     response_model=APIEmptyContentWithIdResponse
 )
-async def route_delete_shacl_test_suite(id: PydanticObjectId):
-    await delete_shacl_test_suite(id)
-    APIEmptyContentWithIdResponse(_id=id)
+async def route_delete_shacl_test_suite(shacl_test_suite: SHACLTestSuite = Depends(get_shacl_test_suite)):
+    await delete_shacl_test_suite(shacl_test_suite)
+    APIEmptyContentWithIdResponse(_id=shacl_test_suite.id)
 
 
 @router.get(
@@ -175,6 +175,7 @@ async def route_get_shacl_test_file_resource(
     name=f"{FILE_RESOURCE_NAME_FOR_MANY}:delete_{FILE_RESOURCE_NAME_FOR_ONE}",
     response_model=APIEmptyContentWithIdResponse
 )
-async def route_delete_shacl_test_file_resource(id: PydanticObjectId):
-    await delete_shacl_test_file_resource(id)
-    return APIEmptyContentWithIdResponse(_id=id)
+async def route_delete_shacl_test_file_resource(
+        shacl_test_file_resource: SHACLTestFileResource = Depends(get_shacl_test_file_resource)):
+    await delete_shacl_test_file_resource(shacl_test_file_resource)
+    return APIEmptyContentWithIdResponse(_id=shacl_test_file_resource.id)

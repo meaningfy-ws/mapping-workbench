@@ -19,7 +19,7 @@ from mapping_workbench.backend.triple_map_fragment.services.api_for_specific imp
     create_specific_triple_map_fragment,
     update_specific_triple_map_fragment,
     get_specific_triple_map_fragment,
-    delete_specific_triple_map_fragment, update_specific_triple_map_fragments
+    delete_specific_triple_map_fragment, update_specific_triple_map_fragments, get_specific_triple_map_fragment_out
 )
 from mapping_workbench.backend.user.models.user import User
 
@@ -111,7 +111,7 @@ async def route_update_specific_triple_map_fragment(
     await update_specific_triple_map_fragment(id=id,
                                               specific_triple_map_fragment_data=specific_triple_map_fragment_data,
                                               user=user)
-    return await get_specific_triple_map_fragment(id)
+    return await get_specific_triple_map_fragment_out(id)
 
 
 @router.get(
@@ -121,7 +121,7 @@ async def route_update_specific_triple_map_fragment(
     response_model=SpecificTripleMapFragmentOut
 )
 async def route_get_specific_triple_map_fragment(
-        specific_triple_map_fragment: SpecificTripleMapFragmentOut = Depends(get_specific_triple_map_fragment)):
+        specific_triple_map_fragment: SpecificTripleMapFragmentOut = Depends(get_specific_triple_map_fragment_out)):
     return specific_triple_map_fragment
 
 
@@ -131,6 +131,7 @@ async def route_get_specific_triple_map_fragment(
     name=f"{NAME_FOR_MANY}:delete_{NAME_FOR_ONE}",
     response_model=APIEmptyContentWithIdResponse
 )
-async def route_delete_specific_triple_map_fragment(id: PydanticObjectId):
-    await delete_specific_triple_map_fragment(id)
-    return APIEmptyContentWithIdResponse(_id=id)
+async def route_delete_specific_triple_map_fragment(
+        specific_triple_map_fragment: SpecificTripleMapFragment = Depends(get_specific_triple_map_fragment)):
+    await delete_specific_triple_map_fragment(specific_triple_map_fragment)
+    return APIEmptyContentWithIdResponse(_id=specific_triple_map_fragment.id)

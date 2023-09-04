@@ -38,10 +38,7 @@ async def get_shacl_test_suite(id: PydanticObjectId) -> SHACLTestSuite:
     return SHACLTestSuite(**shacl_test_suite.dict(by_alias=False))
 
 
-async def delete_shacl_test_suite(id: PydanticObjectId):
-    shacl_test_suite: SHACLTestSuite = await SHACLTestSuite.get(id)
-    if not api_entity_is_found(shacl_test_suite):
-        raise ResourceNotFoundException()
+async def delete_shacl_test_suite(shacl_test_suite: SHACLTestSuite):
     return await shacl_test_suite.delete()
 
 
@@ -84,8 +81,5 @@ async def get_shacl_test_file_resource(id: PydanticObjectId) -> SHACLTestFileRes
     return shacl_test_file_resource
 
 
-async def delete_shacl_test_file_resource(id: PydanticObjectId):
-    shacl_test_file_resource: SHACLTestFileResource = await SHACLTestFileResource.get(id)
-    if not api_entity_is_found(shacl_test_file_resource):
-        raise ResourceNotFoundException()
+async def delete_shacl_test_file_resource(shacl_test_file_resource: SHACLTestFileResource):
     return await shacl_test_file_resource.delete()

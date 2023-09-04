@@ -38,10 +38,7 @@ async def get_sparql_test_suite(id: PydanticObjectId) -> SPARQLTestSuite:
     return SPARQLTestSuite(**sparql_test_suite.dict(by_alias=False))
 
 
-async def delete_sparql_test_suite(id: PydanticObjectId):
-    sparql_test_suite: SPARQLTestSuite = await SPARQLTestSuite.get(id)
-    if not api_entity_is_found(sparql_test_suite):
-        raise ResourceNotFoundException()
+async def delete_sparql_test_suite(sparql_test_suite: SPARQLTestSuite):
     return await sparql_test_suite.delete()
 
 
@@ -94,8 +91,5 @@ async def get_sparql_test_file_resource(id: PydanticObjectId) -> SPARQLTestFileR
     return sparql_test_file_resource
 
 
-async def delete_sparql_test_file_resource(id: PydanticObjectId):
-    sparql_test_file_resource: SPARQLTestFileResource = await SPARQLTestFileResource.get(id)
-    if not api_entity_is_found(sparql_test_file_resource):
-        raise ResourceNotFoundException()
+async def delete_sparql_test_file_resource(sparql_test_file_resource: SPARQLTestFileResource):
     return await sparql_test_file_resource.delete()

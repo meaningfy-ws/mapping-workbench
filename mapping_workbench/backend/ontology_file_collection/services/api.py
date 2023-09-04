@@ -44,10 +44,7 @@ async def get_ontology_file_collection(id: PydanticObjectId) -> OntologyFileColl
     return OntologyFileCollection(**ontology_file_collection.dict(by_alias=False))
 
 
-async def delete_ontology_file_collection(id: PydanticObjectId):
-    ontology_file_collection: OntologyFileCollection = await OntologyFileCollection.get(id)
-    if not api_entity_is_found(ontology_file_collection):
-        raise ResourceNotFoundException()
+async def delete_ontology_file_collection(ontology_file_collection: OntologyFileCollection):
     return await ontology_file_collection.delete()
 
 
@@ -90,8 +87,5 @@ async def get_ontology_file_resource(id: PydanticObjectId) -> OntologyFileResour
     return ontology_file_resource
 
 
-async def delete_ontology_file_resource(id: PydanticObjectId):
-    ontology_file_resource: OntologyFileResource = await OntologyFileResource.get(id)
-    if not api_entity_is_found(ontology_file_resource):
-        raise ResourceNotFoundException()
+async def delete_ontology_file_resource(ontology_file_resource: OntologyFileResource):
     return await ontology_file_resource.delete()

@@ -103,9 +103,9 @@ async def route_get_test_data_suite(test_data_suite: TestDataSuite = Depends(get
     name=f"{NAME_FOR_MANY}:delete_{NAME_FOR_ONE}",
     response_model=APIEmptyContentWithIdResponse
 )
-async def route_delete_test_data_suite(id: PydanticObjectId):
-    await delete_test_data_suite(id)
-    APIEmptyContentWithIdResponse(_id=id)
+async def route_delete_test_data_suite(test_data_suite: TestDataSuite = Depends(get_test_data_suite)):
+    await delete_test_data_suite(test_data_suite)
+    APIEmptyContentWithIdResponse(_id=test_data_suite.id)
 
 
 @router.get(
@@ -174,6 +174,7 @@ async def route_get_test_data_file_resource(
     name=f"{FILE_RESOURCE_NAME_FOR_MANY}:delete_{FILE_RESOURCE_NAME_FOR_ONE}",
     response_model=APIEmptyContentWithIdResponse
 )
-async def route_delete_test_data_file_resource(id: PydanticObjectId):
-    await delete_test_data_file_resource(id)
-    return APIEmptyContentWithIdResponse(_id=id)
+async def route_delete_test_data_file_resource(
+        test_data_file_resource: TestDataFileResource = Depends(get_test_data_file_resource)):
+    await delete_test_data_file_resource(test_data_file_resource)
+    return APIEmptyContentWithIdResponse(_id=test_data_file_resource.id)

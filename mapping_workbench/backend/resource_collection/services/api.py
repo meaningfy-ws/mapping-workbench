@@ -42,10 +42,7 @@ async def get_resource_collection(id: PydanticObjectId) -> ResourceCollection:
     return ResourceCollection(**resource_collection.dict(by_alias=False))
 
 
-async def delete_resource_collection(id: PydanticObjectId):
-    resource_collection: ResourceCollection = await ResourceCollection.get(id)
-    if not api_entity_is_found(resource_collection):
-        raise ResourceNotFoundException()
+async def delete_resource_collection(resource_collection: ResourceCollection):
     return await resource_collection.delete()
 
 
@@ -88,8 +85,5 @@ async def get_resource_file(id: PydanticObjectId) -> ResourceFile:
     return resource_file
 
 
-async def delete_resource_file(id: PydanticObjectId):
-    resource_file: ResourceFile = await ResourceFile.get(id)
-    if not api_entity_is_found(resource_file):
-        raise ResourceNotFoundException()
+async def delete_resource_file(resource_file: ResourceFile):
     return await resource_file.delete()

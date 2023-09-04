@@ -43,15 +43,15 @@ async def update_generic_triple_map_fragment(id: PydanticObjectId,
     return await generic_triple_map_fragment.set(update_data)
 
 
-async def get_generic_triple_map_fragment(id: PydanticObjectId) -> GenericTripleMapFragmentOut:
+async def get_generic_triple_map_fragment(id: PydanticObjectId) -> GenericTripleMapFragment:
     generic_triple_map_fragment: GenericTripleMapFragment = await GenericTripleMapFragment.get(id)
     if not api_entity_is_found(generic_triple_map_fragment):
         raise ResourceNotFoundException()
+    return generic_triple_map_fragment
+
+async def get_generic_triple_map_fragment_out(id: PydanticObjectId) -> GenericTripleMapFragmentOut:
+    generic_triple_map_fragment: GenericTripleMapFragment = await get_generic_triple_map_fragment(id)
     return GenericTripleMapFragmentOut(**generic_triple_map_fragment.dict(by_alias=False))
 
-
-async def delete_generic_triple_map_fragment(id: PydanticObjectId):
-    generic_triple_map_fragment: GenericTripleMapFragment = await GenericTripleMapFragment.get(id)
-    if not api_entity_is_found(generic_triple_map_fragment):
-        raise ResourceNotFoundException()
+async def delete_generic_triple_map_fragment(generic_triple_map_fragment: GenericTripleMapFragment):
     return await generic_triple_map_fragment.delete()

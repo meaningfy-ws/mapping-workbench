@@ -15,6 +15,7 @@ export const en = {
   [tokens.nav.contact]: 'Contact',
   [tokens.nav.course]: 'Course',
   [tokens.nav.create]: 'Create',
+  [tokens.nav.import]: 'Import',
   [tokens.nav.crypto]: 'Crypto',
   [tokens.nav.customers]: 'Customers',
   [tokens.nav.dashboard]: 'Dashboard',

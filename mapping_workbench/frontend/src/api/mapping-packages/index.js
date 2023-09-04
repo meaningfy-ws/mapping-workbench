@@ -1,4 +1,5 @@
 import {SectionApi} from "../section";
+import {appApi} from "../app";
 
 class MappingPackagesApi extends SectionApi {
     get SECTION_TITLE() {
@@ -19,6 +20,15 @@ class MappingPackagesApi extends SectionApi {
         return mappingPackagesStore.items.map(
             mappingPackage => ({id: mappingPackage._id, title: mappingPackage.title})
         ).sort((a, b) => a.title.localeCompare(b.title));
+    }
+
+    async importPackage(request) {
+        try {
+            let endpoint = this.paths['import'];
+            const headers = {"Content-Type": "multipart/form-data"};
+            return await appApi.post(endpoint, request, null, headers);
+        } catch (err) {
+        }
     }
 }
 

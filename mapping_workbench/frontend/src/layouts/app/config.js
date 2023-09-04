@@ -180,6 +180,10 @@ export const useSections = () => {
                     {
                         title: t(tokens.nav.create),
                         path: paths.app.mapping_packages.create
+                    },
+                    {
+                        title: t(tokens.nav.import),
+                        path: paths.app.mapping_packages.import
                     }
                 ]
             },

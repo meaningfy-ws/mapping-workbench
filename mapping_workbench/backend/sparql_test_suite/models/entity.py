@@ -27,6 +27,7 @@ class SPARQLTestFileResourceFormat(Enum):
 
 class SPARQLTestFileResourceIn(FileResourceIn):
     format: Optional[SPARQLTestFileResourceFormat]
+    type: Optional[SPARQLQueryValidationType]
 
 
 class SPARQLTestFileResourceCreateIn(SPARQLTestFileResourceIn):

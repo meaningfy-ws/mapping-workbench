@@ -38,10 +38,7 @@ async def get_test_data_suite(id: PydanticObjectId) -> TestDataSuite:
     return TestDataSuite(**test_data_suite.dict(by_alias=False))
 
 
-async def delete_test_data_suite(id: PydanticObjectId):
-    test_data_suite: TestDataSuite = await TestDataSuite.get(id)
-    if not api_entity_is_found(test_data_suite):
-        raise ResourceNotFoundException()
+async def delete_test_data_suite(test_data_suite: TestDataSuite):
     return await test_data_suite.delete()
 
 
@@ -84,8 +81,5 @@ async def get_test_data_file_resource(id: PydanticObjectId) -> TestDataFileResou
     return test_data_file_resource
 
 
-async def delete_test_data_file_resource(id: PydanticObjectId):
-    test_data_file_resource: TestDataFileResource = await TestDataFileResource.get(id)
-    if not api_entity_is_found(test_data_file_resource):
-        raise ResourceNotFoundException()
+async def delete_test_data_file_resource(test_data_file_resource: TestDataFileResource):
     return await test_data_file_resource.delete()

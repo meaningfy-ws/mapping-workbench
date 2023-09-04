@@ -14,8 +14,7 @@ export class FileResourcesApi extends SectionApi {
         try {
             let endpoint = this.paths['file_resources'].replace(':id', collection_id);
             const headers = {"Content-Type": "multipart/form-data"};
-            let data = await appApi.create(endpoint, request, headers);
-            return Promise.resolve(data);
+            return await appApi.create(endpoint, request, headers);
         } catch (err) {
         }
     }

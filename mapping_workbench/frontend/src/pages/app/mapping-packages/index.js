@@ -1,5 +1,6 @@
 import {useCallback, useEffect, useState} from 'react';
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
+import {Upload04 as ImportIcon} from '@untitled-ui/icons-react/build/esm';
 import Box from '@mui/material/Box';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
@@ -20,6 +21,8 @@ import {paths} from 'src/paths';
 import {ListSearch} from "../../../sections/app/mapping-package/list-search";
 import {ListTable} from "../../../sections/app/mapping-package/list-table";
 import {useMounted} from "../../../hooks/use-mounted";
+import {PackageImporter} from 'src/sections/app/mapping-package/package-importer';
+import {useDialog} from "../../../hooks/use-dialog";
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -100,6 +103,8 @@ const Page = () => {
     const itemsSearch = useItemsSearch();
     const itemsStore = useItemsStore(itemsSearch.state);
 
+    const importDialog = useDialog();
+
     usePageView();
 
     return (
@@ -109,7 +114,7 @@ const Page = () => {
                 component="main"
                 sx={{
                     flexGrow: 1,
-                    py: 8
+                    py: 4
                 }}
             >
                 <Container maxWidth="xl">
@@ -165,7 +170,19 @@ const Page = () => {
                                 >
                                     Add
                                 </Button>
+                                <Button
+                                    onClick={importDialog.handleOpen}
+                                    startIcon={(
+                                        <SvgIcon>
+                                            <ImportIcon/>
+                                        </SvgIcon>
+                                    )}
+                                    variant="contained"
+                                >
+                                    Import
+                                </Button>
                             </Stack>
+
                         </Stack>
                         <Card>
                             <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
@@ -182,6 +199,11 @@ const Page = () => {
                     </Stack>
                 </Container>
             </Box>
+            <PackageImporter
+                onClose={importDialog.handleClose}
+                open={importDialog.open}
+                sectionApi={sectionApi}
+            />
         </>
     );
 };

@@ -35,15 +35,15 @@ async def update_project(id: PydanticObjectId, project_data: ProjectUpdateIn, us
     return await project.set(update_data)
 
 
-async def get_project(id: PydanticObjectId) -> ProjectOut:
+async def get_project(id: PydanticObjectId) -> Project:
     project: Project = await Project.get(id)
     if not api_entity_is_found(project):
         raise ResourceNotFoundException()
+    return project
+
+async def get_project_out(id: PydanticObjectId) -> ProjectOut:
+    project: Project = await get_project(id)
     return ProjectOut(**project.dict(by_alias=False))
 
-
-async def delete_project(id: PydanticObjectId):
-    project: Project = await Project.get(id)
-    if not api_entity_is_found(project):
-        raise ResourceNotFoundException()
+async def delete_project(project: Project):
     return await project.delete()

@@ -101,9 +101,9 @@ async def route_get_resource_collection(resource_collection: ResourceCollection 
     name=f"{NAME_FOR_MANY}:delete_{NAME_FOR_ONE}",
     response_model=APIEmptyContentWithIdResponse
 )
-async def route_delete_resource_collection(id: PydanticObjectId):
-    await delete_resource_collection(id)
-    APIEmptyContentWithIdResponse(_id=id)
+async def route_delete_resource_collection(resource_collection: ResourceCollection = Depends(get_resource_collection)):
+    await delete_resource_collection(resource_collection)
+    APIEmptyContentWithIdResponse(_id=resource_collection.id)
 
 
 @router.get(
@@ -172,6 +172,6 @@ async def route_get_resource_file(
     name=f"{FILE_RESOURCE_NAME_FOR_MANY}:delete_{FILE_RESOURCE_NAME_FOR_ONE}",
     response_model=APIEmptyContentWithIdResponse
 )
-async def route_delete_resource_file(id: PydanticObjectId):
-    await delete_resource_file(id)
-    return APIEmptyContentWithIdResponse(_id=id)
+async def route_delete_resource_file(resource_file: ResourceFile = Depends(get_resource_file)):
+    await delete_resource_file(resource_file)
+    return APIEmptyContentWithIdResponse(_id=resource_file.id)

@@ -70,7 +70,7 @@ export const FileResourceEditForm = (props) => {
         onSubmit: async (values, helpers) => {
             try {
                 values['path'] = (typeof values['path'] == 'string') ?
-                    values['path'].split('\n').map(s => s.trim()).filter(s => s !== '') : values['path'];
+                    values['path'].split('\n').map(s => s.trim()).filter(s => s !== '').join(',') : values['path'];
                 let response;
                 values['project'] = sessionApi.getSessionProject();
                 let formData = values;

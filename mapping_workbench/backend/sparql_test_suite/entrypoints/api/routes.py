@@ -104,9 +104,9 @@ async def route_get_sparql_test_suite(sparql_test_suite: SPARQLTestSuite = Depen
     name=f"{NAME_FOR_MANY}:delete_{NAME_FOR_ONE}",
     response_model=APIEmptyContentWithIdResponse
 )
-async def route_delete_sparql_test_suite(id: PydanticObjectId):
-    await delete_sparql_test_suite(id)
-    APIEmptyContentWithIdResponse(_id=id)
+async def route_delete_sparql_test_suite(sparql_test_suite: SPARQLTestSuite = Depends(get_sparql_test_suite)):
+    await delete_sparql_test_suite(sparql_test_suite)
+    APIEmptyContentWithIdResponse(_id=sparql_test_suite.id)
 
 
 @router.get(
@@ -191,6 +191,7 @@ async def route_get_sparql_test_file_resource(
     name=f"{FILE_RESOURCE_NAME_FOR_MANY}:delete_{FILE_RESOURCE_NAME_FOR_ONE}",
     response_model=APIEmptyContentWithIdResponse
 )
-async def route_delete_sparql_test_file_resource(id: PydanticObjectId):
-    await delete_sparql_test_file_resource(id)
-    return APIEmptyContentWithIdResponse(_id=id)
+async def route_delete_sparql_test_file_resource(
+        sparql_test_file_resource: SPARQLTestFileResource = Depends(get_sparql_test_file_resource)):
+    await delete_sparql_test_file_resource(sparql_test_file_resource)
+    return APIEmptyContentWithIdResponse(_id=sparql_test_file_resource.id)

@@ -60,7 +60,7 @@ const CustomApp = (props) => {
                     {(settings) => {
                       // Prevent theme flicker when restoring custom settings from browser storage
                       if (!settings.isInitialized) {
-                        // return null;
+                        return null;
                       }
 
                       const theme = createTheme({

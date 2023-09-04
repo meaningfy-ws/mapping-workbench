@@ -102,9 +102,10 @@ async def route_get_ontology_file_collection(
     name=f"{NAME_FOR_MANY}:delete_{NAME_FOR_ONE}",
     response_model=APIEmptyContentWithIdResponse
 )
-async def route_delete_ontology_file_collection(id: PydanticObjectId):
-    await delete_ontology_file_collection(id)
-    APIEmptyContentWithIdResponse(_id=id)
+async def route_delete_ontology_file_collection(
+        ontology_file_collection: OntologyFileCollection = Depends(get_ontology_file_collection)):
+    await delete_ontology_file_collection(ontology_file_collection)
+    APIEmptyContentWithIdResponse(_id=ontology_file_collection.id)
 
 
 @router.get(
@@ -173,6 +174,7 @@ async def route_get_ontology_file_resource(
     name=f"{FILE_RESOURCE_NAME_FOR_MANY}:delete_{FILE_RESOURCE_NAME_FOR_ONE}",
     response_model=APIEmptyContentWithIdResponse
 )
-async def route_delete_ontology_file_resource(id: PydanticObjectId):
-    await delete_ontology_file_resource(id)
-    return APIEmptyContentWithIdResponse(_id=id)
+async def route_delete_ontology_file_resource(
+        ontology_file_resource: OntologyFileResource = Depends(get_ontology_file_resource)):
+    await delete_ontology_file_resource(ontology_file_resource)
+    return APIEmptyContentWithIdResponse(_id=ontology_file_resource.id)

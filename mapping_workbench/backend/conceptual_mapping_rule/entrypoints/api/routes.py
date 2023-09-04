@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, status, Query
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRuleOut, \
     ConceptualMappingRuleCreateIn, \
-    ConceptualMappingRuleUpdateIn
+    ConceptualMappingRuleUpdateIn, ConceptualMappingRule
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity_api_response import \
     APIListConceptualMappingRulesPaginatedResponse
 from mapping_workbench.backend.conceptual_mapping_rule.services.api import (
@@ -13,7 +13,7 @@ from mapping_workbench.backend.conceptual_mapping_rule.services.api import (
     create_conceptual_mapping_rule,
     update_conceptual_mapping_rule,
     get_conceptual_mapping_rule,
-    delete_conceptual_mapping_rule
+    delete_conceptual_mapping_rule, get_conceptual_mapping_rule_out
 )
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
@@ -81,7 +81,7 @@ async def route_update_conceptual_mapping_rule(
         user: User = Depends(current_active_user)
 ):
     await update_conceptual_mapping_rule(id=id, conceptual_mapping_rule_data=conceptual_mapping_rule_data, user=user)
-    return await get_conceptual_mapping_rule(id)
+    return await get_conceptual_mapping_rule_out(id)
 
 
 @router.get(
@@ -91,7 +91,7 @@ async def route_update_conceptual_mapping_rule(
     response_model=ConceptualMappingRuleOut
 )
 async def route_get_conceptual_mapping_rule(
-        conceptual_mapping_rule: ConceptualMappingRuleOut = Depends(get_conceptual_mapping_rule)):
+        conceptual_mapping_rule: ConceptualMappingRuleOut = Depends(get_conceptual_mapping_rule_out)):
     return conceptual_mapping_rule
 
 
@@ -101,6 +101,7 @@ async def route_get_conceptual_mapping_rule(
     name=f"{NAME_FOR_MANY}:delete_{NAME_FOR_ONE}",
     response_model=APIEmptyContentWithIdResponse
 )
-async def route_delete_conceptual_mapping_rule(id: PydanticObjectId):
-    await delete_conceptual_mapping_rule(id)
-    return APIEmptyContentWithIdResponse(_id=id)
+async def route_delete_conceptual_mapping_rule(
+        conceptual_mapping_rule: ConceptualMappingRule = Depends(get_conceptual_mapping_rule)):
+    await delete_conceptual_mapping_rule(conceptual_mapping_rule)
+    return APIEmptyContentWithIdResponse(_id=conceptual_mapping_rule.id)
