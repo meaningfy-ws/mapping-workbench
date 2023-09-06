@@ -4,12 +4,11 @@ from typing import Optional, List
 from beanie import Link
 
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
-from mapping_workbench.backend.file_resource.models.file_resource import FileResource
+from mapping_workbench.backend.file_resource.models.file_resource import FileResource, FileResourceCollection, \
+    FileResourceIn
 
 
-class TestDataSuite(BaseProjectResourceEntity):
-    title: Optional[str]
-    description: Optional[str]
+class TestDataSuite(FileResourceCollection):
     file_resources: Optional[List[Link["TestDataFileResource"]]] = []
 
     class Settings(BaseProjectResourceEntity.Settings):
@@ -20,6 +19,18 @@ class TestDataSuite(BaseProjectResourceEntity):
 class TestDataFileResourceFormat(Enum):
     XML = "XML"
     JSON = "JSON"
+
+
+class TestDataFileResourceIn(FileResourceIn):
+    format: Optional[TestDataFileResourceFormat]
+
+
+class TestDataFileResourceCreateIn(TestDataFileResourceIn):
+    test_data_suite: Optional[Link[TestDataSuite]]
+
+
+class TestDataFileResourceUpdateIn(TestDataFileResourceIn):
+    pass
 
 
 class TestDataFileResource(FileResource):

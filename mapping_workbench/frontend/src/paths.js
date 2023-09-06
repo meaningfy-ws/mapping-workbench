@@ -74,12 +74,12 @@ export const paths = {
         view: '/app/resource-collections/[id]/resource-manager/[fid]/view',
       }
     },
-
     mapping_packages: {
       index: '/app/mapping-packages',
       create: '/app/mapping-packages/create',
       edit: '/app/mapping-packages/[id]/edit',
-      view: '/app/mapping-packages/[id]/view'
+      view: '/app/mapping-packages/[id]/view',
+      import: '/app/mapping-packages/import'
     },
 
     conceptual_mapping_rules: {
@@ -168,7 +168,8 @@ export const apiPaths = {
 
   mapping_packages: {
     items: '/mapping_packages',
-    item: '/mapping_packages/:id'
+    item: '/mapping_packages/:id',
+    import: '/mapping_packages/import'
   },
 
   conceptual_mapping_rules: {

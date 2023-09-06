@@ -33,10 +33,15 @@ export const FileResourceEditForm = (props) => {
     const sectionApi = itemctx.api;
     const item = itemctx.data;
 
+    const prepareTextareaListValue = (value) => {
+        return (value && (value.join('\n') + ['\n'])) || ''
+    }
+
     const initFormValues = (data) => {
         return {
             title: data.title || '',
             description: data.description || '',
+            path: prepareTextareaListValue(data.path),
             format: data.format || sectionApi.FILE_RESOURCE_DEFAULT_FORMAT || '',
             content: data.content || '',
             file: null
@@ -64,6 +69,8 @@ export const FileResourceEditForm = (props) => {
         }),
         onSubmit: async (values, helpers) => {
             try {
+                values['path'] = (typeof values['path'] == 'string') ?
+                    values['path'].split('\n').map(s => s.trim()).filter(s => s !== '').join(',') : values['path'];
                 let response;
                 values['project'] = sessionApi.getSessionProject();
                 let formData = values;
@@ -140,6 +147,9 @@ export const FileResourceEditForm = (props) => {
                         )}
                         <Grid xs={12} md={12}>
                             <FormTextArea formik={formik} name="description" label="Description"/>
+                        </Grid>
+                        <Grid xs={12} md={12}>
+                            <FormTextArea formik={formik} name="path" label="Path"/>
                         </Grid>
                         <Grid xs={12} md={12}>
                             <TextField

@@ -12,6 +12,7 @@ import {Scrollbar} from 'src/components/scrollbar';
 import {usePathname} from 'src/hooks/use-pathname';
 import {paths} from 'src/paths';
 import {MobileNavSection} from './mobile-nav-section';
+import {ProjectSwitch} from "../project-switch";
 
 const MOBILE_NAV_WIDTH = 280;
 
@@ -167,13 +168,39 @@ export const MobileNav = (props) => {
               px: 2
             }}
           >
-            {sections.map((section, index) => (
-              <MobileNavSection
+            {sections.projects.map((section, index) => (
+                <MobileNavSection
                 items={section.items}
                 key={index}
                 pathname={pathname}
                 subheader={section.subheader}
               />
+            ))}
+            <Stack
+                component="ul"
+                spacing={0.5}
+                sx={{
+                  listStyle: 'none',
+                  m: 0,
+                  p: 0
+                }}>
+              <ProjectSwitch/>
+            </Stack>
+            {sections.resources.map((section, index) => (
+                <MobileNavSection
+                    items={section.items}
+                    key={index}
+                    pathname={pathname}
+                    subheader={section.subheader}
+                />
+            ))}
+            {sections.admin.map((section, index) => (
+                <MobileNavSection
+                    items={section.items}
+                    key={index}
+                    pathname={pathname}
+                    subheader={section.subheader}
+                />
             ))}
           </Stack>
         </Stack>

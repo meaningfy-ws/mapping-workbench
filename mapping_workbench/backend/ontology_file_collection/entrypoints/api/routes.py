@@ -8,7 +8,7 @@ from mapping_workbench.backend.core.models.api_response import APIEmptyContentWi
 from mapping_workbench.backend.file_resource.services.file_resource_form_data import \
     file_resource_data_from_form_request
 from mapping_workbench.backend.ontology_file_collection.models.entity import OntologyFileCollection, \
-    OntologyFileResource
+    OntologyFileResource, OntologyFileResourceCreateIn, OntologyFileResourceUpdateIn
 from mapping_workbench.backend.ontology_file_collection.models.entity_api_response import \
     APIListOntologyFileCollectionsPaginatedResponse, APIListOntologyFileResourcesPaginatedResponse
 from mapping_workbench.backend.ontology_file_collection.services.api import (
@@ -91,7 +91,8 @@ async def route_update_ontology_file_collection(
     name=f"{NAME_FOR_MANY}:get_{NAME_FOR_ONE}",
     response_model=OntologyFileCollection
 )
-async def route_get_ontology_file_collection(ontology_file_collection: OntologyFileCollection = Depends(get_ontology_file_collection)):
+async def route_get_ontology_file_collection(
+        ontology_file_collection: OntologyFileCollection = Depends(get_ontology_file_collection)):
     return ontology_file_collection
 
 
@@ -101,9 +102,10 @@ async def route_get_ontology_file_collection(ontology_file_collection: OntologyF
     name=f"{NAME_FOR_MANY}:delete_{NAME_FOR_ONE}",
     response_model=APIEmptyContentWithIdResponse
 )
-async def route_delete_ontology_file_collection(id: PydanticObjectId):
-    await delete_ontology_file_collection(id)
-    APIEmptyContentWithIdResponse(_id=id)
+async def route_delete_ontology_file_collection(
+        ontology_file_collection: OntologyFileCollection = Depends(get_ontology_file_collection)):
+    await delete_ontology_file_collection(ontology_file_collection)
+    APIEmptyContentWithIdResponse(_id=ontology_file_collection.id)
 
 
 @router.get(
@@ -127,14 +129,14 @@ async def route_list_ontology_file_collection_file_resources(
     status_code=status.HTTP_201_CREATED
 )
 async def route_create_ontology_file_collection_file_resources(
-        id: PydanticObjectId,
         req: Request,
+        ontology_file_collection: OntologyFileCollection = Depends(get_ontology_file_collection),
         user: User = Depends(current_active_user)
 ):
-    ontology_file_resource = OntologyFileResource(**await file_resource_data_from_form_request(req))
+    data = OntologyFileResourceCreateIn(**(await file_resource_data_from_form_request(req)))
     return await create_ontology_file_collection_file_resource(
-        id=id,
-        ontology_file_resource=ontology_file_resource,
+        ontology_file_collection=ontology_file_collection,
+        data=data,
         user=user
     )
 
@@ -146,13 +148,12 @@ async def route_create_ontology_file_collection_file_resources(
     response_model=OntologyFileResource
 )
 async def route_update_ontology_file_resource(
-        id: PydanticObjectId,
         req: Request,
+        ontology_file_resource: OntologyFileResource = Depends(get_ontology_file_resource),
         user: User = Depends(current_active_user)
 ):
-    data = OntologyFileResource(**(await file_resource_data_from_form_request(req)))
-    await update_ontology_file_resource(id, data, user=user)
-    return await get_ontology_file_resource(id)
+    data = OntologyFileResourceUpdateIn(**(await file_resource_data_from_form_request(req)))
+    return await update_ontology_file_resource(ontology_file_resource, data, user=user)
 
 
 @router.get(
@@ -173,6 +174,7 @@ async def route_get_ontology_file_resource(
     name=f"{FILE_RESOURCE_NAME_FOR_MANY}:delete_{FILE_RESOURCE_NAME_FOR_ONE}",
     response_model=APIEmptyContentWithIdResponse
 )
-async def route_delete_ontology_file_resource(id: PydanticObjectId):
-    await delete_ontology_file_resource(id)
-    return APIEmptyContentWithIdResponse(_id=id)
+async def route_delete_ontology_file_resource(
+        ontology_file_resource: OntologyFileResource = Depends(get_ontology_file_resource)):
+    await delete_ontology_file_resource(ontology_file_resource)
+    return APIEmptyContentWithIdResponse(_id=ontology_file_resource.id)

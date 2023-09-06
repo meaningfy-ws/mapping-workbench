@@ -4,16 +4,16 @@ from typing import Optional, List
 from beanie import Link
 
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
-from mapping_workbench.backend.file_resource.models.file_resource import FileResource
+from mapping_workbench.backend.file_resource.models.file_resource import FileResource, FileResourceCollection, \
+    FileResourceIn
 
 
 class SPARQLQueryValidationType(Enum):
     CM_ASSERTION = "cm_assertion"
     INTEGRATION_TEST = "integration_test"
 
-class SPARQLTestSuite(BaseProjectResourceEntity):
-    title: Optional[str]
-    description: Optional[str]
+
+class SPARQLTestSuite(FileResourceCollection):
     type: Optional[SPARQLQueryValidationType]
     file_resources: Optional[List[Link["SPARQLTestFileResource"]]] = []
 
@@ -23,6 +23,19 @@ class SPARQLTestSuite(BaseProjectResourceEntity):
 
 class SPARQLTestFileResourceFormat(Enum):
     RQ = "RQ"
+
+
+class SPARQLTestFileResourceIn(FileResourceIn):
+    format: Optional[SPARQLTestFileResourceFormat]
+    type: Optional[SPARQLQueryValidationType]
+
+
+class SPARQLTestFileResourceCreateIn(SPARQLTestFileResourceIn):
+    sparql_test_suite: Optional[Link[SPARQLTestSuite]]
+
+
+class SPARQLTestFileResourceUpdateIn(SPARQLTestFileResourceIn):
+    pass
 
 
 class SPARQLTestFileResource(FileResource):

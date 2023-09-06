@@ -9,7 +9,8 @@ from mapping_workbench.backend.file_resource.services.file_resource_form_data im
     file_resource_data_from_form_request
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
-from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestFileResource
+from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestFileResource, \
+    SHACLTestFileResourceCreateIn, SHACLTestFileResourceUpdateIn
 from mapping_workbench.backend.shacl_test_suite.models.entity_api_response import \
     APIListSHACLTestSuitesPaginatedResponse, APIListSHACLTestFileResourcesPaginatedResponse
 from mapping_workbench.backend.shacl_test_suite.services.api import (
@@ -103,9 +104,9 @@ async def route_get_shacl_test_suite(shacl_test_suite: SHACLTestSuite = Depends(
     name=f"{NAME_FOR_MANY}:delete_{NAME_FOR_ONE}",
     response_model=APIEmptyContentWithIdResponse
 )
-async def route_delete_shacl_test_suite(id: PydanticObjectId):
-    await delete_shacl_test_suite(id)
-    APIEmptyContentWithIdResponse(_id=id)
+async def route_delete_shacl_test_suite(shacl_test_suite: SHACLTestSuite = Depends(get_shacl_test_suite)):
+    await delete_shacl_test_suite(shacl_test_suite)
+    APIEmptyContentWithIdResponse(_id=shacl_test_suite.id)
 
 
 @router.get(
@@ -129,14 +130,14 @@ async def route_list_shacl_test_suite_file_resources(
     status_code=status.HTTP_201_CREATED
 )
 async def route_create_shacl_test_suite_file_resources(
-        id: PydanticObjectId,
         req: Request,
+        shacl_test_suite: SHACLTestSuite = Depends(get_shacl_test_suite),
         user: User = Depends(current_active_user)
 ):
-    shacl_test_file_resource = SHACLTestFileResource(**await file_resource_data_from_form_request(req))
+    data = SHACLTestFileResourceCreateIn(**(await file_resource_data_from_form_request(req)))
     return await create_shacl_test_suite_file_resource(
-        id=id,
-        shacl_test_file_resource=shacl_test_file_resource,
+        shacl_test_suite=shacl_test_suite,
+        data=data,
         user=user
     )
 
@@ -148,13 +149,12 @@ async def route_create_shacl_test_suite_file_resources(
     response_model=SHACLTestFileResource
 )
 async def route_update_shacl_test_file_resource(
-        id: PydanticObjectId,
         req: Request,
+        shacl_test_file_resource: SHACLTestFileResource = Depends(get_shacl_test_file_resource),
         user: User = Depends(current_active_user)
 ):
-    data = SHACLTestFileResource(**(await file_resource_data_from_form_request(req)))
-    await update_shacl_test_file_resource(id, data, user=user)
-    return await get_shacl_test_file_resource(id)
+    data = SHACLTestFileResourceUpdateIn(**(await file_resource_data_from_form_request(req)))
+    return await update_shacl_test_file_resource(shacl_test_file_resource, data, user=user)
 
 
 @router.get(
@@ -175,6 +175,7 @@ async def route_get_shacl_test_file_resource(
     name=f"{FILE_RESOURCE_NAME_FOR_MANY}:delete_{FILE_RESOURCE_NAME_FOR_ONE}",
     response_model=APIEmptyContentWithIdResponse
 )
-async def route_delete_shacl_test_file_resource(id: PydanticObjectId):
-    await delete_shacl_test_file_resource(id)
-    return APIEmptyContentWithIdResponse(_id=id)
+async def route_delete_shacl_test_file_resource(
+        shacl_test_file_resource: SHACLTestFileResource = Depends(get_shacl_test_file_resource)):
+    await delete_shacl_test_file_resource(shacl_test_file_resource)
+    return APIEmptyContentWithIdResponse(_id=shacl_test_file_resource.id)

@@ -7,7 +7,7 @@ from mapping_workbench.backend.core.models.api_response import APIEmptyContentWi
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.triple_map_fragment.models.entity import GenericTripleMapFragmentOut, \
-    GenericTripleMapFragmentCreateIn, GenericTripleMapFragmentUpdateIn
+    GenericTripleMapFragmentCreateIn, GenericTripleMapFragmentUpdateIn, GenericTripleMapFragment
 from mapping_workbench.backend.triple_map_fragment.models.entity_api_response import \
     APIListGenericTripleMapFragmentsPaginatedResponse
 from mapping_workbench.backend.triple_map_fragment.services.api_for_generic import (
@@ -15,7 +15,7 @@ from mapping_workbench.backend.triple_map_fragment.services.api_for_generic impo
     create_generic_triple_map_fragment,
     update_generic_triple_map_fragment,
     get_generic_triple_map_fragment,
-    delete_generic_triple_map_fragment
+    delete_generic_triple_map_fragment, get_generic_triple_map_fragment_out
 )
 from mapping_workbench.backend.user.models.user import User
 
@@ -77,7 +77,7 @@ async def route_update_generic_triple_map_fragment(
 ):
     await update_generic_triple_map_fragment(id=id, generic_triple_map_fragment_data=generic_triple_map_fragment_data,
                                              user=user)
-    return await get_generic_triple_map_fragment(id)
+    return await get_generic_triple_map_fragment_out(id)
 
 
 @router.get(
@@ -87,7 +87,7 @@ async def route_update_generic_triple_map_fragment(
     response_model=GenericTripleMapFragmentOut
 )
 async def route_get_generic_triple_map_fragment(
-        generic_triple_map_fragment: GenericTripleMapFragmentOut = Depends(get_generic_triple_map_fragment)):
+        generic_triple_map_fragment: GenericTripleMapFragmentOut = Depends(get_generic_triple_map_fragment_out)):
     return generic_triple_map_fragment
 
 
@@ -97,6 +97,7 @@ async def route_get_generic_triple_map_fragment(
     name=f"{NAME_FOR_MANY}:delete_{NAME_FOR_ONE}",
     response_model=APIEmptyContentWithIdResponse
 )
-async def route_delete_generic_triple_map_fragment(id: PydanticObjectId):
-    await delete_generic_triple_map_fragment(id)
-    return APIEmptyContentWithIdResponse(_id=id)
+async def route_delete_generic_triple_map_fragment(
+        generic_triple_map_fragment: GenericTripleMapFragment = Depends(get_generic_triple_map_fragment)):
+    await delete_generic_triple_map_fragment(generic_triple_map_fragment)
+    return APIEmptyContentWithIdResponse(_id=generic_triple_map_fragment.id)

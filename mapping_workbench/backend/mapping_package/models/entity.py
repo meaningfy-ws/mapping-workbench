@@ -12,6 +12,7 @@ from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuit
 
 
 class MappingPackageIn(BaseProjectResourceEntityInSchema):
+    title: Optional[str]
     description: Optional[str]
     identifier: Optional[str]
     subtype: Optional[List[str]]
@@ -29,7 +30,11 @@ class MappingPackageCreateIn(MappingPackageIn):
 
 
 class MappingPackageUpdateIn(MappingPackageIn):
-    title: Optional[str]
+    pass
+
+
+class MappingPackageImportIn(MappingPackageIn):
+    created_at: Optional[datetime]
 
 
 class MappingPackageOut(BaseProjectResourceEntityOutSchema):
@@ -65,3 +70,4 @@ class MappingPackage(BaseProjectResourceEntity):
 
     class Settings(BaseProjectResourceEntity.Settings):
         name = "mapping_packages"
+

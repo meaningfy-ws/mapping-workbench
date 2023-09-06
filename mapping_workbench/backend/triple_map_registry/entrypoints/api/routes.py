@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, status
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.triple_map_registry.models.entity import TripleMapRegistryOut, \
-    TripleMapRegistryCreateIn, TripleMapRegistryUpdateIn
+    TripleMapRegistryCreateIn, TripleMapRegistryUpdateIn, TripleMapRegistry
 from mapping_workbench.backend.triple_map_registry.models.entity_api_response import \
     APIListTripleMapRegistriesPaginatedResponse
 from mapping_workbench.backend.triple_map_registry.services.api import (
@@ -14,7 +14,7 @@ from mapping_workbench.backend.triple_map_registry.services.api import (
     create_triple_map_registry,
     update_triple_map_registry,
     get_triple_map_registry,
-    delete_triple_map_registry
+    delete_triple_map_registry, get_triple_map_registry_out
 )
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.user.models.user import User
@@ -75,7 +75,7 @@ async def route_update_triple_map_registry(
         user: User = Depends(current_active_user)
 ):
     await update_triple_map_registry(id=id, triple_map_registry_data=triple_map_registry_data, user=user)
-    return await get_triple_map_registry(id)
+    return await get_triple_map_registry_out(id)
 
 
 @router.get(
@@ -85,7 +85,7 @@ async def route_update_triple_map_registry(
     response_model=TripleMapRegistryOut
 )
 async def route_get_triple_map_registry(
-        triple_map_registry: TripleMapRegistryOut = Depends(get_triple_map_registry)):
+        triple_map_registry: TripleMapRegistryOut = Depends(get_triple_map_registry_out)):
     return triple_map_registry
 
 
@@ -95,6 +95,6 @@ async def route_get_triple_map_registry(
     name=f"{NAME_FOR_MANY}:delete_{NAME_FOR_ONE}",
     response_model=APIEmptyContentWithIdResponse
 )
-async def route_delete_triple_map_registry(id: PydanticObjectId):
-    await delete_triple_map_registry(id)
-    return APIEmptyContentWithIdResponse(_id=id)
+async def route_delete_triple_map_registry(triple_map_registry: TripleMapRegistry = Depends(get_triple_map_registry)):
+    await delete_triple_map_registry(triple_map_registry)
+    return APIEmptyContentWithIdResponse(_id=triple_map_registry.id)

@@ -38,6 +38,10 @@ class SPARQLTestFileResourcesApi extends FileResourcesApi {
         return types;
     }
 
+    get FILE_RESOURCE_DEFAULT_TYPE() {
+        return FILE_RESOURCE_TYPE_INTEGRATION_TEST_VALUE;
+    }
+
     constructor() {
         super("sparql_test_suites");
         this.isProjectResource = true;

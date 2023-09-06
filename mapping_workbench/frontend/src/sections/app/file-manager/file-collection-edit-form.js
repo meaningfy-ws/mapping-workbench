@@ -40,12 +40,11 @@ export const FileCollectionEditForm = (props) => {
 
     let initialValues = {
         title: item.title || '',
-        description: item.description || '',
-        submit: null
+        description: item.description || ''
     };
 
     if (sectionApi.hasFileCollectionType) {
-        initialValues['type'] = item.type || '';
+        initialValues['type'] = item.type || null;
     }
 
     switch (sectionApi.section) {

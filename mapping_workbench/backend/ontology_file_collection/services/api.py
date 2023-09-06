@@ -4,9 +4,10 @@ from beanie import PydanticObjectId
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
-from mapping_workbench.backend.core.services.request import request_update_data, api_entity_is_found
+from mapping_workbench.backend.core.services.request import request_update_data, api_entity_is_found, \
+    request_create_data
 from mapping_workbench.backend.ontology_file_collection.models.entity import OntologyFileCollection, \
-    OntologyFileResource
+    OntologyFileResource, OntologyFileResourceCreateIn, OntologyFileResourceUpdateIn
 from mapping_workbench.backend.user.models.user import User
 
 
@@ -43,10 +44,7 @@ async def get_ontology_file_collection(id: PydanticObjectId) -> OntologyFileColl
     return OntologyFileCollection(**ontology_file_collection.dict(by_alias=False))
 
 
-async def delete_ontology_file_collection(id: PydanticObjectId):
-    ontology_file_collection: OntologyFileCollection = await OntologyFileCollection.get(id)
-    if not api_entity_is_found(ontology_file_collection):
-        raise ResourceNotFoundException()
+async def delete_ontology_file_collection(ontology_file_collection: OntologyFileCollection):
     return await ontology_file_collection.delete()
 
 
@@ -63,24 +61,22 @@ async def list_ontology_file_collection_file_resources(
 
 
 async def create_ontology_file_collection_file_resource(
-        id: PydanticObjectId,
-        ontology_file_resource: OntologyFileResource,
+        ontology_file_collection: OntologyFileCollection,
+        data: OntologyFileResourceCreateIn,
         user: User
 ) -> OntologyFileResource:
-    ontology_file_resource.ontology_file_collection = OntologyFileCollection.link_from_id(id)
-    ontology_file_resource.on_create(user=user)
+    data.ontology_file_collection = ontology_file_collection
+    ontology_file_resource = OntologyFileResource(**request_create_data(data)).on_create(user=user)
     return await ontology_file_resource.create()
 
 
 async def update_ontology_file_resource(
-        id: PydanticObjectId,
-        ontology_file_resource_data: OntologyFileResource,
-        user: User):
-    ontology_file_resource: OntologyFileResource = await OntologyFileResource.get(id)
-    if not api_entity_is_found(ontology_file_resource):
-        raise ResourceNotFoundException()
-    request_data = request_update_data(ontology_file_resource_data)
-    update_data = request_update_data(OntologyFileResource(**request_data).on_update(user=user))
+        ontology_file_resource: OntologyFileResource,
+        data: OntologyFileResourceUpdateIn,
+        user: User) -> OntologyFileResource:
+    update_data = request_update_data(
+        OntologyFileResource(**request_update_data(data)).on_update(user=user)
+    )
     return await ontology_file_resource.set(update_data)
 
 
@@ -91,8 +87,5 @@ async def get_ontology_file_resource(id: PydanticObjectId) -> OntologyFileResour
     return ontology_file_resource
 
 
-async def delete_ontology_file_resource(id: PydanticObjectId):
-    ontology_file_resource: OntologyFileResource = await OntologyFileResource.get(id)
-    if not api_entity_is_found(ontology_file_resource):
-        raise ResourceNotFoundException()
+async def delete_ontology_file_resource(ontology_file_resource: OntologyFileResource):
     return await ontology_file_resource.delete()

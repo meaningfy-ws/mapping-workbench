@@ -16,20 +16,14 @@ import nProgress from 'nprogress';
 import {sessionApi} from "../../../api/session";
 import TextField from "@mui/material/TextField";
 import * as React from "react";
-import Grid from "@mui/material/Unstable_Grid2";
 
 
-export const FileUploader = (props) => {
+export const PackageImporter = (props) => {
     const router = useRouter();
 
-    const {onClose, open = false, collectionId, sectionApi} = props;
-
-    const defaultFormatValue = sectionApi.FILE_RESOURCE_DEFAULT_FORMAT;
+    const {onClose, open = false, sectionApi} = props;
 
     const [files, setFiles] = useState([]);
-    const [format, setFormat] = useState(defaultFormatValue);
-    const [type, setType] = useState(sectionApi.FILE_RESOURCE_DEFAULT_TYPE || "");
-
     useEffect(() => {
         setFiles([]);
     }, [open]);
@@ -37,27 +31,21 @@ export const FileUploader = (props) => {
     const handleUpload = useCallback(async() => {
         nProgress.start();
         let incStep = 100 / files.length;
+        let formData;
         for (let file of files) {
-            let formData = new FormData();
-
-            formData.append("title", file.name);
-            formData.append("format", format);
-            if (sectionApi.hasFileResourceType) {
-                formData.append("type", type);
-            }
+            formData = new FormData();
             formData.append("file", file);
             formData.append("project", sessionApi.getSessionProject());
-            await sectionApi.createCollectionFileResource(collectionId, formData);
+            await sectionApi.importPackage(formData);
             nProgress.inc(incStep);
         }
         nProgress.done();
         onClose();
         // router.push({
-        //     pathname: paths.app[sectionApi.section].resource_manager.index,
-        //     query: {id: collection_id}
+        //     pathname: paths.app[sectionApi.section].index
         // });
         router.reload();
-    }, [files, format, type]);
+    }, [files]);
 
     const handleDrop = useCallback((newFiles) => {
         setFiles((prevFiles) => {
@@ -93,7 +81,7 @@ export const FileUploader = (props) => {
                 }}
             >
                 <Typography variant="h6">
-                    Upload Files
+                    Import Packages
                 </Typography>
                 <IconButton
                     color="inherit"
@@ -105,40 +93,9 @@ export const FileUploader = (props) => {
                 </IconButton>
             </Stack>
             <DialogContent>
-                <TextField
-                    fullWidth
-                    label="Format"
-                    onChange={e => setFormat(e.target.value)}
-                    select
-                    required
-                    value={format}
-                    sx={{mb: 3}}
-                >
-                    {Object.keys(sectionApi.FILE_RESOURCE_FORMATS).map((key) => (
-                        <MenuItem key={key} value={key}>
-                            {sectionApi.FILE_RESOURCE_FORMATS[key]}
-                        </MenuItem>
-                    ))}
-                </TextField>
-                {sectionApi.hasFileResourceType && (
-                    <TextField
-                        fullWidth
-                        label="Type"
-                        onChange={e => setType(e.target.value)}
-                        select
-                        value={type}
-                        sx={{mb: 3}}
-                    >
-                        {Object.keys(sectionApi.FILE_RESOURCE_TYPES).map((key) => (
-                            <MenuItem key={key} value={key}>
-                                {sectionApi.FILE_RESOURCE_TYPES[key]}
-                            </MenuItem>
-                        ))}
-                    </TextField>
-                )}
                 <FileDropzone
                     accept={{'*/*': []}}
-                    caption="Max file size is 3 MB"
+                    caption="Required name: {PACKAGE_NAME}.zip"
                     files={files}
                     onDrop={handleDrop}
                     onRemove={handleRemove}
@@ -151,7 +108,7 @@ export const FileUploader = (props) => {
     );
 };
 
-FileUploader.propTypes = {
+PackageImporter.propTypes = {
     onClose: PropTypes.func,
     open: PropTypes.bool
 };

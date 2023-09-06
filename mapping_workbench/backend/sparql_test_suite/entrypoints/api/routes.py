@@ -9,7 +9,8 @@ from mapping_workbench.backend.file_resource.services.file_resource_form_data im
     file_resource_data_from_form_request
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
-from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuite, SPARQLTestFileResource
+from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuite, SPARQLTestFileResource, \
+    SPARQLTestFileResourceCreateIn, SPARQLTestFileResourceUpdateIn
 from mapping_workbench.backend.sparql_test_suite.models.entity_api_response import \
     APIListSPARQLTestSuitesPaginatedResponse, APIListSPARQLTestFileResourcesPaginatedResponse
 from mapping_workbench.backend.sparql_test_suite.services.api import (
@@ -103,9 +104,9 @@ async def route_get_sparql_test_suite(sparql_test_suite: SPARQLTestSuite = Depen
     name=f"{NAME_FOR_MANY}:delete_{NAME_FOR_ONE}",
     response_model=APIEmptyContentWithIdResponse
 )
-async def route_delete_sparql_test_suite(id: PydanticObjectId):
-    await delete_sparql_test_suite(id)
-    APIEmptyContentWithIdResponse(_id=id)
+async def route_delete_sparql_test_suite(sparql_test_suite: SPARQLTestSuite = Depends(get_sparql_test_suite)):
+    await delete_sparql_test_suite(sparql_test_suite)
+    APIEmptyContentWithIdResponse(_id=sparql_test_suite.id)
 
 
 @router.get(
@@ -122,7 +123,6 @@ async def route_list_sparql_test_file_resources(
         filters['type'] = type
     items: List[SPARQLTestFileResource] = await list_sparql_test_file_resources(filters)
     return APIListSPARQLTestFileResourcesPaginatedResponse(items=items, count=len(items))
-
 
 
 @router.get(
@@ -146,14 +146,14 @@ async def route_list_sparql_test_suite_file_resources(
     status_code=status.HTTP_201_CREATED
 )
 async def route_create_sparql_test_suite_file_resources(
-        id: PydanticObjectId,
         req: Request,
+        sparql_test_suite: SPARQLTestSuite = Depends(get_sparql_test_suite),
         user: User = Depends(current_active_user)
 ):
-    sparql_test_file_resource = SPARQLTestFileResource(**await file_resource_data_from_form_request(req))
+    data = SPARQLTestFileResourceCreateIn(**(await file_resource_data_from_form_request(req)))
     return await create_sparql_test_suite_file_resource(
-        id=id,
-        sparql_test_file_resource=sparql_test_file_resource,
+        sparql_test_suite=sparql_test_suite,
+        data=data,
         user=user
     )
 
@@ -165,13 +165,12 @@ async def route_create_sparql_test_suite_file_resources(
     response_model=SPARQLTestFileResource
 )
 async def route_update_sparql_test_file_resource(
-        id: PydanticObjectId,
         req: Request,
+        sparql_test_file_resource: SPARQLTestFileResource = Depends(get_sparql_test_file_resource),
         user: User = Depends(current_active_user)
 ):
-    data = SPARQLTestFileResource(**(await file_resource_data_from_form_request(req)))
-    await update_sparql_test_file_resource(id, data, user=user)
-    return await get_sparql_test_file_resource(id)
+    data = SPARQLTestFileResourceUpdateIn(**(await file_resource_data_from_form_request(req)))
+    return await update_sparql_test_file_resource(sparql_test_file_resource, data, user=user)
 
 
 @router.get(
@@ -192,6 +191,7 @@ async def route_get_sparql_test_file_resource(
     name=f"{FILE_RESOURCE_NAME_FOR_MANY}:delete_{FILE_RESOURCE_NAME_FOR_ONE}",
     response_model=APIEmptyContentWithIdResponse
 )
-async def route_delete_sparql_test_file_resource(id: PydanticObjectId):
-    await delete_sparql_test_file_resource(id)
-    return APIEmptyContentWithIdResponse(_id=id)
+async def route_delete_sparql_test_file_resource(
+        sparql_test_file_resource: SPARQLTestFileResource = Depends(get_sparql_test_file_resource)):
+    await delete_sparql_test_file_resource(sparql_test_file_resource)
+    return APIEmptyContentWithIdResponse(_id=sparql_test_file_resource.id)

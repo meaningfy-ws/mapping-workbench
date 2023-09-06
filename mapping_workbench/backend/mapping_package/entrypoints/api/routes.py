@@ -1,20 +1,23 @@
 from typing import List
 
 from beanie import PydanticObjectId
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, UploadFile, Form
 
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
+from mapping_workbench.backend.file_resource.services.file_resource_form_data import \
+    file_resource_data_from_form_request
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageOut, MappingPackageCreateIn, \
-    MappingPackageUpdateIn
+    MappingPackageUpdateIn, MappingPackage
 from mapping_workbench.backend.mapping_package.models.entity_api_response import APIListMappingPackagesPaginatedResponse
 from mapping_workbench.backend.mapping_package.services.api import (
     list_mapping_packages,
     create_mapping_package,
     update_mapping_package,
     get_mapping_package,
-    delete_mapping_package
+    delete_mapping_package, get_mapping_package_out, import_package
 )
 from mapping_workbench.backend.project.models.entity import Project
+from mapping_workbench.backend.project.services.api import get_project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.user.models.user import User
 
@@ -74,7 +77,7 @@ async def route_update_mapping_package(
         user: User = Depends(current_active_user)
 ):
     await update_mapping_package(id=id, mapping_package_data=mapping_package_data, user=user)
-    return await get_mapping_package(id)
+    return await get_mapping_package_out(id)
 
 
 @router.get(
@@ -83,7 +86,7 @@ async def route_update_mapping_package(
     name=f"{NAME_FOR_MANY}:get_{NAME_FOR_ONE}",
     response_model=MappingPackageOut
 )
-async def route_get_mapping_package(mapping_package: MappingPackageOut = Depends(get_mapping_package)):
+async def route_get_mapping_package(mapping_package: MappingPackageOut = Depends(get_mapping_package_out)):
     return mapping_package
 
 
@@ -93,6 +96,20 @@ async def route_get_mapping_package(mapping_package: MappingPackageOut = Depends
     name=f"{NAME_FOR_MANY}:delete_{NAME_FOR_ONE}",
     response_model=APIEmptyContentWithIdResponse
 )
-async def route_delete_mapping_package(id: PydanticObjectId):
-    await delete_mapping_package(id)
-    return APIEmptyContentWithIdResponse(_id=id)
+async def route_delete_mapping_package(mapping_package: MappingPackage = Depends(get_mapping_package)):
+    await delete_mapping_package(mapping_package)
+    return APIEmptyContentWithIdResponse(_id=mapping_package.id)
+
+
+@router.post(
+    "/import",
+    description=f"Import {NAME_FOR_ONE}",
+    name=f"{NAME_FOR_MANY}:import_{NAME_FOR_ONE}",
+    status_code=status.HTTP_201_CREATED
+)
+async def route_import_mapping_packages(
+        project: PydanticObjectId = Form(...),
+        file: UploadFile = Form(...),
+        user: User = Depends(current_active_user)
+):
+    await import_package(file.file.read(), file.filename, await get_project(project), user)

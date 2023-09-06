@@ -10,7 +10,7 @@ def request_update_data(entity_data: BaseModel) -> dict:
 
 
 def request_create_data(entity_data: BaseModel) -> dict:
-    return entity_data.dict(exclude_unset=True)
+    return entity_data.dict()
 
 
 def api_entity_is_found(entity: BaseEntity) -> bool:
