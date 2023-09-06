@@ -5,13 +5,38 @@ from datetime import datetime
 from pathlib import Path
 from zipfile import ZipFile
 
+import pandas as pd
+
+from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageImportIn, MappingPackage
 from mapping_workbench.backend.project.models.entity import Project
+from mapping_workbench.backend.resource_collection.models.entity import ResourceFile, ResourceCollection, \
+    ResourceFileFormat
+from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestFileResourceFormat, SHACLTestSuite, \
+    SHACLTestFileResource
+from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResourceFormat, SPARQLTestSuite, \
+    SPARQLTestFileResource, SPARQLQueryValidationType
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
     TestDataFileResourceFormat
+from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragmentFormat, \
+    GenericTripleMapFragment
 from mapping_workbench.backend.user.models.user import User
 
-TEST_DATA_DIR = "test_data"
+TEST_DATA_DIR = Path("test_data")
+TRANSFORMATION_DIR = Path("transformation")
+VALIDATION_DIR = Path("validation")
+TRIPLE_MAP_FRAGMENTS_DIR = TRANSFORMATION_DIR / "mappings"
+CONCEPTUAL_MAPPINGS_FILE = TRANSFORMATION_DIR / "conceptual_mappings.xlsx"
+
+RULES_SF_FIELD_ID = 'Standard Form Field ID (M)'
+RULES_SF_FIELD_NAME = 'Standard Form Field Name (M)'
+RULES_E_FORM_BT_ID = 'eForm BT-ID (Provisional/Indicative) (O)'
+RULES_E_FORM_BT_NAME = 'eForm BT Name (Provisional/Indicative) (O)'
+RULES_FIELD_XPATH = 'Field XPath (M)'
+RULES_CLASS_PATH = "Class path (M)"
+RULES_PROPERTY_PATH = "Property path (M)"
+RULES_INTEGRATION_TESTS_REF = "Reference to Integration Tests (O)"
+RULES_RML_TRIPLE_MAP_REF = "RML TripleMap reference (O)"
 
 
 class PackageImporter:
@@ -33,6 +58,11 @@ class PackageImporter:
     async def run(self):
         await self.add_mapping_package()
         await self.add_test_data()
+        await self.add_triple_map_fragments()
+        await self.add_sparql_test_suites()
+        await self.add_shacl_test_suites()
+        await self.add_resource_collections()
+        await self.add_mapping_rules()
 
         self.tempdir.cleanup()
 
@@ -91,16 +121,18 @@ class PackageImporter:
 
                 resource_format = os.path.splitext(file)[1][1:].upper()
                 if resource_format not in resource_formats:
+                    print(f"-- skipped {file} :: {resource_format} not in {resource_formats}")
                     continue
 
                 file_path = Path(os.path.join(root, file))
+                file_name = str(file)
 
                 test_data_file_resource = TestDataFileResource(
                     project=self.project,
                     test_data_suite=test_data_suite,
                     format=resource_format,
-                    title=file,
-                    filename=file,
+                    title=file_name,
+                    filename=file_name,
                     path=parents,
                     content=file_path.read_text(encoding="utf-8")
                 )
@@ -108,9 +140,220 @@ class PackageImporter:
 
         await self.mapping_package.save()
 
+    async def add_triple_map_fragments(self):
+        resource_formats = [e.value for e in TripleMapFragmentFormat]
+        triple_map_fragments_path = self.package_path / TRIPLE_MAP_FRAGMENTS_DIR
+        for file in Path(triple_map_fragments_path).iterdir():
+            if file.is_file():
+                resource_format = os.path.splitext(file)[1][1:].upper()
+                if resource_format not in resource_formats:
+                    print(f"-- skipped {file} :: {resource_format} not in {resource_formats}")
+                    continue
+
+                file_path = triple_map_fragments_path / file
+                file_name = file.name
+
+                triple_map_fragment = GenericTripleMapFragment(
+                    triple_map_uri=file_name,
+                    triple_map_content=file_path.read_text(encoding="utf-8"),
+                    format=resource_format,
+                    project=self.project
+                )
+                await triple_map_fragment.on_create(self.user).save()
+
+    async def add_sparql_test_suites(self):
+        resource_formats = [e.value for e in SPARQLTestFileResourceFormat]
+        sparql_test_suites_path = self.package_path / VALIDATION_DIR / "sparql"
+        for root, folders, files in os.walk(sparql_test_suites_path):
+            if root == str(sparql_test_suites_path):
+                continue
+
+            parents = list(
+                map(lambda path_value: str(path_value), Path(os.path.relpath(root, sparql_test_suites_path)).parts))
+
+            sparql_test_suite = None
+            if len(parents) == 1:  # first level
+                sparql_test_suite_title = str(os.path.relpath(root, sparql_test_suites_path))
+                if sparql_test_suite_title == "cm_assertions":
+                    print("-- skipped sparql_test_suite cm_assertions")
+                    continue
+                validation_type = sparql_test_suite_title[:-1]
+                sparql_test_suite = SPARQLTestSuite(
+                    project=self.project,
+                    title=sparql_test_suite_title,
+                    type=validation_type
+                )
+                await sparql_test_suite.on_create(self.user).save()
+                self.mapping_package.sparql_test_suites.append(SPARQLTestSuite.link_from_id(sparql_test_suite.id))
+
+            for file in files:
+                if file.startswith('.'):
+                    continue
+
+                resource_format = os.path.splitext(file)[1][1:].upper()
+                if resource_format not in resource_formats:
+                    print(f"-- skipped {file} :: {resource_format} not in {resource_formats}")
+                    continue
+
+                file_path = Path(os.path.join(root, file))
+                file_name = str(file)
+
+                sparql_test_file_resource = SPARQLTestFileResource(
+                    project=self.project,
+                    sparql_test_suite=sparql_test_suite,
+                    format=resource_format,
+                    title=file_name,
+                    filename=file_name,
+                    path=parents,
+                    content=file_path.read_text(encoding="utf-8"),
+                    type=sparql_test_suite.type
+                )
+                await sparql_test_file_resource.on_create(self.user).save()
+
+        await self.mapping_package.save()
+
+    async def add_shacl_test_suites(self):
+        resource_formats = [e.value for e in SHACLTestFileResourceFormat]
+        shacl_test_suites_path = self.package_path / VALIDATION_DIR / "shacl"
+        for root, folders, files in os.walk(shacl_test_suites_path):
+            if root == str(shacl_test_suites_path):
+                continue
+
+            parents = list(
+                map(lambda path_value: str(path_value), Path(os.path.relpath(root, shacl_test_suites_path)).parts))
+
+            shacl_test_suite = None
+            if len(parents) == 1:  # first level
+                shacl_test_suite_title = str(os.path.relpath(root, shacl_test_suites_path))
+                shacl_test_suite = SHACLTestSuite(
+                    project=self.project,
+                    title=shacl_test_suite_title
+                )
+                await shacl_test_suite.on_create(self.user).save()
+                self.mapping_package.shacl_test_suites.append(SHACLTestSuite.link_from_id(shacl_test_suite.id))
+
+            for file in files:
+                if file.startswith('.'):
+                    continue
+
+                resource_format = f"SHACL.{os.path.splitext(file)[1][1:].upper()}"
+                if resource_format not in resource_formats:
+                    print(f"-- skipped {file} :: {resource_format} not in {resource_formats}")
+                    continue
+
+                file_path = Path(os.path.join(root, file))
+                file_name = str(file)
+
+                shacl_test_file_resource = SHACLTestFileResource(
+                    project=self.project,
+                    shacl_test_suite=shacl_test_suite,
+                    format=resource_format,
+                    title=file_name,
+                    filename=file_name,
+                    path=parents,
+                    content=file_path.read_text(encoding="utf-8")
+                )
+                await shacl_test_file_resource.on_create(self.user).save()
+
+        await self.mapping_package.save()
+
+    async def add_resource_collections(self):
+        resource_formats = [e.value for e in ResourceFileFormat]
+        resource_collections_path = self.package_path / TRANSFORMATION_DIR / "resources"
+
+        resource_collection = ResourceCollection(
+            project=self.project,
+            title="Default"
+        )
+        await resource_collection.on_create(self.user).save()
+        # self.mapping_package.resource_collections.append(ResourceCollection.link_from_id(resource_collection.id))
+        await self.mapping_package.save()
+
+        for root, folders, files in os.walk(resource_collections_path):
+            if root == str(resource_collections_path):
+                continue
+
+            parents = list(
+                map(lambda path_value: str(path_value), Path(os.path.relpath(root, resource_collections_path)).parts))
+
+            for file in files:
+                if file.startswith('.'):
+                    continue
+
+                resource_format = os.path.splitext(file)[1][1:].upper()
+                if resource_format not in resource_formats:
+                    print(f"-- skipped {file} :: {resource_format} not in {resource_formats}")
+                    continue
+
+                file_path = Path(os.path.join(root, file))
+                file_name = str(file)
+
+                resource_file = ResourceFile(
+                    project=self.project,
+                    resource_collection=resource_collection,
+                    format=resource_format,
+                    title=file_name,
+                    filename=file_name,
+                    path=parents,
+                    content=file_path.read_text(encoding="utf-8")
+                )
+                await resource_file.on_create(self.user).save()
+
     async def add_mapping_package(self):
         self.add_metadata_to_package()
         self.mapping_package = MappingPackage(**(self.mapping_package_data.dict()))
         self.mapping_package.project = self.project
         self.mapping_package.test_data_suites = []
+        self.mapping_package.sparql_test_suites = []
+        self.mapping_package.shacl_test_suites = []
         await self.mapping_package.on_create(self.user).save()
+
+    async def add_mapping_rules(self):
+        def read_pd_value(value, default=""):
+            if pd.isna(value):
+                return default
+            return value
+
+        def read_list_from_pd_value(value, sep=',') -> list:
+            if value and pd.notna(value):
+                return [x.strip() for x in str(value).split(',')]
+            return []
+
+        conceptual_mappings_file = self.package_path / CONCEPTUAL_MAPPINGS_FILE
+        df = pd.read_excel(conceptual_mappings_file, sheet_name="Rules")
+        df.columns = df.iloc[0]
+        rules_df = df[1:].copy()
+        rules_df[RULES_SF_FIELD_ID].ffill(axis="index", inplace=True)
+        rules_df[RULES_SF_FIELD_NAME].ffill(axis="index", inplace=True)
+
+        rules = []
+        rule: ConceptualMappingRule
+        for idx, row in rules_df.iterrows():
+            rule = ConceptualMappingRule()
+            rule.project = self.project
+            rule.business_id = read_pd_value(row[RULES_E_FORM_BT_ID])
+            rule.business_title = read_pd_value(row[RULES_E_FORM_BT_NAME])
+            rule.business_description = \
+                f"{read_pd_value(row[RULES_SF_FIELD_ID])} {read_pd_value(row[RULES_SF_FIELD_NAME])}"
+            rule.source_xpath = read_list_from_pd_value(row[RULES_FIELD_XPATH], sep='\n')
+            rule.target_class_path = read_pd_value(row[RULES_CLASS_PATH])
+            rule.target_property_path = read_pd_value(row[RULES_PROPERTY_PATH])
+            rule.mapping_packages = [self.mapping_package]
+            rule.triple_map_fragment = None
+
+            df_integration_tests = read_list_from_pd_value(row[RULES_INTEGRATION_TESTS_REF])
+            sparql_integration_tests_query = {
+                "project": Project.link_from_id(self.project.id),
+                "type": SPARQLQueryValidationType.INTEGRATION_TEST.value,
+                "filename": {
+                    "$in": df_integration_tests
+                }
+            }
+            sparql_integration_tests = await SPARQLTestFileResource.find(
+                sparql_integration_tests_query,
+                fetch_links=False
+            ).to_list()
+
+            rule.sparql_assertions = sparql_integration_tests
+
+            await rule.on_create(self.user).save()

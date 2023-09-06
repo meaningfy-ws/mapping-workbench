@@ -16,6 +16,7 @@ import nProgress from 'nprogress';
 import {sessionApi} from "../../../api/session";
 import TextField from "@mui/material/TextField";
 import * as React from "react";
+import Grid from "@mui/material/Unstable_Grid2";
 
 
 export const FileUploader = (props) => {
@@ -27,6 +28,8 @@ export const FileUploader = (props) => {
 
     const [files, setFiles] = useState([]);
     const [format, setFormat] = useState(defaultFormatValue);
+    const [type, setType] = useState(sectionApi.FILE_RESOURCE_DEFAULT_TYPE || "");
+
     useEffect(() => {
         setFiles([]);
     }, [open]);
@@ -39,6 +42,9 @@ export const FileUploader = (props) => {
 
             formData.append("title", file.name);
             formData.append("format", format);
+            if (sectionApi.hasFileResourceType) {
+                formData.append("type", type);
+            }
             formData.append("file", file);
             formData.append("project", sessionApi.getSessionProject());
             await sectionApi.createCollectionFileResource(collectionId, formData);
@@ -51,7 +57,7 @@ export const FileUploader = (props) => {
         //     query: {id: collection_id}
         // });
         router.reload();
-    }, [files, format]);
+    }, [files, format, type]);
 
     const handleDrop = useCallback((newFiles) => {
         setFiles((prevFiles) => {
@@ -114,6 +120,22 @@ export const FileUploader = (props) => {
                         </MenuItem>
                     ))}
                 </TextField>
+                {sectionApi.hasFileResourceType && (
+                    <TextField
+                        fullWidth
+                        label="Type"
+                        onChange={e => setType(e.target.value)}
+                        select
+                        value={type}
+                        sx={{mb: 3}}
+                    >
+                        {Object.keys(sectionApi.FILE_RESOURCE_TYPES).map((key) => (
+                            <MenuItem key={key} value={key}>
+                                {sectionApi.FILE_RESOURCE_TYPES[key]}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                )}
                 <FileDropzone
                     accept={{'*/*': []}}
                     caption="Max file size is 3 MB"
