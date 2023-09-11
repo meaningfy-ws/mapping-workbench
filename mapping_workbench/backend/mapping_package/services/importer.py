@@ -39,6 +39,8 @@ RULES_PROPERTY_PATH = "Property path (M)"
 RULES_INTEGRATION_TESTS_REF = "Reference to Integration Tests (O)"
 RULES_RML_TRIPLE_MAP_REF = "RML TripleMap reference (O)"
 
+DEFAULT_RESOURCES_COLLECTION_NAME = "Default"
+
 
 class PackageImporter:
     mapping_package: MappingPackage
@@ -57,11 +59,11 @@ class PackageImporter:
         self.package_path = Path(tempdir_name) / self.package_name
 
     async def run(self):
-        await self.add_mapping_package()
-        await self.add_test_data()
-        await self.add_triple_map_fragments()
-        await self.add_sparql_test_suites()
-        await self.add_shacl_test_suites()
+        await self.add_mapping_package(False)
+        # await self.add_test_data()
+        # await self.add_triple_map_fragments()
+        # await self.add_sparql_test_suites()
+        # await self.add_shacl_test_suites()
         await self.add_resource_collections()
         await self.add_mapping_rules()
 
@@ -210,7 +212,6 @@ class PackageImporter:
                 )
                 await sparql_test_file_resource.on_create(self.user).save()
 
-
     async def add_shacl_test_suites(self):
         resource_formats = [e.value for e in SHACLTestFileResourceFormat]
         shacl_test_suites_path = self.package_path / VALIDATION_DIR / "shacl"
@@ -260,18 +261,21 @@ class PackageImporter:
         resource_formats = [e.value for e in ResourceFileFormat]
         resource_collections_path = self.package_path / TRANSFORMATION_DIR / "resources"
 
-        resource_collection = ResourceCollection(
-            project=self.project,
-            title="Default"
+        resource_collection = await ResourceCollection.find_one(
+            ResourceCollection.title == DEFAULT_RESOURCES_COLLECTION_NAME
         )
-        await resource_collection.on_create(self.user).save()
-        # self.mapping_package.resource_collections.append(ResourceCollection.link_from_id(resource_collection.id))
-        await self.mapping_package.save()
+
+        if not resource_collection:
+            resource_collection = ResourceCollection(
+                project=self.project,
+                title=DEFAULT_RESOURCES_COLLECTION_NAME
+            )
+            await resource_collection.on_create(self.user).save()
+
+        project_link = ResourceCollection.link_from_id(self.project.id)
+        resource_collection_link = Project.link_from_id(resource_collection.id)
 
         for root, folders, files in os.walk(resource_collections_path):
-            if root == str(resource_collections_path):
-                continue
-
             parents = list(
                 map(lambda path_value: str(path_value), Path(os.path.relpath(root, resource_collections_path)).parts))
 
@@ -287,23 +291,32 @@ class PackageImporter:
                 file_path = Path(os.path.join(root, file))
                 file_name = str(file)
 
-                resource_file = ResourceFile(
-                    project=self.project,
-                    resource_collection=resource_collection,
-                    format=resource_format,
-                    title=file_name,
-                    filename=file_name,
-                    path=parents,
-                    content=file_path.read_text(encoding="utf-8")
+                resource_file = await ResourceFile.find_one(
+                    ResourceFile.project == project_link,
+                    ResourceFile.resource_collection == resource_collection_link,
+                    ResourceFile.filename == file_name
                 )
-                await resource_file.on_create(self.user).save()
 
-    async def add_mapping_package(self, with_save: True):
+                file_content = file_path.read_text(encoding="utf-8")
+                if not resource_file:
+                    await (ResourceFile(
+                        project=project_link,
+                        resource_collection=resource_collection_link,
+                        format=resource_format,
+                        title=file_name,
+                        filename=file_name,
+                        path=parents,
+                        content=file_content
+                    )).on_create(self.user).save()
+                else:
+                    resource_file.content = file_content
+                    await resource_file.on_update(self.user).save()
+
+    async def add_mapping_package(self, with_save: bool = True):
         self.add_metadata_to_package()
         self.mapping_package = MappingPackage(**(self.mapping_package_data.dict()))
         self.mapping_package.project = self.project
         self.mapping_package.test_data_suites = []
-        self.mapping_package.sparql_test_suites = []
         self.mapping_package.shacl_test_suites = []
         with_save and await self.mapping_package.on_create(self.user).save()
 
