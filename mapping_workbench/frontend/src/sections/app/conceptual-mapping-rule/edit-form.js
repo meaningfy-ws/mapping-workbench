@@ -38,9 +38,9 @@ export const EditForm = (props) => {
     }
 
     let initialValues = {
-        business_id: item.business_id || '',
-        business_title: item.business_title || '',
-        business_description: item.business_description || '',
+        field_id: item.field_id || '',
+        field_title: item.field_title || '',
+        field_description: item.field_description || '',
         source_xpath: prepareTextareaListValue(item.source_xpath),
         target_class_path: item.target_class_path || '',
         target_property_path: item.target_property_path || '',
@@ -52,14 +52,14 @@ export const EditForm = (props) => {
     const formik = useFormik({
         initialValues: initialValues,
         validationSchema: Yup.object({
-            business_id: Yup
+            field_id: Yup
                 .string()
                 .max(255)
-                .required('Business ID is required'),
-            business_title: Yup
+                .required('Field ID is required'),
+            field_title: Yup
                 .string()
                 .max(255),
-            business_description: Yup.string().max(2048)
+            field_description: Yup.string().max(2048)
         }),
         onSubmit: async (values, helpers) => {
             try {
@@ -127,13 +127,13 @@ export const EditForm = (props) => {
                 <CardContent sx={{pt: 0}}>
                     <Grid container spacing={3}>
                         <Grid xs={12} md={12}>
-                            <FormTextField formik={formik} name="business_id" label="Business ID" required={true}/>
+                            <FormTextField formik={formik} name="field_id" label="Field ID" required={true}/>
                         </Grid>
                         <Grid xs={12} md={12}>
-                            <FormTextField formik={formik} name="business_title" label="Business Title"/>
+                            <FormTextField formik={formik} name="field_title" label="Field Title"/>
                         </Grid>
                         <Grid xs={12} md={12}>
-                            <FormTextArea formik={formik} name="business_description" label="Business Description"/>
+                            <FormTextArea formik={formik} name="field_description" label="Field Description"/>
                         </Grid>
                         <Grid xs={12} md={12}>
                             <FormTextArea formik={formik} name="source_xpath" label="Source XPaths"/>

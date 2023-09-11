@@ -494,8 +494,8 @@ export const ListTableRow = (props) => {
             </TableCell>
             <TableCell>
                 <Typography variant="subtitle2">
-                    <Box>{item.business_id}</Box>
-                    <Box>{item.business_title}</Box>
+                    <Box>{item.field_id}</Box>
+                    <Box>{item.field_title}</Box>
                 </Typography>
             </TableCell>
             <TableCell>
@@ -569,20 +569,20 @@ export const ListTableRow = (props) => {
                             xs={12}
                         >
                             <PropertyList>
-                                {item.business_id && (<PropertyListItem
-                                    key="business_id"
-                                    label="Business ID"
-                                    value={item.business_id}
+                                {item.field_id && (<PropertyListItem
+                                    key="field_id"
+                                    label="Field ID"
+                                    value={item.field_id}
                                 />)}
-                                {item.business_title && (<PropertyListItem
-                                    key="business_title"
-                                    label="Business Title"
-                                    value={item.business_title}
+                                {item.field_title && (<PropertyListItem
+                                    key="field_title"
+                                    label="Field Title"
+                                    value={item.field_title}
                                 />)}
-                                {item.business_description && (<PropertyListItem
+                                {item.field_description && (<PropertyListItem
                                     key="description"
                                     label="Description"
-                                    value={item.business_description}
+                                    value={item.field_description}
                                     sx={{
                                         whiteSpace: "pre-wrap",
                                         px: 3,

@@ -3,9 +3,11 @@ import os
 import tempfile
 from datetime import datetime
 from pathlib import Path
+from typing import Dict, List
 from zipfile import ZipFile
 
 import pandas as pd
+from fastapi.encoders import jsonable_encoder
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageImportIn, MappingPackage
@@ -299,20 +301,33 @@ class PackageImporter:
                 )
                 await resource_file.on_create(self.user).save()
 
-    async def add_mapping_package(self):
+    async def add_mapping_package(self, with_save: True):
         self.add_metadata_to_package()
         self.mapping_package = MappingPackage(**(self.mapping_package_data.dict()))
         self.mapping_package.project = self.project
         self.mapping_package.test_data_suites = []
         self.mapping_package.sparql_test_suites = []
         self.mapping_package.shacl_test_suites = []
-        await self.mapping_package.on_create(self.user).save()
+        with_save and await self.mapping_package.on_create(self.user).save()
 
     async def add_mapping_rules(self):
+        async def rule_exists(rule: ConceptualMappingRule):
+            q: Dict = {
+                'field_id': rule.field_id,
+                'field_title': rule.field_title,
+                'field_description': rule.field_description,
+                'source_xpath': rule.source_xpath,
+                'target_class_path': rule.target_class_path,
+                'target_property_path': rule.target_property_path,
+                'triple_map_fragment': rule.triple_map_fragment,
+                'sparql_assertions': rule.sparql_assertions
+            }
+            return len(await ConceptualMappingRule.find(q).to_list()) > 0
+
         def read_pd_value(value, default=""):
             if pd.isna(value):
                 return default
-            return value
+            return value.strip()
 
         def read_list_from_pd_value(value, sep=',') -> list:
             if value and pd.notna(value):
@@ -326,24 +341,25 @@ class PackageImporter:
         rules_df[RULES_SF_FIELD_ID].ffill(axis="index", inplace=True)
         rules_df[RULES_SF_FIELD_NAME].ffill(axis="index", inplace=True)
 
-        rules = []
+        project_link = Project.link_from_id(self.project.id)
+        duplicates: List[ConceptualMappingRule] = []
         rule: ConceptualMappingRule
         for idx, row in rules_df.iterrows():
             rule = ConceptualMappingRule()
-            rule.project = self.project
-            rule.business_id = read_pd_value(row[RULES_E_FORM_BT_ID])
-            rule.business_title = read_pd_value(row[RULES_E_FORM_BT_NAME])
-            rule.business_description = \
-                f"{read_pd_value(row[RULES_SF_FIELD_ID])} {read_pd_value(row[RULES_SF_FIELD_NAME])}"
+            rule.project = project_link
+            rule.field_id = read_pd_value(row[RULES_SF_FIELD_ID])
+            rule.field_title = read_pd_value(row[RULES_SF_FIELD_NAME])
+            rule.field_description = \
+                f"{read_pd_value(row[RULES_E_FORM_BT_ID])} {read_pd_value(row[RULES_E_FORM_BT_NAME])}".strip()
             rule.source_xpath = read_list_from_pd_value(row[RULES_FIELD_XPATH], sep='\n')
             rule.target_class_path = read_pd_value(row[RULES_CLASS_PATH])
             rule.target_property_path = read_pd_value(row[RULES_PROPERTY_PATH])
-            rule.mapping_packages = [self.mapping_package]
+            rule.mapping_packages = [MappingPackage.link_from_id(self.mapping_package.id)]
             rule.triple_map_fragment = None
 
             df_integration_tests = read_list_from_pd_value(row[RULES_INTEGRATION_TESTS_REF])
             sparql_integration_tests_query = {
-                "project": Project.link_from_id(self.project.id),
+                "project": project_link,
                 "type": SPARQLQueryValidationType.INTEGRATION_TEST.value,
                 "filename": {
                     "$in": df_integration_tests
@@ -354,6 +370,14 @@ class PackageImporter:
                 fetch_links=False
             ).to_list()
 
-            rule.sparql_assertions = sparql_integration_tests
+            rule.sparql_assertions = list(map(
+                lambda x: SPARQLTestFileResource.link_from_id(x.id),
+                sparql_integration_tests
+            ))
 
-            await rule.on_create(self.user).save()
+            if not (await rule_exists(rule)):
+                await rule.on_create(self.user).save()
+            else:
+                duplicates.append(rule)
+
+        print("RULES_DUPLICATES :: ", len(duplicates))

@@ -10,9 +10,9 @@ from mapping_workbench.backend.triple_map_fragment.models.entity import GenericT
 
 
 class ConceptualMappingRuleIn(BaseProjectResourceEntityInSchema):
-    business_id: Optional[str]
-    business_title: Optional[str]
-    business_description: Optional[str]
+    field_id: Optional[str]
+    field_title: Optional[str]
+    field_description: Optional[str]
     source_xpath: Optional[List[str]]
     target_class_path: Optional[str]
     target_property_path: Optional[str]
@@ -30,9 +30,9 @@ class ConceptualMappingRuleUpdateIn(ConceptualMappingRuleIn):
 
 
 class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema):
-    business_id: Optional[str]
-    business_title: Optional[str]
-    business_description: Optional[str]
+    field_id: Optional[str]
+    field_title: Optional[str]
+    field_description: Optional[str]
     source_xpath: Optional[List[str]]
     target_class_path: Optional[str]
     target_property_path: Optional[str]
@@ -42,9 +42,9 @@ class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema):
 
 
 class ConceptualMappingRule(BaseProjectResourceEntity):
-    business_id: Optional[str]
-    business_title: Optional[str]
-    business_description: Optional[str]
+    field_id: Optional[str]
+    field_title: Optional[str]
+    field_description: Optional[str]
     source_xpath: Optional[List[str]]
     target_class_path: Optional[str]
     target_property_path: Optional[str]
