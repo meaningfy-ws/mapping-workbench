@@ -7,7 +7,6 @@ from typing import Dict, List
 from zipfile import ZipFile
 
 import pandas as pd
-from fastapi.encoders import jsonable_encoder
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageImportIn, MappingPackage
@@ -186,7 +185,6 @@ class PackageImporter:
                     type=validation_type
                 )
                 await sparql_test_suite.on_create(self.user).save()
-                self.mapping_package.sparql_test_suites.append(SPARQLTestSuite.link_from_id(sparql_test_suite.id))
 
             for file in files:
                 if file.startswith('.'):
@@ -212,7 +210,6 @@ class PackageImporter:
                 )
                 await sparql_test_file_resource.on_create(self.user).save()
 
-        await self.mapping_package.save()
 
     async def add_shacl_test_suites(self):
         resource_formats = [e.value for e in SHACLTestFileResourceFormat]

@@ -7,7 +7,6 @@ from mapping_workbench.backend.core.models.base_entity import BaseTitledEntityLi
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite
-from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuite
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite
 
 
@@ -21,7 +20,6 @@ class MappingPackageIn(BaseProjectResourceEntityInSchema):
     min_xsd_version: Optional[str]
     max_xsd_version: Optional[str]
     test_data_suites: Optional[List[Link[TestDataSuite]]]
-    sparql_test_suites: Optional[List[Link[SPARQLTestSuite]]]
     shacl_test_suites: Optional[List[Link[SHACLTestSuite]]]
 
 
@@ -47,7 +45,6 @@ class MappingPackageOut(BaseProjectResourceEntityOutSchema):
     min_xsd_version: Optional[str]
     max_xsd_version: Optional[str]
     test_data_suites: Optional[List[Link[TestDataSuite]]]
-    sparql_test_suites: Optional[List[Link[SPARQLTestSuite]]]
     shacl_test_suites: Optional[List[Link[SHACLTestSuite]]]
 
 
@@ -65,7 +62,6 @@ class MappingPackage(BaseProjectResourceEntity):
     min_xsd_version: Optional[str]
     max_xsd_version: Optional[str]
     test_data_suites: Optional[List[Link[TestDataSuite]]]
-    sparql_test_suites: Optional[List[Link[SPARQLTestSuite]]]
     shacl_test_suites: Optional[List[Link[SHACLTestSuite]]]
 
     class Settings(BaseProjectResourceEntity.Settings):
