@@ -3,6 +3,7 @@ import os
 import tempfile
 from datetime import datetime
 from pathlib import Path
+from typing import Dict, List
 from zipfile import ZipFile
 
 import pandas as pd
@@ -37,6 +38,8 @@ RULES_CLASS_PATH = "Class path (M)"
 RULES_PROPERTY_PATH = "Property path (M)"
 RULES_INTEGRATION_TESTS_REF = "Reference to Integration Tests (O)"
 RULES_RML_TRIPLE_MAP_REF = "RML TripleMap reference (O)"
+
+DEFAULT_RESOURCES_COLLECTION_NAME = "Default"
 
 
 class PackageImporter:
@@ -184,7 +187,6 @@ class PackageImporter:
                     type=validation_type
                 )
                 await sparql_test_suite.on_create(self.user).save()
-                self.mapping_package.sparql_test_suites.append(SPARQLTestSuite.link_from_id(sparql_test_suite.id))
 
             for file in files:
                 if file.startswith('.'):
@@ -209,8 +211,6 @@ class PackageImporter:
                     type=sparql_test_suite.type
                 )
                 await sparql_test_file_resource.on_create(self.user).save()
-
-        await self.mapping_package.save()
 
     async def add_shacl_test_suites(self):
         resource_formats = [e.value for e in SHACLTestFileResourceFormat]
@@ -261,18 +261,21 @@ class PackageImporter:
         resource_formats = [e.value for e in ResourceFileFormat]
         resource_collections_path = self.package_path / TRANSFORMATION_DIR / "resources"
 
-        resource_collection = ResourceCollection(
-            project=self.project,
-            title="Default"
+        resource_collection = await ResourceCollection.find_one(
+            ResourceCollection.title == DEFAULT_RESOURCES_COLLECTION_NAME
         )
-        await resource_collection.on_create(self.user).save()
-        # self.mapping_package.resource_collections.append(ResourceCollection.link_from_id(resource_collection.id))
-        await self.mapping_package.save()
+
+        if not resource_collection:
+            resource_collection = ResourceCollection(
+                project=self.project,
+                title=DEFAULT_RESOURCES_COLLECTION_NAME
+            )
+            await resource_collection.on_create(self.user).save()
+
+        project_link = ResourceCollection.link_from_id(self.project.id)
+        resource_collection_link = Project.link_from_id(resource_collection.id)
 
         for root, folders, files in os.walk(resource_collections_path):
-            if root == str(resource_collections_path):
-                continue
-
             parents = list(
                 map(lambda path_value: str(path_value), Path(os.path.relpath(root, resource_collections_path)).parts))
 
@@ -288,31 +291,53 @@ class PackageImporter:
                 file_path = Path(os.path.join(root, file))
                 file_name = str(file)
 
-                resource_file = ResourceFile(
-                    project=self.project,
-                    resource_collection=resource_collection,
-                    format=resource_format,
-                    title=file_name,
-                    filename=file_name,
-                    path=parents,
-                    content=file_path.read_text(encoding="utf-8")
+                resource_file = await ResourceFile.find_one(
+                    ResourceFile.project == project_link,
+                    ResourceFile.resource_collection == resource_collection_link,
+                    ResourceFile.filename == file_name
                 )
-                await resource_file.on_create(self.user).save()
 
-    async def add_mapping_package(self):
+                file_content = file_path.read_text(encoding="utf-8")
+                if not resource_file:
+                    await (ResourceFile(
+                        project=project_link,
+                        resource_collection=resource_collection_link,
+                        format=resource_format,
+                        title=file_name,
+                        filename=file_name,
+                        path=parents,
+                        content=file_content
+                    )).on_create(self.user).save()
+                else:
+                    resource_file.content = file_content
+                    await resource_file.on_update(self.user).save()
+
+    async def add_mapping_package(self, with_save: bool = True):
         self.add_metadata_to_package()
         self.mapping_package = MappingPackage(**(self.mapping_package_data.dict()))
         self.mapping_package.project = self.project
         self.mapping_package.test_data_suites = []
-        self.mapping_package.sparql_test_suites = []
         self.mapping_package.shacl_test_suites = []
-        await self.mapping_package.on_create(self.user).save()
+        with_save and await self.mapping_package.on_create(self.user).save()
 
     async def add_mapping_rules(self):
+        async def rule_exists(rule: ConceptualMappingRule):
+            q: Dict = {
+                'field_id': rule.field_id,
+                'field_title': rule.field_title,
+                'field_description': rule.field_description,
+                'source_xpath': rule.source_xpath,
+                'target_class_path': rule.target_class_path,
+                'target_property_path': rule.target_property_path,
+                'triple_map_fragment': rule.triple_map_fragment,
+                'sparql_assertions': rule.sparql_assertions
+            }
+            return len(await ConceptualMappingRule.find(q).to_list()) > 0
+
         def read_pd_value(value, default=""):
             if pd.isna(value):
                 return default
-            return value
+            return value.strip()
 
         def read_list_from_pd_value(value, sep=',') -> list:
             if value and pd.notna(value):
@@ -326,24 +351,25 @@ class PackageImporter:
         rules_df[RULES_SF_FIELD_ID].ffill(axis="index", inplace=True)
         rules_df[RULES_SF_FIELD_NAME].ffill(axis="index", inplace=True)
 
-        rules = []
+        project_link = Project.link_from_id(self.project.id)
+        duplicates: List[ConceptualMappingRule] = []
         rule: ConceptualMappingRule
         for idx, row in rules_df.iterrows():
             rule = ConceptualMappingRule()
-            rule.project = self.project
-            rule.business_id = read_pd_value(row[RULES_E_FORM_BT_ID])
-            rule.business_title = read_pd_value(row[RULES_E_FORM_BT_NAME])
-            rule.business_description = \
-                f"{read_pd_value(row[RULES_SF_FIELD_ID])} {read_pd_value(row[RULES_SF_FIELD_NAME])}"
+            rule.project = project_link
+            rule.field_id = read_pd_value(row[RULES_SF_FIELD_ID])
+            rule.field_title = read_pd_value(row[RULES_SF_FIELD_NAME])
+            rule.field_description = \
+                f"{read_pd_value(row[RULES_E_FORM_BT_ID])} {read_pd_value(row[RULES_E_FORM_BT_NAME])}".strip()
             rule.source_xpath = read_list_from_pd_value(row[RULES_FIELD_XPATH], sep='\n')
             rule.target_class_path = read_pd_value(row[RULES_CLASS_PATH])
             rule.target_property_path = read_pd_value(row[RULES_PROPERTY_PATH])
-            rule.mapping_packages = [self.mapping_package]
+            rule.mapping_packages = [MappingPackage.link_from_id(self.mapping_package.id)]
             rule.triple_map_fragment = None
 
             df_integration_tests = read_list_from_pd_value(row[RULES_INTEGRATION_TESTS_REF])
             sparql_integration_tests_query = {
-                "project": Project.link_from_id(self.project.id),
+                "project": project_link,
                 "type": SPARQLQueryValidationType.INTEGRATION_TEST.value,
                 "filename": {
                     "$in": df_integration_tests
@@ -354,6 +380,14 @@ class PackageImporter:
                 fetch_links=False
             ).to_list()
 
-            rule.sparql_assertions = sparql_integration_tests
+            rule.sparql_assertions = list(map(
+                lambda x: SPARQLTestFileResource.link_from_id(x.id),
+                sparql_integration_tests
+            ))
 
-            await rule.on_create(self.user).save()
+            if not (await rule_exists(rule)):
+                await rule.on_create(self.user).save()
+            else:
+                duplicates.append(rule)
+
+        print("RULES_DUPLICATES :: ", len(duplicates))

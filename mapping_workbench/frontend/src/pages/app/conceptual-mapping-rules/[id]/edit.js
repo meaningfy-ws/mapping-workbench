@@ -86,7 +86,7 @@ const Page = () => {
                                 >
                                     <Stack spacing={1}>
                                         <Typography variant="h4">
-                                            {item.business_title || item.business_id}
+                                            {item.field_title || item.field_id}
                                         </Typography>
                                         <Stack
                                             alignItems="center"

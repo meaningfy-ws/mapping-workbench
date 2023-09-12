@@ -17,7 +17,6 @@ import {FormTextArea} from "../../../components/app/form/text-area";
 import {FormDateField} from "../../../components/app/form/date-field";
 import {sessionApi} from "../../../api/session";
 import {testDataSuitesApi} from "../../../api/test-data-suites";
-import {sparqlTestSuitesApi} from "../../../api/sparql-test-suites";
 import {shaclTestSuitesApi} from "../../../api/shacl-test-suites";
 import {ListSelectorSelect as ResourceListSelector} from "src/components/app/list-selector/select";
 
@@ -38,7 +37,6 @@ export const EditForm = (props) => {
         min_xsd_version: item.min_xsd_version || '',
         max_xsd_version: item.max_xsd_version || '',
         test_data_suites: (item.test_data_suites || []).map(x => x.id),
-        sparql_test_suites: (item.sparql_test_suites || []).map(x => x.id),
         shacl_test_suites: (item.shacl_test_suites || []).map(x => x.id)
     };
 
@@ -131,18 +129,6 @@ export const EditForm = (props) => {
                             <ResourceListSelector
                                 valuesApi={testDataSuitesApi}
                                 listValues={formik.values.test_data_suites}/>
-                        </Grid>
-                    </Grid>
-                </CardContent>
-            </Card>
-            <Card sx={{mt: 3}}>
-                <CardHeader title={sparqlTestSuitesApi.SECTION_TITLE}/>
-                <CardContent sx={{pt: 0}}>
-                    <Grid container spacing={3}>
-                        <Grid xs={12} md={12}>
-                            <ResourceListSelector
-                                valuesApi={sparqlTestSuitesApi}
-                                listValues={formik.values.sparql_test_suites}/>
                         </Grid>
                     </Grid>
                 </CardContent>

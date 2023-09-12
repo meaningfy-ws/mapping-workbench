@@ -29,7 +29,6 @@ import {createEmotionCache} from 'src/utils/create-emotion-cache';
 // Remove if locales are not used
 import 'src/locales/i18n';
 
-
 const clientSideEmotionCache = createEmotionCache();
 
 const CustomApp = (props) => {
@@ -60,7 +59,7 @@ const CustomApp = (props) => {
                     {(settings) => {
                       // Prevent theme flicker when restoring custom settings from browser storage
                       if (!settings.isInitialized) {
-                        return null;
+                        //return null;
                       }
 
                       const theme = createTheme({
@@ -72,7 +71,7 @@ const CustomApp = (props) => {
                       });
 
                       // Prevent guards from redirecting
-                      const showSlashScreen = !auth.isInitialized;
+                      const showSplashScreen = !auth.isInitialized;
 
                       return (
                         <ThemeProvider theme={theme}>
@@ -88,7 +87,7 @@ const CustomApp = (props) => {
                           </Head>
                           <RTL direction={settings.direction}>
                             <CssBaseline />
-                            {showSlashScreen
+                            {showSplashScreen
                               ? <SplashScreen />
                               : (
                                 <>
