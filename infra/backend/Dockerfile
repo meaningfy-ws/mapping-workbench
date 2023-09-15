@@ -18,6 +18,7 @@ WORKDIR /app
 COPY ./mapping_workbench/backend ./mapping_workbench/backend
 COPY ./requirements.txt ./
 COPY ./Makefile ./
+COPY ./.env ./
 
 RUN make install-backend
 
