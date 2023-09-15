@@ -65,7 +65,7 @@ class PackageImporter:
         # await self.add_triple_map_fragments()
         # await self.add_sparql_test_suites()
         # await self.add_shacl_test_suites()
-        # await self.add_resource_collections()
+        await self.add_resource_collections()
         await self.add_mapping_rules()
 
         self.tempdir.cleanup()
@@ -273,8 +273,8 @@ class PackageImporter:
             )
             await resource_collection.on_create(self.user).save()
 
-        project_link = ResourceCollection.link_from_id(self.project.id)
-        resource_collection_link = Project.link_from_id(resource_collection.id)
+        project_link = Project.link_from_id(self.project.id)
+        resource_collection_link = ResourceCollection.link_from_id(resource_collection.id)
 
         for root, folders, files in os.walk(resource_collections_path):
             parents = list(
