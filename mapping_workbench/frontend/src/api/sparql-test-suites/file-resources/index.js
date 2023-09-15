@@ -56,9 +56,7 @@ class SPARQLTestFileResourcesApi extends FileResourcesApi {
         return sparqlTestFileResourcesStore.items.map(
             sparqlTestFileResource => ({
                 id: sparqlTestFileResource._id,
-                title: sparqlTestFileResource.title + (
-                    sparqlTestFileResource.filename ? " (" + sparqlTestFileResource.filename + ")" : ""
-                )
+                title: sparqlTestFileResource.title
             })
         ).sort((a, b) => a.title.localeCompare(b.title));
     }

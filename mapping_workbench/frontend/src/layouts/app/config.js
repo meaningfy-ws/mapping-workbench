@@ -234,6 +234,21 @@ export const useSections = () => {
             subheader: t(tokens.nav.admin),
             items: [
                 {
+                    title: t(tokens.nav.ontology),
+                    path: paths.app.ontology_namespaces.index,
+                    icon: (
+                        <SvgIcon fontSize="small">
+                            <SchemaIcon/>
+                        </SvgIcon>
+                    ),
+                    items: [
+                        {
+                            title: t(tokens.nav.namespaces),
+                            path: paths.app.ontology_namespaces.index
+                        }
+                    ]
+                },
+                {
                     title: t(tokens.nav.users),
                     path: paths.app.users.index,
                     icon: (

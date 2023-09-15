@@ -14,8 +14,9 @@ from mapping_workbench.backend.mapping_package.services.api import (
     create_mapping_package,
     update_mapping_package,
     get_mapping_package,
-    delete_mapping_package, get_mapping_package_out, import_package
+    delete_mapping_package, get_mapping_package_out
 )
+from mapping_workbench.backend.mapping_package.services.importer import import_package
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.project.services.api import get_project
 from mapping_workbench.backend.security.services.user_manager import current_active_user

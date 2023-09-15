@@ -37,6 +37,8 @@ from mapping_workbench.backend.test_data_suite.entrypoints.api import routes as 
 from mapping_workbench.backend.triple_map_fragment.models.entity import SpecificTripleMapFragment, \
     GenericTripleMapFragment
 from mapping_workbench.backend.triple_map_registry.models.entity import TripleMapRegistry
+from mapping_workbench.backend.ontology.entrypoints.api import routes as namespace_routes
+from mapping_workbench.backend.ontology.models.namespace import Namespace
 
 from mapping_workbench.backend.user.entrypoints.api import routes as user_routes
 from mapping_workbench.backend.user.models.user import User
@@ -87,7 +89,8 @@ async def on_startup():
             ConceptualMappingRule,
             TripleMapRegistry,
             SpecificTripleMapFragment,
-            GenericTripleMapFragment
+            GenericTripleMapFragment,
+            Namespace
         ],
     )
 
@@ -113,7 +116,8 @@ secured_routers: list = [
     triple_map_registry_routes.router,
     specific_triple_map_fragment_routes.router,
     generic_triple_map_fragment_routes.router,
-    config_routes.router
+    config_routes.router,
+    namespace_routes.router
 ]
 
 for secured_router in secured_routers:
