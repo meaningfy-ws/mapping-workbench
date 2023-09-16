@@ -44,8 +44,8 @@ class AuthApi {
     async signInWithSessionInit(request) {
         await this.signIn(request);
         const user = await this.me();
-        sessionApi.setLocalSessionProject(user.settings.session.project);
-        sessionApi.setLocalAppSettings(user.settings.app.settings);
+        sessionApi.setLocalSessionProject(user.settings.session && user.settings.session.project);
+        sessionApi.setLocalAppSettings(user.settings.app && user.settings.app.settings);
 
         return user;
     }
