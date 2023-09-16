@@ -94,7 +94,6 @@ async def on_startup():
         ],
     )
 
-
 app_router = APIRouter()
 
 app_public_router = APIRouter()

@@ -87,6 +87,7 @@ export const EditForm = (props) => {
                             pathname: paths.app[sectionApi.section].edit,
                             query: {id: response._id}
                         });
+                        router.reload();
                     } else if (itemctx.isStateable) {
                         itemctx.setState(response);
                     }

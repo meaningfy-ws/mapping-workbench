@@ -4,6 +4,7 @@ import {wait} from 'src/utils/wait';
 import {users} from './data';
 import {appApi} from "../app";
 import {sessionApi} from "../session";
+import {SESSION_PROJECT_KEY} from "../projects";
 
 const STORAGE_KEY = 'users';
 
@@ -40,50 +41,29 @@ class AuthApi {
         return appApi.signIn(request);
     }
 
-    async signUp(request) {
-        const {username, name, password} = request;
+    async signInWithSessionInit(request) {
+        await this.signIn(request);
+        const user = await this.me();
+        sessionApi.setLocalSessionProject(user.settings.session.project);
+        sessionApi.setLocalAppSettings(user.settings.app.settings);
 
-        await wait(1000);
-
-        return new Promise((resolve, reject) => {
-            try {
-                // Merge static users (data file) with persisted users (browser storage)
-                const mergedUsers = [
-                    ...users,
-                    ...getPersistedUsers()
-                ];
-
-                // Check if a user already exists
-                let user = mergedUsers.find((user) => user.username === username);
-
-                if (user) {
-                    reject(new Error('User already exists'));
-                    return;
-                }
-
-                user = {
-                    id: createResourceId(),
-                    avatar: undefined,
-                    username,
-                    name,
-                    password,
-                    plan: 'Standard'
-                };
-
-                persistUser(user);
-
-                const accessToken = sign({userId: user.id}, JWT_SECRET, {expiresIn: JWT_EXPIRES_IN});
-
-                resolve({accessToken});
-            } catch (err) {
-                console.error('[Auth Api]: ', err);
-                reject(new Error('Internal server error'));
-            }
-        });
+        return user;
     }
 
-    async me(request) {
-        return await appApi.get('/users/me');
+    async signOut() {
+        return appApi.signOut();
+    }
+
+    async signUp(request) {
+        return appApi.signUp(request);
+    }
+
+    async me() {
+        return await appApi.me();
+    }
+
+    async verifyAuth() {
+        return await appApi.verifyAuth();
     }
 }
 

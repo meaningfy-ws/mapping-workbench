@@ -126,7 +126,7 @@ export const paths = {
             create: '/app/ontology-namespaces/create',
             edit: '/app/ontology-namespaces/[id]/edit',
             view: '/app/ontology-namespaces/[id]/view'
-        },
+        }
     },
     docs: 'https://material-kit-pro-react-docs.devias.io',
     notAuthorized: '/401',
@@ -201,5 +201,11 @@ export const apiPaths = {
     ontology_namespaces: {
         items: '/ontology/namespaces',
         item: '/ontology/namespaces/:id'
+    },
+
+    session: {
+        session_project: '/users/set_project_for_current_user_session',
+        app_settings: '/users/set_app_settings_for_current_user',
+        me: '/users/me'
     }
 }

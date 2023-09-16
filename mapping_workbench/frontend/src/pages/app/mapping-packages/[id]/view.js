@@ -174,225 +174,215 @@ const Page = () => {
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_ITEM_TITLE} View`}/>
-            <Box
-                component="main"
-                sx={{
-                    flexGrow: 1,
-                    py: 4
-                }}
-            >
-                <Container maxWidth="xl">
-                    <Stack spacing={4}>
-                        <Stack spacing={4}>
-                            <div>
-                                <Link
-                                    color="text.primary"
-                                    component={RouterLink}
-                                    href={paths.app[sectionApi.section].index}
-                                    sx={{
-                                        alignItems: 'center',
-                                        display: 'inline-flex'
-                                    }}
-                                    underline="hover"
-                                >
-                                    <SvgIcon sx={{mr: 1}}>
-                                        <ArrowLeftIcon/>
-                                    </SvgIcon>
-                                    <Typography variant="subtitle2">
-                                        {sectionApi.SECTION_TITLE}
-                                    </Typography>
-                                </Link>
-                            </div>
-                            <Stack
-                                alignItems="flex-start"
-                                direction={{
-                                    xs: 'column',
-                                    md: 'row'
-                                }}
-                                justifyContent="space-between"
-                                spacing={4}
-                            >
+            <Stack spacing={4}>
+                <Stack spacing={4}>
+                    <div>
+                        <Link
+                            color="text.primary"
+                            component={RouterLink}
+                            href={paths.app[sectionApi.section].index}
+                            sx={{
+                                alignItems: 'center',
+                                display: 'inline-flex'
+                            }}
+                            underline="hover"
+                        >
+                            <SvgIcon sx={{mr: 1}}>
+                                <ArrowLeftIcon/>
+                            </SvgIcon>
+                            <Typography variant="subtitle2">
+                                {sectionApi.SECTION_TITLE}
+                            </Typography>
+                        </Link>
+                    </div>
+                    <Stack
+                        alignItems="flex-start"
+                        direction={{
+                            xs: 'column',
+                            md: 'row'
+                        }}
+                        justifyContent="space-between"
+                        spacing={4}
+                    >
+                        <Stack
+                            alignItems="center"
+                            direction="row"
+                            spacing={2}
+                        >
+                            <Stack spacing={1}>
+                                <Typography variant="h4">
+                                    {item.title}
+                                </Typography>
                                 <Stack
                                     alignItems="center"
                                     direction="row"
-                                    spacing={2}
+                                    spacing={1}
                                 >
-                                    <Stack spacing={1}>
-                                        <Typography variant="h4">
-                                            {item.title}
-                                        </Typography>
-                                        <Stack
-                                            alignItems="center"
-                                            direction="row"
-                                            spacing={1}
-                                        >
-                                            <Chip
-                                                label={item._id}
-                                                size="small"
-                                            />
-                                        </Stack>
-                                    </Stack>
+                                    <Chip
+                                        label={item._id}
+                                        size="small"
+                                    />
                                 </Stack>
                             </Stack>
-                            <Tabs
-                                indicatorColor="primary"
-                                onChange={handleTabsChange}
-                                scrollButtons="auto"
-                                sx={{mt: 3}}
-                                textColor="primary"
-                                value={currentTab}
-                                variant="scrollable"
-                            >
-                                {tabs.map((tab) => (
-                                    <Tab
-                                        key={tab.value}
-                                        label={tab.label}
-                                        value={tab.value}
-                                    />
-                                ))}
-                            </Tabs>
-                            <Divider/>
                         </Stack>
-                        {currentTab === 'details' && (
-                            <Grid container spacing={3}>
-                                <Grid md={12} xs={12}>
-                                    <Card>
-                                        <CardContent>
-                                            <Grid
-                                                item={item}
-                                                md={12}
-                                                xs={12}
-                                            >
-                                                <PropertyList>
-                                                    <PropertyListItem
-                                                        label="Description"
-                                                        value={item.description}
-                                                        sx={{
-                                                            whiteSpace: "pre-wrap",
-                                                            px: 3,
-                                                            py: 1.5
-                                                        }}
-                                                    />
-                                                    <Divider/>
-                                                    <Grid container spacing={3}>
-                                                        <Grid md={6} xs={12}>
-                                                            <PropertyListItem
-                                                                label="Identifier"
-                                                                value={item.identifier}
-                                                            />
-                                                        </Grid>
-                                                        <Grid md={6} xs={12}>
-                                                            <PropertyListItem
-                                                                label="Sub-type"
-                                                                value={item.subtype.join(', ')}
-                                                            />
-                                                        </Grid>
-                                                        <Grid md={6} xs={12}>
-                                                            <PropertyListItem
-                                                                label="Start Date"
-                                                                value={item.start_date}
-                                                            />
-                                                        </Grid>
-                                                        <Grid md={6} xs={12}>
-                                                            <PropertyListItem
-                                                                label="End Date"
-                                                                value={item.end_date}
-                                                            />
-                                                        </Grid>
-                                                        <Grid md={6} xs={12}>
-                                                            <PropertyListItem
-                                                                label="Min XSD Version"
-                                                                value={item.min_xsd_version}
-                                                            />
-                                                        </Grid>
-                                                        <Grid md={6} xs={12}>
-                                                            <PropertyListItem
-                                                                label="Max XSD Version"
-                                                                value={item.max_xsd_version}
-                                                            />
-                                                        </Grid>
-                                                    </Grid>
-                                                </PropertyList>
-                                            </Grid>
-                                        </CardContent>
-                                    </Card>
-                                </Grid>
-                            </Grid>
-                        )}
-                        {currentTab === 'resources' && (
-                            <Grid container spacing={3}>
-                                <Grid md={12} xs={12}>
-                                    <FileResourceCollectionsCard
-                                        collectionApi={testDataSuitesApi}
-                                        filters={{
-                                            ids: ((item.test_data_suites || []).length > 0
-                                                && item.test_data_suites.map(x => x.id)) || ''
-                                        }}
-                                    />
-                                </Grid>
-                                <Grid md={12} xs={12}>
-                                    <FileResourceCollectionsCard
-                                        collectionApi={sparqlTestSuitesApi}
-                                        filters={{
-                                            ids: ((item.sparql_test_suites || []).length > 0
-                                                && item.sparql_test_suites.map(x => x.id)) || ''
-                                        }}
-                                    />
-                                </Grid>
-                                <Grid md={12} xs={12}>
-                                    <FileResourceCollectionsCard
-                                        collectionApi={shaclTestSuitesApi}
-                                        filters={{
-                                            ids: ((item.shacl_test_suites || []).length > 0
-                                                && item.shacl_test_suites.map(x => x.id)) || ''
-                                        }}
-                                    />
-                                </Grid>
-                            </Grid>
-                        )}
-                        {currentTab === "mappingRules" && (
-                            <>
-                                <ListSearch onFiltersChange={mappingRulesSearch.handleFiltersChange}/>
-                                <MappingRulesListTable
-                                    onPageChange={mappingRulesSearch.handlePageChange}
-                                    onRowsPerPageChange={mappingRulesSearch.handleRowsPerPageChange}
-                                    page={mappingRulesSearch.state.page}
-                                    items={mappingRulesStore.items}
-                                    count={mappingRulesStore.itemsCount}
-                                    sectionApi={conceptualMappingRulesApi}
-                                    onPackagesUpdate={handlePackagesUpdate}
-                                />
-                            </>
-                        )}
-                        {currentTab === "tripleMapFragments" && (
-                            <Card sx={{mt: 3}}>
-                                <CardHeader title="RML Triple Maps"/>
-                                <CardContent sx={{pt: 0}}>
-                                    <Grid container spacing={3}>
-                                        <Grid xs={12} md={12}>
-                                            <ResourceListSelector
-                                                valuesApi={specificTripleMapFragmentsApi}
-                                                listValues={tripleMapFragments}
-                                                titleField="uri"
+                    </Stack>
+                    <Tabs
+                        indicatorColor="primary"
+                        onChange={handleTabsChange}
+                        scrollButtons="auto"
+                        sx={{mt: 3}}
+                        textColor="primary"
+                        value={currentTab}
+                        variant="scrollable"
+                    >
+                        {tabs.map((tab) => (
+                            <Tab
+                                key={tab.value}
+                                label={tab.label}
+                                value={tab.value}
+                            />
+                        ))}
+                    </Tabs>
+                    <Divider/>
+                </Stack>
+                {currentTab === 'details' && (
+                    <Grid container spacing={3}>
+                        <Grid md={12} xs={12}>
+                            <Card>
+                                <CardContent>
+                                    <Grid
+                                        item={item}
+                                        md={12}
+                                        xs={12}
+                                    >
+                                        <PropertyList>
+                                            <PropertyListItem
+                                                label="Description"
+                                                value={item.description}
+                                                sx={{
+                                                    whiteSpace: "pre-wrap",
+                                                    px: 3,
+                                                    py: 1.5
+                                                }}
                                             />
-                                            <FormControl>
-                                                <Button
-                                                    variant="contained"
-                                                    size="small"
-                                                    color="success"
-                                                    onClick={handleTripleMapFragmentsUpdate}
-                                                >
-                                                    Update
-                                                </Button>
-                                            </FormControl>
-                                        </Grid>
+                                            <Divider/>
+                                            <Grid container spacing={3}>
+                                                <Grid md={6} xs={12}>
+                                                    <PropertyListItem
+                                                        label="Identifier"
+                                                        value={item.identifier}
+                                                    />
+                                                </Grid>
+                                                <Grid md={6} xs={12}>
+                                                    <PropertyListItem
+                                                        label="Sub-type"
+                                                        value={item.subtype.join(', ')}
+                                                    />
+                                                </Grid>
+                                                <Grid md={6} xs={12}>
+                                                    <PropertyListItem
+                                                        label="Start Date"
+                                                        value={item.start_date}
+                                                    />
+                                                </Grid>
+                                                <Grid md={6} xs={12}>
+                                                    <PropertyListItem
+                                                        label="End Date"
+                                                        value={item.end_date}
+                                                    />
+                                                </Grid>
+                                                <Grid md={6} xs={12}>
+                                                    <PropertyListItem
+                                                        label="Min XSD Version"
+                                                        value={item.min_xsd_version}
+                                                    />
+                                                </Grid>
+                                                <Grid md={6} xs={12}>
+                                                    <PropertyListItem
+                                                        label="Max XSD Version"
+                                                        value={item.max_xsd_version}
+                                                    />
+                                                </Grid>
+                                            </Grid>
+                                        </PropertyList>
                                     </Grid>
                                 </CardContent>
                             </Card>
-                        )}
-                    </Stack>
-                </Container>
-            </Box>
+                        </Grid>
+                    </Grid>
+                )}
+                {currentTab === 'resources' && (
+                    <Grid container spacing={3}>
+                        <Grid md={12} xs={12}>
+                            <FileResourceCollectionsCard
+                                collectionApi={testDataSuitesApi}
+                                filters={{
+                                    ids: ((item.test_data_suites || []).length > 0
+                                        && item.test_data_suites.map(x => x.id)) || ''
+                                }}
+                            />
+                        </Grid>
+                        <Grid md={12} xs={12}>
+                            <FileResourceCollectionsCard
+                                collectionApi={sparqlTestSuitesApi}
+                                filters={{
+                                    ids: ((item.sparql_test_suites || []).length > 0
+                                        && item.sparql_test_suites.map(x => x.id)) || ''
+                                }}
+                            />
+                        </Grid>
+                        <Grid md={12} xs={12}>
+                            <FileResourceCollectionsCard
+                                collectionApi={shaclTestSuitesApi}
+                                filters={{
+                                    ids: ((item.shacl_test_suites || []).length > 0
+                                        && item.shacl_test_suites.map(x => x.id)) || ''
+                                }}
+                            />
+                        </Grid>
+                    </Grid>
+                )}
+                {currentTab === "mappingRules" && (
+                    <>
+                        <ListSearch onFiltersChange={mappingRulesSearch.handleFiltersChange}/>
+                        <MappingRulesListTable
+                            onPageChange={mappingRulesSearch.handlePageChange}
+                            onRowsPerPageChange={mappingRulesSearch.handleRowsPerPageChange}
+                            page={mappingRulesSearch.state.page}
+                            items={mappingRulesStore.items}
+                            count={mappingRulesStore.itemsCount}
+                            sectionApi={conceptualMappingRulesApi}
+                            onPackagesUpdate={handlePackagesUpdate}
+                        />
+                    </>
+                )}
+                {currentTab === "tripleMapFragments" && (
+                    <Card sx={{mt: 3}}>
+                        <CardHeader title="RML Triple Maps"/>
+                        <CardContent sx={{pt: 0}}>
+                            <Grid container spacing={3}>
+                                <Grid xs={12} md={12}>
+                                    <ResourceListSelector
+                                        valuesApi={specificTripleMapFragmentsApi}
+                                        listValues={tripleMapFragments}
+                                        titleField="uri"
+                                    />
+                                    <FormControl>
+                                        <Button
+                                            variant="contained"
+                                            size="small"
+                                            color="success"
+                                            onClick={handleTripleMapFragmentsUpdate}
+                                        >
+                                            Update
+                                        </Button>
+                                    </FormControl>
+                                </Grid>
+                            </Grid>
+                        </CardContent>
+                    </Card>
+                )}
+            </Stack>
         </>
     );
 };

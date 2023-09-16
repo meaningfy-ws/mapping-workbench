@@ -22,9 +22,10 @@ install: install-backend install-frontend
 install-dev: install-dev-backend install-frontend-dev
 
 install-backend:
-	@ echo "Installing BACKEND requirements"
+	@ echo "Installing BACKEND requirements :: START"
 	@ pip install --upgrade pip
 	@ pip install --no-cache-dir -r requirements.txt
+	@ echo "Installing BACKEND requirements :: END"
 
 install-dev-backend:
 	@ echo "Installing dev BACKEND requirements"

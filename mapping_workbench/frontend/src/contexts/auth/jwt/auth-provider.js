@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { authApi } from 'src/api/auth';
 import { Issuer } from 'src/utils/auth';
 import { AuthContext, initialState } from './auth-context';
-import {SESSION_PROJECT_KEY} from "../../../api/projects";
 import {sessionApi} from "../../../api/session";
 
 export const STORAGE_KEY = 'accessToken';
@@ -14,6 +13,7 @@ var ActionType;
   ActionType['INITIALIZE'] = 'INITIALIZE';
   ActionType['SIGN_IN'] = 'SIGN_IN';
   ActionType['SIGN_UP'] = 'SIGN_UP';
+  ActionType['VERIFY_AUTH'] = 'VERIFY_AUTH';
   ActionType['SIGN_OUT'] = 'SIGN_OUT';
 })(ActionType || (ActionType = {}));
 
@@ -42,7 +42,15 @@ const handlers = {
 
     return {
       ...state,
-      isAuthenticated: true,
+      isAuthenticated: false,
+      user
+    };
+  },
+  VERIFY_AUTH: (state, action) => {
+    const { user } = action.payload;
+    return {
+      ...state,
+      isAuthenticated: !!user,
       user
     };
   },
@@ -103,10 +111,7 @@ export const AuthProvider = (props) => {
     []);
 
   const signIn = useCallback(async (username, password) => {
-    const { accessToken } = await authApi.signIn({ username, password });
-    const user = await authApi.me({ accessToken });
-    sessionApi.getStorage().setItem(STORAGE_KEY, accessToken);
-    sessionApi.getStorage().setItem(SESSION_PROJECT_KEY, user.settings.session.project);
+    const user = await authApi.signInWithSessionInit({ username, password });
 
     dispatch({
       type: ActionType.SIGN_IN,
@@ -116,11 +121,19 @@ export const AuthProvider = (props) => {
     });
   }, [dispatch]);
 
-  const signUp = useCallback(async (username, name, password) => {
-    const { accessToken } = await authApi.signUp({ username, name, password });
-    const user = await authApi.me({ accessToken });
+  const verifyAuth = useCallback(async () => {
+    const user = await authApi.verifyAuth();
+    dispatch({
+      type: ActionType.VERIFY_AUTH,
+      payload: {
+        user
+      }
+    });
+  }, [dispatch]);
 
-    sessionApi.getStorage().setItem(STORAGE_KEY, accessToken);
+  const signUp = useCallback(async (username, name, password) => {
+    await authApi.signUp({ username, name, password });
+    const user = { username, name }
 
     dispatch({
       type: ActionType.SIGN_UP,
@@ -131,8 +144,7 @@ export const AuthProvider = (props) => {
   }, [dispatch]);
 
   const signOut = useCallback(async () => {
-    sessionApi.getStorage().removeItem(STORAGE_KEY);
-
+    await authApi.signOut();
     dispatch({ type: ActionType.SIGN_OUT });
   }, [dispatch]);
 
@@ -143,6 +155,7 @@ export const AuthProvider = (props) => {
         issuer: Issuer.JWT,
         signIn,
         signUp,
+        verifyAuth,
         signOut
       }}
     >

@@ -5,6 +5,7 @@ import {useAuth} from 'src/hooks/use-auth';
 import {useRouter} from 'src/hooks/use-router';
 import {paths} from 'src/paths';
 import {Issuer} from 'src/utils/auth';
+import {authApi} from "../api/auth";
 
 const loginPaths = {
   [Issuer.JWT]: paths.auth.jwt.login
@@ -13,18 +14,18 @@ const loginPaths = {
 export const AuthGuard = (props) => {
   const { children } = props;
   const router = useRouter();
-  const { isAuthenticated, issuer } = useAuth();
+  const auth = useAuth();
   const [checked, setChecked] = useState(false);
-
-  const check = useCallback(() => {
-    if (!isAuthenticated) {
+  const check = useCallback(async () => {
+    await auth.verifyAuth();
+    if (!auth.isAuthenticated) {
       const searchParams = new URLSearchParams({ returnTo: window.location.pathname }).toString();
-      const href = loginPaths[issuer] + `?${searchParams}`;
-      router.replace(href);
+      const href = loginPaths[auth.issuer] + `?${searchParams}`;
+      await router.replace(href);
     } else {
       setChecked(true);
     }
-  }, [isAuthenticated, issuer, router]);
+  }, [auth, router]);
 
   // Only check on mount, this allows us to redirect the user manually when auth state changes
   useEffect(() => {

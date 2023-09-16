@@ -150,100 +150,91 @@ const Page = () => {
     return (
         <>
             <Seo title="App: Resource Manager"/>
-            <Box
-                component="main"
-                sx={{
-                    flexGrow: 1,
-                    py: 4
+            <Grid
+                container
+                spacing={{
+                    xs: 3,
+                    lg: 4
                 }}
             >
-                <Container maxWidth={settings.stretch ? false : 'xl'}>
-                    <Grid
-                        container
+                <Grid xs={12}>
+                    <Stack
+                        direction="row"
+                        justifyContent="space-between"
+                        spacing={4}
+                    >
+                        <div>
+                            <Typography variant="h4">
+                                {itemsStore.collection.title}
+                            </Typography>
+                            <Typography variant="h5">
+                                Resource Manager
+                            </Typography>
+                        </div>
+                        <Stack
+                            alignItems="center"
+                            direction="row"
+                            spacing={2}
+                        >
+                            <Button
+                                onClick={uploadDialog.handleOpen}
+                                startIcon={(
+                                    <SvgIcon>
+                                        <Upload01Icon/>
+                                    </SvgIcon>
+                                )}
+                                variant="contained"
+                            >
+                                Upload
+                            </Button>
+                            <Button
+                                onClick={handleCreate}
+                                startIcon={(
+                                    <SvgIcon>
+                                        <Plus/>
+                                    </SvgIcon>
+                                )}
+                                variant="contained"
+                            >
+                                Add
+                            </Button>
+                        </Stack>
+                    </Stack>
+                </Grid>
+                <Grid
+                    xs={12}
+                    md={12}
+                >
+                    <Stack
                         spacing={{
                             xs: 3,
                             lg: 4
                         }}
                     >
-                        <Grid xs={12}>
-                            <Stack
-                                direction="row"
-                                justifyContent="space-between"
-                                spacing={4}
-                            >
-                                <div>
-                                    <Typography variant="h4">
-                                        {itemsStore.collection.title}
-                                    </Typography>
-                                    <Typography variant="h5">
-                                        Resource Manager
-                                    </Typography>
-                                </div>
-                                <Stack
-                                    alignItems="center"
-                                    direction="row"
-                                    spacing={2}
-                                >
-                                    <Button
-                                        onClick={uploadDialog.handleOpen}
-                                        startIcon={(
-                                            <SvgIcon>
-                                                <Upload01Icon/>
-                                            </SvgIcon>
-                                        )}
-                                        variant="contained"
-                                    >
-                                        Upload
-                                    </Button>
-                                    <Button
-                                        onClick={handleCreate}
-                                        startIcon={(
-                                            <SvgIcon>
-                                                <Plus/>
-                                            </SvgIcon>
-                                        )}
-                                        variant="contained"
-                                    >
-                                        Add
-                                    </Button>
-                                </Stack>
-                            </Stack>
-                        </Grid>
-                        <Grid
-                            xs={12}
-                            md={12}
-                        >
-                            <Stack
-                                spacing={{
-                                    xs: 3,
-                                    lg: 4
-                                }}
-                            >
-                                <ItemSearch
-                                    onFiltersChange={itemsSearch.handleFiltersChange}
-                                    onSortChange={itemsSearch.handleSortChange}
-                                    onViewChange={setView}
-                                    sortBy={itemsSearch.state.sortBy}
-                                    sortDir={itemsSearch.state.sortDir}
-                                    view={view}
-                                />
-                                <ItemList
-                                    count={itemsStore.itemsCount}
-                                    items={itemsStore.items}
-                                    collection={itemsStore.collection}
-                                    onPageChange={itemsSearch.handlePageChange}
-                                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                                    page={itemsSearch.state.page}
-                                    rowsPerPage={itemsSearch.state.rowsPerPage}
-                                    view={view}
-                                    sectionApi={sectionApi}
-                                    fileResourcesApi={fileResourcesApi}
-                                />
-                            </Stack>
-                        </Grid>
-                    </Grid>
-                </Container>
-            </Box>
+                        <ItemSearch
+                            onFiltersChange={itemsSearch.handleFiltersChange}
+                            onSortChange={itemsSearch.handleSortChange}
+                            onViewChange={setView}
+                            sortBy={itemsSearch.state.sortBy}
+                            sortDir={itemsSearch.state.sortDir}
+                            view={view}
+                        />
+                        <ItemList
+                            count={itemsStore.itemsCount}
+                            items={itemsStore.items}
+                            collection={itemsStore.collection}
+                            onPageChange={itemsSearch.handlePageChange}
+                            onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                            page={itemsSearch.state.page}
+                            rowsPerPage={itemsSearch.state.rowsPerPage}
+                            view={view}
+                            sectionApi={sectionApi}
+                            fileResourcesApi={fileResourcesApi}
+                        />
+                    </Stack>
+                </Grid>
+            </Grid>
+
             <ItemDrawer
                 item={currentItem}
                 onClose={detailsDialog.handleClose}

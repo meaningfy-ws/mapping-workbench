@@ -26,64 +26,55 @@ const Page = () => {
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_ITEM_TITLE} Import`}/>
-            <Box
-                component="main"
-                sx={{
-                    flexGrow: 1,
-                    py: 4
-                }}
-            >
-                <Container maxWidth="xl">
-                    <Stack spacing={4}>
-                        <Stack spacing={1}>
-                            <Typography variant="h4">
-                                {sectionApi.SECTION_TITLE}
-                            </Typography>
-                            <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
-                                <Link
-                                    color="text.primary"
-                                    component={RouterLink}
-                                    href={paths.index}
-                                    variant="subtitle2"
-                                >
-                                    App
-                                </Link>
-                                <Link
-                                    color="text.primary"
-                                    component={RouterLink}
-                                    href={paths.app[sectionApi.section].index}
-                                    variant="subtitle2"
-                                >
-                                    {sectionApi.SECTION_TITLE}
-                                </Link>
-                                <Typography
-                                    color="text.secondary"
-                                    variant="subtitle2"
-                                >
-                                    Import
-                                </Typography>
-                            </Breadcrumbs>
-                        </Stack>
-                    </Stack>
-                    <Stack
-                        alignItems="center"
-                        direction="row"
-                        pt={4}
-                    >
-                        <Button
-                            onClick={importDialog.handleOpen}
-                            startIcon={(
-                                <SvgIcon>
-                                    <ImportIcon/>
-                                </SvgIcon>
-                            )}
-                            variant="contained"
+            <Stack spacing={4}>
+                <Stack spacing={1}>
+                    <Typography variant="h4">
+                        {sectionApi.SECTION_TITLE}
+                    </Typography>
+                    <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
+                        <Link
+                            color="text.primary"
+                            component={RouterLink}
+                            href={paths.index}
+                            variant="subtitle2"
+                        >
+                            App
+                        </Link>
+                        <Link
+                            color="text.primary"
+                            component={RouterLink}
+                            href={paths.app[sectionApi.section].index}
+                            variant="subtitle2"
+                        >
+                            {sectionApi.SECTION_TITLE}
+                        </Link>
+                        <Typography
+                            color="text.secondary"
+                            variant="subtitle2"
                         >
                             Import
-                        </Button>
-                    </Stack>
-                </Container>
-            </Box>
+                        </Typography>
+                    </Breadcrumbs>
+                </Stack>
+            </Stack>
+            <Stack
+                alignItems="center"
+                direction="row"
+                pt={4}
+            >
+                <Button
+                    onClick={importDialog.handleOpen}
+                    startIcon={(
+                        <SvgIcon>
+                            <ImportIcon/>
+                        </SvgIcon>
+                    )}
+                    variant="contained"
+                >
+                    Import
+                </Button>
+            </Stack>
+
             <PackageImporter
                 onClose={importDialog.handleClose}
                 open={importDialog.open}

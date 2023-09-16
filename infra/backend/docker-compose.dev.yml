@@ -11,7 +11,6 @@ services:
       dockerfile: ./infra/backend/Dockerfile
       args:
         - ENVIRONMENT=${ENVIRONMENT}
-        - HOST=${MW_BACKEND_SERVER_HOST}
         - PORT=${MW_BACKEND_SERVER_PORT}
     ports:
       - ${MW_BACKEND_SERVER_PORT}:${MW_BACKEND_SERVER_PORT}

@@ -1,14 +1,14 @@
 import { createContext } from 'react';
 
 export const defaultSettings = {
-  colorPreset: 'indigo',
-  contrast: 'normal',
+  colorPreset: 'blue',
+  contrast: 'high',
   direction: 'ltr',
   layout: 'vertical',
   navColor: 'evident',
-  paletteMode: 'light',
+  paletteMode: 'dark',
   responsiveFontSizes: true,
-  stretch: false
+  stretch: true
 };
 
 export const initialState = {

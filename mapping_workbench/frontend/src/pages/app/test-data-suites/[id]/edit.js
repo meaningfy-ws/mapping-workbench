@@ -21,9 +21,9 @@ import {useRouter} from "src/hooks/use-router";
 
 const Page = () => {
     const router = useRouter();
-    if(!router.isReady) return;
+    if (!router.isReady) return;
 
-    const { id } = router.query;
+    const {id} = router.query;
 
     if (!id) {
         return;
@@ -41,71 +41,61 @@ const Page = () => {
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_ITEM_TITLE} Edit`}/>
-            <Box
-                component="main"
-                sx={{
-                    flexGrow: 1,
-                    py: 4
-                }}
-            >
-                <Container maxWidth="xl">
-                    <Stack spacing={4}>
-                        <Stack spacing={4}>
-                            <div>
-                                <Link
-                                    color="text.primary"
-                                    component={RouterLink}
-                                    href={paths.app[sectionApi.section].index}
-                                    sx={{
-                                        alignItems: 'center',
-                                        display: 'inline-flex'
-                                    }}
-                                    underline="hover"
-                                >
-                                    <SvgIcon sx={{mr: 1}}>
-                                        <ArrowLeftIcon/>
-                                    </SvgIcon>
-                                    <Typography variant="subtitle2">
-                                        {sectionApi.SECTION_TITLE}
-                                    </Typography>
-                                </Link>
-                            </div>
-                            <Stack
-                                alignItems="flex-start"
-                                direction={{
-                                    xs: 'column',
-                                    md: 'row'
-                                }}
-                                justifyContent="space-between"
-                                spacing={4}
-                            >
+            <Stack spacing={4}>
+                <Stack spacing={4}>
+                    <div>
+                        <Link
+                            color="text.primary"
+                            component={RouterLink}
+                            href={paths.app[sectionApi.section].index}
+                            sx={{
+                                alignItems: 'center',
+                                display: 'inline-flex'
+                            }}
+                            underline="hover"
+                        >
+                            <SvgIcon sx={{mr: 1}}>
+                                <ArrowLeftIcon/>
+                            </SvgIcon>
+                            <Typography variant="subtitle2">
+                                {sectionApi.SECTION_TITLE}
+                            </Typography>
+                        </Link>
+                    </div>
+                    <Stack
+                        alignItems="flex-start"
+                        direction={{
+                            xs: 'column',
+                            md: 'row'
+                        }}
+                        justifyContent="space-between"
+                        spacing={4}
+                    >
+                        <Stack
+                            alignItems="center"
+                            direction="row"
+                            spacing={2}
+                        >
+                            <Stack spacing={1}>
+                                <Typography variant="h4">
+                                    {item.title}
+                                </Typography>
                                 <Stack
                                     alignItems="center"
                                     direction="row"
-                                    spacing={2}
+                                    spacing={1}
                                 >
-                                    <Stack spacing={1}>
-                                        <Typography variant="h4">
-                                            {item.title}
-                                        </Typography>
-                                        <Stack
-                                            alignItems="center"
-                                            direction="row"
-                                            spacing={1}
-                                        >
-                                            <Chip
-                                                label={item._id}
-                                                size="small"
-                                            />
-                                        </Stack>
-                                    </Stack>
+                                    <Chip
+                                        label={item._id}
+                                        size="small"
+                                    />
                                 </Stack>
                             </Stack>
                         </Stack>
-                        <FileCollectionEditForm itemctx={new ForItemEditForm(item, sectionApi, formState.setState)}/>
                     </Stack>
-                </Container>
-            </Box>
+                </Stack>
+                <FileCollectionEditForm itemctx={new ForItemEditForm(item, sectionApi, formState.setState)}/>
+            </Stack>
         </>
     );
 };

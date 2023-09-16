@@ -105,83 +105,73 @@ const Page = () => {
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
-            <Box
-                component="main"
-                sx={{
-                    flexGrow: 1,
-                    py: 4
-                }}
-            >
-                <Container maxWidth="xl">
-                    <Stack spacing={4}>
-                        <Stack
-                            direction="row"
-                            justifyContent="space-between"
-                            spacing={4}
-                        >
-                            <Stack spacing={1}>
-                                <Typography variant="h4">
-                                    {sectionApi.SECTION_TITLE}
-                                </Typography>
-                                <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
-                                    <Link
-                                        color="text.primary"
-                                        component={RouterLink}
-                                        href={paths.index}
-                                        variant="subtitle2"
-                                    >
-                                        App
-                                    </Link>
-                                    <Link
-                                        color="text.primary"
-                                        component={RouterLink}
-                                        href={paths.app[sectionApi.section].index}
-                                        variant="subtitle2"
-                                    >
-                                        {sectionApi.SECTION_TITLE}
-                                    </Link>
-                                    <Typography
-                                        color="text.secondary"
-                                        variant="subtitle2"
-                                    >
-                                        List
-                                    </Typography>
-                                </Breadcrumbs>
-                            </Stack>
-                            <Stack
-                                alignItems="center"
-                                direction="row"
-                                spacing={3}
+            <Stack spacing={4}>
+                <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    spacing={4}
+                >
+                    <Stack spacing={1}>
+                        <Typography variant="h4">
+                            {sectionApi.SECTION_TITLE}
+                        </Typography>
+                        <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
+                            <Link
+                                color="text.primary"
+                                component={RouterLink}
+                                href={paths.index}
+                                variant="subtitle2"
                             >
-                                <Button
-                                    component={RouterLink}
-                                    href={paths.app[sectionApi.section].create}
-                                    startIcon={(
-                                        <SvgIcon>
-                                            <PlusIcon/>
-                                        </SvgIcon>
-                                    )}
-                                    variant="contained"
-                                >
-                                    Add
-                                </Button>
-                            </Stack>
-                        </Stack>
-                        <Card>
-                            <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
-                            <ListTable
-                                onPageChange={itemsSearch.handlePageChange}
-                                onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                                page={itemsSearch.state.page}
-                                items={itemsStore.items}
-                                count={itemsStore.itemsCount}
-                                rowsPerPage={itemsSearch.state.rowsPerPage}
-                                sectionApi={sectionApi}
-                            />
-                        </Card>
+                                App
+                            </Link>
+                            <Link
+                                color="text.primary"
+                                component={RouterLink}
+                                href={paths.app[sectionApi.section].index}
+                                variant="subtitle2"
+                            >
+                                {sectionApi.SECTION_TITLE}
+                            </Link>
+                            <Typography
+                                color="text.secondary"
+                                variant="subtitle2"
+                            >
+                                List
+                            </Typography>
+                        </Breadcrumbs>
                     </Stack>
-                </Container>
-            </Box>
+                    <Stack
+                        alignItems="center"
+                        direction="row"
+                        spacing={3}
+                    >
+                        <Button
+                            component={RouterLink}
+                            href={paths.app[sectionApi.section].create}
+                            startIcon={(
+                                <SvgIcon>
+                                    <PlusIcon/>
+                                </SvgIcon>
+                            )}
+                            variant="contained"
+                        >
+                            Add
+                        </Button>
+                    </Stack>
+                </Stack>
+                <Card>
+                    <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
+                    <ListTable
+                        onPageChange={itemsSearch.handlePageChange}
+                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                        page={itemsSearch.state.page}
+                        items={itemsStore.items}
+                        count={itemsStore.itemsCount}
+                        rowsPerPage={itemsSearch.state.rowsPerPage}
+                        sectionApi={sectionApi}
+                    />
+                </Card>
+            </Stack>
         </>
     );
 };

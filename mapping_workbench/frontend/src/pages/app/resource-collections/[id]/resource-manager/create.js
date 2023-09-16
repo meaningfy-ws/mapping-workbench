@@ -34,44 +34,34 @@ const Page = () => {
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_ITEM_TITLE} Create`}/>
-            <Box
-                component="main"
-                sx={{
-                    flexGrow: 1,
-                    py: 4
-                }}
-            >
-                <Container maxWidth="xl">
-                    <Stack spacing={4}>
-                        <Stack spacing={4}>
-                            <div>
-                                <Link
-                                    color="text.primary"
-                                    component={RouterLink}
-                                    href={{
-                                        pathname: paths.app[sectionApi.section].resource_manager.index,
-                                        query: {id: id}
-                                    }}
-                                    sx={{
-                                        alignItems: 'center',
-                                        display: 'inline-flex'
-                                    }}
-                                    underline="hover"
-                                >
-                                    <SvgIcon sx={{mr: 1}}>
-                                        <ArrowLeftIcon/>
-                                    </SvgIcon>
-                                    <Typography variant="subtitle2">
-                                        {sectionApi.SECTION_TITLE}
-                                    </Typography>
-                                </Link>
-                            </div>
-                        </Stack>
-                        <FileResourceEditForm itemctx={new ForItemCreateForm(item, sectionApi)}
-                                              collection_id={id}/>
-                    </Stack>
-                </Container>
-            </Box>
+            <Stack spacing={4}>
+                <Stack spacing={4}>
+                    <div>
+                        <Link
+                            color="text.primary"
+                            component={RouterLink}
+                            href={{
+                                pathname: paths.app[sectionApi.section].resource_manager.index,
+                                query: {id: id}
+                            }}
+                            sx={{
+                                alignItems: 'center',
+                                display: 'inline-flex'
+                            }}
+                            underline="hover"
+                        >
+                            <SvgIcon sx={{mr: 1}}>
+                                <ArrowLeftIcon/>
+                            </SvgIcon>
+                            <Typography variant="subtitle2">
+                                {sectionApi.SECTION_TITLE}
+                            </Typography>
+                        </Link>
+                    </div>
+                </Stack>
+                <FileResourceEditForm itemctx={new ForItemCreateForm(item, sectionApi)}
+                                      collection_id={id}/>
+            </Stack>
         </>
     );
 };
