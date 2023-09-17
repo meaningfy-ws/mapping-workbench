@@ -60,6 +60,8 @@ export const en = {
   [tokens.nav.sparql_test_suites]: 'SPARQL Test Suites',
   [tokens.nav.shacl_test_suites]: 'SHACL Test Suites',
   [tokens.nav.ontology_file_collections]: 'Ontologies',
+  [tokens.nav.ontology]: 'Ontology',
+  [tokens.nav.namespaces]: 'Namespaces',
   [tokens.nav.resource_collections]: 'Resources',
   [tokens.nav.mapping_packages]: 'Packages',
   [tokens.nav.conceptual_mapping_rules]: 'Conceptual Mappings',

@@ -202,9 +202,6 @@ const Page = () => {
             </form>
           </CardContent>
         </Card>
-        <Box sx={{ mt: 3 }}>
-          <AuthIssuer issuer={issuer} />
-        </Box>
       </div>
     </>
   );

@@ -12,5 +12,6 @@ export const AuthContext = createContext({
   issuer: Issuer.JWT,
   signIn: () => Promise.resolve(),
   signUp: () => Promise.resolve(),
+  verifyAuth: () => Promise.resolve(),
   signOut: () => Promise.resolve()
 });

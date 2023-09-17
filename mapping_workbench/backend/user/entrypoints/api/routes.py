@@ -1,3 +1,5 @@
+from typing import Dict
+
 from fastapi import APIRouter, Query, Depends
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
@@ -9,7 +11,7 @@ from mapping_workbench.backend.user.models.query_filters import QueryFilters
 from mapping_workbench.backend.user.models.user import UserRead, UserUpdate, User, Settings as UserSettings, \
     CurrentUserRead
 from mapping_workbench.backend.user.services.api import list_users as list_users_for_api, \
-    set_project_for_current_user_session
+    set_project_for_current_user_session, set_app_settings_for_current_user
 
 ROUTE_PREFIX = "/users"
 TAGS = ["users"]
@@ -47,6 +49,18 @@ async def route_set_project_for_current_user_session(
     return APIEmptyContentWithIdResponse(_id=data.id)
 
 
+@sub_router.post(
+    "/set_app_settings_for_current_user",
+    description=f"Set APP settings for current user",
+    name=f"users:set_app_settings_for_current_user",
+)
+async def route_set_app_settings_for_current_user(
+        settings: Dict,
+        user: User = Depends(current_active_user)
+):
+    return await set_app_settings_for_current_user(data=settings['data'], user=user)
+
+
 @sub_router.get(
     "/me",
     description=f"Get current user",
@@ -66,6 +80,6 @@ router.include_router(sub_router, prefix=ROUTE_PREFIX, tags=TAGS)
 router.include_router(
     fastapi_users.get_users_router(UserRead, UserUpdate),
     prefix=ROUTE_PREFIX,
-    tags=TAGS,
+    tags=TAGS
 )
 

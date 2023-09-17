@@ -1,11 +1,6 @@
-import io
-import tempfile
-import zipfile
-from pathlib import Path
 from typing import List
 
 from beanie import PydanticObjectId
-from fastapi import Depends
 from pymongo.errors import DuplicateKeyError
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
@@ -14,9 +9,7 @@ from mapping_workbench.backend.core.services.request import request_update_data,
     api_entity_is_found
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageCreateIn, \
     MappingPackageUpdateIn, MappingPackageOut
-from mapping_workbench.backend.mapping_package.services.importer import PackageImporter
 from mapping_workbench.backend.project.models.entity import Project
-from mapping_workbench.backend.project.services.api import get_project
 from mapping_workbench.backend.user.models.user import User
 
 
@@ -62,11 +55,3 @@ async def get_mapping_package_out(id: PydanticObjectId) -> MappingPackageOut:
 
 async def delete_mapping_package(mapping_package: MappingPackage):
     return await mapping_package.delete()
-
-
-async def import_package(file_content: bytes, file_name: str, project: Project, user: User):
-    zf = zipfile.ZipFile(io.BytesIO(file_content))
-    importer: PackageImporter = PackageImporter(Path(file_name).stem, zf, project, user)
-    await importer.run()
-
-

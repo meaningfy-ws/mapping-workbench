@@ -15,12 +15,17 @@ class UserSession(BaseModel):
     project: Optional[PydanticObjectId]
 
 
+class UserApp(BaseModel):
+    settings: Optional[Dict]
+
+
 class Settings(BaseModel):
-    app: Optional[Dict]
+    app: Optional[UserApp] = UserApp()
     session: Optional[UserSession] = UserSession()
 
 
 class User(BeanieBaseUser, Document):
+    name: Optional[str]
     oauth_accounts: List[OAuthAccount] = Field(default_factory=list)
     settings: Optional[Settings] = Settings()
 
@@ -33,12 +38,12 @@ class CurrentUserRead(schemas.BaseUser[PydanticObjectId]):
 
 
 class UserRead(schemas.BaseUser[PydanticObjectId]):
-    pass
+    name: Optional[str]
 
 
 class UserCreate(schemas.BaseUserCreate):
-    pass
+    name: Optional[str]
 
 
 class UserUpdate(schemas.BaseUserUpdate):
-    pass
+    name: Optional[str]

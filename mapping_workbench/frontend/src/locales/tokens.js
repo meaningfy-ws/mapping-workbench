@@ -60,6 +60,8 @@ export const tokens = {
     shacl_test_suites: 'nav.shacl_test_suites',
     ontology_file_collections: 'nav.ontology_file_collections',
     resource_collections: 'nav.resource_collections',
+    ontology: 'nav.ontology',
+    namespaces: 'nav.namespaces',
 
     mapping_packages: 'nav.mapping_packages',
     conceptual_mapping_rules: 'nav.conceptual_mapping_rules',

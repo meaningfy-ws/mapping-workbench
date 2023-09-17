@@ -42,8 +42,6 @@ class FileResourceIn(BaseProjectResourceEntityInSchema):
         return v
 
 
-
-
 class FileResource(BaseProjectResourceEntity):
     title: Optional[str]
     description: Optional[str]

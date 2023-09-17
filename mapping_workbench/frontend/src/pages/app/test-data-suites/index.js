@@ -71,23 +71,23 @@ const useItemsStore = (searchState) => {
 
     const handleItemsGet = useCallback(async () => {
         try {
-            const response = await sectionApi.getItems(searchState);           
+            const response = await sectionApi.getItems(searchState);
 
             if (isMounted()) {
                 setState({
                     items: response.items,
                     itemsCount: response.count
                 });
-                
-            }            
+
+            }
 
         } catch (err) {
             console.error(err);
         }
-    }, [searchState, isMounted]);    
+    }, [searchState, isMounted]);
 
     useEffect(() => {
-            handleItemsGet();            
+            handleItemsGet();
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [searchState]);
@@ -99,91 +99,80 @@ const useItemsStore = (searchState) => {
 
 const Page = () => {
     const itemsSearch = useItemsSearch();
-    const itemsStore = useItemsStore(itemsSearch.state);    
+    const itemsStore = useItemsStore(itemsSearch.state);
 
     usePageView();
 
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
-            <Box
-                component="main"
-                sx={{
-                    flexGrow: 1,
-                    py: 4
-                }}
-            >
-                <Container maxWidth="xl">
-                    <Stack spacing={4}>
-                        <Stack
-                            direction="row"
-                            justifyContent="space-between"
-                            spacing={4}
-                        >
-                            <Stack spacing={1}>
-                                <Typography variant="h4">
-                                    { sectionApi.SECTION_TITLE }
-                                </Typography>
-                                <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
-                                    <Link
-                                        color="text.primary"
-                                        component={RouterLink}
-                                        href={paths.index}
-                                        variant="subtitle2"
-                                    >
-                                        App
-                                    </Link>
-                                    <Link
-                                        color="text.primary"
-                                        component={RouterLink}
-                                        href={paths.app[sectionApi.section].index}
-                                        variant="subtitle2"
-                                    >
-                                        { sectionApi.SECTION_TITLE }
-                                    </Link>
-                                    <Typography
-                                        color="text.secondary"
-                                        variant="subtitle2"
-                                    >
-                                        List
-                                    </Typography>
-                                </Breadcrumbs>
-                            </Stack>
-                            <Stack
-                                alignItems="center"
-                                direction="row"
-                                spacing={3}
+            <Stack spacing={4}>
+                <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    spacing={4}
+                >
+                    <Stack spacing={1}>
+                        <Typography variant="h4">
+                            {sectionApi.SECTION_TITLE}
+                        </Typography>
+                        <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
+                            <Link
+                                color="text.primary"
+                                component={RouterLink}
+                                href={paths.index}
+                                variant="subtitle2"
                             >
-                                <Button
-                                    component={RouterLink}
-                                    href={paths.app[sectionApi.section].create}
-                                    startIcon={(
-                                        <SvgIcon>
-                                            <PlusIcon/>
-                                        </SvgIcon>
-                                    )}
-                                    variant="contained"
-                                >
-                                    Add
-                                </Button>
-                            </Stack>
-                        </Stack>
-                        <Card>
-                            <FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
-                            <FileCollectionListTable
-                                onPageChange={itemsSearch.handlePageChange}
-                                onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                                page={itemsSearch.state.page}
-                                items={itemsStore.items}
-                                count={itemsStore.itemsCount}
-                                rowsPerPage={itemsSearch.state.rowsPerPage}
-                                sectionApi={sectionApi}
-                            />
-                        </Card>
+                                App
+                            </Link>
+                            <Link
+                                color="text.primary"
+                                component={RouterLink}
+                                href={paths.app[sectionApi.section].index}
+                                variant="subtitle2"
+                            >
+                                {sectionApi.SECTION_TITLE}
+                            </Link>
+                            <Typography
+                                color="text.secondary"
+                                variant="subtitle2"
+                            >
+                                List
+                            </Typography>
+                        </Breadcrumbs>
                     </Stack>
-                </Container>
-            </Box>
-            
+                    <Stack
+                        alignItems="center"
+                        direction="row"
+                        spacing={3}
+                    >
+                        <Button
+                            component={RouterLink}
+                            href={paths.app[sectionApi.section].create}
+                            startIcon={(
+                                <SvgIcon>
+                                    <PlusIcon/>
+                                </SvgIcon>
+                            )}
+                            variant="contained"
+                        >
+                            Add
+                        </Button>
+                    </Stack>
+                </Stack>
+                <Card>
+                    <FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
+                    <FileCollectionListTable
+                        onPageChange={itemsSearch.handlePageChange}
+                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                        page={itemsSearch.state.page}
+                        items={itemsStore.items}
+                        count={itemsStore.itemsCount}
+                        rowsPerPage={itemsSearch.state.rowsPerPage}
+                        sectionApi={sectionApi}
+                    />
+                </Card>
+            </Stack>
         </>
     );
 };
