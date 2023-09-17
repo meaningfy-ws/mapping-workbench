@@ -32,6 +32,10 @@ class SessionApi {
     setLocalAppSettings(data) {
         localStorage.setItem(APP_SETTINGS_KEY, JSON.stringify(data));
     }
+
+    getLocalAppSettings() {
+        return localStorage.getItem(APP_SETTINGS_KEY);
+    }
 }
 
 export const sessionApi = new SessionApi();

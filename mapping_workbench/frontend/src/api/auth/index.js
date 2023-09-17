@@ -1,10 +1,5 @@
-import {createResourceId} from 'src/utils/create-resource-id';
-import {JWT_EXPIRES_IN, JWT_SECRET, sign} from 'src/utils/jwt';
-import {wait} from 'src/utils/wait';
-import {users} from './data';
 import {appApi} from "../app";
 import {sessionApi} from "../session";
-import {SESSION_PROJECT_KEY} from "../projects";
 
 const STORAGE_KEY = 'users';
 
@@ -45,7 +40,11 @@ class AuthApi {
         await this.signIn(request);
         const user = await this.me();
         sessionApi.setLocalSessionProject(user.settings.session && user.settings.session.project);
-        sessionApi.setLocalAppSettings(user.settings.app && user.settings.app.settings);
+        if (user.settings.app && user.settings.app.settings) {
+            sessionApi.setLocalAppSettings(user.settings.app.settings);
+        } else {
+            await sessionApi.setAppSettings(sessionApi.getLocalAppSettings(), !!user);
+        }
 
         return user;
     }
