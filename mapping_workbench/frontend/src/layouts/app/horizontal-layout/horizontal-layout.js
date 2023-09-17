@@ -5,6 +5,8 @@ import {MobileNav} from '../mobile-nav';
 import {TopNav} from './top-nav';
 import {useMobileNav} from './use-mobile-nav';
 import {Box} from "@mui/system";
+import Container from "@mui/material/Container";
+import {useSettings} from "../../../hooks/use-settings";
 
 const HorizontalLayoutRoot = styled('div')({
     display: 'flex',
@@ -23,6 +25,7 @@ export const HorizontalLayout = (props) => {
     const {children, navColor, sections} = props;
     const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
     const mobileNav = useMobileNav();
+    const settings = useSettings();
 
     return (
         <>

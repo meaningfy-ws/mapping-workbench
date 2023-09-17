@@ -80,6 +80,6 @@ router.include_router(sub_router, prefix=ROUTE_PREFIX, tags=TAGS)
 router.include_router(
     fastapi_users.get_users_router(UserRead, UserUpdate),
     prefix=ROUTE_PREFIX,
-    tags=TAGS,
+    tags=TAGS
 )
 
