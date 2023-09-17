@@ -32,6 +32,7 @@ services:
       - "traefik.http.routers.mw-frontend-${ENVIRONMENT}-secured.rule=Host(`mw.${SUBDOMAIN}${DOMAIN}`)" # <== Your Domain Name for the https rule
       - "traefik.http.routers.mw-frontend-${ENVIRONMENT}-secured.entrypoints=web-secured" # <== Defining entrypoint for https, **ref: line 31
       - "traefik.http.routers.mw-frontend-${ENVIRONMENT}-secured.tls=true"
+      - "traefik.http.routers.mw-frontend-${ENVIRONMENT}-secured.tls.certresolver=mytlschallenge"
     volumes:
       - ${FRONTEND_INFRA_FOLDER}/src:/app/src
       - ${FRONTEND_INFRA_FOLDER}/public:/app/public
