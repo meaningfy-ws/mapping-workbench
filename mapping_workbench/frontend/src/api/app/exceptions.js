@@ -27,6 +27,10 @@ export class HTTPException extends AxiosError {
     }
 
     renderMessage() {
+        return this.response ? this.renderResponseMessage() : this.message;
+    }
+
+    renderResponseMessage() {
         return `${this.statusText()}: ${this.data().detail}`;
     }
 }
