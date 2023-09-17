@@ -54,6 +54,8 @@ export const SettingsProvider = (props) => {
                 ...restored,
                 isInitialized: true
             }));
+        } else {
+            storeSettings(defaultSettings, isAuthenticated);
         }
     }, [isAuthenticated]);
 
