@@ -42,7 +42,7 @@ class AuthApi {
         sessionApi.setLocalSessionProject(user.settings.session && user.settings.session.project);
         if (user.settings.app && user.settings.app.settings) {
             sessionApi.setLocalAppSettings(user.settings.app.settings);
-        } else {
+        } else if (sessionApi.getLocalAppSettings()) {
             await sessionApi.setAppSettings(sessionApi.getLocalAppSettings(), !!user);
         }
 
