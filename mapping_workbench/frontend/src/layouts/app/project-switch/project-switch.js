@@ -8,6 +8,7 @@ import {useFormik} from "formik";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
 import {useRouter} from "../../../hooks/use-router";
+import Typography from "@mui/material/Typography";
 
 const useProjectsStore = () => {
     const isMounted = useMounted();
@@ -88,7 +89,12 @@ export const ProjectSwitch = (props) => {
                         key={project.id}
                         value={project.id}
                     >
-                        {project.title}
+                        <Typography
+                            color="var(--nav-color)"
+                            variant="body2"
+                        >
+                            {project.title}
+                        </Typography>
                     </MenuItem>
                 ))}
             </TextField>

@@ -113,4 +113,8 @@ async def route_import_mapping_packages(
         file: UploadFile = Form(...),
         user: User = Depends(current_active_user)
 ):
-    await import_package(file.file.read(), file.filename, await get_project(project), user)
+    mapping_package: MappingPackage = await import_package(
+        file.file.read(), file.filename, await get_project(project), user
+    )
+
+    return mapping_package.dict()

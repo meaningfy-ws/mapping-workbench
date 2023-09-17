@@ -60,15 +60,17 @@ class PackageImporter:
         self.package_path = Path(tempdir_name) / self.package_name
 
     async def run(self):
-        await self.add_mapping_package(False)
-        # await self.add_test_data()
-        # await self.add_triple_map_fragments()
-        # await self.add_sparql_test_suites()
-        # await self.add_shacl_test_suites()
+        await self.add_mapping_package()
+        await self.add_test_data()
+        await self.add_triple_map_fragments()
+        await self.add_sparql_test_suites()
+        await self.add_shacl_test_suites()
         await self.add_resource_collections()
         await self.add_mapping_rules()
 
         self.tempdir.cleanup()
+
+        return self.mapping_package
 
     @classmethod
     def metadata_constraint_value(cls, constraints, key, single=True):

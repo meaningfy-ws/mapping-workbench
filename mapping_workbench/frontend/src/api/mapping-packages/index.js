@@ -22,11 +22,11 @@ class MappingPackagesApi extends SectionApi {
         ).sort((a, b) => a.title.localeCompare(b.title));
     }
 
-    async importPackage(request) {
+    importPackage(request) {
         try {
             let endpoint = this.paths['import'];
             const headers = {"Content-Type": "multipart/form-data"};
-            return await appApi.post(endpoint, request, null, headers);
+            return appApi.post(endpoint, request, null, headers);
         } catch (err) {
         }
     }

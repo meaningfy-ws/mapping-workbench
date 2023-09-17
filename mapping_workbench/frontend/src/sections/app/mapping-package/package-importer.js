@@ -16,6 +16,7 @@ import nProgress from 'nprogress';
 import {sessionApi} from "../../../api/session";
 import TextField from "@mui/material/TextField";
 import * as React from "react";
+import toast from "react-hot-toast";
 
 
 export const PackageImporter = (props) => {
@@ -28,7 +29,7 @@ export const PackageImporter = (props) => {
         setFiles([]);
     }, [open]);
 
-    const handleUpload = useCallback(async() => {
+    const handleUpload = useCallback(() => {
         nProgress.start();
         let incStep = 100 / files.length;
         let formData;
@@ -36,7 +37,11 @@ export const PackageImporter = (props) => {
             formData = new FormData();
             formData.append("file", file);
             formData.append("project", sessionApi.getSessionProject());
-            await sectionApi.importPackage(formData);
+            toast.promise(sectionApi.importPackage(formData), {
+                loading: `Importing "${file.name}" ... `,
+                success: (mappingPackage) => `"${mappingPackage.title}" successfully imported.`,
+                error: (err) => `Importing "${file.name}" failed: ${err.message}.`
+            }).then(r => {})
             nProgress.inc(incStep);
         }
         nProgress.done();
@@ -44,8 +49,8 @@ export const PackageImporter = (props) => {
         // router.push({
         //     pathname: paths.app[sectionApi.section].index
         // });
-        router.reload();
-    }, [files]);
+        //router.reload();
+    }, [files])
 
     const handleDrop = useCallback((newFiles) => {
         setFiles((prevFiles) => {
