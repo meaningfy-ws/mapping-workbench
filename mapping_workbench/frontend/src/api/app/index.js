@@ -3,7 +3,7 @@ import {api as apiConfig} from 'src/config';
 import {STORAGE_KEY as ACCESS_TOKEN_STORAGE_KEY} from 'src/contexts/auth/jwt/auth-provider';
 import {sessionStorageTokenInterceptor} from './security';
 import {HTTPException} from "./exceptions";
-import {apiPaths} from "../../paths";
+import {apiPaths, paths} from "../../paths";
 
 
 const LOGIN_ENDPOINT = "/auth/jwt/login";
@@ -100,10 +100,10 @@ class AppApi {
     }
 
     async request(method, endpoint, data = null, params = null, headers = null) {
-        if (!(await this.verifyAuth())) {
-            history.push(paths.auth.jwt.login);
-            return;
-        }
+        // if (!(await this.verifyAuth())) {
+        //     history.push(paths.auth.jwt.login);
+        //     return;
+        // }
 
         headers = this.addAuth(headers);
 

@@ -17,7 +17,7 @@ export const AuthGuard = (props) => {
   const auth = useAuth();
   const [checked, setChecked] = useState(false);
   const check = useCallback(async () => {
-    await auth.verifyAuth();
+    //await auth.verifyAuth();
     if (!auth.isAuthenticated) {
       const searchParams = new URLSearchParams({ returnTo: window.location.pathname }).toString();
       const href = loginPaths[auth.issuer] + `?${searchParams}`;
