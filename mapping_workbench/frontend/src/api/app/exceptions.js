@@ -3,8 +3,9 @@ import {AxiosError, AxiosResponse, InternalAxiosRequestConfig} from "axios";
 export class HTTPException extends AxiosError {
     constructor(error) {
         const response = error.response;
+        console.log(error);
         super(
-            response.statusText,
+            response && response.statusText || error.message,
             response.status,
             null,
             error.request,
