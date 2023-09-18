@@ -245,6 +245,10 @@ export const useSections = () => {
                         {
                             title: t(tokens.nav.namespaces),
                             path: paths.app.ontology_namespaces.index
+                        },
+                        {
+                            title: t(tokens.nav.terms),
+                            path: paths.app.ontology_terms.index
                         }
                     ]
                 },

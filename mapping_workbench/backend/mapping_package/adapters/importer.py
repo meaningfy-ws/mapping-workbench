@@ -78,7 +78,7 @@ class PackageImporter:
             return constraints[key][0] if single else constraints[key]
         return None
 
-    def add_metadata_to_package(self):
+    def add_metadata_to_package_data(self):
         with open(self.package_path / "metadata.json") as metadata_path:
             metadata = json.load(metadata_path)
 
@@ -316,12 +316,18 @@ class PackageImporter:
                     await resource_file.on_update(self.user).save()
 
     async def add_mapping_package(self, with_save: bool = True):
-        self.add_metadata_to_package()
-        self.mapping_package = MappingPackage(**(self.mapping_package_data.dict()))
+        self.add_metadata_to_package_data()
+        self.mapping_package = await MappingPackage.find_one(
+            MappingPackage.identifier == self.mapping_package_data.identifier
+        ) or MappingPackage(**(self.mapping_package_data.dict()))
+
         self.mapping_package.project = self.project
         self.mapping_package.test_data_suites = []
         self.mapping_package.shacl_test_suites = []
-        with_save and await self.mapping_package.on_create(self.user).save()
+        with_save and (
+            await self.mapping_package.on_update(self.user).save() if self.mapping_package.id
+            else await self.mapping_package.on_create(self.user).save()
+        )
 
     async def add_mapping_rules(self):
         async def rule_exists(rule: ConceptualMappingRule):
