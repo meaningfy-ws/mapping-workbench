@@ -12,3 +12,7 @@ async def import_package(file_content: bytes, file_name: str, project: Project, 
     zf = zipfile.ZipFile(io.BytesIO(file_content))
     importer: PackageImporter = PackageImporter(Path(file_name).stem, zf, project, user)
     return await importer.run()
+
+
+async def clear_project_data(project: Project):
+    return await PackageImporter.clear_project_data(project)
