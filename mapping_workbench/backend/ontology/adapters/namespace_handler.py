@@ -16,8 +16,13 @@ from pandas import DataFrame
 from mapping_workbench.backend.ontology.adapters import invert_dict
 from mapping_workbench.backend.ontology.adapters.prefix_cc_fetcher import prefix_cc_lookup_base_uri, \
     prefix_cc_lookup_prefix
+from mapping_workbench.backend.ontology.models.namespace import Namespace
 
 logger = logging.getLogger(__name__)
+
+
+class NamespaceInventoryException(Exception):
+    info: str = None
 
 
 class NamespaceInventory(rdflib.namespace.NamespaceManager):
@@ -30,7 +35,7 @@ class NamespaceInventory(rdflib.namespace.NamespaceManager):
             for prefix, namespace in invert_dict(invert_dict(namespace_definition_dict)).items():
                 self.bind(prefix=prefix, namespace=namespace, replace=True, override=True)
 
-        self._remote_query_cash = []
+        self._remote_query_cache = []
 
     def namespaces_as_dict(self) -> Dict:
         """
@@ -59,13 +64,15 @@ class NamespaceInventory(rdflib.namespace.NamespaceManager):
         :param error_fail: whether the errors shall fail hard or just issue a warning
         :param prefix_cc_lookup: whether to lookup a namespace on prefix.cc in case it is unknown or not.
         :param uri_string: the string of a URI to be reduced to a QName
+        :param stored_uris: stored uris
         :return: qname string
         """
         try:
             computed_ns = self.compute_qname_strict(uri_string)
             base_uri = str(computed_ns[1])
-            if prefix_cc_lookup and base_uri not in self._remote_query_cash:
-                self._remote_query_cash.append(base_uri)
+            if base_uri not in invert_dict(self.namespaces_as_dict()) \
+                    and prefix_cc_lookup and base_uri not in self._remote_query_cache:
+                self._remote_query_cache.append(base_uri)
                 lookup_result = prefix_cc_lookup_base_uri(base_uri=base_uri)
                 if lookup_result:
                     for prefix, namespace in lookup_result.items():  # expecting at most one result
@@ -97,9 +104,12 @@ class NamespaceInventory(rdflib.namespace.NamespaceManager):
             ns_uri = self.prefix_to_ns_uri(prefix=prefix, prefix_cc_lookup=prefix_cc_lookup)
             return ns_uri + local_name
         except Exception as e:
-            logger.warning(f"Could not transform the QName <{qname_string}> to its absolute URI form.")
+            error_info = f"Could not transform the QName <{qname_string}> to its absolute URI form."
+            logger.warning(error_info)
             if error_fail:
-                raise e
+                ns_inv_e = NamespaceInventoryException()
+                ns_inv_e.info = error_info
+                raise ns_inv_e from e
             return qname_string
 
 
@@ -136,3 +146,8 @@ def simplify_uris_in_tabular(data_frame: DataFrame, namespace_inventory: Namespa
         result_frame[column] = result_frame[column].apply(
             lambda x: namespace_inventory.uri_to_qname(x, prefix_cc_lookup=prefix_cc_lookup, error_fail=error_fail))
     return result_frame
+
+
+async def get_ns_handler() -> NamespaceInventory:
+    namespace_definition_dict = {x.prefix: (x.uri or '') for x in (await Namespace.find_all().to_list())}
+    return NamespaceInventory(namespace_definition_dict=namespace_definition_dict)

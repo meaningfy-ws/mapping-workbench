@@ -219,10 +219,9 @@ export const SideNav = (props) => {
                             />
                         ))}
                         <Stack
-                            component="ul"
+                            component="nav"
                             spacing={0.5}
                             sx={{
-                                listStyle: 'none',
                                 m: 0,
                                 p: 0
                             }}>

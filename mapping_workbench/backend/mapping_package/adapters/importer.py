@@ -60,15 +60,18 @@ class PackageImporter:
         self.package_path = Path(tempdir_name) / self.package_name
 
     async def run(self):
-        await self.add_mapping_package(False)
-        # await self.add_test_data()
-        # await self.add_triple_map_fragments()
-        # await self.add_sparql_test_suites()
-        # await self.add_shacl_test_suites()
+        await self.add_mapping_package()
+        await self.add_test_data()
+        await self.add_triple_map_fragments()
+        await self.add_sparql_test_suites()
+        await self.add_shacl_test_suites()
         await self.add_resource_collections()
         await self.add_mapping_rules()
 
         self.tempdir.cleanup()
+
+        await self.mapping_package.save()
+        return self.mapping_package
 
     @classmethod
     def metadata_constraint_value(cls, constraints, key, single=True):
@@ -76,7 +79,7 @@ class PackageImporter:
             return constraints[key][0] if single else constraints[key]
         return None
 
-    def add_metadata_to_package(self):
+    def add_metadata_to_package_data(self):
         with open(self.package_path / "metadata.json") as metadata_path:
             metadata = json.load(metadata_path)
 
@@ -142,7 +145,6 @@ class PackageImporter:
                 )
                 await test_data_file_resource.on_create(self.user).save()
 
-        await self.mapping_package.save()
 
     async def add_triple_map_fragments(self):
         resource_formats = [e.value for e in TripleMapFragmentFormat]
@@ -168,6 +170,8 @@ class PackageImporter:
     async def add_sparql_test_suites(self):
         resource_formats = [e.value for e in SPARQLTestFileResourceFormat]
         sparql_test_suites_path = self.package_path / VALIDATION_DIR / "sparql"
+        project_link = Project.link_from_id(self.project.id)
+
         for root, folders, files in os.walk(sparql_test_suites_path):
             if root == str(sparql_test_suites_path):
                 continue
@@ -176,18 +180,29 @@ class PackageImporter:
                 map(lambda path_value: str(path_value), Path(os.path.relpath(root, sparql_test_suites_path)).parts))
 
             sparql_test_suite = None
+            sparql_test_suite_link = None
             if len(parents) == 1:  # first level
                 sparql_test_suite_title = str(os.path.relpath(root, sparql_test_suites_path))
+
                 if sparql_test_suite_title == "cm_assertions":
                     print("-- skipped sparql_test_suite cm_assertions")
                     continue
-                validation_type = sparql_test_suite_title[:-1]
-                sparql_test_suite = SPARQLTestSuite(
-                    project=self.project,
-                    title=sparql_test_suite_title,
-                    type=validation_type
+
+                sparql_test_suite = await SPARQLTestSuite.find_one(
+                    SPARQLTestSuite.project == project_link,
+                    SPARQLTestSuite.title == sparql_test_suite_title
                 )
-                await sparql_test_suite.on_create(self.user).save()
+
+                if not sparql_test_suite:
+                    validation_type = sparql_test_suite_title[:-1]
+                    sparql_test_suite = SPARQLTestSuite(
+                        project=self.project,
+                        title=sparql_test_suite_title,
+                        type=validation_type
+                    )
+                    await sparql_test_suite.on_create(self.user).save()
+
+                sparql_test_suite_link = SPARQLTestSuite.link_from_id(sparql_test_suite.id)
 
             for file in files:
                 if file.startswith('.'):
@@ -201,21 +216,34 @@ class PackageImporter:
                 file_path = Path(os.path.join(root, file))
                 file_name = str(file)
 
-                sparql_test_file_resource = SPARQLTestFileResource(
-                    project=self.project,
-                    sparql_test_suite=sparql_test_suite,
-                    format=resource_format,
-                    title=file_name,
-                    filename=file_name,
-                    path=parents,
-                    content=file_path.read_text(encoding="utf-8"),
-                    type=sparql_test_suite.type
+                sparql_test_file_resource = await SPARQLTestFileResource.find_one(
+                    SPARQLTestFileResource.project == project_link,
+                    SPARQLTestFileResource.sparql_test_suite == sparql_test_suite_link,
+                    SPARQLTestFileResource.filename == file_name
                 )
-                await sparql_test_file_resource.on_create(self.user).save()
+
+                file_content = file_path.read_text(encoding="utf-8")
+                if not sparql_test_file_resource:
+                    sparql_test_file_resource = SPARQLTestFileResource(
+                        project=self.project,
+                        sparql_test_suite=sparql_test_suite,
+                        format=resource_format,
+                        title=file_name,
+                        filename=file_name,
+                        path=parents,
+                        content=file_content,
+                        type=sparql_test_suite.type
+                    )
+                    await sparql_test_file_resource.on_create(self.user).save()
+                else:
+                    sparql_test_file_resource.content = file_content
+                    await sparql_test_file_resource.on_update(self.user).save()
 
     async def add_shacl_test_suites(self):
         resource_formats = [e.value for e in SHACLTestFileResourceFormat]
         shacl_test_suites_path = self.package_path / VALIDATION_DIR / "shacl"
+        project_link = Project.link_from_id(self.project.id)
+
         for root, folders, files in os.walk(shacl_test_suites_path):
             if root == str(shacl_test_suites_path):
                 continue
@@ -224,14 +252,24 @@ class PackageImporter:
                 map(lambda path_value: str(path_value), Path(os.path.relpath(root, shacl_test_suites_path)).parts))
 
             shacl_test_suite = None
+            shacl_test_suite_link = None
             if len(parents) == 1:  # first level
                 shacl_test_suite_title = str(os.path.relpath(root, shacl_test_suites_path))
-                shacl_test_suite = SHACLTestSuite(
-                    project=self.project,
-                    title=shacl_test_suite_title
+
+                shacl_test_suite = await SHACLTestSuite.find_one(
+                    SHACLTestSuite.project == project_link,
+                    SHACLTestSuite.title == shacl_test_suite_title
                 )
-                await shacl_test_suite.on_create(self.user).save()
-                self.mapping_package.shacl_test_suites.append(SHACLTestSuite.link_from_id(shacl_test_suite.id))
+
+                if not shacl_test_suite:
+                    shacl_test_suite = SHACLTestSuite(
+                        project=self.project,
+                        title=shacl_test_suite_title
+                    )
+                    await shacl_test_suite.on_create(self.user).save()
+
+                shacl_test_suite_link = SHACLTestSuite.link_from_id(shacl_test_suite.id)
+                self.mapping_package.shacl_test_suites.append(shacl_test_suite_link)
 
             for file in files:
                 if file.startswith('.'):
@@ -245,24 +283,36 @@ class PackageImporter:
                 file_path = Path(os.path.join(root, file))
                 file_name = str(file)
 
-                shacl_test_file_resource = SHACLTestFileResource(
-                    project=self.project,
-                    shacl_test_suite=shacl_test_suite,
-                    format=resource_format,
-                    title=file_name,
-                    filename=file_name,
-                    path=parents,
-                    content=file_path.read_text(encoding="utf-8")
+                shacl_test_file_resource = await SHACLTestFileResource.find_one(
+                    SHACLTestFileResource.project == project_link,
+                    SHACLTestFileResource.shacl_test_suite == shacl_test_suite_link,
+                    SHACLTestFileResource.filename == file_name
                 )
-                await shacl_test_file_resource.on_create(self.user).save()
 
-        await self.mapping_package.save()
+                file_content = file_path.read_text(encoding="utf-8")
+                if not shacl_test_file_resource:
+                    shacl_test_file_resource = SHACLTestFileResource(
+                        project=self.project,
+                        shacl_test_suite=shacl_test_suite,
+                        format=resource_format,
+                        title=file_name,
+                        filename=file_name,
+                        path=parents,
+                        content=file_content
+                    )
+                    await shacl_test_file_resource.on_create(self.user).save()
+                else:
+                    shacl_test_file_resource.content = file_content
+                    await shacl_test_file_resource.on_update(self.user).save()
+
 
     async def add_resource_collections(self):
         resource_formats = [e.value for e in ResourceFileFormat]
         resource_collections_path = self.package_path / TRANSFORMATION_DIR / "resources"
+        project_link = Project.link_from_id(self.project.id)
 
         resource_collection = await ResourceCollection.find_one(
+            ResourceCollection.project == project_link,
             ResourceCollection.title == DEFAULT_RESOURCES_COLLECTION_NAME
         )
 
@@ -273,7 +323,6 @@ class PackageImporter:
             )
             await resource_collection.on_create(self.user).save()
 
-        project_link = Project.link_from_id(self.project.id)
         resource_collection_link = ResourceCollection.link_from_id(resource_collection.id)
 
         for root, folders, files in os.walk(resource_collections_path):
@@ -314,12 +363,18 @@ class PackageImporter:
                     await resource_file.on_update(self.user).save()
 
     async def add_mapping_package(self, with_save: bool = True):
-        self.add_metadata_to_package()
-        self.mapping_package = MappingPackage(**(self.mapping_package_data.dict()))
+        self.add_metadata_to_package_data()
+        self.mapping_package = await MappingPackage.find_one(
+            MappingPackage.identifier == self.mapping_package_data.identifier
+        ) or MappingPackage(**(self.mapping_package_data.dict()))
+
         self.mapping_package.project = self.project
         self.mapping_package.test_data_suites = []
         self.mapping_package.shacl_test_suites = []
-        with_save and await self.mapping_package.on_create(self.user).save()
+        with_save and (
+            await self.mapping_package.on_update(self.user).save() if self.mapping_package.id
+            else await self.mapping_package.on_create(self.user).save()
+        )
 
     async def add_mapping_rules(self):
         async def rule_exists(rule: ConceptualMappingRule):
@@ -394,3 +449,19 @@ class PackageImporter:
             await discover_and_save_mapping_rule_prefixes(rule)
 
         print("RULES_DUPLICATES :: ", len(duplicates))
+
+    @classmethod
+    async def clear_project_data(cls, project: Project):
+        project_link = Project.link_from_id(project.id)
+
+        await ConceptualMappingRule.find(ConceptualMappingRule.project == project_link).delete()
+        await GenericTripleMapFragment.find(GenericTripleMapFragment.project == project_link).delete()
+        await MappingPackage.find(MappingPackage.project == project_link).delete()
+        await ResourceCollection.find(ResourceCollection.project == project_link).delete()
+        await ResourceFile.find(ResourceFile.project == project_link).delete()
+        await SHACLTestFileResource.find(SHACLTestFileResource.project == project_link).delete()
+        await SHACLTestSuite.find(SHACLTestSuite.project == project_link).delete()
+        await SPARQLTestFileResource.find(SPARQLTestFileResource.project == project_link).delete()
+        await SPARQLTestSuite.find(SPARQLTestSuite.project == project_link).delete()
+        await TestDataFileResource.find(TestDataFileResource.project == project_link).delete()
+        await TestDataSuite.find(TestDataSuite.project == project_link).delete()

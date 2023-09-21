@@ -1,0 +1,149 @@
+import PropTypes from 'prop-types';
+import toast from 'react-hot-toast';
+import * as Yup from 'yup';
+import {useFormik} from 'formik';
+import Button from '@mui/material/Button';
+import {MenuItem} from '@mui/material';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardHeader from '@mui/material/CardHeader';
+import Grid from '@mui/material/Unstable_Grid2';
+import Stack from '@mui/material/Stack';
+
+import {RouterLink} from 'src/components/router-link';
+import {paths} from 'src/paths';
+import {useRouter} from 'src/hooks/use-router';
+import {FormTextField} from "../../../components/app/form/text-field";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
+import MenuList from "@mui/material/MenuList";
+import TextField from "@mui/material/TextField";
+import * as React from "react";
+
+
+export const EditForm = (props) => {
+    const {itemctx, ...other} = props;
+    const router = useRouter();
+    const sectionApi = itemctx.api;
+    const item = itemctx.data;
+
+    let initialValues = {
+        term: item.term || '',
+        type: item.type || '',
+    };
+
+    const formik = useFormik({
+        initialValues: initialValues,
+        validationSchema: Yup.object({
+            term: Yup
+                .string()
+                .max(255)
+                .required('Term is required')
+        }),
+        onSubmit: async (values, helpers) => {
+            try {
+                let response;
+                let requestValues = values;
+                requestValues['type'] = values['type'] || null;
+                if (itemctx.isNew) {
+                    response = await sectionApi.createItem(requestValues);
+                } else {
+                    requestValues['id'] = item._id;
+                    response = await sectionApi.updateItem(requestValues);
+                }
+                helpers.setStatus({success: true});
+                helpers.setSubmitting(false);
+                toast.success(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "created" : "updated"));
+                if (response) {
+                    if (itemctx.isNew) {
+                        router.push({
+                            pathname: paths.app[sectionApi.section].edit,
+                            query: {id: response._id}
+                        });
+                    } else if (itemctx.isStateable) {
+                        itemctx.setState(response);
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                toast.error('Something went wrong!');
+                helpers.setStatus({success: false});
+                helpers.setErrors({submit: err.message});
+                helpers.setSubmitting(false);
+            }
+        }
+    });
+
+    return (
+        <form
+            onSubmit={formik.handleSubmit}
+            {...other}>
+            <Card>
+                <CardHeader title={(itemctx.isNew ? 'Create' : 'Edit') + ' ' + sectionApi.SECTION_ITEM_TITLE}/>
+                <CardContent sx={{pt: 0}}>
+                    <Grid
+                        container
+                        spacing={3}
+                    >
+                        <Grid xs={12} md={12}>
+                            <FormTextField formik={formik} name="term" label="Term" required={true}/>
+                        </Grid>
+                        <Grid xs={12} md={12}>
+                            <TextField
+                                error={!!(formik.touched.type && formik.errors.type)}
+                                fullWidth
+                                helperText={formik.touched.type && formik.errors.type}
+                                onBlur={formik.handleBlur}
+                                label="Type"
+                                onChange={e => {
+                                    formik.setFieldValue("type", e.target.value);
+                                }}
+                                select
+                                value={formik.values.type}
+                            >
+                                <MenuItem key="none" value="">&nbsp;</MenuItem>
+                                {Object.keys(sectionApi.TERM_TYPES).map((key) => (
+                                    <MenuItem key={key} value={key}>
+                                        {sectionApi.TERM_TYPES[key]}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                        </Grid>
+                    </Grid>
+                </CardContent>
+            </Card>
+
+            <Card sx={{mt: 3}}>
+                <Stack
+                    direction={{
+                        xs: 'column',
+                        sm: 'row'
+                    }}
+                    flexWrap="wrap"
+                    spacing={3}
+                    sx={{p: 3}}
+                >
+                    <Button
+                        disabled={formik.isSubmitting}
+                        type="submit"
+                        variant="contained"
+                    >
+                        {itemctx.isNew ? 'Create' : 'Update'}
+                    </Button>
+                    <Button
+                        color="inherit"
+                        component={RouterLink}
+                        disabled={formik.isSubmitting}
+                        href={paths.app.ontology_terms.index}
+                    >
+                        Cancel
+                    </Button>
+                </Stack>
+            </Card>
+        </form>
+    );
+};
+
+EditForm.propTypes = {
+    itemctx: PropTypes.object.isRequired
+};

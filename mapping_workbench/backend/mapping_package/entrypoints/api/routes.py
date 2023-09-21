@@ -4,8 +4,6 @@ from beanie import PydanticObjectId
 from fastapi import APIRouter, Depends, status, UploadFile, Form
 
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
-from mapping_workbench.backend.file_resource.services.file_resource_form_data import \
-    file_resource_data_from_form_request
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageOut, MappingPackageCreateIn, \
     MappingPackageUpdateIn, MappingPackage
 from mapping_workbench.backend.mapping_package.models.entity_api_response import APIListMappingPackagesPaginatedResponse
@@ -16,7 +14,7 @@ from mapping_workbench.backend.mapping_package.services.api import (
     get_mapping_package,
     delete_mapping_package, get_mapping_package_out
 )
-from mapping_workbench.backend.mapping_package.services.importer import import_package
+from mapping_workbench.backend.mapping_package.services.importer import import_package, clear_project_data
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.project.services.api import get_project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
@@ -113,4 +111,17 @@ async def route_import_mapping_packages(
         file: UploadFile = Form(...),
         user: User = Depends(current_active_user)
 ):
-    await import_package(file.file.read(), file.filename, await get_project(project), user)
+    mapping_package: MappingPackage = await import_package(
+        file.file.read(), file.filename, await get_project(project), user
+    )
+
+    return mapping_package.dict()
+
+
+@router.post(
+    "/clear_project_data/{id}"
+)
+async def route_clear_project_data(
+        id: PydanticObjectId
+):
+    await clear_project_data(await get_project(id))

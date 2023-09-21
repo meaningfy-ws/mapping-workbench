@@ -13,15 +13,15 @@ async def discover_and_save_mapping_rule_prefixes(rule: ConceptualMappingRule):
             await discover_and_save_prefix_namespace(prefix)
 
 
-async def discover_and_save_prefix_namespace(prefix: str):
-    ns_handler: NamespaceInventory = NamespaceInventory()
+async def discover_and_save_prefix_namespace(prefix: str, uri: str = None):
     namespace: Namespace = (await Namespace.find_one(Namespace.prefix == prefix)) or Namespace(prefix=prefix)
     if namespace.is_syncable:
-        try:
-            namespace.uri = ns_handler.prefix_to_ns_uri(prefix=prefix)
-        except ValueError as e:
-            pass
+        if uri:
+            namespace.uri = uri
+        else:
+            ns_handler: NamespaceInventory = NamespaceInventory()
+            try:
+                namespace.uri = ns_handler.prefix_to_ns_uri(prefix=prefix)
+            except ValueError as e:
+                pass
         await namespace.save()
-
-
-

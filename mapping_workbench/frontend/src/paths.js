@@ -126,6 +126,12 @@ export const paths = {
             create: '/app/ontology-namespaces/create',
             edit: '/app/ontology-namespaces/[id]/edit',
             view: '/app/ontology-namespaces/[id]/view'
+        },
+        ontology_terms: {
+            index: '/app/ontology-terms',
+            create: '/app/ontology-terms/create',
+            edit: '/app/ontology-terms/[id]/edit',
+            view: '/app/ontology-terms/[id]/view'
         }
     },
     docs: 'https://material-kit-pro-react-docs.devias.io',
@@ -180,7 +186,8 @@ export const apiPaths = {
 
     conceptual_mapping_rules: {
         items: '/conceptual_mapping_rules',
-        item: '/conceptual_mapping_rules/:id'
+        item: '/conceptual_mapping_rules/:id',
+        check_content_terms_validity: '/ontology/check_content_terms_validity'
     },
 
     triple_map_fragments: {
@@ -201,6 +208,13 @@ export const apiPaths = {
     ontology_namespaces: {
         items: '/ontology/namespaces',
         item: '/ontology/namespaces/:id'
+    },
+
+    ontology_terms: {
+        items: '/ontology/terms',
+        item: '/ontology/terms/:id',
+        discover_terms: '/ontology/discover_terms',
+        known_terms: '/ontology/known_terms'
     },
 
     session: {

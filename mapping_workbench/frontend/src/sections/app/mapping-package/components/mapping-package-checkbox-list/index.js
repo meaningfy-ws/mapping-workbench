@@ -61,11 +61,11 @@ export const MappingPackageCheckboxList = (props) => {
         }
 
         setAllCheckedCallback(mappingPackages);
-    }, [projectMappingPackages  ]);
+    }, [projectMappingPackages]);
 
     const setAllCheckedCallback = useCallback((values) => {
         setAllChecked(
-            (projectMappingPackages.filter(x => !values.includes(x.id))).length === 0
+            values.length > 0 && (projectMappingPackages.filter(x => !values.includes(x.id))).length === 0
         );
     }, [projectMappingPackages]);
 
@@ -95,10 +95,8 @@ export const MappingPackageCheckboxList = (props) => {
                         value=""
                     />
                 </MenuItem>
-            </MenuList>
-            {projectMappingPackages.map((project_mapping_package) => {
-                return (
-                    <MenuList>
+                {projectMappingPackages.map((project_mapping_package) => {
+                    return (
                         <MenuItem key={project_mapping_package.id}>
                             <MappingPackageCheckboxListItem
                                 xs={12}
@@ -107,9 +105,10 @@ export const MappingPackageCheckboxList = (props) => {
                                 updateMappingPackages={updateMappingPackages}
                             />
                         </MenuItem>
-                    </MenuList>
-                )
-            })}
+                    )
+                })}
+            </MenuList>
+
         </>
     )
 }

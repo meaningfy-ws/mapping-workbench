@@ -4,7 +4,8 @@ export const FormTextField = (props) => {
     const {
         formik, name, label,
         type = 'text',
-        required = false
+        required = false,
+        ...other
     } = props;
 
     return (<TextField
@@ -18,5 +19,6 @@ export const FormTextField = (props) => {
         value={formik.values[name]}
         required={required}
         type={type}
+        {...other}
     />)
 }
