@@ -35,7 +35,7 @@ async def get_sparql_test_suite(id: PydanticObjectId) -> SPARQLTestSuite:
     sparql_test_suite: SPARQLTestSuite = await SPARQLTestSuite.get(id)
     if not api_entity_is_found(sparql_test_suite):
         raise ResourceNotFoundException()
-    return SPARQLTestSuite(**sparql_test_suite.dict(by_alias=False))
+    return SPARQLTestSuite(**sparql_test_suite.model_dump(by_alias=False))
 
 
 async def delete_sparql_test_suite(sparql_test_suite: SPARQLTestSuite):

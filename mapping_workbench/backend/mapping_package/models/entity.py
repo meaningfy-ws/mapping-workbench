@@ -11,16 +11,16 @@ from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuit
 
 
 class MappingPackageIn(BaseProjectResourceEntityInSchema):
-    title: Optional[str]
-    description: Optional[str]
-    identifier: Optional[str]
-    subtype: Optional[List[str]]
-    start_date: Optional[datetime]
-    end_date: Optional[datetime]
-    min_xsd_version: Optional[str]
-    max_xsd_version: Optional[str]
-    test_data_suites: Optional[List[Link[TestDataSuite]]]
-    shacl_test_suites: Optional[List[Link[SHACLTestSuite]]]
+    title: Optional[str] = None
+    description: Optional[str] = None
+    identifier: Optional[str] = None
+    subtype: Optional[List[str]] = None
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    min_xsd_version: Optional[str] = None
+    max_xsd_version: Optional[str] = None
+    test_data_suites: Optional[List[Link[TestDataSuite]]] = None
+    shacl_test_suites: Optional[List[Link[SHACLTestSuite]]] = None
 
 
 class MappingPackageCreateIn(MappingPackageIn):
@@ -32,20 +32,20 @@ class MappingPackageUpdateIn(MappingPackageIn):
 
 
 class MappingPackageImportIn(MappingPackageIn):
-    created_at: Optional[datetime]
+    created_at: Optional[datetime] = None
 
 
 class MappingPackageOut(BaseProjectResourceEntityOutSchema):
-    title: Optional[str]
-    description: Optional[str]
-    identifier: Optional[str]
-    subtype: Optional[List[str]]
-    start_date: Optional[datetime]
-    end_date: Optional[datetime]
-    min_xsd_version: Optional[str]
-    max_xsd_version: Optional[str]
-    test_data_suites: Optional[List[Link[TestDataSuite]]]
-    shacl_test_suites: Optional[List[Link[SHACLTestSuite]]]
+    title: Optional[str] = None
+    description: Optional[str] = None
+    identifier: Optional[str] = None
+    subtype: Optional[List[str]] = None
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    min_xsd_version: Optional[str] = None
+    max_xsd_version: Optional[str] = None
+    test_data_suites: Optional[List[Link[TestDataSuite]]] = None
+    shacl_test_suites: Optional[List[Link[SHACLTestSuite]]] = None
 
 
 class MappingPackageListFilters(BaseTitledEntityListFiltersSchema):
@@ -54,15 +54,15 @@ class MappingPackageListFilters(BaseTitledEntityListFiltersSchema):
 
 class MappingPackage(BaseProjectResourceEntity):
     title: Indexed(str, unique=True)
-    description: Optional[str]
+    description: Optional[str] = None
     identifier: Indexed(str, unique=True)
-    subtype: Optional[List[str]]
-    start_date: Optional[datetime]
-    end_date: Optional[datetime]
-    min_xsd_version: Optional[str]
-    max_xsd_version: Optional[str]
-    test_data_suites: Optional[List[Link[TestDataSuite]]]
-    shacl_test_suites: Optional[List[Link[SHACLTestSuite]]]
+    subtype: Optional[List[str]] = None
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    min_xsd_version: Optional[str] = None
+    max_xsd_version: Optional[str] = None
+    test_data_suites: Optional[List[Link[TestDataSuite]]] = None
+    shacl_test_suites: Optional[List[Link[SHACLTestSuite]]] = None
 
     class Settings(BaseProjectResourceEntity.Settings):
         name = "mapping_packages"

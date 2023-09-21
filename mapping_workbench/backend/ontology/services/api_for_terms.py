@@ -22,7 +22,7 @@ async def create_term(term_data: TermIn, user: User) -> TermOut:
         await term.create()
     except DuplicateKeyError as e:
         raise DuplicateKeyException(e)
-    return TermOut(**term.dict())
+    return TermOut(**term.model_dump())
 
 
 async def update_term(id: PydanticObjectId, term_data: TermIn, user: User):
@@ -44,7 +44,7 @@ async def get_term(id: PydanticObjectId) -> Term:
 
 async def get_term_out(id: PydanticObjectId) -> TermOut:
     term: Term = await get_term(id)
-    return TermOut(**term.dict(by_alias=False))
+    return TermOut(**term.model_dump(by_alias=False))
 
 
 async def delete_term(term: Term):

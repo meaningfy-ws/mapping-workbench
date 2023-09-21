@@ -29,7 +29,7 @@ async def create_mapping_rule_registry(mapping_rule_registry_data: MappingRuleRe
         await mapping_rule_registry.create()
     except DuplicateKeyError as e:
         raise DuplicateKeyException(e)
-    return MappingRuleRegistryOut(**mapping_rule_registry.dict())
+    return MappingRuleRegistryOut(**mapping_rule_registry.model_dump())
 
 
 async def update_mapping_rule_registry(id: PydanticObjectId,
@@ -52,7 +52,7 @@ async def get_mapping_rule_registry(id: PydanticObjectId) -> MappingRuleRegistry
 
 async def get_mapping_rule_registry_out(id: PydanticObjectId) -> MappingRuleRegistryOut:
     mapping_rule_registry: MappingRuleRegistry = await get_mapping_rule_registry(id)
-    return MappingRuleRegistryOut(**mapping_rule_registry.dict(by_alias=False))
+    return MappingRuleRegistryOut(**mapping_rule_registry.model_dump(by_alias=False))
 
 async def delete_mapping_rule_registry(mapping_rule_registry: MappingRuleRegistry):
     return await mapping_rule_registry.delete()

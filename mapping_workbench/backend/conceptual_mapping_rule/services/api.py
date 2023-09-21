@@ -29,7 +29,7 @@ async def create_conceptual_mapping_rule(conceptual_mapping_rule_data: Conceptua
         await conceptual_mapping_rule.create()
     except DuplicateKeyError as e:
         raise DuplicateKeyException(e)
-    return ConceptualMappingRuleOut(**conceptual_mapping_rule.dict())
+    return ConceptualMappingRuleOut(**conceptual_mapping_rule.model_dump())
 
 
 async def update_conceptual_mapping_rule(id: PydanticObjectId,
@@ -52,7 +52,7 @@ async def get_conceptual_mapping_rule(id: PydanticObjectId) -> ConceptualMapping
 
 async def get_conceptual_mapping_rule_out(id: PydanticObjectId) -> ConceptualMappingRuleOut:
     conceptual_mapping_rule: ConceptualMappingRule = await get_conceptual_mapping_rule(id)
-    return ConceptualMappingRuleOut(**conceptual_mapping_rule.dict(by_alias=False))
+    return ConceptualMappingRuleOut(**conceptual_mapping_rule.model_dump(by_alias=False))
 
 
 async def delete_conceptual_mapping_rule(conceptual_mapping_rule: ConceptualMappingRule):

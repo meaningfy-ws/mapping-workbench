@@ -1,6 +1,7 @@
 from typing import List
 
 from beanie import PydanticObjectId
+from bson import DBRef
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
@@ -36,10 +37,10 @@ async def update_resource_collection(id: PydanticObjectId, resource_collection_d
 
 
 async def get_resource_collection(id: PydanticObjectId) -> ResourceCollection:
-    resource_collection: ResourceCollection = await ResourceCollection.get(id)
+    resource_collection: ResourceCollection = await ResourceCollection.get(id, fetch_links=False)
     if not api_entity_is_found(resource_collection):
         raise ResourceNotFoundException()
-    return ResourceCollection(**resource_collection.dict(by_alias=False))
+    return ResourceCollection(**resource_collection.model_dump())
 
 
 async def delete_resource_collection(resource_collection: ResourceCollection):

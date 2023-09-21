@@ -10,15 +10,15 @@ from mapping_workbench.backend.triple_map_fragment.models.entity import GenericT
 
 
 class ConceptualMappingRuleIn(BaseProjectResourceEntityInSchema):
-    field_id: Optional[str]
-    field_title: Optional[str]
-    field_description: Optional[str]
-    source_xpath: Optional[List[str]]
-    target_class_path: Optional[str]
-    target_property_path: Optional[str]
-    mapping_packages: Optional[List[Link[MappingPackage]]]
-    triple_map_fragment: Optional[Link[GenericTripleMapFragment]]
-    sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]]
+    field_id: Optional[str] = None
+    field_title: Optional[str] = None
+    field_description: Optional[str] = None
+    source_xpath: Optional[List[str]] = None
+    target_class_path: Optional[str] = None
+    target_property_path: Optional[str] = None
+    mapping_packages: Optional[List[Link[MappingPackage]]] = None
+    triple_map_fragment: Optional[Link[GenericTripleMapFragment]] = None
+    sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
 
 
 class ConceptualMappingRuleCreateIn(ConceptualMappingRuleIn):
@@ -30,27 +30,27 @@ class ConceptualMappingRuleUpdateIn(ConceptualMappingRuleIn):
 
 
 class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema):
-    field_id: Optional[str]
-    field_title: Optional[str]
-    field_description: Optional[str]
-    source_xpath: Optional[List[str]]
-    target_class_path: Optional[str]
-    target_property_path: Optional[str]
-    mapping_packages: Optional[List[Link[MappingPackage]]]
-    triple_map_fragment: Optional[Link[GenericTripleMapFragment]]
-    sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]]
+    field_id: Optional[str] = None
+    field_title: Optional[str] = None
+    field_description: Optional[str] = None
+    source_xpath: Optional[List[str]] = None
+    target_class_path: Optional[str] = None
+    target_property_path: Optional[str] = None
+    mapping_packages: Optional[List[Link[MappingPackage]]] = None
+    triple_map_fragment: Optional[Link[GenericTripleMapFragment]] = None
+    sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
 
 
 class ConceptualMappingRule(BaseProjectResourceEntity):
-    field_id: Optional[str]
-    field_title: Optional[str]
-    field_description: Optional[str]
-    source_xpath: Optional[List[str]]
-    target_class_path: Optional[str]
-    target_property_path: Optional[str]
-    mapping_packages: Optional[List[Link[MappingPackage]]]
-    triple_map_fragment: Optional[Link[GenericTripleMapFragment]]
-    sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]]
+    field_id: Optional[str] = None
+    field_title: Optional[str] = None
+    field_description: Optional[str] = None
+    source_xpath: Optional[List[str]] = None
+    target_class_path: Optional[str] = None
+    target_property_path: Optional[str] = None
+    mapping_packages: Optional[List[Link[MappingPackage]]] = None
+    triple_map_fragment: Optional[Link[GenericTripleMapFragment]] = None
+    sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
 
     class Settings(BaseProjectResourceEntity.Settings):
         name = "conceptual_mapping_rules"

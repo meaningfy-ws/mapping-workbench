@@ -115,7 +115,7 @@ async def route_import_mapping_packages(
         file.file.read(), file.filename, await get_project(project), user
     )
 
-    return mapping_package.dict()
+    return mapping_package.model_dump()
 
 
 @router.post(

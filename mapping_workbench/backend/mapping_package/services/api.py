@@ -28,7 +28,7 @@ async def create_mapping_package(mapping_package_data: MappingPackageCreateIn, u
         await mapping_package.create()
     except DuplicateKeyError as e:
         raise DuplicateKeyException(e)
-    return MappingPackageOut(**mapping_package.dict())
+    return MappingPackageOut(**mapping_package.model_dump())
 
 
 async def update_mapping_package(id: PydanticObjectId, mapping_package_data: MappingPackageUpdateIn, user: User):
@@ -50,7 +50,7 @@ async def get_mapping_package(id: PydanticObjectId) -> MappingPackage:
 
 async def get_mapping_package_out(id: PydanticObjectId) -> MappingPackageOut:
     mapping_package: MappingPackage = await get_mapping_package(id)
-    return MappingPackageOut(**mapping_package.dict(by_alias=False))
+    return MappingPackageOut(**mapping_package.model_dump(by_alias=False))
 
 
 async def delete_mapping_package(mapping_package: MappingPackage):

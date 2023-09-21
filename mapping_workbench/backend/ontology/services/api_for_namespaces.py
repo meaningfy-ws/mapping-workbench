@@ -22,7 +22,7 @@ async def create_namespace(namespace_data: NamespaceIn, user: User) -> Namespace
         await namespace.create()
     except DuplicateKeyError as e:
         raise DuplicateKeyException(e)
-    return NamespaceOut(**namespace.dict())
+    return NamespaceOut(**namespace.model_dump())
 
 
 async def update_namespace(id: PydanticObjectId, namespace_data: NamespaceIn, user: User):
@@ -44,7 +44,7 @@ async def get_namespace(id: PydanticObjectId) -> Namespace:
 
 async def get_namespace_out(id: PydanticObjectId) -> NamespaceOut:
     namespace: Namespace = await get_namespace(id)
-    return NamespaceOut(**namespace.dict(by_alias=False))
+    return NamespaceOut(**namespace.model_dump(by_alias=False))
 
 
 async def delete_namespace(namespace: Namespace):

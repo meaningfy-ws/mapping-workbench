@@ -13,25 +13,25 @@ class TermType(Enum):
 
 
 class TermIn(BaseEntityInSchema):
-    term: Optional[str]
-    type: Optional[TermType]
+    term: Optional[str] = None
+    type: Optional[TermType] = None
 
 
 class TermOut(BaseEntityOutSchema):
-    term: Optional[str]
-    type: Optional[TermType]
+    term: Optional[str] = None
+    type: Optional[TermType] = None
 
 
 class Term(BaseEntity):
     term: Indexed(str)
-    type: Optional[TermType]
+    type: Optional[TermType] = None
 
     class Settings(BaseEntity.Settings):
         name = "terms"
 
 
 class TermValidityResponse(BaseModel):
-    term: str
-    ns_term: Optional[str]
-    is_valid: bool
-    info: Optional[str]
+    term: Optional[str] = None
+    ns_term: Optional[str] = None
+    is_valid: Optional[bool] = None
+    info: Optional[str] = None

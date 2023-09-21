@@ -145,7 +145,6 @@ class PackageImporter:
                 )
                 await test_data_file_resource.on_create(self.user).save()
 
-
     async def add_triple_map_fragments(self):
         resource_formats = [e.value for e in TripleMapFragmentFormat]
         triple_map_fragments_path = self.package_path / TRIPLE_MAP_FRAGMENTS_DIR
@@ -305,7 +304,6 @@ class PackageImporter:
                     shacl_test_file_resource.content = file_content
                     await shacl_test_file_resource.on_update(self.user).save()
 
-
     async def add_resource_collections(self):
         resource_formats = [e.value for e in ResourceFileFormat]
         resource_collections_path = self.package_path / TRANSFORMATION_DIR / "resources"
@@ -366,7 +364,7 @@ class PackageImporter:
         self.add_metadata_to_package_data()
         self.mapping_package = await MappingPackage.find_one(
             MappingPackage.identifier == self.mapping_package_data.identifier
-        ) or MappingPackage(**(self.mapping_package_data.dict()))
+        ) or MappingPackage(**(self.mapping_package_data.model_dump()))
 
         self.mapping_package.project = self.project
         self.mapping_package.test_data_suites = []

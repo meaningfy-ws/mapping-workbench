@@ -14,10 +14,10 @@ class TripleMapFragmentFormat(Enum):
 
 
 class SpecificTripleMapFragmentIn(BaseProjectResourceEntityInSchema):
-    triple_map_uri: Optional[str]
-    triple_map_content: Optional[str]
-    format: Optional[TripleMapFragmentFormat]
-    mapping_package: Optional[Link[MappingPackage]]
+    triple_map_uri: Optional[str] = None
+    triple_map_content: Optional[str] = None
+    format: Optional[TripleMapFragmentFormat] = None
+    mapping_package: Optional[Link[MappingPackage]] = None
 
 
 class SpecificTripleMapFragmentCreateIn(SpecificTripleMapFragmentIn):
@@ -29,16 +29,16 @@ class SpecificTripleMapFragmentUpdateIn(SpecificTripleMapFragmentIn):
 
 
 class SpecificTripleMapFragmentOut(BaseProjectResourceEntityOutSchema):
-    triple_map_uri: Optional[str]
-    triple_map_content: Optional[str]
-    format: Optional[TripleMapFragmentFormat]
-    mapping_package: Optional[Link[MappingPackage]]
+    triple_map_uri: Optional[str] = None
+    triple_map_content: Optional[str] = None
+    format: Optional[TripleMapFragmentFormat] = None
+    mapping_package: Optional[Link[MappingPackage]] = None
 
 
 class GenericTripleMapFragmentIn(BaseProjectResourceEntityInSchema):
-    triple_map_uri: Optional[str]
-    triple_map_content: Optional[str]
-    format: Optional[TripleMapFragmentFormat]
+    triple_map_uri: Optional[str] = None
+    triple_map_content: Optional[str] = None
+    format: Optional[TripleMapFragmentFormat] = None
 
 
 class GenericTripleMapFragmentCreateIn(GenericTripleMapFragmentIn):
@@ -50,19 +50,19 @@ class GenericTripleMapFragmentUpdateIn(GenericTripleMapFragmentIn):
 
 
 class GenericTripleMapFragmentOut(BaseProjectResourceEntityOutSchema):
-    triple_map_uri: Optional[str]
-    triple_map_content: Optional[str]
-    format: Optional[TripleMapFragmentFormat]
+    triple_map_uri: Optional[str] = None
+    triple_map_content: Optional[str] = None
+    format: Optional[TripleMapFragmentFormat] = None
 
 
 class TripleMapFragment(BaseProjectResourceEntity):
-    triple_map_uri: Optional[str]
-    triple_map_content: Optional[str]
-    format: Optional[TripleMapFragmentFormat]
+    triple_map_uri: Optional[str] = None
+    triple_map_content: Optional[str] = None
+    format: Optional[TripleMapFragmentFormat] = None
 
 
 class SpecificTripleMapFragment(TripleMapFragment):
-    mapping_package: Optional[Link[MappingPackage]]
+    mapping_package: Optional[Link[MappingPackage]] = None
 
     class Settings(TripleMapFragment.Settings):
         name = "specific_triple_map_fragments"

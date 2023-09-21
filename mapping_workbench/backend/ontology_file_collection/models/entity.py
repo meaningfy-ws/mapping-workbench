@@ -21,11 +21,11 @@ class OntologyFileResourceFormat(Enum):
 
 
 class OntologyFileResourceIn(FileResourceIn):
-    format: Optional[OntologyFileResourceFormat]
+    format: Optional[OntologyFileResourceFormat] = None
 
 
 class OntologyFileResourceCreateIn(OntologyFileResourceIn):
-    ontology_file_collection: Optional[Link[OntologyFileCollection]]
+    ontology_file_collection: Optional[Link[OntologyFileCollection]] = None
 
 
 class OntologyFileResourceUpdateIn(OntologyFileResourceIn):
@@ -33,8 +33,8 @@ class OntologyFileResourceUpdateIn(OntologyFileResourceIn):
 
 
 class OntologyFileResource(FileResource):
-    format: Optional[OntologyFileResourceFormat]
-    ontology_file_collection: Optional[Link[OntologyFileCollection]]
+    format: Optional[OntologyFileResourceFormat] = None
+    ontology_file_collection: Optional[Link[OntologyFileCollection]] = None
 
     class Settings(FileResource.Settings):
         name = "ontology_file_resources"

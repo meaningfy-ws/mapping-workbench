@@ -16,17 +16,17 @@ class MappingRuleRegistryCreateIn(MappingRuleRegistryIn):
 
 
 class MappingRuleRegistryUpdateIn(MappingRuleRegistryIn):
-    title: Optional[str]
+    title: Optional[str] = None
 
 
 class MappingRuleRegistryOut(BaseProjectResourceEntityOutSchema):
-    title: Optional[str]
-    mapping_rules: Optional[List[Link[ConceptualMappingRule]]]
+    title: Optional[str] = None
+    mapping_rules: Optional[List[Link[ConceptualMappingRule]]] = None
 
 
 class MappingRuleRegistry(BaseProjectResourceEntity):
     title: Indexed(str, unique=True)
-    mapping_rules: Optional[List[Link[ConceptualMappingRule]]]
+    mapping_rules: Optional[List[Link[ConceptualMappingRule]]] = None
 
     class Settings(BaseProjectResourceEntity.Settings):
         name = "mapping_rule_registries"

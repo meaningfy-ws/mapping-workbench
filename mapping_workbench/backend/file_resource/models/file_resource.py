@@ -1,9 +1,9 @@
 from enum import Enum
-from typing import Optional, List, Annotated, Any
+from typing import Optional, List, Any
 
 from beanie import Link
-from fastapi import UploadFile, File
-from pydantic import validator
+from fastapi import UploadFile
+from pydantic import field_validator
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntity
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
@@ -21,21 +21,21 @@ class FileResourceFormat(Enum):
 
 
 class FileResourceIn(BaseProjectResourceEntityInSchema):
-    title: Optional[str]
-    description: Optional[str]
-    file: Optional[UploadFile]
-    filename: Optional[str]
-    path: Optional[List[str]]
-    format: Optional[FileResourceFormat]
-    content: Optional[str]
+    title: Optional[str] = None
+    description: Optional[str] = None
+    file: Optional[UploadFile] = None
+    filename: Optional[str] = None
+    path: Optional[List[str]] = None
+    format: Optional[FileResourceFormat] = None
+    content: Optional[str] = None
 
-    @validator("filename", always=True)
+    @field_validator("filename")
     def set_filename(cls, v: str, values: dict[str, Any]) -> str:
         if ("file" in values) and values["file"]:
             return values["file"].filename
         return v
 
-    @validator("content", always=True)
+    @field_validator("content")
     def set_content(cls, v: str, values: dict[str, Any]) -> str:
         if ("file" in values) and values["file"]:
             return (values["file"].file.read()).decode("utf-8")
@@ -43,19 +43,19 @@ class FileResourceIn(BaseProjectResourceEntityInSchema):
 
 
 class FileResource(BaseProjectResourceEntity):
-    title: Optional[str]
-    description: Optional[str]
-    filename: Optional[str]
-    path: Optional[List[str]]
-    format: Optional[FileResourceFormat]
-    content: Optional[str]
+    title: Optional[str] = None
+    description: Optional[str] = None
+    filename: Optional[str] = None
+    path: Optional[List[str]] = None
+    format: Optional[FileResourceFormat] = None
+    content: Optional[str] = None
 
     class Settings(BaseEntity.Settings):
         name = "file_resources"
 
 
 class FileResourceCollection(BaseProjectResourceEntity):
-    title: Optional[str]
-    description: Optional[str]
-    path: Optional[List[str]]
+    title: Optional[str] = None
+    description: Optional[str] = None
+    path: Optional[List[str]] = None
     file_resources: Optional[List[Link["FileResource"]]] = []

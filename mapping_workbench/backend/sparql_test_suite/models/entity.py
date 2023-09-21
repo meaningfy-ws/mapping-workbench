@@ -14,7 +14,7 @@ class SPARQLQueryValidationType(Enum):
 
 
 class SPARQLTestSuite(FileResourceCollection):
-    type: Optional[SPARQLQueryValidationType]
+    type: Optional[SPARQLQueryValidationType] = None
     file_resources: Optional[List[Link["SPARQLTestFileResource"]]] = []
 
     class Settings(BaseProjectResourceEntity.Settings):
@@ -26,12 +26,12 @@ class SPARQLTestFileResourceFormat(Enum):
 
 
 class SPARQLTestFileResourceIn(FileResourceIn):
-    format: Optional[SPARQLTestFileResourceFormat]
-    type: Optional[SPARQLQueryValidationType]
+    format: Optional[SPARQLTestFileResourceFormat] = None
+    type: Optional[SPARQLQueryValidationType] = None
 
 
 class SPARQLTestFileResourceCreateIn(SPARQLTestFileResourceIn):
-    sparql_test_suite: Optional[Link[SPARQLTestSuite]]
+    sparql_test_suite: Optional[Link[SPARQLTestSuite]] = None
 
 
 class SPARQLTestFileResourceUpdateIn(SPARQLTestFileResourceIn):
@@ -39,9 +39,9 @@ class SPARQLTestFileResourceUpdateIn(SPARQLTestFileResourceIn):
 
 
 class SPARQLTestFileResource(FileResource):
-    format: Optional[SPARQLTestFileResourceFormat]
-    type: Optional[SPARQLQueryValidationType]
-    sparql_test_suite: Optional[Link[SPARQLTestSuite]]
+    format: Optional[SPARQLTestFileResourceFormat] = None
+    type: Optional[SPARQLQueryValidationType] = None
+    sparql_test_suite: Optional[Link[SPARQLTestSuite]] = None
 
     class Settings(FileResource.Settings):
         name = "sparql_test_file_resources"

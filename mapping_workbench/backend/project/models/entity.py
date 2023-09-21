@@ -2,10 +2,12 @@ from enum import Enum
 from typing import Optional, List
 
 from beanie import Indexed, Link
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntity, BaseEntityInSchema, BaseEntityOutSchema, \
     BaseTitledEntityListFiltersSchema
+
+
 # from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 # from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingRuleRegistry
 # from mapping_workbench.backend.ontology_file_collection.models.entity import OntologyFileCollection
@@ -22,27 +24,28 @@ class SourceSchemaType(Enum):
 
 
 class SourceSchema(BaseModel):
-    title: Optional[str]
-    description: Optional[str]
-    version: Optional[str]
-    type: Optional[SourceSchemaType]
+    title: Optional[str] = None
+    description: Optional[str] = None
+    version: Optional[str] = None
+    type: Optional[SourceSchemaType] = None
 
-    class Config:
-        use_enum_values = True
+    model_config = ConfigDict(
+        use_enum_values=True
+    )
 
 
 class TargetOntology(BaseModel):
-    title: Optional[str]
-    description: Optional[str]
-    version: Optional[str]
-    uri: Optional[str]
+    title: Optional[str] = None
+    description: Optional[str] = None
+    version: Optional[str] = None
+    uri: Optional[str] = None
 
 
 class ProjectIn(BaseEntityInSchema):
-    description: Optional[str]
-    version: Optional[str]
-    source_schema: Optional[SourceSchema]
-    target_ontology: Optional[TargetOntology]
+    description: Optional[str] = None
+    version: Optional[str] = None
+    source_schema: Optional[SourceSchema] = None
+    target_ontology: Optional[TargetOntology] = None
 
 
 class ProjectCreateIn(ProjectIn):
@@ -50,15 +53,15 @@ class ProjectCreateIn(ProjectIn):
 
 
 class ProjectUpdateIn(ProjectIn):
-    title: Optional[str]
+    title: Optional[str] = None
 
 
 class ProjectOut(BaseEntityOutSchema):
-    title: Optional[str]
-    description: Optional[str]
-    version: Optional[str]
-    source_schema: Optional[SourceSchema]
-    target_ontology: Optional[TargetOntology]
+    title: Optional[str] = None
+    description: Optional[str] = None
+    version: Optional[str] = None
+    source_schema: Optional[SourceSchema] = None
+    target_ontology: Optional[TargetOntology] = None
 
 
 class ProjectListFilters(BaseTitledEntityListFiltersSchema):
@@ -66,11 +69,13 @@ class ProjectListFilters(BaseTitledEntityListFiltersSchema):
 
 
 class Project(BaseEntity):
-    title: Indexed(str, unique=True)
-    description: Optional[str]
-    version: Optional[str]
-    source_schema: Optional[SourceSchema]
-    target_ontology: Optional[TargetOntology]
+    # title: Indexed(str, unique=True)
+    title: Optional[str] = None
+    description: Optional[str] = None
+    version: Optional[str] = None
+    source_schema: Optional[SourceSchema] = None
+    target_ontology: Optional[TargetOntology] = None
+
     # mapping_packages: Optional[List[Link[MappingPackage]]]
     # test_data_suites: Optional[List[Link[TestDataSuite]]]
     # sparql_test_suites: Optional[List[Link[SPARQLTestSuite]]]

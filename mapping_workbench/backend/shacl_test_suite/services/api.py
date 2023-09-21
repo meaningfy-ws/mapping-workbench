@@ -35,7 +35,7 @@ async def get_shacl_test_suite(id: PydanticObjectId) -> SHACLTestSuite:
     shacl_test_suite: SHACLTestSuite = await SHACLTestSuite.get(id)
     if not api_entity_is_found(shacl_test_suite):
         raise ResourceNotFoundException()
-    return SHACLTestSuite(**shacl_test_suite.dict(by_alias=False))
+    return SHACLTestSuite(**shacl_test_suite.model_dump(by_alias=False))
 
 
 async def delete_shacl_test_suite(shacl_test_suite: SHACLTestSuite):

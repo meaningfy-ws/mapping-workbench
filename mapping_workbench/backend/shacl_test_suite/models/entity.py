@@ -20,11 +20,11 @@ class SHACLTestFileResourceFormat(Enum):
 
 
 class SHACLTestFileResourceIn(FileResourceIn):
-    format: Optional[SHACLTestFileResourceFormat]
+    format: Optional[SHACLTestFileResourceFormat] = None
 
 
 class SHACLTestFileResourceCreateIn(SHACLTestFileResourceIn):
-    shacl_test_suite: Optional[Link[SHACLTestSuite]]
+    shacl_test_suite: Optional[Link[SHACLTestSuite]] = None
 
 
 class SHACLTestFileResourceUpdateIn(SHACLTestFileResourceIn):
@@ -32,8 +32,8 @@ class SHACLTestFileResourceUpdateIn(SHACLTestFileResourceIn):
 
 
 class SHACLTestFileResource(FileResource):
-    format: Optional[SHACLTestFileResourceFormat]
-    shacl_test_suite: Optional[Link[SHACLTestSuite]]
+    format: Optional[SHACLTestFileResourceFormat] = None
+    shacl_test_suite: Optional[Link[SHACLTestSuite]] = None
 
     class Settings(FileResource.Settings):
         name = "shacl_test_file_resources"

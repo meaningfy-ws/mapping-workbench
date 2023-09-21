@@ -7,12 +7,12 @@ from mapping_workbench.backend.project.models.entity import Project
 
 
 class BaseProjectResourceEntity(BaseEntity):
-    project: Optional[Link[Project]]
+    project: Optional[Link[Project]] = None
 
 
 class BaseProjectResourceEntityInSchema(BaseEntityInSchema):
-    project: Optional[Link[Project]]
+    project: Optional[Link[Project]] = None
 
 
 class BaseProjectResourceEntityOutSchema(BaseEntityOutSchema):
-    project: Optional[Link[Project]]
+    project: Optional[Link[Project]] = None

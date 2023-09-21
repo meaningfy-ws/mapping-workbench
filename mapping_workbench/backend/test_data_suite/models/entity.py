@@ -22,11 +22,11 @@ class TestDataFileResourceFormat(Enum):
 
 
 class TestDataFileResourceIn(FileResourceIn):
-    format: Optional[TestDataFileResourceFormat]
+    format: Optional[TestDataFileResourceFormat] = None
 
 
 class TestDataFileResourceCreateIn(TestDataFileResourceIn):
-    test_data_suite: Optional[Link[TestDataSuite]]
+    test_data_suite: Optional[Link[TestDataSuite]] = None
 
 
 class TestDataFileResourceUpdateIn(TestDataFileResourceIn):
@@ -34,8 +34,8 @@ class TestDataFileResourceUpdateIn(TestDataFileResourceIn):
 
 
 class TestDataFileResource(FileResource):
-    format: Optional[TestDataFileResourceFormat]
-    test_data_suite: Optional[Link[TestDataSuite]]
+    format: Optional[TestDataFileResourceFormat] = None
+    test_data_suite: Optional[Link[TestDataSuite]] = None
 
     class Settings(FileResource.Settings):
         name = "test_data_file_resources"

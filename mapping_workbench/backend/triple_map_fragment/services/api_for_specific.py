@@ -30,7 +30,7 @@ async def create_specific_triple_map_fragment(specific_triple_map_fragment_data:
         await specific_triple_map_fragment.create()
     except DuplicateKeyError as e:
         raise DuplicateKeyException(e)
-    return SpecificTripleMapFragmentOut(**specific_triple_map_fragment.dict())
+    return SpecificTripleMapFragmentOut(**specific_triple_map_fragment.model_dump())
 
 
 async def update_specific_triple_map_fragments(
@@ -63,7 +63,7 @@ async def get_specific_triple_map_fragment(id: PydanticObjectId) -> SpecificTrip
 
 async def get_specific_triple_map_fragment_out(id: PydanticObjectId) -> SpecificTripleMapFragmentOut:
     specific_triple_map_fragment: SpecificTripleMapFragment = await get_specific_triple_map_fragment(id)
-    return SpecificTripleMapFragmentOut(**specific_triple_map_fragment.dict(by_alias=False))
+    return SpecificTripleMapFragmentOut(**specific_triple_map_fragment.model_dump(by_alias=False))
 
 async def delete_specific_triple_map_fragment(specific_triple_map_fragment: SpecificTripleMapFragment):
     return await specific_triple_map_fragment.delete()

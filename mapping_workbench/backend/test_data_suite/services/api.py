@@ -35,7 +35,7 @@ async def get_test_data_suite(id: PydanticObjectId) -> TestDataSuite:
     test_data_suite: TestDataSuite = await TestDataSuite.get(id)
     if not api_entity_is_found(test_data_suite):
         raise ResourceNotFoundException()
-    return TestDataSuite(**test_data_suite.dict(by_alias=False))
+    return TestDataSuite(**test_data_suite.model_dump(by_alias=False))
 
 
 async def delete_test_data_suite(test_data_suite: TestDataSuite):

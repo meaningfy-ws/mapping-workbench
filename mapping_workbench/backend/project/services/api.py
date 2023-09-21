@@ -22,7 +22,7 @@ async def create_project(project_data: ProjectCreateIn, user: User) -> ProjectOu
         await project.create()
     except DuplicateKeyError as e:
         raise DuplicateKeyException(e)
-    return ProjectOut(**project.dict())
+    return ProjectOut(**project.model_dump())
 
 
 async def update_project(id: PydanticObjectId, project_data: ProjectUpdateIn, user: User):
@@ -41,9 +41,11 @@ async def get_project(id: PydanticObjectId) -> Project:
         raise ResourceNotFoundException()
     return project
 
+
 async def get_project_out(id: PydanticObjectId) -> ProjectOut:
     project: Project = await get_project(id)
-    return ProjectOut(**project.dict(by_alias=False))
+    return ProjectOut(**project.model_dump(by_alias=False))
+
 
 async def delete_project(project: Project):
     return await project.delete()

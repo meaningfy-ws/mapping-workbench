@@ -22,18 +22,18 @@ async def list_triple_map_registries(filters=None) -> List[TripleMapRegistryOut]
 
 
 async def create_triple_map_registry(triple_map_registry_data: TripleMapRegistryCreateIn,
-                                         user: User) -> TripleMapRegistryOut:
+                                     user: User) -> TripleMapRegistryOut:
     triple_map_registry: TripleMapRegistry = TripleMapRegistry(
         **request_create_data(triple_map_registry_data)).on_create(user=user)
     try:
         await triple_map_registry.create()
     except DuplicateKeyError as e:
         raise DuplicateKeyException(e)
-    return TripleMapRegistryOut(**triple_map_registry.dict())
+    return TripleMapRegistryOut(**triple_map_registry.model_dump())
 
 
 async def update_triple_map_registry(id: PydanticObjectId,
-                                         triple_map_registry_data: TripleMapRegistryUpdateIn, user: User):
+                                     triple_map_registry_data: TripleMapRegistryUpdateIn, user: User):
     triple_map_registry: TripleMapRegistry = await TripleMapRegistry.get(id)
     if not api_entity_is_found(triple_map_registry):
         raise ResourceNotFoundException()
@@ -49,9 +49,11 @@ async def get_triple_map_registry(id: PydanticObjectId) -> TripleMapRegistry:
         raise ResourceNotFoundException()
     return triple_map_registry
 
+
 async def get_triple_map_registry_out(id: PydanticObjectId) -> TripleMapRegistryOut:
     triple_map_registry: TripleMapRegistry = await get_triple_map_registry(id)
-    return TripleMapRegistryOut(**triple_map_registry.dict(by_alias=False))
+    return TripleMapRegistryOut(**triple_map_registry.model_dump(by_alias=False))
+
 
 async def delete_triple_map_registry(triple_map_registry: TripleMapRegistry):
     return await triple_map_registry.delete()

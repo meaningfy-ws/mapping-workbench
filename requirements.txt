@@ -2,10 +2,11 @@
 python-multipart~=0.0.6
 motor~=3.2.0
 python-dotenv~=1.0.0
-pydantic~=1.10.11
-beanie==1.20.0
-fastapi~=0.99.1
-fastapi-users[beanie,oauth]==12.1.0
+pydantic~=2.3
+pydantic-settings~=2.0
+beanie==1.22
+fastapi~=0.103
+fastapi-users[beanie,oauth]==12.1
 uvicorn[standard]
 requests-toolbelt~=1.0.0
 xlrd~=2.0.1

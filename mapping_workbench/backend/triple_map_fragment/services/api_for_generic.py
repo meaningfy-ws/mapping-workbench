@@ -22,18 +22,19 @@ async def list_generic_triple_map_fragments(filters=None) -> List[GenericTripleM
 
 
 async def create_generic_triple_map_fragment(generic_triple_map_fragment_data: GenericTripleMapFragmentCreateIn,
-                                         user: User) -> GenericTripleMapFragmentOut:
+                                             user: User) -> GenericTripleMapFragmentOut:
     generic_triple_map_fragment: GenericTripleMapFragment = GenericTripleMapFragment(
         **request_create_data(generic_triple_map_fragment_data)).on_create(user=user)
     try:
         await generic_triple_map_fragment.create()
     except DuplicateKeyError as e:
         raise DuplicateKeyException(e)
-    return GenericTripleMapFragmentOut(**generic_triple_map_fragment.dict())
+    return GenericTripleMapFragmentOut(**generic_triple_map_fragment.model_dump())
 
 
 async def update_generic_triple_map_fragment(id: PydanticObjectId,
-                                         generic_triple_map_fragment_data: GenericTripleMapFragmentUpdateIn, user: User):
+                                             generic_triple_map_fragment_data: GenericTripleMapFragmentUpdateIn,
+                                             user: User):
     generic_triple_map_fragment: GenericTripleMapFragment = await GenericTripleMapFragment.get(id)
     if not api_entity_is_found(generic_triple_map_fragment):
         raise ResourceNotFoundException()
@@ -49,9 +50,11 @@ async def get_generic_triple_map_fragment(id: PydanticObjectId) -> GenericTriple
         raise ResourceNotFoundException()
     return generic_triple_map_fragment
 
+
 async def get_generic_triple_map_fragment_out(id: PydanticObjectId) -> GenericTripleMapFragmentOut:
     generic_triple_map_fragment: GenericTripleMapFragment = await get_generic_triple_map_fragment(id)
-    return GenericTripleMapFragmentOut(**generic_triple_map_fragment.dict(by_alias=False))
+    return GenericTripleMapFragmentOut(**generic_triple_map_fragment.model_dump(by_alias=False))
+
 
 async def delete_generic_triple_map_fragment(generic_triple_map_fragment: GenericTripleMapFragment):
     return await generic_triple_map_fragment.delete()

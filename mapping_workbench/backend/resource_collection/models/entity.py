@@ -2,6 +2,7 @@ from enum import Enum
 from typing import Optional, List
 
 from beanie import Link
+from pydantic import ConfigDict
 
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
 from mapping_workbench.backend.file_resource.models.file_resource import FileResource, FileResourceCollection, \
@@ -21,11 +22,11 @@ class ResourceFileFormat(Enum):
 
 
 class ResourceFileIn(FileResourceIn):
-    format: Optional[ResourceFileFormat]
+    format: Optional[ResourceFileFormat] = None
 
 
 class ResourceFileCreateIn(ResourceFileIn):
-    resource_collection: Optional[Link[ResourceCollection]]
+    resource_collection: Optional[Link[ResourceCollection]] = None
 
 
 class ResourceFileUpdateIn(ResourceFileIn):
@@ -33,8 +34,8 @@ class ResourceFileUpdateIn(ResourceFileIn):
 
 
 class ResourceFile(FileResource):
-    format: Optional[ResourceFileFormat]
-    resource_collection: Optional[Link[ResourceCollection]]
+    format: Optional[ResourceFileFormat] = None
+    resource_collection: Optional[Link[ResourceCollection]] = None
 
     class Settings(FileResource.Settings):
         name = "resource_files"
