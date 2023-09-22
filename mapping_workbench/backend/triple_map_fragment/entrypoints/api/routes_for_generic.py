@@ -37,15 +37,20 @@ router = APIRouter(
     response_model=APIListGenericTripleMapFragmentsPaginatedResponse
 )
 async def route_list_generic_triple_map_fragments(
-        project: PydanticObjectId = None
+        project: PydanticObjectId = None,
+        page: int = None,
+        limit: int = None,
+        q: str = None
 ):
     filters: dict = {}
     if project:
         filters['project'] = Project.link_from_id(project)
-    items: List[GenericTripleMapFragmentOut] = await list_generic_triple_map_fragments(filters)
+    if q is not None:
+        filters['q'] = q
+    items, total_count = await list_generic_triple_map_fragments(filters, page, limit)
     return APIListGenericTripleMapFragmentsPaginatedResponse(
         items=items,
-        count=len(items)
+        count=total_count
     )
 
 

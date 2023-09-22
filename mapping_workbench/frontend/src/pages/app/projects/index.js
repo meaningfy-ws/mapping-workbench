@@ -29,14 +29,15 @@ const useItemsSearch = () => {
             status: [],
             inStock: undefined
         },
-        page: 0,
-        rowsPerPage: 5
+        page: sectionApi.DEFAULT_PAGE,
+        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
 
     const handleFiltersChange = useCallback((filters) => {
         setState((prevState) => ({
             ...prevState,
-            filters
+            filters,
+            page: 0
         }));
     }, []);
 

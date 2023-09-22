@@ -8,17 +8,26 @@ from mapping_workbench.backend.conceptual_mapping_rule.models.entity import Conc
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException, DuplicateKeyException
 from mapping_workbench.backend.core.services.request import request_update_data, request_create_data, \
-    api_entity_is_found
+    api_entity_is_found, pagination_params, prepare_search_param
 from mapping_workbench.backend.user.models.user import User
 
 
-async def list_conceptual_mapping_rules(filters=None) -> List[ConceptualMappingRuleOut]:
+async def list_conceptual_mapping_rules(filters: dict = None, page: int = None, limit: int = None) -> \
+        (List[ConceptualMappingRuleOut], int):
     query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
-    return await ConceptualMappingRule.find(
+
+    prepare_search_param(query_filters)
+    skip, limit = pagination_params(page, limit)
+
+    items: List[ConceptualMappingRuleOut] = await ConceptualMappingRule.find(
         query_filters,
         projection_model=ConceptualMappingRuleOut,
-        fetch_links=False
+        fetch_links=False,
+        skip=skip,
+        limit=limit
     ).to_list()
+    total_count: int = await ConceptualMappingRule.find(query_filters).count()
+    return items, total_count
 
 
 async def create_conceptual_mapping_rule(conceptual_mapping_rule_data: ConceptualMappingRuleCreateIn,

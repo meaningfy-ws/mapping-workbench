@@ -6,20 +6,29 @@ from pymongo.errors import DuplicateKeyError
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException, DuplicateKeyException
 from mapping_workbench.backend.core.services.request import request_update_data, request_create_data, \
-    api_entity_is_found
+    api_entity_is_found, prepare_search_param, pagination_params
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageCreateIn, \
     MappingPackageUpdateIn, MappingPackageOut
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.user.models.user import User
 
 
-async def list_mapping_packages(filters=None) -> List[MappingPackageOut]:
+async def list_mapping_packages(filters: dict = None, page: int = None, limit: int = None) -> \
+        (List[MappingPackageOut], int):
     query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
-    return await MappingPackage.find(
+
+    prepare_search_param(query_filters)
+    skip, limit = pagination_params(page, limit)
+
+    items: List[MappingPackageOut] = await MappingPackage.find(
         query_filters,
         projection_model=MappingPackageOut,
-        fetch_links=False
+        fetch_links=False,
+        skip=skip,
+        limit=limit
     ).to_list()
+    total_count: int = await MappingPackage.find(query_filters).count()
+    return items, total_count
 
 
 async def create_mapping_package(mapping_package_data: MappingPackageCreateIn, user: User) -> MappingPackageOut:

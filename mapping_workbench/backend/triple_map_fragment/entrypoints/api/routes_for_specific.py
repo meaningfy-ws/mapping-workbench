@@ -42,18 +42,23 @@ router = APIRouter(
 )
 async def route_list_specific_triple_map_fragments(
         project: PydanticObjectId = None,
-        mapping_package: PydanticObjectId = None
+        mapping_package: PydanticObjectId = None,
+        page: int = None,
+        limit: int = None,
+        q: str = None
 ):
     filters: dict = {}
     if project:
         filters['project'] = Project.link_from_id(project)
     if mapping_package is not None:
         filters['mapping_package'] = MappingPackage.link_from_id(mapping_package)
+    if q is not None:
+        filters['q'] = q
 
-    items: List[SpecificTripleMapFragmentOut] = await list_specific_triple_map_fragments(filters)
+    items, total_count = await list_specific_triple_map_fragments(filters, page, limit)
     return APIListSpecificTripleMapFragmentsPaginatedResponse(
         items=items,
-        count=len(items)
+        count=total_count
     )
 
 

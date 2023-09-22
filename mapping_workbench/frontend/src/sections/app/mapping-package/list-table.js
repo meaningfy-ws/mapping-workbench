@@ -61,12 +61,21 @@ export const ListTable = (props) => {
     // }, []);
 
     // const handleItemDelete = useCallback(() => {
-        
+
     //     toast.error('Item cannot be deleted');
     // }, []);
 
     return (
         <div>
+            <TablePagination
+                component="div"
+                count={count}
+                onPageChange={onPageChange}
+                onRowsPerPageChange={onRowsPerPageChange}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+            />
             <Scrollbar>
                 <Table sx={{minWidth: 1200}}>
                     <TableHead>
@@ -160,7 +169,7 @@ export const ListTable = (props) => {
                                             {item.identifier}
                                         </TableCell>
                                         <TableCell align="left">
-                                        {(item.created_at).replace("T", " ").split(".")[0]}                                            
+                                            {(item.created_at).replace("T", " ").split(".")[0]}
                                         </TableCell>
                                         <TableCell align="right">
                                             <ListItemActions
@@ -222,7 +231,7 @@ export const ListTable = (props) => {
                 onRowsPerPageChange={onRowsPerPageChange}
                 page={page}
                 rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={[5, 10, 25]}
+                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
             />
         </div>
     );

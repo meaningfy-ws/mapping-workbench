@@ -34,11 +34,19 @@ router = APIRouter(
     name=f"{NAME_FOR_MANY}:list",
     response_model=APIListProjectsPaginatedResponse
 )
-async def route_list_projects():
-    items: List[ProjectOut] = await list_projects()
+async def route_list_projects(
+        page: int = None,
+        limit: int = None,
+        q: str = None
+):
+    filters: dict = {}
+    if q is not None:
+        filters['q'] = q
+
+    items, total_count = await list_projects(filters, page, limit)
     return APIListProjectsPaginatedResponse(
         items=items,
-        count=len(items)
+        count=total_count
     )
 
 

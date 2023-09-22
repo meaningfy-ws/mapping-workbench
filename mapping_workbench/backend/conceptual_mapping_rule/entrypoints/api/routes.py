@@ -40,18 +40,23 @@ router = APIRouter(
 )
 async def route_list_conceptual_mapping_rules(
         project: PydanticObjectId = None,
-        mapping_packages: Annotated[List[PydanticObjectId | str] | None, Query()] = None
+        mapping_packages: Annotated[List[PydanticObjectId | str] | None, Query()] = None,
+        page: int = None,
+        limit: int = None,
+        q: str = None
 ):
     filters: dict = {}
     if project:
         filters['project'] = Project.link_from_id(project)
     if mapping_packages is not None:
         filters['mapping_packages'] = {"$in": list(map(lambda x: MappingPackage.link_from_id(x), mapping_packages))}
+    if q is not None:
+        filters['q'] = q
 
-    items: List[ConceptualMappingRuleOut] = await list_conceptual_mapping_rules(filters)
+    items, total_count = await list_conceptual_mapping_rules(filters, page, limit)
     return APIListConceptualMappingRulesPaginatedResponse(
         items=items,
-        count=len(items)
+        count=total_count
     )
 
 

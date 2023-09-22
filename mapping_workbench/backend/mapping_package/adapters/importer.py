@@ -91,7 +91,8 @@ class PackageImporter:
         if ('metadata_constraints' in metadata) and ('constraints' in metadata['metadata_constraints']):
             constraints = metadata['metadata_constraints']['constraints']
             if constraints:
-                self.mapping_package_data.subtype = self.metadata_constraint_value(constraints, 'eforms_subtype', False)
+                self.mapping_package_data.subtype = \
+                    list(map(lambda x: str(x), self.metadata_constraint_value(constraints, 'eforms_subtype', False)))
                 start_date = self.metadata_constraint_value(constraints, 'start_date')
                 if start_date:
                     self.mapping_package_data.start_date = datetime.strptime(start_date, '%Y-%d-%m')
@@ -384,7 +385,8 @@ class PackageImporter:
                 'target_class_path': rule.target_class_path,
                 'target_property_path': rule.target_property_path,
                 'triple_map_fragment': rule.triple_map_fragment,
-                'sparql_assertions': rule.sparql_assertions
+                'sparql_assertions': rule.sparql_assertions,
+                'project': Project.link_from_id(self.project.id)
             }
             return len(await ConceptualMappingRule.find(q).to_list()) > 0
 

@@ -1,8 +1,10 @@
 from enum import Enum
 from typing import Optional
 
+import pymongo
 from beanie import Indexed
 from pydantic import BaseModel
+from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntity, BaseEntityInSchema, BaseEntityOutSchema
 
@@ -28,6 +30,16 @@ class Term(BaseEntity):
 
     class Settings(BaseEntity.Settings):
         name = "terms"
+
+        indexes = [
+            IndexModel(
+                [
+                    ("term", pymongo.TEXT),
+                    ("type", pymongo.TEXT)
+                ],
+                name="search_text_idx"
+            )
+        ]
 
 
 class TermValidityResponse(BaseModel):

@@ -6,19 +6,29 @@ from pymongo.errors import DuplicateKeyError
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException, DuplicateKeyException
 from mapping_workbench.backend.core.services.request import request_update_data, request_create_data, \
-    api_entity_is_found
+    api_entity_is_found, prepare_search_param, pagination_params
 from mapping_workbench.backend.triple_map_fragment.models.entity import GenericTripleMapFragment, \
     GenericTripleMapFragmentCreateIn, GenericTripleMapFragmentUpdateIn, GenericTripleMapFragmentOut
 from mapping_workbench.backend.user.models.user import User
 
 
-async def list_generic_triple_map_fragments(filters=None) -> List[GenericTripleMapFragmentOut]:
+async def list_generic_triple_map_fragments(filters: dict = None, page: int = None, limit: int = None) -> \
+        (List[GenericTripleMapFragmentOut], int):
+
     query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
-    return await GenericTripleMapFragment.find(
+
+    prepare_search_param(query_filters)
+    skip, limit = pagination_params(page, limit)
+
+    items: List[GenericTripleMapFragmentOut] = await GenericTripleMapFragment.find(
         query_filters,
         projection_model=GenericTripleMapFragmentOut,
-        fetch_links=False
+        fetch_links=False,
+        skip=skip,
+        limit=limit
     ).to_list()
+    total_count: int = await GenericTripleMapFragment.find(query_filters).count()
+    return items, total_count
 
 
 async def create_generic_triple_map_fragment(generic_triple_map_fragment_data: GenericTripleMapFragmentCreateIn,

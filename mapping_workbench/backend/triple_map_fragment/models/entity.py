@@ -1,7 +1,9 @@
 from enum import Enum
 from typing import Optional, List
 
+import pymongo
 from beanie import Link
+from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
@@ -67,7 +69,29 @@ class SpecificTripleMapFragment(TripleMapFragment):
     class Settings(TripleMapFragment.Settings):
         name = "specific_triple_map_fragments"
 
+        indexes = [
+            IndexModel(
+                [
+                    ("triple_map_uri", pymongo.TEXT),
+                    ("triple_map_content", pymongo.TEXT),
+                    ("format", pymongo.TEXT)
+                ],
+                name="search_text_idx"
+            )
+        ]
+
 
 class GenericTripleMapFragment(TripleMapFragment):
     class Settings(TripleMapFragment.Settings):
         name = "generic_triple_map_fragments"
+
+        indexes = [
+            IndexModel(
+                [
+                    ("triple_map_uri", pymongo.TEXT),
+                    ("triple_map_content", pymongo.TEXT),
+                    ("format", pymongo.TEXT)
+                ],
+                name="search_text_idx"
+            )
+        ]

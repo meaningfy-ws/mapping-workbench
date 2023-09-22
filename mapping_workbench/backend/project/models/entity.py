@@ -1,8 +1,10 @@
 from enum import Enum
 from typing import Optional, List
 
+import pymongo
 from beanie import Indexed, Link
 from pydantic import BaseModel, ConfigDict
+from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntity, BaseEntityInSchema, BaseEntityOutSchema, \
     BaseTitledEntityListFiltersSchema
@@ -69,8 +71,7 @@ class ProjectListFilters(BaseTitledEntityListFiltersSchema):
 
 
 class Project(BaseEntity):
-    # title: Indexed(str, unique=True)
-    title: Optional[str] = None
+    title: Optional[Indexed(str, unique=True)] = None
     description: Optional[str] = None
     version: Optional[str] = None
     source_schema: Optional[SourceSchema] = None
@@ -87,3 +88,16 @@ class Project(BaseEntity):
 
     class Settings(BaseEntity.Settings):
         name = "projects"
+
+        indexes = [
+            IndexModel(
+                [
+                    ("title", pymongo.TEXT),
+                    ("description", pymongo.TEXT),
+                    ("version", pymongo.TEXT),
+                    ("source_schema", pymongo.TEXT),
+                    ("target_ontology", pymongo.TEXT)
+                ],
+                name="search_text_idx"
+            )
+        ]

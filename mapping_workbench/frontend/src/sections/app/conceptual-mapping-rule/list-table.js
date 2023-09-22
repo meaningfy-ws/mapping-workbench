@@ -73,7 +73,9 @@ export const ListTableTripleMapFragment = (props) => {
 
     useEffect(() => {
         (async () => {
-            await setProjectTripleMapFragments(await genericTripleMapFragmentsApi.getValuesForSelector());
+            if (initProjectTripleMapFragments.length === 0) {
+                await setProjectTripleMapFragments(await genericTripleMapFragmentsApi.getValuesForSelector());
+            }
         })()
     }, [genericTripleMapFragmentsApi])
 
@@ -389,25 +391,31 @@ export const ListTableSPARQLAssertions = (props) => {
         sparqlTestFileResourcesDialog.handleClose();
     }, []);
 
-    const sparqlResourcesForSelector = function(filters = {}) {
+    const sparqlResourcesForSelector = function (filters = {}) {
         return sparqlTestFileResourcesApi.getMappingRuleResources(filters);
     }
 
     return (
         <>
-            {projectSPARQLResources.filter(x => sparqlResources.includes(x.id)).map(x => (
-                <Box>{x.title}</Box>
-            ))}
-            <Button
-                aria-describedby={"sparql_assertions_" + item._id}
-                variant="text"
-                fullWidth
-                size="small"
-                color="success"
-                onClick={sparqlTestFileResourcesDialog.handleOpen}
-            >
-                Edit
-            </Button>
+            <Box sx={{mb: 1}}>
+                {projectSPARQLResources.filter(x => sparqlResources.includes(x.id)).map(x => (
+                    <Box>{x.title}</Box>
+                ))}
+            </Box>
+            <Divider/>
+            <Box>
+                <Button
+                    aria-describedby={"sparql_assertions_" + item._id}
+                    variant="text"
+                    fullWidth
+                    size="small"
+                    color="success"
+                    onClick={sparqlTestFileResourcesDialog.handleOpen}
+                    sx={{mt: 1}}
+                >
+                    Edit
+                </Button>
+            </Box>
             <Dialog
                 id={"sparql_assertions_" + item._id}
                 onClose={sparqlTestFileResourcesDialog.handleClose}
@@ -675,6 +683,15 @@ export const ListTable = (props) => {
     // }, []);
 
     return (<div>
+        <TablePagination
+            component="div"
+            count={count}
+            onPageChange={onPageChange}
+            onRowsPerPageChange={onRowsPerPageChange}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+        />
         <Scrollbar>
             <Table sx={{minWidth: 1200}}>
                 <TableHead>
@@ -818,7 +835,7 @@ export const ListTable = (props) => {
             onRowsPerPageChange={onRowsPerPageChange}
             page={page}
             rowsPerPage={rowsPerPage}
-            rowsPerPageOptions={[5, 10, 25]}
+            rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
         />
     </div>);
 };

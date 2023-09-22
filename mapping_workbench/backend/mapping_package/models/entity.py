@@ -1,7 +1,9 @@
 from datetime import datetime
 from typing import Optional, List
 
+import pymongo
 from beanie import Indexed, Link
+from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_entity import BaseTitledEntityListFiltersSchema
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
@@ -14,13 +16,13 @@ class MappingPackageIn(BaseProjectResourceEntityInSchema):
     title: Optional[str] = None
     description: Optional[str] = None
     identifier: Optional[str] = None
-    subtype: Optional[List[str]] = None
+    subtype: Optional[List[Optional[str]]] = None
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
     min_xsd_version: Optional[str] = None
     max_xsd_version: Optional[str] = None
-    test_data_suites: Optional[List[Link[TestDataSuite]]] = None
-    shacl_test_suites: Optional[List[Link[SHACLTestSuite]]] = None
+    test_data_suites: Optional[List[Optional[Link[TestDataSuite]]]] = None
+    shacl_test_suites: Optional[List[Optional[Link[SHACLTestSuite]]]] = None
 
 
 class MappingPackageCreateIn(MappingPackageIn):
@@ -53,9 +55,9 @@ class MappingPackageListFilters(BaseTitledEntityListFiltersSchema):
 
 
 class MappingPackage(BaseProjectResourceEntity):
-    title: Indexed(str, unique=True)
+    title: Optional[Indexed(str, unique=True)] = None
     description: Optional[str] = None
-    identifier: Indexed(str, unique=True)
+    identifier: Optional[Indexed(str, unique=True)] = None
     subtype: Optional[List[str]] = None
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
@@ -66,4 +68,18 @@ class MappingPackage(BaseProjectResourceEntity):
 
     class Settings(BaseProjectResourceEntity.Settings):
         name = "mapping_packages"
+
+        indexes = [
+            IndexModel(
+                [
+                    ("title", pymongo.TEXT),
+                    ("description", pymongo.TEXT),
+                    ("identifier", pymongo.TEXT),
+                    ("subtype", pymongo.TEXT),
+                    ("min_xsd_version", pymongo.TEXT),
+                    ("max_xsd_version", pymongo.TEXT)
+                ],
+                name="search_text_idx"
+            )
+        ]
 

@@ -40,11 +40,19 @@ router = APIRouter(
     name=f"{NAME_FOR_MANY}:list_namespaces",
     response_model=APIListNamespacesPaginatedResponse
 )
-async def route_list_namespaces():
-    items: List[NamespaceOut] = await list_namespaces()
+async def route_list_namespaces(
+        page: int = None,
+        limit: int = None,
+        q: str = None
+):
+    filters: dict = {}
+    if q is not None:
+        filters['q'] = q
+
+    items, total_count = await list_namespaces(filters, page, limit)
     return APIListNamespacesPaginatedResponse(
         items=items,
-        count=len(items)
+        count=total_count
     )
 
 
@@ -104,11 +112,19 @@ async def route_delete_namespace(namespace: Namespace = Depends(get_namespace)):
     name=f"{NAME_FOR_MANY}:list_terms",
     response_model=APIListTermsPaginatedResponse
 )
-async def route_list_terms():
-    items: List[TermOut] = await list_terms()
+async def route_list_terms(
+        page: int = None,
+        limit: int = None,
+        q: str = None
+):
+    filters: dict = {}
+    if q is not None:
+        filters['q'] = q
+
+    items, total_count = await list_terms(filters, page, limit)
     return APIListTermsPaginatedResponse(
         items=items,
-        count=len(items)
+        count=total_count
     )
 
 

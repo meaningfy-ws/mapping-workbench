@@ -38,15 +38,21 @@ router = APIRouter(
     response_model=APIListMappingPackagesPaginatedResponse
 )
 async def route_list_mapping_packages(
-        project: PydanticObjectId = None
+        project: PydanticObjectId = None,
+        page: int = None,
+        limit: int = None,
+        q: str = None
 ):
     filters: dict = {}
     if project:
         filters['project'] = Project.link_from_id(project)
-    items: List[MappingPackageOut] = await list_mapping_packages(filters)
+    if q is not None:
+        filters['q'] = q
+
+    items, total_count = await list_mapping_packages(filters, page, limit)
     return APIListMappingPackagesPaginatedResponse(
         items=items,
-        count=len(items)
+        count=total_count
     )
 
 
