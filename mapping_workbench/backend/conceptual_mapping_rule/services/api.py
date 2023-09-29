@@ -26,6 +26,7 @@ async def list_conceptual_mapping_rules(filters: dict = None, page: int = None, 
         skip=skip,
         limit=limit
     ).to_list()
+
     total_count: int = await ConceptualMappingRule.find(query_filters).count()
     return items, total_count
 
@@ -48,7 +49,18 @@ async def update_conceptual_mapping_rule(conceptual_mapping_rule: ConceptualMapp
                                          user: User) -> ConceptualMappingRuleOut:
     return ConceptualMappingRuleOut(**(
         await conceptual_mapping_rule.set(request_update_data(data, user=user))
-    ))
+    ).model_dump())
+
+
+async def clone_conceptual_mapping_rule(conceptual_mapping_rule: ConceptualMappingRule,
+                                         user: User) -> ConceptualMappingRuleOut:
+    cloned_conceptual_mapping_rule: ConceptualMappingRule = \
+        await conceptual_mapping_rule.model_copy(
+            update={"id": None, "updated_at": None, "updated_by": None}
+        ).on_create(user=user).create()
+    return ConceptualMappingRuleOut(**(
+        cloned_conceptual_mapping_rule
+    ).model_dump())
 
 
 async def get_conceptual_mapping_rule(id: PydanticObjectId) -> ConceptualMappingRule:

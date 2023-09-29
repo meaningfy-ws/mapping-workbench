@@ -20,6 +20,7 @@ import {genericTripleMapFragmentsApi} from "../../../api/triple-map-fragments/ge
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
+import Link from "@mui/material/Link";
 import * as React from "react";
 import {useCallback, useEffect, useState} from "react";
 import {sparqlTestFileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
@@ -28,6 +29,7 @@ import Alert from "@mui/material/Alert";
 import Divider from "@mui/material/Divider";
 
 import parse from 'html-react-parser';
+import {ontologyTermsApi as sectionApi} from "../../../api/ontology-terms";
 
 
 const TermValidityInfo = (props) => {
@@ -61,37 +63,43 @@ export const EditForm = (props) => {
     const [targetClassPathValidityInfo, setTargetClassPathValidityInfo] = useState("");
     const [targetClassPathTermsValidityInfo, setTargetClassPathTermsValidityInfo] = useState([]);
 
-    const checkTermsValidity = useCallback((e) => {
-        const elName = e.target.name;
-        const value = e.target.value;
-        toast.promise(sectionApi.checkTermsValidity(value), {
-            loading: `Checking terms validity ... `,
-            success: (termsValidity) => {
-                toast.success("Terms checked for validity.");
-                let validityInfo = value;
-                for (let termValidity of termsValidity) {
-                    let color = termValidity.is_valid ? 'green' : 'red'
-                    console.log(termValidity.term);
-                    validityInfo = validityInfo.replace(
-                        new RegExp(termValidity.term, 'g'),
-                        `<b style="color: ${color}">${termValidity.term}</b>`
-                    )
-                }
-                console.log(validityInfo);
-                switch (elName) {
-                    case 'target_property_path':
-                        setTargetPropertyPathValidityInfo(validityInfo)
-                        setTargetPropertyPathTermsValidityInfo(termsValidity)
-                        break;
-                    case 'target_class_path':
-                        setTargetClassPathValidityInfo(validityInfo)
-                        setTargetClassPathTermsValidityInfo(termsValidity)
-                        break;
-                }
-            },
-            error: (err) => `Checking terms validity failed: ${err.message}.`
-        }).then(r => {
-        })
+    const checkTermsValidity = useCallback((elName, value, hasNotification = true) => {
+        const checkTermsValidityOnSuccess = (termsValidity) => {
+            let validityInfo = value;
+            for (let termValidity of termsValidity) {
+                let color = termValidity.is_valid ? 'green' : 'red'
+                validityInfo = validityInfo.replace(
+                    new RegExp(termValidity.term, 'g'),
+                    `<b style="color: ${color}">${termValidity.term}</b>`
+                )
+            }
+            switch (elName) {
+                case 'target_property_path':
+                    setTargetPropertyPathValidityInfo(validityInfo)
+                    setTargetPropertyPathTermsValidityInfo(termsValidity)
+                    break;
+                case 'target_class_path':
+                    setTargetClassPathValidityInfo(validityInfo)
+                    setTargetClassPathTermsValidityInfo(termsValidity)
+                    break;
+            }
+        }
+        const checkTermsValidityPromise = sectionApi.checkTermsValidity(value);
+        if (hasNotification) {
+            toast.promise(checkTermsValidityPromise, {
+                loading: `Checking terms validity ... `,
+                success: (termsValidity) => {
+                    checkTermsValidityOnSuccess(termsValidity);
+                    return `Terms checked for validity.`;
+                },
+                error: (err) => `Checking terms validity failed: ${err.message}.`
+            }).then(r => {
+            })
+        } else {
+            checkTermsValidityPromise.then(termsValidity => {
+                checkTermsValidityOnSuccess(termsValidity);
+            })
+        }
     }, [sectionApi])
 
     const prepareTextareaListValue = (value) => {
@@ -183,6 +191,29 @@ export const EditForm = (props) => {
         return sparqlTestFileResourcesApi.getMappingRuleResources(filters);
     }
 
+    useEffect(() => {
+        checkTermsValidity('target_property_path', formik.values.target_property_path, false)
+        checkTermsValidity('target_class_path', formik.values.target_class_path, false)
+    }, [])
+
+    const handleCloneAction = useCallback(async (e) => {
+        e.preventDefault();
+        toast.promise(sectionApi.cloneItem(item._id), {
+            loading: `Cloning rule ... `,
+            success: (response) => {
+                router.push({
+                    pathname: paths.app[sectionApi.section].edit,
+                    query: {id: response._id}
+                });
+                return `Rule successfully cloned.`
+            },
+            error: (err) => `Cloning rule failed: ${err.message}.`
+        })
+
+        return false;
+
+    }, [router, sectionApi, item]);
+
     return (
         <form onSubmit={formik.handleSubmit} {...other}>
             <Card>
@@ -202,8 +233,12 @@ export const EditForm = (props) => {
                             <FormTextArea formik={formik} name="source_xpath" label="Source XPaths"/>
                         </Grid>
                         <Grid xs={12} md={12}>
-                            <FormTextField formik={formik} name="target_class_path" label="Target Class Path"
-                                           onBlur={(e) => checkTermsValidity(e)}
+                            <FormTextField
+                                formik={formik}
+                                name="target_class_path" label="Target Class Path"
+                                onBlur={(e) => checkTermsValidity(
+                                    e.target.name, e.target.value
+                                )}
                             />
                             {targetClassPathValidityInfo && <>
                                 <Alert severity="info"
@@ -220,8 +255,12 @@ export const EditForm = (props) => {
                             {targetClassPathTermsValidityInfo.length > 0 && <Divider/>}
                         </Grid>
                         <Grid xs={12} md={12}>
-                            <FormTextField formik={formik} name="target_property_path" label="Target Property Path"
-                                           onBlur={(e) => checkTermsValidity(e)}/>
+                            <FormTextField
+                                formik={formik}
+                                name="target_property_path" label="Target Property Path"
+                                onBlur={(e) => checkTermsValidity(
+                                    e.target.name, e.target.value
+                                )}/>
 
                             {targetPropertyPathValidityInfo && <>
                                 <Alert severity="info"
@@ -307,6 +346,15 @@ export const EditForm = (props) => {
                         variant="contained"
                     >
                         {itemctx.isNew ? 'Create' : 'Update'}
+                    </Button>
+                    <Button
+                        onClick={(e) => handleCloneAction(e)}
+                        variant="text"
+                        type="button"
+                        disabled={formik.isSubmitting}
+                        color="warning"
+                    >
+                        Clone
                     </Button>
                     <Button
                         color="inherit"

@@ -1,4 +1,4 @@
-import {SectionApi} from "../section";
+import {ACTION, SectionApi} from "../section";
 import {appApi} from "../app";
 
 class ConceptualMappingRulesApi extends SectionApi {
@@ -10,6 +10,10 @@ class ConceptualMappingRulesApi extends SectionApi {
         return "Conceptual Mapping Rule";
     }
 
+    get SECTION_LIST_ACTIONS() {
+        return [ACTION.EDIT, ACTION.DELETE];
+    }
+
     constructor() {
         super("conceptual_mapping_rules");
         this.isProjectResource = true;
@@ -19,6 +23,12 @@ class ConceptualMappingRulesApi extends SectionApi {
         let endpoint = this.paths['check_content_terms_validity'];
         return appApi.post(endpoint, {"content": content});
     }
+
+    async cloneItem(id){
+        let endpoint = this.paths['clone'].replace(':id', id);
+        return appApi.post(endpoint);
+    }
+
 }
 
 export const conceptualMappingRulesApi = new ConceptualMappingRulesApi();

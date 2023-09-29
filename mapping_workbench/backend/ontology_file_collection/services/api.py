@@ -5,19 +5,28 @@ from beanie import PydanticObjectId
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
 from mapping_workbench.backend.core.services.request import request_update_data, api_entity_is_found, \
-    request_create_data
+    request_create_data, prepare_search_param, pagination_params
 from mapping_workbench.backend.ontology_file_collection.models.entity import OntologyFileCollection, \
     OntologyFileResource, OntologyFileResourceCreateIn, OntologyFileResourceUpdateIn
 from mapping_workbench.backend.user.models.user import User
 
 
-async def list_ontology_file_collections(filters=None) -> List[OntologyFileCollection]:
+async def list_ontology_file_collections(filters: dict = None, page: int = None, limit: int = None) -> \
+        (List[OntologyFileCollection], int):
     query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
-    return await OntologyFileCollection.find(
+
+    prepare_search_param(query_filters)
+    skip, limit = pagination_params(page, limit)
+
+    items: List[OntologyFileCollection] = await OntologyFileCollection.find(
         query_filters,
         projection_model=OntologyFileCollection,
-        fetch_links=False
+        fetch_links=False,
+        skip=skip,
+        limit=limit
     ).to_list()
+    total_count: int = await OntologyFileCollection.find(query_filters).count()
+    return items, total_count
 
 
 async def create_ontology_file_collection(
@@ -50,15 +59,23 @@ async def delete_ontology_file_collection(ontology_file_collection: OntologyFile
 
 
 async def list_ontology_file_collection_file_resources(
-        id: PydanticObjectId = None,
-        filters=None
-) -> List[OntologyFileResource]:
+        ontology_file_collection: OntologyFileCollection,
+        filters=None, page: int = None, limit: int = None
+) -> (List[OntologyFileResource], int):
     query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
-    return await OntologyFileResource.find(
-        OntologyFileResource.ontology_file_collection == OntologyFileCollection.link_from_id(id),
+    query_filters['ontology_file_collection'] = OntologyFileCollection.link_from_id(ontology_file_collection.id)
+
+    prepare_search_param(query_filters)
+    skip, limit = pagination_params(page, limit)
+
+    items: List[OntologyFileResource] = await OntologyFileResource.find(
         query_filters,
-        fetch_links=False
+        fetch_links=False,
+        skip=skip,
+        limit=limit
     ).to_list()
+    total_count: int = await OntologyFileResource.find(query_filters).count()
+    return items, total_count
 
 
 async def create_ontology_file_collection_file_resource(

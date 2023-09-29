@@ -138,7 +138,6 @@ const Page = () => {
                                     id={item._id}
                                     term={item.term}
                                     type={item.type}
-                                    is_syncable={item.is_syncable}
                                 />
                             </Grid>
                         </Grid>

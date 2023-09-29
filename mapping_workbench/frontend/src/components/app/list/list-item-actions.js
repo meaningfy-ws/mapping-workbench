@@ -16,6 +16,7 @@ import {useCallback} from "react";
 import {paths} from 'src/paths';
 import {useRouter} from "../../../hooks/use-router";
 import {Box} from "@mui/system";
+import {ACTION} from "../../../api/section";
 
 export const ListItemActions = (props) => {
     const router = useRouter();
@@ -53,30 +54,30 @@ export const ListItemActions = (props) => {
 
     return (
         <>
-            <Button
+            {itemctx.api.SECTION_LIST_ACTIONS.includes(ACTION.VIEW) && <Button
                 variant="text"
                 size="small"
                 color="info"
                 onClick={handleViewAction}
             >
                 View
-            </Button>
-            <Button
+            </Button>}
+            {itemctx.api.SECTION_LIST_ACTIONS.includes(ACTION.EDIT) && <Button
                 variant="text"
                 size="small"
                 color="success"
                 onClick={handleEditAction}
             >
                 Edit
-            </Button>
-            <Button
+            </Button>}
+            {itemctx.api.SECTION_LIST_ACTIONS.includes(ACTION.DELETE) && <Button
                 variant="text"
                 size="small"
                 color="error"
                 onClick={handleDeleteAction}
             >
                 Delete
-            </Button>
+            </Button>}
 
             {/* <Tooltip title="More options">
                 <IconButton

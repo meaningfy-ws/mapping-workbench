@@ -11,6 +11,8 @@ import Typography from '@mui/material/Typography';
 
 import {MultiSelect} from 'src/components/multi-select';
 import {useUpdateEffect} from 'src/hooks/use-update-effect';
+import Switch from "@mui/material/Switch";
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 
 const statusOptions = [
@@ -25,7 +27,7 @@ const statusOptions = [
 ];
 
 export const ListSearch = (props) => {
-    const {onFiltersChange, ...other} = props;
+    const {onFiltersChange, onDetailedViewChange, detailedView, ...other} = props;
     const queryRef = useRef(null);
     const [chips, setChips] = useState([]);
 
@@ -219,18 +221,32 @@ export const ListSearch = (props) => {
                                 variant="outlined"
                             />
                         ))}
+                        <Divider/>
                     </Stack>
                 )
-                : (
-                    <Box sx={{p: 2.5}}>
-                        <Typography
-                            color="text.secondary"
-                            variant="subtitle2"
-                        >
-                            No filters applied
-                        </Typography>
-                    </Box>
+                : (false && <>
+                        <Box sx={{p: 2.5}}>
+                            <Typography
+                                color="text.secondary"
+                                variant="subtitle2"
+                            >
+                                No filters applied
+                            </Typography>
+                        </Box>
+                        <Divider/>
+
+                    </>
                 )}
+
+            <Box sx={{p: 2.5}}>
+                <FormControlLabel fullWidth control={
+                    <Switch
+                        checked={detailedView}
+                        value={detailedView}
+                        onChange={(e) => onDetailedViewChange(e, e.target.checked)}
+                    />
+                } label="Detailed view"/>
+            </Box>
             <Divider/>
             {false && <Stack
                 alignItems="center"
@@ -251,5 +267,6 @@ export const ListSearch = (props) => {
 };
 
 ListSearch.propTypes = {
-    onFiltersChange: PropTypes.func
+    onFiltersChange: PropTypes.func,
+    onDetailedViewChange: PropTypes.func
 };

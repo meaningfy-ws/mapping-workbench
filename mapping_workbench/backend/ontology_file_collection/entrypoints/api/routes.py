@@ -47,13 +47,22 @@ router = APIRouter(
     response_model=APIListOntologyFileCollectionsPaginatedResponse
 )
 async def route_list_ontology_file_collections(
-        project: PydanticObjectId = None
+        project: PydanticObjectId = None,
+        page: int = None,
+        limit: int = None,
+        q: str = None
 ):
     filters: dict = {}
     if project:
         filters['project'] = Project.link_from_id(project)
-    items: List[OntologyFileCollection] = await list_ontology_file_collections(filters)
-    return APIListOntologyFileCollectionsPaginatedResponse(items=items, count=len(items))
+    if q is not None:
+        filters['q'] = q
+
+    items, total_count = await list_ontology_file_collections(filters, page, limit)
+    return APIListOntologyFileCollectionsPaginatedResponse(
+        items=items,
+        count=total_count
+    )
 
 
 @router.post(
@@ -114,10 +123,24 @@ async def route_delete_ontology_file_collection(
     response_model=APIListOntologyFileResourcesPaginatedResponse
 )
 async def route_list_ontology_file_collection_file_resources(
-        id: PydanticObjectId = None
+        ontology_file_collection: OntologyFileCollection = Depends(get_ontology_file_collection),
+        project: PydanticObjectId = None,
+        page: int = None,
+        limit: int = None,
+        q: str = None
 ):
-    items: List[OntologyFileResource] = await list_ontology_file_collection_file_resources(id)
-    return APIListOntologyFileResourcesPaginatedResponse(items=items, count=len(items))
+    filters: dict = {}
+    if project:
+        filters['project'] = Project.link_from_id(project)
+    if q is not None:
+        filters['q'] = q
+
+    items, total_count = \
+        await list_ontology_file_collection_file_resources(ontology_file_collection, filters, page, limit)
+    return APIListOntologyFileResourcesPaginatedResponse(
+        items=items,
+        count=total_count
+    )
 
 
 @router.post(

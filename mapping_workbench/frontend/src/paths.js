@@ -187,7 +187,9 @@ export const apiPaths = {
     conceptual_mapping_rules: {
         items: '/conceptual_mapping_rules',
         item: '/conceptual_mapping_rules/:id',
-        check_content_terms_validity: '/ontology/check_content_terms_validity'
+        check_content_terms_validity: '/ontology/check_content_terms_validity',
+        clone: '/conceptual_mapping_rules/:id/clone'
+
     },
 
     triple_map_fragments: {

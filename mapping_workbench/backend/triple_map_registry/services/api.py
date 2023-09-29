@@ -41,7 +41,7 @@ async def update_triple_map_registry(
 ) -> TripleMapRegistryOut:
     return TripleMapRegistryOut(**(
         await triple_map_registry.set(request_update_data(data, user=user))
-    ))
+    ).model_dump())
 
 
 async def get_triple_map_registry(id: PydanticObjectId) -> TripleMapRegistry:

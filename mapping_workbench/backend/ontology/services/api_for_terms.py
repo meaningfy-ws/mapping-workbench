@@ -49,7 +49,7 @@ async def update_term(
 ) -> TermOut:
     return TermOut(**(
         await term.set(request_update_data(data, user=user))
-    ))
+    ).model_dump())
 
 
 async def get_term(id: PydanticObjectId) -> Term:

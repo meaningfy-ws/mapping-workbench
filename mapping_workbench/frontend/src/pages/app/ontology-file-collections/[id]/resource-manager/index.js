@@ -1,9 +1,7 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import Upload01Icon from '@untitled-ui/icons-react/build/esm/Upload01';
 import Plus from '@untitled-ui/icons-react/build/esm/Plus';
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
@@ -38,7 +36,8 @@ const useItemsSearch = () => {
     const handleFiltersChange = useCallback((filters) => {
         setState((prevState) => ({
             ...prevState,
-            filters
+            filters,
+            page: 0
         }));
     }, []);
 

@@ -60,7 +60,7 @@ async def update_specific_triple_map_fragment(
 ) -> SpecificTripleMapFragmentOut:
     return SpecificTripleMapFragmentOut(**(
         await specific_triple_map_fragment.set(request_update_data(data, user=user))
-    ))
+    ).model_dump())
 
 
 async def check_specific_triple_map_fragment_exists(id: PydanticObjectId) -> bool:

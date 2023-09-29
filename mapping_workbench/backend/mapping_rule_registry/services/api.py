@@ -43,7 +43,7 @@ async def update_mapping_rule_registry(
 ) -> MappingRuleRegistryOut:
     return MappingRuleRegistryOut(**(
         await mapping_rule_registry.set(request_update_data(data, user=user))
-    ))
+    ).model_dump())
 
 
 async def get_mapping_rule_registry(id: PydanticObjectId) -> MappingRuleRegistry:

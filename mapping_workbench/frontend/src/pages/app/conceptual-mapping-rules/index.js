@@ -28,7 +28,8 @@ const useItemsSearch = () => {
             inStock: undefined
         },
         page: sectionApi.DEFAULT_PAGE,
-        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
+        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE,
+        detailedView: false
     });
 
     const handleFiltersChange = useCallback((filters) => {
@@ -53,10 +54,18 @@ const useItemsSearch = () => {
         }));
     }, []);
 
+    const handleDetailedViewChange = useCallback((event, detailedView) => {
+        setState((prevState) => ({
+            ...prevState,
+            detailedView
+        }));
+    }, []);
+
     return {
         handleFiltersChange,
         handlePageChange,
         handleRowsPerPageChange,
+        handleDetailedViewChange,
         state
     };
 };
@@ -100,6 +109,19 @@ const Page = () => {
     const itemsStore = useItemsStore(itemsSearch.state);
 
     usePageView();
+
+    const [sortDir, setSortDir] = useState('desc');
+    const [sortField, setSortField] = useState('1');
+
+    const handleSort = useCallback(() => {
+        setSortDir((prevState) => {
+            if (prevState === 'asc') {
+                return 'desc';
+            }
+
+            return 'asc';
+        });
+    }, []);
 
     return (
         <>
@@ -159,7 +181,10 @@ const Page = () => {
                     </Stack>
                 </Stack>
                 <Card>
-                    <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
+                    <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}
+                                onDetailedViewChange={itemsSearch.handleDetailedViewChange}
+                                detailedView={itemsSearch.state.detailedView}
+                    />
                     <ListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
@@ -168,6 +193,10 @@ const Page = () => {
                         count={itemsStore.itemsCount}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
+                        sortDir={sortDir}
+                        sortField={sortField}
+                        handleSort={handleSort}
+                        detailedView={itemsSearch.state.detailedView}
                     />
                 </Card>
             </Stack>

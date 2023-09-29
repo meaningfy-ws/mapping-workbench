@@ -52,7 +52,7 @@ async def update_generic_triple_map_fragment(
 ) -> GenericTripleMapFragmentOut:
     return GenericTripleMapFragmentOut(**(
         await generic_triple_map_fragment.set(request_update_data(data, user=user))
-    ))
+    ).model_dump())
 
 
 async def get_generic_triple_map_fragment(id: PydanticObjectId) -> GenericTripleMapFragment:

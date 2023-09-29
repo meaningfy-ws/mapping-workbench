@@ -48,7 +48,7 @@ async def update_namespace(
 ) -> NamespaceOut:
     return NamespaceOut(**(
         await namespace.set(request_update_data(data, user=user))
-    ))
+    ).model_dump())
 
 
 async def get_namespace(id: PydanticObjectId) -> Namespace:

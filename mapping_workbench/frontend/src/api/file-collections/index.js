@@ -3,14 +3,16 @@ import {appApi} from "../app";
 
 export class FileCollectionsApi extends SectionApi {
     async getFileResources(id, request = {}) {
-        const { filters, page, rowsPerPage } = request;
-        let endpoint = this.paths['file_resources'].replace(':id', id);
-        let {items, count} = await appApi.get(endpoint);
+        const {
+            filters = {},
+            page = this.DEFAULT_PAGE,
+            rowsPerPage = this.DEFAULT_ROWS_PER_PAGE
+        } = request;
+        filters['page'] = page;
+        filters['limit'] = rowsPerPage >= 0 ? rowsPerPage : null;
 
-        return Promise.resolve({
-            items,
-            count
-        });
+        let endpoint = this.paths['file_resources'].replace(':id', id);
+        return await appApi.get(endpoint, filters);
     }
 }
 

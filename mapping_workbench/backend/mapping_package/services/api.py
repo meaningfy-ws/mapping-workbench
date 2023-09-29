@@ -52,7 +52,7 @@ async def update_mapping_package(
 ) -> MappingPackageOut:
     return MappingPackageOut(**(
         await mapping_package.set(request_update_data(data, user=user))
-    ))
+    ).model_dump())
 
 
 async def get_mapping_package(id: PydanticObjectId) -> MappingPackage:

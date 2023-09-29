@@ -20,6 +20,7 @@ import {ListItemActions} from 'src/components/app/list/list-item-actions';
 
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import Tooltip from "@mui/material/Tooltip";
+import Switch from "@mui/material/Switch";
 
 
 export const ListTable = (props) => {
@@ -186,7 +187,11 @@ export const ListTable = (props) => {
                                             {item.uri}
                                         </TableCell>
                                         <TableCell>
-                                            {item.is_syncable}
+                                            <Switch
+                                                disabled
+                                                checked={item.is_syncable}
+                                                value={item.is_syncable}
+                                            />
                                         </TableCell>
                                         <TableCell align="right">
                                             <ListItemActions

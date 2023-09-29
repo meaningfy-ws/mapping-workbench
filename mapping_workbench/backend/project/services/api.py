@@ -49,7 +49,7 @@ async def update_project(
 ) -> ProjectOut:
     return ProjectOut(**(
         await project.set(request_update_data(data, user=user))
-    ))
+    ).model_dump())
 
 
 async def get_project(id: PydanticObjectId) -> Project:

@@ -13,7 +13,7 @@ from mapping_workbench.backend.conceptual_mapping_rule.services.api import (
     create_conceptual_mapping_rule,
     update_conceptual_mapping_rule,
     get_conceptual_mapping_rule,
-    delete_conceptual_mapping_rule, get_conceptual_mapping_rule_out
+    delete_conceptual_mapping_rule, get_conceptual_mapping_rule_out, clone_conceptual_mapping_rule
 )
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
@@ -109,3 +109,16 @@ async def route_delete_conceptual_mapping_rule(
         conceptual_mapping_rule: ConceptualMappingRule = Depends(get_conceptual_mapping_rule)):
     await delete_conceptual_mapping_rule(conceptual_mapping_rule)
     return APIEmptyContentWithIdResponse(id=conceptual_mapping_rule.id)
+
+
+@router.post(
+    "/{id}/clone",
+    description=f"Clone {NAME_FOR_ONE}",
+    name=f"{NAME_FOR_MANY}:clone_{NAME_FOR_ONE}",
+    response_model=ConceptualMappingRuleOut
+)
+async def route_clone_conceptual_mapping_rule(
+        conceptual_mapping_rule: ConceptualMappingRule = Depends(get_conceptual_mapping_rule),
+        user: User = Depends(current_active_user)
+):
+    return await clone_conceptual_mapping_rule(conceptual_mapping_rule, user=user)
