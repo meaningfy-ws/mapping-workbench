@@ -21,14 +21,14 @@ async def create_shacl_test_suite(shacl_test_suite: SHACLTestSuite, user: User) 
     return await shacl_test_suite.create()
 
 
-async def update_shacl_test_suite(id: PydanticObjectId, shacl_test_suite_data: SHACLTestSuite, user: User):
-    shacl_test_suite: SHACLTestSuite = await SHACLTestSuite.get(id)
-    if not api_entity_is_found(shacl_test_suite):
-        raise ResourceNotFoundException()
-
-    request_data = request_update_data(shacl_test_suite_data)
-    update_data = request_update_data(SHACLTestSuite(**request_data).on_update(user=user))
-    return await shacl_test_suite.set(update_data)
+async def update_shacl_test_suite(
+        shacl_test_suite: SHACLTestSuite,
+        data: SHACLTestSuite,
+        user: User
+) -> SHACLTestSuite:
+    return await shacl_test_suite.set(
+        request_update_data(data, user=user)
+    )
 
 
 async def get_shacl_test_suite(id: PydanticObjectId) -> SHACLTestSuite:
@@ -60,7 +60,7 @@ async def create_shacl_test_suite_file_resource(
         user: User
 ) -> SHACLTestFileResource:
     data.shacl_test_suite = shacl_test_suite
-    shacl_test_file_resource = SHACLTestFileResource(**request_create_data(data)).on_create(user=user)
+    shacl_test_file_resource = SHACLTestFileResource(**request_create_data(data, user=user))
     return await shacl_test_file_resource.create()
 
 
@@ -68,10 +68,9 @@ async def update_shacl_test_file_resource(
         shacl_test_file_resource: SHACLTestFileResource,
         data: SHACLTestFileResourceUpdateIn,
         user: User) -> SHACLTestFileResource:
-    update_data = request_update_data(
-        SHACLTestFileResource(**request_update_data(data)).on_update(user=user)
+    return await shacl_test_file_resource.set(
+        request_update_data(data, user=user)
     )
-    return await shacl_test_file_resource.set(update_data)
 
 
 async def get_shacl_test_file_resource(id: PydanticObjectId) -> SHACLTestFileResource:

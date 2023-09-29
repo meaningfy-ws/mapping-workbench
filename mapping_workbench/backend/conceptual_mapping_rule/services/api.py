@@ -30,10 +30,12 @@ async def list_conceptual_mapping_rules(filters: dict = None, page: int = None, 
     return items, total_count
 
 
-async def create_conceptual_mapping_rule(conceptual_mapping_rule_data: ConceptualMappingRuleCreateIn,
+async def create_conceptual_mapping_rule(data: ConceptualMappingRuleCreateIn,
                                          user: User) -> ConceptualMappingRuleOut:
-    conceptual_mapping_rule: ConceptualMappingRule = ConceptualMappingRule(
-        **request_create_data(conceptual_mapping_rule_data)).on_create(user=user)
+    conceptual_mapping_rule: ConceptualMappingRule = \
+        ConceptualMappingRule(
+            **request_create_data(data, user=user)
+        )
     try:
         await conceptual_mapping_rule.create()
     except DuplicateKeyError as e:
@@ -41,15 +43,12 @@ async def create_conceptual_mapping_rule(conceptual_mapping_rule_data: Conceptua
     return ConceptualMappingRuleOut(**conceptual_mapping_rule.model_dump())
 
 
-async def update_conceptual_mapping_rule(id: PydanticObjectId,
-                                         conceptual_mapping_rule_data: ConceptualMappingRuleUpdateIn, user: User):
-    conceptual_mapping_rule: ConceptualMappingRule = await ConceptualMappingRule.get(id)
-    if not api_entity_is_found(conceptual_mapping_rule):
-        raise ResourceNotFoundException()
-
-    request_data = request_update_data(conceptual_mapping_rule_data)
-    update_data = request_update_data(ConceptualMappingRule(**request_data).on_update(user=user))
-    return await conceptual_mapping_rule.set(update_data)
+async def update_conceptual_mapping_rule(conceptual_mapping_rule: ConceptualMappingRule,
+                                         data: ConceptualMappingRuleUpdateIn,
+                                         user: User) -> ConceptualMappingRuleOut:
+    return ConceptualMappingRuleOut(**(
+        await conceptual_mapping_rule.set(request_update_data(data, user=user))
+    ))
 
 
 async def get_conceptual_mapping_rule(id: PydanticObjectId) -> ConceptualMappingRule:

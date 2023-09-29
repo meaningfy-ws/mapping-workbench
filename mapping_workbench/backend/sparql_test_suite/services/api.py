@@ -21,14 +21,14 @@ async def create_sparql_test_suite(sparql_test_suite: SPARQLTestSuite, user: Use
     return await sparql_test_suite.create()
 
 
-async def update_sparql_test_suite(id: PydanticObjectId, sparql_test_suite_data: SPARQLTestSuite, user: User):
-    sparql_test_suite: SPARQLTestSuite = await SPARQLTestSuite.get(id)
-    if not api_entity_is_found(sparql_test_suite):
-        raise ResourceNotFoundException()
-
-    request_data = request_update_data(sparql_test_suite_data)
-    update_data = request_update_data(SPARQLTestSuite(**request_data).on_update(user=user))
-    return await sparql_test_suite.set(update_data)
+async def update_sparql_test_suite(
+        sparql_test_suite: SPARQLTestSuite,
+        data: SPARQLTestSuite,
+        user: User
+) -> SPARQLTestSuite:
+    return await sparql_test_suite.set(
+        request_update_data(data, user=user)
+    )
 
 
 async def get_sparql_test_suite(id: PydanticObjectId) -> SPARQLTestSuite:
@@ -70,7 +70,7 @@ async def create_sparql_test_suite_file_resource(
         user: User
 ) -> SPARQLTestFileResource:
     data.sparql_test_suite = sparql_test_suite
-    sparql_test_file_resource = SPARQLTestFileResource(**request_create_data(data)).on_create(user=user)
+    sparql_test_file_resource = SPARQLTestFileResource(**request_create_data(data, user=user))
     return await sparql_test_file_resource.create()
 
 
@@ -78,10 +78,9 @@ async def update_sparql_test_file_resource(
         sparql_test_file_resource: SPARQLTestFileResource,
         data: SPARQLTestFileResourceUpdateIn,
         user: User) -> SPARQLTestFileResource:
-    update_data = request_update_data(
-        SPARQLTestFileResource(**request_update_data(data)).on_update(user=user)
+    return await sparql_test_file_resource.set(
+        request_update_data(data, user=user)
     )
-    return await sparql_test_file_resource.set(update_data)
 
 
 async def get_sparql_test_file_resource(id: PydanticObjectId) -> SPARQLTestFileResource:

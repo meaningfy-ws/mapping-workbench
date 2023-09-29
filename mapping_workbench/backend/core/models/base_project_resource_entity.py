@@ -14,5 +14,10 @@ class BaseProjectResourceEntityInSchema(BaseEntityInSchema):
     project: Optional[Link[Project]] = None
 
 
+class BaseProjectResourceEntityUpdateInSchema(BaseProjectResourceEntityInSchema):
+    """
+    """
+
+
 class BaseProjectResourceEntityOutSchema(BaseEntityOutSchema):
     project: Optional[Link[Project]] = None

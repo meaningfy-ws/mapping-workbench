@@ -30,8 +30,11 @@ async def list_terms(filters: dict = None, page: int = None, limit: int = None) 
     return items, total_count
 
 
-async def create_term(term_data: TermIn, user: User) -> TermOut:
-    term: Term = Term(**request_create_data(term_data)).on_create(user=user)
+async def create_term(data: TermIn, user: User) -> TermOut:
+    term: Term = \
+        Term(
+            **request_create_data(data, user=user)
+        )
     try:
         await term.create()
     except DuplicateKeyError as e:
@@ -39,14 +42,14 @@ async def create_term(term_data: TermIn, user: User) -> TermOut:
     return TermOut(**term.model_dump())
 
 
-async def update_term(id: PydanticObjectId, term_data: TermIn, user: User):
-    term: Term = await Term.get(id)
-    if not api_entity_is_found(term):
-        raise ResourceNotFoundException()
-
-    request_data = request_update_data(term_data)
-    update_data = request_update_data(Term(**request_data).on_update(user=user))
-    return await term.set(update_data)
+async def update_term(
+        term: Term,
+        data: TermIn,
+        user: User
+) -> TermOut:
+    return TermOut(**(
+        await term.set(request_update_data(data, user=user))
+    ))
 
 
 async def get_term(id: PydanticObjectId) -> Term:

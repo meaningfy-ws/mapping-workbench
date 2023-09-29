@@ -46,7 +46,7 @@ async def route_set_project_for_current_user_session(
         user: User = Depends(current_active_user)
 ):
     await set_project_for_current_user_session(id=data.id, user=user)
-    return APIEmptyContentWithIdResponse(_id=data.id)
+    return APIEmptyContentWithIdResponse(id=data.id)
 
 
 @sub_router.post(

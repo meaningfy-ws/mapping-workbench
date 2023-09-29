@@ -68,10 +68,10 @@ async def route_list_conceptual_mapping_rules(
     status_code=status.HTTP_201_CREATED
 )
 async def route_create_conceptual_mapping_rule(
-        conceptual_mapping_rule_data: ConceptualMappingRuleCreateIn,
+        data: ConceptualMappingRuleCreateIn,
         user: User = Depends(current_active_user)
 ):
-    return await create_conceptual_mapping_rule(conceptual_mapping_rule_data=conceptual_mapping_rule_data, user=user)
+    return await create_conceptual_mapping_rule(data, user=user)
 
 
 @router.patch(
@@ -81,12 +81,11 @@ async def route_create_conceptual_mapping_rule(
     response_model=ConceptualMappingRuleOut
 )
 async def route_update_conceptual_mapping_rule(
-        id: PydanticObjectId,
-        conceptual_mapping_rule_data: ConceptualMappingRuleUpdateIn,
+        data: ConceptualMappingRuleUpdateIn,
+        conceptual_mapping_rule: ConceptualMappingRule = Depends(get_conceptual_mapping_rule),
         user: User = Depends(current_active_user)
 ):
-    await update_conceptual_mapping_rule(id=id, conceptual_mapping_rule_data=conceptual_mapping_rule_data, user=user)
-    return await get_conceptual_mapping_rule_out(id)
+    return await update_conceptual_mapping_rule(conceptual_mapping_rule, data, user=user)
 
 
 @router.get(
@@ -109,4 +108,4 @@ async def route_get_conceptual_mapping_rule(
 async def route_delete_conceptual_mapping_rule(
         conceptual_mapping_rule: ConceptualMappingRule = Depends(get_conceptual_mapping_rule)):
     await delete_conceptual_mapping_rule(conceptual_mapping_rule)
-    return APIEmptyContentWithIdResponse(_id=conceptual_mapping_rule.id)
+    return APIEmptyContentWithIdResponse(id=conceptual_mapping_rule.id)

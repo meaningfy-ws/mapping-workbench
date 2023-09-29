@@ -62,11 +62,13 @@ async def route_list_generic_triple_map_fragments(
     status_code=status.HTTP_201_CREATED
 )
 async def route_create_generic_triple_map_fragment(
-        generic_triple_map_fragment_data: GenericTripleMapFragmentCreateIn,
+        data: GenericTripleMapFragmentCreateIn,
         user: User = Depends(current_active_user)
 ):
-    return await create_generic_triple_map_fragment(generic_triple_map_fragment_data=generic_triple_map_fragment_data,
-                                                    user=user)
+    return await create_generic_triple_map_fragment(
+        data,
+        user=user
+    )
 
 
 @router.patch(
@@ -76,13 +78,15 @@ async def route_create_generic_triple_map_fragment(
     response_model=GenericTripleMapFragmentOut
 )
 async def route_update_generic_triple_map_fragment(
-        id: PydanticObjectId,
-        generic_triple_map_fragment_data: GenericTripleMapFragmentUpdateIn,
+        data: GenericTripleMapFragmentUpdateIn,
+        generic_triple_map_fragment: GenericTripleMapFragment = Depends(get_generic_triple_map_fragment),
         user: User = Depends(current_active_user)
 ):
-    await update_generic_triple_map_fragment(id=id, generic_triple_map_fragment_data=generic_triple_map_fragment_data,
-                                             user=user)
-    return await get_generic_triple_map_fragment_out(id)
+    return await update_generic_triple_map_fragment(
+        generic_triple_map_fragment,
+        data,
+        user=user
+    )
 
 
 @router.get(
@@ -105,4 +109,4 @@ async def route_get_generic_triple_map_fragment(
 async def route_delete_generic_triple_map_fragment(
         generic_triple_map_fragment: GenericTripleMapFragment = Depends(get_generic_triple_map_fragment)):
     await delete_generic_triple_map_fragment(generic_triple_map_fragment)
-    return APIEmptyContentWithIdResponse(_id=generic_triple_map_fragment.id)
+    return APIEmptyContentWithIdResponse(id=generic_triple_map_fragment.id)

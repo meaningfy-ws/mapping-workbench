@@ -29,8 +29,11 @@ async def list_namespaces(filters: dict = None, page: int = None, limit: int = N
     return items, total_count
 
 
-async def create_namespace(namespace_data: NamespaceIn, user: User) -> NamespaceOut:
-    namespace: Namespace = Namespace(**request_create_data(namespace_data)).on_create(user=user)
+async def create_namespace(data: NamespaceIn, user: User) -> NamespaceOut:
+    namespace: Namespace = \
+        Namespace(
+            **request_create_data(data, user=user)
+        )
     try:
         await namespace.create()
     except DuplicateKeyError as e:
@@ -38,14 +41,14 @@ async def create_namespace(namespace_data: NamespaceIn, user: User) -> Namespace
     return NamespaceOut(**namespace.model_dump())
 
 
-async def update_namespace(id: PydanticObjectId, namespace_data: NamespaceIn, user: User):
-    namespace: Namespace = await Namespace.get(id)
-    if not api_entity_is_found(namespace):
-        raise ResourceNotFoundException()
-
-    request_data = request_update_data(namespace_data)
-    update_data = request_update_data(Namespace(**request_data).on_update(user=user))
-    return await namespace.set(update_data)
+async def update_namespace(
+        namespace: Namespace,
+        data: NamespaceIn,
+        user: User
+) -> NamespaceOut:
+    return NamespaceOut(**(
+        await namespace.set(request_update_data(data, user=user))
+    ))
 
 
 async def get_namespace(id: PydanticObjectId) -> Namespace:

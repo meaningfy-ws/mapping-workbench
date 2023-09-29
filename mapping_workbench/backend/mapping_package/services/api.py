@@ -9,7 +9,6 @@ from mapping_workbench.backend.core.services.request import request_update_data,
     api_entity_is_found, prepare_search_param, pagination_params
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageCreateIn, \
     MappingPackageUpdateIn, MappingPackageOut
-from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.user.models.user import User
 
 
@@ -31,8 +30,14 @@ async def list_mapping_packages(filters: dict = None, page: int = None, limit: i
     return items, total_count
 
 
-async def create_mapping_package(mapping_package_data: MappingPackageCreateIn, user: User) -> MappingPackageOut:
-    mapping_package: MappingPackage = MappingPackage(**request_create_data(mapping_package_data)).on_create(user=user)
+async def create_mapping_package(
+        data: MappingPackageCreateIn,
+        user: User
+) -> MappingPackageOut:
+    mapping_package: MappingPackage = \
+        MappingPackage(
+            **request_create_data(data, user=user)
+        )
     try:
         await mapping_package.create()
     except DuplicateKeyError as e:
@@ -40,14 +45,14 @@ async def create_mapping_package(mapping_package_data: MappingPackageCreateIn, u
     return MappingPackageOut(**mapping_package.model_dump())
 
 
-async def update_mapping_package(id: PydanticObjectId, mapping_package_data: MappingPackageUpdateIn, user: User):
-    mapping_package: MappingPackage = await MappingPackage.get(id)
-    if not api_entity_is_found(mapping_package):
-        raise ResourceNotFoundException()
-
-    request_data = request_update_data(mapping_package_data)
-    update_data = request_update_data(MappingPackage(**request_data).on_update(user=user))
-    return await mapping_package.set(update_data)
+async def update_mapping_package(
+        mapping_package: MappingPackage,
+        data: MappingPackageUpdateIn,
+        user: User
+) -> MappingPackageOut:
+    return MappingPackageOut(**(
+        await mapping_package.set(request_update_data(data, user=user))
+    ))
 
 
 async def get_mapping_package(id: PydanticObjectId) -> MappingPackage:

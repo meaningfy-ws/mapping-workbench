@@ -53,7 +53,7 @@ export const FormCodeTextArea = (props) => {
                         color: 'text.primary',
                         mb: 1,
                     }}
-                    for={name}
+                    htmlFor={name}
                 >
                     {label}
                 </FormLabel>

@@ -64,10 +64,10 @@ async def route_list_namespaces(
     status_code=status.HTTP_201_CREATED
 )
 async def route_create_namespace(
-        namespace_data: NamespaceIn,
+        data: NamespaceIn,
         user: User = Depends(current_active_user)
 ):
-    return await create_namespace(namespace_data=namespace_data, user=user)
+    return await create_namespace(data, user=user)
 
 
 @router.patch(
@@ -77,12 +77,11 @@ async def route_create_namespace(
     response_model=NamespaceOut
 )
 async def route_update_namespace(
-        id: PydanticObjectId,
-        namespace_data: NamespaceIn,
+        data: NamespaceIn,
+        namespace: Namespace = Depends(get_namespace),
         user: User = Depends(current_active_user)
 ):
-    await update_namespace(id=id, namespace_data=namespace_data, user=user)
-    return await get_namespace_out(id)
+    return await update_namespace(namespace, data, user=user)
 
 
 @router.get(
@@ -103,7 +102,7 @@ async def route_get_namespace(namespace: NamespaceOut = Depends(get_namespace_ou
 )
 async def route_delete_namespace(namespace: Namespace = Depends(get_namespace)):
     await delete_namespace(namespace)
-    return APIEmptyContentWithIdResponse(_id=namespace.id)
+    return APIEmptyContentWithIdResponse(id=namespace.id)
 
 
 @router.get(
@@ -136,10 +135,10 @@ async def route_list_terms(
     status_code=status.HTTP_201_CREATED
 )
 async def route_create_term(
-        term_data: TermIn,
+        data: TermIn,
         user: User = Depends(current_active_user)
 ):
-    return await create_term(term_data=term_data, user=user)
+    return await create_term(data, user=user)
 
 
 @router.patch(
@@ -149,12 +148,11 @@ async def route_create_term(
     response_model=TermOut
 )
 async def route_update_term(
-        id: PydanticObjectId,
-        term_data: TermIn,
+        data: TermIn,
+        term: Term = Depends(get_term),
         user: User = Depends(current_active_user)
 ):
-    await update_term(id=id, term_data=term_data, user=user)
-    return await get_term_out(id)
+    return await update_term(term, data, user=user)
 
 
 @router.get(
@@ -175,7 +173,7 @@ async def route_get_term(term: TermOut = Depends(get_term_out)):
 )
 async def route_delete_term(term: Term = Depends(get_term)):
     await delete_term(term)
-    return APIEmptyContentWithIdResponse(_id=term.id)
+    return APIEmptyContentWithIdResponse(id=term.id)
 
 
 @router.get(

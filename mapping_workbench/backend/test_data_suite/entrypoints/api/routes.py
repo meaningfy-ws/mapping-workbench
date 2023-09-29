@@ -69,7 +69,7 @@ async def route_create_test_data_suite(
         test_data_suite: TestDataSuite,
         user: User = Depends(current_active_user)
 ):
-    return await create_test_data_suite(test_data_suite=test_data_suite, user=user)
+    return await create_test_data_suite(test_data_suite, user=user)
 
 
 @router.patch(
@@ -79,12 +79,11 @@ async def route_create_test_data_suite(
     response_model=TestDataSuite
 )
 async def route_update_test_data_suite(
-        id: PydanticObjectId,
-        test_data_suite_data: TestDataSuite,
+        data: TestDataSuite,
+        test_data_suite: TestDataSuite = Depends(get_test_data_suite),
         user: User = Depends(current_active_user)
 ):
-    await update_test_data_suite(id=id, test_data_suite_data=test_data_suite_data, user=user)
-    return await get_test_data_suite(id)
+    return await update_test_data_suite(test_data_suite, data, user=user)
 
 
 @router.get(
@@ -105,7 +104,7 @@ async def route_get_test_data_suite(test_data_suite: TestDataSuite = Depends(get
 )
 async def route_delete_test_data_suite(test_data_suite: TestDataSuite = Depends(get_test_data_suite)):
     await delete_test_data_suite(test_data_suite)
-    APIEmptyContentWithIdResponse(_id=test_data_suite.id)
+    return APIEmptyContentWithIdResponse(id=test_data_suite.id)
 
 
 @router.get(
@@ -177,4 +176,4 @@ async def route_get_test_data_file_resource(
 async def route_delete_test_data_file_resource(
         test_data_file_resource: TestDataFileResource = Depends(get_test_data_file_resource)):
     await delete_test_data_file_resource(test_data_file_resource)
-    return APIEmptyContentWithIdResponse(_id=test_data_file_resource.id)
+    return APIEmptyContentWithIdResponse(id=test_data_file_resource.id)

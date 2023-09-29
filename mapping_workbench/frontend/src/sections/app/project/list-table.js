@@ -1,15 +1,11 @@
 import {Fragment, useCallback, useState} from 'react';
 import PropTypes from 'prop-types';
-import {toast} from 'react-hot-toast';
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import CardContent from '@mui/material/CardContent';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
-import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -18,17 +14,20 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { PropertyList } from 'src/components/property-list';
-import { PropertyListItem } from 'src/components/property-list-item';
+import {PropertyList} from 'src/components/property-list';
+import {PropertyListItem} from 'src/components/property-list-item';
 
 import {Scrollbar} from 'src/components/scrollbar';
-import {SeverityPill} from 'src/components/severity-pill';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import Tooltip from "@mui/material/Tooltip";
+import {Button} from "@mui/material";
+import {sessionApi} from "../../../api/session";
+import {useRouter} from "../../../hooks/use-router";
+import toast from "react-hot-toast";
+import {SeverityPill} from "../../../components/severity-pill";
 
 
 export const ListTable = (props) => {
@@ -43,9 +42,11 @@ export const ListTable = (props) => {
         sectionApi
     } = props;
 
-    //console.log("PROJECT PROPS: ", props);
+    const router = useRouter();
 
     const [currentItem, setCurrentItem] = useState(null);
+
+    const sessionProject = sessionApi.getSessionProject()
 
     const handleItemToggle = useCallback((itemId) => {
         setCurrentItem((prevItemId) => {
@@ -57,6 +58,16 @@ export const ListTable = (props) => {
         });
     }, []);
 
+    const handleSelectAction = useCallback(async (itemId) => {
+        try {
+            toast.loading('Selecting project...');
+            await sessionApi.setSessionProject(itemId);
+            router.reload();
+        } catch (e) {
+            toast.error('Something went wrong!');
+        }
+    }, [sessionApi, router]);
+
     // const handleItemClose = useCallback(() => {
     //     setCurrentItem(null);
     // }, []);
@@ -67,7 +78,7 @@ export const ListTable = (props) => {
     // }, []);
 
     // const handleItemDelete = useCallback(() => {
-        
+
     //     toast.error('Item cannot be deleted');
     // }, []);
 
@@ -151,7 +162,8 @@ export const ListTable = (props) => {
                         {items.map((item) => {
                             const item_id = item._id;
                             const isCurrent = item_id === currentItem;
-                            const statusColor = item.status === 'published' ? 'success' : 'info';
+                            const isSessionProject = item_id === sessionProject
+                            const statusColor = isSessionProject ? 'success' : 'primary';
 
                             return (
                                 <Fragment key={item_id}>
@@ -202,9 +214,17 @@ export const ListTable = (props) => {
                                                 </Box>
                                             </Box>
                                         </TableCell> */}
-                                        <TableCell width="25%">
-                                            <Typography variant="subtitle2">
-                                                {item.title}
+                                        <TableCell
+                                            width="25%"
+                                        >
+                                            <Typography
+                                                variant="subtitle3"
+                                            >
+                                                {isSessionProject && <SeverityPill color={statusColor}>
+                                                    <b>{item.title}</b>
+                                                </SeverityPill>
+                                                }
+                                                {!isSessionProject && item.title}
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
@@ -219,9 +239,17 @@ export const ListTable = (props) => {
                                             </SeverityPill>
                                         </TableCell> */}
                                         <TableCell align="left">
-                                        {(item.created_at).replace("T", " ").split(".")[0]}                                            
+                                            {(item.created_at).replace("T", " ").split(".")[0]}
                                         </TableCell>
                                         <TableCell align="right">
+                                            <Button
+                                                variant="text"
+                                                size="small"
+                                                color="warning"
+                                                onClick={() => handleSelectAction(item_id)}
+                                            >
+                                                Select
+                                            </Button>
                                             <ListItemActions
                                                 itemctx={new ForListItemAction(item_id, sectionApi)}/>
                                         </TableCell>
@@ -253,8 +281,8 @@ export const ListTable = (props) => {
                                                             item
                                                             md={12}
                                                             xs={12}
-                                                        >                                                            
-                                                            
+                                                        >
+
                                                             <Grid
                                                                 container
                                                                 spacing={3}
@@ -264,10 +292,10 @@ export const ListTable = (props) => {
                                                                     md={6}
                                                                     xs={12}
                                                                 >
-                                                                    <Typography sx={{ paddingLeft: "24px" }} variant="h6">
+                                                                    <Typography sx={{paddingLeft: "24px"}} variant="h6">
                                                                         Source Schema
                                                                     </Typography>
-                                                                    <Divider sx={{my: 2}}/>                                                                    
+                                                                    <Divider sx={{my: 2}}/>
                                                                     {/* <TextField
                                                                         defaultValue={item.title}
                                                                         fullWidth
@@ -302,7 +330,7 @@ export const ListTable = (props) => {
                                                                     md={6}
                                                                     xs={12}
                                                                 >
-                                                                    <Typography sx={{ paddingLeft: "24px" }} variant="h6">
+                                                                    <Typography sx={{paddingLeft: "24px"}} variant="h6">
                                                                         Target Ontology
                                                                     </Typography>
                                                                     <Divider sx={{my: 2}}/>
@@ -329,8 +357,8 @@ export const ListTable = (props) => {
                                                                             value={item.target_ontology.uri}
                                                                         />
                                                                     </PropertyList>}
-                                                                    
-                                                                </Grid>                                                                
+
+                                                                </Grid>
                                                                 <Grid
                                                                     item
                                                                     md={6}
@@ -347,7 +375,7 @@ export const ListTable = (props) => {
                                                         </Grid>
                                                     </Grid>
                                                 </CardContent>
-                                                <Divider/>                                                
+                                                <Divider/>
                                             </TableCell>
                                         </TableRow>
                                     )}

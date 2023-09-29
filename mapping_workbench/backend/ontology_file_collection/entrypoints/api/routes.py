@@ -67,7 +67,7 @@ async def route_create_ontology_file_collection(
         ontology_file_collection: OntologyFileCollection,
         user: User = Depends(current_active_user)
 ):
-    return await create_ontology_file_collection(ontology_file_collection=ontology_file_collection, user=user)
+    return await create_ontology_file_collection(ontology_file_collection, user=user)
 
 
 @router.patch(
@@ -77,12 +77,11 @@ async def route_create_ontology_file_collection(
     response_model=OntologyFileCollection
 )
 async def route_update_ontology_file_collection(
-        id: PydanticObjectId,
-        ontology_file_collection_data: OntologyFileCollection,
+        data: OntologyFileCollection,
+        ontology_file_collection: OntologyFileCollection = Depends(get_ontology_file_collection),
         user: User = Depends(current_active_user)
 ):
-    await update_ontology_file_collection(id=id, ontology_file_collection_data=ontology_file_collection_data, user=user)
-    return await get_ontology_file_collection(id)
+    return await update_ontology_file_collection(ontology_file_collection, data, user=user)
 
 
 @router.get(
@@ -105,7 +104,7 @@ async def route_get_ontology_file_collection(
 async def route_delete_ontology_file_collection(
         ontology_file_collection: OntologyFileCollection = Depends(get_ontology_file_collection)):
     await delete_ontology_file_collection(ontology_file_collection)
-    APIEmptyContentWithIdResponse(_id=ontology_file_collection.id)
+    return APIEmptyContentWithIdResponse(id=ontology_file_collection.id)
 
 
 @router.get(
@@ -177,4 +176,4 @@ async def route_get_ontology_file_resource(
 async def route_delete_ontology_file_resource(
         ontology_file_resource: OntologyFileResource = Depends(get_ontology_file_resource)):
     await delete_ontology_file_resource(ontology_file_resource)
-    return APIEmptyContentWithIdResponse(_id=ontology_file_resource.id)
+    return APIEmptyContentWithIdResponse(id=ontology_file_resource.id)

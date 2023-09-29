@@ -376,7 +376,7 @@ class PackageImporter:
         )
 
     async def add_mapping_rules(self):
-        async def rule_exists(rule: ConceptualMappingRule):
+        async def rule_exists(rule: ConceptualMappingRule) -> ConceptualMappingRule:
             q: Dict = {
                 'field_id': rule.field_id,
                 'field_title': rule.field_title,
@@ -388,7 +388,7 @@ class PackageImporter:
                 'sparql_assertions': rule.sparql_assertions,
                 'project': Project.link_from_id(self.project.id)
             }
-            return len(await ConceptualMappingRule.find(q).to_list()) > 0
+            return await ConceptualMappingRule.find_one(q)
 
         def read_pd_value(value, default=""):
             if pd.isna(value):
@@ -441,9 +441,12 @@ class PackageImporter:
                 sparql_integration_tests
             ))
 
-            if not (await rule_exists(rule)):
+            existing_rule = await rule_exists(rule)
+            if not existing_rule:
                 await rule.on_create(self.user).save()
             else:
+                existing_rule.mapping_packages.append(MappingPackage.link_from_id(self.mapping_package.id))
+                await existing_rule.on_update(self.user).save()
                 duplicates.append(rule)
 
             await discover_and_save_mapping_rule_prefixes(rule)

@@ -20,28 +20,29 @@ async def list_ontology_file_collections(filters=None) -> List[OntologyFileColle
     ).to_list()
 
 
-async def create_ontology_file_collection(ontology_file_collection: OntologyFileCollection,
-                                          user: User) -> OntologyFileCollection:
+async def create_ontology_file_collection(
+        ontology_file_collection: OntologyFileCollection,
+        user: User
+) -> OntologyFileCollection:
     ontology_file_collection.on_create(user=user)
     return await ontology_file_collection.create()
 
 
-async def update_ontology_file_collection(id: PydanticObjectId, ontology_file_collection_data: OntologyFileCollection,
-                                          user: User):
-    ontology_file_collection: OntologyFileCollection = await OntologyFileCollection.get(id)
-    if not api_entity_is_found(ontology_file_collection):
-        raise ResourceNotFoundException()
-
-    request_data = request_update_data(ontology_file_collection_data)
-    update_data = request_update_data(OntologyFileCollection(**request_data).on_update(user=user))
-    return await ontology_file_collection.set(update_data)
+async def update_ontology_file_collection(
+        ontology_file_collection: OntologyFileCollection,
+        data: OntologyFileCollection,
+        user: User
+):
+    return await ontology_file_collection.set(
+        request_update_data(data, user=user)
+    )
 
 
 async def get_ontology_file_collection(id: PydanticObjectId) -> OntologyFileCollection:
     ontology_file_collection: OntologyFileCollection = await OntologyFileCollection.get(id)
     if not api_entity_is_found(ontology_file_collection):
         raise ResourceNotFoundException()
-    return OntologyFileCollection(**ontology_file_collection.model_dump(by_alias=False))
+    return ontology_file_collection
 
 
 async def delete_ontology_file_collection(ontology_file_collection: OntologyFileCollection):
@@ -66,7 +67,10 @@ async def create_ontology_file_collection_file_resource(
         user: User
 ) -> OntologyFileResource:
     data.ontology_file_collection = ontology_file_collection
-    ontology_file_resource = OntologyFileResource(**request_create_data(data)).on_create(user=user)
+    ontology_file_resource = \
+        OntologyFileResource(
+            **request_create_data(data, user=user)
+        )
     return await ontology_file_resource.create()
 
 
@@ -74,10 +78,9 @@ async def update_ontology_file_resource(
         ontology_file_resource: OntologyFileResource,
         data: OntologyFileResourceUpdateIn,
         user: User) -> OntologyFileResource:
-    update_data = request_update_data(
-        OntologyFileResource(**request_update_data(data)).on_update(user=user)
+    return await ontology_file_resource.set(
+        request_update_data(data, user=user)
     )
-    return await ontology_file_resource.set(update_data)
 
 
 async def get_ontology_file_resource(id: PydanticObjectId) -> OntologyFileResource:

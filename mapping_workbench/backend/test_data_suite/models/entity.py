@@ -1,7 +1,9 @@
 from enum import Enum
 from typing import Optional, List
 
+import pymongo
 from beanie import Link
+from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
 from mapping_workbench.backend.file_resource.models.file_resource import FileResource, FileResourceCollection, \
@@ -13,7 +15,17 @@ class TestDataSuite(FileResourceCollection):
 
     class Settings(BaseProjectResourceEntity.Settings):
         name = "test_data_suites"
-        use_state_management = True
+
+        indexes = [
+            IndexModel(
+                [
+                    ("title", pymongo.TEXT),
+                    ("description", pymongo.TEXT),
+                    ("path", pymongo.TEXT)
+                ],
+                name="search_text_idx"
+            )
+        ]
 
 
 class TestDataFileResourceFormat(Enum):
@@ -39,3 +51,17 @@ class TestDataFileResource(FileResource):
 
     class Settings(FileResource.Settings):
         name = "test_data_file_resources"
+
+        indexes = [
+            IndexModel(
+                [
+                    ("title", pymongo.TEXT),
+                    ("description", pymongo.TEXT),
+                    ("filename", pymongo.TEXT),
+                    ("path", pymongo.TEXT),
+                    ("format", pymongo.TEXT),
+                    ("content", pymongo.TEXT)
+                ],
+                name="search_text_idx"
+            )
+        ]

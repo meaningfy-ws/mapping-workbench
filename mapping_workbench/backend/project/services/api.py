@@ -30,8 +30,11 @@ async def list_projects(filters: dict = None, page: int = None, limit: int = Non
     return items, total_count
 
 
-async def create_project(project_data: ProjectCreateIn, user: User) -> ProjectOut:
-    project: Project = Project(**request_create_data(project_data)).on_create(user=user)
+async def create_project(data: ProjectCreateIn, user: User) -> ProjectOut:
+    project: Project = \
+        Project(
+            **request_create_data(data, user=user)
+        )
     try:
         await project.create()
     except DuplicateKeyError as e:
@@ -39,14 +42,14 @@ async def create_project(project_data: ProjectCreateIn, user: User) -> ProjectOu
     return ProjectOut(**project.model_dump())
 
 
-async def update_project(id: PydanticObjectId, project_data: ProjectUpdateIn, user: User):
-    project: Project = await Project.get(id)
-    if not api_entity_is_found(project):
-        raise ResourceNotFoundException()
-
-    request_data = request_update_data(project_data)
-    update_data = request_update_data(Project(**request_data).on_update(user=user))
-    return await project.set(update_data)
+async def update_project(
+        project: Project,
+        data: ProjectUpdateIn,
+        user: User
+) -> ProjectOut:
+    return ProjectOut(**(
+        await project.set(request_update_data(data, user=user))
+    ))
 
 
 async def get_project(id: PydanticObjectId) -> Project:

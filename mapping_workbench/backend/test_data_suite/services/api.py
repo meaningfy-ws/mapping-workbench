@@ -21,14 +21,14 @@ async def create_test_data_suite(test_data_suite: TestDataSuite, user: User) -> 
     return await test_data_suite.create()
 
 
-async def update_test_data_suite(id: PydanticObjectId, test_data_suite_data: TestDataSuite, user: User):
-    test_data_suite: TestDataSuite = await TestDataSuite.get(id)
-    if not api_entity_is_found(test_data_suite):
-        raise ResourceNotFoundException()
-
-    request_data = request_update_data(test_data_suite_data)
-    update_data = request_update_data(TestDataSuite(**request_data).on_update(user=user))
-    return await test_data_suite.set(update_data)
+async def update_test_data_suite(
+        test_data_suite: TestDataSuite,
+        data: TestDataSuite,
+        user: User
+) -> TestDataSuite:
+    return await test_data_suite.set(
+        request_update_data(data, user=user)
+    )
 
 
 async def get_test_data_suite(id: PydanticObjectId) -> TestDataSuite:
@@ -60,7 +60,7 @@ async def create_test_data_suite_file_resource(
         user: User
 ) -> TestDataFileResource:
     data.test_data_suite = test_data_suite
-    test_data_file_resource = TestDataFileResource(**request_create_data(data)).on_create(user=user)
+    test_data_file_resource = TestDataFileResource(**request_create_data(data, user=user))
     return await test_data_file_resource.create()
 
 
@@ -68,10 +68,9 @@ async def update_test_data_file_resource(
         test_data_file_resource: TestDataFileResource,
         data: TestDataFileResourceUpdateIn,
         user: User) -> TestDataFileResource:
-    update_data = request_update_data(
-        TestDataFileResource(**request_update_data(data)).on_update(user=user)
+    return await test_data_file_resource.set(
+        request_update_data(data, user=user)
     )
-    return await test_data_file_resource.set(update_data)
 
 
 async def get_test_data_file_resource(id: PydanticObjectId) -> TestDataFileResource:

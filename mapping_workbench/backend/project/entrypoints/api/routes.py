@@ -58,10 +58,10 @@ async def route_list_projects(
     status_code=status.HTTP_201_CREATED
 )
 async def route_create_project(
-        project_data: ProjectCreateIn,
+        data: ProjectCreateIn,
         user: User = Depends(current_active_user)
 ):
-    return await create_project(project_data=project_data, user=user)
+    return await create_project(data, user=user)
 
 
 @router.patch(
@@ -71,12 +71,11 @@ async def route_create_project(
     response_model=ProjectOut
 )
 async def route_update_project(
-        id: PydanticObjectId,
-        project_data: ProjectUpdateIn,
+        data: ProjectUpdateIn,
+        project: Project = Depends(get_project),
         user: User = Depends(current_active_user)
 ):
-    await update_project(id=id, project_data=project_data, user=user)
-    return await get_project_out(id)
+    return await update_project(project, data, user=user)
 
 
 @router.get(
@@ -97,4 +96,4 @@ async def route_get_project(project: ProjectOut = Depends(get_project_out)):
 )
 async def route_delete_project(project: Project = Depends(get_project)):
     await delete_project(project)
-    return APIEmptyContentWithIdResponse(_id=project.id)
+    return APIEmptyContentWithIdResponse(id=project.id)

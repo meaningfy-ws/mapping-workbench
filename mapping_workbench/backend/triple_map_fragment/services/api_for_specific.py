@@ -31,10 +31,14 @@ async def list_specific_triple_map_fragments(filters: dict = None, page: int = N
     return items, total_count
 
 
-async def create_specific_triple_map_fragment(specific_triple_map_fragment_data: SpecificTripleMapFragmentCreateIn,
-                                              user: User) -> SpecificTripleMapFragmentOut:
-    specific_triple_map_fragment: SpecificTripleMapFragment = SpecificTripleMapFragment(
-        **request_create_data(specific_triple_map_fragment_data)).on_create(user=user)
+async def create_specific_triple_map_fragment(
+        data: SpecificTripleMapFragmentCreateIn,
+        user: User
+) -> SpecificTripleMapFragmentOut:
+    specific_triple_map_fragment: SpecificTripleMapFragment = \
+        SpecificTripleMapFragment(
+            **request_create_data(data, user=user)
+        )
     try:
         await specific_triple_map_fragment.create()
     except DuplicateKeyError as e:
@@ -50,17 +54,17 @@ async def update_specific_triple_map_fragments(
 
 
 async def update_specific_triple_map_fragment(
-        id: PydanticObjectId,
-        specific_triple_map_fragment_data: SpecificTripleMapFragmentUpdateIn,
+        specific_triple_map_fragment: SpecificTripleMapFragment,
+        data: SpecificTripleMapFragmentUpdateIn,
         user: User
-):
-    specific_triple_map_fragment: SpecificTripleMapFragment = await SpecificTripleMapFragment.get(id)
-    if not api_entity_is_found(specific_triple_map_fragment):
-        raise ResourceNotFoundException()
+) -> SpecificTripleMapFragmentOut:
+    return SpecificTripleMapFragmentOut(**(
+        await specific_triple_map_fragment.set(request_update_data(data, user=user))
+    ))
 
-    request_data = request_update_data(specific_triple_map_fragment_data)
-    update_data = request_update_data(SpecificTripleMapFragment(**request_data).on_update(user=user))
-    return await specific_triple_map_fragment.set(update_data)
+
+async def check_specific_triple_map_fragment_exists(id: PydanticObjectId) -> bool:
+    return bool(await get_specific_triple_map_fragment(id))
 
 
 async def get_specific_triple_map_fragment(id: PydanticObjectId) -> SpecificTripleMapFragment:

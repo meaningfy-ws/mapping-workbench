@@ -46,7 +46,8 @@ class BaseEntityOutSchema(BaseModel):
 
 
 class BaseEntityInSchema(BaseModel, extra=Extra.forbid):
-    pass
+    """
+    """
 
 
 class BaseEntityImmutableFiltersSchema(BaseModel):

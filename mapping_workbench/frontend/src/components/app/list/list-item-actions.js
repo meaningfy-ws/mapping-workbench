@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import {Button} from '@mui/material';
 import EditIcon from '@untitled-ui/icons-react/build/esm/Edit02';
 import Eye from '@untitled-ui/icons-react/build/esm/Eye';
 import DotsHorizontalIcon from '@untitled-ui/icons-react/build/esm/DotsHorizontal';
@@ -44,7 +44,7 @@ export const ListItemActions = (props) => {
     const handleDeleteAction = useCallback(async () => {
         const response = await itemctx.api.deleteItem(itemctx.id);
         console.log("delete pathname: ", itemctx.api.section);
-        
+
         router.push({
             pathname: paths.app[itemctx.api.section].index
         });
@@ -53,14 +53,13 @@ export const ListItemActions = (props) => {
 
     return (
         <>
-        <Box className="newActionButtons" /*sx={{ display: "flex", flexDirection: "inline", justifyContent: "space-evenly"}}*/>
             <Button
                 variant="text"
                 size="small"
                 color="info"
                 onClick={handleViewAction}
             >
-            View
+                View
             </Button>
             <Button
                 variant="text"
@@ -68,7 +67,7 @@ export const ListItemActions = (props) => {
                 color="success"
                 onClick={handleEditAction}
             >
-            Edit
+                Edit
             </Button>
             <Button
                 variant="text"
@@ -76,9 +75,8 @@ export const ListItemActions = (props) => {
                 color="error"
                 onClick={handleDeleteAction}
             >
-            Delete
+                Delete
             </Button>
-        </Box>
 
             {/* <Tooltip title="More options">
                 <IconButton

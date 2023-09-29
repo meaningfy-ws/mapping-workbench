@@ -1,12 +1,15 @@
 from enum import Enum
-from typing import Optional, List
+from typing import Optional
 
 import pymongo
 from beanie import Link
 from pymongo import IndexModel
 
+from mapping_workbench.backend.core.models.base_mapping_package_resource_entity import \
+    BaseMappingPackageResourceEntityOutSchema, BaseMappingPackageResourceEntityInSchema, \
+    BaseMappingPackageResourceEntityUpdateInSchema
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
-    BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
+    BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema, BaseProjectResourceEntityUpdateInSchema
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 
 
@@ -15,26 +18,35 @@ class TripleMapFragmentFormat(Enum):
     YAML = "YAML"
 
 
-class SpecificTripleMapFragmentIn(BaseProjectResourceEntityInSchema):
+class SpecificTripleMapFragmentIn(
+    BaseProjectResourceEntityInSchema,
+    BaseMappingPackageResourceEntityInSchema
+):
     triple_map_uri: Optional[str] = None
     triple_map_content: Optional[str] = None
     format: Optional[TripleMapFragmentFormat] = None
-    mapping_package: Optional[Link[MappingPackage]] = None
 
 
 class SpecificTripleMapFragmentCreateIn(SpecificTripleMapFragmentIn):
     pass
 
 
-class SpecificTripleMapFragmentUpdateIn(SpecificTripleMapFragmentIn):
-    pass
-
-
-class SpecificTripleMapFragmentOut(BaseProjectResourceEntityOutSchema):
+class SpecificTripleMapFragmentUpdateIn(
+    BaseProjectResourceEntityUpdateInSchema,
+    BaseMappingPackageResourceEntityUpdateInSchema
+):
     triple_map_uri: Optional[str] = None
     triple_map_content: Optional[str] = None
     format: Optional[TripleMapFragmentFormat] = None
-    mapping_package: Optional[Link[MappingPackage]] = None
+
+
+class SpecificTripleMapFragmentOut(
+    BaseProjectResourceEntityOutSchema,
+    BaseMappingPackageResourceEntityOutSchema
+):
+    triple_map_uri: Optional[str] = None
+    triple_map_content: Optional[str] = None
+    format: Optional[TripleMapFragmentFormat] = None
 
 
 class GenericTripleMapFragmentIn(BaseProjectResourceEntityInSchema):

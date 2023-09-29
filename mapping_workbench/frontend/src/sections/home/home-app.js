@@ -6,8 +6,8 @@ export const HomeApp = () => {
 
     return (
         <Typography
-            variant="h1"
-            sx={{mb: 2}}
+            variant="h2"
+            sx={{mb: 4}}
         >
             <Typography
                 component="span"
