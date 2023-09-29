@@ -20,7 +20,6 @@ import {genericTripleMapFragmentsApi} from "../../../api/triple-map-fragments/ge
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import Link from "@mui/material/Link";
 import * as React from "react";
 import {useCallback, useEffect, useState} from "react";
 import {sparqlTestFileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
@@ -29,7 +28,6 @@ import Alert from "@mui/material/Alert";
 import Divider from "@mui/material/Divider";
 
 import parse from 'html-react-parser';
-import {ontologyTermsApi as sectionApi} from "../../../api/ontology-terms";
 
 
 const TermValidityInfo = (props) => {
@@ -197,7 +195,6 @@ export const EditForm = (props) => {
     }, [])
 
     const handleCloneAction = useCallback(async (e) => {
-        e.preventDefault();
         toast.promise(sectionApi.cloneItem(item._id), {
             loading: `Cloning rule ... `,
             success: (response) => {
@@ -205,6 +202,7 @@ export const EditForm = (props) => {
                     pathname: paths.app[sectionApi.section].edit,
                     query: {id: response._id}
                 });
+                itemctx.setState(response);
                 return `Rule successfully cloned.`
             },
             error: (err) => `Cloning rule failed: ${err.message}.`
@@ -212,7 +210,7 @@ export const EditForm = (props) => {
 
         return false;
 
-    }, [router, sectionApi, item]);
+    }, [router, sectionApi, item, itemctx]);
 
     return (
         <form onSubmit={formik.handleSubmit} {...other}>

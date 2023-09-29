@@ -186,43 +186,44 @@ export const ListSearch = (props) => {
             </Stack>
             <Divider/>
             {showChips
-                ? (
-                    <Stack
-                        alignItems="center"
-                        direction="row"
-                        flexWrap="wrap"
-                        gap={1}
-                        sx={{p: 2}}
-                    >
-                        {chips.map((chip, index) => (
-                            <Chip
-                                key={index}
-                                label={(
-                                    <Box
-                                        sx={{
-                                            alignItems: 'center',
-                                            display: 'flex',
-                                            '& span': {
-                                                fontWeight: 600
-                                            }
-                                        }}
-                                    >
-                                        <>
+                ? (<>
+                        <Stack
+                            alignItems="center"
+                            direction="row"
+                            flexWrap="wrap"
+                            gap={1}
+                            sx={{p: 2}}
+                        >
+                            {chips.map((chip, index) => (
+                                <Chip
+                                    key={index}
+                                    label={(
+                                        <Box
+                                            sx={{
+                                                alignItems: 'center',
+                                                display: 'flex',
+                                                '& span': {
+                                                    fontWeight: 600
+                                                }
+                                            }}
+                                        >
+                                            <>
                         <span>
                           {chip.label}
                         </span>
-                                            :
-                                            {' '}
-                                            {chip.displayValue || chip.value}
-                                        </>
-                                    </Box>
-                                )}
-                                onDelete={() => handleChipDelete(chip)}
-                                variant="outlined"
-                            />
-                        ))}
+                                                :
+                                                {' '}
+                                                {chip.displayValue || chip.value}
+                                            </>
+                                        </Box>
+                                    )}
+                                    onDelete={() => handleChipDelete(chip)}
+                                    variant="outlined"
+                                />
+                            ))}
+                        </Stack>
                         <Divider/>
-                    </Stack>
+                    </>
                 )
                 : (false && <>
                         <Box sx={{p: 2.5}}>
