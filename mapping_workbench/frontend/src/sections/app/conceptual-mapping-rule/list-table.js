@@ -167,7 +167,7 @@ export const ListTableTripleMapFragment = (props) => {
                 aria-describedby={"triple_map_fragment_dialog_" + item._id}
                 variant="contained"
                 size="small"
-                color="info"
+                color="primary"
                 onClick={handleTripleMapFragmentDialogOpen}
                 component={Link}
                 sx={{
@@ -341,7 +341,7 @@ export const ListTableMappingPackages = (props) => {
                 aria-describedby={"mapping_packages_dialog_" + item._id}
                 variant="contained"
                 size="small"
-                color="info"
+                color="primary"
                 onClick={mappingPackagesDialog.handleOpen}
                 component={Link}
                 sx={{
@@ -439,7 +439,7 @@ export const ListTableSPARQLAssertions = (props) => {
                     aria-describedby={"sparql_assertions_" + item._id}
                     variant="contained"
                     size="small"
-                    color="info"
+                    color="primary"
                     onClick={sparqlTestFileResourcesDialog.handleOpen}
                     component={Link}
                     sx={{
