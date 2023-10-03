@@ -2,9 +2,10 @@ import {Button} from '@mui/material';
 
 
 import {usePopover} from 'src/hooks/use-popover';
-import {useCallback} from "react";
+import {useCallback, useState} from "react";
 import {paths} from 'src/paths';
 import {useRouter} from "../../../hooks/use-router";
+import ConfirmDialog from "../dialog/confirm-dialog";
 
 export const ListFileCollectionActions = (props) => {
     const router = useRouter();
@@ -43,6 +44,8 @@ export const ListFileCollectionActions = (props) => {
         window.location.reload();
     }, [router, itemctx]);
 
+    const [confirmOpen, setConfirmOpen] = useState(false);
+
     return (
         <>
             <div className='newActionButtons' sx={{ display: "flex", flexDirection: "inline", justifyContent: "space-evenly"}}>
@@ -74,10 +77,18 @@ export const ListFileCollectionActions = (props) => {
                     variant="text"
                     size="small"
                     color="error"
-                    onClick={handleDeleteAction}
+                    onClick={() => setConfirmOpen(true)}
                 >
                 Delete
                 </Button>
+                <ConfirmDialog
+                    title="Delete It?"
+                    open={confirmOpen}
+                    setOpen={setConfirmOpen}
+                    onConfirm={handleDeleteAction}
+                >
+                    Are you sure you want to delete it?
+                </ConfirmDialog>
             </div>
             {/* <Tooltip title="More options">
                 <IconButton

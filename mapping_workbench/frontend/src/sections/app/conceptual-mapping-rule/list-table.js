@@ -34,7 +34,6 @@ import toast from "react-hot-toast";
 import {conceptualMappingRulesApi} from "../../../api/conceptual-mapping-rules";
 import {mappingPackagesApi} from "../../../api/mapping-packages";
 import {genericTripleMapFragmentsApi} from "../../../api/triple-map-fragments/generic";
-import Divider from "@mui/material/Divider";
 import TextField from "@mui/material/TextField";
 import Link from "@mui/material/Link";
 import MenuItem from "@mui/material/MenuItem";
@@ -51,6 +50,8 @@ import {sparqlTestFileResourcesApi} from "../../../api/sparql-test-suites/file-r
 import {paths} from "../../../paths";
 import {useRouter} from "../../../hooks/use-router";
 import ListItem from "@mui/material/ListItem";
+import parse from "html-react-parser";
+import Alert from "@mui/material/Alert";
 
 export const ListTableTripleMapFragment = (props) => {
     const {
@@ -175,7 +176,9 @@ export const ListTableTripleMapFragment = (props) => {
                     marginTop: "-50%"
                 }}
             >
-                <EditIcon/>
+                <SvgIcon fontSize="small">
+                    <EditIcon/>
+                </SvgIcon>
             </Button>}
         </Box>
         <Dialog
@@ -349,7 +352,9 @@ export const ListTableMappingPackages = (props) => {
                     marginTop: "-50%"
                 }}
             >
-                <EditIcon/>
+                <SvgIcon fontSize="small">
+                    <EditIcon/>
+                </SvgIcon>
             </Button>}
         </Box>
         <Dialog
@@ -447,7 +452,9 @@ export const ListTableSPARQLAssertions = (props) => {
                         marginTop: "-50%"
                     }}
                 >
-                    <EditIcon/>
+                    <SvgIcon fontSize="small">
+                        <EditIcon/>
+                    </SvgIcon>
                 </Button>}
             </Box>
             <Dialog
@@ -519,6 +526,44 @@ export const ListTableRow = (props) => {
 
     }, [router]);
 
+    const [targetPropertyPathValidityInfo, setTargetPropertyPathValidityInfo] = useState("");
+    const [targetClassPathValidityInfo, setTargetClassPathValidityInfo] = useState("");
+
+    const checkTermsValidity = (termsValidity, pathName, pathValue) => {
+        let validityInfo = pathValue;
+        for (let termValidity of termsValidity) {
+            let color = termValidity.is_valid ? 'green' : 'red'
+            validityInfo = validityInfo.replace(
+                new RegExp(termValidity.term, 'g'),
+                `<b style="color: ${color}">${termValidity.term}</b>`
+            )
+        }
+        switch (pathName) {
+            case 'target_property_path':
+                setTargetPropertyPathValidityInfo(validityInfo)
+                break;
+            case 'target_class_path':
+                setTargetClassPathValidityInfo(validityInfo)
+                break;
+        }
+    }
+
+    useEffect(() => {
+        checkTermsValidity(
+            item.target_class_path_validity,
+            "target_class_path",
+            item.target_class_path
+        );
+        checkTermsValidity(
+            item.target_property_path_validity,
+            "target_property_path",
+            item.target_property_path
+        );
+    }, [])
+
+    const hasTargetPropertyPathValidityErrors = item.target_property_path_validity.some(x => !x.is_valid);
+    const hasTargetClassPathValidityErrors = item.target_class_path_validity.some(x => !x.is_valid);
+
     return (<Fragment key={item_id}>
         <TableRow
             hover
@@ -581,7 +626,10 @@ export const ListTableRow = (props) => {
             </TableCell>
             <TableCell>
                 <Box title={item.target_class_path}>
-                    {detailedView && item.target_class_path}
+                    {detailedView && item.target_class_path &&
+                        <Alert severity={hasTargetClassPathValidityErrors ? "error" : "success"}>
+                            {parse(targetClassPathValidityInfo)}
+                        </Alert>}
                     {!detailedView && (
                         <>
                             {item.target_class_path.length > TRUNCATE_LENGTH && "..."}
@@ -592,7 +640,10 @@ export const ListTableRow = (props) => {
             </TableCell>
             <TableCell>
                 <Box title={item.target_property_path}>
-                    {detailedView && item.target_property_path}
+                    {detailedView && item.target_property_path &&
+                        <Alert severity={hasTargetPropertyPathValidityErrors ? "error" : "success"}>
+                            {parse(targetPropertyPathValidityInfo)}
+                        </Alert>}
                     {!detailedView && (
                         <>
                             {item.target_property_path.length > TRUNCATE_LENGTH && "..."}

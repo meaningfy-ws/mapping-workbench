@@ -92,7 +92,7 @@ async def is_known_term() -> bool:
 async def check_content_terms_validity(content: str) -> List[TermValidityResponse]:
     ns_handler: NamespaceInventory = await get_ns_handler()
 
-    terms_validity = []
+    terms_validity: List[TermValidityResponse] = []
     terms = sorted(list(set(re.findall(r"([\w.\-_]+:[\w.\-_]+)", content))))
 
     for term in terms:

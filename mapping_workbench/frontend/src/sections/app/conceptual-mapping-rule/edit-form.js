@@ -212,6 +212,8 @@ export const EditForm = (props) => {
 
     }, [router, sectionApi, item, itemctx]);
 
+    const hasTargetPropertyPathValidityErrors = targetPropertyPathTermsValidityInfo.some(x => !x.is_valid);
+    const hasTargetClassPathValidityErrors = targetClassPathTermsValidityInfo.some(x => !x.is_valid);
     return (
         <form onSubmit={formik.handleSubmit} {...other}>
             <Card>
@@ -239,7 +241,7 @@ export const EditForm = (props) => {
                                 )}
                             />
                             {targetClassPathValidityInfo && <>
-                                <Alert severity="info"
+                                <Alert severity={hasTargetClassPathValidityErrors ? "error" : "success"}
                                        sx={{
                                            my: 2
                                        }}
@@ -261,7 +263,7 @@ export const EditForm = (props) => {
                                 )}/>
 
                             {targetPropertyPathValidityInfo && <>
-                                <Alert severity="info"
+                                <Alert severity={hasTargetPropertyPathValidityErrors ? "error" : "success"}
                                        sx={{
                                            my: 2
                                        }}

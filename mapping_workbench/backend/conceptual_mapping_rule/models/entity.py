@@ -7,6 +7,7 @@ from pymongo import IndexModel
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
+from mapping_workbench.backend.ontology.models.term import TermValidityResponse
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResource
 from mapping_workbench.backend.triple_map_fragment.models.entity import GenericTripleMapFragment
 
@@ -37,7 +38,9 @@ class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema):
     field_description: Optional[str] = None
     source_xpath: Optional[List[str]] = None
     target_class_path: Optional[str] = None
+    target_class_path_validity: Optional[List[TermValidityResponse]] = None
     target_property_path: Optional[str] = None
+    target_property_path_validity: Optional[List[TermValidityResponse]] = None
     mapping_packages: Optional[List[Link[MappingPackage]]] = None
     triple_map_fragment: Optional[Link[GenericTripleMapFragment]] = None
     sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None

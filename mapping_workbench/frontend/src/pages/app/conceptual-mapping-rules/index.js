@@ -29,7 +29,7 @@ const useItemsSearch = () => {
         },
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE,
-        detailedView: false
+        detailedView: true
     });
 
     const handleFiltersChange = useCallback((filters) => {

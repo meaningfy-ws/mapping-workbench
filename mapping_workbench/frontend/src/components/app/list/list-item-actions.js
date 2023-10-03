@@ -1,22 +1,11 @@
 import {Button} from '@mui/material';
-import EditIcon from '@untitled-ui/icons-react/build/esm/Edit02';
-import Eye from '@untitled-ui/icons-react/build/esm/Eye';
-import DotsHorizontalIcon from '@untitled-ui/icons-react/build/esm/DotsHorizontal';
-import DeleteIcon from '@untitled-ui/icons-react/build/esm/Delete';
-import IconButton from '@mui/material/IconButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import SvgIcon from '@mui/material/SvgIcon';
-import Tooltip from '@mui/material/Tooltip';
 
 import {usePopover} from 'src/hooks/use-popover';
-import {useCallback} from "react";
+import {useCallback, useState} from "react";
 import {paths} from 'src/paths';
 import {useRouter} from "../../../hooks/use-router";
-import {Box} from "@mui/system";
 import {ACTION} from "../../../api/section";
+import ConfirmDialog from "../dialog/confirm-dialog";
 
 export const ListItemActions = (props) => {
     const router = useRouter();
@@ -52,6 +41,8 @@ export const ListItemActions = (props) => {
         window.location.reload();
     }, [router, itemctx]);
 
+    const [confirmOpen, setConfirmOpen] = useState(false);
+
     return (
         <>
             {itemctx.api.SECTION_LIST_ACTIONS.includes(ACTION.VIEW) && <Button
@@ -70,14 +61,24 @@ export const ListItemActions = (props) => {
             >
                 Edit
             </Button>}
-            {itemctx.api.SECTION_LIST_ACTIONS.includes(ACTION.DELETE) && <Button
-                variant="text"
-                size="small"
-                color="error"
-                onClick={handleDeleteAction}
-            >
-                Delete
-            </Button>}
+            {itemctx.api.SECTION_LIST_ACTIONS.includes(ACTION.DELETE) && <>
+                <Button
+                    variant="text"
+                    size="small"
+                    color="error"
+                    onClick={() => setConfirmOpen(true)}
+                >
+                    Delete
+                </Button>
+                <ConfirmDialog
+                    title="Delete It?"
+                    open={confirmOpen}
+                    setOpen={setConfirmOpen}
+                    onConfirm={handleDeleteAction}
+                >
+                    Are you sure you want to delete it?
+                </ConfirmDialog>
+            </>}
 
             {/* <Tooltip title="More options">
                 <IconButton
