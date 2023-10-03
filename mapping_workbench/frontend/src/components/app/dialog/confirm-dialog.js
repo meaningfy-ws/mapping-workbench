@@ -8,7 +8,6 @@ import Divider from "@mui/material/Divider";
 
 const ConfirmDialog = (props) => {
     const {title, children, open, setOpen, onConfirm} = props;
-    console.log(title);
     return (
         <Dialog
             open={open}

@@ -217,7 +217,7 @@ export const ListTableTripleMapFragment = (props) => {
                     {tripleMapFragment._id && (
                         <>
                             <Box>
-                                <Grid xs={12} md={12} pb={2}>
+                                <Grid xs={12} md={12} pb={2} item={true}>
                                     <FormControlLabel
                                         sx={{
                                             width: '100%'
@@ -431,7 +431,7 @@ export const ListTableSPARQLAssertions = (props) => {
             {ruleSPARQLResources.length > 0 && (
                 <Box sx={{mb: 1}}>
                     {ruleSPARQLResources.map(x => (
-                        <ListItem>{x.title}</ListItem>
+                        <ListItem key={`sparql_resource_${x.id}`}>{x.title}</ListItem>
                     ))}
                 </Box>
             )}
@@ -526,10 +526,8 @@ export const ListTableRow = (props) => {
 
     }, [router]);
 
-    const [targetPropertyPathValidityInfo, setTargetPropertyPathValidityInfo] = useState("");
-    const [targetClassPathValidityInfo, setTargetClassPathValidityInfo] = useState("");
 
-    const checkTermsValidity = (termsValidity, pathName, pathValue) => {
+    const generateValidityInfo = (termsValidity, pathName, pathValue) => {
         let validityInfo = pathValue;
         for (let termValidity of termsValidity) {
             let color = termValidity.is_valid ? 'green' : 'red'
@@ -538,28 +536,20 @@ export const ListTableRow = (props) => {
                 `<b style="color: ${color}">${termValidity.term}</b>`
             )
         }
-        switch (pathName) {
-            case 'target_property_path':
-                setTargetPropertyPathValidityInfo(validityInfo)
-                break;
-            case 'target_class_path':
-                setTargetClassPathValidityInfo(validityInfo)
-                break;
-        }
+
+        return validityInfo;
     }
 
-    useEffect(() => {
-        checkTermsValidity(
-            item.target_class_path_validity,
-            "target_class_path",
-            item.target_class_path
-        );
-        checkTermsValidity(
-            item.target_property_path_validity,
-            "target_property_path",
-            item.target_property_path
-        );
-    }, [])
+    const targetPropertyPathValidityInfo = generateValidityInfo(
+        item.target_property_path_validity,
+        "target_property_path",
+        item.target_property_path
+    );
+    const targetClassPathValidityInfo = generateValidityInfo(
+        item.target_class_path_validity,
+        "target_class_path",
+        item.target_class_path
+    );
 
     const hasTargetPropertyPathValidityErrors = item.target_property_path_validity.some(x => !x.is_valid);
     const hasTargetClassPathValidityErrors = item.target_class_path_validity.some(x => !x.is_valid);
@@ -567,7 +557,7 @@ export const ListTableRow = (props) => {
     return (<Fragment key={item_id}>
         <TableRow
             hover
-            key={"rule_" + item_id}
+            key={`rule_${item_id}`}
             sx={{
                 verticalAlign: 'top',
                 wordBreak: "break-all"
@@ -613,7 +603,7 @@ export const ListTableRow = (props) => {
             <TableCell>
                 {item.source_xpath.map(
                     x => (
-                        <ListItem title={x}>
+                        <ListItem title={x} key={`source_xpath_${x.id}`}>
                             {detailedView && x}
                             {!detailedView && (
                                 <>
@@ -801,13 +791,7 @@ export const ListTable = (props) => {
     }, []);
 
     const handleItemHover = useCallback((itemId) => {
-        setHoveredItem((prevItemId) => {
-            if (prevItemId === itemId) {
-                return null;
-            }
-
-            return itemId;
-        });
+        setHoveredItem(itemId);
     }, []);
 
     // const handleItemClose = useCallback(() => {
@@ -839,7 +823,7 @@ export const ListTable = (props) => {
                 <TableHead>
                     <TableRow>
                         <TableCell/>
-                        <TableCell>
+                        <TableCell width="12%">
                             <Tooltip
                                 enterDelay={300}
                                 title="Sort"
@@ -853,7 +837,7 @@ export const ListTable = (props) => {
                                 </TableSortLabel>
                             </Tooltip>
                         </TableCell>
-                        <TableCell>
+                        <TableCell width="17%">
                             <Tooltip
                                 enterDelay={300}
                                 title="Sort"
@@ -865,7 +849,7 @@ export const ListTable = (props) => {
                                 </TableSortLabel>
                             </Tooltip>
                         </TableCell>
-                        <TableCell>
+                        <TableCell width="17%">
                             <Tooltip
                                 enterDelay={300}
                                 title="Sort"
@@ -877,7 +861,7 @@ export const ListTable = (props) => {
                                 </TableSortLabel>
                             </Tooltip>
                         </TableCell>
-                        <TableCell>
+                        <TableCell width="17%">
                             <Tooltip
                                 enterDelay={300}
                                 title="Sort"
@@ -923,7 +907,10 @@ export const ListTable = (props) => {
                         const isHovered = item_id === hoveredItem;
 
                         return (<ListTableRow
-                            item_id={item_id} item={item} isCurrent={isCurrent}
+                            key={`rules_list_row_${item_id}`}
+                            item={item}
+                            item_id={item_id}
+                            isCurrent={isCurrent}
                             handleItemToggle={handleItemToggle} sectionApi={sectionApi}
                             initProjectMappingPackages={projectMappingPackages}
                             initProjectTripleMapFragments={projectTripleMapFragments}
