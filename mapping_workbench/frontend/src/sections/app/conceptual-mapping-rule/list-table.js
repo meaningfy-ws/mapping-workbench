@@ -541,18 +541,18 @@ export const ListTableRow = (props) => {
     }
 
     const targetPropertyPathValidityInfo = generateValidityInfo(
-        item.target_property_path_validity,
+        item.target_property_path_terms_validity,
         "target_property_path",
         item.target_property_path
     );
     const targetClassPathValidityInfo = generateValidityInfo(
-        item.target_class_path_validity,
+        item.target_class_path_terms_validity,
         "target_class_path",
         item.target_class_path
     );
 
-    const hasTargetPropertyPathValidityErrors = item.target_property_path_validity.some(x => !x.is_valid);
-    const hasTargetClassPathValidityErrors = item.target_class_path_validity.some(x => !x.is_valid);
+    const hasTargetPropertyPathValidityErrors = item.target_property_path_terms_validity.some(x => !x.is_valid);
+    const hasTargetClassPathValidityErrors = item.target_class_path_terms_validity.some(x => !x.is_valid);
 
     return (<Fragment key={item_id}>
         <TableRow
@@ -823,7 +823,7 @@ export const ListTable = (props) => {
                 <TableHead>
                     <TableRow>
                         <TableCell/>
-                        <TableCell width="12%">
+                        <TableCell width="10%">
                             <Tooltip
                                 enterDelay={300}
                                 title="Sort"
@@ -837,7 +837,7 @@ export const ListTable = (props) => {
                                 </TableSortLabel>
                             </Tooltip>
                         </TableCell>
-                        <TableCell width="17%">
+                        <TableCell width="18%">
                             <Tooltip
                                 enterDelay={300}
                                 title="Sort"
@@ -849,7 +849,7 @@ export const ListTable = (props) => {
                                 </TableSortLabel>
                             </Tooltip>
                         </TableCell>
-                        <TableCell width="17%">
+                        <TableCell width="18%">
                             <Tooltip
                                 enterDelay={300}
                                 title="Sort"
@@ -861,7 +861,7 @@ export const ListTable = (props) => {
                                 </TableSortLabel>
                             </Tooltip>
                         </TableCell>
-                        <TableCell width="17%">
+                        <TableCell width="18%">
                             <Tooltip
                                 enterDelay={300}
                                 title="Sort"

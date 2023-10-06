@@ -22,8 +22,8 @@ import {useMounted} from "../../../hooks/use-mounted";
 const useItemsSearch = () => {
     const [state, setState] = useState({
         filters: {
-            name: undefined,
-            category: [],
+            q: undefined,
+            terms_validity: undefined,
             status: [],
             inStock: undefined
         },

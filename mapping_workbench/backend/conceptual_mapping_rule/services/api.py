@@ -4,7 +4,8 @@ from beanie import PydanticObjectId
 from pymongo.errors import DuplicateKeyError
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule, \
-    ConceptualMappingRuleCreateIn, ConceptualMappingRuleUpdateIn, ConceptualMappingRuleOut
+    ConceptualMappingRuleCreateIn, ConceptualMappingRuleUpdateIn, ConceptualMappingRuleOut, \
+    ConceptualMappingRuleTermsValidity
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException, DuplicateKeyException
 from mapping_workbench.backend.core.services.request import request_update_data, request_create_data, \
@@ -20,6 +21,16 @@ async def list_conceptual_mapping_rules(filters: dict = None, page: int = None, 
     prepare_search_param(query_filters)
     skip, limit = pagination_params(page, limit)
 
+    # update terms_validity info for queried rules
+    for item in await ConceptualMappingRule.find(query_filters).to_list():
+        item.target_class_path_terms_validity = await check_content_terms_validity(item.target_class_path)
+        item.target_property_path_terms_validity = await check_content_terms_validity(item.target_property_path)
+        item.terms_validity = ConceptualMappingRuleTermsValidity.INVALID \
+            if any(not x.is_valid for x in item.target_class_path_terms_validity) \
+            or any(not x.is_valid for x in item.target_property_path_terms_validity) \
+            else ConceptualMappingRuleTermsValidity.VALID
+        await item.save()
+
     items: List[ConceptualMappingRuleOut] = await ConceptualMappingRule.find(
         query_filters,
         projection_model=ConceptualMappingRuleOut,
@@ -27,10 +38,6 @@ async def list_conceptual_mapping_rules(filters: dict = None, page: int = None, 
         skip=skip,
         limit=limit
     ).to_list()
-
-    for item in items:
-        item.target_class_path_validity = await check_content_terms_validity(item.target_class_path)
-        item.target_property_path_validity = await check_content_terms_validity(item.target_property_path)
 
     total_count: int = await ConceptualMappingRule.find(query_filters).count()
     return items, total_count

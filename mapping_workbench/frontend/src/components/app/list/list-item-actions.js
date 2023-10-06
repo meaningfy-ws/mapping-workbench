@@ -6,6 +6,7 @@ import {paths} from 'src/paths';
 import {useRouter} from "../../../hooks/use-router";
 import {ACTION} from "../../../api/section";
 import ConfirmDialog from "../dialog/confirm-dialog";
+import {Box} from "@mui/system";
 
 export const ListItemActions = (props) => {
     const router = useRouter();
@@ -44,12 +45,15 @@ export const ListItemActions = (props) => {
     const [confirmOpen, setConfirmOpen] = useState(false);
 
     return (
-        <>
+        <Box>
             {itemctx.api.SECTION_LIST_ACTIONS.includes(ACTION.VIEW) && <Button
                 variant="text"
                 size="small"
                 color="info"
                 onClick={handleViewAction}
+                sx={{
+                    whiteSpace: "nowrap"
+                }}
             >
                 View
             </Button>}
@@ -58,6 +62,9 @@ export const ListItemActions = (props) => {
                 size="small"
                 color="success"
                 onClick={handleEditAction}
+                sx={{
+                    whiteSpace: "nowrap"
+                }}
             >
                 Edit
             </Button>}
@@ -67,6 +74,9 @@ export const ListItemActions = (props) => {
                     size="small"
                     color="error"
                     onClick={() => setConfirmOpen(true)}
+                    sx={{
+                        whiteSpace: "nowrap"
+                    }}
                 >
                     Delete
                 </Button>
@@ -134,6 +144,6 @@ export const ListItemActions = (props) => {
                     <ListItemText primary="Delete"/>
                 </MenuItem>
             </Menu> */}
-        </>
+        </Box>
     );
 };

@@ -12,7 +12,11 @@ import Typography from '@mui/material/Typography';
 import {MultiSelect} from 'src/components/multi-select';
 import {useUpdateEffect} from 'src/hooks/use-update-effect';
 import Switch from "@mui/material/Switch";
+import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import Radio from "@mui/material/Radio";
+import Paper from "@mui/material/Paper";
+import FormLabel from "@mui/material/FormLabel";
 
 
 const statusOptions = [
@@ -34,6 +38,7 @@ export const ListSearch = (props) => {
     const handleChipsUpdate = useCallback(() => {
         const filters = {
             q: undefined,
+            terms_validity: undefined,
             status: [],
         };
 
@@ -43,6 +48,9 @@ export const ListSearch = (props) => {
                     // There will (or should) be only one chips with field "q"
                     // so we can set up it directly
                     filters.q = chip.value;
+                    break;
+                case 'terms_validity':
+                    filters.terms_validity = chip.value;
                     break;
                 case 'status':
                     filters.status.push(chip.value);
@@ -113,6 +121,43 @@ export const ListSearch = (props) => {
         }
     }, []);
 
+    const handleTermsValidityChange = useCallback((event) => {
+        const value = event.target.value || '';
+
+        setChips((prevChips) => {
+            const found = prevChips.find((chip) => chip.field === 'terms_validity');
+
+            if (found && value) {
+                return prevChips.map((chip) => {
+                    if (chip.field === 'terms_validity') {
+                        return {
+                            ...chip,
+                            value: value || ''
+                        };
+                    }
+
+                    return chip;
+                });
+            }
+
+            if (found && !value) {
+                return prevChips.filter((chip) => chip.field !== 'terms_validity');
+            }
+
+            if (!found && value) {
+                const chip = {
+                    label: 'Terms',
+                    field: 'terms_validity',
+                    value
+                };
+
+                return [...prevChips, chip];
+            }
+
+            return prevChips;
+        });
+    }, []);
+
     const handleStatusChange = useCallback((values) => {
         setChips((prevChips) => {
             const valuesFound = [];
@@ -161,6 +206,9 @@ export const ListSearch = (props) => {
         .map((chip) => chip.value), [chips]);
 
     const showChips = chips.length > 0;
+
+    const termsValidityValue = useMemo(() => (chips
+        .find((chip) => chip.field === 'terms_validity') || {'value': ''}).value, [chips]);
 
     return (
         <div {...other}>
@@ -239,7 +287,7 @@ export const ListSearch = (props) => {
                     </>
                 )}
 
-            <Box sx={{p: 2.5}}>
+            <Box sx={{p: 2.5, display: 'flex'}} direction="row">
                 <FormControlLabel fullWidth control={
                     <Switch
                         checked={detailedView}
@@ -247,7 +295,74 @@ export const ListSearch = (props) => {
                         onChange={(e) => onDetailedViewChange(e, e.target.checked)}
                     />
                 } label="Detailed view"/>
+                <Stack
+                    component={RadioGroup}
+                    defaultValue={termsValidityValue}
+                    name="terms_validity"
+                    spacing={3}
+                    onChange={handleTermsValidityChange}
+                >
+                    <Paper
+                        key="2"
+                        sx={{
+                            alignItems: 'flex-start',
+                            display: 'flex',
+                            p: 2
+                        }}
+                        variant="outlined"
+                    >
+                        <Box sx={{mr: 2, mt: 1}}>
+                            Terms:
+                        </Box>
+                        <FormControlLabel
+                            control={<Radio/>}
+                            key="terms_validity_all"
+                            checked={termsValidityValue === ''}
+                            label={(
+                                <Box sx={{ml: 0, mr: 1}}>
+                                    <Typography
+                                        variant="subtitle2"
+                                    >
+                                        All
+                                    </Typography>
+                                </Box>
+                            )}
+                            value=""
+                        />
+                        <FormControlLabel
+                            control={<Radio/>}
+                            key="terms_validity_valid"
+                            checked={termsValidityValue === 'valid'}
+                            label={(
+                                <Box sx={{ml: 0, mr: 1}}>
+                                    <Typography
+                                        variant="subtitle2"
+                                    >
+                                        Valid
+                                    </Typography>
+                                </Box>
+                            )}
+                            value="valid"
+                        />
+                        <FormControlLabel
+                            control={<Radio/>}
+                            key="terms_validity_invalid"
+                            checked={termsValidityValue === 'invalid'}
+                            label={(
+                                <Box sx={{ml: 0, mr: 1}}>
+                                    <Typography
+                                        variant="subtitle2"
+                                    >
+                                        Invalid
+                                    </Typography>
+                                </Box>
+                            )}
+                            value="invalid"
+                        />
+                    </Paper>
+                </Stack>
             </Box>
+
             <Divider/>
             {false && <Stack
                 alignItems="center"

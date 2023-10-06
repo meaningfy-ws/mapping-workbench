@@ -178,6 +178,9 @@ start-frontend-console-mode:
 start-backend-console-mode:
 	uvicorn mapping_workbench.backend.core.entrypoints.api.main:app --reload
 
+start-mongo-console-mode:
+	mongod --dbpath=$$HOME/mongodb/data/
+
 start-mongo-dev: build-externals
 	@ echo "Starting the Mongo services"
 	@ docker-compose -p ${NAME} --file ./infra/mongodb/docker-compose.dev.yml --env-file ${ENV_FILE} up -d

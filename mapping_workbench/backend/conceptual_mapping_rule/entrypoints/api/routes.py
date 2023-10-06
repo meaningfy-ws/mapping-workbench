@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, status, Query
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRuleOut, \
     ConceptualMappingRuleCreateIn, \
-    ConceptualMappingRuleUpdateIn, ConceptualMappingRule
+    ConceptualMappingRuleUpdateIn, ConceptualMappingRule, ConceptualMappingRuleTermsValidity
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity_api_response import \
     APIListConceptualMappingRulesPaginatedResponse
 from mapping_workbench.backend.conceptual_mapping_rule.services.api import (
@@ -43,7 +43,8 @@ async def route_list_conceptual_mapping_rules(
         mapping_packages: Annotated[List[PydanticObjectId | str] | None, Query()] = None,
         page: int = None,
         limit: int = None,
-        q: str = None
+        q: str = None,
+        terms_validity: ConceptualMappingRuleTermsValidity = None
 ):
     filters: dict = {}
     if project:
@@ -52,6 +53,8 @@ async def route_list_conceptual_mapping_rules(
         filters['mapping_packages'] = {"$in": list(map(lambda x: MappingPackage.link_from_id(x), mapping_packages))}
     if q is not None:
         filters['q'] = q
+    if terms_validity:
+        filters['terms_validity'] = terms_validity
 
     items, total_count = await list_conceptual_mapping_rules(filters, page, limit)
     return APIListConceptualMappingRulesPaginatedResponse(

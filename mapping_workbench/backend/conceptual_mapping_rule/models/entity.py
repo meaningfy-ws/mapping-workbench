@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Optional, List
 
 import pymongo
@@ -10,6 +11,11 @@ from mapping_workbench.backend.mapping_package.models.entity import MappingPacka
 from mapping_workbench.backend.ontology.models.term import TermValidityResponse
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResource
 from mapping_workbench.backend.triple_map_fragment.models.entity import GenericTripleMapFragment
+
+
+class ConceptualMappingRuleTermsValidity(Enum):
+    VALID = "valid"
+    INVALID = "invalid"
 
 
 class ConceptualMappingRuleIn(BaseProjectResourceEntityInSchema):
@@ -38,9 +44,10 @@ class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema):
     field_description: Optional[str] = None
     source_xpath: Optional[List[str]] = None
     target_class_path: Optional[str] = None
-    target_class_path_validity: Optional[List[TermValidityResponse]] = None
+    target_class_path_terms_validity: Optional[List[TermValidityResponse]] = None
     target_property_path: Optional[str] = None
-    target_property_path_validity: Optional[List[TermValidityResponse]] = None
+    target_property_path_terms_validity: Optional[List[TermValidityResponse]] = None
+    terms_validity: Optional[ConceptualMappingRuleTermsValidity] = None
     mapping_packages: Optional[List[Link[MappingPackage]]] = None
     triple_map_fragment: Optional[Link[GenericTripleMapFragment]] = None
     sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
@@ -52,7 +59,10 @@ class ConceptualMappingRule(BaseProjectResourceEntity):
     field_description: Optional[str] = None
     source_xpath: Optional[List[str]] = None
     target_class_path: Optional[str] = None
+    target_class_path_terms_validity: Optional[List[TermValidityResponse]] = None
     target_property_path: Optional[str] = None
+    target_property_path_terms_validity: Optional[List[TermValidityResponse]] = None
+    terms_validity: Optional[ConceptualMappingRuleTermsValidity] = None
     mapping_packages: Optional[List[Optional[Link[MappingPackage]]]] = None
     triple_map_fragment: Optional[Link[GenericTripleMapFragment]] = None
     sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
