@@ -20,7 +20,7 @@ class NamespaceOut(BaseEntityOutSchema):
 
 
 class Namespace(BaseEntity):
-    prefix: Indexed(str, unique=True)
+    prefix: Indexed(str, unique=False)
     uri: Optional[str] = None
     is_syncable: Optional[bool] = True
 

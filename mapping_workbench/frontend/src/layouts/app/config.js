@@ -9,6 +9,7 @@ import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import HiveIcon from '@mui/icons-material/Hive';
 import MapIcon from '@mui/icons-material/Map';
 import SchemaIcon from '@mui/icons-material/Schema';
+import TaskIcon from '@mui/icons-material/TaskAlt';
 
 import HomeSmileIcon from 'src/icons/ui/duocolor/home-smile';
 import LayoutAlt02 from 'src/icons/ui/duocolor/layout-alt-02';
@@ -249,6 +250,21 @@ export const useSections = () => {
                         {
                             title: t(tokens.nav.terms),
                             path: paths.app.ontology_terms.index
+                        }
+                    ]
+                },
+                {
+                    title: t(tokens.nav.tasks),
+                    path: paths.app.tasks.index,
+                    icon: (
+                        <SvgIcon fontSize="small">
+                            <TaskIcon/>
+                        </SvgIcon>
+                    ),
+                    items: [
+                        {
+                            title: t(tokens.nav.terms_validator),
+                            path: paths.app.tasks.terms_validator
                         }
                     ]
                 },

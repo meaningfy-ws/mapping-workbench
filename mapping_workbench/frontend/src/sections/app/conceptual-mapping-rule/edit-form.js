@@ -28,6 +28,8 @@ import Alert from "@mui/material/Alert";
 import Divider from "@mui/material/Divider";
 
 import parse from 'html-react-parser';
+import {conceptualMappingRulesApi as sectionApi} from "../../../api/conceptual-mapping-rules";
+import Typography from "@mui/material/Typography";
 
 
 const TermValidityInfo = (props) => {
@@ -46,6 +48,34 @@ const TermValidityInfo = (props) => {
                    my: 2
                }}
         ><b color="success">{term}</b> {info}</Alert>
+    )
+}
+
+const RuleComment = (props) => {
+    const {comment, ...other} = props;
+
+    let severity;
+    switch (comment.priority) {
+        case 'high':
+            severity = 'error';
+            break;
+        case 'low':
+            severity = 'info';
+            break;
+        default:
+            severity = 'success';
+            break;
+    }
+
+    return (
+        <Alert severity={severity}
+               sx={{
+                   my: 2
+               }}
+        >
+            <b>{comment.title}</b><br/>
+            {comment.comment}
+        </Alert>
     )
 }
 
@@ -328,7 +358,31 @@ export const EditForm = (props) => {
                     </Grid>
                 </CardContent>
             </Card>
+            <Card sx={{mt: 3}}>
+                <CardHeader title="Notes"/>
+                <CardContent sx={{pt: 0}}>
+                    {item.notes && item.notes.length > 0 && item.notes.map(
+                        (note) => <RuleComment comment={note}/>
+                    )}
+                    <Divider />
+                    <Grid xs={12} md={12} sx={{mt: 2}}>
+                        <FormTextArea formik={formik} name="note" label="Note"/>
+                    </Grid>
+                </CardContent>
 
+            </Card>
+            <Card sx={{mt: 3}}>
+                <CardHeader title="Comments"/>
+                <CardContent sx={{pt: 0}}>
+                    {item.comments && item.comments.length > 0 && item.comments.map(
+                        (comment) => <RuleComment comment={comment}/>
+                    )}
+                    <Divider />
+                    <Grid xs={12} md={12} sx={{mt: 2}}>
+                        <FormTextArea formik={formik} name="comment" label="Comment"/>
+                    </Grid>
+                </CardContent>
+            </Card>
 
             <Card sx={{mt: 3}}>
                 <Stack

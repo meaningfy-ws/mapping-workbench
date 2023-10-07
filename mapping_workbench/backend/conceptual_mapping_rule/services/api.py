@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 
 from beanie import PydanticObjectId
 from pymongo.errors import DuplicateKeyError
@@ -20,16 +20,6 @@ async def list_conceptual_mapping_rules(filters: dict = None, page: int = None, 
 
     prepare_search_param(query_filters)
     skip, limit = pagination_params(page, limit)
-
-    # update terms_validity info for queried rules
-    for item in await ConceptualMappingRule.find(query_filters).to_list():
-        item.target_class_path_terms_validity = await check_content_terms_validity(item.target_class_path)
-        item.target_property_path_terms_validity = await check_content_terms_validity(item.target_property_path)
-        item.terms_validity = ConceptualMappingRuleTermsValidity.INVALID \
-            if any(not x.is_valid for x in item.target_class_path_terms_validity) \
-            or any(not x.is_valid for x in item.target_property_path_terms_validity) \
-            else ConceptualMappingRuleTermsValidity.VALID
-        await item.save()
 
     items: List[ConceptualMappingRuleOut] = await ConceptualMappingRule.find(
         query_filters,
@@ -59,13 +49,17 @@ async def create_conceptual_mapping_rule(data: ConceptualMappingRuleCreateIn,
 async def update_conceptual_mapping_rule(conceptual_mapping_rule: ConceptualMappingRule,
                                          data: ConceptualMappingRuleUpdateIn,
                                          user: User) -> ConceptualMappingRuleOut:
-    return ConceptualMappingRuleOut(**(
-        await conceptual_mapping_rule.set(request_update_data(data, user=user))
-    ).model_dump())
+    update_data = request_update_data(data, user=user)
+    terms_validated_rule = await rule_terms_validator(ConceptualMappingRule(**update_data))
+    update_data['target_class_path_terms_validity'] = terms_validated_rule.target_class_path_terms_validity
+    update_data['target_property_path_terms_validity'] = terms_validated_rule.target_property_path_terms_validity
+    update_data['terms_validity'] = terms_validated_rule.terms_validity
+    rule: ConceptualMappingRule = await conceptual_mapping_rule.set(update_data)
+    return ConceptualMappingRuleOut(**rule.model_dump())
 
 
 async def clone_conceptual_mapping_rule(conceptual_mapping_rule: ConceptualMappingRule,
-                                         user: User) -> ConceptualMappingRuleOut:
+                                        user: User) -> ConceptualMappingRuleOut:
     cloned_conceptual_mapping_rule: ConceptualMappingRule = \
         await conceptual_mapping_rule.model_copy(
             update={"id": None, "updated_at": None, "updated_by": None}
@@ -89,3 +83,27 @@ async def get_conceptual_mapping_rule_out(id: PydanticObjectId) -> ConceptualMap
 
 async def delete_conceptual_mapping_rule(conceptual_mapping_rule: ConceptualMappingRule):
     return await conceptual_mapping_rule.delete()
+
+
+async def rule_terms_validator(rule: ConceptualMappingRule) -> ConceptualMappingRule:
+    rule.target_class_path_terms_validity = await check_content_terms_validity(rule.target_class_path)
+    rule.target_property_path_terms_validity = await check_content_terms_validity(rule.target_property_path)
+    rule.terms_validity = ConceptualMappingRuleTermsValidity.INVALID \
+        if any(not x.is_valid for x in rule.target_class_path_terms_validity) \
+           or any(not x.is_valid for x in rule.target_property_path_terms_validity) \
+        else ConceptualMappingRuleTermsValidity.VALID
+
+    return rule
+
+
+async def validate_and_save_rules_terms(query_filters: Dict = None):
+    """
+    update terms_validity info for queried rules
+
+    :param query_filters:
+    :return:
+    """
+
+    for item in await ConceptualMappingRule.find(query_filters or {}).to_list():
+        item = await rule_terms_validator(item)
+        await item.save()

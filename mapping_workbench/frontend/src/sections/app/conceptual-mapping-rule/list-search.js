@@ -312,7 +312,7 @@ export const ListSearch = (props) => {
                         variant="outlined"
                     >
                         <Box sx={{mr: 2, mt: 1}}>
-                            Terms:
+                            <b>Terms:</b>
                         </Box>
                         <FormControlLabel
                             control={<Radio/>}

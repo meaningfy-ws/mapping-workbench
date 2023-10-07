@@ -1,8 +1,10 @@
+from datetime import datetime
 from enum import Enum
 from typing import Optional, List
 
 import pymongo
 from beanie import Link, Indexed
+from pydantic import BaseModel
 from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
@@ -11,11 +13,26 @@ from mapping_workbench.backend.mapping_package.models.entity import MappingPacka
 from mapping_workbench.backend.ontology.models.term import TermValidityResponse
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResource
 from mapping_workbench.backend.triple_map_fragment.models.entity import GenericTripleMapFragment
+from mapping_workbench.backend.user.models.user import User
 
 
 class ConceptualMappingRuleTermsValidity(Enum):
     VALID = "valid"
     INVALID = "invalid"
+
+
+class ConceptualMappingRuleCommentPriority(Enum):
+    HIGH = "high"
+    NORMAL = "normal"
+    LOW = "low"
+
+
+class ConceptualMappingRuleComment(BaseModel):
+    title: Optional[str] = None
+    comment: Optional[str] = None
+    priority: Optional[ConceptualMappingRuleCommentPriority] = ConceptualMappingRuleCommentPriority.NORMAL
+    created_at: Optional[datetime] = None
+    created_by: Optional[Link[User]] = None
 
 
 class ConceptualMappingRuleIn(BaseProjectResourceEntityInSchema):
@@ -51,6 +68,8 @@ class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema):
     mapping_packages: Optional[List[Link[MappingPackage]]] = None
     triple_map_fragment: Optional[Link[GenericTripleMapFragment]] = None
     sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
+    notes: Optional[List[ConceptualMappingRuleComment]] = None
+    comments: Optional[List[ConceptualMappingRuleComment]] = None
 
 
 class ConceptualMappingRule(BaseProjectResourceEntity):
@@ -66,6 +85,8 @@ class ConceptualMappingRule(BaseProjectResourceEntity):
     mapping_packages: Optional[List[Optional[Link[MappingPackage]]]] = None
     triple_map_fragment: Optional[Link[GenericTripleMapFragment]] = None
     sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
+    notes: Optional[List[ConceptualMappingRuleComment]] = None
+    comments: Optional[List[ConceptualMappingRuleComment]] = None
 
     class Settings(BaseProjectResourceEntity.Settings):
         name = "conceptual_mapping_rules"

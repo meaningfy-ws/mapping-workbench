@@ -132,6 +132,10 @@ export const paths = {
             create: '/app/ontology-terms/create',
             edit: '/app/ontology-terms/[id]/edit',
             view: '/app/ontology-terms/[id]/view'
+        },
+        tasks: {
+            index: '/app/tasks',
+            terms_validator: '/app/tasks/terms_validator'
         }
     },
     docs: 'https://material-kit-pro-react-docs.devias.io',
@@ -223,5 +227,9 @@ export const apiPaths = {
         session_project: '/users/set_project_for_current_user_session',
         app_settings: '/users/set_app_settings_for_current_user',
         me: '/users/me'
+    },
+
+    tasks: {
+        terms_validator: '/tasks/terms_validator'
     }
 }
