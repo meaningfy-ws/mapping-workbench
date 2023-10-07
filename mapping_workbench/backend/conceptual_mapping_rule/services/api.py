@@ -35,9 +35,10 @@ async def list_conceptual_mapping_rules(filters: dict = None, page: int = None, 
 
 async def create_conceptual_mapping_rule(data: ConceptualMappingRuleCreateIn,
                                          user: User) -> ConceptualMappingRuleOut:
+    create_data = await rule_validated_data(request_create_data(data, user=user))
     conceptual_mapping_rule: ConceptualMappingRule = \
         ConceptualMappingRule(
-            **request_create_data(data, user=user)
+            **create_data
         )
     try:
         await conceptual_mapping_rule.create()
@@ -49,11 +50,7 @@ async def create_conceptual_mapping_rule(data: ConceptualMappingRuleCreateIn,
 async def update_conceptual_mapping_rule(conceptual_mapping_rule: ConceptualMappingRule,
                                          data: ConceptualMappingRuleUpdateIn,
                                          user: User) -> ConceptualMappingRuleOut:
-    update_data = request_update_data(data, user=user)
-    terms_validated_rule = await rule_terms_validator(ConceptualMappingRule(**update_data))
-    update_data['target_class_path_terms_validity'] = terms_validated_rule.target_class_path_terms_validity
-    update_data['target_property_path_terms_validity'] = terms_validated_rule.target_property_path_terms_validity
-    update_data['terms_validity'] = terms_validated_rule.terms_validity
+    update_data = await rule_validated_data(request_update_data(data, user=user))
     rule: ConceptualMappingRule = await conceptual_mapping_rule.set(update_data)
     return ConceptualMappingRuleOut(**rule.model_dump())
 
@@ -94,6 +91,15 @@ async def rule_terms_validator(rule: ConceptualMappingRule) -> ConceptualMapping
         else ConceptualMappingRuleTermsValidity.VALID
 
     return rule
+
+
+async def rule_validated_data(data: dict) -> dict:
+    terms_validated_rule = await rule_terms_validator(ConceptualMappingRule(**data))
+    data['target_class_path_terms_validity'] = terms_validated_rule.target_class_path_terms_validity
+    data['target_property_path_terms_validity'] = terms_validated_rule.target_property_path_terms_validity
+    data['terms_validity'] = terms_validated_rule.terms_validity
+
+    return data
 
 
 async def validate_and_save_rules_terms(query_filters: Dict = None):
