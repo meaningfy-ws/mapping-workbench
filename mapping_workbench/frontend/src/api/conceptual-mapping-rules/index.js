@@ -1,6 +1,12 @@
 import {ACTION, SectionApi} from "../section";
 import {appApi} from "../app";
 
+export const COMMENT_PRIORITY = {
+    HIGH: 'high',
+    NORMAL: 'normal',
+    LOW: 'low'
+};
+
 class ConceptualMappingRulesApi extends SectionApi {
     get SECTION_TITLE() {
         return "Conceptual Mapping Rules";

@@ -27,9 +27,17 @@ import {ListSelectorSelect as ResourceListSelector} from "../../../components/ap
 import Alert from "@mui/material/Alert";
 import Divider from "@mui/material/Divider";
 
+
 import parse from 'html-react-parser';
-import {conceptualMappingRulesApi as sectionApi} from "../../../api/conceptual-mapping-rules";
+import {Box} from "@mui/system";
+import RadioGroup from "@mui/material/RadioGroup";
+import Paper from "@mui/material/Paper";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Radio from "@mui/material/Radio";
 import Typography from "@mui/material/Typography";
+import {COMMENT_PRIORITY} from "../../../api/conceptual-mapping-rules";
+import CardActions from "@mui/material/CardActions";
+import Switch from "@mui/material/Switch";
 
 
 const TermValidityInfo = (props) => {
@@ -52,14 +60,15 @@ const TermValidityInfo = (props) => {
 }
 
 const RuleComment = (props) => {
-    const {comment, ...other} = props;
+    let {formik, fieldName, idx, handleDelete, ...other} = props;
 
+    let comment = formik.values[fieldName][idx];
     let severity;
     switch (comment.priority) {
-        case 'high':
+        case COMMENT_PRIORITY.HIGH:
             severity = 'error';
             break;
-        case 'low':
+        case COMMENT_PRIORITY.LOW:
             severity = 'info';
             break;
         default:
@@ -67,14 +76,37 @@ const RuleComment = (props) => {
             break;
     }
 
+    const titleName = `${fieldName}[${idx}][title]`;
+    const commentName = `${fieldName}[${idx}][comment]`;
+
     return (
         <Alert severity={severity}
                sx={{
-                   my: 2
+                   my: 2,
+                   position: "relative",
+                   paddingRight: "20%"
                }}
         >
-            <b>{comment.title}</b><br/>
-            {comment.comment}
+            <Box>
+                {comment.title && <Box><b>{comment.title}</b></Box>}
+
+                <Box>{comment.comment}</Box>
+                <input name={titleName} value={comment.title} type="hidden"/>
+                <input name={commentName} value={comment.comment} type="hidden"/>
+            </Box>
+            <Button
+                variant="text"
+                size="small"
+                color="error"
+                onClick={(e) => handleDelete(idx, fieldName)}
+                sx={{
+                    position: "absolute",
+                    top: "5px",
+                    right: "5px"
+                }}
+            >
+                Delete
+            </Button>
         </Alert>
     )
 }
@@ -86,6 +118,8 @@ export const EditForm = (props) => {
     const sectionApi = itemctx.api;
     const item = itemctx.data;
 
+    const [showComments, setShowComments] = useState(false);
+    const [showNotes, setShowNotes] = useState(false);
     const [targetPropertyPathValidityInfo, setTargetPropertyPathValidityInfo] = useState("");
     const [targetPropertyPathTermsValidityInfo, setTargetPropertyPathTermsValidityInfo] = useState([]);
     const [targetClassPathValidityInfo, setTargetClassPathValidityInfo] = useState("");
@@ -134,6 +168,14 @@ export const EditForm = (props) => {
         return (value && (value.join('\n') + ['\n'])) || ''
     }
 
+    const initComment = () => {
+        return {
+            title: '',
+            comment: '',
+            priority: COMMENT_PRIORITY.NORMAL
+        }
+    }
+
     let initialValues = {
         field_id: item.field_id || '',
         field_title: item.field_title || '',
@@ -143,7 +185,11 @@ export const EditForm = (props) => {
         target_property_path: item.target_property_path || '',
         mapping_packages: (item.mapping_packages || []).map(x => x.id),
         sparql_assertions: (item.sparql_assertions || []).map(x => x.id),
-        triple_map_fragment: (item.triple_map_fragment && item.triple_map_fragment.id) || ''
+        triple_map_fragment: (item.triple_map_fragment && item.triple_map_fragment.id) || '',
+        notes: (item.notes || []),
+        comments: (item.comments || []),
+        note: initComment(),
+        comment: initComment()
     };
 
     const formik = useFormik({
@@ -161,6 +207,16 @@ export const EditForm = (props) => {
         onSubmit: async (values, helpers) => {
             try {
                 let requestValues = values;
+                if (values['comment']['comment']) {
+                    values['comments'].push(values['comment']);
+                }
+                delete values['comment'];
+
+                if (values['note']['comment']) {
+                    values['notes'].push(values['note']);
+                }
+                delete values['note'];
+
                 requestValues['source_xpath'] = (typeof values['source_xpath'] == 'string') ?
                     values['source_xpath'].split('\n').map(s => s.trim()).filter(s => s !== '') : values['source_xpath'];
                 requestValues['triple_map_fragment'] = values['triple_map_fragment'] || null;
@@ -184,6 +240,8 @@ export const EditForm = (props) => {
                     } else if (itemctx.isStateable) {
                         itemctx.setState(response);
                         formik.values.source_xpath = prepareTextareaListValue(response['source_xpath']);
+                        formik.values.note = initComment();
+                        formik.values.comment = initComment();
                     }
                 }
             } catch (err) {
@@ -241,6 +299,11 @@ export const EditForm = (props) => {
         return false;
 
     }, [router, sectionApi, item, itemctx]);
+
+    const handleDeleteComment = useCallback((idx, fieldName) => {
+        let values = formik.values[fieldName]
+        formik.setFieldValue(fieldName, values.slice(0, idx).concat(values.slice(idx + 1)));
+    }, [formik]);
 
     const hasTargetPropertyPathValidityErrors = targetPropertyPathTermsValidityInfo.some(x => !x.is_valid);
     const hasTargetClassPathValidityErrors = targetClassPathTermsValidityInfo.some(x => !x.is_valid);
@@ -359,27 +422,212 @@ export const EditForm = (props) => {
                 </CardContent>
             </Card>
             <Card sx={{mt: 3}}>
-                <CardHeader title="Notes"/>
+                <CardContent sx={{pb: 1, pt: 3}}>
+                    <Typography sx={{fontWeight: "bold"}}>
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={showNotes}
+                                    onChange={(e) => setShowNotes(e.target.checked)}
+                                />
+                            }
+                            label={`Notes (${formik.values.notes.length})`}
+                        />
+                    </Typography>
+                </CardContent>
                 <CardContent sx={{pt: 0}}>
-                    {item.notes && item.notes.length > 0 && item.notes.map(
-                        (note) => <RuleComment comment={note}/>
-                    )}
-                    <Divider />
-                    <Grid xs={12} md={12} sx={{mt: 2}}>
-                        <FormTextArea formik={formik} name="note" label="Note"/>
+                    {showNotes && <>
+                        {formik.values.notes.map(
+                            (note, idx) => <RuleComment
+                                formik={formik}
+                                fieldName="notes" idx={idx} handleDelete={handleDeleteComment}
+                            />
+                        )}
+                    </>}
+                    <Divider sx={{py: 1}}/>
+                    <Grid xs={12} md={12} sx={{mt: 1}}>
+                        <Stack
+                            component={RadioGroup}
+                            defaultValue={COMMENT_PRIORITY.NORMAL}
+                            name="note[priority]"
+                            spacing={3}
+                            onChange={(e) => {
+                                formik.setFieldValue('note[priority]', e.target.value);
+                            }}
+                        >
+                            <Box sx={{
+                                alignItems: 'flex-start',
+                                display: 'flex',
+                                py: 2,
+                                px: 1
+                            }}>
+                                <Box sx={{mr: 2, mt: 1}}>
+                                    <b>Priority:</b>
+                                </Box>
+                                <FormControlLabel
+                                    control={<Radio/>}
+                                    key="note_priority_high"
+                                    label={(
+                                        <Box sx={{ml: 0, mr: 1}}>
+                                            <Typography
+                                                variant="subtitle2"
+                                            >
+                                                High
+                                            </Typography>
+                                        </Box>
+                                    )}
+                                    value={COMMENT_PRIORITY.HIGH}
+                                    checked={formik.values.note.priority === COMMENT_PRIORITY.HIGH}
+                                />
+                                <FormControlLabel
+                                    control={<Radio/>}
+                                    key="note_priority_normal"
+                                    label={(
+                                        <Box sx={{ml: 0, mr: 1}}>
+                                            <Typography
+                                                variant="subtitle2"
+                                            >
+                                                Normal
+                                            </Typography>
+                                        </Box>
+                                    )}
+                                    value={COMMENT_PRIORITY.NORMAL}
+                                    checked={formik.values.note.priority === COMMENT_PRIORITY.NORMAL}
+                                />
+                                <FormControlLabel
+                                    control={<Radio/>}
+                                    key="note_priority_low"
+                                    label={(
+                                        <Box sx={{ml: 0, mr: 1}}>
+                                            <Typography
+                                                variant="subtitle2"
+                                            >
+                                                Low
+                                            </Typography>
+                                        </Box>
+                                    )}
+                                    value={COMMENT_PRIORITY.LOW}
+                                    checked={formik.values.note.priority === COMMENT_PRIORITY.LOW}
+                                />
+                            </Box>
+                        </Stack>
+                        <TextField
+                            name="note[comment]"
+                            minRows={3}
+                            multiline
+                            fullWidth
+                            label="Add new Note ..."
+                            helperText="... for external viewers"
+                            value={formik.values.note.comment}
+                            onBlur={formik.handleBlur}
+                            onChange={formik.handleChange}
+                        />
                     </Grid>
                 </CardContent>
 
             </Card>
             <Card sx={{mt: 3}}>
-                <CardHeader title="Comments"/>
+                <CardContent sx={{pb: 1, pt: 3}}>
+                    <Typography sx={{fontWeight: "bold"}}>
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={showComments}
+                                    onChange={(e) => setShowComments(e.target.checked)}
+                                />
+                            }
+                            label={`Comments (${formik.values.comments.length})`}
+                        />
+                    </Typography>
+                </CardContent>
                 <CardContent sx={{pt: 0}}>
-                    {item.comments && item.comments.length > 0 && item.comments.map(
-                        (comment) => <RuleComment comment={comment}/>
-                    )}
-                    <Divider />
-                    <Grid xs={12} md={12} sx={{mt: 2}}>
-                        <FormTextArea formik={formik} name="comment" label="Comment"/>
+                    {showComments && <>
+                        {formik.values.comments.map(
+                            (comment, idx) => <RuleComment
+                                formik={formik}
+                                fieldName="comments" idx={idx} handleDelete={handleDeleteComment}
+                            />
+                        )}
+                    </>}
+                    <Divider sx={{py: 1}}/>
+                    <Grid xs={12} md={12} sx={{mt: 1}}>
+                        <Stack
+                            component={RadioGroup}
+                            defaultValue={COMMENT_PRIORITY.NORMAL}
+                            name="comment[priority]"
+                            spacing={3}
+                            onChange={(e) => {
+                                formik.setFieldValue('comment[priority]', e.target.value);
+                            }}
+                        >
+                            <Box sx={{
+                                alignItems: 'flex-start',
+                                display: 'flex',
+                                py: 2,
+                                px: 1
+                            }}>
+                                <Box sx={{mr: 2, mt: 1}}>
+                                    <b>Priority:</b>
+                                </Box>
+                                <FormControlLabel
+                                    control={<Radio/>}
+                                    key="comment_priority_high"
+                                    label={(
+                                        <Box sx={{ml: 0, mr: 1}}>
+                                            <Typography
+                                                variant="subtitle2"
+                                            >
+                                                High
+                                            </Typography>
+                                        </Box>
+                                    )}
+                                    value={COMMENT_PRIORITY.HIGH}
+                                    checked={formik.values.comment.priority === COMMENT_PRIORITY.HIGH}
+                                />
+                                <FormControlLabel
+                                    control={<Radio/>}
+                                    key="comment_priority_normal"
+                                    label={(
+                                        <Box sx={{ml: 0, mr: 1}}>
+                                            <Typography
+                                                variant="subtitle2"
+                                            >
+                                                Normal
+                                            </Typography>
+                                        </Box>
+                                    )}
+                                    value={COMMENT_PRIORITY.NORMAL}
+                                    checked={formik.values.comment.priority === COMMENT_PRIORITY.NORMAL}
+                                />
+                                <FormControlLabel
+                                    control={<Radio/>}
+                                    key="comment_priority_low"
+                                    label={(
+                                        <Box sx={{ml: 0, mr: 1}}>
+                                            <Typography
+                                                variant="subtitle2"
+                                            >
+                                                Low
+                                            </Typography>
+                                        </Box>
+                                    )}
+                                    value={COMMENT_PRIORITY.LOW}
+                                    checked={formik.values.comment.priority === COMMENT_PRIORITY.LOW}
+                                />
+                            </Box>
+                        </Stack>
+                        <TextField
+                            name="comment[comment]"
+                            minRows={3}
+                            multiline
+                            fullWidth
+                            label="Add new Comment ..."
+                            helperText="... for other editors"
+                            value={formik.values.comment.comment}
+                            onBlur={formik.handleBlur}
+                            onChange={formik.handleChange}
+                        />
+
                     </Grid>
                 </CardContent>
             </Card>

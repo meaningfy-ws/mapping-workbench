@@ -4,7 +4,8 @@ import TextField from "@mui/material/TextField";
 export const FormTextArea = (props) => {
     const {
         formik, name, label,
-        required = false
+        required = false,
+        ...other
     } = props;
 
     return (<TextField
@@ -19,5 +20,6 @@ export const FormTextArea = (props) => {
         onChange={formik.handleChange}
         value={formik.values[name]}
         required={required}
+        {...other}
     />)
 }

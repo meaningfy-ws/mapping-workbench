@@ -31,7 +31,7 @@ import Dialog from "@mui/material/Dialog";
 import {useDialog} from "../../../hooks/use-dialog";
 import Stack from "@mui/material/Stack";
 import toast from "react-hot-toast";
-import {conceptualMappingRulesApi} from "../../../api/conceptual-mapping-rules";
+import {COMMENT_PRIORITY, conceptualMappingRulesApi} from "../../../api/conceptual-mapping-rules";
 import {mappingPackagesApi} from "../../../api/mapping-packages";
 import {genericTripleMapFragmentsApi} from "../../../api/triple-map-fragments/generic";
 import TextField from "@mui/material/TextField";
@@ -52,6 +52,11 @@ import {useRouter} from "../../../hooks/use-router";
 import ListItem from "@mui/material/ListItem";
 import parse from "html-react-parser";
 import Alert from "@mui/material/Alert";
+import Divider from "@mui/material/Divider";
+import RadioGroup from "@mui/material/RadioGroup";
+import Radio from "@mui/material/Radio";
+import Card from "@mui/material/Card";
+import CardHeader from "@mui/material/CardHeader";
 
 export const ListTableTripleMapFragment = (props) => {
     const {
@@ -497,6 +502,39 @@ export const ListTableSPARQLAssertions = (props) => {
     )
 }
 
+const RuleComment = (props) => {
+    let {comment, ...other} = props;
+
+    let severity;
+    switch (comment.priority) {
+        case COMMENT_PRIORITY.HIGH:
+            severity = 'error';
+            break;
+        case COMMENT_PRIORITY.LOW:
+            severity = 'info';
+            break;
+        default:
+            severity = 'success';
+            break;
+    }
+
+    return (
+        <Alert severity={severity}
+               sx={{
+                   my: 2,
+                   position: "relative",
+                   paddingRight: "20%"
+               }}
+        >
+            <Box>
+                {comment.title && <Box><b>{comment.title}</b></Box>}
+
+                <Box>{comment.comment}</Box>
+            </Box>
+        </Alert>
+    )
+}
+
 export const ListTableRow = (props) => {
     const router = useRouter();
 
@@ -554,6 +592,9 @@ export const ListTableRow = (props) => {
     const hasTargetPropertyPathValidityErrors = item.target_property_path_terms_validity.some(x => !x.is_valid);
     const hasTargetClassPathValidityErrors = item.target_class_path_terms_validity.some(x => !x.is_valid);
 
+    const commentsDialog = useDialog();
+    const notesDialog = useDialog();
+
     return (<Fragment key={item_id}>
         <TableRow
             hover
@@ -603,7 +644,9 @@ export const ListTableRow = (props) => {
             <TableCell>
                 {item.source_xpath.map(
                     x => (
-                        <ListItem title={x} key={`source_xpath_${x.id}`}>
+                        <ListItem title={x} key={`source_xpath_${x.id}`} sx={{
+                            px: 0
+                        }}>
                             {detailedView && x}
                             {!detailedView && (
                                 <>
@@ -670,6 +713,63 @@ export const ListTableRow = (props) => {
             {/*<TableCell align="left">
                 {(item.created_at).replace("T", " ").split(".")[0]}
             </TableCell>*/}
+            <TableCell align="center">
+                {item.comments && item.comments.length > 0 && <>
+
+                    <Button variant="text"
+                            size="small"
+                            color="warning"
+                            onClick={commentsDialog.handleOpen}
+                    >{(item.comments || []).length}</Button>
+                    <Dialog
+                        id={"comments_" + item._id}
+                        onClose={commentsDialog.handleClose}
+                        open={commentsDialog.open}
+                        fullWidth
+                        maxWidth="md"
+                    >
+                        <Card>
+                            <CardHeader title="Comments" sx={{mb: 2}}/>
+                            <Divider/>
+                            <CardContent sx={{pt: 1}}>
+                                {(item.comments || []).map(
+                                    (comment) => <RuleComment
+                                        comment={comment}
+                                    />
+                                )}
+                            </CardContent>
+                        </Card>
+                    </Dialog>
+                </>}
+            </TableCell>
+            <TableCell align="center">
+                {item.notes && item.notes.length > 0 && <>
+                    <Button variant="text"
+                            size="small"
+                            color="warning"
+                            onClick={notesDialog.handleOpen}
+                    >{(item.notes || []).length}</Button>
+                    <Dialog
+                        id={"notes_" + item._id}
+                        onClose={notesDialog.handleClose}
+                        open={notesDialog.open}
+                        fullWidth
+                        maxWidth="md"
+                    >
+                        <Card>
+                            <CardHeader title="Notes" sx={{mb: 2}}/>
+                            <Divider/>
+                            <CardContent sx={{pt: 1}}>
+                                {(item.notes || []).map(
+                                    (note) => <RuleComment
+                                        comment={note}
+                                    />
+                                )}
+                            </CardContent>
+                        </Card>
+                    </Dialog>
+                </>}
+            </TableCell>
             <TableCell align="right">
                 <ListItemActions
                     itemctx={new ForListItemAction(item_id, sectionApi)}/>
@@ -723,7 +823,9 @@ export const ListTableRow = (props) => {
                                     label="Source XPath"
                                     value={item.source_xpath.map(
                                         x => (
-                                            <ListItem title={x}>
+                                            <ListItem title={x} sx={{
+                                                px: 0
+                                            }}>
                                                 {x}
                                             </ListItem>
                                         )
@@ -895,6 +997,12 @@ export const ListTable = (props) => {
                                 </TableSortLabel>
                             </Tooltip>
                         </TableCell>*/}
+                        <TableCell>
+                            Comments
+                        </TableCell>
+                        <TableCell>
+                            Notes
+                        </TableCell>
                         <TableCell align="right">
                             Actions
                         </TableCell>

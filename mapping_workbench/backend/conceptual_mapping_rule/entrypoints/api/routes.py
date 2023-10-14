@@ -88,6 +88,7 @@ async def route_update_conceptual_mapping_rule(
         conceptual_mapping_rule: ConceptualMappingRule = Depends(get_conceptual_mapping_rule),
         user: User = Depends(current_active_user)
 ):
+    print("K :: ", data)
     return await update_conceptual_mapping_rule(conceptual_mapping_rule, data, user=user)
 
 

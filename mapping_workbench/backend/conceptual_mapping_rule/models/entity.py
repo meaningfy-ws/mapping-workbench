@@ -33,6 +33,8 @@ class ConceptualMappingRuleComment(BaseModel):
     priority: Optional[ConceptualMappingRuleCommentPriority] = ConceptualMappingRuleCommentPriority.NORMAL
     created_at: Optional[datetime] = None
     created_by: Optional[Link[User]] = None
+    updated_at: Optional[datetime] = None
+    updated_by: Optional[Link[User]] = None
 
 
 class ConceptualMappingRuleIn(BaseProjectResourceEntityInSchema):
@@ -45,6 +47,8 @@ class ConceptualMappingRuleIn(BaseProjectResourceEntityInSchema):
     mapping_packages: Optional[List[Link[MappingPackage]]] = None
     triple_map_fragment: Optional[Link[GenericTripleMapFragment]] = None
     sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
+    notes: Optional[List[ConceptualMappingRuleComment]] = None
+    comments: Optional[List[ConceptualMappingRuleComment]] = None
 
 
 class ConceptualMappingRuleCreateIn(ConceptualMappingRuleIn):
