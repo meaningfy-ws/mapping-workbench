@@ -521,9 +521,7 @@ const RuleComment = (props) => {
     return (
         <Alert severity={severity}
                sx={{
-                   my: 2,
-                   position: "relative",
-                   paddingRight: "20%"
+                   my: 2
                }}
         >
             <Box>
