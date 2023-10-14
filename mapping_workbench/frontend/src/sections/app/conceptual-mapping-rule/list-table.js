@@ -995,10 +995,10 @@ export const ListTable = (props) => {
                                 </TableSortLabel>
                             </Tooltip>
                         </TableCell>*/}
-                        <TableCell>
+                        <TableCell align="center">
                             Comments
                         </TableCell>
-                        <TableCell>
+                        <TableCell align="center">
                             Notes
                         </TableCell>
                         <TableCell align="right">
