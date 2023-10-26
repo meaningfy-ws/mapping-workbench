@@ -16,6 +16,7 @@ class MappingPackageIn(BaseProjectResourceEntityInSchema):
     title: Optional[str] = None
     description: Optional[str] = None
     identifier: Optional[str] = None
+    base_xpath: Optional[str] = None
     subtype: Optional[List[Optional[str]]] = None
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
@@ -41,6 +42,7 @@ class MappingPackageOut(BaseProjectResourceEntityOutSchema):
     title: Optional[str] = None
     description: Optional[str] = None
     identifier: Optional[str] = None
+    base_xpath: Optional[str] = None
     subtype: Optional[List[str]] = None
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
@@ -58,6 +60,7 @@ class MappingPackage(BaseProjectResourceEntity):
     title: Optional[Indexed(str, unique=True)] = None
     description: Optional[str] = None
     identifier: Optional[Indexed(str, unique=True)] = None
+    base_xpath: Optional[str] = None
     subtype: Optional[List[str]] = None
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
@@ -75,6 +78,7 @@ class MappingPackage(BaseProjectResourceEntity):
                     ("title", pymongo.TEXT),
                     ("description", pymongo.TEXT),
                     ("identifier", pymongo.TEXT),
+                    ("base_xpath", pymongo.TEXT),
                     ("subtype", pymongo.TEXT),
                     ("min_xsd_version", pymongo.TEXT),
                     ("max_xsd_version", pymongo.TEXT)

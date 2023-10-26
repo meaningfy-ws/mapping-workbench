@@ -73,6 +73,10 @@ export const tokens = {
     admin: 'nav.admin',
     users: 'nav.users',
     terms_validator: 'nav.terms_validator',
-    tasks: 'nav.tasks'
+    tasks: 'nav.tasks',
+
+    generate_cm_assertions_queries: 'nav.generate_cm_assertions_queries',
+    assertions_queries: 'nav.assertions_queries',
+    transform_test_data: 'nav.transform_test_data'
   }
 };

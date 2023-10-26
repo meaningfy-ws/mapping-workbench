@@ -4,10 +4,10 @@ from typing import List, Dict
 import rdflib
 from rdflib import RDF
 
-from mapping_workbench.backend.ontology.adapters.namespace_handler import NamespaceInventory, get_ns_handler, \
+from mapping_workbench.backend.ontology.adapters.namespace_handler import NamespaceInventory, \
     NamespaceInventoryException
 from mapping_workbench.backend.ontology.models.term import Term, TermValidityResponse
-from mapping_workbench.backend.ontology.services.namespaces import discover_and_save_prefix_namespace
+from mapping_workbench.backend.ontology.services.namespaces import discover_and_save_prefix_namespace, get_ns_handler
 from mapping_workbench.backend.user.models.user import User
 
 EPO_OWL_SOURCE_CONTENT = \

@@ -6,6 +6,7 @@ from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersS
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
 from mapping_workbench.backend.core.services.request import request_update_data, api_entity_is_found, \
     request_create_data
+from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuite, SPARQLTestFileResource, \
     SPARQLTestFileResourceUpdateIn, SPARQLTestFileResourceCreateIn
 from mapping_workbench.backend.user.models.user import User
@@ -92,3 +93,13 @@ async def get_sparql_test_file_resource(id: PydanticObjectId) -> SPARQLTestFileR
 
 async def delete_sparql_test_file_resource(sparql_test_file_resource: SPARQLTestFileResource):
     return await sparql_test_file_resource.delete()
+
+
+async def get_sparql_test_suite_by_project_and_title(
+        project_id: PydanticObjectId,
+        sparql_test_suite_title: str) -> SPARQLTestSuite:
+    sparql_test_suite = await SPARQLTestSuite.find_one(
+        SPARQLTestSuite.project == Project.link_from_id(project_id),
+        SPARQLTestSuite.title == sparql_test_suite_title
+    )
+    return sparql_test_suite

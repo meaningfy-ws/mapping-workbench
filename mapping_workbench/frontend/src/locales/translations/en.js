@@ -71,4 +71,7 @@ export const en = {
   [tokens.nav.generic_triple_map_fragments]: 'Generic Triple Maps',
   [tokens.nav.terms_validator]: 'Terms Validator',
   [tokens.nav.tasks]: 'Tasks',
+  [tokens.nav.generate_cm_assertions_queries]: 'Generate CM Assertions Queries',
+  [tokens.nav.assertions_queries]: 'SPARQL Queries',
+  [tokens.nav.transform_test_data]: 'Transform Test Data',
 };

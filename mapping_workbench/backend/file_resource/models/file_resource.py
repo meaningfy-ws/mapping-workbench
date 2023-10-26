@@ -4,6 +4,7 @@ from typing import Optional, List, Any
 from beanie import Link
 from fastapi import UploadFile
 from pydantic import field_validator
+from pydantic_core.core_schema import ValidationInfo
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntity
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
@@ -30,15 +31,17 @@ class FileResourceIn(BaseProjectResourceEntityInSchema):
     content: Optional[str] = None
 
     @field_validator("filename")
-    def set_filename(cls, v: str, values: dict[str, Any]) -> str:
-        if ("file" in values) and values["file"]:
-            return values["file"].filename
+    def set_filename(cls, v: str, values: ValidationInfo) -> str:
+        data = values.data
+        if ("file" in data) and data["file"]:
+            return data["file"].filename
         return v
 
     @field_validator("content")
-    def set_content(cls, v: str, values: dict[str, Any]) -> str:
-        if ("file" in values) and values["file"]:
-            return (values["file"].file.read()).decode("utf-8")
+    def set_content(cls, v: str, values: ValidationInfo) -> str:
+        data = values.data
+        if ("file" in data) and data["file"]:
+            return (data["file"].file.read()).decode("utf-8")
         return v
 
 

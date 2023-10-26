@@ -1,5 +1,6 @@
 import {ACTION, SectionApi} from "../section";
 import {appApi} from "../app";
+import {sessionApi} from "../session";
 
 export const COMMENT_PRIORITY = {
     HIGH: 'high',
@@ -33,6 +34,19 @@ class ConceptualMappingRulesApi extends SectionApi {
     async cloneItem(id){
         let endpoint = this.paths['clone'].replace(':id', id);
         return appApi.post(endpoint);
+    }
+
+    async generateCMAssertionsQueries(request = {}) {
+        try {
+            let endpoint = this.paths['tasks']['generate_cm_assertions_queries'];
+            let filters = {}
+            if (request['filters']) {
+                filters = request['filters'];
+            }
+            filters['project'] = sessionApi.getSessionProject();
+            return appApi.post(endpoint, filters);
+        } catch (err) {
+        }
     }
 
 }

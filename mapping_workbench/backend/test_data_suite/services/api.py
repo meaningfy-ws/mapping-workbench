@@ -8,6 +8,7 @@ from mapping_workbench.backend.core.services.request import request_update_data,
     request_create_data
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
     TestDataFileResourceUpdateIn, TestDataFileResourceCreateIn
+from mapping_workbench.backend.test_data_suite.services.transform_test_data import transform_test_data_file_resource
 from mapping_workbench.backend.user.models.user import User
 
 
@@ -67,10 +68,19 @@ async def create_test_data_suite_file_resource(
 async def update_test_data_file_resource(
         test_data_file_resource: TestDataFileResource,
         data: TestDataFileResourceUpdateIn,
-        user: User) -> TestDataFileResource:
-    return await test_data_file_resource.set(
-        request_update_data(data, user=user)
-    )
+        user: User,
+        transform_test_data: bool = False
+) -> TestDataFileResource:
+
+    update_data = request_update_data(data, user=user)
+    test_data_file_resource = await test_data_file_resource.set(update_data)
+    if transform_test_data:
+        test_data_file_resource = await transform_test_data_file_resource(
+            test_data_file_resource=test_data_file_resource,
+            user=user
+        )
+
+    return test_data_file_resource
 
 
 async def get_test_data_file_resource(id: PydanticObjectId) -> TestDataFileResource:

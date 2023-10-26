@@ -21,6 +21,8 @@ import MenuItem from "@mui/material/MenuItem";
 import * as React from "react";
 import FormLabel from "@mui/material/FormLabel";
 import Select from "@mui/material/Select";
+import {FormTextField} from "../../../components/app/form/text-field";
+import {FormTextArea} from "../../../components/app/form/text-area";
 
 
 export const FileCollectionEditForm = (props) => {
@@ -127,17 +129,7 @@ export const FileCollectionEditForm = (props) => {
                             xs={12}
                             md={12}
                         >
-                            <TextField
-                                error={!!(formik.touched.title && formik.errors.title)}
-                                fullWidth
-                                helperText={formik.touched.title && formik.errors.title}
-                                label="Title"
-                                name="title"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                required
-                                value={formik.values.title}
-                            />
+                            <FormTextField formik={formik} name="title" label="Title" required={true}/>
                         </Grid>
                         {sectionApi.hasFileCollectionType && (
                             <Grid xs={12} md={12}>
@@ -166,18 +158,9 @@ export const FileCollectionEditForm = (props) => {
                             xs={12}
                             md={12}
                         >
-                            <TextField
-                                error={!!(formik.touched.description && formik.errors.description)}
-                                minRows={5}
-                                multiline
-                                fullWidth
-                                helperText={formik.touched.description && formik.errors.description}
-                                label="Description"
-                                name="description"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                value={formik.values.description}
-                            />
+                            <Grid xs={12} md={12}>
+                                <FormTextArea formik={formik} name="description" label="Description"/>
+                            </Grid>
                         </Grid>
                     </Grid>
                 </CardContent>

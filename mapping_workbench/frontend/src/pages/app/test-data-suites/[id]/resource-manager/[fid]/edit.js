@@ -1,7 +1,5 @@
 import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
-import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
@@ -18,7 +16,18 @@ import {ForItemEditForm} from "src/contexts/app/section/for-item-form";
 import {ForItemDataState} from "src/contexts/app/section/for-item-data-state";
 import {useRouter} from "src/hooks/use-router";
 import {useMounted} from "../../../../../../hooks/use-mounted";
+import * as React from "react";
 import {useCallback, useEffect, useState} from "react";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Divider from "@mui/material/Divider";
+import {FormCodeTextArea} from "../../../../../../components/app/form/code-text-area";
+import Grid from "@mui/material/Unstable_Grid2";
+import {useFormik} from "formik";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+import Paper from "@mui/material/Paper";
+
 
 const useItem = (sectionApi, id) => {
     const isMounted = useMounted();
@@ -44,6 +53,55 @@ const useItem = (sectionApi, id) => {
     return new ForItemDataState(item, setItem);
 };
 
+
+const ExtraForm = (props) => {
+    const {
+        item,
+        formik
+    } = props;
+
+    const handleTransformTestDataChange = useCallback((event) => {
+        formik.setFieldValue('transform_test_data', event.target.checked);
+    }, [formik]);
+
+    return (
+        <>
+            <Paper
+                sx={{
+                    alignItems: 'flex-start',
+                    display: 'flex',
+                    px: 2,
+                    mb: 4
+                }}
+                variant="outlined"
+            >
+                <FormControlLabel
+                    sx={{
+                        width: '100%'
+                    }}
+                    control={
+                        <Checkbox
+                            checked={formik.values.transform_test_data}
+                            onChange={handleTransformTestDataChange}
+                        />
+                    }
+                    label="Transform Test Data"
+                    value=""
+                />
+            </Paper>
+            <Grid xs={12} md={12}>
+                <FormCodeTextArea
+                    formik={formik}
+                    name="rdf_manifestation"
+                    label="RDF Manifestation"
+                    grammar={sectionApi.FILE_RESOURCE_CODE['RDF']['grammar']}
+                    language={sectionApi.FILE_RESOURCE_CODE['RDF']['language']}
+                />
+            </Grid>
+        </>
+    )
+}
+
 const Page = () => {
     const router = useRouter();
     if (!router.isReady) return;
@@ -57,10 +115,19 @@ const Page = () => {
     const formState = useItem(sectionApi, fid);
     const item = formState.item;
 
+    const formik = useFormik({
+        initialValues: {"rdf_manifestation": item && item.rdf_manifestation}
+    });
+
     usePageView();
 
     if (!item) {
         return;
+    }
+
+    const extra_form_fields = {
+        rdf_manifestation: item.rdf_manifestation || '',
+        transform_test_data: false
     }
 
     return (
@@ -121,9 +188,15 @@ const Page = () => {
                             </Stack>
                         </Stack>
                     </Stack>
+
                 </Stack>
-                <FileResourceEditForm itemctx={new ForItemEditForm(item, sectionApi, formState.setState)}
-                                      collection_id={id}/>
+                <FileResourceEditForm
+                    itemctx={new ForItemEditForm(item, sectionApi, formState.setState)}
+                    collection_id={id}
+                    extra_form={ExtraForm}
+                    extra_form_fields={extra_form_fields}
+                />
+
             </Stack>
         </>
     );

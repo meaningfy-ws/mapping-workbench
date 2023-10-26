@@ -3,6 +3,8 @@ from typing import List, Annotated
 from beanie import PydanticObjectId
 from fastapi import APIRouter, Depends, status, Query
 
+from mapping_workbench.backend.conceptual_mapping_rule.models.api_request import \
+    APIRequestForGenerateCMAssertionsQueries
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRuleOut, \
     ConceptualMappingRuleCreateIn, \
     ConceptualMappingRuleUpdateIn, ConceptualMappingRule, ConceptualMappingRuleTermsValidity
@@ -19,6 +21,8 @@ from mapping_workbench.backend.core.models.api_response import APIEmptyContentWi
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
+from mapping_workbench.backend.sparql_test_suite.services.sparql_cm_assertions import \
+    clean_sparql_cm_assertions_queries_for_project, generate_and_save_cm_assertions_queries
 from mapping_workbench.backend.user.models.user import User
 
 ROUTE_PREFIX = "/conceptual_mapping_rules"
@@ -126,3 +130,17 @@ async def route_clone_conceptual_mapping_rule(
         user: User = Depends(current_active_user)
 ):
     return await clone_conceptual_mapping_rule(conceptual_mapping_rule, user=user)
+
+
+@router.post(
+    "/tasks/generate_cm_assertions_queries",
+    description=f"Generate CM Assertions Queries",
+    name=f"generate_cm_assertions_queries"
+)
+async def route_generate_cm_assertions_queries(
+        filters: APIRequestForGenerateCMAssertionsQueries,
+        user: User = Depends(current_active_user)
+):
+    if filters.cleanup:
+        await clean_sparql_cm_assertions_queries_for_project(project_id=filters.project)
+    return await generate_and_save_cm_assertions_queries(project_id=filters.project, user=user)

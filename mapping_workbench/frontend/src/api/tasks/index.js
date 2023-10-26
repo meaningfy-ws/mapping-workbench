@@ -27,6 +27,29 @@ class TasksApi {
         } catch (err) {
         }
     }
+    async runGenerateCMAssertionsQueries(request = {}) {
+        try {
+            let endpoint = this.paths['generate_cm_assertions_queries'];
+            let filters = {}
+            if (request['filters']) {
+                filters = request['filters'];
+            }
+            return appApi.post(endpoint, filters);
+        } catch (err) {
+        }
+    }
+
+    async runTransformTestData(request = {}) {
+        try {
+            let endpoint = this.paths['transform_test_data'];
+            let filters = {}
+            if (request['filters']) {
+                filters = request['filters'];
+            }
+            return appApi.post(endpoint, filters);
+        } catch (err) {
+        }
+    }
 }
 
 export const tasksApi = new TasksApi();

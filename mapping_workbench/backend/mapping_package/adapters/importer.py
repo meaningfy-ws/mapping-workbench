@@ -18,6 +18,8 @@ from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestFi
     SHACLTestFileResource
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResourceFormat, SPARQLTestSuite, \
     SPARQLTestFileResource, SPARQLQueryValidationType
+from mapping_workbench.backend.sparql_test_suite.services.api import get_sparql_test_suite_by_project_and_title
+from mapping_workbench.backend.sparql_test_suite.services.sparql_cm_assertions import SPARQL_CM_ASSERTIONS_SUITE_TITLE
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
     TestDataFileResourceFormat
 from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragmentFormat, \
@@ -30,6 +32,8 @@ VALIDATION_DIR = Path("validation")
 TRIPLE_MAP_FRAGMENTS_DIR = TRANSFORMATION_DIR / "mappings"
 CONCEPTUAL_MAPPINGS_FILE = TRANSFORMATION_DIR / "conceptual_mappings.xlsx"
 
+BASE_XPATH_FIELD = "Base XPath"
+
 RULES_SF_FIELD_ID = 'Standard Form Field ID (M)'
 RULES_SF_FIELD_NAME = 'Standard Form Field Name (M)'
 RULES_E_FORM_BT_ID = 'eForm BT-ID (Provisional/Indicative) (O)'
@@ -41,6 +45,7 @@ RULES_INTEGRATION_TESTS_REF = "Reference to Integration Tests (O)"
 RULES_RML_TRIPLE_MAP_REF = "RML TripleMap reference (O)"
 
 DEFAULT_RESOURCES_COLLECTION_NAME = "Default"
+
 
 
 class PackageImporter:
@@ -103,6 +108,11 @@ class PackageImporter:
                     self.metadata_constraint_value(constraints, 'min_xsd_version')
                 self.mapping_package_data.max_xsd_version = \
                     self.metadata_constraint_value(constraints, 'max_xsd_version')
+
+        conceptual_mappings_file = self.package_path / CONCEPTUAL_MAPPINGS_FILE
+        df = pd.read_excel(conceptual_mappings_file, sheet_name="Metadata")
+        cm_file_metadata = df.copy().set_index('Field').T.to_dict('list')
+        self.mapping_package_data.base_xpath = self.cm_file_read_pd_value(cm_file_metadata[BASE_XPATH_FIELD][0])
 
     async def add_test_data(self):
         resource_formats = [e.value for e in TestDataFileResourceFormat]
@@ -184,13 +194,13 @@ class PackageImporter:
             if len(parents) == 1:  # first level
                 sparql_test_suite_title = str(os.path.relpath(root, sparql_test_suites_path))
 
-                if sparql_test_suite_title == "cm_assertions":
-                    print("-- skipped sparql_test_suite cm_assertions")
+                if sparql_test_suite_title == SPARQL_CM_ASSERTIONS_SUITE_TITLE:
+                    print(f"-- skipped sparql_test_suite {SPARQL_CM_ASSERTIONS_SUITE_TITLE}")
                     continue
 
-                sparql_test_suite = await SPARQLTestSuite.find_one(
-                    SPARQLTestSuite.project == project_link,
-                    SPARQLTestSuite.title == sparql_test_suite_title
+                sparql_test_suite = await get_sparql_test_suite_by_project_and_title(
+                    project_id=self.project.id,
+                    sparql_test_suite_title=sparql_test_suite_title
                 )
 
                 if not sparql_test_suite:
@@ -363,17 +373,29 @@ class PackageImporter:
 
     async def add_mapping_package(self, with_save: bool = True):
         self.add_metadata_to_package_data()
-        self.mapping_package = await MappingPackage.find_one(
-            MappingPackage.identifier == self.mapping_package_data.identifier
-        ) or MappingPackage(**(self.mapping_package_data.model_dump()))
+        # self.mapping_package = await MappingPackage.find_one(
+        #     MappingPackage.identifier == self.mapping_package_data.identifier
+        # ) or MappingPackage(**(self.mapping_package_data.model_dump()))
+        #
+        # self.mapping_package.project = self.project
+        # self.mapping_package.test_data_suites = []
+        # self.mapping_package.shacl_test_suites = []
+        # with_save and (
+        #     await self.mapping_package.on_update(self.user).save() if self.mapping_package.id
+        #     else await self.mapping_package.on_create(self.user).save()
+        # )
 
-        self.mapping_package.project = self.project
-        self.mapping_package.test_data_suites = []
-        self.mapping_package.shacl_test_suites = []
-        with_save and (
-            await self.mapping_package.on_update(self.user).save() if self.mapping_package.id
-            else await self.mapping_package.on_create(self.user).save()
-        )
+    @classmethod
+    def cm_file_read_pd_value(cls, value, default=""):
+        if pd.isna(value):
+            return default
+        return value.strip()
+
+    @classmethod
+    def cm_file_read_list_from_pd_value(cls, value, sep=',') -> list:
+        if value and pd.notna(value):
+            return [x.strip() for x in str(value).split(',')]
+        return []
 
     async def add_mapping_rules(self):
         async def rule_exists(rule: ConceptualMappingRule) -> ConceptualMappingRule:
@@ -390,16 +412,6 @@ class PackageImporter:
             }
             return await ConceptualMappingRule.find_one(q)
 
-        def read_pd_value(value, default=""):
-            if pd.isna(value):
-                return default
-            return value.strip()
-
-        def read_list_from_pd_value(value, sep=',') -> list:
-            if value and pd.notna(value):
-                return [x.strip() for x in str(value).split(',')]
-            return []
-
         conceptual_mappings_file = self.package_path / CONCEPTUAL_MAPPINGS_FILE
         df = pd.read_excel(conceptual_mappings_file, sheet_name="Rules")
         df.columns = df.iloc[0]
@@ -413,17 +425,17 @@ class PackageImporter:
         for idx, row in rules_df.iterrows():
             rule = ConceptualMappingRule()
             rule.project = project_link
-            rule.field_id = read_pd_value(row[RULES_SF_FIELD_ID])
-            rule.field_title = read_pd_value(row[RULES_SF_FIELD_NAME])
+            rule.field_id = self.cm_file_read_pd_value(row[RULES_SF_FIELD_ID])
+            rule.field_title = self.cm_file_read_pd_value(row[RULES_SF_FIELD_NAME])
             rule.field_description = \
-                f"{read_pd_value(row[RULES_E_FORM_BT_ID])} {read_pd_value(row[RULES_E_FORM_BT_NAME])}".strip()
-            rule.source_xpath = read_list_from_pd_value(row[RULES_FIELD_XPATH], sep='\n')
-            rule.target_class_path = read_pd_value(row[RULES_CLASS_PATH])
-            rule.target_property_path = read_pd_value(row[RULES_PROPERTY_PATH])
+                f"{self.cm_file_read_pd_value(row[RULES_E_FORM_BT_ID])} {self.cm_file_read_pd_value(row[RULES_E_FORM_BT_NAME])}".strip()
+            rule.source_xpath = self.cm_file_read_list_from_pd_value(row[RULES_FIELD_XPATH], sep='\n')
+            rule.target_class_path = self.cm_file_read_pd_value(row[RULES_CLASS_PATH])
+            rule.target_property_path = self.cm_file_read_pd_value(row[RULES_PROPERTY_PATH])
             rule.mapping_packages = [MappingPackage.link_from_id(self.mapping_package.id)]
             rule.triple_map_fragment = None
 
-            df_integration_tests = read_list_from_pd_value(row[RULES_INTEGRATION_TESTS_REF])
+            df_integration_tests = self.cm_file_read_list_from_pd_value(row[RULES_INTEGRATION_TESTS_REF])
             sparql_integration_tests_query = {
                 "project": project_link,
                 "type": SPARQLQueryValidationType.INTEGRATION_TEST.value,

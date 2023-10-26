@@ -24,6 +24,9 @@ export const paths = {
                 create: '/app/test-data-suites/[id]/resource-manager/create',
                 edit: '/app/test-data-suites/[id]/resource-manager/[fid]/edit',
                 view: '/app/test-data-suites/[id]/resource-manager/[fid]/view',
+            },
+            tasks: {
+                transform_test_data: '/app/test-data-suites/tasks/transform-test-data'
             }
         },
         sparql_test_suites: {
@@ -86,7 +89,10 @@ export const paths = {
             index: '/app/conceptual-mapping-rules',
             create: '/app/conceptual-mapping-rules/create',
             edit: '/app/conceptual-mapping-rules/[id]/edit',
-            view: '/app/conceptual-mapping-rules/[id]/view'
+            view: '/app/conceptual-mapping-rules/[id]/view',
+            tasks: {
+                generate_cm_assertions_queries: '/app/conceptual-mapping-rules/tasks/generate-cm-assertions-queries'
+            }
         },
 
         triple_map_fragments: {
@@ -135,7 +141,9 @@ export const paths = {
         },
         tasks: {
             index: '/app/tasks',
-            terms_validator: '/app/tasks/terms_validator'
+            terms_validator: '/app/tasks/terms_validator',
+            transform_test_data: '/app/tasks/transform_test_data',
+            generate_cm_assertions_queries: '/app/tasks/generate_cm_assertions_queries'
         }
     },
     docs: 'https://material-kit-pro-react-docs.devias.io',
@@ -155,6 +163,9 @@ export const apiPaths = {
         item: '/test_data_suites/:id',
         file_resources: '/test_data_suites/:id/file_resources',
         file_resource: '/test_data_suites/file_resources/:id',
+        tasks: {
+            transform_test_data: '/test_data_suites/tasks/transform_test_data',
+        }
     },
     sparql_test_suites: {
         items: '/sparql_test_suites',
@@ -192,8 +203,10 @@ export const apiPaths = {
         items: '/conceptual_mapping_rules',
         item: '/conceptual_mapping_rules/:id',
         check_content_terms_validity: '/ontology/check_content_terms_validity',
-        clone: '/conceptual_mapping_rules/:id/clone'
-
+        clone: '/conceptual_mapping_rules/:id/clone',
+        tasks: {
+            generate_cm_assertions_queries: '/conceptual_mapping_rules/tasks/generate_cm_assertions_queries'
+        }
     },
 
     triple_map_fragments: {
@@ -230,6 +243,8 @@ export const apiPaths = {
     },
 
     tasks: {
-        terms_validator: '/tasks/terms_validator'
+        terms_validator: '/tasks/terms_validator',
+        generate_cm_assertions_queries: '/tasks/generate_cm_assertions_queries',
+        transform_test_data: '/tasks/transform_test_data'
     }
 }

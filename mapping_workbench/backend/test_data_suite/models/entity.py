@@ -35,6 +35,7 @@ class TestDataFileResourceFormat(Enum):
 
 class TestDataFileResourceIn(FileResourceIn):
     format: Optional[TestDataFileResourceFormat] = None
+    rdf_manifestation: Optional[str] = None
 
 
 class TestDataFileResourceCreateIn(TestDataFileResourceIn):
@@ -48,6 +49,7 @@ class TestDataFileResourceUpdateIn(TestDataFileResourceIn):
 class TestDataFileResource(FileResource):
     format: Optional[TestDataFileResourceFormat] = None
     test_data_suite: Optional[Link[TestDataSuite]] = None
+    rdf_manifestation: Optional[str] = None
 
     class Settings(FileResource.Settings):
         name = "test_data_file_resources"

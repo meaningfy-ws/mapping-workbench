@@ -265,6 +265,14 @@ export const useSections = () => {
                         {
                             title: t(tokens.nav.terms_validator),
                             path: paths.app.tasks.terms_validator
+                        },
+                        {
+                            title: t(tokens.nav.assertions_queries),
+                            path: paths.app.tasks.generate_cm_assertions_queries
+                        },
+                        {
+                            title: t(tokens.nav.transform_test_data),
+                            path: paths.app.tasks.transform_test_data
                         }
                     ]
                 },

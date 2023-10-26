@@ -1,5 +1,6 @@
 import {useCallback, useEffect, useState} from 'react';
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
+import RefreshIcon from '@untitled-ui/icons-react/build/esm/Repeat02';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -18,14 +19,14 @@ import {paths} from 'src/paths';
 import {ListSearch} from "../../../sections/app/conceptual-mapping-rule/list-search";
 import {ListTable} from "../../../sections/app/conceptual-mapping-rule/list-table";
 import {useMounted} from "../../../hooks/use-mounted";
+import {useTranslation} from "react-i18next";
+import {tokens} from "/src/locales/tokens";
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
         filters: {
             q: undefined,
-            terms_validity: undefined,
-            status: [],
-            inStock: undefined
+            terms_validity: undefined
         },
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE,
@@ -105,6 +106,8 @@ const useItemsStore = (searchState) => {
 
 
 const Page = () => {
+    const {t} = useTranslation();
+
     const itemsSearch = useItemsSearch();
     const itemsStore = useItemsStore(itemsSearch.state);
 
@@ -177,6 +180,18 @@ const Page = () => {
                             variant="contained"
                         >
                             Add
+                        </Button>
+                        <Button
+                            component={RouterLink}
+                            href={paths.app[sectionApi.section].tasks.generate_cm_assertions_queries}
+                            startIcon={(
+                                <SvgIcon>
+                                    <RefreshIcon/>
+                                </SvgIcon>
+                            )}
+                            variant="contained"
+                        >
+                            {t(tokens.nav.generate_cm_assertions_queries)}
                         </Button>
                     </Stack>
                 </Stack>

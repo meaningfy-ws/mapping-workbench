@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import dotenv
 import os
 from pydantic_settings import BaseSettings
@@ -27,7 +29,17 @@ class SecuritySettings(BaseSettings):
     JWT_EXPIRES_IN: int = int(os.getenv('JWT_EXPIRES_IN', 3600))
 
 
-class Settings(AppSettings, ServerSettings, DatabaseSettings, SecuritySettings):
+class RMLMapperSettings(BaseSettings):
+    RML_MAPPER_PATH: Path = Path(os.getenv('RML_MAPPER_PATH'))
+
+
+class Settings(
+    AppSettings,
+    ServerSettings,
+    DatabaseSettings,
+    SecuritySettings,
+    RMLMapperSettings
+):
     pass
 
 

@@ -26,7 +26,8 @@ export const FormCodeTextArea = (props) => {
     const {
         formik, name, label,
         required = false,
-        grammar = null, language = null
+        grammar = null, language = null,
+        ...other
     } = props;
 
     const [content, setContent] = useState('');
@@ -86,6 +87,7 @@ export const FormCodeTextArea = (props) => {
                             label={label}
                             name={name}
                             required={required}
+                            {...other}
                         />
                     </div>
                 </Box>

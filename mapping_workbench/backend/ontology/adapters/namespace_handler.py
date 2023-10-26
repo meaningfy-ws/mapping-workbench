@@ -29,7 +29,6 @@ class NamespaceInventory(rdflib.namespace.NamespaceManager):
 
     def __init__(self, namespace_definition_dict=None):
         super().__init__(rdflib.Graph())
-
         if namespace_definition_dict:
             # reduce the namespace definition dictionary and bind the definitions
             for prefix, namespace in invert_dict(invert_dict(namespace_definition_dict)).items():
@@ -146,8 +145,3 @@ def simplify_uris_in_tabular(data_frame: DataFrame, namespace_inventory: Namespa
         result_frame[column] = result_frame[column].apply(
             lambda x: namespace_inventory.uri_to_qname(x, prefix_cc_lookup=prefix_cc_lookup, error_fail=error_fail))
     return result_frame
-
-
-async def get_ns_handler() -> NamespaceInventory:
-    namespace_definition_dict = {x.prefix: (x.uri or '') for x in (await Namespace.find_all().to_list())}
-    return NamespaceInventory(namespace_definition_dict=namespace_definition_dict)

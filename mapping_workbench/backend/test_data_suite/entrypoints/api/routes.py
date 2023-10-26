@@ -4,6 +4,7 @@ from beanie import PydanticObjectId
 from fastapi import APIRouter, status, Depends, Query
 from starlette.requests import Request
 
+from mapping_workbench.backend.core.models.api_request import APIRequestWithProject
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
 from mapping_workbench.backend.file_resource.services.file_resource_form_data import \
     file_resource_data_from_form_request
@@ -24,6 +25,8 @@ from mapping_workbench.backend.test_data_suite.services.api import (
     get_test_data_file_resource,
     delete_test_data_file_resource, update_test_data_file_resource
 )
+from mapping_workbench.backend.test_data_suite.services.transform_test_data import transform_test_data_file_resource, \
+    transform_test_data_for_project
 from mapping_workbench.backend.user.models.user import User
 
 ROUTE_PREFIX = "/test_data_suites"
@@ -151,8 +154,17 @@ async def route_update_test_data_file_resource(
         test_data_file_resource: TestDataFileResource = Depends(get_test_data_file_resource),
         user: User = Depends(current_active_user)
 ):
-    data = TestDataFileResourceUpdateIn(**(await file_resource_data_from_form_request(req)))
-    return await update_test_data_file_resource(test_data_file_resource, data, user=user)
+    req_data = await file_resource_data_from_form_request(req)
+    transform_test_data: bool = False
+    if 'transform_test_data' in req_data:
+        transform_test_data = req_data['transform_test_data'] == 'true'
+        del req_data['transform_test_data']
+    data = TestDataFileResourceUpdateIn(**req_data)
+    return await update_test_data_file_resource(
+        test_data_file_resource, data,
+        user=user,
+        transform_test_data=transform_test_data
+    )
 
 
 @router.get(
@@ -177,3 +189,15 @@ async def route_delete_test_data_file_resource(
         test_data_file_resource: TestDataFileResource = Depends(get_test_data_file_resource)):
     await delete_test_data_file_resource(test_data_file_resource)
     return APIEmptyContentWithIdResponse(id=test_data_file_resource.id)
+
+
+@router.post(
+    "/tasks/transform_test_data",
+    description=f"Transform Test Data",
+    name=f"transform_test_data"
+)
+async def route_transform_test_data(
+        filters: APIRequestWithProject,
+        user: User = Depends(current_active_user)
+):
+    return await transform_test_data_for_project(project_id=filters.project, user=user)
