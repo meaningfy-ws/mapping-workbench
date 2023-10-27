@@ -17,7 +17,6 @@ import FormControl from "@mui/material/FormControl";
 import {Box} from '@mui/system';
 import styles from './style/code-text-area.module.scss';
 import variables from './style/variables.code-text-area.module.scss';
-import {genericTripleMapFragmentsApi} from "../../../api/triple-map-fragments/generic";
 
 const DEFAULT_GRAMMAR = 'text';
 const DEFAULT_LANGUAGE = 'none';
