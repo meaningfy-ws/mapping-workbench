@@ -1,6 +1,5 @@
-from typing import List, Dict
+from typing import Dict
 
-from beanie import PydanticObjectId
 from fastapi import APIRouter, Depends, status
 
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
@@ -19,7 +18,7 @@ from mapping_workbench.backend.ontology.services.api_for_namespaces import (
 from mapping_workbench.backend.ontology.services.api_for_terms import list_terms, create_term, update_term, \
     get_term_out, get_term, delete_term
 from mapping_workbench.backend.ontology.services.terms import discover_and_save_terms, list_known_terms, is_known_term, \
-    check_content_terms_validity
+    check_content_terms_validity, search_terms, get_prefixed_terms
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.user.models.user import User
 
@@ -209,4 +208,24 @@ async def route_check_content_terms_validity(data: Dict):
     name=f"{NAME_FOR_MANY}:list_{NAME_FOR_ONE}_known_terms"
 )
 async def route_is_known_term(term: str):
-    return await is_known_term()
+    return await is_known_term(term=term)
+
+
+@router.get(
+    "/search_terms",
+    description=f"Search {NAME_FOR_ONE} terms",
+    name=f"{NAME_FOR_MANY}:search_{NAME_FOR_ONE}_terms"
+)
+async def route_search_terms(q: str):
+    terms = await search_terms(q=q)
+    return terms
+
+
+@router.get(
+    "/prefixed_terms",
+    description=f"Prefixed {NAME_FOR_ONE} terms",
+    name=f"{NAME_FOR_MANY}:prefixed_{NAME_FOR_ONE}_terms"
+)
+async def route_prefixed_terms():
+    prefixed_terms = await get_prefixed_terms()
+    return prefixed_terms

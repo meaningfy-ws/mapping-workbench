@@ -203,6 +203,8 @@ export const apiPaths = {
         items: '/conceptual_mapping_rules',
         item: '/conceptual_mapping_rules/:id',
         check_content_terms_validity: '/ontology/check_content_terms_validity',
+        search_terms: '/ontology/search_terms',
+        prefixed_terms: '/ontology/prefixed_terms',
         clone: '/conceptual_mapping_rules/:id/clone',
         tasks: {
             generate_cm_assertions_queries: '/conceptual_mapping_rules/tasks/generate_cm_assertions_queries'

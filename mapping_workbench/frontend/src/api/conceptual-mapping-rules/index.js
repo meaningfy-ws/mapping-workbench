@@ -31,6 +31,16 @@ class ConceptualMappingRulesApi extends SectionApi {
         return appApi.post(endpoint, {"content": content});
     }
 
+    async searchTerms(q){
+        let endpoint = this.paths['search_terms'];
+        return appApi.get(endpoint, {"q": q});
+    }
+
+    async getPrefixedTerms(q){
+        let endpoint = this.paths['prefixed_terms'];
+        return appApi.get(endpoint);
+    }
+
     async cloneItem(id){
         let endpoint = this.paths['clone'].replace(':id', id);
         return appApi.post(endpoint);

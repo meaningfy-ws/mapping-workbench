@@ -110,38 +110,3 @@ class NamespaceInventory(rdflib.namespace.NamespaceManager):
                 ns_inv_e.info = error_info
                 raise ns_inv_e from e
             return qname_string
-
-
-def simplify_uris_in_tabular(data_frame: DataFrame, namespace_inventory: NamespaceInventory,
-                             target_columns: List = None,
-                             prefix_cc_lookup=True, inplace=True, error_fail=True) -> DataFrame:
-    """
-        Replace the full URIs by their qname counterparts. Discover the namespaces
-        in the process, if the namespaces are not defined.
-
-    :param namespace_inventory: the namespace inventory to be used for replacement resolution
-    :param error_fail: fail on error or throw exception per data_fame cell
-    :param inplace: indicate whether the current data_frame shall be modified or a new one be created instead
-    :param prefix_cc_lookup:
-    :param target_columns: the target columns to explore;
-                                Expectation is that these columns exclusively contain only URIs as values
-    :param data_frame: the dataframe to explore
-    :return:  the DataFrame with replaced values
-    """
-    if not target_columns:
-        target_columns = []
-
-    for col in target_columns:
-        if col not in data_frame.columns.values.tolist():
-            raise ValueError("The target column not found in the data frame")
-    # get all the string columns
-    obj_columns = data_frame.select_dtypes([object]).columns
-    # limit to columns indicated in the self.target_columns
-    obj_columns = filter(lambda x: x in target_columns, obj_columns) if target_columns else obj_columns
-
-    # copy the dataframe if needed
-    result_frame = data_frame if inplace else data_frame.copy(deep=True)
-    for column in obj_columns:
-        result_frame[column] = result_frame[column].apply(
-            lambda x: namespace_inventory.uri_to_qname(x, prefix_cc_lookup=prefix_cc_lookup, error_fail=error_fail))
-    return result_frame
