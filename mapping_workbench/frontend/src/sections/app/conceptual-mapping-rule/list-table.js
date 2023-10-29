@@ -53,45 +53,38 @@ import ListItem from "@mui/material/ListItem";
 import parse from "html-react-parser";
 import Alert from "@mui/material/Alert";
 import Divider from "@mui/material/Divider";
-import RadioGroup from "@mui/material/RadioGroup";
-import Radio from "@mui/material/Radio";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 
 export const ListTableTripleMapFragment = (props) => {
     const {
-        item, initProjectTripleMapFragments = [],
+        item, initProjectTripleMapFragments = null,
         isCurrent,
         isHovered
     } = props;
 
 
     const [tripleMapFragment, setTripleMapFragment] = useState({});
+    const [projectTripleMapFragments, setProjectTripleMapFragments] = useState(initProjectTripleMapFragments || []);
     const triple_map_fragment_id = item.triple_map_fragment && item.triple_map_fragment.id;
+
     useEffect(() => {
         (async () => {
+            if (initProjectTripleMapFragments === null) {
+                setProjectTripleMapFragments(await genericTripleMapFragmentsApi.getValuesForSelector());
+            }
             if (triple_map_fragment_id) {
-                setTripleMapFragment(await genericTripleMapFragmentsApi.getItem(triple_map_fragment_id));
+                setTripleMapFragment(projectTripleMapFragments.find(x => x._id === triple_map_fragment_id));
             }
         })()
     }, [genericTripleMapFragmentsApi])
 
     const [ruleTripleMapFragment, setRuleTripleMapFragment] = useState(triple_map_fragment_id);
 
-    const [projectTripleMapFragments, setProjectTripleMapFragments] = useState(initProjectTripleMapFragments);
-
-    useEffect(() => {
-        (async () => {
-            if (initProjectTripleMapFragments.length === 0) {
-                await setProjectTripleMapFragments(await genericTripleMapFragmentsApi.getValuesForSelector());
-            }
-        })()
-    }, [genericTripleMapFragmentsApi])
-
     let initialValues = {
-        triple_map_uri: tripleMapFragment.triple_map_uri || '',
-        triple_map_content: tripleMapFragment.triple_map_content || '',
-        format: tripleMapFragment.format || genericTripleMapFragmentsApi.FILE_RESOURCE_DEFAULT_FORMAT || '',
+        triple_map_uri: (tripleMapFragment && tripleMapFragment.triple_map_uri) || '',
+        triple_map_content: (tripleMapFragment && tripleMapFragment.triple_map_content) || '',
+        format: (tripleMapFragment && tripleMapFragment.format) || genericTripleMapFragmentsApi.FILE_RESOURCE_DEFAULT_FORMAT || '',
     };
 
     const formik = useFormik({
@@ -210,7 +203,7 @@ export const ListTableTripleMapFragment = (props) => {
                                 label={genericTripleMapFragmentsApi.SECTION_ITEM_TITLE}
                                 onChange={handleTripleMapFragmentSelect}
                                 select
-                                value={tripleMapFragment._id}
+                                value={tripleMapFragment && tripleMapFragment._id}
                             >
                                 <MenuItem key="" value={null}>&nbsp;</MenuItem>
                                 {projectTripleMapFragments.map((x) => (
@@ -219,7 +212,7 @@ export const ListTableTripleMapFragment = (props) => {
                             </TextField>
                         </FormControl>
                     </Box>
-                    {tripleMapFragment._id && (
+                    {tripleMapFragment && tripleMapFragment._id && (
                         <>
                             <Box>
                                 <Grid xs={12} md={12} pb={2} item={true}>
@@ -302,18 +295,21 @@ export const ListTableTripleMapFragment = (props) => {
 
 export const ListTableMappingPackages = (props) => {
     const {
-        item, initProjectMappingPackages = [], onPackagesUpdate = () => {
+        item, initProjectMappingPackages = null, onPackagesUpdate = () => {
         },
         isCurrent,
         isHovered
     } = props;
 
-    const [mappingPackages, setMappingPackages] = useState(item.mapping_packages.map(x => x.id));
-    const [projectMappingPackages, setProjectMappingPackages] = useState(initProjectMappingPackages);
+    let ruleFilteredMappingPackages = item.mapping_packages.map(x => x.id);
+    const [mappingPackages, setMappingPackages] = useState(ruleFilteredMappingPackages);
+    const [projectMappingPackages, setProjectMappingPackages] = useState(initProjectMappingPackages || []);
+    const [tempMappingPackages, setTempMappingPackages] =
+        useState(JSON.parse(JSON.stringify(ruleFilteredMappingPackages)));
 
     useEffect(() => {
         (async () => {
-            if (initProjectMappingPackages.length === 0) {
+            if (initProjectMappingPackages === null) {
                 setProjectMappingPackages(await mappingPackagesApi.getProjectPackages());
             }
         })()
@@ -324,14 +320,23 @@ export const ListTableMappingPackages = (props) => {
     const handleMappingPackagesUpdate = useCallback(async () => {
         let values = {}
         values['id'] = item._id;
-        values['mapping_packages'] = mappingPackages;
+        console.log(tempMappingPackages);
+        values['mapping_packages'] = tempMappingPackages;
         await conceptualMappingRulesApi.updateItem(values);
+        setMappingPackages(tempMappingPackages);
+        item.mapping_packages = tempMappingPackages.map(x => {return { id: x}});
         toast.success(conceptualMappingRulesApi.SECTION_ITEM_TITLE + ' updated');
         mappingPackagesDialog.handleClose();
         onPackagesUpdate()
-    }, [item, onPackagesUpdate]);
+    }, [item, onPackagesUpdate, tempMappingPackages]);
 
     const ruleMappingPackages = projectMappingPackages.filter(x => mappingPackages.includes(x.id))
+
+    const mappingPackagesDialogHandleClose = useCallback(() => {
+        mappingPackagesDialog.handleClose();
+        setTempMappingPackages(JSON.parse(JSON.stringify(ruleFilteredMappingPackages)));
+    }, [mappingPackagesDialog])
+
     return (<>
         {ruleMappingPackages.length > 0 && (
             <Box sx={{mb: 1}}>
@@ -364,7 +369,7 @@ export const ListTableMappingPackages = (props) => {
         </Box>
         <Dialog
             id={"mapping_packages_dialog_" + item._id}
-            onClose={mappingPackagesDialog.handleClose}
+            onClose={mappingPackagesDialogHandleClose}
             open={mappingPackagesDialog.open}
             fullWidth
             maxWidth="sm"
@@ -380,7 +385,7 @@ export const ListTableMappingPackages = (props) => {
                 </Typography>
                 <Box container spacing={3}>
                     <MappingPackageCheckboxList
-                        mappingPackages={mappingPackages} initProjectMappingPackages={projectMappingPackages}/>
+                        mappingPackages={tempMappingPackages} initProjectMappingPackages={projectMappingPackages}/>
                 </Box>
                 <Button
                     variant="contained"
@@ -400,15 +405,19 @@ export const ListTableSPARQLAssertions = (props) => {
         item,
         isCurrent,
         isHovered,
-        initProjectSPARQLResources = []
+        initProjectSPARQLResources = null
     } = props;
 
-    const [sparqlResources, setSparqlResources] = useState((item.sparql_assertions || []).map(x => x.id));
-    const [projectSPARQLResources, setProjectSPARQLResources] = useState(initProjectSPARQLResources);
+    let ruleFilteredSparqlResources = (item.sparql_assertions || []).map(x => x.id);
+    const [sparqlResources, setSparqlResources] = useState(ruleFilteredSparqlResources);
+    const [projectSPARQLResources, setProjectSPARQLResources] = useState(initProjectSPARQLResources || []);
+    const [tempSparqlResources, setTempSparqlResources] = useState(
+        JSON.parse(JSON.stringify(ruleFilteredSparqlResources))
+    );
 
     useEffect(() => {
         (async () => {
-            if (initProjectSPARQLResources.length === 0) {
+            if (initProjectSPARQLResources === null) {
                 setProjectSPARQLResources(await sparqlTestFileResourcesApi.getMappingRuleResources());
             }
         })()
@@ -419,15 +428,22 @@ export const ListTableSPARQLAssertions = (props) => {
     const handleSparqlTestFileResourcesUpdate = useCallback(async () => {
         let values = {}
         values['id'] = item._id;
-        values['sparql_assertions'] = sparqlResources;
+        values['sparql_assertions'] = tempSparqlResources;
         await conceptualMappingRulesApi.updateItem(values);
+        setSparqlResources(tempSparqlResources);
+        item.sparql_assertions = tempSparqlResources.map(x => {return { id: x}});
         toast.success(conceptualMappingRulesApi.SECTION_ITEM_TITLE + ' updated');
         sparqlTestFileResourcesDialog.handleClose();
-    }, []);
+    }, [tempSparqlResources]);
 
     const sparqlResourcesForSelector = function (filters = {}) {
         return sparqlTestFileResourcesApi.getMappingRuleResources(filters);
     }
+
+    const sparqlTestFileResourcesDialogHandleClose = useCallback(() => {
+        sparqlTestFileResourcesDialog.handleClose();
+        setTempSparqlResources(JSON.parse(JSON.stringify(ruleFilteredSparqlResources)));
+    }, [sparqlTestFileResourcesDialog])
 
     const ruleSPARQLResources = projectSPARQLResources.filter(x => sparqlResources.includes(x.id))
 
@@ -464,7 +480,7 @@ export const ListTableSPARQLAssertions = (props) => {
             </Box>
             <Dialog
                 id={"sparql_assertions_" + item._id}
-                onClose={sparqlTestFileResourcesDialog.handleClose}
+                onClose={sparqlTestFileResourcesDialogHandleClose}
                 open={sparqlTestFileResourcesDialog.open}
                 fullWidth
                 maxWidth="sm"
@@ -482,7 +498,7 @@ export const ListTableSPARQLAssertions = (props) => {
                     <Box container spacing={3}>
                         <ResourceListSelector
                             valuesApi={sparqlTestFileResourcesApi}
-                            listValues={sparqlResources}
+                            listValues={tempSparqlResources}
                             initProjectValues={projectSPARQLResources}
                             titleField="title"
                             valuesForSelector={sparqlResourcesForSelector}
@@ -544,9 +560,9 @@ export const ListTableRow = (props) => {
         handleItemToggle,
         handleItemHover,
         sectionApi,
-        initProjectTripleMapFragments = [],
-        initProjectMappingPackages = [],
-        initProjectSPARQLResources = [],
+        initProjectTripleMapFragments = null,
+        initProjectMappingPackages = null,
+        initProjectSPARQLResources = null,
         onPackagesUpdate = () => {
         },
         detailedView
@@ -565,6 +581,9 @@ export const ListTableRow = (props) => {
 
     const generateValidityInfo = (termsValidity, pathName, pathValue) => {
         let validityInfo = pathValue;
+        if (!termsValidity) {
+            return validityInfo;
+        }
         for (let termValidity of termsValidity) {
             let color = termValidity.is_valid ? 'green' : 'red'
             validityInfo = validityInfo.replace(
@@ -587,8 +606,14 @@ export const ListTableRow = (props) => {
         item.target_class_path
     );
 
-    const hasTargetPropertyPathValidityErrors = item.target_property_path_terms_validity.some(x => !x.is_valid);
-    const hasTargetClassPathValidityErrors = item.target_class_path_terms_validity.some(x => !x.is_valid);
+    const hasTargetPropertyPathValidityErrors =
+        item.target_property_path_terms_validity
+            ? item.target_property_path_terms_validity.some(x => !x.is_valid)
+            : false;
+    const hasTargetClassPathValidityErrors =
+        item.target_class_path_terms_validity
+            ? item.target_class_path_terms_validity.some(x => !x.is_valid)
+            : false;
 
     const commentsDialog = useDialog();
     const notesDialog = useDialog();
@@ -859,27 +884,6 @@ export const ListTable = (props) => {
     const [currentItem, setCurrentItem] = useState(null);
     const [hoveredItem, setHoveredItem] = useState(null);
 
-    const [projectTripleMapFragments, setProjectTripleMapFragments] = useState([]);
-    useEffect(() => {
-        (async () => {
-            setProjectTripleMapFragments(await genericTripleMapFragmentsApi.getValuesForSelector());
-        })()
-    }, [genericTripleMapFragmentsApi])
-
-    const [projectMappingPackages, setProjectMappingPackages] = useState([]);
-    useEffect(() => {
-        (async () => {
-            setProjectMappingPackages(await mappingPackagesApi.getProjectPackages());
-        })()
-    }, [mappingPackagesApi])
-
-    const [projectSPARQLResources, setProjectSPARQLResources] = useState([]);
-    useEffect(() => {
-        (async () => {
-            setProjectSPARQLResources(await sparqlTestFileResourcesApi.getMappingRuleResources());
-        })()
-    }, [sparqlTestFileResourcesApi])
-
     const handleItemToggle = useCallback((itemId) => {
         setCurrentItem((prevItemId) => {
             if (prevItemId === itemId) {
@@ -907,6 +911,23 @@ export const ListTable = (props) => {
 
     //     toast.error('Item cannot be deleted');
     // }, []);
+
+    const [isProjectDataReady, setIsProjectDataReady] = useState(false);
+
+    const [projectTripleMapFragments, setProjectTripleMapFragments] = useState([]);
+    const [projectMappingPackages, setProjectMappingPackages] = useState([]);
+    const [projectSPARQLResources, setProjectSPARQLResources] = useState([]);
+
+    useEffect(() => {
+        (async () => {
+            setProjectTripleMapFragments(await genericTripleMapFragmentsApi.getValuesForSelector());
+            setProjectMappingPackages(await mappingPackagesApi.getProjectPackages());
+            setProjectSPARQLResources(await sparqlTestFileResourcesApi.getMappingRuleResources());
+            setIsProjectDataReady(true);
+        })()
+    }, [genericTripleMapFragmentsApi])
+
+    if (!isProjectDataReady) return null;
 
     return (<div>
         <TablePagination

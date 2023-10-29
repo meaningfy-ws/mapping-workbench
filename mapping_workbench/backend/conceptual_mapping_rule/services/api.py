@@ -83,11 +83,19 @@ async def delete_conceptual_mapping_rule(conceptual_mapping_rule: ConceptualMapp
 
 
 async def rule_terms_validator(rule: ConceptualMappingRule) -> ConceptualMappingRule:
-    rule.target_class_path_terms_validity = await check_content_terms_validity(rule.target_class_path)
-    rule.target_property_path_terms_validity = await check_content_terms_validity(rule.target_property_path)
+    rule.target_class_path_terms_validity = await check_content_terms_validity(
+        rule.target_class_path) if rule.target_class_path else []
+    rule.target_property_path_terms_validity = await check_content_terms_validity(
+        rule.target_property_path) if rule.target_property_path else []
     rule.terms_validity = ConceptualMappingRuleTermsValidity.INVALID \
-        if any(not x.is_valid for x in rule.target_class_path_terms_validity) \
-           or any(not x.is_valid for x in rule.target_property_path_terms_validity) \
+        if (
+                   rule.target_class_path_terms_validity
+                   and any(not x.is_valid for x in rule.target_class_path_terms_validity)
+           ) \
+           or (
+                   rule.target_property_path_terms_validity
+                   and any(not x.is_valid for x in rule.target_property_path_terms_validity)
+           ) \
         else ConceptualMappingRuleTermsValidity.VALID
 
     return rule

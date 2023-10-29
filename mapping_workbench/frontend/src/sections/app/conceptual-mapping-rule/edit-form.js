@@ -254,19 +254,6 @@ export const EditForm = (props) => {
             }
         });
 
-        const [projectTripleMapFragments, setProjectTripleMapFragments] = useState([]);
-        useEffect(() => {
-            (async () => {
-                setProjectTripleMapFragments(await genericTripleMapFragmentsApi.getValuesForSelector());
-            })()
-        }, [genericTripleMapFragmentsApi])
-
-        const [projectSPARQLResources, setProjectSPARQLResources] = useState([]);
-        useEffect(() => {
-            (async () => {
-                setProjectSPARQLResources(await sparqlTestFileResourcesApi.getMappingRuleResources());
-            })()
-        }, [sparqlTestFileResourcesApi])
 
         const handleTripleMapFragmentSelect = useCallback((e) => {
             let value = e.target.value;
@@ -335,6 +322,21 @@ export const EditForm = (props) => {
                 formik.setFieldValue(fieldName, fieldValue);
             }
         }
+
+        const [isProjectDataReady, setIsProjectDataReady] = useState(false);
+
+        const [projectTripleMapFragments, setProjectTripleMapFragments] = useState([]);
+        const [projectSPARQLResources, setProjectSPARQLResources] = useState([]);
+
+        useEffect(() => {
+            (async () => {
+                setProjectTripleMapFragments(await genericTripleMapFragmentsApi.getValuesForSelector());
+                setProjectSPARQLResources(await sparqlTestFileResourcesApi.getMappingRuleResources());
+                setIsProjectDataReady(true);
+            })()
+        }, [])
+
+        if (!isProjectDataReady) return null;
 
         return (
             <form onSubmit={formik.handleSubmit} {...other}>
