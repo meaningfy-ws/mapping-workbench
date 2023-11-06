@@ -7,9 +7,9 @@ def import_fields_registry_from_eforms_fields(eforms_fields_content: dict,
                                               field_registry_title: str = None) -> FieldsRegistry:
     """
     Imports a FieldsRegistry from the eForms content of fields.json file
-    :param field_registry_title: The title of the FieldsRegistry
     :param eforms_fields_content: The content of the eForms fields.json file
-    :return: The FieldsRegistry
+    :param field_registry_title: The title of the FieldsRegistry
+    :return: The instance of FieldsRegistry
     """
 
     eforms_sdk_fields = EFormsSDKFields(**eforms_fields_content)
