@@ -31,7 +31,7 @@ class StructuralNode(StructuralElement):
 
 class FieldsRegistry(BaseModel):
     """
-
+        
     """
     title: str
     fields: List[StructuralField] = []
