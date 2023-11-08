@@ -1,7 +1,9 @@
 from datetime import datetime
 from typing import Optional, List
 
+import pymongo
 from beanie import Indexed, Link
+from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_entity import BaseTitledEntityListFiltersSchema
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
@@ -11,16 +13,17 @@ from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuit
 
 
 class MappingPackageIn(BaseProjectResourceEntityInSchema):
-    title: Optional[str]
-    description: Optional[str]
-    identifier: Optional[str]
-    subtype: Optional[List[str]]
-    start_date: Optional[datetime]
-    end_date: Optional[datetime]
-    min_xsd_version: Optional[str]
-    max_xsd_version: Optional[str]
-    test_data_suites: Optional[List[Link[TestDataSuite]]]
-    shacl_test_suites: Optional[List[Link[SHACLTestSuite]]]
+    title: Optional[str] = None
+    description: Optional[str] = None
+    identifier: Optional[str] = None
+    base_xpath: Optional[str] = None
+    subtype: Optional[List[Optional[str]]] = None
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    min_xsd_version: Optional[str] = None
+    max_xsd_version: Optional[str] = None
+    test_data_suites: Optional[List[Optional[Link[TestDataSuite]]]] = None
+    shacl_test_suites: Optional[List[Optional[Link[SHACLTestSuite]]]] = None
 
 
 class MappingPackageCreateIn(MappingPackageIn):
@@ -32,20 +35,21 @@ class MappingPackageUpdateIn(MappingPackageIn):
 
 
 class MappingPackageImportIn(MappingPackageIn):
-    created_at: Optional[datetime]
+    created_at: Optional[datetime] = None
 
 
 class MappingPackageOut(BaseProjectResourceEntityOutSchema):
-    title: Optional[str]
-    description: Optional[str]
-    identifier: Optional[str]
-    subtype: Optional[List[str]]
-    start_date: Optional[datetime]
-    end_date: Optional[datetime]
-    min_xsd_version: Optional[str]
-    max_xsd_version: Optional[str]
-    test_data_suites: Optional[List[Link[TestDataSuite]]]
-    shacl_test_suites: Optional[List[Link[SHACLTestSuite]]]
+    title: Optional[str] = None
+    description: Optional[str] = None
+    identifier: Optional[str] = None
+    base_xpath: Optional[str] = None
+    subtype: Optional[List[str]] = None
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    min_xsd_version: Optional[str] = None
+    max_xsd_version: Optional[str] = None
+    test_data_suites: Optional[List[Link[TestDataSuite]]] = None
+    shacl_test_suites: Optional[List[Link[SHACLTestSuite]]] = None
 
 
 class MappingPackageListFilters(BaseTitledEntityListFiltersSchema):
@@ -53,17 +57,33 @@ class MappingPackageListFilters(BaseTitledEntityListFiltersSchema):
 
 
 class MappingPackage(BaseProjectResourceEntity):
-    title: Indexed(str, unique=True)
-    description: Optional[str]
-    identifier: Indexed(str, unique=True)
-    subtype: Optional[List[str]]
-    start_date: Optional[datetime]
-    end_date: Optional[datetime]
-    min_xsd_version: Optional[str]
-    max_xsd_version: Optional[str]
-    test_data_suites: Optional[List[Link[TestDataSuite]]]
-    shacl_test_suites: Optional[List[Link[SHACLTestSuite]]]
+    title: Optional[Indexed(str, unique=True)] = None
+    description: Optional[str] = None
+    identifier: Optional[Indexed(str, unique=True)] = None
+    base_xpath: Optional[str] = None
+    subtype: Optional[List[str]] = None
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+    min_xsd_version: Optional[str] = None
+    max_xsd_version: Optional[str] = None
+    test_data_suites: Optional[List[Link[TestDataSuite]]] = None
+    shacl_test_suites: Optional[List[Link[SHACLTestSuite]]] = None
 
     class Settings(BaseProjectResourceEntity.Settings):
         name = "mapping_packages"
+
+        indexes = [
+            IndexModel(
+                [
+                    ("title", pymongo.TEXT),
+                    ("description", pymongo.TEXT),
+                    ("identifier", pymongo.TEXT),
+                    ("base_xpath", pymongo.TEXT),
+                    ("subtype", pymongo.TEXT),
+                    ("min_xsd_version", pymongo.TEXT),
+                    ("max_xsd_version", pymongo.TEXT)
+                ],
+                name="search_text_idx"
+            )
+        ]
 

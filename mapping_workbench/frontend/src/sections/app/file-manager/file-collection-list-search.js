@@ -31,16 +31,16 @@ export const FileCollectionListSearch = (props) => {
 
     const handleChipsUpdate = useCallback(() => {
         const filters = {
-            name: undefined,
+            q: undefined,
             status: [],
         };
 
         chips.forEach((chip) => {
             switch (chip.field) {
-                case 'name':
-                    // There will (or should) be only one chips with field "name"
+                case 'q':
+                    // There will (or should) be only one chips with field "q"
                     // so we can set up it directly
-                    filters.name = chip.value;
+                    filters.q = chip.value;
                     break;
                 case 'status':
                     filters.status.push(chip.value);
@@ -74,11 +74,11 @@ export const FileCollectionListSearch = (props) => {
         const value = queryRef.current?.value || '';
 
         setChips((prevChips) => {
-            const found = prevChips.find((chip) => chip.field === 'name');
+            const found = prevChips.find((chip) => chip.field === 'q');
 
             if (found && value) {
                 return prevChips.map((chip) => {
-                    if (chip.field === 'name') {
+                    if (chip.field === 'q') {
                         return {
                             ...chip,
                             value: queryRef.current?.value || ''
@@ -90,13 +90,13 @@ export const FileCollectionListSearch = (props) => {
             }
 
             if (found && !value) {
-                return prevChips.filter((chip) => chip.field !== 'name');
+                return prevChips.filter((chip) => chip.field !== 'q');
             }
 
             if (!found && value) {
                 const chip = {
-                    label: 'Name',
-                    field: 'name',
+                    label: 'Q',
+                    field: 'q',
                     value
                 };
 
@@ -178,7 +178,7 @@ export const FileCollectionListSearch = (props) => {
                     disableUnderline
                     fullWidth
                     inputProps={{ref: queryRef}}
-                    placeholder="Search by project name"
+                    placeholder="Search"
                     sx={{flexGrow: 1}}
                 />
             </Stack>
@@ -232,20 +232,20 @@ export const FileCollectionListSearch = (props) => {
                     </Box>
                 )}
             <Divider/>
-            <Stack
-                alignItems="center"
-                direction="row"
-                flexWrap="wrap"
-                spacing={1}
-                sx={{p: 1}}
-            >
-                <MultiSelect
-                    label="Status"
-                    onChange={handleStatusChange}
-                    options={statusOptions}
-                    value={statusValues}
-                />
-            </Stack>
+            {/*<Stack*/}
+            {/*    alignItems="center"*/}
+            {/*    direction="row"*/}
+            {/*    flexWrap="wrap"*/}
+            {/*    spacing={1}*/}
+            {/*    sx={{p: 1}}*/}
+            {/*>*/}
+            {/*    <MultiSelect*/}
+            {/*        label="Status"*/}
+            {/*        onChange={handleStatusChange}*/}
+            {/*        options={statusOptions}*/}
+            {/*        value={statusValues}*/}
+            {/*    />*/}
+            {/*</Stack>*/}
         </div>
     );
 };

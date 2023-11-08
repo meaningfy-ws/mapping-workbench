@@ -44,6 +44,9 @@ from mapping_workbench.backend.ontology.models.term import Term
 from mapping_workbench.backend.user.entrypoints.api import routes as user_routes
 from mapping_workbench.backend.user.models.user import User
 
+from mapping_workbench.backend.tasks.entrypoints.api import routes as tasks_routes
+
+
 ROOT_API_PATH = "/api/v1"
 
 google_oauth_client = GoogleOAuth2("CLIENT_ID", "CLIENT_SECRET")
@@ -118,7 +121,8 @@ secured_routers: list = [
     specific_triple_map_fragment_routes.router,
     generic_triple_map_fragment_routes.router,
     config_routes.router,
-    ontology_routes.router
+    ontology_routes.router,
+    tasks_routes.router
 ]
 
 for secured_router in secured_routers:

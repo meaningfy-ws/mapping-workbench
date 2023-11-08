@@ -20,6 +20,10 @@ import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
 import {FileCollectionListSearch} from 'src/sections/app/file-manager/file-collection-list-search';
 import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
+import TaskIcon from "@mui/icons-material/TaskAlt";
+import {tokens} from "/src/locales/tokens";
+import {useTranslation} from "react-i18next";
+
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -98,6 +102,8 @@ const useItemsStore = (searchState) => {
 };
 
 const Page = () => {
+    const {t} = useTranslation();
+
     const itemsSearch = useItemsSearch();
     const itemsStore = useItemsStore(itemsSearch.state);
 
@@ -157,6 +163,18 @@ const Page = () => {
                             variant="contained"
                         >
                             Add
+                        </Button>
+                        <Button
+                            component={RouterLink}
+                            href={paths.app[sectionApi.section].tasks.transform_test_data}
+                            startIcon={(
+                                <SvgIcon>
+                                    <TaskIcon/>
+                                </SvgIcon>
+                            )}
+                            variant="contained"
+                        >
+                            {t(tokens.nav.transform_test_data)}
                         </Button>
                     </Stack>
                 </Stack>

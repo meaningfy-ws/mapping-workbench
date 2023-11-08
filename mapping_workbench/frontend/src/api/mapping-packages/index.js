@@ -18,7 +18,11 @@ class MappingPackagesApi extends SectionApi {
     async getProjectPackages(request = {}) {
         let mappingPackagesStore = await this.getItems(request);
         return mappingPackagesStore.items.map(
-            mappingPackage => ({id: mappingPackage._id, title: mappingPackage.title})
+            mappingPackage => ({
+                id: mappingPackage._id,
+                title: mappingPackage.title,
+                identifier: mappingPackage.identifier
+            })
         ).sort((a, b) => a.title.localeCompare(b.title));
     }
 

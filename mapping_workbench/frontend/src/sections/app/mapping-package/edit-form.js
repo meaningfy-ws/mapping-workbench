@@ -31,6 +31,7 @@ export const EditForm = (props) => {
         title: item.title || '',
         description: item.description || '',
         identifier: item.identifier || '',
+        base_xpath: item.base_xpath || '',
         subtype: item.subtype || '',
         start_date: item.start_date && new Date(item.start_date) || '',
         end_date: item.end_date && new Date(item.end_date) || '',
@@ -102,6 +103,9 @@ export const EditForm = (props) => {
                         </Grid>
                         <Grid xs={12} md={12}>
                             <FormTextField formik={formik} name="identifier" label="Identifier" required={true}/>
+                        </Grid>
+                        <Grid xs={12} md={12}>
+                            <FormTextField formik={formik} name="base_xpath" label="Base XPath"/>
                         </Grid>
                         <Grid xs={12} md={12}>
                             <FormTextField formik={formik} name="subtype" label="Sub-type"/>

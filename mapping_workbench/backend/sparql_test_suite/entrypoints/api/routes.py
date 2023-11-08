@@ -70,7 +70,7 @@ async def route_create_sparql_test_suite(
         sparql_test_suite: SPARQLTestSuite,
         user: User = Depends(current_active_user)
 ):
-    return await create_sparql_test_suite(sparql_test_suite=sparql_test_suite, user=user)
+    return await create_sparql_test_suite(sparql_test_suite, user=user)
 
 
 @router.patch(
@@ -80,12 +80,11 @@ async def route_create_sparql_test_suite(
     response_model=SPARQLTestSuite
 )
 async def route_update_sparql_test_suite(
-        id: PydanticObjectId,
-        sparql_test_suite_data: SPARQLTestSuite,
+        data: SPARQLTestSuite,
+        sparql_test_suite: SPARQLTestSuite = Depends(get_sparql_test_suite),
         user: User = Depends(current_active_user)
 ):
-    await update_sparql_test_suite(id=id, sparql_test_suite_data=sparql_test_suite_data, user=user)
-    return await get_sparql_test_suite(id)
+    return await update_sparql_test_suite(sparql_test_suite, data, user=user)
 
 
 @router.get(
@@ -106,7 +105,7 @@ async def route_get_sparql_test_suite(sparql_test_suite: SPARQLTestSuite = Depen
 )
 async def route_delete_sparql_test_suite(sparql_test_suite: SPARQLTestSuite = Depends(get_sparql_test_suite)):
     await delete_sparql_test_suite(sparql_test_suite)
-    APIEmptyContentWithIdResponse(_id=sparql_test_suite.id)
+    return APIEmptyContentWithIdResponse(id=sparql_test_suite.id)
 
 
 @router.get(
@@ -194,4 +193,4 @@ async def route_get_sparql_test_file_resource(
 async def route_delete_sparql_test_file_resource(
         sparql_test_file_resource: SPARQLTestFileResource = Depends(get_sparql_test_file_resource)):
     await delete_sparql_test_file_resource(sparql_test_file_resource)
-    return APIEmptyContentWithIdResponse(_id=sparql_test_file_resource.id)
+    return APIEmptyContentWithIdResponse(id=sparql_test_file_resource.id)

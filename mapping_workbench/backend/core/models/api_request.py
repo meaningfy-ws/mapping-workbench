@@ -11,3 +11,7 @@ class APIRequestWithId(BaseModel):
 class APIRequestForUpdateMany(BaseModel):
     for_query: Optional[Dict]
     set_values: Optional[Dict]
+
+
+class APIRequestWithProject(BaseModel):
+    project: Optional[PydanticObjectId] = None

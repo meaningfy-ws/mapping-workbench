@@ -11,13 +11,13 @@ import {useMounted} from "../../../../../hooks/use-mounted";
 const useMappingPackagesStore = (initProjectMappingPackages = []) => {
     const isMounted = useMounted();
     const [state, setState] = useState({
-        items: initProjectMappingPackages
+        items: initProjectMappingPackages || []
     });
 
     const handleMappingPackagesGet = useCallback(async () => {
         try {
             let mappingPackages = initProjectMappingPackages;
-            if (mappingPackages.length === 0) {
+            if (mappingPackages === null) {
                 mappingPackages = (await mappingPackagesApi.getProjectPackages());
             }
             if (isMounted()) {
@@ -40,7 +40,7 @@ const useMappingPackagesStore = (initProjectMappingPackages = []) => {
 };
 
 export const MappingPackageCheckboxList = (props) => {
-    const {mappingPackages = [], initProjectMappingPackages = [], ...other} = props;
+    const {mappingPackages = [], initProjectMappingPackages = null, ...other} = props;
 
     const [allChecked, setAllChecked] = useState(false);
     const [projectMappingPackages, setProjectMappingPackages] = useState([]);
@@ -61,7 +61,7 @@ export const MappingPackageCheckboxList = (props) => {
         }
 
         setAllCheckedCallback(mappingPackages);
-    }, [projectMappingPackages]);
+    }, [projectMappingPackages, mappingPackages]);
 
     const setAllCheckedCallback = useCallback((values) => {
         setAllChecked(

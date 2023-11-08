@@ -1,6 +1,5 @@
-from typing import List, Dict
+from typing import Dict
 
-from beanie import PydanticObjectId
 from fastapi import APIRouter, Depends, status
 
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
@@ -19,7 +18,7 @@ from mapping_workbench.backend.ontology.services.api_for_namespaces import (
 from mapping_workbench.backend.ontology.services.api_for_terms import list_terms, create_term, update_term, \
     get_term_out, get_term, delete_term
 from mapping_workbench.backend.ontology.services.terms import discover_and_save_terms, list_known_terms, is_known_term, \
-    check_content_terms_validity
+    check_content_terms_validity, search_terms, get_prefixed_terms
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.user.models.user import User
 
@@ -40,11 +39,19 @@ router = APIRouter(
     name=f"{NAME_FOR_MANY}:list_namespaces",
     response_model=APIListNamespacesPaginatedResponse
 )
-async def route_list_namespaces():
-    items: List[NamespaceOut] = await list_namespaces()
+async def route_list_namespaces(
+        page: int = None,
+        limit: int = None,
+        q: str = None
+):
+    filters: dict = {}
+    if q is not None:
+        filters['q'] = q
+
+    items, total_count = await list_namespaces(filters, page, limit)
     return APIListNamespacesPaginatedResponse(
         items=items,
-        count=len(items)
+        count=total_count
     )
 
 
@@ -56,10 +63,10 @@ async def route_list_namespaces():
     status_code=status.HTTP_201_CREATED
 )
 async def route_create_namespace(
-        namespace_data: NamespaceIn,
+        data: NamespaceIn,
         user: User = Depends(current_active_user)
 ):
-    return await create_namespace(namespace_data=namespace_data, user=user)
+    return await create_namespace(data, user=user)
 
 
 @router.patch(
@@ -69,12 +76,11 @@ async def route_create_namespace(
     response_model=NamespaceOut
 )
 async def route_update_namespace(
-        id: PydanticObjectId,
-        namespace_data: NamespaceIn,
+        data: NamespaceIn,
+        namespace: Namespace = Depends(get_namespace),
         user: User = Depends(current_active_user)
 ):
-    await update_namespace(id=id, namespace_data=namespace_data, user=user)
-    return await get_namespace_out(id)
+    return await update_namespace(namespace, data, user=user)
 
 
 @router.get(
@@ -95,7 +101,7 @@ async def route_get_namespace(namespace: NamespaceOut = Depends(get_namespace_ou
 )
 async def route_delete_namespace(namespace: Namespace = Depends(get_namespace)):
     await delete_namespace(namespace)
-    return APIEmptyContentWithIdResponse(_id=namespace.id)
+    return APIEmptyContentWithIdResponse(id=namespace.id)
 
 
 @router.get(
@@ -104,11 +110,19 @@ async def route_delete_namespace(namespace: Namespace = Depends(get_namespace)):
     name=f"{NAME_FOR_MANY}:list_terms",
     response_model=APIListTermsPaginatedResponse
 )
-async def route_list_terms():
-    items: List[TermOut] = await list_terms()
+async def route_list_terms(
+        page: int = None,
+        limit: int = None,
+        q: str = None
+):
+    filters: dict = {}
+    if q is not None:
+        filters['q'] = q
+
+    items, total_count = await list_terms(filters, page, limit)
     return APIListTermsPaginatedResponse(
         items=items,
-        count=len(items)
+        count=total_count
     )
 
 
@@ -120,10 +134,10 @@ async def route_list_terms():
     status_code=status.HTTP_201_CREATED
 )
 async def route_create_term(
-        term_data: TermIn,
+        data: TermIn,
         user: User = Depends(current_active_user)
 ):
-    return await create_term(term_data=term_data, user=user)
+    return await create_term(data, user=user)
 
 
 @router.patch(
@@ -133,12 +147,11 @@ async def route_create_term(
     response_model=TermOut
 )
 async def route_update_term(
-        id: PydanticObjectId,
-        term_data: TermIn,
+        data: TermIn,
+        term: Term = Depends(get_term),
         user: User = Depends(current_active_user)
 ):
-    await update_term(id=id, term_data=term_data, user=user)
-    return await get_term_out(id)
+    return await update_term(term, data, user=user)
 
 
 @router.get(
@@ -159,7 +172,7 @@ async def route_get_term(term: TermOut = Depends(get_term_out)):
 )
 async def route_delete_term(term: Term = Depends(get_term)):
     await delete_term(term)
-    return APIEmptyContentWithIdResponse(_id=term.id)
+    return APIEmptyContentWithIdResponse(id=term.id)
 
 
 @router.get(
@@ -195,4 +208,24 @@ async def route_check_content_terms_validity(data: Dict):
     name=f"{NAME_FOR_MANY}:list_{NAME_FOR_ONE}_known_terms"
 )
 async def route_is_known_term(term: str):
-    return await is_known_term()
+    return await is_known_term(term=term)
+
+
+@router.get(
+    "/search_terms",
+    description=f"Search {NAME_FOR_ONE} terms",
+    name=f"{NAME_FOR_MANY}:search_{NAME_FOR_ONE}_terms"
+)
+async def route_search_terms(q: str):
+    terms = await search_terms(q=q)
+    return terms
+
+
+@router.get(
+    "/prefixed_terms",
+    description=f"Prefixed {NAME_FOR_ONE} terms",
+    name=f"{NAME_FOR_MANY}:prefixed_{NAME_FOR_ONE}_terms"
+)
+async def route_prefixed_terms():
+    prefixed_terms = await get_prefixed_terms()
+    return prefixed_terms

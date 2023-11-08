@@ -70,7 +70,7 @@ async def route_create_shacl_test_suite(
         shacl_test_suite: SHACLTestSuite,
         user: User = Depends(current_active_user)
 ):
-    return await create_shacl_test_suite(shacl_test_suite=shacl_test_suite, user=user)
+    return await create_shacl_test_suite(shacl_test_suite, user=user)
 
 
 @router.patch(
@@ -80,12 +80,11 @@ async def route_create_shacl_test_suite(
     response_model=SHACLTestSuite
 )
 async def route_update_shacl_test_suite(
-        id: PydanticObjectId,
-        shacl_test_suite_data: SHACLTestSuite,
+        data: SHACLTestSuite,
+        shacl_test_suite: SHACLTestSuite = Depends(get_shacl_test_suite),
         user: User = Depends(current_active_user)
 ):
-    await update_shacl_test_suite(id=id, shacl_test_suite_data=shacl_test_suite_data, user=user)
-    return await get_shacl_test_suite(id)
+    return await update_shacl_test_suite(shacl_test_suite, data, user=user)
 
 
 @router.get(
@@ -106,7 +105,7 @@ async def route_get_shacl_test_suite(shacl_test_suite: SHACLTestSuite = Depends(
 )
 async def route_delete_shacl_test_suite(shacl_test_suite: SHACLTestSuite = Depends(get_shacl_test_suite)):
     await delete_shacl_test_suite(shacl_test_suite)
-    APIEmptyContentWithIdResponse(_id=shacl_test_suite.id)
+    return APIEmptyContentWithIdResponse(id=shacl_test_suite.id)
 
 
 @router.get(
@@ -178,4 +177,4 @@ async def route_get_shacl_test_file_resource(
 async def route_delete_shacl_test_file_resource(
         shacl_test_file_resource: SHACLTestFileResource = Depends(get_shacl_test_file_resource)):
     await delete_shacl_test_file_resource(shacl_test_file_resource)
-    return APIEmptyContentWithIdResponse(_id=shacl_test_file_resource.id)
+    return APIEmptyContentWithIdResponse(id=shacl_test_file_resource.id)

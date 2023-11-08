@@ -57,10 +57,10 @@ async def route_list_mapping_rule_registries(
     status_code=status.HTTP_201_CREATED
 )
 async def route_create_mapping_rule_registry(
-        mapping_rule_registry_data: MappingRuleRegistryCreateIn,
+        data: MappingRuleRegistryCreateIn,
         user: User = Depends(current_active_user)
 ):
-    return await create_mapping_rule_registry(mapping_rule_registry_data=mapping_rule_registry_data, user=user)
+    return await create_mapping_rule_registry(data, user=user)
 
 
 @router.patch(
@@ -70,12 +70,11 @@ async def route_create_mapping_rule_registry(
     response_model=MappingRuleRegistryOut
 )
 async def route_update_mapping_rule_registry(
-        id: PydanticObjectId,
-        mapping_rule_registry_data: MappingRuleRegistryUpdateIn,
+        data: MappingRuleRegistryUpdateIn,
+        mapping_rule_registry: MappingRuleRegistry = Depends(get_mapping_rule_registry),
         user: User = Depends(current_active_user)
 ):
-    await update_mapping_rule_registry(id=id, mapping_rule_registry_data=mapping_rule_registry_data, user=user)
-    return await get_mapping_rule_registry_out(id)
+    return await update_mapping_rule_registry(mapping_rule_registry, data, user=user)
 
 
 @router.get(
@@ -98,4 +97,4 @@ async def route_get_mapping_rule_registry(
 async def route_delete_mapping_rule_registry(
         mapping_rule_registry: MappingRuleRegistry = Depends(get_mapping_rule_registry)):
     await delete_mapping_rule_registry(mapping_rule_registry)
-    return APIEmptyContentWithIdResponse(_id=mapping_rule_registry.id)
+    return APIEmptyContentWithIdResponse(id=mapping_rule_registry.id)

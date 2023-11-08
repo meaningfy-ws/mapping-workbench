@@ -47,13 +47,22 @@ router = APIRouter(
     response_model=APIListOntologyFileCollectionsPaginatedResponse
 )
 async def route_list_ontology_file_collections(
-        project: PydanticObjectId = None
+        project: PydanticObjectId = None,
+        page: int = None,
+        limit: int = None,
+        q: str = None
 ):
     filters: dict = {}
     if project:
         filters['project'] = Project.link_from_id(project)
-    items: List[OntologyFileCollection] = await list_ontology_file_collections(filters)
-    return APIListOntologyFileCollectionsPaginatedResponse(items=items, count=len(items))
+    if q is not None:
+        filters['q'] = q
+
+    items, total_count = await list_ontology_file_collections(filters, page, limit)
+    return APIListOntologyFileCollectionsPaginatedResponse(
+        items=items,
+        count=total_count
+    )
 
 
 @router.post(
@@ -67,7 +76,7 @@ async def route_create_ontology_file_collection(
         ontology_file_collection: OntologyFileCollection,
         user: User = Depends(current_active_user)
 ):
-    return await create_ontology_file_collection(ontology_file_collection=ontology_file_collection, user=user)
+    return await create_ontology_file_collection(ontology_file_collection, user=user)
 
 
 @router.patch(
@@ -77,12 +86,11 @@ async def route_create_ontology_file_collection(
     response_model=OntologyFileCollection
 )
 async def route_update_ontology_file_collection(
-        id: PydanticObjectId,
-        ontology_file_collection_data: OntologyFileCollection,
+        data: OntologyFileCollection,
+        ontology_file_collection: OntologyFileCollection = Depends(get_ontology_file_collection),
         user: User = Depends(current_active_user)
 ):
-    await update_ontology_file_collection(id=id, ontology_file_collection_data=ontology_file_collection_data, user=user)
-    return await get_ontology_file_collection(id)
+    return await update_ontology_file_collection(ontology_file_collection, data, user=user)
 
 
 @router.get(
@@ -105,7 +113,7 @@ async def route_get_ontology_file_collection(
 async def route_delete_ontology_file_collection(
         ontology_file_collection: OntologyFileCollection = Depends(get_ontology_file_collection)):
     await delete_ontology_file_collection(ontology_file_collection)
-    APIEmptyContentWithIdResponse(_id=ontology_file_collection.id)
+    return APIEmptyContentWithIdResponse(id=ontology_file_collection.id)
 
 
 @router.get(
@@ -115,10 +123,24 @@ async def route_delete_ontology_file_collection(
     response_model=APIListOntologyFileResourcesPaginatedResponse
 )
 async def route_list_ontology_file_collection_file_resources(
-        id: PydanticObjectId = None
+        ontology_file_collection: OntologyFileCollection = Depends(get_ontology_file_collection),
+        project: PydanticObjectId = None,
+        page: int = None,
+        limit: int = None,
+        q: str = None
 ):
-    items: List[OntologyFileResource] = await list_ontology_file_collection_file_resources(id)
-    return APIListOntologyFileResourcesPaginatedResponse(items=items, count=len(items))
+    filters: dict = {}
+    if project:
+        filters['project'] = Project.link_from_id(project)
+    if q is not None:
+        filters['q'] = q
+
+    items, total_count = \
+        await list_ontology_file_collection_file_resources(ontology_file_collection, filters, page, limit)
+    return APIListOntologyFileResourcesPaginatedResponse(
+        items=items,
+        count=total_count
+    )
 
 
 @router.post(
@@ -177,4 +199,4 @@ async def route_get_ontology_file_resource(
 async def route_delete_ontology_file_resource(
         ontology_file_resource: OntologyFileResource = Depends(get_ontology_file_resource)):
     await delete_ontology_file_resource(ontology_file_resource)
-    return APIEmptyContentWithIdResponse(_id=ontology_file_resource.id)
+    return APIEmptyContentWithIdResponse(id=ontology_file_resource.id)

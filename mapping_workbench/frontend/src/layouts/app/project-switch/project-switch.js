@@ -9,6 +9,7 @@ import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
 import {useRouter} from "../../../hooks/use-router";
 import Typography from "@mui/material/Typography";
+import toast from "react-hot-toast";
 
 const useProjectsStore = () => {
     const isMounted = useMounted();
@@ -57,7 +58,7 @@ export const ProjectSwitch = (props) => {
         onSubmit: async (values, helpers) => {
             try {
                 // NOTE: Make API request
-                toast.success('Project chosen');
+                toast.success('Project changed');
             } catch (err) {
                 console.error(err);
                 toast.error('Something went wrong!');
@@ -67,6 +68,7 @@ export const ProjectSwitch = (props) => {
 
     const handleSessionProjectChange = useCallback(async (event) => {
         let value = event.target.value;
+        toast.loading('Selecting project...');
         await sessionApi.setSessionProject(value);
         formik.setFieldValue('sessionProject', value);
         router.reload();

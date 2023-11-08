@@ -58,7 +58,7 @@ const useCustomersSearch = () => {
     const handleRowsPerPageChange = useCallback((event) => {
         setState((prevState) => ({
             ...prevState,
-            rowsPerPage: parseInt(event.target.value, 10),
+            rowsPerPage: parseInt(event.target.value, 10)
         }));
     }, []);
 

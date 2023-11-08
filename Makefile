@@ -7,6 +7,7 @@ BACKEND_INFRA_FOLDER := ${PROJECT_PATH}/${NAME}/backend
 FRONTEND_HOME := ${NAME}/frontend
 FRONTEND_INFRA_FOLDER := ${PROJECT_PATH}/${FRONTEND_HOME}
 
+RML_MAPPER_PATH = ${PROJECT_PATH}/.rmlmapper/rmlmapper.jar
 
 
 # include .env files if they exist
@@ -21,7 +22,7 @@ install: install-backend install-frontend
 
 install-dev: install-dev-backend install-frontend-dev
 
-install-backend:
+install-backend: init-rml-mapper
 	@ echo "Installing BACKEND requirements :: START"
 	@ pip install --upgrade pip
 	@ pip install --no-cache-dir -r requirements.txt
@@ -76,6 +77,7 @@ dev-dotenv-file:
 	@ echo BACKEND_INFRA_FOLDER=${BACKEND_INFRA_FOLDER} >> ${ENV_FILE}
 	@ echo FRONTEND_INFRA_FOLDER=${FRONTEND_INFRA_FOLDER} >> ${ENV_FILE}
 	@ echo NODE_ENV=development >> ${ENV_FILE}
+	@ echo RML_MAPPER_PATH=${RML_MAPPER_PATH} >> .env
 	@ vault kv get -format="json" mapping-workbench-dev/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> ${ENV_FILE}
 
 staging-dotenv-file:
@@ -85,6 +87,7 @@ staging-dotenv-file:
 	@ echo BACKEND_INFRA_FOLDER=${BACKEND_INFRA_FOLDER} >> ${ENV_FILE}
 	@ echo FRONTEND_INFRA_FOLDER=${FRONTEND_INFRA_FOLDER} >> ${ENV_FILE}
 	@ echo NODE_ENV=development >> ${ENV_FILE}
+	@ echo RML_MAPPER_PATH=${RML_MAPPER_PATH} >> .env
 	@ vault kv get -format="json" mapping-workbench-staging/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> ${ENV_FILE}
 
 prod-dotenv-file:
@@ -94,14 +97,13 @@ prod-dotenv-file:
 	@ echo BACKEND_INFRA_FOLDER=${BACKEND_INFRA_FOLDER} >> ${ENV_FILE}
 	@ echo FRONTEND_INFRA_FOLDER=${FRONTEND_INFRA_FOLDER} >> ${ENV_FILE}
 	@ echo NODE_ENV=production >> ${ENV_FILE}
+	@ echo RML_MAPPER_PATH=${RML_MAPPER_PATH} >> .env
 	@ vault kv get -format="json" mapping-workbench-prod/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> ${ENV_FILE}
 
 
 #-----------------------------------------------------------------------------
 # STAGING & PRODUCTION
 #-----------------------------------------------------------------------------
-
-
 
 build-backend:
 	@ echo "Building the BACKEND"
@@ -178,6 +180,9 @@ start-frontend-console-mode:
 start-backend-console-mode:
 	uvicorn mapping_workbench.backend.core.entrypoints.api.main:app --reload
 
+start-mongo-console-mode:
+	mongod --dbpath=/usr/local/var/mongodb/data/
+
 start-mongo-dev: build-externals
 	@ echo "Starting the Mongo services"
 	@ docker-compose -p ${NAME} --file ./infra/mongodb/docker-compose.dev.yml --env-file ${ENV_FILE} up -d
@@ -202,3 +207,8 @@ start-traefik: build-externals
 stop-traefik:
 	@ echo "Stopping the Traefik services"
 	@ docker-compose -p common --file ./infra/traefik/docker-compose.yml --env-file ${ENV_FILE} down
+
+init-rml-mapper:
+	@ echo -e "RMLMapper folder initialization!"
+	@ mkdir -p ./.rmlmapper
+	@ wget -c https://github.com/RMLio/rmlmapper-java/releases/download/v6.2.1/rmlmapper-6.2.1-r368-all.jar -O ./.rmlmapper/rmlmapper.jar

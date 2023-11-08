@@ -1,8 +1,6 @@
 import {useCallback, useEffect, useState} from 'react';
 import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
-import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Unstable_Grid2';
 import Link from '@mui/material/Link';
@@ -31,7 +29,7 @@ import CardContent from "@mui/material/CardContent";
 import {ListTable as MappingRulesListTable} from "src/sections/app/conceptual-mapping-rule/list-table";
 import {conceptualMappingRulesApi} from "../../../../api/conceptual-mapping-rules";
 import {useMounted} from "../../../../hooks/use-mounted";
-import {ListSearch} from "../../../../sections/app/conceptual-mapping-rule/list-search";
+import {ListSearch as MappingRulesListSearch} from "src/sections/app/conceptual-mapping-rule/list-search";
 import CardHeader from "@mui/material/CardHeader";
 import {ListSelectorSelect as ResourceListSelector} from "../../../../components/app/list-selector/select";
 import {specificTripleMapFragmentsApi} from "../../../../api/triple-map-fragments/specific";
@@ -49,19 +47,19 @@ const tabs = [
 const useMappingRulesSearch = () => {
     const [state, setState] = useState({
         filters: {
-            name: undefined,
-            category: [],
-            status: [],
-            inStock: undefined
+            q: undefined,
+            terms_validity: undefined,
         },
-        page: 0,
-        rowsPerPage: 5
+        page: conceptualMappingRulesApi.DEFAULT_PAGE,
+        rowsPerPage: conceptualMappingRulesApi.DEFAULT_ROWS_PER_PAGE,
+        detailedView: true
     });
 
     const handleFiltersChange = useCallback((filters) => {
         setState((prevState) => ({
             ...prevState,
-            filters
+            filters,
+            //page: 0
         }));
     }, []);
 
@@ -79,15 +77,23 @@ const useMappingRulesSearch = () => {
         }));
     }, []);
 
+    const handleDetailedViewChange = useCallback((event, detailedView) => {
+        setState((prevState) => ({
+            ...prevState,
+            detailedView
+        }));
+    }, []);
+
     return {
         handleFiltersChange,
         handlePageChange,
         handleRowsPerPageChange,
+        handleDetailedViewChange,
         state
     };
 };
 
-const useMappingRulesStore = (filters = {}) => {
+const useMappingRulesStore = (searchState, mappingPackage) => {
     const isMounted = useMounted();
     const [state, setState] = useState({
         items: [],
@@ -96,10 +102,8 @@ const useMappingRulesStore = (filters = {}) => {
 
     const handleItemsGet = useCallback(async () => {
         try {
-            const request = {
-                filters: filters
-            }
-
+            let request = searchState;
+            request['filters']['mapping_packages'] = [mappingPackage];
             const response = await conceptualMappingRulesApi.getItems(request);
             if (isMounted()) {
                 setState({
@@ -110,11 +114,11 @@ const useMappingRulesStore = (filters = {}) => {
         } catch (err) {
             console.error(err);
         }
-    }, [conceptualMappingRulesApi, filters, isMounted]);
+    }, [conceptualMappingRulesApi, searchState, mappingPackage, isMounted]);
 
     useEffect(() => {
         handleItemsGet();
-    }, []);
+    }, [searchState]);
 
     return {
         handleItemsGet, ...state
@@ -138,9 +142,7 @@ const Page = () => {
     const [currentTab, setCurrentTab] = useState('details');
 
     const mappingRulesSearch = useMappingRulesSearch();
-    const mappingRulesStore = useMappingRulesStore({
-        mapping_packages: [id]
-    });
+    const mappingRulesStore = useMappingRulesStore(mappingRulesSearch.state, id);
 
     const [tripleMapFragments, setTripleMapFragments] = useState([]);
 
@@ -279,6 +281,12 @@ const Page = () => {
                                                         value={item.subtype.join(', ')}
                                                     />
                                                 </Grid>
+                                                <Grid md={12} xs={12}>
+                                                    <PropertyListItem
+                                                        label="Base XPath"
+                                                        value={item.base_xpath}
+                                                    />
+                                                </Grid>
                                                 <Grid md={6} xs={12}>
                                                     <PropertyListItem
                                                         label="Start Date"
@@ -344,15 +352,21 @@ const Page = () => {
                 )}
                 {currentTab === "mappingRules" && (
                     <>
-                        <ListSearch onFiltersChange={mappingRulesSearch.handleFiltersChange}/>
+                        <MappingRulesListSearch
+                            onFiltersChange={mappingRulesSearch.handleFiltersChange}
+                            onDetailedViewChange={mappingRulesSearch.handleDetailedViewChange}
+                            detailedView={mappingRulesSearch.state.detailedView}
+                        />
                         <MappingRulesListTable
                             onPageChange={mappingRulesSearch.handlePageChange}
                             onRowsPerPageChange={mappingRulesSearch.handleRowsPerPageChange}
                             page={mappingRulesSearch.state.page}
                             items={mappingRulesStore.items}
                             count={mappingRulesStore.itemsCount}
+                            rowsPerPage={mappingRulesSearch.state.rowsPerPage}
                             sectionApi={conceptualMappingRulesApi}
                             onPackagesUpdate={handlePackagesUpdate}
+                            detailedView={mappingRulesSearch.state.detailedView}
                         />
                     </>
                 )}

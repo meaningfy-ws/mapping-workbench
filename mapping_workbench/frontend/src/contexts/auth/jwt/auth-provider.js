@@ -5,6 +5,7 @@ import { authApi } from 'src/api/auth';
 import { Issuer } from 'src/utils/auth';
 import { AuthContext, initialState } from './auth-context';
 import {sessionApi} from "../../../api/session";
+import toast from "react-hot-toast";
 
 export const STORAGE_KEY = 'accessToken';
 
@@ -111,8 +112,9 @@ export const AuthProvider = (props) => {
     []);
 
   const signIn = useCallback(async (username, password) => {
+    const toastId = toast.loading("Logging in...");
     const user = await authApi.signInWithSessionInit({ username, password });
-
+    toast.dismiss(toastId);
     dispatch({
       type: ActionType.SIGN_IN,
       payload: {

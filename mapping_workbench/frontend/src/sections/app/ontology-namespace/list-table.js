@@ -20,6 +20,7 @@ import {ListItemActions} from 'src/components/app/list/list-item-actions';
 
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import Tooltip from "@mui/material/Tooltip";
+import Switch from "@mui/material/Switch";
 
 
 export const ListTable = (props) => {
@@ -64,6 +65,15 @@ export const ListTable = (props) => {
 
     return (
         <div>
+            <TablePagination
+                component="div"
+                count={count}
+                onPageChange={onPageChange}
+                onRowsPerPageChange={onRowsPerPageChange}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+            />
             <Scrollbar>
                 <Table sx={{minWidth: 1200}}>
                     <TableHead>
@@ -177,7 +187,11 @@ export const ListTable = (props) => {
                                             {item.uri}
                                         </TableCell>
                                         <TableCell>
-                                            {item.is_syncable}
+                                            <Switch
+                                                disabled
+                                                checked={item.is_syncable}
+                                                value={item.is_syncable}
+                                            />
                                         </TableCell>
                                         <TableCell align="right">
                                             <ListItemActions
@@ -221,7 +235,7 @@ export const ListTable = (props) => {
                 onRowsPerPageChange={onRowsPerPageChange}
                 page={page}
                 rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={[5, 10, 25]}
+                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
             />
         </div>
     );

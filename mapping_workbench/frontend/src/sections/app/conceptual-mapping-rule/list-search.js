@@ -11,6 +11,12 @@ import Typography from '@mui/material/Typography';
 
 import {MultiSelect} from 'src/components/multi-select';
 import {useUpdateEffect} from 'src/hooks/use-update-effect';
+import Switch from "@mui/material/Switch";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Radio from "@mui/material/Radio";
+import Paper from "@mui/material/Paper";
+import FormLabel from "@mui/material/FormLabel";
 
 
 const statusOptions = [
@@ -25,22 +31,26 @@ const statusOptions = [
 ];
 
 export const ListSearch = (props) => {
-    const {onFiltersChange, ...other} = props;
+    const {onFiltersChange, onDetailedViewChange, detailedView, ...other} = props;
     const queryRef = useRef(null);
     const [chips, setChips] = useState([]);
 
     const handleChipsUpdate = useCallback(() => {
         const filters = {
-            name: undefined,
+            q: undefined,
+            terms_validity: undefined,
             status: [],
         };
 
         chips.forEach((chip) => {
             switch (chip.field) {
-                case 'name':
-                    // There will (or should) be only one chips with field "name"
+                case 'q':
+                    // There will (or should) be only one chips with field "q"
                     // so we can set up it directly
-                    filters.name = chip.value;
+                    filters.q = chip.value;
+                    break;
+                case 'terms_validity':
+                    filters.terms_validity = chip.value;
                     break;
                 case 'status':
                     filters.status.push(chip.value);
@@ -74,11 +84,11 @@ export const ListSearch = (props) => {
         const value = queryRef.current?.value || '';
 
         setChips((prevChips) => {
-            const found = prevChips.find((chip) => chip.field === 'name');
+            const found = prevChips.find((chip) => chip.field === 'q');
 
             if (found && value) {
                 return prevChips.map((chip) => {
-                    if (chip.field === 'name') {
+                    if (chip.field === 'q') {
                         return {
                             ...chip,
                             value: queryRef.current?.value || ''
@@ -90,13 +100,13 @@ export const ListSearch = (props) => {
             }
 
             if (found && !value) {
-                return prevChips.filter((chip) => chip.field !== 'name');
+                return prevChips.filter((chip) => chip.field !== 'q');
             }
 
             if (!found && value) {
                 const chip = {
-                    label: 'Name',
-                    field: 'name',
+                    label: 'Q',
+                    field: 'q',
                     value
                 };
 
@@ -109,6 +119,43 @@ export const ListSearch = (props) => {
         if (queryRef.current) {
             queryRef.current.value = '';
         }
+    }, []);
+
+    const handleTermsValidityChange = useCallback((event) => {
+        const value = event.target.value || '';
+
+        setChips((prevChips) => {
+            const found = prevChips.find((chip) => chip.field === 'terms_validity');
+
+            if (found && value) {
+                return prevChips.map((chip) => {
+                    if (chip.field === 'terms_validity') {
+                        return {
+                            ...chip,
+                            value: value || ''
+                        };
+                    }
+
+                    return chip;
+                });
+            }
+
+            if (found && !value) {
+                return prevChips.filter((chip) => chip.field !== 'terms_validity');
+            }
+
+            if (!found && value) {
+                const chip = {
+                    label: 'Terms',
+                    field: 'terms_validity',
+                    value
+                };
+
+                return [...prevChips, chip];
+            }
+
+            return prevChips;
+        });
     }, []);
 
     const handleStatusChange = useCallback((values) => {
@@ -160,6 +207,9 @@ export const ListSearch = (props) => {
 
     const showChips = chips.length > 0;
 
+    const termsValidityValue = useMemo(() => (chips
+        .find((chip) => chip.field === 'terms_validity') || {'value': ''}).value, [chips]);
+
     return (
         <div {...other}>
             <Stack
@@ -184,55 +234,137 @@ export const ListSearch = (props) => {
             </Stack>
             <Divider/>
             {showChips
-                ? (
-                    <Stack
-                        alignItems="center"
-                        direction="row"
-                        flexWrap="wrap"
-                        gap={1}
-                        sx={{p: 2}}
-                    >
-                        {chips.map((chip, index) => (
-                            <Chip
-                                key={index}
-                                label={(
-                                    <Box
-                                        sx={{
-                                            alignItems: 'center',
-                                            display: 'flex',
-                                            '& span': {
-                                                fontWeight: 600
-                                            }
-                                        }}
-                                    >
-                                        <>
+                ? (<>
+                        <Stack
+                            alignItems="center"
+                            direction="row"
+                            flexWrap="wrap"
+                            gap={1}
+                            sx={{p: 2}}
+                        >
+                            {chips.map((chip, index) => (
+                                <Chip
+                                    key={index}
+                                    label={(
+                                        <Box
+                                            sx={{
+                                                alignItems: 'center',
+                                                display: 'flex',
+                                                '& span': {
+                                                    fontWeight: 600
+                                                }
+                                            }}
+                                        >
+                                            <>
                         <span>
                           {chip.label}
                         </span>
-                                            :
-                                            {' '}
-                                            {chip.displayValue || chip.value}
-                                        </>
-                                    </Box>
-                                )}
-                                onDelete={() => handleChipDelete(chip)}
-                                variant="outlined"
-                            />
-                        ))}
-                    </Stack>
+                                                :
+                                                {' '}
+                                                {chip.displayValue || chip.value}
+                                            </>
+                                        </Box>
+                                    )}
+                                    onDelete={() => handleChipDelete(chip)}
+                                    variant="outlined"
+                                />
+                            ))}
+                        </Stack>
+                        <Divider/>
+                    </>
                 )
-                : (
-                    <Box sx={{p: 2.5}}>
-                        <Typography
-                            color="text.secondary"
-                            variant="subtitle2"
-                        >
-                            No filters applied
-                        </Typography>
-                    </Box>
+                : (false && <>
+                        <Box sx={{p: 2.5}}>
+                            <Typography
+                                color="text.secondary"
+                                variant="subtitle2"
+                            >
+                                No filters applied
+                            </Typography>
+                        </Box>
+                        <Divider/>
+
+                    </>
                 )}
+
+            <Box sx={{p: 2.5, display: 'flex'}} direction="row">
+                <FormControlLabel fullWidth control={
+                    <Switch
+                        checked={detailedView}
+                        value={detailedView}
+                        onChange={(e) => onDetailedViewChange(e, e.target.checked)}
+                    />
+                } label="Detailed view"/>
+                <Stack
+                    component={RadioGroup}
+                    defaultValue={termsValidityValue}
+                    name="terms_validity"
+                    spacing={3}
+                    onChange={handleTermsValidityChange}
+                >
+                    <Paper
+                        key="2"
+                        sx={{
+                            alignItems: 'flex-start',
+                            display: 'flex',
+                            p: 2
+                        }}
+                        variant="outlined"
+                    >
+                        <Box sx={{mr: 2, mt: 1}}>
+                            <b>Terms:</b>
+                        </Box>
+                        <FormControlLabel
+                            control={<Radio/>}
+                            key="terms_validity_all"
+                            checked={termsValidityValue === ''}
+                            label={(
+                                <Box sx={{ml: 0, mr: 1}}>
+                                    <Typography
+                                        variant="subtitle2"
+                                    >
+                                        All
+                                    </Typography>
+                                </Box>
+                            )}
+                            value=""
+                        />
+                        <FormControlLabel
+                            control={<Radio/>}
+                            key="terms_validity_valid"
+                            checked={termsValidityValue === 'valid'}
+                            label={(
+                                <Box sx={{ml: 0, mr: 1}}>
+                                    <Typography
+                                        variant="subtitle2"
+                                    >
+                                        Valid
+                                    </Typography>
+                                </Box>
+                            )}
+                            value="valid"
+                        />
+                        <FormControlLabel
+                            control={<Radio/>}
+                            key="terms_validity_invalid"
+                            checked={termsValidityValue === 'invalid'}
+                            label={(
+                                <Box sx={{ml: 0, mr: 1}}>
+                                    <Typography
+                                        variant="subtitle2"
+                                    >
+                                        Invalid
+                                    </Typography>
+                                </Box>
+                            )}
+                            value="invalid"
+                        />
+                    </Paper>
+                </Stack>
+            </Box>
+
             <Divider/>
-            <Stack
+            {false && <Stack
                 alignItems="center"
                 direction="row"
                 flexWrap="wrap"
@@ -245,11 +377,12 @@ export const ListSearch = (props) => {
                     options={statusOptions}
                     value={statusValues}
                 />
-            </Stack>
+            </Stack>}
         </div>
     );
 };
 
 ListSearch.propTypes = {
-    onFiltersChange: PropTypes.func
+    onFiltersChange: PropTypes.func,
+    onDetailedViewChange: PropTypes.func
 };

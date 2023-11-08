@@ -57,10 +57,10 @@ async def route_list_triple_map_registries(
     status_code=status.HTTP_201_CREATED
 )
 async def route_create_triple_map_registry(
-        triple_map_registry_data: TripleMapRegistryCreateIn,
+        data: TripleMapRegistryCreateIn,
         user: User = Depends(current_active_user)
 ):
-    return await create_triple_map_registry(triple_map_registry_data=triple_map_registry_data, user=user)
+    return await create_triple_map_registry(data, user=user)
 
 
 @router.patch(
@@ -70,12 +70,11 @@ async def route_create_triple_map_registry(
     response_model=TripleMapRegistryOut
 )
 async def route_update_triple_map_registry(
-        id: PydanticObjectId,
-        triple_map_registry_data: TripleMapRegistryUpdateIn,
+        data: TripleMapRegistryUpdateIn,
+        triple_map_registry: TripleMapRegistry = Depends(get_triple_map_registry),
         user: User = Depends(current_active_user)
 ):
-    await update_triple_map_registry(id=id, triple_map_registry_data=triple_map_registry_data, user=user)
-    return await get_triple_map_registry_out(id)
+    return await update_triple_map_registry(triple_map_registry, data, user=user)
 
 
 @router.get(
@@ -97,4 +96,4 @@ async def route_get_triple_map_registry(
 )
 async def route_delete_triple_map_registry(triple_map_registry: TripleMapRegistry = Depends(get_triple_map_registry)):
     await delete_triple_map_registry(triple_map_registry)
-    return APIEmptyContentWithIdResponse(_id=triple_map_registry.id)
+    return APIEmptyContentWithIdResponse(id=triple_map_registry.id)

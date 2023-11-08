@@ -30,6 +30,7 @@ export const AccountPopover = (props) => {
 
             switch (auth.issuer) {
                 case Issuer.JWT: {
+                    toast.loading("Logging out...");
                     await auth.signOut();
                     break;
                 }
