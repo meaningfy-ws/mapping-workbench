@@ -40,7 +40,7 @@ CLASSIFIERS = [
 
 kwargs = {}
 
-with pathlib.Path('requirements.toolchain.txt').open() as requirements:
+with pathlib.Path('requirements.txt').open() as requirements:
     kwargs["install_requires"] = [str(requirement) for requirement in parse_requirements(requirements)]
 
 kwargs["extras_require"] = {}
