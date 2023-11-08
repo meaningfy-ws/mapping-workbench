@@ -17,7 +17,6 @@ import FormControl from "@mui/material/FormControl";
 import {Box} from '@mui/system';
 import styles from './style/code-text-area.module.scss';
 import variables from './style/variables.code-text-area.module.scss';
-import {genericTripleMapFragmentsApi} from "../../../api/triple-map-fragments/generic";
 
 const DEFAULT_GRAMMAR = 'text';
 const DEFAULT_LANGUAGE = 'none';
@@ -26,7 +25,8 @@ export const FormCodeTextArea = (props) => {
     const {
         formik, name, label,
         required = false,
-        grammar = null, language = null
+        grammar = null, language = null,
+        ...other
     } = props;
 
     const [content, setContent] = useState('');
@@ -53,7 +53,7 @@ export const FormCodeTextArea = (props) => {
                         color: 'text.primary',
                         mb: 1,
                     }}
-                    for={name}
+                    htmlFor={name}
                 >
                     {label}
                 </FormLabel>
@@ -86,6 +86,7 @@ export const FormCodeTextArea = (props) => {
                             label={label}
                             name={name}
                             required={required}
+                            {...other}
                         />
                     </div>
                 </Box>

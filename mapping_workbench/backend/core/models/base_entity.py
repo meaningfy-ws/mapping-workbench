@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional
 
 from beanie import Document, Link, PydanticObjectId
-from pydantic import BaseModel, Field, Extra
+from pydantic import BaseModel, Field, Extra, ConfigDict
 
 from mapping_workbench.backend.user.models.user import User
 
@@ -11,10 +11,10 @@ class BaseEntity(Document):
     """
     The general model for entities
     """
-    created_at: Optional[datetime]
-    updated_at: Optional[datetime]
-    created_by: Optional[Link[User]]
-    updated_by: Optional[Link[User]]
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+    created_by: Optional[Link[User]] = None
+    updated_by: Optional[Link[User]] = None
     is_deleted: bool = False
 
     def on_create(self, user: User):
@@ -37,15 +37,17 @@ class BaseEntityOutSchema(BaseModel):
     # is_deleted: Optional[bool]
     # created_by: Optional[Any]
     # updated_by: Optional[Any]
-    created_at: Optional[datetime]
-    updated_at: Optional[datetime]
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
-    class Config(BaseModel.Config):
-        allow_population_by_field_name = True
+    model_config = ConfigDict(
+        populate_by_name=True
+    )
 
 
 class BaseEntityInSchema(BaseModel, extra=Extra.forbid):
-    pass
+    """
+    """
 
 
 class BaseEntityImmutableFiltersSchema(BaseModel):

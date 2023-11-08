@@ -1,4 +1,6 @@
 import {FileCollectionsApi} from "../file-collections";
+import {sessionApi} from "../session";
+import {appApi} from "../app";
 
 class TestDataSuitesApi extends FileCollectionsApi {
     get SECTION_TITLE() {
@@ -19,6 +21,19 @@ class TestDataSuitesApi extends FileCollectionsApi {
         return valuesStore.items.map(
             value => ({id: value._id, title: value.title})
         ).sort((a, b) => a.title.localeCompare(b.title));
+    }
+
+    async transformTestData(request = {}) {
+        try {
+            let endpoint = this.paths['tasks']['transform_test_data'];
+            let filters = {}
+            if (request['filters']) {
+                filters = request['filters'];
+            }
+            filters['project'] = sessionApi.getSessionProject();
+            return appApi.post(endpoint, filters);
+        } catch (err) {
+        }
     }
 }
 

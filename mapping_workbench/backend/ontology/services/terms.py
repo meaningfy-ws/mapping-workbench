@@ -1,13 +1,15 @@
 import re
-from typing import List, Dict
+from typing import List
 
 import rdflib
 from rdflib import RDF
 
-from mapping_workbench.backend.ontology.adapters.namespace_handler import NamespaceInventory, get_ns_handler, \
+from mapping_workbench.backend.ontology.adapters import invert_dict
+from mapping_workbench.backend.ontology.adapters.namespace_handler import NamespaceInventory, \
     NamespaceInventoryException
 from mapping_workbench.backend.ontology.models.term import Term, TermValidityResponse
-from mapping_workbench.backend.ontology.services.namespaces import discover_and_save_prefix_namespace
+from mapping_workbench.backend.ontology.services.namespaces import discover_and_save_prefix_namespace, get_ns_handler, \
+    get_prefixes_definitions
 from mapping_workbench.backend.user.models.user import User
 
 EPO_OWL_SOURCE_CONTENT = \
@@ -85,14 +87,14 @@ async def discover_and_save_terms(user: User):
             await Term(term=term).on_create(user=user).save()
 
 
-async def is_known_term() -> bool:
+async def is_known_term(term: str) -> bool:
     return True
 
 
 async def check_content_terms_validity(content: str) -> List[TermValidityResponse]:
     ns_handler: NamespaceInventory = await get_ns_handler()
 
-    terms_validity = []
+    terms_validity: List[TermValidityResponse] = []
     terms = sorted(list(set(re.findall(r"([\w.\-_]+:[\w.\-_]+)", content))))
 
     for term in terms:
@@ -109,3 +111,36 @@ async def check_content_terms_validity(content: str) -> List[TermValidityRespons
             term_validity.info = e.info or str(e)
         terms_validity.append(term_validity)
     return terms_validity
+
+
+def last_term_for_search(q: str) -> str:
+    first, *middle, last = q.split(' ')
+    return last
+
+
+async def search_terms(q: str) -> List[str]:
+    last_term = last_term_for_search(q)
+    if not last_term:
+        return []
+
+    query_filters: dict = {
+        'term': {
+            '$regex': last_term,
+            '$options': 'i'
+        }
+    }
+
+    return [x.term for x in await Term.find(query_filters).to_list()]
+
+
+async def get_prefixed_terms():
+    prefixes = invert_dict(await get_prefixes_definitions())
+    terms = [x.term for x in await Term.find().to_list()]
+    prefixed_terms = []
+    for term in terms:
+        parts = term.split('#')
+        ns = parts[0] + '#'
+        term_value = parts[1] if len(parts) == 2 else ''
+        prefix = prefixes[ns] if ns in prefixes else ''
+        prefixed_terms.append(f"{prefix}:{term_value}")
+    return list(set(prefixed_terms))

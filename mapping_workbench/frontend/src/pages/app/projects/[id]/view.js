@@ -99,9 +99,6 @@ const Page = () => {
                                     direction="row"
                                     spacing={1}
                                 >
-                                    <Typography variant="subtitle2">
-                                        {item.name}:
-                                    </Typography>
                                     <Chip
                                         label={item._id}
                                         size="small"

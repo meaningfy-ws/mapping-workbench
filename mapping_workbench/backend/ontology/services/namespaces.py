@@ -1,4 +1,5 @@
 import re
+from typing import Dict
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
 from mapping_workbench.backend.ontology.adapters.namespace_handler import NamespaceInventory
@@ -25,3 +26,11 @@ async def discover_and_save_prefix_namespace(prefix: str, uri: str = None):
             except ValueError as e:
                 pass
         await namespace.save()
+
+
+async def get_prefixes_definitions() -> Dict[str, str]:
+    return {x.prefix: (x.uri or '') for x in (await Namespace.find_all().to_list())}
+
+
+async def get_ns_handler() -> NamespaceInventory:
+    return NamespaceInventory(namespace_definition_dict=await get_prefixes_definitions())

@@ -67,7 +67,7 @@ async def route_create_resource_collection(
         resource_collection: ResourceCollection,
         user: User = Depends(current_active_user)
 ):
-    return await create_resource_collection(resource_collection=resource_collection, user=user)
+    return await create_resource_collection(resource_collection, user=user)
 
 
 @router.patch(
@@ -77,12 +77,11 @@ async def route_create_resource_collection(
     response_model=ResourceCollection
 )
 async def route_update_resource_collection(
-        id: PydanticObjectId,
-        resource_collection_data: ResourceCollection,
+        data: ResourceCollection,
+        resource_collection: ResourceCollection = Depends(get_resource_collection),
         user: User = Depends(current_active_user)
 ):
-    await update_resource_collection(id=id, resource_collection_data=resource_collection_data, user=user)
-    return await get_resource_collection(id)
+    return await update_resource_collection(resource_collection, data, user=user)
 
 
 @router.get(
@@ -103,7 +102,7 @@ async def route_get_resource_collection(resource_collection: ResourceCollection 
 )
 async def route_delete_resource_collection(resource_collection: ResourceCollection = Depends(get_resource_collection)):
     await delete_resource_collection(resource_collection)
-    APIEmptyContentWithIdResponse(_id=resource_collection.id)
+    return APIEmptyContentWithIdResponse(id=resource_collection.id)
 
 
 @router.get(
@@ -174,4 +173,4 @@ async def route_get_resource_file(
 )
 async def route_delete_resource_file(resource_file: ResourceFile = Depends(get_resource_file)):
     await delete_resource_file(resource_file)
-    return APIEmptyContentWithIdResponse(_id=resource_file.id)
+    return APIEmptyContentWithIdResponse(id=resource_file.id)

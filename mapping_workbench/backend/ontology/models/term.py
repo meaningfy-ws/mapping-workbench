@@ -1,8 +1,10 @@
 from enum import Enum
 from typing import Optional
 
+import pymongo
 from beanie import Indexed
 from pydantic import BaseModel
+from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntity, BaseEntityInSchema, BaseEntityOutSchema
 
@@ -13,25 +15,35 @@ class TermType(Enum):
 
 
 class TermIn(BaseEntityInSchema):
-    term: Optional[str]
-    type: Optional[TermType]
+    term: Optional[str] = None
+    type: Optional[TermType] = None
 
 
 class TermOut(BaseEntityOutSchema):
-    term: Optional[str]
-    type: Optional[TermType]
+    term: Optional[str] = None
+    type: Optional[TermType] = None
 
 
 class Term(BaseEntity):
     term: Indexed(str)
-    type: Optional[TermType]
+    type: Optional[TermType] = None
 
     class Settings(BaseEntity.Settings):
         name = "terms"
 
+        indexes = [
+            IndexModel(
+                [
+                    ("term", pymongo.TEXT),
+                    ("type", pymongo.TEXT)
+                ],
+                name="search_text_idx"
+            )
+        ]
+
 
 class TermValidityResponse(BaseModel):
-    term: str
-    ns_term: Optional[str]
-    is_valid: bool
-    info: Optional[str]
+    term: Optional[str] = None
+    ns_term: Optional[str] = None
+    is_valid: Optional[bool] = None
+    info: Optional[str] = None

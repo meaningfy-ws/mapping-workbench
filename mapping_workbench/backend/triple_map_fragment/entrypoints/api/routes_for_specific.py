@@ -42,18 +42,23 @@ router = APIRouter(
 )
 async def route_list_specific_triple_map_fragments(
         project: PydanticObjectId = None,
-        mapping_package: PydanticObjectId = None
+        mapping_package: PydanticObjectId = None,
+        page: int = None,
+        limit: int = None,
+        q: str = None
 ):
     filters: dict = {}
     if project:
         filters['project'] = Project.link_from_id(project)
     if mapping_package is not None:
         filters['mapping_package'] = MappingPackage.link_from_id(mapping_package)
+    if q is not None:
+        filters['q'] = q
 
-    items: List[SpecificTripleMapFragmentOut] = await list_specific_triple_map_fragments(filters)
+    items, total_count = await list_specific_triple_map_fragments(filters, page, limit)
     return APIListSpecificTripleMapFragmentsPaginatedResponse(
         items=items,
-        count=len(items)
+        count=total_count
     )
 
 
@@ -65,11 +70,13 @@ async def route_list_specific_triple_map_fragments(
     status_code=status.HTTP_201_CREATED
 )
 async def route_create_specific_triple_map_fragment(
-        specific_triple_map_fragment_data: SpecificTripleMapFragmentCreateIn,
+        data: SpecificTripleMapFragmentCreateIn,
         user: User = Depends(current_active_user)
 ):
     return await create_specific_triple_map_fragment(
-        specific_triple_map_fragment_data=specific_triple_map_fragment_data, user=user)
+        data,
+        user=user
+    )
 
 
 @router.patch(
@@ -104,14 +111,15 @@ async def route_update_specific_mapping_package(
     response_model=SpecificTripleMapFragmentOut
 )
 async def route_update_specific_triple_map_fragment(
-        id: PydanticObjectId,
-        specific_triple_map_fragment_data: SpecificTripleMapFragmentUpdateIn,
+        data: SpecificTripleMapFragmentUpdateIn,
+        specific_triple_map_fragment: SpecificTripleMapFragment = Depends(get_specific_triple_map_fragment),
         user: User = Depends(current_active_user)
 ):
-    await update_specific_triple_map_fragment(id=id,
-                                              specific_triple_map_fragment_data=specific_triple_map_fragment_data,
-                                              user=user)
-    return await get_specific_triple_map_fragment_out(id)
+    return await update_specific_triple_map_fragment(
+        specific_triple_map_fragment,
+        data,
+        user=user
+    )
 
 
 @router.get(
@@ -134,4 +142,4 @@ async def route_get_specific_triple_map_fragment(
 async def route_delete_specific_triple_map_fragment(
         specific_triple_map_fragment: SpecificTripleMapFragment = Depends(get_specific_triple_map_fragment)):
     await delete_specific_triple_map_fragment(specific_triple_map_fragment)
-    return APIEmptyContentWithIdResponse(_id=specific_triple_map_fragment.id)
+    return APIEmptyContentWithIdResponse(id=specific_triple_map_fragment.id)

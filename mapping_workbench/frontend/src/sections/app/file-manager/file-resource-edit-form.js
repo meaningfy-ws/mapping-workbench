@@ -29,7 +29,10 @@ export const FileResourceEditForm = (props) => {
     const router = useRouter();
     if (!router.isReady) return;
 
-    const {itemctx, collection_id, ...other} = props;
+    const {itemctx, collection_id,
+        extra_form = null,
+        extra_form_fields = {},
+        ...other} = props;
     const sectionApi = itemctx.api;
     const item = itemctx.data;
 
@@ -38,14 +41,15 @@ export const FileResourceEditForm = (props) => {
     }
 
     const initFormValues = (data) => {
-        return {
+        return Object.assign({
             title: data.title || '',
             description: data.description || '',
             path: prepareTextareaListValue(data.path),
+            filename: data.filename || '',
             format: data.format || sectionApi.FILE_RESOURCE_DEFAULT_FORMAT || '',
             content: data.content || '',
             file: null
-        }
+        }, extra_form_fields)
     }
 
     let initialValues = initFormValues(item);
@@ -152,6 +156,9 @@ export const FileResourceEditForm = (props) => {
                             <FormTextArea formik={formik} name="path" label="Path"/>
                         </Grid>
                         <Grid xs={12} md={12}>
+                            <FormTextField formik={formik} name="filename" label="Filename"/>
+                        </Grid>
+                        <Grid xs={12} md={12}>
                             <TextField
                                 error={!!(formik.touched.format && formik.errors.format)}
                                 fullWidth
@@ -191,6 +198,13 @@ export const FileResourceEditForm = (props) => {
                 </CardContent>
             </Card>
 
+            {extra_form && (
+                <Card sx={{mt: 3}}>
+                    <CardContent>
+                        {extra_form({item: item, formik: formik})}
+                    </CardContent>
+                </Card>
+            )}
             <Card sx={{mt: 3}}>
                 <Stack
                     direction={{

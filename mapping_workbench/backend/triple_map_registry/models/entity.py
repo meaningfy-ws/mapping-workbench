@@ -16,17 +16,17 @@ class TripleMapRegistryCreateIn(TripleMapRegistryIn):
 
 
 class TripleMapRegistryUpdateIn(TripleMapRegistryIn):
-    title: Optional[str]
+    title: Optional[str] = None
 
 
 class TripleMapRegistryOut(BaseProjectResourceEntityOutSchema):
-    title: Optional[str]
-    triple_map_fragments: Optional[List[Link[TripleMapFragment]]]
+    title: Optional[str] = None
+    triple_map_fragments: Optional[List[Link[TripleMapFragment]]] = None
 
 
 class TripleMapRegistry(BaseProjectResourceEntity):
     title: Indexed(str, unique=True)
-    triple_map_fragments: Optional[List[Link[TripleMapFragment]]]
+    triple_map_fragments: Optional[List[Link[TripleMapFragment]]] = None
 
     class Settings(BaseProjectResourceEntity.Settings):
         name = "triple_map_registries"

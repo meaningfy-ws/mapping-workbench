@@ -30,7 +30,7 @@ export const EditForm = (props) => {
     let initialValues = {
         prefix: item.prefix || '',
         uri: item.uri || '',
-        is_syncable: item.is_syncable || true
+        is_syncable: item.is_syncable !== null ? item.is_syncable : true
     };
 
     const formik = useFormik({

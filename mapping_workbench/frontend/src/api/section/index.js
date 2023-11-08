@@ -6,8 +6,13 @@ export const ACTION = {
     LIST: 'list',
     CREATE: 'create',
     EDIT: 'edit',
-    DELETE: 'delete'
+    DELETE: 'delete',
+    VIEW: 'view'
 };
+
+const DEFAULT_PAGE = 0;
+const DEFAULT_ROWS_PER_PAGE = 25;
+const DEFAULT_ROWS_PER_PAGE_SELECTION = [5, 10, 25, 50, { value: -1, label: 'All' }];
 
 export class SectionApi {
     isProjectResource;
@@ -25,11 +30,34 @@ export class SectionApi {
         this.paths = apiPaths[section];
     }
 
+    get DEFAULT_PAGE() {
+        return DEFAULT_PAGE;
+    }
+
+    get DEFAULT_ROWS_PER_PAGE() {
+        return DEFAULT_ROWS_PER_PAGE;
+    }
+
+    get DEFAULT_ROWS_PER_PAGE_SELECTION() {
+        return DEFAULT_ROWS_PER_PAGE_SELECTION;
+    }
+
+    get SECTION_LIST_ACTIONS() {
+        return [ACTION.VIEW, ACTION.EDIT, ACTION.DELETE];
+    }
+
     async getItems(request = {}, path = 'items') {
-        const {filters = {}, page, rowsPerPage} = request;
+        const {
+            filters = {},
+            page = this.DEFAULT_PAGE,
+            rowsPerPage = this.DEFAULT_ROWS_PER_PAGE
+        } = request;
         if (this.isProjectResource) {
             filters['project'] = sessionApi.getSessionProject();
         }
+        filters['page'] = page;
+        filters['limit'] = rowsPerPage >= 0 ? rowsPerPage : null;
+
         return await appApi.get(this.paths[path], filters);
     }
 

@@ -1,10 +1,9 @@
 import {useCallback, useEffect, useState} from 'react';
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
-import Box from '@mui/material/Box';
+import RefreshIcon from '@untitled-ui/icons-react/build/esm/Repeat02';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
@@ -20,23 +19,25 @@ import {paths} from 'src/paths';
 import {ListSearch} from "../../../sections/app/conceptual-mapping-rule/list-search";
 import {ListTable} from "../../../sections/app/conceptual-mapping-rule/list-table";
 import {useMounted} from "../../../hooks/use-mounted";
+import {useTranslation} from "react-i18next";
+import {tokens} from "/src/locales/tokens";
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
         filters: {
-            name: undefined,
-            category: [],
-            status: [],
-            inStock: undefined
+            q: undefined,
+            terms_validity: undefined
         },
-        page: 0,
-        rowsPerPage: 5
+        page: sectionApi.DEFAULT_PAGE,
+        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE,
+        detailedView: true
     });
 
     const handleFiltersChange = useCallback((filters) => {
         setState((prevState) => ({
             ...prevState,
-            filters
+            filters,
+            page: 0
         }));
     }, []);
 
@@ -54,10 +55,18 @@ const useItemsSearch = () => {
         }));
     }, []);
 
+    const handleDetailedViewChange = useCallback((event, detailedView) => {
+        setState((prevState) => ({
+            ...prevState,
+            detailedView
+        }));
+    }, []);
+
     return {
         handleFiltersChange,
         handlePageChange,
         handleRowsPerPageChange,
+        handleDetailedViewChange,
         state
     };
 };
@@ -97,10 +106,25 @@ const useItemsStore = (searchState) => {
 
 
 const Page = () => {
+    const {t} = useTranslation();
+
     const itemsSearch = useItemsSearch();
     const itemsStore = useItemsStore(itemsSearch.state);
 
     usePageView();
+
+    const [sortDir, setSortDir] = useState('desc');
+    const [sortField, setSortField] = useState('1');
+
+    const handleSort = useCallback(() => {
+        setSortDir((prevState) => {
+            if (prevState === 'asc') {
+                return 'desc';
+            }
+
+            return 'asc';
+        });
+    }, []);
 
     return (
         <>
@@ -157,10 +181,25 @@ const Page = () => {
                         >
                             Add
                         </Button>
+                        <Button
+                            component={RouterLink}
+                            href={paths.app[sectionApi.section].tasks.generate_cm_assertions_queries}
+                            startIcon={(
+                                <SvgIcon>
+                                    <RefreshIcon/>
+                                </SvgIcon>
+                            )}
+                            variant="contained"
+                        >
+                            {t(tokens.nav.generate_cm_assertions_queries)}
+                        </Button>
                     </Stack>
                 </Stack>
                 <Card>
-                    <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
+                    <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}
+                                onDetailedViewChange={itemsSearch.handleDetailedViewChange}
+                                detailedView={itemsSearch.state.detailedView}
+                    />
                     <ListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
@@ -169,6 +208,10 @@ const Page = () => {
                         count={itemsStore.itemsCount}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
+                        sortDir={sortDir}
+                        sortField={sortField}
+                        handleSort={handleSort}
+                        detailedView={itemsSearch.state.detailedView}
                     />
                 </Card>
             </Stack>

@@ -1,5 +1,3 @@
-from typing import List
-
 from beanie import PydanticObjectId
 from fastapi import APIRouter, Depends, status, UploadFile, Form
 
@@ -38,15 +36,21 @@ router = APIRouter(
     response_model=APIListMappingPackagesPaginatedResponse
 )
 async def route_list_mapping_packages(
-        project: PydanticObjectId = None
+        project: PydanticObjectId = None,
+        page: int = None,
+        limit: int = None,
+        q: str = None
 ):
     filters: dict = {}
     if project:
         filters['project'] = Project.link_from_id(project)
-    items: List[MappingPackageOut] = await list_mapping_packages(filters)
+    if q is not None:
+        filters['q'] = q
+
+    items, total_count = await list_mapping_packages(filters, page, limit)
     return APIListMappingPackagesPaginatedResponse(
         items=items,
-        count=len(items)
+        count=total_count
     )
 
 
@@ -58,10 +62,10 @@ async def route_list_mapping_packages(
     status_code=status.HTTP_201_CREATED
 )
 async def route_create_mapping_package(
-        mapping_package_data: MappingPackageCreateIn,
+        data: MappingPackageCreateIn,
         user: User = Depends(current_active_user)
 ):
-    return await create_mapping_package(mapping_package_data=mapping_package_data, user=user)
+    return await create_mapping_package(data, user=user)
 
 
 @router.patch(
@@ -71,12 +75,11 @@ async def route_create_mapping_package(
     response_model=MappingPackageOut
 )
 async def route_update_mapping_package(
-        id: PydanticObjectId,
-        mapping_package_data: MappingPackageUpdateIn,
+        data: MappingPackageUpdateIn,
+        mapping_package: MappingPackage = Depends(get_mapping_package),
         user: User = Depends(current_active_user)
 ):
-    await update_mapping_package(id=id, mapping_package_data=mapping_package_data, user=user)
-    return await get_mapping_package_out(id)
+    return await update_mapping_package(mapping_package, data, user=user)
 
 
 @router.get(
@@ -97,7 +100,7 @@ async def route_get_mapping_package(mapping_package: MappingPackageOut = Depends
 )
 async def route_delete_mapping_package(mapping_package: MappingPackage = Depends(get_mapping_package)):
     await delete_mapping_package(mapping_package)
-    return APIEmptyContentWithIdResponse(_id=mapping_package.id)
+    return APIEmptyContentWithIdResponse(id=mapping_package.id)
 
 
 @router.post(
@@ -115,7 +118,7 @@ async def route_import_mapping_packages(
         file.file.read(), file.filename, await get_project(project), user
     )
 
-    return mapping_package.dict()
+    return mapping_package.model_dump()
 
 
 @router.post(

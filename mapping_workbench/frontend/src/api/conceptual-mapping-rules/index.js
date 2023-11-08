@@ -1,5 +1,12 @@
-import {SectionApi} from "../section";
+import {ACTION, SectionApi} from "../section";
 import {appApi} from "../app";
+import {sessionApi} from "../session";
+
+export const COMMENT_PRIORITY = {
+    HIGH: 'high',
+    NORMAL: 'normal',
+    LOW: 'low'
+};
 
 class ConceptualMappingRulesApi extends SectionApi {
     get SECTION_TITLE() {
@@ -8,6 +15,10 @@ class ConceptualMappingRulesApi extends SectionApi {
 
     get SECTION_ITEM_TITLE() {
         return "Conceptual Mapping Rule";
+    }
+
+    get SECTION_LIST_ACTIONS() {
+        return [ACTION.EDIT, ACTION.DELETE];
     }
 
     constructor() {
@@ -19,6 +30,35 @@ class ConceptualMappingRulesApi extends SectionApi {
         let endpoint = this.paths['check_content_terms_validity'];
         return appApi.post(endpoint, {"content": content});
     }
+
+    async searchTerms(q){
+        let endpoint = this.paths['search_terms'];
+        return appApi.get(endpoint, {"q": q});
+    }
+
+    async getPrefixedTerms(q){
+        let endpoint = this.paths['prefixed_terms'];
+        return appApi.get(endpoint);
+    }
+
+    async cloneItem(id){
+        let endpoint = this.paths['clone'].replace(':id', id);
+        return appApi.post(endpoint);
+    }
+
+    async generateCMAssertionsQueries(request = {}) {
+        try {
+            let endpoint = this.paths['tasks']['generate_cm_assertions_queries'];
+            let filters = {}
+            if (request['filters']) {
+                filters = request['filters'];
+            }
+            filters['project'] = sessionApi.getSessionProject();
+            return appApi.post(endpoint, filters);
+        } catch (err) {
+        }
+    }
+
 }
 
 export const conceptualMappingRulesApi = new ConceptualMappingRulesApi();

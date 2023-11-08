@@ -1,6 +1,7 @@
 from typing import List
 
 from beanie import PydanticObjectId
+from bson import DBRef
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
@@ -25,21 +26,21 @@ async def create_resource_collection(resource_collection: ResourceCollection, us
     return await resource_collection.create()
 
 
-async def update_resource_collection(id: PydanticObjectId, resource_collection_data: ResourceCollection, user: User):
-    resource_collection: ResourceCollection = await ResourceCollection.get(id)
-    if not api_entity_is_found(resource_collection):
-        raise ResourceNotFoundException()
-
-    request_data = request_update_data(resource_collection_data)
-    update_data = request_update_data(ResourceCollection(**request_data).on_update(user=user))
-    return await resource_collection.set(update_data)
+async def update_resource_collection(
+        resource_collection: ResourceCollection,
+        data: ResourceCollection,
+        user: User
+) -> ResourceCollection:
+    return await resource_collection.set(
+        request_update_data(data, user=user)
+    )
 
 
 async def get_resource_collection(id: PydanticObjectId) -> ResourceCollection:
-    resource_collection: ResourceCollection = await ResourceCollection.get(id)
+    resource_collection: ResourceCollection = await ResourceCollection.get(id, fetch_links=False)
     if not api_entity_is_found(resource_collection):
         raise ResourceNotFoundException()
-    return ResourceCollection(**resource_collection.dict(by_alias=False))
+    return ResourceCollection(**resource_collection.model_dump())
 
 
 async def delete_resource_collection(resource_collection: ResourceCollection):
@@ -64,7 +65,7 @@ async def create_resource_collection_file_resource(
         user: User
 ) -> ResourceFile:
     data.resource_collection = resource_collection
-    resource_file = ResourceFile(**request_create_data(data)).on_create(user=user)
+    resource_file = ResourceFile(**request_create_data(data, user=user))
     return await resource_file.create()
 
 
@@ -72,10 +73,9 @@ async def update_resource_file(
         resource_file: ResourceFile,
         data: ResourceFileUpdateIn,
         user: User) -> ResourceFile:
-    update_data = request_update_data(
-        ResourceFile(**request_update_data(data)).on_update(user=user)
+    return await resource_file.set(
+        request_update_data(data, user=user)
     )
-    return await resource_file.set(update_data)
 
 
 async def get_resource_file(id: PydanticObjectId) -> ResourceFile:

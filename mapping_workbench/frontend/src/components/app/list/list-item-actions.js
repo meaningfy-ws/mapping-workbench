@@ -1,20 +1,11 @@
-import { Button } from '@mui/material';
-import EditIcon from '@untitled-ui/icons-react/build/esm/Edit02';
-import Eye from '@untitled-ui/icons-react/build/esm/Eye';
-import DotsHorizontalIcon from '@untitled-ui/icons-react/build/esm/DotsHorizontal';
-import DeleteIcon from '@untitled-ui/icons-react/build/esm/Delete';
-import IconButton from '@mui/material/IconButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import SvgIcon from '@mui/material/SvgIcon';
-import Tooltip from '@mui/material/Tooltip';
+import {Button} from '@mui/material';
 
 import {usePopover} from 'src/hooks/use-popover';
-import {useCallback} from "react";
+import {useCallback, useState} from "react";
 import {paths} from 'src/paths';
 import {useRouter} from "../../../hooks/use-router";
+import {ACTION} from "../../../api/section";
+import ConfirmDialog from "../dialog/confirm-dialog";
 import {Box} from "@mui/system";
 
 export const ListItemActions = (props) => {
@@ -44,41 +35,60 @@ export const ListItemActions = (props) => {
     const handleDeleteAction = useCallback(async () => {
         const response = await itemctx.api.deleteItem(itemctx.id);
         console.log("delete pathname: ", itemctx.api.section);
-        
+
         router.push({
             pathname: paths.app[itemctx.api.section].index
         });
         window.location.reload();
     }, [router, itemctx]);
 
+    const [confirmOpen, setConfirmOpen] = useState(false);
+
     return (
-        <>
-        <Box className="newActionButtons" /*sx={{ display: "flex", flexDirection: "inline", justifyContent: "space-evenly"}}*/>
-            <Button
+        <Box>
+            {itemctx.api.SECTION_LIST_ACTIONS.includes(ACTION.VIEW) && <Button
                 variant="text"
                 size="small"
                 color="info"
                 onClick={handleViewAction}
+                sx={{
+                    whiteSpace: "nowrap"
+                }}
             >
-            View
-            </Button>
-            <Button
+                View
+            </Button>}
+            {itemctx.api.SECTION_LIST_ACTIONS.includes(ACTION.EDIT) && <Button
                 variant="text"
                 size="small"
                 color="success"
                 onClick={handleEditAction}
+                sx={{
+                    whiteSpace: "nowrap"
+                }}
             >
-            Edit
-            </Button>
-            <Button
-                variant="text"
-                size="small"
-                color="error"
-                onClick={handleDeleteAction}
-            >
-            Delete
-            </Button>
-        </Box>
+                Edit
+            </Button>}
+            {itemctx.api.SECTION_LIST_ACTIONS.includes(ACTION.DELETE) && <>
+                <Button
+                    variant="text"
+                    size="small"
+                    color="error"
+                    onClick={() => setConfirmOpen(true)}
+                    sx={{
+                        whiteSpace: "nowrap"
+                    }}
+                >
+                    Delete
+                </Button>
+                <ConfirmDialog
+                    title="Delete It?"
+                    open={confirmOpen}
+                    setOpen={setConfirmOpen}
+                    onConfirm={handleDeleteAction}
+                >
+                    Are you sure you want to delete it?
+                </ConfirmDialog>
+            </>}
 
             {/* <Tooltip title="More options">
                 <IconButton
@@ -134,6 +144,6 @@ export const ListItemActions = (props) => {
                     <ListItemText primary="Delete"/>
                 </MenuItem>
             </Menu> */}
-        </>
+        </Box>
     );
 };

@@ -43,7 +43,7 @@ export const EditForm = (props) => {
                 .string()
                 .max(255)
                 .required('URI is required'),
-            triple_map_content: Yup.string().max(2048),
+            triple_map_content: Yup.string(),
             format: Yup
                 .string()
                 .max(255)

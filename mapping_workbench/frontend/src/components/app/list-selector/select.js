@@ -12,7 +12,7 @@ import Input from "@mui/material/Input";
 
 export const ListSelectorSelect = (props) => {
     const {
-        valuesApi, titleField = "title", listValues = [], initProjectValues = [],
+        valuesApi, titleField = "title", listValues = [], initProjectValues = null,
         multiple = true,
         valuesForSelector = null,
         valuesFilters = {},
@@ -20,12 +20,12 @@ export const ListSelectorSelect = (props) => {
     } = props;
 
     const [stateValues, setStateValues] = useState(listValues);
-    const [projectValues, setProjectValues] = useState(initProjectValues);
+    const [projectValues, setProjectValues] = useState(initProjectValues || []);
     const [valuesMap, setValuesMap] = useState({});
 
     useEffect(() => {
         (async () => {
-            if (initProjectValues.length === 0) {
+            if (initProjectValues === null) {
                 setProjectValues(await (
                     (valuesForSelector && valuesForSelector(valuesFilters)) || valuesApi.getValuesForSelector(valuesFilters))
                 );

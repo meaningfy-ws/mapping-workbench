@@ -7,7 +7,7 @@ from mapping_workbench.backend.user.models.user import User, UserApp
 
 
 async def list_users(query: QueryFilters = None) -> List[User]:
-    return await User.find(query.dict(exclude_unset=True), fetch_links=False).to_list()
+    return await User.find(query.model_dump(exclude_unset=True), fetch_links=False).to_list()
 
 
 async def set_project_for_current_user_session(id: PydanticObjectId, user: User) -> PydanticObjectId:

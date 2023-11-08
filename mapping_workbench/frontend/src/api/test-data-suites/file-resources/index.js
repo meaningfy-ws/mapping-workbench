@@ -29,6 +29,10 @@ class TestDataFileResourcesApi extends FileResourcesApi {
             "JSON": {
                 "grammar": "json",
                 "language": "json"
+            },
+            "RDF": {
+                "grammar": "turtle",
+                "language": "turtle"
             }
         };
     }

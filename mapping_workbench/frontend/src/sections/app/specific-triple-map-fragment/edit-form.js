@@ -44,7 +44,7 @@ export const EditForm = (props) => {
                 .string()
                 .max(255)
                 .required('URI is required'),
-            triple_map_content: Yup.string().max(2048),
+            triple_map_content: Yup.string(),
             mapping_package: Yup.string().max(255).required('Package is required')
         }),
         onSubmit: async (values, helpers) => {

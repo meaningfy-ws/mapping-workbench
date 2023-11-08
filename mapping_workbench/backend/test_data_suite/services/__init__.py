@@ -1,0 +1,4 @@
+DATA_SOURCE_PATH_NAME = "data"
+TRANSFORMATION_PATH_NAME = "transformation"
+MAPPINGS_PATH_NAME = "mappings"
+RESOURCES_PATH_NAME = "resources"
