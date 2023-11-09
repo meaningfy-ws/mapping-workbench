@@ -8,6 +8,7 @@ from mapping_workbench.backend.config import settings
 from mapping_workbench.backend.config.entrypoints.api import routes as config_routes
 from mapping_workbench.backend.core.entrypoints.api import routes as core_routes
 from mapping_workbench.backend.database.adapters.mongodb import DB
+from mapping_workbench.backend.fields_registry.models.field_registry import FieldsRegistry
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingRuleRegistry
 from mapping_workbench.backend.project.entrypoints.api import routes as project_routes
@@ -95,7 +96,8 @@ async def on_startup():
             SpecificTripleMapFragment,
             GenericTripleMapFragment,
             Namespace,
-            Term
+            Term,
+            FieldsRegistry
         ],
     )
 

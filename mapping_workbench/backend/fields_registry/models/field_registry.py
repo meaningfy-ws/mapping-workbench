@@ -1,5 +1,8 @@
+from beanie import Indexed
 from pydantic import BaseModel
 from typing import Optional, List
+
+from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
 
 
 class StructuralElement(BaseModel):
@@ -29,11 +32,39 @@ class StructuralNode(StructuralElement):
     """
 
 
-class FieldsRegistry(BaseModel):
+class FieldsRegistry(BaseProjectResourceEntity):
     """
-        
+
     """
+    title: Indexed(str, unique=True)
+    fields: List[StructuralField] = []
+    nodes: List[StructuralNode] = []
+    root_node_id: Optional[str] = None
+
+    class Settings(BaseProjectResourceEntity.Settings):
+        name = "fields_registry"
+
+
+class FieldsRegistryCreateIn:
     title: str
     fields: List[StructuralField] = []
     nodes: List[StructuralNode] = []
     root_node_id: Optional[str] = None
+
+
+class FieldsRegistryUpdateIn:
+    title: str
+    fields: List[StructuralField] = []
+    nodes: List[StructuralNode] = []
+    root_node_id: Optional[str] = None
+
+
+class FieldsRegistryOut:
+    title: str
+    fields: List[StructuralField] = []
+    nodes: List[StructuralNode] = []
+    root_node_id: Optional[str] = None
+
+
+class APIListFieldsRegistrysPaginatedResponse:
+    items: List[FieldsRegistryOut]
