@@ -29,10 +29,12 @@ export const FileResourceEditForm = (props) => {
     const router = useRouter();
     if (!router.isReady) return;
 
-    const {itemctx, collection_id,
+    const {
+        itemctx, collection_id,
         extra_form = null,
         extra_form_fields = {},
-        ...other} = props;
+        ...other
+    } = props;
     const sectionApi = itemctx.api;
     const item = itemctx.data;
 
@@ -47,6 +49,9 @@ export const FileResourceEditForm = (props) => {
             path: prepareTextareaListValue(data.path),
             filename: data.filename || '',
             format: data.format || sectionApi.FILE_RESOURCE_DEFAULT_FORMAT || '',
+            query_title: data.query.title || '',
+            query_description: data.query.description || '',
+            query_xpath: prepareTextareaListValue(data.query.xpath),
             content: data.content || '',
             file: null
         }, extra_form_fields)
@@ -73,6 +78,8 @@ export const FileResourceEditForm = (props) => {
         }),
         onSubmit: async (values, helpers) => {
             try {
+                values['query_xpath'] = (typeof values['query_xpath'] == 'string') ?
+                    values['query_xpath'].split('\n').map(s => s.trim()).filter(s => s !== '').join(',') : values['query_xpath']
                 values['path'] = (typeof values['path'] == 'string') ?
                     values['path'].split('\n').map(s => s.trim()).filter(s => s !== '').join(',') : values['path'];
                 let response;
@@ -178,6 +185,15 @@ export const FileResourceEditForm = (props) => {
                                     </MenuItem>
                                 ))}
                             </TextField>
+                        </Grid>
+                        <Grid xs={12} md={12}>
+                            <FormTextField formik={formik} name="query_title" label="Query Title"/>
+                        </Grid>
+                        <Grid xs={12} md={12}>
+                            <FormTextArea formik={formik} name="query_description" label="Query Description"/>
+                        </Grid>
+                        <Grid xs={12} md={12}>
+                            <FormTextArea formik={formik} name="query_xpath" label="Query XPath"/>
                         </Grid>
                         <Grid xs={12} md={12}>
                             <FormCodeTextArea

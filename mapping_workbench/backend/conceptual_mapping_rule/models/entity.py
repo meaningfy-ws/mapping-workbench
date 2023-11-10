@@ -31,9 +31,9 @@ class ConceptualMappingRuleComment(BaseModel):
     title: Optional[str] = None
     comment: Optional[str] = None
     priority: Optional[ConceptualMappingRuleCommentPriority] = ConceptualMappingRuleCommentPriority.NORMAL
-    created_at: Optional[datetime] = None
+    created_at: Optional[datetime] = datetime.now().isoformat()
     created_by: Optional[Link[User]] = None
-    updated_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = datetime.now().isoformat()
     updated_by: Optional[Link[User]] = None
 
 

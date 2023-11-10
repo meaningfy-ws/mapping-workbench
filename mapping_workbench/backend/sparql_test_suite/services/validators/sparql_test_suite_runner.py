@@ -8,13 +8,14 @@ from mapping_workbench.backend import NOTICE_IDS_FIELD
 from mapping_workbench.backend.file_resource.models.file_resource import FileResource
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.sparql_test_suite.adapters.sparql_runner import SPARQLRunner
-from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuite
+from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuite, SPARQLTestFileResource
+from mapping_workbench.backend.sparql_test_suite.models.validation import SPARQLQuery
 from mapping_workbench.backend.sparql_test_suite.services.sparql_cm_assertions import SPARQL_XPATH_SEPARATOR
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataFileResource
-from mapping_workbench.backend.test_data_suite.models.manifestation import XMLManifestation, \
-    SPARQLQuery, SPARQLQueryRefinedResultType, SPARQLQueryResult, SPARQLTestSuiteValidationReport
+from mapping_workbench.backend.test_data_suite.models.validation import SPARQLQueryResult, \
+    SPARQLTestSuiteValidationReport
 
-#TEMPLATES = Environment(loader=PackageLoader("mapping_workbench.sparql_test_suite.resources", "templates"))
+# TEMPLATES = Environment(loader=PackageLoader("mapping_workbench.sparql_test_suite.resources", "templates"))
 TEMPLATES = Environment(loader=FileSystemLoader("mapping_workbench.sparql_test_suite.resources.templates"))
 SPARQL_TEST_SUITE_EXECUTION_HTML_REPORT_TEMPLATE = "sparql_query_results_report.jinja2"
 SPARQL_SUMMARY_HTML_REPORT_TEMPLATE = "sparql_summary_report.jinja2"
@@ -25,22 +26,6 @@ QUERY_METADATA_XPATH = "xpath"
 DEFAULT_QUERY_TITLE = "untitled query"
 DEFAULT_QUERY_DESCRIPTION = "un-described query"
 DEFAULT_QUERY_XPATH = []
-
-
-def extract_metadata_from_sparql_query(content: str) -> dict:
-    """
-        Extracts a dictionary of metadata from a SPARQL query
-    """
-
-    def _process_line(line) -> Tuple[str, str]:
-        if ":" in line:
-            key_part, value_part = line.split(":", 1)
-            key_part = key_part.replace("#", "").strip()
-            value_part = value_part.strip()
-            return key_part, value_part
-
-    content_lines_with_comments = filter(lambda x: x.strip().startswith("#"), content.splitlines())
-    return dict([_process_line(line) for line in content_lines_with_comments])
 
 
 class SPARQLTestSuiteRunner:
@@ -64,23 +49,6 @@ class SPARQLTestSuiteRunner:
         query = re.sub(r'(?m)^ *#.*\n?', '', query).strip('\n ')
         return query
 
-    @classmethod
-    def _sparql_query_from_file_resource(cls, file_resource: FileResource) -> SPARQLQuery:
-        """
-        Gets file content and converts to a SPARQLQuery
-        :param file_resource:
-        :return:
-        """
-        metadata = extract_metadata_from_sparql_query(file_resource.content)
-        title = metadata[QUERY_METADATA_TITLE] \
-            if QUERY_METADATA_TITLE in metadata else DEFAULT_QUERY_TITLE
-        description = metadata[QUERY_METADATA_DESCRIPTION] \
-            if QUERY_METADATA_DESCRIPTION in metadata else DEFAULT_QUERY_DESCRIPTION
-        xpath = metadata[QUERY_METADATA_XPATH].split(
-            SPARQL_XPATH_SEPARATOR
-        ) if QUERY_METADATA_XPATH in metadata and metadata[QUERY_METADATA_XPATH] else DEFAULT_QUERY_XPATH
-        query = cls._sanitize_query(file_resource.file_content)
-        return SPARQLQuery(title=title, description=description, xpath=xpath, query=query)
 
     @classmethod
     def _refined_result(cls, ask_answer, sparql_query_result,
@@ -135,7 +103,9 @@ class SPARQLTestSuiteRunner:
             validation_results=[],
             object_data="SPARQLTestSuiteExecution")
         for query_file_resource in self.sparql_test_suite.file_resources:
-            sparql_query: SPARQLQuery = self._sparql_query_from_file_resource(file_resource=query_file_resource)
+            sparql_query: SPARQLQuery = SPARQLQuery(
+                title=
+            )
             sparql_query_result = SPARQLQueryResult(query=sparql_query)
             try:
                 sparql_query_result.identifier = Path(query_file_resource.file_name).stem
@@ -178,11 +148,13 @@ class SPARQLReportBuilder:
         return self.sparql_test_suite_execution
 
 
-def validate_notice_with_sparql_queries(notice: TestDataFileResource,
-                                        mapping_package: MappingPackage):
+def validate_test_data_with_sparql_queries(test_data_file_resources: List[TestDataFileResource],
+                                           sparql_test_file_resources: List[SPARQLTestFileResource]):
     """
-        Validates a notice with SPARQL queries
+        Validates test_data (notice) with SPARQL queries
     """
+    for test_data_file_resource in test_data_file_resources:
+
     for test_suite in mapping_package.test_data_suites:
         sparql_test_suite_runner = SPARQLTestSuiteRunner(
             rdf_manifestation=notice.rdf_manifestation,

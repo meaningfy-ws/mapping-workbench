@@ -9,7 +9,7 @@ from mapping_workbench.backend.file_resource.models.file_resource import FileRes
 from mapping_workbench.backend.ontology.services.namespaces import get_prefixes_definitions
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResource, SPARQLTestSuite, \
-    SPARQLQueryValidationType
+    SPARQLQueryValidationType, SPARQLQueryMeta
 from mapping_workbench.backend.sparql_test_suite.services.api import get_sparql_test_suite_by_project_and_title
 from mapping_workbench.backend.user.models.user import User
 
@@ -82,14 +82,7 @@ async def generate_and_save_cm_assertions_queries(
 
         subject_type_display = ''
         file_name = f"{rq_name}{index}.rq"
-        file_content = f"#title: {sparql_title}\n" \
-                       f"#description: “{cm_rule.field_description}” " \
-                       f"The corresponding XML element is " \
-                       f"{concat_cm_rule_field_xpaths(cm_rule)}. " \
-                       f"The expected ontology instances are epo: {cm_rule.target_class_path} .\n" \
-                       f"#xpath: {concat_cm_rule_field_xpaths(cm_rule, separator=SPARQL_XPATH_SEPARATOR)}" \
-                       "\n" + "\n" + "\n".join(prefixes) + \
-                       "\n\n" + \
+        file_content = "\n".join(prefixes) + "\n\n" + \
                        f"ASK WHERE {{ " \
                        f"{subject_type_display}" \
                        f"\n\t{cm_rule.target_property_path} \n}}"
@@ -98,6 +91,15 @@ async def generate_and_save_cm_assertions_queries(
             SPARQLTestFileResource.project == project_link,
             SPARQLTestFileResource.sparql_test_suite == sparql_test_suite_link,
             SPARQLTestFileResource.title == sparql_title
+        )
+
+        query_meta = SPARQLQueryMeta(
+            title=sparql_title,
+            description=f"“{cm_rule.field_description}”\n" +
+                        f"The corresponding XML element is " +
+                        f"{concat_cm_rule_field_xpaths(cm_rule)}.\n" +
+                        f"The expected ontology instances are epo: {cm_rule.target_class_path} .",
+            xpath=(cm_rule.source_xpath or [])
         )
 
         if not sparql_test_file_resource:
@@ -109,6 +111,7 @@ async def generate_and_save_cm_assertions_queries(
                 filename=file_name,
                 path=[sparql_test_suite.title, file_name],
                 content=file_content,
+                query_meta=query_meta,
                 type=sparql_test_suite.type
             )
             if user is not None:
@@ -117,6 +120,7 @@ async def generate_and_save_cm_assertions_queries(
         else:
             sparql_test_file_resource.title = sparql_title
             sparql_test_file_resource.content = file_content
+            sparql_test_file_resource.query_meta = query_meta
             if user is not None:
                 sparql_test_file_resource.on_update(user)
             await sparql_test_file_resource.save()

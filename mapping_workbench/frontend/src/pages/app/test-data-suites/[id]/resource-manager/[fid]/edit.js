@@ -116,7 +116,7 @@ const Page = () => {
     const item = formState.item;
 
     const formik = useFormik({
-        initialValues: {"rdf_manifestation": item && item.rdf_manifestation}
+        initialValues: {"rdf_manifestation": item && item.rdf_manifestation && item.rdf_manifestation.content}
     });
 
     usePageView();
@@ -126,7 +126,7 @@ const Page = () => {
     }
 
     const extra_form_fields = {
-        rdf_manifestation: item.rdf_manifestation || '',
+        rdf_manifestation: item.rdf_manifestation && item.rdf_manifestation.content || '',
         transform_test_data: false
     }
 

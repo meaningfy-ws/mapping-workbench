@@ -5,8 +5,6 @@ from fastapi import APIRouter, status, Depends, Query
 from starlette.requests import Request
 
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
-from mapping_workbench.backend.file_resource.services.file_resource_form_data import \
-    file_resource_data_from_form_request
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuite, SPARQLTestFileResource, \
@@ -25,6 +23,8 @@ from mapping_workbench.backend.sparql_test_suite.services.api import (
     get_sparql_test_file_resource,
     delete_sparql_test_file_resource, list_sparql_test_file_resources
 )
+from mapping_workbench.backend.sparql_test_suite.services.sparql_test_file_resource_form_data import \
+    sparql_test_file_resource_data_from_form_request
 from mapping_workbench.backend.user.models.user import User
 
 ROUTE_PREFIX = "/sparql_test_suites"
@@ -149,7 +149,7 @@ async def route_create_sparql_test_suite_file_resources(
         sparql_test_suite: SPARQLTestSuite = Depends(get_sparql_test_suite),
         user: User = Depends(current_active_user)
 ):
-    data = SPARQLTestFileResourceCreateIn(**(await file_resource_data_from_form_request(req)))
+    data = SPARQLTestFileResourceCreateIn(**(await sparql_test_file_resource_data_from_form_request(req)))
     return await create_sparql_test_suite_file_resource(
         sparql_test_suite=sparql_test_suite,
         data=data,
@@ -168,7 +168,7 @@ async def route_update_sparql_test_file_resource(
         sparql_test_file_resource: SPARQLTestFileResource = Depends(get_sparql_test_file_resource),
         user: User = Depends(current_active_user)
 ):
-    data = SPARQLTestFileResourceUpdateIn(**(await file_resource_data_from_form_request(req)))
+    data = SPARQLTestFileResourceUpdateIn(**(await sparql_test_file_resource_data_from_form_request(req)))
     return await update_sparql_test_file_resource(sparql_test_file_resource, data, user=user)
 
 

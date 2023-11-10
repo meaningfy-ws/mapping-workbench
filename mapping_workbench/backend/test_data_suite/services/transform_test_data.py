@@ -9,6 +9,7 @@ from mapping_workbench.backend.resource_collection.models.entity import Resource
 from mapping_workbench.backend.resource_collection.services.data import get_resource_files_for_project
 from mapping_workbench.backend.test_data_suite.adapters.rml_mapper import RMLMapperABC, RMLMapper
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataFileResource
+from mapping_workbench.backend.test_data_suite.models.manifestation import RDFManifestation
 from mapping_workbench.backend.test_data_suite.services import DATA_SOURCE_PATH_NAME, \
     TRANSFORMATION_PATH_NAME, MAPPINGS_PATH_NAME, RESOURCES_PATH_NAME
 from mapping_workbench.backend.test_data_suite.services.data import get_test_data_file_resources_for_project
@@ -77,11 +78,13 @@ async def transform_test_data_file_resource(
             project_id=test_data_file_resource.project.to_ref().id
         )
 
-    test_data_file_resource.rdf_manifestation = await transform_test_data_file_resource_content(
-        content=test_data_file_resource.content,
-        mappings=mappings,
-        resources=resources,
-        rml_mapper=rml_mapper
+    test_data_file_resource.rdf_manifestation = RDFManifestation(
+        content=await transform_test_data_file_resource_content(
+            content=test_data_file_resource.content,
+            mappings=mappings,
+            resources=resources,
+            rml_mapper=rml_mapper
+        )
     )
 
     if save:

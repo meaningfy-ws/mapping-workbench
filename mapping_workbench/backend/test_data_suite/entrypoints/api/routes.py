@@ -6,8 +6,6 @@ from starlette.requests import Request
 
 from mapping_workbench.backend.core.models.api_request import APIRequestWithProject
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
-from mapping_workbench.backend.file_resource.services.file_resource_form_data import \
-    file_resource_data_from_form_request
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
@@ -25,8 +23,9 @@ from mapping_workbench.backend.test_data_suite.services.api import (
     get_test_data_file_resource,
     delete_test_data_file_resource, update_test_data_file_resource
 )
-from mapping_workbench.backend.test_data_suite.services.transform_test_data import transform_test_data_file_resource, \
-    transform_test_data_for_project
+from mapping_workbench.backend.test_data_suite.services.test_data_file_resource_form_data import \
+    test_data_file_resource_data_from_form_request
+from mapping_workbench.backend.test_data_suite.services.transform_test_data import transform_test_data_for_project
 from mapping_workbench.backend.user.models.user import User
 
 ROUTE_PREFIX = "/test_data_suites"
@@ -135,7 +134,7 @@ async def route_create_test_data_suite_file_resources(
         test_data_suite: TestDataSuite = Depends(get_test_data_suite),
         user: User = Depends(current_active_user)
 ):
-    data = TestDataFileResourceCreateIn(**(await file_resource_data_from_form_request(req)))
+    data = TestDataFileResourceCreateIn(**(await test_data_file_resource_data_from_form_request(req)))
     return await create_test_data_suite_file_resource(
         test_data_suite=test_data_suite,
         data=data,
@@ -154,7 +153,7 @@ async def route_update_test_data_file_resource(
         test_data_file_resource: TestDataFileResource = Depends(get_test_data_file_resource),
         user: User = Depends(current_active_user)
 ):
-    req_data = await file_resource_data_from_form_request(req)
+    req_data = await test_data_file_resource_data_from_form_request(req)
     transform_test_data: bool = False
     if 'transform_test_data' in req_data:
         transform_test_data = req_data['transform_test_data'] == 'true'
