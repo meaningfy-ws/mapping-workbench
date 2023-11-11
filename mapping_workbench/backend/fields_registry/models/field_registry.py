@@ -15,6 +15,7 @@ class StructuralElement(BaseModel):
     repeatable: bool
     parent_node_id: Optional[str] = None
     description: Optional[str] = None
+    imported: bool = False
 
 
 class StructuralField(StructuralElement):
