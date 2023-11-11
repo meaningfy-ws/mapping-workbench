@@ -23,6 +23,7 @@ def import_fields_registry_from_eforms_fields(eforms_fields_content: dict,
                                                             value_type=eforms_field.value_type,
                                                             legal_type=eforms_field.legal_type,
                                                             parent_node_id=eforms_field.parent_node_id,
+                                                            imported=True
                                                             )
                                             for eforms_field in eforms_sdk_fields.fields
                                             ],
@@ -31,6 +32,7 @@ def import_fields_registry_from_eforms_fields(eforms_fields_content: dict,
                                                           relative_xpath=eforms_node.xpath_relative,
                                                           repeatable=eforms_node.repeatable,
                                                           parent_node_id=eforms_node.parent_id,
+                                                          imported=True
                                                           )
                                            for eforms_node in eforms_sdk_fields.xml_structure
                                            ]
