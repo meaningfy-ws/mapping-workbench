@@ -36,6 +36,19 @@ def test_fields_registry_differ(eforms_fields_v180, eforms_fields_v191):
     assert len(fields_registry_diff.new_nodes) == 20
     assert len(fields_registry_diff.updated_nodes) == 7
 
+    fields_registry_diff = get_fields_registry_diff(old_field_registry=fields_registry_v191,
+                                                    new_field_registry=fields_registry_v191)
+
+    assert fields_registry_diff
+    assert not fields_registry_diff.deleted_fields
+    assert not fields_registry_diff.new_fields
+    assert not fields_registry_diff.updated_fields
+    assert not fields_registry_diff.deleted_nodes
+    assert not fields_registry_diff.new_nodes
+    assert not fields_registry_diff.updated_nodes
+    assert not fields_registry_diff.updated_title
+    assert not fields_registry_diff.updated_root_node_id
+
 
 @pytest.mark.asyncio
 async def test_fields_registry_differ_by_id(eforms_fields_v180, eforms_fields_v191):
@@ -61,3 +74,15 @@ async def test_fields_registry_differ_by_id(eforms_fields_v180, eforms_fields_v1
     assert len(fields_registry_diff.deleted_nodes) == 6
     assert len(fields_registry_diff.new_nodes) == 20
     assert len(fields_registry_diff.updated_nodes) == 7
+
+    fields_registry_diff = await get_fields_registry_diff_by_id(old_fields_registry_id=new_fields_registry.id,
+                                                                new_fields_registry_id=new_fields_registry.id)
+
+    assert fields_registry_diff
+    assert not fields_registry_diff.deleted_fields
+    assert not fields_registry_diff.new_fields
+    assert not fields_registry_diff.updated_fields
+    assert not fields_registry_diff.deleted_nodes
+    assert not fields_registry_diff.new_nodes
+    assert not fields_registry_diff.updated_nodes
+    assert not fields_registry_diff.updated_title
