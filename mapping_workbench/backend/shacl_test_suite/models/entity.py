@@ -2,7 +2,8 @@ from enum import Enum
 from typing import Optional, List
 
 import pymongo
-from beanie import Link
+from beanie import Link, BackLink
+from pydantic import Field
 from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
