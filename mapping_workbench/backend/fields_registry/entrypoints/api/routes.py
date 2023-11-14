@@ -8,12 +8,13 @@ from fastapi import APIRouter, Depends, status, UploadFile, Form
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
 from mapping_workbench.backend.fields_registry.models.field_registry import FieldsRegistryOut, FieldsRegistryCreateIn, \
     FieldsRegistryUpdateIn, FieldsRegistry, APIListFieldsRegistrysPaginatedResponse
+from mapping_workbench.backend.fields_registry.models.field_registry_diff import FieldsRegistryDiff
 from mapping_workbench.backend.fields_registry.services.api import (
     list_fields_registries,
     create_fields_registry,
     update_fields_registry,
     get_fields_registry,
-    delete_fields_registry, get_fields_registry_out
+    delete_fields_registry, get_fields_registry_out, get_fields_registry_diff_by_id
 )
 from mapping_workbench.backend.fields_registry.services.import_fields_registry import \
     import_fields_registry_from_eforms_fields
@@ -106,7 +107,7 @@ async def route_delete_fields_registry(fields_registry: FieldsRegistry = Depends
     "/import",
     description=f"Import {NAME_FOR_ONE}",
     name=f"{NAME_FOR_MANY}:import_{NAME_FOR_ONE}",
-    status_code=status.HTTP_201_CREATED
+    status_code=status.HTTP_200_OK
 )
 async def route_import_fields_registry(
         project: PydanticObjectId = Form(...),
@@ -122,3 +123,17 @@ async def route_import_fields_registry(
     fields_registry.created_at = datetime.now()
     await fields_registry.create()
     return fields_registry.dict()
+
+
+@router.post(
+    "/diff",
+    description=f"Diff {NAME_FOR_ONE}",
+    name=f"{NAME_FOR_MANY}:diff_{NAME_FOR_ONE}",
+    status_code=status.HTTP_200_OK,
+    response_model=FieldsRegistryDiff
+)
+async def route_diff_fields_registry(
+        old_fields_registry_id: PydanticObjectId = Form(...),
+        new_fields_registry_id: PydanticObjectId = Form(...)) -> FieldsRegistryDiff:
+    return await get_fields_registry_diff_by_id(old_fields_registry_id=old_fields_registry_id,
+                                                new_fields_registry_id=new_fields_registry_id)
