@@ -6,8 +6,12 @@ from beanie import Link
 from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
-from mapping_workbench.backend.file_resource.models.file_resource import FileResource, FileResourceCollection, \
-    FileResourceIn
+from mapping_workbench.backend.file_resource.models.file_resource import FileResource, FileResourceCollection
+
+
+class SHACLTestFileResourceFormat(Enum):
+    SHACL_TTL = "SHACL.TTL"
+    XML = "XML"
 
 
 class SHACLTestSuite(FileResourceCollection):
@@ -26,22 +30,6 @@ class SHACLTestSuite(FileResourceCollection):
                 name="search_text_idx"
             )
         ]
-
-
-class SHACLTestFileResourceFormat(Enum):
-    SHACL_TTL = "SHACL.TTL"
-
-
-class SHACLTestFileResourceIn(FileResourceIn):
-    format: Optional[SHACLTestFileResourceFormat] = None
-
-
-class SHACLTestFileResourceCreateIn(SHACLTestFileResourceIn):
-    shacl_test_suite: Optional[Link[SHACLTestSuite]] = None
-
-
-class SHACLTestFileResourceUpdateIn(SHACLTestFileResourceIn):
-    pass
 
 
 class SHACLTestFileResource(FileResource):

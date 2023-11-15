@@ -140,3 +140,4 @@ node_modules
 package-lock.json
 infra/backend/src
 .rmlmapper
+activate_venv.sh

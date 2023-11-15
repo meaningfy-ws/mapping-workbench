@@ -9,10 +9,10 @@ from mapping_workbench.backend.file_resource.services.file_resource_form_data im
     file_resource_data_from_form_request
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
-from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestFileResource, \
-    SHACLTestFileResourceCreateIn, SHACLTestFileResourceUpdateIn
+from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestFileResource
 from mapping_workbench.backend.shacl_test_suite.models.entity_api_response import \
-    APIListSHACLTestSuitesPaginatedResponse, APIListSHACLTestFileResourcesPaginatedResponse
+    APIListSHACLTestSuitesPaginatedResponse, APIListSHACLTestFileResourcesPaginatedResponse, \
+    SHACLTestFileResourceCreateIn, SHACLTestFileResourceUpdateIn
 from mapping_workbench.backend.shacl_test_suite.services.api import (
     list_shacl_test_suites,
     create_shacl_test_suite,
