@@ -8,6 +8,7 @@ from pymongo import IndexModel
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
 from mapping_workbench.backend.file_resource.models.file_resource import FileResource, FileResourceCollection, \
     FileResourceIn
+from mapping_workbench.backend.shacl_test_suite.models.validator import SHACLFileResourceValidationResult
 
 
 class TestDataSuite(FileResourceCollection):
@@ -31,6 +32,7 @@ class TestDataSuite(FileResourceCollection):
 class TestDataFileResourceFormat(Enum):
     XML = "XML"
     JSON = "JSON"
+    RDF = "RDF"
 
 
 class TestDataFileResourceIn(FileResourceIn):
@@ -50,6 +52,8 @@ class TestDataFileResource(FileResource):
     format: Optional[TestDataFileResourceFormat] = None
     test_data_suite: Optional[Link[TestDataSuite]] = None
     rdf_manifestation: Optional[str] = None
+
+    shacl_validation_result: Optional[Link[SHACLFileResourceValidationResult]] = None
 
     class Settings(FileResource.Settings):
         name = "test_data_file_resources"
