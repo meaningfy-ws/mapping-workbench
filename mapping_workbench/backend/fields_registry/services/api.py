@@ -9,6 +9,8 @@ from mapping_workbench.backend.core.services.request import request_update_data,
     api_entity_is_found, prepare_search_param, pagination_params
 from mapping_workbench.backend.fields_registry.models.field_registry import FieldsRegistry, FieldsRegistryCreateIn, \
     FieldsRegistryUpdateIn, FieldsRegistryOut
+from mapping_workbench.backend.fields_registry.models.field_registry_diff import FieldsRegistryDiff
+from mapping_workbench.backend.fields_registry.services.fields_registry_differ import get_fields_registry_diff
 from mapping_workbench.backend.user.models.user import User
 
 
@@ -69,3 +71,11 @@ async def get_fields_registry_out(id: PydanticObjectId) -> FieldsRegistryOut:
 
 async def delete_fields_registry(fields_registry: FieldsRegistry):
     return await fields_registry.delete()
+
+
+async def get_fields_registry_diff_by_id(old_fields_registry_id: PydanticObjectId,
+                                         new_fields_registry_id: PydanticObjectId) -> FieldsRegistryDiff:
+    old_fields_registry: FieldsRegistry = await get_fields_registry(old_fields_registry_id)
+    new_fields_registry: FieldsRegistry = await get_fields_registry(new_fields_registry_id)
+    return get_fields_registry_diff(old_field_registry=old_fields_registry,
+                                    new_field_registry=new_fields_registry)
