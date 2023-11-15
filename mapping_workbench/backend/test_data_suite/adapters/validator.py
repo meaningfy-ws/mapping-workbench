@@ -1,7 +1,7 @@
 import abc
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, validate_call
 
 from mapping_workbench.backend import DEFAULT_MODEL_CONFIG
 
@@ -19,7 +19,7 @@ class ValidatorABC(abc.ABC):
         pass
 
 
-class TestDataValidator(ValidatorABC, BaseModel):
+class TestDataValidator(abc.ABC, BaseModel):
     """Base class for validators."""
 
     model_config = DEFAULT_MODEL_CONFIG

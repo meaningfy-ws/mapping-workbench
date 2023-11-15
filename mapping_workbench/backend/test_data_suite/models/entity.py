@@ -51,6 +51,9 @@ class TestDataFileResourceUpdateIn(TestDataFileResourceIn):
 class TestDataFileResource(FileResource):
     format: Optional[TestDataFileResourceFormat] = None
     test_data_suite: Optional[Link[TestDataSuite]] = None
+
+    # TODO: is this field storing the same data as the content field in FileResource? In this case,
+    #       we should remove it or compute it from the content field
     rdf_manifestation: Optional[str] = None
 
     shacl_validation_result: Optional[Link[SHACLFileResourceValidationResult]] = None
