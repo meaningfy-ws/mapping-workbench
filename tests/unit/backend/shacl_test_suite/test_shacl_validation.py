@@ -3,9 +3,31 @@ from pydantic import ValidationError
 
 from mapping_workbench.backend.shacl_test_suite.adapters.validator import SHACLValidator
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite
-from mapping_workbench.backend.shacl_test_suite.services.validate_rdf_manifestation import \
+from mapping_workbench.backend.shacl_test_suite.services.shacl_validator import \
     validate_test_data_with_shacl_test_suite, validate_tests_data_with_shacl_tests
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataFileResource
+
+
+def test_shacl_validator(dummy_test_data_file_resource: TestDataFileResource,
+                         dummy_shacl_test_suite: SHACLTestSuite):
+    shacl_validator = SHACLValidator(test_data=dummy_test_data_file_resource)
+
+    shacl_validator_result = shacl_validator.validate(shacl_files=dummy_shacl_test_suite.file_resources)
+
+    assert shacl_validator_result is not None
+    assert shacl_validator_result.identifier == dummy_test_data_file_resource.filename
+    assert shacl_validator_result.conforms is not None
+    assert shacl_validator_result.results_dict is not None
+    assert shacl_validator_result.error is None
+
+    shacl_validator = SHACLValidator(test_data=dummy_test_data_file_resource, shacl_shape_result_query="not_valid_query")
+
+    shacl_validator_result = shacl_validator.validate(shacl_files=dummy_shacl_test_suite.file_resources)
+    assert shacl_validator_result is not None
+    assert shacl_validator_result.error is not None
+
+    with pytest.raises(ValueError):
+        SHACLValidator(test_data=None)
 
 
 @pytest.mark.asyncio
@@ -33,7 +55,6 @@ async def test_validate_tests_data_with_shacl_tests(dummy_test_data_file_resourc
 
 def test_shacl_validator(dummy_test_data_file_resource: TestDataFileResource, dummy_shacl_test_suite: SHACLTestSuite):
     shacl_validator = SHACLValidator(test_data=dummy_test_data_file_resource)
-
 
     assert shacl_validator.validate(shacl_files=dummy_shacl_test_suite.file_resources) is not None
     assert shacl_validator.validate(None) is not None
