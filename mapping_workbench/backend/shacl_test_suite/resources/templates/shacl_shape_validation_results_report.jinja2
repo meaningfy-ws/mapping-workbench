@@ -101,18 +101,18 @@
     </thead>
     <tbody>
     <tr>
-        <td>{{ validation_results.identifier }}</td>
-        <td{% if validation_results.conforms == "True" %}
-            class="success"{% endif %}>{{ validation_results.conforms }}</td>
-        <td>{{ validation_results.error }}</td>
+        <td>{{ identifier }}</td>
+        <td{% if conforms == "True" %}
+            class="success"{% endif %}>{{ conforms }}</td>
+        <td>{{ error }}</td>
     </tr>
     </tbody>
 </table>
 
-{% if validation_results.results_dict %}
+{% if results_dict %}
     <hr>
     <h2>Extended results</h2>
-    <h1>{{ validation_results.identifier }}</h1>
+    <h1>{{ identifier }}</h1>
     <table class="display" data-order='[[0, "asc"]]'>
      <thead class="center aligned">
         <tr>
@@ -124,7 +124,7 @@
         </tr>
         </thead>
         <tbody>
-        {% for biding in validation_results.results_dict.results.bindings %}
+        {% for biding in results_dict.results.bindings %}
             <tr>
                 <td>{{ biding.focusNode.value }}</td>
                 <td>{{ biding.resultPath.value }}</td>
