@@ -13,7 +13,7 @@ from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.resource_collection.models.entity import ResourceCollection, ResourceFile
 from mapping_workbench.backend.security.models.security import AccessToken
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestFileResource
-from mapping_workbench.backend.shacl_test_suite.models.validator import SHACLFileResourceValidationResult
+from mapping_workbench.backend.shacl_test_suite.models.validator import SHACLTestDataValidationResult
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuite, SPARQLTestFileResource
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource
 from mapping_workbench.backend.triple_map_fragment.models.entity import SpecificTripleMapFragment, \
@@ -48,6 +48,6 @@ async def init_project_models(mongodb_database: AsyncIOMotorDatabase):
             Namespace,
             Term,
             FieldsRegistry,
-            SHACLFileResourceValidationResult
+            SHACLTestDataValidationResult
         ],
     )
