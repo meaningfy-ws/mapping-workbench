@@ -9,6 +9,12 @@ from mapping_workbench.backend.core.models.base_project_resource_entity import B
 from mapping_workbench.backend.file_resource.models.file_resource import FileResource, FileResourceCollection, \
     FileResourceIn
 from mapping_workbench.backend.shacl_test_suite.models.validator import SHACLTestDataValidationResult
+from mapping_workbench.backend.sparql_test_suite.models.validator import SPARQLTestDataValidationResult
+
+
+class TestDataException(Exception):
+    pass
+
 
 
 class TestDataSuite(FileResourceCollection):
@@ -52,11 +58,10 @@ class TestDataFileResource(FileResource):
     format: Optional[TestDataFileResourceFormat] = None
     test_data_suite: Optional[Link[TestDataSuite]] = None
 
-    # TODO: is this field storing the same data as the content field in FileResource? In this case,
-    #       we should remove it or compute it from the content field
     rdf_manifestation: Optional[str] = None
 
     shacl_validation_result: Optional[Link[SHACLTestDataValidationResult]] = None
+    sparql_validation_result: Optional[Link[SPARQLTestDataValidationResult]] = None
 
     class Settings(FileResource.Settings):
         name = "test_data_file_resources"
