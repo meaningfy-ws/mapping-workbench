@@ -6,7 +6,7 @@ from pydantic import validate_call
 from pyshacl import validate
 
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestFileResource
-from mapping_workbench.backend.shacl_test_suite.models.validator import SHACLFileResourceValidationResult
+from mapping_workbench.backend.shacl_test_suite.models.validator import SHACLTestDataValidationResult
 from mapping_workbench.backend.shacl_test_suite.resources import SHACL_RESULT_QUERY_PATH
 from mapping_workbench.backend.test_data_suite.adapters.validator import TestDataValidator
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataFileResource
@@ -33,14 +33,14 @@ class SHACLValidator(TestDataValidator):
         self.resource_id = test_data.filename
         self.shacl_shape_result_query = shacl_shape_result_query or SHACL_RESULT_QUERY_PATH.read_text()
 
-    def validate(self, shacl_files: List[SHACLTestFileResource]) -> SHACLFileResourceValidationResult:
+    def validate(self, shacl_files: List[SHACLTestFileResource]) -> SHACLTestDataValidationResult:
         """
         Validates with a list of shacl shape files and return one validation result
         :param shacl_files:
         :return:
         """
         shacl_shape_graph = rdflib.Graph()
-        shacl_shape_validation_result = SHACLFileResourceValidationResult()
+        shacl_shape_validation_result = SHACLTestDataValidationResult()
         try:
             for shacl_shape_file in shacl_files:
                 shacl_shape_graph.parse(format=rdflib.util.guess_format(shacl_shape_file.filename),
