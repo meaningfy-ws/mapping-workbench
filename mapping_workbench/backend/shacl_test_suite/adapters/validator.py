@@ -24,14 +24,23 @@ class SHACLValidator(TestDataValidator):
     rdf_graph: Any = None
     resource_id: str = ""
     shacl_shape_result_query: str = ""
+    shacl_test_suite_id: str = ""
+    mapping_suite_id: str = ""
 
     @validate_call
-    def __init__(self, test_data: TestDataFileResource, shacl_shape_result_query: str = None, **data: Any):
+    def __init__(self,
+                 test_data: TestDataFileResource,
+                 shacl_test_suite_id: str,
+                 mapping_suite_id: str,
+                 shacl_shape_result_query: str = None,
+                 **data: Any):
         super().__init__(**data)
         self.rdf_graph = rdflib.Graph().parse(data=test_data.rdf_manifestation,
                                               format=rdflib.util.guess_format(test_data.filename))
         self.resource_id = test_data.filename
         self.shacl_shape_result_query = shacl_shape_result_query or SHACL_RESULT_QUERY_PATH.read_text()
+        self.shacl_test_suite_id = shacl_test_suite_id
+        self.mapping_suite_id = mapping_suite_id
 
     def validate(self, shacl_files: List[SHACLTestFileResource]) -> SHACLTestDataValidationResult:
         """
@@ -41,6 +50,8 @@ class SHACLValidator(TestDataValidator):
         """
         shacl_shape_graph = rdflib.Graph()
         shacl_shape_validation_result = SHACLTestDataValidationResult()
+        shacl_shape_validation_result.shacl_test_suite_id = self.shacl_test_suite_id
+        shacl_shape_validation_result.mapping_suite_id = self.mapping_suite_id
         try:
             for shacl_shape_file in shacl_files:
                 shacl_shape_graph.parse(format=rdflib.util.guess_format(shacl_shape_file.filename),
@@ -64,6 +75,6 @@ class SHACLValidator(TestDataValidator):
                     key=lambda x: x["focusNode"]["value"])
 
         except Exception as e:
-            shacl_shape_validation_result.error = str(e)[:100]
+            shacl_shape_validation_result.error = "Error on validating: " + str(e)[:100]
 
         return shacl_shape_validation_result

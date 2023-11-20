@@ -11,7 +11,8 @@ class SHACLTestDataValidationResult(TestDataValidationResult):
     results_dict: Optional[dict] = None
     error: Optional[str] = None
     identifier: Optional[str] = None
-    notice_ids: Optional[List[str]] = None
+    shacl_test_suite_id: Optional[str] = None
+    mapping_suite_id: Optional[str] = None
 
 
     class Settings(BaseEntity.Settings):

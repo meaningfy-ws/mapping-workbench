@@ -30,6 +30,7 @@ def dummy_test_data_file_resource(shacl_test_data_file_path: pathlib.Path) -> Te
 @pytest.fixture
 def dummy_shacl_test_suite(shacl_test_resources_file_path: pathlib.Path) -> SHACLTestSuite:
     return SHACLTestSuite(
+        title="dummy_shacl_test_suite",
         file_resources=[SHACLTestFileResource(content=shacl_test_resources_file_path.read_text(encoding="utf-8"),
                                               filename=shacl_test_resources_file_path.name,
                                               format=SHACLTestFileResourceFormat.XML)])

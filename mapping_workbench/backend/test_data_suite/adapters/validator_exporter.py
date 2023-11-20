@@ -1,5 +1,6 @@
 import abc
-from typing import Any
+from datetime import datetime
+from typing import Any, Optional
 
 from pydantic import BaseModel
 
@@ -10,13 +11,13 @@ class ValidatorExporterABC(abc.ABC):
     """Abstract base class for validator exporters."""
 
     @abc.abstractmethod
-    def export(self) -> None:
+    def export(self, value: Any) -> Any:
         """Export the validator."""
         pass
 
 
 
-class TestDataValidatorExporter(abc.ABC, BaseModel):
+class TestDataValidatorExporter(ValidatorExporterABC, BaseModel):
     """Base class for validator exporters."""
 
     model_config = DEFAULT_MODEL_CONFIG

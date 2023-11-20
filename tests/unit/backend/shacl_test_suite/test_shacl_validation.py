@@ -1,5 +1,4 @@
 import pytest
-from pydantic import ValidationError
 
 from mapping_workbench.backend.shacl_test_suite.adapters.validator import SHACLValidator
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite
@@ -10,8 +9,11 @@ from mapping_workbench.backend.test_data_suite.models.entity import TestDataFile
 
 
 def test_shacl_validator(dummy_test_data_file_resource: TestDataFileResource,
-                         dummy_shacl_test_suite: SHACLTestSuite):
-    shacl_validator = SHACLValidator(test_data=dummy_test_data_file_resource)
+                         dummy_shacl_test_suite: SHACLTestSuite,
+                         dummy_mapping_suite_id: str):
+    shacl_validator = SHACLValidator(test_data=dummy_test_data_file_resource,
+                                     mapping_suite_id=dummy_mapping_suite_id,
+                                     shacl_test_suite_id=dummy_shacl_test_suite.title)
 
     shacl_validator_result = shacl_validator.validate(shacl_files=dummy_shacl_test_suite.file_resources)
 
@@ -21,7 +23,10 @@ def test_shacl_validator(dummy_test_data_file_resource: TestDataFileResource,
     assert shacl_validator_result.results_dict is not None
     assert shacl_validator_result.error is None
 
-    shacl_validator = SHACLValidator(test_data=dummy_test_data_file_resource, shacl_shape_result_query="not_valid_query")
+    shacl_validator = SHACLValidator(test_data=dummy_test_data_file_resource,
+                                     mapping_suite_id=dummy_mapping_suite_id,
+                                     shacl_test_suite_id=dummy_shacl_test_suite.title,
+                                     shacl_shape_result_query="not_valid_query")
 
     shacl_validator_result = shacl_validator.validate(shacl_files=dummy_shacl_test_suite.file_resources)
     assert shacl_validator_result is not None
@@ -33,9 +38,11 @@ def test_shacl_validator(dummy_test_data_file_resource: TestDataFileResource,
 
 @pytest.mark.asyncio
 async def test_validate_rdf_manifestation_with_shacl_test_suite(dummy_test_data_file_resource: TestDataFileResource,
-                                                                dummy_shacl_test_suite: SHACLTestSuite):
+                                                                dummy_shacl_test_suite: SHACLTestSuite,
+                                                                dummy_mapping_suite_id: str):
     result = await validate_test_data_with_shacl_test_suite(test_data=dummy_test_data_file_resource,
-                                                            shacl_test_suite=dummy_shacl_test_suite)
+                                                            shacl_test_suite=dummy_shacl_test_suite,
+                                                            mapping_suite_id=dummy_mapping_suite_id)
 
     assert result.shacl_validation_result is not None
     assert result.id is not None
@@ -50,9 +57,12 @@ async def test_validate_rdf_manifestation_with_shacl_test_suite(dummy_test_data_
 
 @pytest.mark.asyncio
 async def test_validate_tests_data_with_shacl_tests(dummy_test_data_file_resource: TestDataFileResource,
-                                                    dummy_shacl_test_suite: SHACLTestSuite):
+                                                    dummy_shacl_test_suite: SHACLTestSuite,
+                                                    dummy_mapping_suite_id: str):
     results = await validate_tests_data_with_shacl_tests(tests_data=[dummy_test_data_file_resource],
-                                                         shacl_tests=dummy_shacl_test_suite.file_resources)
+                                                         shacl_tests=dummy_shacl_test_suite.file_resources,
+                                                         shacl_test_suite_id=dummy_shacl_test_suite.title,
+                                                         mapping_suite_id=dummy_mapping_suite_id)
 
     for result in results:
         assert result.shacl_validation_result is not None
@@ -64,4 +74,3 @@ async def test_validate_tests_data_with_shacl_tests(dummy_test_data_file_resourc
         assert shacl_result.conforms is not None
         assert shacl_result.results_dict is not None
         assert shacl_result.error is None
-
