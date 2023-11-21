@@ -28,6 +28,7 @@ async def list_fields_registries(filters: dict = None, page: int = None, limit: 
         skip=skip,
         limit=limit
     ).to_list()
+
     total_count: int = await FieldsRegistry.find(query_filters).count()
     return items, total_count
 

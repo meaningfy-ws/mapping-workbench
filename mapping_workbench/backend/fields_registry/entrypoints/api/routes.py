@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, status, UploadFile, Form
 
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
 from mapping_workbench.backend.fields_registry.models.field_registry import FieldsRegistryOut, FieldsRegistryCreateIn, \
-    FieldsRegistryUpdateIn, FieldsRegistry, APIListFieldsRegistrysPaginatedResponse
+    FieldsRegistryUpdateIn, FieldsRegistry, APIListFieldsRegistriesPaginatedResponse
 from mapping_workbench.backend.fields_registry.models.field_registry_diff import FieldsRegistryDiff
 from mapping_workbench.backend.fields_registry.services.api import (
     list_fields_registries,
@@ -38,18 +38,24 @@ router = APIRouter(
     "",
     description=f"List {NAME_FOR_MANY}",
     name=f"{NAME_FOR_MANY}:list",
-    response_model=APIListFieldsRegistrysPaginatedResponse
+    response_model=APIListFieldsRegistriesPaginatedResponse
 )
 async def route_list_fields_registries(
-        project: PydanticObjectId = None
+        project: PydanticObjectId = None,
+        page: int = None,
+        limit: int = None,
+        q: str = None
 ):
     filters: dict = {}
     if project:
         filters['project'] = Project.link_from_id(project)
-    items: List[FieldsRegistryOut] = await list_fields_registries(filters)
-    return APIListFieldsRegistrysPaginatedResponse(
+    if q is not None:
+        filters['q'] = q
+
+    items, total_count = await list_fields_registries(filters, page, limit)
+    return APIListFieldsRegistriesPaginatedResponse(
         items=items,
-        count=len(items)
+        count=total_count
     )
 
 
@@ -61,10 +67,10 @@ async def route_list_fields_registries(
     status_code=status.HTTP_201_CREATED
 )
 async def route_create_fields_registry(
-        fields_registry_data: FieldsRegistryCreateIn,
+        data: FieldsRegistryCreateIn,
         user: User = Depends(current_active_user)
 ):
-    return await create_fields_registry(fields_registry_data=fields_registry_data, user=user)
+    return await create_fields_registry(data=data, user=user)
 
 
 @router.patch(
@@ -74,12 +80,11 @@ async def route_create_fields_registry(
     response_model=FieldsRegistryOut
 )
 async def route_update_fields_registry(
-        id: PydanticObjectId,
-        fields_registry_data: FieldsRegistryUpdateIn,
+        data: FieldsRegistryUpdateIn,
+        fields_registry: FieldsRegistry = Depends(get_fields_registry),
         user: User = Depends(current_active_user)
 ):
-    await update_fields_registry(id=id, fields_registry_data=fields_registry_data, user=user)
-    return await get_fields_registry_out(id)
+    return await update_fields_registry(fields_registry=fields_registry, data=data, user=user)
 
 
 @router.get(
