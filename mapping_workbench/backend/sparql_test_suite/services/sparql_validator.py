@@ -1,14 +1,30 @@
 from typing import List
 
-from beanie import WriteRules
+from beanie import WriteRules, PydanticObjectId
 
 from mapping_workbench.backend.sparql_test_suite.adapters.validator import SPARQLValidator
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuite, SPARQLTestFileResource
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataFileResource, TestDataException
+from mapping_workbench.backend.user.models.user import User
 
 
-async def validate_test_data_with_sparql_test_suite(test_data: TestDataFileResource,
-                                             sparql_test_suite: SPARQLTestSuite) -> TestDataFileResource:
+async def test_data_sparql_validation_for_project(
+        project_id: PydanticObjectId,
+        user: User = None
+):
+    """
+
+    :param test_data:
+    :param sparql_test_suite:
+    :return:
+    """
+    pass
+
+
+async def validate_test_data_with_sparql_test_suite(
+        test_data: TestDataFileResource,
+        sparql_test_suite: SPARQLTestSuite
+) -> TestDataFileResource:
     """
 
     """
@@ -24,8 +40,10 @@ async def validate_test_data_with_sparql_test_suite(test_data: TestDataFileResou
     return test_data
 
 
-async def validate_tests_data_with_shacl_tests(tests_data: List[TestDataFileResource],
-                                             sparql_tests: List[SPARQLTestFileResource]) -> List[TestDataFileResource]:
+async def validate_tests_data_with_shacl_tests(
+        tests_data: List[TestDataFileResource],
+        sparql_tests: List[SPARQLTestFileResource]
+) -> List[TestDataFileResource]:
     """
 
     """
