@@ -1,10 +1,8 @@
 import {useCallback, useEffect, useState} from 'react';
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
-import Box from '@mui/material/Box';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
@@ -21,18 +19,6 @@ import {FileCollectionListSearch} from 'src/sections/app/file-manager/file-colle
 import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
 
 
-const mockDataPackages = {
-    title: "F03",
-    description: "Des03",
-    formType: "35",
-    minDate: "01/06/2023",
-    maxDate: "23/06/2023",
-    minVersion: "R2.08.55",
-    maxVersion: "R2.09.66",
-};
-
-const collectionsID = [];
-
 const useItemsSearch = () => {
     const [state, setState] = useState({
         filters: {
@@ -41,14 +27,15 @@ const useItemsSearch = () => {
             status: [],
             inStock: undefined
         },
-        page: 0,
-        rowsPerPage: 5
+        page: sectionApi.DEFAULT_PAGE,
+        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
 
     const handleFiltersChange = useCallback((filters) => {
         setState((prevState) => ({
             ...prevState,
-            filters
+            filters,
+            page: 0
         }));
     }, []);
 
@@ -80,10 +67,6 @@ const useItemsStore = (searchState) => {
         items: [],
         itemsCount: 0
     });
-    const [stateFile, setStateFile] = useState({
-        items: [],
-        itemsCount: 0
-    });
 
     const handleItemsGet = useCallback(async () => {
         try {
@@ -100,26 +83,6 @@ const useItemsStore = (searchState) => {
         }
     }, [searchState, isMounted]);
 
-    const handleItemsGetFiles = useCallback(async () => {
-        try {
-            const response2 = await sectionApi.getFileResources(id);
-            //const collection = await sectionApi.getItem(id);
-
-
-            //console.log("response2: ", response);
-            //console.log("collection: ", collection);
-
-
-            setStateFile({
-                //collection: collection,
-                itemsF: response2.items,
-                itemsFCount: response2.count
-            });
-
-        } catch (err) {
-            console.error(err);
-        }
-    }, []);
 
     useEffect(() => {
             handleItemsGet().then(response => {
