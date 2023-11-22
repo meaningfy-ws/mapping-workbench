@@ -11,7 +11,9 @@
     "export": "next export",
     "lint": "next lint",
     "lint-fix": "next lint --fix",
-    "test": ""
+    "test": "",
+    "cy:open": "cypress open",
+    "cy:tests": "cypress run"
   },
   "engines": {
     "node": ">=12.x"
@@ -99,9 +101,15 @@
     "@types/react-slick": "0.23.10",
     "@types/react-syntax-highlighter": "15.5.6",
     "babel-plugin-prismjs": "^2.1.0",
+    "cypress": "^13.5.1",
+    "cypress-cucumber-preprocessor": "^4.3.1",
     "eslint": "8.40.0",
     "eslint-config-next": "13.4.2",
     "sass": "^1.65.1",
     "typescript": "5.0.4"
+  },
+  "cypress-cucumber-preprocessor": {
+    "nonGlobalStepDefinitions": true,
+    "step_definitions": "cypress/e2e/"
   }
 }
