@@ -2,7 +2,8 @@ from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
-from mapping_workbench.backend.fields_registry.models.field_registry import FieldsRegistry
+from mapping_workbench.backend.fields_registry.models.field_registry import StructuralNode, StructuralField, \
+    StructuralElementsVersionedView
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingRuleRegistry
 from mapping_workbench.backend.ontology.models.namespace import Namespace
@@ -48,8 +49,10 @@ async def init_project_models(mongodb_database: AsyncIOMotorDatabase):
             GenericTripleMapFragment,
             Namespace,
             Term,
-            FieldsRegistry,
             SHACLTestDataValidationResult,
-            SPARQLTestDataValidationResult
+            SPARQLTestDataValidationResult,
+            StructuralNode,
+            StructuralField,
+            StructuralElementsVersionedView
         ],
     )
