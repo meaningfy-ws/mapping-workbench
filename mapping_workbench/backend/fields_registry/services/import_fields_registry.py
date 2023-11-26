@@ -105,7 +105,11 @@ async def import_notice_types_versioned_view(notice_type_structure: NoticeTypeSt
                                       nodes_enriched_metadata)
     extract_structural_elements_order(notice_type_structure.content, ordered_structural_elements,
                                       nodes_enriched_metadata)
+
+    structural_elements_versioned_view_id = f"{fields_metadata[VERSION_KEY]}_{notice_type_structure.notice_type_id}"
+
     structural_elements_versioned_view = StructuralElementsVersionedView(project=project_link,
+                                                                         id=structural_elements_versioned_view_id,
                                                                          eforms_sdk_version=fields_metadata[
                                                                              VERSION_KEY],
                                                                          eforms_subtype=notice_type_structure.notice_type_id)

@@ -55,6 +55,7 @@ class StructuralElementsVersionedView(BaseProjectResourceEntity):
     """
 
     """
+    id: str
     eforms_sdk_version: str
     eforms_subtype: str
     ordered_elements: List[StructuralElementsOrder] = []
