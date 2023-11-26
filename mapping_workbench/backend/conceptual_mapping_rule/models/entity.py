@@ -1,14 +1,15 @@
 from datetime import datetime
 from enum import Enum
-from typing import Optional, List
+from typing import Optional, List, Literal
 
 import pymongo
-from beanie import Link, Indexed
+from beanie import Link
 from pydantic import BaseModel
 from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
+from mapping_workbench.backend.fields_registry.models.field_registry import StructuralField
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.ontology.models.term import TermValidityResponse
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResource
@@ -74,6 +75,9 @@ class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema):
     sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
     notes: Optional[List[ConceptualMappingRuleComment]] = None
     comments: Optional[List[ConceptualMappingRuleComment]] = None
+    refers_to_eforms_sdk_versions: Optional[List[str]] = None
+    refers_to_structural_element_id: Optional[str] = None
+    refers_to_content_type: Literal["field", "node"] = "field"
 
 
 class ConceptualMappingRule(BaseProjectResourceEntity):
@@ -91,6 +95,9 @@ class ConceptualMappingRule(BaseProjectResourceEntity):
     sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
     notes: Optional[List[ConceptualMappingRuleComment]] = None
     comments: Optional[List[ConceptualMappingRuleComment]] = None
+    refers_to_eforms_sdk_versions: Optional[List[str]] = None
+    refers_to_structural_element_id: Optional[str] = None
+    refers_to_content_type: Literal["field", "node"] = "field"
 
     class Settings(BaseProjectResourceEntity.Settings):
         name = "conceptual_mapping_rules"
