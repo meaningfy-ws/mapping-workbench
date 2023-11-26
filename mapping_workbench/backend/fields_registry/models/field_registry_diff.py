@@ -26,6 +26,7 @@ class UpdatedStructuralElementDiff(BaseModel):
 
 class UpdatedStructuralFieldDiff(UpdatedStructuralElementDiff):
     name: Optional[StringValeDiff] = None
+    bt_id: Optional[StringValeDiff] = None
     value_type: Optional[StringValeDiff] = None
     legal_type: Optional[StringValeDiff] = None
 
