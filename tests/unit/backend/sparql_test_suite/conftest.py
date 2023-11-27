@@ -1,4 +1,5 @@
 import pathlib
+import re
 
 import pytest
 
@@ -23,13 +24,24 @@ def dummy_test_data_file_resource(sparql_test_data_file_path: pathlib.Path) -> T
     return TestDataFileResource(
         rdf_manifestation=sparql_test_data_file_path.read_text(encoding="utf-8"),
         filename=sparql_test_data_file_path.name,
-        format=TestDataFileResourceFormat.RDF
+        format=TestDataFileResourceFormat.RDF,
+        description="Dummy Test Data File Resource",
+        title="Dummy Test Data File Resource",
+
     )
 
 
 @pytest.fixture
 def dummy_sparql_test_suite(sparql_test_resources_file_path: pathlib.Path) -> SPARQLTestSuite:
+    sparql_query_file_content = sparql_test_resources_file_path.read_text(encoding="utf-8")
+    sparql_query = sparql_query_file_content.partition("PREFIX")
+    sparql_query = sparql_query[1] + sparql_query[2]
     return SPARQLTestSuite(
-        file_resources=[SPARQLTestFileResource(content=sparql_test_resources_file_path.read_text(encoding="utf-8"),
+        title="Dummy SPARQL Test Suite",
+        file_resources=[SPARQLTestFileResource(content=sparql_query,
                                                filename=sparql_test_resources_file_path.name,
-                                               format=SPARQLTestFileResourceFormat.RQ)])
+                                               format=SPARQLTestFileResourceFormat.RQ,
+                                               description=re.search('%s(.*)%s' % ("#description: ", '\n'),
+                                                                     sparql_query_file_content).group(1),
+                                               title=re.search('%s(.*)%s' % ("#title: ", '\n'),
+                                                               sparql_query_file_content).group(1), )])

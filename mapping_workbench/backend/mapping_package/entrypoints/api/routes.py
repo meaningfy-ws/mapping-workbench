@@ -10,7 +10,7 @@ from mapping_workbench.backend.mapping_package.services.api import (
     create_mapping_package,
     update_mapping_package,
     get_mapping_package,
-    delete_mapping_package, get_mapping_package_out
+    delete_mapping_package, get_mapping_package_out, validate_mapping_package
 )
 from mapping_workbench.backend.mapping_package.services.importer import import_package, clear_project_data
 from mapping_workbench.backend.project.models.entity import Project
@@ -128,3 +128,16 @@ async def route_clear_project_data(
         id: PydanticObjectId
 ):
     await clear_project_data(await get_project(id))
+
+
+@router.post(
+    "/validate",
+    description=f"Validate Mapping Package with SPARQL queries",
+    name=f"{NAME_FOR_MANY}:validate_{NAME_FOR_ONE}",
+    status_code=status.HTTP_200_OK
+)
+async def route_validate_mapping_package(
+        mapping_package: MappingPackage = Depends(get_mapping_package),
+        user: User = Depends(current_active_user)
+):
+    return await validate_mapping_package(mapping_package, user=user)

@@ -60,9 +60,6 @@ class TestDataFileResource(FileResource):
 
     rdf_manifestation: Optional[str] = None
 
-    shacl_validation_result: Optional[Link[SHACLTestDataValidationResult]] = None
-    sparql_validation_result: Optional[Link[SPARQLTestDataValidationResult]] = None
-
     class Settings(FileResource.Settings):
         name = "test_data_file_resources"
 

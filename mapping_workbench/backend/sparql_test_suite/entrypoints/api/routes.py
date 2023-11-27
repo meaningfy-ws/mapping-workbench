@@ -25,6 +25,9 @@ from mapping_workbench.backend.sparql_test_suite.services.api import (
     get_sparql_test_file_resource,
     delete_sparql_test_file_resource, list_sparql_test_file_resources
 )
+from mapping_workbench.backend.sparql_test_suite.services.sparql_validator import \
+    validate_test_data_with_sparql_test_suite
+from mapping_workbench.backend.test_data_suite.models.entity import TestDataFileResource
 from mapping_workbench.backend.user.models.user import User
 
 ROUTE_PREFIX = "/sparql_test_suites"

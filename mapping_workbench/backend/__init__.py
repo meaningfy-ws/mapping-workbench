@@ -5,4 +5,5 @@ DEFAULT_MODEL_CONFIG = ConfigDict(extra='forbid',
                                   validate_assignment=True,
                                   revalidate_instances='always',
                                   validate_default=True,
-                                  validate_return=True)
+                                  validate_return=True,
+                                  use_enum_values=True)

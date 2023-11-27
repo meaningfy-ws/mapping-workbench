@@ -20,7 +20,7 @@ class SHACLValidatorExporter(TestDataValidatorExporter):
         pass
 
 
-class SHACLValidatorExporterHTML(SHACLValidatorExporter):
+class SHACLTestDataValidatorExporterHTML(SHACLValidatorExporter):
     """Export SHACL validator result to HTML."""
 
     html_template: ClassVar[Any] = Environment(

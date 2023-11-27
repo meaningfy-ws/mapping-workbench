@@ -1,6 +1,6 @@
 from typing import List
 
-from beanie import PydanticObjectId
+from beanie import PydanticObjectId, WriteRules
 from pymongo.errors import DuplicateKeyError
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
@@ -9,6 +9,9 @@ from mapping_workbench.backend.core.services.request import request_update_data,
     api_entity_is_found, prepare_search_param, pagination_params
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageCreateIn, \
     MappingPackageUpdateIn, MappingPackageOut
+from mapping_workbench.backend.sparql_test_suite.models.validator import SPARQLTestDataValidationResult
+from mapping_workbench.backend.sparql_test_suite.services.sparql_validator import \
+    validate_rdf_manifestation_with_sparql_test_suite
 from mapping_workbench.backend.user.models.user import User
 
 
@@ -69,3 +72,28 @@ async def get_mapping_package_out(id: PydanticObjectId) -> MappingPackageOut:
 
 async def delete_mapping_package(mapping_package: MappingPackage):
     return await mapping_package.delete()
+
+
+async def validate_mapping_package(mapping_package: MappingPackage, user: User):
+    sparql_test_suites = [await sparql_test_suite_link.fetch() for sparql_test_suite_link in
+                          mapping_package.sparql_test_suites]
+
+    for test_data_suite_link in mapping_package.test_data_suites:
+        test_data_suite = await test_data_suite_link.fetch()
+        for test_data_file_resource_link in test_data_suite.file_resources:
+            test_data_file_resource = await test_data_file_resource_link.fetch()
+            for sparql_test_suite in sparql_test_suites:
+                sparql_query_results = await validate_rdf_manifestation_with_sparql_test_suite(
+                    test_data_file_resource.rdf_manifestation,
+                    test_data_file_resource.filename,
+                    sparql_test_suite)
+
+                sparql_report = SPARQLTestDataValidationResult(
+                    validation_results=sparql_query_results,
+                    sparql_test_suite_title=sparql_test_suite.title,
+                    mapping_suite_title=mapping_package.title,
+                    test_data_resource=test_data_file_resource_link
+                )
+
+                sparql_report.id = sparql_test_suite.title
+                await sparql_report.save()
