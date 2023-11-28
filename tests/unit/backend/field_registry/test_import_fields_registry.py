@@ -1,35 +1,56 @@
-from mapping_workbench.backend.fields_registry.models.field_registry import FieldsRegistry
-from mapping_workbench.backend.fields_registry.services.import_fields_registry import \
-    import_fields_registry_from_eforms_fields
+import pytest
+
+from mapping_workbench.backend.fields_registry.models.field_registry import StructuralField, StructuralNode, \
+    StructuralElementsVersionedView
+from mapping_workbench.backend.fields_registry.services.import_fields_registry import import_eforms_fields_from_folder, \
+    import_eforms_fields_from_github_repository
 
 
-def test_import_fields_registry_from_eforms_fields(eforms_fields_v191, eforms_fields_v180):
-    assert eforms_fields_v191
-    assert isinstance(eforms_fields_v191, dict)
+@pytest.mark.asyncio
+async def test_import_eforms_fields_from_folder(eforms_sdk_repo_v_1_9_1_dir_path):
+    await import_eforms_fields_from_folder(eforms_fields_folder_path=eforms_sdk_repo_v_1_9_1_dir_path)
 
-    field_registry = import_fields_registry_from_eforms_fields(eforms_fields_content=eforms_fields_v191)
+    imported_fields = await StructuralField.find().to_list()
+    assert imported_fields
+    assert len(imported_fields) == 1224
 
-    assert field_registry
-    assert isinstance(field_registry, FieldsRegistry)
-    assert field_registry.title == "eforms-sdk-1.9.1"
-    assert field_registry.fields
-    assert field_registry.nodes
-    assert field_registry.root_node_id
-    assert field_registry.root_node_id == "ND-Root"
-    assert len(field_registry.fields) == 1224
-    assert len(field_registry.nodes) == 286
+    imported_nodes = await StructuralNode.find().to_list()
+    assert imported_nodes
+    assert len(imported_nodes) == 286
 
-    assert eforms_fields_v180
-    assert isinstance(eforms_fields_v180, dict)
+    imported_versioned_view = await StructuralElementsVersionedView.find().to_list()
+    assert imported_versioned_view
+    assert len(imported_versioned_view) == 45
+    for versioned_view in imported_versioned_view:
+        assert versioned_view.ordered_elements
+        assert len(versioned_view.ordered_elements) > 0
+    imported_versioned_view = await StructuralElementsVersionedView.find(
+        StructuralElementsVersionedView.eforms_subtype == "1").to_list()
+    assert imported_versioned_view
+    assert len(imported_versioned_view) == 1
 
-    field_registry = import_fields_registry_from_eforms_fields(eforms_fields_content=eforms_fields_v180)
 
-    assert field_registry
-    assert isinstance(field_registry, FieldsRegistry)
-    assert field_registry.title == "eforms-sdk-1.8.0"
-    assert field_registry.fields
-    assert field_registry.nodes
-    assert field_registry.root_node_id
-    assert field_registry.root_node_id == "ND-Root"
-    assert len(field_registry.fields) == 771
-    assert len(field_registry.nodes) == 272
+@pytest.mark.asyncio
+async def test_import_eforms_fields_from_github_repository(eforms_sdk_github_repository_url,
+                                                           eforms_sdk_github_repository_v1_9_1_tag_name):
+    await import_eforms_fields_from_github_repository(github_repository_url=eforms_sdk_github_repository_url,
+                                                      branch_or_tag_name=eforms_sdk_github_repository_v1_9_1_tag_name)
+
+    imported_fields = await StructuralField.find().to_list()
+    assert imported_fields
+    assert len(imported_fields) == 1224
+
+    imported_nodes = await StructuralNode.find().to_list()
+    assert imported_nodes
+    assert len(imported_nodes) == 286
+
+    imported_versioned_view = await StructuralElementsVersionedView.find().to_list()
+    assert imported_versioned_view
+    assert len(imported_versioned_view) == 45
+    for versioned_view in imported_versioned_view:
+        assert versioned_view.ordered_elements
+        assert len(versioned_view.ordered_elements) > 0
+    imported_versioned_view = await StructuralElementsVersionedView.find(
+        StructuralElementsVersionedView.eforms_subtype == "1").to_list()
+    assert imported_versioned_view
+    assert len(imported_versioned_view) == 1

@@ -1,82 +1,119 @@
 from typing import List
 
-from beanie import PydanticObjectId
-from pymongo.errors import DuplicateKeyError
+from beanie import PydanticObjectId, Link, Document
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
-from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException, DuplicateKeyException
-from mapping_workbench.backend.core.services.request import request_update_data, request_create_data, \
-    api_entity_is_found, prepare_search_param, pagination_params
-from mapping_workbench.backend.fields_registry.models.field_registry import FieldsRegistry, FieldsRegistryCreateIn, \
-    FieldsRegistryUpdateIn, FieldsRegistryOut
-from mapping_workbench.backend.fields_registry.models.field_registry_diff import FieldsRegistryDiff
-from mapping_workbench.backend.fields_registry.services.fields_registry_differ import get_fields_registry_diff
-from mapping_workbench.backend.user.models.user import User
+from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
+from mapping_workbench.backend.core.services.request import api_entity_is_found, prepare_search_param, pagination_params
+from mapping_workbench.backend.fields_registry.models.field_registry import StructuralField, StructuralNode, \
+    StructuralElementsVersionedView
+from mapping_workbench.backend.project.models.entity import Project
 
 
-async def list_fields_registries(filters: dict = None, page: int = None, limit: int = None) -> \
-        (List[FieldsRegistryOut], int):
+async def list_structural_fields(filters: dict = None, page: int = None, limit: int = None) -> \
+        (List[StructuralField], int):
     query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
 
     prepare_search_param(query_filters)
     skip, limit = pagination_params(page, limit)
 
-    items: List[FieldsRegistryOut] = await FieldsRegistry.find(
+    items: List[StructuralField] = await StructuralField.find(
         query_filters,
-        projection_model=FieldsRegistryOut,
+        projection_model=StructuralField,
         fetch_links=False,
         skip=skip,
         limit=limit
     ).to_list()
-
-    total_count: int = await FieldsRegistry.find(query_filters).count()
+    total_count: int = await StructuralField.find(query_filters).count()
     return items, total_count
 
 
-async def create_fields_registry(
-        data: FieldsRegistryCreateIn,
-        user: User
-) -> FieldsRegistryOut:
-    fields_registry: FieldsRegistry = \
-        FieldsRegistry(
-            **request_create_data(data, user=user)
-        )
-    try:
-        await fields_registry.create()
-    except DuplicateKeyError as e:
-        raise DuplicateKeyException(e)
-    return FieldsRegistryOut(**fields_registry.model_dump())
+async def list_structural_nodes(filters: dict = None, page: int = None, limit: int = None) -> \
+        (List[StructuralNode], int):
+    query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
+
+    prepare_search_param(query_filters)
+    skip, limit = pagination_params(page, limit)
+
+    items: List[StructuralNode] = await StructuralNode.find(
+        query_filters,
+        projection_model=StructuralNode,
+        fetch_links=False,
+        skip=skip,
+        limit=limit
+    ).to_list()
+    total_count: int = await StructuralNode.find(query_filters).count()
+    return items, total_count
 
 
-async def update_fields_registry(
-        fields_registry: FieldsRegistry,
-        data: FieldsRegistryUpdateIn,
-        user: User
-) -> FieldsRegistryOut:
-    return FieldsRegistryOut(**(
-        await fields_registry.set(request_update_data(data, user=user))
-    ).model_dump())
+async def list_structural_elements_versioned_view(filters: dict = None, page: int = None, limit: int = None) -> \
+        (List[StructuralElementsVersionedView], int):
+    query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
+
+    prepare_search_param(query_filters)
+
+    skip, limit = pagination_params(page, limit)
+
+    items: List[StructuralElementsVersionedView] = await StructuralElementsVersionedView.find(
+        query_filters,
+        projection_model=StructuralElementsVersionedView,
+        fetch_links=False,
+        skip=skip,
+        limit=limit
+    ).to_list()
+    total_count: int = await StructuralElementsVersionedView.find(query_filters).count()
+    return items, total_count
 
 
-async def get_fields_registry(id: PydanticObjectId) -> FieldsRegistry:
-    fields_registry: FieldsRegistry = await FieldsRegistry.get(id)
-    if not api_entity_is_found(fields_registry):
+async def get_structural_elements_versioned_view_by_version(eforms_sdk_version: str,
+                                                            eforms_subtype: str,
+                                                            project_id: PydanticObjectId = None) -> \
+        StructuralElementsVersionedView:
+    filters: dict = {}
+    if project_id:
+        filters['project'] = Project.link_from_id(project_id)
+    filters['eforms_sdk_version'] = eforms_sdk_version
+    filters['eforms_subtype'] = eforms_subtype
+    structural_elements_versioned_view: StructuralElementsVersionedView = await StructuralElementsVersionedView.find_one(
+        filters)
+    if not api_entity_is_found(structural_elements_versioned_view):
         raise ResourceNotFoundException()
-    return fields_registry
+    return structural_elements_versioned_view
 
 
-async def get_fields_registry_out(id: PydanticObjectId) -> FieldsRegistryOut:
-    fields_registry: FieldsRegistry = await get_fields_registry(id)
-    return FieldsRegistryOut(**fields_registry.model_dump(by_alias=False))
+async def get_structural_elements_versioned_view(structural_elements_versioned_view_id: PydanticObjectId) -> \
+        StructuralElementsVersionedView:
+    structural_elements_versioned_view: StructuralElementsVersionedView = await StructuralElementsVersionedView.get(
+        structural_elements_versioned_view_id)
+    if not api_entity_is_found(structural_elements_versioned_view):
+        raise ResourceNotFoundException()
+    return structural_elements_versioned_view
 
 
-async def delete_fields_registry(fields_registry: FieldsRegistry):
-    return await fields_registry.delete()
+async def delete_structural_elements_versioned_view(
+        structural_elements_versioned_view: StructuralElementsVersionedView):
+    return await structural_elements_versioned_view.delete()
 
 
-async def get_fields_registry_diff_by_id(old_fields_registry_id: PydanticObjectId,
-                                         new_fields_registry_id: PydanticObjectId) -> FieldsRegistryDiff:
-    old_fields_registry: FieldsRegistry = await get_fields_registry(old_fields_registry_id)
-    new_fields_registry: FieldsRegistry = await get_fields_registry(new_fields_registry_id)
-    return get_fields_registry_diff(old_field_registry=old_fields_registry,
-                                    new_field_registry=new_fields_registry)
+async def get_structural_field(structural_field_id: PydanticObjectId) -> StructuralField:
+    structural_field: StructuralField = await StructuralField.get(structural_field_id)
+    if not api_entity_is_found(structural_field):
+        raise ResourceNotFoundException()
+    return structural_field
+
+
+async def get_structural_node(structural_node_id: PydanticObjectId) -> StructuralNode:
+    structural_node: StructuralNode = await StructuralNode.get(structural_node_id)
+    if not api_entity_is_found(structural_node):
+        raise ResourceNotFoundException()
+    return structural_node
+
+
+async def delete_structural_field(structural_field: StructuralField):
+    return await structural_field.delete()
+
+
+async def delete_structural_node(structural_node: StructuralNode):
+    return await structural_node.delete()
+
+
