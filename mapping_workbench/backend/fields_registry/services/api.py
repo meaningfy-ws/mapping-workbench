@@ -1,48 +1,30 @@
 from typing import List
 
-from beanie import PydanticObjectId, Link, Document
+from beanie import PydanticObjectId
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
 from mapping_workbench.backend.core.services.request import api_entity_is_found, prepare_search_param, pagination_params
-from mapping_workbench.backend.fields_registry.models.field_registry import StructuralField, StructuralNode, \
+from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement, \
     StructuralElementsVersionedView
 from mapping_workbench.backend.project.models.entity import Project
 
 
-async def list_structural_fields(filters: dict = None, page: int = None, limit: int = None) -> \
-        (List[StructuralField], int):
+async def list_structural_elements(filters: dict = None, page: int = None, limit: int = None) -> \
+        (List[StructuralElement], int):
     query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
 
     prepare_search_param(query_filters)
     skip, limit = pagination_params(page, limit)
 
-    items: List[StructuralField] = await StructuralField.find(
+    items: List[StructuralElement] = await StructuralElement.find(
         query_filters,
-        projection_model=StructuralField,
+        projection_model=StructuralElement,
         fetch_links=False,
         skip=skip,
         limit=limit
     ).to_list()
-    total_count: int = await StructuralField.find(query_filters).count()
-    return items, total_count
-
-
-async def list_structural_nodes(filters: dict = None, page: int = None, limit: int = None) -> \
-        (List[StructuralNode], int):
-    query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
-
-    prepare_search_param(query_filters)
-    skip, limit = pagination_params(page, limit)
-
-    items: List[StructuralNode] = await StructuralNode.find(
-        query_filters,
-        projection_model=StructuralNode,
-        fetch_links=False,
-        skip=skip,
-        limit=limit
-    ).to_list()
-    total_count: int = await StructuralNode.find(query_filters).count()
+    total_count: int = await StructuralElement.find(query_filters).count()
     return items, total_count
 
 
@@ -95,25 +77,12 @@ async def delete_structural_elements_versioned_view(
     return await structural_elements_versioned_view.delete()
 
 
-async def get_structural_field(structural_field_id: PydanticObjectId) -> StructuralField:
-    structural_field: StructuralField = await StructuralField.get(structural_field_id)
-    if not api_entity_is_found(structural_field):
+async def get_structural_element(structural_element_id: PydanticObjectId) -> StructuralElement:
+    structural_element: StructuralElement = await StructuralElement.get(structural_element_id)
+    if not api_entity_is_found(structural_element):
         raise ResourceNotFoundException()
-    return structural_field
+    return structural_element
 
 
-async def get_structural_node(structural_node_id: PydanticObjectId) -> StructuralNode:
-    structural_node: StructuralNode = await StructuralNode.get(structural_node_id)
-    if not api_entity_is_found(structural_node):
-        raise ResourceNotFoundException()
-    return structural_node
-
-
-async def delete_structural_field(structural_field: StructuralField):
-    return await structural_field.delete()
-
-
-async def delete_structural_node(structural_node: StructuralNode):
-    return await structural_node.delete()
-
-
+async def delete_structural_element(structural_element: StructuralElement):
+    return await StructuralElement.delete()

@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel
 
-from mapping_workbench.backend.fields_registry.models.field_registry import StructuralField, StructuralNode
+from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
 
 
 class BoolValeDiff(BaseModel):
@@ -38,11 +38,11 @@ class UpdatedStructuralNodeDiff(UpdatedStructuralElementDiff):
 
 
 class FieldsRegistryDiff(BaseModel):
-    deleted_fields: List[StructuralField] = []
-    new_fields: List[StructuralField] = []
+    deleted_fields: List[StructuralElement] = []
+    new_fields: List[StructuralElement] = []
     updated_fields: List[UpdatedStructuralFieldDiff] = []
-    deleted_nodes: List[StructuralNode] = []
-    new_nodes: List[StructuralNode] = []
+    deleted_nodes: List[StructuralElement] = []
+    new_nodes: List[StructuralElement] = []
     updated_nodes: List[UpdatedStructuralNodeDiff] = []
     updated_title: Optional[str] = None
     updated_root_node_id: Optional[str] = None
