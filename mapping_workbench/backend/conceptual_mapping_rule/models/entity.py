@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from typing import Optional, List, Literal
+from typing import Optional, List
 
 import pymongo
 from beanie import Link
@@ -9,7 +9,7 @@ from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
-from mapping_workbench.backend.fields_registry.models.field_registry import StructuralField
+from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.ontology.models.term import TermValidityResponse
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResource
@@ -61,10 +61,7 @@ class ConceptualMappingRuleUpdateIn(ConceptualMappingRuleIn):
 
 
 class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema):
-    field_id: Optional[str] = None
-    field_title: Optional[str] = None
-    field_description: Optional[str] = None
-    source_xpath: Optional[List[str]] = None
+    source_structural_element: Optional[Link[StructuralElement]] = None
     target_class_path: Optional[str] = None
     target_class_path_terms_validity: Optional[List[TermValidityResponse]] = None
     target_property_path: Optional[str] = None
@@ -75,16 +72,10 @@ class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema):
     sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
     notes: Optional[List[ConceptualMappingRuleComment]] = None
     comments: Optional[List[ConceptualMappingRuleComment]] = None
-    refers_to_eforms_sdk_versions: Optional[List[str]] = None
-    refers_to_structural_element_id: Optional[str] = None
-    refers_to_content_type: Literal["field", "node"] = "field"
 
 
 class ConceptualMappingRule(BaseProjectResourceEntity):
-    field_id: Optional[str] = None
-    field_title: Optional[str] = None
-    field_description: Optional[str] = None
-    source_xpath: Optional[List[str]] = None
+    source_structural_element: Optional[Link[StructuralElement]] = None
     target_class_path: Optional[str] = None
     target_class_path_terms_validity: Optional[List[TermValidityResponse]] = None
     target_property_path: Optional[str] = None
@@ -95,19 +86,12 @@ class ConceptualMappingRule(BaseProjectResourceEntity):
     sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
     notes: Optional[List[ConceptualMappingRuleComment]] = None
     comments: Optional[List[ConceptualMappingRuleComment]] = None
-    refers_to_eforms_sdk_versions: Optional[List[str]] = None
-    refers_to_structural_element_id: Optional[str] = None
-    refers_to_content_type: Literal["field", "node"] = "field"
 
     class Settings(BaseProjectResourceEntity.Settings):
         name = "conceptual_mapping_rules"
         indexes = [
             IndexModel(
                 [
-                    ("field_id", pymongo.TEXT),
-                    ("field_title", pymongo.TEXT),
-                    ("field_description", pymongo.TEXT),
-                    ("source_xpath", pymongo.TEXT),
                     ("target_class_path", pymongo.TEXT),
                     ("target_property_path", pymongo.TEXT)
                 ],

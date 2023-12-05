@@ -4,13 +4,13 @@ from beanie import PydanticObjectId
 from fastapi import APIRouter, Depends, status
 
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
-from mapping_workbench.backend.fields_registry.models.field_registry import APIListStructuralFieldPaginatedResponse, \
-    StructuralField, APIListStructuralNodePaginatedResponse, StructuralNode, \
-    APIListStructuralElementsVersionedViewPaginatedResponse, StructuralElementsVersionedView
-from mapping_workbench.backend.fields_registry.services.api import list_structural_fields, list_structural_nodes, \
-    list_structural_elements_versioned_view, get_structural_elements_versioned_view, \
-    delete_structural_elements_versioned_view, get_structural_field, delete_structural_field, get_structural_node, \
-    delete_structural_node, get_structural_elements_versioned_view_by_version
+from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement, \
+    APIListStructuralElementsPaginatedResponse, APIListStructuralElementsVersionedViewPaginatedResponse, \
+    StructuralElementsVersionedView
+from mapping_workbench.backend.fields_registry.services.api import list_structural_elements_versioned_view, \
+    get_structural_elements_versioned_view, \
+    delete_structural_elements_versioned_view, get_structural_elements_versioned_view_by_version, \
+    list_structural_elements, get_structural_element, delete_structural_element
 from mapping_workbench.backend.fields_registry.services.generate_conceptual_mapping_rules import \
     generate_conceptual_mapping_rules
 from mapping_workbench.backend.fields_registry.services.import_fields_registry import \
@@ -29,91 +29,35 @@ router = APIRouter(
 
 
 @router.get(
-    "/fields",
-    description=f"Get list of fields",
-    name=f"fields:list",
-    response_model=APIListStructuralFieldPaginatedResponse
+    "/elements",
+    description=f"Get list of elements",
+    name=f"fields:elements",
+    response_model=APIListStructuralElementsPaginatedResponse
 )
-async def route_list_structural_fields(
+async def route_list_structural_elements(
         project_id: PydanticObjectId = None
 ):
     filters: dict = {}
     if project_id:
         filters['project'] = Project.link_from_id(project_id)
-    items: List[StructuralField] = await list_structural_fields(filters)
-    return APIListStructuralFieldPaginatedResponse(
+    items: List[StructuralElement] = await list_structural_elements(filters)
+    return APIListStructuralElementsPaginatedResponse(
         items=items,
         count=len(items)
     )
 
 
-@router.get(
-    "/fields/{id}",
-    description=f"Get structural field by id",
-    name=f"fields:get",
-    response_model=StructuralField
-)
-async def route_get_structural_field(
-        structural_field: StructuralField = Depends(get_structural_field)
-):
-    return structural_field
-
-
 @router.delete(
-    "/fields/{id}",
-    description=f"Delete structural field by id",
-    name=f"fields:delete",
+    "/elements/{id}",
+    description=f"Delete structural element by id",
+    name=f"elements:delete",
     response_model=APIEmptyContentWithIdResponse
 )
 async def route_delete_structural_field(
-        structural_field: StructuralField = Depends(get_structural_field)
+        structural_field: StructuralElement = Depends(get_structural_element)
 ):
-    await delete_structural_field(structural_field)
+    await delete_structural_element(structural_field)
     return APIEmptyContentWithIdResponse(_id=structural_field.id)
-
-
-@router.get(
-    "/nodes",
-    description=f"Get list of nodes",
-    name=f"nodes:list",
-    response_model=APIListStructuralNodePaginatedResponse
-)
-async def route_list_structural_nodes(
-        project_id: PydanticObjectId = None
-):
-    filters: dict = {}
-    if project_id:
-        filters['project'] = Project.link_from_id(project_id)
-    items: List[StructuralNode] = await list_structural_nodes(filters)
-    return APIListStructuralNodePaginatedResponse(
-        items=items,
-        count=len(items)
-    )
-
-
-@router.get(
-    "/nodes/{id}",
-    description=f"Get structural node by id",
-    name=f"nodes:get",
-    response_model=StructuralNode
-)
-async def route_get_structural_node(
-        structural_node: StructuralNode = Depends(get_structural_node)
-):
-    return structural_node
-
-
-@router.delete(
-    "/nodes/{id}",
-    description=f"Delete structural node by id",
-    name=f"nodes:delete",
-    response_model=APIEmptyContentWithIdResponse
-)
-async def route_delete_structural_node(
-        structural_node: StructuralNode = Depends(get_structural_node)
-):
-    await delete_structural_node(structural_node)
-    return APIEmptyContentWithIdResponse(_id=structural_node.id)
 
 
 @router.get(
