@@ -3,18 +3,22 @@ from enum import Enum
 from typing import Optional, List
 
 import pymongo
-from beanie import Link
+from beanie import Link, PydanticObjectId
 from pydantic import BaseModel
 from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
-from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.ontology.models.term import TermValidityResponse
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResource
+from mapping_workbench.backend.state_manager.models.state_object import ObjectState, StatefulObjectABC
 from mapping_workbench.backend.triple_map_fragment.models.entity import GenericTripleMapFragment
 from mapping_workbench.backend.user.models.user import User
+
+
+class ConceptualMappingRuleException(Exception):
+    pass
 
 
 class ConceptualMappingRuleTermsValidity(Enum):
@@ -45,7 +49,7 @@ class ConceptualMappingRuleIn(BaseProjectResourceEntityInSchema):
     source_xpath: Optional[List[str]] = None
     target_class_path: Optional[str] = None
     target_property_path: Optional[str] = None
-    mapping_packages: Optional[List[Link[MappingPackage]]] = None
+    refers_to_mapping_package_ids: List[PydanticObjectId] = []
     triple_map_fragment: Optional[Link[GenericTripleMapFragment]] = None
     sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
     notes: Optional[List[ConceptualMappingRuleComment]] = None
@@ -67,25 +71,63 @@ class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema):
     target_property_path: Optional[str] = None
     target_property_path_terms_validity: Optional[List[TermValidityResponse]] = None
     terms_validity: Optional[ConceptualMappingRuleTermsValidity] = None
-    mapping_packages: Optional[List[Link[MappingPackage]]] = None
+    refers_to_mapping_package_ids: List[PydanticObjectId] = []
     triple_map_fragment: Optional[Link[GenericTripleMapFragment]] = None
     sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
     notes: Optional[List[ConceptualMappingRuleComment]] = None
     comments: Optional[List[ConceptualMappingRuleComment]] = None
 
 
-class ConceptualMappingRule(BaseProjectResourceEntity):
+class ConceptualMappingRuleState(ObjectState):
+    source_structural_element: Optional[StructuralElement] = None
+    target_class_path: Optional[str] = None
+    target_class_path_terms_validity: Optional[List[TermValidityResponse]] = None
+    target_property_path: Optional[str] = None
+    target_property_path_terms_validity: Optional[List[TermValidityResponse]] = None
+    terms_validity: Optional[ConceptualMappingRuleTermsValidity] = None
+    refers_to_mapping_package_ids: List[PydanticObjectId] = []
+    triple_map_fragment: Optional[GenericTripleMapFragment] = None
+    sparql_assertions: Optional[List[SPARQLTestFileResource]] = None
+    notes: Optional[List[ConceptualMappingRuleComment]] = None
+    comments: Optional[List[ConceptualMappingRuleComment]] = None
+
+
+class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
     source_structural_element: Optional[Link[StructuralElement]] = None
     target_class_path: Optional[str] = None
     target_class_path_terms_validity: Optional[List[TermValidityResponse]] = None
     target_property_path: Optional[str] = None
     target_property_path_terms_validity: Optional[List[TermValidityResponse]] = None
     terms_validity: Optional[ConceptualMappingRuleTermsValidity] = None
-    mapping_packages: Optional[List[Optional[Link[MappingPackage]]]] = None
+    refers_to_mapping_package_ids: List[PydanticObjectId] = []
     triple_map_fragment: Optional[Link[GenericTripleMapFragment]] = None
     sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
     notes: Optional[List[ConceptualMappingRuleComment]] = None
     comments: Optional[List[ConceptualMappingRuleComment]] = None
+
+    async def get_state(self) -> ConceptualMappingRuleState:
+        source_structural_element = await self.source_structural_element.fetch()
+        triple_map_fragment = await self.triple_map_fragment.fetch() if self.triple_map_fragment else None
+        sparql_assertions = []
+        if self.sparql_assertions:
+            sparql_assertions = [await sparql_assertion.fetch() for sparql_assertion in self.sparql_assertions]
+
+        return ConceptualMappingRuleState(
+            source_structural_element=source_structural_element,
+            target_class_path=self.target_class_path,
+            target_class_path_terms_validity=self.target_class_path_terms_validity,
+            target_property_path=self.target_property_path,
+            target_property_path_terms_validity=self.target_property_path_terms_validity,
+            terms_validity=self.terms_validity,
+            refers_to_mapping_package_ids=self.refers_to_mapping_package_ids,
+            triple_map_fragment=triple_map_fragment,
+            sparql_assertions=sparql_assertions,
+            notes=self.notes,
+            comments=self.comments
+        )
+
+    def set_state(self, state: ConceptualMappingRuleState):
+        raise ConceptualMappingRuleException("Setting the state of a conceptual mapping rule is not supported.")
 
     class Settings(BaseProjectResourceEntity.Settings):
         name = "conceptual_mapping_rules"

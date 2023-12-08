@@ -10,29 +10,11 @@ from mapping_workbench.backend.file_resource.models.file_resource import FileRes
     FileResourceIn
 from mapping_workbench.backend.shacl_test_suite.models.validator import SHACLTestDataValidationResult
 from mapping_workbench.backend.sparql_test_suite.models.validator import SPARQLTestDataValidationResult
+from mapping_workbench.backend.state_manager.models.state_object import StatefulObjectABC, ObjectState
 
 
 class TestDataException(Exception):
     pass
-
-
-
-class TestDataSuite(FileResourceCollection):
-    file_resources: Optional[List[Link["TestDataFileResource"]]] = []
-
-    class Settings(BaseProjectResourceEntity.Settings):
-        name = "test_data_suites"
-
-        indexes = [
-            IndexModel(
-                [
-                    ("title", pymongo.TEXT),
-                    ("description", pymongo.TEXT),
-                    ("path", pymongo.TEXT)
-                ],
-                name="search_text_idx"
-            )
-        ]
 
 
 class TestDataFileResourceFormat(Enum):
@@ -47,21 +29,51 @@ class TestDataFileResourceIn(FileResourceIn):
 
 
 class TestDataFileResourceCreateIn(TestDataFileResourceIn):
-    test_data_suite: Optional[Link[TestDataSuite]] = None
+    test_data_suite: Optional[Link["TestDataSuite"]] = None
 
 
 class TestDataFileResourceUpdateIn(TestDataFileResourceIn):
     pass
 
 
-class TestDataFileResource(FileResource):
+class TestDataState(ObjectState):
+    xml_manifestation: Optional[FileResource] = None
+    rdf_manifestation: Optional[str] = None
+    shacl_validation_result: Optional[SHACLTestDataValidationResult] = None
+    sparql_validation_result: Optional[SPARQLTestDataValidationResult] = None
+
+
+class TestDataFileResource(FileResource, StatefulObjectABC):
     format: Optional[TestDataFileResourceFormat] = None
-    test_data_suite: Optional[Link[TestDataSuite]] = None
+    test_data_suite: Optional[Link["TestDataSuite"]] = None
 
     rdf_manifestation: Optional[str] = None
 
     shacl_validation_result: Optional[Link[SHACLTestDataValidationResult]] = None
     sparql_validation_result: Optional[Link[SPARQLTestDataValidationResult]] = None
+
+    async def get_state(self) -> TestDataState:
+        xml_manifestation = FileResource(
+            title=self.title,
+            description=self.description,
+            filename=self.filename,
+            path=self.path,
+            format=self.format,
+            content=self.content
+        )
+        rdf_manifestation = self.rdf_manifestation
+        shacl_validation_result = await self.shacl_validation_result.fetch() if self.sparql_validation_result else None
+        sparql_validation_result = await self.sparql_validation_result.fetch() if self.sparql_validation_result else None
+
+        return TestDataState(
+            xml_manifestation=xml_manifestation,
+            rdf_manifestation=rdf_manifestation,
+            shacl_validation_result=shacl_validation_result,
+            sparql_validation_result=sparql_validation_result
+        )
+
+    def set_state(self, state: TestDataState):
+        raise TestDataException("Setting the state of a test data file resource is not supported.")
 
     class Settings(FileResource.Settings):
         name = "test_data_file_resources"
@@ -75,6 +87,47 @@ class TestDataFileResource(FileResource):
                     ("path", pymongo.TEXT),
                     ("format", pymongo.TEXT),
                     ("content", pymongo.TEXT)
+                ],
+                name="search_text_idx"
+            )
+        ]
+
+
+class TestDataSuiteState(ObjectState):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    path: Optional[List[str]] = None
+    test_data_states: List[TestDataState]
+
+
+class TestDataSuite(FileResourceCollection, StatefulObjectABC):
+    file_resources: Optional[List[Link[TestDataFileResource]]] = []
+
+    async def get_state(self) -> TestDataSuiteState:
+        title = self.title
+        description = self.description
+        path = self.path
+        test_data_list = [await test_data.fetch() for test_data in self.file_resources]
+        test_data_states = [await test_data.get_state() for test_data in test_data_list]
+        return TestDataSuiteState(
+            title=title,
+            description=description,
+            path=path,
+            test_data_states=test_data_states
+        )
+
+    def set_state(self, state: TestDataSuiteState):
+        raise TestDataException("Setting the state of a test data suite is not supported.")
+
+    class Settings(BaseProjectResourceEntity.Settings):
+        name = "test_data_suites"
+
+        indexes = [
+            IndexModel(
+                [
+                    ("title", pymongo.TEXT),
+                    ("description", pymongo.TEXT),
+                    ("path", pymongo.TEXT)
                 ],
                 name="search_text_idx"
             )

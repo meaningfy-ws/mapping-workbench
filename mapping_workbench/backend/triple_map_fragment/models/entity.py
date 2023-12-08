@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Optional
 
 import pymongo
-from beanie import Link
+from beanie import PydanticObjectId
 from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_mapping_package_resource_entity import \
@@ -10,7 +10,6 @@ from mapping_workbench.backend.core.models.base_mapping_package_resource_entity 
     BaseMappingPackageResourceEntityUpdateInSchema
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema, BaseProjectResourceEntityUpdateInSchema
-from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 
 
 class TripleMapFragmentFormat(Enum):
@@ -76,7 +75,7 @@ class TripleMapFragment(BaseProjectResourceEntity):
 
 
 class SpecificTripleMapFragment(TripleMapFragment):
-    mapping_package: Optional[Link[MappingPackage]] = None
+    mapping_package_id: Optional[PydanticObjectId] = None
 
     class Settings(TripleMapFragment.Settings):
         name = "specific_triple_map_fragments"
