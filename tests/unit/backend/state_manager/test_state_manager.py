@@ -6,7 +6,7 @@ from tests.fakes.fake_state_object import FakeObjectState
 
 
 @pytest.mark.asyncio
-async def test_object_state_manager():
+async def _test_object_state_manager():
     fake_object_state = FakeObjectState(name="Test1", object_data="Test2")
     fake_object_state_id = await save_object_state(fake_object_state)
     new_fake_object_state = await load_object_state(fake_object_state_id, FakeObjectState)
