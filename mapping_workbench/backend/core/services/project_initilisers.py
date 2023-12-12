@@ -22,6 +22,7 @@ from mapping_workbench.backend.triple_map_fragment.models.entity import Specific
     GenericTripleMapFragment
 from mapping_workbench.backend.triple_map_registry.models.entity import TripleMapRegistry
 from mapping_workbench.backend.user.models.user import User
+from mapping_workbench.backend.validation.models.xpath_validation import XPathAssertion
 
 
 async def init_project_models(mongodb_database: AsyncIOMotorDatabase):
@@ -52,6 +53,7 @@ async def init_project_models(mongodb_database: AsyncIOMotorDatabase):
             SHACLTestDataValidationResult,
             SPARQLTestDataValidationResult,
             StructuralElement,
-            StructuralElementsVersionedView
+            StructuralElementsVersionedView,
+            XPathAssertion
         ],
     )
