@@ -2,7 +2,7 @@ name: Tests on push
 
 on:
   push:
-    branches: [ feature/* , main, hotfix/*, release/* ]
+    branches: [ feature/* , hotfix/*, release/* ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
