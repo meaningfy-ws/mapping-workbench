@@ -1,12 +1,12 @@
 from datetime import datetime
-from enum import StrEnum
+from enum import Enum
 from typing import Callable, Optional, List
 
 from pebble import ProcessFuture
 from pydantic import BaseModel
 
 
-class TaskStatus(StrEnum):
+class TaskStatus(str, Enum):
     """
 
     """
