@@ -1,5 +1,4 @@
-import concurrent
-from concurrent.futures import CancelledError
+from concurrent.futures import CancelledError, TimeoutError
 from typing import List
 
 from pebble import ProcessPool, ProcessFuture
@@ -25,7 +24,7 @@ def on_task_done_callback(future):
     except CancelledError:
         task.update_task_status(TaskStatus.CANCELED)
         task.update_exception_message("Task was canceled!")
-    except (concurrent.futures.TimeoutError, TimeoutError) as error:
+    except TimeoutError:
         task.update_task_status(TaskStatus.TIMEOUT)
         task.update_exception_message(f"Task took longer than {task.task_metadata.task_timeout} seconds")
     except Exception as error:
