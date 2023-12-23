@@ -44,6 +44,7 @@ def test_task_manager():
     while task_manager.is_active():
         time.sleep(1)
 
+    assert task_manager.tasks[0].task_metadata.exception_message == "Task took longer than 1 seconds"
     assert task_manager.tasks[0].get_task_status() == TaskStatus.TIMEOUT
 
     task_manager.delete_all_tasks()
