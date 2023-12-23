@@ -33,12 +33,17 @@ class RMLMapperSettings(BaseSettings):
     RML_MAPPER_PATH: Path = Path(os.getenv('RML_MAPPER_PATH'))
 
 
+class TaskManagerSettings(BaseSettings):
+    TASK_MANAGER_MAX_WORKERS: int = int(os.getenv('MW_TASK_MANAGER_MAX_WORKERS', 10))
+
+
 class Settings(
     AppSettings,
     ServerSettings,
     DatabaseSettings,
     SecuritySettings,
-    RMLMapperSettings
+    RMLMapperSettings,
+    TaskManagerSettings
 ):
     pass
 
