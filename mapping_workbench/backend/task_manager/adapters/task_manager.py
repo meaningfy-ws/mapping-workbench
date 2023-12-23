@@ -1,4 +1,3 @@
-import socket
 from concurrent.futures import CancelledError
 from typing import List
 
@@ -19,12 +18,19 @@ def on_task_done_callback(future):
     except CancelledError:
         task.update_task_status(TaskStatus.CANCELED)
         task.update_exception_message("Task was canceled!")
-    except (socket.timeout, TimeoutError) as error:
-        task.update_task_status(TaskStatus.TIMEOUT)
-        task.update_exception_message(f"Task took longer than {error.args[1]} seconds")
+    except OSError as error:
+        if len(error.args) > 0:
+            if error.args[0] == "Task timeout":
+                task.update_task_status(TaskStatus.TIMEOUT)
+                task.update_exception_message(f"Task took longer than {task.task_metadata.task_timeout} seconds")
+        else:
+            task.update_task_status(TaskStatus.FAILED)
+            task.update_exception_message(
+                f"Task raised error: {str(error)}\n{error.__traceback__}, error_type={type(error)}")
     except Exception as error:
         task.update_task_status(TaskStatus.FAILED)
-        task.update_exception_message(f"Task raised error: {str(error)}\n{error.__traceback__}")
+        task.update_exception_message(
+            f"Task raised error: {str(error)}\n{error.__traceback__}, error_type={type(error)}")
 
 
 class TaskManager:
