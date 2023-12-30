@@ -2,7 +2,6 @@ import asyncio
 
 from mongomock_motor import AsyncMongoMockClient
 from mapping_workbench.backend.core.services.project_initilisers import init_project_models
-from mapping_workbench.backend.database.adapters.gridfs_storage import AsyncGridFSStorage
 
 from mapping_workbench.backend.database.adapters.gridfs_storage import AsyncGridFSStorage
 
