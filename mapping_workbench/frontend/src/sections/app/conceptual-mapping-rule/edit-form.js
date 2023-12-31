@@ -659,7 +659,7 @@ export const EditForm = (props) => {
                                             </Box>
                                         )}
                                         value={COMMENT_PRIORITY.HIGH}
-                                        checked={formik.values.comment.priority === COMMENT_PRIORITY.HIGH}
+                                        checked={formik.values.comment && formik.values.comment.priority === COMMENT_PRIORITY.HIGH}
                                     />
                                     <FormControlLabel
                                         control={<Radio/>}
@@ -674,7 +674,7 @@ export const EditForm = (props) => {
                                             </Box>
                                         )}
                                         value={COMMENT_PRIORITY.NORMAL}
-                                        checked={formik.values.comment.priority === COMMENT_PRIORITY.NORMAL}
+                                        checked={formik.values.comment && formik.values.comment.priority === COMMENT_PRIORITY.NORMAL}
                                     />
                                     <FormControlLabel
                                         control={<Radio/>}
@@ -689,7 +689,7 @@ export const EditForm = (props) => {
                                             </Box>
                                         )}
                                         value={COMMENT_PRIORITY.LOW}
-                                        checked={formik.values.comment.priority === COMMENT_PRIORITY.LOW}
+                                        checked={formik.values.comment && formik.values.comment.priority === COMMENT_PRIORITY.LOW}
                                     />
                                 </Box>
                             </Stack>
@@ -700,7 +700,7 @@ export const EditForm = (props) => {
                                 fullWidth
                                 label="Add new Comment ..."
                                 helperText="... for other editors"
-                                value={formik.values.comment.comment}
+                                value={formik.values.comment && formik.values.comment.comment || ''}
                                 onBlur={formik.handleBlur}
                                 onChange={formik.handleChange}
                             />
