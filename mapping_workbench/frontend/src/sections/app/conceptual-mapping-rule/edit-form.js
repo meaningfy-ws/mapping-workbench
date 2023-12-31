@@ -595,7 +595,7 @@ export const EditForm = (props) => {
                                 fullWidth
                                 label="Add new Note ..."
                                 helperText="... for external viewers"
-                                value={formik.values.note.comment}
+                                value={formik.values.note && formik.values.note.comment || ''}
                                 onBlur={formik.handleBlur}
                                 onChange={formik.handleChange}
                             />
