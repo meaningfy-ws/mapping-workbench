@@ -554,7 +554,7 @@ export const EditForm = (props) => {
                                             </Box>
                                         )}
                                         value={COMMENT_PRIORITY.HIGH}
-                                        checked={formik.values.note.priority === COMMENT_PRIORITY.HIGH}
+                                        checked={formik.values.note && formik.values.note.priority === COMMENT_PRIORITY.HIGH}
                                     />
                                     <FormControlLabel
                                         control={<Radio/>}
