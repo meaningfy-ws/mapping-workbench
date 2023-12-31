@@ -1,13 +1,12 @@
 from typing import Optional
 
-from beanie import Link
+from beanie import PydanticObjectId
 
-from mapping_workbench.backend.core.models.base_entity import BaseEntityInSchema, BaseEntityOutSchema, BaseEntity
-from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
+from mapping_workbench.backend.core.models.base_entity import BaseEntityInSchema, BaseEntityOutSchema
 
 
 class BaseMappingPackageResourceEntityInSchema(BaseEntityInSchema):
-    mapping_package: Optional[Link[MappingPackage]] = None
+    mapping_package_id: Optional[PydanticObjectId] = None
 
 
 class BaseMappingPackageResourceEntityUpdateInSchema(BaseMappingPackageResourceEntityInSchema):
@@ -16,4 +15,4 @@ class BaseMappingPackageResourceEntityUpdateInSchema(BaseMappingPackageResourceE
 
 
 class BaseMappingPackageResourceEntityOutSchema(BaseEntityOutSchema):
-    mapping_package: Optional[Link[MappingPackage]] = None
+    mapping_package_id: Optional[PydanticObjectId] = None

@@ -18,6 +18,7 @@ class NoticeTypeSelector(BaseModel):
 class NoticeTypeFieldInfoSelector(BaseModel):
     element_id: str = Field(..., alias="id")
     content_type: Literal["field"] = Field(..., alias="contentType")
+    description: str = Field(..., alias="description")
 
 
 class NoticeTypeGroupInfoSelector(BaseModel):
