@@ -184,7 +184,7 @@ export const ListTable = (props) => {
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            {projectMappingPackagesMap[item.mapping_package.id]}
+                                            {item.mapping_package && projectMappingPackagesMap[item.mapping_package.id]}
                                         </TableCell>
                                         <TableCell align="left">
                                             {

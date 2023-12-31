@@ -301,7 +301,7 @@ export const ListTableMappingPackages = (props) => {
         isHovered
     } = props;
 
-    let ruleFilteredMappingPackages = item.mapping_packages.map(x => x.id);
+    let ruleFilteredMappingPackages = (item.mapping_packages || []).map(x => x.id);
     const [mappingPackages, setMappingPackages] = useState(ruleFilteredMappingPackages);
     const [projectMappingPackages, setProjectMappingPackages] = useState(initProjectMappingPackages || []);
     const [tempMappingPackages, setTempMappingPackages] =
@@ -665,7 +665,7 @@ export const ListTableRow = (props) => {
                 </Link>
             </TableCell>
             <TableCell>
-                {item.source_xpath.map(
+                {item.source_xpath && item.source_xpath.map(
                     x => (
                         <ListItem title={x} key={`source_xpath_${x.id}`} sx={{
                             px: 0
