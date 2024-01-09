@@ -183,7 +183,7 @@ export const EditForm = (props) => {
             source_xpath: prepareTextareaListValue(item.source_xpath),
             target_class_path: item.target_class_path || '',
             target_property_path: item.target_property_path || '',
-            mapping_packages: (item.mapping_packages || []).map(x => x.id),
+            refers_to_mapping_package_ids: (item.mapping_packages || []).map(x => x.id),
             sparql_assertions: (item.sparql_assertions || []).map(x => x.id),
             triple_map_fragment: (item.triple_map_fragment && item.triple_map_fragment.id) || '',
             notes: (item.notes || []),
