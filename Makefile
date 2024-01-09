@@ -2,16 +2,15 @@ PROJECT_PATH = $(shell pwd)
 
 ENV_FILE := .env
 
-NAME := mapping_workbench
+# include .env files if they exist
+-include ${ENV_FILE}
+
+NAME := mapping_workbench_${ENVIRONMENT}
 BACKEND_INFRA_FOLDER := ${PROJECT_PATH}/${NAME}/backend
 FRONTEND_HOME := ${NAME}/frontend
 FRONTEND_INFRA_FOLDER := ${PROJECT_PATH}/${FRONTEND_HOME}
 
 RML_MAPPER_PATH = ${PROJECT_PATH}/.rmlmapper/rmlmapper.jar
-
-
-# include .env files if they exist
--include ${ENV_FILE}
 
 
 #-----------------------------------------------------------------------------
