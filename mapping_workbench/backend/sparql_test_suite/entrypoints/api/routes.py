@@ -48,15 +48,24 @@ router = APIRouter(
 )
 async def route_list_sparql_test_suites(
         project: PydanticObjectId = None,
-        ids: Annotated[List[PydanticObjectId | str] | None, Query()] = None
+        ids: Annotated[List[PydanticObjectId | str] | None, Query()] = None,
+        page: int = None,
+        limit: int = None,
+        q: str = None
 ):
     filters: dict = {}
     if project:
         filters['project'] = Project.link_from_id(project)
     if ids is not None:
         filters['_id'] = {"$in": ids}
-    items: List[SPARQLTestSuite] = await list_sparql_test_suites(filters)
-    return APIListSPARQLTestSuitesPaginatedResponse(items=items, count=len(items))
+    if q is not None:
+        filters['q'] = q
+
+    items, total_count = await list_sparql_test_suites(filters, page, limit)
+    return APIListSPARQLTestSuitesPaginatedResponse(
+        items=items,
+        count=total_count
+    )
 
 
 @router.post(
@@ -131,10 +140,25 @@ async def route_list_sparql_test_file_resources(
     response_model=APIListSPARQLTestFileResourcesPaginatedResponse
 )
 async def route_list_sparql_test_suite_file_resources(
-        id: PydanticObjectId = None
+        sparql_test_suite: SPARQLTestSuite = Depends(get_sparql_test_suite),
+        project: PydanticObjectId = None,
+        page: int = None,
+        limit: int = None,
+        q: str = None
 ):
-    items: List[SPARQLTestFileResource] = await list_sparql_test_suite_file_resources(id)
-    return APIListSPARQLTestFileResourcesPaginatedResponse(items=items, count=len(items))
+
+    filters: dict = {}
+    if project:
+        filters['project'] = Project.link_from_id(project)
+    if q is not None:
+        filters['q'] = q
+
+    items, total_count = \
+        await list_sparql_test_suite_file_resources(sparql_test_suite, filters, page, limit)
+    return APIListSPARQLTestFileResourcesPaginatedResponse(
+        items=items,
+        count=total_count
+    )
 
 
 @router.post(

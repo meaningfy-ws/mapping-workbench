@@ -10,6 +10,8 @@ from mapping_workbench.backend.file_resource.services.file_resource_form_data im
     file_resource_data_from_form_request
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
+from mapping_workbench.backend.sparql_test_suite.services.sparql_validator import \
+    test_data_sparql_validation_for_project
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
     TestDataFileResourceUpdateIn, TestDataFileResourceCreateIn
 from mapping_workbench.backend.test_data_suite.models.entity_api_response import \
@@ -25,8 +27,7 @@ from mapping_workbench.backend.test_data_suite.services.api import (
     get_test_data_file_resource,
     delete_test_data_file_resource, update_test_data_file_resource
 )
-from mapping_workbench.backend.test_data_suite.services.transform_test_data import transform_test_data_file_resource, \
-    transform_test_data_for_project
+from mapping_workbench.backend.test_data_suite.services.transform_test_data import transform_test_data_for_project
 from mapping_workbench.backend.user.models.user import User
 
 ROUTE_PREFIX = "/test_data_suites"
@@ -50,15 +51,24 @@ router = APIRouter(
 )
 async def route_list_test_data_suites(
         project: PydanticObjectId = None,
-        ids: Annotated[List[PydanticObjectId | str] | None, Query()] = None
+        ids: Annotated[List[PydanticObjectId | str] | None, Query()] = None,
+        page: int = None,
+        limit: int = None,
+        q: str = None
 ):
     filters: dict = {}
     if project:
         filters['project'] = Project.link_from_id(project)
     if ids is not None:
         filters['_id'] = {"$in": ids}
-    items: List[TestDataSuite] = await list_test_data_suites(filters)
-    return APIListTestDataSuitesPaginatedResponse(items=items, count=len(items))
+    if q is not None:
+        filters['q'] = q
+
+    items, total_count = await list_test_data_suites(filters, page, limit)
+    return APIListTestDataSuitesPaginatedResponse(
+        items=items,
+        count=total_count
+    )
 
 
 @router.post(
@@ -117,10 +127,24 @@ async def route_delete_test_data_suite(test_data_suite: TestDataSuite = Depends(
     response_model=APIListTestDataFileResourcesPaginatedResponse
 )
 async def route_list_test_data_suite_file_resources(
-        id: PydanticObjectId = None
+        test_data_suite: TestDataSuite = Depends(get_test_data_suite),
+        project: PydanticObjectId = None,
+        page: int = None,
+        limit: int = None,
+        q: str = None
 ):
-    items: List[TestDataFileResource] = await list_test_data_suite_file_resources(id)
-    return APIListTestDataFileResourcesPaginatedResponse(items=items, count=len(items))
+    filters: dict = {}
+    if project:
+        filters['project'] = Project.link_from_id(project)
+    if q is not None:
+        filters['q'] = q
+
+    items, total_count = \
+        await list_test_data_suite_file_resources(test_data_suite, filters, page, limit)
+    return APIListTestDataFileResourcesPaginatedResponse(
+        items=items,
+        count=total_count
+    )
 
 
 @router.post(
@@ -201,3 +225,15 @@ async def route_transform_test_data(
         user: User = Depends(current_active_user)
 ):
     return await transform_test_data_for_project(project_id=filters.project, user=user)
+
+
+@router.post(
+    "/tasks/sparql_validation",
+    description=f"Test Data SPARQL Validation",
+    name=f"transform_test_data"
+)
+async def route_test_data_sparql_validation(
+        filters: APIRequestWithProject,
+        user: User = Depends(current_active_user)
+):
+    return await test_data_sparql_validation_for_project(project_id=filters.project, user=user)

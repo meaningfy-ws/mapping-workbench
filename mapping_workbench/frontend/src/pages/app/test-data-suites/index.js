@@ -1,10 +1,8 @@
 import {useCallback, useEffect, useState} from 'react';
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
-import Box from '@mui/material/Box';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
@@ -33,14 +31,15 @@ const useItemsSearch = () => {
             status: [],
             inStock: undefined
         },
-        page: 0,
-        rowsPerPage: 5
+        page: sectionApi.DEFAULT_PAGE,
+        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
 
     const handleFiltersChange = useCallback((filters) => {
         setState((prevState) => ({
             ...prevState,
-            filters
+            filters,
+            page: 0
         }));
     }, []);
 

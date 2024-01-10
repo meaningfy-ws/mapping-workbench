@@ -3,7 +3,6 @@ import toast from 'react-hot-toast';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
 import Button from '@mui/material/Button';
-import {MenuItem} from '@mui/material';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
@@ -14,9 +13,6 @@ import {RouterLink} from 'src/components/router-link';
 import {paths} from 'src/paths';
 import {useRouter} from 'src/hooks/use-router';
 import {FormTextField} from "../../../components/app/form/text-field";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
-import MenuList from "@mui/material/MenuList";
 
 
 export const EditForm = (props) => {
@@ -26,20 +22,16 @@ export const EditForm = (props) => {
     const item = itemctx.data;
 
     let initialValues = {
-        prefix: item.prefix || '',
-        uri: item.uri || '',
-        is_syncable: item.is_syncable !== null ? item.is_syncable : true
+        title: item.title || ''
     };
 
     const formik = useFormik({
         initialValues: initialValues,
         validationSchema: Yup.object({
-            prefix: Yup
+            title: Yup
                 .string()
                 .max(255)
-                .required('Prefix is required'),
-            uri: Yup.string().max(2048),
-            is_syncable: Yup.boolean()
+                .required('Title is required')
         }),
         onSubmit: async (values, helpers) => {
             try {
@@ -85,27 +77,8 @@ export const EditForm = (props) => {
                         spacing={3}
                     >
                         <Grid xs={12} md={12}>
-                            <FormTextField formik={formik} name="prefix" label="Prefix" required={true}/>
+                            <FormTextField formik={formik} name="title" label="Title" required={true}/>
                         </Grid>
-                        <Grid xs={12} md={12}>
-                            <FormTextField formik={formik} name="uri" label="URI"/>
-                        </Grid>
-                        <MenuList>
-                            <MenuItem key={0}>
-                                <FormControlLabel
-                                    sx={{
-                                        width: '100%'
-                                    }}
-                                    control={
-                                        <Switch
-                                            checked={formik.values.is_syncable}
-                                            onChange={(event) => formik.setFieldValue('is_syncable', event.target.checked)}
-                                        />
-                                    }
-                                    label="Syncable"
-                                />
-                            </MenuItem>
-                        </MenuList>
                     </Grid>
                 </CardContent>
             </Card>

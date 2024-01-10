@@ -13,7 +13,7 @@ from mapping_workbench.backend.core.models.base_project_resource_entity import B
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite
 from mapping_workbench.backend.state_manager.models.state_object import ObjectState, StatefulObjectABC
-from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataSuiteState
+#from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataSuiteState
 
 
 class MappingPackageException(Exception):
@@ -30,7 +30,7 @@ class MappingPackageIn(BaseProjectResourceEntityInSchema):
     end_date: Optional[datetime] = None
     min_xsd_version: Optional[str] = None
     max_xsd_version: Optional[str] = None
-    test_data_suites: Optional[List[Optional[Link[TestDataSuite]]]] = None
+    #test_data_suites: Optional[List[Optional[Link[TestDataSuite]]]] = None
     shacl_test_suites: Optional[List[Optional[Link[SHACLTestSuite]]]] = None
 
 
@@ -56,7 +56,7 @@ class MappingPackageOut(BaseProjectResourceEntityOutSchema):
     end_date: Optional[datetime] = None
     min_xsd_version: Optional[str] = None
     max_xsd_version: Optional[str] = None
-    test_data_suites: Optional[List[Link[TestDataSuite]]] = None
+    #test_data_suites: Optional[List[Link[TestDataSuite]]] = None
     shacl_test_suites: Optional[List[Link[SHACLTestSuite]]] = None
 
 
@@ -74,7 +74,7 @@ class MappingPackageState(ObjectState):
     end_date: Optional[datetime] = None
     min_xsd_version: Optional[str] = None
     max_xsd_version: Optional[str] = None
-    test_data_suites: List[TestDataSuiteState] = []
+    #test_data_suites: List[TestDataSuiteState] = []
     shacl_test_suites: List[SHACLTestSuite] = []
     conceptual_mapping_rule_states: List[ConceptualMappingRuleState] = []
 
@@ -89,7 +89,7 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
     end_date: Optional[datetime] = None
     min_xsd_version: Optional[str] = None
     max_xsd_version: Optional[str] = None
-    test_data_suites: Optional[List[Link[TestDataSuite]]] = None
+    #test_data_suites: Optional[List[Link[TestDataSuite]]] = None
     shacl_test_suites: Optional[List[Link[SHACLTestSuite]]] = None
 
     async def get_conceptual_mapping_rules(self) -> List[ConceptualMappingRuleState]:

@@ -16,9 +16,6 @@ import {FormTextField} from "../../../components/app/form/text-field";
 import {sessionApi} from "../../../api/session";
 import {MappingPackageFormSelect} from "../mapping-package/components/mapping-package-form-select";
 import {FormCodeTextArea} from "../../../components/app/form/code-text-area";
-import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
-import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
 import * as React from "react";
@@ -34,7 +31,7 @@ export const EditForm = (props) => {
         triple_map_uri: item.triple_map_uri || '',
         triple_map_content: item.triple_map_content || '',
         format: item.format || sectionApi.FILE_RESOURCE_DEFAULT_FORMAT || '',
-        mapping_package: (item.mapping_package && item.mapping_package.id) || ''
+        mapping_package_id: item.mapping_package_id || ''
     };
 
     const formik = useFormik({
@@ -45,7 +42,7 @@ export const EditForm = (props) => {
                 .max(255)
                 .required('URI is required'),
             triple_map_content: Yup.string(),
-            mapping_package: Yup.string().max(255).required('Package is required')
+            mapping_package_id: Yup.string().max(255).required('Package is required')
         }),
         onSubmit: async (values, helpers) => {
             try {

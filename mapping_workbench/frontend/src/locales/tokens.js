@@ -69,6 +69,7 @@ export const tokens = {
     triple_map_fragments: 'nav.triple_map_fragments',
     generic_triple_map_fragments: 'nav.generic_triple_map_fragments',
     specific_triple_map_fragments: 'nav.specific_triple_map_fragments',
+    fields_registry: 'nav.fields_registry',
 
     admin: 'nav.admin',
     users: 'nav.users',

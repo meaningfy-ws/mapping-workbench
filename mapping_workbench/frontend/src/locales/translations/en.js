@@ -69,6 +69,7 @@ export const en = {
   [tokens.nav.triple_map_fragments]: 'Triple Maps',
   [tokens.nav.specific_triple_map_fragments]: 'Specific Triple Maps',
   [tokens.nav.generic_triple_map_fragments]: 'Generic Triple Maps',
+  [tokens.nav.fields_registry]: 'Fields Registry',
   [tokens.nav.terms_validator]: 'Terms Validator',
   [tokens.nav.tasks]: 'Tasks',
   [tokens.nav.generate_cm_assertions_queries]: 'Generate CM Assertions Queries',

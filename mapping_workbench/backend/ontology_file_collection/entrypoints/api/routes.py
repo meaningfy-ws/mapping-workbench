@@ -1,5 +1,3 @@
-from typing import List
-
 from beanie import PydanticObjectId
 from fastapi import APIRouter, status, Depends
 from starlette.requests import Request

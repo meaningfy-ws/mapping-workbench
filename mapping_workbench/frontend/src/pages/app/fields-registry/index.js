@@ -8,7 +8,7 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {ontologyFileCollectionsApi as sectionApi} from 'src/api/ontology-file-collections';
+import {fieldsRegistryApi as sectionApi} from 'src/api/fields-registry';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
@@ -16,8 +16,8 @@ import {useMounted} from 'src/hooks/use-mounted';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
-import {FileCollectionListSearch} from 'src/sections/app/file-manager/file-collection-list-search';
-import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
+import {ListSearch} from "../../../sections/app/fields-registry/list-search";
+import {ListTable} from "../../../sections/app/fields-registry/list-table";
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -157,8 +157,8 @@ const Page = () => {
                     </Stack>
                 </Stack>
                 <Card>
-                    <FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
-                    <FileCollectionListTable
+                    <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
+                    <ListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                         page={itemsSearch.state.page}
@@ -170,7 +170,7 @@ const Page = () => {
                 </Card>
             </Stack>
         </>
-    );
+    )
 };
 
 Page.getLayout = (page) => (

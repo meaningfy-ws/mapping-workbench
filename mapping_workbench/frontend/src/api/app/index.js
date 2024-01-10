@@ -20,7 +20,6 @@ const METHOD = {
 };
 
 class AppApi {
-
     constructor() {
         this.config = apiConfig;
         this.apiClient = this.getApiClient(this.config);

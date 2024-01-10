@@ -1,24 +1,33 @@
 from typing import List
 
 from beanie import PydanticObjectId
-from bson import DBRef
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
 from mapping_workbench.backend.core.services.request import request_update_data, api_entity_is_found, \
-    request_create_data
+    request_create_data, prepare_search_param, pagination_params
 from mapping_workbench.backend.resource_collection.models.entity import ResourceCollection, ResourceFile, \
     ResourceFileUpdateIn, ResourceFileCreateIn
 from mapping_workbench.backend.user.models.user import User
 
 
-async def list_resource_collections(filters=None) -> List[ResourceCollection]:
+async def list_resource_collections(filters: dict = None, page: int = None, limit: int = None) -> \
+        (List[ResourceCollection], int):
     query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
-    return await ResourceCollection.find(
+
+    prepare_search_param(query_filters)
+    skip, limit = pagination_params(page, limit)
+
+    items: List[ResourceCollection] = await ResourceCollection.find(
         query_filters,
         projection_model=ResourceCollection,
-        fetch_links=False
+        fetch_links=False,
+        skip=skip,
+        limit=limit
     ).to_list()
+
+    total_count: int = await ResourceCollection.find(query_filters).count()
+    return items, total_count
 
 
 async def create_resource_collection(resource_collection: ResourceCollection, user: User) -> ResourceCollection:
@@ -48,15 +57,23 @@ async def delete_resource_collection(resource_collection: ResourceCollection):
 
 
 async def list_resource_collection_file_resources(
-        id: PydanticObjectId = None,
-        filters=None
-) -> List[ResourceFile]:
+        resource_collection: ResourceCollection,
+        filters=None, page: int = None, limit: int = None
+):
     query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
-    return await ResourceFile.find(
-        ResourceFile.resource_collection == ResourceCollection.link_from_id(id),
+    query_filters['resource_collection'] = ResourceCollection.link_from_id(resource_collection.id)
+
+    prepare_search_param(query_filters)
+    skip, limit = pagination_params(page, limit)
+
+    items: List[ResourceFile] = await ResourceFile.find(
         query_filters,
-        fetch_links=False
+        fetch_links=False,
+        skip=skip,
+        limit=limit
     ).to_list()
+    total_count: int = await ResourceFile.find(query_filters).count()
+    return items, total_count
 
 
 async def create_resource_collection_file_resource(

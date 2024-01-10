@@ -5,16 +5,16 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {specificTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/specific';
+import {fieldsRegistryApi as sectionApi} from 'src/api/fields-registry';
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
+import {EditForm} from 'src/sections/app/fields-registry/edit-form';
 import {ForItemEditForm} from "src/contexts/app/section/for-item-form";
 import {useItem} from "src/contexts/app/section/for-item-data-state";
 import {useRouter} from "src/hooks/use-router";
-import {EditForm} from "../../../../sections/app/specific-triple-map-fragment/edit-form";
 
 
 const Page = () => {
@@ -76,7 +76,7 @@ const Page = () => {
                         >
                             <Stack spacing={1}>
                                 <Typography variant="h4">
-                                    {item.triple_map_uri}
+                                    {item.prefix}
                                 </Typography>
                                 <Stack
                                     alignItems="center"
