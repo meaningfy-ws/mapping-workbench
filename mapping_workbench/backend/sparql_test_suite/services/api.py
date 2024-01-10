@@ -5,16 +5,29 @@ from beanie import PydanticObjectId
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
 from mapping_workbench.backend.core.services.request import request_update_data, api_entity_is_found, \
-    request_create_data
+    request_create_data, prepare_search_param, pagination_params
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuite, SPARQLTestFileResource, \
     SPARQLTestFileResourceUpdateIn, SPARQLTestFileResourceCreateIn
 from mapping_workbench.backend.user.models.user import User
 
 
-async def list_sparql_test_suites(filters=None) -> List[SPARQLTestSuite]:
+async def list_sparql_test_suites(filters: dict = None, page: int = None, limit: int = None) -> \
+        (List[SPARQLTestSuite], int):
     query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
-    return await SPARQLTestSuite.find(query_filters, projection_model=SPARQLTestSuite, fetch_links=False).to_list()
+
+    prepare_search_param(query_filters)
+    skip, limit = pagination_params(page, limit)
+
+    items: List[SPARQLTestSuite] = await SPARQLTestSuite.find(
+        query_filters,
+        projection_model=SPARQLTestSuite,
+        fetch_links=False,
+        skip=skip,
+        limit=limit
+    ).to_list()
+    total_count: int = await SPARQLTestSuite.find(query_filters).count()
+    return items, total_count
 
 
 async def create_sparql_test_suite(sparql_test_suite: SPARQLTestSuite, user: User) -> SPARQLTestSuite:
@@ -54,15 +67,23 @@ async def list_sparql_test_file_resources(
 
 
 async def list_sparql_test_suite_file_resources(
-        id: PydanticObjectId = None,
-        filters=None
-) -> List[SPARQLTestFileResource]:
+        sparql_test_suite: SPARQLTestSuite,
+        filters=None, page: int = None, limit: int = None
+) -> (List[SPARQLTestFileResource], int):
     query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
-    return await SPARQLTestFileResource.find(
-        SPARQLTestFileResource.sparql_test_suite == SPARQLTestSuite.link_from_id(id),
+    query_filters['sparql_test_suite'] = SPARQLTestSuite.link_from_id(sparql_test_suite.id)
+
+    prepare_search_param(query_filters)
+    skip, limit = pagination_params(page, limit)
+
+    items: List[SPARQLTestFileResource] = await SPARQLTestFileResource.find(
         query_filters,
-        fetch_links=False
+        fetch_links=False,
+        skip=skip,
+        limit=limit
     ).to_list()
+    total_count: int = await SPARQLTestFileResource.find(query_filters).count()
+    return items, total_count
 
 
 async def create_sparql_test_suite_file_resource(

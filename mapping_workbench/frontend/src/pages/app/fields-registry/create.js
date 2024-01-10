@@ -1,16 +1,18 @@
 import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {testDataSuitesApi as sectionApi} from 'src/api/test-data-suites';
+import {fieldsRegistryApi as sectionApi} from 'src/api/fields-registry';
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
-import {FileCollectionEditForm} from 'src/sections/app/file-manager/file-collection-edit-form';
+import {EditForm} from 'src/sections/app/fields-registry/edit-form';
 import {ForItemCreateForm} from "src/contexts/app/section/for-item-form";
 
 
@@ -44,7 +46,7 @@ const Page = () => {
                         </Link>
                     </div>
                 </Stack>
-                <FileCollectionEditForm itemctx={new ForItemCreateForm(item, sectionApi)}/>
+                <EditForm itemctx={new ForItemCreateForm(item, sectionApi)}/>
             </Stack>
         </>
     );

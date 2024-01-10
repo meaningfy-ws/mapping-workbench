@@ -183,7 +183,7 @@ export const EditForm = (props) => {
             source_xpath: prepareTextareaListValue(item.source_xpath),
             target_class_path: item.target_class_path || '',
             target_property_path: item.target_property_path || '',
-            mapping_packages: (item.mapping_packages || []).map(x => x.id),
+            refers_to_mapping_package_ids: item.refers_to_mapping_package_ids || [],
             sparql_assertions: (item.sparql_assertions || []).map(x => x.id),
             triple_map_fragment: (item.triple_map_fragment && item.triple_map_fragment.id) || '',
             notes: (item.notes || []),
@@ -477,7 +477,7 @@ export const EditForm = (props) => {
                     <CardContent sx={{pt: 0}}>
                         <Grid container spacing={3}>
                             <Grid xs={12} md={12}>
-                                <MappingPackageCheckboxList mappingPackages={formik.values.mapping_packages}/>
+                                <MappingPackageCheckboxList mappingPackages={formik.values.refers_to_mapping_package_ids}/>
                             </Grid>
                         </Grid>
                     </CardContent>
@@ -554,7 +554,7 @@ export const EditForm = (props) => {
                                             </Box>
                                         )}
                                         value={COMMENT_PRIORITY.HIGH}
-                                        checked={formik.values.note.priority === COMMENT_PRIORITY.HIGH}
+                                        checked={formik.values.note && formik.values.note.priority === COMMENT_PRIORITY.HIGH}
                                     />
                                     <FormControlLabel
                                         control={<Radio/>}
@@ -569,7 +569,7 @@ export const EditForm = (props) => {
                                             </Box>
                                         )}
                                         value={COMMENT_PRIORITY.NORMAL}
-                                        checked={formik.values.note.priority === COMMENT_PRIORITY.NORMAL}
+                                        checked={formik.values.note && formik.values.note.priority === COMMENT_PRIORITY.NORMAL}
                                     />
                                     <FormControlLabel
                                         control={<Radio/>}
@@ -584,7 +584,7 @@ export const EditForm = (props) => {
                                             </Box>
                                         )}
                                         value={COMMENT_PRIORITY.LOW}
-                                        checked={formik.values.note.priority === COMMENT_PRIORITY.LOW}
+                                        checked={formik.values.note && formik.values.note.priority === COMMENT_PRIORITY.LOW}
                                     />
                                 </Box>
                             </Stack>
@@ -595,7 +595,7 @@ export const EditForm = (props) => {
                                 fullWidth
                                 label="Add new Note ..."
                                 helperText="... for external viewers"
-                                value={formik.values.note.comment}
+                                value={formik.values.note && formik.values.note.comment || ''}
                                 onBlur={formik.handleBlur}
                                 onChange={formik.handleChange}
                             />
@@ -659,7 +659,7 @@ export const EditForm = (props) => {
                                             </Box>
                                         )}
                                         value={COMMENT_PRIORITY.HIGH}
-                                        checked={formik.values.comment.priority === COMMENT_PRIORITY.HIGH}
+                                        checked={formik.values.comment && formik.values.comment.priority === COMMENT_PRIORITY.HIGH}
                                     />
                                     <FormControlLabel
                                         control={<Radio/>}
@@ -674,7 +674,7 @@ export const EditForm = (props) => {
                                             </Box>
                                         )}
                                         value={COMMENT_PRIORITY.NORMAL}
-                                        checked={formik.values.comment.priority === COMMENT_PRIORITY.NORMAL}
+                                        checked={formik.values.comment && formik.values.comment.priority === COMMENT_PRIORITY.NORMAL}
                                     />
                                     <FormControlLabel
                                         control={<Radio/>}
@@ -689,7 +689,7 @@ export const EditForm = (props) => {
                                             </Box>
                                         )}
                                         value={COMMENT_PRIORITY.LOW}
-                                        checked={formik.values.comment.priority === COMMENT_PRIORITY.LOW}
+                                        checked={formik.values.comment && formik.values.comment.priority === COMMENT_PRIORITY.LOW}
                                     />
                                 </Box>
                             </Stack>
@@ -700,7 +700,7 @@ export const EditForm = (props) => {
                                 fullWidth
                                 label="Add new Comment ..."
                                 helperText="... for other editors"
-                                value={formik.values.comment.comment}
+                                value={formik.values.comment && formik.values.comment.comment || ''}
                                 onBlur={formik.handleBlur}
                                 onChange={formik.handleChange}
                             />

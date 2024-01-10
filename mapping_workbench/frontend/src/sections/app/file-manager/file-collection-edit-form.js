@@ -23,6 +23,7 @@ import FormLabel from "@mui/material/FormLabel";
 import Select from "@mui/material/Select";
 import {FormTextField} from "../../../components/app/form/text-field";
 import {FormTextArea} from "../../../components/app/form/text-area";
+import {MappingPackageFormSelect} from "../mapping-package/components/mapping-package-form-select";
 
 
 export const FileCollectionEditForm = (props) => {
@@ -47,6 +48,10 @@ export const FileCollectionEditForm = (props) => {
 
     if (sectionApi.hasFileCollectionType) {
         initialValues['type'] = item.type || null;
+    }
+
+    if (sectionApi.hasMappingPackage) {
+        initialValues['mapping_package_id'] = item.mapping_package_id || '';
     }
 
     switch (sectionApi.section) {
@@ -131,6 +136,11 @@ export const FileCollectionEditForm = (props) => {
                         >
                             <FormTextField formik={formik} name="title" label="Title" required={true}/>
                         </Grid>
+                        {sectionApi.hasMappingPackage && (
+                            <Grid xs={12} md={12}>
+                                <MappingPackageFormSelect formik={formik}/>
+                            </Grid>
+                        )}
                         {sectionApi.hasFileCollectionType && (
                             <Grid xs={12} md={12}>
                                 <TextField

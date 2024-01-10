@@ -227,6 +227,25 @@ export const useSections = () => {
                         path: paths.app.specific_triple_map_fragments.index
                     }
                 ]
+            },
+            {
+                title: t(tokens.nav.fields_registry),
+                path: paths.app.fields_registry.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <HiveIcon/>
+                    </SvgIcon>
+                ),
+                items: [
+                    {
+                        title: t(tokens.nav.list),
+                        path: paths.app.fields_registry.index
+                    },
+                    {
+                        title: t(tokens.nav.create),
+                        path: paths.app.fields_registry.create
+                    }
+                ]
             });
     }
     items.resources.push(sections);

@@ -2,16 +2,16 @@ PROJECT_PATH = $(shell pwd)
 
 ENV_FILE := .env
 
+# include .env files if they exist
+-include ${ENV_FILE}
+
 NAME := mapping_workbench
+DOCKER_PROJECT := ${NAME}_${ENVIRONMENT}
 BACKEND_INFRA_FOLDER := ${PROJECT_PATH}/${NAME}/backend
 FRONTEND_HOME := ${NAME}/frontend
 FRONTEND_INFRA_FOLDER := ${PROJECT_PATH}/${FRONTEND_HOME}
 
 RML_MAPPER_PATH = ${PROJECT_PATH}/.rmlmapper/rmlmapper.jar
-
-
-# include .env files if they exist
--include ${ENV_FILE}
 
 
 #-----------------------------------------------------------------------------
@@ -107,37 +107,37 @@ prod-dotenv-file:
 
 build-backend:
 	@ echo "Building the BACKEND"
-	@ docker-compose -p ${NAME} --file ./infra/backend/docker-compose.yml --env-file ${ENV_FILE} build --progress plain --no-cache --force-rm
-	@ docker-compose -p ${NAME} --file ./infra/backend/docker-compose.yml --env-file ${ENV_FILE} up -d --force-recreate
+	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/backend/docker-compose.yml --env-file ${ENV_FILE} build --progress plain --no-cache --force-rm
+	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/backend/docker-compose.yml --env-file ${ENV_FILE} up -d --force-recreate
 
 start-backend:
 	@ echo "Starting the BACKEND"
-	@ docker-compose -p ${NAME} --file ./infra/backend/docker-compose.yml --env-file ${ENV_FILE} up -d
+	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/backend/docker-compose.yml --env-file ${ENV_FILE} up -d
 
 stop-backend:
 	@ echo "Stopping the BACKEND"
-	@ docker-compose -p ${NAME} --file ./infra/backend/docker-compose.yml --env-file ${ENV_FILE} down
+	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/backend/docker-compose.yml --env-file ${ENV_FILE} down
 
 build-frontend:
 	@ echo "Building the FRONTEND"
-	@ docker-compose -p ${NAME} --file ./infra/frontend/docker-compose.yml --env-file ${ENV_FILE} build --progress plain --no-cache --force-rm
-	@ docker-compose -p ${NAME} --file ./infra/frontend/docker-compose.yml --env-file ${ENV_FILE} up -d --force-recreate
+	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/frontend/docker-compose.yml --env-file ${ENV_FILE} build --progress plain --no-cache --force-rm
+	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/frontend/docker-compose.yml --env-file ${ENV_FILE} up -d --force-recreate
 
 start-frontend:
 	@ echo "Starting the FRONTEND"
-	@ docker-compose -p ${NAME} --file ./infra/frontend/docker-compose.yml --env-file ${ENV_FILE} up -d
+	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/frontend/docker-compose.yml --env-file ${ENV_FILE} up -d
 
 stop-frontend:
 	@ echo "Stopping the FRONTEND"
-	@ docker-compose -p ${NAME} --file ./infra/frontend/docker-compose.yml --env-file ${ENV_FILE} down
+	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/frontend/docker-compose.yml --env-file ${ENV_FILE} down
 
 start-mongo: build-externals
 	@ echo "Starting the Mongo services"
-	@ docker-compose -p ${NAME} --file ./infra/mongodb/docker-compose.yml --env-file ${ENV_FILE} up -d
+	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/mongodb/docker-compose.yml --env-file ${ENV_FILE} up -d
 
 stop-mongo:
 	@ echo "Stopping the Mongo services"
-	@ docker-compose -p ${NAME} --file ./infra/mongodb/docker-compose.yml --env-file ${ENV_FILE} down
+	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/mongodb/docker-compose.yml --env-file ${ENV_FILE} down
 
 
 #-----------------------------------------------------------------------------
@@ -146,29 +146,29 @@ stop-mongo:
 
 build-backend-dev:
 	@ echo "Building the BACKEND"
-	@ docker-compose -p ${NAME} --file ./infra/backend/docker-compose.dev.yml --env-file ${ENV_FILE} build --progress plain --no-cache --force-rm
-	@ docker-compose -p ${NAME} --file ./infra/backend/docker-compose.dev.yml --env-file ${ENV_FILE} up -d --force-recreate
+	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/backend/docker-compose.dev.yml --env-file ${ENV_FILE} build --progress plain --no-cache --force-rm
+	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/backend/docker-compose.dev.yml --env-file ${ENV_FILE} up -d --force-recreate
 
 start-backend-dev:
 	@ echo "Starting the BACKEND"
-	@ docker-compose -p ${NAME} --file ./infra/backend/docker-compose.dev.yml --env-file ${ENV_FILE} up -d
+	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/backend/docker-compose.dev.yml --env-file ${ENV_FILE} up -d
 
 stop-backend-dev:
 	@ echo "Stopping the BACKEND"
-	@ docker-compose -p ${NAME} --file ./infra/backend/docker-compose.dev.yml --env-file ${ENV_FILE} down
+	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/backend/docker-compose.dev.yml --env-file ${ENV_FILE} down
 
 build-frontend-dev:
 	@ echo "Building the FRONTEND"
-	@ docker-compose -p ${NAME} --file ./infra/frontend/docker-compose.dev.yml --env-file ${ENV_FILE} build --progress plain --no-cache --force-rm
-	@ docker-compose -p ${NAME} --file ./infra/frontend/docker-compose.dev.yml --env-file ${ENV_FILE} up -d --force-recreate
+	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/frontend/docker-compose.dev.yml --env-file ${ENV_FILE} build --progress plain --no-cache --force-rm
+	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/frontend/docker-compose.dev.yml --env-file ${ENV_FILE} up -d --force-recreate
 
 start-frontend-dev:
 	@ echo "Starting the FRONTEND"
-	@ docker-compose -p ${NAME} --file ./infra/frontend/docker-compose.dev.yml --env-file ${ENV_FILE} up -d
+	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/frontend/docker-compose.dev.yml --env-file ${ENV_FILE} up -d
 
 stop-frontend-dev:
 	@ echo "Stopping the FRONTEND"
-	@ docker-compose -p ${NAME} --file ./infra/frontend/docker-compose.dev.yml --env-file ${ENV_FILE} down
+	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/frontend/docker-compose.dev.yml --env-file ${ENV_FILE} down
 
 clear-frontend:
 	@ cd ${FRONTEND_HOME} && rm -rf build && rm -rf node_modules && rm -f .env* &&  rm -f package-lock.json
@@ -185,11 +185,11 @@ start-mongo-console-mode:
 
 start-mongo-dev: build-externals
 	@ echo "Starting the Mongo services"
-	@ docker-compose -p ${NAME} --file ./infra/mongodb/docker-compose.dev.yml --env-file ${ENV_FILE} up -d
+	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/mongodb/docker-compose.dev.yml --env-file ${ENV_FILE} up -d
 
 stop-mongo-dev:
 	@ echo "Stopping the Mongo services"
-	@ docker-compose -p ${NAME} --file ./infra/mongodb/docker-compose.dev.yml --env-file ${ENV_FILE} down
+	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/mongodb/docker-compose.dev.yml --env-file ${ENV_FILE} down
 
 #-----------------------------------------------------------------------------
 # SERVER SERVICES

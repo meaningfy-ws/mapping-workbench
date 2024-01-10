@@ -5,16 +5,29 @@ from beanie import PydanticObjectId
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
 from mapping_workbench.backend.core.services.request import request_update_data, api_entity_is_found, \
-    request_create_data
+    request_create_data, prepare_search_param, pagination_params
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
     TestDataFileResourceUpdateIn, TestDataFileResourceCreateIn
 from mapping_workbench.backend.test_data_suite.services.transform_test_data import transform_test_data_file_resource
 from mapping_workbench.backend.user.models.user import User
 
 
-async def list_test_data_suites(filters=None) -> List[TestDataSuite]:
+async def list_test_data_suites(filters: dict = None, page: int = None, limit: int = None) -> \
+        (List[TestDataSuite], int):
     query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
-    return await TestDataSuite.find(query_filters, projection_model=TestDataSuite, fetch_links=False).to_list()
+
+    prepare_search_param(query_filters)
+    skip, limit = pagination_params(page, limit)
+
+    items: List[TestDataSuite] = await TestDataSuite.find(
+        query_filters,
+        projection_model=TestDataSuite,
+        fetch_links=False,
+        skip=skip,
+        limit=limit
+    ).to_list()
+    total_count: int = await TestDataSuite.find(query_filters).count()
+    return items, total_count
 
 
 async def create_test_data_suite(test_data_suite: TestDataSuite, user: User) -> TestDataSuite:
@@ -44,15 +57,24 @@ async def delete_test_data_suite(test_data_suite: TestDataSuite):
 
 
 async def list_test_data_suite_file_resources(
-        id: PydanticObjectId = None,
-        filters=None
-) -> List[TestDataFileResource]:
+        test_data_suite: TestDataSuite,
+        filters=None, page: int = None, limit: int = None
+) -> (List[TestDataFileResource], int):
     query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
-    return await TestDataFileResource.find(
-        TestDataFileResource.test_data_suite == TestDataSuite.link_from_id(id),
+    query_filters['test_data_suite'] = TestDataSuite.link_from_id(test_data_suite.id)
+
+    prepare_search_param(query_filters)
+    skip, limit = pagination_params(page, limit)
+    print("K :: ", test_data_suite.id, query_filters)
+
+    items: List[TestDataFileResource] = await TestDataFileResource.find(
         query_filters,
-        fetch_links=False
+        fetch_links=False,
+        skip=skip,
+        limit=limit
     ).to_list()
+    total_count: int = await TestDataFileResource.find(query_filters).count()
+    return items, total_count
 
 
 async def create_test_data_suite_file_resource(

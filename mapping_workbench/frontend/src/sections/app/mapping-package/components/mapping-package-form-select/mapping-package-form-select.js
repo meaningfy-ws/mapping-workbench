@@ -39,21 +39,21 @@ export const MappingPackageFormSelect = (props) => {
 
     const handleMappingPackageChange = useCallback(async (event) => {
         let value = event.target.value;
-        formik.setFieldValue('mapping_package', value);
+        formik.setFieldValue('mapping_package_id', value);
     }, [formik])
 
     return (
         <>
             <TextField
-                error={!!(formik.touched.mapping_package && formik.errors.mapping_package)}
+                error={!!(formik.touched.mapping_package_id && formik.errors.mapping_package_id)}
                 fullWidth
                 label="Mapping Package"
-                name="mapping_package"
+                name="mapping_package_id"
                 onBlur={formik.handleBlur}
                 onChange={handleMappingPackageChange}
                 select
-                value={formik.values.mapping_package}
-                required={formik.values.mapping_package.required}
+                value={formik.values.mapping_package_id}
+                required={formik.values.mapping_package_id.required}
             >
                 {mappingPackagesStore.items.map((mapping_package) => (
                     <MenuItem
