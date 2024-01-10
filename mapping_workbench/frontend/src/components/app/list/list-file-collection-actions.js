@@ -48,7 +48,10 @@ export const ListFileCollectionActions = (props) => {
 
     return (
         <>
-            <div className='newActionButtons' sx={{ display: "flex", flexDirection: "inline", justifyContent: "space-evenly"}}>
+            <div
+                className='newActionButtons'
+                sx={{display: "flex", flexDirection: "inline", justifyContent: "space-evenly"}}
+            >
                 {/*<Button
                     variant="text"
                     size="small"
@@ -63,7 +66,7 @@ export const ListFileCollectionActions = (props) => {
                     color="info"
                     onClick={handleResourceManagerAction}
                 >
-                Resources
+                    Resources
                 </Button>
                 <Button
                     variant="text"
@@ -71,7 +74,7 @@ export const ListFileCollectionActions = (props) => {
                     color="success"
                     onClick={handleEditAction}
                 >
-                Edit
+                    Edit
                 </Button>
                 <Button
                     variant="text"
@@ -79,7 +82,7 @@ export const ListFileCollectionActions = (props) => {
                     color="error"
                     onClick={() => setConfirmOpen(true)}
                 >
-                Delete
+                    Delete
                 </Button>
                 <ConfirmDialog
                     title="Delete It?"

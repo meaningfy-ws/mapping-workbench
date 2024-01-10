@@ -139,6 +139,12 @@ export const paths = {
             edit: '/app/ontology-terms/[id]/edit',
             view: '/app/ontology-terms/[id]/view'
         },
+        fields_registry: {
+            index: '/app/fields-registry',
+            create: '/app/fields-registry/create',
+            edit: '/app/fields-registry/[id]/edit',
+            view: '/app/fields-registry/[id]/view'
+        },
         tasks: {
             index: '/app/tasks',
             terms_validator: '/app/tasks/terms_validator',
@@ -242,6 +248,11 @@ export const apiPaths = {
         session_project: '/users/set_project_for_current_user_session',
         app_settings: '/users/set_app_settings_for_current_user',
         me: '/users/me'
+    },
+
+    fields_registry: {
+        items: '/fields_registry',
+        item: '/fields_registry/:id'
     },
 
     tasks: {

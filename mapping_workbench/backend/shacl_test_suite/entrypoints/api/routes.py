@@ -48,15 +48,24 @@ router = APIRouter(
 )
 async def route_list_shacl_test_suites(
         project: PydanticObjectId = None,
-        ids: Annotated[List[PydanticObjectId | str] | None, Query()] = None
+        ids: Annotated[List[PydanticObjectId | str] | None, Query()] = None,
+        page: int = None,
+        limit: int = None,
+        q: str = None
 ):
     filters: dict = {}
     if project:
         filters['project'] = Project.link_from_id(project)
     if ids is not None:
         filters['_id'] = {"$in": ids}
-    items: List[SHACLTestSuite] = await list_shacl_test_suites(filters)
-    return APIListSHACLTestSuitesPaginatedResponse(items=items, count=len(items))
+    if q is not None:
+        filters['q'] = q
+
+    items, total_count = await list_shacl_test_suites(filters, page, limit)
+    return APIListSHACLTestSuitesPaginatedResponse(
+        items=items,
+        count=total_count
+    )
 
 
 @router.post(
@@ -115,10 +124,25 @@ async def route_delete_shacl_test_suite(shacl_test_suite: SHACLTestSuite = Depen
     response_model=APIListSHACLTestFileResourcesPaginatedResponse
 )
 async def route_list_shacl_test_suite_file_resources(
-        id: PydanticObjectId = None
+        shacl_test_suite: SHACLTestSuite = Depends(get_shacl_test_suite),
+        project: PydanticObjectId = None,
+        page: int = None,
+        limit: int = None,
+        q: str = None
 ):
-    items: List[SHACLTestFileResource] = await list_shacl_test_suite_file_resources(id)
-    return APIListSHACLTestFileResourcesPaginatedResponse(items=items, count=len(items))
+
+    filters: dict = {}
+    if project:
+        filters['project'] = Project.link_from_id(project)
+    if q is not None:
+        filters['q'] = q
+
+    items, total_count = \
+        await list_shacl_test_suite_file_resources(shacl_test_suite, filters, page, limit)
+    return APIListSHACLTestFileResourcesPaginatedResponse(
+        items=items,
+        count=total_count
+    )
 
 
 @router.post(

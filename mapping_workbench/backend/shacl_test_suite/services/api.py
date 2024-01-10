@@ -5,15 +5,29 @@ from beanie import PydanticObjectId
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
 from mapping_workbench.backend.core.services.request import request_update_data, api_entity_is_found, \
-    request_create_data
-from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestFileResource, \
-    SHACLTestFileResourceCreateIn, SHACLTestFileResourceUpdateIn
+    request_create_data, prepare_search_param, pagination_params
+from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestFileResource
+from mapping_workbench.backend.shacl_test_suite.models.entity_api_response import SHACLTestFileResourceCreateIn, \
+    SHACLTestFileResourceUpdateIn
 from mapping_workbench.backend.user.models.user import User
 
 
-async def list_shacl_test_suites(filters=None) -> List[SHACLTestSuite]:
+async def list_shacl_test_suites(filters: dict = None, page: int = None, limit: int = None) -> \
+        (List[SHACLTestSuite], int):
     query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
-    return await SHACLTestSuite.find(query_filters, projection_model=SHACLTestSuite, fetch_links=False).to_list()
+
+    prepare_search_param(query_filters)
+    skip, limit = pagination_params(page, limit)
+
+    items: List[SHACLTestSuite] = await SHACLTestSuite.find(
+        query_filters,
+        projection_model=SHACLTestSuite,
+        fetch_links=False,
+        skip=skip,
+        limit=limit
+    ).to_list()
+    total_count: int = await SHACLTestSuite.find(query_filters).count()
+    return items, total_count
 
 
 async def create_shacl_test_suite(shacl_test_suite: SHACLTestSuite, user: User) -> SHACLTestSuite:
@@ -43,15 +57,23 @@ async def delete_shacl_test_suite(shacl_test_suite: SHACLTestSuite):
 
 
 async def list_shacl_test_suite_file_resources(
-        id: PydanticObjectId = None,
-        filters = None
-) -> List[SHACLTestFileResource]:
+        shacl_test_suite: SHACLTestSuite,
+        filters=None, page: int = None, limit: int = None
+):
     query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
-    return await SHACLTestFileResource.find(
-        SHACLTestFileResource.shacl_test_suite == SHACLTestSuite.link_from_id(id),
+    query_filters['shacl_test_suite'] = SHACLTestSuite.link_from_id(shacl_test_suite.id)
+
+    prepare_search_param(query_filters)
+    skip, limit = pagination_params(page, limit)
+
+    items: List[SHACLTestFileResource] = await SHACLTestFileResource.find(
         query_filters,
-        fetch_links=False
+        fetch_links=False,
+        skip=skip,
+        limit=limit
     ).to_list()
+    total_count: int = await SHACLTestFileResource.find(query_filters).count()
+    return items, total_count
 
 
 async def create_shacl_test_suite_file_resource(

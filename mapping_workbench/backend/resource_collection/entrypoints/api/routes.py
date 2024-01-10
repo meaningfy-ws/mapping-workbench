@@ -47,13 +47,22 @@ router = APIRouter(
     response_model=APIListResourceCollectionsPaginatedResponse
 )
 async def route_list_resource_collections(
-        project: PydanticObjectId = None
+        project: PydanticObjectId = None,
+        page: int = None,
+        limit: int = None,
+        q: str = None
 ):
     filters: dict = {}
     if project:
         filters['project'] = Project.link_from_id(project)
-    items: List[ResourceCollection] = await list_resource_collections(filters)
-    return APIListResourceCollectionsPaginatedResponse(items=items, count=len(items))
+    if q is not None:
+        filters['q'] = q
+
+    items, total_count = await list_resource_collections(filters, page, limit)
+    return APIListResourceCollectionsPaginatedResponse(
+        items=items,
+        count=total_count
+    )
 
 
 @router.post(
@@ -112,10 +121,24 @@ async def route_delete_resource_collection(resource_collection: ResourceCollecti
     response_model=APIListResourceFilesPaginatedResponse
 )
 async def route_list_resource_collection_file_resources(
-        id: PydanticObjectId = None
+        resource_collection: ResourceCollection = Depends(get_resource_collection),
+        project: PydanticObjectId = None,
+        page: int = None,
+        limit: int = None,
+        q: str = None
 ):
-    items: List[ResourceFile] = await list_resource_collection_file_resources(id)
-    return APIListResourceFilesPaginatedResponse(items=items, count=len(items))
+    filters: dict = {}
+    if project:
+        filters['project'] = Project.link_from_id(project)
+    if q is not None:
+        filters['q'] = q
+
+    items, total_count = \
+        await list_resource_collection_file_resources(resource_collection, filters, page, limit)
+    return APIListResourceFilesPaginatedResponse(
+        items=items,
+        count=total_count
+    )
 
 
 @router.post(

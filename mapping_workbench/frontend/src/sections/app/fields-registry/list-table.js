@@ -1,14 +1,10 @@
 import {Fragment, useCallback, useState} from 'react';
 import PropTypes from 'prop-types';
-import {toast} from 'react-hot-toast';
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
-import Button from '@mui/material/Button';
 import CardContent from '@mui/material/CardContent';
 import Divider from '@mui/material/Divider';
-import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
-import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -17,23 +13,17 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { format } from 'date-fns';
-import {useMounted} from 'src/hooks/use-mounted';
 
 import {Scrollbar} from 'src/components/scrollbar';
-import {SeverityPill} from 'src/components/severity-pill';
+import {ListItemActions} from 'src/components/app/list/list-item-actions';
 
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import Tooltip from "@mui/material/Tooltip";
-import {ListFileCollectionActions} from "src/components/app/list/list-file-collection-actions";
-import { PropertyListItem } from 'src/components/property-list-item';
-import {FileCollectionListSearch} from "./file-collection-list-search";
-import {sparqlTestSuitesApi as sectionApi} from "../../../api/sparql-test-suites";
-import Card from "@mui/material/Card";
+import Switch from "@mui/material/Switch";
 
-export const CollectionFiles = (props) => {
+
+export const ListTable = (props) => {
     const {
         count = 0,
         items = [],
@@ -45,15 +35,9 @@ export const CollectionFiles = (props) => {
         sectionApi
     } = props;
 
-    const [currentItem, setCurrentItem] = useState(null);
-    const isMounted = useMounted();
+    //console.log("PROJECT PROPS: ", props);
 
-    // if(isMounted()){
-    //     console.log("itemsWEneed: ", items[0]._id);
-    //     const itemFileCollection = useItemsStoreFiles(items[0]._id);
-    // }
-    //const itemFileCollection = useItemsStoreFiles(items[0]._id);
-    //console.log("itemFileCollection: ", itemFileCollection);
+    const [currentItem, setCurrentItem] = useState(null);
 
     const handleItemToggle = useCallback((itemId) => {
         setCurrentItem((prevItemId) => {
@@ -63,32 +47,50 @@ export const CollectionFiles = (props) => {
 
             return itemId;
         });
-        //useItemsStoreFiles(itemId);
     }, []);
 
-    const handleItemClose = useCallback(() => {
-        setCurrentItem(null);
-    }, []);
+    // const handleItemClose = useCallback(() => {
+    //     setCurrentItem(null);
+    // }, []);
 
-    const handleItemUpdate = useCallback(() => {
-        setCurrentItem(null);
-        toast.success('Item updated');
-    }, []);
+    // const handleItemUpdate = useCallback(() => {
+    //     setCurrentItem(null);
+    //     toast.success('Item updated');
+    // }, []);
 
-    const handleItemDelete = useCallback(() => {
-        toast.error('Item cannot be deleted');
-    }, []);
-
-    //console.log("date before: ", items);
-    //console.log(" items[0].created_at ",(items[0].created_at).replace("T", " ").split(".")[0]);
+    // const handleItemDelete = useCallback(() => {
+        
+    //     toast.error('Item cannot be deleted');
+    // }, []);
 
     return (
         <div>
+            <TablePagination
+                component="div"
+                count={count}
+                onPageChange={onPageChange}
+                onRowsPerPageChange={onRowsPerPageChange}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+            />
             <Scrollbar>
                 <Table sx={{minWidth: 1200}}>
                     <TableHead>
                         <TableRow>
                             <TableCell/>
+                            {/* <TableCell width="25%">
+                                <Tooltip
+                                    enterDelay={300}
+                                    title="Sort"
+                                >
+                                    <TableSortLabel
+                                        direction="asc"
+                                    >
+                                        Name
+                                    </TableSortLabel>
+                                </Tooltip>
+                            </TableCell> */}
                             <TableCell width="25%">
                                 <Tooltip
                                     enterDelay={300}
@@ -97,26 +99,22 @@ export const CollectionFiles = (props) => {
                                     <TableSortLabel
                                         direction="asc"
                                     >
-                                        Title
+                                        Prefix
                                     </TableSortLabel>
                                 </Tooltip>
                             </TableCell>
                             <TableCell>
-                                Description
+                                URI
                             </TableCell>
-                            {/* <TableCell>
-                                Status
-                            </TableCell> */}
-                            <TableCell align="left">
+                            <TableCell>
                                 <Tooltip
                                     enterDelay={300}
                                     title="Sort"
                                 >
                                     <TableSortLabel
-                                        active
-                                        direction="desc"
+                                        direction="asc"
                                     >
-                                        Created
+                                        Syncable
                                     </TableSortLabel>
                                 </Tooltip>
                             </TableCell>
@@ -161,24 +159,42 @@ export const CollectionFiles = (props) => {
                                                 </SvgIcon>
                                             </IconButton>
                                         </TableCell>
+                                        {/* <TableCell width="25%">
+                                            <Box
+                                                sx={{
+                                                    alignItems: 'center',
+                                                    display: 'flex'
+                                                }}
+                                            >
+                                                <Box
+                                                    sx={{
+                                                        cursor: 'pointer',
+                                                        ml: 2
+                                                    }}
+                                                >
+                                                    <Typography variant="subtitle2">
+                                                        {item.name}
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
+                                        </TableCell> */}
                                         <TableCell width="25%">
                                             <Typography variant="subtitle2">
-                                                {item.title}
+                                                {item.prefix}
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            {item.description}
+                                            {item.uri}
                                         </TableCell>
-                                        {/* <TableCell>
-                                            <SeverityPill color={statusColor}>
-                                                {item.status}
-                                            </SeverityPill>
-                                        </TableCell> */}
-                                        <TableCell align="left">
-                                            {(item.created_at).replace("T", " ").split(".")[0]}
+                                        <TableCell>
+                                            <Switch
+                                                disabled
+                                                checked={item.is_syncable}
+                                                value={item.is_syncable}
+                                            />
                                         </TableCell>
                                         <TableCell align="right">
-                                            <ListFileCollectionActions
+                                            <ListItemActions
                                                 itemctx={new ForListItemAction(item_id, sectionApi)}/>
                                         </TableCell>
                                     </TableRow>
@@ -201,73 +217,8 @@ export const CollectionFiles = (props) => {
                                                 }}
                                             >
                                                 <CardContent>
-                                                    <Grid
-                                                        container
-                                                        spacing={3}
-                                                    >
-                                                        <Grid
-                                                            item
-                                                            md={12}
-                                                            xs={12}
-                                                        >
-                                                            <Typography sx={{ paddingLeft: "0"}} variant="h6">
-                                                                Details
-                                                            </Typography>
-                                                            <Divider sx={{my: 2}}/>
-                                                            <Grid
-                                                                container
-                                                                spacing={3}
-                                                            >
-                                                                <Grid
-                                                                    item
-                                                                    md={6}
-                                                                    xs={12}
-                                                                >
-                                                                    {/* <TextField
-                                                                        defaultValue={item.title}
-                                                                        fullWidth
-                                                                        label="Title"
-                                                                        name="title"
-                                                                    /> */}
-                                                                    <PropertyListItem
-                                                                        label="Title"
-                                                                        value={item.title}
-                                                                    />
-
-                                                                </Grid>
-                                                                <Grid
-                                                                    item
-                                                                    md={6}
-                                                                    xs={12}
-                                                                >
-                                                                    {/* <TextField
-                                                                        defaultValue={item.description}
-                                                                        fullWidth
-                                                                        label="Description"
-                                                                        name="description"
-                                                                    /> */}
-                                                                    <PropertyListItem
-                                                                        label="Description"
-                                                                        value={item.description}
-                                                                    />
-                                                                </Grid>
-                                                            </Grid>
-                                                        </Grid>
-                                                    </Grid>
                                                 </CardContent>
-                                                <Divider/>
-                                                <Card>
-                                                    <FileCollectionListTable
-                                                        onPageChange={itemsSearch.handlePageChange}
-                                                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                                                        page={itemsSearch.state.page}
-                                                        items={itemsStore.items}
-                                                        count={itemsStore.itemsCount}
-                                                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                                                        sectionApi={sectionApi}
-                                                    />
-                                                </Card>
-                                                <Divider/>
+                                                <Divider/>                                                
                                             </TableCell>
                                         </TableRow>
                                     )}
@@ -284,13 +235,13 @@ export const CollectionFiles = (props) => {
                 onRowsPerPageChange={onRowsPerPageChange}
                 page={page}
                 rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={[5, 10, 25]}
+                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
             />
         </div>
     );
 };
 
-FileCollectionListTable.propTypes = {
+ListTable.propTypes = {
     count: PropTypes.number,
     items: PropTypes.array,
     onPageChange: PropTypes.func,

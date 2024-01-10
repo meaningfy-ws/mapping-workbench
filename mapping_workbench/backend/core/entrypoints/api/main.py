@@ -2,6 +2,7 @@ from fastapi import FastAPI, APIRouter, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from httpx_oauth.clients.google import GoogleOAuth2
 
+from mapping_workbench.backend.fields_registry.entrypoints.api import routes as fields_registry
 from mapping_workbench.backend.conceptual_mapping_rule.entrypoints.api import routes as conceptual_mapping_rule_routes
 from mapping_workbench.backend.config import settings
 from mapping_workbench.backend.config.entrypoints.api import routes as config_routes
@@ -77,7 +78,8 @@ secured_routers: list = [
     generic_triple_map_fragment_routes.router,
     config_routes.router,
     ontology_routes.router,
-    tasks_routes.router
+    tasks_routes.router,
+    fields_registry.router
 ]
 
 for secured_router in secured_routers:
