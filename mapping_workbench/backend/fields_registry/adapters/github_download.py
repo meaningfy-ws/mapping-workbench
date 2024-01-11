@@ -28,6 +28,7 @@ class GithubDownloader:
         with tempfile.TemporaryDirectory() as tmp_dir:
             temp_dir_path = pathlib.Path(tmp_dir)
             bash_script = f"cd {temp_dir_path} && git clone --depth=1 --single-branch --branch {self.branch_or_tag_name} {self.github_repository_url}"
+            print("K :: ", bash_script)
             subprocess.run(bash_script, shell=True,
                            stdout=subprocess.DEVNULL,
                            stderr=subprocess.STDOUT)
