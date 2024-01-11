@@ -8,13 +8,13 @@ export class ForItemDataState {
     }
 }
 
-export const useItem = (sectionApi, id) => {
+export const useItem = (sectionApi, id, path = null) => {
     const isMounted = useMounted();
     const [item, setItem] = useState(null);
 
     const handleItemGet = useCallback(async () => {
         try {
-            const response = await sectionApi.getItem(id);
+            const response = await sectionApi.getItem(id, path);
             if (isMounted()) {
                 setItem(response);
             }

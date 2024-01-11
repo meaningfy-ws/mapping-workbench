@@ -1,7 +1,8 @@
+import json
 from typing import List
 
 from beanie import PydanticObjectId
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, UploadFile, Form
 
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement, \
@@ -35,16 +36,32 @@ router = APIRouter(
     response_model=APIListStructuralElementsPaginatedResponse
 )
 async def route_list_structural_elements(
-        project_id: PydanticObjectId = None
+        project: PydanticObjectId = None,
+        page: int = None,
+        limit: int = None,
+        q: str = None
 ):
     filters: dict = {}
-    if project_id:
-        filters['project'] = Project.link_from_id(project_id)
-    items: List[StructuralElement] = await list_structural_elements(filters)
+    if project:
+        filters['project'] = Project.link_from_id(project)
+    if q is not None:
+        filters['q'] = q
+
+    items, total_count = await list_structural_elements(filters, page, limit)
     return APIListStructuralElementsPaginatedResponse(
         items=items,
-        count=len(items)
+        count=total_count
     )
+
+
+@router.get(
+    "/elements/{structural_element_id}",
+    description=f"Get structural element by id",
+    name=f"elements:get",
+    response_model=StructuralElement
+)
+async def route_get_structural_element(structural_element: StructuralElement = Depends(get_structural_element)):
+    return structural_element
 
 
 @router.delete(
@@ -137,9 +154,10 @@ async def route_search_structural_elements_versioned_view_by_eforms_version(
     status_code=status.HTTP_200_OK
 )
 async def route_import_eforms_from_github(
-        github_repository_url: str,
-        branch_or_tag_name: str,
-        project_id: PydanticObjectId):
+        github_repository_url: str = Form(...),
+        branch_or_tag_name: str = Form(...),
+        project_id: PydanticObjectId = Form(...)
+):
     project_link = Project.link_from_id(project_id)
     await import_eforms_fields_from_github_repository(github_repository_url=github_repository_url,
                                                       branch_or_tag_name=branch_or_tag_name,

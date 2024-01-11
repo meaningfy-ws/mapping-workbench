@@ -11,14 +11,15 @@ import {Box} from "@mui/system";
 export const ListItemActions = (props) => {
     const router = useRouter();
 
-    const {itemctx} = props;
+    const {itemctx, pathnames} = props;
     const popover = usePopover();
 
     //console.log("itemctx: ", itemctx);    
 
     const handleViewAction = useCallback(async () => {
+        const viewPathname = pathnames && pathnames.view || paths.app[itemctx.api.section].view;
         router.push({
-            pathname: paths.app[itemctx.api.section].view,
+            pathname: viewPathname,
             query: {id: itemctx.id}
         });
 

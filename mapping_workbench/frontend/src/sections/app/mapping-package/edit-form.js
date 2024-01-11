@@ -26,7 +26,7 @@ export const EditForm = (props) => {
     const router = useRouter();
     const sectionApi = itemctx.api;
     const item = itemctx.data;
-    console.log(item);
+
     let initialValues = {
         title: item.title || '',
         description: item.description || '',

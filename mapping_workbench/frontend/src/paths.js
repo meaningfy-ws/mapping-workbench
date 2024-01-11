@@ -140,10 +140,13 @@ export const paths = {
             view: '/app/ontology-terms/[id]/view'
         },
         fields_registry: {
-            index: '/app/fields-registry',
-            create: '/app/fields-registry/create',
-            edit: '/app/fields-registry/[id]/edit',
-            view: '/app/fields-registry/[id]/view'
+            elements: {
+                index: '/app/fields-registry/elements',
+                //create: '/app/fields-registry/elements/create',
+                //edit: '/app/fields-registry/elements/[id]/edit',
+                view: '/app/fields-registry/elements/[id]/view',
+                import: '/app/fields-registry/elements/import'
+            }
         },
         tasks: {
             index: '/app/tasks',
@@ -252,7 +255,10 @@ export const apiPaths = {
 
     fields_registry: {
         items: '/fields_registry',
-        item: '/fields_registry/:id'
+        item: '/fields_registry/:id',
+        import_eforms_from_github: '/fields_registry/import_eforms_from_github',
+        elements: '/fields_registry/elements',
+        element: '/fields_registry/elements/:id',
     },
 
     tasks: {

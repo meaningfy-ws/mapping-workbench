@@ -27,13 +27,14 @@ class GithubDownloader:
         """
         with tempfile.TemporaryDirectory() as tmp_dir:
             temp_dir_path = pathlib.Path(tmp_dir)
-            bash_script = f"cd {temp_dir_path} && git clone --depth=1 --branch {self.branch_or_tag_name} {self.github_repository_url}"
+            bash_script = f"cd {temp_dir_path} && git clone --depth=1 --single-branch --branch {self.branch_or_tag_name} {self.github_repository_url}"
             subprocess.run(bash_script, shell=True,
                            stdout=subprocess.DEVNULL,
                            stderr=subprocess.STDOUT)
             dir_contents = list(temp_dir_path.iterdir())
             assert len(dir_contents) == 1
             repository_name = dir_contents[0].name
+
             repository_content_dir_path = temp_dir_path / repository_name
             if download_resources_filter:
                 for content_path in repository_content_dir_path.iterdir():

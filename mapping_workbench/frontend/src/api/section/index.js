@@ -61,8 +61,9 @@ export class SectionApi {
         return await appApi.get(this.paths[path], filters);
     }
 
-    async getItem(id) {
-        let endpoint = this.paths['item'].replace(':id', id);
+    async getItem(id, path = null) {
+        path = path || "item";
+        let endpoint = this.paths[path].replace(':id', id);
         return await appApi.get(endpoint);
     }
 
