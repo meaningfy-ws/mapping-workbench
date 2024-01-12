@@ -49,6 +49,7 @@ async def import_eforms_fields(eforms_fields_content: dict, project_link: Link[D
         if old_structural_node:
             old_structural_node.versions.append(eforms_sdk_version)
             old_structural_node.versions = list(set(old_structural_node.versions))
+            await old_structural_node.save()
         else:
             new_structural_node.versions.append(eforms_sdk_version)
             await new_structural_node.save()
@@ -71,6 +72,7 @@ async def import_eforms_fields(eforms_fields_content: dict, project_link: Link[D
         if old_structural_field:
             old_structural_field.versions.append(eforms_sdk_version)
             old_structural_field.versions = list(set(old_structural_field.versions))
+            await old_structural_field.save()
         else:
             new_structural_field.versions.append(eforms_sdk_version)
             await new_structural_field.save()

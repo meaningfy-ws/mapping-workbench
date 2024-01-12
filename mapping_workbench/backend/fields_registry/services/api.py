@@ -77,7 +77,7 @@ async def delete_structural_elements_versioned_view(
     return await structural_elements_versioned_view.delete()
 
 
-async def get_structural_element(structural_element_id: PydanticObjectId) -> StructuralElement:
+async def get_structural_element(structural_element_id: str) -> StructuralElement:
     structural_element: StructuralElement = await StructuralElement.get(structural_element_id)
     if not api_entity_is_found(structural_element):
         raise ResourceNotFoundException()

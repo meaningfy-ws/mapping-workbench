@@ -5,7 +5,7 @@ ARG PORT
 
 ENV PORT=$PORT
 
-RUN apt update && apt install -y make wget
+RUN apt update && apt install -y make wget git
 
 # Create an application directory
 RUN mkdir -p /app

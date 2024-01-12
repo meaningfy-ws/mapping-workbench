@@ -1,5 +1,8 @@
+import pymongo
 from beanie import Link
 from typing import Optional, List, Literal, Set
+
+from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.api_response import APIListPaginatedResponse
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
@@ -26,6 +29,21 @@ class StructuralElement(BaseProjectResourceEntity):
 
     class Settings(BaseProjectResourceEntity.Settings):
         name = "structural_elements_registry"
+
+        indexes = [
+            IndexModel(
+                [
+                    ("eforms_sdk_element_id", pymongo.TEXT),
+                    ("absolute_xpath", pymongo.TEXT),
+                    ("relative_xpath", pymongo.TEXT),
+                    ("parent_node_id", pymongo.TEXT),
+                    ("versions", pymongo.TEXT),
+                    ("name", pymongo.TEXT),
+                    ("bt_id", pymongo.TEXT)
+                ],
+                name="search_text_idx"
+            )
+        ]
 
 
 class StructuralElementsVersionedView(BaseProjectResourceEntity):
