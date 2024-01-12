@@ -118,8 +118,9 @@ export const EditForm = (props) => {
         const sectionApi = itemctx.api;
         const item = itemctx.data;
 
-        const [showComments, setShowComments] = useState(false);
-        const [showNotes, setShowNotes] = useState(false);
+        const [showMappingNotes, setShowMappingNotes] = useState(false);
+        const [showEditorialNotes, setShowEditorialNotes] = useState(false);
+        const [showFeedbackNotes, setShowFeedbackNotes] = useState(false);
         const [targetPropertyPathValidityInfo, setTargetPropertyPathValidityInfo] = useState("");
         const [targetPropertyPathTermsValidityInfo, setTargetPropertyPathTermsValidityInfo] = useState([]);
         const [targetClassPathValidityInfo, setTargetClassPathValidityInfo] = useState("");
@@ -186,10 +187,12 @@ export const EditForm = (props) => {
             refers_to_mapping_package_ids: item.refers_to_mapping_package_ids || [],
             sparql_assertions: (item.sparql_assertions || []).map(x => x.id),
             triple_map_fragment: (item.triple_map_fragment && item.triple_map_fragment.id) || '',
-            notes: (item.notes || []),
-            comments: (item.comments || []),
-            note: initComment(),
-            comment: initComment()
+            mapping_notes: (item.mapping_notes || []),
+            editorial_notes: (item.editorial_notes || []),
+            feedback_notes: (item.feedback_notes || []),
+            mapping_note: initComment(),
+            editorial_note: initComment(),
+            feedback_note: initComment()
         };
 
         const formik = useFormik({
@@ -207,15 +210,18 @@ export const EditForm = (props) => {
             onSubmit: async (values, helpers) => {
                 try {
                     let requestValues = values;
-                    if (values['comment']['comment']) {
-                        values['comments'].push(values['comment']);
+                    if (values['mapping_note']['comment']) {
+                        values['mapping_notes'].push(values['mapping_note']);
                     }
-                    delete values['comment'];
-
-                    if (values['note']['comment']) {
-                        values['notes'].push(values['note']);
+                    delete values['mapping_note'];
+                    if (values['editorial_note']['comment']) {
+                        values['editorial_notes'].push(values['editorial_note']);
                     }
-                    delete values['note'];
+                    delete values['editorial_note'];
+                    if (values['feedback_note']['comment']) {
+                        values['feedback_notes'].push(values['feedback_note']);
+                    }
+                    delete values['feedback_note'];
 
                     requestValues['source_xpath'] = (typeof values['source_xpath'] == 'string') ?
                         values['source_xpath'].split('\n').map(s => s.trim()).filter(s => s !== '') : values['source_xpath'];
@@ -240,8 +246,9 @@ export const EditForm = (props) => {
                         } else if (itemctx.isStateable) {
                             itemctx.setState(response);
                             formik.values.source_xpath = prepareTextareaListValue(response['source_xpath']);
-                            formik.values.note = initComment();
-                            formik.values.comment = initComment();
+                            formik.values.mapping_note = initComment();
+                            formik.values.editorial_note = initComment();
+                            formik.values.feedback_note = initComment();
                         }
                     }
                 } catch (err) {
@@ -504,20 +511,20 @@ export const EditForm = (props) => {
                             <FormControlLabel
                                 control={
                                     <Switch
-                                        checked={showNotes}
-                                        onChange={(e) => setShowNotes(e.target.checked)}
+                                        checked={showMappingNotes}
+                                        onChange={(e) => setShowMappingNotes(e.target.checked)}
                                     />
                                 }
-                                label={`Notes (${formik.values.notes.length})`}
+                                label={`Mapping Notes (${formik.values.mapping_notes.length})`}
                             />
                         </Typography>
                     </CardContent>
                     <CardContent sx={{pt: 0}}>
-                        {showNotes && <>
-                            {formik.values.notes.map(
-                                (note, idx) => <RuleComment
+                        {showMappingNotes && <>
+                            {formik.values.mapping_notes.map(
+                                (mapping_note, idx) => <RuleComment
                                     formik={formik}
-                                    fieldName="notes" idx={idx} handleDelete={handleDeleteComment}
+                                    fieldName="mapping_notes" idx={idx} handleDelete={handleDeleteComment}
                                 />
                             )}
                         </>}
@@ -526,10 +533,10 @@ export const EditForm = (props) => {
                             <Stack
                                 component={RadioGroup}
                                 defaultValue={COMMENT_PRIORITY.NORMAL}
-                                name="note[priority]"
+                                name="mapping_note[priority]"
                                 spacing={3}
                                 onChange={(e) => {
-                                    formik.setFieldValue('note[priority]', e.target.value);
+                                    formik.setFieldValue('mapping_note[priority]', e.target.value);
                                 }}
                             >
                                 <Box sx={{
@@ -543,7 +550,7 @@ export const EditForm = (props) => {
                                     </Box>
                                     <FormControlLabel
                                         control={<Radio/>}
-                                        key="note_priority_high"
+                                        key="mapping_note_priority_high"
                                         label={(
                                             <Box sx={{ml: 0, mr: 1}}>
                                                 <Typography
@@ -554,11 +561,11 @@ export const EditForm = (props) => {
                                             </Box>
                                         )}
                                         value={COMMENT_PRIORITY.HIGH}
-                                        checked={formik.values.note && formik.values.note.priority === COMMENT_PRIORITY.HIGH}
+                                        checked={formik.values.mapping_note && formik.values.mapping_note.priority === COMMENT_PRIORITY.HIGH}
                                     />
                                     <FormControlLabel
                                         control={<Radio/>}
-                                        key="note_priority_normal"
+                                        key="mapping_note_priority_normal"
                                         label={(
                                             <Box sx={{ml: 0, mr: 1}}>
                                                 <Typography
@@ -569,11 +576,11 @@ export const EditForm = (props) => {
                                             </Box>
                                         )}
                                         value={COMMENT_PRIORITY.NORMAL}
-                                        checked={formik.values.note && formik.values.note.priority === COMMENT_PRIORITY.NORMAL}
+                                        checked={formik.values.mapping_note && formik.values.mapping_note.priority === COMMENT_PRIORITY.NORMAL}
                                     />
                                     <FormControlLabel
                                         control={<Radio/>}
-                                        key="note_priority_low"
+                                        key="mapping_note_priority_low"
                                         label={(
                                             <Box sx={{ml: 0, mr: 1}}>
                                                 <Typography
@@ -584,18 +591,18 @@ export const EditForm = (props) => {
                                             </Box>
                                         )}
                                         value={COMMENT_PRIORITY.LOW}
-                                        checked={formik.values.note && formik.values.note.priority === COMMENT_PRIORITY.LOW}
+                                        checked={formik.values.mapping_note && formik.values.mapping_note.priority === COMMENT_PRIORITY.LOW}
                                     />
                                 </Box>
                             </Stack>
                             <TextField
-                                name="note[comment]"
+                                name="mapping_note[comment]"
                                 minRows={3}
                                 multiline
                                 fullWidth
-                                label="Add new Note ..."
-                                helperText="... for external viewers"
-                                value={formik.values.note && formik.values.note.comment || ''}
+                                label="Add new Mapping Note ..."
+                                helperText="... public"
+                                value={formik.values.mapping_note && formik.values.mapping_note.comment || ''}
                                 onBlur={formik.handleBlur}
                                 onChange={formik.handleChange}
                             />
@@ -609,20 +616,20 @@ export const EditForm = (props) => {
                             <FormControlLabel
                                 control={
                                     <Switch
-                                        checked={showComments}
-                                        onChange={(e) => setShowComments(e.target.checked)}
+                                        checked={showEditorialNotes}
+                                        onChange={(e) => setShowEditorialNotes(e.target.checked)}
                                     />
                                 }
-                                label={`Comments (${formik.values.comments.length})`}
+                                label={`Editorial Notes (${formik.values.editorial_notes.length})`}
                             />
                         </Typography>
                     </CardContent>
                     <CardContent sx={{pt: 0}}>
-                        {showComments && <>
-                            {formik.values.comments.map(
-                                (comment, idx) => <RuleComment
+                        {showEditorialNotes && <>
+                            {formik.values.editorial_notes.map(
+                                (editorial_note, idx) => <RuleComment
                                     formik={formik}
-                                    fieldName="comments" idx={idx} handleDelete={handleDeleteComment}
+                                    fieldName="editorial_notes" idx={idx} handleDelete={handleDeleteComment}
                                 />
                             )}
                         </>}
@@ -631,10 +638,10 @@ export const EditForm = (props) => {
                             <Stack
                                 component={RadioGroup}
                                 defaultValue={COMMENT_PRIORITY.NORMAL}
-                                name="comment[priority]"
+                                name="editorial_note[priority]"
                                 spacing={3}
                                 onChange={(e) => {
-                                    formik.setFieldValue('comment[priority]', e.target.value);
+                                    formik.setFieldValue('editorial_note[priority]', e.target.value);
                                 }}
                             >
                                 <Box sx={{
@@ -648,7 +655,7 @@ export const EditForm = (props) => {
                                     </Box>
                                     <FormControlLabel
                                         control={<Radio/>}
-                                        key="comment_priority_high"
+                                        key="editorial_note_priority_high"
                                         label={(
                                             <Box sx={{ml: 0, mr: 1}}>
                                                 <Typography
@@ -659,11 +666,11 @@ export const EditForm = (props) => {
                                             </Box>
                                         )}
                                         value={COMMENT_PRIORITY.HIGH}
-                                        checked={formik.values.comment && formik.values.comment.priority === COMMENT_PRIORITY.HIGH}
+                                        checked={formik.values.editorial_note && formik.values.editorial_note.priority === COMMENT_PRIORITY.HIGH}
                                     />
                                     <FormControlLabel
                                         control={<Radio/>}
-                                        key="comment_priority_normal"
+                                        key="editorial_note_priority_normal"
                                         label={(
                                             <Box sx={{ml: 0, mr: 1}}>
                                                 <Typography
@@ -674,11 +681,11 @@ export const EditForm = (props) => {
                                             </Box>
                                         )}
                                         value={COMMENT_PRIORITY.NORMAL}
-                                        checked={formik.values.comment && formik.values.comment.priority === COMMENT_PRIORITY.NORMAL}
+                                        checked={formik.values.editorial_note && formik.values.editorial_note.priority === COMMENT_PRIORITY.NORMAL}
                                     />
                                     <FormControlLabel
                                         control={<Radio/>}
-                                        key="comment_priority_low"
+                                        key="editorial_note_priority_low"
                                         label={(
                                             <Box sx={{ml: 0, mr: 1}}>
                                                 <Typography
@@ -689,18 +696,123 @@ export const EditForm = (props) => {
                                             </Box>
                                         )}
                                         value={COMMENT_PRIORITY.LOW}
-                                        checked={formik.values.comment && formik.values.comment.priority === COMMENT_PRIORITY.LOW}
+                                        checked={formik.values.editorial_note && formik.values.editorial_note.priority === COMMENT_PRIORITY.LOW}
                                     />
                                 </Box>
                             </Stack>
                             <TextField
-                                name="comment[comment]"
+                                name="editorial_note[comment]"
                                 minRows={3}
                                 multiline
                                 fullWidth
-                                label="Add new Comment ..."
-                                helperText="... for other editors"
-                                value={formik.values.comment && formik.values.comment.comment || ''}
+                                label="Add new Editorial Note ..."
+                                helperText="... private"
+                                value={formik.values.editorial_note && formik.values.editorial_note.comment || ''}
+                                onBlur={formik.handleBlur}
+                                onChange={formik.handleChange}
+                            />
+
+                        </Grid>
+                    </CardContent>
+                </Card>
+                <Card sx={{mt: 3}}>
+                    <CardContent sx={{pb: 1, pt: 3}}>
+                        <Typography sx={{fontWeight: "bold"}}>
+                            <FormControlLabel
+                                control={
+                                    <Switch
+                                        checked={showFeedbackNotes}
+                                        onChange={(e) => setShowFeedbackNotes(e.target.checked)}
+                                    />
+                                }
+                                label={`Feedback Notes (${formik.values.feedback_notes.length})`}
+                            />
+                        </Typography>
+                    </CardContent>
+                    <CardContent sx={{pt: 0}}>
+                        {showFeedbackNotes && <>
+                            {formik.values.feedback_notes.map(
+                                (feedback_note, idx) => <RuleComment
+                                    formik={formik}
+                                    fieldName="feedback_notes" idx={idx} handleDelete={handleDeleteComment}
+                                />
+                            )}
+                        </>}
+                        <Divider sx={{py: 1}}/>
+                        <Grid xs={12} md={12} sx={{mt: 1}}>
+                            <Stack
+                                component={RadioGroup}
+                                defaultValue={COMMENT_PRIORITY.NORMAL}
+                                name="feedback_note[priority]"
+                                spacing={3}
+                                onChange={(e) => {
+                                    formik.setFieldValue('feedback_note[priority]', e.target.value);
+                                }}
+                            >
+                                <Box sx={{
+                                    alignItems: 'flex-start',
+                                    display: 'flex',
+                                    py: 2,
+                                    px: 1
+                                }}>
+                                    <Box sx={{mr: 2, mt: 1}}>
+                                        <b>Priority:</b>
+                                    </Box>
+                                    <FormControlLabel
+                                        control={<Radio/>}
+                                        key="feedback_note_priority_high"
+                                        label={(
+                                            <Box sx={{ml: 0, mr: 1}}>
+                                                <Typography
+                                                    variant="subtitle2"
+                                                >
+                                                    High
+                                                </Typography>
+                                            </Box>
+                                        )}
+                                        value={COMMENT_PRIORITY.HIGH}
+                                        checked={formik.values.feedback_note && formik.values.feedback_note.priority === COMMENT_PRIORITY.HIGH}
+                                    />
+                                    <FormControlLabel
+                                        control={<Radio/>}
+                                        key="feedback_note_priority_normal"
+                                        label={(
+                                            <Box sx={{ml: 0, mr: 1}}>
+                                                <Typography
+                                                    variant="subtitle2"
+                                                >
+                                                    Normal
+                                                </Typography>
+                                            </Box>
+                                        )}
+                                        value={COMMENT_PRIORITY.NORMAL}
+                                        checked={formik.values.feedback_note && formik.values.feedback_note.priority === COMMENT_PRIORITY.NORMAL}
+                                    />
+                                    <FormControlLabel
+                                        control={<Radio/>}
+                                        key="feedback_note_priority_low"
+                                        label={(
+                                            <Box sx={{ml: 0, mr: 1}}>
+                                                <Typography
+                                                    variant="subtitle2"
+                                                >
+                                                    Low
+                                                </Typography>
+                                            </Box>
+                                        )}
+                                        value={COMMENT_PRIORITY.LOW}
+                                        checked={formik.values.feedback_note && formik.values.feedback_note.priority === COMMENT_PRIORITY.LOW}
+                                    />
+                                </Box>
+                            </Stack>
+                            <TextField
+                                name="feedback_note[comment]"
+                                minRows={3}
+                                multiline
+                                fullWidth
+                                label="Add new Feedback Note ..."
+                                helperText="... private"
+                                value={formik.values.feedback_note && formik.values.feedback_note.comment || ''}
                                 onBlur={formik.handleBlur}
                                 onChange={formik.handleChange}
                             />

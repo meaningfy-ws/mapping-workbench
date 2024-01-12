@@ -32,7 +32,7 @@ LIST_COLUMN_NAMES = ["eForms Subtype", "eForms SDK version"]
 
 def import_file_resource(file_path: pathlib.Path) -> ImportedFileResource:
     file_resource = ImportedFileResource(name=file_path.name,
-                                         format=file_path.suffix,
+                                         format=file_path.suffix[1:],
                                          content=file_path.read_text(encoding="utf-8"))
     return file_resource
 
@@ -138,6 +138,8 @@ async def import_mapping_package(file_content: bytes, project: Project, user: Us
     importer: PackageImporter = PackageImporter(project=project, user=user)
     package: MappingPackage = await importer.import_from_mono_mapping_suite(imp_mapping_suite)
 
-    print("K :: ", package)
-
     return package
+
+
+async def clear_project_data(project: Project):
+    return await PackageImporter.clear_project_data(project)

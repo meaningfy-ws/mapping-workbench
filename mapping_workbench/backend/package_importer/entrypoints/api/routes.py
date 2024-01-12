@@ -3,8 +3,8 @@ from fastapi import APIRouter, status, Form, UploadFile, Depends
 
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.package_importer.services.import_mapping_suite_v3 import \
-    import_mapping_package as import_mapping_package_v3
-from mapping_workbench.backend.package_importer.services.importer import import_package, clear_project_data
+    import_mapping_package as import_mapping_package_v3, clear_project_data
+from mapping_workbench.backend.package_importer.services.importer import import_package
 from mapping_workbench.backend.project.services.api import get_project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.user.models.user import User

@@ -13,6 +13,7 @@ from mapping_workbench.backend.file_resource.models.file_resource import FileRes
 class SPARQLQueryValidationType(Enum):
     CM_ASSERTION = "cm_assertion"
     INTEGRATION_TEST = "integration_test"
+    OTHER = "other"
 
 
 class SPARQLTestSuite(FileResourceCollection):

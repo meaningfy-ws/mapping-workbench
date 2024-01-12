@@ -1,16 +1,10 @@
-import json
-import os
-import tempfile
-from datetime import datetime
-from pathlib import Path
-from typing import Dict, List
-from zipfile import ZipFile
+from typing import Dict
 
-import pandas as pd
-
-from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
-from mapping_workbench.backend.mapping_package.models.entity import MappingPackageImportIn, MappingPackage
-from mapping_workbench.backend.ontology.services.namespaces import discover_and_save_mapping_rule_prefixes
+from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule, \
+    ConceptualMappingRuleComment
+from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
+from mapping_workbench.backend.fields_registry.services.data import get_structural_element_by_unique_fields
+from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.package_importer.models.imported_mapping_suite import ImportedMappingSuite
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.resource_collection.models.entity import ResourceFile, ResourceCollection, \
@@ -19,31 +13,11 @@ from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestFi
     SHACLTestFileResource
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResourceFormat, SPARQLTestSuite, \
     SPARQLTestFileResource, SPARQLQueryValidationType
-from mapping_workbench.backend.sparql_test_suite.services.api import get_sparql_test_suite_by_project_and_title
-from mapping_workbench.backend.sparql_test_suite.services.sparql_cm_assertions import SPARQL_CM_ASSERTIONS_SUITE_TITLE
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
     TestDataFileResourceFormat
 from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragmentFormat, \
     GenericTripleMapFragment
 from mapping_workbench.backend.user.models.user import User
-
-TEST_DATA_DIR = Path("test_data")
-TRANSFORMATION_DIR = Path("transformation")
-VALIDATION_DIR = Path("validation")
-TRIPLE_MAP_FRAGMENTS_DIR = TRANSFORMATION_DIR / "mappings"
-CONCEPTUAL_MAPPINGS_FILE = TRANSFORMATION_DIR / "conceptual_mappings.xlsx"
-
-BASE_XPATH_FIELD = "Base XPath"
-
-RULES_SF_FIELD_ID = 'Standard Form Field ID (M)'
-RULES_SF_FIELD_NAME = 'Standard Form Field Name (M)'
-RULES_E_FORM_BT_ID = 'eForm BT-ID (Provisional/Indicative) (O)'
-RULES_E_FORM_BT_NAME = 'eForm BT Name (Provisional/Indicative) (O)'
-RULES_FIELD_XPATH = 'Field XPath (M)'
-RULES_CLASS_PATH = "Class path (M)"
-RULES_PROPERTY_PATH = "Property path (M)"
-RULES_INTEGRATION_TESTS_REF = "Reference to Integration Tests (O)"
-RULES_RML_TRIPLE_MAP_REF = "RML TripleMap reference (O)"
 
 DEFAULT_RESOURCES_COLLECTION_NAME = "Default"
 
@@ -53,241 +27,213 @@ class PackageImporter:
 
     def __init__(self, project: Project, user: User):
         self.project = project
+        self.project_link = Project.link_from_id(self.project.id)
         self.user = user
+        self.package = None
 
-    async def import_from_mono_mapping_suite(self, mono_package: ImportedMappingSuite) -> MappingPackage:
+    async def import_from_mono_mapping_suite(self, mono_package: ImportedMappingSuite):
         """
 
         :param mono_package:
         :return:
         """
-        package: MappingPackage = await self.add_mapping_package_from_mono(mono_package)
+        await self.add_mapping_package_from_mono(mono_package)
+        await self.add_mapping_rules_from_mono(mono_package)
+        await self.add_transformation_resources_from_mono(mono_package)
+        await self.add_transformation_mappings_from_mono(mono_package)
+        await self.add_test_data_from_mono(mono_package)
+        await self.add_sparql_test_suites_from_mono(mono_package)
+        await self.add_shacl_test_suites_from_mono(mono_package)
 
-        print("K :: ", package)
-        # await self.add_test_data_from_mono()
-        # await self.add_triple_map_fragments_from_mono()
-        # await self.add_sparql_test_suites_from_mono()
-        # await self.add_shacl_test_suites_from_mono()
-        # await self.add_resource_collections_from_mono()
-        # await self.add_mapping_rules_from_mono()
-        #
-        # await package.save()
-        return package
+        await self.package.save()
 
-    @classmethod
-    def metadata_constraint_value(cls, constraints, key, single=True):
-        if (key in constraints) and len(constraints[key]):
-            return constraints[key][0] if single else constraints[key]
-        return None
+        return self.package
 
-    async def add_test_data(self):
+    async def add_test_data_from_mono(self, mono_package: ImportedMappingSuite):
         resource_formats = [e.value for e in TestDataFileResourceFormat]
-        test_data_path = self.package_path / TEST_DATA_DIR
-        for root, folders, files in os.walk(test_data_path):
-            if root == str(test_data_path):
-                continue
 
-            parents = list(map(lambda path_value: str(path_value), Path(os.path.relpath(root, test_data_path)).parts))
+        for mono_resource_collection in mono_package.test_data_resources:
+            test_data_suite: TestDataSuite = await TestDataSuite.find_one(
+                TestDataSuite.project == self.project_link,
+                TestDataSuite.title == mono_resource_collection.name
+            )
 
-            test_data_suite = None
-            if len(parents) == 1:  # first level
-                test_data_suite_title = str(os.path.relpath(root, test_data_path))
+            if not test_data_suite:
                 test_data_suite = TestDataSuite(
                     project=self.project,
-                    title=test_data_suite_title
+                    mapping_package_id=self.package.id,
+                    title=mono_resource_collection.name
                 )
                 await test_data_suite.on_create(self.user).save()
-                self.mapping_package.test_data_suites.append(TestDataSuite.link_from_id(test_data_suite.id))
 
-            for file in files:
-                if file.startswith('.'):
-                    continue
+            for mono_file_resource in mono_resource_collection.file_resources:
+                resource_path = [mono_resource_collection.name]
+                resource_name = mono_file_resource.name
+                resource_format = mono_file_resource.format.upper()
 
-                resource_format = os.path.splitext(file)[1][1:].upper()
                 if resource_format not in resource_formats:
-                    print(f"-- skipped {file} :: {resource_format} not in {resource_formats}")
+                    print(f"-- skipped {resource_name} :: {resource_format} not in {resource_formats}")
                     continue
 
-                file_path = Path(os.path.join(root, file))
-                file_name = str(file)
+                resource_content = mono_file_resource.content
 
-                test_data_file_resource = TestDataFileResource(
-                    project=self.project,
-                    test_data_suite=test_data_suite,
-                    format=resource_format,
-                    title=file_name,
-                    filename=file_name,
-                    path=parents,
-                    content=file_path.read_text(encoding="utf-8")
+                test_data_file_resource: TestDataFileResource = await TestDataFileResource.find_one(
+                    TestDataFileResource.project == self.project_link,
+                    TestDataFileResource.filename == resource_name,
+                    TestDataFileResource.test_data_suite == TestDataSuite.link_from_id(test_data_suite.id)
                 )
-                await test_data_file_resource.on_create(self.user).save()
 
-    async def add_triple_map_fragments(self):
+                if not test_data_file_resource:
+                    test_data_file_resource = TestDataFileResource(
+                        project=self.project,
+                        test_data_suite=test_data_suite,
+                        format=resource_format,
+                        title=resource_name,
+                        filename=resource_name,
+                        path=resource_path,
+                        content=resource_content
+                    )
+                    await test_data_file_resource.on_create(self.user).save()
+                else:
+                    test_data_file_resource.content = resource_content
+                    await test_data_file_resource.on_update(self.user).save()
+
+    async def add_transformation_mappings_from_mono(self, mono_package: ImportedMappingSuite):
         resource_formats = [e.value for e in TripleMapFragmentFormat]
-        triple_map_fragments_path = self.package_path / TRIPLE_MAP_FRAGMENTS_DIR
-        for file in Path(triple_map_fragments_path).iterdir():
-            if file.is_file():
-                resource_format = os.path.splitext(file)[1][1:].upper()
-                if resource_format not in resource_formats:
-                    print(f"-- skipped {file} :: {resource_format} not in {resource_formats}")
-                    continue
 
-                file_path = triple_map_fragments_path / file
-                file_name = file.name
+        for mono_file_resource in mono_package.transformation_mappings.file_resources:
+            resource_name = mono_file_resource.name
+            resource_format = mono_file_resource.format.upper()
+            if resource_format not in resource_formats:
+                print(f"-- skipped {resource_name} :: {resource_format} not in {resource_formats}")
+                continue
 
+            resource_content = mono_file_resource.content
+
+            triple_map_fragment = await GenericTripleMapFragment.find_one(
+                GenericTripleMapFragment.project == self.project_link,
+                GenericTripleMapFragment.triple_map_uri == resource_name
+            )
+
+            if not triple_map_fragment:
                 triple_map_fragment = GenericTripleMapFragment(
-                    triple_map_uri=file_name,
-                    triple_map_content=file_path.read_text(encoding="utf-8"),
+                    triple_map_uri=resource_name,
+                    triple_map_content=resource_content,
                     format=resource_format,
                     project=self.project
                 )
                 await triple_map_fragment.on_create(self.user).save()
+            else:
+                triple_map_fragment.triple_map_content = resource_content
+                await triple_map_fragment.on_update(self.user).save()
 
-    async def add_sparql_test_suites(self):
+    async def add_sparql_test_suites_from_mono(self, mono_package: ImportedMappingSuite):
         resource_formats = [e.value for e in SPARQLTestFileResourceFormat]
-        sparql_test_suites_path = self.package_path / VALIDATION_DIR / "sparql"
-        project_link = Project.link_from_id(self.project.id)
 
-        for root, folders, files in os.walk(sparql_test_suites_path):
-            if root == str(sparql_test_suites_path):
-                continue
+        for mono_resource_collection in mono_package.sparql_validation_resources:
+            sparql_test_suite: SPARQLTestSuite = await SPARQLTestSuite.find_one(
+                SPARQLTestSuite.project == self.project_link,
+                SPARQLTestSuite.title == mono_resource_collection.name
+            )
 
-            parents = list(
-                map(lambda path_value: str(path_value), Path(os.path.relpath(root, sparql_test_suites_path)).parts))
-
-            sparql_test_suite = None
-            sparql_test_suite_link = None
-            if len(parents) == 1:  # first level
-                sparql_test_suite_title = str(os.path.relpath(root, sparql_test_suites_path))
-
-                if sparql_test_suite_title == SPARQL_CM_ASSERTIONS_SUITE_TITLE:
-                    print(f"-- skipped sparql_test_suite {SPARQL_CM_ASSERTIONS_SUITE_TITLE}")
-                    continue
-
-                sparql_test_suite = await get_sparql_test_suite_by_project_and_title(
-                    project_id=self.project.id,
-                    sparql_test_suite_title=sparql_test_suite_title
+            if not sparql_test_suite:
+                sparql_test_suite = SPARQLTestSuite(
+                    project=self.project,
+                    title=mono_resource_collection.name,
+                    type=SPARQLQueryValidationType.OTHER
                 )
+                await sparql_test_suite.on_create(self.user).save()
 
-                if not sparql_test_suite:
-                    validation_type = sparql_test_suite_title[:-1]
-                    sparql_test_suite = SPARQLTestSuite(
-                        project=self.project,
-                        title=sparql_test_suite_title,
-                        type=validation_type
-                    )
-                    await sparql_test_suite.on_create(self.user).save()
+            for mono_file_resource in mono_resource_collection.file_resources:
+                resource_path = [mono_resource_collection.name]
+                resource_name = mono_file_resource.name
+                resource_format = mono_file_resource.format.upper()
 
-                sparql_test_suite_link = SPARQLTestSuite.link_from_id(sparql_test_suite.id)
-
-            for file in files:
-                if file.startswith('.'):
-                    continue
-
-                resource_format = os.path.splitext(file)[1][1:].upper()
                 if resource_format not in resource_formats:
-                    print(f"-- skipped {file} :: {resource_format} not in {resource_formats}")
+                    print(f"-- skipped {resource_name} :: {resource_format} not in {resource_formats}")
                     continue
 
-                file_path = Path(os.path.join(root, file))
-                file_name = str(file)
+                resource_content = mono_file_resource.content
 
-                sparql_test_file_resource = await SPARQLTestFileResource.find_one(
-                    SPARQLTestFileResource.project == project_link,
-                    SPARQLTestFileResource.sparql_test_suite == sparql_test_suite_link,
-                    SPARQLTestFileResource.filename == file_name
+                sparql_test_file_resource: SPARQLTestFileResource = await SPARQLTestFileResource.find_one(
+                    SPARQLTestFileResource.project == self.project_link,
+                    SPARQLTestFileResource.filename == resource_name,
+                    SPARQLTestFileResource.sparql_test_suite == SPARQLTestSuite.link_from_id(sparql_test_suite.id)
                 )
 
-                file_content = file_path.read_text(encoding="utf-8")
                 if not sparql_test_file_resource:
                     sparql_test_file_resource = SPARQLTestFileResource(
                         project=self.project,
                         sparql_test_suite=sparql_test_suite,
                         format=resource_format,
-                        title=file_name,
-                        filename=file_name,
-                        path=parents,
-                        content=file_content,
+                        title=resource_name,
+                        filename=resource_name,
+                        path=resource_path,
+                        content=resource_content,
                         type=sparql_test_suite.type
                     )
                     await sparql_test_file_resource.on_create(self.user).save()
                 else:
-                    sparql_test_file_resource.content = file_content
+                    sparql_test_file_resource.content = resource_content
                     await sparql_test_file_resource.on_update(self.user).save()
 
-    async def add_shacl_test_suites(self):
+    async def add_shacl_test_suites_from_mono(self, mono_package: ImportedMappingSuite):
         resource_formats = [e.value for e in SHACLTestFileResourceFormat]
-        shacl_test_suites_path = self.package_path / VALIDATION_DIR / "shacl"
-        project_link = Project.link_from_id(self.project.id)
 
-        for root, folders, files in os.walk(shacl_test_suites_path):
-            if root == str(shacl_test_suites_path):
-                continue
+        for mono_resource_collection in mono_package.shacl_validation_resources:
+            shacl_test_suite: SHACLTestSuite = await SHACLTestSuite.find_one(
+                SHACLTestSuite.project == self.project_link,
+                SHACLTestSuite.title == mono_resource_collection.name
+            )
 
-            parents = list(
-                map(lambda path_value: str(path_value), Path(os.path.relpath(root, shacl_test_suites_path)).parts))
-
-            shacl_test_suite = None
-            shacl_test_suite_link = None
-            if len(parents) == 1:  # first level
-                shacl_test_suite_title = str(os.path.relpath(root, shacl_test_suites_path))
-
-                shacl_test_suite = await SHACLTestSuite.find_one(
-                    SHACLTestSuite.project == project_link,
-                    SHACLTestSuite.title == shacl_test_suite_title
+            if not shacl_test_suite:
+                shacl_test_suite = SHACLTestSuite(
+                    project=self.project,
+                    title=mono_resource_collection.name
                 )
+                await shacl_test_suite.on_create(self.user).save()
 
-                if not shacl_test_suite:
-                    shacl_test_suite = SHACLTestSuite(
-                        project=self.project,
-                        title=shacl_test_suite_title
-                    )
-                    await shacl_test_suite.on_create(self.user).save()
+            shacl_test_suite_link = SHACLTestSuite.link_from_id(shacl_test_suite.id)
+            if shacl_test_suite_link not in self.package.shacl_test_suites:
+                self.package.shacl_test_suites.append(shacl_test_suite_link)
 
-                shacl_test_suite_link = SHACLTestSuite.link_from_id(shacl_test_suite.id)
-                self.mapping_package.shacl_test_suites.append(shacl_test_suite_link)
+            for mono_file_resource in mono_resource_collection.file_resources:
+                resource_path = [mono_resource_collection.name]
+                resource_name = mono_file_resource.name
+                resource_format = f"SHACL.{mono_file_resource.format.upper()}"
 
-            for file in files:
-                if file.startswith('.'):
-                    continue
-
-                resource_format = f"SHACL.{os.path.splitext(file)[1][1:].upper()}"
                 if resource_format not in resource_formats:
-                    print(f"-- skipped {file} :: {resource_format} not in {resource_formats}")
+                    print(f"-- skipped {resource_name} :: {resource_format} not in {resource_formats}")
                     continue
 
-                file_path = Path(os.path.join(root, file))
-                file_name = str(file)
+                resource_content = mono_file_resource.content
 
-                shacl_test_file_resource = await SHACLTestFileResource.find_one(
-                    SHACLTestFileResource.project == project_link,
-                    SHACLTestFileResource.shacl_test_suite == shacl_test_suite_link,
-                    SHACLTestFileResource.filename == file_name
+                shacl_test_file_resource: SHACLTestFileResource = await SHACLTestFileResource.find_one(
+                    SHACLTestFileResource.project == self.project_link,
+                    SHACLTestFileResource.filename == resource_name,
+                    SHACLTestFileResource.shacl_test_suite == shacl_test_suite_link
                 )
 
-                file_content = file_path.read_text(encoding="utf-8")
                 if not shacl_test_file_resource:
                     shacl_test_file_resource = SHACLTestFileResource(
                         project=self.project,
                         shacl_test_suite=shacl_test_suite,
                         format=resource_format,
-                        title=file_name,
-                        filename=file_name,
-                        path=parents,
-                        content=file_content
+                        title=resource_name,
+                        filename=resource_name,
+                        path=resource_path,
+                        content=resource_content,
                     )
                     await shacl_test_file_resource.on_create(self.user).save()
                 else:
-                    shacl_test_file_resource.content = file_content
+                    shacl_test_file_resource.content = resource_content
                     await shacl_test_file_resource.on_update(self.user).save()
 
-    async def add_resource_collections(self):
+    async def add_transformation_resources_from_mono(self, mono_package: ImportedMappingSuite):
         resource_formats = [e.value for e in ResourceFileFormat]
-        resource_collections_path = self.package_path / TRANSFORMATION_DIR / "resources"
-        project_link = Project.link_from_id(self.project.id)
 
-        resource_collection = await ResourceCollection.find_one(
-            ResourceCollection.project == project_link,
+        resource_collection: ResourceCollection = await ResourceCollection.find_one(
+            ResourceCollection.project == self.project_link,
             ResourceCollection.title == DEFAULT_RESOURCES_COLLECTION_NAME
         )
 
@@ -300,44 +246,35 @@ class PackageImporter:
 
         resource_collection_link = ResourceCollection.link_from_id(resource_collection.id)
 
-        for root, folders, files in os.walk(resource_collections_path):
-            parents = list(
-                map(lambda path_value: str(path_value), Path(os.path.relpath(root, resource_collections_path)).parts))
+        for mono_file_resource in mono_package.transformation_resources.file_resources:
+            resource_name = mono_file_resource.name
+            resource_format = mono_file_resource.format.upper()
+            if resource_format not in resource_formats:
+                print(f"-- skipped {resource_name} :: {resource_format} not in {resource_formats}")
+                continue
 
-            for file in files:
-                if file.startswith('.'):
-                    continue
+            resource_file = await ResourceFile.find_one(
+                ResourceFile.project == self.project_link,
+                ResourceFile.resource_collection == resource_collection_link,
+                ResourceFile.filename == resource_name
+            )
 
-                resource_format = os.path.splitext(file)[1][1:].upper()
-                if resource_format not in resource_formats:
-                    print(f"-- skipped {file} :: {resource_format} not in {resource_formats}")
-                    continue
+            resource_content = mono_file_resource.content
 
-                file_path = Path(os.path.join(root, file))
-                file_name = str(file)
+            if not resource_file:
+                await (ResourceFile(
+                    project=self.project_link,
+                    resource_collection=resource_collection_link,
+                    format=resource_format,
+                    title=resource_name,
+                    filename=resource_name,
+                    content=resource_content
+                )).on_create(self.user).save()
+            else:
+                resource_file.content = resource_content
+                await resource_file.on_update(self.user).save()
 
-                resource_file = await ResourceFile.find_one(
-                    ResourceFile.project == project_link,
-                    ResourceFile.resource_collection == resource_collection_link,
-                    ResourceFile.filename == file_name
-                )
-
-                file_content = file_path.read_text(encoding="utf-8")
-                if not resource_file:
-                    await (ResourceFile(
-                        project=project_link,
-                        resource_collection=resource_collection_link,
-                        format=resource_format,
-                        title=file_name,
-                        filename=file_name,
-                        path=parents,
-                        content=file_content
-                    )).on_create(self.user).save()
-                else:
-                    resource_file.content = file_content
-                    await resource_file.on_update(self.user).save()
-
-    async def add_mapping_package_from_mono(self, mono_package: ImportedMappingSuite) -> MappingPackage:
+    async def add_mapping_package_from_mono(self, mono_package: ImportedMappingSuite):
         package: MappingPackage = await MappingPackage.find_one(
             MappingPackage.identifier == mono_package.metadata.identifier
         )
@@ -353,88 +290,52 @@ class PackageImporter:
 
         await package.on_update(self.user).save() if package.id else await package.on_create(self.user).save()
 
-        return package
+        self.package = package
 
 
-    @classmethod
-    def cm_file_read_pd_value(cls, value, default=""):
-        if pd.isna(value):
-            return default
-        return value.strip()
+    async def add_mapping_rules_from_mono(self, mono_package: ImportedMappingSuite):
+        for mono_rule in mono_package.conceptual_rules:
+            source_structural_element: StructuralElement = await get_structural_element_by_unique_fields(
+                eforms_sdk_element_id=mono_rule.eforms_sdk_id,
+                name=mono_rule.field_name,
+                bt_id=mono_rule.bt_id,
+                absolute_xpath=mono_rule.absolute_xpath
+            )
 
-    @classmethod
-    def cm_file_read_list_from_pd_value(cls, value, sep=',') -> list:
-        if value and pd.notna(value):
-            return [x.strip() for x in str(value).split(',')]
-        return []
+            # if not source_structural_element:
+            #     continue
 
-    async def add_mapping_rules(self):
-        async def rule_exists(rule: ConceptualMappingRule) -> ConceptualMappingRule:
-            q: Dict = {
-                'field_id': rule.field_id,
-                'field_title': rule.field_title,
-                'field_description': rule.field_description,
-                'source_xpath': rule.source_xpath,
-                'target_class_path': rule.target_class_path,
-                'target_property_path': rule.target_property_path,
-                'triple_map_fragment': rule.triple_map_fragment,
-                'sparql_assertions': rule.sparql_assertions,
-                'project': Project.link_from_id(self.project.id)
-            }
-            return await ConceptualMappingRule.find_one(q)
+            # rule: ConceptualMappingRule = await get_conceptual_mapping_rule_by_key(source_structural_element)
 
-        conceptual_mappings_file = self.package_path / CONCEPTUAL_MAPPINGS_FILE
-        df = pd.read_excel(conceptual_mappings_file, sheet_name="Rules")
-        df.columns = df.iloc[0]
-        rules_df = df[1:].copy()
-        rules_df[RULES_SF_FIELD_ID].ffill(axis="index", inplace=True)
-        rules_df[RULES_SF_FIELD_NAME].ffill(axis="index", inplace=True)
+            # if not rule:
+            #     rule = ConceptualMappingRule(
+            #         source_structural_element=StructuralElement.link_from_id(source_structural_element.id)
+            #     )
 
-        project_link = Project.link_from_id(self.project.id)
-        duplicates: List[ConceptualMappingRule] = []
-        rule: ConceptualMappingRule
-        for idx, row in rules_df.iterrows():
-            rule = ConceptualMappingRule()
-            rule.project = project_link
-            rule.field_id = self.cm_file_read_pd_value(row[RULES_SF_FIELD_ID])
-            rule.field_title = self.cm_file_read_pd_value(row[RULES_SF_FIELD_NAME])
-            rule.field_description = \
-                f"{self.cm_file_read_pd_value(row[RULES_E_FORM_BT_ID])} {self.cm_file_read_pd_value(row[RULES_E_FORM_BT_NAME])}".strip()
-            rule.source_xpath = self.cm_file_read_list_from_pd_value(row[RULES_FIELD_XPATH], sep='\n')
-            rule.target_class_path = self.cm_file_read_pd_value(row[RULES_CLASS_PATH])
-            rule.target_property_path = self.cm_file_read_pd_value(row[RULES_PROPERTY_PATH])
-            rule.mapping_packages = [MappingPackage.link_from_id(self.mapping_package.id)]
-            rule.triple_map_fragment = None
+            rule: ConceptualMappingRule = ConceptualMappingRule()
+            rule.project = self.project
+            if source_structural_element:
+                rule.source_structural_element = source_structural_element
 
-            df_integration_tests = self.cm_file_read_list_from_pd_value(row[RULES_INTEGRATION_TESTS_REF])
-            sparql_integration_tests_query = {
-                "project": project_link,
-                "type": SPARQLQueryValidationType.INTEGRATION_TEST.value,
-                "filename": {
-                    "$in": df_integration_tests
-                }
-            }
-            sparql_integration_tests = await SPARQLTestFileResource.find(
-                sparql_integration_tests_query,
-                fetch_links=False
-            ).to_list()
+            if not rule.refers_to_mapping_package_ids:
+                rule.refers_to_mapping_package_ids = []
 
-            rule.sparql_assertions = list(map(
-                lambda x: SPARQLTestFileResource.link_from_id(x.id),
-                sparql_integration_tests
-            ))
+            if self.package:
+                package_link = MappingPackage.link_from_id(self.package.id)
+                if package_link not in rule.refers_to_mapping_package_ids:
+                    rule.refers_to_mapping_package_ids.append(package_link)
 
-            existing_rule = await rule_exists(rule)
-            if not existing_rule:
-                await rule.on_create(self.user).save()
-            else:
-                existing_rule.mapping_packages.append(MappingPackage.link_from_id(self.mapping_package.id))
-                await existing_rule.on_update(self.user).save()
-                duplicates.append(rule)
+            rule.min_sdk_version = mono_rule.min_sdk_version
+            rule.max_sdk_version = mono_rule.max_sdk_version
+            rule.mapping_group_id = mono_rule.mapping_group_id
+            rule.target_class_path = mono_rule.class_path
+            rule.target_property_path = mono_rule.property_path
+            rule.status = mono_rule.status
+            rule.mapping_notes = [ConceptualMappingRuleComment(comment=mono_rule.mapping_notes)]
+            rule.editorial_notes = [ConceptualMappingRuleComment(comment=mono_rule.editorial_notes)]
+            rule.feedback_notes = [ConceptualMappingRuleComment(comment=mono_rule.feedback_notes)]
 
-            await discover_and_save_mapping_rule_prefixes(rule)
-
-        print("RULES_DUPLICATES :: ", len(duplicates))
+            await rule.on_update(self.user).save() if rule.id else await rule.on_create(self.user).create()
 
     @classmethod
     async def clear_project_data(cls, project: Project):
