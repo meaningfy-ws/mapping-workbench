@@ -1,8 +1,7 @@
-import json
 from typing import List
 
 from beanie import PydanticObjectId
-from fastapi import APIRouter, Depends, status, UploadFile, Form
+from fastapi import APIRouter, Depends, status, Form
 
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement, \

@@ -1,11 +1,18 @@
+import io
+import tempfile
+import zipfile
 from typing import List
 
 import pandas as pd
 import numpy as np
 import pathlib
 
+from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
+from mapping_workbench.backend.package_importer.adapters.v3.importer import PackageImporter
 from mapping_workbench.backend.package_importer.models.imported_mapping_suite import MappingMetadata, \
     MappingConceptualRule, ImportedCollectionResource, ImportedFileResource, ImportedMappingSuite
+from mapping_workbench.backend.project.models.entity import Project
+from mapping_workbench.backend.user.models.user import User
 
 TEST_DATA_DIR_NAME = "test_data"
 TRANSFORMATION_DIR_NAME = "transformation"
@@ -115,3 +122,22 @@ def import_mapping_suite_from_file_system(mapping_suite_dir_path: pathlib.Path) 
                                          sparql_validation_resources=mapping_sparql_validation_resources,
                                          shacl_result_query=mapping_shacl_result_query)
     return mapping_suite
+
+
+async def import_mapping_package(file_content: bytes, project: Project, user: User) -> MappingPackage:
+    zf = zipfile.ZipFile(io.BytesIO(file_content))
+    tempdir = tempfile.TemporaryDirectory()
+    tempdir_name = tempdir.name
+    tempdir_path = pathlib.Path(tempdir_name)
+    zf.extractall(tempdir_name)
+    dir_contents = list(tempdir_path.iterdir())
+    assert len(dir_contents) == 1
+
+    imp_mapping_suite: ImportedMappingSuite = import_mapping_suite_from_file_system(dir_contents[0])
+
+    importer: PackageImporter = PackageImporter(project=project, user=user)
+    package: MappingPackage = await importer.import_from_mono_mapping_suite(imp_mapping_suite)
+
+    print("K :: ", package)
+
+    return package

@@ -11,6 +11,7 @@ import pandas as pd
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageImportIn, MappingPackage
 from mapping_workbench.backend.ontology.services.namespaces import discover_and_save_mapping_rule_prefixes
+from mapping_workbench.backend.package_importer.models.imported_mapping_suite import ImportedMappingSuite
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.resource_collection.models.entity import ResourceFile, ResourceCollection, \
     ResourceFileFormat
@@ -47,72 +48,37 @@ RULES_RML_TRIPLE_MAP_REF = "RML TripleMap reference (O)"
 DEFAULT_RESOURCES_COLLECTION_NAME = "Default"
 
 
-
 class PackageImporter:
     mapping_package: MappingPackage
 
-    def __init__(self, package_name, package_archive: ZipFile, project: Project, user: User):
-        self.package_name = package_name
-        self.package_archive = package_archive
+    def __init__(self, project: Project, user: User):
         self.project = project
         self.user = user
 
-        self.mapping_package_data: MappingPackageImportIn = MappingPackageImportIn()
+    async def import_from_mono_mapping_suite(self, mono_package: ImportedMappingSuite) -> MappingPackage:
+        """
 
-        self.tempdir = tempfile.TemporaryDirectory()
-        tempdir_name = self.tempdir.name
-        self.package_archive.extractall(tempdir_name)
-        self.package_path = Path(tempdir_name) / self.package_name
+        :param mono_package:
+        :return:
+        """
+        package: MappingPackage = await self.add_mapping_package_from_mono(mono_package)
 
-    async def run(self):
-        await self.add_mapping_package()
-        await self.add_test_data()
-        await self.add_triple_map_fragments()
-        await self.add_sparql_test_suites()
-        await self.add_shacl_test_suites()
-        await self.add_resource_collections()
-        await self.add_mapping_rules()
-
-        self.tempdir.cleanup()
-
-        await self.mapping_package.save()
-        return self.mapping_package
+        print("K :: ", package)
+        # await self.add_test_data_from_mono()
+        # await self.add_triple_map_fragments_from_mono()
+        # await self.add_sparql_test_suites_from_mono()
+        # await self.add_shacl_test_suites_from_mono()
+        # await self.add_resource_collections_from_mono()
+        # await self.add_mapping_rules_from_mono()
+        #
+        # await package.save()
+        return package
 
     @classmethod
     def metadata_constraint_value(cls, constraints, key, single=True):
         if (key in constraints) and len(constraints[key]):
             return constraints[key][0] if single else constraints[key]
         return None
-
-    def add_metadata_to_package_data(self):
-        with open(self.package_path / "metadata.json") as metadata_path:
-            metadata = json.load(metadata_path)
-
-        self.mapping_package_data.title = metadata['title']
-        self.mapping_package_data.identifier = metadata['identifier']
-        self.mapping_package_data.description = metadata['description']
-        self.mapping_package_data.created_at = metadata['created_at']
-
-        if ('metadata_constraints' in metadata) and ('constraints' in metadata['metadata_constraints']):
-            constraints = metadata['metadata_constraints']['constraints']
-            if constraints:
-                self.mapping_package_data.subtype = \
-                    list(map(lambda x: str(x), self.metadata_constraint_value(constraints, 'eforms_subtype', False)))
-                start_date = self.metadata_constraint_value(constraints, 'start_date')
-                if start_date:
-                    self.mapping_package_data.start_date = datetime.strptime(start_date, '%Y-%d-%m')
-                end_date = self.metadata_constraint_value(constraints, 'end_date')
-                if end_date:
-                    self.mapping_package_data.end_date = datetime.strptime(end_date, '%Y-%d-%m')
-                self.mapping_package_data.min_xsd_version = \
-                    self.metadata_constraint_value(constraints, 'min_xsd_version')
-                self.mapping_package_data.max_xsd_version = \
-                    self.metadata_constraint_value(constraints, 'max_xsd_version')
-
-        conceptual_mappings_file = self.package_path / CONCEPTUAL_MAPPINGS_FILE
-        df = pd.read_excel(conceptual_mappings_file, sheet_name="Metadata")
-        cm_file_metadata = df.copy().set_index('Field').T.to_dict('list')
-        self.mapping_package_data.base_xpath = self.cm_file_read_pd_value(cm_file_metadata[BASE_XPATH_FIELD][0])
 
     async def add_test_data(self):
         resource_formats = [e.value for e in TestDataFileResourceFormat]
@@ -371,19 +337,24 @@ class PackageImporter:
                     resource_file.content = file_content
                     await resource_file.on_update(self.user).save()
 
-    async def add_mapping_package(self, with_save: bool = True):
-        self.add_metadata_to_package_data()
-        # self.mapping_package = await MappingPackage.find_one(
-        #     MappingPackage.identifier == self.mapping_package_data.identifier
-        # ) or MappingPackage(**(self.mapping_package_data.model_dump()))
-        #
-        # self.mapping_package.project = self.project
-        # self.mapping_package.test_data_suites = []
-        # self.mapping_package.shacl_test_suites = []
-        # with_save and (
-        #     await self.mapping_package.on_update(self.user).save() if self.mapping_package.id
-        #     else await self.mapping_package.on_create(self.user).save()
-        # )
+    async def add_mapping_package_from_mono(self, mono_package: ImportedMappingSuite) -> MappingPackage:
+        package: MappingPackage = await MappingPackage.find_one(
+            MappingPackage.identifier == mono_package.metadata.identifier
+        )
+
+        metadata: Dict = mono_package.metadata.model_dump()
+        if package:
+            package = package.model_copy(update=metadata)
+        else:
+            package = MappingPackage(**metadata)
+
+        package.project = self.project
+        package.shacl_test_suites = []
+
+        await package.on_update(self.user).save() if package.id else await package.on_create(self.user).save()
+
+        return package
+
 
     @classmethod
     def cm_file_read_pd_value(cls, value, default=""):

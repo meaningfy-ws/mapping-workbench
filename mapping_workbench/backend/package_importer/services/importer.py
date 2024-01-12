@@ -2,8 +2,8 @@ import io
 import zipfile
 from pathlib import Path
 
-from mapping_workbench.backend.mapping_package.adapters.importer import PackageImporter
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
+from mapping_workbench.backend.package_importer.adapters.importer import PackageImporter
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.user.models.user import User
 

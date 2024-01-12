@@ -275,40 +275,40 @@ const Page = () => {
                                                         value={item.identifier}
                                                     />
                                                 </Grid>
-                                                <Grid md={6} xs={12}>
+                                                <Grid md={12} xs={12}>
                                                     <PropertyListItem
-                                                        label="Sub-type"
-                                                        value={item.subtype.join(', ')}
+                                                        label="Mapping Version"
+                                                        value={item.mapping_version}
                                                     />
                                                 </Grid>
                                                 <Grid md={12} xs={12}>
                                                     <PropertyListItem
-                                                        label="Base XPath"
-                                                        value={item.base_xpath}
+                                                        label="EPO Version"
+                                                        value={item.epo_version}
                                                     />
                                                 </Grid>
-                                                <Grid md={6} xs={12}>
+                                                <Grid md={12} xs={12}>
+                                                    <PropertyListItem
+                                                        label="eForms Subtype"
+                                                        value={item.eform_subtypes.join(', ')}
+                                                    />
+                                                </Grid>
+                                                <Grid md={12} xs={12}>
                                                     <PropertyListItem
                                                         label="Start Date"
                                                         value={item.start_date}
                                                     />
                                                 </Grid>
-                                                <Grid md={6} xs={12}>
+                                                <Grid md={12} xs={12}>
                                                     <PropertyListItem
                                                         label="End Date"
                                                         value={item.end_date}
                                                     />
                                                 </Grid>
-                                                <Grid md={6} xs={12}>
+                                                <Grid md={12} xs={12}>
                                                     <PropertyListItem
-                                                        label="Min XSD Version"
-                                                        value={item.min_xsd_version}
-                                                    />
-                                                </Grid>
-                                                <Grid md={6} xs={12}>
-                                                    <PropertyListItem
-                                                        label="Max XSD Version"
-                                                        value={item.max_xsd_version}
+                                                        label="eForms SDK version"
+                                                        value={item.eforms_sdk_versions.join(', ')}
                                                     />
                                                 </Grid>
                                             </Grid>
@@ -321,24 +321,24 @@ const Page = () => {
                 )}
                 {currentTab === 'resources' && (
                     <Grid container spacing={3}>
-                        <Grid md={12} xs={12}>
-                            <FileResourceCollectionsCard
-                                collectionApi={testDataSuitesApi}
-                                filters={{
-                                    ids: ((item.test_data_suites || []).length > 0
-                                        && item.test_data_suites.map(x => x.id)) || ''
-                                }}
-                            />
-                        </Grid>
-                        <Grid md={12} xs={12}>
-                            <FileResourceCollectionsCard
-                                collectionApi={sparqlTestSuitesApi}
-                                filters={{
-                                    ids: ((item.sparql_test_suites || []).length > 0
-                                        && item.sparql_test_suites.map(x => x.id)) || ''
-                                }}
-                            />
-                        </Grid>
+                        {/*<Grid md={12} xs={12}>*/}
+                        {/*    <FileResourceCollectionsCard*/}
+                        {/*        collectionApi={testDataSuitesApi}*/}
+                        {/*        filters={{*/}
+                        {/*            ids: ((item.test_data_suites || []).length > 0*/}
+                        {/*                && item.test_data_suites.map(x => x.id)) || ''*/}
+                        {/*        }}*/}
+                        {/*    />*/}
+                        {/*</Grid>*/}
+                        {/*<Grid md={12} xs={12}>*/}
+                        {/*    <FileResourceCollectionsCard*/}
+                        {/*        collectionApi={sparqlTestSuitesApi}*/}
+                        {/*        filters={{*/}
+                        {/*            ids: ((item.sparql_test_suites || []).length > 0*/}
+                        {/*                && item.sparql_test_suites.map(x => x.id)) || ''*/}
+                        {/*        }}*/}
+                        {/*    />*/}
+                        {/*</Grid>*/}
                         <Grid md={12} xs={12}>
                             <FileResourceCollectionsCard
                                 collectionApi={shaclTestSuitesApi}
