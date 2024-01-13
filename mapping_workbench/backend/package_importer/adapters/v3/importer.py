@@ -321,9 +321,8 @@ class PackageImporter:
                 rule.refers_to_mapping_package_ids = []
 
             if self.package:
-                package_link = MappingPackage.link_from_id(self.package.id)
-                if package_link not in rule.refers_to_mapping_package_ids:
-                    rule.refers_to_mapping_package_ids.append(package_link)
+                if self.package.id not in rule.refers_to_mapping_package_ids:
+                    rule.refers_to_mapping_package_ids.append(self.package.id)
 
             rule.min_sdk_version = mono_rule.min_sdk_version
             rule.max_sdk_version = mono_rule.max_sdk_version
@@ -331,9 +330,12 @@ class PackageImporter:
             rule.target_class_path = mono_rule.class_path
             rule.target_property_path = mono_rule.property_path
             rule.status = mono_rule.status
-            rule.mapping_notes = [ConceptualMappingRuleComment(comment=mono_rule.mapping_notes)]
-            rule.editorial_notes = [ConceptualMappingRuleComment(comment=mono_rule.editorial_notes)]
-            rule.feedback_notes = [ConceptualMappingRuleComment(comment=mono_rule.feedback_notes)]
+            if mono_rule.mapping_notes:
+                rule.mapping_notes = [ConceptualMappingRuleComment(comment=mono_rule.mapping_notes)]
+            if mono_rule.editorial_notes:
+                rule.editorial_notes = [ConceptualMappingRuleComment(comment=mono_rule.editorial_notes)]
+            if mono_rule.feedback_notes:
+                rule.feedback_notes = [ConceptualMappingRuleComment(comment=mono_rule.feedback_notes)]
 
             await rule.on_update(self.user).save() if rule.id else await rule.on_create(self.user).create()
 

@@ -615,8 +615,9 @@ export const ListTableRow = (props) => {
             ? item.target_class_path_terms_validity.some(x => !x.is_valid)
             : false;
 
-    const commentsDialog = useDialog();
-    const notesDialog = useDialog();
+    const mappingNotesDialog = useDialog();
+    const editorialNotesDialog = useDialog();
+    const feedbackNotesDialog = useDialog();
 
     return (<Fragment key={item_id}>
         <TableRow
@@ -688,8 +689,8 @@ export const ListTableRow = (props) => {
                         </Alert>}
                     {!detailedView && (
                         <>
-                            {item.target_class_path.length > TRUNCATE_LENGTH && "..."}
-                            {item.target_class_path.substring(item.target_class_path.length - TRUNCATE_LENGTH)}
+                            {item.target_class_path && item.target_class_path.length > TRUNCATE_LENGTH && "..."}
+                            {item.target_class_path && item.target_class_path.substring(item.target_class_path.length - TRUNCATE_LENGTH)}
                         </>
                     )}
                 </Box>
@@ -702,8 +703,8 @@ export const ListTableRow = (props) => {
                         </Alert>}
                     {!detailedView && (
                         <>
-                            {item.target_property_path.length > TRUNCATE_LENGTH && "..."}
-                            {item.target_property_path.substring(item.target_property_path.length - TRUNCATE_LENGTH)}
+                            {item.target_property_path && item.target_property_path.length > TRUNCATE_LENGTH && "..."}
+                            {item.target_property_path && item.target_property_path.substring(item.target_property_path.length - TRUNCATE_LENGTH)}
                         </>
                     )}
                 </Box>
@@ -737,27 +738,26 @@ export const ListTableRow = (props) => {
                 {(item.created_at).replace("T", " ").split(".")[0]}
             </TableCell>*/}
             <TableCell align="center">
-                {item.comments && item.comments.length > 0 && <>
-
+                {item.mapping_notes && item.mapping_notes.length > 0 && <>
                     <Button variant="text"
                             size="small"
                             color="warning"
-                            onClick={commentsDialog.handleOpen}
-                    >{(item.comments || []).length}</Button>
+                            onClick={mappingNotesDialog.handleOpen}
+                    >{(item.mapping_notes || []).length}</Button>
                     <Dialog
-                        id={"comments_" + item._id}
-                        onClose={commentsDialog.handleClose}
-                        open={commentsDialog.open}
+                        id={"mapping_notes_" + item._id}
+                        onClose={mappingNotesDialog.handleClose}
+                        open={mappingNotesDialog.open}
                         fullWidth
                         maxWidth="md"
                     >
                         <Card>
-                            <CardHeader title="Comments" sx={{mb: 2}}/>
+                            <CardHeader title="Mapping Notes" sx={{mb: 2}}/>
                             <Divider/>
                             <CardContent sx={{pt: 1}}>
-                                {(item.comments || []).map(
-                                    (comment) => <RuleComment
-                                        comment={comment}
+                                {(item.mapping_notes || []).map(
+                                    (mapping_note) => <RuleComment
+                                        comment={mapping_note}
                                     />
                                 )}
                             </CardContent>
@@ -766,26 +766,26 @@ export const ListTableRow = (props) => {
                 </>}
             </TableCell>
             <TableCell align="center">
-                {item.notes && item.notes.length > 0 && <>
+                {item.editorial_notes && item.editorial_notes.length > 0 && <>
                     <Button variant="text"
                             size="small"
                             color="warning"
-                            onClick={notesDialog.handleOpen}
-                    >{(item.notes || []).length}</Button>
+                            onClick={editorialNotesDialog.handleOpen}
+                    >{(item.editorial_notes || []).length}</Button>
                     <Dialog
-                        id={"notes_" + item._id}
-                        onClose={notesDialog.handleClose}
-                        open={notesDialog.open}
+                        id={"editorial_notes_" + item._id}
+                        onClose={editorialNotesDialog.handleClose}
+                        open={editorialNotesDialog.open}
                         fullWidth
                         maxWidth="md"
                     >
                         <Card>
-                            <CardHeader title="Notes" sx={{mb: 2}}/>
+                            <CardHeader title="Editorial Notes" sx={{mb: 2}}/>
                             <Divider/>
                             <CardContent sx={{pt: 1}}>
-                                {(item.notes || []).map(
-                                    (note) => <RuleComment
-                                        comment={note}
+                                {(item.editorial_notes || []).map(
+                                    (editorial_note) => <RuleComment
+                                        comment={editorial_note}
                                     />
                                 )}
                             </CardContent>
@@ -793,6 +793,35 @@ export const ListTableRow = (props) => {
                     </Dialog>
                 </>}
             </TableCell>
+            <TableCell align="center">
+                {item.feedback_notes && item.feedback_notes.length > 0 && <>
+                    <Button variant="text"
+                            size="small"
+                            color="warning"
+                            onClick={feedbackNotesDialog.handleOpen}
+                    >{(item.feedback_notes || []).length}</Button>
+                    <Dialog
+                        id={"feedback_notes_" + item._id}
+                        onClose={feedbackNotesDialog.handleClose}
+                        open={feedbackNotesDialog.open}
+                        fullWidth
+                        maxWidth="md"
+                    >
+                        <Card>
+                            <CardHeader title="Feedback Notes" sx={{mb: 2}}/>
+                            <Divider/>
+                            <CardContent sx={{pt: 1}}>
+                                {(item.feedback_notes || []).map(
+                                    (feedback_note) => <RuleComment
+                                        comment={feedback_note}
+                                    />
+                                )}
+                            </CardContent>
+                        </Card>
+                    </Dialog>
+                </>}
+            </TableCell>
+
             <TableCell align="right">
                 <ListItemActions
                     itemctx={new ForListItemAction(item_id, sectionApi)}/>
@@ -1017,10 +1046,13 @@ export const ListTable = (props) => {
                             </Tooltip>
                         </TableCell>*/}
                         <TableCell align="center">
-                            Comments
+                            M. Notes
                         </TableCell>
                         <TableCell align="center">
-                            Notes
+                            E. Notes
+                        </TableCell>
+                        <TableCell align="center">
+                            F. Notes
                         </TableCell>
                         <TableCell align="right">
                             Actions
