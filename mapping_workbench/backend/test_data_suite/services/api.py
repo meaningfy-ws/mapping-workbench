@@ -65,7 +65,6 @@ async def list_test_data_suite_file_resources(
 
     prepare_search_param(query_filters)
     skip, limit = pagination_params(page, limit)
-    print("K :: ", test_data_suite.id, query_filters)
 
     items: List[TestDataFileResource] = await TestDataFileResource.find(
         query_filters,

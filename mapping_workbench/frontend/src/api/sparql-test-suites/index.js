@@ -12,7 +12,8 @@ class SPARQLTestSuitesApi extends FileCollectionsApi {
     get FILE_COLLECTION_TYPES() {
         return {
             "cm_assertion": "CM Assertions",
-            "integration_test": "Integration Tests"
+            "integration_test": "Integration Tests",
+            "other": "Other"
         };
     }
 

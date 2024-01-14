@@ -19,7 +19,7 @@ from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestFi
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResourceFormat, SPARQLTestSuite, \
     SPARQLTestFileResource, SPARQLQueryValidationType
 from mapping_workbench.backend.sparql_test_suite.services.api import get_sparql_test_suite_by_project_and_title
-from mapping_workbench.backend.sparql_test_suite.services.sparql_cm_assertions import SPARQL_CM_ASSERTIONS_SUITE_TITLE
+from mapping_workbench.backend.package_validator.services.sparql_cm_assertions import SPARQL_CM_ASSERTIONS_SUITE_TITLE
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
     TestDataFileResourceFormat
 from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragmentFormat, \
@@ -45,7 +45,6 @@ RULES_INTEGRATION_TESTS_REF = "Reference to Integration Tests (O)"
 RULES_RML_TRIPLE_MAP_REF = "RML TripleMap reference (O)"
 
 DEFAULT_RESOURCES_COLLECTION_NAME = "Default"
-
 
 
 class PackageImporter:

@@ -3,7 +3,7 @@ from typing import Dict
 from mapping_workbench.backend.conceptual_mapping_rule.services.api import validate_and_save_rules_terms
 from mapping_workbench.backend.core.models.api_request import APIRequestWithProject
 from mapping_workbench.backend.project.models.entity import Project
-from mapping_workbench.backend.sparql_test_suite.services.sparql_cm_assertions import \
+from mapping_workbench.backend.package_validator.services.sparql_cm_assertions import \
     clean_sparql_cm_assertions_queries_for_project, generate_and_save_cm_assertions_queries
 from mapping_workbench.backend.test_data_suite.services.transform_test_data import transform_test_data_for_project
 

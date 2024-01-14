@@ -31,12 +31,12 @@ export const EditForm = (props) => {
         title: item.title || '',
         description: item.description || '',
         identifier: item.identifier || '',
-        base_xpath: item.base_xpath || '',
-        subtype: item.subtype || '',
+        mapping_version: item.mapping_version || '',
+        epo_version: item.epo_version || '',
+        eform_subtypes: item.eform_subtypes || '',
         start_date: item.start_date && new Date(item.start_date) || '',
         end_date: item.end_date && new Date(item.end_date) || '',
-        min_xsd_version: item.min_xsd_version || '',
-        max_xsd_version: item.max_xsd_version || '',
+        eforms_sdk_versions: item.eforms_sdk_versions || '',
         //test_data_suites: (item.test_data_suites || []).map(x => x.id),
         shacl_test_suites: (item.shacl_test_suites || []).map(x => x.id)
     };
@@ -53,8 +53,10 @@ export const EditForm = (props) => {
         }),
         onSubmit: async (values, helpers) => {
             try {
-                values['subtype'] = (typeof values['subtype'] == 'string') ?
-                    values['subtype'].split(',').map(s => s.trim()) : values['subtype'];
+                values['eform_subtypes'] = (typeof values['eform_subtypes'] == 'string') ?
+                    values['eform_subtypes'].split(',').map(s => s.trim()) : values['eform_subtypes'];
+                values['eforms_sdk_versions'] = (typeof values['eforms_sdk_versions'] == 'string') ?
+                    values['eforms_sdk_versions'].split(',').map(s => s.trim()) : values['eforms_sdk_versions'];
                 values['start_date'] = values['start_date'] || null;
                 values['end_date'] = values['end_date'] || null;
                 let response;
@@ -70,7 +72,6 @@ export const EditForm = (props) => {
                 toast.success(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "created" : "updated"));
                 if (response) {
                     if (itemctx.isNew) {
-                        console.log(response);
                         router.push({
                             pathname: paths.app[sectionApi.section].edit,
                             query: {id: response._id}
@@ -105,10 +106,13 @@ export const EditForm = (props) => {
                             <FormTextField formik={formik} name="identifier" label="Identifier" required={true}/>
                         </Grid>
                         <Grid xs={12} md={12}>
-                            <FormTextField formik={formik} name="base_xpath" label="Base XPath"/>
+                            <FormTextField formik={formik} name="mapping_version" label="Mapping Version"/>
                         </Grid>
                         <Grid xs={12} md={12}>
-                            <FormTextField formik={formik} name="subtype" label="Sub-type"/>
+                            <FormTextField formik={formik} name="epo_version" label="EPO Version"/>
+                        </Grid>
+                        <Grid xs={12} md={12}>
+                            <FormTextField formik={formik} name="eform_subtypes" label="eForms Subtype"/>
                         </Grid>
                         <Grid xs={12} md={6}>
                             <FormDateField formik={formik} name="start_date" label="Start Date"/>
@@ -116,11 +120,8 @@ export const EditForm = (props) => {
                         <Grid xs={12} md={6}>
                             <FormDateField formik={formik} name="end_date" label="End Date"/>
                         </Grid>
-                        <Grid xs={12} md={6}>
-                            <FormTextField formik={formik} name="min_xsd_version" label="Min XSD Version"/>
-                        </Grid>
-                        <Grid xs={12} md={6}>
-                            <FormTextField formik={formik} name="max_xsd_version" label="Max XSD Version"/>
+                        <Grid xs={12} md={12}>
+                            <FormTextField formik={formik} name="eforms_sdk_versions" label="eForms SDK version"/>
                         </Grid>
                     </Grid>
                 </CardContent>

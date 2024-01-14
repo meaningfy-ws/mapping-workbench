@@ -43,17 +43,19 @@ class ConceptualMappingRuleComment(BaseModel):
 
 
 class ConceptualMappingRuleIn(BaseProjectResourceEntityInSchema):
-    field_id: Optional[str] = None
-    field_title: Optional[str] = None
-    field_description: Optional[str] = None
-    source_xpath: Optional[List[str]] = None
+    min_sdk_version: Optional[str] = None
+    max_sdk_version: Optional[str] = None
+    source_structural_element: Optional[Link[StructuralElement]] = None
+    mapping_group_id: Optional[str] = None
     target_class_path: Optional[str] = None
     target_property_path: Optional[str] = None
     refers_to_mapping_package_ids: List[PydanticObjectId] = []
     triple_map_fragment: Optional[Link[GenericTripleMapFragment]] = None
     sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
-    notes: Optional[List[ConceptualMappingRuleComment]] = None
-    comments: Optional[List[ConceptualMappingRuleComment]] = None
+    status: Optional[str] = None
+    mapping_notes: Optional[List[ConceptualMappingRuleComment]] = None
+    editorial_notes: Optional[List[ConceptualMappingRuleComment]] = None
+    feedback_notes: Optional[List[ConceptualMappingRuleComment]] = None
 
 
 class ConceptualMappingRuleCreateIn(ConceptualMappingRuleIn):
@@ -65,7 +67,10 @@ class ConceptualMappingRuleUpdateIn(ConceptualMappingRuleIn):
 
 
 class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema):
+    min_sdk_version: Optional[str] = None
+    max_sdk_version: Optional[str] = None
     source_structural_element: Optional[Link[StructuralElement]] = None
+    mapping_group_id: Optional[str] = None
     target_class_path: Optional[str] = None
     target_class_path_terms_validity: Optional[List[TermValidityResponse]] = None
     target_property_path: Optional[str] = None
@@ -74,12 +79,17 @@ class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema):
     refers_to_mapping_package_ids: List[PydanticObjectId] = []
     triple_map_fragment: Optional[Link[GenericTripleMapFragment]] = None
     sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
-    notes: Optional[List[ConceptualMappingRuleComment]] = None
-    comments: Optional[List[ConceptualMappingRuleComment]] = None
+    status: Optional[str] = None
+    mapping_notes: Optional[List[ConceptualMappingRuleComment]] = None
+    editorial_notes: Optional[List[ConceptualMappingRuleComment]] = None
+    feedback_notes: Optional[List[ConceptualMappingRuleComment]] = None
 
 
 class ConceptualMappingRuleState(ObjectState):
+    min_sdk_version: Optional[str] = None
+    max_sdk_version: Optional[str] = None
     source_structural_element: Optional[StructuralElement] = None
+    mapping_group_id: Optional[str] = None
     target_class_path: Optional[str] = None
     target_class_path_terms_validity: Optional[List[TermValidityResponse]] = None
     target_property_path: Optional[str] = None
@@ -88,12 +98,17 @@ class ConceptualMappingRuleState(ObjectState):
     refers_to_mapping_package_ids: List[PydanticObjectId] = []
     triple_map_fragment: Optional[GenericTripleMapFragment] = None
     sparql_assertions: Optional[List[SPARQLTestFileResource]] = None
-    notes: Optional[List[ConceptualMappingRuleComment]] = None
-    comments: Optional[List[ConceptualMappingRuleComment]] = None
+    status: Optional[str] = None
+    mapping_notes: Optional[List[ConceptualMappingRuleComment]] = None
+    editorial_notes: Optional[List[ConceptualMappingRuleComment]] = None
+    feedback_notes: Optional[List[ConceptualMappingRuleComment]] = None
 
 
 class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
+    min_sdk_version: Optional[str] = None
+    max_sdk_version: Optional[str] = None
     source_structural_element: Optional[Link[StructuralElement]] = None
+    mapping_group_id: Optional[str] = None
     target_class_path: Optional[str] = None
     target_class_path_terms_validity: Optional[List[TermValidityResponse]] = None
     target_property_path: Optional[str] = None
@@ -102,8 +117,10 @@ class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
     refers_to_mapping_package_ids: List[PydanticObjectId] = []
     triple_map_fragment: Optional[Link[GenericTripleMapFragment]] = None
     sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
-    notes: Optional[List[ConceptualMappingRuleComment]] = None
-    comments: Optional[List[ConceptualMappingRuleComment]] = None
+    status: Optional[str] = None
+    mapping_notes: Optional[List[ConceptualMappingRuleComment]] = None
+    editorial_notes: Optional[List[ConceptualMappingRuleComment]] = None
+    feedback_notes: Optional[List[ConceptualMappingRuleComment]] = None
 
     async def get_state(self) -> ConceptualMappingRuleState:
         source_structural_element = await self.source_structural_element.fetch()
@@ -122,8 +139,10 @@ class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
             refers_to_mapping_package_ids=self.refers_to_mapping_package_ids,
             triple_map_fragment=triple_map_fragment,
             sparql_assertions=sparql_assertions,
-            notes=self.notes,
-            comments=self.comments
+            status=self.status,
+            mapping_notes=self.mapping_notes,
+            editorial_notes=self.editorial_notes,
+            feedback_notes=self.feedback_notes
         )
 
     def set_state(self, state: ConceptualMappingRuleState):

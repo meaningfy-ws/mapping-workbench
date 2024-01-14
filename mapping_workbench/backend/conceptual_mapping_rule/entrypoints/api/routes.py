@@ -21,7 +21,7 @@ from mapping_workbench.backend.core.models.api_response import APIEmptyContentWi
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
-from mapping_workbench.backend.sparql_test_suite.services.sparql_cm_assertions import \
+from mapping_workbench.backend.package_validator.services.sparql_cm_assertions import \
     clean_sparql_cm_assertions_queries_for_project, generate_and_save_cm_assertions_queries
 from mapping_workbench.backend.user.models.user import User
 

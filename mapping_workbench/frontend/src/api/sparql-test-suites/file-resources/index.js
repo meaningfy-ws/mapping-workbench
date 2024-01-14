@@ -35,6 +35,7 @@ class SPARQLTestFileResourcesApi extends FileResourcesApi {
             "cm_assertion": "CM Assertion"
         }
         types[FILE_RESOURCE_TYPE_INTEGRATION_TEST_VALUE] = "Integration Test";
+        types['other'] = 'Other';
         return types;
     }
 

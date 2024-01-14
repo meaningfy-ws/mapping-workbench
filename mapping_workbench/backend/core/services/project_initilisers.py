@@ -14,14 +14,15 @@ from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.resource_collection.models.entity import ResourceCollection, ResourceFile
 from mapping_workbench.backend.security.models.security import AccessToken
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestFileResource
-from mapping_workbench.backend.shacl_test_suite.models.validator import SHACLTestDataValidationResult
+from mapping_workbench.backend.package_validator.models.shacl_validation import SHACLTestDataValidationResult
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuite, SPARQLTestFileResource
-from mapping_workbench.backend.sparql_test_suite.models.validator import SPARQLTestDataValidationResult
+from mapping_workbench.backend.package_validator.models.sparql_validation import SPARQLTestDataValidationResult
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource
 from mapping_workbench.backend.triple_map_fragment.models.entity import SpecificTripleMapFragment, \
     GenericTripleMapFragment
 from mapping_workbench.backend.triple_map_registry.models.entity import TripleMapRegistry
 from mapping_workbench.backend.user.models.user import User
+from mapping_workbench.backend.package_validator.models.xpath_validation import XPathAssertion
 
 
 async def init_project_models(mongodb_database: AsyncIOMotorDatabase):
@@ -52,6 +53,7 @@ async def init_project_models(mongodb_database: AsyncIOMotorDatabase):
             SHACLTestDataValidationResult,
             SPARQLTestDataValidationResult,
             StructuralElement,
-            StructuralElementsVersionedView
+            StructuralElementsVersionedView,
+            XPathAssertion
         ],
     )
