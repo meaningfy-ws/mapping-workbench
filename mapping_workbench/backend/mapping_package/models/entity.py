@@ -4,7 +4,7 @@ from typing import Optional, List
 import pymongo
 from beanie import Indexed, Link
 from beanie.odm.operators.find.comparison import In
-from pydantic import Field
+
 from pymongo import IndexModel
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRuleState, \
@@ -12,10 +12,9 @@ from mapping_workbench.backend.conceptual_mapping_rule.models.entity import Conc
 from mapping_workbench.backend.core.models.base_entity import BaseTitledEntityListFiltersSchema
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
-from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite
+from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestSuiteState
 from mapping_workbench.backend.state_manager.models.state_object import ObjectState, StatefulObjectABC
-
-#from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataSuiteState
+from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuiteState
 
 
 class MappingPackageException(Exception):
@@ -74,8 +73,8 @@ class MappingPackageState(ObjectState):
     start_date: Optional[str] = None
     end_date: Optional[str] = None
     eforms_sdk_versions: List[str] = None
-    #test_data_suites: List[TestDataSuiteState] = []
-    shacl_test_suites: List[SHACLTestSuite] = []
+    test_data_suites: List[TestDataSuiteState] = []
+    shacl_test_suites: List[SHACLTestSuiteState] = []
     conceptual_mapping_rule_states: List[ConceptualMappingRuleState] = []
 
 
@@ -105,7 +104,13 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
             test_data_suites = [await test_data_suite.fetch() for test_data_suite in self.test_data_suites]
         shacl_test_suites = []
         if self.shacl_test_suites:
-            shacl_test_suites = [await shacl_test_suite.fetch() for shacl_test_suite in self.shacl_test_suites]
+            shacl_test_suites = []
+            for shacl_test_suite in self.shacl_test_suites:
+                shacl_test_suite = await shacl_test_suite.fetch()
+                if shacl_test_suite:
+                    shacl_test_suite_state = await shacl_test_suite.get_state()
+                    shacl_test_suites.append(shacl_test_suite_state)
+
         return MappingPackageState(
             title=self.title,
             description=self.description,

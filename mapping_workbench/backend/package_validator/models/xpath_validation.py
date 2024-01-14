@@ -1,7 +1,6 @@
 from typing import Optional, List
 
 from beanie import Document
-from pydantic import BaseModel
 
 
 class XPathAssertion(Document):
@@ -17,6 +16,3 @@ class XPathAssertion(Document):
 
     class Settings:
         name = "xpath_assertions"
-
-
-

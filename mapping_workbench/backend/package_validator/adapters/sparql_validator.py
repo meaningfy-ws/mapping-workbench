@@ -4,9 +4,12 @@ import rdflib
 from pydantic import validate_call
 
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResource
-from mapping_workbench.backend.sparql_test_suite.models.validator import SPARQLTestDataValidationResult, SPARQLTestDataResult
-from mapping_workbench.backend.test_data_suite.adapters.validator import TestDataValidator
-from mapping_workbench.backend.test_data_suite.models.entity import TestDataFileResource
+from mapping_workbench.backend.package_validator.models.sparql_validation import SPARQLTestDataValidationResult, \
+    SPARQLTestDataResult
+from mapping_workbench.backend.package_validator.adapters.xpath_validator import TestDataValidator
+from mapping_workbench.backend.test_data_suite.models.entity import TestDataState
+
+RDF_FORMAT = "ttl"
 
 
 class SPARQLValidator(TestDataValidator):
@@ -18,10 +21,10 @@ class SPARQLValidator(TestDataValidator):
     rdf_graph: Any = None
 
     @validate_call
-    def __init__(self, test_data: TestDataFileResource, **data: Any):
+    def __init__(self, test_data: TestDataState, **data: Any):
         super().__init__(**data)
         self.rdf_graph = rdflib.Graph().parse(data=test_data.rdf_manifestation,
-                                              format=rdflib.util.guess_format(test_data.filename))
+                                              format=RDF_FORMAT)
 
     def validate(self, sparql_queries: List[SPARQLTestFileResource]) -> SPARQLTestDataValidationResult:
         ask_results = []

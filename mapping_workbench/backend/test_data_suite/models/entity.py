@@ -7,10 +7,9 @@ from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
 from mapping_workbench.backend.file_resource.models.file_resource import FileResource, FileResourceCollection, \
-    FileResourceIn
-from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
-from mapping_workbench.backend.shacl_test_suite.models.validator import SHACLTestDataValidationResult
-from mapping_workbench.backend.sparql_test_suite.models.validator import SPARQLTestDataValidationResult
+    FileResourceIn, FileResourceFormat
+from mapping_workbench.backend.package_validator.models.shacl_validation import SHACLTestDataValidationResult
+from mapping_workbench.backend.package_validator.models.sparql_validation import SPARQLTestDataValidationResult
 from mapping_workbench.backend.state_manager.models.state_object import StatefulObjectABC, ObjectState
 
 
@@ -59,7 +58,7 @@ class TestDataFileResource(FileResource, StatefulObjectABC):
             description=self.description,
             filename=self.filename,
             path=self.path,
-            format=self.format,
+            format=FileResourceFormat.XML,
             content=self.content
         )
         rdf_manifestation = self.rdf_manifestation

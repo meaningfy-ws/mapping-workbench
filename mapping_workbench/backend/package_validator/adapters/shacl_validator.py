@@ -6,10 +6,10 @@ from pydantic import validate_call
 from pyshacl import validate
 
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestFileResource
-from mapping_workbench.backend.shacl_test_suite.models.validator import SHACLTestDataValidationResult
-from mapping_workbench.backend.shacl_test_suite.resources import SHACL_RESULT_QUERY_PATH
-from mapping_workbench.backend.test_data_suite.adapters.validator import TestDataValidator
-from mapping_workbench.backend.test_data_suite.models.entity import TestDataFileResource
+from mapping_workbench.backend.package_validator.models.shacl_validation import SHACLTestDataValidationResult
+from mapping_workbench.backend.package_validator.resources import SHACL_RESULT_QUERY_PATH
+from mapping_workbench.backend.package_validator.adapters.xpath_validator import TestDataValidator
+from mapping_workbench.backend.test_data_suite.models.entity import TestDataState
 
 TURTLE_FILE_TYPE = "turtle"
 SHACL_FILE_FORMAT_TURTLE = "n3"
@@ -26,11 +26,11 @@ class SHACLValidator(TestDataValidator):
     shacl_shape_result_query: str = ""
 
     @validate_call
-    def __init__(self, test_data: TestDataFileResource, shacl_shape_result_query: str = None, **data: Any):
+    def __init__(self, test_data: TestDataState, shacl_shape_result_query: str = None, **data: Any):
         super().__init__(**data)
         self.rdf_graph = rdflib.Graph().parse(data=test_data.rdf_manifestation,
-                                              format=rdflib.util.guess_format(test_data.filename))
-        self.resource_id = test_data.filename
+                                              format=rdflib.util.guess_format(test_data.xml_manifestation.filename))
+        self.resource_id = test_data.xml_manifestation.filename
         self.shacl_shape_result_query = shacl_shape_result_query or SHACL_RESULT_QUERY_PATH.read_text()
 
     def validate(self, shacl_files: List[SHACLTestFileResource]) -> SHACLTestDataValidationResult:
