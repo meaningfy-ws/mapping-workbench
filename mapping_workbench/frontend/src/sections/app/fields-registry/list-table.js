@@ -20,7 +20,12 @@ import {ListItemActions} from 'src/components/app/list/list-item-actions';
 
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import Tooltip from "@mui/material/Tooltip";
-import Switch from "@mui/material/Switch";
+import Grid from "@mui/material/Grid";
+import {PropertyList} from "../../../components/property-list";
+import {PropertyListItem} from "../../../components/property-list-item";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import {paths} from "../../../paths";
 
 
 export const ListTable = (props) => {
@@ -35,7 +40,6 @@ export const ListTable = (props) => {
         sectionApi
     } = props;
 
-    //console.log("PROJECT PROPS: ", props);
 
     const [currentItem, setCurrentItem] = useState(null);
 
@@ -59,7 +63,7 @@ export const ListTable = (props) => {
     // }, []);
 
     // const handleItemDelete = useCallback(() => {
-        
+
     //     toast.error('Item cannot be deleted');
     // }, []);
 
@@ -79,32 +83,17 @@ export const ListTable = (props) => {
                     <TableHead>
                         <TableRow>
                             <TableCell/>
-                            {/* <TableCell width="25%">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        Name
-                                    </TableSortLabel>
-                                </Tooltip>
-                            </TableCell> */}
-                            <TableCell width="25%">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        Prefix
-                                    </TableSortLabel>
-                                </Tooltip>
-                            </TableCell>
                             <TableCell>
-                                URI
+                                <Tooltip
+                                    enterDelay={300}
+                                    title="Sort"
+                                >
+                                    <TableSortLabel
+                                        direction="asc"
+                                    >
+                                        Element ID
+                                    </TableSortLabel>
+                                </Tooltip>
                             </TableCell>
                             <TableCell>
                                 <Tooltip
@@ -114,9 +103,30 @@ export const ListTable = (props) => {
                                     <TableSortLabel
                                         direction="asc"
                                     >
-                                        Syncable
+                                        Parent ID
                                     </TableSortLabel>
                                 </Tooltip>
+                            </TableCell>
+                            <TableCell>
+                                <Tooltip
+                                    enterDelay={300}
+                                    title="Sort"
+                                >
+                                    <TableSortLabel
+                                        direction="asc"
+                                    >
+                                        BT ID
+                                    </TableSortLabel>
+                                </Tooltip>
+                            </TableCell>
+                            <TableCell>
+                                Name
+                            </TableCell>
+                            <TableCell>
+                                Versions
+                            </TableCell>
+                            <TableCell>
+                                Type
                             </TableCell>
                             <TableCell align="right">
                                 Actions
@@ -127,7 +137,6 @@ export const ListTable = (props) => {
                         {items.map((item) => {
                             const item_id = item._id;
                             const isCurrent = item_id === currentItem;
-                            const statusColor = item.status === 'published' ? 'success' : 'info';
 
                             return (
                                 <Fragment key={item_id}>
@@ -159,43 +168,48 @@ export const ListTable = (props) => {
                                                 </SvgIcon>
                                             </IconButton>
                                         </TableCell>
-                                        {/* <TableCell width="25%">
-                                            <Box
-                                                sx={{
-                                                    alignItems: 'center',
-                                                    display: 'flex'
-                                                }}
-                                            >
-                                                <Box
-                                                    sx={{
-                                                        cursor: 'pointer',
-                                                        ml: 2
-                                                    }}
-                                                >
-                                                    <Typography variant="subtitle2">
-                                                        {item.name}
-                                                    </Typography>
-                                                </Box>
-                                            </Box>
-                                        </TableCell> */}
-                                        <TableCell width="25%">
+                                        <TableCell>
                                             <Typography variant="subtitle2">
-                                                {item.prefix}
+                                                {item.eforms_sdk_element_id}
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            {item.uri}
+                                            {item.parent_node_id}
                                         </TableCell>
                                         <TableCell>
-                                            <Switch
-                                                disabled
-                                                checked={item.is_syncable}
-                                                value={item.is_syncable}
-                                            />
+                                            {item.bt_id}
+                                        </TableCell>
+                                        <TableCell>
+                                            {item.name}
+                                        </TableCell>
+                                        <TableCell>
+                                            <List sx={{
+                                                whiteSpace: 'nowrap',
+                                                padding: 0,
+                                                margin: 0
+                                            }}>
+                                                {item.versions.sort().map((version) => {
+                                                    return (
+                                                        <ListItem
+                                                            sx={{
+                                                                padding: 0,
+                                                                margin: 0
+                                                            }}
+                                                        >{version}</ListItem>
+                                                    )
+                                                })}
+                                            </List>
+                                        </TableCell>
+                                        <TableCell>
+                                            {item.element_type}
                                         </TableCell>
                                         <TableCell align="right">
                                             <ListItemActions
-                                                itemctx={new ForListItemAction(item_id, sectionApi)}/>
+                                                itemctx={new ForListItemAction(item_id, sectionApi)}
+                                                pathnames={{
+                                                    view: paths.app[sectionApi.section].elements.view
+                                                }}
+                                            />
                                         </TableCell>
                                     </TableRow>
                                     {isCurrent && (
@@ -217,8 +231,36 @@ export const ListTable = (props) => {
                                                 }}
                                             >
                                                 <CardContent>
+                                                    <Grid container>
+                                                        <Grid
+                                                            item
+                                                            md={12}
+                                                            xs={12}
+                                                        >
+                                                            <PropertyList>
+                                                                <PropertyListItem
+                                                                    label="Absolute XPath"
+                                                                    value={item.absolute_xpath}
+                                                                    sx={{
+                                                                        whiteSpace: "pre-wrap",
+                                                                        px: 3,
+                                                                        py: 1.5
+                                                                    }}
+                                                                />
+                                                                <PropertyListItem
+                                                                    label="Relative XPath"
+                                                                    value={item.relative_xpath}
+                                                                    sx={{
+                                                                        whiteSpace: "pre-wrap",
+                                                                        px: 3,
+                                                                        py: 1.5
+                                                                    }}
+                                                                />
+                                                            </PropertyList>
+                                                        </Grid>
+                                                    </Grid>
                                                 </CardContent>
-                                                <Divider/>                                                
+                                                <Divider/>
                                             </TableCell>
                                         </TableRow>
                                     )}

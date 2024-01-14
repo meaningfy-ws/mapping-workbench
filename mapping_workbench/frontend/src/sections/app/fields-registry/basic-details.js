@@ -13,83 +13,84 @@ import {paths} from "../../../paths";
 import {useRouter} from "../../../hooks/use-router";
 import Switch from "@mui/material/Switch";
 import Stack from "@mui/material/Stack";
+import ListItem from "@mui/material/ListItem";
+import List from "@mui/material/List";
 
 export const BasicDetails = (props) => {
-    const {id, prefix, uri, is_syncable, ...other} = props;
-
-    const router = useRouter();
-    const itemctx = new ForListItemAction(id, sectionApi);
-
-    const handleEditAction = useCallback(async () => {
-        router.push({
-            //pathname: paths.app[item.api.section].edit,
-            pathname: paths.app.ontology_namespaces.edit, query: {id: id}
-        });
-
-    }, [router]);
-
-    const handleDeleteAction = useCallback(async () => {
-        const response = await itemctx.api.deleteItem(id);
-
-        router.push({
-            pathname: paths.app.ontology_namespaces.index
-        });
-        //window.location.reload();
-    }, [router, itemctx]);
+    const {item, ...other} = props;
 
     return (
         <>
             <Card>
-                <CardHeader title="Details"/>
                 <PropertyList>
                     <PropertyListItem
                         divider
-                        label="Prefix"
-                        value={prefix}
+                        label="Element ID"
+                        value={item.eforms_sdk_element_id}
                     />
                     <PropertyListItem
                         divider
-                        label="URI"
-                        value={uri}
+                        label="Absolute XPath"
+                        value={item.absolute_xpath}
                     />
                     <PropertyListItem
                         divider
-                        label="Syncable"
-                        value={<Switch
-                            disabled
-                            checked={is_syncable}
-                            value={is_syncable}
-                        />}
+                        label="Relative XPath"
+                        value={item.relative_xpath}
                     />
+                    <PropertyListItem
+                        divider
+                        label="Repeatable"
+                        value={item.repeatable}
+                    />
+                    <PropertyListItem
+                        divider
+                        label="Parent ID"
+                        value={item.parent_node_id}
+                    />
+                    <PropertyListItem
+                        divider
+                        label="Name"
+                        value={item.name}
+                    />
+                    <PropertyListItem
+                        divider
+                        label="BT ID"
+                        value={item.bt_id}
+                    />
+                    <PropertyListItem
+                        divider
+                        label="Value Type"
+                        value={item.value_type}
+                    />
+                    <PropertyListItem
+                        divider
+                        label="Legal Type"
+                        value={item.legal_type}
+                    />
+                    <PropertyListItem
+                        divider
+                        label="Element Type"
+                        value={item.element_type}
+                    />
+                    <small>
+                        <List>
+                            {item.versions.map((version) => {
+                                return (
+                                    <ListItem>{version}</ListItem>
+                                )
+                            })}
+                        </List>
+                        <List>
+                            {item.descriptions.map((description) => {
+                                return (
+                                    <ListItem>{description}</ListItem>
+                                )
+                            })}
+                        </List>
+                    </small>
                 </PropertyList>
 
-            </Card>
-            <Card sx={{mt: 3}}>
-                <Stack
-                    direction={{
-                        xs: 'column',
-                        sm: 'row'
-                    }}
-                    flexWrap="wrap"
-                    spacing={3}
-                    sx={{p: 3}}
-                >
-                    <Button
-                        variant="contained"
-                        size="small"
-                        onClick={handleEditAction}
-                    >
-                        Edit
-                    </Button>
-                    <Button
-                        variant="contained"
-                        size="small"
-                        color="error"
-                        onClick={handleDeleteAction}
-                    >
-                        Delete
-                    </Button>
-                </Stack>
             </Card>
         </>
 
@@ -97,6 +98,4 @@ export const BasicDetails = (props) => {
         ;
 };
 
-BasicDetails.propTypes = {
-    id: PropTypes.string.isRequired, prefix: PropTypes.string, uri: PropTypes.string, is_syncable: PropTypes.string
-};
+BasicDetails.propTypes = {};

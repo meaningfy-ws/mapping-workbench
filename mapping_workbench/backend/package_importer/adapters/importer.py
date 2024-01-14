@@ -47,7 +47,6 @@ RULES_RML_TRIPLE_MAP_REF = "RML TripleMap reference (O)"
 DEFAULT_RESOURCES_COLLECTION_NAME = "Default"
 
 
-
 class PackageImporter:
     mapping_package: MappingPackage
 

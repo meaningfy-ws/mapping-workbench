@@ -230,7 +230,7 @@ export const useSections = () => {
             },
             {
                 title: t(tokens.nav.fields_registry),
-                path: paths.app.fields_registry.index,
+                path: paths.app.fields_registry.elements.index,
                 icon: (
                     <SvgIcon fontSize="small">
                         <HiveIcon/>
@@ -238,12 +238,12 @@ export const useSections = () => {
                 ),
                 items: [
                     {
-                        title: t(tokens.nav.list),
-                        path: paths.app.fields_registry.index
+                        title: t(tokens.nav.elements),
+                        path: paths.app.fields_registry.elements.index
                     },
                     {
-                        title: t(tokens.nav.create),
-                        path: paths.app.fields_registry.create
+                        title: t(tokens.nav.import),
+                        path: paths.app.fields_registry.elements.import
                     }
                 ]
             });
