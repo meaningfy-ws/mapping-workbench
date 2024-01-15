@@ -10,6 +10,7 @@ from mapping_workbench.backend.file_resource.models.file_resource import FileRes
     FileResourceIn, FileResourceFormat
 from mapping_workbench.backend.package_validator.models.shacl_validation import SHACLTestDataValidationResult
 from mapping_workbench.backend.package_validator.models.sparql_validation import SPARQLTestDataValidationResult
+from mapping_workbench.backend.package_validator.models.xpath_validation import XPathAssertion
 from mapping_workbench.backend.state_manager.models.state_object import StatefulObjectABC, ObjectState
 
 
@@ -41,6 +42,7 @@ class TestDataState(ObjectState):
     rdf_manifestation: Optional[str] = None
     shacl_validation_result: Optional[SHACLTestDataValidationResult] = None
     sparql_validation_result: Optional[SPARQLTestDataValidationResult] = None
+    xpath_validation_result: List[XPathAssertion] = None
 
 
 class TestDataFileResource(FileResource, StatefulObjectABC):
