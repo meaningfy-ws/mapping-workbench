@@ -5,7 +5,7 @@ from mapping_workbench.backend.package_validator.services.xpath_coverage_validat
     compute_xpath_assertions_for_mapping_package
 
 
-async def validate_mapping_package(mapping_package_state: MappingPackageState):
+def validate_mapping_package(mapping_package_state: MappingPackageState):
     """
     Validate the given mapping package state.
 
@@ -21,7 +21,4 @@ async def validate_mapping_package(mapping_package_state: MappingPackageState):
             sparql_assertions = conceptual_mapping_rule_state.sparql_assertions
             validate_tests_data_with_sparql_tests(test_data_suite.test_data_states, sparql_assertions)
 
-    # TODO: resolve with mapping package base xpath
-    xpath_assertions = compute_xpath_assertions_for_mapping_package(mapping_package_state, "")
-    for xpath_assertion in xpath_assertions:
-        await xpath_assertion.save()
+    compute_xpath_assertions_for_mapping_package(mapping_package_state)

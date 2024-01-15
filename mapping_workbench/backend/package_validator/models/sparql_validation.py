@@ -11,7 +11,6 @@ class SPARQLTestDataResult(NamedTuple):
 
 
 class SPARQLTestDataValidationResult(TestDataValidationResult):
-
     ask_results: List[SPARQLTestDataResult]
 
     class Settings(BaseEntity.Settings):
