@@ -26,6 +26,15 @@ class FieldsRegistryApi extends SectionApi {
         } catch (err) {
         }
     }
+
+    async getStructuralElementsForSelector(request = {}) {
+        request.page = 0;
+        request.rowsPerPage = -1;
+        let structuralElementsStore = await this.getItems(request, 'elements');
+        return structuralElementsStore.items.map(
+            structuralElement => ({id: structuralElement._id, eforms_sdk_element_id: structuralElement.eforms_sdk_element_id})
+        ).sort((a, b) => a.eforms_sdk_element_id.localeCompare(b.eforms_sdk_element_id));
+    }
 }
 
 export const fieldsRegistryApi = new FieldsRegistryApi();

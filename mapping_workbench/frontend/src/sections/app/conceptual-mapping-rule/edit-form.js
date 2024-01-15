@@ -16,6 +16,7 @@ import {FormTextField} from "../../../components/app/form/text-field";
 import {FormTextArea} from "../../../components/app/form/text-area";
 import {sessionApi} from "../../../api/session";
 import {MappingPackageCheckboxList} from "../mapping-package/components/mapping-package-checkbox-list";
+import {fieldsRegistryApi} from "../../../api/fields-registry";
 import {genericTripleMapFragmentsApi} from "../../../api/triple-map-fragments/generic";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
@@ -39,6 +40,7 @@ import Switch from "@mui/material/Switch";
 import Menu from "@mui/material/Menu";
 import {Dropdown} from "../../../components/dropdown";
 import Autocomplete from "@mui/material/Autocomplete";
+import {fieldsRegistryApi as sectionApi} from "../../../api/fields-registry";
 
 const TermValidityInfo = (props) => {
     const {item, ...other} = props;
@@ -165,10 +167,6 @@ export const EditForm = (props) => {
             }
         }, [sectionApi])
 
-        const prepareTextareaListValue = (value) => {
-            return (value && (value.join('\n') + ['\n'])) || ''
-        }
-
         const initComment = () => {
             return {
                 title: '',
@@ -178,10 +176,11 @@ export const EditForm = (props) => {
         }
 
         let initialValues = {
-            field_id: item.field_id || '',
-            field_title: item.field_title || '',
-            field_description: item.field_description || '',
-            source_xpath: prepareTextareaListValue(item.source_xpath),
+            source_structural_element: (item.source_structural_element && item.source_structural_element.id) || '',
+            min_sdk_version: item.min_sdk_version || '',
+            max_sdk_version: item.max_sdk_version || '',
+            mapping_group_id: item.mapping_group_id || '',
+            status: item.status || '',
             target_class_path: item.target_class_path || '',
             target_property_path: item.target_property_path || '',
             refers_to_mapping_package_ids: item.refers_to_mapping_package_ids || [],
@@ -198,14 +197,6 @@ export const EditForm = (props) => {
         const formik = useFormik({
             initialValues: initialValues,
             validationSchema: Yup.object({
-                field_id: Yup
-                    .string()
-                    .max(255)
-                    .required('Field ID is required'),
-                field_title: Yup
-                    .string()
-                    .max(255),
-                field_description: Yup.string().max(2048)
             }),
             onSubmit: async (values, helpers) => {
                 try {
@@ -223,8 +214,7 @@ export const EditForm = (props) => {
                     }
                     delete values['feedback_note'];
 
-                    requestValues['source_xpath'] = (typeof values['source_xpath'] == 'string') ?
-                        values['source_xpath'].split('\n').map(s => s.trim()).filter(s => s !== '') : values['source_xpath'];
+                    requestValues['source_structural_element'] = values['source_structural_element'] || null;
                     requestValues['triple_map_fragment'] = values['triple_map_fragment'] || null;
                     let response;
                     requestValues['project'] = sessionApi.getSessionProject();
@@ -245,7 +235,6 @@ export const EditForm = (props) => {
                             });
                         } else if (itemctx.isStateable) {
                             itemctx.setState(response);
-                            formik.values.source_xpath = prepareTextareaListValue(response['source_xpath']);
                             formik.values.mapping_note = initComment();
                             formik.values.editorial_note = initComment();
                             formik.values.feedback_note = initComment();
@@ -261,6 +250,10 @@ export const EditForm = (props) => {
             }
         });
 
+        const handleSourceStructuralElementSelect = useCallback((e) => {
+            let value = e.target.value;
+            formik.setFieldValue('source_structural_element', value);
+        }, [formik]);
 
         const handleTripleMapFragmentSelect = useCallback((e) => {
             let value = e.target.value;
@@ -332,11 +325,13 @@ export const EditForm = (props) => {
 
         const [isProjectDataReady, setIsProjectDataReady] = useState(false);
 
+        const [projectSourceStructuralElements, setProjectSourceStructuralElements] = useState([]);
         const [projectTripleMapFragments, setProjectTripleMapFragments] = useState([]);
         const [projectSPARQLResources, setProjectSPARQLResources] = useState([]);
 
         useEffect(() => {
             (async () => {
+                setProjectSourceStructuralElements(await fieldsRegistryApi.getStructuralElementsForSelector());
                 setProjectTripleMapFragments(await genericTripleMapFragmentsApi.getValuesForSelector());
                 setProjectSPARQLResources(await sparqlTestFileResourcesApi.getMappingRuleResources());
                 setIsProjectDataReady(true);
@@ -352,16 +347,16 @@ export const EditForm = (props) => {
                     <CardContent sx={{pt: 0}}>
                         <Grid container spacing={3}>
                             <Grid xs={12} md={12}>
-                                <FormTextField formik={formik} name="field_id" label="Field ID" required={true}/>
+                                <FormTextField formik={formik} name="min_sdk_version" label="Min SDK Version"/>
                             </Grid>
                             <Grid xs={12} md={12}>
-                                <FormTextField formik={formik} name="field_title" label="Field Title"/>
+                                <FormTextField formik={formik} name="max_sdk_version" label="Max SDK Version"/>
                             </Grid>
                             <Grid xs={12} md={12}>
-                                <FormTextArea formik={formik} name="field_description" label="Field Description"/>
+                                <FormTextField formik={formik} name="mapping_group_id" label="Mapping Group ID"/>
                             </Grid>
                             <Grid xs={12} md={12}>
-                                <FormTextArea formik={formik} name="source_xpath" label="Source XPaths"/>
+                                <FormTextField formik={formik} name="status" label="Status"/>
                             </Grid>
                             <Grid xs={12} md={12}>
                                 <Autocomplete
@@ -452,6 +447,29 @@ export const EditForm = (props) => {
                                     (item) => <TermValidityInfo item={item}/>
                                 )}
                                 {targetPropertyPathTermsValidityInfo.length > 0 && <Divider/>}
+                            </Grid>
+                        </Grid>
+                    </CardContent>
+                </Card>
+                <Card sx={{mt: 3}}>
+                    <CardHeader title="Source Structural Element"/>
+                    <CardContent sx={{pt: 0}}>
+                        <Grid container spacing={3}>
+                            <Grid xs={12} md={12}>
+                                <FormControl sx={{my: 2, width: '100%'}}>
+                                    <TextField
+                                        fullWidth
+                                        label="Structural Element"
+                                        onChange={handleSourceStructuralElementSelect}
+                                        select
+                                        value={formik.values.source_structural_element}
+                                    >
+                                        <MenuItem key="" value={null}>&nbsp;</MenuItem>
+                                        {projectSourceStructuralElements.map((x) => (
+                                            <MenuItem key={x.id} value={x.id}>{x.eforms_sdk_element_id}</MenuItem>
+                                        ))}
+                                    </TextField>
+                                </FormControl>
                             </Grid>
                         </Grid>
                     </CardContent>

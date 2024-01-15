@@ -12,8 +12,6 @@ import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
 import {EditForm} from 'src/sections/app/conceptual-mapping-rule/edit-form';
 import {ForItemCreateForm} from "src/contexts/app/section/for-item-form";
-
-
 const Page = () => {
     let item = {};
 
