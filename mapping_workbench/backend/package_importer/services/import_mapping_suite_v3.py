@@ -124,7 +124,7 @@ def import_mapping_suite_from_file_system(mapping_suite_dir_path: pathlib.Path) 
     return mapping_suite
 
 
-async def import_mapping_package(file_content: bytes, project: Project, user: User) -> MappingPackage:
+async def import_mapping_package(file_content: bytes, project: Project, user: User = None) -> MappingPackage:
     zf = zipfile.ZipFile(io.BytesIO(file_content))
     tempdir = tempfile.TemporaryDirectory()
     tempdir_name = tempdir.name
