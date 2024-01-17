@@ -205,7 +205,8 @@ export const apiPaths = {
     mapping_packages: {
         items: '/mapping_packages',
         item: '/mapping_packages/:id',
-        import: '/package_importer/import/v3'
+        import: '/package_importer/import/v3',
+        process: '/package_validator/process'
     },
 
     conceptual_mapping_rules: {

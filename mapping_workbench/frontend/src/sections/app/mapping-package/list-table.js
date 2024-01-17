@@ -23,7 +23,98 @@ import {ListItemActions} from 'src/components/app/list/list-item-actions';
 
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import Tooltip from "@mui/material/Tooltip";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
+import Card from "@mui/material/Card";
+import {useFormik} from "formik";
+import * as Yup from "yup";
+import {sessionApi} from "../../../api/session";
+import toast from "react-hot-toast";
 
+
+const PackageRow = (props) => {
+    const {
+        item, sectionApi
+    } = props;
+
+    const [isProcessing, setIsProcessing] = useState(false);
+
+    const formik = useFormik({
+        initialValues: {},
+        validationSchema: Yup.object({}),
+        onSubmit: async (values, helpers) => {
+            setIsProcessing(true)
+
+            let data = {
+                package_id: item._id,
+                project_id: sessionApi.getSessionProject()
+            }
+            toast.promise(sectionApi.processPackage(data), {
+                loading: `Processing "${item.identifier}" ... `,
+                success: (mappingPackage) => {
+                    setIsProcessing(false);
+                    return `"${mappingPackage.title}" successfully processed.`
+                },
+                error: (err) => {
+                    setIsProcessing(false);
+                    return `Processing "${item.identifier}" failed: ${err.message}.`
+                }
+            }).then(r => {
+            })
+        }
+    });
+
+    return (<>
+        <CardContent>
+            <Grid container>
+                <Grid
+                    item
+                    md={12}
+                    xs={12}
+                >
+                    <PropertyList>
+                        <PropertyListItem
+                            label="Description"
+                            value={item.description}
+                            sx={{
+                                whiteSpace: "pre-wrap",
+                                px: 3,
+                                py: 1.5
+                            }}
+                        />
+                    </PropertyList>
+                </Grid>
+            </Grid>
+        </CardContent>
+        <Divider/>
+        <Card
+            sx={{
+                px: 3
+            }}
+        >
+            <form onSubmit={formik.handleSubmit}>
+                <Stack
+                    direction={{
+                        xs: 'column',
+                        sm: 'row'
+                    }}
+                    flexWrap="wrap"
+                    spacing={3}
+                    sx={{p: 3}}
+                >
+                    <Button
+                        disabled={isProcessing}
+                        type="submit"
+                        variant="contained"
+                    >
+                        Process
+                    </Button>
+                </Stack>
+            </form>
+        </Card>
+    </>
+)
+}
 
 export const ListTable = (props) => {
     const {
@@ -194,27 +285,10 @@ export const ListTable = (props) => {
                                                     }
                                                 }}
                                             >
-                                                <CardContent>
-                                                    <Grid container>
-                                                        <Grid
-                                                            item
-                                                            md={12}
-                                                            xs={12}
-                                                        >
-                                                            <PropertyList>
-                                                                <PropertyListItem
-                                                                    label="Description"
-                                                                    value={item.description}
-                                                                    sx={{
-                                                                        whiteSpace: "pre-wrap",
-                                                                        px: 3,
-                                                                        py: 1.5
-                                                                    }}
-                                                                />
-                                                            </PropertyList>
-                                                        </Grid>
-                                                    </Grid>
-                                                </CardContent>
+                                                <PackageRow
+                                                    item={item}
+                                                    sectionApi={sectionApi}
+                                                />
                                             </TableCell>
                                         </TableRow>
                                     )}

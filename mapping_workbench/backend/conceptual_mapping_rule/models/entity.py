@@ -123,7 +123,8 @@ class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
     feedback_notes: Optional[List[ConceptualMappingRuleComment]] = None
 
     async def get_state(self) -> ConceptualMappingRuleState:
-        source_structural_element = await self.source_structural_element.fetch()
+        source_structural_element = await self.source_structural_element.fetch() \
+            if self.source_structural_element else None
         triple_map_fragment = await self.triple_map_fragment.fetch() if self.triple_map_fragment else None
         sparql_assertions = []
         if self.sparql_assertions:

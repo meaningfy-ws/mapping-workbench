@@ -58,24 +58,25 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
 
     conceptual_mapping_rule_states = mapping_package_state.conceptual_mapping_rule_states
     for conceptual_mapping_rule_state in conceptual_mapping_rule_states:
-        structural_element = conceptual_mapping_rule_state.structural_element
-        structural_element_xpath = structural_element.absolute_xpath
-        structural_element_sdk_id = structural_element.eforms_sdk_element_id
-        structural_element_sdk_title = structural_element.name
+        structural_element = conceptual_mapping_rule_state.source_structural_element
+        if structural_element:
+            structural_element_xpath = structural_element.absolute_xpath
+            structural_element_sdk_id = structural_element.eforms_sdk_element_id
+            structural_element_sdk_title = structural_element.name
 
-        if structural_element_xpath in xpath_dict.keys():
-            xpath_dict[structural_element_xpath].eforms_sdk_element_id = structural_element_sdk_id
-            xpath_dict[structural_element_xpath].eforms_sdk_element_xpath = structural_element_xpath
-            xpath_dict[structural_element_xpath].eforms_sdk_element_title = structural_element_sdk_title
+            if structural_element_xpath in xpath_dict.keys():
+                xpath_dict[structural_element_xpath].eforms_sdk_element_id = structural_element_sdk_id
+                xpath_dict[structural_element_xpath].eforms_sdk_element_xpath = structural_element_xpath
+                xpath_dict[structural_element_xpath].eforms_sdk_element_title = structural_element_sdk_title
 
-        else:
-            xpath_dict[structural_element_xpath] = XPathAssertion(id=structural_element_xpath,
-                                                                  eforms_sdk_element_id=structural_element_sdk_id,
-                                                                  eforms_sdk_element_xpath=structural_element_xpath,
-                                                                  eforms_sdk_element_title=structural_element_sdk_title
-                                                                  )
+            else:
+                xpath_dict[structural_element_xpath] = XPathAssertion(id=structural_element_xpath,
+                                                                      eforms_sdk_element_id=structural_element_sdk_id,
+                                                                      eforms_sdk_element_xpath=structural_element_xpath,
+                                                                      eforms_sdk_element_title=structural_element_sdk_title
+                                                                      )
     for test_data_suite in test_data_suites:
-        test_data_states = test_data_suite.test_data_files
+        test_data_states = test_data_suite.test_data_states
         for test_data_state in test_data_states:
             xml_content = test_data_state.xml_manifestion.content
             test_data_xpaths = get_unique_xpaths_from_xml_content(xml_content)

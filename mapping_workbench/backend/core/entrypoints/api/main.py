@@ -11,6 +11,7 @@ from mapping_workbench.backend.core.services.project_initilisers import init_pro
 from mapping_workbench.backend.database.adapters.mongodb import DB
 from mapping_workbench.backend.mapping_package.entrypoints.api import routes as mapping_package_routes
 from mapping_workbench.backend.package_importer.entrypoints.api import routes as package_importer_routes
+from mapping_workbench.backend.package_validator.entrypoints.api import routes as package_validator_routes
 from mapping_workbench.backend.mapping_rule_registry.entrypoints.api import routes as mapping_rule_registry_routes
 from mapping_workbench.backend.ontology.entrypoints.api import routes as ontology_routes
 from mapping_workbench.backend.ontology_file_collection.entrypoints.api import routes as ontology_file_collection_routes
@@ -73,6 +74,7 @@ secured_routers: list = [
     resource_collection_routes.router,
     mapping_package_routes.router,
     package_importer_routes.router,
+    package_validator_routes.router,
     mapping_rule_registry_routes.router,
     conceptual_mapping_rule_routes.router,
     triple_map_registry_routes.router,
