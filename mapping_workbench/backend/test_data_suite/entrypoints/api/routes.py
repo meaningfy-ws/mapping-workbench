@@ -10,8 +10,7 @@ from mapping_workbench.backend.file_resource.services.file_resource_form_data im
     file_resource_data_from_form_request
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
-# from mapping_workbench.backend.package_validator.services.sparql_validator import \
-#     test_data_sparql_validation_for_project
+
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
     TestDataFileResourceUpdateIn, TestDataFileResourceCreateIn
 from mapping_workbench.backend.test_data_suite.models.entity_api_response import \
@@ -227,13 +226,15 @@ async def route_transform_test_data(
     return await transform_test_data_for_project(project_id=filters.project, user=user)
 
 
-# @router.post(
-#     "/tasks/sparql_validation",
-#     description=f"Test Data SPARQL Validation",
-#     name=f"transform_test_data"
-# )
-# async def route_test_data_sparql_validation(
-#         filters: APIRequestWithProject,
-#         user: User = Depends(current_active_user)
-# ):
-#     return await test_data_sparql_validation_for_project(project_id=filters.project, user=user)
+@router.post(
+    "/tasks/sparql_validation",
+    description=f"Test Data SPARQL Validation",
+    name=f"transform_test_data"
+)
+async def route_test_data_sparql_validation(
+        filters: APIRequestWithProject,
+        user: User = Depends(current_active_user)
+):
+    #TODO: Implement this with latest changes.
+    raise NotImplementedError()
+    #return await test_data_sparql_validation_for_project(project_id=filters.project, user=user)
