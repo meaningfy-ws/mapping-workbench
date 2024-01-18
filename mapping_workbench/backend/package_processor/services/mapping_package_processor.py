@@ -5,6 +5,7 @@ from beanie import PydanticObjectId
 
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState, MappingPackage
 from mapping_workbench.backend.mapping_package.services.api import get_mapping_package
+from mapping_workbench.backend.mapping_package.services.data import get_latest_mapping_package_state
 from mapping_workbench.backend.package_transformer.services.mapping_package_transformer import transform_mapping_package
 from mapping_workbench.backend.package_validator.services.mapping_package_validator import validate_mapping_package
 from mapping_workbench.backend.package_validator.services.sparql_cm_assertions import \
@@ -48,7 +49,7 @@ async def process_mapping_package(
     print(f"Processing Mapping Package `{mapping_package.identifier}` ... ")
 
     if TaskToRun.TRANSFORM_TEST_DATA.value in tasks_to_run:
-        print("   Transforming ...")
+        print("   Transforming Test Data ...")
         await transform_mapping_package(
             mapping_package=mapping_package,
             user=user
@@ -65,17 +66,12 @@ async def process_mapping_package(
     print("   ... DONE")
 
     print("   Initializing Package State ...")
-    mapping_package_state: MappingPackageState
+    mapping_package_state: MappingPackageState = None
     if use_latest_package_state:
         print("      Using latest Package State ...")
-        mapping_package_state = (await MappingPackageState.find(
-            MappingPackageState.identifier == mapping_package.identifier
-        ).sort(-MappingPackageState.created_at).limit(1).to_list()
-                                 or [await create_mapping_package_state(mapping_package)]
-                                 )[0]
-    else:
+        mapping_package_state = await get_latest_mapping_package_state(mapping_package)
+    if not mapping_package_state:
         mapping_package_state = await create_mapping_package_state(mapping_package)
-
     print("   ... DONE")
 
     if TaskToRun.VALIDATE_PACKAGE.value in tasks_to_run:
