@@ -4,7 +4,7 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElementsVersionedView, \
     StructuralElement
-from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
+from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageState
 from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingRuleRegistry
 from mapping_workbench.backend.ontology.models.namespace import Namespace
 from mapping_workbench.backend.ontology.models.term import Term
@@ -43,6 +43,7 @@ async def init_project_models(mongodb_database: AsyncIOMotorDatabase):
             TestDataSuite,
             TestDataFileResource,
             MappingPackage,
+            MappingPackageState,
             MappingRuleRegistry,
             ConceptualMappingRule,
             TripleMapRegistry,

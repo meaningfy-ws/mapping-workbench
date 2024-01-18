@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional, List
 
 import pymongo
-from beanie import Indexed, Link
+from beanie import Indexed, Link, Document
 from beanie.odm.operators.find.comparison import Eq
 from pymongo import IndexModel
 
@@ -62,7 +62,7 @@ class MappingPackageListFilters(BaseTitledEntityListFiltersSchema):
     pass
 
 
-class MappingPackageState(ObjectState):
+class MappingPackageState(Document, ObjectState):
     title: Optional[str] = None
     description: Optional[str] = None
     identifier: Optional[str] = None
