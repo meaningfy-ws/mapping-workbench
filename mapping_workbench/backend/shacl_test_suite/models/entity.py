@@ -45,6 +45,7 @@ class SHACLTestSuite(FileResourceCollection):
     async def get_state(self) -> SHACLTestSuiteState:
         shacl_test_states = await self.get_shacl_test_states()
         return SHACLTestSuiteState(
+            title=self.title,
             shacl_test_states=shacl_test_states
         )
 

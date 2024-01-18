@@ -8,7 +8,7 @@ from pymongo import IndexModel
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRuleState, \
     ConceptualMappingRule
-from mapping_workbench.backend.core.models.base_entity import BaseTitledEntityListFiltersSchema
+from mapping_workbench.backend.core.models.base_entity import BaseTitledEntityListFiltersSchema, BaseEntity
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestSuiteState
@@ -75,6 +75,24 @@ class MappingPackageState(ObjectState):
     test_data_suites: Optional[List[TestDataSuiteState]] = []
     shacl_test_suites: Optional[List[SHACLTestSuiteState]] = []
     conceptual_mapping_rule_states: Optional[List[ConceptualMappingRuleState]] = []
+
+    class Settings:
+        name = "mapping_package_states"
+
+        indexes = [
+            IndexModel(
+                [
+                    ("title", pymongo.TEXT),
+                    ("description", pymongo.TEXT),
+                    ("identifier", pymongo.TEXT),
+                    ("mapping_version", pymongo.TEXT),
+                    ("epo_version", pymongo.TEXT),
+                    ("eform_subtypes", pymongo.TEXT),
+                    ("eforms_sdk_versions", pymongo.TEXT)
+                ],
+                name="search_text_idx"
+            )
+        ]
 
 
 class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):

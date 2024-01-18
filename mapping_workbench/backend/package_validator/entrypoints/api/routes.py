@@ -1,3 +1,5 @@
+import time
+
 from beanie import PydanticObjectId
 from fastapi import APIRouter, status, Depends, Form
 
@@ -24,13 +26,20 @@ router = APIRouter(
 )
 async def route_process_package(
         package_id: PydanticObjectId = Form(...),
-        project_id: PydanticObjectId = Form(...),
         user: User = Depends(current_active_user)
 ):
+    t = time.process_time()
+
     mapping_package_state: MappingPackageState = await process_mapping_package(
         package_id=package_id,
-        project_id=project_id,
         user=user
     )
 
-    return mapping_package_state.model_dump()
+    elapsed_time = time.process_time() - t
+
+    return {
+        "result": mapping_package_state.model_dump(),
+        "task": {
+            "duration": elapsed_time
+        }
+    }

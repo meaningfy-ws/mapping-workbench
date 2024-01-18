@@ -39,6 +39,15 @@ class MappingPackagesApi extends SectionApi {
         try {
             let endpoint = this.paths['process'];
             const headers = {"Content-Type": "multipart/form-data"};
+            return appApi.post(endpoint, request);
+        } catch (err) {
+        }
+    }
+
+    exportPackage(request) {
+        try {
+            let endpoint = this.paths['export'];
+            const headers = {"Content-Type": "multipart/form-data"};
             return appApi.post(endpoint, request, null, headers);
         } catch (err) {
         }

@@ -38,6 +38,7 @@ const PackageRow = (props) => {
     } = props;
 
     const [isProcessing, setIsProcessing] = useState(false);
+    const [isExporting, setIsExporting] = useState(false);
 
     const formik = useFormik({
         initialValues: {},
@@ -50,10 +51,10 @@ const PackageRow = (props) => {
                 project_id: sessionApi.getSessionProject()
             }
             toast.promise(sectionApi.processPackage(data), {
-                loading: `Processing "${item.identifier}" ... `,
-                success: (mappingPackage) => {
+                loading: `Processing "${item.identifier}" ... This may take a while. Please, be patient.`,
+                success: (response) => {
                     setIsProcessing(false);
-                    return `"${mappingPackage.title}" successfully processed.`
+                    return `"${response.result.title}" successfully processed in ${(response.task.duration / 60).toFixed(2)} minutes.`
                 },
                 error: (err) => {
                     setIsProcessing(false);
@@ -64,56 +65,95 @@ const PackageRow = (props) => {
         }
     });
 
+    const handleExport = useCallback((itemId) => {
+        setIsExporting(true)
+        let data = {
+            package_id: item._id,
+            project_id: sessionApi.getSessionProject()
+        }
+        toast.promise(sectionApi.exportPackage(data), {
+            loading: `Exporting "${item.identifier}" ... This may take a while. Please, be patient.`,
+            success: (response) => {
+                setIsExporting(false);
+                return `"${response.result.title}" successfully exported in ${(response.task.duration / 60).toFixed(2)} minutes.`
+            },
+            error: (err) => {
+                setIsExporting(false);
+                return `Exporting "${item.identifier}" failed: ${err.message}.`
+            }
+        }).then(r => {
+        })
+    }, []);
+
     return (<>
-        <CardContent>
-            <Grid container>
-                <Grid
-                    item
-                    md={12}
-                    xs={12}
-                >
-                    <PropertyList>
-                        <PropertyListItem
-                            label="Description"
-                            value={item.description}
-                            sx={{
-                                whiteSpace: "pre-wrap",
-                                px: 3,
-                                py: 1.5
-                            }}
-                        />
-                    </PropertyList>
-                </Grid>
-            </Grid>
-        </CardContent>
-        <Divider/>
-        <Card
-            sx={{
-                px: 3
-            }}
-        >
-            <form onSubmit={formik.handleSubmit}>
-                <Stack
-                    direction={{
-                        xs: 'column',
-                        sm: 'row'
-                    }}
-                    flexWrap="wrap"
-                    spacing={3}
-                    sx={{p: 3}}
-                >
-                    <Button
-                        disabled={isProcessing}
-                        type="submit"
-                        variant="contained"
+            <CardContent>
+                <Grid container>
+                    <Grid
+                        item
+                        md={12}
+                        xs={12}
                     >
-                        Process
-                    </Button>
-                </Stack>
-            </form>
-        </Card>
-    </>
-)
+                        <PropertyList>
+                            <PropertyListItem
+                                label="Description"
+                                value={item.description}
+                                sx={{
+                                    whiteSpace: "pre-wrap",
+                                    px: 3,
+                                    py: 1.5
+                                }}
+                            />
+                        </PropertyList>
+                    </Grid>
+                </Grid>
+            </CardContent>
+            <Divider/>
+            <Card
+                sx={{
+                    px: 3
+                }}
+            >
+                <form onSubmit={formik.handleSubmit}>
+                    <Stack
+                        direction={{
+                            xs: 'column',
+                            sm: 'row'
+                        }}
+                        flexWrap="wrap"
+                        spacing={3}
+                        sx={{p: 3}}
+                    >
+                        <Button
+                            disabled={isProcessing}
+                            type="submit"
+                            variant="contained"
+                        >
+                            {!isProcessing && "Process"}
+                            {isProcessing && "Processing ..."}
+                        </Button>
+                        <small>
+                            <b>Processing a Mapping Package includes:</b>
+                            <ul>
+                                <li>Transforming Test Data</li>
+                                <li>Generating CM Assertions Queries</li>
+                                <li>Creating the Mapping Package State</li>
+                                <li>Validating the Mapping Package State</li>
+                            </ul>
+                        </small>
+                        <Button
+                            disabled={isExporting}
+                            type="button"
+                            variant="contained"
+                            onClick={() => handleExport()}
+                        >
+                            {!isExporting && "Export Latest"}
+                            {isExporting && "Exporting Latest ..."}
+                        </Button>
+                    </Stack>
+                </form>
+            </Card>
+        </>
+    )
 }
 
 export const ListTable = (props) => {
