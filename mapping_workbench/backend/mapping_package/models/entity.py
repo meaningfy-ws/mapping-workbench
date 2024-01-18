@@ -74,7 +74,7 @@ class MappingPackageState(Document, ObjectState):
     eforms_sdk_versions: List[str] = None
     test_data_suites: Optional[List[TestDataSuiteState]] = []
     shacl_test_suites: Optional[List[SHACLTestSuiteState]] = []
-    conceptual_mapping_rule_states: Optional[List[ConceptualMappingRuleState]] = []
+    conceptual_mapping_rules: Optional[List[ConceptualMappingRuleState]] = []
 
     class Settings:
         name = "mapping_package_states"
@@ -144,7 +144,7 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
             eforms_sdk_versions=self.eforms_sdk_versions,
             test_data_suites=test_data_suites,
             shacl_test_suites=shacl_test_suites,
-            conceptual_mapping_rule_states=conceptual_mapping_rules
+            conceptual_mapping_rules=conceptual_mapping_rules
         )
 
     def set_state(self, state: MappingPackageState):

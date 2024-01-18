@@ -42,7 +42,7 @@ class TestDataState(ObjectState):
     rdf_manifestation: Optional[str] = None
     shacl_validation_result: Optional[SHACLTestDataValidationResult] = None
     sparql_validation_result: Optional[SPARQLTestDataValidationResult] = None
-    xpath_validation_result: List[XPathAssertion] = None
+    xpath_validation_result: List[XPathAssertion] = []
 
 
 class TestDataFileResource(FileResource, StatefulObjectABC):

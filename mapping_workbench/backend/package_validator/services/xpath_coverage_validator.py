@@ -22,7 +22,6 @@ def get_xpaths_from_xml_content(xml_content: str) -> Iterator[str]:
     """
     Get xpaths from xml content
     :param xml_content:
-    :param base_xpath:
     :return:
     """
     path = []
@@ -46,7 +45,6 @@ def get_unique_xpaths_from_xml_content(xml_content: str) -> List[str]:
     """
     Get unique xpaths from xml content
     :param xml_content:
-    :param base_xpath:
     :return:
     """
     return list(set(get_xpaths_from_xml_content(xml_content)))
@@ -56,7 +54,7 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
     xpath_dict = {}
     test_data_suites: List[TestDataSuiteState] = mapping_package_state.test_data_suites
 
-    conceptual_mapping_rule_states = mapping_package_state.conceptual_mapping_rule_states
+    conceptual_mapping_rule_states = mapping_package_state.conceptual_mapping_rules
     for conceptual_mapping_rule_state in conceptual_mapping_rule_states:
         structural_element = conceptual_mapping_rule_state.source_structural_element
         if structural_element:
@@ -78,9 +76,9 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
     for test_data_suite in test_data_suites:
         test_data_states = test_data_suite.test_data_states
         for test_data_state in test_data_states:
-            xml_content = test_data_state.xml_manifestion.content
+            xml_content = test_data_state.xml_manifestation.content
             test_data_xpaths = get_unique_xpaths_from_xml_content(xml_content)
-            test_data_id = test_data_state.xml_manifestion.filename
+            test_data_id = test_data_state.xml_manifestation.filename
             for xpath in test_data_xpaths:
                 if xpath not in xpath_dict.keys():
                     xpath_dict[xpath] = XPathAssertion(id=xpath,

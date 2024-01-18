@@ -30,6 +30,9 @@ import {useFormik} from "formik";
 import * as Yup from "yup";
 import {sessionApi} from "../../../api/session";
 import toast from "react-hot-toast";
+import Switch from "@mui/material/Switch";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import {Box} from "@mui/system";
 
 
 const PackageRow = (props) => {
@@ -41,14 +44,39 @@ const PackageRow = (props) => {
     const [isExporting, setIsExporting] = useState(false);
 
     const formik = useFormik({
-        initialValues: {},
+        initialValues: {
+            use_latest_package_state: false,
+            transform_test_data: true,
+            generate_cm_assertions: true,
+            validate_package: true,
+            validate_package_xpath_and_sparql: true,
+            validate_package_shacl: true
+        },
         validationSchema: Yup.object({}),
         onSubmit: async (values, helpers) => {
             setIsProcessing(true)
 
+            let tasks_to_run = [];
+            if (values['transform_test_data']) {
+                tasks_to_run.push('transform_test_data');
+            }
+            if (values['generate_cm_assertions']) {
+                tasks_to_run.push('generate_cm_assertions');
+            }
+            if (values['validate_package']) {
+                tasks_to_run.push('validate_package');
+            }
+            if (values['validate_package_xpath_and_sparql']) {
+                tasks_to_run.push('validate_package_xpath_and_sparql');
+            }
+            if (values['validate_package_shacl']) {
+                tasks_to_run.push('validate_package_shacl');
+            }
             let data = {
                 package_id: item._id,
-                project_id: sessionApi.getSessionProject()
+                project_id: sessionApi.getSessionProject(),
+                use_latest_package_state: values['use_latest_package_state'],
+                tasks_to_run: tasks_to_run.join(',')
             }
             toast.promise(sectionApi.processPackage(data), {
                 loading: `Processing "${item.identifier}" ... This may take a while. Please, be patient.`,
@@ -124,26 +152,109 @@ const PackageRow = (props) => {
                         sx={{p: 3}}
                     >
                         <Button
-                            disabled={isProcessing}
+                            disabled={isProcessing || isExporting}
                             type="submit"
                             variant="contained"
+                            color="primary"
                         >
                             {!isProcessing && "Process"}
                             {isProcessing && "Processing ..."}
                         </Button>
-                        <small>
+                        <Box>
+                            <FormControlLabel
+                                sx={{
+                                    width: '100%',
+                                }}
+                                control={
+                                    <Switch
+                                        checked={formik.values.use_latest_package_state}
+                                        onChange={(event) => formik.setFieldValue('use_latest_package_state', event.target.checked)}
+                                    />
+                                }
+                                label="Use latest Package State"
+                            />
+                            <Divider sx={{my:2}}/>
                             <b>Processing a Mapping Package includes:</b>
-                            <ul>
-                                <li>Transforming Test Data</li>
-                                <li>Generating CM Assertions Queries</li>
-                                <li>Creating the Mapping Package State</li>
-                                <li>Validating the Mapping Package State</li>
+                            <ul style={{listStyleType: "none", padding: 0}}>
+                                <li>
+                                    <FormControlLabel
+                                        sx={{
+                                            width: '100%'
+                                        }}
+                                        control={
+                                            <Switch
+                                                checked={formik.values.transform_test_data}
+                                                onChange={(event) => formik.setFieldValue('transform_test_data', event.target.checked)}
+                                            />
+                                        }
+                                        label="Transform Test Data"
+                                    />
+                                </li>
+                                <li>
+                                    <FormControlLabel
+                                        sx={{
+                                            width: '100%'
+                                        }}
+                                        control={
+                                            <Switch
+                                                checked={formik.values.generate_cm_assertions}
+                                                onChange={(event) => formik.setFieldValue('generate_cm_assertions', event.target.checked)}
+                                            />
+                                        }
+                                        label="Generate CM Assertions Queries"
+                                    />
+                                </li>
+                                <li>
+                                    <FormControlLabel
+                                        sx={{
+                                            width: '100%'
+                                        }}
+                                        control={
+                                            <Switch
+                                                checked={formik.values.validate_package}
+                                                onChange={(event) => formik.setFieldValue('validate_package', event.target.checked)}
+                                            />
+                                        }
+                                        label="Validate the Mapping Package"
+                                    />
+                                    <ul style={{listStyleType: "none"}}>
+                                        <li>
+                                            <FormControlLabel
+                                                sx={{
+                                                    width: '100%'
+                                                }}
+                                                control={
+                                                    <Switch
+                                                        checked={formik.values.validate_package_shacl}
+                                                        onChange={(event) => formik.setFieldValue('validate_package_shacl', event.target.checked)}
+                                                    />
+                                                }
+                                                label="SHACL"
+                                            />
+                                        </li>
+                                        <li>
+                                            <FormControlLabel
+                                                sx={{
+                                                    width: '100%'
+                                                }}
+                                                control={
+                                                    <Switch
+                                                        checked={formik.values.validate_package_xpath_and_sparql}
+                                                        onChange={(event) => formik.setFieldValue('validate_package_xpath_and_sparql', event.target.checked)}
+                                                    />
+                                                }
+                                                label="XPATH + SPARQL"
+                                            />
+                                        </li>
+                                    </ul>
+                                </li>
                             </ul>
-                        </small>
+                        </Box>
                         <Button
-                            disabled={isExporting}
+                            disabled={isProcessing || isExporting}
                             type="button"
                             variant="contained"
+                            color="primary"
                             onClick={() => handleExport()}
                         >
                             {!isExporting && "Export Latest"}

@@ -145,12 +145,3 @@ async def import_mapping_package(file_content: bytes, project: Project, user: Us
 
 async def clear_project_data(project: Project):
     return await PackageImporter.clear_project_data(project)
-
-
-async def export_latest_package_state(package_id: PydanticObjectId):
-    """
-
-    :param package_id:
-    :return:
-    """
-    print(package_id)

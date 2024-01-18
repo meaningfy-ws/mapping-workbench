@@ -27,6 +27,7 @@ class SHACLTestState(ObjectState):
 
 
 class SHACLTestSuiteState(ObjectState):
+    title: Optional[str] = None
     shacl_test_states: Optional[List[SHACLTestState]] = []
 
 

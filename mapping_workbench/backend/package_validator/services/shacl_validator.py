@@ -22,6 +22,7 @@ def validate_test_data_with_shacl_test_suite(test_data: TestDataState,
         test_data.shacl_validation_result = shacl_test_suite_validation_report
         return test_data
     except Exception as e:
+        print("ERROR :: SHACL Validation :: ", e)
         pass
 
 

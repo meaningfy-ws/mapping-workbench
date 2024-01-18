@@ -21,6 +21,7 @@ def validate_tests_data_with_sparql_tests(
             sparql_test_suite_validation_result = sparql_runner.validate(sparql_queries=sparql_tests)
             test_data.sparql_validation_result = sparql_test_suite_validation_result
         except Exception as e:
+            print("ERROR :: SPARQL Validation :: ", e)
             pass
 
     return tests_data
