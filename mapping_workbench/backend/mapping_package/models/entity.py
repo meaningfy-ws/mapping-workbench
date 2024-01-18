@@ -11,7 +11,9 @@ from mapping_workbench.backend.conceptual_mapping_rule.models.entity import Conc
 from mapping_workbench.backend.core.models.base_entity import BaseTitledEntityListFiltersSchema, BaseEntity
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
+from mapping_workbench.backend.file_resource.models.file_resource import FileResource
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestSuiteState
+from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuiteState
 from mapping_workbench.backend.state_manager.models.state_object import ObjectState, StatefulObjectABC
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuiteState, TestDataSuite
 
@@ -74,7 +76,10 @@ class MappingPackageState(Document, ObjectState):
     eforms_sdk_versions: List[str] = None
     test_data_suites: Optional[List[TestDataSuiteState]] = []
     shacl_test_suites: Optional[List[SHACLTestSuiteState]] = []
+    sparql_test_suites: Optional[List[SPARQLTestSuiteState]] = []
     conceptual_mapping_rules: Optional[List[ConceptualMappingRuleState]] = []
+    transformation_resources: Optional[List[FileResource]] = []
+    transformation_mappings: Optional[List[FileResource]] = []
 
     class Settings:
         name = "mapping_package_states"

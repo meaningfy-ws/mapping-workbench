@@ -34,6 +34,9 @@ import Switch from "@mui/material/Switch";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import {Box} from "@mui/system";
 
+import { saveAs } from 'file-saver';
+
+
 
 const PackageRow = (props) => {
     const {
@@ -103,7 +106,8 @@ const PackageRow = (props) => {
             loading: `Exporting "${item.identifier}" ... This may take a while. Please, be patient.`,
             success: (response) => {
                 setIsExporting(false);
-                return `"${response.result.title}" successfully exported in ${(response.task.duration / 60).toFixed(2)} minutes.`
+                saveAs(new Blob([response], {type: "application/x-zip-compressed"}), `${item.identifier}.zip`);
+                return `"${item.identifier}" successfully exported.`
             },
             error: (err) => {
                 setIsExporting(false);
