@@ -172,7 +172,7 @@ const Page = () => {
     const handleViewStatesAction = useCallback(async () => {
         router.push({
             pathname: paths.app[sectionApi.section].states.index,
-            query: {id: item._id}
+            query: {id: id}
         });
 
     }, [router]);
