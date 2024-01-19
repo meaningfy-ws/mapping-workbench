@@ -46,7 +46,10 @@ export class SectionApi {
         return [ACTION.VIEW, ACTION.EDIT, ACTION.DELETE];
     }
 
-    async getItems(request = {}, path = 'items') {
+    async getItems(request = {}, path = null, endpoint = null) {
+        if (!path) {
+            path = 'items';
+        }
         const {
             filters = {},
             page = this.DEFAULT_PAGE,
@@ -58,7 +61,7 @@ export class SectionApi {
         filters['page'] = page;
         filters['limit'] = rowsPerPage >= 0 ? rowsPerPage : null;
 
-        return await appApi.get(this.paths[path], filters);
+        return await appApi.get(endpoint || this.paths[path], filters);
     }
 
     async getItem(id, path = null) {
