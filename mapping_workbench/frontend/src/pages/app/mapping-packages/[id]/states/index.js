@@ -18,6 +18,8 @@ import {useMounted} from "../../../../../hooks/use-mounted";
 import {usePageView} from "../../../../../hooks/use-page-view";
 import {mappingPackageStatesApi as sectionApi} from "../../../../../api/mapping-packages/states";
 import {useItem} from "../../../../../contexts/app/section/for-item-data-state";
+import {useRouter} from "../../../../../hooks/use-router";
+import {ListTable} from "../../../../../sections/app/project/list-table";
 
 
 const useItemsSearch = () => {
@@ -63,7 +65,7 @@ const useItemsSearch = () => {
 };
 
 
-const useItemsStore = (searchState) => {
+const useItemsStore = (id, searchState) => {
     const isMounted = useMounted();
     const [state, setState] = useState({
         items: [],
@@ -72,9 +74,8 @@ const useItemsStore = (searchState) => {
 
     const handleItemsGet = useCallback(async () => {
         try {
-            const response = await sectionApi.getStates("65aa35fad23c90595bdd159b");
+            const response = await sectionApi.getStates(id, searchState);
             console.log("searchState",searchState)
-            const secondResponse = await sectionApi.getItems(searchState)
 
             if (isMounted()) {
                 setState({
@@ -102,8 +103,18 @@ const useItemsStore = (searchState) => {
 };
 
 const Page = () => {
+
+      const router = useRouter();
+    if (!router.isReady) return;
+
+    const {id} = router.query;
+
+    if (!id) {
+        return;
+    }
+
     const itemsSearch = useItemsSearch();
-    const itemsStore = useItemsStore(itemsSearch.state);
+    const itemsStore = useItemsStore(id, itemsSearch.state);
     const formState = useItem(sectionApi, "65aa2c39d23c90595bdd159a");
     console.log("formState",formState)
 
@@ -169,7 +180,7 @@ const Page = () => {
                 </Stack>
                 <Card>
                     <FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
-                    <FileCollectionListTable
+                    <ListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                         page={itemsSearch.state.page}
