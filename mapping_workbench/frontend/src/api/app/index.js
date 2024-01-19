@@ -98,7 +98,7 @@ class AppApi {
         return null;
     }
 
-    async request(method, endpoint, data = null, params = null, headers = null) {
+    async request(method, endpoint, data = null, params = null, headers = null, extraConfig = null) {
         // if (!(await this.verifyAuth())) {
         //     history.push(paths.auth.jwt.login);
         //     return;
@@ -111,6 +111,10 @@ class AppApi {
             url: this.url(endpoint),
             headers: headers
         }
+        if (extraConfig) {
+            Object.assign(config, extraConfig)
+        }
+
         if (data !== null) {
             config.data = data;
         }
@@ -131,8 +135,8 @@ class AppApi {
             });
     }
 
-    async get(endpoint, params = null) {
-        return this.request(METHOD.GET, endpoint, null, params);
+    async get(endpoint, params = null, headers = null, extraConfig = null) {
+        return this.request(METHOD.GET, endpoint, null, params, headers, extraConfig);
     }
 
     async post(endpoint, data = {}, params = null, headers = null) {

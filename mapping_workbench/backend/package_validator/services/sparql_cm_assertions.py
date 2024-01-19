@@ -5,6 +5,7 @@ from beanie import PydanticObjectId
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
 from mapping_workbench.backend.conceptual_mapping_rule.services.data import get_conceptual_mapping_rules_for_project
+from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
 from mapping_workbench.backend.file_resource.models.file_resource import FileResourceFormat
 from mapping_workbench.backend.ontology.services.namespaces import get_prefixes_definitions
 from mapping_workbench.backend.project.models.entity import Project
@@ -24,22 +25,22 @@ SPARQL_CM_ASSERTIONS_SUITE_TITLE = "cm_assertions"
 
 
 def get_sparql_prefixes(sparql_q: str) -> list:
-    finds: list = re.findall(SPARQL_PREFIX_PATTERN, sparql_q)
+    finds: list = re.findall(SPARQL_PREFIX_PATTERN, sparql_q or "")
     return sorted(set(finds))
-
-
-def concat_cm_rule_field_xpaths(cm_rule: ConceptualMappingRule, separator: str = SPARQL_XPATH_SEPARATOR) -> str:
-    return separator.join(cm_rule.source_xpath or [])
 
 
 async def generate_and_save_cm_assertions_queries(
         project_id: PydanticObjectId,
+        cleanup: bool = True,
         user: User = None,
         rq_name: str = DEFAULT_RQ_NAME,
         prefixes_definitions=None
 ):
     """
     """
+
+    if cleanup:
+        await clean_sparql_cm_assertions_queries_for_project(project_id=project_id)
 
     project_link = Project.link_from_id(project_id)
 
@@ -48,7 +49,7 @@ async def generate_and_save_cm_assertions_queries(
         sparql_test_suite_title=SPARQL_CM_ASSERTIONS_SUITE_TITLE
     )
     if not sparql_test_suite:
-        sparql_test_suite = await SPARQLTestSuite(
+        sparql_test_suite = SPARQLTestSuite(
             title=SPARQL_CM_ASSERTIONS_SUITE_TITLE,
             type=SPARQLQueryValidationType.CM_ASSERTION,
             path=[SPARQL_CM_ASSERTIONS_SUITE_TITLE],
@@ -57,7 +58,7 @@ async def generate_and_save_cm_assertions_queries(
         if user is not None:
             sparql_test_suite.on_create(user=user)
 
-        sparql_test_suite.save()
+        await sparql_test_suite.save()
 
     sparql_test_suite_link = SPARQLTestSuite.link_from_id(sparql_test_suite.id)
 
@@ -67,8 +68,16 @@ async def generate_and_save_cm_assertions_queries(
     cm_rules: List[ConceptualMappingRule] = await get_conceptual_mapping_rules_for_project(project_id=project_id)
     for index, cm_rule in enumerate(cm_rules):
         prefixes_string = cm_rule.target_property_path
+        sparql_title = ""
+        sparql_description = ""
+        sparql_xpath = ""
 
-        sparql_title = " - ".join(filter(lambda x: x, [cm_rule.field_id, cm_rule.field_title]))
+        if cm_rule.source_structural_element:
+            structural_element: StructuralElement = await cm_rule.source_structural_element.fetch()
+            if structural_element:
+                sparql_title = structural_element.eforms_sdk_element_id
+                sparql_description = ", ".join(structural_element.descriptions or [])
+                sparql_xpath = structural_element.absolute_xpath
 
         prefixes = []
         for prefix in get_sparql_prefixes(prefixes_string):
@@ -83,11 +92,11 @@ async def generate_and_save_cm_assertions_queries(
         subject_type_display = ''
         file_name = f"{rq_name}{index}.rq"
         file_content = f"#title: {sparql_title}\n" \
-                       f"#description: “{cm_rule.field_description}” " \
+                       f"#description: “{sparql_description}” " \
                        f"The corresponding XML element is " \
-                       f"{concat_cm_rule_field_xpaths(cm_rule)}. " \
+                       f"{sparql_xpath}. " \
                        f"The expected ontology instances are epo: {cm_rule.target_class_path} .\n" \
-                       f"#xpath: {concat_cm_rule_field_xpaths(cm_rule, separator=SPARQL_XPATH_SEPARATOR)}" \
+                       f"#xpath: {sparql_xpath}" \
                        "\n" + "\n" + "\n".join(prefixes) + \
                        "\n\n" + \
                        f"ASK WHERE {{ " \
@@ -120,6 +129,9 @@ async def generate_and_save_cm_assertions_queries(
             if user is not None:
                 sparql_test_file_resource.on_update(user)
             await sparql_test_file_resource.save()
+
+        cm_rule.sparql_assertions = [SPARQLTestFileResource.link_from_id(sparql_test_file_resource.id)]
+        await cm_rule.save()
 
 
 async def clean_sparql_cm_assertions_queries_for_project(project_id: PydanticObjectId):

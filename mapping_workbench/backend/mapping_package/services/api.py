@@ -8,7 +8,7 @@ from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundE
 from mapping_workbench.backend.core.services.request import request_update_data, request_create_data, \
     api_entity_is_found, prepare_search_param, pagination_params
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageCreateIn, \
-    MappingPackageUpdateIn, MappingPackageOut
+    MappingPackageUpdateIn, MappingPackageOut, MappingPackageState
 from mapping_workbench.backend.user.models.user import User
 
 
@@ -69,3 +69,35 @@ async def get_mapping_package_out(id: PydanticObjectId) -> MappingPackageOut:
 
 async def delete_mapping_package(mapping_package: MappingPackage):
     return await mapping_package.delete()
+
+
+# Mapping Package States
+
+async def list_mapping_package_states(filters: dict = None, page: int = None, limit: int = None) -> \
+        (List[MappingPackageState], int):
+    query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
+
+    prepare_search_param(query_filters)
+    skip, limit = pagination_params(page, limit)
+
+    items: List[MappingPackageState] = await MappingPackageState.find(
+        query_filters,
+        projection_model=MappingPackageState,
+        fetch_links=False,
+        sort=-MappingPackageState.created_at,
+        skip=skip,
+        limit=limit
+    ).to_list()
+    total_count: int = await MappingPackageState.find(query_filters).count()
+    return items, total_count
+
+
+async def get_mapping_package_state(id: PydanticObjectId) -> MappingPackageState:
+    mapping_package_state: MappingPackageState = await MappingPackageState.get(id)
+    if not mapping_package_state:
+        raise ResourceNotFoundException()
+    return mapping_package_state
+
+
+async def delete_mapping_package_state(mapping_package_state: MappingPackageState):
+    return await mapping_package_state.delete()

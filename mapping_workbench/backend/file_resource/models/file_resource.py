@@ -53,9 +53,6 @@ class FileResource(BaseProjectResourceEntity):
     format: Optional[FileResourceFormat] = None
     content: Optional[str] = None
 
-    class Settings(BaseEntity.Settings):
-        name = "file_resources"
-
 
 class FileResourceCollection(BaseProjectResourceEntity):
     title: Optional[str] = None

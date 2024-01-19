@@ -11,7 +11,8 @@ from mapping_workbench.backend.test_data_suite.adapters.rml_mapper import RMLMap
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataFileResource
 from mapping_workbench.backend.test_data_suite.services import DATA_SOURCE_PATH_NAME, \
     TRANSFORMATION_PATH_NAME, MAPPINGS_PATH_NAME, RESOURCES_PATH_NAME
-from mapping_workbench.backend.test_data_suite.services.data import get_test_data_file_resources_for_project
+from mapping_workbench.backend.test_data_suite.services.data import get_test_data_file_resources_for_project, \
+    get_test_data_file_resources_for_package
 from mapping_workbench.backend.triple_map_fragment.models.entity import GenericTripleMapFragment
 from mapping_workbench.backend.triple_map_fragment.services.data_for_generic import \
     get_generic_triple_map_fragments_for_project
@@ -92,13 +93,11 @@ async def transform_test_data_file_resource(
     return test_data_file_resource
 
 
-async def transform_test_data_for_project(
+async def transform_test_data_file_resources(
+        test_data_file_resources: List[TestDataFileResource],
         project_id: PydanticObjectId,
         user: User = None
 ):
-    test_data_file_resources: List[TestDataFileResource] = \
-        await get_test_data_file_resources_for_project(project_id=project_id)
-
     mappings = await get_generic_triple_map_fragments_for_project(
         project_id=project_id
     )
@@ -118,3 +117,32 @@ async def transform_test_data_for_project(
             rml_mapper=rml_mapper,
             save=True
         )
+
+
+async def transform_test_data_for_project(
+        project_id: PydanticObjectId,
+        user: User = None
+):
+    test_data_file_resources: List[TestDataFileResource] = \
+        await get_test_data_file_resources_for_project(project_id=project_id)
+
+    await transform_test_data_file_resources(
+        test_data_file_resources=test_data_file_resources,
+        project_id=project_id,
+        user=user
+    )
+
+
+async def transform_test_data_for_package(
+        package_id: PydanticObjectId,
+        project_id: PydanticObjectId,
+        user: User = None
+):
+    test_data_file_resources: List[TestDataFileResource] = \
+        await get_test_data_file_resources_for_package(package_id=package_id)
+
+    await transform_test_data_file_resources(
+        test_data_file_resources=test_data_file_resources,
+        project_id=project_id,
+        user=user
+    )

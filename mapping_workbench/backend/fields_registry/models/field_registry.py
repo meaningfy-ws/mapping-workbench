@@ -13,10 +13,10 @@ class StructuralElement(BaseProjectResourceEntity):
 
     """
     id: str
-    eforms_sdk_element_id: str
-    absolute_xpath: str
-    relative_xpath: str
-    repeatable: bool
+    eforms_sdk_element_id: str = None
+    absolute_xpath: str = None
+    relative_xpath: str = None
+    repeatable: bool = None
     parent_node_id: Optional[str] = None
     descriptions: List[str] = []
     versions: List[str] = []

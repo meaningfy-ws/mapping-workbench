@@ -23,7 +23,253 @@ import {ListItemActions} from 'src/components/app/list/list-item-actions';
 
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import Tooltip from "@mui/material/Tooltip";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
+import Card from "@mui/material/Card";
+import {useFormik} from "formik";
+import * as Yup from "yup";
+import {sessionApi} from "../../../api/session";
+import toast from "react-hot-toast";
+import Switch from "@mui/material/Switch";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import {Box} from "@mui/system";
 
+import { saveAs } from 'file-saver';
+
+
+
+const PackageRow = (props) => {
+    const {
+        item, sectionApi
+    } = props;
+
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [isExporting, setIsExporting] = useState(false);
+
+    const formik = useFormik({
+        initialValues: {
+            use_latest_package_state: false,
+            transform_test_data: true,
+            generate_cm_assertions: true,
+            validate_package: true,
+            validate_package_xpath_and_sparql: true,
+            validate_package_shacl: true
+        },
+        validationSchema: Yup.object({}),
+        onSubmit: async (values, helpers) => {
+            setIsProcessing(true)
+
+            let tasks_to_run = [];
+            if (values['transform_test_data']) {
+                tasks_to_run.push('transform_test_data');
+            }
+            if (values['generate_cm_assertions']) {
+                tasks_to_run.push('generate_cm_assertions');
+            }
+            if (values['validate_package']) {
+                tasks_to_run.push('validate_package');
+            }
+            if (values['validate_package_xpath_and_sparql']) {
+                tasks_to_run.push('validate_package_xpath_and_sparql');
+            }
+            if (values['validate_package_shacl']) {
+                tasks_to_run.push('validate_package_shacl');
+            }
+            let data = {
+                package_id: item._id,
+                project_id: sessionApi.getSessionProject(),
+                use_latest_package_state: values['use_latest_package_state'],
+                tasks_to_run: tasks_to_run.join(',')
+            }
+            toast.promise(sectionApi.processPackage(data), {
+                loading: `Processing "${item.identifier}" ... This may take a while. Please, be patient.`,
+                success: (response) => {
+                    setIsProcessing(false);
+                    return `"${response.result.title}" successfully processed in ${(response.task.duration / 60).toFixed(2)} minutes.`
+                },
+                error: (err) => {
+                    setIsProcessing(false);
+                    return `Processing "${item.identifier}" failed: ${err.message}.`
+                }
+            }).then(r => {
+            })
+        }
+    });
+
+    const handleExport = useCallback((itemId) => {
+        setIsExporting(true)
+        let data = {
+            package_id: item._id,
+            project_id: sessionApi.getSessionProject()
+        }
+        toast.promise(sectionApi.exportPackage(data), {
+            loading: `Exporting "${item.identifier}" ... This may take a while. Please, be patient.`,
+            success: (response) => {
+                setIsExporting(false);
+                saveAs(new Blob([response], {type: "application/x-zip-compressed"}), `${item.identifier}.zip`);
+                return `"${item.identifier}" successfully exported.`
+            },
+            error: (err) => {
+                setIsExporting(false);
+                return `Exporting "${item.identifier}" failed: ${err.message}.`
+            }
+        }).then(r => {
+        })
+    }, []);
+
+    return (<>
+            <CardContent>
+                <Grid container>
+                    <Grid
+                        item
+                        md={12}
+                        xs={12}
+                    >
+                        <PropertyList>
+                            <PropertyListItem
+                                label="Description"
+                                value={item.description}
+                                sx={{
+                                    whiteSpace: "pre-wrap",
+                                    px: 3,
+                                    py: 1.5
+                                }}
+                            />
+                        </PropertyList>
+                    </Grid>
+                </Grid>
+            </CardContent>
+            <Divider/>
+            <Card
+                sx={{
+                    px: 3
+                }}
+            >
+                <form onSubmit={formik.handleSubmit}>
+                    <Stack
+                        direction={{
+                            xs: 'column',
+                            sm: 'row'
+                        }}
+                        flexWrap="wrap"
+                        spacing={3}
+                        sx={{p: 3}}
+                    >
+                        <Button
+                            disabled={isProcessing || isExporting}
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                        >
+                            {!isProcessing && "Process"}
+                            {isProcessing && "Processing ..."}
+                        </Button>
+                        <Box>
+                            <FormControlLabel
+                                sx={{
+                                    width: '100%',
+                                }}
+                                control={
+                                    <Switch
+                                        checked={formik.values.use_latest_package_state}
+                                        onChange={(event) => formik.setFieldValue('use_latest_package_state', event.target.checked)}
+                                    />
+                                }
+                                label="Use latest Package State"
+                            />
+                            <Divider sx={{my:2}}/>
+                            <b>Processing a Mapping Package includes:</b>
+                            <ul style={{listStyleType: "none", padding: 0}}>
+                                <li>
+                                    <FormControlLabel
+                                        sx={{
+                                            width: '100%'
+                                        }}
+                                        control={
+                                            <Switch
+                                                checked={formik.values.transform_test_data}
+                                                onChange={(event) => formik.setFieldValue('transform_test_data', event.target.checked)}
+                                            />
+                                        }
+                                        label="Transform Test Data"
+                                    />
+                                </li>
+                                <li>
+                                    <FormControlLabel
+                                        sx={{
+                                            width: '100%'
+                                        }}
+                                        control={
+                                            <Switch
+                                                checked={formik.values.generate_cm_assertions}
+                                                onChange={(event) => formik.setFieldValue('generate_cm_assertions', event.target.checked)}
+                                            />
+                                        }
+                                        label="Generate CM Assertions Queries"
+                                    />
+                                </li>
+                                <li>
+                                    <FormControlLabel
+                                        sx={{
+                                            width: '100%'
+                                        }}
+                                        control={
+                                            <Switch
+                                                checked={formik.values.validate_package}
+                                                onChange={(event) => formik.setFieldValue('validate_package', event.target.checked)}
+                                            />
+                                        }
+                                        label="Validate the Mapping Package"
+                                    />
+                                    <ul style={{listStyleType: "none"}}>
+                                        <li>
+                                            <FormControlLabel
+                                                sx={{
+                                                    width: '100%'
+                                                }}
+                                                control={
+                                                    <Switch
+                                                        checked={formik.values.validate_package_shacl}
+                                                        onChange={(event) => formik.setFieldValue('validate_package_shacl', event.target.checked)}
+                                                    />
+                                                }
+                                                label="SHACL"
+                                            />
+                                        </li>
+                                        <li>
+                                            <FormControlLabel
+                                                sx={{
+                                                    width: '100%'
+                                                }}
+                                                control={
+                                                    <Switch
+                                                        checked={formik.values.validate_package_xpath_and_sparql}
+                                                        onChange={(event) => formik.setFieldValue('validate_package_xpath_and_sparql', event.target.checked)}
+                                                    />
+                                                }
+                                                label="XPATH + SPARQL"
+                                            />
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </Box>
+                        <Button
+                            disabled={isProcessing || isExporting}
+                            type="button"
+                            variant="contained"
+                            color="primary"
+                            onClick={() => handleExport()}
+                        >
+                            {!isExporting && "Export Latest"}
+                            {isExporting && "Exporting Latest ..."}
+                        </Button>
+                    </Stack>
+                </form>
+            </Card>
+        </>
+    )
+}
 
 export const ListTable = (props) => {
     const {
@@ -194,27 +440,10 @@ export const ListTable = (props) => {
                                                     }
                                                 }}
                                             >
-                                                <CardContent>
-                                                    <Grid container>
-                                                        <Grid
-                                                            item
-                                                            md={12}
-                                                            xs={12}
-                                                        >
-                                                            <PropertyList>
-                                                                <PropertyListItem
-                                                                    label="Description"
-                                                                    value={item.description}
-                                                                    sx={{
-                                                                        whiteSpace: "pre-wrap",
-                                                                        px: 3,
-                                                                        py: 1.5
-                                                                    }}
-                                                                />
-                                                            </PropertyList>
-                                                        </Grid>
-                                                    </Grid>
-                                                </CardContent>
+                                                <PackageRow
+                                                    item={item}
+                                                    sectionApi={sectionApi}
+                                                />
                                             </TableCell>
                                         </TableRow>
                                     )}

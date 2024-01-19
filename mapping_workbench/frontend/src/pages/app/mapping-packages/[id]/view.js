@@ -18,8 +18,6 @@ import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
 import {useRouter} from "src/hooks/use-router";
 import {useItem} from "src/contexts/app/section/for-item-data-state";
-import {testDataSuitesApi} from 'src/api/test-data-suites';
-import {sparqlTestSuitesApi} from 'src/api/sparql-test-suites';
 import {FileResourceCollectionsCard} from 'src/sections/app/file-manager/file-resource-collections-card'
 import {PropertyList} from "../../../../components/property-list";
 import {PropertyListItem} from "../../../../components/property-list-item";
@@ -36,12 +34,14 @@ import {specificTripleMapFragmentsApi} from "../../../../api/triple-map-fragment
 import toast from "react-hot-toast";
 import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
+import * as React from "react";
 
 const tabs = [
     {label: 'Details', value: 'details'},
     {label: 'Resources', value: 'resources'},
     {label: 'Mapping Rules', value: 'mappingRules'},
-    {label: 'Triple Map Fragments', value: 'tripleMapFragments'}
+    {label: 'Triple Map Fragments', value: 'tripleMapFragments'},
+    {label: 'States', value: 'states'}
 ];
 
 const useMappingRulesSearch = () => {
@@ -103,7 +103,7 @@ const useMappingRulesStore = (searchState, mappingPackage) => {
     const handleItemsGet = useCallback(async () => {
         try {
             let request = searchState;
-            request['filters']['mapping_packages'] = [mappingPackage];
+            request['filters']['refers_to_mapping_package_ids'] = [mappingPackage];
             const response = await conceptualMappingRulesApi.getItems(request);
             if (isMounted()) {
                 setState({
@@ -168,6 +168,14 @@ const Page = () => {
         await specificTripleMapFragmentsApi.update_specific_mapping_package(id, tripleMapFragments);
         toast.success(specificTripleMapFragmentsApi.SECTION_TITLE + ' updated');
     }, [specificTripleMapFragmentsApi, id, tripleMapFragments]);
+
+    const handleViewStatesAction = useCallback(async () => {
+        router.push({
+            pathname: paths.app[sectionApi.section].states.index,
+            query: {id: item._id}
+        });
+
+    }, [router]);
 
     if (!item) {
         return;
@@ -390,6 +398,25 @@ const Page = () => {
                                         >
                                             Update
                                         </Button>
+                                    </FormControl>
+                                </Grid>
+                            </Grid>
+                        </CardContent>
+                    </Card>
+                )}
+                {currentTab === "states" && (
+                    <Card sx={{mt: 3}}>
+                        <CardContent>
+                            <Grid container spacing={3}>
+                                <Grid xs={12} md={12}>
+                                    <FormControl>
+                                        {<Button
+                                            variant="contained"
+                                            color="info"
+                                            onClick={handleViewStatesAction}
+                                        >
+                                            View "{item.title}" States
+                                        </Button>}
                                     </FormControl>
                                 </Grid>
                             </Grid>

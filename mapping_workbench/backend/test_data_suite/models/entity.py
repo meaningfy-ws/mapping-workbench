@@ -42,7 +42,7 @@ class TestDataState(ObjectState):
     rdf_manifestation: Optional[str] = None
     shacl_validation_result: Optional[SHACLTestDataValidationResult] = None
     sparql_validation_result: Optional[SPARQLTestDataValidationResult] = None
-    xpath_validation_result: List[XPathAssertion] = None
+    xpath_validation_result: List[XPathAssertion] = []
 
 
 class TestDataFileResource(FileResource, StatefulObjectABC):
@@ -99,7 +99,7 @@ class TestDataSuiteState(ObjectState):
     title: Optional[str] = None
     description: Optional[str] = None
     path: Optional[List[str]] = None
-    test_data_states: List[TestDataState]
+    test_data_states: Optional[List[TestDataState]] = []
 
 
 class TestDataSuite(
@@ -109,12 +109,20 @@ class TestDataSuite(
     file_resources: Optional[List[Link[TestDataFileResource]]] = []
     mapping_package_id: Optional[PydanticObjectId] = None
 
+    async def get_test_data_states(self) -> List[TestDataState]:
+        test_data_file_resources = await TestDataFileResource.find(
+            TestDataFileResource.test_data_suite == TestDataSuite.link_from_id(self.id)).to_list()
+
+        test_data_states = [await test_data_file_resource.get_state() for test_data_file_resource in
+                            test_data_file_resources] if test_data_file_resources else []
+
+        return test_data_states
+
     async def get_state(self) -> TestDataSuiteState:
         title = self.title
         description = self.description
         path = self.path
-        test_data_list = [await test_data.fetch() for test_data in self.file_resources]
-        test_data_states = [await test_data.get_state() for test_data in test_data_list]
+        test_data_states = await self.get_test_data_states()
         return TestDataSuiteState(
             title=title,
             description=description,

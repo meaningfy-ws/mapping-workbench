@@ -5,7 +5,7 @@ import rdflib
 from pydantic import validate_call
 from pyshacl import validate
 
-from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestFileResource
+from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestFileResource, SHACLTestState
 from mapping_workbench.backend.package_validator.models.shacl_validation import SHACLTestDataValidationResult
 from mapping_workbench.backend.package_validator.resources import SHACL_RESULT_QUERY_PATH
 from mapping_workbench.backend.package_validator.adapters.xpath_validator import TestDataValidator
@@ -33,7 +33,7 @@ class SHACLValidator(TestDataValidator):
         self.resource_id = test_data.xml_manifestation.filename
         self.shacl_shape_result_query = shacl_shape_result_query or SHACL_RESULT_QUERY_PATH.read_text()
 
-    def validate(self, shacl_files: List[SHACLTestFileResource]) -> SHACLTestDataValidationResult:
+    def validate(self, shacl_files: List[SHACLTestState]) -> SHACLTestDataValidationResult:
         """
         Validates with a list of shacl shape files and return one validation result
         :param shacl_files:

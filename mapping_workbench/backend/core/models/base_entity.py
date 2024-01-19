@@ -18,12 +18,14 @@ class BaseEntity(Document):
     is_deleted: bool = False
 
     def on_create(self, user: User):
-        self.created_by = User.link_from_id(user.id)
+        if user:
+            self.created_by = User.link_from_id(user.id)
         self.created_at = datetime.now()
         return self
 
     def on_update(self, user: User):
-        self.updated_by = User.link_from_id(user.id)
+        if user:
+            self.updated_by = User.link_from_id(user.id)
         self.updated_at = datetime.now()
         return self
 
