@@ -9,6 +9,8 @@ from mapping_workbench.backend.package_importer.models.imported_mapping_suite im
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.resource_collection.models.entity import ResourceFile, ResourceCollection, \
     ResourceFileFormat
+from mapping_workbench.backend.resource_collection.services.data import get_default_resource_collection, \
+    DEFAULT_RESOURCES_COLLECTION_NAME
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestFileResourceFormat, SHACLTestSuite, \
     SHACLTestFileResource
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResourceFormat, SPARQLTestSuite, \
@@ -18,8 +20,6 @@ from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuit
 from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragmentFormat, \
     GenericTripleMapFragment
 from mapping_workbench.backend.user.models.user import User
-
-DEFAULT_RESOURCES_COLLECTION_NAME = "Default"
 
 
 class PackageImporter:
@@ -232,10 +232,7 @@ class PackageImporter:
     async def add_transformation_resources_from_mono(self, mono_package: ImportedMappingSuite):
         resource_formats = [e.value for e in ResourceFileFormat]
 
-        resource_collection: ResourceCollection = await ResourceCollection.find_one(
-            ResourceCollection.project == self.project_link,
-            ResourceCollection.title == DEFAULT_RESOURCES_COLLECTION_NAME
-        )
+        resource_collection: ResourceCollection = await get_default_resource_collection(project_id=self.project.id)
 
         if not resource_collection:
             resource_collection = ResourceCollection(

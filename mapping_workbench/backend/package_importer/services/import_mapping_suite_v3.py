@@ -7,6 +7,8 @@ import pandas as pd
 import numpy as np
 import pathlib
 
+from beanie import PydanticObjectId
+
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.package_importer.adapters.v3.importer import PackageImporter
 from mapping_workbench.backend.package_importer.models.imported_mapping_suite import MappingMetadata, \
@@ -124,7 +126,7 @@ def import_mapping_suite_from_file_system(mapping_suite_dir_path: pathlib.Path) 
     return mapping_suite
 
 
-async def import_mapping_package(file_content: bytes, project: Project, user: User) -> MappingPackage:
+async def import_mapping_package(file_content: bytes, project: Project, user: User = None) -> MappingPackage:
     zf = zipfile.ZipFile(io.BytesIO(file_content))
     tempdir = tempfile.TemporaryDirectory()
     tempdir_name = tempdir.name

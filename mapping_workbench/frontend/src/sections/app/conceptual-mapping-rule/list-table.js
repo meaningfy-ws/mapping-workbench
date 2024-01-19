@@ -125,10 +125,11 @@ export const ListTableTripleMapFragment = (props) => {
 
     const handleTripleMapFragmentUpdate = useCallback(async () => {
         let values = {}
+        const tripleMapFragmentId = tripleMapFragment && tripleMapFragment._id || null;
         values['id'] = item._id;
-        values['triple_map_fragment'] = tripleMapFragment._id;
+        values['triple_map_fragment'] = tripleMapFragmentId;
         await conceptualMappingRulesApi.updateItem(values);
-        setRuleTripleMapFragment(tripleMapFragment._id);
+        setRuleTripleMapFragment(tripleMapFragmentId);
         toast.success(conceptualMappingRulesApi.SECTION_ITEM_TITLE + ' updated');
 
         if (updateContent) {
@@ -301,7 +302,7 @@ export const ListTableMappingPackages = (props) => {
         isHovered
     } = props;
 
-    let ruleFilteredMappingPackages = (item.mapping_packages || []).map(x => x.id);
+    let ruleFilteredMappingPackages = item.refers_to_mapping_package_ids || [];
     const [mappingPackages, setMappingPackages] = useState(ruleFilteredMappingPackages);
     const [projectMappingPackages, setProjectMappingPackages] = useState(initProjectMappingPackages || []);
     const [tempMappingPackages, setTempMappingPackages] =
@@ -320,11 +321,10 @@ export const ListTableMappingPackages = (props) => {
     const handleMappingPackagesUpdate = useCallback(async () => {
         let values = {}
         values['id'] = item._id;
-        console.log(tempMappingPackages);
-        values['mapping_packages'] = tempMappingPackages;
+        values['refers_to_mapping_package_ids'] = tempMappingPackages;
         await conceptualMappingRulesApi.updateItem(values);
         setMappingPackages(tempMappingPackages);
-        item.mapping_packages = tempMappingPackages.map(x => {return { id: x}});
+        item.refers_to_mapping_package_ids = tempMappingPackages;
         toast.success(conceptualMappingRulesApi.SECTION_ITEM_TITLE + ' updated');
         mappingPackagesDialog.handleClose();
         onPackagesUpdate()
@@ -431,7 +431,9 @@ export const ListTableSPARQLAssertions = (props) => {
         values['sparql_assertions'] = tempSparqlResources;
         await conceptualMappingRulesApi.updateItem(values);
         setSparqlResources(tempSparqlResources);
-        item.sparql_assertions = tempSparqlResources.map(x => {return { id: x}});
+        item.sparql_assertions = tempSparqlResources.map(x => {
+            return {id: x}
+        });
         toast.success(conceptualMappingRulesApi.SECTION_ITEM_TITLE + ' updated');
         sparqlTestFileResourcesDialog.handleClose();
     }, [tempSparqlResources]);
@@ -660,26 +662,16 @@ export const ListTableRow = (props) => {
                       color="primary"
                 >
                     <Typography variant="subtitle2">
-                        <Box>{item.field_id}</Box>
-                        <Box>{item.field_title}</Box>
+                        <Box>
+                            {item.source_structural_element &&
+                                item.source_structural_element.eforms_sdk_element_id
+                            }
+                            {item.mapping_group_id && " / "}
+                            {item.mapping_group_id}
+
+                        </Box>
                     </Typography>
                 </Link>
-            </TableCell>
-            <TableCell>
-                {item.source_xpath && item.source_xpath.map(
-                    x => (
-                        <ListItem title={x} key={`source_xpath_${x.id}`} sx={{
-                            px: 0
-                        }}>
-                            {detailedView && x}
-                            {!detailedView && (
-                                <>
-                                    {x.length > TRUNCATE_LENGTH && "..."}{x.substring(x.length - TRUNCATE_LENGTH)}
-                                </>
-                            )}
-                        </ListItem>
-                    )
-                )}
             </TableCell>
             <TableCell>
                 <Box title={item.target_class_path}>
@@ -829,7 +821,7 @@ export const ListTableRow = (props) => {
         </TableRow>
         {isCurrent && (<TableRow>
             <TableCell
-                colSpan={7}
+                colSpan={11}
                 sx={{
                     p: 0, position: 'relative', '&:after': {
                         position: 'absolute',
@@ -850,39 +842,30 @@ export const ListTableRow = (props) => {
                             xs={12}
                         >
                             <PropertyList>
-                                {item.field_id && (<PropertyListItem
-                                    key="field_id"
-                                    label="Field ID"
-                                    value={item.field_id}
-                                />)}
-                                {item.field_title && (<PropertyListItem
-                                    key="field_title"
-                                    label="Field Title"
-                                    value={item.field_title}
-                                />)}
-                                {item.field_description && (<PropertyListItem
-                                    key="description"
-                                    label="Description"
-                                    value={item.field_description}
-                                    sx={{
-                                        whiteSpace: "pre-wrap",
-                                        px: 3,
-                                        py: 1.5
-                                    }}
-                                />)}
-                                {item.source_xpath && (<PropertyListItem
-                                    key="source_xpath"
-                                    label="Source XPath"
-                                    value={item.source_xpath.map(
-                                        x => (
-                                            <ListItem title={x} sx={{
-                                                px: 0
-                                            }}>
-                                                {x}
-                                            </ListItem>
-                                        )
-                                    )}
-                                />)}
+                                {item.source_structural_element && (
+                                    <>
+                                        {item.source_structural_element.eforms_sdk_element_id && <PropertyListItem
+                                            key="eforms_sdk_element_id"
+                                            label="eForms SDK ID"
+                                            value={item.source_structural_element.eforms_sdk_element_id}
+                                        />}
+                                        {item.source_structural_element.absolute_xpath && <PropertyListItem
+                                            key="absolute_xpath"
+                                            label="Absolute XPath"
+                                            value={item.source_structural_element.absolute_xpath}
+                                        />}
+                                        {item.source_structural_element.name && <PropertyListItem
+                                            key="name"
+                                            label="Field Name"
+                                            value={item.source_structural_element.name}
+                                        />}
+                                        {item.source_structural_element.bt_id && <PropertyListItem
+                                            key="bt_id"
+                                            label="BT ID"
+                                            value={item.source_structural_element.bt_id}
+                                        />}
+                                    </>
+                                )}
                                 {item.target_class_path && (<PropertyListItem
                                     key="target_class_path"
                                     label="Ontology Fragment Class path"
@@ -995,18 +978,6 @@ export const ListTable = (props) => {
                                 <TableSortLabel
                                     direction="asc"
                                 >
-                                    Source XPath
-                                </TableSortLabel>
-                            </Tooltip>
-                        </TableCell>
-                        <TableCell width="18%">
-                            <Tooltip
-                                enterDelay={300}
-                                title="Sort"
-                            >
-                                <TableSortLabel
-                                    direction="asc"
-                                >
                                     Ontology Fragment Class path
                                 </TableSortLabel>
                             </Tooltip>
@@ -1045,16 +1016,32 @@ export const ListTable = (props) => {
                                 </TableSortLabel>
                             </Tooltip>
                         </TableCell>*/}
-                        <TableCell align="center">
-                            M. Notes
+                        <TableCell align="center" title="Mapping Notes"
+                                   sx={{
+                                       whiteSpace: "nowrap"
+                                   }}
+                        >
+                            M-Notes
                         </TableCell>
-                        <TableCell align="center">
-                            E. Notes
+                        <TableCell align="center" title="Editorial Notes"
+                                   sx={{
+                                       whiteSpace: "nowrap"
+                                   }}
+                        >
+                            E-Notes
                         </TableCell>
-                        <TableCell align="center">
-                            F. Notes
+                        <TableCell align="center" title="Feedback Notes"
+                                   sx={{
+                                       whiteSpace: "nowrap"
+                                   }}
+                        >
+                            F-Notes
                         </TableCell>
-                        <TableCell align="right">
+                        <TableCell align="right"
+                                   sx={{
+                                       whiteSpace: "nowrap"
+                                   }}
+                        >
                             Actions
                         </TableCell>
                     </TableRow>

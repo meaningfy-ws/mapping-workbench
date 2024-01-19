@@ -2,19 +2,20 @@ from datetime import datetime
 from typing import Optional, List
 
 import pymongo
-from beanie import Indexed, Link
-from beanie.odm.operators.find.comparison import In
-
+from beanie import Indexed, Link, Document
+from beanie.odm.operators.find.comparison import Eq
 from pymongo import IndexModel
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRuleState, \
     ConceptualMappingRule
-from mapping_workbench.backend.core.models.base_entity import BaseTitledEntityListFiltersSchema
+from mapping_workbench.backend.core.models.base_entity import BaseTitledEntityListFiltersSchema, BaseEntity
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
+from mapping_workbench.backend.file_resource.models.file_resource import FileResource
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestSuiteState
+from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuiteState
 from mapping_workbench.backend.state_manager.models.state_object import ObjectState, StatefulObjectABC
-from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuiteState
+from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuiteState, TestDataSuite
 
 
 class MappingPackageException(Exception):
@@ -63,7 +64,7 @@ class MappingPackageListFilters(BaseTitledEntityListFiltersSchema):
     pass
 
 
-class MappingPackageState(ObjectState):
+class MappingPackageState(Document, ObjectState):
     title: Optional[str] = None
     description: Optional[str] = None
     identifier: Optional[str] = None
@@ -73,9 +74,30 @@ class MappingPackageState(ObjectState):
     start_date: Optional[str] = None
     end_date: Optional[str] = None
     eforms_sdk_versions: List[str] = None
-    test_data_suites: List[TestDataSuiteState] = []
-    shacl_test_suites: List[SHACLTestSuiteState] = []
-    conceptual_mapping_rule_states: List[ConceptualMappingRuleState] = []
+    test_data_suites: Optional[List[TestDataSuiteState]] = []
+    shacl_test_suites: Optional[List[SHACLTestSuiteState]] = []
+    sparql_test_suites: Optional[List[SPARQLTestSuiteState]] = []
+    conceptual_mapping_rules: Optional[List[ConceptualMappingRuleState]] = []
+    transformation_resources: Optional[List[FileResource]] = []
+    transformation_mappings: Optional[List[FileResource]] = []
+
+    class Settings:
+        name = "mapping_package_states"
+
+        indexes = [
+            IndexModel(
+                [
+                    ("title", pymongo.TEXT),
+                    ("description", pymongo.TEXT),
+                    ("identifier", pymongo.TEXT),
+                    ("mapping_version", pymongo.TEXT),
+                    ("epo_version", pymongo.TEXT),
+                    ("eform_subtypes", pymongo.TEXT),
+                    ("eforms_sdk_versions", pymongo.TEXT)
+                ],
+                name="search_text_idx"
+            )
+        ]
 
 
 class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
@@ -92,16 +114,20 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
 
     async def get_conceptual_mapping_rules(self) -> List[ConceptualMappingRuleState]:
         conceptual_mapping_rules = await ConceptualMappingRule.find(
-            In(self.id, ConceptualMappingRule.refers_to_mapping_package_ids)).to_list()
+            Eq(ConceptualMappingRule.refers_to_mapping_package_ids, self.id)).to_list()
         conceptual_mapping_rule_states = [await conceptual_mapping_rule.get_state() for conceptual_mapping_rule in
                                           conceptual_mapping_rules]
         return conceptual_mapping_rule_states
 
+    async def get_test_data_suites(self) -> List[TestDataSuiteState]:
+        test_data_suites = await TestDataSuite.find(TestDataSuite.mapping_package_id == self.id).to_list()
+        test_data_suites_states = [await test_data_suite.get_state() for test_data_suite in test_data_suites]
+        return test_data_suites_states
+
     async def get_state(self) -> MappingPackageState:
         conceptual_mapping_rules = await self.get_conceptual_mapping_rules()
-        test_data_suites = []
-        if self.test_data_suites:
-            test_data_suites = [await test_data_suite.fetch() for test_data_suite in self.test_data_suites]
+        test_data_suites = await self.get_test_data_suites()
+
         shacl_test_suites = []
         if self.shacl_test_suites:
             shacl_test_suites = []
@@ -123,7 +149,7 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
             eforms_sdk_versions=self.eforms_sdk_versions,
             test_data_suites=test_data_suites,
             shacl_test_suites=shacl_test_suites,
-            conceptual_mapping_rule_states=conceptual_mapping_rules
+            conceptual_mapping_rules=conceptual_mapping_rules
         )
 
     def set_state(self, state: MappingPackageState):

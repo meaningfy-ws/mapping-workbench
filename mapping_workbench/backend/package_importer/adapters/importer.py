@@ -14,6 +14,8 @@ from mapping_workbench.backend.ontology.services.namespaces import discover_and_
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.resource_collection.models.entity import ResourceFile, ResourceCollection, \
     ResourceFileFormat
+from mapping_workbench.backend.resource_collection.services.data import DEFAULT_RESOURCES_COLLECTION_NAME, \
+    get_default_resource_collection
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestFileResourceFormat, SHACLTestSuite, \
     SHACLTestFileResource
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResourceFormat, SPARQLTestSuite, \
@@ -43,8 +45,6 @@ RULES_CLASS_PATH = "Class path (M)"
 RULES_PROPERTY_PATH = "Property path (M)"
 RULES_INTEGRATION_TESTS_REF = "Reference to Integration Tests (O)"
 RULES_RML_TRIPLE_MAP_REF = "RML TripleMap reference (O)"
-
-DEFAULT_RESOURCES_COLLECTION_NAME = "Default"
 
 
 class PackageImporter:
@@ -319,10 +319,7 @@ class PackageImporter:
         resource_collections_path = self.package_path / TRANSFORMATION_DIR / "resources"
         project_link = Project.link_from_id(self.project.id)
 
-        resource_collection = await ResourceCollection.find_one(
-            ResourceCollection.project == project_link,
-            ResourceCollection.title == DEFAULT_RESOURCES_COLLECTION_NAME
-        )
+        resource_collection: ResourceCollection = await get_default_resource_collection(project_id=self.project.id)
 
         if not resource_collection:
             resource_collection = ResourceCollection(

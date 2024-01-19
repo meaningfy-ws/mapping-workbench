@@ -49,7 +49,7 @@ class ConceptualMappingRuleIn(BaseProjectResourceEntityInSchema):
     mapping_group_id: Optional[str] = None
     target_class_path: Optional[str] = None
     target_property_path: Optional[str] = None
-    refers_to_mapping_package_ids: List[PydanticObjectId] = []
+    refers_to_mapping_package_ids: Optional[List[PydanticObjectId]] = []
     triple_map_fragment: Optional[Link[GenericTripleMapFragment]] = None
     sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
     status: Optional[str] = None
@@ -76,7 +76,7 @@ class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema):
     target_property_path: Optional[str] = None
     target_property_path_terms_validity: Optional[List[TermValidityResponse]] = None
     terms_validity: Optional[ConceptualMappingRuleTermsValidity] = None
-    refers_to_mapping_package_ids: List[PydanticObjectId] = []
+    refers_to_mapping_package_ids: Optional[List[PydanticObjectId]] = []
     triple_map_fragment: Optional[Link[GenericTripleMapFragment]] = None
     sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
     status: Optional[str] = None
@@ -95,7 +95,7 @@ class ConceptualMappingRuleState(ObjectState):
     target_property_path: Optional[str] = None
     target_property_path_terms_validity: Optional[List[TermValidityResponse]] = None
     terms_validity: Optional[ConceptualMappingRuleTermsValidity] = None
-    refers_to_mapping_package_ids: List[PydanticObjectId] = []
+    refers_to_mapping_package_ids: Optional[List[PydanticObjectId]] = []
     triple_map_fragment: Optional[GenericTripleMapFragment] = None
     sparql_assertions: Optional[List[SPARQLTestFileResource]] = None
     status: Optional[str] = None
@@ -114,7 +114,7 @@ class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
     target_property_path: Optional[str] = None
     target_property_path_terms_validity: Optional[List[TermValidityResponse]] = None
     terms_validity: Optional[ConceptualMappingRuleTermsValidity] = None
-    refers_to_mapping_package_ids: List[PydanticObjectId] = []
+    refers_to_mapping_package_ids: Optional[List[PydanticObjectId]] = []
     triple_map_fragment: Optional[Link[GenericTripleMapFragment]] = None
     sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
     status: Optional[str] = None
@@ -123,7 +123,8 @@ class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
     feedback_notes: Optional[List[ConceptualMappingRuleComment]] = None
 
     async def get_state(self) -> ConceptualMappingRuleState:
-        source_structural_element = await self.source_structural_element.fetch()
+        source_structural_element = await self.source_structural_element.fetch() \
+            if self.source_structural_element else None
         triple_map_fragment = await self.triple_map_fragment.fetch() if self.triple_map_fragment else None
         sparql_assertions = []
         if self.sparql_assertions:

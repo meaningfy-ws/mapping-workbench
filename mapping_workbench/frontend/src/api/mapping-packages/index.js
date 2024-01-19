@@ -17,13 +17,13 @@ class MappingPackagesApi extends SectionApi {
 
     async getProjectPackages(request = {}) {
         let mappingPackagesStore = await this.getItems(request);
-        return mappingPackagesStore.items.map(
+        return mappingPackagesStore.items && mappingPackagesStore.items.map(
             mappingPackage => ({
                 id: mappingPackage._id,
                 title: mappingPackage.title,
                 identifier: mappingPackage.identifier
             })
-        ).sort((a, b) => a.title.localeCompare(b.title));
+        ).sort((a, b) => a.title.localeCompare(b.title)) || [];
     }
 
     importPackage(request) {
@@ -31,6 +31,26 @@ class MappingPackagesApi extends SectionApi {
             let endpoint = this.paths['import'];
             const headers = {"Content-Type": "multipart/form-data"};
             return appApi.post(endpoint, request, null, headers);
+        } catch (err) {
+        }
+    }
+
+    processPackage(request) {
+        try {
+            let endpoint = this.paths['process'];
+            const headers = {"Content-Type": "multipart/form-data"};
+            return appApi.post(endpoint, request, null, headers);
+        } catch (err) {
+        }
+    }
+
+    exportPackage(params) {
+        try {
+            let endpoint = this.paths['export'];
+            const headers = {};
+            return appApi.get(endpoint, params, headers, {
+                responseType: 'blob'
+            });
         } catch (err) {
         }
     }
