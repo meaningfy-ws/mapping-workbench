@@ -82,7 +82,11 @@ export const paths = {
             create: '/app/mapping-packages/create',
             edit: '/app/mapping-packages/[id]/edit',
             view: '/app/mapping-packages/[id]/view',
-            import: '/app/mapping-packages/import'
+            import: '/app/mapping-packages/import',
+            states: {
+                index: '/app/mapping-packages/[id]/states',
+                view: '/app/mapping-packages/[id]/states/[sid]/view',
+            }
         },
 
         conceptual_mapping_rules: {
@@ -207,7 +211,9 @@ export const apiPaths = {
         item: '/mapping_packages/:id',
         import: '/package_importer/import/v3',
         process: '/package_processor/process',
-        export: '/package_exporter/export_latest_package_state'
+        export: '/package_exporter/export_latest_package_state',
+        states: '/mapping_packages/:id/states',
+        state: '/mapping_packages/state/:id',
     },
 
     conceptual_mapping_rules: {
