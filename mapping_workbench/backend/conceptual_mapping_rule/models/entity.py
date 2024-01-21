@@ -9,9 +9,9 @@ from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
-from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
+from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement, StructuralElementState
 from mapping_workbench.backend.ontology.models.term import TermValidityResponse
-from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResource
+from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResource, SPARQLTestState
 from mapping_workbench.backend.state_manager.models.state_object import ObjectState, StatefulObjectABC
 from mapping_workbench.backend.triple_map_fragment.models.entity import GenericTripleMapFragment
 from mapping_workbench.backend.user.models.user import User
@@ -88,16 +88,12 @@ class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema):
 class ConceptualMappingRuleState(ObjectState):
     min_sdk_version: Optional[str] = None
     max_sdk_version: Optional[str] = None
-    source_structural_element: Optional[StructuralElement] = None
+    source_structural_element: Optional[StructuralElementState] = None
     mapping_group_id: Optional[str] = None
     target_class_path: Optional[str] = None
-    target_class_path_terms_validity: Optional[List[TermValidityResponse]] = None
     target_property_path: Optional[str] = None
-    target_property_path_terms_validity: Optional[List[TermValidityResponse]] = None
-    terms_validity: Optional[ConceptualMappingRuleTermsValidity] = None
-    refers_to_mapping_package_ids: Optional[List[PydanticObjectId]] = []
     triple_map_fragment: Optional[GenericTripleMapFragment] = None
-    sparql_assertions: Optional[List[SPARQLTestFileResource]] = None
+    sparql_assertions: Optional[List[SPARQLTestState]] = None
     status: Optional[str] = None
     mapping_notes: Optional[List[ConceptualMappingRuleComment]] = None
     editorial_notes: Optional[List[ConceptualMappingRuleComment]] = None
@@ -126,20 +122,22 @@ class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
         source_structural_element = await self.source_structural_element.fetch() \
             if self.source_structural_element else None
         triple_map_fragment = await self.triple_map_fragment.fetch() if self.triple_map_fragment else None
-        sparql_assertions = []
+        sparql_assertions_states = []
         if self.sparql_assertions:
             sparql_assertions = [await sparql_assertion.fetch() for sparql_assertion in self.sparql_assertions]
+            sparql_assertions_states = [await sparql_assertion.get_state() for sparql_assertion in
+                                        sparql_assertions] if sparql_assertions else []
 
         return ConceptualMappingRuleState(
-            source_structural_element=source_structural_element,
+            source_structural_element=(
+                await source_structural_element.get_state()
+            ) if source_structural_element else None,
             target_class_path=self.target_class_path,
-            target_class_path_terms_validity=self.target_class_path_terms_validity,
             target_property_path=self.target_property_path,
-            target_property_path_terms_validity=self.target_property_path_terms_validity,
-            terms_validity=self.terms_validity,
-            refers_to_mapping_package_ids=self.refers_to_mapping_package_ids,
-            triple_map_fragment=triple_map_fragment,
-            sparql_assertions=sparql_assertions,
+            triple_map_fragment=(
+                await triple_map_fragment.get_state()
+            ) if triple_map_fragment else None,
+            sparql_assertions=sparql_assertions_states,
             status=self.status,
             mapping_notes=self.mapping_notes,
             editorial_notes=self.editorial_notes,

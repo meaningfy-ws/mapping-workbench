@@ -9,6 +9,7 @@ from pydantic_core.core_schema import ValidationInfo
 from mapping_workbench.backend.core.models.base_entity import BaseEntity
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema
+from mapping_workbench.backend.state_manager.models.state_object import ObjectState
 
 
 class FileResourceFormat(Enum):
@@ -59,3 +60,12 @@ class FileResourceCollection(BaseProjectResourceEntity):
     description: Optional[str] = None
     path: Optional[List[str]] = None
     file_resources: Optional[List[Link["FileResource"]]] = []
+
+
+class FileResourceState(ObjectState):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    filename: Optional[str] = None
+    path: Optional[List[str]] = None
+    format: Optional[FileResourceFormat] = None
+    content: Optional[str] = None

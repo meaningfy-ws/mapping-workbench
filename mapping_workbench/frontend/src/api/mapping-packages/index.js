@@ -16,6 +16,8 @@ class MappingPackagesApi extends SectionApi {
     }
 
     async getProjectPackages(request = {}) {
+        request.page = 0;
+        request.rowsPerPage = -1;
         let mappingPackagesStore = await this.getItems(request);
         return mappingPackagesStore.items && mappingPackagesStore.items.map(
             mappingPackage => ({

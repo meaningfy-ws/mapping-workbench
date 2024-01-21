@@ -78,8 +78,8 @@ class PackageStateExporter:
             test_data_suite_path = self.package_test_data_path / test_data_suite.title
             test_data_suite_path.mkdir(parents=True, exist_ok=True)
             for test_data in test_data_suite.test_data_states:
-                self.write_to_file(test_data_suite_path / test_data.xml_manifestation.filename,
-                                   test_data.xml_manifestation.content)
+                self.write_to_file(test_data_suite_path / (test_data.filename or f"{test_data.identifier}.xml"),
+                                   test_data.xml_manifestation)
 
     async def add_validation_shacl(self):
         for shacl_test_suite in self.package_state.shacl_test_suites:
@@ -100,8 +100,12 @@ class PackageStateExporter:
             test_data_suite_output_path = self.package_output_path / test_data_suite.title
             test_data_suite_output_path.mkdir(parents=True, exist_ok=True)
             for test_data in test_data_suite.test_data_states:
-                test_data_output_path = test_data_suite_output_path / test_data.xml_manifestation.title
+                test_data_output_path = test_data_suite_output_path / test_data.identifier
                 test_data_output_path.mkdir(parents=True, exist_ok=True)
+
+                if test_data.rdf_manifestation:
+                    self.write_to_file(test_data_output_path / f"{test_data.identifier}.ttl",
+                                       test_data.rdf_manifestation)
                 if test_data.sparql_validation_result:
                     sparql_str = json.dumps(test_data.sparql_validation_result.model_dump(), indent=4)
                     self.write_to_file(test_data_output_path / "sparql.json", sparql_str)

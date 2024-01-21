@@ -119,7 +119,7 @@ export const ItemListCard = (props) => {
                                 color="text.secondary"
                                 variant="body2"
                             >
-                                {item.format}
+                                {item.identifier && `${item.identifier}.`}{item.format}
                             </Typography>
                         </div>
                     </Stack>

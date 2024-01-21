@@ -14,6 +14,7 @@ from mapping_workbench.backend.state_manager.models.state_object import ObjectSt
 class SPARQLTestException(Exception):
     pass
 
+
 class SPARQLQueryValidationType(Enum):
     CM_ASSERTION = "cm_assertion"
     INTEGRATION_TEST = "integration_test"
@@ -36,7 +37,7 @@ class SPARQLTestSuiteState(ObjectState):
     sparql_test_states: Optional[List[SPARQLTestState]] = []
 
 
-class SPARQLTestSuite(FileResourceCollection):
+class SPARQLTestSuite(FileResourceCollection, StatefulObjectABC):
     type: Optional[SPARQLQueryValidationType] = None
     file_resources: Optional[List[Link["SPARQLTestFileResource"]]] = []
 
@@ -55,6 +56,9 @@ class SPARQLTestSuite(FileResourceCollection):
             title=self.title,
             sparql_test_states=sparql_test_states
         )
+
+    def set_state(self, state: SPARQLTestSuiteState):
+        raise SPARQLTestException("Setting the state of a SPARQL test suite is not supported.")
 
     class Settings(BaseProjectResourceEntity.Settings):
         name = "sparql_test_suites"
@@ -84,7 +88,7 @@ class SPARQLTestFileResourceUpdateIn(SPARQLTestFileResourceIn):
     pass
 
 
-class SPARQLTestFileResource(FileResource):
+class SPARQLTestFileResource(FileResource, StatefulObjectABC):
     format: Optional[SPARQLTestFileResourceFormat] = None
     type: Optional[SPARQLQueryValidationType] = None
     sparql_test_suite: Optional[Link[SPARQLTestSuite]] = None

@@ -7,7 +7,7 @@ from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
 from mapping_workbench.backend.file_resource.models.file_resource import FileResource, FileResourceCollection, \
-    FileResourceIn, FileResourceFormat
+    FileResourceIn, FileResourceFormat, FileResourceState
 from mapping_workbench.backend.package_validator.models.shacl_validation import SHACLTestDataValidationResult
 from mapping_workbench.backend.package_validator.models.sparql_validation import SPARQLTestDataValidationResult
 from mapping_workbench.backend.package_validator.models.xpath_validation import XPathAssertion
@@ -38,7 +38,11 @@ class TestDataFileResourceUpdateIn(TestDataFileResourceIn):
 
 
 class TestDataState(ObjectState):
-    xml_manifestation: Optional[FileResource] = None
+    identifier: Optional[str] = None
+    title: Optional[str] = None
+    description: Optional[str] = None
+    filename: Optional[str] = None
+    xml_manifestation: Optional[str] = None
     rdf_manifestation: Optional[str] = None
     shacl_validation_result: Optional[SHACLTestDataValidationResult] = None
     sparql_validation_result: Optional[SPARQLTestDataValidationResult] = None
@@ -46,32 +50,26 @@ class TestDataState(ObjectState):
 
 
 class TestDataFileResource(FileResource, StatefulObjectABC):
+    identifier: Optional[str] = None
     format: Optional[TestDataFileResourceFormat] = None
     test_data_suite: Optional[Link["TestDataSuite"]] = None
-
     rdf_manifestation: Optional[str] = None
 
-    shacl_validation_result: Optional[Link[SHACLTestDataValidationResult]] = None
-    sparql_validation_result: Optional[Link[SPARQLTestDataValidationResult]] = None
-
     async def get_state(self) -> TestDataState:
-        xml_manifestation = FileResource(
-            title=self.title,
-            description=self.description,
-            filename=self.filename,
-            path=self.path,
-            format=FileResourceFormat.XML,
-            content=self.content
-        )
+        identifier = self.identifier
+        title = self.title
+        description = self.description
+        filename = self.filename
+        xml_manifestation = self.content
         rdf_manifestation = self.rdf_manifestation
-        shacl_validation_result = await self.shacl_validation_result.fetch() if self.sparql_validation_result else None
-        sparql_validation_result = await self.sparql_validation_result.fetch() if self.sparql_validation_result else None
 
         return TestDataState(
+            identifier=identifier,
+            title=title,
+            description=description,
+            filename=filename,
             xml_manifestation=xml_manifestation,
-            rdf_manifestation=rdf_manifestation,
-            shacl_validation_result=shacl_validation_result,
-            sparql_validation_result=sparql_validation_result
+            rdf_manifestation=rdf_manifestation
         )
 
     def set_state(self, state: TestDataState):

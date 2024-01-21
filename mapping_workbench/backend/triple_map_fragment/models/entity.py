@@ -10,6 +10,11 @@ from mapping_workbench.backend.core.models.base_mapping_package_resource_entity 
     BaseMappingPackageResourceEntityUpdateInSchema
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema, BaseProjectResourceEntityUpdateInSchema
+from mapping_workbench.backend.state_manager.models.state_object import ObjectState, StatefulObjectABC
+
+
+class TripleMapFragmentException(Exception):
+    pass
 
 
 class TripleMapFragmentFormat(Enum):
@@ -68,10 +73,26 @@ class GenericTripleMapFragmentOut(BaseProjectResourceEntityOutSchema):
     format: Optional[TripleMapFragmentFormat] = None
 
 
-class TripleMapFragment(BaseProjectResourceEntity):
+class TripleMapFragmentState(ObjectState):
     triple_map_uri: Optional[str] = None
     triple_map_content: Optional[str] = None
     format: Optional[TripleMapFragmentFormat] = None
+
+
+class TripleMapFragment(BaseProjectResourceEntity, StatefulObjectABC):
+    triple_map_uri: Optional[str] = None
+    triple_map_content: Optional[str] = None
+    format: Optional[TripleMapFragmentFormat] = None
+
+    async def get_state(self) -> TripleMapFragmentState:
+        return TripleMapFragmentState(
+            triple_map_uri=self.triple_map_uri,
+            triple_map_content=self.triple_map_content,
+            format=self.format
+        )
+
+    def set_state(self, state: TripleMapFragmentState):
+        raise TripleMapFragmentException("Setting the state of a Triple Map Fragment is not supported.")
 
 
 class SpecificTripleMapFragment(TripleMapFragment):
