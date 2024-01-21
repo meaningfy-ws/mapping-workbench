@@ -14,7 +14,7 @@ from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTest
 from mapping_workbench.backend.sparql_test_suite.services.api import get_sparql_test_suite_by_project_and_title
 from mapping_workbench.backend.user.models.user import User
 
-DEFAULT_RQ_NAME = 'sparql_query_'
+DEFAULT_RQ_NAME = 'cm_assertion_'
 
 SPARQL_PREFIX_PATTERN = re.compile('(?:\\s+|^)([\\w\\-]+)?:')
 SPARQL_PREFIX_LINE = 'PREFIX {prefix}: <{value}>'
@@ -71,13 +71,22 @@ async def generate_and_save_cm_assertions_queries(
         sparql_title = ""
         sparql_description = ""
         sparql_xpath = ""
+        sparql_idx = None
+
+        structural_element: StructuralElement
+        structural_element_exists: bool = False
 
         if cm_rule.source_structural_element:
-            structural_element: StructuralElement = await cm_rule.source_structural_element.fetch()
+            structural_element = await cm_rule.source_structural_element.fetch()
             if structural_element:
                 sparql_title = structural_element.eforms_sdk_element_id
                 sparql_description = ", ".join(structural_element.descriptions or [])
                 sparql_xpath = structural_element.absolute_xpath
+                sparql_idx = structural_element.id
+                structural_element_exists = True
+
+        if not structural_element_exists:
+            continue
 
         prefixes = []
         for prefix in get_sparql_prefixes(prefixes_string):
@@ -90,7 +99,7 @@ async def generate_and_save_cm_assertions_queries(
             prefixes.append(SPARQL_PREFIX_LINE.format(prefix=prefix, value=prefix_value))
 
         subject_type_display = ''
-        file_name = f"{rq_name}{index}.rq"
+        file_name = f"{rq_name}{sparql_idx}.rq"
         file_content = f"#title: {sparql_title}\n" \
                        f"#description: “{sparql_description}” " \
                        f"The corresponding XML element is " \

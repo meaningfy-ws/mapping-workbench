@@ -22,7 +22,8 @@ class PackageStateExporter:
         tempdir_name = self.tempdir.name
         self.tempdir_path = Path(tempdir_name)
         self.package_path = self.tempdir_path / self.package_state.identifier
-        self.archive_path = self.tempdir_path / f"{self.package_state.identifier}.{ARCHIVE_ZIP_FORMAT}"
+        self.archive_path = self.tempdir_path / "archive"
+        self.archive_file_path = self.archive_path / f"{self.package_state.identifier}.{ARCHIVE_ZIP_FORMAT}"
 
         self.package_output_path = self.package_path / "output"
         self.package_test_data_path = self.package_path / "test_data"
@@ -46,11 +47,9 @@ class PackageStateExporter:
         await self.add_validation_sparql()
         await self.add_output()
 
-        for root, dirs, files in os.walk(self.package_path):
-            print(root, dirs, files)
-        self.archiver.archive_dir(self.package_path, self.archive_path)
+        self.archiver.make_archive(self.package_path, self.archive_file_path)
 
-        with open(self.archive_path, 'rb') as zip_file:
+        with open(self.archive_file_path, 'rb') as zip_file:
             return zip_file.read()
 
     @classmethod
@@ -58,6 +57,7 @@ class PackageStateExporter:
         file_path.write_text(file_content, encoding="utf-8")
 
     def create_dirs(self):
+        self.archive_path.mkdir(parents=True, exist_ok=True)
         self.package_output_path.mkdir(parents=True, exist_ok=True)
         self.package_test_data_path.mkdir(parents=True, exist_ok=True)
         self.package_transformation_path.mkdir(parents=True, exist_ok=True)
