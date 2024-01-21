@@ -28,6 +28,7 @@ class SHACLTestState(ObjectState):
 
 class SHACLTestSuiteState(ObjectState):
     title: Optional[str] = None
+    description: Optional[str] = None
     shacl_test_states: Optional[List[SHACLTestState]] = []
 
 
@@ -47,6 +48,7 @@ class SHACLTestSuite(FileResourceCollection, StatefulObjectABC):
         shacl_test_states = await self.get_shacl_test_states()
         return SHACLTestSuiteState(
             title=self.title,
+            description=self.description,
             shacl_test_states=shacl_test_states
         )
 
