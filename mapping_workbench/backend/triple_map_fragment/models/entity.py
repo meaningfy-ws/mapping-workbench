@@ -26,6 +26,7 @@ class SpecificTripleMapFragmentIn(
     BaseProjectResourceEntityInSchema,
     BaseMappingPackageResourceEntityInSchema
 ):
+    identifier: Optional[str] = None
     triple_map_uri: Optional[str] = None
     triple_map_content: Optional[str] = None
     format: Optional[TripleMapFragmentFormat] = None
@@ -39,6 +40,7 @@ class SpecificTripleMapFragmentUpdateIn(
     BaseProjectResourceEntityUpdateInSchema,
     BaseMappingPackageResourceEntityUpdateInSchema
 ):
+    identifier: Optional[str] = None
     triple_map_uri: Optional[str] = None
     triple_map_content: Optional[str] = None
     format: Optional[TripleMapFragmentFormat] = None
@@ -48,12 +50,14 @@ class SpecificTripleMapFragmentOut(
     BaseProjectResourceEntityOutSchema,
     BaseMappingPackageResourceEntityOutSchema
 ):
+    identifier: Optional[str] = None
     triple_map_uri: Optional[str] = None
     triple_map_content: Optional[str] = None
     format: Optional[TripleMapFragmentFormat] = None
 
 
 class GenericTripleMapFragmentIn(BaseProjectResourceEntityInSchema):
+    identifier: Optional[str] = None
     triple_map_uri: Optional[str] = None
     triple_map_content: Optional[str] = None
     format: Optional[TripleMapFragmentFormat] = None
@@ -68,24 +72,28 @@ class GenericTripleMapFragmentUpdateIn(GenericTripleMapFragmentIn):
 
 
 class GenericTripleMapFragmentOut(BaseProjectResourceEntityOutSchema):
+    identifier: Optional[str] = None
     triple_map_uri: Optional[str] = None
     triple_map_content: Optional[str] = None
     format: Optional[TripleMapFragmentFormat] = None
 
 
 class TripleMapFragmentState(ObjectState):
+    identifier: Optional[str] = None
     triple_map_uri: Optional[str] = None
     triple_map_content: Optional[str] = None
     format: Optional[TripleMapFragmentFormat] = None
 
 
 class TripleMapFragment(BaseProjectResourceEntity, StatefulObjectABC):
+    identifier: Optional[str] = None
     triple_map_uri: Optional[str] = None
     triple_map_content: Optional[str] = None
     format: Optional[TripleMapFragmentFormat] = None
 
     async def get_state(self) -> TripleMapFragmentState:
         return TripleMapFragmentState(
+            identifier=self.identifier,
             triple_map_uri=self.triple_map_uri,
             triple_map_content=self.triple_map_content,
             format=self.format

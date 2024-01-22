@@ -3,15 +3,15 @@ from pydantic import BaseModel, Field
 
 
 class MappingMetadata(BaseModel):
-    identifier: str = Field(..., alias="Identifier")
-    title: str = Field(..., alias="Title")
-    description: str = Field(..., alias="Description")
-    mapping_version: str = Field(..., alias="Mapping Version")
-    epo_version: str = Field(..., alias="EPO version")
-    eform_subtypes: List[str] = Field(..., alias="eForms Subtype")
-    start_date: Optional[str] = Field(..., alias="Start Date")
-    end_date: Optional[str] = Field(..., alias="End Date")
-    eforms_sdk_versions: List[str] = Field(..., alias="eForms SDK version")
+    identifier: str = None
+    title: str = None
+    description: str = None
+    mapping_version: str = None
+    epo_version: str = None
+    eform_subtypes: List[str] = None
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+    eforms_sdk_versions: List[str] = None
 
 
 class MappingConceptualRule(BaseModel):
@@ -50,6 +50,3 @@ class ImportedMappingSuite(BaseModel):
     shacl_validation_resources: List[ImportedCollectionResource] = []
     sparql_validation_resources: List[ImportedCollectionResource] = []
     shacl_result_query: str
-
-
-

@@ -173,6 +173,7 @@ const PackageRow = (props) => {
                                 }}
                                 control={
                                     <Switch
+                                        disabled={true}
                                         checked={formik.values.use_latest_package_state}
                                         onChange={(event) => formik.setFieldValue('use_latest_package_state', event.target.checked)}
                                     />

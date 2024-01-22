@@ -36,7 +36,9 @@ class ResourceCollection(FileResourceCollection, StatefulObjectABC):
 
     async def get_resource_files_states(self) -> List[ResourceFileState]:
         resource_files = await ResourceFile.find(
-            ResourceFile.resource_collection == ResourceCollection.link_from_id(self.id)).to_list()
+            ResourceFile.resource_collection == ResourceCollection.link_from_id(self.id),
+            ResourceFile.project == self.project
+        ).to_list()
 
         resource_files_states = [await resource_file.get_state() for resource_file in
                                  resource_files] if resource_files else []
@@ -92,7 +94,7 @@ class ResourceFile(FileResource, StatefulObjectABC):
             description=self.description,
             filename=self.filename,
             path=self.path,
-            content=self.contents
+            content=self.content
         )
 
     def set_state(self, state: ResourceFileState):

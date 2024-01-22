@@ -29,6 +29,11 @@ def get_sparql_prefixes(sparql_q: str) -> list:
     return sorted(set(finds))
 
 
+def generate_subject_type_for_cm_assertion(class_path: str) -> str:
+    subject_reference = class_path.split(' / ')[0]
+    return f"?this rdf:type {subject_reference} ." if subject_reference else ''
+
+
 async def generate_and_save_cm_assertions_queries(
         project_id: PydanticObjectId,
         cleanup: bool = True,
@@ -67,7 +72,13 @@ async def generate_and_save_cm_assertions_queries(
 
     cm_rules: List[ConceptualMappingRule] = await get_conceptual_mapping_rules_for_project(project_id=project_id)
     for index, cm_rule in enumerate(cm_rules):
+        subject_type = generate_subject_type_for_cm_assertion(cm_rule.target_class_path) \
+            if cm_rule.target_class_path and '?this' in cm_rule.target_property_path else ''
+
         prefixes_string = cm_rule.target_property_path
+        if subject_type:
+            prefixes_string += subject_type
+
         sparql_title = ""
         sparql_description = ""
         sparql_xpath = ""
@@ -98,7 +109,7 @@ async def generate_and_save_cm_assertions_queries(
 
             prefixes.append(SPARQL_PREFIX_LINE.format(prefix=prefix, value=prefix_value))
 
-        subject_type_display = ''
+        subject_type_display = ('\n\t' + subject_type) if subject_type else ''
         file_name = f"{rq_name}{sparql_idx}.rq"
         file_content = f"#title: {sparql_title}\n" \
                        f"#description: “{sparql_description}” " \

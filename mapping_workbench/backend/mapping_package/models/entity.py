@@ -2,23 +2,26 @@ from datetime import datetime
 from typing import Optional, List
 
 import pymongo
-from beanie import Indexed, Link, Document
+from beanie import Indexed, Link, Document, PydanticObjectId
 from beanie.odm.operators.find.comparison import Eq, NE
 from pymongo import IndexModel
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRuleState, \
     ConceptualMappingRule
-from mapping_workbench.backend.core.models.base_entity import BaseTitledEntityListFiltersSchema
+from mapping_workbench.backend.core.models.base_entity import BaseTitledEntityListFiltersSchema, BaseEntity
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
 from mapping_workbench.backend.package_validator.services.sparql_cm_assertions import SPARQL_CM_ASSERTIONS_SUITE_TITLE
-from mapping_workbench.backend.resource_collection.models.entity import ResourceCollectionState
+from mapping_workbench.backend.resource_collection.models.entity import ResourceCollectionState, ResourceCollection, \
+    ResourceFileState
+from mapping_workbench.backend.resource_collection.services.data import get_default_resource_collection
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestSuiteState
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuiteState, SPARQLTestSuite, \
     SPARQLQueryValidationType
 from mapping_workbench.backend.state_manager.models.state_object import ObjectState, StatefulObjectABC
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuiteState, TestDataSuite
-from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragmentState
+from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragmentState, \
+    GenericTripleMapFragment, SpecificTripleMapFragment
 
 
 class MappingPackageException(Exception):
@@ -67,7 +70,8 @@ class MappingPackageListFilters(BaseTitledEntityListFiltersSchema):
     pass
 
 
-class MappingPackageState(Document, ObjectState):
+class MappingPackageState(ObjectState):
+    id: Optional[str] = None
     title: Optional[str] = None
     description: Optional[str] = None
     identifier: Optional[str] = None
@@ -82,7 +86,20 @@ class MappingPackageState(Document, ObjectState):
     sparql_test_suites: Optional[List[SPARQLTestSuiteState]] = []
     conceptual_mapping_rules: Optional[List[ConceptualMappingRuleState]] = []
     triple_map_fragments: Optional[List[TripleMapFragmentState]] = []
-    resource_collections: Optional[List[ResourceCollectionState]] = []
+    resources: Optional[List[ResourceFileState]] = []
+
+
+class MappingPackageStateGate(BaseEntity):
+    id: Optional[PydanticObjectId] = None
+    title: Optional[str] = None
+    description: Optional[str] = None
+    identifier: Optional[str] = None
+    mapping_version: str = None
+    epo_version: str = None
+    eform_subtypes: List[str] = None
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+    eforms_sdk_versions: List[str] = None
 
     class Settings:
         name = "mapping_package_states"
@@ -117,13 +134,18 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
 
     async def get_conceptual_mapping_rules_states(self) -> List[ConceptualMappingRuleState]:
         conceptual_mapping_rules = await ConceptualMappingRule.find(
-            Eq(ConceptualMappingRule.refers_to_mapping_package_ids, self.id)).to_list()
+            Eq(ConceptualMappingRule.refers_to_mapping_package_ids, self.id),
+            Eq(ConceptualMappingRule.project, self.project)
+        ).to_list()
         conceptual_mapping_rule_states = [await conceptual_mapping_rule.get_state() for conceptual_mapping_rule in
                                           conceptual_mapping_rules]
         return conceptual_mapping_rule_states
 
     async def get_test_data_suites_states(self) -> List[TestDataSuiteState]:
-        test_data_suites = await TestDataSuite.find(TestDataSuite.mapping_package_id == self.id).to_list()
+        test_data_suites = await TestDataSuite.find(
+            TestDataSuite.mapping_package_id == self.id,
+            Eq(TestDataSuite.project, self.project)
+        ).to_list()
         test_data_suites_states = [await test_data_suite.get_state() for test_data_suite in test_data_suites]
         return test_data_suites_states
 
@@ -143,7 +165,8 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
     ) -> List[SPARQLTestSuiteState]:
         sparql_test_suites_states = []
         sparql_test_suites = await SPARQLTestSuite.find(
-            NE(SPARQLTestSuite.type, SPARQLQueryValidationType.CM_ASSERTION)
+            NE(SPARQLTestSuite.type, SPARQLQueryValidationType.CM_ASSERTION),
+            Eq(SPARQLTestSuite.project, self.project)
         ).to_list()
         if sparql_test_suites:
             for sparql_test_suite in sparql_test_suites:
@@ -169,10 +192,32 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
         return sparql_test_suites_states
 
     async def get_triple_map_fragments_states(self) -> List[TripleMapFragmentState]:
-        return []
+        generic_triple_map_fragments = await GenericTripleMapFragment.find(
+            Eq(GenericTripleMapFragment.project, self.project)
+        ).to_list()
+        generic_triple_map_fragments_states = [
+            await generic_triple_map_fragment.get_state()
+            for generic_triple_map_fragment in generic_triple_map_fragments
+        ]
 
-    async def get_resource_collections_states(self) -> List[ResourceCollectionState]:
-        return []
+        specific_triple_map_fragments = await SpecificTripleMapFragment.find(
+            SpecificTripleMapFragment.mapping_package_id == self.id,
+            Eq(TestDataSuite.project, self.project)
+        ).to_list()
+        specific_triple_map_fragments_states = [
+            await specific_triple_map_fragment.get_state()
+            for specific_triple_map_fragment in specific_triple_map_fragments
+        ]
+        return generic_triple_map_fragments_states + specific_triple_map_fragments_states
+
+    async def get_resources_states(self) -> List[ResourceCollectionState]:
+        resources_states = []
+        default_resource_collection: ResourceCollection = \
+            await get_default_resource_collection(self.project.to_ref().id)
+        if default_resource_collection:
+            resources_states = await default_resource_collection.get_resource_files_states()
+
+        return resources_states
 
     async def get_state(self) -> MappingPackageState:
         conceptual_mapping_rules = await self.get_conceptual_mapping_rules_states()
@@ -182,7 +227,7 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
             conceptual_mapping_rules_states=conceptual_mapping_rules
         )
         triple_map_fragments = await self.get_triple_map_fragments_states()
-        resource_collections = await self.get_resource_collections_states()
+        resources = await self.get_resources_states()
 
         return MappingPackageState(
             title=self.title,
@@ -199,7 +244,7 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
             sparql_test_suites=sparql_test_suites,
             conceptual_mapping_rules=conceptual_mapping_rules,
             triple_map_fragments=triple_map_fragments,
-            resource_collections=resource_collections
+            resources=resources
         )
 
     def set_state(self, state: MappingPackageState):

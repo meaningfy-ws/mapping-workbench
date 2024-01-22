@@ -3,7 +3,7 @@ from typing import Any, List
 import rdflib
 from pydantic import validate_call
 
-from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResource
+from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResource, SPARQLTestState
 from mapping_workbench.backend.package_validator.models.sparql_validation import SPARQLTestDataValidationResult, \
     SPARQLTestDataResult
 from mapping_workbench.backend.package_validator.adapters.xpath_validator import TestDataValidator
@@ -23,10 +23,10 @@ class SPARQLValidator(TestDataValidator):
     @validate_call
     def __init__(self, test_data: TestDataState, **data: Any):
         super().__init__(**data)
-        self.rdf_graph = rdflib.Graph().parse(data=test_data.rdf_manifestation,
+        self.rdf_graph = rdflib.Graph().parse(data=test_data.rdf_manifestation.content,
                                               format=RDF_FORMAT)
 
-    def validate(self, sparql_queries: List[SPARQLTestFileResource]) -> SPARQLTestDataValidationResult:
+    def validate(self, sparql_queries: List[SPARQLTestState]) -> SPARQLTestDataValidationResult:
         ask_results = []
 
         for sparql_query in sparql_queries:

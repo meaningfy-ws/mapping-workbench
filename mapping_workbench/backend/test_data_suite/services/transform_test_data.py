@@ -13,15 +13,15 @@ from mapping_workbench.backend.test_data_suite.services import DATA_SOURCE_PATH_
     TRANSFORMATION_PATH_NAME, MAPPINGS_PATH_NAME, RESOURCES_PATH_NAME
 from mapping_workbench.backend.test_data_suite.services.data import get_test_data_file_resources_for_project, \
     get_test_data_file_resources_for_package
-from mapping_workbench.backend.triple_map_fragment.models.entity import GenericTripleMapFragment
+from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragment
 from mapping_workbench.backend.triple_map_fragment.services.data_for_generic import \
-    get_generic_triple_map_fragments_for_project
+    get_generic_triple_map_fragments_for_project, get_specific_triple_map_fragments_for_package
 from mapping_workbench.backend.user.models.user import User
 
 
 async def transform_test_data_file_resource_content(
         content: str,
-        mappings: List[GenericTripleMapFragment],
+        mappings: List[TripleMapFragment],
         resources: List[ResourceFile] = None,
         rml_mapper: RMLMapperABC = None
 ) -> str:
@@ -57,10 +57,26 @@ async def transform_test_data_file_resource_content(
         return rml_mapper.execute(data_path=data_path)
 
 
+async def get_mappings_to_transform_test_data(
+        project_id: PydanticObjectId,
+        package_id: PydanticObjectId = None
+):
+    generic_mappings = await get_generic_triple_map_fragments_for_project(
+        project_id=project_id
+    )
+    specific_mappings = []
+    if not package_id is None:
+        specific_mappings = await get_specific_triple_map_fragments_for_package(
+            package_id=package_id
+        )
+    return generic_mappings + specific_mappings
+
+
 async def transform_test_data_file_resource(
         test_data_file_resource: TestDataFileResource,
+        package_id: PydanticObjectId = None,
         user: User = None,
-        mappings: List[GenericTripleMapFragment] = None,
+        mappings: List[TripleMapFragment] = None,
         resources: List[ResourceFile] = None,
         rml_mapper: RMLMapperABC = None,
         save: bool = True
@@ -69,8 +85,9 @@ async def transform_test_data_file_resource(
     """
 
     if mappings is None:
-        mappings = await get_generic_triple_map_fragments_for_project(
-            project_id=test_data_file_resource.project.to_ref().id
+        mappings = await get_mappings_to_transform_test_data(
+            project_id=test_data_file_resource.project.to_ref().id,
+            package_id=package_id
         )
 
     if resources is None:
@@ -96,10 +113,12 @@ async def transform_test_data_file_resource(
 async def transform_test_data_file_resources(
         test_data_file_resources: List[TestDataFileResource],
         project_id: PydanticObjectId,
+        package_id: PydanticObjectId = None,
         user: User = None
 ):
-    mappings = await get_generic_triple_map_fragments_for_project(
-        project_id=project_id
+    mappings = await get_mappings_to_transform_test_data(
+        project_id=project_id,
+        package_id=package_id
     )
 
     resources = await get_resource_files_for_project(
@@ -144,5 +163,6 @@ async def transform_test_data_for_package(
     await transform_test_data_file_resources(
         test_data_file_resources=test_data_file_resources,
         project_id=project_id,
+        package_id=package_id,
         user=user
     )

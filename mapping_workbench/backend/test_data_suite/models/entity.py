@@ -42,8 +42,8 @@ class TestDataState(ObjectState):
     title: Optional[str] = None
     description: Optional[str] = None
     filename: Optional[str] = None
-    xml_manifestation: Optional[str] = None
-    rdf_manifestation: Optional[str] = None
+    xml_manifestation: Optional[FileResourceState] = None
+    rdf_manifestation: Optional[FileResourceState] = None
     shacl_validation_result: Optional[SHACLTestDataValidationResult] = None
     sparql_validation_result: Optional[SPARQLTestDataValidationResult] = None
     xpath_validation_result: List[XPathAssertion] = []
@@ -60,8 +60,16 @@ class TestDataFileResource(FileResource, StatefulObjectABC):
         title = self.title
         description = self.description
         filename = self.filename
-        xml_manifestation = self.content
-        rdf_manifestation = self.rdf_manifestation
+        xml_manifestation = FileResourceState(
+            filename=f"{self.identifier}.xml" if self.identifier else self.filename,
+            format=FileResourceFormat.XML,
+            content=self.content
+        )
+        rdf_manifestation = FileResourceState(
+            filename=f"{self.identifier or self.filename}.ttl",
+            format=FileResourceFormat.RDF,
+            content=self.rdf_manifestation
+        )
 
         return TestDataState(
             identifier=identifier,
