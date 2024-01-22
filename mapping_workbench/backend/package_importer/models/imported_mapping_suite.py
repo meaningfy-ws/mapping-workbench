@@ -1,5 +1,5 @@
 from typing import List, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class MappingMetadata(BaseModel):
@@ -12,6 +12,10 @@ class MappingMetadata(BaseModel):
     start_date: Optional[str] = Field(None, alias="Start Date")
     end_date: Optional[str] = Field(None, alias="End Date")
     eforms_sdk_versions: List[str] = Field(None, alias="eForms SDK version")
+
+    model_config = ConfigDict(
+        populate_by_name=True,
+    )
 
 
 class MappingConceptualRule(BaseModel):
@@ -28,6 +32,10 @@ class MappingConceptualRule(BaseModel):
     mapping_notes: Optional[str] = Field(None, alias="Mapping Notes (public)")
     editorial_notes: Optional[str] = Field(None, alias="Editorial Notes (private)")
     feedback_notes: Optional[str] = Field(None, alias="Feedback Notes (private)")
+
+    model_config = ConfigDict(
+        populate_by_name=True,
+    )
 
 
 class ImportedFileResource(BaseModel):

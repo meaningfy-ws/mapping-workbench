@@ -135,7 +135,7 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
     async def get_conceptual_mapping_rules_states(self) -> List[ConceptualMappingRuleState]:
         conceptual_mapping_rules = await ConceptualMappingRule.find(
             Eq(ConceptualMappingRule.refers_to_mapping_package_ids, self.id),
-            Eq(ConceptualMappingRule.project, self.project)
+            Eq(ConceptualMappingRule.project, self.project.to_ref())
         ).to_list()
         conceptual_mapping_rule_states = [await conceptual_mapping_rule.get_state() for conceptual_mapping_rule in
                                           conceptual_mapping_rules]
@@ -144,9 +144,10 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
     async def get_test_data_suites_states(self) -> List[TestDataSuiteState]:
         test_data_suites = await TestDataSuite.find(
             TestDataSuite.mapping_package_id == self.id,
-            Eq(TestDataSuite.project, self.project)
+            Eq(TestDataSuite.project, self.project.to_ref())
         ).to_list()
         test_data_suites_states = [await test_data_suite.get_state() for test_data_suite in test_data_suites]
+        print("Test data suites states: ", len(test_data_suites_states))
         return test_data_suites_states
 
     async def get_shacl_test_suites_states(self) -> List[SHACLTestSuiteState]:
@@ -166,7 +167,7 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
         sparql_test_suites_states = []
         sparql_test_suites = await SPARQLTestSuite.find(
             NE(SPARQLTestSuite.type, SPARQLQueryValidationType.CM_ASSERTION),
-            Eq(SPARQLTestSuite.project, self.project)
+            Eq(SPARQLTestSuite.project, self.project.to_ref())
         ).to_list()
         if sparql_test_suites:
             for sparql_test_suite in sparql_test_suites:
@@ -193,7 +194,7 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
 
     async def get_triple_map_fragments_states(self) -> List[TripleMapFragmentState]:
         generic_triple_map_fragments = await GenericTripleMapFragment.find(
-            Eq(GenericTripleMapFragment.project, self.project)
+            Eq(GenericTripleMapFragment.project, self.project.to_ref())
         ).to_list()
         generic_triple_map_fragments_states = [
             await generic_triple_map_fragment.get_state()
@@ -202,7 +203,7 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
 
         specific_triple_map_fragments = await SpecificTripleMapFragment.find(
             SpecificTripleMapFragment.mapping_package_id == self.id,
-            Eq(TestDataSuite.project, self.project)
+            Eq(TestDataSuite.project, self.project.to_ref())
         ).to_list()
         specific_triple_map_fragments_states = [
             await specific_triple_map_fragment.get_state()

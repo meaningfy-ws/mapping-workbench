@@ -9,7 +9,7 @@ from bson.objectid import ObjectId
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.package_importer.services.import_mapping_suite_v3 import \
-    import_mapping_suite_from_file_system, import_mapping_package
+    import_mapping_suite_from_file_system, import_mapping_package_from_archive, import_mapping_package
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.resource_collection.models.entity import ResourceFile, ResourceCollection
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestFileResource
@@ -40,6 +40,28 @@ def test_import_mapping_suite_v3():
 @pytest.mark.asyncio
 async def test_import_mapping_package():
     assert PACKAGE_EFORMS_16_DIR_PATH.exists()
+    package = await import_mapping_package(PACKAGE_EFORMS_16_DIR_PATH, Project(id=ObjectId()))
+    assert package.id
+    assert await MappingPackage.count() > 0
+    db_package = await MappingPackage.get(package.id)
+    assert db_package.identifier == "package_eforms_16_v1.2"
+    assert len(db_package.shacl_test_suites) > 0
+
+    assert await ConceptualMappingRule.count() > 0
+    assert await ResourceCollection.count() > 0
+    assert await ResourceFile.count() > 0
+    assert await GenericTripleMapFragment.count() > 0
+    assert await TestDataSuite.count() > 0
+    assert await TestDataFileResource.count() > 0
+    assert await SPARQLTestSuite.count() > 0
+    assert await SPARQLTestFileResource.count() > 0
+    assert await SHACLTestSuite.count() > 0
+    assert await SHACLTestFileResource.count() > 0
+
+
+@pytest.mark.asyncio
+async def test_import_mapping_package_from_archive():
+    assert PACKAGE_EFORMS_16_DIR_PATH.exists()
 
     def zip_directory(path, zip_file_handle):
         for root, _dirs, files in os.walk(path):
@@ -61,7 +83,7 @@ async def test_import_mapping_package():
             zip_directory(PACKAGE_EFORMS_16_DIR_PATH, zip_file)
 
         with open(arch_path, 'rb') as zip_file:
-            package: MappingPackage = await import_mapping_package(
+            package: MappingPackage = await import_mapping_package_from_archive(
                 file_content=zip_file.read(),
                 project=Project(id=project_id)
             )

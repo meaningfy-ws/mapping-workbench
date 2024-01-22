@@ -3,6 +3,7 @@ from typing import Optional, List
 
 import pymongo
 from beanie import Link
+from pydantic import ConfigDict
 from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
@@ -15,14 +16,20 @@ class SPARQLTestException(Exception):
     pass
 
 
-class SPARQLQueryValidationType(Enum):
+class SPARQLQueryValidationType(str, Enum):
     CM_ASSERTION = "cm_assertion"
     INTEGRATION_TEST = "integration_test"
     OTHER = "other"
 
+    def __str__(self):
+        return str(self.value)
 
-class SPARQLTestFileResourceFormat(Enum):
+
+class SPARQLTestFileResourceFormat(str, Enum):
     RQ = "RQ"
+
+    def __str__(self):
+        return str(self.value)
 
 
 class SPARQLTestState(ObjectState):
@@ -31,6 +38,8 @@ class SPARQLTestState(ObjectState):
     title: Optional[str] = None
     filename: Optional[str] = None
     content: Optional[str] = None
+
+    model_config = ConfigDict(use_enum_values=True)
 
 
 class SPARQLTestSuiteState(ObjectState):

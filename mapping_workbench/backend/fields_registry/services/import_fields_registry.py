@@ -132,7 +132,9 @@ async def import_notice_types_versioned_view(notice_type_structure: NoticeTypeSt
 
 
 async def import_eforms_fields_from_folder(eforms_fields_folder_path: pathlib.Path,
-                                           project_link: Link[Document] = None):
+                                           project_link: Link[Document] = None,
+                                           import_notice_type_views: bool = True
+                                           ):
     notice_types_dir_path = eforms_fields_folder_path / NOTICE_TYPES_PATH_NAME
     fields_dir_path = eforms_fields_folder_path / FIELDS_PATH_NAME
     fields_json_path = fields_dir_path / FIELDS_JSON_FILE_NAME
@@ -141,20 +143,21 @@ async def import_eforms_fields_from_folder(eforms_fields_folder_path: pathlib.Pa
         fields_metadata = await import_eforms_fields(eforms_fields_content=eforms_fields_content,
                                                      project_link=project_link)
 
-    notice_types_file_info_path = notice_types_dir_path / NOTICE_TYPES_INFO_FILE_NAME
+    if import_notice_type_views:
+        notice_types_file_info_path = notice_types_dir_path / NOTICE_TYPES_INFO_FILE_NAME
 
-    notice_types_info = json.loads(notice_types_file_info_path.read_text(encoding="utf-8"))
+        notice_types_info = json.loads(notice_types_file_info_path.read_text(encoding="utf-8"))
 
-    notice_types_info_selector = NoticeTypesInfoSelector(**notice_types_info)
+        notice_types_info_selector = NoticeTypesInfoSelector(**notice_types_info)
 
-    for notice_sub_type in notice_types_info_selector.notice_sub_types:
-        notice_sub_type_file_path = notice_types_dir_path / f"{notice_sub_type.sub_type_id}.json"
-        notice_sub_type_info = json.loads(notice_sub_type_file_path.read_text(encoding="utf-8"))
-        notice_type_structure = NoticeTypeStructureInfoSelector(**notice_sub_type_info)
-        await import_notice_types_versioned_view(
-            notice_type_structure=notice_type_structure,
-            fields_metadata=fields_metadata,
-            project_link=project_link)
+        for notice_sub_type in notice_types_info_selector.notice_sub_types:
+            notice_sub_type_file_path = notice_types_dir_path / f"{notice_sub_type.sub_type_id}.json"
+            notice_sub_type_info = json.loads(notice_sub_type_file_path.read_text(encoding="utf-8"))
+            notice_type_structure = NoticeTypeStructureInfoSelector(**notice_sub_type_info)
+            await import_notice_types_versioned_view(
+                notice_type_structure=notice_type_structure,
+                fields_metadata=fields_metadata,
+                project_link=project_link)
 
 
 async def import_eforms_fields_from_github_repository(github_repository_url: str,
