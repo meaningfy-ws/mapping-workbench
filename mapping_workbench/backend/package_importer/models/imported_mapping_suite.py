@@ -6,12 +6,12 @@ class MappingMetadata(BaseModel):
     identifier: str = None
     title: str = None
     description: str = None
-    mapping_version: str = None
-    epo_version: str = None
-    eform_subtypes: List[str] = None
+    mapping_version: str = ''
+    epo_version: str = ''
+    eform_subtypes: List[str] = []
     start_date: Optional[str] = None
     end_date: Optional[str] = None
-    eforms_sdk_versions: List[str] = None
+    eforms_sdk_versions: List[str] = []
 
 
 class MappingConceptualRule(BaseModel):
