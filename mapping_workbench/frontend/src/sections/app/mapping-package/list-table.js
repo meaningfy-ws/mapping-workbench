@@ -78,8 +78,10 @@ const PackageRow = (props) => {
             let data = {
                 package_id: item._id,
                 project_id: sessionApi.getSessionProject(),
-                use_latest_package_state: values['use_latest_package_state'],
-                tasks_to_run: tasks_to_run.join(',')
+                use_latest_package_state: values['use_latest_package_state']
+            }
+            if (tasks_to_run.length > 0) {
+                data.tasks_to_run = tasks_to_run.join(',');
             }
             toast.promise(sectionApi.processPackage(data), {
                 loading: `Processing "${item.identifier}" ... This may take a while. Please, be patient.`,
@@ -171,6 +173,7 @@ const PackageRow = (props) => {
                                 }}
                                 control={
                                     <Switch
+                                        disabled={true}
                                         checked={formik.values.use_latest_package_state}
                                         onChange={(event) => formik.setFieldValue('use_latest_package_state', event.target.checked)}
                                     />

@@ -8,7 +8,7 @@ from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundE
 from mapping_workbench.backend.core.services.request import request_update_data, request_create_data, \
     api_entity_is_found, prepare_search_param, pagination_params
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageCreateIn, \
-    MappingPackageUpdateIn, MappingPackageOut, MappingPackageState
+    MappingPackageUpdateIn, MappingPackageOut, MappingPackageStateGate
 from mapping_workbench.backend.user.models.user import User
 
 
@@ -74,30 +74,30 @@ async def delete_mapping_package(mapping_package: MappingPackage):
 # Mapping Package States
 
 async def list_mapping_package_states(filters: dict = None, page: int = None, limit: int = None) -> \
-        (List[MappingPackageState], int):
+        (List[MappingPackageStateGate], int):
     query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
 
     prepare_search_param(query_filters)
     skip, limit = pagination_params(page, limit)
 
-    items: List[MappingPackageState] = await MappingPackageState.find(
+    items: List[MappingPackageStateGate] = await MappingPackageStateGate.find(
         query_filters,
-        projection_model=MappingPackageState,
+        projection_model=MappingPackageStateGate,
         fetch_links=False,
-        sort=-MappingPackageState.created_at,
+        sort=-MappingPackageStateGate.created_at,
         skip=skip,
         limit=limit
     ).to_list()
-    total_count: int = await MappingPackageState.find(query_filters).count()
+    total_count: int = await MappingPackageStateGate.find(query_filters).count()
     return items, total_count
 
 
-async def get_mapping_package_state(id: PydanticObjectId) -> MappingPackageState:
-    mapping_package_state: MappingPackageState = await MappingPackageState.get(id)
+async def get_mapping_package_state(id: PydanticObjectId) -> MappingPackageStateGate:
+    mapping_package_state: MappingPackageStateGate = await MappingPackageStateGate.get(id)
     if not mapping_package_state:
         raise ResourceNotFoundException()
     return mapping_package_state
 
 
-async def delete_mapping_package_state(mapping_package_state: MappingPackageState):
+async def delete_mapping_package_state(mapping_package_state: MappingPackageStateGate):
     return await mapping_package_state.delete()

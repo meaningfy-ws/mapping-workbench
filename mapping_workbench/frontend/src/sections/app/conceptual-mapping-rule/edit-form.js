@@ -261,7 +261,7 @@ export const EditForm = (props) => {
         }, [formik]);
 
         const sparqlResourcesForSelector = function (filters = {}) {
-            return sparqlTestFileResourcesApi.getMappingRuleResources(filters);
+            return sparqlTestFileResourcesApi.getMappingRuleSPARQLAssertions(filters);
         }
 
         useEffect(() => {
@@ -333,7 +333,7 @@ export const EditForm = (props) => {
             (async () => {
                 setProjectSourceStructuralElements(await fieldsRegistryApi.getStructuralElementsForSelector());
                 setProjectTripleMapFragments(await genericTripleMapFragmentsApi.getValuesForSelector());
-                setProjectSPARQLResources(await sparqlTestFileResourcesApi.getMappingRuleResources());
+                setProjectSPARQLResources(await sparqlTestFileResourcesApi.getMappingRuleSPARQLAssertions());
                 setIsProjectDataReady(true);
             })()
         }, [])

@@ -28,6 +28,7 @@ export const EditForm = (props) => {
     const item = itemctx.data;
 
     let initialValues = {
+        identifier: item.identifier || '',
         triple_map_uri: item.triple_map_uri || '',
         triple_map_content: item.triple_map_content || '',
         format: item.format || sectionApi.FILE_RESOURCE_DEFAULT_FORMAT || '',
@@ -86,6 +87,9 @@ export const EditForm = (props) => {
                     <Grid container spacing={3}>
                         <Grid xs={12} md={12}>
                             <MappingPackageFormSelect formik={formik}/>
+                        </Grid>
+                        <Grid xs={12} md={12}>
+                            <FormTextField formik={formik} name="identifier" label="Identifier" required={false}/>
                         </Grid>
                         <Grid xs={12} md={12}>
                             <FormTextField formik={formik} name="triple_map_uri" label="URI" required={true}/>

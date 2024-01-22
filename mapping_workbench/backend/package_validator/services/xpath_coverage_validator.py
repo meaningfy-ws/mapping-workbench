@@ -68,17 +68,18 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
                 xpath_dict[structural_element_xpath].eforms_sdk_element_title = structural_element_sdk_title
 
             else:
-                xpath_dict[structural_element_xpath] = XPathAssertion(id=structural_element_xpath,
-                                                                      eforms_sdk_element_id=structural_element_sdk_id,
-                                                                      eforms_sdk_element_xpath=structural_element_xpath,
-                                                                      eforms_sdk_element_title=structural_element_sdk_title
-                                                                      )
+                xpath_dict[structural_element_xpath] = XPathAssertion(
+                    id=structural_element_xpath,
+                    eforms_sdk_element_id=structural_element_sdk_id,
+                    eforms_sdk_element_xpath=structural_element_xpath,
+                    eforms_sdk_element_title=structural_element_sdk_title
+                )
     for test_data_suite in test_data_suites:
         test_data_states = test_data_suite.test_data_states
         for test_data_state in test_data_states:
             xml_content = test_data_state.xml_manifestation.content
             test_data_xpaths = get_unique_xpaths_from_xml_content(xml_content)
-            test_data_id = test_data_state.xml_manifestation.filename
+            test_data_id = test_data_state.identifier
             for xpath in test_data_xpaths:
                 if xpath not in xpath_dict.keys():
                     xpath_dict[xpath] = XPathAssertion(id=xpath,

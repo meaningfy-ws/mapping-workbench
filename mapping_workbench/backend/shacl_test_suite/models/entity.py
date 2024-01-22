@@ -7,7 +7,7 @@ from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
 from mapping_workbench.backend.file_resource.models.file_resource import FileResource, FileResourceCollection
-from mapping_workbench.backend.state_manager.models.state_object import ObjectState
+from mapping_workbench.backend.state_manager.models.state_object import ObjectState, StatefulObjectABC
 
 
 class SHACLTestException(Exception):
@@ -28,10 +28,11 @@ class SHACLTestState(ObjectState):
 
 class SHACLTestSuiteState(ObjectState):
     title: Optional[str] = None
+    description: Optional[str] = None
     shacl_test_states: Optional[List[SHACLTestState]] = []
 
 
-class SHACLTestSuite(FileResourceCollection):
+class SHACLTestSuite(FileResourceCollection, StatefulObjectABC):
     file_resources: Optional[List[Link["SHACLTestFileResource"]]] = []
 
     async def get_shacl_test_states(self) -> List[SHACLTestState]:
@@ -47,8 +48,12 @@ class SHACLTestSuite(FileResourceCollection):
         shacl_test_states = await self.get_shacl_test_states()
         return SHACLTestSuiteState(
             title=self.title,
+            description=self.description,
             shacl_test_states=shacl_test_states
         )
+
+    def set_state(self, state: SHACLTestState):
+        raise SHACLTestException("Setting the state of a SHACL test suite is not supported.")
 
     class Settings(BaseProjectResourceEntity.Settings):
         name = "shacl_test_suites"
@@ -65,7 +70,7 @@ class SHACLTestSuite(FileResourceCollection):
         ]
 
 
-class SHACLTestFileResource(FileResource):
+class SHACLTestFileResource(FileResource, StatefulObjectABC):
     format: Optional[SHACLTestFileResourceFormat] = None
     shacl_test_suite: Optional[Link[SHACLTestSuite]] = None
 

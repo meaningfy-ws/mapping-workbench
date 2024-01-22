@@ -135,10 +135,10 @@ async def import_mapping_package(file_content: bytes, project: Project, user: Us
     dir_contents = list(tempdir_path.iterdir())
     assert len(dir_contents) == 1
 
-    imp_mapping_suite: ImportedMappingSuite = import_mapping_suite_from_file_system(dir_contents[0])
+    mono_mapping_suite: ImportedMappingSuite = import_mapping_suite_from_file_system(dir_contents[0])
 
     importer: PackageImporter = PackageImporter(project=project, user=user)
-    package: MappingPackage = await importer.import_from_mono_mapping_suite(imp_mapping_suite)
+    package: MappingPackage = await importer.import_from_mono_mapping_suite(mono_mapping_suite)
 
     return package
 

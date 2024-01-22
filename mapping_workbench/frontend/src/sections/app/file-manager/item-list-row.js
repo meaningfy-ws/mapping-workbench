@@ -112,7 +112,7 @@ export const ItemListRow = (props) => {
                                 noWrap
                                 variant="body2"
                             >
-                                {item.format}
+                                {item.identifier && `${item.identifier}.`}{item.format}
                             </Typography>
                         </div>
                     </Stack>
