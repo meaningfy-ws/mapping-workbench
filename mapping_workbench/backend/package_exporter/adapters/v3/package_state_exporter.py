@@ -133,7 +133,7 @@ class PackageStateExporter:
                 test_data_output_path = test_data_suite_output_path / test_data.identifier
                 test_data_output_path.mkdir(parents=True, exist_ok=True)
 
-                if test_data.rdf_manifestation:
+                if test_data.rdf_manifestation and test_data.rdf_manifestation.content:
                     self.write_to_file(test_data_output_path / test_data.rdf_manifestation.filename,
                                        test_data.rdf_manifestation.content)
 
