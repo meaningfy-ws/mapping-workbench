@@ -13,7 +13,7 @@ from mapping_workbench.backend.ontology.services.namespaces import discover_and_
 from mapping_workbench.backend.user.models.user import User
 
 EPO_OWL_SOURCE_CONTENT = \
-    'https://raw.githubusercontent.com/OP-TED/ePO/master/implementation/ePO/owl_ontology/ePO_owl_core.ttl'
+    'https://raw.githubusercontent.com/OP-TED/ePO/master/implementation/ePO_core/owl_ontology/ePO_core.ttl'
 
 QUERY_FOR_CLASSES = """
 # get all the classes from an ontology
@@ -72,7 +72,7 @@ async def list_known_terms(saved: bool = False) -> List:
     return list(set(classes + properties))
 
 
-async def discover_and_save_terms(user: User):
+async def discover_and_save_terms(user: User = None):
     g = init_rdflib_graph()
 
     for prefix, uri in g.namespaces():

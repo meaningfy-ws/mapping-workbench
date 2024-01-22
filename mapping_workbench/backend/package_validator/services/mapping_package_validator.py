@@ -32,7 +32,11 @@ def validate_mapping_package(mapping_package_state: MappingPackageState, tasks_t
         if tasks_to_run is None or TaskToRun.VALIDATE_PACKAGE_XPATH_AND_SPARQL.value in tasks_to_run:
             compute_xpath_assertions_for_mapping_package(mapping_package_state)
 
+            sparql_assertions = []
             for conceptual_mapping_rule_state in mapping_package_state.conceptual_mapping_rules:
-                sparql_assertions = conceptual_mapping_rule_state.sparql_assertions
-                validate_tests_data_with_sparql_tests(test_data_suite.test_data_states, sparql_assertions)
-                break
+                sparql_assertions.extend(conceptual_mapping_rule_state.sparql_assertions)
+
+            for sparql_test_suite in mapping_package_state.sparql_test_suites:
+                sparql_assertions.extend(sparql_test_suite.sparql_test_states)
+
+            validate_tests_data_with_sparql_tests(test_data_suite.test_data_states, sparql_assertions)

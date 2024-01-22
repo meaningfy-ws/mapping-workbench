@@ -10,6 +10,7 @@ class XPathAssertion(Document):
     eforms_sdk_element_xpath: Optional[str] = None
     test_data_id: Optional[str] = None
     test_data_xpath: Optional[str] = None
+    is_covered: Optional[bool] = False
 
     class Settings:
         name = "xpath_assertions"

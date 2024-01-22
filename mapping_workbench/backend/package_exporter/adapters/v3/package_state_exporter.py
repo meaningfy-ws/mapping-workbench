@@ -90,7 +90,6 @@ class PackageStateExporter:
             json.dumps(metadata.model_dump(), indent=4)
         )
 
-
     async def add_transformation_mappings(self):
         for triple_map_fragment in self.package_state.triple_map_fragments:
             filename: str = f"{triple_map_fragment.identifier}.{triple_map_fragment.format.value.lower()}" \
@@ -155,12 +154,14 @@ class PackageStateExporter:
                     )
                     sparql_str = json.dumps(sparql_validation_result, indent=4)
                     self.write_to_file(test_data_reports_output_path / "sparql_validation_report.json", sparql_str)
-                    if sparql_validation_result and "ask_results" in sparql_validation_result:
-                        sparql_assertions_str = json.dumps(
-                            sparql_validation_result["ask_results"],
-                            indent=4
-                        )
-                        df = pd.read_json(StringIO(sparql_assertions_str))
+                    if test_data.sparql_validation_result.ask_results:
+                        export_dict_list = []
+                        for sparql_validation_result in test_data.sparql_validation_result.ask_results:
+                            export_dict = sparql_validation_result.query.model_dump()
+                            export_dict["query_result"] = sparql_validation_result.query_result
+                            export_dict_list.append(export_dict)
+
+                        df = pd.DataFrame(export_dict_list)
                         df.to_csv(test_data_reports_output_path / "sparql_assertions_report.csv")
 
                 if test_data.shacl_validation_result:

@@ -126,7 +126,16 @@ def import_mapping_suite_from_file_system(mapping_suite_dir_path: pathlib.Path) 
     return mapping_suite
 
 
-async def import_mapping_package(file_content: bytes, project: Project, user: User = None) -> MappingPackage:
+async def import_mapping_package(mapping_package_dir_path: pathlib.Path, project: Project,
+                                 user: User = None) -> MappingPackage:
+    monolith_mapping_suite: ImportedMappingSuite = import_mapping_suite_from_file_system(mapping_package_dir_path)
+    importer: PackageImporter = PackageImporter(project=project, user=user)
+    package: MappingPackage = await importer.import_from_mono_mapping_suite(monolith_mapping_suite)
+    return package
+
+
+async def import_mapping_package_from_archive(file_content: bytes, project: Project,
+                                              user: User = None) -> MappingPackage:
     zf = zipfile.ZipFile(io.BytesIO(file_content))
     tempdir = tempfile.TemporaryDirectory()
     tempdir_name = tempdir.name
@@ -135,12 +144,7 @@ async def import_mapping_package(file_content: bytes, project: Project, user: Us
     dir_contents = list(tempdir_path.iterdir())
     assert len(dir_contents) == 1
 
-    mono_mapping_suite: ImportedMappingSuite = import_mapping_suite_from_file_system(dir_contents[0])
-
-    importer: PackageImporter = PackageImporter(project=project, user=user)
-    package: MappingPackage = await importer.import_from_mono_mapping_suite(mono_mapping_suite)
-
-    return package
+    return await import_mapping_package(dir_contents[0], project, user)
 
 
 async def clear_project_data(project: Project):
