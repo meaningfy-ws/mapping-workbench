@@ -19,7 +19,7 @@ import {usePageView} from "../../../../../hooks/use-page-view";
 import {mappingPackageStatesApi as sectionApi} from "../../../../../api/mapping-packages/states";
 import {useItem} from "../../../../../contexts/app/section/for-item-data-state";
 import {useRouter} from "../../../../../hooks/use-router";
-import {ListTable} from "../../../../../sections/app/project/list-table";
+import {ListTable} from "../../../../../sections/app/mapping-package/state/list-table";
 
 
 const useItemsSearch = () => {
