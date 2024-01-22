@@ -1,13 +1,13 @@
 from typing import List
 
 from mapping_workbench.backend.package_validator.adapters.sparql_validator import SPARQLValidator
-from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuite, SPARQLTestFileResource
+from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestState
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataException, TestDataState
 
 
 def validate_tests_data_with_sparql_tests(
         tests_data: List[TestDataState],
-        sparql_tests: List[SPARQLTestFileResource]
+        sparql_tests: List[SPARQLTestState]
 ) -> List[TestDataState]:
     """
 

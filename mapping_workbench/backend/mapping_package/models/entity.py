@@ -2,8 +2,8 @@ from datetime import datetime
 from typing import Optional, List
 
 import pymongo
-from beanie import Indexed, Link, Document
-from beanie.odm.operators.find.comparison import Eq
+from beanie import Indexed, Link, Document, PydanticObjectId
+from beanie.odm.operators.find.comparison import Eq, NE
 from pymongo import IndexModel
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRuleState, \
@@ -11,11 +11,17 @@ from mapping_workbench.backend.conceptual_mapping_rule.models.entity import Conc
 from mapping_workbench.backend.core.models.base_entity import BaseTitledEntityListFiltersSchema, BaseEntity
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
-from mapping_workbench.backend.file_resource.models.file_resource import FileResource
+from mapping_workbench.backend.package_validator.services.sparql_cm_assertions import SPARQL_CM_ASSERTIONS_SUITE_TITLE
+from mapping_workbench.backend.resource_collection.models.entity import ResourceCollectionState, ResourceCollection, \
+    ResourceFileState
+from mapping_workbench.backend.resource_collection.services.data import get_default_resource_collection
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestSuiteState
-from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuiteState
+from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuiteState, SPARQLTestSuite, \
+    SPARQLQueryValidationType
 from mapping_workbench.backend.state_manager.models.state_object import ObjectState, StatefulObjectABC
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuiteState, TestDataSuite
+from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragmentState, \
+    GenericTripleMapFragment, SpecificTripleMapFragment
 
 
 class MappingPackageException(Exception):
@@ -64,7 +70,8 @@ class MappingPackageListFilters(BaseTitledEntityListFiltersSchema):
     pass
 
 
-class MappingPackageState(Document, ObjectState):
+class MappingPackageState(ObjectState):
+    id: Optional[str] = None
     title: Optional[str] = None
     description: Optional[str] = None
     identifier: Optional[str] = None
@@ -78,8 +85,21 @@ class MappingPackageState(Document, ObjectState):
     shacl_test_suites: Optional[List[SHACLTestSuiteState]] = []
     sparql_test_suites: Optional[List[SPARQLTestSuiteState]] = []
     conceptual_mapping_rules: Optional[List[ConceptualMappingRuleState]] = []
-    transformation_resources: Optional[List[FileResource]] = []
-    transformation_mappings: Optional[List[FileResource]] = []
+    triple_map_fragments: Optional[List[TripleMapFragmentState]] = []
+    resources: Optional[List[ResourceFileState]] = []
+
+
+class MappingPackageStateGate(BaseEntity):
+    id: Optional[PydanticObjectId] = None
+    title: Optional[str] = None
+    description: Optional[str] = None
+    identifier: Optional[str] = None
+    mapping_version: str = None
+    epo_version: str = None
+    eform_subtypes: List[str] = None
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+    eforms_sdk_versions: List[str] = None
 
     class Settings:
         name = "mapping_package_states"
@@ -112,30 +132,102 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
     eforms_sdk_versions: List[str] = None
     shacl_test_suites: Optional[List[Link[SHACLTestSuite]]] = None
 
-    async def get_conceptual_mapping_rules(self) -> List[ConceptualMappingRuleState]:
+    async def get_conceptual_mapping_rules_states(self) -> List[ConceptualMappingRuleState]:
         conceptual_mapping_rules = await ConceptualMappingRule.find(
-            Eq(ConceptualMappingRule.refers_to_mapping_package_ids, self.id)).to_list()
+            Eq(ConceptualMappingRule.refers_to_mapping_package_ids, self.id),
+            Eq(ConceptualMappingRule.project, self.project)
+        ).to_list()
         conceptual_mapping_rule_states = [await conceptual_mapping_rule.get_state() for conceptual_mapping_rule in
                                           conceptual_mapping_rules]
         return conceptual_mapping_rule_states
 
-    async def get_test_data_suites(self) -> List[TestDataSuiteState]:
-        test_data_suites = await TestDataSuite.find(TestDataSuite.mapping_package_id == self.id).to_list()
+    async def get_test_data_suites_states(self) -> List[TestDataSuiteState]:
+        test_data_suites = await TestDataSuite.find(
+            TestDataSuite.mapping_package_id == self.id,
+            Eq(TestDataSuite.project, self.project)
+        ).to_list()
         test_data_suites_states = [await test_data_suite.get_state() for test_data_suite in test_data_suites]
         return test_data_suites_states
 
-    async def get_state(self) -> MappingPackageState:
-        conceptual_mapping_rules = await self.get_conceptual_mapping_rules()
-        test_data_suites = await self.get_test_data_suites()
-
-        shacl_test_suites = []
+    async def get_shacl_test_suites_states(self) -> List[SHACLTestSuiteState]:
+        shacl_test_suites_states = []
         if self.shacl_test_suites:
-            shacl_test_suites = []
             for shacl_test_suite in self.shacl_test_suites:
                 shacl_test_suite = await shacl_test_suite.fetch()
                 if shacl_test_suite:
                     shacl_test_suite_state = await shacl_test_suite.get_state()
-                    shacl_test_suites.append(shacl_test_suite_state)
+                    shacl_test_suites_states.append(shacl_test_suite_state)
+        return shacl_test_suites_states
+
+    async def get_sparql_test_suites_states(
+            self,
+            conceptual_mapping_rules_states: List[ConceptualMappingRuleState] = None
+    ) -> List[SPARQLTestSuiteState]:
+        sparql_test_suites_states = []
+        sparql_test_suites = await SPARQLTestSuite.find(
+            NE(SPARQLTestSuite.type, SPARQLQueryValidationType.CM_ASSERTION),
+            Eq(SPARQLTestSuite.project, self.project)
+        ).to_list()
+        if sparql_test_suites:
+            for sparql_test_suite in sparql_test_suites:
+                sparql_test_suite_state = await sparql_test_suite.get_state()
+                sparql_test_suites_states.append(sparql_test_suite_state)
+
+        if conceptual_mapping_rules_states is None:
+            conceptual_mapping_rules_states = self.get_conceptual_mapping_rules_states()
+
+        cm_assertions = []
+
+        for cm_rule_state in conceptual_mapping_rules_states:
+            if cm_rule_state.sparql_assertions:
+                for cm_assertion in cm_rule_state.sparql_assertions:
+                    cm_assertions.append(cm_assertion)
+        if cm_assertions:
+            cm_assertions_suite = SPARQLTestSuiteState(
+                title=SPARQL_CM_ASSERTIONS_SUITE_TITLE,
+                sparql_test_states=cm_assertions
+            )
+            sparql_test_suites_states.append(cm_assertions_suite)
+
+        return sparql_test_suites_states
+
+    async def get_triple_map_fragments_states(self) -> List[TripleMapFragmentState]:
+        generic_triple_map_fragments = await GenericTripleMapFragment.find(
+            Eq(GenericTripleMapFragment.project, self.project)
+        ).to_list()
+        generic_triple_map_fragments_states = [
+            await generic_triple_map_fragment.get_state()
+            for generic_triple_map_fragment in generic_triple_map_fragments
+        ]
+
+        specific_triple_map_fragments = await SpecificTripleMapFragment.find(
+            SpecificTripleMapFragment.mapping_package_id == self.id,
+            Eq(TestDataSuite.project, self.project)
+        ).to_list()
+        specific_triple_map_fragments_states = [
+            await specific_triple_map_fragment.get_state()
+            for specific_triple_map_fragment in specific_triple_map_fragments
+        ]
+        return generic_triple_map_fragments_states + specific_triple_map_fragments_states
+
+    async def get_resources_states(self) -> List[ResourceCollectionState]:
+        resources_states = []
+        default_resource_collection: ResourceCollection = \
+            await get_default_resource_collection(self.project.to_ref().id)
+        if default_resource_collection:
+            resources_states = await default_resource_collection.get_resource_files_states()
+
+        return resources_states
+
+    async def get_state(self) -> MappingPackageState:
+        conceptual_mapping_rules = await self.get_conceptual_mapping_rules_states()
+        test_data_suites = await self.get_test_data_suites_states()
+        shacl_test_suites = await self.get_shacl_test_suites_states()
+        sparql_test_suites = await self.get_sparql_test_suites_states(
+            conceptual_mapping_rules_states=conceptual_mapping_rules
+        )
+        triple_map_fragments = await self.get_triple_map_fragments_states()
+        resources = await self.get_resources_states()
 
         return MappingPackageState(
             title=self.title,
@@ -149,11 +241,14 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
             eforms_sdk_versions=self.eforms_sdk_versions,
             test_data_suites=test_data_suites,
             shacl_test_suites=shacl_test_suites,
-            conceptual_mapping_rules=conceptual_mapping_rules
+            sparql_test_suites=sparql_test_suites,
+            conceptual_mapping_rules=conceptual_mapping_rules,
+            triple_map_fragments=triple_map_fragments,
+            resources=resources
         )
 
     def set_state(self, state: MappingPackageState):
-        raise MappingPackageException("Setting the state of a mapping package is not supported.")
+        raise MappingPackageException("Setting the state of a Mapping Package is not supported.")
 
     class Settings(BaseProjectResourceEntity.Settings):
         name = "mapping_packages"

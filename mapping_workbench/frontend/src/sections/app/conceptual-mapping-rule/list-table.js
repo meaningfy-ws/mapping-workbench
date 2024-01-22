@@ -418,7 +418,7 @@ export const ListTableSPARQLAssertions = (props) => {
     useEffect(() => {
         (async () => {
             if (initProjectSPARQLResources === null) {
-                setProjectSPARQLResources(await sparqlTestFileResourcesApi.getMappingRuleResources());
+                setProjectSPARQLResources(await sparqlTestFileResourcesApi.getMappingRuleSPARQLAssertions());
             }
         })()
     }, [sparqlTestFileResourcesApi])
@@ -439,7 +439,7 @@ export const ListTableSPARQLAssertions = (props) => {
     }, [tempSparqlResources]);
 
     const sparqlResourcesForSelector = function (filters = {}) {
-        return sparqlTestFileResourcesApi.getMappingRuleResources(filters);
+        return sparqlTestFileResourcesApi.getMappingRuleSPARQLAssertions(filters);
     }
 
     const sparqlTestFileResourcesDialogHandleClose = useCallback(() => {
@@ -934,7 +934,7 @@ export const ListTable = (props) => {
         (async () => {
             setProjectTripleMapFragments(await genericTripleMapFragmentsApi.getValuesForSelector());
             setProjectMappingPackages(await mappingPackagesApi.getProjectPackages());
-            setProjectSPARQLResources(await sparqlTestFileResourcesApi.getMappingRuleResources());
+            setProjectSPARQLResources(await sparqlTestFileResourcesApi.getMappingRuleSPARQLAssertions());
             setIsProjectDataReady(true);
         })()
     }, [genericTripleMapFragmentsApi])

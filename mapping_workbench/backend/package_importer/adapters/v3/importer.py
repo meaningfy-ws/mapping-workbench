@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Dict
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule, \
@@ -18,7 +19,7 @@ from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTest
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
     TestDataFileResourceFormat
 from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragmentFormat, \
-    GenericTripleMapFragment
+    GenericTripleMapFragment, SpecificTripleMapFragment
 from mapping_workbench.backend.user.models.user import User
 
 
@@ -70,6 +71,7 @@ class PackageImporter:
                 resource_path = [mono_resource_collection.name]
                 resource_name = mono_file_resource.name
                 resource_format = mono_file_resource.format.upper()
+                resource_identifier = Path(resource_name).stem
 
                 if resource_format not in resource_formats:
                     print(f"-- skipped {resource_name} :: {resource_format} not in {resource_formats}")
@@ -79,7 +81,7 @@ class PackageImporter:
 
                 test_data_file_resource: TestDataFileResource = await TestDataFileResource.find_one(
                     TestDataFileResource.project == self.project_link,
-                    TestDataFileResource.filename == resource_name,
+                    TestDataFileResource.identifier == resource_identifier,
                     TestDataFileResource.test_data_suite == TestDataSuite.link_from_id(test_data_suite.id)
                 )
 
@@ -87,6 +89,7 @@ class PackageImporter:
                     test_data_file_resource = TestDataFileResource(
                         project=self.project,
                         test_data_suite=test_data_suite,
+                        identifier=resource_identifier,
                         format=resource_format,
                         title=resource_name,
                         filename=resource_name,
@@ -110,22 +113,22 @@ class PackageImporter:
 
             resource_content = mono_file_resource.content
 
-            triple_map_fragment = await GenericTripleMapFragment.find_one(
+            generic_triple_map_fragment = await GenericTripleMapFragment.find_one(
                 GenericTripleMapFragment.project == self.project_link,
                 GenericTripleMapFragment.triple_map_uri == resource_name
             )
 
-            if not triple_map_fragment:
-                triple_map_fragment = GenericTripleMapFragment(
+            if not generic_triple_map_fragment:
+                generic_triple_map_fragment = GenericTripleMapFragment(
                     triple_map_uri=resource_name,
                     triple_map_content=resource_content,
                     format=resource_format,
                     project=self.project
                 )
-                await triple_map_fragment.on_create(self.user).save()
+                await generic_triple_map_fragment.on_create(self.user).save()
             else:
-                triple_map_fragment.triple_map_content = resource_content
-                await triple_map_fragment.on_update(self.user).save()
+                generic_triple_map_fragment.triple_map_content = resource_content
+                await generic_triple_map_fragment.on_update(self.user).save()
 
     async def add_sparql_test_suites_from_mono(self, mono_package: ImportedMappingSuite):
         resource_formats = [e.value for e in SPARQLTestFileResourceFormat]
@@ -341,6 +344,7 @@ class PackageImporter:
         project_link = Project.link_from_id(project.id)
 
         await ConceptualMappingRule.find(ConceptualMappingRule.project == project_link).delete()
+        await SpecificTripleMapFragment.find(SpecificTripleMapFragment.project == project_link).delete()
         await GenericTripleMapFragment.find(GenericTripleMapFragment.project == project_link).delete()
         await MappingPackage.find(MappingPackage.project == project_link).delete()
         await ResourceCollection.find(ResourceCollection.project == project_link).delete()

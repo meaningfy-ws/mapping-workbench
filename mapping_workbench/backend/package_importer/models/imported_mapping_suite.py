@@ -3,15 +3,15 @@ from pydantic import BaseModel, Field
 
 
 class MappingMetadata(BaseModel):
-    identifier: str = Field(..., alias="Identifier")
-    title: str = Field(..., alias="Title")
-    description: str = Field(..., alias="Description")
-    mapping_version: str = Field(..., alias="Mapping Version")
-    epo_version: str = Field(..., alias="EPO version")
-    eform_subtypes: List[str] = Field(..., alias="eForms Subtype")
-    start_date: Optional[str] = Field(..., alias="Start Date")
-    end_date: Optional[str] = Field(..., alias="End Date")
-    eforms_sdk_versions: List[str] = Field(..., alias="eForms SDK version")
+    identifier: str = Field(None, alias="Identifier")
+    title: str = Field(None, alias="Title")
+    description: str = Field(None, alias="Description")
+    mapping_version: str = Field(None, alias="Mapping Version")
+    epo_version: str = Field(None, alias="EPO version")
+    eform_subtypes: List[str] = Field(None, alias="eForms Subtype")
+    start_date: Optional[str] = Field(None, alias="Start Date")
+    end_date: Optional[str] = Field(None, alias="End Date")
+    eforms_sdk_versions: List[str] = Field(None, alias="eForms SDK version")
 
 
 class MappingConceptualRule(BaseModel):

@@ -22,7 +22,6 @@ async def task_transform_test_data(filters: APIRequestWithProject = None):
 
 
 async def task_generate_cm_assertions_queries(filters: APIRequestWithProject = None):
-    print(filters)
     if filters.cleanup:
         await clean_sparql_cm_assertions_queries_for_project(project_id=filters.project)
     return await generate_and_save_cm_assertions_queries(project_id=filters.project)

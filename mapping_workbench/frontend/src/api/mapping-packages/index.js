@@ -16,6 +16,8 @@ class MappingPackagesApi extends SectionApi {
     }
 
     async getProjectPackages(request = {}) {
+        request.page = 0;
+        request.rowsPerPage = -1;
         let mappingPackagesStore = await this.getItems(request);
         return mappingPackagesStore.items && mappingPackagesStore.items.map(
             mappingPackage => ({
@@ -48,7 +50,8 @@ class MappingPackagesApi extends SectionApi {
         try {
             let endpoint = this.paths['export'];
             const headers = {};
-            return appApi.get(endpoint, params, headers, {
+            params['t'] = Date.now();
+             return appApi.get(endpoint, params, headers, {
                 responseType: 'blob'
             });
         } catch (err) {

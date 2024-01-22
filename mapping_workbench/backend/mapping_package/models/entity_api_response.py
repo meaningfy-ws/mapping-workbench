@@ -1,7 +1,7 @@
 from typing import List
 
 from mapping_workbench.backend.core.models.api_response import APIListPaginatedResponse
-from mapping_workbench.backend.mapping_package.models.entity import MappingPackageOut, MappingPackageState
+from mapping_workbench.backend.mapping_package.models.entity import MappingPackageOut, MappingPackageStateGate
 
 
 class APIListMappingPackagesPaginatedResponse(APIListPaginatedResponse):
@@ -9,4 +9,4 @@ class APIListMappingPackagesPaginatedResponse(APIListPaginatedResponse):
 
 
 class APIListMappingPackageStatesPaginatedResponse(APIListPaginatedResponse):
-    items: List[MappingPackageState]
+    items: List[MappingPackageStateGate]
