@@ -39,6 +39,8 @@ export class TripleMapFragmentsApi extends SectionApi {
     }
 
     async getValuesForSelector(request = {}) {
+        request.page = 0;
+        request.rowsPerPage = -1;
         let tripleMapFragmentsStore = await this.getItems(request);
         return tripleMapFragmentsStore.items.map(
             tripleMapFragment => ({id: tripleMapFragment._id, uri: tripleMapFragment.triple_map_uri})

@@ -6,9 +6,9 @@ This module provides functionalities to archive files
 
 import abc
 import os
+import shutil
 import zipfile
 from pathlib import Path
-from typing import List
 
 ARCHIVE_ZIP_FORMAT = "zip"
 ARCHIVE_MODE_WRITE = 'w'
@@ -20,7 +20,7 @@ class ArchiverABC(abc.ABC):
     """
 
     @abc.abstractmethod
-    def archive_dir(self, dir_path: Path, archive_path: Path) -> Path:
+    def make_archive(self, dir_path: Path, archive_path: Path) -> Path:
         """
         """
 
@@ -35,8 +35,10 @@ class ZipArchiver(ArchiverABC, abc.ABC):
                     os.path.relpath(str(os.path.join(root, file)), str(os.path.join(dir_path, '..')))
                 )
 
-    def archive_dir(self, dir_path: Path, archive_path: Path) -> Path:
-        with zipfile.ZipFile(archive_path, 'w', zipfile.ZIP_DEFLATED) as zip_file:
-            self.zip_directory(dir_path, zip_file)
+    def make_archive(self, source: Path, destination: Path) -> Path:
+        shutil.make_archive(str(destination.with_suffix("")), ARCHIVE_ZIP_FORMAT, source)
 
-        return archive_path
+        # with zipfile.ZipFile(archive_path, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+        #     self.zip_directory(dir_path, zip_file)
+
+        return destination

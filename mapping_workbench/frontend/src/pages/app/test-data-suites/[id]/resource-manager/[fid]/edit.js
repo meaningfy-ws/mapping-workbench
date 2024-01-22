@@ -27,6 +27,7 @@ import {useFormik} from "formik";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Paper from "@mui/material/Paper";
+import {FormTextField} from "../../../../../../components/app/form/text-field";
 
 
 const useItem = (sectionApi, id) => {
@@ -66,12 +67,15 @@ const ExtraForm = (props) => {
 
     return (
         <>
+            <Grid xs={12} md={12}>
+                <FormTextField formik={formik} name="identifier" label="Identifier" required={true}/>
+            </Grid>
             <Paper
                 sx={{
                     alignItems: 'flex-start',
                     display: 'flex',
                     px: 2,
-                    mb: 4
+                    my: 4
                 }}
                 variant="outlined"
             >
@@ -126,6 +130,7 @@ const Page = () => {
     }
 
     const extra_form_fields = {
+        identifier: item.identifier || '',
         rdf_manifestation: item.rdf_manifestation || '',
         transform_test_data: false
     }

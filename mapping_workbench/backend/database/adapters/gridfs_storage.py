@@ -2,6 +2,7 @@ from io import BytesIO
 import gzip
 from typing import Optional
 
+from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorGridFSBucket, AsyncIOMotorDatabase
 
 
@@ -32,7 +33,7 @@ class AsyncGridFSStorage:
         return cls._mongo_database
 
     @classmethod
-    async def upload_file(cls, file_name: str, file_content: str) -> str:
+    async def upload_file(cls, file_name: str, file_content: str) -> ObjectId:
         """
         Uploads a file to the gridfs storage.
         :param file_name: The name of the file to upload.
@@ -46,7 +47,7 @@ class AsyncGridFSStorage:
         return file_id
 
     @classmethod
-    async def download_file(cls, file_id: str) -> Optional[str]:
+    async def download_file(cls, file_id: ObjectId) -> Optional[str]:
         """
         Downloads a file from the gridfs storage.
         :param file_id: The id of the file to download.
@@ -59,13 +60,14 @@ class AsyncGridFSStorage:
             await grid_fs.download_to_stream(file_id, tmp_stream)
             compressed_data = tmp_stream.getvalue()
             result_data = gzip.decompress(compressed_data).decode("utf-8")
-        except Exception:
+        except Exception as e:
+            print("GridFS :: ERROR :: ", e)
             result_data = None
         tmp_stream.close()
         return result_data
 
     @classmethod
-    async def delete_file(cls, file_id: str):
+    async def delete_file(cls, file_id: ObjectId):
         """
         Deletes a file from the gridfs storage.
         :param file_id: The id of the file to delete.

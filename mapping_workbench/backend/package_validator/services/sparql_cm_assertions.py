@@ -14,7 +14,7 @@ from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTest
 from mapping_workbench.backend.sparql_test_suite.services.api import get_sparql_test_suite_by_project_and_title
 from mapping_workbench.backend.user.models.user import User
 
-DEFAULT_RQ_NAME = 'sparql_query_'
+DEFAULT_RQ_NAME = 'cm_assertion_'
 
 SPARQL_PREFIX_PATTERN = re.compile('(?:\\s+|^)([\\w\\-]+)?:')
 SPARQL_PREFIX_LINE = 'PREFIX {prefix}: <{value}>'
@@ -27,6 +27,11 @@ SPARQL_CM_ASSERTIONS_SUITE_TITLE = "cm_assertions"
 def get_sparql_prefixes(sparql_q: str) -> list:
     finds: list = re.findall(SPARQL_PREFIX_PATTERN, sparql_q or "")
     return sorted(set(finds))
+
+
+def generate_subject_type_for_cm_assertion(class_path: str) -> str:
+    subject_reference = class_path.split(' / ')[0]
+    return f"?this rdf:type {subject_reference} ." if subject_reference else ''
 
 
 async def generate_and_save_cm_assertions_queries(
@@ -67,17 +72,32 @@ async def generate_and_save_cm_assertions_queries(
 
     cm_rules: List[ConceptualMappingRule] = await get_conceptual_mapping_rules_for_project(project_id=project_id)
     for index, cm_rule in enumerate(cm_rules):
+        subject_type = generate_subject_type_for_cm_assertion(cm_rule.target_class_path) \
+            if cm_rule.target_class_path and '?this' in cm_rule.target_property_path else ''
+
         prefixes_string = cm_rule.target_property_path
+        if subject_type:
+            prefixes_string += subject_type
+
         sparql_title = ""
         sparql_description = ""
         sparql_xpath = ""
+        sparql_idx = None
+
+        structural_element: StructuralElement
+        structural_element_exists: bool = False
 
         if cm_rule.source_structural_element:
-            structural_element: StructuralElement = await cm_rule.source_structural_element.fetch()
+            structural_element = await cm_rule.source_structural_element.fetch()
             if structural_element:
                 sparql_title = structural_element.eforms_sdk_element_id
                 sparql_description = ", ".join(structural_element.descriptions or [])
                 sparql_xpath = structural_element.absolute_xpath
+                sparql_idx = structural_element.id
+                structural_element_exists = True
+
+        if not structural_element_exists:
+            continue
 
         prefixes = []
         for prefix in get_sparql_prefixes(prefixes_string):
@@ -89,8 +109,8 @@ async def generate_and_save_cm_assertions_queries(
 
             prefixes.append(SPARQL_PREFIX_LINE.format(prefix=prefix, value=prefix_value))
 
-        subject_type_display = ''
-        file_name = f"{rq_name}{index}.rq"
+        subject_type_display = ('\n\t' + subject_type) if subject_type else ''
+        file_name = f"{rq_name}{sparql_idx}.rq"
         file_content = f"#title: {sparql_title}\n" \
                        f"#description: “{sparql_description}” " \
                        f"The corresponding XML element is " \

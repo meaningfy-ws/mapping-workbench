@@ -1,16 +1,28 @@
 from typing import List
 
-from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageState
+from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageState, \
+    MappingPackageStateGate
+from mapping_workbench.backend.state_manager.services.object_state_manager import load_object_state
 
 
-async def get_latest_mapping_package_state(mapping_package: MappingPackage) -> MappingPackageState:
-    mapping_package_states: List[MappingPackageState] = \
-        await MappingPackageState.find(
-            MappingPackageState.identifier == mapping_package.identifier
+async def get_latest_mapping_package_state_gate(mapping_package: MappingPackage) -> MappingPackageStateGate | None:
+    mapping_package_state_gates: List[MappingPackageStateGate] = \
+        await MappingPackageStateGate.find(
+            MappingPackageStateGate.identifier == mapping_package.identifier
         ).sort(
-            -MappingPackageState.created_at
+            -MappingPackageStateGate.created_at
         ).limit(1).to_list()
 
-    if mapping_package_states:
-        return mapping_package_states[0]
+    if mapping_package_state_gates:
+        return mapping_package_state_gates[0]
+    return None
+
+
+async def get_latest_mapping_package_state(mapping_package: MappingPackage) -> MappingPackageState | None:
+    mapping_package_state_gate: MappingPackageStateGate = await get_latest_mapping_package_state_gate(mapping_package)
+    if mapping_package_state_gate:
+        return await load_object_state(
+            state_id=mapping_package_state_gate.id,
+            object_class=MappingPackageState
+        )
     return None

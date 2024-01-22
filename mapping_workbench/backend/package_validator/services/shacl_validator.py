@@ -1,8 +1,7 @@
 from typing import List
 
 from mapping_workbench.backend.package_validator.adapters.shacl_validator import SHACLValidator
-from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestFileResource, \
-    SHACLTestState, SHACLTestSuiteState
+from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestState, SHACLTestSuiteState
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataException, \
     TestDataState
 
@@ -13,7 +12,7 @@ def validate_test_data_with_shacl_test_suite(test_data: TestDataState,
 
     """
     try:
-        if test_data.rdf_manifestation is None:
+        if test_data.rdf_manifestation.content is None:
             raise TestDataException("Test data must have a rdf manifestation")
 
         shacl_test_files: List[SHACLTestState] = shacl_test_suite.shacl_test_states
@@ -34,7 +33,7 @@ def validate_tests_data_with_shacl_tests(tests_data: List[TestDataState],
     shacl_test_suite = SHACLTestSuiteState(shacl_test_states=shacl_tests)
 
     for test_data in tests_data:
-        if test_data.rdf_manifestation is None:
+        if test_data.rdf_manifestation.content is None:
             raise TestDataException("Test data must have a rdf manifestation")
         validate_test_data_with_shacl_test_suite(test_data=test_data, shacl_test_suite=shacl_test_suite)
 

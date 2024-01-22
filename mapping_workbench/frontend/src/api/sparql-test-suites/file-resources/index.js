@@ -1,6 +1,7 @@
 import {FileResourcesApi} from "../../file-collections/file-resources";
 
 const FILE_RESOURCE_TYPE_INTEGRATION_TEST_VALUE = "integration_test";
+const FILE_RESOURCE_TYPE_CM_ASSERTION_VALUE = "cm_assertion";
 
 class SPARQLTestFileResourcesApi extends FileResourcesApi {
     get SECTION_TITLE() {
@@ -31,9 +32,8 @@ class SPARQLTestFileResourcesApi extends FileResourcesApi {
     }
 
     get FILE_RESOURCE_TYPES() {
-        let types = {
-            "cm_assertion": "CM Assertion"
-        }
+        let types = {}
+        types[FILE_RESOURCE_TYPE_CM_ASSERTION_VALUE] = "CM Assertion";
         types[FILE_RESOURCE_TYPE_INTEGRATION_TEST_VALUE] = "Integration Test";
         types['other'] = 'Other';
         return types;
@@ -49,9 +49,9 @@ class SPARQLTestFileResourcesApi extends FileResourcesApi {
         this.hasFileResourceType = true;
     }
 
-    async getMappingRuleResources(request = {}) {
+    async getMappingRuleSPARQLAssertions(request = {}) {
         request['filters'] = {
-            type: FILE_RESOURCE_TYPE_INTEGRATION_TEST_VALUE
+            type: FILE_RESOURCE_TYPE_CM_ASSERTION_VALUE
         };
         let sparqlTestFileResourcesStore = await this.getItems(request, "free_file_resources");
         return sparqlTestFileResourcesStore.items.map(

@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, status
 
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageOut, MappingPackageCreateIn, \
-    MappingPackageUpdateIn, MappingPackage, MappingPackageState
+    MappingPackageUpdateIn, MappingPackage, MappingPackageState, MappingPackageStateGate
 from mapping_workbench.backend.mapping_package.models.entity_api_response import \
     APIListMappingPackagesPaginatedResponse, APIListMappingPackageStatesPaginatedResponse
 from mapping_workbench.backend.mapping_package.services.api import (
@@ -136,10 +136,10 @@ async def route_list_mapping_package_states(
     "/state/{id}",
     description=f"Get {NAME_FOR_ONE} State",
     name=f"{NAME_FOR_MANY}:get_{NAME_FOR_ONE}_state",
-    response_model=MappingPackageState
+    response_model=MappingPackageStateGate
 )
 async def route_get_mapping_package_state(
-        mapping_package_state: MappingPackageState = Depends(get_mapping_package_state)
+        mapping_package_state: MappingPackageStateGate = Depends(get_mapping_package_state)
 ):
     return mapping_package_state
 
@@ -151,6 +151,6 @@ async def route_get_mapping_package_state(
     response_model=APIEmptyContentWithIdResponse
 )
 async def route_delete_mapping_package_state(
-        mapping_package_state: MappingPackageState = Depends(get_mapping_package_state)):
+        mapping_package_state: MappingPackageStateGate = Depends(get_mapping_package_state)):
     await delete_mapping_package_state(mapping_package_state)
     return APIEmptyContentWithIdResponse(id=mapping_package_state.id)
