@@ -20,20 +20,20 @@ export class MappingPackageStatesApi extends SectionApi {
     }
 
     async getStates(id, request = {}) {
-        let endpoint = this.paths['states'].replace(':id', id);
-        let data = await this.getItems(request, null, endpoint);
+        const endpoint = this.paths['states'].replace(':id', id);
+        const data = await this.getItems(request, null, endpoint);
         return Promise.resolve(data);
     }
 
     async deleteState(sid) {
-        let endpoint = this.paths['state'].replace(':id', sid);
-        let data = await appApi.delete(endpoint);
+        const endpoint = this.paths['state'].replace(':id', sid);
+        const data = await appApi.delete(endpoint);
         return Promise.resolve(data);
     }
 
     async getState(sid) {
-        let endpoint = this.paths['state'].replace(':id', sid);
-        let data = await appApi.get(endpoint);
+        const endpoint = this.paths['state'].replace(':id', sid);
+        const data = await appApi.get(endpoint);
         return Promise.resolve(data);
     }
 }

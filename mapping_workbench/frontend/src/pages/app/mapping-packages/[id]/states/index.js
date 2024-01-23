@@ -7,12 +7,8 @@ import {BreadcrumbsSeparator} from "../../../../../components/breadcrumbs-separa
 import Link from "@mui/material/Link";
 import {RouterLink} from "../../../../../components/router-link";
 import {paths} from "../../../../../paths";
-import Button from "@mui/material/Button";
-import SvgIcon from "@mui/material/SvgIcon";
-import PlusIcon from "@untitled-ui/icons-react/build/esm/Plus";
 import Card from "@mui/material/Card";
 import {FileCollectionListSearch} from "../../../../../sections/app/file-manager/file-collection-list-search";
-import {FileCollectionListTable} from "../../../../../sections/app/file-manager/file-collection-list-table";
 import {useCallback, useEffect, useState} from "react";
 import {useMounted} from "../../../../../hooks/use-mounted";
 import {usePageView} from "../../../../../hooks/use-page-view";
@@ -104,7 +100,7 @@ const useItemsStore = (id, searchState) => {
 
 const Page = () => {
 
-      const router = useRouter();
+    const router = useRouter();
     if (!router.isReady) return;
 
     const {id} = router.query;

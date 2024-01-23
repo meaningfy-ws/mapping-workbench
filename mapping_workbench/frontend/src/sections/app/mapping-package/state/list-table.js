@@ -14,6 +14,8 @@ import {Scrollbar} from 'src/components/scrollbar';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
+import {paths} from "../../../../paths";
+import {useRouter} from "../../../../hooks/use-router";
 
 export const ListTable = (props) => {
     const {
@@ -26,6 +28,11 @@ export const ListTable = (props) => {
         rowsPerPage = 0,
         sectionApi
     } = props;
+
+    const router = useRouter();
+    if (!router.isReady) return;
+
+    const {id} = router.query;
 
     return (
         <div>
@@ -105,7 +112,10 @@ export const ListTable = (props) => {
                                         </TableCell>
                                         <TableCell align="right">
                                             <ListItemActions
-                                                itemctx={new ForListItemAction(item_id, sectionApi)}/>
+                                                itemctx={new ForListItemAction(item_id, sectionApi)}
+                                                pathnames={{
+                                                    view: paths.app[sectionApi.section].states.view.replace("[id]",id).replace("[sid]",item_id),
+                                                }}/>
                                         </TableCell>
                                     </TableRow>
                                 </Fragment>
