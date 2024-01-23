@@ -18,7 +18,6 @@ export const ListItemActions = (props) => {
 
     const handleViewAction = useCallback(async () => {
         const viewPathname = pathnames?.view ?? paths.app[itemctx.api.section].view;
-        console.log(viewPathname)
         router.push({
             pathname: viewPathname,
             query: {id: itemctx.id}
@@ -35,7 +34,8 @@ export const ListItemActions = (props) => {
     }, [router, itemctx]);
 
     const handleDeleteAction = useCallback(async () => {
-        const respponse = await itemctx.api.deleteItem(itemctx.id);
+        const deleteAction = itemctx.actions?.delete ?? itemctx.api.deleteItem
+        const response = await deleteAction(itemctx.id);
         console.log("delete pathname: ", itemctx.api.section);
 
         router.push({

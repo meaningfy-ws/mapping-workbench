@@ -115,6 +115,9 @@ export const ListTable = (props) => {
                                                 itemctx={new ForListItemAction(item_id, sectionApi)}
                                                 pathnames={{
                                                     view: paths.app[sectionApi.section].states.view.replace("[id]",id).replace("[sid]",item_id),
+                                                }}
+                                                actions={{
+                                                    delete: sectionApi.deleteState
                                                 }}/>
                                         </TableCell>
                                     </TableRow>

@@ -111,9 +111,6 @@ const Page = () => {
 
     const itemsSearch = useItemsSearch();
     const itemsStore = useItemsStore(id, itemsSearch.state);
-    const formState = useItem(sectionApi, "65aa2c39d23c90595bdd159a");
-    console.log("formState",formState)
-
 
     usePageView();
 
@@ -139,14 +136,6 @@ const Page = () => {
                             >
                                 App
                             </Link>
-                            {/*<Link*/}
-                            {/*    color="text.primary"*/}
-                            {/*    component={RouterLink}*/}
-                            {/*    href={paths.app[sectionApi.section].index}*/}
-                            {/*    variant="subtitle2"*/}
-                            {/*>*/}
-                            {/*    {sectionApi.SECTION_TITLE}*/}
-                            {/*</Link>*/}
                             <Typography
                                 color="text.secondary"
                                 variant="subtitle2"
@@ -160,18 +149,6 @@ const Page = () => {
                         direction="row"
                         spacing={3}
                     >
-                        {/*<Button*/}
-                        {/*    component={RouterLink}*/}
-                        {/*    href={paths.app[sectionApi.section].create}*/}
-                        {/*    startIcon={(*/}
-                        {/*        <SvgIcon>*/}
-                        {/*            <PlusIcon/>*/}
-                        {/*        </SvgIcon>*/}
-                        {/*    )}*/}
-                        {/*    variant="contained"*/}
-                        {/*>*/}
-                        {/*    Add*/}
-                        {/*</Button>*/}
                     </Stack>
                 </Stack>
                 <Card>

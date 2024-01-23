@@ -22,28 +22,12 @@ import {useRouter} from "src/hooks/use-router";
 import {PropertyList} from "../../../../../../components/property-list";
 import {PropertyListItem} from "../../../../../../components/property-list-item";
 
-import {useMounted} from "../../../../../../hooks/use-mounted";
 import {mappingPackageStatesApi} from "../../../../../../api/mapping-packages/states";
 
 
 const tabs = [
     {label: 'Details', value: 'details'}
 ];
-
-const useMappingRulesStore = (sid) => {
-    const isMounted = useMounted();
-    const [state, setState] = useState();
-
-    useEffect(() => {
-        handleItemsGet();
-    }, [sid]);
-
-
-
-    return {
-        handleItemsGet, ...state
-    };
-};
 
 const Page = () => {
     const router = useRouter();
