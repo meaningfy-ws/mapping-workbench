@@ -65,6 +65,7 @@ class PackageImporter:
                     mapping_package_id=self.package.id,
                     title=mono_resource_collection.name
                 )
+                print("Save test_data_suite", test_data_suite.title)
                 await test_data_suite.on_create(self.user).save()
 
             for mono_file_resource in mono_resource_collection.file_resources:
@@ -96,6 +97,7 @@ class PackageImporter:
                         path=resource_path,
                         content=resource_content
                     )
+                    print("Save test_data_file_resource", test_data_file_resource.title)
                     await test_data_file_resource.on_create(self.user).save()
                 else:
                     test_data_file_resource.content = resource_content
