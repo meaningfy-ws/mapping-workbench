@@ -36,6 +36,19 @@ export class MappingPackageStatesApi extends SectionApi {
         const data = await appApi.get(endpoint);
         return Promise.resolve(data);
     }
+
+    exportPackage(params) {
+        console.log('here exportPackage',params)
+        try {
+            const endpoint = this.paths['export_specific'];
+            const headers = {};
+            params['t'] = Date.now();
+             return appApi.get(endpoint, params, headers, {
+                responseType: 'blob'
+            });
+        } catch (err) {
+        }
+    }
 }
 
 export const mappingPackageStatesApi = new MappingPackageStatesApi();

@@ -1,3 +1,5 @@
+from beanie import PydanticObjectId
+
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageState
 from mapping_workbench.backend.mapping_package.services.data import get_latest_mapping_package_state, \
@@ -42,7 +44,7 @@ async def export_latest_package_state(mapping_package: MappingPackage) -> bytes:
     )
 
 
-async def export_specific_package_state(mapping_package: MappingPackage, mapping_package_state_id: str) -> bytes:
+async def export_specific_package_state(mapping_package: MappingPackage, mapping_package_state_id: PydanticObjectId) -> bytes:
     """
 
     :param mapping_package:

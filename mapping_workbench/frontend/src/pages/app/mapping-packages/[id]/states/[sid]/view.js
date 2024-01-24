@@ -12,7 +12,7 @@ import Typography from '@mui/material/Typography';
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 
-import {mappingPackagesApi as sectionApi} from 'src/api/mapping-packages';
+import {mappingPackageStatesApi as sectionApi} from 'src/api/mapping-packages/states';
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
@@ -23,6 +23,12 @@ import {PropertyList} from "../../../../../../components/property-list";
 import {PropertyListItem} from "../../../../../../components/property-list-item";
 
 import {mappingPackageStatesApi} from "../../../../../../api/mapping-packages/states";
+import {Download04 as ExportIcon} from "@untitled-ui/icons-react/build/esm";
+
+
+import Button from "@mui/material/Button";
+import {sessionApi} from "../../../../../../api/session";
+import toast from "react-hot-toast";
 
 
 const tabs = [
@@ -38,9 +44,12 @@ const Page = () => {
     if (!id || !sid) {
         return;
     }
-
     const [currentTab, setCurrentTab] = useState('details');
     const [item, setItem] = useState()
+    const [isExporting, setIsExporting] = useState()
+
+
+
 
     useEffect(() => {
         handleItemsGet(sid);
@@ -56,9 +65,31 @@ const Page = () => {
 
     usePageView();
 
+
     const handleTabsChange = useCallback((event, value) => {
         setCurrentTab(value);
     }, []);
+
+    const handleExport = (item) => {
+        setIsExporting(true)
+        const data = {
+            package_id: id,
+            project_id: sessionApi.getSessionProject(),
+            state_id: item._id
+        }
+        toast.promise(sectionApi.exportPackage(data), {
+            loading: `Exporting "${item.identifier}" ... This may take a while. Please, be patient.`,
+            success: (response) => {
+                setIsExporting(false);
+                saveAs(new Blob([response], {type: "application/x-zip-compressed"}), `${item.identifier} ${item._id}.zip`);
+                return `"${item.identifier}" successfully exported.`
+            },
+            error: (err) => {
+                setIsExporting(false);
+                return `Exporting "${item.identifier}" failed: ${err.message}.`
+            }
+        })
+    };
 
     if (!item) {
         return;
@@ -118,6 +149,18 @@ const Page = () => {
                                 </Stack>
                             </Stack>
                         </Stack>
+                        <Button
+                            onClick={()=>handleExport(item)}
+                            disabled={isExporting}
+                            startIcon={(
+                                <SvgIcon>
+                                    <ExportIcon/>
+                                </SvgIcon>
+                            )}
+                            variant="contained"
+                        >
+                            Export State
+                        </Button>
                     </Stack>
                     <Tabs
                         indicatorColor="primary"

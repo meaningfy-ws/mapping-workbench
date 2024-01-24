@@ -1,5 +1,7 @@
 from typing import List
 
+from beanie import PydanticObjectId
+
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageState, \
     MappingPackageStateGate
 from mapping_workbench.backend.state_manager.services.object_state_manager import load_object_state
@@ -28,7 +30,7 @@ async def get_latest_mapping_package_state(mapping_package: MappingPackage) -> M
     return None
 
 
-async def get_specific_mapping_package_state(mapping_package_state_id: str) -> MappingPackageState:
+async def get_specific_mapping_package_state(mapping_package_state_id: PydanticObjectId) -> MappingPackageState:
     return await load_object_state(
         state_id=mapping_package_state_id,
         object_class=MappingPackageState
