@@ -48,7 +48,6 @@ const Page = () => {
     const handleItemsGet = async (sid) => {
         try {
             const response = await mappingPackageStatesApi.getState(sid);
-            console.log("response",response)
             return  setItem(response);
         } catch (err) {
             console.error(err);

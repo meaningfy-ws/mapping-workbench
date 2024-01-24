@@ -13,9 +13,10 @@ import {useCallback, useEffect, useState} from "react";
 import {useMounted} from "../../../../../hooks/use-mounted";
 import {usePageView} from "../../../../../hooks/use-page-view";
 import {mappingPackageStatesApi as sectionApi} from "../../../../../api/mapping-packages/states";
-import {useItem} from "../../../../../contexts/app/section/for-item-data-state";
+import {mappingPackagesApi as upperSectionApi} from "../../../../../api/mapping-packages";
 import {useRouter} from "../../../../../hooks/use-router";
 import {ListTable} from "../../../../../sections/app/mapping-package/state/list-table";
+import Chip from "@mui/material/Chip";
 
 
 const useItemsSearch = () => {
@@ -71,8 +72,6 @@ const useItemsStore = (id, searchState) => {
     const handleItemsGet = useCallback(async () => {
         try {
             const response = await sectionApi.getStates(id, searchState);
-            console.log("searchState",searchState)
-
             if (isMounted()) {
                 setState({
                     items: response.items,
@@ -87,7 +86,6 @@ const useItemsStore = (id, searchState) => {
 
     useEffect(() => {
             handleItemsGet().then(response => {
-                console.log("RESPONSE: ", response);
             });
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -127,6 +125,16 @@ const Page = () => {
                         <Typography variant="h4">
                             {sectionApi.SECTION_TITLE}
                         </Typography>
+                        <Stack
+                            alignItems="center"
+                            direction="row"
+                            spacing={1}
+                        >
+                            <Chip
+                                label={id}
+                                size="small"
+                            />
+                        </Stack>
                         <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
                             <Link
                                 color="text.primary"
@@ -135,6 +143,20 @@ const Page = () => {
                                 variant="subtitle2"
                             >
                                 App
+                            </Link>
+                            <Link
+                                color="text.primary"
+                                component={RouterLink}
+                                href={paths.app[sectionApi.section].index}
+                                sx={{
+                                    alignItems: 'center',
+                                    display: 'inline-flex'
+                                }}
+                                underline="hover"
+                            >
+                                <Typography variant="subtitle2">
+                                    {upperSectionApi.SECTION_TITLE}
+                                </Typography>
                             </Link>
                             <Typography
                                 color="text.secondary"
