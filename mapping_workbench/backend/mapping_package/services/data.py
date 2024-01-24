@@ -26,3 +26,10 @@ async def get_latest_mapping_package_state(mapping_package: MappingPackage) -> M
             object_class=MappingPackageState
         )
     return None
+
+
+async def get_specific_mapping_package_state(mapping_package_state_id: str) -> MappingPackageState:
+    return await load_object_state(
+        state_id=mapping_package_state_id,
+        object_class=MappingPackageState
+    )
