@@ -46,7 +46,7 @@ async def route_export_latest_package_state(
 )
 async def route_export_specific_package_state(
         package_id: PydanticObjectId,
-        state_id: PydanticObjectId
+        state_id: str
 ):
     mapping_package: MappingPackage = await get_mapping_package(package_id)
     archive: bytes = await export_specific_package_state(mapping_package, state_id)
