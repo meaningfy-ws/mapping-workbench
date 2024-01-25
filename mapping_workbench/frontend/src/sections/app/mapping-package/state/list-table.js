@@ -19,7 +19,7 @@ import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {paths} from "../../../../paths";
 import {useRouter} from "../../../../hooks/use-router";
 import {sessionApi} from "../../../../api/session";
-import toast from "react-hot-toast";
+import exportPackage from "../../../../utils/export-mapping-package";
 
 export const ListTable = (props) => {
     const {
@@ -35,31 +35,16 @@ export const ListTable = (props) => {
 
     const [isExporting, setIsExporting] = useState(false);
 
+    const handleExport = (item) => {
+        return exportPackage(sectionApi, sessionApi.getSessionProject(), id, setIsExporting, item)
+    }
+
     const router = useRouter();
     if (!router.isReady) return;
 
     const {id} = router.query;
 
-    const handleExport = (item) => {
-        setIsExporting(true)
-        const data = {
-            package_id: id,
-            project_id: sessionApi.getSessionProject(),
-            state_id: item._id
-        }
-        toast.promise(sectionApi.exportPackage(data), {
-            loading: `Exporting "${item.identifier}" ... This may take a while. Please, be patient.`,
-            success: (response) => {
-                setIsExporting(false);
-                saveAs(new Blob([response], {type: "application/x-zip-compressed"}), `${item.identifier} ${item._id}.zip`);
-                return `"${item.identifier}" successfully exported.`
-            },
-            error: (err) => {
-                setIsExporting(false);
-                return `Exporting "${item.identifier}" failed: ${err.message}.`
-            }
-        })
-    };
+
 
     return (
         <div>

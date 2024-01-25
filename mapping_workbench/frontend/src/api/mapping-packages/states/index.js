@@ -38,7 +38,6 @@ export class MappingPackageStatesApi extends SectionApi {
     }
 
     exportPackage(params) {
-        console.log('here exportPackage',params)
         try {
             const endpoint = this.paths['export_specific'];
             const headers = {};

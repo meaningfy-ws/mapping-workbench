@@ -27,7 +27,7 @@ import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
 import {Upload04 as ExportIcon} from "@untitled-ui/icons-react/build/esm";
 
 import {sessionApi} from "../../../../../../api/session";
-import toast from "react-hot-toast";
+import exportPackage from "../../../../../../utils/export-mapping-package";
 
 
 const tabs = [
@@ -37,16 +37,16 @@ const tabs = [
 const Page = () => {
     const router = useRouter();
 
+    if (!router.isReady) return;
+    const {id,sid} = router.query;
+
+    if (!id || !sid) {
+        return;
+    }
     const [currentTab, setCurrentTab] = useState('details');
     const [item, setItem] = useState()
     const [isExporting, setIsExporting] = useState()
 
-    const {id,sid} = router.query;
-
-    if (!router.isReady) return;
-    if (!id || !sid) {
-        return;
-    }
 
     useEffect(() => {
         handleItemsGet(sid);
@@ -68,25 +68,8 @@ const Page = () => {
     }, []);
 
     const handleExport = (item) => {
-        setIsExporting(true)
-        const data = {
-            package_id: id,
-            project_id: sessionApi.getSessionProject(),
-            state_id: item._id
-        }
-        toast.promise(sectionApi.exportPackage(data), {
-            loading: `Exporting "${item.identifier}" ... This may take a while. Please, be patient.`,
-            success: (response) => {
-                setIsExporting(false);
-                saveAs(new Blob([response], {type: "application/x-zip-compressed"}), `${item.identifier} ${item._id}.zip`);
-                return `"${item.identifier}" successfully exported.`
-            },
-            error: (err) => {
-                setIsExporting(false);
-                return `Exporting "${item.identifier}" failed: ${err.message}.`
-            }
-        })
-    };
+        return exportPackage(sectionApi, sessionApi.getSessionProject(), id, setIsExporting, item)
+    }
 
     if (!item) {
         return;
