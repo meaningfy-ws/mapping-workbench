@@ -9,8 +9,14 @@ import SvgIcon from '@mui/material/SvgIcon';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import CardHeader from "@mui/material/CardHeader";
+import Button from "@mui/material/Button";
+import FormControl from "@mui/material/FormControl";
 
 import {mappingPackagesApi as sectionApi} from 'src/api/mapping-packages';
+import {mappingPackageStatesApi as sectionStatesApi} from 'src/api/mapping-packages/states';
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
@@ -22,19 +28,17 @@ import {FileResourceCollectionsCard} from 'src/sections/app/file-manager/file-re
 import {PropertyList} from "../../../../components/property-list";
 import {PropertyListItem} from "../../../../components/property-list-item";
 import {shaclTestSuitesApi} from "../../../../api/shacl-test-suites";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
+
 import {ListTable as MappingRulesListTable} from "src/sections/app/conceptual-mapping-rule/list-table";
 import {conceptualMappingRulesApi} from "../../../../api/conceptual-mapping-rules";
 import {useMounted} from "../../../../hooks/use-mounted";
 import {ListSearch as MappingRulesListSearch} from "src/sections/app/conceptual-mapping-rule/list-search";
-import CardHeader from "@mui/material/CardHeader";
 import {ListSelectorSelect as ResourceListSelector} from "../../../../components/app/list-selector/select";
 import {specificTripleMapFragmentsApi} from "../../../../api/triple-map-fragments/specific";
 import toast from "react-hot-toast";
-import Button from "@mui/material/Button";
-import FormControl from "@mui/material/FormControl";
-import * as React from "react";
+
+import {FileCollectionListSearch} from "../../../../sections/app/file-manager/file-collection-list-search";
+import {ListTable} from "../../../../sections/app/mapping-package/state/list-table";
 
 const tabs = [
     {label: 'Details', value: 'details'},
@@ -44,6 +48,82 @@ const tabs = [
     {label: 'States', value: 'states'}
 ];
 
+const useItemsSearch = () => {
+    const [state, setState] = useState({
+        filters: {
+            name: undefined,
+            category: [],
+            status: [],
+            inStock: undefined
+        },
+        page: sectionApi.DEFAULT_PAGE,
+        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
+    });
+
+    const handleFiltersChange = useCallback((filters) => {
+        setState((prevState) => ({
+            ...prevState,
+            filters,
+            page: 0
+        }));
+    }, []);
+
+    const handlePageChange = useCallback((event, page) => {
+        setState((prevState) => ({
+            ...prevState,
+            page
+        }));
+    }, []);
+
+    const handleRowsPerPageChange = useCallback((event) => {
+        setState((prevState) => ({
+            ...prevState,
+            rowsPerPage: parseInt(event.target.value, 10)
+        }));
+    }, []);
+
+    return {
+        handleFiltersChange,
+        handlePageChange,
+        handleRowsPerPageChange,
+        state
+    };
+};
+
+
+const useItemsStore = (id, searchState) => {
+    const isMounted = useMounted();
+    const [state, setState] = useState({
+        items: [],
+        itemsCount: 0
+    });
+
+    const handleItemsGet = useCallback(async () => {
+        try {
+            const response = await sectionStatesApi.getStates(id, searchState);
+            if (isMounted()) {
+                setState({
+                    items: response.items,
+                    itemsCount: response.count
+                });
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }, [searchState, isMounted]);
+
+
+    useEffect(() => {
+            handleItemsGet().then(response => {
+            });
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [searchState]);
+
+    return {
+        ...state
+    };
+};
 const useMappingRulesSearch = () => {
     const [state, setState] = useState({
         filters: {
@@ -97,12 +177,12 @@ const useMappingRulesStore = (searchState, mappingPackage) => {
     const isMounted = useMounted();
     const [state, setState] = useState({
         items: [],
-        itemsCount: 0
+        itemsCount: 0,
     });
 
     const handleItemsGet = useCallback(async () => {
         try {
-            let request = searchState;
+            const request = searchState;
             request['filters']['mapping_packages'] = [mappingPackage];
             const response = await conceptualMappingRulesApi.getItems(request);
             if (isMounted()) {
@@ -134,6 +214,7 @@ const Page = () => {
     if (!id) {
         return;
     }
+    const [stateItemsStore, setStateItemsStore] = useState({itemsStateSearch:{}, itemsStateStore:{}})
 
     const formState = useItem(sectionApi, id);
     const item = formState.item;
@@ -143,6 +224,9 @@ const Page = () => {
 
     const mappingRulesSearch = useMappingRulesSearch();
     const mappingRulesStore = useMappingRulesStore(mappingRulesSearch.state, id);
+
+    const itemsStateSearch = useItemsSearch();
+    const itemsStateStore = useItemsStore(id, itemsStateSearch.state);
 
     const [tripleMapFragments, setTripleMapFragments] = useState([]);
 
@@ -155,6 +239,13 @@ const Page = () => {
             })).map(x => x.id))
         })()
     }, [specificTripleMapFragmentsApi, id])
+
+    // useEffect(() => {
+    //     if(currentTab === "states") {
+    //         setStateItemsStore({itemsStateSearch: useItemsSearch(), itemsStateStore: useItemsStore(id)})
+    //     }
+    // },[currentTab])
+
 
     const handleTabsChange = useCallback((event, value) => {
         setCurrentTab(value);
@@ -409,15 +500,27 @@ const Page = () => {
                         <CardContent>
                             <Grid container spacing={3}>
                                 <Grid xs={12} md={12}>
-                                    <FormControl>
-                                        {<Button
-                                            variant="contained"
-                                            color="info"
-                                            onClick={handleViewStatesAction}
-                                        >
-                                            View "{item.title}" States
-                                        </Button>}
-                                    </FormControl>
+                                    {/*<FormControl>*/}
+                                    {/*    <Button*/}
+                                    {/*        variant="contained"*/}
+                                    {/*        color="info"*/}
+                                    {/*        onClick={handleViewStatesAction}*/}
+                                    {/*    >*/}
+                                    {/*        {`View ${item.title} States`}*/}
+                                    {/*    </Button>*/}
+                                    {/*</FormControl>*/}
+                                    <Card>
+                                        <FileCollectionListSearch onFiltersChange={itemsStateSearch.handleFiltersChange}/>
+                                        <ListTable
+                                            onPageChange={itemsStateSearch.handlePageChange}
+                                            onRowsPerPageChange={itemsStateSearch.handleRowsPerPageChange}
+                                            page={itemsStateSearch.state?.page}
+                                            items={itemsStateStore.items}
+                                            count={itemsStateStore.itemsCount}
+                                            rowsPerPage={itemsStateSearch.state?.rowsPerPage}
+                                            sectionApi={sectionStatesApi}
+                                        />
+                                    </Card>
                                 </Grid>
                             </Grid>
                         </CardContent>

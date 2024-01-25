@@ -1,5 +1,4 @@
 import {useCallback, useEffect, useState} from 'react';
-import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -11,8 +10,10 @@ import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
+import Button from "@mui/material/Button";
 
 import {mappingPackageStatesApi as sectionApi} from 'src/api/mapping-packages/states';
+import {mappingPackagesApi as previousSectionApi} from 'src/api/mapping-packages';
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
@@ -22,11 +23,9 @@ import {useRouter} from "src/hooks/use-router";
 import {PropertyList} from "../../../../../../components/property-list";
 import {PropertyListItem} from "../../../../../../components/property-list-item";
 
-import {mappingPackageStatesApi} from "../../../../../../api/mapping-packages/states";
-import {Download04 as ExportIcon} from "@untitled-ui/icons-react/build/esm";
+import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
+import {Upload04 as ExportIcon} from "@untitled-ui/icons-react/build/esm";
 
-
-import Button from "@mui/material/Button";
 import {sessionApi} from "../../../../../../api/session";
 import toast from "react-hot-toast";
 
@@ -37,26 +36,24 @@ const tabs = [
 
 const Page = () => {
     const router = useRouter();
-    if (!router.isReady) return;
 
-    const {id,sid} = router.query;
-
-    if (!id || !sid) {
-        return;
-    }
     const [currentTab, setCurrentTab] = useState('details');
     const [item, setItem] = useState()
     const [isExporting, setIsExporting] = useState()
 
+    const {id,sid} = router.query;
 
-
+    if (!router.isReady) return;
+    if (!id || !sid) {
+        return;
+    }
 
     useEffect(() => {
         handleItemsGet(sid);
     }, []);
     const handleItemsGet = async (sid) => {
         try {
-            const response = await mappingPackageStatesApi.getState(sid);
+            const response = await sectionApi.getState(sid);
             return  setItem(response);
         } catch (err) {
             console.error(err);
@@ -104,7 +101,7 @@ const Page = () => {
                         <Link
                             color="text.primary"
                             component={RouterLink}
-                            href={paths.app[sectionApi.section].index}
+                            href={paths.app[sectionApi.section].view.replace("[id]", id)}
                             sx={{
                                 alignItems: 'center',
                                 display: 'inline-flex'
@@ -115,7 +112,7 @@ const Page = () => {
                                 <ArrowLeftIcon/>
                             </SvgIcon>
                             <Typography variant="subtitle2">
-                                {sectionApi.SECTION_TITLE}
+                                {previousSectionApi.SECTION_TITLE}
                             </Typography>
                         </Link>
                     </div>
@@ -159,7 +156,7 @@ const Page = () => {
                             )}
                             variant="contained"
                         >
-                            Export State
+                            {isExporting ? "Exporting..." : "Export State"}
                         </Button>
                     </Stack>
                     <Tabs

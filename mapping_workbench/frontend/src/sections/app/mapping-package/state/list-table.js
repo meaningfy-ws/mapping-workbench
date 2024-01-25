@@ -1,5 +1,6 @@
-import {Fragment, useCallback, useState} from 'react';
+import {useState} from 'react';
 import PropTypes from 'prop-types';
+
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -9,14 +10,14 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import Tooltip from "@mui/material/Tooltip";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
 
 import {Scrollbar} from 'src/components/scrollbar';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
-
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {paths} from "../../../../paths";
 import {useRouter} from "../../../../hooks/use-router";
-import Button from "@mui/material/Button";
 import {sessionApi} from "../../../../api/session";
 import toast from "react-hot-toast";
 
@@ -110,33 +111,35 @@ export const ListTable = (props) => {
                                     </TableSortLabel>
                                 </Tooltip>
                             </TableCell>
-                            <TableCell align="right">
+                            <TableCell align="center">
                                 Actions
                             </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {items?.map((item) => {
+                        {items?.map(item => {
                             const item_id = item._id;
-
                             return (
-                                <Fragment key={item_id}>
-                                    <TableRow key={item_id}>
-                                        <TableCell width="25%">
-                                            <Typography variant="subtitle3">
-                                                {item.title}
-                                            </Typography>
-                                        </TableCell>
-                                        <TableCell>
-                                            {item.description}
-                                        </TableCell>
-                                        <TableCell>
-                                            {item.mapping_version}
-                                        </TableCell>
-                                        <TableCell align="left">
-                                            {(item.created_at).replace("T", " ").split(".")[0]}
-                                        </TableCell>
-                                        <TableCell align="right">
+                                <TableRow key={item_id}>
+                                    <TableCell width="25%">
+                                        <Typography variant="subtitle3">
+                                            {item.title}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                        {item.description}
+                                    </TableCell>
+                                    <TableCell>
+                                        {item.mapping_version}
+                                    </TableCell>
+                                    <TableCell align="left">
+                                        {(item.created_at).replace("T", " ").split(".")[0]}
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        <Stack
+                                            alignItems="center"
+                                            direction="row"
+                                        >
                                             <ListItemActions
                                                 itemctx={new ForListItemAction(item_id, sectionApi)}
                                                 pathnames={{
@@ -150,9 +153,10 @@ export const ListTable = (props) => {
                                                 disabled={isExporting}>
                                                 {isExporting ? "Exporting..." : "Export"}
                                             </Button>
-                                        </TableCell>
-                                    </TableRow>
-                                </Fragment>
+                                        </Stack>
+                                    </TableCell>
+                                </TableRow>
+
                             );
                         })}
                     </TableBody>
