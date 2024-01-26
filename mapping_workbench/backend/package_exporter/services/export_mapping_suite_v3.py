@@ -44,10 +44,12 @@ async def export_latest_package_state(mapping_package: MappingPackage) -> bytes:
     )
 
 
-async def export_specific_package_state(mapping_package: MappingPackage, mapping_package_state_id: PydanticObjectId) -> bytes:
+async def export_specific_package_state(mapping_package: MappingPackage,
+                                        mapping_package_state_id: PydanticObjectId) -> bytes:
     """
 
     :param mapping_package:
+    :param mapping_package_state_id:
     :return:
     """
 
