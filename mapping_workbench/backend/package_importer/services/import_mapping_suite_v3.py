@@ -76,11 +76,13 @@ def import_mapping_resource_file_names(conceptual_mappings_file_path: pathlib.Pa
 def import_mapping_conceptual_rules(conceptual_mappings_file_path: pathlib.Path) -> List[MappingConceptualRule]:
     conceptual_rules_df = pd.read_excel(conceptual_mappings_file_path, sheet_name=CONCEPTUAL_RULES_SHEET_NAME)
     conceptual_rules_df.replace({np.nan: None}, inplace=True)
-    mapping_conceptual_rules = [
-        MappingConceptualRule(**conceptual_rule_dict)
-        for conceptual_rule_dict in conceptual_rules_df.to_dict(orient="records")
+    #TODO: this is a quick fix of 'Min/Max SDK Version' being autocast to number, which trigger Pydantic validation error on populating
+    mapping_conceptual_rules = []
+    for conceptual_rule_dict in conceptual_rules_df.to_dict(orient="records"):
+        conceptual_rule_dict['Min SDK Version'] = str(conceptual_rule_dict['Min SDK Version'])
+        conceptual_rule_dict['Max SDK Version'] = str(conceptual_rule_dict['Max SDK Version'])
+        mapping_conceptual_rules.append(MappingConceptualRule(**conceptual_rule_dict))
 
-    ]
     return mapping_conceptual_rules
 
 

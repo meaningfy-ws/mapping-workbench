@@ -1,18 +1,36 @@
+from enum import Enum
 from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
 
-class MappingMetadata(BaseModel):
-    identifier: str = Field(..., alias="Identifier")
-    title: str = Field(..., alias="Title")
-    description: str = Field(..., alias="Description")
-    mapping_version: str = Field(..., alias="Mapping Version")
-    epo_version: str = Field(..., alias="EPO version")
-    eform_subtypes: List[str] = Field(..., alias="eForms Subtype")
-    start_date: Optional[str] = Field(..., alias="Start Date")
-    end_date: Optional[str] = Field(..., alias="End Date")
-    eforms_sdk_versions: List[str] = Field(..., alias="eForms SDK version")
+class MappingSuiteType(str, Enum):
+    STANDARD_FORMS = "standard_forms"
+    ELECTRONIC_FORMS = "eforms"
+
+    def __str__(self):
+        return self.value
+
+
+class EFormsConstraints(BaseModel):
+    eforms_subtype: List[str]
+    start_date: Optional[str]
+    end_date: Optional[str]
+    eforms_sdk_versions: List[str]
+
+
+class MappingMetadataConstraints(BaseModel):
+    constraints: EFormsConstraints
+
+
+class MappingMetadataExport(BaseModel):
+    identifier: str
+    title: str
+    description: str
+    mapping_version: str
+    ontology_version: str
+    mapping_type: MappingSuiteType = MappingSuiteType.ELECTRONIC_FORMS
+    metadata_constraints: MappingMetadataConstraints
 
 
 class MappingConceptualRule(BaseModel):
@@ -43,7 +61,7 @@ class ExportedCollectionResource(BaseModel):
 
 
 class ExportedMappingSuite(BaseModel):
-    metadata: MappingMetadata
+    metadata: MappingMetadataExport
     conceptual_rules: List[MappingConceptualRule] = []
     transformation_resources: ExportedCollectionResource
     transformation_mappings: ExportedCollectionResource
@@ -51,6 +69,3 @@ class ExportedMappingSuite(BaseModel):
     shacl_validation_resources: List[ExportedCollectionResource] = []
     sparql_validation_resources: List[ExportedCollectionResource] = []
     shacl_result_query: str
-
-
-
