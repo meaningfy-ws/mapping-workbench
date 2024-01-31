@@ -7,6 +7,8 @@ import pandas as pd
 
 from mapping_workbench.backend.core.adapters.archiver import ZipArchiver, ARCHIVE_ZIP_FORMAT
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState
+from mapping_workbench.backend.package_exporter.models.exported_mapping_suite import EFormsConstraints, \
+    MappingMetadataExport, MappingMetadataConstraints
 from mapping_workbench.backend.package_importer.models.imported_mapping_suite import MappingMetadata
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.user.models.user import User
@@ -73,21 +75,23 @@ class PackageStateExporter:
         self.package_validation_sparql_path.mkdir(parents=True, exist_ok=True)
 
     async def add_metadata(self):
-        metadata: MappingMetadata = MappingMetadata(
-            identifier=self.package_state.identifier,
-            title=self.package_state.title,
-            description=self.package_state.description,
-            mapping_version=self.package_state.mapping_version,
-            epo_version=self.package_state.epo_version,
-            eform_subtypes=self.package_state.eform_subtypes,
-            start_date=self.package_state.start_date,
-            end_date=self.package_state.end_date,
-            eforms_sdk_versions=self.package_state.eforms_sdk_versions,
-        )
+        eforms_constraints = EFormsConstraints(eforms_subtype=self.package_state.eform_subtypes,
+                                               start_date=self.package_state.start_date,
+                                               end_date=self.package_state.end_date,
+                                               eforms_sdk_versions=self.package_state.eforms_sdk_versions
+                                               )
+        metadata_constraints = MappingMetadataConstraints(constraints=eforms_constraints)
+        mapping_metadata = MappingMetadataExport(identifier=self.package_state.identifier,
+                                                 title=self.package_state.title,
+                                                 description=self.package_state.description,
+                                                 mapping_version=self.package_state.mapping_version,
+                                                 ontology_version=self.package_state.epo_version,
+                                                 metadata_constraints=metadata_constraints
+                                                 )
 
         self.write_to_file(
             self.package_path / "metadata.json",
-            json.dumps(metadata.model_dump(), indent=4)
+            json.dumps(mapping_metadata.model_dump(), indent=4)
         )
 
     async def add_transformation_mappings(self):
@@ -169,5 +173,9 @@ class PackageStateExporter:
                         exclude={'id'}
                     ), indent=4)
                     self.write_to_file(test_data_reports_output_path / "shacl_validation_report.json", shacl_str)
-                    df = pd.read_json(StringIO(shacl_str))
+                    shacl_dict = json.loads(shacl_str)
+                    results = shacl_dict["results_dict"]["results"]["bindings"]
+                    rows_of_results = [{key: result_instance["value"] for key, result_instance in result.items()}
+                                       for result in results]
+                    df = pd.DataFrame(rows_of_results)
                     df.to_csv(test_data_reports_output_path / "shacl_validation_report.csv")
