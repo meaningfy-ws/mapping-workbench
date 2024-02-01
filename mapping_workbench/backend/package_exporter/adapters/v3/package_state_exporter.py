@@ -129,60 +129,16 @@ class PackageStateExporter:
                 self.write_to_file(sparql_test_suite_path / sparql_test.filename, sparql_test.content)
 
     async def get_validation_reports(self):
-        # reports = { "xpath", "sparql", "shacl" }
-        reports = {}
-        print("package_state.test_data_suites",self.package_state.test_data_suites)
+        reports = {"xpath": [], "sparql": [], "shacl": []}
         for test_data_suite in self.package_state.test_data_suites:
-            print("test_data_suite")
-            test_data_suite_output_path = self.package_output_path / test_data_suite.title
-            # test_data_suite_output_path.mkdir(parents=True, exist_ok=True)
             for test_data in test_data_suite.test_data_states:
-                test_data_output_path = test_data_suite_output_path / test_data.identifier
-                # test_data_output_path.mkdir(parents=True, exist_ok=True)
-
-                # if test_data.rdf_manifestation and test_data.rdf_manifestation.content:
-                #     print(test_data.rdf_manifestation.content)
-                    # self.write_to_file(test_data_output_path / test_data.rdf_manifestation.filename,
-                    #                    test_data.rdf_manifestation.content)
-
-                # test_data_reports_output_path = test_data_suite_output_path / test_data.identifier / "reports"
-                # test_data_reports_output_path.mkdir(parents=True, exist_ok=True)
-
                 if test_data.xpath_validation_result:
-                    xpaths_str = json.dumps([xpath_validation_result.model_dump(
-                        exclude={'id'}
-                    ) for xpath_validation_result in test_data.xpath_validation_result], indent=4)
-                    # self.write_to_file(test_data_reports_output_path / "xpath_coverage_report.json", xpaths_str)
-                    if xpaths_str:
-                        df = pd.read_json(StringIO(xpaths_str))
-                        reports["xpath"] = df
-                        # df.to_csv(test_data_reports_output_path / "xpath_coverage_report.csv")
-
+                    for xpath_validation_result in test_data.xpath_validation_result:
+                        reports["xpath"].append(xpath_validation_result)
                 if test_data.sparql_validation_result:
-                    sparql_validation_result = test_data.sparql_validation_result.model_dump(
-                        exclude={'id'}
-                    )
-                    sparql_str = json.dumps(sparql_validation_result, indent=4)
-                    print(sparql_str)
-                    # self.write_to_file(test_data_reports_output_path / "sparql_validation_report.json", sparql_str)
-                    if test_data.sparql_validation_result.ask_results:
-                        export_dict_list = []
-                        for sparql_validation_result in test_data.sparql_validation_result.ask_results:
-                            export_dict = sparql_validation_result.query.model_dump()
-                            export_dict["query_result"] = sparql_validation_result.query_result
-                            export_dict_list.append(export_dict)
-
-                        df = pd.DataFrame(export_dict_list)
-                        # df.to_csv(test_data_reports_output_path / "sparql_assertions_report.csv")
-                        reports["sparql"] = df
+                    reports["sparql"].append(test_data.sparql_validation_result)
                 if test_data.shacl_validation_result:
-                    shacl_str = json.dumps(test_data.shacl_validation_result.model_dump(
-                        exclude={'id'}
-                    ), indent=4)
-                    # self.write_to_file(test_data_reports_output_path / "shacl_validation_report.json", shacl_str)
-                    df = pd.read_json(StringIO(shacl_str))
-                    # df.to_csv(test_data_reports_output_path / "shacl_validation_report.csv")
-                    reports["shacl"] = df
+                    reports["shacl"].append(test_data.shacl_validation_result)
         return reports
 
     async def add_output(self):
