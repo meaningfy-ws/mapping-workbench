@@ -37,6 +37,12 @@ export class MappingPackageStatesApi extends SectionApi {
         return Promise.resolve(data);
     }
 
+    async getValidationReports(params) {
+        const endpoint = this.paths['validation_reports']
+        const data = await appApi.get(endpoint, params);
+        return Promise.resolve(data);
+    }
+
     exportPackage(params) {
         try {
             const endpoint = this.paths['export_specific'];

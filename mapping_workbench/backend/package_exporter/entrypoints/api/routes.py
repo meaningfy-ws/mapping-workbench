@@ -67,11 +67,7 @@ async def route_get_validation_reports(
         state_id: PydanticObjectId
 ):
     mapping_package: MappingPackage = await get_mapping_package(package_id)
-    # result: str = "text"
-    # print(result)
-    result: str = await get_validation_reports(mapping_package, state_id)
-    return {
-        "result": result
-    }
+
+    return await get_validation_reports(mapping_package, state_id)
 
 

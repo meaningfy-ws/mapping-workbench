@@ -1,8 +1,10 @@
-import toast from "react-hot-toast";
 import { saveAs } from 'file-saver';
+import { sessionApi } from "../api/session";
+import toast from "react-hot-toast";
 
-const exportPackage = (api, project_id, package_id, setLoading, item ) => {
-        setLoading(true)
+const exportPackage = (api, package_id, setLoading, item ) => {
+        setLoading(true);
+        const project_id = sessionApi.getSessionProject();
         const data = {
             project_id,
             package_id,

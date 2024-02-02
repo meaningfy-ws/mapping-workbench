@@ -1,4 +1,3 @@
-import {useState} from 'react';
 import PropTypes from 'prop-types';
 
 import Table from '@mui/material/Table';
@@ -16,10 +15,9 @@ import Button from "@mui/material/Button";
 import {Scrollbar} from 'src/components/scrollbar';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import {paths} from "../../../../paths";
-import {useRouter} from "../../../../hooks/use-router";
-import {sessionApi} from "../../../../api/session";
-import exportPackage from "../../../../utils/export-mapping-package";
+import {paths} from "../../../paths";
+import {useRouter} from "../../../hooks/use-router";
+import exportPackage from "../../../utils/export-mapping-package";
 
 export const ListTable = (props) => {
     const {
@@ -29,22 +27,16 @@ export const ListTable = (props) => {
         },
         onRowsPerPageChange,
         page = 0,
-        rowsPerPage = 0,
+        rowsPerPage = 25,
         sectionApi
     } = props;
-
-    const [isExporting, setIsExporting] = useState(false);
-
-    const handleExport = (item) => {
-        return exportPackage(sectionApi, id, setIsExporting, item)
-    }
 
     const router = useRouter();
     if (!router.isReady) return;
 
     const {id} = router.query;
 
-
+    const validationItems = items?.results_dict?.results?.bindings;
 
     return (
         <div>
@@ -66,12 +58,12 @@ export const ListTable = (props) => {
                                          title="Sort"
                                 >
                                     <TableSortLabel direction="asc">
-                                        Title
+                                        focusNode
                                     </TableSortLabel>
                                 </Tooltip>
                             </TableCell>
                             <TableCell>
-                                Description
+                                resultPath
                             </TableCell>
                             <TableCell>
                                 <Tooltip
@@ -79,7 +71,7 @@ export const ListTable = (props) => {
                                     title="Sort"
                                 >
                                     <TableSortLabel direction="asc">
-                                        Version
+                                        resultSeverity
                                     </TableSortLabel>
                                 </Tooltip>
                             </TableCell>
@@ -92,54 +84,57 @@ export const ListTable = (props) => {
                                         active
                                         direction="desc"
                                     >
-                                        Created
+                                        SourceConstraintComponent
                                     </TableSortLabel>
                                 </Tooltip>
                             </TableCell>
                             <TableCell align="center">
-                                Actions
+                                Message
                             </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {items?.map(item => {
-                            const item_id = item._id;
+                        {validationItems?.map((item, key)=> {
+                            // const item_id = item._id;
                             return (
-                                <TableRow key={item_id}>
+                                <TableRow key={key}>
                                     <TableCell width="25%">
                                         <Typography variant="subtitle3">
-                                            {item.title}
+                                            {item.focusNode.value}
                                         </Typography>
                                     </TableCell>
                                     <TableCell>
-                                        {item.description}
+                                        {item.resultPath.value}
                                     </TableCell>
                                     <TableCell>
-                                        {item.mapping_version}
+                                        {item.resultSeverity.value}
                                     </TableCell>
                                     <TableCell align="left">
-                                        {(item.created_at).replace("T", " ").split(".")[0]}
+                                        {item.sourceConstraintComponent.value}
                                     </TableCell>
-                                    <TableCell align="right">
-                                        <Stack
-                                            alignItems="center"
-                                            direction="row"
-                                        >
-                                            <ListItemActions
-                                                itemctx={new ForListItemAction(item_id, sectionApi)}
-                                                pathnames={{
-                                                    view: paths.app[sectionApi.section].states.view.replace("[id]",id).replace("[sid]",item_id),
-                                                }}
-                                                actions={{
-                                                    delete: sectionApi.deleteState
-                                                }}/>
-                                            <Button
-                                                onClick={()=>handleExport(item)}
-                                                disabled={isExporting}>
-                                                {isExporting ? "Exporting..." : "Export"}
-                                            </Button>
-                                        </Stack>
+                                    <TableCell align="left">
+                                        {item.message.value}
                                     </TableCell>
+                                    {/*<TableCell align="right">*/}
+                                    {/*    <Stack*/}
+                                    {/*        alignItems="center"*/}
+                                    {/*        direction="row"*/}
+                                    {/*    >*/}
+                                    {/*        <ListItemActions*/}
+                                    {/*            itemctx={new ForListItemAction(item_id, sectionApi)}*/}
+                                    {/*            pathnames={{*/}
+                                    {/*                view: paths.app[sectionApi.section].states.view.replace("[id]",id).replace("[sid]",item_id),*/}
+                                    {/*            }}*/}
+                                    {/*            actions={{*/}
+                                    {/*                delete: sectionApi.deleteState*/}
+                                    {/*            }}/>*/}
+                                    {/*        <Button*/}
+                                    {/*            onClick={()=>handleExport(item)}*/}
+                                    {/*            disabled={isExporting}>*/}
+                                    {/*            {isExporting ? "Exporting..." : "Export"}*/}
+                                    {/*        </Button>*/}
+                                    {/*    </Stack>*/}
+                                    {/*</TableCell>*/}
                                 </TableRow>
 
                             );

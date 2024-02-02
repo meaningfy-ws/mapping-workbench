@@ -215,6 +215,7 @@ export const apiPaths = {
         export_specific: '/package_exporter/export_specific_package_state',
         states: '/mapping_packages/:id/states',
         state: '/mapping_packages/state/:id',
+        validation_reports: '/package_exporter/get_validation_reports'
     },
 
     conceptual_mapping_rules: {
