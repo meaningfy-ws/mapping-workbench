@@ -33,6 +33,7 @@ import {useMounted} from "../../../../../../hooks/use-mounted";
 import {FileCollectionListSearch} from "../../../../../../sections/app/file-manager/file-collection-list-search";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import ShaclValidationReport from "../../../../../../sections/app/shacl_validation_report/shacl_validation_report_view";
 
 
 const tabs = [
@@ -40,89 +41,6 @@ const tabs = [
     {label: 'Shacl Reports', value: 'shacl'},
 
 ];
-
-const useItemsSearch = () => {
-    const [state, setState] = useState({
-        filters: {
-            name: undefined,
-            category: [],
-            status: [],
-            inStock: undefined
-        },
-        page: sectionApi.DEFAULT_PAGE,
-        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
-    });
-
-    const handleFiltersChange = useCallback((filters) => {
-        setState((prevState) => ({
-            ...prevState,
-            filters,
-            page: 0
-        }));
-    }, []);
-
-    const handlePageChange = useCallback((event, page) => {
-        setState((prevState) => ({
-            ...prevState,
-            page
-        }));
-    }, []);
-
-    const handleRowsPerPageChange = useCallback((event) => {
-        setState((prevState) => ({
-            ...prevState,
-            rowsPerPage: parseInt(event.target.value, 10)
-        }));
-    }, []);
-
-    return {
-        handleFiltersChange,
-        handlePageChange,
-        handleRowsPerPageChange,
-        state
-    };
-};
-
-
-const useItemsStore = (project_id, id, sid, searchState) => {
-    const isMounted = useMounted();
-    const [state, setState] = useState({
-        items: [],
-        itemsCount: 0
-    });
-
-    const handleItemsGet = useCallback(async () => {
-        try {
-            const response = await sectionApi.getValidationReports({
-                project_id,
-                id,
-                sid,
-                searchState
-            });
-            console.log(sectionApi.getValidationReports)
-            if (isMounted()) {
-                setState({
-                    items: response.shacl,
-                    itemsCount: response.shacl.count
-                });
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    }, [searchState, isMounted]);
-
-
-    useEffect(() => {
-            handleItemsGet().then(response => {
-            });
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState]);
-
-    return {
-        ...state
-    };
-};
 
 const Page = () => {
     const router = useRouter();
@@ -355,29 +273,20 @@ const Page = () => {
                 )}
                 {currentTab === 'shacl' && (
                     <>
-                        <Select
-                            onChange={(e) => setSelectShaclValidationFile(e.target.value)}
-                            // defaultValue={validationReports?.shacl[0].identifier}
-                            value={selectShaclValidationFile}>
 
-                            {validationReports?.shacl.map(e=>
-                                <MenuItem key={e.identifier}
-                                          value={e.identifier}>
-                                    {e.identifier}
-                                </MenuItem>)}
-                        </Select>
                         <Card>
                             <CardContent>
                                 {/*<FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>*/}
-                                <ListTable
-                                    // onPageChange={itemsSearch.handlePageChange}
-                                    // onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                                    // page={itemsSearch.state.page}
-                                    items={shaclValidationFile}
-                                    count={shaclValidationFile.count}
-                                    // rowsPerPage={itemsSearch.state.rowsPerPage}
-                                    sectionApi={sectionApi}
-                                />
+                                {/*<ListTable*/}
+                                {/*    // onPageChange={itemsSearch.handlePageChange}*/}
+                                {/*    // onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}*/}
+                                {/*    // page={itemsSearch.state.page}*/}
+                                {/*    items={shaclValidationFile}*/}
+                                {/*    count={shaclValidationFile.count}*/}
+                                {/*    // rowsPerPage={itemsSearch.state.rowsPerPage}*/}
+                                {/*    sectionApi={sectionApi}*/}
+                                {/*/>*/}
+                                <ShaclValidationReport items={validationReports?.shacl}></ShaclValidationReport>
                             </CardContent>
                         </Card>
                     </>

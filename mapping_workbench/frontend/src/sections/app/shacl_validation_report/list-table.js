@@ -17,17 +17,15 @@ import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {paths} from "../../../paths";
 import {useRouter} from "../../../hooks/use-router";
-import exportPackage from "../../../utils/export-mapping-package";
 
 export const ListTable = (props) => {
     const {
         count = 0,
         items = [],
-        onPageChange = () => {
-        },
+        onPageChange,
         onRowsPerPageChange,
         page = 0,
-        rowsPerPage = 25,
+        rowsPerPage = 0,
         sectionApi
     } = props;
 
@@ -35,8 +33,6 @@ export const ListTable = (props) => {
     if (!router.isReady) return;
 
     const {id} = router.query;
-
-    const validationItems = items?.results_dict?.results?.bindings;
 
     return (
         <div>
@@ -94,7 +90,7 @@ export const ListTable = (props) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {validationItems?.map((item, key)=> {
+                        {items?.map((item, key)=> {
                             // const item_id = item._id;
                             return (
                                 <TableRow key={key}>
