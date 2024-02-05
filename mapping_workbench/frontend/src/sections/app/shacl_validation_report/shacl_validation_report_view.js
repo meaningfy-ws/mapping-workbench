@@ -7,7 +7,7 @@ import {useCallback, useEffect, useState} from "react";
 import {useMounted} from "../../../hooks/use-mounted";
 
 
-const useItemsSearch = () => {
+const useItemsSearch = (items) => {
     const [state, setState] = useState({
         filters: {
             name: undefined,
@@ -15,10 +15,16 @@ const useItemsSearch = () => {
             status: [],
             inStock: undefined
         },
+        currentFile: "",
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
 
+    const filteredItems = items.filter((item, i) => {
+        const pageSize = state.page * state.rowsPerPage
+        if(pageSize < i && pageSize + state.rowsPerPage > i)
+            return item
+    })
     const handleFiltersChange = (filters) => {
         setState((prevState) => ({
             ...prevState,
@@ -44,6 +50,7 @@ const useItemsSearch = () => {
         handleFiltersChange,
         handlePageChange,
         handleRowsPerPageChange,
+        filteredItems,
         state
     };
 };
@@ -51,69 +58,44 @@ const useItemsSearch = () => {
 
 
 
-const useItemsStore = (project_id, id, sid, searchState) => {
-    const isMounted = useMounted();
-    const [state, setState] = useState({
-        items: [],
-        itemsCount: 0
-    });
-
-    const handleItemsGet = useCallback(async () => {
-        try {
-            const response = await sectionApi.getValidationReports({
-                project_id,
-                id,
-                sid,
-                searchState
-            });
-            console.log(sectionApi.getValidationReports)
-            if (isMounted()) {
-                setState({
-                    items: response.shacl,
-                    itemsCount: response.shacl.count
-                });
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    }, [searchState, isMounted]);
-
-
-    useEffect(() => {
-            handleItemsGet()
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState]);
-
-    return {
-        ...state
-    };
-};
 
 const ShaclValidationReport = ({ project_id, id, sid }) => {
-    const [selectShaclValidationFile, setSelectShaclValidationFile] = useState("")
-    const [validationReport, setValidationReport] = useState()
+    const [selectedValidationFile, setSelectedValidationFile] = useState("")
+    const [validationReportFiles, setValidationReportFiles] = useState([])
+    const [validationReport, setValidationReport] = useState([])
 
     useEffect(()=>{
-        handleValidationResultsGet(project_id,id,sid,selectShaclValidationFile)
-    },[selectShaclValidationFile])
+        handleValidationReportsFilesGet(project_id, id, sid)
+    },[])
 
-     const handleValidationResultsGet = async (project_id, package_id, state_id, identifier = undefined) => {
+    useEffect(()=>{
+        selectedValidationFile && handleValidationReportsGet(project_id, id, sid, selectedValidationFile)
+    },[selectedValidationFile])
+
+
+
+     const handleValidationReportsGet = async (project_id, package_id, state_id, identifier = undefined) => {
         const data = { project_id, package_id, state_id, identifier }
         try {
             const result = await sectionApi.getShaclReports(data)
-            setValidationReport({...result, items: mapShaclResults(result)});
-            if(!selectShaclValidationFile)
-            {
-                setSelectShaclValidationFile(result.files[0])
-
-            }
+            setValidationReport(mapShaclResults(result));
         } catch (err) {
             console.error(err);
         }
     }
 
-    const mapShaclResults = (result) => result?.items.map(e=>
+    const handleValidationReportsFilesGet = async (project_id, package_id, state_id) => {
+        const data = { project_id, package_id, state_id }
+        try {
+            const result = await sectionApi.getShaclReportFiles(data)
+            setValidationReportFiles(result);
+            setSelectedValidationFile(result[0])
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    const mapShaclResults = (result) => result.map(e=>
         ({
             focusNode: e.focusNode.value,
             message: e.message.value,
@@ -124,22 +106,26 @@ const ShaclValidationReport = ({ project_id, id, sid }) => {
         })
     )
 
-    const itemsSearch = useItemsSearch();
+    const itemsSearch = useItemsSearch(validationReport);
+
 
     return(
         <>
             <Select
-                onChange={(e) => setSelectShaclValidationFile(e.target.value)}
-                value={selectShaclValidationFile}>
-                {validationReport?.files?.map(file =>
+                onChange={(e) => {
+                    itemsSearch.handleFiltersChange()
+                    setSelectedValidationFile(e.target.value)
+                }}
+                value={selectedValidationFile}>
+                {validationReportFiles?.map(file =>
                     <MenuItem key={file}
                               value={file}>
                         {file}
                     </MenuItem>)}
             </Select>
             <ListTable
-                items={validationReport?.items}
-                count={validationReport?.items?.length}
+                items={itemsSearch.filteredItems}
+                count={validationReport?.length}
                 onPageChange={itemsSearch.handlePageChange}
                 onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                 page={itemsSearch.state.page}

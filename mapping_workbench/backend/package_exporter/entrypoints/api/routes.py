@@ -8,7 +8,8 @@ from starlette.responses import StreamingResponse
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.mapping_package.services.api import get_mapping_package
 from mapping_workbench.backend.package_exporter.services.export_mapping_suite_v3 import \
-    export_latest_package_state, export_specific_package_state, get_validation_reports, get_shacl_reports
+    export_latest_package_state, export_specific_package_state, get_validation_reports, get_shacl_reports, \
+    get_shacl_report_files
 
 ROUTE_PREFIX = "/package_exporter"
 TAG = "package_exporter"
@@ -87,4 +88,18 @@ async def route_get_shacl_reports(
 ):
     mapping_package: MappingPackage = await get_mapping_package(package_id)
     return await get_shacl_reports(mapping_package, state_id, identifier)
+
+
+@router.get(
+    "/get_shacl_report_files",
+    description=f"Shacl reports files {NAME_FOR_ONE}",
+    name=f"{NAME_FOR_ONE}:get_shacl_report_files",
+    status_code=status.HTTP_200_OK
+)
+async def route_get_shacl_report_files(
+        package_id: PydanticObjectId,
+        state_id: PydanticObjectId,
+):
+    mapping_package: MappingPackage = await get_mapping_package(package_id)
+    return await get_shacl_report_files(mapping_package, state_id)
 

@@ -149,6 +149,15 @@ class PackageStateExporter:
                     result.append(test_data.shacl_validation_result)
         return result
 
+    async def get_shacl_report_files(self):
+        files = []
+        for test_data_suite in self.package_state.test_data_suites:
+            for test_data in test_data_suite.test_data_states:
+                if test_data.shacl_validation_result:
+                    files.append(test_data.shacl_validation_result.identifier)
+        return files
+
+
     async def add_output(self):
         for test_data_suite in self.package_state.test_data_suites:
             test_data_suite_output_path = self.package_output_path / test_data_suite.title

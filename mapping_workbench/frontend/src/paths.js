@@ -216,7 +216,8 @@ export const apiPaths = {
         states: '/mapping_packages/:id/states',
         state: '/mapping_packages/state/:id',
         validation_reports: '/package_exporter/get_validation_reports',
-        shacl_reports: '/package_exporter/get_shacl_reports'
+        shacl_reports: '/package_exporter/get_shacl_reports',
+        shacl_report_files: '/package_exporter/get_shacl_report_files'
     },
 
     conceptual_mapping_rules: {

@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -28,11 +28,6 @@ import {Upload04 as ExportIcon} from "@untitled-ui/icons-react/build/esm";
 
 import exportPackage from "../../../../../../utils/export-mapping-package";
 import {sessionApi} from "../../../../../../api/session";
-import {ListTable} from "../../../../../../sections/app/shacl_validation_report/list-table";
-import {useMounted} from "../../../../../../hooks/use-mounted";
-import {FileCollectionListSearch} from "../../../../../../sections/app/file-manager/file-collection-list-search";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
 import ShaclValidationReport from "../../../../../../sections/app/shacl_validation_report/shacl_validation_report_view";
 
 
@@ -55,9 +50,6 @@ const Page = () => {
     const [item, setItem] = useState()
     const [isExporting, setIsExporting] = useState()
 
-    // const itemsSearch = useItemsSearch();
-    // const itemsStore = useItemsStore(sessionApi.getSessionProject(), id, sid, itemsSearch.state);
-
 
     useEffect(() => {
         handleItemsGet(sid);
@@ -71,14 +63,9 @@ const Page = () => {
         }
     }
 
-
-
-
     usePageView();
 
-
     const handleTabsChange = (event, value) => {
-        console.log(value)
         setCurrentTab(value)
     }
     const handleExport = (item) => {
@@ -258,8 +245,6 @@ const Page = () => {
                     </Grid>
                 )}
                 {currentTab === 'shacl' && (
-                    <>
-
                         <Card>
                             <CardContent>
                                 {/*<FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>*/}
@@ -268,7 +253,6 @@ const Page = () => {
                                                        sid={sid}/>
                             </CardContent>
                         </Card>
-                    </>
                 )}
             </Stack>
         </>
