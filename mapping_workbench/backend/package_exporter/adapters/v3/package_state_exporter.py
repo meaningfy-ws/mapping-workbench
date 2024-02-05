@@ -141,6 +141,23 @@ class PackageStateExporter:
                     reports["shacl"].append(test_data.shacl_validation_result)
         return reports
 
+    async def get_xpath_reports(self):
+        result = []
+        for test_data_suite in self.package_state.test_data_suites:
+            for test_data in test_data_suite.test_data_states:
+                if test_data.sparql_validation_result:
+                    for xpath_validation_result in test_data.xpath_validation_result:
+                        result.append(xpath_validation_result)
+        return result
+
+    async def get_sparql_reports(self):
+        result = []
+        for test_data_suite in self.package_state.test_data_suites:
+            for test_data in test_data_suite.test_data_states:
+                if test_data.sparql_validation_result:
+                    result.append(test_data.sparql_validation_result)
+        return result
+
     async def get_shacl_reports(self):
         result = []
         for test_data_suite in self.package_state.test_data_suites:

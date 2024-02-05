@@ -9,7 +9,7 @@ from mapping_workbench.backend.mapping_package.models.entity import MappingPacka
 from mapping_workbench.backend.mapping_package.services.api import get_mapping_package
 from mapping_workbench.backend.package_exporter.services.export_mapping_suite_v3 import \
     export_latest_package_state, export_specific_package_state, get_validation_reports, get_shacl_reports, \
-    get_shacl_report_files
+    get_shacl_report_files, get_spqrql_reports, get_xpath_reports
 
 ROUTE_PREFIX = "/package_exporter"
 TAG = "package_exporter"
@@ -70,6 +70,34 @@ async def route_get_validation_reports(
     mapping_package: MappingPackage = await get_mapping_package(package_id)
 
     return await get_validation_reports(mapping_package, state_id)
+
+
+@router.get(
+    "/get_xpath_reports",
+    description=f"Xpath reports {NAME_FOR_ONE}",
+    name=f"{NAME_FOR_ONE}:get_xpath_reports",
+    status_code=status.HTTP_200_OK
+)
+async def route_get_sparql_reports(
+        package_id: PydanticObjectId,
+        state_id: PydanticObjectId
+):
+    mapping_package: MappingPackage = await get_mapping_package(package_id)
+    return await get_xpath_reports(mapping_package, state_id)
+
+
+@router.get(
+    "/get_sparql_reports",
+    description=f"Sparql reports {NAME_FOR_ONE}",
+    name=f"{NAME_FOR_ONE}:get_sparql_reports",
+    status_code=status.HTTP_200_OK
+)
+async def route_get_sparql_reports(
+        package_id: PydanticObjectId,
+        state_id: PydanticObjectId
+):
+    mapping_package: MappingPackage = await get_mapping_package(package_id)
+    return await get_spqrql_reports(mapping_package, state_id)
 
 
 @router.get(

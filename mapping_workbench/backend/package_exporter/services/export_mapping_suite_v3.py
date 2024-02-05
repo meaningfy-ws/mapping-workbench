@@ -118,6 +118,58 @@ async def get_shacl_report_files(mapping_package: MappingPackage,
     return await exporter.get_shacl_report_files()
 
 
+async def get_xpath_reports(mapping_package: MappingPackage,
+                             mapping_package_state_id: PydanticObjectId,
+                             ) -> str:
+
+    """
+
+    :param mapping_package:
+    :param mapping_package_state_id:
+    :return:
+    """
+
+    mapping_package_state: MappingPackageState = await get_specific_mapping_package_state(mapping_package_state_id)
+
+    if not mapping_package_state:
+        raise ResourceNotFoundException()
+
+    project = await get_project(mapping_package.project.to_ref().id)
+
+    exporter: PackageStateExporter = PackageStateExporter(
+        package_state=mapping_package_state,
+        project=project
+    )
+
+    return await exporter.get_xpath_reports()
+
+
+async def get_spqrql_reports(mapping_package: MappingPackage,
+                             mapping_package_state_id: PydanticObjectId,
+                             ) -> str:
+
+    """
+
+    :param mapping_package:
+    :param mapping_package_state_id:
+    :return:
+    """
+
+    mapping_package_state: MappingPackageState = await get_specific_mapping_package_state(mapping_package_state_id)
+
+    if not mapping_package_state:
+        raise ResourceNotFoundException()
+
+    project = await get_project(mapping_package.project.to_ref().id)
+
+    exporter: PackageStateExporter = PackageStateExporter(
+        package_state=mapping_package_state,
+        project=project
+    )
+
+    return await exporter.get_sparql_reports()
+
+
 async def get_shacl_reports(mapping_package: MappingPackage,
                             mapping_package_state_id: PydanticObjectId,
                             shacl_identifier: str = None,
