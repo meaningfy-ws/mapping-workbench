@@ -96,20 +96,20 @@ export const ListTable = (props) => {
                                 <TableRow key={key}>
                                     <TableCell width="25%">
                                         <Typography variant="subtitle3">
-                                            {item.focusNode.value}
+                                            {item.focusNode}
                                         </Typography>
                                     </TableCell>
                                     <TableCell>
-                                        {item.resultPath.value}
+                                        {item.resultPath}
                                     </TableCell>
                                     <TableCell>
-                                        {item.resultSeverity.value}
+                                        {item.resultSeverity}
                                     </TableCell>
                                     <TableCell align="left">
-                                        {item.sourceConstraintComponent.value}
+                                        {item.sourceConstraintComponent}
                                     </TableCell>
                                     <TableCell align="left">
-                                        {item.message.value}
+                                        {item.message}
                                     </TableCell>
                                     {/*<TableCell align="right">*/}
                                     {/*    <Stack*/}

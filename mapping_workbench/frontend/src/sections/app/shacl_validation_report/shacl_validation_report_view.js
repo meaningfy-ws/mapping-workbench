@@ -90,33 +90,56 @@ const useItemsStore = (project_id, id, sid, searchState) => {
     };
 };
 
-const ShaclValidationReport = ({ items }) => {
-    const [selectShaclValidationFile, setSelectShaclValidationFile] = useState(items[0].identifier)
-    const shaclValidationFile = items.find(e => e.identifier === selectShaclValidationFile).results_dict.results.bindings
+const ShaclValidationReport = ({ project_id, id, sid }) => {
+    const [selectShaclValidationFile, setSelectShaclValidationFile] = useState("")
+    const [validationReport, setValidationReport] = useState()
 
-        const itemsSearch = useItemsSearch();
-        console.log(itemsSearch)
-        console.log(shaclValidationFile)
-    // const itemsStore = useItemsStore(sessionApi.getSessionProject(), id, sid, itemsSearch.state);
+    useEffect(()=>{
+        handleValidationResultsGet(project_id,id,sid,selectShaclValidationFile)
+    },[selectShaclValidationFile])
 
+     const handleValidationResultsGet = async (project_id, package_id, state_id, identifier = undefined) => {
+        const data = { project_id, package_id, state_id, identifier }
+        try {
+            const result = await sectionApi.getShaclReports(data)
+            setValidationReport({...result, items: mapShaclResults(result)});
+            if(!selectShaclValidationFile)
+            {
+                setSelectShaclValidationFile(result.files[0])
 
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    const mapShaclResults = (result) => result?.items.map(e=>
+        ({
+            focusNode: e.focusNode.value,
+            message: e.message.value,
+            resultPath: e.resultPath.value,
+            resultSeverity: e.resultSeverity.value,
+            sourceConstraintComponent: e.sourceConstraintComponent.value,
+            sourceShape: e.sourceShape.value
+        })
+    )
+
+    const itemsSearch = useItemsSearch();
 
     return(
         <>
             <Select
                 onChange={(e) => setSelectShaclValidationFile(e.target.value)}
-                // defaultValue={validationReports?.shacl[0].identifier}
                 value={selectShaclValidationFile}>
-
-                {items.map(e=>
-                    <MenuItem key={e.identifier}
-                              value={e.identifier}>
-                        {e.identifier}
+                {validationReport?.files?.map(file =>
+                    <MenuItem key={file}
+                              value={file}>
+                        {file}
                     </MenuItem>)}
             </Select>
             <ListTable
-                items={shaclValidationFile}
-                count={shaclValidationFile.length}
+                items={validationReport?.items}
+                count={validationReport?.items?.length}
                 onPageChange={itemsSearch.handlePageChange}
                 onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                 page={itemsSearch.state.page}

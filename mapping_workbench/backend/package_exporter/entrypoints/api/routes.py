@@ -80,12 +80,11 @@ async def route_get_validation_reports(
 async def route_get_shacl_reports(
         package_id: PydanticObjectId,
         state_id: PydanticObjectId,
-        identifier: PydanticObjectId = None,
+        identifier: str = None,
         page: int = None,
         limit: int = None,
         q: str = None
 ):
     mapping_package: MappingPackage = await get_mapping_package(package_id)
-
     return await get_shacl_reports(mapping_package, state_id, identifier)
 

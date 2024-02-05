@@ -54,8 +54,6 @@ const Page = () => {
     const [currentTab, setCurrentTab] = useState('details');
     const [item, setItem] = useState()
     const [isExporting, setIsExporting] = useState()
-    const [validationReports, setValidationReports] = useState()
-    const [selectShaclValidationFile,setSelectShaclValidationFile] = useState()
 
     // const itemsSearch = useItemsSearch();
     // const itemsStore = useItemsStore(sessionApi.getSessionProject(), id, sid, itemsSearch.state);
@@ -63,7 +61,6 @@ const Page = () => {
 
     useEffect(() => {
         handleItemsGet(sid);
-        handleValidationResultsGet(sessionApi.getSessionProject(), id, sid)
     }, []);
     const handleItemsGet = async (sid) => {
         try {
@@ -75,16 +72,7 @@ const Page = () => {
     }
 
 
-    const handleValidationResultsGet = async (project_id,package_id,state_id) => {
-        const data = { project_id, package_id, state_id }
-        try {
-            const result = await sectionApi.getValidationReports(data)
-            setValidationReports(result);
-            setSelectShaclValidationFile(result?.shacl[0].identifier)
-        } catch (err) {
-            console.error(err);
-        }
-    }
+
 
     usePageView();
 
@@ -96,8 +84,6 @@ const Page = () => {
     const handleExport = (item) => {
         return exportPackage(sectionApi, id, setIsExporting, item)
     }
-
-    const shaclValidationFile = validationReports?.shacl.find(e => e.identifier === selectShaclValidationFile) ?? []
 
     if (!item) {
         return;
@@ -277,16 +263,9 @@ const Page = () => {
                         <Card>
                             <CardContent>
                                 {/*<FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>*/}
-                                {/*<ListTable*/}
-                                {/*    // onPageChange={itemsSearch.handlePageChange}*/}
-                                {/*    // onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}*/}
-                                {/*    // page={itemsSearch.state.page}*/}
-                                {/*    items={shaclValidationFile}*/}
-                                {/*    count={shaclValidationFile.count}*/}
-                                {/*    // rowsPerPage={itemsSearch.state.rowsPerPage}*/}
-                                {/*    sectionApi={sectionApi}*/}
-                                {/*/>*/}
-                                <ShaclValidationReport items={validationReports?.shacl}></ShaclValidationReport>
+                                <ShaclValidationReport project_id={sessionApi.getSessionProject()}
+                                                       id={id}
+                                                       sid={sid}/>
                             </CardContent>
                         </Card>
                     </>

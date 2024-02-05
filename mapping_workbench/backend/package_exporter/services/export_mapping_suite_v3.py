@@ -94,7 +94,7 @@ async def get_validation_reports(mapping_package: MappingPackage,
 
 async def get_shacl_reports(mapping_package: MappingPackage,
                             mapping_package_state_id: PydanticObjectId,
-                            shacl_identifier: PydanticObjectId,
+                            shacl_identifier: str = None,
                             page: int = None,
                             limit: int = None,
                             q: str = None
@@ -131,6 +131,8 @@ async def get_shacl_reports(mapping_package: MappingPackage,
     prepare_search_param(query_filters)
     skip, limit = pagination_params(page, limit)
 
+    print("shacl_identifier", shacl_identifier)
+
     shacl_reports = await exporter.get_shacl_reports()
     files = []
     current_item = {}
@@ -143,7 +145,7 @@ async def get_shacl_reports(mapping_package: MappingPackage,
         result = current_item.results_dict["results"]["bindings"]
     else:
         result = shacl_reports[0].results_dict["results"]["bindings"]
-    return { "files": files, "result": result }
+    return { "files": files, "items": result }
 
 
 async def export_package_state(mapping_package_state: MappingPackageState, project: Project) -> bytes:
