@@ -123,7 +123,7 @@ const ShaclValidationReport = ({ project_id, id, sid }) => {
                           height={50}/>)
             }
         </> :
-        !validationReportFiles?.length || !validationReport?.length ?
+        !validationReportFiles?.length ?
             <Stack justifyContent="center"
                    direction="row">
                 <Alert severity="info">No Data !</Alert>
