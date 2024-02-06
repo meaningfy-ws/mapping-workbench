@@ -2,12 +2,13 @@ import {useEffect, useState} from "react";
 
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import Skeleton from "@mui/material/Skeleton";
+import {Skeleton} from "@mui/material";
 import Stack from "@mui/material/Stack";
 import Alert from "@mui/material/Alert";
 
-import {ListTable} from "./list-table";
 import {mappingPackageStatesApi as sectionApi} from 'src/api/mapping-packages/states';
+import {ListTable} from "./list-table";
+
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
@@ -57,7 +58,11 @@ const useItemsSearch = (items) => {
     };
 };
 
-const ShaclValidationReport = ({ project_id, id, sid }) => {
+
+
+
+
+const SparqlValidationReport = ({ project_id, id, sid }) => {
     const [selectedValidationFile, setSelectedValidationFile] = useState("")
     const [validationReportFiles, setValidationReportFiles] = useState([])
     const [validationReport, setValidationReport] = useState([])
@@ -86,24 +91,34 @@ const ShaclValidationReport = ({ project_id, id, sid }) => {
 
     const handleValidationReportsGet = async (project_id, package_id, state_id, identifier = undefined) => {
         const data = { project_id, package_id, state_id, identifier }
+            console.log('go sparql')
+
         try {
-            const result = await sectionApi.getShaclReports(data)
-            setValidationReport(mapShaclResults(result));
+            const result = await sectionApi.getSparqlReports(data)
+            setValidationReport(mapSparqlResults(result));
             setDataLoad(false)
+            return result
+
         } catch (err) {
             console.error(err);
         }
     }
 
-    const mapShaclResults = (result) => result.map(e=>
-        ({
-            focusNode: e.focusNode.value,
-            message: e.message.value,
-            resultPath: e.resultPath.value,
-            resultSeverity: e.resultSeverity.value,
-            sourceConstraintComponent: e.sourceConstraintComponent.value,
-            sourceShape: e.sourceShape.value
-        })
+    const mapSparqlResults = (result) => result.map(e=> {
+        console.log(e)
+        const pattern = /#(.*?)\n/g;
+        const comments = [];
+        let match;
+        while ((match = pattern.exec(e.query.content)) !== null) {
+            comments.push(match[1]);
+        }
+        let res = {}
+            comments.filter(e => e.length > 1).forEach(e=> {
+              const rs = e.split(": ", 2);
+              res[rs[0]] = rs[1]
+            })
+        return res;
+    }
     )
 
     const itemsSearch = useItemsSearch(validationReport);
@@ -148,4 +163,4 @@ const ShaclValidationReport = ({ project_id, id, sid }) => {
             </>
 }
 
-export default ShaclValidationReport
+export default SparqlValidationReport

@@ -29,12 +29,14 @@ import {Upload04 as ExportIcon} from "@untitled-ui/icons-react/build/esm";
 import exportPackage from "../../../../../../utils/export-mapping-package";
 import {sessionApi} from "../../../../../../api/session";
 import ShaclValidationReport from "../../../../../../sections/app/shacl_validation_report/shacl_validation_report_view";
+import SparqlValidationReport
+    from "../../../../../../sections/app/sparql_validation_report/sparql_validation_report_view";
 
 
 const tabs = [
     {label: 'Details', value: 'details'},
     {label: 'Shacl Reports', value: 'shacl'},
-
+    {label: 'Sparql Reports', value: 'sparql'},
 ];
 
 const Page = () => {
@@ -249,6 +251,16 @@ const Page = () => {
                             <CardContent>
                                 {/*<FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>*/}
                                 <ShaclValidationReport project_id={sessionApi.getSessionProject()}
+                                                       id={id}
+                                                       sid={sid}/>
+                            </CardContent>
+                        </Card>
+                )}
+                {currentTab === 'sparql' && (
+                        <Card>
+                            <CardContent>
+                                {/*<FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>*/}
+                                <SparqlValidationReport project_id={sessionApi.getSessionProject()}
                                                        id={id}
                                                        sid={sid}/>
                             </CardContent>

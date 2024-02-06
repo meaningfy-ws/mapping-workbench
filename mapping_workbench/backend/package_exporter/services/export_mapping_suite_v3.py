@@ -92,7 +92,7 @@ async def get_validation_reports(mapping_package: MappingPackage,
     return await exporter.get_validation_reports()
 
 
-async def get_shacl_report_files(mapping_package: MappingPackage,
+async def get_validation_report_files(mapping_package: MappingPackage,
                             mapping_package_state_id: PydanticObjectId
                             ) -> str:
 
@@ -115,7 +115,7 @@ async def get_shacl_report_files(mapping_package: MappingPackage,
         project=project
     )
 
-    return await exporter.get_shacl_report_files()
+    return await exporter.get_validation_report_files()
 
 
 async def get_xpath_reports(mapping_package: MappingPackage,
@@ -146,12 +146,14 @@ async def get_xpath_reports(mapping_package: MappingPackage,
 
 async def get_spqrql_reports(mapping_package: MappingPackage,
                              mapping_package_state_id: PydanticObjectId,
+                             identifier: str
                              ) -> str:
 
     """
 
     :param mapping_package:
     :param mapping_package_state_id:
+    :param identifier:
     :return:
     """
 
@@ -167,25 +169,20 @@ async def get_spqrql_reports(mapping_package: MappingPackage,
         project=project
     )
 
-    return await exporter.get_sparql_reports()
+    sparql_reports = await exporter.get_sparql_reports()
+    return sparql_reports[identifier]
 
 
 async def get_shacl_reports(mapping_package: MappingPackage,
                             mapping_package_state_id: PydanticObjectId,
-                            shacl_identifier: str = None,
-                            page: int = None,
-                            limit: int = None,
-                            q: str = None
+                            identifier: str,
                             ) -> str:
 
     """
 
     :param mapping_package:
     :param mapping_package_state_id:
-    :param shacl_identifier:
-    :param page:
-    :param limit:
-    :param q:
+    :param identifier:
     :return:
     """
 
@@ -200,30 +197,9 @@ async def get_shacl_reports(mapping_package: MappingPackage,
         package_state=mapping_package_state,
         project=project
     )
-    filters: dict = {}
-    if q is not None:
-        filters['q'] = q
-
-    query_filters: dict = dict(filters or {})
-
-    prepare_search_param(query_filters)
-    skip, limit = pagination_params(page, limit)
-
-    print("shacl_identifier", shacl_identifier)
 
     shacl_reports = await exporter.get_shacl_reports()
-    files = []
-    current_item = {}
-    for item in shacl_reports:
-        files.append(item.identifier)
-        if item.identifier == shacl_identifier:
-            current_item = item
-
-    if shacl_identifier:
-        result = current_item.results_dict["results"]["bindings"]
-    else:
-        result = shacl_reports[0].results_dict["results"]["bindings"]
-    return result
+    return shacl_reports[identifier]
 
 
 async def export_package_state(mapping_package_state: MappingPackageState, project: Project) -> bytes:

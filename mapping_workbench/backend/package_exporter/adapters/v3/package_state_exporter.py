@@ -129,6 +129,7 @@ class PackageStateExporter:
                 self.write_to_file(sparql_test_suite_path / sparql_test.filename, sparql_test.content)
 
     async def get_validation_reports(self):
+        return self.package_state.test_data_suites
         reports = {"xpath": [], "sparql": [], "shacl": []}
         for test_data_suite in self.package_state.test_data_suites:
             for test_data in test_data_suite.test_data_states:
@@ -151,27 +152,27 @@ class PackageStateExporter:
         return result
 
     async def get_sparql_reports(self):
-        result = []
+        result = {}
         for test_data_suite in self.package_state.test_data_suites:
             for test_data in test_data_suite.test_data_states:
                 if test_data.sparql_validation_result:
-                    result.append(test_data.sparql_validation_result)
+                    result[test_data.identifier] = test_data.sparql_validation_result.ask_results
         return result
 
     async def get_shacl_reports(self):
-        result = []
+        result = {}
         for test_data_suite in self.package_state.test_data_suites:
             for test_data in test_data_suite.test_data_states:
                 if test_data.shacl_validation_result:
-                    result.append(test_data.shacl_validation_result)
+                    result[test_data.identifier] = test_data.shacl_validation_result.results_dict["results"]["bindings"]
         return result
 
-    async def get_shacl_report_files(self):
+    async def get_validation_report_files(self):
         files = []
         for test_data_suite in self.package_state.test_data_suites:
             for test_data in test_data_suite.test_data_states:
-                if test_data.shacl_validation_result:
-                    files.append(test_data.shacl_validation_result.identifier)
+                if test_data.identifier:
+                    files.append(test_data.identifier)
         return files
 
 
