@@ -3,8 +3,11 @@ import Select from "@mui/material/Select";
 import {ListTable} from "./list-table";
 import {mappingPackageStatesApi as sectionApi} from 'src/api/mapping-packages/states';
 
-import {useCallback, useEffect, useState} from "react";
-import {useMounted} from "../../../hooks/use-mounted";
+import {useEffect, useState} from "react";
+import {Skeleton} from "@mui/material";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import Alert from "@mui/material/Alert";
 
 
 const useItemsSearch = (items) => {
@@ -63,6 +66,7 @@ const ShaclValidationReport = ({ project_id, id, sid }) => {
     const [selectedValidationFile, setSelectedValidationFile] = useState("")
     const [validationReportFiles, setValidationReportFiles] = useState([])
     const [validationReport, setValidationReport] = useState([])
+    const [dataLoad, setDataLoad] = useState(true)
 
     useEffect(()=>{
         handleValidationReportsFilesGet(project_id, id, sid)
@@ -72,24 +76,25 @@ const ShaclValidationReport = ({ project_id, id, sid }) => {
         selectedValidationFile && handleValidationReportsGet(project_id, id, sid, selectedValidationFile)
     },[selectedValidationFile])
 
-
-
-     const handleValidationReportsGet = async (project_id, package_id, state_id, identifier = undefined) => {
-        const data = { project_id, package_id, state_id, identifier }
-        try {
-            const result = await sectionApi.getShaclReports(data)
-            setValidationReport(mapShaclResults(result));
-        } catch (err) {
-            console.error(err);
-        }
-    }
-
     const handleValidationReportsFilesGet = async (project_id, package_id, state_id) => {
         const data = { project_id, package_id, state_id }
         try {
             const result = await sectionApi.getShaclReportFiles(data)
             setValidationReportFiles(result);
-            setSelectedValidationFile(result[0])
+            if (result.length)
+                setSelectedValidationFile(result[0])
+            else setDataLoad(false)
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    const handleValidationReportsGet = async (project_id, package_id, state_id, identifier = undefined) => {
+        const data = { project_id, package_id, state_id, identifier }
+        try {
+            const result = await sectionApi.getShaclReports(data)
+            setValidationReport(mapShaclResults(result));
+            setDataLoad(false)
         } catch (err) {
             console.error(err);
         }
@@ -108,33 +113,44 @@ const ShaclValidationReport = ({ project_id, id, sid }) => {
 
     const itemsSearch = useItemsSearch(validationReport);
 
-
-    return(
+    return dataLoad ?
         <>
-            <Select
-                onChange={(e) => {
-                    itemsSearch.handleFiltersChange()
-                    setSelectedValidationFile(e.target.value)
-                }}
-                value={selectedValidationFile}>
-                {validationReportFiles?.map(file =>
-                    <MenuItem key={file}
-                              value={file}>
-                        {file}
-                    </MenuItem>)}
-            </Select>
-            <ListTable
-                items={itemsSearch.filteredItems}
-                count={validationReport?.length}
-                onPageChange={itemsSearch.handlePageChange}
-                onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                page={itemsSearch.state.page}
-                rowsPerPage={itemsSearch.state.rowsPerPage}
-                sectionApi={sectionApi}
-            />
-        </>
-    )
-
+            <Skeleton width="20%"
+                      height={80} />
+            {
+                new Array(5).fill("").map((e, i) =>
+                <Skeleton key={i}
+                          height={50}/>)
+            }
+        </> :
+        !validationReportFiles?.length || !validationReport?.length ?
+            <Stack justifyContent="center"
+                   direction="row">
+                <Alert severity="info">No Data !</Alert>
+            </Stack> :
+            <>
+                <Select
+                    onChange={(e) => {
+                        itemsSearch.handleFiltersChange()
+                        setSelectedValidationFile(e.target.value)
+                    }}
+                    value={selectedValidationFile}>
+                    {validationReportFiles?.map(file =>
+                        <MenuItem key={file}
+                                  value={file}>
+                            {file}
+                        </MenuItem>)}
+                </Select>
+                <ListTable
+                    items={itemsSearch.filteredItems}
+                    count={validationReport?.length}
+                    onPageChange={itemsSearch.handlePageChange}
+                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                    page={itemsSearch.state.page}
+                    rowsPerPage={itemsSearch.state.rowsPerPage}
+                    sectionApi={sectionApi}
+                />
+            </>
 }
 
 export default ShaclValidationReport
