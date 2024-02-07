@@ -57,32 +57,14 @@ const useItemsSearch = (items) => {
     };
 };
 
-const ShaclValidationReport = ({ project_id, id, sid }) => {
-    const [selectedValidationFile, setSelectedValidationFile] = useState("")
-    const [validationReportFiles, setValidationReportFiles] = useState([])
+const ShaclValidationReport = ({ project_id, id, sid, files }) => {
+    const [selectedValidationFile, setSelectedValidationFile] = useState(files[0])
     const [validationReport, setValidationReport] = useState([])
     const [dataLoad, setDataLoad] = useState(true)
 
     useEffect(()=>{
-        handleValidationReportsFilesGet(project_id, id, sid)
-    },[])
-
-    useEffect(()=>{
         selectedValidationFile && handleValidationReportsGet(project_id, id, sid, selectedValidationFile)
     },[selectedValidationFile])
-
-    const handleValidationReportsFilesGet = async (project_id, package_id, state_id) => {
-        const data = { project_id, package_id, state_id }
-        try {
-            const result = await sectionApi.getValidationReportFiles(data)
-            setValidationReportFiles(result);
-            if (result.length)
-                setSelectedValidationFile(result[0])
-            else setDataLoad(false)
-        } catch (err) {
-            console.error(err);
-        }
-    }
 
     const handleValidationReportsGet = async (project_id, package_id, state_id, identifier = undefined) => {
         const data = { project_id, package_id, state_id, identifier }
@@ -92,6 +74,7 @@ const ShaclValidationReport = ({ project_id, id, sid }) => {
             setDataLoad(false)
         } catch (err) {
             console.error(err);
+            setDataLoad(false)
         }
     }
 
@@ -118,7 +101,7 @@ const ShaclValidationReport = ({ project_id, id, sid }) => {
                           height={50}/>)
             }
         </> :
-        !validationReportFiles?.length ?
+        !files?.length ?
             <Stack justifyContent="center"
                    direction="row">
                 <Alert severity="info">No Data !</Alert>
@@ -130,7 +113,7 @@ const ShaclValidationReport = ({ project_id, id, sid }) => {
                         setSelectedValidationFile(e.target.value)
                     }}
                     value={selectedValidationFile}>
-                    {validationReportFiles?.map(file =>
+                    {files?.map(file =>
                         <MenuItem key={file}
                                   value={file}>
                             {file}

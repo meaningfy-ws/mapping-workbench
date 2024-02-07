@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react';
+
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -16,7 +17,6 @@ import {mappingPackageStatesApi as sectionApi} from 'src/api/mapping-packages/st
 import {mappingPackagesApi as previousSectionApi} from 'src/api/mapping-packages';
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
-import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
 import {useRouter} from "src/hooks/use-router";
@@ -42,20 +42,19 @@ const tabs = [
 const Page = () => {
     const router = useRouter();
 
-    if (!router.isReady) return;
     const {id,sid} = router.query;
 
-    if (!id || !sid) {
-        return;
-    }
     const [currentTab, setCurrentTab] = useState('details');
-    const [item, setItem] = useState()
+    const [item, setItem] = useState({})
     const [isExporting, setIsExporting] = useState()
-
+    const [validationReportFiles, setValidationReportFiles] = useState([])
 
     useEffect(() => {
-        handleItemsGet(sid);
-    }, []);
+        if (id && sid) {
+            handleItemsGet(sid);
+            handleValidationReportsFilesGet(sessionApi.getSessionProject(), id, sid)
+        }
+    }, [id, sid]);
     const handleItemsGet = async (sid) => {
         try {
             const response = await sectionApi.getState(sid);
@@ -65,17 +64,21 @@ const Page = () => {
         }
     }
 
-    usePageView();
+    const handleValidationReportsFilesGet = async (project_id, package_id, state_id) => {
+        const data = { project_id, package_id, state_id }
+        try {
+            const result = await sectionApi.getValidationReportFiles(data)
+            setValidationReportFiles(result);
+        } catch (err) {
+            console.error(err);
+        }
+    }
 
     const handleTabsChange = (event, value) => {
         setCurrentTab(value)
     }
     const handleExport = (item) => {
         return exportPackage(sectionApi, id, setIsExporting, item)
-    }
-
-    if (!item) {
-        return;
     }
 
     return (
@@ -252,7 +255,8 @@ const Page = () => {
                                 {/*<FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>*/}
                                 <ShaclValidationReport project_id={sessionApi.getSessionProject()}
                                                        id={id}
-                                                       sid={sid}/>
+                                                       sid={sid}
+                                                       files={validationReportFiles}/>
                             </CardContent>
                         </Card>
                 )}
@@ -261,8 +265,9 @@ const Page = () => {
                             <CardContent>
                                 {/*<FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>*/}
                                 <SparqlValidationReport project_id={sessionApi.getSessionProject()}
-                                                       id={id}
-                                                       sid={sid}/>
+                                                        id={id}
+                                                        sid={sid}
+                                                        files={validationReportFiles}/>
                             </CardContent>
                         </Card>
                 )}
