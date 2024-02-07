@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+import {useState} from "react";
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -9,23 +9,18 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import Tooltip from "@mui/material/Tooltip";
-import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Dialog from '@mui/material/Dialog';
-
-import {Scrollbar} from 'src/components/scrollbar';
-import {ListItemActions} from 'src/components/app/list/list-item-actions';
-import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import {paths} from "../../../paths";
-import {useRouter} from "../../../hooks/use-router";
-import {useState} from "react";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
-import {DialogContentText} from "@mui/material";
 import DialogActions from "@mui/material/DialogActions";
+import DialogContentText from "@mui/material/DialogContentText";
+
+import {Scrollbar} from 'src/components/scrollbar';
+import PropTypes from 'prop-types';
 
 export const ListTable = (props) => {
-    const [descriptionDialog, setDescriptionDialog] = useState({open:false,title:"",text:""})
+    const [descriptionDialog, setDescriptionDialog] = useState({open:false, title:"", text:""})
 
     const {
         count = 0,
@@ -37,21 +32,21 @@ export const ListTable = (props) => {
         sectionApi
     } = props;
 
-    const router = useRouter();
-    if (!router.isReady) return;
-
-    const {id} = router.query;
-
-    const handleClickOpen = ({title,description}) => {
-        setDescriptionDialog({open:true,title,description});
+    const handleOpenDescription = ({title, description}) => {
+        setDescriptionDialog({open: true, title, description});
     };
 
+    const handleOpenDetails = ({title, query, query_result}) => {
+        const description = <><li>{`Query result: ${query_result}`}</li><li>{query}</li></>
+        setDescriptionDialog({open: true, title, description});
+    }
+
     const handleClose = () => {
-        setDescriptionDialog(e=>({...e,open:false}));
+        setDescriptionDialog(e=>({...e, open: false}));
     };
 
     return (
-        <div>
+        <>
             <TablePagination
                 component="div"
                 count={count}
@@ -61,8 +56,6 @@ export const ListTable = (props) => {
                 rowsPerPage={rowsPerPage}
                 rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
             />
-
-{/*Form Field	Description	Query content	Result	Details*/}
             <Scrollbar>
                 <Table sx={{minWidth: 1200}}>
                     <TableHead>
@@ -108,8 +101,7 @@ export const ListTable = (props) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {items?.map((item, key)=> {
-                            // const item_id = item._id;
+                        {items?.map((item, key) => {
                             return (
                                 <TableRow key={key}>
                                     <TableCell width="25%">
@@ -119,39 +111,22 @@ export const ListTable = (props) => {
                                     </TableCell>
                                     <TableCell>
                                         <Button variant="outlined"
-                                                onClick={() => handleClickOpen(item)}>
-                                            Show Description
+                                                onClick={() => handleOpenDescription(item)}>
+                                            Description
                                         </Button>
                                     </TableCell>
                                     <TableCell>
-                                        {item.resultSeverity}
+                                        {item.query}
                                     </TableCell>
                                     <TableCell align="left">
                                         {item.sourceConstraintComponent}
                                     </TableCell>
                                     <TableCell align="left">
-                                        {item.message}
+                                        <Button variant="outlined"
+                                                onClick={() => handleOpenDetails(item)}>
+                                            Details
+                                        </Button>
                                     </TableCell>
-                                    {/*<TableCell align="right">*/}
-                                    {/*    <Stack*/}
-                                    {/*        alignItems="center"*/}
-                                    {/*        direction="row"*/}
-                                    {/*    >*/}
-                                    {/*        <ListItemActions*/}
-                                    {/*            itemctx={new ForListItemAction(item_id, sectionApi)}*/}
-                                    {/*            pathnames={{*/}
-                                    {/*                view: paths.app[sectionApi.section].states.view.replace("[id]",id).replace("[sid]",item_id),*/}
-                                    {/*            }}*/}
-                                    {/*            actions={{*/}
-                                    {/*                delete: sectionApi.deleteState*/}
-                                    {/*            }}/>*/}
-                                    {/*        <Button*/}
-                                    {/*            onClick={()=>handleExport(item)}*/}
-                                    {/*            disabled={isExporting}>*/}
-                                    {/*            {isExporting ? "Exporting..." : "Export"}*/}
-                                    {/*        </Button>*/}
-                                    {/*    </Stack>*/}
-                                    {/*</TableCell>*/}
                                 </TableRow>
 
                             );
@@ -169,24 +144,24 @@ export const ListTable = (props) => {
                 rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
             />
             <Dialog
-        open={descriptionDialog.open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {descriptionDialog.title}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-              {descriptionDialog.description}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Close</Button>
-        </DialogActions>
-      </Dialog>
-        </div>
+                open={descriptionDialog.open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                  {descriptionDialog.title}
+                </DialogTitle>
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-description">
+                      {descriptionDialog.description}
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleClose}>Close</Button>
+                </DialogActions>
+            </Dialog>
+        </>
     );
 };
 

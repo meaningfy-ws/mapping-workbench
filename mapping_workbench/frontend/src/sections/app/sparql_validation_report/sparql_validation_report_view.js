@@ -97,27 +97,25 @@ const SparqlValidationReport = ({ project_id, id, sid }) => {
             const result = await sectionApi.getSparqlReports(data)
             setValidationReport(mapSparqlResults(result));
             setDataLoad(false)
-            return result
 
         } catch (err) {
+            setDataLoad(false)
             console.error(err);
         }
     }
 
     const mapSparqlResults = (result) => result.map(e=> {
-        console.log(e)
-        const pattern = /#(.*?)\n/g;
-        const comments = [];
-        let match;
-        while ((match = pattern.exec(e.query.content)) !== null) {
-            comments.push(match[1]);
-        }
-        let res = {}
-            comments.filter(e => e.length > 1).forEach(e=> {
-              const rs = e.split(": ", 2);
-              res[rs[0]] = rs[1]
-            })
-        return res;
+        const queryAsArray = e.query.content.split("\n")
+        const values = queryAsArray.slice(0,3)
+        const resultArray = {}
+        values.forEach(e => {
+                const res = e.split(": ")
+                resultArray[res[0].substring(1)] = res[1]
+            }
+        )
+        resultArray["query"] = queryAsArray.slice(4, queryAsArray.length).join("\n")
+        resultArray["query_result"] = e.query_result
+        return resultArray;
     }
     )
 
