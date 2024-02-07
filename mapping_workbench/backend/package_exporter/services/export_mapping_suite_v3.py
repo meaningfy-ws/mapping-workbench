@@ -119,13 +119,15 @@ async def get_validation_report_files(mapping_package: MappingPackage,
 
 
 async def get_xpath_reports(mapping_package: MappingPackage,
-                             mapping_package_state_id: PydanticObjectId,
+                            mapping_package_state_id: PydanticObjectId,
+                            identifier: str
                              ) -> str:
 
     """
 
     :param mapping_package:
     :param mapping_package_state_id:
+    :param identifier:
     :return:
     """
 
@@ -141,7 +143,8 @@ async def get_xpath_reports(mapping_package: MappingPackage,
         project=project
     )
 
-    return await exporter.get_xpath_reports()
+    xpath_reports = await exporter.get_xpath_reports()
+    return xpath_reports[identifier]
 
 
 async def get_spqrql_reports(mapping_package: MappingPackage,

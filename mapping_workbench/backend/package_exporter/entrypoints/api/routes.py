@@ -80,10 +80,11 @@ async def route_get_validation_reports(
 )
 async def route_get_sparql_reports(
         package_id: PydanticObjectId,
-        state_id: PydanticObjectId
+        state_id: PydanticObjectId,
+        identifier: str
 ):
     mapping_package: MappingPackage = await get_mapping_package(package_id)
-    return await get_xpath_reports(mapping_package, state_id)
+    return await get_xpath_reports(mapping_package, state_id, identifier)
 
 
 @router.get(

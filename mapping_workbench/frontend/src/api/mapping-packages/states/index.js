@@ -43,6 +43,13 @@ export class MappingPackageStatesApi extends SectionApi {
         return Promise.resolve(data);
     }
 
+    async getXpathReports(params) {
+        const endpoint = this.paths['xpath_reports']
+        const data = await appApi.get(endpoint, params);
+        return Promise.resolve(data);
+    }
+
+
     async getSparqlReports(params) {
         const endpoint = this.paths['sparql_reports']
         const data = await appApi.get(endpoint, params);

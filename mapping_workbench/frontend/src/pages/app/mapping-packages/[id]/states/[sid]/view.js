@@ -31,12 +31,14 @@ import {sessionApi} from "../../../../../../api/session";
 import ShaclValidationReport from "../../../../../../sections/app/shacl_validation_report/shacl_validation_report_view";
 import SparqlValidationReport
     from "../../../../../../sections/app/sparql_validation_report/sparql_validation_report_view";
+import XpathValidationReport from "../../../../../../sections/app/xpath_validation_report/xpath_validation_report_view";
 
 
 const tabs = [
     {label: 'Details', value: 'details'},
     {label: 'Shacl Reports', value: 'shacl'},
     {label: 'Sparql Reports', value: 'sparql'},
+    {label: 'Xpath Reports', value: 'xpath'},
 ];
 
 const Page = () => {
@@ -268,6 +270,17 @@ const Page = () => {
                                                         id={id}
                                                         sid={sid}
                                                         files={validationReportFiles}/>
+                            </CardContent>
+                        </Card>
+                )}
+                {currentTab === 'xpath' && (
+                        <Card>
+                            <CardContent>
+                                {/*<FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>*/}
+                                <XpathValidationReport project_id={sessionApi.getSessionProject()}
+                                                       id={id}
+                                                       sid={sid}
+                                                       files={validationReportFiles}/>
                             </CardContent>
                         </Card>
                 )}
