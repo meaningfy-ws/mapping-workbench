@@ -17,6 +17,8 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContentText from "@mui/material/DialogContentText";
 
 import {Scrollbar} from 'src/components/scrollbar';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
 import PropTypes from 'prop-types';
 
 export const ListTable = (props) => {
@@ -32,20 +34,9 @@ export const ListTable = (props) => {
         sectionApi
     } = props;
 
-    const handleOpenDescription = ({title, description}) => {
-        setDescriptionDialog({open: true, title, description});
-    };
-
-    const handleOpenDetails = ({title, query, query_result}) => {
-        const description = <><li>{`Query result: ${query_result}`}</li><li>{query}</li></>
-        setDescriptionDialog({open: true, title, description});
-    }
-
     const handleClose = () => {
         setDescriptionDialog(e=>({...e, open: false}));
     };
-
-    console.log(items)
 
     return (
         <>
@@ -115,7 +106,7 @@ export const ListTable = (props) => {
                                         {item.test_data_xpath}
                                     </TableCell>
                                     <TableCell>
-                                        {item.is_covered.toString()}
+                                        {item.is_covered ? <CheckIcon/> : <CloseIcon/>}
                                     </TableCell>
                                     <TableCell align="left">
                                         {item.sourceConstraintComponent}
