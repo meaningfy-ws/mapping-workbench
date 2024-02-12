@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
@@ -9,10 +9,10 @@ import Tooltip from "@mui/material/Tooltip";
 import Popover from "@mui/material/Popover";
 import FilterIcon from '@mui/icons-material/FilterList'
 import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
 
 import {mappingPackageStatesApi as sectionApi} from 'src/api/mapping-packages/states';
 import {ListTable} from "./list-table";
-
 
 
 const useItemsSearch = (items) => {
@@ -84,7 +84,6 @@ const XpathValidationReport = ({ project_id, id, sid, files }) => {
         selectedValidationFile && handleValidationReportsGet(project_id, id, sid, selectedValidationFile)
     },[selectedValidationFile])
 
-    const ref = useRef()
     const handleValidationReportsGet = async (project_id, package_id, state_id, identifier) => {
         const data = { project_id, package_id, state_id, identifier }
         try {
@@ -104,7 +103,7 @@ const XpathValidationReport = ({ project_id, id, sid, files }) => {
 
     const itemsSearch = useItemsSearch(validationReport);
 
-    const filterConstains = ["true","false","any"]
+    const filterContains = ["true","false","any"]
 
     return dataLoad ?
         <>
@@ -126,7 +125,7 @@ const XpathValidationReport = ({ project_id, id, sid, files }) => {
                        justifyContent="space-between">
                     <Select
                         onChange={(e) => {
-                            itemsSearch.handlePageChange(0)
+                            itemsSearch.handlePageChange(e,0)
                             setSelectedValidationFile(e.target.value)
                         }}
                         value={selectedValidationFile}>
@@ -138,7 +137,7 @@ const XpathValidationReport = ({ project_id, id, sid, files }) => {
                     </Select>
                     <Tooltip title="Filter"
                              arrow>
-                        <IconButton ref={ref}
+                        <IconButton color={["true","false"].includes(itemsSearch.state.filters?.is_covered) ? "primary" : "inherit"}
                                     onClick={(el)=> setFilters(e=> ({...e, show: el.target}))}>
                             <FilterIcon />
                         </IconButton>
@@ -152,12 +151,19 @@ const XpathValidationReport = ({ project_id, id, sid, files }) => {
                         vertical: 'bottom',
                         horizontal: 'left',
                       }}
+                      transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                      }}
                     >
-                        <Stack>
-                            Filters:
+                        <Stack direction="row"
+                               alignItems="center"
+                               spacing={1}
+                               style={{padding: '10px'}}>
+                            <Typography variant="subtitle2">Is covered:</Typography>
                             <Select onChange={(e) => handleFilterChange(e.target.value)}
                                 value={itemsSearch.state.filters?.is_covered ?? "any"}>
-                                {filterConstains.map(e =>
+                                {filterContains.map(e =>
                                     <MenuItem key={e}
                                               value={e}>
                                         {e}

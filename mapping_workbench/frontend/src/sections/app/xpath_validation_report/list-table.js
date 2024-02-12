@@ -66,30 +66,7 @@ export const ListTable = (props) => {
                                 Xpath
                             </TableCell>
                             <TableCell>
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel direction="asc">
-                                        Found
-                                    </TableSortLabel>
-                                </Tooltip>
-                            </TableCell>
-                            <TableCell align="left">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        active
-                                        direction="desc"
-                                    >
-                                        Notice count
-                                    </TableSortLabel>
-                                </Tooltip>
-                            </TableCell>
-                            <TableCell align="center">
-                                Notices
+                                Found
                             </TableCell>
                         </TableRow>
                     </TableHead>
@@ -105,14 +82,8 @@ export const ListTable = (props) => {
                                     <TableCell>
                                         {item.test_data_xpath}
                                     </TableCell>
-                                    <TableCell>
-                                        {item.is_covered ? <CheckIcon/> : <CloseIcon/>}
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        {item.sourceConstraintComponent}
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        {key}
+                                    <TableCell align="center">
+                                        {item.is_covered ? <CheckIcon color="success"/> : <CloseIcon color="error"/>}
                                     </TableCell>
                                 </TableRow>
 
