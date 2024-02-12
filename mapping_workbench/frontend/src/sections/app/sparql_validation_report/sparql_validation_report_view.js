@@ -8,6 +8,7 @@ import Alert from "@mui/material/Alert";
 
 import {mappingPackageStatesApi as sectionApi} from 'src/api/mapping-packages/states';
 import {ListTable} from "./list-table";
+import {QueryResultTable} from "./query-result-table";
 
 
 const useItemsSearch = (items) => {
@@ -125,6 +126,9 @@ const SparqlValidationReport = ({ project_id, id, sid, files }) => {
                             {file}
                         </MenuItem>)}
                 </Select>
+                <QueryResultTable
+                    items={validationReport}
+                />
                 <ListTable
                     items={itemsSearch.filteredItems}
                     count={validationReport?.length}
