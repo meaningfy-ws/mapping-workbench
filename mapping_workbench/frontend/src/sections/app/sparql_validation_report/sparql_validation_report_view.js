@@ -26,7 +26,7 @@ const useItemsSearch = (items) => {
 
     const filteredItems = items.filter((item, i) => {
         const pageSize = state.page * state.rowsPerPage
-        if(pageSize <= i && pageSize + state.rowsPerPage > i)
+        if((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
             return item
     })
     const handleFiltersChange = (filters) => {
