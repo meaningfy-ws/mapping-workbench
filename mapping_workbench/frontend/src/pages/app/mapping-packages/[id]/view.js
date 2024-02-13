@@ -103,7 +103,7 @@ const useMappingRulesStore = (searchState, mappingPackage) => {
     const handleItemsGet = useCallback(async () => {
         try {
             let request = searchState;
-            request['filters']['refers_to_mapping_package_ids'] = [mappingPackage];
+            request['filters']['mapping_packages'] = [mappingPackage];
             const response = await conceptualMappingRulesApi.getItems(request);
             if (isMounted()) {
                 setState({
@@ -172,7 +172,7 @@ const Page = () => {
     const handleViewStatesAction = useCallback(async () => {
         router.push({
             pathname: paths.app[sectionApi.section].states.index,
-            query: {id: item._id}
+            query: {id: id}
         });
 
     }, [router]);
