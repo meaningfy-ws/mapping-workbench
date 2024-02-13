@@ -176,11 +176,11 @@ const Page = () => {
                 <Card>
                     <FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
                     <ListTable
+                        items={itemsStore.items}
+                        count={itemsStore.itemsCount}
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                         page={itemsSearch.state.page}
-                        items={itemsStore.items}
-                        count={itemsStore.itemsCount}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
                     />

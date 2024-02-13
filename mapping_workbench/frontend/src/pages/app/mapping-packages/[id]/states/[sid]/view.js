@@ -1,4 +1,5 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
+
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -16,7 +17,6 @@ import {mappingPackageStatesApi as sectionApi} from 'src/api/mapping-packages/st
 import {mappingPackagesApi as previousSectionApi} from 'src/api/mapping-packages';
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
-import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
 import {useRouter} from "src/hooks/use-router";
@@ -26,53 +26,61 @@ import {PropertyListItem} from "../../../../../../components/property-list-item"
 import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
 import {Upload04 as ExportIcon} from "@untitled-ui/icons-react/build/esm";
 
-import {sessionApi} from "../../../../../../api/session";
 import exportPackage from "../../../../../../utils/export-mapping-package";
+import {sessionApi} from "../../../../../../api/session";
+import ShaclValidationReport from "../../../../../../sections/app/shacl_validation_report/shacl_validation_report_view";
+import SparqlValidationReport
+    from "../../../../../../sections/app/sparql_validation_report/sparql_validation_report_view";
+import XpathValidationReport from "../../../../../../sections/app/xpath_validation_report/xpath_validation_report_view";
 
 
 const tabs = [
-    {label: 'Details', value: 'details'}
+    {label: 'Details', value: 'details'},
+    {label: 'Shacl Reports', value: 'shacl'},
+    {label: 'Sparql Reports', value: 'sparql'},
+    {label: 'Xpath Reports', value: 'xpath'},
 ];
 
 const Page = () => {
     const router = useRouter();
 
-    if (!router.isReady) return;
     const {id,sid} = router.query;
 
-    if (!id || !sid) {
-        return;
-    }
     const [currentTab, setCurrentTab] = useState('details');
-    const [item, setItem] = useState()
+    const [item, setItem] = useState({})
     const [isExporting, setIsExporting] = useState()
-
+    const [validationReportFiles, setValidationReportFiles] = useState([])
 
     useEffect(() => {
-        handleItemsGet(sid);
-    }, []);
+        if (id && sid) {
+            handleItemsGet(sid);
+            handleValidationReportsFilesGet(sessionApi.getSessionProject(), id, sid)
+        }
+    }, [id, sid]);
     const handleItemsGet = async (sid) => {
         try {
             const response = await sectionApi.getState(sid);
-            return  setItem(response);
+            setItem(response);
         } catch (err) {
             console.error(err);
         }
     }
 
-    usePageView();
-
-
-    const handleTabsChange = useCallback((event, value) => {
-        setCurrentTab(value);
-    }, []);
-
-    const handleExport = (item) => {
-        return exportPackage(sectionApi, sessionApi.getSessionProject(), id, setIsExporting, item)
+    const handleValidationReportsFilesGet = async (project_id, package_id, state_id) => {
+        const data = { project_id, package_id, state_id }
+        try {
+            const result = await sectionApi.getValidationReportFiles(data)
+            setValidationReportFiles(result);
+        } catch (err) {
+            console.error(err);
+        }
     }
 
-    if (!item) {
-        return;
+    const handleTabsChange = (event, value) => {
+        setCurrentTab(value)
+    }
+    const handleExport = (item) => {
+        return exportPackage(sectionApi, id, setIsExporting, item)
     }
 
     return (
@@ -242,6 +250,38 @@ const Page = () => {
                             </Card>
                         </Grid>
                     </Grid>
+                )}
+                {currentTab === 'shacl' && (
+                        <Card>
+                            <CardContent>
+                                {/*<FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>*/}
+                                <ShaclValidationReport project_id={sessionApi.getSessionProject()}
+                                                       id={id}
+                                                       sid={sid}
+                                                       files={validationReportFiles}/>
+                            </CardContent>
+                        </Card>
+                )}
+                {currentTab === 'sparql' && (
+                        <Card>
+                            <CardContent>
+                                {/*<FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>*/}
+                                <SparqlValidationReport project_id={sessionApi.getSessionProject()}
+                                                        id={id}
+                                                        sid={sid}
+                                                        files={validationReportFiles}/>
+                            </CardContent>
+                        </Card>
+                )}
+                {currentTab === 'xpath' && (
+                        <Card>
+                            <CardContent>
+                                <XpathValidationReport project_id={sessionApi.getSessionProject()}
+                                                       id={id}
+                                                       sid={sid}
+                                                       files={validationReportFiles}/>
+                            </CardContent>
+                        </Card>
                 )}
             </Stack>
         </>

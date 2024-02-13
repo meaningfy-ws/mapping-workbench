@@ -36,7 +36,7 @@ export const ListTable = (props) => {
     const [isExporting, setIsExporting] = useState(false);
 
     const handleExport = (item) => {
-        return exportPackage(sectionApi, sessionApi.getSessionProject(), id, setIsExporting, item)
+        return exportPackage(sectionApi, id, setIsExporting, item)
     }
 
     const router = useRouter();
