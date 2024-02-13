@@ -19,6 +19,8 @@ const useItemsSearch = (items) => {
     const [state, setState] = useState({
         filters: {
         },
+        sort: {
+        },
         currentFile: "",
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
@@ -26,7 +28,16 @@ const useItemsSearch = (items) => {
 
 
     const {show, ...filters} = state.filters
-    const filteredItems = items.filter((item) => {
+
+    const sortedItems = items.sort((a,b) => {
+        const sortColumn = state.sort.column
+        if(!sortColumn) return
+        return state.sort.direction === "asc" ?
+             a[sortColumn]?.localeCompare(b[sortColumn]) :
+             b[sortColumn]?.localeCompare(a[sortColumn])
+    })
+
+    const filteredItems = sortedItems.filter((item) => {
         let returnItem = item;
 
         Object.entries(filters).forEach(e=> {
@@ -36,6 +47,8 @@ const useItemsSearch = (items) => {
         })
         return returnItem
     })
+
+
 
     const pagedItems = filteredItems.filter((item, i) => {
         const pageSize = state.page * state.rowsPerPage
@@ -57,6 +70,11 @@ const useItemsSearch = (items) => {
             page
         }));
     }
+
+    const handleSort = (column) => {
+        setState(prevState=> ({ ...prevState, sort: {column,
+                direction: prevState.sort.column === column && prevState.sort.direction === "asc" ? "desc" : "asc"}}))
+    }
     const handleRowsPerPageChange = (event) => {
         setState((prevState) => ({
             ...prevState,
@@ -68,6 +86,7 @@ const useItemsSearch = (items) => {
         handleFiltersChange,
         handlePageChange,
         handleRowsPerPageChange,
+        handleSort,
         pagedItems,
         filteredItems,
         state
@@ -179,6 +198,8 @@ const XpathValidationReport = ({ project_id, id, sid, files }) => {
                     onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                     page={itemsSearch.state.page}
                     rowsPerPage={itemsSearch.state.rowsPerPage}
+                    onSort={itemsSearch.handleSort}
+                    sort={itemsSearch.state.sort}
                     sectionApi={sectionApi}
                 />
             </>

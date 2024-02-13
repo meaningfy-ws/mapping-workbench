@@ -17,12 +17,22 @@ const useItemsSearch = (items) => {
             status: [],
             inStock: undefined
         },
+        sort: {
+        },
         currentFile: "",
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
 
-    const filteredItems = items.filter((item, i) => {
+    const sortedItems = items.sort((a,b) => {
+        const sortColumn = state.sort.column
+        if(!sortColumn) return
+        return state.sort.direction === "asc" ?
+             a[sortColumn].localeCompare(b[sortColumn]) :
+             b[sortColumn].localeCompare(a[sortColumn])
+    })
+
+    const filteredItems = sortedItems.filter((item, i) => {
         const pageSize = state.page * state.rowsPerPage
         if((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
             return item
@@ -35,6 +45,10 @@ const useItemsSearch = (items) => {
         }));
     }
 
+    const handleSort = (column) => {
+        setState(prevState=> ({ ...prevState, sort: {column,
+                direction: prevState.sort.column === column && prevState.sort.direction === "asc" ? "desc" : "asc"}}))
+    }
     const handlePageChange = (event, page) => {
         setState((prevState) => ({
             ...prevState,
@@ -52,6 +66,7 @@ const useItemsSearch = (items) => {
         handleFiltersChange,
         handlePageChange,
         handleRowsPerPageChange,
+        handleSort,
         filteredItems,
         state
     };
@@ -89,7 +104,13 @@ const ShaclValidationReport = ({ project_id, id, sid, files }) => {
         })
     )
 
+
+
+
     const itemsSearch = useItemsSearch(validationReport);
+
+    console.log(itemsSearch.state?.sort)
+
 
     return dataLoad ?
         <>
@@ -127,6 +148,8 @@ const ShaclValidationReport = ({ project_id, id, sid, files }) => {
                     page={itemsSearch.state.page}
                     rowsPerPage={itemsSearch.state.rowsPerPage}
                     sectionApi={sectionApi}
+                    onSort={itemsSearch.handleSort}
+                    sort={itemsSearch.state.sort}
                 />
             </>
 }

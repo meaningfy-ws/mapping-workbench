@@ -29,6 +29,8 @@ export const ListTable = (props) => {
         onRowsPerPageChange,
         page = 0,
         rowsPerPage = 0,
+        sort,
+        onSort,
         sectionApi
     } = props;
 
@@ -44,6 +46,19 @@ export const ListTable = (props) => {
     const handleClose = () => {
         setDescriptionDialog(e=>({...e, open: false}));
     };
+
+    const SorterHeader = ({fieldName, title}) => {
+        return <Tooltip enterDelay={300}
+                       title="Sort"
+               >
+                   <TableSortLabel
+                        active={sort.column === fieldName}
+                        direction={sort.direction}
+                        onClick={() => onSort(fieldName)}>
+                        {title ?? fieldName}
+                    </TableSortLabel>
+               </Tooltip>
+    }
 
     return (
         <>
@@ -61,39 +76,19 @@ export const ListTable = (props) => {
                     <TableHead>
                         <TableRow>
                             <TableCell width="25%">
-                                <Tooltip enterDelay={300}
-                                         title="Sort"
-                                >
-                                    <TableSortLabel direction="asc">
-                                        Form Field
-                                    </TableSortLabel>
-                                </Tooltip>
+                                <SorterHeader fieldName="title"
+                                              title="Form Field"/>
                             </TableCell>
                             <TableCell>
                                 Description
                             </TableCell>
                             <TableCell>
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel direction="asc">
-                                        Query content
-                                    </TableSortLabel>
-                                </Tooltip>
+                                 <SorterHeader fieldName="query"
+                                               title="Query content"/>
                             </TableCell>
                             <TableCell align="left">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        active
-                                        direction="desc"
-                                    >
-                                        Result
-                                    </TableSortLabel>
-                                </Tooltip>
+                                <SorterHeader fieldName="sourceConstraintComponent"
+                                              title="result"/>
                             </TableCell>
                             <TableCell align="center">
                                 Details

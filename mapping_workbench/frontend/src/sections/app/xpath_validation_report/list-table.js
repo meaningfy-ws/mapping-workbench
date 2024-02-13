@@ -31,12 +31,27 @@ export const ListTable = (props) => {
         onRowsPerPageChange,
         page = 0,
         rowsPerPage = 0,
-        sectionApi
+        sectionApi,
+        onSort,
+        sort
     } = props;
 
     const handleClose = () => {
         setDescriptionDialog(e=>({...e, open: false}));
     };
+
+    const SorterHeader = ({fieldName, title}) => {
+       return <Tooltip enterDelay={300}
+                       title="Sort"
+               >
+                   <TableSortLabel
+                        active={sort.column === fieldName}
+                        direction={sort.direction}
+                        onClick={() => onSort(fieldName)}>
+                        {title ?? fieldName}
+                    </TableSortLabel>
+               </Tooltip>
+    }
 
     return (
         <>
@@ -54,18 +69,14 @@ export const ListTable = (props) => {
                     <TableHead>
                         <TableRow>
                             <TableCell width="25%">
-                                <Tooltip enterDelay={300}
-                                         title="Sort"
-                                >
-                                    <TableSortLabel direction="asc">
-                                        Form Field
-                                    </TableSortLabel>
-                                </Tooltip>
+                                <SorterHeader fieldName="eforms_sdk_element_id"
+                                              title="Form Field"/>
                             </TableCell>
                             <TableCell>
-                                Xpath
+                                <SorterHeader fieldName="test_data_xpath"
+                                              title="xpath"/>
                             </TableCell>
-                            <TableCell>
+                            <TableCell width="10%">
                                 Found
                             </TableCell>
                         </TableRow>
