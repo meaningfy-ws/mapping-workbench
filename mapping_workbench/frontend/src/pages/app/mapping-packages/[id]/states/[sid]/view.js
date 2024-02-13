@@ -276,7 +276,6 @@ const Page = () => {
                 {currentTab === 'xpath' && (
                         <Card>
                             <CardContent>
-                                {/*<FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>*/}
                                 <XpathValidationReport project_id={sessionApi.getSessionProject()}
                                                        id={id}
                                                        sid={sid}

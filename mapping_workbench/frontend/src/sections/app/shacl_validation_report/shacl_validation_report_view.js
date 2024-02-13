@@ -8,6 +8,7 @@ import Alert from "@mui/material/Alert";
 
 import {ListTable} from "./list-table";
 import {mappingPackageStatesApi as sectionApi} from 'src/api/mapping-packages/states';
+import ItemSearchInput from "../file-manager/item-search-input";
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
@@ -19,12 +20,25 @@ const useItemsSearch = (items) => {
         },
         sort: {
         },
+        search: [],
+        searchColumns:["focusNode","message","resultPath","resultSeverity","sourceConstraintComponent"],
         currentFile: "",
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
 
-    const sortedItems = items.sort((a,b) => {
+    const searchItems = state.search.length ? items.filter(item => {
+        let returnItem = null;
+        state.searchColumns.forEach(column => {
+            state.search.forEach(search => {
+                if(item[column]?.toLowerCase()?.includes(search.toLowerCase()))
+                    returnItem = item
+            })
+        })
+        return returnItem
+    }) : items
+
+    const sortedItems = searchItems.sort((a,b) => {
         const sortColumn = state.sort.column
         if(!sortColumn) return
         return state.sort.direction === "asc" ?
@@ -32,11 +46,16 @@ const useItemsSearch = (items) => {
              b[sortColumn].localeCompare(a[sortColumn])
     })
 
-    const filteredItems = sortedItems.filter((item, i) => {
+    const pagedItems = sortedItems.filter((item, i) => {
         const pageSize = state.page * state.rowsPerPage
         if((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
             return item
     })
+
+    const handleSearchItems = (filters) => {
+        setState(prevState => ({...prevState, search: filters }))
+    }
+
     const handleFiltersChange = (filters) => {
         setState((prevState) => ({
             ...prevState,
@@ -67,7 +86,9 @@ const useItemsSearch = (items) => {
         handlePageChange,
         handleRowsPerPageChange,
         handleSort,
-        filteredItems,
+        handleSearchItems,
+        pagedItems,
+        count: searchItems.length,
         state
     };
 };
@@ -104,13 +125,7 @@ const ShaclValidationReport = ({ project_id, id, sid, files }) => {
         })
     )
 
-
-
-
     const itemsSearch = useItemsSearch(validationReport);
-
-    console.log(itemsSearch.state?.sort)
-
 
     return dataLoad ?
         <>
@@ -140,9 +155,10 @@ const ShaclValidationReport = ({ project_id, id, sid, files }) => {
                             {file}
                         </MenuItem>)}
                 </Select>
+                <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
                 <ListTable
-                    items={itemsSearch.filteredItems}
-                    count={validationReport?.length}
+                    items={itemsSearch.pagedItems}
+                    count={itemsSearch.count}
                     onPageChange={itemsSearch.handlePageChange}
                     onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                     page={itemsSearch.state.page}
