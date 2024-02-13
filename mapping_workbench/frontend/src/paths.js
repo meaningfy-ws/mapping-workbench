@@ -212,6 +212,7 @@ export const apiPaths = {
         import: '/package_importer/import/v3',
         process: '/package_processor/process',
         export: '/package_exporter/export_latest_package_state',
+        export_specific: '/package_exporter/export_specific_package_state',
         states: '/mapping_packages/:id/states',
         state: '/mapping_packages/state/:id',
     },
