@@ -3,6 +3,7 @@ from typing import Optional, List
 
 import pymongo
 from beanie import Link, PydanticObjectId
+from pydantic import BaseModel
 from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
@@ -10,7 +11,8 @@ from mapping_workbench.backend.file_resource.models.file_resource import FileRes
     FileResourceIn, FileResourceFormat, FileResourceState
 from mapping_workbench.backend.package_validator.models.shacl_validation import SHACLTestDataValidationResult
 from mapping_workbench.backend.package_validator.models.sparql_validation import SPARQLTestDataValidationResult
-from mapping_workbench.backend.package_validator.models.xpath_validation import XPathAssertion
+from mapping_workbench.backend.package_validator.models.xpath_validation import XPathAssertion, \
+    XPATHTestDataValidationResult
 from mapping_workbench.backend.state_manager.models.state_object import StatefulObjectABC, ObjectState
 
 
@@ -37,16 +39,30 @@ class TestDataFileResourceUpdateIn(TestDataFileResourceIn):
     pass
 
 
-class TestDataState(ObjectState):
+class TestDataValidationResult(BaseModel):
+    shacl: Optional[SHACLTestDataValidationResult] = None
+    sparql: Optional[SPARQLTestDataValidationResult] = None
+    xpath: Optional[XPATHTestDataValidationResult] = None
+
+
+class TestDataValidation(BaseModel):
+    validation: Optional[TestDataValidationResult] = TestDataValidationResult()
+
+
+class TestDataState(TestDataValidation, ObjectState):
     identifier: Optional[str] = None
     title: Optional[str] = None
     description: Optional[str] = None
     filename: Optional[str] = None
     xml_manifestation: Optional[FileResourceState] = None
     rdf_manifestation: Optional[FileResourceState] = None
-    shacl_validation_result: Optional[SHACLTestDataValidationResult] = None
-    sparql_validation_result: Optional[SPARQLTestDataValidationResult] = None
-    xpath_validation_result: List[XPathAssertion] = []
+
+
+class TestDataStateGate(TestDataValidation, BaseModel):
+    identifier: Optional[str] = None
+    title: Optional[str] = None
+    description: Optional[str] = None
+    filename: Optional[str] = None
 
 
 class TestDataFileResource(FileResource, StatefulObjectABC):
@@ -101,11 +117,18 @@ class TestDataFileResource(FileResource, StatefulObjectABC):
         ]
 
 
-class TestDataSuiteState(ObjectState):
+class TestDataSuiteState(TestDataValidation, ObjectState):
     title: Optional[str] = None
     description: Optional[str] = None
     path: Optional[List[str]] = None
     test_data_states: Optional[List[TestDataState]] = []
+
+
+class TestDataSuiteStateGate(TestDataValidation, BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    path: Optional[List[str]] = None
+    test_data_states: Optional[List[TestDataStateGate]] = []
 
 
 class TestDataSuite(

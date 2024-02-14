@@ -130,40 +130,29 @@ class PackageStateExporter:
 
     async def get_validation_reports(self):
         return self.package_state.test_data_suites
-        reports = {"xpath": [], "sparql": [], "shacl": []}
-        for test_data_suite in self.package_state.test_data_suites:
-            for test_data in test_data_suite.test_data_states:
-                if test_data.xpath_validation_result:
-                    for xpath_validation_result in test_data.xpath_validation_result:
-                        reports["xpath"].append(xpath_validation_result)
-                if test_data.sparql_validation_result:
-                    reports["sparql"].append(test_data.sparql_validation_result)
-                if test_data.shacl_validation_result:
-                    reports["shacl"].append(test_data.shacl_validation_result)
-        return reports
 
     async def get_xpath_reports(self):
         result = {}
         for test_data_suite in self.package_state.test_data_suites:
             for test_data in test_data_suite.test_data_states:
-                if test_data.xpath_validation_result:
-                    result[test_data.identifier] = test_data.xpath_validation_result
+                if test_data.validation.xpath:
+                    result[test_data.identifier] = test_data.validation.xpath.results
         return result
 
     async def get_sparql_reports(self):
         result = {}
         for test_data_suite in self.package_state.test_data_suites:
             for test_data in test_data_suite.test_data_states:
-                if test_data.sparql_validation_result:
-                    result[test_data.identifier] = test_data.sparql_validation_result.ask_results
+                if test_data.validation.sparql:
+                    result[test_data.identifier] = test_data.validation.sparql.results
         return result
 
     async def get_shacl_reports(self):
         result = {}
         for test_data_suite in self.package_state.test_data_suites:
             for test_data in test_data_suite.test_data_states:
-                if test_data.shacl_validation_result:
-                    result[test_data.identifier] = test_data.shacl_validation_result.results_dict["results"]["bindings"]
+                if test_data.validation.shacl:
+                    result[test_data.identifier] = test_data.validation.shacl.results_dict["results"]["bindings"]
         return result
 
     async def get_validation_report_files(self):
@@ -190,24 +179,24 @@ class PackageStateExporter:
                 test_data_reports_output_path = test_data_suite_output_path / test_data.identifier / "reports"
                 test_data_reports_output_path.mkdir(parents=True, exist_ok=True)
 
-                if test_data.xpath_validation_result:
+                if test_data.validation.xpath:
                     xpaths_str = json.dumps([xpath_validation_result.model_dump(
                         exclude={'id'}
-                    ) for xpath_validation_result in test_data.xpath_validation_result], indent=4)
+                    ) for xpath_validation_result in test_data.validation.xpath.results], indent=4)
                     self.write_to_file(test_data_reports_output_path / "xpath_coverage_report.json", xpaths_str)
                     if xpaths_str:
                         df = pd.read_json(StringIO(xpaths_str))
                         df.to_csv(test_data_reports_output_path / "xpath_coverage_report.csv")
 
-                if test_data.sparql_validation_result:
-                    sparql_validation_result = test_data.sparql_validation_result.model_dump(
+                if test_data.validation.sparql:
+                    sparql_validation_result = test_data.validation.sparql.model_dump(
                         exclude={'id'}
                     )
                     sparql_str = json.dumps(sparql_validation_result, indent=4)
                     self.write_to_file(test_data_reports_output_path / "sparql_validation_report.json", sparql_str)
-                    if test_data.sparql_validation_result.ask_results:
+                    if test_data.validation.sparql.results:
                         export_dict_list = []
-                        for sparql_validation_result in test_data.sparql_validation_result.ask_results:
+                        for sparql_validation_result in test_data.validation.sparql.results:
                             export_dict = sparql_validation_result.query.model_dump()
                             export_dict["query_result"] = sparql_validation_result.query_result
                             export_dict_list.append(export_dict)
@@ -215,8 +204,8 @@ class PackageStateExporter:
                         df = pd.DataFrame(export_dict_list)
                         df.to_csv(test_data_reports_output_path / "sparql_assertions_report.csv")
 
-                if test_data.shacl_validation_result:
-                    shacl_str = json.dumps(test_data.shacl_validation_result.model_dump(
+                if test_data.validation.shacl:
+                    shacl_str = json.dumps(test_data.validation.shacl.model_dump(
                         exclude={'id'}
                     ), indent=4)
                     self.write_to_file(test_data_reports_output_path / "shacl_validation_report.json", shacl_str)

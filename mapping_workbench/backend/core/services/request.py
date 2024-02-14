@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from beanie import Link
+from beanie import Link, PydanticObjectId
 from pydantic import BaseModel
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntity
@@ -12,7 +12,7 @@ def request_update_data(entity_data: BaseModel, user: User = None) -> dict:
 
     for field in entity_data.model_fields:
         prop = entity_data.__dict__[field]
-        if isinstance(prop, Link):
+        if isinstance(prop, (Link, PydanticObjectId)):
             data[field] = prop
 
     if user:

@@ -13,7 +13,7 @@ class SPARQLTestDataResult(BaseModel):
 
 
 class SPARQLTestDataValidationResult(TestDataValidationResult):
-    ask_results: Optional[List[SPARQLTestDataResult]] = []
+    results: Optional[List[SPARQLTestDataResult]] = []
 
     class Settings(BaseEntity.Settings):
         name = "sparql_file_resource_validation_results"
