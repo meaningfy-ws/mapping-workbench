@@ -62,7 +62,8 @@ class AppApi {
     }
 
     processError(error) {
-        if (error.response && error.response.status === 401) {
+        if (error.response?.status === 401) {
+            window.location.replace(LOGIN_ENDPOINT)
             this.removeAccessToken();
         }
     }
