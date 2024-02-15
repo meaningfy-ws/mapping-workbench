@@ -131,14 +131,6 @@ class PackageStateExporter:
     async def get_validation_reports(self):
         return self.package_state.test_data_suites
 
-    async def get_xpath_reports(self):
-        result = {}
-        for test_data_suite in self.package_state.test_data_suites:
-            for test_data in test_data_suite.test_data_states:
-                if test_data.validation.xpath:
-                    result[test_data.identifier] = test_data.validation.xpath.results
-        return result
-
     async def get_sparql_reports(self):
         result = {}
         for test_data_suite in self.package_state.test_data_suites:

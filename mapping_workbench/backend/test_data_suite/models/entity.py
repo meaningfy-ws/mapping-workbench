@@ -11,8 +11,7 @@ from mapping_workbench.backend.file_resource.models.file_resource import FileRes
     FileResourceIn, FileResourceFormat, FileResourceState
 from mapping_workbench.backend.package_validator.models.shacl_validation import SHACLTestDataValidationResult
 from mapping_workbench.backend.package_validator.models.sparql_validation import SPARQLTestDataValidationResult
-from mapping_workbench.backend.package_validator.models.xpath_validation import XPathAssertion, \
-    XPATHTestDataValidationResult
+from mapping_workbench.backend.package_validator.models.xpath_validation import XPATHTestDataValidationResult
 from mapping_workbench.backend.state_manager.models.state_object import StatefulObjectABC, ObjectState
 
 
@@ -39,14 +38,14 @@ class TestDataFileResourceUpdateIn(TestDataFileResourceIn):
     pass
 
 
-class TestDataValidationResult(BaseModel):
+class TestDataValidationContainer(BaseModel):
     shacl: Optional[SHACLTestDataValidationResult] = None
     sparql: Optional[SPARQLTestDataValidationResult] = None
     xpath: Optional[XPATHTestDataValidationResult] = None
 
 
 class TestDataValidation(BaseModel):
-    validation: Optional[TestDataValidationResult] = TestDataValidationResult()
+    validation: Optional[TestDataValidationContainer] = TestDataValidationContainer()
 
 
 class TestDataState(TestDataValidation, ObjectState):
@@ -58,7 +57,7 @@ class TestDataState(TestDataValidation, ObjectState):
     rdf_manifestation: Optional[FileResourceState] = None
 
 
-class TestDataStateGate(TestDataValidation, BaseModel):
+class TestDataStateGate(BaseModel):
     identifier: Optional[str] = None
     title: Optional[str] = None
     description: Optional[str] = None
@@ -124,7 +123,7 @@ class TestDataSuiteState(TestDataValidation, ObjectState):
     test_data_states: Optional[List[TestDataState]] = []
 
 
-class TestDataSuiteStateGate(TestDataValidation, BaseModel):
+class TestDataSuiteStateGate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
     path: Optional[List[str]] = None

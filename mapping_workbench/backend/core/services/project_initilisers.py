@@ -12,7 +12,6 @@ from mapping_workbench.backend.ontology_file_collection.models.entity import Ont
     OntologyFileResource
 from mapping_workbench.backend.package_validator.models.shacl_validation import SHACLTestDataValidationResult
 from mapping_workbench.backend.package_validator.models.sparql_validation import SPARQLTestDataValidationResult
-from mapping_workbench.backend.package_validator.models.xpath_validation import XPathAssertion
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.resource_collection.models.entity import ResourceCollection, ResourceFile
 from mapping_workbench.backend.security.models.security import AccessToken
@@ -51,10 +50,7 @@ async def init_project_models(mongodb_database: AsyncIOMotorDatabase):
             GenericTripleMapFragment,
             Namespace,
             Term,
-            SHACLTestDataValidationResult,
-            SPARQLTestDataValidationResult,
             StructuralElement,
-            StructuralElementsVersionedView,
-            XPathAssertion
+            StructuralElementsVersionedView
         ],
     )

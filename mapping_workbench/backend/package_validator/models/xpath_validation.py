@@ -1,22 +1,26 @@
 from typing import Optional, List
 
-from beanie import Document
 from pydantic import BaseModel
 
-from mapping_workbench.backend.test_data_suite.models.entity import TestDataValidationResult
+from mapping_workbench.backend.package_validator.models.test_data_validation import TestDataValidationResult
 
 
-class XPathAssertionTestDataXPath(BaseModel):
+class XPathAssertionEntry(BaseModel):
+    xpath: Optional[str] = None
+    value: Optional[str] = None
+
+
+class XPathAssertionTestDataEntry(BaseModel):
+    test_data_suite: Optional[str] = None
     test_data_id: Optional[str] = None
-    xpaths: Optional[List[str]] = None
+    xpaths: Optional[List[XPathAssertionEntry]] = None
 
 
-class XPathAssertion(Document):
-    id: str
+class XPathAssertion(BaseModel):
     eforms_sdk_element_id: Optional[str] = None
     eforms_sdk_element_title: Optional[str] = None
     eforms_sdk_element_xpath: Optional[str] = None
-    test_data_xpaths: Optional[List[XPathAssertionTestDataXPath]] = None
+    test_data_xpaths: Optional[List[XPathAssertionTestDataEntry]] = None
     is_covered: Optional[bool] = False
     message: Optional[str] = None
 

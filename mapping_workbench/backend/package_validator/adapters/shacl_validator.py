@@ -5,7 +5,7 @@ import rdflib
 from pydantic import validate_call
 from pyshacl import validate
 
-from mapping_workbench.backend.package_validator.adapters.xpath_validator import TestDataValidator
+from mapping_workbench.backend.package_validator.adapters.data_validator import TestDataValidator
 from mapping_workbench.backend.package_validator.models.shacl_validation import SHACLTestDataValidationResult
 from mapping_workbench.backend.package_validator.resources import SHACL_RESULT_QUERY_PATH
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestState

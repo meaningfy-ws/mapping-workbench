@@ -118,7 +118,7 @@ class MappingPackageState(TestDataValidation, ObjectState):
     resources: Optional[List[ResourceFileState]] = []
 
 
-class MappingPackageStateGate(TestDataValidation, BaseEntity):
+class MappingPackageStateGate(BaseEntity):
     id: Optional[PydanticObjectId] = None
     title: Optional[str] = None
     description: Optional[str] = None
@@ -129,7 +129,6 @@ class MappingPackageStateGate(TestDataValidation, BaseEntity):
     start_date: Optional[str] = None
     end_date: Optional[str] = None
     eforms_sdk_versions: List[str] = None
-    test_data_suites: Optional[List[TestDataSuiteStateGate]] = []
 
     class Settings:
         name = "mapping_package_states"

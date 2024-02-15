@@ -10,6 +10,3 @@ class SHACLTestDataValidationResult(TestDataValidationResult):
     results_dict: Optional[dict] = None
     error: Optional[str] = None
     identifier: Optional[str] = None
-
-    class Settings(BaseEntity.Settings):
-        name = "shacl_file_resource_validation_results"

@@ -6,7 +6,7 @@ from pydantic import validate_call
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResource, SPARQLTestState
 from mapping_workbench.backend.package_validator.models.sparql_validation import SPARQLTestDataValidationResult, \
     SPARQLTestDataResult
-from mapping_workbench.backend.package_validator.adapters.xpath_validator import TestDataValidator
+from mapping_workbench.backend.package_validator.adapters.data_validator import TestDataValidator
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataState
 
 RDF_FORMAT = "ttl"
