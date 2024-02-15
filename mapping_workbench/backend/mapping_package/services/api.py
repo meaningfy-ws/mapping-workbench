@@ -1,5 +1,6 @@
 from typing import List
 
+import pymongo
 from beanie import PydanticObjectId
 from pymongo.errors import DuplicateKeyError
 
@@ -73,18 +74,22 @@ async def delete_mapping_package(mapping_package: MappingPackage):
 
 # Mapping Package States
 
-async def list_mapping_package_states(filters: dict = None, page: int = None, limit: int = None) -> \
+async def list_mapping_package_states(filters: dict = None, page: int = None, limit: int = None, sort_field: str = None,
+                                      sort_dir: int = None) -> \
         (List[MappingPackageStateGate], int):
     query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
 
     prepare_search_param(query_filters)
     skip, limit = pagination_params(page, limit)
 
+    sort = -MappingPackageStateGate.created_at
+    if sort_field is not None:
+        sort = [(sort_field, sort_dir or pymongo.ASCENDING)]
     items: List[MappingPackageStateGate] = await MappingPackageStateGate.find(
         query_filters,
         projection_model=MappingPackageStateGate,
         fetch_links=False,
-        sort=-MappingPackageStateGate.created_at,
+        sort=sort,
         skip=skip,
         limit=limit
     ).to_list()
