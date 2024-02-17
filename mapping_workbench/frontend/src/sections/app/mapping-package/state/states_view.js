@@ -1,6 +1,5 @@
 import {useCallback, useEffect, useState} from "react";
 
-import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 import Alert from "@mui/material/Alert";
 
@@ -10,105 +9,120 @@ import {
 } from 'src/api/mapping-packages/states';
 import {ListTable} from "./list-table";
 import {FileCollectionListSearch} from "../../file-manager/file-collection-list-search";
+import {useMounted} from "../../../../hooks/use-mounted";
 
-const StatesView = ({ id }) => {
 
-    const [filtersState, setFiltersState] = useState({
+
+const useItemsSearch = () => {
+    const [state, setState] = useState({
         filters: {},
         page: sectionApi.DEFAULT_PAGE,
-        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
+        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE,
+        sortField: "",
+        sortDirection: undefined,
     });
 
-    const [state, setState] = useState({
-        dataLoad: true,
-        items: [],
-        itemsCount: 0
-    });
-
-    const [sort, setSort] = useState({
-        field: "",
-        direction: null
-    })
-
-    useEffect(() => {
-            handleItemsGet()
-        },
-        [JSON.stringify(filtersState), JSON.stringify(sort)]
-    );
-
-
-    const handleFiltersChange = useCallback(filters => {
-        setFiltersState(prevState => ({
+    const handleFiltersChange = useCallback((filters) => {
+        setState((prevState) => ({
             ...prevState,
             filters,
             page: 0
         }));
-    },[])
+    }, []);
 
-    const handlePageChange = useCallback((event, page) => {
-        setFiltersState(prevState => ({
+    const handlePageChange = (event, page) => {
+        setState((prevState) => ({
             ...prevState,
             page
         }));
-    },[])
+    };
 
-    const handleRowsPerPageChange = useCallback(event => {
-        setFiltersState(prevState => ({
+    const handleRowsPerPageChange = (event) => {
+        setState((prevState) => ({
             ...prevState,
             rowsPerPage: parseInt(event.target.value, 10)
         }));
-    },[])
+    };
 
-    const handleSort = (field) => {
-        console.log(field,sort,sort.direction > 0)
-        if(sort.field === field)
-            setSort(e => ({ field: e.field, direction: e.direction > 0 ? -1 : 1 }))
-        else setSort({ field, direction: -1 })
+    const handleSort = (sortField) => {
+        if(state.sortField === sortField)
+            setState(prevState => ({ ...prevState, sortDirection: prevState.sortDirection > 0 ? -1 : 1 }))
+        else setState(prevState => ({ ...prevState, sortField, sortDirection: -1 }))
     }
 
-    const handleItemsGet = async () => {
+    return {
+        handleFiltersChange,
+        handlePageChange,
+        handleRowsPerPageChange,
+        handleSort,
+        state
+    };
+};
+
+
+const useItemsStore = (id, searchState) => {
+    const isMounted = useMounted();
+    const [state, setState] = useState({
+        items: [],
+        itemsCount: 0
+    });
+
+    const handleItemsGet = useCallback(async () => {
         try {
-            console.log(sort)
-            const response = await sectionStatesApi.getStates(id,
-                {...filtersState, sortField: sort.field, sortDirection: sort.direction});
+            const response = await sectionApi.getStates(id, searchState);
+            if (isMounted()) {
                 setState({
                     items: response.items,
                     itemsCount: response.count
                 });
+            }
         } catch (err) {
             console.error(err);
         }
-    }
+    }, [searchState, isMounted]);
+
+
+    useEffect(() => {
+            handleItemsGet()
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [searchState]);
+
+    return {
+        ...state
+    };
+};
+
+const StatesView = ({ id }) => {
+
+    const itemsSearch = useItemsSearch();
+    const itemsStore = useItemsStore(id, itemsSearch.state);
 
     return (
-        state.dataLoad ?
-            <>
-                <Skeleton height={180} />
-                {
-                    new Array(5).fill("").map((e, i) =>
-                    <Skeleton key={i}
-                              height={50}/>)
-                }
-            </> :
-        !state.items?.length ?
-            <Stack justifyContent="center"
-                   direction="row">
-                <Alert severity="info">No Data !</Alert>
-            </Stack> :
-            <>
-                <FileCollectionListSearch onFiltersChange={handleFiltersChange}/>
-                <ListTable
-                    onPageChange={handlePageChange}
-                    onRowsPerPageChange={handleRowsPerPageChange}
-                    onSort={handleSort}
-                    sort={sort}
-                    page={filtersState?.page}
-                    items={state.items}
-                    count={state.itemsCount}
-                    rowsPerPage={filtersState?.rowsPerPage}
+        <>
+            <FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
+            {
+                itemsStore.itemsCount ?
+                    <ListTable
+                    id={id}
+                    items={itemsStore.items}
+                    count={itemsStore.itemsCount}
+                    itemsSearch={itemsSearch}
+                    onPageChange={itemsSearch.handlePageChange}
+                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                    onSort={itemsSearch.handleSort}
+                    sortField={itemsSearch.state.sortField}
+                    sortDirection={itemsSearch.state.sortDirection}
+                    page={itemsSearch?.state?.page}
+                    rowsPerPage={itemsSearch?.state?.rowsPerPage}
                     sectionApi={sectionStatesApi}
-                />
-            </>
+                /> :
+                <Stack justifyContent="center"
+                       direction="row">
+                    <Alert severity="info">No Data !</Alert>
+                </Stack>
+            }
+        </>
     )
 }
 

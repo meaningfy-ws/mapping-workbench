@@ -17,21 +17,20 @@ import {Scrollbar} from 'src/components/scrollbar';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {paths} from "../../../../paths";
-import {useRouter} from "../../../../hooks/use-router";
-import {sessionApi} from "../../../../api/session";
 import exportPackage from "../../../../utils/export-mapping-package";
 
 export const ListTable = (props) => {
     const {
+        id,
         count = 0,
         items = [],
-        onPageChange = () => {
-        },
-        onSort,
-        sort,
-        onRowsPerPageChange,
         page = 0,
+        onPageChange,
         rowsPerPage = 0,
+        onRowsPerPageChange,
+        sortField,
+        sortDirection,
+        onSort,
         sectionApi
     } = props;
 
@@ -46,20 +45,13 @@ export const ListTable = (props) => {
                        title="Sort"
                >
                    <TableSortLabel
-                        active={sort.field === fieldName}
-                        direction={sort.direction > 0 ? "asc" : "desc"}
+                        active={sortField === fieldName}
+                        direction={sortDirection > 0 ? "asc" : "desc"}
                         onClick={() => onSort(fieldName)}>
                         {title ?? fieldName}
                     </TableSortLabel>
                </Tooltip>
     }
-
-    const router = useRouter();
-    if (!router.isReady) return;
-
-    const {id} = router.query;
-
-
 
     return (
         <div>
@@ -155,10 +147,14 @@ export const ListTable = (props) => {
 };
 
 ListTable.propTypes = {
+    id: PropTypes.string,
     count: PropTypes.number,
     items: PropTypes.array,
-    onPageChange: PropTypes.func,
-    onRowsPerPageChange: PropTypes.func,
     page: PropTypes.number,
-    rowsPerPage: PropTypes.number
+    onPageChange: PropTypes.func,
+    rowsPerPage: PropTypes.number,
+    onRowsPerPageChange: PropTypes.func,
+    sortField: PropTypes.string,
+    sortDirection: PropTypes.number,
+    onSort: PropTypes.func
 };
