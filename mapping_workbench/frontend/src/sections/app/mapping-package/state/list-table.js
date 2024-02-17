@@ -27,6 +27,8 @@ export const ListTable = (props) => {
         items = [],
         onPageChange = () => {
         },
+        onSort,
+        sort,
         onRowsPerPageChange,
         page = 0,
         rowsPerPage = 0,
@@ -37,6 +39,19 @@ export const ListTable = (props) => {
 
     const handleExport = (item) => {
         return exportPackage(sectionApi, id, setIsExporting, item)
+    }
+
+   const SorterHeader = ({fieldName, title}) => {
+       return <Tooltip enterDelay={300}
+                       title="Sort"
+               >
+                   <TableSortLabel
+                        active={sort.field === fieldName}
+                        direction={sort.direction > 0 ? "asc" : "desc"}
+                        onClick={() => onSort(fieldName)}>
+                        {title ?? fieldName}
+                    </TableSortLabel>
+               </Tooltip>
     }
 
     const router = useRouter();
@@ -62,39 +77,18 @@ export const ListTable = (props) => {
                     <TableHead>
                         <TableRow>
                             <TableCell width="25%">
-                                <Tooltip enterDelay={300}
-                                         title="Sort"
-                                >
-                                    <TableSortLabel direction="asc">
-                                        Title
-                                    </TableSortLabel>
-                                </Tooltip>
+                                <SorterHeader fieldName="title"/>
                             </TableCell>
                             <TableCell>
-                                Description
+                                  <SorterHeader fieldName="description"/>
                             </TableCell>
                             <TableCell>
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel direction="asc">
-                                        Version
-                                    </TableSortLabel>
-                                </Tooltip>
+                                <SorterHeader fieldName="mapping_version"
+                                              title="Version"/>
                             </TableCell>
                             <TableCell align="left">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        active
-                                        direction="desc"
-                                    >
-                                        Created
-                                    </TableSortLabel>
-                                </Tooltip>
+                                <SorterHeader fieldName="created_at"
+                                              title="Created"/>
                             </TableCell>
                             <TableCell align="center">
                                 Actions
