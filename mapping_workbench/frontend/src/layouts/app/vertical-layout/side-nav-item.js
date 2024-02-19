@@ -20,7 +20,8 @@ export const SideNavItem = (props) => {
     label,
     open: openProp,
     path,
-    title
+    title,
+    parentId
   } = props;
   const [open, setOpen] = useState(!!openProp);
 
@@ -74,6 +75,7 @@ export const SideNavItem = (props) => {
     return (
       <li>
         <ButtonBase
+          id={`nav_${title.toLowerCase()}`}
           disabled={disabled}
           onClick={handleToggle}
           sx={{
@@ -171,6 +173,7 @@ export const SideNavItem = (props) => {
   return (
     <li>
       <ButtonBase
+        id={`nav_${parentId ? parentId+"_" : ""}${title.toLowerCase()}`}
         disabled={disabled}
         sx={{
           alignItems: 'center',

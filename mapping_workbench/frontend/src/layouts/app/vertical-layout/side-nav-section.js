@@ -4,15 +4,17 @@ import Stack from '@mui/material/Stack';
 
 import { SideNavItem } from './side-nav-item';
 
-const renderItems = ({ depth = 0, items, pathname }) => items.reduce((acc,
+const renderItems = ({ depth = 0, items, parentId, pathname }) => items.reduce((acc,
   item) => reduceChildRoutes({
   acc,
   depth,
   item,
+  parentId,
   pathname
 }), []);
 
-const reduceChildRoutes = ({ acc, depth, item, pathname }) => {
+
+const reduceChildRoutes = ({ acc, depth, item, parentId, pathname }) => {
   const checkPath = !!(item.path && pathname);
   const partialMatch = checkPath ? pathname.includes(item.path) : false;
   const exactMatch = checkPath ? pathname === item.path : false;
@@ -35,6 +37,7 @@ const reduceChildRoutes = ({ acc, depth, item, pathname }) => {
         open={exactMatch}
         title={item.title}
         path={item.path}
+        parentId={parentId}
       >
         {<Stack
           component="ul"
@@ -48,6 +51,7 @@ const reduceChildRoutes = ({ acc, depth, item, pathname }) => {
           {renderItems({
             depth: depth + 1,
             items: item.items,
+            parentId: item.title.toLowerCase(),
             pathname
           })}
         </Stack>}
@@ -65,6 +69,7 @@ const reduceChildRoutes = ({ acc, depth, item, pathname }) => {
         label={item.label}
         path={item.path}
         title={item.title}
+        parentId={parentId}
       />
     );
   }

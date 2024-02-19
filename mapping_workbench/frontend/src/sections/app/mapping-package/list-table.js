@@ -383,6 +383,7 @@ export const ListTable = (props) => {
                                     <TableRow
                                         hover
                                         key={item_id}
+                                        id={item_id}
                                     >
                                         <TableCell
                                             padding="checkbox"
@@ -402,7 +403,8 @@ export const ListTable = (props) => {
                                             }}
                                             width="25%"
                                         >
-                                            <IconButton onClick={() => handleItemToggle(item_id)}>
+                                            <IconButton onClick={() => handleItemToggle(item_id)}
+                                                        id="button_expand">
                                                 <SvgIcon>
                                                     {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
                                                 </SvgIcon>
