@@ -1,13 +1,40 @@
 import { Given, When, Then} from 'cypress-cucumber-preprocessor/steps'
 
-
-Given('Cypress open session', () => {
-    // Caching session when logging in via page visit
+Given('Go Home', () => {
     cy.visit('localhost:3000')
-        cy.get('[name=username]').clear().type('admin@mw.com')
-        cy.get('[name=password]').clear().type('p4$$')
+})
+
+Then('Session Login', () => {
+    const username = 'admin@mw.com'
+    const password = 'p4$$'
+    cy.session([username,password], () => {
+        cy.visit('localhost:3000')
+        cy.get('[name=username]').clear().type(username)
+        cy.get('[name=password]').clear().type(password)
         cy.get('button[type="submit"]').click()
         cy.title().should('eq','App: Projects List | Mapping Workbench')
+    })
+
+
+    // cy.session(username, () => {
+    //     cy.request({
+    //         method: 'POST',
+    //         url: 'localhost:8000/api/v1/auth/jwt/login',
+    //         form: true,
+    //         body: {username, password},
+    //     }).then(({body}) => {
+    //         window.sessionStorage.setItem('accessToken', body.access_token)
+    //         window.sessionStorage.setItem('token_type',"bearer")
+    //         // window.location.replace('localhost:3000')
+    //         cy.visit('localhost:3000')
+    //
+    //     })
+    // })
+    // Caching session when logging in via page visit
+})
+
+Then('Check home title', () => {
+    cy.title().should('eq','App: Projects List | Mapping Workbench')
 })
 
 Given('I expand packages', () => {
