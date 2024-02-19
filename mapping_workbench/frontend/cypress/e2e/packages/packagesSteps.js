@@ -1,10 +1,10 @@
 import { Given, When, Then} from 'cypress-cucumber-preprocessor/steps'
-
 Given('Go Home', () => {
     cy.visit('localhost:3000')
 })
 
-Then('Session Login', () => {
+Given('Session Login', () => {
+    // Caching session when logging in via page visit
     const username = 'admin@mw.com'
     const password = 'p4$$'
     cy.session([username,password], () => {
@@ -14,23 +14,6 @@ Then('Session Login', () => {
         cy.get('button[type="submit"]').click()
         cy.title().should('eq','App: Projects List | Mapping Workbench')
     })
-
-
-    // cy.session(username, () => {
-    //     cy.request({
-    //         method: 'POST',
-    //         url: 'localhost:8000/api/v1/auth/jwt/login',
-    //         form: true,
-    //         body: {username, password},
-    //     }).then(({body}) => {
-    //         window.sessionStorage.setItem('accessToken', body.access_token)
-    //         window.sessionStorage.setItem('token_type',"bearer")
-    //         // window.location.replace('localhost:3000')
-    //         cy.visit('localhost:3000')
-    //
-    //     })
-    // })
-    // Caching session when logging in via page visit
 })
 
 Then('Check home title', () => {
@@ -46,8 +29,18 @@ When('I click on packages list', () => {
 })
 
 Then('I get redirected to mapping_packages list page', () => {
+    cy.intercept('GET', 'http://localhost:8000/api/v1/mapping_packages*',).as('getPackages')
     cy.title().should('eq','App: Mapping Packages List | Mapping Workbench')
 })
+
+Then('I receive packages', () => {
+    cy.wait('@getPackages').its('response.statusCode').should('eq',200)
+})
+
+When('I expand first package details', () => {
+    cy.get('#expand_button').click()
+})
+
 
 When('I click on packages create', () => {
     cy.get("#nav_packages_create").click()
@@ -65,14 +58,22 @@ Then('I get redirected to mapping_packages import page', () => {
     cy.title().should('eq','App: Mapping Package Import | Mapping Workbench')
 })
 
-
-When('I expand first package details', () => {
-    cy.get('#expand').click()
+Then('I click on import button', () => {
+    cy.get('#import_button').click()
 })
 
-
-When('I expand first package details', () => {
-    cy.get('#expand').click()
+Then('I click on package importer', () => {
+    cy.get('.MuiBox-root > input').selectFile('package_eforms_16_1.5.zip', { force: true })
 })
+
+Then('I click on upload button', () => {
+    cy.intercept('POST', 'http://localhost:8000/api/v1/package_importer/import/v3',).as('upload')
+    cy.get('#upload_button').click()
+})
+
+Then('I get success upload', () => {
+    cy.wait('@upload').its('response.statusCode').should('eq',201)
+})
+
 
 

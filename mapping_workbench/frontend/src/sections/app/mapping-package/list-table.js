@@ -404,7 +404,7 @@ export const ListTable = (props) => {
                                             width="25%"
                                         >
                                             <IconButton onClick={() => handleItemToggle(item_id)}
-                                                        id="button_expand">
+                                                        id="expand_button">
                                                 <SvgIcon>
                                                     {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
                                                 </SvgIcon>

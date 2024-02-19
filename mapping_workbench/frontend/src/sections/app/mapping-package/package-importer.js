@@ -97,7 +97,7 @@ export const PackageImporter = (props) => {
                     </SvgIcon>
                 </IconButton>
             </Stack>
-            <DialogContent>
+            <DialogContent id="drop-zone">
                 <FileDropzone
                     accept={{'*/*': []}}
                     caption="Required name: {PACKAGE_NAME}.zip"
