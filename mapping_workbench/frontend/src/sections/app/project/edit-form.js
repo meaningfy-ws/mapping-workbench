@@ -298,6 +298,7 @@ export const EditForm = (props) => {
                     sx={{p: 3}}
                 >
                     <Button
+                        id="create_button"
                         disabled={formik.isSubmitting}
                         type="submit"
                         variant="contained"
@@ -305,6 +306,7 @@ export const EditForm = (props) => {
                         {itemctx.isNew ? 'Create' : 'Update'}
                     </Button>
                     <Button
+                        id="cancel_button"
                         color="inherit"
                         component={RouterLink}
                         disabled={formik.isSubmitting}

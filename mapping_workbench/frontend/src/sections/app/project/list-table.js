@@ -243,6 +243,7 @@ export const ListTable = (props) => {
                                         </TableCell>
                                         <TableCell align="right">
                                             <Button
+                                                id="select_button"
                                                 variant="text"
                                                 size="small"
                                                 color="warning"

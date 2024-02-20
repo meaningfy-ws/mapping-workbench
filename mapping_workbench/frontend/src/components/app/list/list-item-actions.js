@@ -49,6 +49,7 @@ export const ListItemActions = (props) => {
     return (
         <Box>
             {itemctx.api.SECTION_LIST_ACTIONS.includes(ACTION.VIEW) && <Button
+                id="view_delete"
                 variant="text"
                 size="small"
                 color="info"
@@ -60,6 +61,7 @@ export const ListItemActions = (props) => {
                 View
             </Button>}
             {itemctx.api.SECTION_LIST_ACTIONS.includes(ACTION.EDIT) && <Button
+                id="edit_button"
                 variant="text"
                 size="small"
                 color="success"
@@ -72,6 +74,7 @@ export const ListItemActions = (props) => {
             </Button>}
             {itemctx.api.SECTION_LIST_ACTIONS.includes(ACTION.DELETE) && <>
                 <Button
+                    id="edit_delete"
                     variant="text"
                     size="small"
                     color="error"
