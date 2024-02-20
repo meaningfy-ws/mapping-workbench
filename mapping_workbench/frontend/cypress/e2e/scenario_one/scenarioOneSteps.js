@@ -3,7 +3,7 @@ import {Given, Then, When} from "cypress-cucumber-preprocessor/steps";
 const username = 'admin@mw.com'
 const password = 'p4$$'
 const project_name ='TEST_PROJECT'
-// let sessionProject = ''
+let sessionProject = ''
 Given('Go Home', () => {
     cy.visit('localhost:3000')
 })
@@ -18,6 +18,10 @@ Given('Session Login', () => {
         // cy.window().then(win => win.sessionStorage.setItem('sessionProject',sessionProject))
         cy.title().should('eq','App: Projects List | Mapping Workbench')
     })
+    if(sessionProject) {
+        console.log('sessionProject!!!',sessionProject)
+        cy.window().then(win => win.sessionStorage.setItem('sessionProject', sessionProject))
+    }
 })
 
 Given('Set session project', () => {
@@ -78,7 +82,8 @@ When('I select project', () => {
 
 Then('I get success select', () => {
     cy.wait('@select').its('response.statusCode').should('eq',200)
-    // sessionProject = cy.window().then(win => win.sessionStorage.getItem('sessionProject'))
+    cy.window().then(win => sessionProject = win.sessionStorage.getItem('sessionProject'))
+    cy.log('sessionProject',sessionProject)
 })
 
 //importing packages

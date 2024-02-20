@@ -1,8 +1,8 @@
-Feature: Entry Projects
+Feature: Scenario One
 
-  As a valid use i want to see projects
+  As a valid user i run scenarion one
 
-  Scenario: Create Projects
+  Scenario: Create Project
     Given Session Login
     Then Go Home
     Then I expand projects
@@ -16,9 +16,8 @@ Feature: Entry Projects
 
     When I click create button
     Then I get success created
-#
-  Scenario: Import Packages
-    Given Set session project
+
+  Scenario: Select Project
     Given Session Login
     Then Go Home
     Then I get redirected to projects list page
@@ -27,6 +26,10 @@ Feature: Entry Projects
     When I select project
     Then I get success select
     Then I get redirected to projects list page
+
+  Scenario: Import Package
+    Given Session Login
+    Then Go Home
     Then I expand packages
 
     When I click on packages import
@@ -36,15 +39,9 @@ Feature: Entry Projects
     Then I click on upload button
     Then I get success upload
 
-  Scenario: Process Packages
-    #TODO select project once
-#    Given Set session project
+  Scenario: Process Package
     Given Session Login
     Then Go Home
-    Then I get redirected to projects list page
-    Then I search for project
-    When I select project
-    Then I get success select
     Then I get redirected to projects list page
     Then I expand packages
 
@@ -53,5 +50,5 @@ Feature: Entry Projects
     Then I receive packages
     Then I click on expand arrow
 
-#    When I click process button
-#    Then I get processed
+    When I click process button
+    Then I get processed
