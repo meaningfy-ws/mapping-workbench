@@ -59,7 +59,12 @@ When('I click back to projects link', () => {
 })
 
 Then('I search for project', () => {
+    cy.intercept('GET', 'http://localhost:8000/api/v1/projects*',).as('get')
     cy.get('input[type=text]').clear().type(project_name+'{enter}')
+})
+
+Then('I receive project', () => {
+    cy.wait('@get').its('response.statusCode').should('eq',200)
 })
 
 When('I select project', () => {
@@ -69,4 +74,19 @@ When('I select project', () => {
 
 Then('I get success select', () => {
     cy.wait('@select').its('response.statusCode').should('eq',200)
+})
+
+
+//delete project
+When('I click delete button', () => {
+    cy.get('#delete_button').click()
+})
+
+Then('I click yes button', () => {
+    cy.intercept('DELETE', 'http://localhost:8000/api/v1/projects/*',).as('delete')
+    cy.get('#yes_dialog_button').click()
+})
+
+Then('I get success delete', () => {
+    cy.wait('@delete').its('response.statusCode').should('eq',200)
 })
