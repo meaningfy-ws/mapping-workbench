@@ -53,13 +53,19 @@ export class SectionApi {
         const {
             filters = {},
             page = this.DEFAULT_PAGE,
-            rowsPerPage = this.DEFAULT_ROWS_PER_PAGE
+            rowsPerPage = this.DEFAULT_ROWS_PER_PAGE,
+            sortField,
+            sortDirection
         } = request;
         if (this.isProjectResource) {
             filters['project'] = sessionApi.getSessionProject();
         }
         filters['page'] = page;
         filters['limit'] = rowsPerPage >= 0 ? rowsPerPage : null;
+        if(sortField)
+            filters['sort_field'] = sortField;
+        if(sortDirection)
+            filters['sort_direction'] = sortDirection;
 
         return await appApi.get(endpoint || this.paths[path], filters);
     }

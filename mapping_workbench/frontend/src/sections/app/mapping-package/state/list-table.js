@@ -17,19 +17,20 @@ import {Scrollbar} from 'src/components/scrollbar';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {paths} from "../../../../paths";
-import {useRouter} from "../../../../hooks/use-router";
-import {sessionApi} from "../../../../api/session";
 import exportPackage from "../../../../utils/export-mapping-package";
 
 export const ListTable = (props) => {
     const {
+        id,
         count = 0,
         items = [],
-        onPageChange = () => {
-        },
-        onRowsPerPageChange,
         page = 0,
+        onPageChange,
         rowsPerPage = 0,
+        onRowsPerPageChange,
+        sortField,
+        sortDirection,
+        onSort,
         sectionApi
     } = props;
 
@@ -39,12 +40,18 @@ export const ListTable = (props) => {
         return exportPackage(sectionApi, id, setIsExporting, item)
     }
 
-    const router = useRouter();
-    if (!router.isReady) return;
-
-    const {id} = router.query;
-
-
+   const SorterHeader = ({fieldName, title}) => {
+       return <Tooltip enterDelay={300}
+                       title="Sort"
+               >
+                   <TableSortLabel
+                        active={sortField === fieldName}
+                        direction={sortDirection > 0 ? "asc" : "desc"}
+                        onClick={() => onSort(fieldName)}>
+                        {title ?? fieldName}
+                    </TableSortLabel>
+               </Tooltip>
+    }
 
     return (
         <div>
@@ -62,39 +69,18 @@ export const ListTable = (props) => {
                     <TableHead>
                         <TableRow>
                             <TableCell width="25%">
-                                <Tooltip enterDelay={300}
-                                         title="Sort"
-                                >
-                                    <TableSortLabel direction="asc">
-                                        Title
-                                    </TableSortLabel>
-                                </Tooltip>
+                                <SorterHeader fieldName="title"/>
                             </TableCell>
                             <TableCell>
-                                Description
+                                  <SorterHeader fieldName="description"/>
                             </TableCell>
                             <TableCell>
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel direction="asc">
-                                        Version
-                                    </TableSortLabel>
-                                </Tooltip>
+                                <SorterHeader fieldName="mapping_version"
+                                              title="Version"/>
                             </TableCell>
                             <TableCell align="left">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        active
-                                        direction="desc"
-                                    >
-                                        Created
-                                    </TableSortLabel>
-                                </Tooltip>
+                                <SorterHeader fieldName="created_at"
+                                              title="Created"/>
                             </TableCell>
                             <TableCell align="center">
                                 Actions
@@ -161,10 +147,14 @@ export const ListTable = (props) => {
 };
 
 ListTable.propTypes = {
+    id: PropTypes.string,
     count: PropTypes.number,
     items: PropTypes.array,
-    onPageChange: PropTypes.func,
-    onRowsPerPageChange: PropTypes.func,
     page: PropTypes.number,
-    rowsPerPage: PropTypes.number
+    onPageChange: PropTypes.func,
+    rowsPerPage: PropTypes.number,
+    onRowsPerPageChange: PropTypes.func,
+    sortField: PropTypes.string,
+    sortDirection: PropTypes.number,
+    onSort: PropTypes.func
 };
