@@ -158,6 +158,7 @@ const PackageRow = (props) => {
                         sx={{p: 3}}
                     >
                         <Button
+                            id='process_button'
                             disabled={isProcessing || isExporting}
                             type="submit"
                             variant="contained"
@@ -258,6 +259,7 @@ const PackageRow = (props) => {
                             </ul>
                         </Box>
                         <Button
+                            id='export_latest_button'
                             disabled={isProcessing || isExporting}
                             type="button"
                             variant="contained"
