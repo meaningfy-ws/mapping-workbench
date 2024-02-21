@@ -115,6 +115,45 @@ Then('I get success import', () => {
 })
 
 
+//generating conceptual mappings
+Given('I expand conceptual mappings', () => {
+    cy.get('#nav_conceptual\\ mappings').click()
+})
+
+When('I click on conceptual mappings list', () => {
+    cy.get("#nav_conceptual\\ mappings_list").click()
+})
+
+Then('I get redirected to  conceptual mappings list page', () => {
+    cy.url().should('include','conceptual-mapping-rules') // => true
+})
+
+Then('I type git url', () => {
+    cy.get("input[name=github_repository_url]").clear().type(gitUrl)
+})
+
+Then('I type branch name', () => {
+    cy.get("input[name=branch_or_tag_name]").clear().type(branchVersion)
+})
+
+When('I click on generate button', () => {
+    cy.get('#generate_button').click()
+})
+
+Then('I get redirected to tasks', () => {
+     cy.url().should('include','conceptual-mapping-rules/tasks/generate-cm-assertions-queries') // => true
+})
+
+When('I click on run button', () => {
+    cy.intercept('POST', 'http://localhost:8000/api/v1/conceptual_mapping_rules/tasks/generate_cm_assertions_queries',).as('run')
+    cy.get('#run_button').click()
+})
+
+Then('I get success generate', () => {
+    cy.wait('@run').its('response.statusCode').should('eq', 200)
+})
+
+
 //importing packages
 Given('I expand packages', () => {
     cy.get('#nav_packages').click()
@@ -162,6 +201,15 @@ When('I click process button', () => {
     cy.get('#process_button').click()
 })
 
-Then('I get processed', () => {a
+Then('I get processed', () => {
     cy.wait('@process', {responseTimeout: 1999999}).its('response.statusCode').should('eq',200)
+})
+
+When('I click export latest button', () => {
+    cy.intercept('GET', 'http://localhost:8000/api/v1/package_exporter/export_latest_package_state*',).as('export')
+    cy.get('#export_latest_button').click()
+})
+
+Then('I get file', () => {
+    cy.wait('@export').its('response.statusCode').should('eq',200)
 })

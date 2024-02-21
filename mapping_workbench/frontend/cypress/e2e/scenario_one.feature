@@ -52,6 +52,21 @@ Feature: Scenario One
     Then I click on upload button
     Then I get success upload
 
+  Scenario: Generate Conceptual mappings
+    Given Session Login
+    Then Go Home
+    Then I expand conceptual mappings
+
+    When I click on conceptual mappings list
+    Then I get redirected to  conceptual mappings list page
+
+    When I click on generate button
+    Then I get redirected to tasks
+
+    When I click on run button
+    Then I get success generate
+
+
   Scenario: Process Package
     Given Session Login
     Then Go Home
@@ -65,3 +80,17 @@ Feature: Scenario One
 
     When I click process button
     Then I get processed
+
+  Scenario: Export Package
+    Given Session Login
+    Then Go Home
+    Then I get redirected to projects list page
+    Then I expand packages
+
+    When I click on packages list
+    Then I get redirected to mapping_packages list page
+    Then I receive packages
+    Then I click on expand arrow
+
+    When I click export latest button
+    Then I get file
