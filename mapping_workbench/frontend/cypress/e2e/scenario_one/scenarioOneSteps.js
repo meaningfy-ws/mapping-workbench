@@ -2,6 +2,8 @@ import {Given, Then, When} from "cypress-cucumber-preprocessor/steps";
 
 const username = 'admin@mw.com'
 const password = 'p4$$'
+const gitUrl = "https://github.com/OP-TED/eForms-SDK"
+const branchVersion = "1.9.1"
 const project_name ='TEST_PROJECT'
 let sessionProject = ''
 Given('Go Home', () => {
@@ -15,18 +17,13 @@ Given('Session Login', () => {
         cy.get('[name=username]').clear().type(username)
         cy.get('[name=password]').clear().type(password)
         cy.get('button[type="submit"]').click()
-        // cy.window().then(win => win.sessionStorage.setItem('sessionProject',sessionProject))
         cy.title().should('eq','App: Projects List | Mapping Workbench')
     })
     if(sessionProject) {
-        console.log('sessionProject!!!',sessionProject)
         cy.window().then(win => win.sessionStorage.setItem('sessionProject', sessionProject))
     }
 })
 
-Given('Set session project', () => {
-    // cy.window().then(win => win.sessionStorage.setItem('sessionProject',sessionProject))
-})
 //create projects
 Then('I expand projects', () => {
     cy.get('#nav_projects').click()
@@ -48,11 +45,9 @@ When('I click on add project button', () => {
     cy.get('#add_button').click()
 })
 
-
 Then('I get redirected to projects create page', () => {
     cy.title().should('eq','App: Project Create | Mapping Workbench')
 })
-
 
 Then('I type project name', () => {
     cy.get('input[name=title]').clear().type(project_name)
@@ -71,6 +66,7 @@ When('I click back to projects link', () => {
     cy.get('#back_to_projects').click()
 })
 
+//Select project
 Then('I search for project', () => {
     cy.get('input[type=text]').clear().type(project_name+'{enter}')
 })
@@ -86,10 +82,41 @@ Then('I get success select', () => {
     cy.log('sessionProject',sessionProject)
 })
 
+
+//import registry
+Given('I expand fields registry', () => {
+    cy.get('#nav_fields\\ registry').click()
+})
+
+When('I click on fields registry import', () => {
+    cy.get("#nav_fields\\ registry_import").click()
+})
+
+Then('I get redirected to field registry import page', () => {
+    cy.url().should('include','fields-registry/elements/import') // => true
+})
+
+Then('I type git url', () => {
+    cy.get("input[name=github_repository_url]").clear().type(gitUrl)
+})
+
+
+Then('I type branch name', () => {
+    cy.get("input[name=branch_or_tag_name]").clear().type(branchVersion)
+})
+
+When('I click on import button', () => {
+    cy.intercept('POST', 'http://localhost:8000/api/v1/fields_registry/import_eforms_from_github',).as('import')
+    cy.get('#import').click()
+})
+
+Then('I get success import', () => {
+    cy.wait('@import',{responseTimeout: 999999}).its('response.statusCode').should('eq', 200)
+})
+
+
 //importing packages
 Given('I expand packages', () => {
-    // if (sessionProject)
-    //     window.sessionStorage.setItem('sessionProject',sessionProject)
     cy.get('#nav_packages').click()
 })
 When('I click on packages import', () => {
@@ -100,7 +127,7 @@ Then('I get redirected to mapping_packages import page', () => {
     cy.title().should('eq','App: Mapping Package Import | Mapping Workbench')
 })
 
-Then('I click on import button', () => {
+Then('I click on package import button', () => {
     cy.get('#import_button').click()
 })
 
@@ -135,6 +162,6 @@ When('I click process button', () => {
     cy.get('#process_button').click()
 })
 
-Then('I get processed', () => {
-    cy.wait('@process').its('response.statusCode').should('eq',200)
+Then('I get processed', () => {a
+    cy.wait('@process', {responseTimeout: 1999999}).its('response.statusCode').should('eq',200)
 })

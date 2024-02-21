@@ -63,8 +63,6 @@ When('I click on fields registry import', () => {
 
 Then('I get redirected to field registry import page', () => {
     cy.url().should('include','fields-registry/elements/import') // => true
-    // cy.intercept('GET', 'http://localhost:8000/api/v1/mapping_packages*',).as('getPackages')
-    // cy.title().should('eq','App: Mapping Packages List | Mapping Workbench')
 })
 
 Then('I type git url', () => {

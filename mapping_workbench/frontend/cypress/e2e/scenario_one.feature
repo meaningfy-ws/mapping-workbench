@@ -27,6 +27,19 @@ Feature: Scenario One
     Then I get success select
     Then I get redirected to projects list page
 
+  Scenario: Import Fields Registry
+    Given Session Login
+    Then Go Home
+
+    When  I expand fields registry
+    And   I click on fields registry import
+    Then  I get redirected to field registry import page
+    Then  I type git url
+    And   I type branch name
+
+    When  I click on import button
+    Then  I get success import
+
   Scenario: Import Package
     Given Session Login
     Then Go Home
@@ -34,7 +47,7 @@ Feature: Scenario One
 
     When I click on packages import
     Then I get redirected to mapping_packages import page
-    Then I click on import button
+    Then I click on package import button
     Then I click on package importer
     Then I click on upload button
     Then I get success upload

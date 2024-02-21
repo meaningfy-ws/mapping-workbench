@@ -1,4 +1,4 @@
-Feature: Entry Packages
+Feature: Import Fields Registry
 
   As a valid use i want to see package
 
@@ -13,7 +13,7 @@ Feature: Entry Packages
     Then I select project
     Then I get success select
 
-  Scenario: Import Packages
+  Scenario: Import Fields Registry
     Given Session Login
     Then Go Home
 
