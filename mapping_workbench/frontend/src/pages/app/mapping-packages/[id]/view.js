@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useState} from 'react';
 import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
@@ -11,9 +11,6 @@ import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import CardHeader from "@mui/material/CardHeader";
-import Button from "@mui/material/Button";
-import FormControl from "@mui/material/FormControl";
 
 import {mappingPackagesApi as sectionApi} from 'src/api/mapping-packages';
 import {RouterLink} from 'src/components/router-link';
@@ -27,12 +24,9 @@ import {PropertyList} from "../../../../components/property-list";
 import {PropertyListItem} from "../../../../components/property-list-item";
 import {shaclTestSuitesApi} from "../../../../api/shacl-test-suites";
 
-import {ListSelectorSelect as ResourceListSelector} from "../../../../components/app/list-selector/select";
-import {specificTripleMapFragmentsApi} from "../../../../api/triple-map-fragments/specific";
-import toast from "react-hot-toast";
-
 import StatesView from "../../../../sections/app/mapping-package/state/states_view";
 import MappingPackageRulesView from "../../../../sections/app/mapping-package/mapping-package-rules-view";
+import TripleMapping from "../../../../sections/app/mapping-package/triple-mapping";
 
 const tabs = [
     {label: 'Details', value: 'details'},
@@ -45,6 +39,8 @@ const tabs = [
 
 
 const Page = () => {
+    const [currentTab, setCurrentTab] = useState('details');
+
     const router = useRouter();
     if (!router.isReady) return;
 
@@ -53,46 +49,12 @@ const Page = () => {
     if (!id) {
         return;
     }
-    // const [stateItemsStore, setStateItemsStore] = useState({itemsStateSearch:{}, itemsStateStore:{}})
 
-    const formState = useItem(sectionApi, id);
-    const item = formState.item;
-
-    const [currentTab, setCurrentTab] = useState('details');
-
-
-    const [tripleMapFragments, setTripleMapFragments] = useState([]);
-
-    const getTripleMapFragments = async () => {
-        setTripleMapFragments((await specificTripleMapFragmentsApi.getValuesForSelector({
-                filters: {
-                    mapping_package: id
-                }
-            })).map(x => x.id))
-    }
-
-    useEffect(() => {
-        getTripleMapFragments()
-    }, [specificTripleMapFragmentsApi, id])
+    const { item } = useItem(sectionApi, id);
 
     const handleTabsChange = (event, value) => {
         setCurrentTab(value);
     }
-
-
-
-    const handleTripleMapFragmentsUpdate = useCallback(async () => {
-        await specificTripleMapFragmentsApi.update_specific_mapping_package(id, tripleMapFragments);
-        toast.success(specificTripleMapFragmentsApi.SECTION_TITLE + ' updated');
-    }, [specificTripleMapFragmentsApi, id, tripleMapFragments]);
-
-    const handleViewStatesAction = useCallback(async () => {
-        router.push({
-            pathname: paths.app[sectionApi.section].states.index,
-            query: {id: id}
-        });
-
-    }, [router]);
 
     if (!item) {
         return;
@@ -291,32 +253,7 @@ const Page = () => {
                     <MappingPackageRulesView id={id}/>
                 )}
                 {currentTab === "tripleMapFragments" && (
-                    <Card sx={{mt: 3}}>
-                        <CardHeader title="RML Triple Maps"/>
-                        <CardContent sx={{pt: 0}}>
-                            <Grid container
-                                  spacing={3}>
-                                <Grid xs={12}
-                                      md={12}>
-                                    <ResourceListSelector
-                                        valuesApi={specificTripleMapFragmentsApi}
-                                        listValues={tripleMapFragments}
-                                        titleField="uri"
-                                    />
-                                    <FormControl>
-                                        <Button
-                                            variant="contained"
-                                            size="small"
-                                            color="success"
-                                            onClick={handleTripleMapFragmentsUpdate}
-                                        >
-                                            Update
-                                        </Button>
-                                    </FormControl>
-                                </Grid>
-                            </Grid>
-                        </CardContent>
-                    </Card>
+                    <TripleMapping id={id}/>
                 )}
                 {currentTab === "states" && (
                     <Card sx={{mt: 3}}>
