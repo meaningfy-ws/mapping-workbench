@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Optional, List
 
 import pymongo
-from beanie import Indexed, Link, Document, PydanticObjectId
+from beanie import Indexed, Link, PydanticObjectId
 from beanie.odm.operators.find.comparison import Eq, NE
 from pydantic import BaseModel
 from pymongo import IndexModel
@@ -22,7 +22,7 @@ from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTest
     SPARQLQueryValidationType
 from mapping_workbench.backend.state_manager.models.state_object import ObjectState, StatefulObjectABC
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuiteState, TestDataSuite, \
-    TestDataSuiteStateGate, TestDataValidation
+    TestDataValidation
 from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragmentState, \
     GenericTripleMapFragment, SpecificTripleMapFragment
 
@@ -101,6 +101,7 @@ class SPARQLQueryRefinedResultType(Enum):
 
 class MappingPackageState(TestDataValidation, ObjectState):
     id: Optional[str] = None
+    mapping_package_oid: Optional[PydanticObjectId] = None
     title: Optional[str] = None
     description: Optional[str] = None
     identifier: Optional[str] = None
@@ -118,8 +119,31 @@ class MappingPackageState(TestDataValidation, ObjectState):
     resources: Optional[List[ResourceFileState]] = []
 
 
+class MappingPackageTestDataValidationTree(BaseModel):
+    oid: Optional[PydanticObjectId] = None
+    identifier: Optional[str] = None
+    title: Optional[str] = None
+
+
+class MappingPackageTestDataSuiteValidationTree(BaseModel):
+    oid: Optional[PydanticObjectId] = None
+    identifier: Optional[str] = None
+    title: Optional[str] = None
+    test_data_states: Optional[List[MappingPackageTestDataValidationTree]] = []
+
+
+class MappingPackageValidationTree(BaseModel):
+    mapping_package_oid: Optional[PydanticObjectId] = None
+    mapping_package_state_oid: Optional[PydanticObjectId] = None
+    identifier: Optional[str] = None
+    title: Optional[str] = None
+    description: Optional[str] = None
+    test_data_suites: Optional[List[MappingPackageTestDataSuiteValidationTree]] = []
+
+
 class MappingPackageStateGate(BaseEntity):
     id: Optional[PydanticObjectId] = None
+    mapping_package_oid: Optional[PydanticObjectId] = None
     title: Optional[str] = None
     description: Optional[str] = None
     identifier: Optional[str] = None
@@ -153,12 +177,12 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
     title: Optional[Indexed(str, unique=True)] = None
     description: Optional[str] = None
     identifier: Optional[Indexed(str, unique=True)] = None
-    mapping_version: str = None
-    epo_version: str = None
-    eform_subtypes: List[str] = None
+    mapping_version: Optional[str] = ''
+    epo_version: Optional[str] = ''
+    eform_subtypes: Optional[List[str]] = []
     start_date: Optional[str] = None
     end_date: Optional[str] = None
-    eforms_sdk_versions: List[str] = None
+    eforms_sdk_versions: Optional[List[str]] = []
     shacl_test_suites: Optional[List[Link[SHACLTestSuite]]] = None
 
     async def get_conceptual_mapping_rules_states(self) -> List[ConceptualMappingRuleState]:
@@ -259,6 +283,7 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
         resources = await self.get_resources_states()
 
         return MappingPackageState(
+            mapping_package_oid=self.id,
             title=self.title,
             description=self.description,
             identifier=self.identifier,

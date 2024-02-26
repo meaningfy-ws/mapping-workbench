@@ -27,6 +27,7 @@ class TestDataFileResourceFormat(Enum):
 
 class TestDataFileResourceIn(FileResourceIn):
     format: Optional[TestDataFileResourceFormat] = None
+    identifier: Optional[str] = None
     rdf_manifestation: Optional[str] = None
 
 
@@ -49,19 +50,13 @@ class TestDataValidation(BaseModel):
 
 
 class TestDataState(TestDataValidation, ObjectState):
+    oid: Optional[PydanticObjectId] = None
     identifier: Optional[str] = None
     title: Optional[str] = None
     description: Optional[str] = None
     filename: Optional[str] = None
     xml_manifestation: Optional[FileResourceState] = None
     rdf_manifestation: Optional[FileResourceState] = None
-
-
-class TestDataStateGate(BaseModel):
-    identifier: Optional[str] = None
-    title: Optional[str] = None
-    description: Optional[str] = None
-    filename: Optional[str] = None
 
 
 class TestDataFileResource(FileResource, StatefulObjectABC):
@@ -71,6 +66,7 @@ class TestDataFileResource(FileResource, StatefulObjectABC):
     rdf_manifestation: Optional[str] = None
 
     async def get_state(self) -> TestDataState:
+        oid = self.id
         identifier = self.identifier
         title = self.title
         description = self.description
@@ -87,6 +83,7 @@ class TestDataFileResource(FileResource, StatefulObjectABC):
         )
 
         return TestDataState(
+            oid=oid,
             identifier=identifier,
             title=title,
             description=description,
@@ -117,17 +114,11 @@ class TestDataFileResource(FileResource, StatefulObjectABC):
 
 
 class TestDataSuiteState(TestDataValidation, ObjectState):
+    oid: Optional[PydanticObjectId] = None
     title: Optional[str] = None
     description: Optional[str] = None
     path: Optional[List[str]] = None
     test_data_states: Optional[List[TestDataState]] = []
-
-
-class TestDataSuiteStateGate(BaseModel):
-    title: Optional[str] = None
-    description: Optional[str] = None
-    path: Optional[List[str]] = None
-    test_data_states: Optional[List[TestDataStateGate]] = []
 
 
 class TestDataSuite(
@@ -147,11 +138,13 @@ class TestDataSuite(
         return test_data_states
 
     async def get_state(self) -> TestDataSuiteState:
+        oid = self.id
         title = self.title
         description = self.description
         path = self.path
         test_data_states = await self.get_test_data_states()
         return TestDataSuiteState(
+            oid=oid,
             title=title,
             description=description,
             path=path,
