@@ -116,7 +116,9 @@ async def route_list_mapping_package_states(
         mapping_package: MappingPackage = Depends(get_mapping_package),
         page: int = None,
         limit: int = None,
-        q: str = None
+        q: str = None,
+        sort_field: str = None,
+        sort_dir: int = None
 ):
     filters: dict = {}
     filters['identifier'] = mapping_package.identifier
@@ -125,7 +127,7 @@ async def route_list_mapping_package_states(
     if q is not None:
         filters['q'] = q
 
-    items, total_count = await list_mapping_package_states(filters, page, limit)
+    items, total_count = await list_mapping_package_states(filters, page, limit, sort_field, sort_dir)
     return APIListMappingPackageStatesPaginatedResponse(
         items=items,
         count=total_count

@@ -143,6 +143,7 @@ export const Page = () => {
                         spacing={3}
                     >
                         <Button
+                            id="add_button"
                             component={RouterLink}
                             href={paths.app[sectionApi.section].create}
                             startIcon={(

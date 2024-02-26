@@ -86,6 +86,7 @@ const Page = () => {
                     sx={{p: 3}}
                 >
                     <Button
+                        id='import'
                         disabled={isRunning}
                         type="submit"
                         variant="contained"

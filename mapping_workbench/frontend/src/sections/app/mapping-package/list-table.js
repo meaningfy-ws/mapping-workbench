@@ -158,6 +158,7 @@ const PackageRow = (props) => {
                         sx={{p: 3}}
                     >
                         <Button
+                            id='process_button'
                             disabled={isProcessing || isExporting}
                             type="submit"
                             variant="contained"
@@ -258,6 +259,7 @@ const PackageRow = (props) => {
                             </ul>
                         </Box>
                         <Button
+                            id='export_latest_button'
                             disabled={isProcessing || isExporting}
                             type="button"
                             variant="contained"
@@ -383,6 +385,7 @@ export const ListTable = (props) => {
                                     <TableRow
                                         hover
                                         key={item_id}
+                                        id={item_id}
                                     >
                                         <TableCell
                                             padding="checkbox"
@@ -402,7 +405,8 @@ export const ListTable = (props) => {
                                             }}
                                             width="25%"
                                         >
-                                            <IconButton onClick={() => handleItemToggle(item_id)}>
+                                            <IconButton onClick={() => handleItemToggle(item_id)}
+                                                        id="expand_button">
                                                 <SvgIcon>
                                                     {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
                                                 </SvgIcon>

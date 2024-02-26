@@ -136,6 +136,7 @@ export const FileDropzone = (props) => {
             sx={{ mt: 2 }}
           >
             <Button
+              id="remove-all_button"
               color="inherit"
               onClick={onRemoveAll}
               size="small"
@@ -144,6 +145,7 @@ export const FileDropzone = (props) => {
               Remove All
             </Button>
             <Button
+              id="upload_button"
               onClick={onUpload}
               size="small"
               type="button"

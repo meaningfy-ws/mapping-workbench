@@ -39,6 +39,7 @@ import toast from "react-hot-toast";
 
 import {FileCollectionListSearch} from "../../../../sections/app/file-manager/file-collection-list-search";
 import {ListTable} from "../../../../sections/app/mapping-package/state/list-table";
+import StatesView from "../../../../sections/app/mapping-package/state/states_view";
 
 const tabs = [
     {label: 'Details', value: 'details'},
@@ -48,82 +49,7 @@ const tabs = [
     {label: 'States', value: 'states'}
 ];
 
-const useItemsSearch = () => {
-    const [state, setState] = useState({
-        filters: {
-            name: undefined,
-            category: [],
-            status: [],
-            inStock: undefined
-        },
-        page: sectionApi.DEFAULT_PAGE,
-        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
-    });
 
-    const handleFiltersChange = useCallback((filters) => {
-        setState((prevState) => ({
-            ...prevState,
-            filters,
-            page: 0
-        }));
-    }, []);
-
-    const handlePageChange = useCallback((event, page) => {
-        setState((prevState) => ({
-            ...prevState,
-            page
-        }));
-    }, []);
-
-    const handleRowsPerPageChange = useCallback((event) => {
-        setState((prevState) => ({
-            ...prevState,
-            rowsPerPage: parseInt(event.target.value, 10)
-        }));
-    }, []);
-
-    return {
-        handleFiltersChange,
-        handlePageChange,
-        handleRowsPerPageChange,
-        state
-    };
-};
-
-
-const useItemsStore = (id, searchState) => {
-    const isMounted = useMounted();
-    const [state, setState] = useState({
-        items: [],
-        itemsCount: 0
-    });
-
-    const handleItemsGet = useCallback(async () => {
-        try {
-            const response = await sectionStatesApi.getStates(id, searchState);
-            if (isMounted()) {
-                setState({
-                    items: response.items,
-                    itemsCount: response.count
-                });
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    }, [searchState, isMounted]);
-
-
-    useEffect(() => {
-            handleItemsGet().then(response => {
-            });
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState]);
-
-    return {
-        ...state
-    };
-};
 const useMappingRulesSearch = () => {
     const [state, setState] = useState({
         filters: {
@@ -225,9 +151,6 @@ const Page = () => {
     const mappingRulesSearch = useMappingRulesSearch();
     const mappingRulesStore = useMappingRulesStore(mappingRulesSearch.state, id);
 
-    const itemsStateSearch = useItemsSearch();
-    const itemsStateStore = useItemsStore(id, itemsStateSearch.state);
-
     const [tripleMapFragments, setTripleMapFragments] = useState([]);
 
     useEffect(() => {
@@ -239,13 +162,6 @@ const Page = () => {
             })).map(x => x.id))
         })()
     }, [specificTripleMapFragmentsApi, id])
-
-    // useEffect(() => {
-    //     if(currentTab === "states") {
-    //         setStateItemsStore({itemsStateSearch: useItemsSearch(), itemsStateStore: useItemsStore(id)})
-    //     }
-    // },[currentTab])
-
 
     const handleTabsChange = useCallback((event, value) => {
         setCurrentTab(value);
@@ -347,8 +263,10 @@ const Page = () => {
                     <Divider/>
                 </Stack>
                 {currentTab === 'details' && (
-                    <Grid container spacing={3}>
-                        <Grid md={12} xs={12}>
+                    <Grid container
+                          spacing={3}>
+                        <Grid md={12}
+                              xs={12}>
                             <Card>
                                 <CardContent>
                                     <Grid
@@ -367,44 +285,52 @@ const Page = () => {
                                                 }}
                                             />
                                             <Divider/>
-                                            <Grid container spacing={3}>
-                                                <Grid md={6} xs={12}>
+                                            <Grid container
+                                                  spacing={3}>
+                                                <Grid md={6}
+                                                      xs={12}>
                                                     <PropertyListItem
                                                         label="Identifier"
                                                         value={item.identifier}
                                                     />
                                                 </Grid>
-                                                <Grid md={12} xs={12}>
+                                                <Grid md={12}
+                                                      xs={12}>
                                                     <PropertyListItem
                                                         label="Mapping Version"
                                                         value={item.mapping_version}
                                                     />
                                                 </Grid>
-                                                <Grid md={12} xs={12}>
+                                                <Grid md={12}
+                                                      xs={12}>
                                                     <PropertyListItem
                                                         label="EPO Version"
                                                         value={item.epo_version}
                                                     />
                                                 </Grid>
-                                                <Grid md={12} xs={12}>
+                                                <Grid md={12}
+                                                      xs={12}>
                                                     <PropertyListItem
                                                         label="eForms Subtype"
                                                         value={item.eform_subtypes.join(', ')}
                                                     />
                                                 </Grid>
-                                                <Grid md={12} xs={12}>
+                                                <Grid md={12}
+                                                      xs={12}>
                                                     <PropertyListItem
                                                         label="Start Date"
                                                         value={item.start_date}
                                                     />
                                                 </Grid>
-                                                <Grid md={12} xs={12}>
+                                                <Grid md={12}
+                                                      xs={12}>
                                                     <PropertyListItem
                                                         label="End Date"
                                                         value={item.end_date}
                                                     />
                                                 </Grid>
-                                                <Grid md={12} xs={12}>
+                                                <Grid md={12}
+                                                      xs={12}>
                                                     <PropertyListItem
                                                         label="eForms SDK version"
                                                         value={item.eforms_sdk_versions.join(', ')}
@@ -419,7 +345,8 @@ const Page = () => {
                     </Grid>
                 )}
                 {currentTab === 'resources' && (
-                    <Grid container spacing={3}>
+                    <Grid container
+                          spacing={3}>
                         {/*<Grid md={12} xs={12}>*/}
                         {/*    <FileResourceCollectionsCard*/}
                         {/*        collectionApi={testDataSuitesApi}*/}
@@ -438,7 +365,8 @@ const Page = () => {
                         {/*        }}*/}
                         {/*    />*/}
                         {/*</Grid>*/}
-                        <Grid md={12} xs={12}>
+                        <Grid md={12}
+                              xs={12}>
                             <FileResourceCollectionsCard
                                 collectionApi={shaclTestSuitesApi}
                                 filters={{
@@ -473,8 +401,10 @@ const Page = () => {
                     <Card sx={{mt: 3}}>
                         <CardHeader title="RML Triple Maps"/>
                         <CardContent sx={{pt: 0}}>
-                            <Grid container spacing={3}>
-                                <Grid xs={12} md={12}>
+                            <Grid container
+                                  spacing={3}>
+                                <Grid xs={12}
+                                      md={12}>
                                     <ResourceListSelector
                                         valuesApi={specificTripleMapFragmentsApi}
                                         listValues={tripleMapFragments}
@@ -498,28 +428,12 @@ const Page = () => {
                 {currentTab === "states" && (
                     <Card sx={{mt: 3}}>
                         <CardContent>
-                            <Grid container spacing={3}>
-                                <Grid xs={12} md={12}>
-                                    {/*<FormControl>*/}
-                                    {/*    <Button*/}
-                                    {/*        variant="contained"*/}
-                                    {/*        color="info"*/}
-                                    {/*        onClick={handleViewStatesAction}*/}
-                                    {/*    >*/}
-                                    {/*        {`View ${item.title} States`}*/}
-                                    {/*    </Button>*/}
-                                    {/*</FormControl>*/}
+                            <Grid container
+                                  spacing={3}>
+                                <Grid xs={12}
+                                      md={12}>
                                     <Card>
-                                        <FileCollectionListSearch onFiltersChange={itemsStateSearch.handleFiltersChange}/>
-                                        <ListTable
-                                            onPageChange={itemsStateSearch.handlePageChange}
-                                            onRowsPerPageChange={itemsStateSearch.handleRowsPerPageChange}
-                                            page={itemsStateSearch.state?.page}
-                                            items={itemsStateStore.items}
-                                            count={itemsStateStore.itemsCount}
-                                            rowsPerPage={itemsStateSearch.state?.rowsPerPage}
-                                            sectionApi={sectionStatesApi}
-                                        />
+                                        <StatesView id={id}/>
                                     </Card>
                                 </Grid>
                             </Grid>

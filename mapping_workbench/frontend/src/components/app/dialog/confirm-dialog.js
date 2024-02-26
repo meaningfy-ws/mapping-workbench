@@ -20,6 +20,7 @@ const ConfirmDialog = (props) => {
             <Divider/>
             <DialogActions>
                 <Button
+                    id="no_dialog_button"
                     variant="contained"
                     onClick={() => setOpen(false)}
                     color="secondary"
@@ -27,6 +28,7 @@ const ConfirmDialog = (props) => {
                     No
                 </Button>
                 <Button
+                    id="yes_dialog_button"
                     variant="contained"
                     onClick={() => {
                         setOpen(false);

@@ -36,6 +36,7 @@ const Page = () => {
                                 display: 'inline-flex'
                             }}
                             underline="hover"
+                            id='back_to_projects'
                         >
                             <SvgIcon sx={{mr: 1}}>
                                 <ArrowLeftIcon/>
