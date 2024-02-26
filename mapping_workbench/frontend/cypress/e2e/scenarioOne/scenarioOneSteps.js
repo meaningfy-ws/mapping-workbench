@@ -144,8 +144,12 @@ Then('I get redirected to tasks', () => {
      cy.url().should('include','conceptual-mapping-rules/tasks/generate-cm-assertions-queries') // => true
 })
 
-When('I click on run button', () => {
-    cy.intercept('POST', 'http://localhost:8000/api/v1/conceptual_mapping_rules/tasks/generate_cm_assertions_queries',).as('run')
+Then('I get redirected to transform test data page', () => {
+    cy.url().should('include','tasks/transform_test_data') // => true
+})
+
+When('I click on run button for transform data', () => {
+    cy.intercept('POST', 'http://localhost:8000/api/v1/tasks/transform_test_data',).as('run_test_data')
     cy.get('#run_button').click()
 })
 
@@ -182,6 +186,27 @@ Then('I click on upload button', () => {
 Then('I get success upload', () => {
     cy.wait('@upload').its('response.statusCode').should('eq',201)
 })
+
+
+//transform test data
+When('I expand tasks', () => {
+    cy.get('#nav_tasks').click()
+})
+
+Then('I click on transform test data', () => {
+    cy.get('#nav_tasks_transform\\ test\\ data').click()
+})
+
+Then('I click on run button', () => {
+    cy.intercept('POST', 'http://localhost:8000/api/v1/tasks/transform_test_data',).as('run_test_data')
+    cy.get('#run_button').click()
+})
+
+Then('I get success transform', () => {
+    cy.wait('@run_test_data',{responseTimeout: 999999}).its('response.statusCode').should('eq', 200)
+})
+
+//process package
 
 Then('I get redirected to mapping_packages list page', () => {
     cy.intercept('GET', 'http://localhost:8000/api/v1/mapping_packages*',).as('getPackages')

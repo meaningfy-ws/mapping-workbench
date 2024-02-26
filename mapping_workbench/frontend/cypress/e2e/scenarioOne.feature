@@ -67,6 +67,17 @@ Feature: Scenario One
     Then I get success generate
 
 
+  Scenario: Process test data
+    Given Session Login
+    Then Go Home
+    Then I expand tasks
+
+    When I click on transform test data
+    Then I get redirected to transform test data page
+
+    When I click on run button for transform data
+    Then I get success transform
+
   Scenario: Process Package
     Given Session Login
     Then Go Home

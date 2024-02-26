@@ -15,6 +15,7 @@ module.exports = defineConfig({
         "cypress/e2e/projects.feature",
         "cypress/e2e/fieldsRegistry.feature",
         "cypress/e2e/packages.feature",
+        "cypress/e2e/transformTestData.feature",
         "cypress/e2e/conceptualMapping.feature",
         "cypress/e2e/cleanUp.feature",
     ],
