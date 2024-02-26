@@ -34,27 +34,27 @@ const useItemsSearch = () => {
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
 
-    const handleFiltersChange = useCallback((filters) => {
+    const handleFiltersChange = filters => {
         setState((prevState) => ({
             ...prevState,
             filters,
             page: 0
         }));
-    }, []);
+    };
 
-    const handlePageChange = useCallback((event, page) => {
+    const handlePageChange = (event, page) => {
         setState((prevState) => ({
             ...prevState,
             page
         }));
-    }, []);
+    };
 
-    const handleRowsPerPageChange = useCallback((event) => {
+    const handleRowsPerPageChange = event => {
         setState((prevState) => ({
             ...prevState,
             rowsPerPage: parseInt(event.target.value, 10)
         }));
-    }, []);
+    };
 
     return {
         handleFiltersChange,
@@ -66,25 +66,22 @@ const useItemsSearch = () => {
 
 
 const useItemsStore = (searchState) => {
-    const isMounted = useMounted();
     const [state, setState] = useState({
         items: [],
         itemsCount: 0
     });
 
-    const handleItemsGet = useCallback(async () => {
+    const handleItemsGet = async () => {
         try {
             const response = await sectionApi.getItems(searchState);
-            if (isMounted()) {
                 setState({
                     items: response.items,
                     itemsCount: response.count
                 });
-            }
         } catch (err) {
             console.error(err);
         }
-    }, [searchState, isMounted]);
+    }
 
     useEffect(() => {
             handleItemsGet();
@@ -103,8 +100,6 @@ const Page = () => {
     const itemsStore = useItemsStore(itemsSearch.state);
 
     const importDialog = useDialog();
-
-    usePageView();
 
     return (
         <>

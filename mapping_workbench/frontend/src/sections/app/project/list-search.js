@@ -58,7 +58,7 @@ export const ListSearch = (props) => {
     }
 
 
-    const handleChipDelete = (deletedChip) => {
+    const handleChipDelete = deletedChip => {
         setChips(prevChips =>
             prevChips.filter(chip =>
                 // There can exist multiple chips for the same field.
@@ -141,7 +141,6 @@ export const ListSearch = (props) => {
     }
 
 
-    // We memoize this part to prevent re-render issues
     const statusValues = chips?.filter(chip => chip.field === 'status').map(chip => chip.value)
 
     return (
@@ -162,7 +161,6 @@ export const ListSearch = (props) => {
                     disableUnderline
                     fullWidth
                     inputProps={{ref: queryRef}}
-                    // onKeyDown={handleQueryChange}
                     placeholder="Search by project title"
                     sx={{flexGrow: 1}}
                 />
