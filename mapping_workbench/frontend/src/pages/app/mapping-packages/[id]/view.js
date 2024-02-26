@@ -27,14 +27,12 @@ import {PropertyList} from "../../../../components/property-list";
 import {PropertyListItem} from "../../../../components/property-list-item";
 import {shaclTestSuitesApi} from "../../../../api/shacl-test-suites";
 
-import {ListTable as MappingRulesListTable} from "src/sections/app/conceptual-mapping-rule/list-table";
-import {conceptualMappingRulesApi} from "../../../../api/conceptual-mapping-rules";
-import {ListSearch as MappingRulesListSearch} from "src/sections/app/conceptual-mapping-rule/list-search";
 import {ListSelectorSelect as ResourceListSelector} from "../../../../components/app/list-selector/select";
 import {specificTripleMapFragmentsApi} from "../../../../api/triple-map-fragments/specific";
 import toast from "react-hot-toast";
 
 import StatesView from "../../../../sections/app/mapping-package/state/states_view";
+import MappingPackageRulesView from "../../../../sections/app/mapping-package/mapping-package-rules-view";
 
 const tabs = [
     {label: 'Details', value: 'details'},
@@ -45,83 +43,6 @@ const tabs = [
 ];
 
 
-const useMappingRulesSearch = () => {
-    const [state, setState] = useState({
-        filters: {
-            q: undefined,
-            terms_validity: undefined,
-        },
-        page: conceptualMappingRulesApi.DEFAULT_PAGE,
-        rowsPerPage: conceptualMappingRulesApi.DEFAULT_ROWS_PER_PAGE,
-        detailedView: true
-    });
-
-    const handleFiltersChange = filters => {
-        setState(prevState => ({
-            ...prevState,
-            filters,
-            //page: 0
-        }));
-    }
-
-    const handlePageChange = (event, page) => {
-        setState(prevState => ({
-            ...prevState,
-            page
-        }));
-    }
-
-    const handleRowsPerPageChange = event => {
-        setState(prevState => ({
-            ...prevState,
-            rowsPerPage: parseInt(event.target.value, 10)
-        }));
-    }
-
-    const handleDetailedViewChange = (event, detailedView) => {
-        setState(prevState => ({
-            ...prevState,
-            detailedView
-        }));
-    }
-
-    return {
-        handleFiltersChange,
-        handlePageChange,
-        handleRowsPerPageChange,
-        handleDetailedViewChange,
-        state
-    };
-};
-
-const useMappingRulesStore = (searchState, mappingPackage) => {
-    const [state, setState] = useState({
-        items: [],
-        itemsCount: 0,
-    });
-
-    const handleItemsGet = async () => {
-        try {
-            const request = searchState;
-            request['filters']['mapping_packages'] = [mappingPackage];
-            const response = await conceptualMappingRulesApi.getItems(request);
-                setState({
-                    items: response.items,
-                    itemsCount: response.count
-                });
-        } catch (err) {
-            console.error(err);
-        }
-    }
-
-    useEffect(() => {
-        handleItemsGet();
-    }, [searchState]);
-
-    return {
-        handleItemsGet, ...state
-    };
-};
 
 const Page = () => {
     const router = useRouter();
@@ -139,28 +60,26 @@ const Page = () => {
 
     const [currentTab, setCurrentTab] = useState('details');
 
-    const mappingRulesSearch = useMappingRulesSearch();
-    const mappingRulesStore = useMappingRulesStore(mappingRulesSearch.state, id);
 
     const [tripleMapFragments, setTripleMapFragments] = useState([]);
 
-    useEffect(() => {
-        (async () => {
-            setTripleMapFragments((await specificTripleMapFragmentsApi.getValuesForSelector({
+    const getTripleMapFragments = async () => {
+        setTripleMapFragments((await specificTripleMapFragmentsApi.getValuesForSelector({
                 filters: {
                     mapping_package: id
                 }
             })).map(x => x.id))
-        })()
+    }
+
+    useEffect(() => {
+        getTripleMapFragments()
     }, [specificTripleMapFragmentsApi, id])
 
     const handleTabsChange = (event, value) => {
         setCurrentTab(value);
     }
 
-    const handlePackagesUpdate = useCallback((event, value) => {
-        mappingRulesStore.handleItemsGet();
-    }, [mappingRulesStore]);
+
 
     const handleTripleMapFragmentsUpdate = useCallback(async () => {
         await specificTripleMapFragmentsApi.update_specific_mapping_package(id, tripleMapFragments);
@@ -369,24 +288,7 @@ const Page = () => {
                     </Grid>
                 )}
                 {currentTab === "mappingRules" && (
-                    <>
-                        <MappingRulesListSearch
-                            onFiltersChange={mappingRulesSearch.handleFiltersChange}
-                            onDetailedViewChange={mappingRulesSearch.handleDetailedViewChange}
-                            detailedView={mappingRulesSearch.state.detailedView}
-                        />
-                        <MappingRulesListTable
-                            onPageChange={mappingRulesSearch.handlePageChange}
-                            onRowsPerPageChange={mappingRulesSearch.handleRowsPerPageChange}
-                            page={mappingRulesSearch.state.page}
-                            items={mappingRulesStore.items}
-                            count={mappingRulesStore.itemsCount}
-                            rowsPerPage={mappingRulesSearch.state.rowsPerPage}
-                            sectionApi={conceptualMappingRulesApi}
-                            onPackagesUpdate={handlePackagesUpdate}
-                            detailedView={mappingRulesSearch.state.detailedView}
-                        />
-                    </>
+                    <MappingPackageRulesView id={id}/>
                 )}
                 {currentTab === "tripleMapFragments" && (
                     <Card sx={{mt: 3}}>
