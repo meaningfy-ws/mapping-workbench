@@ -16,10 +16,8 @@ import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
 
 import {mappingPackagesApi as sectionApi} from 'src/api/mapping-packages';
-import {mappingPackageStatesApi as sectionStatesApi} from 'src/api/mapping-packages/states';
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
-import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
 import {useRouter} from "src/hooks/use-router";
@@ -31,14 +29,11 @@ import {shaclTestSuitesApi} from "../../../../api/shacl-test-suites";
 
 import {ListTable as MappingRulesListTable} from "src/sections/app/conceptual-mapping-rule/list-table";
 import {conceptualMappingRulesApi} from "../../../../api/conceptual-mapping-rules";
-import {useMounted} from "../../../../hooks/use-mounted";
 import {ListSearch as MappingRulesListSearch} from "src/sections/app/conceptual-mapping-rule/list-search";
 import {ListSelectorSelect as ResourceListSelector} from "../../../../components/app/list-selector/select";
 import {specificTripleMapFragmentsApi} from "../../../../api/triple-map-fragments/specific";
 import toast from "react-hot-toast";
 
-import {FileCollectionListSearch} from "../../../../sections/app/file-manager/file-collection-list-search";
-import {ListTable} from "../../../../sections/app/mapping-package/state/list-table";
 import StatesView from "../../../../sections/app/mapping-package/state/states_view";
 
 const tabs = [
@@ -61,34 +56,34 @@ const useMappingRulesSearch = () => {
         detailedView: true
     });
 
-    const handleFiltersChange = useCallback((filters) => {
-        setState((prevState) => ({
+    const handleFiltersChange = filters => {
+        setState(prevState => ({
             ...prevState,
             filters,
             //page: 0
         }));
-    }, []);
+    }
 
-    const handlePageChange = useCallback((event, page) => {
-        setState((prevState) => ({
+    const handlePageChange = (event, page) => {
+        setState(prevState => ({
             ...prevState,
             page
         }));
-    }, []);
+    }
 
-    const handleRowsPerPageChange = useCallback((event) => {
-        setState((prevState) => ({
+    const handleRowsPerPageChange = event => {
+        setState(prevState => ({
             ...prevState,
             rowsPerPage: parseInt(event.target.value, 10)
         }));
-    }, []);
+    }
 
-    const handleDetailedViewChange = useCallback((event, detailedView) => {
-        setState((prevState) => ({
+    const handleDetailedViewChange = (event, detailedView) => {
+        setState(prevState => ({
             ...prevState,
             detailedView
         }));
-    }, []);
+    }
 
     return {
         handleFiltersChange,
@@ -100,27 +95,24 @@ const useMappingRulesSearch = () => {
 };
 
 const useMappingRulesStore = (searchState, mappingPackage) => {
-    const isMounted = useMounted();
     const [state, setState] = useState({
         items: [],
         itemsCount: 0,
     });
 
-    const handleItemsGet = useCallback(async () => {
+    const handleItemsGet = async () => {
         try {
             const request = searchState;
             request['filters']['mapping_packages'] = [mappingPackage];
             const response = await conceptualMappingRulesApi.getItems(request);
-            if (isMounted()) {
                 setState({
                     items: response.items,
                     itemsCount: response.count
                 });
-            }
         } catch (err) {
             console.error(err);
         }
-    }, [conceptualMappingRulesApi, searchState, mappingPackage, isMounted]);
+    }
 
     useEffect(() => {
         handleItemsGet();
@@ -140,12 +132,11 @@ const Page = () => {
     if (!id) {
         return;
     }
-    const [stateItemsStore, setStateItemsStore] = useState({itemsStateSearch:{}, itemsStateStore:{}})
+    // const [stateItemsStore, setStateItemsStore] = useState({itemsStateSearch:{}, itemsStateStore:{}})
 
     const formState = useItem(sectionApi, id);
     const item = formState.item;
 
-    usePageView();
     const [currentTab, setCurrentTab] = useState('details');
 
     const mappingRulesSearch = useMappingRulesSearch();
@@ -163,9 +154,9 @@ const Page = () => {
         })()
     }, [specificTripleMapFragmentsApi, id])
 
-    const handleTabsChange = useCallback((event, value) => {
+    const handleTabsChange = (event, value) => {
         setCurrentTab(value);
-    }, []);
+    }
 
     const handlePackagesUpdate = useCallback((event, value) => {
         mappingRulesStore.handleItemsGet();
