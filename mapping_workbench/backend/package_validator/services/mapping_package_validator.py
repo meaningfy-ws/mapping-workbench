@@ -52,7 +52,9 @@ def validate_mapping_package(mapping_package_state: MappingPackageState, tasks_t
             validate_tests_data_with_sparql_tests(test_data_suite.test_data_states, sparql_assertions)
 
 
-async def generate_xpath_reports_tree(state: MappingPackageState, state_id: PydanticObjectId) -> MappingPackageValidationTree:
+async def generate_validation_reports_tree(
+        state: MappingPackageState, state_id: PydanticObjectId
+) -> MappingPackageValidationTree:
     tree = MappingPackageValidationTree(**state.model_dump())
     tree.mapping_package_oid = state.mapping_package_oid
     tree.mapping_package_state_oid = state_id

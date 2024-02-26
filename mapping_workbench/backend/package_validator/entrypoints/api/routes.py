@@ -9,7 +9,8 @@ from mapping_workbench.backend.mapping_package.models.entity import MappingPacka
 from mapping_workbench.backend.mapping_package.services.api import get_mapping_package_state
 from mapping_workbench.backend.mapping_package.services.data import get_specific_mapping_package_state
 from mapping_workbench.backend.package_validator.models.xpath_validation import XPathAssertion
-from mapping_workbench.backend.package_validator.services.mapping_package_validator import generate_xpath_reports_tree
+from mapping_workbench.backend.package_validator.services.mapping_package_validator import \
+    generate_validation_reports_tree
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataValidationContainer
 
 ROUTE_PREFIX = "/package_validator"
@@ -23,7 +24,7 @@ router = APIRouter(
 
 
 @router.get(
-    "/state/{id}/xpath",
+    "/xpath/state/{id}",
     description=f"Get {NAME_FOR_ONE} state XPATH validation",
     name=f"{NAME_FOR_ONE}:get_{NAME_FOR_ONE}_state_xpath_validation",
     response_model=List[XPathAssertion]
@@ -37,7 +38,7 @@ async def route_get_mapping_package_state_xpath_validation(
 
 
 @router.get(
-    "/state/{id}/suite/{test_data_suite_id}/xpath",
+    "/xpath/state/{id}/suite/{test_data_suite_id}",
     description=f"Get {NAME_FOR_ONE} state test data suite XPATH validation",
     name=f"{NAME_FOR_ONE}:get_{NAME_FOR_ONE}_state_test_data_suite_xpath_validation",
     response_model=List[XPathAssertion]
@@ -59,7 +60,7 @@ async def route_get_mapping_package_state_test_data_suite_xpath_validation(
 
 
 @router.get(
-    "/state/{id}/suite/{test_data_suite_id}/test/{test_data_id}/xpath",
+    "/xpath/state/{id}/suite/{test_data_suite_id}/test/{test_data_id}",
     description=f"Get {NAME_FOR_ONE} state test data XPATH validation",
     name=f"{NAME_FOR_ONE}:get_{NAME_FOR_ONE}_state_test_data_xpath_validation",
     response_model=List[XPathAssertion]
@@ -90,14 +91,14 @@ async def route_get_mapping_package_state_test_data_xpath_validation(
 
 
 @router.get(
-    "/state/{id}/xpath_reports_tree",
-    description=f"Get {NAME_FOR_ONE} state XPATH validation reports tree",
-    name=f"{NAME_FOR_ONE}:get_{NAME_FOR_ONE}_state_xpath_reports_tree",
+    "/validation_reports_tree/state/{id}",
+    description=f"Get {NAME_FOR_ONE} state validation reports tree",
+    name=f"{NAME_FOR_ONE}:get_{NAME_FOR_ONE}_state_validation_reports_tree",
     response_model=MappingPackageValidationTree
 )
-async def route_get_mapping_package_state_test_data_xpath_validation(
+async def route_get_mapping_package_state_reports_tree(
         mapping_package_state: MappingPackageStateGate = Depends(get_mapping_package_state)
 ):
     state: MappingPackageState = await get_specific_mapping_package_state(mapping_package_state.id)
-    xpath_reports_tree = await generate_xpath_reports_tree(state, mapping_package_state.id)
-    return xpath_reports_tree
+    validation_reports_tree = await generate_validation_reports_tree(state, mapping_package_state.id)
+    return validation_reports_tree
