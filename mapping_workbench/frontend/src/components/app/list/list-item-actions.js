@@ -34,9 +34,7 @@ export const ListItemActions = (props) => {
     }, [router, itemctx]);
 
     const handleDeleteAction = useCallback(async () => {
-        const deleteAction = itemctx.actions?.delete ?? itemctx.api.deleteItem
-        const response = await deleteAction(itemctx.id);
-        console.log("delete pathname: ", itemctx.api.section);
+        const response = await itemctx.api.deleteItem(itemctx.id);
 
         router.push({
             pathname: paths.app[itemctx.api.section].index
@@ -49,6 +47,7 @@ export const ListItemActions = (props) => {
     return (
         <Box>
             {itemctx.api.SECTION_LIST_ACTIONS.includes(ACTION.VIEW) && <Button
+                id="view_button"
                 variant="text"
                 size="small"
                 color="info"
@@ -60,6 +59,7 @@ export const ListItemActions = (props) => {
                 View
             </Button>}
             {itemctx.api.SECTION_LIST_ACTIONS.includes(ACTION.EDIT) && <Button
+                id="edit_button"
                 variant="text"
                 size="small"
                 color="success"
@@ -72,6 +72,7 @@ export const ListItemActions = (props) => {
             </Button>}
             {itemctx.api.SECTION_LIST_ACTIONS.includes(ACTION.DELETE) && <>
                 <Button
+                    id="delete_button"
                     variant="text"
                     size="small"
                     color="error"

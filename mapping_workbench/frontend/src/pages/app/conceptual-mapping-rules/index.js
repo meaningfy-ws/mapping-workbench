@@ -182,6 +182,7 @@ const Page = () => {
                             Add
                         </Button>
                         <Button
+                            id="generate_button"
                             component={RouterLink}
                             href={paths.app[sectionApi.section].tasks.generate_cm_assertions_queries}
                             startIcon={(
