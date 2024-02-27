@@ -91,6 +91,20 @@ async def route_get_mapping_package_state_test_data_xpath_validation(
 
 
 @router.get(
+    "/sparql/state/{id}",
+    description=f"Get {NAME_FOR_ONE} state SPARQL validation",
+    name=f"{NAME_FOR_ONE}:get_{NAME_FOR_ONE}_state_sparql_validation",
+    response_model=List[XPathAssertion]
+)
+async def route_get_mapping_package_state_xpath_validation(
+        mapping_package_state: MappingPackageStateGate = Depends(get_mapping_package_state)
+):
+    state: MappingPackageState = await get_specific_mapping_package_state(mapping_package_state.id)
+    validation: TestDataValidationContainer = state.validation
+    return validation.xpath.results
+
+
+@router.get(
     "/validation_reports_tree/state/{id}",
     description=f"Get {NAME_FOR_ONE} state validation reports tree",
     name=f"{NAME_FOR_ONE}:get_{NAME_FOR_ONE}_state_validation_reports_tree",

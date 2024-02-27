@@ -3,10 +3,10 @@ from typing import Any, List
 import rdflib
 from pydantic import validate_call
 
-from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResource, SPARQLTestState
-from mapping_workbench.backend.package_validator.models.sparql_validation import SPARQLTestDataValidationResult, \
-    SPARQLTestDataResult
 from mapping_workbench.backend.package_validator.adapters.data_validator import TestDataValidator
+from mapping_workbench.backend.package_validator.models.sparql_validation import SPARQLTestDataValidationResult, \
+    SPARQLQueryResult
+from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestState
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataState
 
 RDF_FORMAT = "ttl"
@@ -33,8 +33,12 @@ class SPARQLValidator(TestDataValidator):
 
         for sparql_query in sparql_queries:
             try:
-                results.append(SPARQLTestDataResult(query=sparql_query,
-                                                        query_result=bool(self.rdf_graph.query(sparql_query.content))))
+                results.append(
+                    SPARQLQueryResult(
+                        query=sparql_query,
+                        query_result=bool(self.rdf_graph.query(sparql_query.content))
+                    )
+                )
             except Exception as e:
                 print("ERROR :: SPARQL Validation :: ", e)
                 pass

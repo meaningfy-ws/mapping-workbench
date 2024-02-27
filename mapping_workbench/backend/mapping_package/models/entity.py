@@ -1,5 +1,4 @@
 from datetime import datetime
-from enum import Enum
 from typing import Optional, List
 
 import pymongo
@@ -71,32 +70,6 @@ class MappingPackageOut(BaseProjectResourceEntityOutSchema):
 
 class MappingPackageListFilters(BaseTitledEntityListFiltersSchema):
     pass
-
-
-class SPARQLQueryRefinedResultType(Enum):
-    """
-    The aggregated SPARQL Query result
-    """
-    VALID = "valid"
-    UNVERIFIABLE = "unverifiable"
-    INVALID = "invalid"
-    ERROR = "error"
-    WARNING = "warning"
-    UNKNOWN = "unknown"
-
-
-# class MappingPackageStateSPARQLValidationResult(BaseModel):
-#
-# class MappingPackageStateSPARQLValidationResultForTestDataSuite(BaseModel):
-#     test_data_suite
-
-# class MappingPackageStateSPARQLValidation(BaseModel):
-#     package: Optional[MappingPackageStateSPARQLValidationResult]
-#     test_data_suite: Optional[List[MappingPackageStateSPARQLValidationResult]
-# class MappingPackageStateValidation(BaseModel):
-#     shacl: Optional[SHACLValidationResult] = None
-#     sparql: Optional[SPARQLTestDataValidationResult] = None
-#     xpath: List[XPathAssertion] = []
 
 
 class MappingPackageState(TestDataValidation, ObjectState):
