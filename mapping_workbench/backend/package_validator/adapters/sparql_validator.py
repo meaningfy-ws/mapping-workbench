@@ -6,7 +6,7 @@ from pydantic import validate_call
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResource, SPARQLTestState
 from mapping_workbench.backend.package_validator.models.sparql_validation import SPARQLTestDataValidationResult, \
     SPARQLTestDataResult
-from mapping_workbench.backend.package_validator.adapters.xpath_validator import TestDataValidator
+from mapping_workbench.backend.package_validator.adapters.data_validator import TestDataValidator
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataState
 
 RDF_FORMAT = "ttl"
@@ -29,14 +29,14 @@ class SPARQLValidator(TestDataValidator):
         self.test_data = test_data
 
     def validate(self, sparql_queries: List[SPARQLTestState]) -> SPARQLTestDataValidationResult:
-        ask_results = []
+        results = []
 
         for sparql_query in sparql_queries:
             try:
-                ask_results.append(SPARQLTestDataResult(query=sparql_query,
+                results.append(SPARQLTestDataResult(query=sparql_query,
                                                         query_result=bool(self.rdf_graph.query(sparql_query.content))))
             except Exception as e:
                 print("ERROR :: SPARQL Validation :: ", e)
                 pass
 
-        return SPARQLTestDataValidationResult(ask_results=ask_results)
+        return SPARQLTestDataValidationResult(results=results)

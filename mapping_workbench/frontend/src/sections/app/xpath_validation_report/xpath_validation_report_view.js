@@ -28,7 +28,6 @@ const useItemsSearch = (items) => {
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
 
-
     const {show, ...filters} = state.filters
 
     const searchItems = state.search.length ? items.filter(item => {

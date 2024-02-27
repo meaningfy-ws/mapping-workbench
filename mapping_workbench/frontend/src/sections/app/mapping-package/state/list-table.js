@@ -40,17 +40,17 @@ export const ListTable = (props) => {
         return exportPackage(sectionApi, id, setIsExporting, item)
     }
 
-   const SorterHeader = ({fieldName, title}) => {
-       return <Tooltip enterDelay={300}
-                       title="Sort"
-               >
-                   <TableSortLabel
-                        active={sortField === fieldName}
-                        direction={sortDirection > 0 ? "asc" : "desc"}
-                        onClick={() => onSort(fieldName)}>
-                        {title ?? fieldName}
-                    </TableSortLabel>
-               </Tooltip>
+    const SorterHeader = ({fieldName, title}) => {
+        return <Tooltip enterDelay={300}
+                        title="Sort"
+        >
+            <TableSortLabel
+                active={sortField === fieldName}
+                direction={sortDirection > 0 ? "asc" : "desc"}
+                onClick={() => onSort(fieldName)}>
+                {title ?? fieldName}
+            </TableSortLabel>
+        </Tooltip>
     }
 
     return (
@@ -72,7 +72,7 @@ export const ListTable = (props) => {
                                 <SorterHeader fieldName="title"/>
                             </TableCell>
                             <TableCell>
-                                  <SorterHeader fieldName="description"/>
+                                <SorterHeader fieldName="description"/>
                             </TableCell>
                             <TableCell>
                                 <SorterHeader fieldName="mapping_version"
@@ -114,13 +114,13 @@ export const ListTable = (props) => {
                                             <ListItemActions
                                                 itemctx={new ForListItemAction(item_id, sectionApi)}
                                                 pathnames={{
-                                                    view: paths.app[sectionApi.section].states.view.replace("[id]",id).replace("[sid]",item_id),
+                                                    view: paths.app[sectionApi.section].states.view.replace("[pid]", id),
                                                 }}
                                                 actions={{
                                                     delete: sectionApi.deleteState
                                                 }}/>
                                             <Button
-                                                onClick={()=>handleExport(item)}
+                                                onClick={() => handleExport(item)}
                                                 disabled={isExporting}>
                                                 {isExporting ? "Exporting..." : "Export"}
                                             </Button>

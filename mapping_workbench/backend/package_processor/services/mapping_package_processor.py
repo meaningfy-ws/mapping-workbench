@@ -21,7 +21,8 @@ class TaskToRun(Enum):
     TRANSFORM_TEST_DATA = "transform_test_data"
     GENERATE_CM_ASSERTIONS = "generate_cm_assertions"
     VALIDATE_PACKAGE = "validate_package"
-    VALIDATE_PACKAGE_XPATH_AND_SPARQL = "validate_package_xpath_and_sparql"
+    VALIDATE_PACKAGE_XPATH = "validate_package_xpath"
+    VALIDATE_PACKAGE_SPARQL = "validate_package_sparql"
     VALIDATE_PACKAGE_SHACL = "validate_package_shacl"
 
 

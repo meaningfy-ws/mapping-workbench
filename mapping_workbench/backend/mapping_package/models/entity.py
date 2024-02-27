@@ -1,9 +1,11 @@
 from datetime import datetime
+from enum import Enum
 from typing import Optional, List
 
 import pymongo
-from beanie import Indexed, Link, Document, PydanticObjectId
+from beanie import Indexed, Link, PydanticObjectId
 from beanie.odm.operators.find.comparison import Eq, NE
+from pydantic import BaseModel
 from pymongo import IndexModel
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRuleState, \
@@ -19,7 +21,8 @@ from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSu
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuiteState, SPARQLTestSuite, \
     SPARQLQueryValidationType
 from mapping_workbench.backend.state_manager.models.state_object import ObjectState, StatefulObjectABC
-from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuiteState, TestDataSuite
+from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuiteState, TestDataSuite, \
+    TestDataValidation
 from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragmentState, \
     GenericTripleMapFragment, SpecificTripleMapFragment
 
@@ -70,8 +73,35 @@ class MappingPackageListFilters(BaseTitledEntityListFiltersSchema):
     pass
 
 
-class MappingPackageState(ObjectState):
+class SPARQLQueryRefinedResultType(Enum):
+    """
+    The aggregated SPARQL Query result
+    """
+    VALID = "valid"
+    UNVERIFIABLE = "unverifiable"
+    INVALID = "invalid"
+    ERROR = "error"
+    WARNING = "warning"
+    UNKNOWN = "unknown"
+
+
+# class MappingPackageStateSPARQLValidationResult(BaseModel):
+#
+# class MappingPackageStateSPARQLValidationResultForTestDataSuite(BaseModel):
+#     test_data_suite
+
+# class MappingPackageStateSPARQLValidation(BaseModel):
+#     package: Optional[MappingPackageStateSPARQLValidationResult]
+#     test_data_suite: Optional[List[MappingPackageStateSPARQLValidationResult]
+# class MappingPackageStateValidation(BaseModel):
+#     shacl: Optional[SHACLValidationResult] = None
+#     sparql: Optional[SPARQLTestDataValidationResult] = None
+#     xpath: List[XPathAssertion] = []
+
+
+class MappingPackageState(TestDataValidation, ObjectState):
     id: Optional[str] = None
+    mapping_package_oid: Optional[PydanticObjectId] = None
     title: Optional[str] = None
     description: Optional[str] = None
     identifier: Optional[str] = None
@@ -89,8 +119,31 @@ class MappingPackageState(ObjectState):
     resources: Optional[List[ResourceFileState]] = []
 
 
+class MappingPackageTestDataValidationTree(BaseModel):
+    oid: Optional[PydanticObjectId] = None
+    identifier: Optional[str] = None
+    title: Optional[str] = None
+
+
+class MappingPackageTestDataSuiteValidationTree(BaseModel):
+    oid: Optional[PydanticObjectId] = None
+    identifier: Optional[str] = None
+    title: Optional[str] = None
+    test_data_states: Optional[List[MappingPackageTestDataValidationTree]] = []
+
+
+class MappingPackageValidationTree(BaseModel):
+    mapping_package_oid: Optional[PydanticObjectId] = None
+    mapping_package_state_oid: Optional[PydanticObjectId] = None
+    identifier: Optional[str] = None
+    title: Optional[str] = None
+    description: Optional[str] = None
+    test_data_suites: Optional[List[MappingPackageTestDataSuiteValidationTree]] = []
+
+
 class MappingPackageStateGate(BaseEntity):
     id: Optional[PydanticObjectId] = None
+    mapping_package_oid: Optional[PydanticObjectId] = None
     title: Optional[str] = None
     description: Optional[str] = None
     identifier: Optional[str] = None
@@ -124,12 +177,12 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
     title: Optional[Indexed(str, unique=True)] = None
     description: Optional[str] = None
     identifier: Optional[Indexed(str, unique=True)] = None
-    mapping_version: str = None
-    epo_version: str = None
-    eform_subtypes: List[str] = None
+    mapping_version: Optional[str] = ''
+    epo_version: Optional[str] = ''
+    eform_subtypes: Optional[List[str]] = []
     start_date: Optional[str] = None
     end_date: Optional[str] = None
-    eforms_sdk_versions: List[str] = None
+    eforms_sdk_versions: Optional[List[str]] = []
     shacl_test_suites: Optional[List[Link[SHACLTestSuite]]] = None
 
     async def get_conceptual_mapping_rules_states(self) -> List[ConceptualMappingRuleState]:
@@ -147,7 +200,6 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
             Eq(TestDataSuite.project, self.project.to_ref())
         ).to_list()
         test_data_suites_states = [await test_data_suite.get_state() for test_data_suite in test_data_suites]
-        print("Test data suites states: ", len(test_data_suites_states))
         return test_data_suites_states
 
     async def get_shacl_test_suites_states(self) -> List[SHACLTestSuiteState]:
@@ -231,6 +283,7 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
         resources = await self.get_resources_states()
 
         return MappingPackageState(
+            mapping_package_oid=self.id,
             title=self.title,
             description=self.description,
             identifier=self.identifier,
