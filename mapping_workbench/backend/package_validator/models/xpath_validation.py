@@ -1,10 +1,9 @@
 from typing import Optional, List
 
-from beanie import PydanticObjectId
 from pydantic import BaseModel
 
 from mapping_workbench.backend.package_validator.models.test_data_validation import TestDataValidationResult, \
-    ValidationXPathSDKElement, ValidationTestDataEntry
+    ValidationTestDataEntry, CMRuleSDKElement
 
 
 class XPathAssertionEntry(BaseModel):
@@ -16,7 +15,7 @@ class XPathAssertionTestDataEntry(ValidationTestDataEntry):
     xpaths: Optional[List[XPathAssertionEntry]] = None
 
 
-class XPathAssertion(ValidationXPathSDKElement):
+class XPathAssertion(CMRuleSDKElement):
     test_data_xpaths: Optional[List[XPathAssertionTestDataEntry]] = None
     is_covered: Optional[bool] = False
     message: Optional[str] = None

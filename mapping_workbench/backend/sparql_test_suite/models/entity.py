@@ -9,6 +9,7 @@ from pymongo import IndexModel
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
 from mapping_workbench.backend.file_resource.models.file_resource import FileResource, FileResourceCollection, \
     FileResourceIn
+from mapping_workbench.backend.package_validator.models.test_data_validation import CMRuleSDKElement
 from mapping_workbench.backend.state_manager.models.state_object import ObjectState, StatefulObjectABC
 
 
@@ -38,6 +39,7 @@ class SPARQLTestState(ObjectState):
     title: Optional[str] = None
     filename: Optional[str] = None
     content: Optional[str] = None
+    cm_rule: Optional[CMRuleSDKElement] = None
 
     model_config = ConfigDict(use_enum_values=True)
 
@@ -104,6 +106,7 @@ class SPARQLTestFileResource(FileResource, StatefulObjectABC):
     format: Optional[SPARQLTestFileResourceFormat] = None
     type: Optional[SPARQLQueryValidationType] = None
     sparql_test_suite: Optional[Link[SPARQLTestSuite]] = None
+    cm_rule: Optional[CMRuleSDKElement] = None
 
     async def get_state(self) -> SPARQLTestState:
         return SPARQLTestState(
@@ -111,7 +114,8 @@ class SPARQLTestFileResource(FileResource, StatefulObjectABC):
             type=self.type,
             title=self.title,
             filename=self.filename,
-            content=self.content
+            content=self.content,
+            xpath=self.xpath
         )
 
     def set_state(self, state: SPARQLTestState):

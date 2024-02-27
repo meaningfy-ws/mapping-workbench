@@ -8,6 +8,7 @@ from mapping_workbench.backend.conceptual_mapping_rule.services.data import get_
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
 from mapping_workbench.backend.file_resource.models.file_resource import FileResourceFormat
 from mapping_workbench.backend.ontology.services.namespaces import get_prefixes_definitions
+from mapping_workbench.backend.package_validator.models.test_data_validation import CMRuleSDKElement
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResource, SPARQLTestSuite, \
     SPARQLQueryValidationType
@@ -84,7 +85,7 @@ async def generate_and_save_cm_assertions_queries(
         sparql_xpath = ""
         sparql_idx = None
 
-        structural_element: StructuralElement
+        structural_element: StructuralElement = StructuralElement()
         structural_element_exists: bool = False
 
         if cm_rule.source_structural_element:
@@ -129,6 +130,12 @@ async def generate_and_save_cm_assertions_queries(
             SPARQLTestFileResource.title == sparql_title
         )
 
+        cm_rule_sdk_element = CMRuleSDKElement(
+            eforms_sdk_element_id=structural_element.eforms_sdk_element_id,
+            eforms_sdk_element_title=structural_element.name,
+            eforms_sdk_element_xpath=structural_element.absolute_xpath
+        )
+
         if not sparql_test_file_resource:
             sparql_test_file_resource = SPARQLTestFileResource(
                 project=project_link,
@@ -138,7 +145,8 @@ async def generate_and_save_cm_assertions_queries(
                 filename=file_name,
                 path=[sparql_test_suite.title, file_name],
                 content=file_content,
-                type=sparql_test_suite.type
+                type=sparql_test_suite.type,
+                cm_rule=cm_rule_sdk_element
             )
             if user is not None:
                 sparql_test_file_resource.on_create(user)
@@ -146,6 +154,7 @@ async def generate_and_save_cm_assertions_queries(
         else:
             sparql_test_file_resource.title = sparql_title
             sparql_test_file_resource.content = file_content
+            sparql_test_file_resource.cm_rule = cm_rule_sdk_element
             if user is not None:
                 sparql_test_file_resource.on_update(user)
             await sparql_test_file_resource.save()

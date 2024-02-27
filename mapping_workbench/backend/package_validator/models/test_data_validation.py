@@ -12,7 +12,7 @@ class TestDataValidationResult(BaseModel):
     created_at: Optional[datetime] = datetime.now()
 
 
-class ValidationXPathSDKElement(BaseModel):
+class CMRuleSDKElement(BaseModel):
     eforms_sdk_element_id: Optional[str] = None
     eforms_sdk_element_title: Optional[str] = None
     eforms_sdk_element_xpath: Optional[str] = None

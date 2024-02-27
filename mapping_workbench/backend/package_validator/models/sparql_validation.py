@@ -1,11 +1,10 @@
 from enum import Enum
 from typing import List, Optional
 
-from beanie import PydanticObjectId
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from mapping_workbench.backend.package_validator.models.test_data_validation import TestDataValidationResult, \
-    ValidationXPathSDKElement, ValidationTestDataEntry
+    ValidationTestDataEntry, CMRuleSDKElement
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestState
 
 
@@ -21,16 +20,6 @@ class SPARQLQueryRefinedResultType(Enum):
     UNKNOWN = "unknown"
 
 
-class SPARQLQuery(BaseModel):
-    """
-    Stores SPARQL query details
-    """
-    title: Optional[str] = None
-    description: Optional[str] = None
-    xpath: Optional[List[str]] = []
-    query: SPARQLTestState
-
-
 class SPARQLQueryTestDataEntry(ValidationTestDataEntry):
     """
 
@@ -41,14 +30,16 @@ class SPARQLQueryResult(BaseModel):
     """
     Stores SPARQL query execution result
     """
-    query: SPARQLQuery
+    query: SPARQLTestState
     result: Optional[SPARQLQueryRefinedResultType] = None
     query_result: Optional[str] = None
     fields_covered: Optional[bool] = True
-    missing_fields: Optional[List[ValidationXPathSDKElement]] = []
+    missing_fields: Optional[List[CMRuleSDKElement]] = []
     error: Optional[str] = None
     message: Optional[str] = None
     test_data: Optional[SPARQLQueryTestDataEntry] = None
+
+    model_config = ConfigDict(use_enum_values=True)
 
 
 class SPARQLQueryValidationSummaryEntry(BaseModel):
