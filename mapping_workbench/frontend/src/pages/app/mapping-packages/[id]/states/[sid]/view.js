@@ -31,7 +31,6 @@ import {sessionApi} from "../../../../../../api/session";
 import ShaclValidationReport from "../../../../../../sections/app/shacl_validation_report/shacl_validation_report_view";
 import SparqlValidationReport
     from "../../../../../../sections/app/sparql_validation_report/sparql_validation_report_view";
-import XpathValidationReport from "../../../../../../sections/app/xpath_validation_report/xpath_validation_report_view";
 import XpathValidationReportView
     from "../../../../../../sections/app/xpath_validation_report/xpath_validation_report_view";
 

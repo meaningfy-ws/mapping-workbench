@@ -5,6 +5,7 @@ import Stack from "@mui/material/Stack";
 import Alert from "@mui/material/Alert";
 import ItemSearchInput from "../file-manager/item-search-input";
 import {ListTable} from "./list-table";
+import Typography from "@mui/material/Typography";
 
 
 const useItemsSearch = (items) => {
@@ -105,7 +106,7 @@ const XpathValidationReportTest= ({  sid, suiteId, testId }) => {
 
     useEffect(()=>{
         handleValidationReportsTestGet(sid, suiteId, testId)
-    },[])
+    },[testId])
 
     const handleValidationReportsTestGet = async (sid, suiteId, testId) => {
         try {
