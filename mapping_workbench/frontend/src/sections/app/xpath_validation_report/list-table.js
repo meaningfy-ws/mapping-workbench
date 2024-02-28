@@ -91,7 +91,7 @@ export const ListTable = (props) => {
                                         </Typography>
                                     </TableCell>
                                     <TableCell>
-                                        {item.test_data_xpath}
+                                        {item.eforms_sdk_element_xpath}
                                     </TableCell>
                                     <TableCell align="center">
                                         {item.is_covered ? <CheckIcon color="success"/> : <CloseIcon color="error"/>}
