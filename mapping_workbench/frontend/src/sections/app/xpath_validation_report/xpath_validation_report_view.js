@@ -75,9 +75,7 @@ const XpathValidationReportView = ({ sid, reportTree }) => {
                         ))}
                     </Tabs>
             {currentTab === 'state' &&
-                <>
-                    <XpathValidationReport sid={sid}/>
-                </>
+                <XpathValidationReport sid={sid}/>
             }
             {currentTab === "suite" &&
                 <XpathValidationReportSuite sid={sid}

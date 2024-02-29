@@ -14,7 +14,7 @@ const useItemsSearch = (items) => {
         sort: {
         },
         search: [],
-        searchColumns:["eforms_sdk_element_id","test_data_xpath"],
+        searchColumns:["eforms_sdk_element_xpath"],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -46,6 +46,7 @@ const useItemsSearch = (items) => {
     })
 
     const sortedItems = state.sort.column ? filteredItems.sort((a,b) => {
+        const sortColumn = state.sort.column
         return state.sort.direction === "asc" ?
              a[sortColumn]?.localeCompare(b[sortColumn]) :
              b[sortColumn]?.localeCompare(a[sortColumn])
@@ -99,15 +100,15 @@ const useItemsSearch = (items) => {
     };
 };
 
-const XpathRulesPaths = ({  items }) => {
+const XpathRulesPaths = ({ title, items }) => {
 
     const itemsSearch = useItemsSearch(items);
 
     return (<>
-            <Typography m={2}
-                        variant="h3">
-                  XPATH Assertions
-            </Typography>
+            {title && <Typography m={2}
+                         variant="h3">
+                {title}
+            </Typography>}
             <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
             {!items?.length ?
                 <Stack justifyContent="center"

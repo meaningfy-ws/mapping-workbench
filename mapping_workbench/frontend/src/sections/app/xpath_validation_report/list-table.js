@@ -77,6 +77,9 @@ export const ListTable = (props) => {
                                               title="xpath"/>
                             </TableCell>
                             <TableCell width="10%">
+                                Notice Count
+                            </TableCell>
+                            <TableCell width="10%">
                                 Found
                             </TableCell>
                         </TableRow>
@@ -92,6 +95,9 @@ export const ListTable = (props) => {
                                     </TableCell>
                                     <TableCell>
                                         {item.eforms_sdk_element_xpath}
+                                    </TableCell>
+                                     <TableCell>
+                                        {item.test_data_xpaths.length}
                                     </TableCell>
                                     <TableCell align="center">
                                         {item.is_covered ? <CheckIcon color="success"/> : <CloseIcon color="error"/>}

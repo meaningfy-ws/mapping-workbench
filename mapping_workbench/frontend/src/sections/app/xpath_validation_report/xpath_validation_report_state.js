@@ -48,6 +48,7 @@ const useItemsSearch = (items) => {
     })
 
     const sortedItems = state.sort.column ? filteredItems.sort((a,b) => {
+        const sortColumn = state.sort.column
         return state.sort.direction === "asc" ?
              a[sortColumn]?.localeCompare(b[sortColumn]) :
              b[sortColumn]?.localeCompare(a[sortColumn])
@@ -122,12 +123,13 @@ const XpathValidationReport = ({  sid }) => {
 
     const itemsSearch = useItemsSearch(validationReport);
 
-    const coveredReports = validationReport.filter(report => report.is_covered).map(report => ({
-        eforms_sdk_element_xpath: report.eforms_sdk_element_xpath
-    }))
+
+    const { coveredReports, notCoveredReports } = validationReport.reduce((acc, report) => {
+        acc[report.is_covered ? "coveredReports" : "notCoveredReports"].push({ eforms_sdk_element_xpath: report.eforms_sdk_element_xpath })
+        return acc
+    }, {coveredReports:[], notCoveredReports:[]})
 
     const coveredReportPercent = (coveredReports.length/validationReport.length*100).toFixed(2)
-
 
     return dataLoad ?
         <>
@@ -140,10 +142,10 @@ const XpathValidationReport = ({  sid }) => {
             }
         </> :
         <>
-            <Typography m={2}
-                        variant="h3">
-                {`${coveredReportPercent}%`}
-            </Typography>
+            {/*<Typography m={2}*/}
+            {/*            variant="h3">*/}
+            {/*    {`${coveredReportPercent}%`}*/}
+            {/*</Typography>*/}
             <Typography m={2}
                         variant="h3">
                   XPATH Assertions
@@ -154,18 +156,23 @@ const XpathValidationReport = ({  sid }) => {
                        direction="row">
                     <Alert severity="info">No Data !</Alert>
                 </Stack> :
-                <ListTable
-                        items={itemsSearch.pagedItems}
-                        count={itemsSearch.count}
-                        onPageChange={itemsSearch.handlePageChange}
-                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        page={itemsSearch.state.page}
-                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                        onSort={itemsSearch.handleSort}
-                        sort={itemsSearch.state.sort}
-                        sectionApi={sectionApi}
-                />}
-                <XpathRulesPaths items={coveredReports}/>
+                <>
+                    <ListTable
+                            items={itemsSearch.pagedItems}
+                            count={itemsSearch.count}
+                            onPageChange={itemsSearch.handlePageChange}
+                            onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                            page={itemsSearch.state.page}
+                            rowsPerPage={itemsSearch.state.rowsPerPage}
+                            onSort={itemsSearch.handleSort}
+                            sort={itemsSearch.state.sort}
+                            sectionApi={sectionApi}
+                    />
+                    <XpathRulesPaths title={`XPATHs covered in the "Rules" of Conceptual Mapping`}
+                                     items={coveredReports}/>
+                    <XpathRulesPaths title="XPATHs not covered by Conceptual Mapping"
+                                     items={notCoveredReports}/>
+                </>}
             </>
 }
 export default  XpathValidationReport
