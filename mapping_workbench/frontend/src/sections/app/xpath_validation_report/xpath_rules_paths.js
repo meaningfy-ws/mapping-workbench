@@ -1,10 +1,9 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
-import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 import Alert from "@mui/material/Alert";
 import ItemSearchInput from "../file-manager/item-search-input";
-import {ListTable} from "./list-table";
+import {ListTable} from "./list-table-paths";
 import Typography from "@mui/material/Typography";
 
 
@@ -100,41 +99,17 @@ const useItemsSearch = (items) => {
     };
 };
 
-const XpathValidationReport = ({  sid }) => {
-    const [validationReport, setValidationReport] = useState([])
-    const [dataLoad, setDataLoad] = useState(true)
+const XpathRulesPaths = ({  items }) => {
 
-    useEffect(()=>{
-        handleValidationReportsGet(sid)
-    },[])
+    const itemsSearch = useItemsSearch(items);
 
-    const handleValidationReportsGet = async (sid) => {
-        try {
-            const result = await sectionApi.getXpathReports(sid)
-            setValidationReport(result)
-        } catch (err) {
-            console.error(err);
-        } finally {
-            setDataLoad(false)
-        }
-    }
-
-    const itemsSearch = useItemsSearch(validationReport);
-
-
-    return dataLoad ?
-        <>
-            <Skeleton width="20%"
-                      height={80} />
-            {
-                new Array(5).fill("").map((e, i) =>
-                <Skeleton key={i}
-                          height={50}/>)
-            }
-        </> :
-        <>
+    return (<>
+            <Typography m={2}
+                        variant="h3">
+                  XPATH Assertions
+            </Typography>
             <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
-            {!validationReport?.length ?
+            {!items?.length ?
                 <Stack justifyContent="center"
                        direction="row">
                     <Alert severity="info">No Data !</Alert>
@@ -150,6 +125,6 @@ const XpathValidationReport = ({  sid }) => {
                         sort={itemsSearch.state.sort}
                         sectionApi={sectionApi}
                 />}
-            </>
+            </>)
 }
-export default  XpathValidationReport
+export default  XpathRulesPaths

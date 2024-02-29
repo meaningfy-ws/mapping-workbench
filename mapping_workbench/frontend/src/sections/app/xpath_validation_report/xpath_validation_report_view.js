@@ -3,7 +3,7 @@ import {useState} from "react";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
-import XpathValidationReport from "./xpath_validation_report";
+import XpathValidationReport from "./xpath_validation_report_state";
 import XpathValidationReportSuite from "./xpath_validation_report_suite";
 import XpathValidationReportTest from "./xpath_validation_report_test";
 import Tabs from "@mui/material/Tabs";
@@ -32,6 +32,7 @@ const XpathValidationReportView = ({ sid, reportTree }) => {
     const handleTabsChange = (event, value) => {
         setCurrentTab(value)
     }
+
 
     return (
         <>
@@ -74,7 +75,9 @@ const XpathValidationReportView = ({ sid, reportTree }) => {
                         ))}
                     </Tabs>
             {currentTab === 'state' &&
-                <XpathValidationReport sid={sid}/>
+                <>
+                    <XpathValidationReport sid={sid}/>
+                </>
             }
             {currentTab === "suite" &&
                 <XpathValidationReportSuite sid={sid}
