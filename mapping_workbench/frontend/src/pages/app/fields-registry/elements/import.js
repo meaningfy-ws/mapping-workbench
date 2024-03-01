@@ -61,7 +61,7 @@ const Page = () => {
     return (
         <form onSubmit={formik.handleSubmit}>
             <Card>
-                <CardHeader title="Import EForms from Github"/>
+                <CardHeader title="Import eForms from GitHub"/>
                 <CardContent sx={{pt: 0}}>
                     <Grid container spacing={3}>
                         <Grid xs={12} md={12}>
