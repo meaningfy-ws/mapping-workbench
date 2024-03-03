@@ -1,5 +1,8 @@
 import {useState} from "react";
 
+import Accordion from "@mui/material/Accordion";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import AccordionSummary from "@mui/material/AccordionSummary";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -17,6 +20,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContentText from "@mui/material/DialogContentText";
 
 import {Scrollbar} from 'src/components/scrollbar';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import PropTypes from 'prop-types';
@@ -39,6 +43,7 @@ export const ListTable = (props) => {
     const handleClose = () => {
         setDescriptionDialog(e=>({...e, open: false}));
     };
+
 
     const SorterHeader = ({fieldName, title}) => {
        return <Tooltip enterDelay={300}
@@ -77,7 +82,7 @@ export const ListTable = (props) => {
                                               title="xpath"/>
                             </TableCell>
                             <TableCell width="10%">
-                                Notice Count
+                                Notices
                             </TableCell>
                             <TableCell width="10%">
                                 Found
@@ -86,6 +91,7 @@ export const ListTable = (props) => {
                     </TableHead>
                     <TableBody>
                         {items?.map((item, key) => {
+                            const notices = item.test_data_xpaths.map(e=> `"${e.test_data_oid}":${e.xpaths.length}`)
                             return (
                                 <TableRow key={key}>
                                     <TableCell width="25%">
@@ -97,7 +103,17 @@ export const ListTable = (props) => {
                                         {item.eforms_sdk_element_xpath}
                                     </TableCell>
                                      <TableCell>
-                                        {item.test_data_xpaths.length}
+                                         <Accordion
+                                            disabled={!item.test_data_xpaths.length}>
+                                             <AccordionSummary
+
+                                                expandIcon={<ExpandMoreIcon />}>
+                                                {item.test_data_xpaths.length}
+                                             </AccordionSummary>
+                                             <AccordionDetails>
+                                                 {notices.join(',\n')}
+                                             </AccordionDetails>
+                                         </Accordion>
                                     </TableCell>
                                     <TableCell align="center">
                                         {item.is_covered ? <CheckIcon color="success"/> : <CloseIcon color="error"/>}
