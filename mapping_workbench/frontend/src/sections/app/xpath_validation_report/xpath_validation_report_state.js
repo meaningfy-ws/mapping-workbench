@@ -131,6 +131,9 @@ const XpathValidationReport = ({  sid }) => {
 
     const coveredReportPercent = (coveredReports.length/validationReport.length*100).toFixed(2)
 
+    const uniqueNotices =
+        [...new Set(validationReport.map(xpaths => xpaths.test_data_xpaths.map(notice => notice.test_data_oid)).flat())]
+
     return dataLoad ?
         <>
             <Skeleton width="20%"
