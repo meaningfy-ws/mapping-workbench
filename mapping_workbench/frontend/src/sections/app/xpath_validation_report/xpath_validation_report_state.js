@@ -1,17 +1,24 @@
 import {useEffect, useState} from "react";
 import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
+
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 import Alert from "@mui/material/Alert";
+import Typography from "@mui/material/Typography";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import RadioGroup from "@mui/material/RadioGroup";
+import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
+import Radio from "@mui/material/Radio";
+
 import ItemSearchInput from "../file-manager/item-search-input";
 import {ListTable} from "./list-table";
-import Typography from "@mui/material/Typography";
-import XpathRulesPaths from "./xpath_rules_paths";
 
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
         filters: {
+            is_covered: ""
         },
         sort: {
         },
@@ -36,10 +43,9 @@ const useItemsSearch = (items) => {
 
     const filteredItems = searchItems.filter((item) => {
         let returnItem = item;
-
-        Object.entries(filters).forEach(e=> {
-            const [key, value] = e
-            if(value !== undefined && typeof item[key] === "boolean" && item[key]?.toString() != value)
+        Object.entries(filters).forEach(filter=> {
+            const [key, value] = filter
+            if(value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
                 returnItem = null
             if(value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase))
                 returnItem = null
@@ -104,6 +110,7 @@ const useItemsSearch = (items) => {
 
 const XpathValidationReport = ({  sid }) => {
     const [validationReport, setValidationReport] = useState([])
+    const [filters, setFilters] = useState('')
     const [dataLoad, setDataLoad] = useState(true)
 
     useEffect(()=>{
@@ -121,7 +128,11 @@ const XpathValidationReport = ({  sid }) => {
         }
     }
 
+
     const itemsSearch = useItemsSearch(validationReport);
+    const handleCoverageFilterChange = e => {
+        itemsSearch.handleFiltersChange({is_covered: e.target.value})
+    }
 
 
     const { coveredReports, notCoveredReports } = validationReport.reduce((acc, report) => {
@@ -132,7 +143,7 @@ const XpathValidationReport = ({  sid }) => {
     const coveredReportPercent = (coveredReports.length/validationReport.length*100).toFixed(2)
 
     const uniqueNotices =
-        [...new Set(validationReport.map(xpaths => xpaths.test_data_xpaths.map(notice => notice.test_data_oid)).flat())]
+        [...new Set(validationReport.map(xpaths => xpaths.test_data_xpaths.map(notice => notice.test_data_id)).flat())]
 
     return dataLoad ?
         <>
@@ -145,37 +156,96 @@ const XpathValidationReport = ({  sid }) => {
             }
         </> :
         <>
-            {/*<Typography m={2}*/}
-            {/*            variant="h3">*/}
-            {/*    {`${coveredReportPercent}%`}*/}
-            {/*</Typography>*/}
             <Typography m={2}
                         variant="h3">
                   XPATH Assertions
             </Typography>
             <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
+            <Box sx={{p: 2.5, display: 'flex'}}
+                 direction="row">
+                <Stack
+                    component={RadioGroup}
+                    name="terms_validity"
+                    spacing={3}
+                    onChange={handleCoverageFilterChange}
+                >
+                    <Paper
+                        key="2"
+                        sx={{
+                            alignItems: 'flex-start',
+                            display: 'flex',
+                            p: 2
+                        }}
+                        variant="outlined"
+                    >
+                        <Box sx={{mr: 2, mt: 1}}>
+                            <b>Filter Coverage:</b>
+                        </Box>
+                        <FormControlLabel
+                            control={<Radio/>}
+                            key="terms_validity_all"
+                            checked={itemsSearch.state.filters.is_covered === ""}
+                            label={(
+                                <Box sx={{ml: 0, mr: 1}}>
+                                    <Typography
+                                        variant="subtitle2"
+                                    >
+                                        All
+                                    </Typography>
+                                </Box>
+                            )}
+                            value=""
+                        />
+                        <FormControlLabel
+                            control={<Radio/>}
+                            key="terms_validity_valid"
+                            checked={itemsSearch.state.filters.is_covered === "true"}
+                            label={(
+                                <Box sx={{ml: 0, mr: 1}}>
+                                    <Typography
+                                        variant="subtitle2"
+                                    >
+                                        Covered
+                                    </Typography>
+                                </Box>
+                            )}
+                            value="true"
+                        />
+                        <FormControlLabel
+                            control={<Radio/>}
+                            key="terms_validity_invalid"
+                            checked={itemsSearch.state.filters.is_covered === "false"}
+                            label={(
+                                <Box sx={{ml: 0, mr: 1}}>
+                                    <Typography
+                                        variant="subtitle2"
+                                    >
+                                        Not Covered
+                                    </Typography>
+                                </Box>
+                            )}
+                            value="false"
+                        />
+                    </Paper>
+                </Stack>
+            </Box>
             {!validationReport?.length ?
                 <Stack justifyContent="center"
                        direction="row">
                     <Alert severity="info">No Data !</Alert>
                 </Stack> :
-                <>
-                    <ListTable
-                            items={itemsSearch.pagedItems}
-                            count={itemsSearch.count}
-                            onPageChange={itemsSearch.handlePageChange}
-                            onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                            page={itemsSearch.state.page}
-                            rowsPerPage={itemsSearch.state.rowsPerPage}
-                            onSort={itemsSearch.handleSort}
-                            sort={itemsSearch.state.sort}
-                            sectionApi={sectionApi}
-                    />
-                    <XpathRulesPaths title={`XPATHs covered in the "Rules" of Conceptual Mapping`}
-                                     items={coveredReports}/>
-                    <XpathRulesPaths title="XPATHs not covered by Conceptual Mapping"
-                                     items={notCoveredReports}/>
-                </>}
-            </>
+                <ListTable
+                        items={itemsSearch.pagedItems}
+                        count={itemsSearch.count}
+                        onPageChange={itemsSearch.handlePageChange}
+                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                        page={itemsSearch.state.page}
+                        rowsPerPage={itemsSearch.state.rowsPerPage}
+                        onSort={itemsSearch.handleSort}
+                        sort={itemsSearch.state.sort}
+                        sectionApi={sectionApi}
+                />
+            }
+        </>
 }
 export default  XpathValidationReport

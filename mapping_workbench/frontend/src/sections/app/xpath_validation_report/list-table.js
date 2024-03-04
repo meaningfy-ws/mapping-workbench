@@ -91,7 +91,7 @@ export const ListTable = (props) => {
                     </TableHead>
                     <TableBody>
                         {items?.map((item, key) => {
-                            const notices = item.test_data_xpaths.map(e=> `"${e.test_data_oid}":${e.xpaths.length}`)
+                            const notices = item.test_data_xpaths.map(e=> `"${e.test_data_id}":${e.xpaths.length}`)
                             return (
                                 <TableRow key={key}>
                                     <TableCell width="25%">
