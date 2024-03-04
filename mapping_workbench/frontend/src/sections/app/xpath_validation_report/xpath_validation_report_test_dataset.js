@@ -7,6 +7,7 @@ import ItemSearchInput from "../file-manager/item-search-input";
 import {ListTable} from "./list-table";
 import Typography from "@mui/material/Typography";
 import XpathRulesPaths from "./xpath_rules_paths";
+import CoverageReport from "./coverage_report";
 
 
 const useItemsSearch = (items) => {
@@ -47,14 +48,25 @@ const useItemsSearch = (items) => {
         return returnItem
     })
 
-    const sortedItems = state.sort.column ? filteredItems.sort((a,b) => {
+    const sortedItems = () => {
         const sortColumn = state.sort.column
-        return state.sort.direction === "asc" ?
-             a[sortColumn]?.localeCompare(b[sortColumn]) :
-             b[sortColumn]?.localeCompare(a[sortColumn])
-    }) : filteredItems
+        if(!sortColumn) {
+            return filteredItems
+        } else {
+            return filteredItems.sort((a,b) => {
+                if (typeof a[sortColumn] === "string")
+                    return state.sort.direction === "asc" ?
+                        a[sortColumn]?.localeCompare(b[sortColumn]) :
+                        b[sortColumn]?.localeCompare(a[sortColumn])
+                else
+                    return state.sort.direction === "asc" ?
+                        a[sortColumn] - b[sortColumn] :
+                        b[sortColumn] - a[sortColumn]
+                })
+        }
+    }
 
-    const pagedItems = sortedItems.filter((item, i) => {
+    const pagedItems = sortedItems().filter((item, i) => {
         const pageSize = state.page * state.rowsPerPage
         if((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
             return item
@@ -114,7 +126,7 @@ const XpathValidationReportSuite = ({  sid, suiteId }) => {
         try {
             setDataLoad(true)
             const result = await sectionApi.getXpathReportsSuite(sid, suiteId)
-            setValidationReport(result)
+            setValidationReport(result.map(e => ({...e, notice_count: e.test_data_xpaths.length})))
         } catch (err) {
             console.error(err);
         } finally {
@@ -140,6 +152,7 @@ const XpathValidationReportSuite = ({  sid, suiteId }) => {
             }
         </> :
         <>
+            <CoverageReport validationReport={validationReport}/>
             <Typography m={2}
                         variant="h3">
                 XPATH Assertions
@@ -150,23 +163,18 @@ const XpathValidationReportSuite = ({  sid, suiteId }) => {
                        direction="row">
                     <Alert severity="info">No Data !</Alert>
                 </Stack> :
-                <>
-                    <ListTable
-                            items={itemsSearch.pagedItems}
-                            count={itemsSearch.count}
-                            onPageChange={itemsSearch.handlePageChange}
-                            onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                            page={itemsSearch.state.page}
-                            rowsPerPage={itemsSearch.state.rowsPerPage}
-                            onSort={itemsSearch.handleSort}
-                            sort={itemsSearch.state.sort}
-                            sectionApi={sectionApi}
-                    />
-                    <XpathRulesPaths title={`XPATHs covered in the "Rules" of Conceptual Mapping`}
-                                         items={coveredReports}/>
-                    <XpathRulesPaths title="XPATHs not covered by Conceptual Mapping"
-                                     items={notCoveredReports}/>
-                </>}
-            </>
+                <ListTable
+                        items={itemsSearch.pagedItems}
+                        count={itemsSearch.count}
+                        onPageChange={itemsSearch.handlePageChange}
+                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                        page={itemsSearch.state.page}
+                        rowsPerPage={itemsSearch.state.rowsPerPage}
+                        onSort={itemsSearch.handleSort}
+                        sort={itemsSearch.state.sort}
+                        sectionApi={sectionApi}
+                />
+            }
+        </>
 }
 export default  XpathValidationReportSuite

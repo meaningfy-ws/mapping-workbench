@@ -13,6 +13,7 @@ import Radio from "@mui/material/Radio";
 
 import ItemSearchInput from "../file-manager/item-search-input";
 import {ListTable} from "./list-table";
+import CoverageReport from "./coverage_report";
 
 
 const useItemsSearch = (items) => {
@@ -53,14 +54,25 @@ const useItemsSearch = (items) => {
         return returnItem
     })
 
-    const sortedItems = state.sort.column ? filteredItems.sort((a,b) => {
+    const sortedItems = () => {
         const sortColumn = state.sort.column
-        return state.sort.direction === "asc" ?
-             a[sortColumn]?.localeCompare(b[sortColumn]) :
-             b[sortColumn]?.localeCompare(a[sortColumn])
-    }) : filteredItems
+        if(!sortColumn) {
+            return filteredItems
+        } else {
+            return filteredItems.sort((a,b) => {
+                if (typeof a[sortColumn] === "string")
+                    return state.sort.direction === "asc" ?
+                        a[sortColumn]?.localeCompare(b[sortColumn]) :
+                        b[sortColumn]?.localeCompare(a[sortColumn])
+                else
+                    return state.sort.direction === "asc" ?
+                        a[sortColumn] - b[sortColumn] :
+                        b[sortColumn] - a[sortColumn]
+                })
+        }
+    }
 
-    const pagedItems = sortedItems.filter((item, i) => {
+    const pagedItems = sortedItems().filter((item, i) => {
         const pageSize = state.page * state.rowsPerPage
         if((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
             return item
@@ -92,7 +104,6 @@ const useItemsSearch = (items) => {
     const handleRowsPerPageChange = (event) => {
         setState((prevState) => ({
             ...prevState,
-            rowsPerPage: parseInt(event.target.value, 10)
         }));
     }
 
@@ -110,7 +121,6 @@ const useItemsSearch = (items) => {
 
 const XpathValidationReport = ({  sid }) => {
     const [validationReport, setValidationReport] = useState([])
-    const [filters, setFilters] = useState('')
     const [dataLoad, setDataLoad] = useState(true)
 
     useEffect(()=>{
@@ -120,7 +130,7 @@ const XpathValidationReport = ({  sid }) => {
     const handleValidationReportsGet = async (sid) => {
         try {
             const result = await sectionApi.getXpathReports(sid)
-            setValidationReport(result)
+            setValidationReport(result.map(e => ({...e, notice_count: e.test_data_xpaths.length})))
         } catch (err) {
             console.error(err);
         } finally {
@@ -128,19 +138,10 @@ const XpathValidationReport = ({  sid }) => {
         }
     }
 
-
     const itemsSearch = useItemsSearch(validationReport);
     const handleCoverageFilterChange = e => {
         itemsSearch.handleFiltersChange({is_covered: e.target.value})
     }
-
-
-    const { coveredReports, notCoveredReports } = validationReport.reduce((acc, report) => {
-        acc[report.is_covered ? "coveredReports" : "notCoveredReports"].push({ eforms_sdk_element_xpath: report.eforms_sdk_element_xpath })
-        return acc
-    }, {coveredReports:[], notCoveredReports:[]})
-
-    const coveredReportPercent = (coveredReports.length/validationReport.length*100).toFixed(2)
 
     const uniqueNotices =
         [...new Set(validationReport.map(xpaths => xpaths.test_data_xpaths.map(notice => notice.test_data_id)).flat())]
@@ -156,6 +157,7 @@ const XpathValidationReport = ({  sid }) => {
             }
         </> :
         <>
+            <CoverageReport validationReport={validationReport}/>
             <Typography m={2}
                         variant="h3">
                   XPATH Assertions

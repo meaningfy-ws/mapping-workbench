@@ -3,20 +3,15 @@ import {useState} from "react";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
-import XpathValidationReport from "./xpath_validation_report_state";
-import XpathValidationReportSuite from "./xpath_validation_report_suite";
-import XpathValidationReportTest from "./xpath_validation_report_test";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import Typography from "@mui/material/Typography";
-import {projectsApi as sectionApi} from "../../../api/projects";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
-import {BreadcrumbsSeparator} from "../../../components/breadcrumbs-separator";
-import Link from "@mui/material/Link";
-import {RouterLink} from "../../../components/router-link";
-import {paths} from "../../../paths";
-import Button from "@mui/material/Button";
 import ToggleButton from "@mui/material/ToggleButton";
+
+import XpathValidationReport from "./xpath_validation_report_package_state";
+import XpathValidationReportSuite from "./xpath_validation_report_test_dataset";
+import XpathValidationReportTest from "./xpath_validation_report_file";
+
+import {BreadcrumbsSeparator} from "../../../components/breadcrumbs-separator";
+
 
 const tabs = [
     {label: 'Package State XPath Coverage', value: 'package_state'},

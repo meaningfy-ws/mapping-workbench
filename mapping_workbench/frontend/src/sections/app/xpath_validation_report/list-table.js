@@ -78,14 +78,16 @@ export const ListTable = (props) => {
                                               title="Form Field"/>
                             </TableCell>
                             <TableCell>
-                                <SorterHeader fieldName="test_data_xpath"
-                                              title="xpath"/>
+                                <SorterHeader fieldName="eforms_sdk_element_xpath"
+                                              title="Xpath"/>
                             </TableCell>
                             <TableCell width="10%">
-                                Notices
+                                 <SorterHeader fieldName="notice_count"
+                                               title="Notices"/>
                             </TableCell>
                             <TableCell width="10%">
-                                Found
+                                <SorterHeader fieldName="is_covered"
+                                               title="Found"/>
                             </TableCell>
                         </TableRow>
                     </TableHead>
@@ -104,11 +106,11 @@ export const ListTable = (props) => {
                                     </TableCell>
                                      <TableCell>
                                          <Accordion
-                                            disabled={!item.test_data_xpaths.length}>
+                                            disabled={!item.notice_count}>
                                              <AccordionSummary
 
                                                 expandIcon={<ExpandMoreIcon />}>
-                                                {item.test_data_xpaths.length}
+                                                {item.notice_count}
                                              </AccordionSummary>
                                              <AccordionDetails>
                                                  {notices.join(',\n')}

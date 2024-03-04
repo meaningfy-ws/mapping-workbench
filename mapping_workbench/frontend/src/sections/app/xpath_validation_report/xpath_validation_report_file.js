@@ -47,14 +47,25 @@ const useItemsSearch = (items) => {
         return returnItem
     })
 
-    const sortedItems = state.sort.column ? filteredItems.sort((a,b) => {
+    const sortedItems = () => {
         const sortColumn = state.sort.column
-        return state.sort.direction === "asc" ?
-             a[sortColumn]?.localeCompare(b[sortColumn]) :
-             b[sortColumn]?.localeCompare(a[sortColumn])
-    }) : filteredItems
+        if(!sortColumn) {
+            return filteredItems
+        } else {
+            return filteredItems.sort((a,b) => {
+                if (typeof a[sortColumn] === "string")
+                    return state.sort.direction === "asc" ?
+                        a[sortColumn]?.localeCompare(b[sortColumn]) :
+                        b[sortColumn]?.localeCompare(a[sortColumn])
+                else
+                    return state.sort.direction === "asc" ?
+                        a[sortColumn] - b[sortColumn] :
+                        b[sortColumn] - a[sortColumn]
+                })
+        }
+    }
 
-    const pagedItems = sortedItems.filter((item, i) => {
+    const pagedItems = sortedItems().filter((item, i) => {
         const pageSize = state.page * state.rowsPerPage
         if((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
             return item
