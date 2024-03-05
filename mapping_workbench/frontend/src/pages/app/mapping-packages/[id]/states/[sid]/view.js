@@ -57,7 +57,7 @@ const Page = () => {
     useEffect(() => {
         if (id && sid) {
             handleItemsGet(sid);
-            handleValidationReportsFilesGet(sessionApi.getSessionProject(), id, sid)
+            // handleValidationReportsFilesGet(sessionApi.getSessionProject(), id, sid)
             handleValidationReportTreeGet(sid)
         }
     }, [id, sid]);
@@ -70,15 +70,15 @@ const Page = () => {
         }
     }
 
-    const handleValidationReportsFilesGet = async (project_id, package_id, state_id) => {
-        const data = { project_id, package_id, state_id }
-        try {
-            const result = await sectionApi.getValidationReportFiles(data)
-            setValidationReportFiles(result);
-        } catch (err) {
-            console.error(err);
-        }
-    }
+    // const handleValidationReportsFilesGet = async (project_id, package_id, state_id) => {
+    //     const data = { project_id, package_id, state_id }
+    //     try {
+    //         const result = await sectionApi.getValidationReportFiles(data)
+    //         setValidationReportFiles(result);
+    //     } catch (err) {
+    //         console.error(err);
+    //     }
+    // }
 
       const handleValidationReportTreeGet = async (state_id) => {
           console.log('here')
@@ -278,20 +278,17 @@ const Page = () => {
                 {currentTab === 'sparql' && (
                         <Card>
                             <CardContent>
-                                <SparqlValidationReport project_id={sessionApi.getSessionProject()}
-                                                        id={id}
+                                <SparqlValidationReport
                                                         sid={sid}
-                                                        files={validationReportFiles}/>
+                                                        reportTree={validationReportTree}/>
                             </CardContent>
                         </Card>
                 )}
                 {currentTab === 'xpath' && (
                         <Card>
                             <CardContent>
-                                <XpathValidationReportView project_id={sessionApi.getSessionProject()}
-                                                       id={id}
+                                <XpathValidationReportView
                                                        sid={sid}
-                                                       files={validationReportFiles}
                                                        reportTree={validationReportTree}/>
                             </CardContent>
                         </Card>

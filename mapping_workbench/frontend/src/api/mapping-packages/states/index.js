@@ -69,9 +69,22 @@ export class MappingPackageStatesApi extends SectionApi {
     }
 
 
-    async getSparqlReports(params) {
+    async getSparqlReports(sid) {
         const endpoint = this.paths['sparql_reports']
-        const data = await appApi.get(endpoint, params);
+        const data = await appApi.get(endpoint(sid));
+        return Promise.resolve(data);
+    }
+
+
+    async getSparqlReportsSuite(sid, suiteId) {
+        const endpoint = this.paths['sparql_reports_suite']
+        const data = await appApi.get(endpoint(sid, suiteId));
+        return Promise.resolve(data);
+    }
+
+    async getSparqlReportsTest(sid, suiteId, testId) {
+        const endpoint = this.paths['sparql_reports_test']
+        const data = await appApi.get(endpoint(sid, suiteId, testId));
         return Promise.resolve(data);
     }
 

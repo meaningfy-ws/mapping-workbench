@@ -18,7 +18,6 @@ import DialogContentText from "@mui/material/DialogContentText";
 
 import {Scrollbar} from 'src/components/scrollbar';
 import PropTypes from 'prop-types';
-import Stack from "@mui/material/Stack";
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open:false, title:"", text:""})
@@ -39,18 +38,8 @@ export const ListTable = (props) => {
         setDescriptionDialog({open: true, title, description});
     };
 
-    const mapNotices = (notices) => {
-        return(
-            <ul>
-                {notices.map((notice,i) => <li key={`notice${i}`}>
-                    {notice.test_data_id}{notice.test_data_suite_id}
-                </li>)}
-            </ul>
-        )
-    }
-
-    const handleOpenDetails = ({title, notices}) => {
-        const description = mapNotices(notices)
+    const handleOpenDetails = ({title, query, query_result}) => {
+        const description = <><li>{`Query result: ${query_result}`}</li><li>{query}</li></>
         setDescriptionDialog({open: true, title, description});
     }
 
@@ -69,19 +58,6 @@ export const ListTable = (props) => {
                         {title ?? fieldName}
                     </TableSortLabel>
                </Tooltip>
-    }
-
-    const ResultCell = ({title, result, onClick}) => {
-        return <Stack direction="column"
-        alignItems="center"
-        justifyContent="start"
-        height={100}>
-                    {result.count}
-                    {!!result.count && <Button
-                    onClick={()=> onClick({title, notices: result.test_datas})}>
-                        Details
-                    </Button>}
-                </Stack>
     }
 
     return (
@@ -104,30 +80,18 @@ export const ListTable = (props) => {
                                               title="Form Field"/>
                             </TableCell>
                             <TableCell>
-                                 <SorterHeader fieldName="test_suite"
-                                               title="Test Suite"/>
+                                Description
                             </TableCell>
                             <TableCell>
                                  <SorterHeader fieldName="query"
                                                title="Query content"/>
                             </TableCell>
-                            <TableCell align="center">
-                                Valid
+                            <TableCell align="left">
+                                <SorterHeader fieldName="sourceConstraintComponent"
+                                              title="result"/>
                             </TableCell>
                             <TableCell align="center">
-                                Unverifiable
-                            </TableCell>
-                            <TableCell align="center">
-                                Warning
-                            </TableCell>
-                             <TableCell align="center">
-                                Invalid
-                            </TableCell>
-                             <TableCell align="center">
-                                Error
-                            </TableCell>
-                             <TableCell align="center">
-                                Unknown
+                                Details
                             </TableCell>
                         </TableRow>
                     </TableHead>
@@ -141,46 +105,22 @@ export const ListTable = (props) => {
                                         </Typography>
                                     </TableCell>
                                     <TableCell>
-                                        {item.test_suite}
+                                        <Button variant="outlined"
+                                                onClick={() => handleOpenDescription(item)}>
+                                            Description
+                                        </Button>
                                     </TableCell>
                                     <TableCell>
                                         {item.query}
                                     </TableCell>
-                                    <TableCell>
-                                        <ResultCell
-                                            title={item.title}
-                                            result={item.result.valid}
-                                            onClick={handleOpenDetails}/>
+                                    <TableCell align="left">
+                                        {item.sourceConstraintComponent}
                                     </TableCell>
-                                    <TableCell>
-                                        <ResultCell
-                                            title={item.title}
-                                            result={item.result.unverifiable}
-                                            onClick={handleOpenDetails}/>
-                                    </TableCell>
-                                    <TableCell>
-                                        <ResultCell
-                                            title={item.title}
-                                            result={item.result.warning}
-                                            onClick={handleOpenDetails}/>
-                                    </TableCell>
-                                    <TableCell>
-                                        <ResultCell
-                                            title={item.title}
-                                            result={item.result.invalid}
-                                            onClick={handleOpenDetails}/>
-                                    </TableCell>
-                                    <TableCell>
-                                        <ResultCell
-                                            title={item.title}
-                                            result={item.result.error}
-                                            onClick={handleOpenDetails}/>
-                                    </TableCell>
-                                    <TableCell>
-                                        <ResultCell
-                                            title={item.title}
-                                            result={item.result.unknown}
-                                            onClick={handleOpenDetails}/>
+                                    <TableCell align="left">
+                                        <Button variant="outlined"
+                                                onClick={() => handleOpenDetails(item)}>
+                                            Details
+                                        </Button>
                                     </TableCell>
                                 </TableRow>
 
