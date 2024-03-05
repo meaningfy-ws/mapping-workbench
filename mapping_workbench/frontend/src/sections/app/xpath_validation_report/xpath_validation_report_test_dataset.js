@@ -7,6 +7,8 @@ import ItemSearchInput from "../file-manager/item-search-input";
 import {ListTable} from "./list-table";
 import Typography from "@mui/material/Typography";
 import XpathRulesPaths from "./xpath_rules_paths";
+import CoverageReport from "./coverage_report";
+import CoverageFiles from "./coverage_files";
 
 
 const useItemsSearch = (items) => {
@@ -47,14 +49,25 @@ const useItemsSearch = (items) => {
         return returnItem
     })
 
-    const sortedItems = state.sort.column ? filteredItems.sort((a,b) => {
+    const sortedItems = () => {
         const sortColumn = state.sort.column
-        return state.sort.direction === "asc" ?
-             a[sortColumn]?.localeCompare(b[sortColumn]) :
-             b[sortColumn]?.localeCompare(a[sortColumn])
-    }) : filteredItems
+        if(!sortColumn) {
+            return filteredItems
+        } else {
+            return filteredItems.sort((a,b) => {
+                if (typeof a[sortColumn] === "string")
+                    return state.sort.direction === "asc" ?
+                        a[sortColumn]?.localeCompare(b[sortColumn]) :
+                        b[sortColumn]?.localeCompare(a[sortColumn])
+                else
+                    return state.sort.direction === "asc" ?
+                        a[sortColumn] - b[sortColumn] :
+                        b[sortColumn] - a[sortColumn]
+                })
+        }
+    }
 
-    const pagedItems = sortedItems.filter((item, i) => {
+    const pagedItems = sortedItems().filter((item, i) => {
         const pageSize = state.page * state.rowsPerPage
         if((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
             return item
@@ -102,18 +115,19 @@ const useItemsSearch = (items) => {
     };
 };
 
-const XpathValidationReportTest= ({  sid, suiteId, testId }) => {
+const XpathValidationReportSuite = ({  sid, suiteId, files, mappingSuiteIdentifier }) => {
     const [validationReport, setValidationReport] = useState([])
     const [dataLoad, setDataLoad] = useState(true)
 
     useEffect(()=>{
-        handleValidationReportsTestGet(sid, suiteId, testId)
-    },[testId])
+        handleValidationReportsSuiteGet(sid,suiteId)
+    },[suiteId])
 
-    const handleValidationReportsTestGet = async (sid, suiteId, testId) => {
+    const handleValidationReportsSuiteGet = async (sid, suiteId) => {
         try {
-            const result = await sectionApi.getXpathReportsTest(sid, suiteId, testId)
-            setValidationReport(result)
+            setDataLoad(true)
+            const result = await sectionApi.getXpathReportsSuite(sid, suiteId)
+            setValidationReport(result.map(e => ({...e, notice_count: e.test_data_xpaths.length})))
         } catch (err) {
             console.error(err);
         } finally {
@@ -128,6 +142,7 @@ const XpathValidationReportTest= ({  sid, suiteId, testId }) => {
         return acc
     }, {coveredReports:[], notCoveredReports:[]})
 
+
     return dataLoad ?
         <>
             <Skeleton width="20%"
@@ -139,33 +154,30 @@ const XpathValidationReportTest= ({  sid, suiteId, testId }) => {
             }
         </> :
         <>
+            <CoverageReport validationReport={validationReport}
+                            mappingSuiteIdentifier={mappingSuiteIdentifier}/>
+            <Typography m={2}
+                        variant="h4">
+                Assertions
+            </Typography>
             <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
             {!validationReport?.length ?
                 <Stack justifyContent="center"
                        direction="row">
                     <Alert severity="info">No Data !</Alert>
                 </Stack> :
-                <>
-                     <Typography m={2}
-                                 variant="h3">
-                        XPATH Assertions
-                    </Typography>
-                    <ListTable
-                            items={itemsSearch.pagedItems}
-                            count={itemsSearch.count}
-                            onPageChange={itemsSearch.handlePageChange}
-                            onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                            page={itemsSearch.state.page}
-                            rowsPerPage={itemsSearch.state.rowsPerPage}
-                            onSort={itemsSearch.handleSort}
-                            sort={itemsSearch.state.sort}
-                            sectionApi={sectionApi}
-                    />
-                    <XpathRulesPaths title={`XPATHs covered in the "Rules" of Conceptual Mapping`}
-                                             items={coveredReports}/>
-                    <XpathRulesPaths title="XPATHs not covered by Conceptual Mapping"
-                                         items={notCoveredReports}/>
-                </>}
-            </>
+                <ListTable
+                        items={itemsSearch.pagedItems}
+                        count={itemsSearch.count}
+                        onPageChange={itemsSearch.handlePageChange}
+                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                        page={itemsSearch.state.page}
+                        rowsPerPage={itemsSearch.state.rowsPerPage}
+                        onSort={itemsSearch.handleSort}
+                        sort={itemsSearch.state.sort}
+                        sectionApi={sectionApi}
+                />
+            }
+        </>
 }
-export default  XpathValidationReportTest
+export default  XpathValidationReportSuite

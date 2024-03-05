@@ -37,9 +37,9 @@ import XpathValidationReportView
 
 const tabs = [
     {label: 'Details', value: 'details'},
-    {label: 'Shacl Reports', value: 'shacl'},
-    {label: 'Sparql Reports', value: 'sparql'},
-    {label: 'Xpath Reports', value: 'xpath'},
+    {label: 'SHACL Reports', value: 'shacl'},
+    {label: 'SPARQL Reports', value: 'sparql'},
+    {label: 'XPath Reports', value: 'xpath'},
 ];
 
 const Page = () => {
@@ -268,7 +268,6 @@ const Page = () => {
                 {currentTab === 'shacl' && (
                         <Card>
                             <CardContent>
-                                {/*<FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>*/}
                                 <ShaclValidationReport project_id={sessionApi.getSessionProject()}
                                                        id={id}
                                                        sid={sid}
@@ -279,7 +278,6 @@ const Page = () => {
                 {currentTab === 'sparql' && (
                         <Card>
                             <CardContent>
-                                {/*<FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>*/}
                                 <SparqlValidationReport project_id={sessionApi.getSessionProject()}
                                                         id={id}
                                                         sid={sid}
