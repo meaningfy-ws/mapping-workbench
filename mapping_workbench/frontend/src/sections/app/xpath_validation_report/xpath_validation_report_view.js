@@ -1,169 +1,101 @@
 import {useState} from "react";
 
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
-import ToggleButton from "@mui/material/ToggleButton";
+import Link from "@mui/material/Link";
+import CoverageFiles from "./coverage_files";
+import Typography from "@mui/material/Typography";
 
 import XpathValidationReport from "./xpath_validation_report_package_state";
 import XpathValidationReportSuite from "./xpath_validation_report_test_dataset";
 import XpathValidationReportTest from "./xpath_validation_report_file";
 
-import {BreadcrumbsSeparator} from "../../../components/breadcrumbs-separator";
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import CoverageReport from "./coverage_report";
 
+
+const pacakageState = "package_state", testDataset = "test_dataset", file =  "file";
 
 const tabs = [
-    {label: 'Package State XPath Coverage', value: 'package_state'},
-    {label: 'Test Dataset XPath Coverage', value: 'test_dataset'},
-    {label: 'File XPath Coverage', value: 'file'},
+    {label: 'Package State XPath Coverage', value: pacakageState},
+    {label: 'Test Dataset XPath Coverage', value: testDataset},
+    {label: 'File XPath Coverage', value: file},
 ];
 
 const XpathValidationReportView = ({ sid, reportTree }) => {
-    const [selectedDataSuite, setSelectedDataSuite] = useState(reportTree.test_data_suites[0])
-    const [selectedDataState, setSelectedDataState] = useState(reportTree.test_data_suites[0].test_data_states[0])
+    const [selectedPackageState, setSelectedPackageState] = useState(reportTree.test_data_suites[0])
+    const [selectedTestDataset, setSelectedTestDataset] = useState(reportTree.test_data_suites[0].test_data_states[0])
     const [currentTab, setCurrentTab] = useState(tabs[0].value)
     const handleDataSuiteChange = (e) => {
         const dataSuite = reportTree?.test_data_suites?.find(suite => suite.oid === e.target.value)
-        setSelectedDataSuite(dataSuite);
-        setSelectedDataState(dataSuite.test_data_states[0])
+        setSelectedPackageState(dataSuite);
+        setSelectedTestDataset(dataSuite.test_data_states[0])
     }
 
     const handleDataStateChange = (e) => {
-        setSelectedDataState(selectedDataSuite?.test_data_states?.find(state => state.oid === e.target.value))
+        setSelectedPackageState(selectedPackageState?.test_data_states?.find(state => state.oid === e.target.value))
     }
 
     const handleTabsChange = (event, value) => {
         setCurrentTab(value)
     }
 
+    const handleFileClick = (file, tab) => {
+        if(tab === "test_dataset")
+        {
+            setSelectedPackageState(file)
+            setSelectedTestDataset({})
+        }
+        else setSelectedTestDataset(file)
+        setCurrentTab(tab)
+    }
 
     return (
         <>
-            {/*<Stack direction="row"*/}
-            {/*       justifyContent="space-between">*/}
-            {/*    <Select*/}
-            {/*        onChange={handleDataSuiteChange}*/}
-            {/*        value={selectedDataSuite.oid}>*/}
-            {/*        {reportTree?.test_data_suites?.map(report =>*/}
-            {/*            <MenuItem key={report.oid}*/}
-            {/*                      value={report.oid}>*/}
-            {/*                {report.identifier}*/}
-            {/*            </MenuItem>)}*/}
-            {/*    </Select>*/}
-            {/*    <Select*/}
-            {/*        onChange={handleDataStateChange}*/}
-            {/*        value={selectedDataState.oid}>*/}
-            {/*        {selectedDataSuite?.test_data_states?.map(state =>*/}
-            {/*            <MenuItem key={state.oid}*/}
-            {/*                      value={state.oid}>*/}
-            {/*                {state.identifier}*/}
-            {/*            </MenuItem>)}*/}
-            {/*    </Select>*/}
-            {/*</Stack>*/}
-            {/*<Tabs*/}
-            {/*    indicatorColor="primary"*/}
-            {/*    onChange={handleTabsChange}*/}
-            {/*    scrollButtons="auto"*/}
-            {/*    sx={{mt: 3}}*/}
-            {/*    textColor="primary"*/}
-            {/*    value={currentTab}*/}
-            {/*    variant="scrollable"*/}
-            {/*>*/}
-            {/*    {tabs.map((tab) => (*/}
-            {/*        <Tab*/}
-            {/*            key={tab.value}*/}
-            {/*            label={tab.label}*/}
-            {/*            value={tab.value}*/}
-            {/*        />*/}
-            {/*    ))}*/}
-            {/*</Tabs>*/}
             <Stack spacing={1}>
-                <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
-                    {/* <Typography*/}
-                    {/*    color="text.secondary"*/}
-                    {/*    variant="subtitle2"*/}
-                    {/*>*/}
-                    {/*    Package State XPath Coverage*/}
-                    {/*</Typography>*/}
-                    <ToggleButton variant="link"
-                                  color="primary"
-                                  value="package_state"
-                                  selected={currentTab === "package_state"}
-                                  onChange={()=>setCurrentTab("package_state")}
+                <Breadcrumbs separator={<KeyboardArrowRightIcon/>}>
+                    <Link component="button"
+                          color={currentTab !== pacakageState ? "inherit" : "primary"}
+                          onClick={()=> setCurrentTab(pacakageState)}
                     >
                         Package State XPath Coverage
-                    </ToggleButton>
-                    <Stack direction="row"
-                           alignItems="center">
-                        {/*<Typography*/}
-                        {/*    color="text.secondary"*/}
-                        {/*    variant="subtitle2"*/}
-                        {/*    marginRight={1}*/}
-                        {/*>*/}
-                        {/*    Test Dataset XPath Coverage :*/}
-                        {/*</Typography>*/}
-                        <ToggleButton variant="link"
-                                      color="primary"
-                                      value="test_dataset"
-                                      selected={currentTab === "test_dataset"}
-                                      onChange={() => setCurrentTab("test_dataset")}
+                    </Link>
+                    {currentTab !== pacakageState &&
+                        <Link component="button"
+                              color={currentTab !== testDataset ? "inherit" : "primary"}
+                              onClick={() => setCurrentTab(testDataset)}
                         >
-                            Package State XPath Coverage
-                        </ToggleButton>
-                        <Select
-                            variant="standard"
-                            onChange={handleDataSuiteChange}
-                            value={selectedDataSuite.oid}>
-                            {reportTree?.test_data_suites?.map(report =>
-                                <MenuItem key={report.oid}
-                                          value={report.oid}>
-                                    {report.identifier}
-                                </MenuItem>)}
-                        </Select>
-                    </Stack>
-                    <Stack direction="row"
-                           alignItems="center">
-                        {/*<Typography*/}
-                        {/*        color="text.secondary"*/}
-                        {/*        variant="subtitle2"*/}
-                        {/*        marginRight={1}*/}
-                        {/*    >*/}
-                        {/*        File XPath Coverage :*/}
-                        {/*</Typography>*/}
-                        <ToggleButton variant="link"
-                                      color="primary"
-                                      value="file"
-                                      selected={currentTab === "file"}
-                                      onChange={() => setCurrentTab("file")}
-                        >
-                            File XPath Coverage
-                        </ToggleButton>
-                        <Select
-                            variant="standard"
-                            onChange={handleDataStateChange}
-                            value={selectedDataState.oid}>
-                            {selectedDataSuite?.test_data_states?.map(state =>
-                                <MenuItem key={state.oid}
-                                          value={state.oid}>
-                                    {state.identifier}
-                                </MenuItem>)}
-                        </Select>
-                    </Stack>
-
+                            Package State XPath Coverage: {selectedPackageState.identifier}
+                        </Link>}
+                    {currentTab === file &&
+                        <Typography>
+                            File XPath Coverage: {selectedTestDataset.identifier}
+                        </Typography>}
                 </Breadcrumbs>
             </Stack>
-            {currentTab === "package_state" &&
-                <XpathValidationReport sid={sid}/>
+            {currentTab === pacakageState &&
+                <>
+                    <CoverageFiles files={reportTree.test_data_suites}
+                                   onClick={handleFileClick}
+                                   tab={testDataset}/>
+                    <XpathValidationReport sid={sid}
+                                           files={reportTree.test_data_suites}/>
+                </>
             }
-            {currentTab === "test_dataset" &&
-                <XpathValidationReportSuite sid={sid}
-                                        suiteId={selectedDataSuite.oid}/>
+            {currentTab === testDataset &&
+                <>
+                    <CoverageFiles files={selectedPackageState?.test_data_states}
+                                   onClick={handleFileClick}
+                                   tab={file}/>
+                    <XpathValidationReportSuite sid={sid}
+                                        suiteId={selectedPackageState.oid}
+                                        files={selectedPackageState?.test_data_states}/>
+                </>
             }
-            {currentTab === "file" &&
+            {currentTab === file &&
                 <XpathValidationReportTest sid={sid}
-                                       suiteId={selectedDataSuite.oid}
-                                       testId={selectedDataState.oid}/>
+                                       suiteId={selectedPackageState.oid}
+                                       testId={selectedTestDataset.oid}/>
             }
         </>
     )

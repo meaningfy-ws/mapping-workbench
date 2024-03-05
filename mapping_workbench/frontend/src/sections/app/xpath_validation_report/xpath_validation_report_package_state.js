@@ -14,6 +14,7 @@ import Radio from "@mui/material/Radio";
 import ItemSearchInput from "../file-manager/item-search-input";
 import {ListTable} from "./list-table";
 import CoverageReport from "./coverage_report";
+import CoverageFiles from "./coverage_files";
 
 
 const useItemsSearch = (items) => {
@@ -119,7 +120,7 @@ const useItemsSearch = (items) => {
     };
 };
 
-const XpathValidationReport = ({  sid }) => {
+const XpathValidationReport = ({ sid, files }) => {
     const [validationReport, setValidationReport] = useState([])
     const [dataLoad, setDataLoad] = useState(true)
 
@@ -157,11 +158,12 @@ const XpathValidationReport = ({  sid }) => {
             }
         </> :
         <>
-            <CoverageReport validationReport={validationReport}/>
+
             <Typography m={2}
                         variant="h3">
                   XPATH Assertions
             </Typography>
+            <CoverageReport validationReport={validationReport}/>
             <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
             <Box sx={{p: 2.5, display: 'flex'}}
                  direction="row">

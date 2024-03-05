@@ -8,6 +8,7 @@ import {ListTable} from "./list-table";
 import Typography from "@mui/material/Typography";
 import XpathRulesPaths from "./xpath_rules_paths";
 import CoverageReport from "./coverage_report";
+import CoverageFiles from "./coverage_files";
 
 
 const useItemsSearch = (items) => {
@@ -114,7 +115,7 @@ const useItemsSearch = (items) => {
     };
 };
 
-const XpathValidationReportSuite = ({  sid, suiteId }) => {
+const XpathValidationReportSuite = ({  sid, suiteId, files }) => {
     const [validationReport, setValidationReport] = useState([])
     const [dataLoad, setDataLoad] = useState(true)
 
@@ -141,6 +142,7 @@ const XpathValidationReportSuite = ({  sid, suiteId }) => {
         return acc
     }, {coveredReports:[], notCoveredReports:[]})
 
+
     return dataLoad ?
         <>
             <Skeleton width="20%"
@@ -152,7 +154,6 @@ const XpathValidationReportSuite = ({  sid, suiteId }) => {
             }
         </> :
         <>
-            <CoverageReport validationReport={validationReport}/>
             <Typography m={2}
                         variant="h3">
                 XPATH Assertions
