@@ -33,7 +33,7 @@ class StructuralElement(BaseProjectResourceEntity, StatefulObjectABC):
     """
 
     """
-    id: str
+    id: str = None
     eforms_sdk_element_id: str = None
     absolute_xpath: str = None
     relative_xpath: str = None

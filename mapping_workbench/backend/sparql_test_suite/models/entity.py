@@ -2,13 +2,14 @@ from enum import Enum
 from typing import Optional, List
 
 import pymongo
-from beanie import Link
+from beanie import Link, PydanticObjectId
 from pydantic import ConfigDict
 from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
 from mapping_workbench.backend.file_resource.models.file_resource import FileResource, FileResourceCollection, \
     FileResourceIn
+from mapping_workbench.backend.package_validator.models.test_data_validation import CMRuleSDKElement
 from mapping_workbench.backend.state_manager.models.state_object import ObjectState, StatefulObjectABC
 
 
@@ -33,11 +34,13 @@ class SPARQLTestFileResourceFormat(str, Enum):
 
 
 class SPARQLTestState(ObjectState):
+    oid: Optional[PydanticObjectId] = None
     format: Optional[SPARQLTestFileResourceFormat] = None
     type: Optional[SPARQLQueryValidationType] = None
     title: Optional[str] = None
     filename: Optional[str] = None
     content: Optional[str] = None
+    cm_rule: Optional[CMRuleSDKElement] = None
 
     model_config = ConfigDict(use_enum_values=True)
 
@@ -104,14 +107,17 @@ class SPARQLTestFileResource(FileResource, StatefulObjectABC):
     format: Optional[SPARQLTestFileResourceFormat] = None
     type: Optional[SPARQLQueryValidationType] = None
     sparql_test_suite: Optional[Link[SPARQLTestSuite]] = None
+    cm_rule: Optional[CMRuleSDKElement] = None
 
     async def get_state(self) -> SPARQLTestState:
         return SPARQLTestState(
+            oid=self.id,
             format=self.format,
             type=self.type,
             title=self.title,
             filename=self.filename,
-            content=self.content
+            content=self.content,
+            cm_rule=self.cm_rule
         )
 
     def set_state(self, state: SPARQLTestState):

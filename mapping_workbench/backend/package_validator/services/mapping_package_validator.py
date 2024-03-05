@@ -3,11 +3,15 @@ from typing import List
 
 from beanie import PydanticObjectId
 
+from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState, MappingPackageValidationTree
+from mapping_workbench.backend.mapping_package.services.data import get_specific_mapping_package_state
 from mapping_workbench.backend.package_validator.services.shacl_validator import validate_tests_data_with_shacl_tests
-from mapping_workbench.backend.package_validator.services.sparql_validator import validate_tests_data_with_sparql_tests
+from mapping_workbench.backend.package_validator.services.sparql_validator import \
+    validate_mapping_package_state_with_sparql
 from mapping_workbench.backend.package_validator.services.xpath_coverage_validator import \
     compute_xpath_assertions_for_mapping_package
+from mapping_workbench.backend.test_data_suite.models.entity import TestDataValidationContainer
 
 
 class TaskToRun(Enum):
@@ -25,20 +29,10 @@ def validate_mapping_package(mapping_package_state: MappingPackageState, tasks_t
     :param mapping_package_state: The mapping package state to validate.
     :type mapping_package_state: MappingPackageState
     """
-    sparql_assertions = []
 
     if tasks_to_run is None or TaskToRun.VALIDATE_PACKAGE_XPATH.value in tasks_to_run:
         print("   Validating Package State ... XPATH")
         compute_xpath_assertions_for_mapping_package(mapping_package_state)
-
-    if tasks_to_run is None or TaskToRun.VALIDATE_PACKAGE_SPARQL.value in tasks_to_run:
-        print("   Validating Package State ... SPARQL")
-
-        for conceptual_mapping_rule_state in mapping_package_state.conceptual_mapping_rules:
-            sparql_assertions.extend(conceptual_mapping_rule_state.sparql_assertions)
-
-        for sparql_test_suite in mapping_package_state.sparql_test_suites:
-            sparql_assertions.extend(sparql_test_suite.sparql_test_states)
 
     for test_data_suite in mapping_package_state.test_data_suites:
         if tasks_to_run is None or TaskToRun.VALIDATE_PACKAGE_SHACL.value in tasks_to_run:
@@ -48,8 +42,10 @@ def validate_mapping_package(mapping_package_state: MappingPackageState, tasks_t
                     shacl_test_suite.shacl_test_states
                 )
 
-        if tasks_to_run is None or TaskToRun.VALIDATE_PACKAGE_SPARQL.value in tasks_to_run:
-            validate_tests_data_with_sparql_tests(test_data_suite.test_data_states, sparql_assertions)
+    if tasks_to_run is None or TaskToRun.VALIDATE_PACKAGE_SPARQL.value in tasks_to_run:
+        print("   Validating Package State ... SPARQL")
+
+        validate_mapping_package_state_with_sparql(mapping_package_state)
 
 
 async def generate_validation_reports_tree(
@@ -62,3 +58,37 @@ async def generate_validation_reports_tree(
     for idx, suite in enumerate(tree.test_data_suites):
         tree.test_data_suites[idx].identifier = suite.title
     return tree
+
+
+async def get_state_test_data_suite_validatiton(mapping_package_state,
+                                                test_data_suite_id) -> TestDataValidationContainer:
+    state: MappingPackageState = await get_specific_mapping_package_state(mapping_package_state.id)
+    test_data_suite = next((
+        test_data_suite for test_data_suite in state.test_data_suites
+        if test_data_suite.oid == test_data_suite_id), False
+    )
+    if not test_data_suite:
+        raise ResourceNotFoundException(404)
+
+    return test_data_suite.validation
+
+
+async def get_state_test_data_validatiton(mapping_package_state, test_data_suite_id,
+                                          test_data_id) -> TestDataValidationContainer:
+    state: MappingPackageState = await get_specific_mapping_package_state(mapping_package_state.id)
+    test_data_suite = next((
+        test_data_suite for test_data_suite in state.test_data_suites
+        if test_data_suite.oid == test_data_suite_id), False
+    )
+    if not test_data_suite:
+        raise ResourceNotFoundException(404)
+
+    test_data = next((
+        test_data for test_data in test_data_suite.test_data_states
+        if test_data.oid == test_data_id), False
+    )
+
+    if not test_data:
+        raise ResourceNotFoundException(404)
+
+    return test_data.validation
