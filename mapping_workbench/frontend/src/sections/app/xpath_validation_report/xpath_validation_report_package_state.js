@@ -120,7 +120,7 @@ const useItemsSearch = (items) => {
     };
 };
 
-const XpathValidationReport = ({ sid, files }) => {
+const XpathValidationReport = ({ sid, files, mappingSuiteIdentifier }) => {
     const [validationReport, setValidationReport] = useState([])
     const [dataLoad, setDataLoad] = useState(true)
 
@@ -158,12 +158,12 @@ const XpathValidationReport = ({ sid, files }) => {
             }
         </> :
         <>
-
+            <CoverageReport validationReport={validationReport}
+                            mappingSuiteIdentifier={mappingSuiteIdentifier}/>
             <Typography m={2}
-                        variant="h3">
-                  XPATH Assertions
+                        variant="h4">
+                Assertions
             </Typography>
-            <CoverageReport validationReport={validationReport}/>
             <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
             <Box sx={{p: 2.5, display: 'flex'}}
                  direction="row">

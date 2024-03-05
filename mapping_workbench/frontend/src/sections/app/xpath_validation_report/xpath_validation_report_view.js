@@ -79,7 +79,8 @@ const XpathValidationReportView = ({ sid, reportTree }) => {
                                    onClick={handleFileClick}
                                    tab={testDataset}/>
                     <XpathValidationReport sid={sid}
-                                           files={reportTree.test_data_suites}/>
+                                           files={reportTree.test_data_suites}
+                                           mappingSuiteIdentifier={reportTree.identifier}/>
                 </>
             }
             {currentTab === testDataset &&
@@ -89,13 +90,15 @@ const XpathValidationReportView = ({ sid, reportTree }) => {
                                    tab={file}/>
                     <XpathValidationReportSuite sid={sid}
                                         suiteId={selectedPackageState.oid}
-                                        files={selectedPackageState?.test_data_states}/>
+                                        files={selectedPackageState?.test_data_states}
+                                        mappingSuiteIdentifier={reportTree.identifier}/>
                 </>
             }
             {currentTab === file &&
                 <XpathValidationReportTest sid={sid}
                                        suiteId={selectedPackageState.oid}
-                                       testId={selectedTestDataset.oid}/>
+                                       testId={selectedTestDataset.oid}
+                                       mappingSuiteIdentifier={reportTree.identifier}/>
             }
         </>
     )

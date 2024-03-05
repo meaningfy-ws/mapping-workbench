@@ -7,6 +7,7 @@ import ItemSearchInput from "../file-manager/item-search-input";
 import {ListTable} from "./list-table";
 import Typography from "@mui/material/Typography";
 import XpathRulesPaths from "./xpath_rules_paths";
+import CoverageReport from "./coverage_report";
 
 
 const useItemsSearch = (items) => {
@@ -113,7 +114,7 @@ const useItemsSearch = (items) => {
     };
 };
 
-const XpathValidationReportTest= ({  sid, suiteId, testId }) => {
+const XpathValidationReportTest= ({  sid, suiteId, testId, mappingSuiteIdentifier }) => {
     const [validationReport, setValidationReport] = useState([])
     const [dataLoad, setDataLoad] = useState(true)
 
@@ -150,17 +151,19 @@ const XpathValidationReportTest= ({  sid, suiteId, testId }) => {
             }
         </> :
         <>
-            <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
             {!validationReport?.length ?
                 <Stack justifyContent="center"
                        direction="row">
                     <Alert severity="info">No Data !</Alert>
                 </Stack> :
                 <>
-                     <Typography m={2}
-                                 variant="h3">
-                        XPATH Assertions
+                    <CoverageReport validationReport={validationReport}
+                        mappingSuiteIdentifier={mappingSuiteIdentifier}/>
+                    <Typography m={2}
+                                variant="h4">
+                        Assertions
                     </Typography>
+                    <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
                     <ListTable
                             items={itemsSearch.pagedItems}
                             count={itemsSearch.count}

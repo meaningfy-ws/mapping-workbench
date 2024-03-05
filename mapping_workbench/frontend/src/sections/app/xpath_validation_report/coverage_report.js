@@ -1,4 +1,8 @@
-const CoverageReport = ({validationReport}) => {
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import Typography from "@mui/material/Typography";
+
+const CoverageReport = ({validationReport, mappingSuiteIdentifier}) => {
     const { coveredReports, notCoveredReports } = validationReport.reduce((acc, report) => {
         acc[report.is_covered ? "coveredReports" : "notCoveredReports"].push({ eforms_sdk_element_xpath: report.eforms_sdk_element_xpath })
         return acc
@@ -8,10 +12,23 @@ const CoverageReport = ({validationReport}) => {
     const notCoveredReportPercent = (notCoveredReports.length/validationReport.length*100).toFixed(2)
 
     return(
-        <div>
-            XPATHs covered: {coveredReports.length} {coveredReportPercent}%
-            XPAThs not covered: {notCoveredReports.length} {notCoveredReportPercent}%
-        </div>
+        <>
+            <Typography m={2}
+                        variant="h4">
+                        Summary
+            </Typography>
+            <List>
+                <ListItem>
+                    Mapping suite identifier: {mappingSuiteIdentifier}
+                </ListItem>
+                <ListItem>
+                    XPATHs covered: {coveredReports.length} / {coveredReportPercent}%
+                </ListItem>
+                <ListItem>
+                    XPATHs not covered: {notCoveredReports.length} / {notCoveredReportPercent}%
+                </ListItem>
+            </List>
+        </>
     )
 }
 

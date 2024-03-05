@@ -268,7 +268,6 @@ const Page = () => {
                 {currentTab === 'shacl' && (
                         <Card>
                             <CardContent>
-                                {/*<FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>*/}
                                 <ShaclValidationReport project_id={sessionApi.getSessionProject()}
                                                        id={id}
                                                        sid={sid}
@@ -279,7 +278,6 @@ const Page = () => {
                 {currentTab === 'sparql' && (
                         <Card>
                             <CardContent>
-                                {/*<FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>*/}
                                 <SparqlValidationReport project_id={sessionApi.getSessionProject()}
                                                         id={id}
                                                         sid={sid}
