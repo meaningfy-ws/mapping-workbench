@@ -37,9 +37,9 @@ import XpathValidationReportView
 
 const tabs = [
     {label: 'Details', value: 'details'},
-    {label: 'Shacl Reports', value: 'shacl'},
-    {label: 'Sparql Reports', value: 'sparql'},
-    {label: 'Xpath Reports', value: 'xpath'},
+    {label: 'SHACL Reports', value: 'shacl'},
+    {label: 'SPARQL Reports', value: 'sparql'},
+    {label: 'XPath Reports', value: 'xpath'},
 ];
 
 const Page = () => {
