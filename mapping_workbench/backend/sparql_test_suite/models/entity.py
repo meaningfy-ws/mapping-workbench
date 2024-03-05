@@ -115,7 +115,7 @@ class SPARQLTestFileResource(FileResource, StatefulObjectABC):
             title=self.title,
             filename=self.filename,
             content=self.content,
-            xpath=self.xpath
+            cm_rule=self.cm_rule
         )
 
     def set_state(self, state: SPARQLTestState):
