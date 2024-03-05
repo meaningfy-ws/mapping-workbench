@@ -32,7 +32,7 @@ class SPARQLQueryResult(BaseModel):
     """
     query: SPARQLTestState
     result: Optional[SPARQLQueryRefinedResultType] = None
-    query_result: Optional[str] = None
+    query_result: Optional[bool] = None
     fields_covered: Optional[bool] = True
     missing_fields: Optional[List[CMRuleSDKElement]] = []
     error: Optional[str] = None
