@@ -47,7 +47,7 @@ class SPARQLValidator(TestDataValidator):
             )
             try:
                 sparql_query_result.query_result = bool(self.rdf_graph.query(sparql_query.content))
-                self.process_sparql_ask_result(sparql_query_result)
+                self.process_sparql_result(sparql_query_result)
             except Exception as e:
                 sparql_query_result.error = str(e)[:100]
                 sparql_query_result.result = SPARQLQueryRefinedResultType.ERROR.value
@@ -57,7 +57,7 @@ class SPARQLValidator(TestDataValidator):
 
         return SPARQLTestDataValidationResult(results=results)
 
-    def process_sparql_ask_result(self, sparql_query_result: SPARQLQueryResult):
+    def process_sparql_result(self, sparql_query_result: SPARQLQueryResult):
         ask_answer = sparql_query_result.query_result
 
         # Initial result

@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Optional, List
 
 import pymongo
-from beanie import Link
+from beanie import Link, PydanticObjectId
 from pydantic import ConfigDict
 from pymongo import IndexModel
 
@@ -34,6 +34,7 @@ class SPARQLTestFileResourceFormat(str, Enum):
 
 
 class SPARQLTestState(ObjectState):
+    oid: Optional[PydanticObjectId] = None
     format: Optional[SPARQLTestFileResourceFormat] = None
     type: Optional[SPARQLQueryValidationType] = None
     title: Optional[str] = None
@@ -110,6 +111,7 @@ class SPARQLTestFileResource(FileResource, StatefulObjectABC):
 
     async def get_state(self) -> SPARQLTestState:
         return SPARQLTestState(
+            oid=self.id,
             format=self.format,
             type=self.type,
             title=self.title,
