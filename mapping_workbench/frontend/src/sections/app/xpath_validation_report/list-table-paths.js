@@ -68,19 +68,9 @@ export const ListTable = (props) => {
                 <Table sx={{minWidth: 1200}}>
                     <TableHead>
                         <TableRow>
-                            <TableCell width="25%">
-                                <SorterHeader fieldName="eforms_sdk_element_id"
-                                              title="Form Field"/>
-                            </TableCell>
                             <TableCell>
-                                <SorterHeader fieldName="test_data_xpath"
+                                <SorterHeader fieldName="eforms_sdk_element_xpath"
                                               title="xpath"/>
-                            </TableCell>
-                            <TableCell width="10%">
-                                Notice Count
-                            </TableCell>
-                            <TableCell width="10%">
-                                Found
                             </TableCell>
                         </TableRow>
                     </TableHead>
@@ -88,22 +78,8 @@ export const ListTable = (props) => {
                         {items?.map((item, key) => {
                             return (
                                 <TableRow key={key}>
-                                    <TableCell width="25%">
-                                        <Typography variant="subtitle3">
-                                            {item.eforms_sdk_element_id}
-                                        </Typography>
-                                    </TableCell>
-                                    <TableCell>
-                                        {item.eforms_sdk_element_xpath}
-                                    </TableCell>
-                                     <TableCell>
-                                        {item.test_data_xpaths.length}
-                                    </TableCell>
-                                    <TableCell align="center">
-                                        {item.is_covered ? <CheckIcon color="success"/> : <CloseIcon color="error"/>}
-                                    </TableCell>
+                                    <TableCell>{item.eforms_sdk_element_xpath}</TableCell>
                                 </TableRow>
-
                             );
                         })}
                     </TableBody>

@@ -43,9 +43,28 @@ export class MappingPackageStatesApi extends SectionApi {
         return Promise.resolve(data);
     }
 
-    async getXpathReports(params) {
+    async getXpathReports(sid) {
         const endpoint = this.paths['xpath_reports']
-        const data = await appApi.get(endpoint, params);
+        const data = await appApi.get(endpoint(sid));
+        return Promise.resolve(data);
+    }
+
+    async getXpathReportsSuite(sid, suiteId) {
+        const endpoint = this.paths['xpath_reports_suite']
+        const data = await appApi.get(endpoint(sid, suiteId));
+        return Promise.resolve(data);
+    }
+
+    async getXpathReportsTest(sid, suiteId, testId) {
+        const endpoint = this.paths['xpath_reports_test']
+        const data = await appApi.get(endpoint(sid, suiteId, testId));
+        return Promise.resolve(data);
+    }
+
+
+    async getValidationReportTree(sid) {
+        const endpoint = this.paths['validation_reports_tree']
+        const data = await appApi.get(endpoint(sid))
         return Promise.resolve(data);
     }
 

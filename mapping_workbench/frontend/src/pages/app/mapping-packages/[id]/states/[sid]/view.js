@@ -31,7 +31,8 @@ import {sessionApi} from "../../../../../../api/session";
 import ShaclValidationReport from "../../../../../../sections/app/shacl_validation_report/shacl_validation_report_view";
 import SparqlValidationReport
     from "../../../../../../sections/app/sparql_validation_report/sparql_validation_report_view";
-import XpathValidationReport from "../../../../../../sections/app/xpath_validation_report/xpath_validation_report_view";
+import XpathValidationReportView
+    from "../../../../../../sections/app/xpath_validation_report/xpath_validation_report_view";
 
 
 const tabs = [
@@ -50,11 +51,14 @@ const Page = () => {
     const [item, setItem] = useState({})
     const [isExporting, setIsExporting] = useState()
     const [validationReportFiles, setValidationReportFiles] = useState([])
+    const [validationReportTree, setValidationReportTree] = useState([])
+
 
     useEffect(() => {
         if (id && sid) {
             handleItemsGet(sid);
             handleValidationReportsFilesGet(sessionApi.getSessionProject(), id, sid)
+            handleValidationReportTreeGet(sid)
         }
     }, [id, sid]);
     const handleItemsGet = async (sid) => {
@@ -71,6 +75,16 @@ const Page = () => {
         try {
             const result = await sectionApi.getValidationReportFiles(data)
             setValidationReportFiles(result);
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+      const handleValidationReportTreeGet = async (state_id) => {
+          console.log('here')
+        try {
+            const result = await sectionApi.getValidationReportTree(state_id)
+            setValidationReportTree(result);
         } catch (err) {
             console.error(err);
         }
@@ -276,10 +290,11 @@ const Page = () => {
                 {currentTab === 'xpath' && (
                         <Card>
                             <CardContent>
-                                <XpathValidationReport project_id={sessionApi.getSessionProject()}
+                                <XpathValidationReportView project_id={sessionApi.getSessionProject()}
                                                        id={id}
                                                        sid={sid}
-                                                       files={validationReportFiles}/>
+                                                       files={validationReportFiles}
+                                                       reportTree={validationReportTree}/>
                             </CardContent>
                         </Card>
                 )}
