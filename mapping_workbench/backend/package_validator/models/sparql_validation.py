@@ -26,11 +26,14 @@ class SPARQLQueryTestDataEntry(ValidationTestDataEntry):
     """
 
 
-class SPARQLQueryResult(BaseModel):
+class ValidationSPARQLQuery(BaseModel):
+    query: Optional[SPARQLTestState] = None
+
+
+class SPARQLQueryResult(ValidationSPARQLQuery, BaseModel):
     """
     Stores SPARQL query execution result
     """
-    query: SPARQLTestState
     result: Optional[SPARQLQueryRefinedResultType] = None
     query_result: Optional[bool] = None
     fields_covered: Optional[bool] = True
@@ -47,7 +50,7 @@ class SPARQLQueryValidationSummaryEntry(BaseModel):
     test_datas: Optional[List[SPARQLQueryTestDataEntry]] = []
 
 
-class SPARQLValidationSummary(BaseModel):
+class SPARQLValidationSummaryResult(BaseModel):
     valid: Optional[SPARQLQueryValidationSummaryEntry] = SPARQLQueryValidationSummaryEntry()
     unverifiable: Optional[SPARQLQueryValidationSummaryEntry] = SPARQLQueryValidationSummaryEntry()
     warning: Optional[SPARQLQueryValidationSummaryEntry] = SPARQLQueryValidationSummaryEntry()
@@ -56,6 +59,10 @@ class SPARQLValidationSummary(BaseModel):
     unknown: Optional[SPARQLQueryValidationSummaryEntry] = SPARQLQueryValidationSummaryEntry()
 
 
+class SPARQLValidationSummary(ValidationSPARQLQuery, BaseModel):
+    result: Optional[SPARQLValidationSummaryResult] = SPARQLValidationSummaryResult()
+
+
 class SPARQLTestDataValidationResult(TestDataValidationResult):
     results: Optional[List[SPARQLQueryResult]] = []
-    summary: Optional[SPARQLValidationSummary] = SPARQLValidationSummary()
+    summary: Optional[List[SPARQLValidationSummary]] = []

@@ -60,6 +60,19 @@ async def generate_validation_reports_tree(
     return tree
 
 
+async def get_state_test_data_suite_validatiton(mapping_package_state,
+                                                test_data_suite_id) -> TestDataValidationContainer:
+    state: MappingPackageState = await get_specific_mapping_package_state(mapping_package_state.id)
+    test_data_suite = next((
+        test_data_suite for test_data_suite in state.test_data_suites
+        if test_data_suite.oid == test_data_suite_id), False
+    )
+    if not test_data_suite:
+        raise ResourceNotFoundException(404)
+
+    return test_data_suite.validation
+
+
 async def get_state_test_data_validatiton(mapping_package_state, test_data_suite_id,
                                           test_data_id) -> TestDataValidationContainer:
     state: MappingPackageState = await get_specific_mapping_package_state(mapping_package_state.id)
