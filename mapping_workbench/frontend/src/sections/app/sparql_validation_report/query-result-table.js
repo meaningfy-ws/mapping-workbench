@@ -6,6 +6,8 @@ import TableRow from '@mui/material/TableRow';
 
 import {Scrollbar} from 'src/components/scrollbar';
 import Typography from "@mui/material/Typography";
+import Chip from "@mui/material/Chip";
+import {resultColor} from "./utils";
 
 export const QueryResultTable = ({items}) => {
 
@@ -40,7 +42,8 @@ export const QueryResultTable = ({items}) => {
                             return (
                                 <TableRow key={key}>
                                     <TableCell>
-                                            {item[0]}
+                                        <Chip label={item[0]}
+                                              color={resultColor(item[0])}/>
                                     </TableCell>
                                     <TableCell>
                                         {item[1]}

@@ -143,6 +143,7 @@ const SparqlFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier 
             }
         )
         resultArray["query"] = queryAsArray.slice(4, queryAsArray.length).join("\n")
+        resultArray["query_result"] = e.query_result
         resultArray["result"] = e.result
         return resultArray;
     })

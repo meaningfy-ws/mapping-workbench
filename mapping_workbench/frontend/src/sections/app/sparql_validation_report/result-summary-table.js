@@ -3,9 +3,11 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import Chip from "@mui/material/Chip";
+import Typography from "@mui/material/Typography";
 
 import {Scrollbar} from 'src/components/scrollbar';
-import Typography from "@mui/material/Typography";
+import {resultColor} from "./utils";
 
 const ResultSummaryTable = ({items}) => {
 
@@ -45,7 +47,8 @@ const ResultSummaryTable = ({items}) => {
                             return (
                                 <TableRow key={key}>
                                     <TableCell>
-                                            {item[0]}
+                                        <Chip label={item[0]}
+                                              color={resultColor(item[0])}/>
                                     </TableCell>
                                     <TableCell>
                                         {item[1]}

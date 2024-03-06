@@ -18,6 +18,8 @@ import DialogContentText from "@mui/material/DialogContentText";
 
 import {Scrollbar} from 'src/components/scrollbar';
 import PropTypes from 'prop-types';
+import Chip from "@mui/material/Chip";
+import {resultColor} from "./utils";
 
 export const ListTableFile = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open:false, title:"", text:""})
@@ -114,7 +116,8 @@ export const ListTableFile = (props) => {
                                         {item.query}
                                     </TableCell>
                                     <TableCell align="left">
-                                        {item.result}
+                                        <Chip label={item.result}
+                                              color={resultColor(item.result)}/>
                                     </TableCell>
                                     <TableCell align="left">
                                         <Button variant="outlined"

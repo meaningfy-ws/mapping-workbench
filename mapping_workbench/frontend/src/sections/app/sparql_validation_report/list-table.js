@@ -77,7 +77,7 @@ export const ListTable = (props) => {
         justifyContent="start"
         height={100}>
                     {result.count}
-                    {!!result.count && <Button
+                    {!!result.count && <Button variant="outlined"
                     onClick={()=> onClick({title, notices: result.test_datas})}>
                         Details
                     </Button>}
