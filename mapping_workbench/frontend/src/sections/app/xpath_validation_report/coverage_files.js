@@ -15,7 +15,7 @@ const CoverageFiles = ({files, onClick}) => {
                 {files.map(file=>
                     <ListItem key={file.oid}
                               disablePadding>
-                        <ListItemButton onClick={() => onClick(files)}>
+                        <ListItemButton onClick={() => onClick(file)}>
                             <ListItemText primary={file.identifier} />
                         </ListItemButton>
                     </ListItem>)}

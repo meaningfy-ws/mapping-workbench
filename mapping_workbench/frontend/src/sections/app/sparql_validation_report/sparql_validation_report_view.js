@@ -11,12 +11,12 @@ import CoverageFiles from "../xpath_validation_report/coverage_files";
 import SparqlTestDatasetReport from "./sparql_validation_report_test_dataset";
 import SparqlFileReport from "./sparql_validation_report_file";
 
-const pacakageState = "package_state", testDataset = "test_dataset", file =  "file";
+const pacakageState = "package_state", testDataset = "test_dataset", fileCoverage =  "file_coverage";
 
 const tabs = [
     {label: 'Package State SPARQL Coverage', value: pacakageState},
     {label: 'Test Dataset SPARQL Coverage', value: testDataset},
-    {label: 'File SPARQL Coverage', value: file},
+    {label: 'File SPARQL Coverage', value: fileCoverage},
 ];
 
 const SparqlValidationReportView = ({ sid, reportTree }) => {
@@ -25,15 +25,17 @@ const SparqlValidationReportView = ({ sid, reportTree }) => {
     const [selectedTestDataset, setSelectedTestDataset] = useState(reportTree.test_data_suites[0].test_data_states[0])
     const [currentTab, setCurrentTab] = useState(tabs[0].value)
 
-    const handleSetPackageState = (files) => {
-        setSelectedPackageState(...files)
+    const handleSetPackageState = (file) => {
+        setSelectedPackageState(file)
         setCurrentTab(testDataset)
     }
 
-    const handleSetTestDataset = (files) => {
-        setSelectedTestDataset(...files)
-        setCurrentTab(file)
+    const handleSetTestDataset = (file) => {
+        setSelectedTestDataset(file)
+        setCurrentTab(fileCoverage)
     }
+
+    console.log(selectedPackageState,selectedTestDataset)
 
     return (
         <>
@@ -52,7 +54,7 @@ const SparqlValidationReportView = ({ sid, reportTree }) => {
                         >
                             Package State XPath Coverage: {selectedPackageState.identifier}
                         </Link>}
-                    {currentTab === file &&
+                    {currentTab === fileCoverage &&
                         <Typography>
                             File XPath Coverage: {selectedTestDataset.identifier}
                         </Typography>}
@@ -74,7 +76,7 @@ const SparqlValidationReportView = ({ sid, reportTree }) => {
                                         suiteId={selectedPackageState.oid}/>
                 </>
             }
-            {currentTab === file &&
+            {currentTab === fileCoverage &&
                 <SparqlFileReport sid={sid}
                                   suiteId={selectedPackageState.oid}
                                   testId={selectedTestDataset.oid}/>
