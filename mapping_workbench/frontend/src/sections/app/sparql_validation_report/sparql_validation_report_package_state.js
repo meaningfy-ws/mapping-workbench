@@ -13,6 +13,7 @@ import Radio from "@mui/material/Radio";
 
 import ItemSearchInput from "../file-manager/item-search-input";
 import {ListTable} from "./list-table";
+import ResultSummaryTable from "./result-summary-table";
 // import CoverageReport from "./coverage_report";
 // import CoverageFiles from "./coverage_files";
 
@@ -140,7 +141,6 @@ const SparqlValidationReport = ({ sid, files, mappingSuiteIdentifier }) => {
         }
     }
 
-    console.log(validationReport)
     const mapSparqlResults = (result) => result.map(e=> {
         const queryAsArray = e.query.content.split("\n")
         const values = queryAsArray.slice(0,3)
@@ -177,11 +177,11 @@ const SparqlValidationReport = ({ sid, files, mappingSuiteIdentifier }) => {
         <>
             {/*<CoverageReport validationReport={validationReport}*/}
             {/*                mappingSuiteIdentifier={mappingSuiteIdentifier}/>*/}
+            <ResultSummaryTable items={validationReport}/>
             <Typography m={2}
                         variant="h4">
                 Assertions
             </Typography>
-            <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
             <Box sx={{p: 2.5, display: 'flex'}}
                  direction="row">
                 <Stack
@@ -255,17 +255,20 @@ const SparqlValidationReport = ({ sid, files, mappingSuiteIdentifier }) => {
                        direction="row">
                     <Alert severity="info">No Data !</Alert>
                 </Stack> :
-                <ListTable
-                        items={itemsSearch.pagedItems}
-                        count={itemsSearch.count}
-                        onPageChange={itemsSearch.handlePageChange}
-                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        page={itemsSearch.state.page}
-                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                        onSort={itemsSearch.handleSort}
-                        sort={itemsSearch.state.sort}
-                        sectionApi={sectionApi}
-                />
+                <>
+                    <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
+                    <ListTable
+                            items={itemsSearch.pagedItems}
+                            count={itemsSearch.count}
+                            onPageChange={itemsSearch.handlePageChange}
+                            onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                            page={itemsSearch.state.page}
+                            rowsPerPage={itemsSearch.state.rowsPerPage}
+                            onSort={itemsSearch.handleSort}
+                            sort={itemsSearch.state.sort}
+                            sectionApi={sectionApi}
+                    />
+                </>
             }
         </>
 }

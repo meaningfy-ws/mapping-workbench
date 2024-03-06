@@ -22,9 +22,9 @@ import XpathValidationReportSuite from "../xpath_validation_report/xpath_validat
 const pacakageState = "package_state", testDataset = "test_dataset", file =  "file";
 
 const tabs = [
-    {label: 'Package State XPath Coverage', value: pacakageState},
-    {label: 'Test Dataset XPath Coverage', value: testDataset},
-    {label: 'File XPath Coverage', value: file},
+    {label: 'Package State SPARQL Coverage', value: pacakageState},
+    {label: 'Test Dataset SPARQL Coverage', value: testDataset},
+    {label: 'File SPARQL Coverage', value: file},
 ];
 
 const SparqlValidationReportView = ({ sid, reportTree }) => {
@@ -89,6 +89,7 @@ const SparqlValidationReportView = ({ sid, reportTree }) => {
                         <CoverageFiles files={reportTree.test_data_suites}
                                        onClick={handleFileClick}
                                        tab={testDataset}/>
+
                         <SparqlValidationReport sid={sid}
                                         files={reportTree.test_data_suites}
                                         mappingSuiteIdentifier={reportTree.identifier}/>
