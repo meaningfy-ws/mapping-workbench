@@ -37,9 +37,9 @@ import XpathValidationReportView
 
 const tabs = [
     {label: 'Details', value: 'details'},
-    {label: 'SHACL Reports', value: 'shacl'},
-    {label: 'SPARQL Reports', value: 'sparql'},
     {label: 'XPath Reports', value: 'xpath'},
+    {label: 'SPARQL Reports', value: 'sparql'},
+    {label: 'SHACL Reports', value: 'shacl'},
 ];
 
 const Page = () => {
@@ -57,7 +57,7 @@ const Page = () => {
     useEffect(() => {
         if (id && sid) {
             handleItemsGet(sid);
-            // handleValidationReportsFilesGet(sessionApi.getSessionProject(), id, sid)
+            handleValidationReportsFilesGet(sessionApi.getSessionProject(), id, sid)
             handleValidationReportTreeGet(sid)
         }
     }, [id, sid]);
@@ -70,15 +70,15 @@ const Page = () => {
         }
     }
 
-    // const handleValidationReportsFilesGet = async (project_id, package_id, state_id) => {
-    //     const data = { project_id, package_id, state_id }
-    //     try {
-    //         const result = await sectionApi.getValidationReportFiles(data)
-    //         setValidationReportFiles(result);
-    //     } catch (err) {
-    //         console.error(err);
-    //     }
-    // }
+    const handleValidationReportsFilesGet = async (project_id, package_id, state_id) => {
+        const data = { project_id, package_id, state_id }
+        try {
+            const result = await sectionApi.getValidationReportFiles(data)
+            setValidationReportFiles(result);
+        } catch (err) {
+            console.error(err);
+        }
+    }
 
       const handleValidationReportTreeGet = async (state_id) => {
           console.log('here')
@@ -278,7 +278,8 @@ const Page = () => {
                 {currentTab === 'sparql' && (
                         <Card>
                             <CardContent>
-                                <SparqlValidationReport
+                                <SparqlValidationReport project_id={sessionApi.getSessionProject()}
+                                                        filtes={validationReportFiles}
                                                         sid={sid}
                                                         reportTree={validationReportTree}/>
                             </CardContent>

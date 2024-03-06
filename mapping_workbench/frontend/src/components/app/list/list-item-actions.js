@@ -18,6 +18,8 @@ export const ListItemActions = (props) => {
 
     const handleViewAction = useCallback(async () => {
         const viewPathname = pathnames?.view ?? paths.app[itemctx.api.section].view;
+        console.log('view',viewPathname)
+
         router.push({
             pathname: viewPathname,
             query: {id: itemctx.id}

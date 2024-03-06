@@ -43,18 +43,18 @@ const SparqlValidationReportView = ({ sid, reportTree }) => {
                           color={currentTab !== pacakageState ? "inherit" : "primary"}
                           onClick={()=> setCurrentTab(pacakageState)}
                     >
-                        Package State XPath Coverage
+                        Package State SPARQL Coverage
                     </Link>
                     {currentTab !== pacakageState &&
                         <Link component="button"
                               color={currentTab !== testDataset ? "inherit" : "primary"}
                               onClick={() => setCurrentTab(testDataset)}
                         >
-                            Package State XPath Coverage: {selectedPackageState.identifier}
+                            Test Dataset SPARQL Coverage: {selectedPackageState.identifier}
                         </Link>}
                     {currentTab === fileCoverage &&
                         <Typography color="primary">
-                            File XPath Coverage: {selectedTestDataset.identifier}
+                            File SPARQL Coverage: {selectedTestDataset.identifier}
                         </Typography>}
                 </Breadcrumbs>
             </Stack>
