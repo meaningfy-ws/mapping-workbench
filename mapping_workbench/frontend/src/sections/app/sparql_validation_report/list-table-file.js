@@ -19,7 +19,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import {Scrollbar} from 'src/components/scrollbar';
 import PropTypes from 'prop-types';
 
-export const ListTable = (props) => {
+export const ListTableFile = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open:false, title:"", text:""})
 
     const {
@@ -114,7 +114,7 @@ export const ListTable = (props) => {
                                         {item.query}
                                     </TableCell>
                                     <TableCell align="left">
-                                        {item.sourceConstraintComponent}
+                                        {item.result}
                                     </TableCell>
                                     <TableCell align="left">
                                         <Button variant="outlined"
@@ -160,7 +160,7 @@ export const ListTable = (props) => {
     );
 };
 
-ListTable.propTypes = {
+ListTableFile.propTypes = {
     count: PropTypes.number,
     items: PropTypes.array,
     onPageChange: PropTypes.func,

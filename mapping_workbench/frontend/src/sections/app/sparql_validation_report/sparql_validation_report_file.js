@@ -7,8 +7,8 @@ import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
 
 import ItemSearchInput from "../file-manager/item-search-input";
-import {ListTable} from "./list-table";
-import ResultSummaryTable from "./result-summary-table";
+import {ListTableFile} from "./list-table-file";
+import {QueryResultTable} from "./query-result-table";
 
 
 const useItemsSearch = (items) => {
@@ -114,19 +114,18 @@ const useItemsSearch = (items) => {
     };
 };
 
-const SparqlValidationReport = ({ sid, files, mappingSuiteIdentifier }) => {
+const SparqlFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier }) => {
     const [validationReport, setValidationReport] = useState([])
     const [dataLoad, setDataLoad] = useState(true)
 
     useEffect(()=>{
-        handleValidationReportsGet(sid)
+        handleValidationReportsGet(sid, suiteId, testId)
     },[])
 
-    const handleValidationReportsGet = async (sid) => {
+    const handleValidationReportsGet = async (sid, suiteId, testId) => {
         try {
-            const result = await sectionApi.getSparqlReports(sid)
-            console.log(result)
-            setValidationReport(mapSparqlResults(result.summary))
+            const result = await sectionApi.getSparqlReportsTest(sid, suiteId, testId)
+            setValidationReport(mapSparqlResults(result.results))
         } catch (err) {
             console.error(err);
         } finally {
@@ -144,7 +143,6 @@ const SparqlValidationReport = ({ sid, files, mappingSuiteIdentifier }) => {
             }
         )
         resultArray["query"] = queryAsArray.slice(4, queryAsArray.length).join("\n")
-        resultArray["test_suite"] = e.query.filename
         resultArray["result"] = e.result
         return resultArray;
     })
@@ -165,7 +163,9 @@ const SparqlValidationReport = ({ sid, files, mappingSuiteIdentifier }) => {
             }
         </> :
         <>
-            <ResultSummaryTable items={validationReport}/>
+             <QueryResultTable
+                    items={validationReport}
+                />
             <Typography m={2}
                         variant="h4">
                 Assertions
@@ -245,7 +245,7 @@ const SparqlValidationReport = ({ sid, files, mappingSuiteIdentifier }) => {
                 </Stack> :
                 <>
                     <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
-                    <ListTable
+                    <ListTableFile
                             items={itemsSearch.pagedItems}
                             count={itemsSearch.count}
                             onPageChange={itemsSearch.handlePageChange}
@@ -260,4 +260,4 @@ const SparqlValidationReport = ({ sid, files, mappingSuiteIdentifier }) => {
             }
         </>
 }
-export default  SparqlValidationReport
+export default  SparqlFileReport

@@ -5,49 +5,56 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
 import {Scrollbar} from 'src/components/scrollbar';
+import Typography from "@mui/material/Typography";
 
 export const QueryResultTable = ({items}) => {
 
     const itemsReduce  = items.reduce((acc, item) => {
-        acc[item.query_result.toString()]++
+        acc[item.result] = (acc[item.result] ?? 0) + 1
         return acc
-    },{ true:0, false:0, error:0 })
+    },{})
 
     return (
-        <Scrollbar>
-            <Table sx={{minWidth: 1200}}>
-                <TableHead>
-                    <TableRow>
-                        <TableCell >
-                           Query Result
-                        </TableCell>
-                        <TableCell>
-                            Number of
-                        </TableCell>
-                        <TableCell>
-                            Ration
-                        </TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {Object.entries(itemsReduce)?.map((item, key) => {
-                        return (
-                            <TableRow key={key}>
-                                <TableCell>
-                                        {item[0]}
-                                </TableCell>
-                                <TableCell>
-                                    {item[1]}
-                                </TableCell>
-                                <TableCell>
-                                    {`${item[1] ? (item[1]/items.length*100).toFixed(2) : 0}%`}
-                                </TableCell>
-                            </TableRow>
+        <>
+            <Typography m={2}
+                        variant="h4">
+                    Results Summary
+            </Typography>
+            <Scrollbar>
+                <Table sx={{minWidth: 1200}}>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell >
+                                Result
+                            </TableCell>
+                            <TableCell>
+                                Count
+                            </TableCell>
+                            <TableCell>
+                                Ratio(%)
+                            </TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {Object.entries(itemsReduce)?.map((item, key) => {
+                            return (
+                                <TableRow key={key}>
+                                    <TableCell>
+                                            {item[0]}
+                                    </TableCell>
+                                    <TableCell>
+                                        {item[1]}
+                                    </TableCell>
+                                    <TableCell>
+                                        {`${item[1] ? (item[1]/items.length*100).toFixed(2) : 0}%`}
+                                    </TableCell>
+                                </TableRow>
 
-                        );
-                    })}
-                </TableBody>
-            </Table>
-        </Scrollbar>
+                            );
+                        })}
+                    </TableBody>
+                </Table>
+            </Scrollbar>
+        </>
     );
 };

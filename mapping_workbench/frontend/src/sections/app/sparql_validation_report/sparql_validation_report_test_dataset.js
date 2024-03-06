@@ -10,7 +10,6 @@ import ItemSearchInput from "../file-manager/item-search-input";
 import {ListTable} from "./list-table";
 import ResultSummaryTable from "./result-summary-table";
 
-
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
         filters: {
@@ -114,17 +113,17 @@ const useItemsSearch = (items) => {
     };
 };
 
-const SparqlValidationReport = ({ sid, files, mappingSuiteIdentifier }) => {
+const SparqlTestDatasetReport = ({ sid, suiteId, files, mappingSuiteIdentifier }) => {
     const [validationReport, setValidationReport] = useState([])
     const [dataLoad, setDataLoad] = useState(true)
 
     useEffect(()=>{
-        handleValidationReportsGet(sid)
+        handleValidationReportsGet(sid, suiteId)
     },[])
 
-    const handleValidationReportsGet = async (sid) => {
+    const handleValidationReportsGet = async (sid, suiteId) => {
         try {
-            const result = await sectionApi.getSparqlReports(sid)
+            const result = await sectionApi.getSparqlReportsSuite(sid, suiteId)
             console.log(result)
             setValidationReport(mapSparqlResults(result.summary))
         } catch (err) {
@@ -260,4 +259,4 @@ const SparqlValidationReport = ({ sid, files, mappingSuiteIdentifier }) => {
             }
         </>
 }
-export default  SparqlValidationReport
+export default  SparqlTestDatasetReport
