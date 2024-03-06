@@ -19,6 +19,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import {Scrollbar} from 'src/components/scrollbar';
 import PropTypes from 'prop-types';
 import Stack from "@mui/material/Stack";
+import {ResultChip, resultColor} from "./utils";
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open:false, title:"", text:""})
@@ -112,22 +113,22 @@ export const ListTable = (props) => {
                                                title="Query content"/>
                             </TableCell>
                             <TableCell align="center">
-                                Valid
+                                <ResultChip label={"Valid"}/>
                             </TableCell>
                             <TableCell align="center">
-                                Unverifiable
+                                <ResultChip label={"Unverifiable"}/>
                             </TableCell>
                             <TableCell align="center">
-                                Warning
+                                 <ResultChip label={"Warning"}/>
                             </TableCell>
                              <TableCell align="center">
-                                Invalid
+                                 <ResultChip label={"Invalid"}/>
                             </TableCell>
                              <TableCell align="center">
-                                Error
+                                 <ResultChip label={"Error"}/>
                             </TableCell>
                              <TableCell align="center">
-                                Unknown
+                                 <ResultChip label={"Unknown"}/>
                             </TableCell>
                         </TableRow>
                     </TableHead>

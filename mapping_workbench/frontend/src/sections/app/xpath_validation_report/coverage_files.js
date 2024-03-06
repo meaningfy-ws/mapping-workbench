@@ -4,7 +4,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import Typography from "@mui/material/Typography";
 
-const CoverageFiles = ({files, onClick, tab}) => {
+const CoverageFiles = ({files, onClick}) => {
     return (
         <>
             <Typography m={2}
@@ -15,7 +15,7 @@ const CoverageFiles = ({files, onClick, tab}) => {
                 {files.map(file=>
                     <ListItem key={file.oid}
                               disablePadding>
-                        <ListItemButton onClick={() => onClick(file, tab)}>
+                        <ListItemButton onClick={() => onClick(files)}>
                             <ListItemText primary={file.identifier} />
                         </ListItemButton>
                     </ListItem>)}

@@ -9,12 +9,13 @@ import Typography from "@mui/material/Typography";
 import ItemSearchInput from "../file-manager/item-search-input";
 import {ListTableFile} from "./list-table-file";
 import {QueryResultTable} from "./query-result-table";
+import {ResultFilter} from "./utils";
 
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
         filters: {
-            is_covered: ""
+            result: ""
         },
         sort: {
         },
@@ -43,7 +44,7 @@ const useItemsSearch = (items) => {
             const [key, value] = filter
             if(value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
                 returnItem = null
-            if(value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase))
+            if(value !== "" && value !== undefined && typeof item[key] === "string" && item[key] !== value.toLowerCase())
                 returnItem = null
         })
         return returnItem
@@ -149,8 +150,9 @@ const SparqlFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier 
     })
 
     const itemsSearch = useItemsSearch(validationReport);
-    const handleCoverageFilterChange = e => {
-        itemsSearch.handleFiltersChange({is_covered: e.target.value})
+
+    const handleResultFilterChange = e => {
+        itemsSearch.handleFiltersChange({result: e.target.value})
     }
 
     return dataLoad ?
@@ -171,74 +173,6 @@ const SparqlFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier 
                         variant="h4">
                 Assertions
             </Typography>
-            {/*<Box sx={{p: 2.5, display: 'flex'}}*/}
-            {/*     direction="row">*/}
-            {/*    <Stack*/}
-            {/*        component={RadioGroup}*/}
-            {/*        name="terms_validity"*/}
-            {/*        spacing={3}*/}
-            {/*        onChange={handleCoverageFilterChange}*/}
-            {/*    >*/}
-            {/*        <Paper*/}
-            {/*            key="2"*/}
-            {/*            sx={{*/}
-            {/*                alignItems: 'flex-start',*/}
-            {/*                display: 'flex',*/}
-            {/*                p: 2*/}
-            {/*            }}*/}
-            {/*            variant="outlined"*/}
-            {/*        >*/}
-            {/*            <Box sx={{mr: 2, mt: 1}}>*/}
-            {/*                <b>Filter Coverage:</b>*/}
-            {/*            </Box>*/}
-            {/*            <FormControlLabel*/}
-            {/*                control={<Radio/>}*/}
-            {/*                key="terms_validity_all"*/}
-            {/*                checked={itemsSearch.state.filters.is_covered === ""}*/}
-            {/*                label={(*/}
-            {/*                    <Box sx={{ml: 0, mr: 1}}>*/}
-            {/*                        <Typography*/}
-            {/*                            variant="subtitle2"*/}
-            {/*                        >*/}
-            {/*                            All*/}
-            {/*                        </Typography>*/}
-            {/*                    </Box>*/}
-            {/*                )}*/}
-            {/*                value=""*/}
-            {/*            />*/}
-            {/*            <FormControlLabel*/}
-            {/*                control={<Radio/>}*/}
-            {/*                key="terms_validity_valid"*/}
-            {/*                checked={itemsSearch.state.filters.is_covered === "true"}*/}
-            {/*                label={(*/}
-            {/*                    <Box sx={{ml: 0, mr: 1}}>*/}
-            {/*                        <Typography*/}
-            {/*                            variant="subtitle2"*/}
-            {/*                        >*/}
-            {/*                            Covered*/}
-            {/*                        </Typography>*/}
-            {/*                    </Box>*/}
-            {/*                )}*/}
-            {/*                value="true"*/}
-            {/*            />*/}
-            {/*            <FormControlLabel*/}
-            {/*                control={<Radio/>}*/}
-            {/*                key="terms_validity_invalid"*/}
-            {/*                checked={itemsSearch.state.filters.is_covered === "false"}*/}
-            {/*                label={(*/}
-            {/*                    <Box sx={{ml: 0, mr: 1}}>*/}
-            {/*                        <Typography*/}
-            {/*                            variant="subtitle2"*/}
-            {/*                        >*/}
-            {/*                            Not Covered*/}
-            {/*                        </Typography>*/}
-            {/*                    </Box>*/}
-            {/*                )}*/}
-            {/*                value="false"*/}
-            {/*            />*/}
-            {/*        </Paper>*/}
-            {/*    </Stack>*/}
-            {/*</Box>*/}
             {!validationReport?.length ?
                 <Stack justifyContent="center"
                        direction="row">
@@ -246,6 +180,8 @@ const SparqlFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier 
                 </Stack> :
                 <>
                     <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
+                    <ResultFilter onStateChange={handleResultFilterChange}
+                          currentState={itemsSearch.state.filters.result}/>
                     <ListTableFile
                             items={itemsSearch.pagedItems}
                             count={itemsSearch.count}

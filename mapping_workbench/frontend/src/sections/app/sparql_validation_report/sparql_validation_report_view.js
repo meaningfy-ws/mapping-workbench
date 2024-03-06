@@ -25,14 +25,14 @@ const SparqlValidationReportView = ({ sid, reportTree }) => {
     const [selectedTestDataset, setSelectedTestDataset] = useState(reportTree.test_data_suites[0].test_data_states[0])
     const [currentTab, setCurrentTab] = useState(tabs[0].value)
 
-    const handleFileClick = (file, tab) => {
-        if(tab === "test_dataset")
-        {
-            setSelectedPackageState(file)
-            setSelectedTestDataset({})
-        }
-        else setSelectedTestDataset(file)
-        setCurrentTab(tab)
+    const handleSetPackageState = (files) => {
+        setSelectedPackageState(...files)
+        setCurrentTab(testDataset)
+    }
+
+    const handleSetTestDataset = (files) => {
+        setSelectedTestDataset(...files)
+        setCurrentTab(file)
     }
 
     return (
@@ -61,32 +61,23 @@ const SparqlValidationReportView = ({ sid, reportTree }) => {
             {currentTab === pacakageState &&
                 <>
                     <CoverageFiles files={reportTree.test_data_suites}
-                                   onClick={handleFileClick}
-                                   tab={testDataset}/>
-
+                                   onClick={handleSetPackageState}/>
                     <SparqlValidationReport sid={sid}
-                                    files={reportTree.test_data_suites}
-                                    mappingSuiteIdentifier={reportTree.identifier}/>
+                                    files={reportTree.test_data_suites}/>
                 </>
             }
             {currentTab === testDataset &&
                 <>
                     <CoverageFiles files={selectedPackageState?.test_data_states}
-                                   onClick={handleFileClick}
-                                   tab={file}/>
+                                   onClick={handleSetTestDataset}/>
                     <SparqlTestDatasetReport sid={sid}
-                                        suiteId={selectedPackageState.oid}
-                                        files={selectedPackageState?.test_data_states}
-                                        mappingSuiteIdentifier={reportTree.identifier}/>
+                                        suiteId={selectedPackageState.oid}/>
                 </>
             }
             {currentTab === file &&
-                <>
-                    <SparqlFileReport   sid={sid}
-                                        suiteId={selectedPackageState.oid}
-                                        testId={selectedTestDataset.oid}
-                                        />
-                </>
+                <SparqlFileReport sid={sid}
+                                  suiteId={selectedPackageState.oid}
+                                  testId={selectedTestDataset.oid}/>
             }
         </>
     )
