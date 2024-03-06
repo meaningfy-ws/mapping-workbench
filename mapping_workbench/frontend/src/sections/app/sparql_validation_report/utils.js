@@ -33,54 +33,54 @@ export const ResultFilter = ({currentState, onStateChange}) => {
 
 
     const FilterValue = ({label, value, currentState}) => {
-        return (<FormControlLabel
-            control={<Radio/>}
-            checked={currentState === (value ?? label.toLowerCase())}
-            label={(
-                <Box sx={{ml: 0, mr: 1}}>
-                    <Typography
-                        variant="subtitle2"
-                    >
-                        <ResultChip label={label}/>
-                    </Typography>
-                </Box>
-            )}
-            value={value ?? label.toLowerCase()}
-        />)
+        return (
+            <FormControlLabel
+                control={<Radio/>}
+                checked={currentState === (value ?? label.toLowerCase())}
+                label={(
+                    <Box sx={{ml: 0, mr: 1}}>
+                        <Typography
+                            variant="subtitle2"
+                        >
+                            <ResultChip label={label}/>
+                        </Typography>
+                    </Box>
+                )}
+                value={value ?? label.toLowerCase()}
+            />)
     }
 
     return(
         <Box sx={{p: 2.5, display: 'flex'}}
                  direction="row">
-                <Stack
-                    component={RadioGroup}
-                    name="terms_validity"
-                    spacing={3}
-                    onChange={onStateChange}
+            <Stack
+                component={RadioGroup}
+                name="terms_validity"
+                spacing={3}
+                onChange={onStateChange}
+            >
+                <Paper
+                    sx={{
+                        alignItems: 'flex-start',
+                        display: 'flex',
+                        p: 2
+                    }}
+                    variant="outlined"
                 >
-                    <Paper
-                        key="2"
-                        sx={{
-                            alignItems: 'flex-start',
-                            display: 'flex',
-                            p: 2
-                        }}
-                        variant="outlined"
-                    >
-                        <Box sx={{mr: 2, mt: 1}}>
-                            <b>Filter Results:</b>
-                        </Box>
+                    <Box sx={{mr: 2, mt: 1}}>
+                        <b>Filter Results:</b>
+                    </Box>
+                    <FilterValue label="all"
+                                 value=""
+                                 currentState={currentState}/>
+                    {reportValues.map(value =>
+                        <FilterValue key={value}
+                                     label={value}
+                                     currentState={currentState}/>)}
 
-                        {reportValues.map(value =>
-                            <FilterValue key={value}
-                                         label={value}
-                                         currentState={currentState}/> )}
-                        <FilterValue label={"all"}
-                                     value={""}
-                                     currentState={currentState}/>
 
-                    </Paper>
-                </Stack>
-            </Box>
+                </Paper>
+            </Stack>
+        </Box>
     )
 }

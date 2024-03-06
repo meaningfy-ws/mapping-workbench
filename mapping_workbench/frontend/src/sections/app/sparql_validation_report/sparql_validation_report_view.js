@@ -35,8 +35,6 @@ const SparqlValidationReportView = ({ sid, reportTree }) => {
         setCurrentTab(fileCoverage)
     }
 
-    console.log(selectedPackageState,selectedTestDataset)
-
     return (
         <>
             <Stack spacing={1}>
@@ -55,7 +53,7 @@ const SparqlValidationReportView = ({ sid, reportTree }) => {
                             Package State XPath Coverage: {selectedPackageState.identifier}
                         </Link>}
                     {currentTab === fileCoverage &&
-                        <Typography>
+                        <Typography color="primary">
                             File XPath Coverage: {selectedTestDataset.identifier}
                         </Typography>}
                 </Breadcrumbs>
