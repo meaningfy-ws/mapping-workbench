@@ -19,7 +19,7 @@ const ResultSummaryTable = ({items}) => {
                 }
             )
             return acc
-        },{})
+        },{valid:0,unverifiable:0,warning:0,invalid:0,error:0,unknown:0})
 
     return (
         <>

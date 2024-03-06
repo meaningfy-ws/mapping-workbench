@@ -14,7 +14,7 @@ export const QueryResultTable = ({items}) => {
     const itemsReduce  = items.reduce((acc, item) => {
         acc[item.result] = (acc[item.result] ?? 0) + 1
         return acc
-    },{})
+    },{valid:0,unverifiable:0,warning:0,invalid:0,error:0,unknown:0})
 
     return (
         <>
