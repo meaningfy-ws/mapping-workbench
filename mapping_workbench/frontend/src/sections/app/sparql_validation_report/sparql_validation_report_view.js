@@ -11,19 +11,18 @@ import CoverageFiles from "../xpath_validation_report/coverage_files";
 import SparqlTestDatasetReport from "./sparql_validation_report_test_dataset";
 import SparqlFileReport from "./sparql_validation_report_file";
 
-const pacakageState = "package_state", testDataset = "test_dataset", fileCoverage =  "file_coverage";
-
-const tabs = [
-    {label: 'Package State SPARQL Coverage', value: pacakageState},
-    {label: 'Test Dataset SPARQL Coverage', value: testDataset},
-    {label: 'File SPARQL Coverage', value: fileCoverage},
-];
+const pacakageState = "package_state";
+const packageStateLabel = "Package State SPARQL Coverage";
+const testDataset = "test_dataset";
+const testDatasetLabel = "Test Dataset SPARQL Coverage";
+const fileCoverage =  "file_coverage";
+const fileCoverageLabel = "File SPARQL Coverage"
 
 const SparqlValidationReportView = ({ sid, reportTree }) => {
 
     const [selectedPackageState, setSelectedPackageState] = useState(reportTree.test_data_suites[0])
     const [selectedTestDataset, setSelectedTestDataset] = useState(reportTree.test_data_suites[0].test_data_states[0])
-    const [currentTab, setCurrentTab] = useState(tabs[0].value)
+    const [currentTab, setCurrentTab] = useState(pacakageState)
 
     const handleSetPackageState = (file) => {
         setSelectedPackageState(file)
@@ -43,18 +42,18 @@ const SparqlValidationReportView = ({ sid, reportTree }) => {
                           color={currentTab !== pacakageState ? "inherit" : "primary"}
                           onClick={()=> setCurrentTab(pacakageState)}
                     >
-                        Package State SPARQL Coverage
+                        {packageStateLabel}
                     </Link>
                     {currentTab !== pacakageState &&
                         <Link component="button"
                               color={currentTab !== testDataset ? "inherit" : "primary"}
                               onClick={() => setCurrentTab(testDataset)}
                         >
-                            Test Dataset SPARQL Coverage: {selectedPackageState.identifier}
+                            {testDatasetLabel}: {selectedPackageState.identifier}
                         </Link>}
                     {currentTab === fileCoverage &&
                         <Typography color="primary">
-                            File SPARQL Coverage: {selectedTestDataset.identifier}
+                            {fileCoverageLabel}: {selectedTestDataset.identifier}
                         </Typography>}
                 </Breadcrumbs>
             </Stack>

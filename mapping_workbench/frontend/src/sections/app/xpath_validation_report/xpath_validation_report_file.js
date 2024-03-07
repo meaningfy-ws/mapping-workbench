@@ -1,11 +1,13 @@
 import {useEffect, useState} from "react";
 import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
+
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 import Alert from "@mui/material/Alert";
+import Typography from "@mui/material/Typography";
+
 import ItemSearchInput from "../file-manager/item-search-input";
 import {ListTable} from "./list-table";
-import Typography from "@mui/material/Typography";
 import XpathRulesPaths from "./xpath_rules_paths";
 import CoverageReport from "./coverage_report";
 
@@ -175,10 +177,6 @@ const XpathValidationReportTest= ({  sid, suiteId, testId, mappingSuiteIdentifie
                             sort={itemsSearch.state.sort}
                             sectionApi={sectionApi}
                     />
-                    <XpathRulesPaths title={`XPATHs covered in the "Rules" of Conceptual Mapping`}
-                                             items={coveredReports}/>
-                    <XpathRulesPaths title="XPATHs not covered by Conceptual Mapping"
-                                         items={notCoveredReports}/>
                 </>}
             </>
 }

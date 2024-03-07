@@ -1,14 +1,15 @@
+import {useState} from "react";
+
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-
-import {Scrollbar} from 'src/components/scrollbar';
 import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
+
+import {Scrollbar} from 'src/components/scrollbar';
 import {resultColor, SorterHeader, sortItems} from "./utils";
-import {useState} from "react";
 
 export const QueryResultTable = ({items}) => {
     const[sort,setSort] = useState({column:'',direction:''})

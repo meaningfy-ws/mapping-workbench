@@ -18,11 +18,11 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContentText from "@mui/material/DialogContentText";
-
-import {Scrollbar} from 'src/components/scrollbar';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
+
+import {Scrollbar} from 'src/components/scrollbar';
 import PropTypes from 'prop-types';
 
 export const ListTable = (props) => {

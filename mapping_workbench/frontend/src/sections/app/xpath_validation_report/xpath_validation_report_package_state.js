@@ -5,16 +5,10 @@ import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import RadioGroup from "@mui/material/RadioGroup";
-import Paper from "@mui/material/Paper";
-import Box from "@mui/material/Box";
-import Radio from "@mui/material/Radio";
 
 import ItemSearchInput from "../file-manager/item-search-input";
 import {ListTable} from "./list-table";
 import CoverageReport from "./coverage_report";
-import CoverageFiles from "./coverage_files";
 import {CoverageFilter} from "./utils";
 
 
@@ -81,11 +75,11 @@ const useItemsSearch = (items) => {
     })
 
     const handleSearchItems = (filters) => {
-        setState(prevState => ({...prevState, search: filters }))
+        setState(prevState=> ({...prevState, search: filters }))
     }
 
     const handleFiltersChange = (filters) => {
-        setState((prevState) => ({
+        setState(prevState=> ({
             ...prevState,
             filters,
             page: 0
@@ -93,7 +87,7 @@ const useItemsSearch = (items) => {
     }
 
     const handlePageChange = (event, page) => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             page
         }));
@@ -104,7 +98,7 @@ const useItemsSearch = (items) => {
                 direction: prevState.sort.column === column && prevState.sort.direction === "asc" ? "desc" : "asc"}}))
     }
     const handleRowsPerPageChange = (event) => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
         }));
     }
@@ -144,9 +138,6 @@ const XpathValidationReport = ({ sid, files, mappingSuiteIdentifier }) => {
     const handleCoverageFilterChange = e => {
         itemsSearch.handleFiltersChange({is_covered: e.target.value})
     }
-
-    const uniqueNotices =
-        [...new Set(validationReport.map(xpaths => xpaths.test_data_xpaths.map(notice => notice.test_data_id)).flat())]
 
     return dataLoad ?
         <>

@@ -94,6 +94,7 @@ const useItemsSearch = (items) => {
         setState(prevState=> ({ ...prevState, sort: {column,
                 direction: prevState.sort.column === column ? prevState.sort.direction === "asc" ? "desc" : "asc" : desc ? "desc" : "asc" }}))
     }
+
     const handleRowsPerPageChange = (event) => {
         setState(prevState => ({
             ...prevState,

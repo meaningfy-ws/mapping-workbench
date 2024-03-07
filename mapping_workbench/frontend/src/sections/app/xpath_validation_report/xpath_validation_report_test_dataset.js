@@ -1,14 +1,14 @@
 import {useEffect, useState} from "react";
 import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
+
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 import Alert from "@mui/material/Alert";
+import Typography from "@mui/material/Typography";
+
 import ItemSearchInput from "../file-manager/item-search-input";
 import {ListTable} from "./list-table";
-import Typography from "@mui/material/Typography";
-import XpathRulesPaths from "./xpath_rules_paths";
 import CoverageReport from "./coverage_report";
-import CoverageFiles from "./coverage_files";
 import {CoverageFilter} from "./utils";
 
 
@@ -40,10 +40,9 @@ const useItemsSearch = (items) => {
 
     const filteredItems = searchItems.filter((item) => {
         let returnItem = item;
-
-        Object.entries(filters).forEach(e=> {
-            const [key, value] = e
-            if(value !== undefined && typeof item[key] === "boolean" && item[key]?.toString() != value)
+        Object.entries(filters).forEach(filter=> {
+            const [key, value] = filter
+            if(value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
                 returnItem = null
             if(value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase))
                 returnItem = null
@@ -138,11 +137,6 @@ const XpathValidationReportSuite = ({  sid, suiteId, files, mappingSuiteIdentifi
     }
 
     const itemsSearch = useItemsSearch(validationReport);
-
-    const { coveredReports, notCoveredReports } = validationReport.reduce((acc, report) => {
-        acc[report.is_covered ? "coveredReports" : "notCoveredReports"].push({ eforms_sdk_element_xpath: report.eforms_sdk_element_xpath })
-        return acc
-    }, {coveredReports:[], notCoveredReports:[]})
 
     const handleCoverageFilterChange = e => {
         itemsSearch.handleFiltersChange({is_covered: e.target.value})
