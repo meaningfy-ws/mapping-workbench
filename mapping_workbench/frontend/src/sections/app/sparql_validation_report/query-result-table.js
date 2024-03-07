@@ -64,7 +64,7 @@ export const QueryResultTable = ({items}) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {itemsDisplay?.map((item, key) => {
+                        {sortedItems?.map((item, key) => {
                             return (
                                 <TableRow key={key}>
                                     <TableCell>

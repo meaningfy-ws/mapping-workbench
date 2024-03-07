@@ -166,7 +166,7 @@ const SparqlFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier 
             }
         </> :
         <>
-             <QueryResultTable
+            <QueryResultTable
                     items={validationReport}
                 />
             <Typography m={2}
