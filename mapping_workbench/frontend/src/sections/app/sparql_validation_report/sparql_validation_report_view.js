@@ -1,176 +1,85 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
 
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
-import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
-import Alert from "@mui/material/Alert";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import Link from "@mui/material/Link";
+import Typography from "@mui/material/Typography";
 
-import {mappingPackageStatesApi as sectionApi} from 'src/api/mapping-packages/states';
-import {ListTable} from "./list-table";
-import {QueryResultTable} from "./query-result-table";
-import ItemSearchInput from "../file-manager/item-search-input";
+import SparqlValidationReport from "./sparql_validation_report_package_state";
+import CoverageFiles from "../xpath_validation_report/coverage_files";
+import SparqlTestDatasetReport from "./sparql_validation_report_test_dataset";
+import SparqlFileReport from "./sparql_validation_report_file";
 
+const pacakageState = "package_state";
+const packageStateLabel = "Package State SPARQL Coverage";
+const testDataset = "test_dataset";
+const testDatasetLabel = "Test Dataset SPARQL Coverage";
+const fileCoverage =  "file_coverage";
+const fileCoverageLabel = "File SPARQL Coverage"
 
-const useItemsSearch = (items) => {
-    const [state, setState] = useState({
-        filters: {},
-        sort: {},
-        search: [],
-        searchColumns:["description", "query", "title", "xpath"],
-        page: sectionApi.DEFAULT_PAGE,
-        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
-    });
+const SparqlValidationReportView = ({ sid, reportTree }) => {
 
-    const searchItems = state.search.length ? items.filter(item => {
-        let returnItem = null;
-        state.searchColumns.forEach(column => {
-            state.search.forEach(search => {
-                if(item[column]?.toLowerCase()?.includes(search.toLowerCase()))
-                    returnItem = item
-            })
-        })
-        return returnItem
-    }) : items
+    const [selectedPackageState, setSelectedPackageState] = useState(reportTree.test_data_suites[0])
+    const [selectedTestDataset, setSelectedTestDataset] = useState(reportTree.test_data_suites[0].test_data_states[0])
+    const [currentTab, setCurrentTab] = useState(pacakageState)
 
-    const sortedItems = searchItems.sort((a,b) => {
-        const sortColumn = state.sort.column
-        if(!sortColumn) return
-        return state.sort.direction === "asc" ?
-             a[sortColumn].localeCompare(b[sortColumn]) :
-             b[sortColumn].localeCompare(a[sortColumn])
-    })
-
-    const pagedItems = sortedItems.filter((item, i) => {
-        const pageSize = state.page * state.rowsPerPage
-        if((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
-            return item
-    })
-
-    const handleSearchItems = (filters) => {
-        setState(prevState => ({...prevState, search: filters }))
+    const handleSetPackageState = (file) => {
+        setSelectedPackageState(file)
+        setCurrentTab(testDataset)
     }
 
-    const handleFiltersChange = (filters) => {
-        setState((prevState) => ({
-            ...prevState,
-            filters,
-            page: 0
-        }));
+    const handleSetTestDataset = (file) => {
+        setSelectedTestDataset(file)
+        setCurrentTab(fileCoverage)
     }
 
-     const handleSort = (column) => {
-        setState(prevState=> ({ ...prevState, sort: {column,
-                direction: prevState.sort.column === column && prevState.sort.direction === "asc" ? "desc" : "asc"}}))
-    }
-
-    const handlePageChange = (event, page) => {
-        setState((prevState) => ({
-            ...prevState,
-            page
-        }));
-    }
-    const handleRowsPerPageChange = (event) => {
-        setState((prevState) => ({
-            ...prevState,
-            rowsPerPage: parseInt(event.target.value, 10)
-        }));
-    }
-
-    return {
-        handleFiltersChange,
-        handlePageChange,
-        handleRowsPerPageChange,
-        handleSort,
-        handleSearchItems,
-        pagedItems,
-        count: searchItems.length,
-        state
-    };
-};
-
-const SparqlValidationReport = ({ project_id, id, sid, files }) => {
-    const [selectedValidationFile, setSelectedValidationFile] = useState(files[0])
-    const [validationReport, setValidationReport] = useState([])
-    const [dataLoad, setDataLoad] = useState(true)
-
-    useEffect(()=>{
-        selectedValidationFile && handleValidationReportsGet(project_id, id, sid, selectedValidationFile)
-    },[selectedValidationFile])
-
-    const handleValidationReportsGet = async (project_id, package_id, state_id, identifier = undefined) => {
-        const data = { project_id, package_id, state_id, identifier }
-        try {
-            const result = await sectionApi.getSparqlReports(data)
-            setValidationReport(mapSparqlResults(result));
-            setDataLoad(false)
-
-        } catch (err) {
-            setDataLoad(false)
-            console.error(err);
-        }
-    }
-
-    const mapSparqlResults = (result) => result.map(e=> {
-        const queryAsArray = e.query.content.split("\n")
-        const values = queryAsArray.slice(0,3)
-        const resultArray = {}
-        values.forEach(e => {
-                const res = e.split(": ")
-                resultArray[res[0].substring(1)] = res[1]
-            }
-        )
-        resultArray["query"] = queryAsArray.slice(4, queryAsArray.length).join("\n")
-        resultArray["query_result"] = e.query_result
-        return resultArray;
-    })
-
-    const itemsSearch = useItemsSearch(validationReport);
-
-    return dataLoad ?
+    return (
         <>
-            <Skeleton width="20%"
-                      height={80} />
-            {
-                new Array(5).fill("").map((e, i) =>
-                <Skeleton key={i}
-                          height={50}/>)
+            <Stack spacing={1}>
+                <Breadcrumbs separator={<KeyboardArrowRightIcon/>}>
+                    <Link component="button"
+                          color={currentTab !== pacakageState ? "inherit" : "primary"}
+                          onClick={()=> setCurrentTab(pacakageState)}
+                    >
+                        {packageStateLabel}
+                    </Link>
+                    {currentTab !== pacakageState &&
+                        <Link component="button"
+                              color={currentTab !== testDataset ? "inherit" : "primary"}
+                              onClick={() => setCurrentTab(testDataset)}
+                        >
+                            {testDatasetLabel}: {selectedPackageState.identifier}
+                        </Link>}
+                    {currentTab === fileCoverage &&
+                        <Typography color="primary">
+                            {fileCoverageLabel}: {selectedTestDataset.identifier}
+                        </Typography>}
+                </Breadcrumbs>
+            </Stack>
+            {currentTab === pacakageState &&
+                <>
+                    <CoverageFiles files={reportTree.test_data_suites}
+                                   onClick={handleSetPackageState}/>
+                    <SparqlValidationReport sid={sid}
+                                    files={reportTree.test_data_suites}/>
+                </>
             }
-        </> :
-        !files?.length ?
-            <Stack justifyContent="center"
-                   direction="row">
-                <Alert severity="info">No Data !</Alert>
-            </Stack> :
-            <>
-                <Select
-                    onChange={(e) => {
-                        itemsSearch.handleFiltersChange()
-                        setSelectedValidationFile(e.target.value)
-                    }}
-                    value={selectedValidationFile}>
-                    {files?.map(file =>
-                        <MenuItem key={file}
-                                  value={file}>
-                            {file}
-                        </MenuItem>)}
-                </Select>
-                <QueryResultTable
-                    items={validationReport}
-                />
-                <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
-                <ListTable
-                    items={itemsSearch.pagedItems}
-                    count={itemsSearch.pagedItems?.length}
-                    onPageChange={itemsSearch.handlePageChange}
-                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                    page={itemsSearch.state.page}
-                    rowsPerPage={itemsSearch.state.rowsPerPage}
-                    onSort={itemsSearch.handleSort}
-                    sort={itemsSearch.state.sort}
-                    sectionApi={sectionApi}
-                />
-            </>
+            {currentTab === testDataset &&
+                <>
+                    <CoverageFiles files={selectedPackageState?.test_data_states}
+                                   onClick={handleSetTestDataset}/>
+                    <SparqlTestDatasetReport sid={sid}
+                                        suiteId={selectedPackageState.oid}/>
+                </>
+            }
+            {currentTab === fileCoverage &&
+                <SparqlFileReport sid={sid}
+                                  suiteId={selectedPackageState.oid}
+                                  testId={selectedTestDataset.oid}/>
+            }
+        </>
+    )
 }
 
-export default SparqlValidationReport
+export default SparqlValidationReportView

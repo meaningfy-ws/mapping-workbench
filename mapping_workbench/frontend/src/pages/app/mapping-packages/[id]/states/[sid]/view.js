@@ -37,9 +37,9 @@ import XpathValidationReportView
 
 const tabs = [
     {label: 'Details', value: 'details'},
-    {label: 'Shacl Reports', value: 'shacl'},
-    {label: 'Sparql Reports', value: 'sparql'},
-    {label: 'Xpath Reports', value: 'xpath'},
+    {label: 'XPath Reports', value: 'xpath'},
+    {label: 'SPARQL Reports', value: 'sparql'},
+    {label: 'SHACL Reports', value: 'shacl'},
 ];
 
 const Page = () => {
@@ -268,7 +268,6 @@ const Page = () => {
                 {currentTab === 'shacl' && (
                         <Card>
                             <CardContent>
-                                {/*<FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>*/}
                                 <ShaclValidationReport project_id={sessionApi.getSessionProject()}
                                                        id={id}
                                                        sid={sid}
@@ -279,21 +278,18 @@ const Page = () => {
                 {currentTab === 'sparql' && (
                         <Card>
                             <CardContent>
-                                {/*<FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>*/}
                                 <SparqlValidationReport project_id={sessionApi.getSessionProject()}
-                                                        id={id}
+                                                        filtes={validationReportFiles}
                                                         sid={sid}
-                                                        files={validationReportFiles}/>
+                                                        reportTree={validationReportTree}/>
                             </CardContent>
                         </Card>
                 )}
                 {currentTab === 'xpath' && (
                         <Card>
                             <CardContent>
-                                <XpathValidationReportView project_id={sessionApi.getSessionProject()}
-                                                       id={id}
+                                <XpathValidationReportView
                                                        sid={sid}
-                                                       files={validationReportFiles}
                                                        reportTree={validationReportTree}/>
                             </CardContent>
                         </Card>

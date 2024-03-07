@@ -1,13 +1,14 @@
 import {useEffect, useState} from "react";
 import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
+
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 import Alert from "@mui/material/Alert";
+import Typography from "@mui/material/Typography";
+
 import ItemSearchInput from "../file-manager/item-search-input";
 import {ListTable} from "./list-table";
-import Typography from "@mui/material/Typography";
-import XpathRulesPaths from "./xpath_rules_paths";
-
+import ResultSummaryTable from "./result-summary-table";
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
@@ -16,7 +17,7 @@ const useItemsSearch = (items) => {
         sort: {
         },
         search: [],
-        searchColumns:["eforms_sdk_element_id","test_data_xpath"],
+        searchColumns:[],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -36,10 +37,9 @@ const useItemsSearch = (items) => {
 
     const filteredItems = searchItems.filter((item) => {
         let returnItem = item;
-
-        Object.entries(filters).forEach(e=> {
-            const [key, value] = e
-            if(value !== undefined && typeof item[key] === "boolean" && item[key]?.toString() != value)
+        Object.entries(filters).forEach(filter=> {
+            const [key, value] = filter
+            if(value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
                 returnItem = null
             if(value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase))
                 returnItem = null
@@ -47,14 +47,25 @@ const useItemsSearch = (items) => {
         return returnItem
     })
 
-    const sortedItems = state.sort.column ? filteredItems.sort((a,b) => {
+    const sortedItems = () => {
         const sortColumn = state.sort.column
-        return state.sort.direction === "asc" ?
-             a[sortColumn]?.localeCompare(b[sortColumn]) :
-             b[sortColumn]?.localeCompare(a[sortColumn])
-    }) : filteredItems
+        if(!sortColumn) {
+            return filteredItems
+        } else {
+            return filteredItems.sort((a,b) => {
+                if (typeof a[sortColumn] === "string")
+                    return state.sort.direction === "asc" ?
+                        a[sortColumn]?.localeCompare(b[sortColumn]) :
+                        b[sortColumn]?.localeCompare(a[sortColumn])
+                else
+                    return state.sort.direction === "asc" ?
+                        a[sortColumn] - b[sortColumn] :
+                        b[sortColumn] - a[sortColumn]
+                })
+        }
+    }
 
-    const pagedItems = sortedItems.filter((item, i) => {
+    const pagedItems = sortedItems().filter((item, i) => {
         const pageSize = state.page * state.rowsPerPage
         if((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
             return item
@@ -65,7 +76,7 @@ const useItemsSearch = (items) => {
     }
 
     const handleFiltersChange = (filters) => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             filters,
             page: 0
@@ -73,18 +84,19 @@ const useItemsSearch = (items) => {
     }
 
     const handlePageChange = (event, page) => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             page
         }));
     }
 
-    const handleSort = (column) => {
+    const handleSort = (column, desc) => {
         setState(prevState=> ({ ...prevState, sort: {column,
-                direction: prevState.sort.column === column && prevState.sort.direction === "asc" ? "desc" : "asc"}}))
+                direction: prevState.sort.column === column ? prevState.sort.direction === "asc" ? "desc" : "asc" : desc ? "desc" : "asc" }}))
     }
+
     const handleRowsPerPageChange = (event) => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             rowsPerPage: parseInt(event.target.value, 10)
         }));
@@ -102,19 +114,18 @@ const useItemsSearch = (items) => {
     };
 };
 
-const XpathValidationReportSuite = ({  sid, suiteId }) => {
+const SparqlTestDatasetReport = ({ sid, suiteId }) => {
     const [validationReport, setValidationReport] = useState([])
     const [dataLoad, setDataLoad] = useState(true)
 
     useEffect(()=>{
-        handleValidationReportsSuiteGet(sid,suiteId)
-    },[suiteId])
+        handleValidationReportsGet(sid, suiteId)
+    },[])
 
-    const handleValidationReportsSuiteGet = async (sid, suiteId) => {
+    const handleValidationReportsGet = async (sid, suiteId) => {
         try {
-            setDataLoad(true)
-            const result = await sectionApi.getXpathReportsSuite(sid, suiteId)
-            setValidationReport(result)
+            const result = await sectionApi.getSparqlReportsSuite(sid, suiteId)
+            setValidationReport(mapSparqlResults(result.summary))
         } catch (err) {
             console.error(err);
         } finally {
@@ -122,12 +133,26 @@ const XpathValidationReportSuite = ({  sid, suiteId }) => {
         }
     }
 
-    const itemsSearch = useItemsSearch(validationReport);
+    const mapSparqlResults = (result) => result.map(e=> {
+        const queryAsArray = e.query.content.split("\n")
+        const values = queryAsArray.slice(0,3)
+        const resultArray = {}
+        values.forEach(e => {
+                const res = e.split(": ")
+                resultArray[res[0].substring(1)] = res[1]
+            }
+        )
+        resultArray["query"] = queryAsArray.slice(4, queryAsArray.length).join("\n")
+        resultArray["test_suite"] = e.query.filename
+        resultArray["result"] = e.result
+        Object.entries(e.result).forEach(entrie => {
+            const [key,value] = entrie
+            resultArray[`${key}Count`] = value.count
+        })
+        return resultArray;
+    })
 
-    const { coveredReports, notCoveredReports } = validationReport.reduce((acc, report) => {
-        acc[report.is_covered ? "coveredReports" : "notCoveredReports"].push({ eforms_sdk_element_xpath: report.eforms_sdk_element_xpath })
-        return acc
-    }, {coveredReports:[], notCoveredReports:[]})
+    const itemsSearch = useItemsSearch(validationReport);
 
     return dataLoad ?
         <>
@@ -140,17 +165,18 @@ const XpathValidationReportSuite = ({  sid, suiteId }) => {
             }
         </> :
         <>
+            <ResultSummaryTable items={validationReport}/>
             <Typography m={2}
-                        variant="h3">
-                XPATH Assertions
+                        variant="h4">
+                Assertions
             </Typography>
-            <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
             {!validationReport?.length ?
                 <Stack justifyContent="center"
                        direction="row">
                     <Alert severity="info">No Data !</Alert>
                 </Stack> :
                 <>
+                    <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
                     <ListTable
                             items={itemsSearch.pagedItems}
                             count={itemsSearch.count}
@@ -162,11 +188,8 @@ const XpathValidationReportSuite = ({  sid, suiteId }) => {
                             sort={itemsSearch.state.sort}
                             sectionApi={sectionApi}
                     />
-                    <XpathRulesPaths title={`XPATHs covered in the "Rules" of Conceptual Mapping`}
-                                         items={coveredReports}/>
-                    <XpathRulesPaths title="XPATHs not covered by Conceptual Mapping"
-                                     items={notCoveredReports}/>
-                </>}
-            </>
+                </>
+            }
+        </>
 }
-export default  XpathValidationReportSuite
+export default SparqlTestDatasetReport

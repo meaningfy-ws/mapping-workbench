@@ -1,90 +1,85 @@
 import {useState} from "react";
 
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
-import XpathValidationReport from "./xpath_validation_report_state";
-import XpathValidationReportSuite from "./xpath_validation_report_suite";
-import XpathValidationReportTest from "./xpath_validation_report_test";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
+import Link from "@mui/material/Link";
+import CoverageFiles from "./coverage_files";
+import Typography from "@mui/material/Typography";
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
-const tabs = [
-    {label: 'Xpath State', value: 'state'},
-    {label: 'Xpath Suite', value: 'suite'},
-    {label: 'Xpath Test', value: 'test'},
-];
+import XpathValidationReport from "./xpath_validation_report_package_state";
+import XpathValidationReportSuite from "./xpath_validation_report_test_dataset";
+import XpathValidationReportTest from "./xpath_validation_report_file";
+
+const packageState = "package_state"
+const packageStateLabel = "Package State XPath Coverage"
+const testDataset = "test_dataset"
+const testDatasetLabel = "Test Dataset XPath Coverage"
+const fileCoverage =  "file";
+const fileCoverageLabel = "File XPath Coverage"
 
 const XpathValidationReportView = ({ sid, reportTree }) => {
-    const [selectedDataSuite, setSelectedDataSuite] = useState(reportTree.test_data_suites[0])
-    const [selectedDataState, setSelectedDataState] = useState(reportTree.test_data_suites[0].test_data_states[0])
-    const [currentTab, setCurrentTab] = useState(tabs[0].value)
-    const handleDataSuiteChange = (e) => {
-        const dataSuite = reportTree?.test_data_suites?.find(suite => suite.oid === e.target.value)
-        setSelectedDataSuite(dataSuite);
-        setSelectedDataState(dataSuite.test_data_states[0])
+    const [selectedPackageState, setSelectedPackageState] = useState(reportTree.test_data_suites[0])
+    const [selectedTestDataset, setSelectedTestDataset] = useState(reportTree.test_data_suites[0].test_data_states[0])
+    const [currentTab, setCurrentTab] = useState(packageState)
+
+    const handleSetPackageState = (file) => {
+        setSelectedPackageState(file)
+        setCurrentTab(testDataset)
     }
 
-    const handleDataStateChange = (e) => {
-        setSelectedDataState(selectedDataSuite?.test_data_states?.find(state => state.oid === e.target.value))
+    const handleSetTestDataset = (file) => {
+        setSelectedTestDataset(file)
+        setCurrentTab(fileCoverage)
     }
-
-    const handleTabsChange = (event, value) => {
-        setCurrentTab(value)
-    }
-
 
     return (
         <>
-            <Stack direction="row"
-                   justifyContent="space-between">
-                <Select
-                    onChange={handleDataSuiteChange}
-                    value={selectedDataSuite.oid}>
-                    {reportTree?.test_data_suites?.map(report =>
-                        <MenuItem key={report.oid}
-                                  value={report.oid}>
-                            {report.identifier}
-                        </MenuItem>)}
-                </Select>
-                <Select
-                    onChange={handleDataStateChange}
-                    value={selectedDataState.oid}>
-                    {selectedDataSuite?.test_data_states?.map(state =>
-                        <MenuItem key={state.oid}
-                                  value={state.oid}>
-                            {state.identifier}
-                        </MenuItem>)}
-                </Select>
-            </Stack>
-             <Tabs
-                        indicatorColor="primary"
-                        onChange={handleTabsChange}
-                        scrollButtons="auto"
-                        sx={{mt: 3}}
-                        textColor="primary"
-                        value={currentTab}
-                        variant="scrollable"
+            <Stack spacing={1}>
+                <Breadcrumbs separator={<KeyboardArrowRightIcon/>}>
+                    <Link component="button"
+                          color={currentTab !== packageState ? "inherit" : "primary"}
+                          onClick={()=> setCurrentTab(packageState)}
                     >
-                        {tabs.map((tab) => (
-                            <Tab
-                                key={tab.value}
-                                label={tab.label}
-                                value={tab.value}
-                            />
-                        ))}
-                    </Tabs>
-            {currentTab === 'state' &&
-                <XpathValidationReport sid={sid}/>
+                        {packageStateLabel}
+                    </Link>
+                    {currentTab !== packageState &&
+                        <Link component="button"
+                              color={currentTab !== testDataset ? "inherit" : "primary"}
+                              onClick={() => setCurrentTab(testDataset)}
+                        >
+                            {fileCoverageLabel}: {<b>{selectedPackageState.identifier}</b>}
+                        </Link>}
+                    {currentTab === fileCoverage &&
+                        <Typography color="primary">
+                            {testDatasetLabel}: {<b>{selectedTestDataset.identifier}</b>}
+                        </Typography>}
+                </Breadcrumbs>
+            </Stack>
+            {currentTab === packageState &&
+                <>
+                    <CoverageFiles files={reportTree.test_data_suites}
+                                   onClick={handleSetPackageState}/>
+                    <XpathValidationReport sid={sid}
+                                           files={reportTree.test_data_suites}
+                                           mappingSuiteIdentifier={reportTree.identifier}/>
+                </>
             }
-            {currentTab === "suite" &&
-                <XpathValidationReportSuite sid={sid}
-                                        suiteId={selectedDataSuite.oid}/>
+            {currentTab === testDataset &&
+                <>
+                    <CoverageFiles files={selectedPackageState?.test_data_states}
+                                   onClick={handleSetTestDataset}/>
+                    <XpathValidationReportSuite sid={sid}
+                                        suiteId={selectedPackageState.oid}
+                                        files={selectedPackageState?.test_data_states}
+                                        mappingSuiteIdentifier={reportTree.identifier}/>
+                </>
             }
-            {currentTab === "test" &&
+            {currentTab === fileCoverage &&
                 <XpathValidationReportTest sid={sid}
-                                       suiteId={selectedDataSuite.oid}
-                                       testId={selectedDataState.oid}/>
+                                       suiteId={selectedPackageState.oid}
+                                       testId={selectedTestDataset.oid}
+                                       mappingSuiteIdentifier={reportTree.identifier}/>
             }
         </>
     )

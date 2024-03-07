@@ -1,5 +1,8 @@
 import {useState} from "react";
 
+import Accordion from "@mui/material/Accordion";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import AccordionSummary from "@mui/material/AccordionSummary";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -15,10 +18,11 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContentText from "@mui/material/DialogContentText";
-
-import {Scrollbar} from 'src/components/scrollbar';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
+
+import {Scrollbar} from 'src/components/scrollbar';
 import PropTypes from 'prop-types';
 
 export const ListTable = (props) => {
@@ -39,6 +43,7 @@ export const ListTable = (props) => {
     const handleClose = () => {
         setDescriptionDialog(e=>({...e, open: false}));
     };
+
 
     const SorterHeader = ({fieldName, title}) => {
        return <Tooltip enterDelay={300}
@@ -73,19 +78,22 @@ export const ListTable = (props) => {
                                               title="Form Field"/>
                             </TableCell>
                             <TableCell>
-                                <SorterHeader fieldName="test_data_xpath"
-                                              title="xpath"/>
+                                <SorterHeader fieldName="eforms_sdk_element_xpath"
+                                              title="Xpath"/>
                             </TableCell>
                             <TableCell width="10%">
-                                Notice Count
+                                 <SorterHeader fieldName="notice_count"
+                                               title="Notices"/>
                             </TableCell>
                             <TableCell width="10%">
-                                Found
+                                <SorterHeader fieldName="is_covered"
+                                               title="Found"/>
                             </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {items?.map((item, key) => {
+                            const notices = item.test_data_xpaths.map(e=> `"${e.test_data_id}":${e.xpaths.length}`)
                             return (
                                 <TableRow key={key}>
                                     <TableCell width="25%">
@@ -97,7 +105,17 @@ export const ListTable = (props) => {
                                         {item.eforms_sdk_element_xpath}
                                     </TableCell>
                                      <TableCell>
-                                        {item.test_data_xpaths.length}
+                                         <Accordion
+                                            disabled={!item.notice_count}>
+                                             <AccordionSummary
+
+                                                expandIcon={<ExpandMoreIcon />}>
+                                                {item.notice_count}
+                                             </AccordionSummary>
+                                             <AccordionDetails>
+                                                 {notices.join(',\n')}
+                                             </AccordionDetails>
+                                         </Accordion>
                                     </TableCell>
                                     <TableCell align="center">
                                         {item.is_covered ? <CheckIcon color="success"/> : <CloseIcon color="error"/>}

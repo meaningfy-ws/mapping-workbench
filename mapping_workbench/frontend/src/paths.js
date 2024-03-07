@@ -216,12 +216,14 @@ export const apiPaths = {
         states: '/mapping_packages/:id/states',
         state: '/mapping_packages/state/:id',
         validation_reports: '/package_exporter/get_validation_reports',
-        sparql_reports: '/package_exporter/get_sparql_reports',
         shacl_reports: '/package_exporter/get_shacl_reports',
         validation_reports_tree: (sid) => `/package_validator/validation_reports_tree/state/${sid}`,
         xpath_reports: (sid) => `/package_validator/xpath/state/${sid}`,
         xpath_reports_suite: (sid, suiteId) => `/package_validator/xpath/state/${sid}/suite/${suiteId}`,
         xpath_reports_test: (sid, suiteId, testId) => `/package_validator/xpath/state/${sid}/suite/${suiteId}/test/${testId}`,
+        sparql_reports: (sid) => `/package_validator/sparql/state/${sid}`,
+        sparql_reports_suite: (sid, suiteId) => `/package_validator/sparql/state/${sid}/suite/${suiteId}`,
+        sparql_reports_test: (sid, suiteId, testId) => `/package_validator/sparql/state/${sid}/suite/${suiteId}/test/${testId}`,
         validation_report_files: '/package_exporter/get_validation_report_files'
     },
 
