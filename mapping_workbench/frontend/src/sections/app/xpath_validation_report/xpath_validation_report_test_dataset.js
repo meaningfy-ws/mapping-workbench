@@ -9,11 +9,13 @@ import Typography from "@mui/material/Typography";
 import XpathRulesPaths from "./xpath_rules_paths";
 import CoverageReport from "./coverage_report";
 import CoverageFiles from "./coverage_files";
+import {CoverageFilter} from "./utils";
 
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
         filters: {
+            is_covered: ""
         },
         sort: {
         },
@@ -127,7 +129,7 @@ const XpathValidationReportSuite = ({  sid, suiteId, files, mappingSuiteIdentifi
         try {
             setDataLoad(true)
             const result = await sectionApi.getXpathReportsSuite(sid, suiteId)
-            setValidationReport(result.map(e => ({...e, notice_count: e.test_data_xpaths.length})))
+            setValidationReport(result.results.map(e => ({...e, notice_count: e.test_data_xpaths.length})))
         } catch (err) {
             console.error(err);
         } finally {
@@ -142,6 +144,9 @@ const XpathValidationReportSuite = ({  sid, suiteId, files, mappingSuiteIdentifi
         return acc
     }, {coveredReports:[], notCoveredReports:[]})
 
+    const handleCoverageFilterChange = e => {
+        itemsSearch.handleFiltersChange({is_covered: e.target.value})
+    }
 
     return dataLoad ?
         <>
@@ -161,6 +166,8 @@ const XpathValidationReportSuite = ({  sid, suiteId, files, mappingSuiteIdentifi
                 Assertions
             </Typography>
             <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
+            <CoverageFilter onChange={handleCoverageFilterChange}
+                            filterState={itemsSearch.state.filters.is_covered}/>
             {!validationReport?.length ?
                 <Stack justifyContent="center"
                        direction="row">

@@ -125,7 +125,7 @@ const XpathValidationReportTest= ({  sid, suiteId, testId, mappingSuiteIdentifie
     const handleValidationReportsTestGet = async (sid, suiteId, testId) => {
         try {
             const result = await sectionApi.getXpathReportsTest(sid, suiteId, testId)
-            setValidationReport(result)
+            setValidationReport(result.results)
         } catch (err) {
             console.error(err);
         } finally {

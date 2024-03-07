@@ -15,6 +15,7 @@ import ItemSearchInput from "../file-manager/item-search-input";
 import {ListTable} from "./list-table";
 import CoverageReport from "./coverage_report";
 import CoverageFiles from "./coverage_files";
+import {CoverageFilter} from "./utils";
 
 
 const useItemsSearch = (items) => {
@@ -131,7 +132,7 @@ const XpathValidationReport = ({ sid, files, mappingSuiteIdentifier }) => {
     const handleValidationReportsGet = async (sid) => {
         try {
             const result = await sectionApi.getXpathReports(sid)
-            setValidationReport(result.map(e => ({...e, notice_count: e.test_data_xpaths.length})))
+            setValidationReport(result.results.map(e => ({...e, notice_count: e.test_data_xpaths.length})))
         } catch (err) {
             console.error(err);
         } finally {
@@ -165,74 +166,8 @@ const XpathValidationReport = ({ sid, files, mappingSuiteIdentifier }) => {
                 Assertions
             </Typography>
             <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
-            <Box sx={{p: 2.5, display: 'flex'}}
-                 direction="row">
-                <Stack
-                    component={RadioGroup}
-                    name="terms_validity"
-                    spacing={3}
-                    onChange={handleCoverageFilterChange}
-                >
-                    <Paper
-                        key="2"
-                        sx={{
-                            alignItems: 'flex-start',
-                            display: 'flex',
-                            p: 2
-                        }}
-                        variant="outlined"
-                    >
-                        <Box sx={{mr: 2, mt: 1}}>
-                            <b>Filter Coverage:</b>
-                        </Box>
-                        <FormControlLabel
-                            control={<Radio/>}
-                            key="terms_validity_all"
-                            checked={itemsSearch.state.filters.is_covered === ""}
-                            label={(
-                                <Box sx={{ml: 0, mr: 1}}>
-                                    <Typography
-                                        variant="subtitle2"
-                                    >
-                                        All
-                                    </Typography>
-                                </Box>
-                            )}
-                            value=""
-                        />
-                        <FormControlLabel
-                            control={<Radio/>}
-                            key="terms_validity_valid"
-                            checked={itemsSearch.state.filters.is_covered === "true"}
-                            label={(
-                                <Box sx={{ml: 0, mr: 1}}>
-                                    <Typography
-                                        variant="subtitle2"
-                                    >
-                                        Covered
-                                    </Typography>
-                                </Box>
-                            )}
-                            value="true"
-                        />
-                        <FormControlLabel
-                            control={<Radio/>}
-                            key="terms_validity_invalid"
-                            checked={itemsSearch.state.filters.is_covered === "false"}
-                            label={(
-                                <Box sx={{ml: 0, mr: 1}}>
-                                    <Typography
-                                        variant="subtitle2"
-                                    >
-                                        Not Covered
-                                    </Typography>
-                                </Box>
-                            )}
-                            value="false"
-                        />
-                    </Paper>
-                </Stack>
-            </Box>
+            <CoverageFilter onChange={handleCoverageFilterChange}
+                            filterState={itemsSearch.state.filters.is_covered}/>
             {!validationReport?.length ?
                 <Stack justifyContent="center"
                        direction="row">
