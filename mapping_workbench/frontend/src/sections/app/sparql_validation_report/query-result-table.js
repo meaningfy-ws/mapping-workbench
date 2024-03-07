@@ -7,14 +7,28 @@ import TableRow from '@mui/material/TableRow';
 import {Scrollbar} from 'src/components/scrollbar';
 import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
-import {resultColor} from "./utils";
+import {resultColor, SorterHeader, sortItems} from "./utils";
+import {useState} from "react";
 
 export const QueryResultTable = ({items}) => {
+    const[sort,setSort] = useState({column:'',direction:''})
+
+    const handleSort = (column) => {
+        setSort(prevState=> ({ column,
+                direction: prevState.column === column && prevState.direction === "asc" ? "desc" : "asc" }))
+    }
 
     const itemsReduce  = items.reduce((acc, item) => {
         acc[item.result] = (acc[item.result] ?? 0) + 1
         return acc
-    },{valid:0,unverifiable:0,warning:0,invalid:0,error:0,unknown:0})
+    },{valid:0, unverifiable:0, warning:0, invalid:0, error:0, unknown:0})
+
+    const itemsDisplay = Object.entries(itemsReduce)?.map(item => {
+        const [itemName, itemCount] = item
+        return {itemName, itemCount, itemPercent: (itemCount/items.length) * 100 ?? 0 }
+    })
+
+    const sortedItems = sortItems(itemsDisplay, sort)
 
     return (
         <>
@@ -27,29 +41,41 @@ export const QueryResultTable = ({items}) => {
                     <TableHead>
                         <TableRow>
                             <TableCell >
-                                Result
+                                <SorterHeader title="Result"
+                                              fieldName="itemName"
+                                              sort={sort}
+                                              onSort={handleSort}
+                                />
                             </TableCell>
                             <TableCell>
-                                Count
+                                <SorterHeader title="Count"
+                                              fieldName="itemCount"
+                                              sort={sort}
+                                              onSort={handleSort}
+                                />
                             </TableCell>
                             <TableCell>
-                                Ratio(%)
+                                <SorterHeader title="Ratio(%)"
+                                              fieldName="itemPercent"
+                                              sort={sort}
+                                              onSort={handleSort}
+                                />
                             </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {Object.entries(itemsReduce)?.map((item, key) => {
+                        {itemsDisplay?.map((item, key) => {
                             return (
                                 <TableRow key={key}>
                                     <TableCell>
-                                        <Chip label={item[0]}
-                                              color={resultColor(item[0])}/>
+                                        <Chip label={item.itemName}
+                                              color={resultColor(item.itemName)}/>
                                     </TableCell>
                                     <TableCell>
-                                        {item[1]}
+                                        {item.itemCount}
                                     </TableCell>
                                     <TableCell>
-                                        {`${item[1] ? (item[1]/items.length*100).toFixed(2) : 0}%`}
+                                        {`${item.itemPercent.toFixed(2)}%`}
                                     </TableCell>
                                 </TableRow>
 

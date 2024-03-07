@@ -1,3 +1,5 @@
+import {useState} from "react";
+
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -7,9 +9,15 @@ import Chip from "@mui/material/Chip";
 import Typography from "@mui/material/Typography";
 
 import {Scrollbar} from 'src/components/scrollbar';
-import {resultColor} from "./utils";
+import {resultColor, SorterHeader, sortItems} from "./utils";
 
 const ResultSummaryTable = ({items}) => {
+    const[sort,setSort] = useState({column:'',direction:''})
+
+    const handleSort = (column) => {
+        setSort(prevState=> ({ column,
+                direction: prevState.column === column && prevState.direction === "asc" ? "desc" : "asc" }))
+    }
 
     const {itemsTotal, ...itemsReduce} =
         items.map(item => item.result).reduce((acc, report) => {
@@ -21,9 +29,16 @@ const ResultSummaryTable = ({items}) => {
             return acc
         },{valid:0,unverifiable:0,warning:0,invalid:0,error:0,unknown:0})
 
+    const itemsDisplay = Object.entries(itemsReduce)?.map(item => {
+        const [itemName, itemCount] = item
+        return {itemName, itemCount, itemPercent: (itemCount/itemsTotal) * 100 ?? 0 }
+    })
+
+    const sortedItems = sortItems(itemsDisplay, sort)
+
     return (
         <>
-             <Typography m={2}
+            <Typography m={2}
                             variant="h4">
                 Results Summary
             </Typography>
@@ -32,29 +47,44 @@ const ResultSummaryTable = ({items}) => {
                     <TableHead>
                         <TableRow>
                             <TableCell >
-                               Result
+                                <SorterHeader
+                                            title="Result"
+                                            fieldName="itemName"
+                                            sort={sort}
+                                            onSort={handleSort}
+                                />
                             </TableCell>
                             <TableCell>
-                                Count
+                                <SorterHeader
+                                            title="Count"
+                                            fieldName="itemCount"
+                                            sort={sort}
+                                            onSort={handleSort}
+                                />
                             </TableCell>
                             <TableCell>
-                                Ratio(%)
+                                <SorterHeader
+                                            title="Ratio(%)"
+                                            fieldName="itemPercent"
+                                            sort={sort}
+                                            onSort={handleSort}
+                                />
                             </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {Object.entries(itemsReduce)?.map((item, key) => {
+                        {sortedItems?.map((item, key) => {
                             return (
                                 <TableRow key={key}>
                                     <TableCell>
-                                        <Chip label={item[0]}
-                                              color={resultColor(item[0])}/>
+                                        <Chip label={item.itemName}
+                                              color={resultColor(item.itemName)}/>
                                     </TableCell>
                                     <TableCell>
-                                        {item[1]}
+                                        {item.itemCount}
                                     </TableCell>
                                     <TableCell>
-                                        {`${item[1] ? (item[1]/itemsTotal*100).toFixed(2) : 0}%`}
+                                        {`${item.itemPercent.toFixed(2)}%`}
                                     </TableCell>
                                 </TableRow>
 

@@ -6,6 +6,8 @@ import Paper from "@mui/material/Paper";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
+import Tooltip from "@mui/material/Tooltip";
+import TableSortLabel from "@mui/material/TableSortLabel";
 
 export const resultColor = (result) => {
     switch (result.toLowerCase()) {
@@ -84,3 +86,34 @@ export const ResultFilter = ({currentState, onStateChange}) => {
         </Box>
     )
 }
+
+export const SorterHeader = ({fieldName, title, sort, onSort}) => {
+    return <Tooltip enterDelay={300}
+                   title="Sort"
+           >
+               <TableSortLabel
+                    active={sort.column === fieldName}
+                    direction={sort.direction}
+                    onClick={() => onSort(fieldName)}>
+                    {title ?? fieldName}
+                </TableSortLabel>
+           </Tooltip>
+}
+
+export const sortItems = (items, sort) => {
+        const sortColumn = sort.column
+        if(!sortColumn) {
+            return items
+        } else {
+            return items.sort((a,b) => {
+                if (typeof a[sortColumn] === "string")
+                    return sort.direction === "asc" ?
+                        a[sortColumn]?.localeCompare(b[sortColumn]) :
+                        b[sortColumn]?.localeCompare(a[sortColumn])
+                else
+                    return sort.direction === "asc" ?
+                        a[sortColumn] - b[sortColumn] :
+                        b[sortColumn] - a[sortColumn]
+                })
+        }
+    }
