@@ -19,7 +19,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import {Scrollbar} from 'src/components/scrollbar';
 import PropTypes from 'prop-types';
 import Stack from "@mui/material/Stack";
-import {ResultChip, resultColor} from "./utils";
+import {ResultChip} from "./utils";
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open:false, title:"", text:""})
@@ -35,10 +35,6 @@ export const ListTable = (props) => {
         onSort,
         sectionApi
     } = props;
-
-    const handleOpenDescription = ({title, description}) => {
-        setDescriptionDialog({open: true, title, description});
-    };
 
     const mapNotices = (notices) => {
         return(
@@ -113,22 +109,34 @@ export const ListTable = (props) => {
                                                title="Query content"/>
                             </TableCell>
                             <TableCell align="center">
-                                <ResultChip label={"Valid"}/>
+                                <SorterHeader fieldName="validCount"
+                                              title={<ResultChip label="Valid"
+                                                                 clickable/>}/>
                             </TableCell>
                             <TableCell align="center">
-                                <ResultChip label={"Unverifiable"}/>
+                                <SorterHeader fieldName="unverifiableCount"
+                                      title={<ResultChip label="Unverifiable"
+                                                         clickable/>}/>
                             </TableCell>
                             <TableCell align="center">
-                                 <ResultChip label={"Warning"}/>
+                                 <SorterHeader fieldName="warningCount"
+                                      title={<ResultChip label="Warning"
+                                                         clickable/>}/>
                             </TableCell>
                              <TableCell align="center">
-                                 <ResultChip label={"Invalid"}/>
+                                 <SorterHeader fieldName="invalidCount"
+                                      title={<ResultChip label="Invalid"
+                                                         clickable/>}/>
                             </TableCell>
                              <TableCell align="center">
-                                 <ResultChip label={"Error"}/>
+                                 <SorterHeader fieldName="errorCount"
+                                      title={<ResultChip label="Error"
+                                                         clickable/>}/>
                             </TableCell>
                              <TableCell align="center">
-                                 <ResultChip label={"Unknown"}/>
+                                 <SorterHeader fieldName="unknownCount"
+                                      title={<ResultChip label="Unknown"
+                                                         clickable/>}/>
                             </TableCell>
                         </TableRow>
                     </TableHead>

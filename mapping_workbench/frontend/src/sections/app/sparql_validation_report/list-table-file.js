@@ -89,7 +89,7 @@ export const ListTableFile = (props) => {
                                                title="Query content"/>
                             </TableCell>
                             <TableCell align="left">
-                                <SorterHeader fieldName="sourceConstraintComponent"
+                                <SorterHeader fieldName="result"
                                               title="result"/>
                             </TableCell>
                             <TableCell align="center">

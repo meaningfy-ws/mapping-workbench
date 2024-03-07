@@ -145,6 +145,10 @@ const SparqlValidationReport = ({ sid }) => {
         resultArray["query"] = queryAsArray.slice(4, queryAsArray.length).join("\n")
         resultArray["test_suite"] = e.query.filename
         resultArray["result"] = e.result
+        Object.entries(e.result).forEach(entrie => {
+            const [key,value] = entrie
+            resultArray[`${key}Count`] = value.count
+        })
         return resultArray;
     })
 

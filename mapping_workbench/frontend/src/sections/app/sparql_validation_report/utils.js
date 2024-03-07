@@ -23,10 +23,12 @@ export const resultColor = (result) => {
     }
 }
 
-export const ResultChip = ({label, color}) => {
+export const ResultChip = ({label, color, clickable}) => {
     return(
         <Chip label={label}
-          color={resultColor(color ?? label)}/>
+              clickable={clickable}
+              color={resultColor(color ?? label)}
+              />
     )
 }
 
@@ -44,7 +46,7 @@ export const ResultFilter = ({currentState, onStateChange}) => {
                         <Typography
                             variant="subtitle2"
                         >
-                            <ResultChip label={label}/>
+                            <ResultChip clickable label={label}/>
                         </Typography>
                     </Box>
                 )}
