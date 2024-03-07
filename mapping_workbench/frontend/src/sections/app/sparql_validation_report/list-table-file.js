@@ -15,10 +15,10 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContentText from "@mui/material/DialogContentText";
+import Chip from "@mui/material/Chip";
 
 import {Scrollbar} from 'src/components/scrollbar';
 import PropTypes from 'prop-types';
-import Chip from "@mui/material/Chip";
 import {resultColor} from "./utils";
 
 export const ListTableFile = (props) => {

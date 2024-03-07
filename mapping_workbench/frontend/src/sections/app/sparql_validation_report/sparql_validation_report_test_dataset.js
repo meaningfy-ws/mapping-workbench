@@ -76,7 +76,7 @@ const useItemsSearch = (items) => {
     }
 
     const handleFiltersChange = (filters) => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             filters,
             page: 0
@@ -84,19 +84,20 @@ const useItemsSearch = (items) => {
     }
 
     const handlePageChange = (event, page) => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             page
         }));
     }
 
-    const handleSort = (column) => {
+    const handleSort = (column, desc) => {
         setState(prevState=> ({ ...prevState, sort: {column,
-                direction: prevState.sort.column === column && prevState.sort.direction === "asc" ? "desc" : "asc"}}))
+                direction: prevState.sort.column === column ? prevState.sort.direction === "asc" ? "desc" : "asc" : desc ? "desc" : "asc" }}))
     }
     const handleRowsPerPageChange = (event) => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
+            rowsPerPage: parseInt(event.target.value, 10)
         }));
     }
 

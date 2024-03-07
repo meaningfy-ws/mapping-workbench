@@ -55,14 +55,14 @@ export const ListTable = (props) => {
         setDescriptionDialog(e=>({...e, open: false}));
     };
 
-    const SorterHeader = ({fieldName, title}) => {
+    const SorterHeader = ({fieldName, title, desc}) => {
         return <Tooltip enterDelay={300}
                        title="Sort"
                >
                    <TableSortLabel
                         active={sort.column === fieldName}
                         direction={sort.direction}
-                        onClick={() => onSort(fieldName)}>
+                        onClick={() => onSort(fieldName, desc)}>
                         {title ?? fieldName}
                     </TableSortLabel>
                </Tooltip>
@@ -111,32 +111,38 @@ export const ListTable = (props) => {
                             <TableCell align="center">
                                 <SorterHeader fieldName="validCount"
                                               title={<ResultChip label="Valid"
-                                                                 clickable/>}/>
+                                                                 clickable/>}
+                                              desc/>
                             </TableCell>
                             <TableCell align="center">
                                 <SorterHeader fieldName="unverifiableCount"
-                                      title={<ResultChip label="Unverifiable"
-                                                         clickable/>}/>
+                                              title={<ResultChip label="Unverifiable"
+                                                                 clickable/>}
+                                              desc/>
                             </TableCell>
                             <TableCell align="center">
                                  <SorterHeader fieldName="warningCount"
-                                      title={<ResultChip label="Warning"
-                                                         clickable/>}/>
+                                               title={<ResultChip label="Warning"
+                                                                  clickable/>}
+                                               desc/>
                             </TableCell>
                              <TableCell align="center">
                                  <SorterHeader fieldName="invalidCount"
-                                      title={<ResultChip label="Invalid"
-                                                         clickable/>}/>
+                                               title={<ResultChip label="Invalid"
+                                                                clickable/>}
+                                               desc/>
                             </TableCell>
                              <TableCell align="center">
                                  <SorterHeader fieldName="errorCount"
-                                      title={<ResultChip label="Error"
-                                                         clickable/>}/>
+                                               title={<ResultChip label="Error"
+                                                                  clickable/>}
+                                               desc/>
                             </TableCell>
                              <TableCell align="center">
                                  <SorterHeader fieldName="unknownCount"
-                                      title={<ResultChip label="Unknown"
-                                                         clickable/>}/>
+                                               title={<ResultChip label="Unknown"
+                                                                  clickable/>}
+                                               desc/>
                             </TableCell>
                         </TableRow>
                     </TableHead>
