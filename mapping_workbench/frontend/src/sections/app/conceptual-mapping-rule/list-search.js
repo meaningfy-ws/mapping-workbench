@@ -30,7 +30,7 @@ const statusOptions = [
 ];
 
 export const ListSearch = (props) => {
-    const {onFiltersChange, onDetailedViewChange, detailedView, ...other} = props;
+    const {onFiltersChange, onDetailedViewChange, detailedView, placeholder="Search", ...other} = props;
     const queryRef = useRef(null);
     const [chips, setChips] = useState([]);
 
@@ -227,7 +227,7 @@ export const ListSearch = (props) => {
                     disableUnderline
                     fullWidth
                     inputProps={{ref: queryRef}}
-                    placeholder="Search"
+                    placeholder={placeholder}
                     sx={{flexGrow: 1}}
                 />
             </Stack>

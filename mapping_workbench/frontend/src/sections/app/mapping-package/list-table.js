@@ -237,7 +237,8 @@ const PackageRow = (props) => {
                                                 }}
                                                 control={
                                                     <Switch
-                                                        checked={formik.values.validate_package_shacl}
+                                                        checked={formik.values.validate_package_shacl && formik.values.validate_package}
+                                                        disabled={!formik.values.validate_package}
                                                         onChange={(event) => formik.setFieldValue('validate_package_shacl', event.target.checked)}
                                                     />
                                                 }
@@ -251,7 +252,8 @@ const PackageRow = (props) => {
                                                 }}
                                                 control={
                                                     <Switch
-                                                        checked={formik.values.validate_package_xpath}
+                                                        checked={formik.values.validate_package_xpath && formik.values.validate_package}
+                                                        disabled={!formik.values.validate_package}
                                                         onChange={(event) => formik.setFieldValue('validate_package_xpath', event.target.checked)}
                                                     />
                                                 }
@@ -265,7 +267,8 @@ const PackageRow = (props) => {
                                                 }}
                                                 control={
                                                     <Switch
-                                                        checked={formik.values.validate_package_sparql}
+                                                        checked={formik.values.validate_package_sparql && formik.values.validate_package}
+                                                        disabled={!formik.values.validate_package}
                                                         onChange={(event) => formik.setFieldValue('validate_package_sparql', event.target.checked)}
                                                     />
                                                 }

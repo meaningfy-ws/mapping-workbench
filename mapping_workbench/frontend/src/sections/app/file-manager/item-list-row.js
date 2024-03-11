@@ -22,13 +22,12 @@ export const ItemListRow = (props) => {
     const {item, collection, sectionApi, fileResourcesApi} = props;
     const popover = usePopover();
 
-    const handleEdit = useCallback(async () => {
+    const handleEdit = (item_id) => {
         router.push({
             pathname: paths.app[sectionApi.section].resource_manager.edit,
-            query: {id: collection._id, fid: item._id}
+            query: {id: collection._id, fid: item_id}
         });
-
-    }, [router, item, collection, sectionApi]);
+    }
 
     const handleDelete = useCallback(async () => {
         const response = await fileResourcesApi.deleteFileResource(item._id);
@@ -90,7 +89,7 @@ export const ItemListRow = (props) => {
                         spacing={2}
                     >
                         <Box
-                            onClick={() => handleEdit?.(item.id)}
+                            onClick={() => handleEdit?.(item._id)}
                             sx={{cursor: 'pointer'}}
                         >
                             <ItemIcon
@@ -101,7 +100,7 @@ export const ItemListRow = (props) => {
                         <div>
                             <Typography
                                 noWrap
-                                onClick={() => handleEdit?.(item.id)}
+                                onClick={() => handleEdit?.(item._id)}
                                 sx={{cursor: 'pointer'}}
                                 variant="subtitle2"
                             >
@@ -146,7 +145,7 @@ export const ItemListRow = (props) => {
             <ItemMenu
                 anchorEl={popover.anchorRef.current}
                 onClose={popover.handleClose}
-                onEdit={handleEdit}
+                onEdit={() => handleEdit?.(item._id)}
                 onDelete={handleDelete}
                 open={popover.open}
             />
