@@ -11,7 +11,7 @@ import CoverageFiles from "../xpath_validation_report/coverage_files";
 import SparqlTestDatasetReport from "./sparql_validation_report_test_dataset";
 import SparqlFileReport from "./sparql_validation_report_file";
 
-const pacakageState = "package_state";
+const packageState = "package_state";
 const packageStateLabel = "Package State SPARQL Coverage";
 const testDataset = "test_dataset";
 const testDatasetLabel = "Test Dataset SPARQL Coverage";
@@ -22,7 +22,7 @@ const SparqlValidationReportView = ({ sid, reportTree }) => {
 
     const [selectedPackageState, setSelectedPackageState] = useState(reportTree.test_data_suites[0])
     const [selectedTestDataset, setSelectedTestDataset] = useState(reportTree.test_data_suites[0].test_data_states[0])
-    const [currentTab, setCurrentTab] = useState(pacakageState)
+    const [currentTab, setCurrentTab] = useState(packageState)
 
     const handleSetPackageState = (file) => {
         setSelectedPackageState(file)
@@ -39,25 +39,25 @@ const SparqlValidationReportView = ({ sid, reportTree }) => {
             <Stack spacing={1}>
                 <Breadcrumbs separator={<KeyboardArrowRightIcon/>}>
                     <Link component="button"
-                          color={currentTab !== pacakageState ? "inherit" : "primary"}
-                          onClick={()=> setCurrentTab(pacakageState)}
+                          color={currentTab !== packageState ? "inherit" : "primary"}
+                          onClick={()=> setCurrentTab(packageState)}
                     >
                         {packageStateLabel}
                     </Link>
-                    {currentTab !== pacakageState &&
+                    {currentTab !== packageState &&
                         <Link component="button"
                               color={currentTab !== testDataset ? "inherit" : "primary"}
                               onClick={() => setCurrentTab(testDataset)}
                         >
-                            {testDatasetLabel}: {selectedPackageState.identifier}
+                            {testDatasetLabel}: {<b>{selectedPackageState.identifier}</b>}
                         </Link>}
                     {currentTab === fileCoverage &&
                         <Typography color="primary">
-                            {fileCoverageLabel}: {selectedTestDataset.identifier}
+                            {fileCoverageLabel}: {<b>{selectedTestDataset.identifier}</b>}
                         </Typography>}
                 </Breadcrumbs>
             </Stack>
-            {currentTab === pacakageState &&
+            {currentTab === packageState &&
                 <>
                     <CoverageFiles files={reportTree.test_data_suites}
                                    onClick={handleSetPackageState}/>
