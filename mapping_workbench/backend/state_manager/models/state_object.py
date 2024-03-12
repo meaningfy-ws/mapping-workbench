@@ -15,7 +15,7 @@ class ObjectState(BaseModel):
     Abstract base class for to store the state of an object.
     """
 
-    created_at: Optional[datetime] = None
+    created_at: Optional[datetime] = datetime.now()
     created_by: Optional[Link[User]] = None
 
     def on_create(self, user: User):

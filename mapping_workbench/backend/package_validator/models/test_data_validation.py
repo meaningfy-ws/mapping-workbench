@@ -1,11 +1,25 @@
-from beanie import Document
+from datetime import datetime
+from typing import Optional
 
-from mapping_workbench.backend import DEFAULT_MODEL_CONFIG
-from mapping_workbench.backend.core.models.base_entity import BaseEntity
+from beanie import PydanticObjectId
+from pydantic import BaseModel
 
 
-class TestDataValidationResult(Document):
-    model_config = DEFAULT_MODEL_CONFIG
+class TestDataValidationResult(BaseModel):
+    """
 
-    class Settings(BaseEntity.Settings):
-        name = "file_resource_validation_result"
+    """
+    created_at: Optional[datetime] = datetime.now()
+
+
+class CMRuleSDKElement(BaseModel):
+    eforms_sdk_element_id: Optional[str] = None
+    eforms_sdk_element_title: Optional[str] = None
+    eforms_sdk_element_xpath: Optional[str] = None
+
+
+class ValidationTestDataEntry(BaseModel):
+    test_data_suite_oid: Optional[PydanticObjectId] = None
+    test_data_suite_id: Optional[str] = None
+    test_data_oid: Optional[PydanticObjectId] = None
+    test_data_id: Optional[str] = None

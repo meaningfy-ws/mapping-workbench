@@ -1,8 +1,5 @@
 import {useState} from "react";
 
-import Accordion from "@mui/material/Accordion";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import AccordionSummary from "@mui/material/AccordionSummary";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -18,14 +15,13 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContentText from "@mui/material/DialogContentText";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import CheckIcon from '@mui/icons-material/Check';
-import CloseIcon from '@mui/icons-material/Close';
+import Chip from "@mui/material/Chip";
 
 import {Scrollbar} from 'src/components/scrollbar';
 import PropTypes from 'prop-types';
+import {resultColor} from "./utils";
 
-export const ListTable = (props) => {
+export const ListTableFile = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open:false, title:"", text:""})
 
     const {
@@ -35,18 +31,26 @@ export const ListTable = (props) => {
         onRowsPerPageChange,
         page = 0,
         rowsPerPage = 0,
-        sectionApi,
+        sort,
         onSort,
-        sort
+        sectionApi
     } = props;
+
+    const handleOpenDescription = ({title, description}) => {
+        setDescriptionDialog({open: true, title, description});
+    };
+
+    const handleOpenDetails = ({title, query, query_result}) => {
+        const description = <><li>{`Query result: ${query_result}`}</li><li>{query}</li></>
+        setDescriptionDialog({open: true, title, description});
+    }
 
     const handleClose = () => {
         setDescriptionDialog(e=>({...e, open: false}));
     };
 
-
     const SorterHeader = ({fieldName, title}) => {
-       return <Tooltip enterDelay={300}
+        return <Tooltip enterDelay={300}
                        title="Sort"
                >
                    <TableSortLabel
@@ -74,51 +78,52 @@ export const ListTable = (props) => {
                     <TableHead>
                         <TableRow>
                             <TableCell width="25%">
-                                <SorterHeader fieldName="eforms_sdk_element_id"
+                                <SorterHeader fieldName="title"
                                               title="Form Field"/>
                             </TableCell>
                             <TableCell>
-                                <SorterHeader fieldName="eforms_sdk_element_xpath"
-                                              title="Xpath"/>
+                                Description
                             </TableCell>
-                            <TableCell width="10%">
-                                 <SorterHeader fieldName="notice_count"
-                                               title="Notices"/>
+                            <TableCell>
+                                 <SorterHeader fieldName="query"
+                                               title="Query content"/>
                             </TableCell>
-                            <TableCell width="10%">
-                                <SorterHeader fieldName="is_covered"
-                                               title="Found"/>
+                            <TableCell align="left">
+                                <SorterHeader fieldName="result"
+                                              title="result"/>
+                            </TableCell>
+                            <TableCell align="center">
+                                Details
                             </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {items?.map((item, key) => {
-                            const notices = item.test_data_xpaths.map(e=> `"${e.test_data_id}":${e.xpaths.length}`)
                             return (
                                 <TableRow key={key}>
                                     <TableCell width="25%">
                                         <Typography variant="subtitle3">
-                                            {item.eforms_sdk_element_id}
+                                            {item.title}
                                         </Typography>
                                     </TableCell>
                                     <TableCell>
-                                        {item.eforms_sdk_element_xpath}
+                                        <Button variant="outlined"
+                                                onClick={() => handleOpenDescription(item)}>
+                                            Description
+                                        </Button>
                                     </TableCell>
-                                     <TableCell>
-                                         <Accordion
-                                            disabled={!item.notice_count}>
-                                             <AccordionSummary
-
-                                                expandIcon={<ExpandMoreIcon />}>
-                                                {item.notice_count}
-                                             </AccordionSummary>
-                                             <AccordionDetails>
-                                                 {notices.join(',\n')}
-                                             </AccordionDetails>
-                                         </Accordion>
+                                    <TableCell>
+                                        {item.query}
                                     </TableCell>
-                                    <TableCell align="center">
-                                        {item.is_covered ? <CheckIcon color="success"/> : <CloseIcon color="error"/>}
+                                    <TableCell align="left">
+                                        <Chip label={item.result}
+                                              color={resultColor(item.result)}/>
+                                    </TableCell>
+                                    <TableCell align="left">
+                                        <Button variant="outlined"
+                                                onClick={() => handleOpenDetails(item)}>
+                                            Details
+                                        </Button>
                                     </TableCell>
                                 </TableRow>
 
@@ -158,7 +163,7 @@ export const ListTable = (props) => {
     );
 };
 
-ListTable.propTypes = {
+ListTableFile.propTypes = {
     count: PropTypes.number,
     items: PropTypes.array,
     onPageChange: PropTypes.func,

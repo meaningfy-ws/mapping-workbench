@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Tuple
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule, \
     ConceptualMappingRuleComment
@@ -7,6 +7,7 @@ from mapping_workbench.backend.fields_registry.models.field_registry import Stru
 from mapping_workbench.backend.fields_registry.services.data import get_structural_element_by_unique_fields
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.package_importer.models.imported_mapping_suite import ImportedMappingSuite
+from mapping_workbench.backend.package_validator.models.test_data_validation import CMRuleSDKElement
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.resource_collection.models.entity import ResourceFile, ResourceCollection, \
     ResourceFileFormat
@@ -65,7 +66,7 @@ class PackageImporter:
                     mapping_package_id=self.package.id,
                     title=mono_resource_collection.name
                 )
-                print("Save test_data_suite", test_data_suite.title)
+
                 await test_data_suite.on_create(self.user).save()
 
             for mono_file_resource in mono_resource_collection.file_resources:
@@ -97,7 +98,6 @@ class PackageImporter:
                         path=resource_path,
                         content=resource_content
                     )
-                    print("Save test_data_file_resource", test_data_file_resource.title)
                     await test_data_file_resource.on_create(self.user).save()
                 else:
                     test_data_file_resource.content = resource_content
@@ -131,6 +131,21 @@ class PackageImporter:
             else:
                 generic_triple_map_fragment.triple_map_content = resource_content
                 await generic_triple_map_fragment.on_update(self.user).save()
+
+    @classmethod
+    def extract_metadata_from_sparql_query(cls, content) -> dict:
+        """
+            Extracts a dictionary of metadata from a SPARQL query
+        """
+        def _process_line(line) -> Tuple[str, str]:
+            if ":" in line:
+                key_part, value_part = line.split(":", 1)
+                key_part = key_part.replace("#", "").strip()
+                value_part = value_part.strip()
+                return key_part, value_part
+
+        content_lines_with_comments = filter(lambda x: x.strip().startswith("#"), content.splitlines())
+        return dict([_process_line(line) for line in content_lines_with_comments])
 
     async def add_sparql_test_suites_from_mono(self, mono_package: ImportedMappingSuite):
         resource_formats = [e.value for e in SPARQLTestFileResourceFormat]
@@ -166,6 +181,13 @@ class PackageImporter:
                     SPARQLTestFileResource.sparql_test_suite == SPARQLTestSuite.link_from_id(sparql_test_suite.id)
                 )
 
+                metadata = self.extract_metadata_from_sparql_query(resource_content)
+                cm_rule_sdk_element = CMRuleSDKElement(
+                    eforms_sdk_element_id=None,
+                    eforms_sdk_element_title=metadata['title'],
+                    eforms_sdk_element_xpath=metadata['xpath']
+                )
+
                 if not sparql_test_file_resource:
                     sparql_test_file_resource = SPARQLTestFileResource(
                         project=self.project,
@@ -175,11 +197,13 @@ class PackageImporter:
                         filename=resource_name,
                         path=resource_path,
                         content=resource_content,
-                        type=sparql_test_suite.type
+                        type=sparql_test_suite.type,
+                        cm_rule=cm_rule_sdk_element
                     )
                     await sparql_test_file_resource.on_create(self.user).save()
                 else:
                     sparql_test_file_resource.content = resource_content
+                    sparql_test_file_resource.cm_rule = cm_rule_sdk_element
                     await sparql_test_file_resource.on_update(self.user).save()
 
     async def add_shacl_test_suites_from_mono(self, mono_package: ImportedMappingSuite):

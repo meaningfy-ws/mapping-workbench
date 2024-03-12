@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useRef, useState} from 'react';
+import {useCallback, useMemo, useRef, useState} from 'react';
 import PropTypes from 'prop-types';
 import SearchMdIcon from '@untitled-ui/icons-react/build/esm/SearchMd';
 import Box from '@mui/material/Box';
@@ -29,7 +29,7 @@ const statusOptions = [
 ];
 
 export const ListSearch = (props) => {
-    const {onFiltersChange, onDetailedViewChange, detailedView, showStatus, ...other} = props;
+    const {onFiltersChange, onDetailedViewChange, detailedView, placeholder="Search", ...other} = props;
     const queryRef = useRef(null);
     const [chips, setChips] = useState([]);
 
@@ -212,7 +212,7 @@ export const ListSearch = (props) => {
                     disableUnderline
                     fullWidth
                     inputProps={{ref: queryRef}}
-                    placeholder="Search"
+                    placeholder={placeholder}
                     sx={{flexGrow: 1}}
                 />
             </Stack>

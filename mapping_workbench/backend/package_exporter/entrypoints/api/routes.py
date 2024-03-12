@@ -1,15 +1,14 @@
 import io
-from io import BytesIO
 
 from beanie import PydanticObjectId
-from fastapi import APIRouter, status, Form
+from fastapi import APIRouter, status
 from starlette.responses import StreamingResponse
 
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.mapping_package.services.api import get_mapping_package
 from mapping_workbench.backend.package_exporter.services.export_mapping_suite_v3 import \
     export_latest_package_state, export_specific_package_state, get_validation_reports, get_shacl_reports, \
-    get_validation_report_files, get_spqrql_reports, get_xpath_reports
+    get_validation_report_files, get_spqrql_reports, get_test_data_xpath_report
 
 ROUTE_PREFIX = "/package_exporter"
 TAG = "package_exporter"
@@ -73,18 +72,19 @@ async def route_get_validation_reports(
 
 
 @router.get(
-    "/get_xpath_reports",
-    description=f"Xpath reports {NAME_FOR_ONE}",
-    name=f"{NAME_FOR_ONE}:get_xpath_reports",
+    "/get_test_data_xpath_report",
+    description=f"XPath report {NAME_FOR_ONE} test data",
+    name=f"{NAME_FOR_ONE}:get_test_data_xpath_report",
     status_code=status.HTTP_200_OK
 )
-async def route_get_sparql_reports(
+async def route_get_test_data_xpath_report(
         package_id: PydanticObjectId,
         state_id: PydanticObjectId,
-        identifier: str
+        test_data_suite_identifier: str,
+        test_data_identifier: str
 ):
     mapping_package: MappingPackage = await get_mapping_package(package_id)
-    return await get_xpath_reports(mapping_package, state_id, identifier)
+    return await get_test_data_xpath_report(mapping_package, state_id, test_data_suite_identifier, test_data_identifier)
 
 
 @router.get(

@@ -13,6 +13,7 @@ from mapping_workbench.backend.mapping_package.entrypoints.api import routes as 
 from mapping_workbench.backend.package_importer.entrypoints.api import routes as package_importer_routes
 from mapping_workbench.backend.package_exporter.entrypoints.api import routes as package_exporter_routes
 from mapping_workbench.backend.package_processor.entrypoints.api import routes as package_processor_routes
+from mapping_workbench.backend.package_validator.entrypoints.api import routes as package_validator_routes
 from mapping_workbench.backend.mapping_rule_registry.entrypoints.api import routes as mapping_rule_registry_routes
 from mapping_workbench.backend.ontology.entrypoints.api import routes as ontology_routes
 from mapping_workbench.backend.ontology_file_collection.entrypoints.api import routes as ontology_file_collection_routes
@@ -77,6 +78,7 @@ secured_routers: list = [
     package_importer_routes.router,
     package_exporter_routes.router,
     package_processor_routes.router,
+    package_validator_routes.router,
     mapping_rule_registry_routes.router,
     conceptual_mapping_rule_routes.router,
     triple_map_registry_routes.router,

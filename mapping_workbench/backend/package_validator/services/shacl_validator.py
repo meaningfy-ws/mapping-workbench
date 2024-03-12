@@ -18,11 +18,10 @@ def validate_test_data_with_shacl_test_suite(test_data: TestDataState,
         shacl_test_files: List[SHACLTestState] = shacl_test_suite.shacl_test_states
         shacl_runner = SHACLValidator(test_data=test_data)
         shacl_test_suite_validation_report = shacl_runner.validate(shacl_files=shacl_test_files)
-        test_data.shacl_validation_result = shacl_test_suite_validation_report
+        test_data.validation.shacl = shacl_test_suite_validation_report
         return test_data
     except Exception as e:
         print("ERROR :: SHACL Validation :: ", e)
-        pass
 
 
 def validate_tests_data_with_shacl_tests(tests_data: List[TestDataState],

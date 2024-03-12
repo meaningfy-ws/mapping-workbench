@@ -52,7 +52,8 @@ const PackageRow = (props) => {
             transform_test_data: true,
             generate_cm_assertions: true,
             validate_package: true,
-            validate_package_xpath_and_sparql: true,
+            validate_package_xpath: true,
+            validate_package_sparql: true,
             validate_package_shacl: true
         },
         validationSchema: Yup.object({}),
@@ -69,8 +70,11 @@ const PackageRow = (props) => {
             if (values['validate_package']) {
                 tasks_to_run.push('validate_package');
             }
-            if (values['validate_package_xpath_and_sparql']) {
-                tasks_to_run.push('validate_package_xpath_and_sparql');
+            if (values['validate_package_xpath']) {
+                tasks_to_run.push('validate_package_xpath');
+            }
+            if (values['validate_package_sparql']) {
+                tasks_to_run.push('validate_package_sparql');
             }
             if (values['validate_package_shacl']) {
                 tasks_to_run.push('validate_package_shacl');
@@ -233,7 +237,8 @@ const PackageRow = (props) => {
                                                 }}
                                                 control={
                                                     <Switch
-                                                        checked={formik.values.validate_package_shacl}
+                                                        checked={formik.values.validate_package_shacl && formik.values.validate_package}
+                                                        disabled={!formik.values.validate_package}
                                                         onChange={(event) => formik.setFieldValue('validate_package_shacl', event.target.checked)}
                                                     />
                                                 }
@@ -247,11 +252,27 @@ const PackageRow = (props) => {
                                                 }}
                                                 control={
                                                     <Switch
-                                                        checked={formik.values.validate_package_xpath_and_sparql}
-                                                        onChange={(event) => formik.setFieldValue('validate_package_xpath_and_sparql', event.target.checked)}
+                                                        checked={formik.values.validate_package_xpath && formik.values.validate_package}
+                                                        disabled={!formik.values.validate_package}
+                                                        onChange={(event) => formik.setFieldValue('validate_package_xpath', event.target.checked)}
                                                     />
                                                 }
-                                                label="XPATH + SPARQL"
+                                                label="XPATH"
+                                            />
+                                        </li>
+                                        <li>
+                                            <FormControlLabel
+                                                sx={{
+                                                    width: '100%'
+                                                }}
+                                                control={
+                                                    <Switch
+                                                        checked={formik.values.validate_package_sparql && formik.values.validate_package}
+                                                        disabled={!formik.values.validate_package}
+                                                        onChange={(event) => formik.setFieldValue('validate_package_sparql', event.target.checked)}
+                                                    />
+                                                }
+                                                label="SPARQL"
                                             />
                                         </li>
                                     </ul>
