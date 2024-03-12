@@ -21,13 +21,13 @@ export const ItemListCard = (props) => {
     const {item, collection, sectionApi, fileResourcesApi} = props;
     const popover = usePopover();
 
-    const handleEdit = useCallback(async (item_id) => {
+    const handleEdit = (item_id) => {
+        console.log('handleEdit',item_id)
         router.push({
             pathname: paths.app[sectionApi.section].resource_manager.edit,
             query: {id: collection._id, fid: item_id}
         });
-
-    }, [router, item, collection, sectionApi]);
+    }
 
     const handleDelete = useCallback(async () => {
         const response = await fileResourcesApi.deleteFileResource(item._id);
@@ -135,7 +135,7 @@ export const ItemListCard = (props) => {
                 anchorEl={popover.anchorRef.current}
                 onClose={popover.handleClose}
                 onDelete={handleDelete}
-                onEdit={handleEdit}
+                onEdit={() => handleEdit?.(item._id)}
                 open={popover.open}
             />
         </>

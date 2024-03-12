@@ -30,7 +30,7 @@ const Page = () => {
             github_repository_url: Yup
                 .string()
                 .max(1024)
-                .required('Github Repo URL is required'),
+                .required('GitHub Repo URL is required'),
             branch_or_tag_name: Yup
                 .string()
                 .max(20)
@@ -41,17 +41,17 @@ const Page = () => {
             values['project_id'] = sessionApi.getSessionProject();
 
             toast.promise(sectionApi.importEFormsFromGithub(values), {
-                loading: `Importing EForm Fields ... `,
+                loading: `Importing eForm Fields ... `,
                 success: (response) => {
                     setIsRunning(false);
                     helpers.setStatus({success: true});
-                    return `EForm Fields successfully imported.`;
+                    return `eForm Fields successfully imported.`;
                 },
                 error: (err) => {
                     setIsRunning(false);
                     helpers.setStatus({success: false});
                     helpers.setErrors({submit: err.message});
-                    return `EForm Fields import failed: ${err.message}.`;
+                    return `eForm Fields import failed: ${err.message}.`;
                 }
             }).then(r => {
             })
@@ -61,11 +61,11 @@ const Page = () => {
     return (
         <form onSubmit={formik.handleSubmit}>
             <Card>
-                <CardHeader title="Import EForms from Github"/>
+                <CardHeader title="Import eForms SDK from GitHub"/>
                 <CardContent sx={{pt: 0}}>
                     <Grid container spacing={3}>
                         <Grid xs={12} md={12}>
-                            <FormTextField formik={formik} name="github_repository_url" label="Github Repository URL"
+                            <FormTextField formik={formik} name="github_repository_url" label="GitHub Repository URL"
                                            required={true}/>
                         </Grid>
                         <Grid xs={12} md={12}>

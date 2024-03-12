@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import XIcon from '@untitled-ui/icons-react/build/esm/X';
 import Dialog from '@mui/material/Dialog';
@@ -10,13 +10,10 @@ import Typography from '@mui/material/Typography';
 
 import {FileDropzone} from 'src/components/file-dropzone';
 import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
 import {useRouter} from 'src/hooks/use-router';
 import nProgress from 'nprogress';
 import {sessionApi} from "../../../api/session";
 import TextField from "@mui/material/TextField";
-import * as React from "react";
-import Grid from "@mui/material/Unstable_Grid2";
 
 
 export const FileUploader = (props) => {
@@ -34,11 +31,11 @@ export const FileUploader = (props) => {
         setFiles([]);
     }, [open]);
 
-    const handleUpload = useCallback(async() => {
+    const handleUpload = async () => {
         nProgress.start();
         let incStep = 100 / files.length;
-        for (let file of files) {
-            let formData = new FormData();
+        await files.forEach(file => {
+            const formData = new FormData();
 
             formData.append("title", file.name);
             formData.append("format", format);
@@ -46,10 +43,11 @@ export const FileUploader = (props) => {
                 formData.append("type", type);
             }
             formData.append("file", file);
+            formData.append("content",file.content)
             formData.append("project", sessionApi.getSessionProject());
-            await sectionApi.createCollectionFileResource(collectionId, formData);
+            sectionApi.createCollectionFileResource(collectionId, formData);
             nProgress.inc(incStep);
-        }
+        })
         nProgress.done();
         onClose();
         // router.push({
@@ -57,23 +55,19 @@ export const FileUploader = (props) => {
         //     query: {id: collection_id}
         // });
         router.reload();
-    }, [files, format, type]);
+    }
 
-    const handleDrop = useCallback((newFiles) => {
+    const handleDrop = newFiles => {
         setFiles((prevFiles) => {
             return [...prevFiles, ...newFiles];
         });
-    }, []);
+    }
 
-    const handleRemove = useCallback((file) => {
-        setFiles((prevFiles) => {
-            return prevFiles.filter((_file) => _file.path !== file.path);
-        });
-    }, []);
+    const handleRemove = file => {
+        setFiles(prevFiles => prevFiles.filter((_file) => _file.path !== file.path));
+    }
 
-    const handleRemoveAll = useCallback(() => {
-        setFiles([]);
-    }, []);
+    const handleRemoveAll = () => setFiles([]);
 
     return (
         <Dialog
@@ -129,8 +123,9 @@ export const FileUploader = (props) => {
                         value={type}
                         sx={{mb: 3}}
                     >
-                        {Object.keys(sectionApi.FILE_RESOURCE_TYPES).map((key) => (
-                            <MenuItem key={key} value={key}>
+                        {Object.keys(sectionApi.FILE_RESOURCE_TYPES)?.map((key) => (
+                            <MenuItem key={key}
+                                      value={key}>
                                 {sectionApi.FILE_RESOURCE_TYPES[key]}
                             </MenuItem>
                         ))}

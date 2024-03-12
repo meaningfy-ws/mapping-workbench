@@ -65,7 +65,7 @@ export const en = {
   [tokens.nav.namespaces]: 'Namespaces',
   [tokens.nav.terms]: 'Terms',
   [tokens.nav.resource_collections]: 'Resources',
-  [tokens.nav.mapping_packages]: 'Packages',
+  [tokens.nav.mapping_packages]: 'Mapping Packages',
   [tokens.nav.conceptual_mapping_rules]: 'Conceptual Mappings',
   [tokens.nav.triple_map_fragments]: 'Triple Maps',
   [tokens.nav.specific_triple_map_fragments]: 'Specific Triple Maps',
