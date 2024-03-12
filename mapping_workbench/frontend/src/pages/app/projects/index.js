@@ -1,5 +1,7 @@
-import {useCallback, useEffect, useState} from 'react';
+import { useEffect, useState} from 'react';
+
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
+
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -9,13 +11,11 @@ import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
 import {projectsApi as sectionApi} from 'src/api/projects';
+import {paths} from 'src/paths';
+import {Layout as AppLayout} from 'src/layouts/app';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
-import {useMounted} from 'src/hooks/use-mounted';
-import {usePageView} from 'src/hooks/use-page-view';
-import {Layout as AppLayout} from 'src/layouts/app';
-import {paths} from 'src/paths';
 import {ListSearch} from 'src/sections/app/project/list-search';
 import {ListTable} from 'src/sections/app/project/list-table';
 
@@ -31,27 +31,27 @@ const useItemsSearch = () => {
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
 
-    const handleFiltersChange = useCallback((filters) => {
+    const handleFiltersChange = (filters) => {
         setState((prevState) => ({
             ...prevState,
             filters,
             page: 0
         }));
-    }, []);
+    };
 
-    const handlePageChange = useCallback((event, page) => {
+    const handlePageChange = (event, page) => {
         setState((prevState) => ({
             ...prevState,
             page
         }));
-    }, []);
+    };
 
-    const handleRowsPerPageChange = useCallback((event) => {
+    const handleRowsPerPageChange = event => {
         setState((prevState) => ({
             ...prevState,
             rowsPerPage: parseInt(event.target.value, 10)
         }));
-    }, []);
+    };
 
     return {
         handleFiltersChange,
@@ -62,25 +62,22 @@ const useItemsSearch = () => {
 };
 
 const useItemsStore = (searchState) => {
-    const isMounted = useMounted();
     const [state, setState] = useState({
         items: [],
         itemsCount: 0
     });
 
-    const handleItemsGet = useCallback(async () => {
+    const handleItemsGet = async () => {
         try {
             const response = await sectionApi.getItems(searchState);
-            if (isMounted()) {
                 setState({
                     items: response.items,
                     itemsCount: response.count
                 });
-            }
         } catch (err) {
             console.error(err);
         }
-    }, [searchState, isMounted]);
+    };
 
     useEffect(() => {
             handleItemsGet();
@@ -96,8 +93,6 @@ const useItemsStore = (searchState) => {
 export const Page = () => {
     const itemsSearch = useItemsSearch();
     const itemsStore = useItemsStore(itemsSearch.state);
-
-    usePageView();
 
     return (
         <>
