@@ -70,6 +70,7 @@ class RMLMapper(RMLMapperABC):
         """
         # java -jar ./rmlmapper.jar -m rml.ttl -s turtle  -o output.ttl
         bash_script = f"cd {data_path} && java -jar {self.rml_mapper_path} -m {data_path / TRANSFORMATION_PATH_NAME / MAPPINGS_PATH_NAME / '*'} -s {self.get_serialization_format_value()}"
+        print("K :: ", bash_script)
         process = subprocess.Popen(
             bash_script,
             shell=True,
