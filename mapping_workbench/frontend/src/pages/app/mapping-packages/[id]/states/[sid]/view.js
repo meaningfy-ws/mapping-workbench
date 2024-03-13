@@ -81,7 +81,6 @@ const Page = () => {
     }
 
       const handleValidationReportTreeGet = async (state_id) => {
-          console.log('here')
         try {
             const result = await sectionApi.getValidationReportTree(state_id)
             setValidationReportTree(result);
@@ -102,11 +101,13 @@ const Page = () => {
             <Seo title={`App: ${sectionApi.SECTION_ITEM_TITLE} View`}/>
             <Stack spacing={4}>
                 <Stack spacing={4}>
-                    <div>
+                    <Stack direction="row"
+                           justifyItems="center"
+                           gap={1}>
                         <Link
                             color="text.primary"
                             component={RouterLink}
-                            href={paths.app[sectionApi.section].view.replace("[id]", id)}
+                            href={paths.app[sectionApi.section].index}
                             sx={{
                                 alignItems: 'center',
                                 display: 'inline-flex'
@@ -120,7 +121,22 @@ const Page = () => {
                                 {previousSectionApi.SECTION_TITLE}
                             </Typography>
                         </Link>
-                    </div>
+                        /
+                        <Link
+                            color="text.primary"
+                            component={RouterLink}
+                            href={paths.app[sectionApi.section].view.replace("[id]", id)}
+                            sx={{
+                                alignItems: 'center',
+                                display: 'inline-flex'
+                            }}
+                            underline="hover"
+                        >
+                            <Typography variant="subtitle2">
+                                States
+                            </Typography>
+                        </Link>
+                    </Stack>
                     <Stack
                         alignItems="flex-start"
                         direction={{
