@@ -30,6 +30,7 @@ import {sessionApi} from "../../../api/session";
 import {useRouter} from "../../../hooks/use-router";
 import toast from "react-hot-toast";
 import {SeverityPill} from "../../../components/severity-pill";
+import {paths} from "../../../paths";
 
 
 export const ListTable = (props) => {
@@ -60,15 +61,21 @@ export const ListTable = (props) => {
         });
     }, []);
 
-    const handleSelectAction = useCallback(async (itemId) => {
-        try {
-            toast.loading('Selecting project...');
-            await sessionApi.setSessionProject(itemId);
-            router.reload();
-        } catch (e) {
-            toast.error('Something went wrong!');
+    const handleSelectAction = async (itemId, section) => {
+            const loadingToast = toast.loading('Selecting project...');
+            sessionApi.setSessionProject(itemId)
+                .then(() => {
+                    toast.success('Package selected')
+                     router.push({
+                         pathname: paths.app[section.section].view,
+                         query: {id: itemId}
+                    });
+                })
+                .catch(() => {
+                    toast.error('Something went wrong!');
+                })
+                .finally(() => toast.dismiss(loadingToast))
         }
-    }, [sessionApi, router]);
 
     // const handleItemClose = useCallback(() => {
     //     setCurrentItem(null);
@@ -250,7 +257,7 @@ export const ListTable = (props) => {
                                                 variant="text"
                                                 size="small"
                                                 color="warning"
-                                                onClick={() => handleSelectAction(item_id)}
+                                                onClick={() => handleSelectAction(item_id, sectionApi)}
                                             >
                                                 Select
                                             </Button>

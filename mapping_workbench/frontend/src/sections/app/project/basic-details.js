@@ -24,9 +24,6 @@ export const BasicDetails = (props) => {
     const router = useRouter();
     const itemctx = new ForListItemAction(id, projectsApi);
 
-    console.log("props: ", props);
-    console.log("intemctx: ", typeof (itemctx));
-
 
     const handleEditAction = useCallback(async () => {
         router.push({
