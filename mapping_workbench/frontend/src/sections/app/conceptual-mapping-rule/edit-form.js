@@ -230,8 +230,7 @@ export const EditForm = (props) => {
                     if (response) {
                         if (itemctx.isNew) {
                             router.push({
-                                pathname: paths.app[sectionApi.section].edit,
-                                query: {id: response._id}
+                                pathname: paths.app[sectionApi.section].index,
                             });
                         } else if (itemctx.isStateable) {
                             itemctx.setState(response);
