@@ -24,6 +24,8 @@ const tabs = [
 ];
 
 const Page = () => {
+    const [currentTab, setCurrentTab] = useState('details');
+
     const router = useRouter();
     if (!router.isReady) return;
 
@@ -37,11 +39,10 @@ const Page = () => {
     const item = formState.item;
 
     usePageView();
-    const [currentTab, setCurrentTab] = useState('details');
 
-    const handleTabsChange = useCallback((event, value) => {
+    const handleTabsChange = (event, value) => {
         setCurrentTab(value);
-    }, []);
+    }
 
     if (!item) {
         return;
