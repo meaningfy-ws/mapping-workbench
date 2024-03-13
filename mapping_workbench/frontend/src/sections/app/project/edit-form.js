@@ -35,9 +35,9 @@ export const EditForm = (props) => {
     ];
 
     const initialValues = {
-        title: item.title || '',
-        description: item.description || '',
-        version: item.version || '',
+        title: item.title ?? '',
+        description: item.description ?? '',
+        version: item.version ?? '',
         source_schema: {
             title: item.source_schema?.title ?? '',
             description: item.source_schema?.description ?? '',
@@ -85,7 +85,6 @@ export const EditForm = (props) => {
                     if (itemctx.isNew) {
                         router.push({
                             pathname: paths.app[sectionApi.section].index,
-                            query: {id: response._id}
                         });
                     } else if (itemctx.isStateable) {
                         itemctx.setState(response);
@@ -117,7 +116,7 @@ export const EditForm = (props) => {
                             <FormTextField formik={formik}
                                            name="title"
                                            label="Title"
-                                           required={true}/>
+                                           required/>
                         </Grid>
                         <Grid xs={12}
                               md={12}>
@@ -140,7 +139,6 @@ export const EditForm = (props) => {
                 spacing={3}
             >
                 <Grid
-                    item
                     xs={12}
                     md={6}
                 >
@@ -223,7 +221,6 @@ export const EditForm = (props) => {
                     </Card>
                 </Grid>
                 <Grid
-                    item
                     xs={12}
                     md={6}
                 >
