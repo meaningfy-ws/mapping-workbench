@@ -1,12 +1,13 @@
 import PropTypes from 'prop-types';
+
 import Box from '@mui/material/Box';
+import Card from "@mui/material/Card";
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TablePagination from '@mui/material/TablePagination';
 
 import {Scrollbar} from 'src/components/scrollbar';
-
 import {ItemListCard} from './item-list-card';
 import {ItemListRow} from './item-list-row';
 
@@ -25,10 +26,7 @@ export const ItemList = (props) => {
         view = 'grid'
     } = props;
 
-    let content;    
-
-    if (view === 'grid') {
-        content = (
+    const content = view === 'grid' ?
             <Box
                 sx={{
                     display: 'grid',
@@ -46,10 +44,8 @@ export const ItemList = (props) => {
                     />
                 ))}
             </Box>
-        );
-    } else {
+        :
         // Negative margin is a fix for the box shadow. The virtual scrollbar cuts it.
-        content = (
             <Box sx={{m: -3}}>
                 <Scrollbar>
                     <Box sx={{p: 3}}>
@@ -75,31 +71,32 @@ export const ItemList = (props) => {
                     </Box>
                 </Scrollbar>
             </Box>
-        );
-    }
 
     return (
-        <Stack spacing={4}>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-            />
-            {content}
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-            />
-        </Stack>
+        <Card>
+            <Stack spacing={4}>
+                    <TablePagination
+                        component="div"
+                        count={count}
+                        onPageChange={onPageChange}
+                        onRowsPerPageChange={onRowsPerPageChange}
+                        page={page}
+                        rowsPerPage={rowsPerPage}
+                        rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+                    />
+                    {content}
+                    <TablePagination
+                        component="div"
+                        count={count}
+                        onPageChange={onPageChange}
+                        onRowsPerPageChange={onRowsPerPageChange}
+                        page={page}
+                        rowsPerPage={rowsPerPage}
+                        rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+                    />
+            </Stack>
+        </Card>
+
     );
 };
 
