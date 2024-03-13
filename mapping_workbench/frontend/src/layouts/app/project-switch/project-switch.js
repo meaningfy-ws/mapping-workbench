@@ -1,15 +1,17 @@
+import {useEffect, useState} from "react";
+import toast from "react-hot-toast";
+import {useRouter} from "next/router";
+import {useFormik} from "formik";
+import * as Yup from "yup";
 import PropTypes from 'prop-types';
-import {useCallback, useEffect, useState} from "react";
+
+import MenuItem from "@mui/material/MenuItem";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+
 import {projectsApi} from "../../../api/projects";
 import {sessionApi} from "../../../api/session";
 import {useMounted} from "../../../hooks/use-mounted";
-import * as Yup from "yup";
-import {useFormik} from "formik";
-import MenuItem from "@mui/material/MenuItem";
-import TextField from "@mui/material/TextField";
-import {useRouter} from "../../../hooks/use-router";
-import Typography from "@mui/material/Typography";
-import toast from "react-hot-toast";
 
 const useProjectsStore = () => {
     const isMounted = useMounted();
@@ -17,10 +19,10 @@ const useProjectsStore = () => {
         items: []
     });
 
-    const handleProjectsGet = useCallback(async () => {
+    const handleProjectsGet = async () => {
         try {
-            const projects = await projectsApi.getSessionProjects();
             if (isMounted()) {
+                const projects = await projectsApi.getSessionProjects();
                 setState({
                     items: projects,
                 });
@@ -28,12 +30,11 @@ const useProjectsStore = () => {
         } catch (err) {
             console.error(err);
         }
-    }, [isMounted]);
+    }
 
     useEffect(() => {
-            handleProjectsGet();
-        },
-        []);
+        handleProjectsGet();
+        },[isMounted]);
 
     return {
         ...state
@@ -41,11 +42,12 @@ const useProjectsStore = () => {
 };
 
 export const ProjectSwitch = (props) => {
+
     const router = useRouter();
     const projectsStore = useProjectsStore();
 
     const initialValues = {
-        sessionProject: sessionApi.getSessionProject() || ''
+        sessionProject: sessionApi.getSessionProject() ?? ''
     };
 
     const validationSchema = Yup.object({
@@ -66,16 +68,16 @@ export const ProjectSwitch = (props) => {
         },
     });
 
-    const handleSessionProjectChange = useCallback(async (event) => {
-        let value = event.target.value;
+    const handleSessionProjectChange = async (event) => {
+        const value = event.target.value;
         toast.loading('Selecting project...');
         await sessionApi.setSessionProject(value);
         formik.setFieldValue('sessionProject', value);
         router.reload();
-    }, [formik])
+    }
 
     return (
-        <>
+        projectsStore.items.length ?
             <TextField
                 error={!!(formik.touched.sessionProject && formik.errors.sessionProject)}
                 fullWidth
@@ -100,7 +102,8 @@ export const ProjectSwitch = (props) => {
                     </MenuItem>
                 ))}
             </TextField>
-        </>
+            : <TextField label="Project"
+                         disabled/>
     );
 };
 
