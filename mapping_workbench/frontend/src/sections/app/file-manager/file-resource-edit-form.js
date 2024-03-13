@@ -76,8 +76,11 @@ export const FileResourceEditForm = (props) => {
                 values['path'] = (typeof values['path'] == 'string') ?
                     values['path'].split('\n').map(s => s.trim()).filter(s => s !== '').join(',') : values['path'];
                 let response;
+
                 values['project'] = sessionApi.getSessionProject();
-                let formData = values;
+
+                const formData = values;
+
                 if (itemctx.isNew) {
                     response = await sectionApi.createCollectionFileResource(collection_id, formData);
                 } else {
@@ -89,8 +92,9 @@ export const FileResourceEditForm = (props) => {
                 toast.success(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "created" : "updated"));
                 if (response) {
                     if (itemctx.isNew) {
+                        console.log(paths.app[sectionApi.section].resource_manager)
                         router.push({
-                            pathname: paths.app[sectionApi.section].resource_manager.edit,
+                            pathname: paths.app[sectionApi.section].resource_manager.index,
                             query: {id: collection_id, fid: response._id}
                         });
                     } else {
@@ -107,9 +111,9 @@ export const FileResourceEditForm = (props) => {
         }
     });
 
-    const handleFile = useCallback((e) => {
+    const handleFile = e => {
         formik.values.file = e.target.files[0];
-    }, [formik]);
+    }
 
     return (
         <form encType="multipart/form-data"
