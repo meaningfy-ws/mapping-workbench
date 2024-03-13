@@ -213,5 +213,5 @@ MobileNav.propTypes = {
   color: PropTypes.oneOf(['blend-in', 'discrete', 'evident']),
   onClose: PropTypes.func,
   open: PropTypes.bool,
-  sections: PropTypes.array
+  sections: PropTypes.object
 };
