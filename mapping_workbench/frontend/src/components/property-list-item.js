@@ -56,5 +56,5 @@ PropertyListItem.propTypes = {
   children: PropTypes.node,
   disableGutters: PropTypes.bool,
   label: PropTypes.string.isRequired,
-  value: PropTypes.string
+  value: PropTypes.string | PropTypes.bool
 };
