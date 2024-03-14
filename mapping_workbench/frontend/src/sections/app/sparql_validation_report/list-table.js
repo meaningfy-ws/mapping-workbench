@@ -1,4 +1,5 @@
 import {useState} from "react";
+import PropTypes from 'prop-types';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -14,11 +15,9 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import DialogContentText from "@mui/material/DialogContentText";
 import Stack from "@mui/material/Stack";
 
 import {Scrollbar} from 'src/components/scrollbar';
-import PropTypes from 'prop-types';
 import {ResultChip} from "./utils";
 
 export const ListTable = (props) => {
@@ -223,9 +222,7 @@ export const ListTable = (props) => {
                   {descriptionDialog.title}
                 </DialogTitle>
                 <DialogContent>
-                  <DialogContentText id="alert-dialog-description">
                       {descriptionDialog.description}
-                  </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                   <Button onClick={handleClose}>Close</Button>

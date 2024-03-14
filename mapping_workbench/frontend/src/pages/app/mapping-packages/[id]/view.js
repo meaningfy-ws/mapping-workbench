@@ -257,19 +257,7 @@ const Page = () => {
                     <TripleMapping id={id}/>
                 )}
                 {currentTab === "states" && (
-                    <Card sx={{mt: 3}}>
-                        <CardContent>
-                            <Grid container
-                                  spacing={3}>
-                                <Grid xs={12}
-                                      md={12}>
-                                    <Card>
-                                        <StatesView id={id}/>
-                                    </Card>
-                                </Grid>
-                            </Grid>
-                        </CardContent>
-                    </Card>
+                    <StatesView id={id}/>
                 )}
             </Stack>
         </>

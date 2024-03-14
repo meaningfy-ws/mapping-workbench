@@ -1,5 +1,7 @@
 import {useEffect, useState} from 'react';
 
+import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
+import {Upload04 as ExportIcon} from "@untitled-ui/icons-react/build/esm";
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -13,19 +15,15 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 
+import {paths} from 'src/paths';
+import {Seo} from 'src/components/seo';
 import {mappingPackageStatesApi as sectionApi} from 'src/api/mapping-packages/states';
 import {mappingPackagesApi as previousSectionApi} from 'src/api/mapping-packages';
 import {RouterLink} from 'src/components/router-link';
-import {Seo} from 'src/components/seo';
 import {Layout as AppLayout} from 'src/layouts/app';
-import {paths} from 'src/paths';
 import {useRouter} from "src/hooks/use-router";
 import {PropertyList} from "../../../../../../components/property-list";
 import {PropertyListItem} from "../../../../../../components/property-list-item";
-
-import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
-import {Upload04 as ExportIcon} from "@untitled-ui/icons-react/build/esm";
-
 import exportPackage from "../../../../../../utils/export-mapping-package";
 import {sessionApi} from "../../../../../../api/session";
 import ShaclValidationReport from "../../../../../../sections/app/shacl_validation_report/shacl_validation_report_view";

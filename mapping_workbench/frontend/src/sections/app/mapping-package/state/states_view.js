@@ -2,11 +2,10 @@ import {useCallback, useEffect, useState} from "react";
 
 import Stack from "@mui/material/Stack";
 import Alert from "@mui/material/Alert";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
 
-import {
-    mappingPackageStatesApi as sectionStatesApi,
-    mappingPackageStatesApi as sectionApi
-} from 'src/api/mapping-packages/states';
+import {mappingPackageStatesApi as sectionApi} from 'src/api/mapping-packages/states';
 import {ListTable} from "./list-table";
 import {FileCollectionListSearch} from "../../file-manager/file-collection-list-search";
 import {useMounted} from "../../../../hooks/use-mounted";
@@ -99,30 +98,32 @@ const StatesView = ({ id }) => {
     const itemsStore = useItemsStore(id, itemsSearch.state);
 
     return (
-        <>
-            <FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
-            {
-                itemsStore.itemsCount ?
-                    <ListTable
-                    id={id}
-                    items={itemsStore.items}
-                    count={itemsStore.itemsCount}
-                    itemsSearch={itemsSearch}
-                    onPageChange={itemsSearch.handlePageChange}
-                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                    onSort={itemsSearch.handleSort}
-                    sortField={itemsSearch.state.sortField}
-                    sortDirection={itemsSearch.state.sortDirection}
-                    page={itemsSearch?.state?.page}
-                    rowsPerPage={itemsSearch?.state?.rowsPerPage}
-                    sectionApi={sectionStatesApi}
-                /> :
-                <Stack justifyContent="center"
-                       direction="row">
-                    <Alert severity="info">No Data !</Alert>
-                </Stack>
-            }
-        </>
+        <Card sx={{mt: 3}}>
+            <CardContent>
+                <FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
+                {
+                    itemsStore.itemsCount ?
+                        <ListTable
+                            id={id}
+                            items={itemsStore.items}
+                            count={itemsStore.itemsCount}
+                            itemsSearch={itemsSearch}
+                            onPageChange={itemsSearch.handlePageChange}
+                            onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                            onSort={itemsSearch.handleSort}
+                            sortField={itemsSearch.state.sortField}
+                            sortDirection={itemsSearch.state.sortDirection}
+                            page={itemsSearch?.state?.page}
+                            rowsPerPage={itemsSearch?.state?.rowsPerPage}
+                            sectionApi={sectionApi}
+                        /> :
+                    <Stack justifyContent="center"
+                           direction="row">
+                        <Alert severity="info">No Data !</Alert>
+                    </Stack>
+                }
+            </CardContent>
+        </Card>
     )
 }
 
