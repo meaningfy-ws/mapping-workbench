@@ -1,6 +1,11 @@
-import * as React from 'react';
-import {Fragment, useCallback, useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
+import toast from "react-hot-toast";
+import {useRouter} from "next/router";
 import PropTypes from 'prop-types';
+import parse from "html-react-parser";
+import {useFormik} from "formik";
+import * as Yup from "yup";
+
 import EditIcon from '@untitled-ui/icons-react/build/esm/Edit05';
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
@@ -16,45 +21,41 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import {PropertyList} from 'src/components/property-list';
-import {PropertyListItem} from 'src/components/property-list-item';
-
-import {Scrollbar} from 'src/components/scrollbar';
-import {ListItemActions} from 'src/components/app/list/list-item-actions';
-
-import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import Tooltip from "@mui/material/Tooltip";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import {MappingPackageCheckboxList} from "../mapping-package/components/mapping-package-checkbox-list";
-import Dialog from "@mui/material/Dialog";
-import {useDialog} from "../../../hooks/use-dialog";
 import Stack from "@mui/material/Stack";
-import toast from "react-hot-toast";
-import {COMMENT_PRIORITY, conceptualMappingRulesApi} from "../../../api/conceptual-mapping-rules";
-import {mappingPackagesApi} from "../../../api/mapping-packages";
-import {genericTripleMapFragmentsApi} from "../../../api/triple-map-fragments/generic";
+import Dialog from "@mui/material/Dialog";
 import TextField from "@mui/material/TextField";
 import Link from "@mui/material/Link";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import Select from "@mui/material/Select";
-import {FormCodeTextArea} from "../../../components/app/form/code-text-area";
-import {useFormik} from "formik";
-import * as Yup from "yup";
 import Switch from "@mui/material/Switch";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import {ListSelectorSelect as ResourceListSelector} from "../../../components/app/list-selector/select";
-import {sparqlTestFileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
-import {paths} from "../../../paths";
-import {useRouter} from "../../../hooks/use-router";
 import ListItem from "@mui/material/ListItem";
-import parse from "html-react-parser";
 import Alert from "@mui/material/Alert";
 import Divider from "@mui/material/Divider";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
+import FormControlLabel from "@mui/material/FormControlLabel";
+
+import {paths} from "src/paths";
+import {PropertyList} from 'src/components/property-list';
+import {PropertyListItem} from 'src/components/property-list-item';
+import {Scrollbar} from 'src/components/scrollbar';
+import {ListItemActions} from 'src/components/app/list/list-item-actions';
+import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
+import {MappingPackageCheckboxList} from "../mapping-package/components/mapping-package-checkbox-list";
+
+import {useDialog} from "../../../hooks/use-dialog";
+import {COMMENT_PRIORITY, conceptualMappingRulesApi} from "../../../api/conceptual-mapping-rules";
+import {mappingPackagesApi} from "../../../api/mapping-packages";
+import {genericTripleMapFragmentsApi} from "../../../api/triple-map-fragments/generic";
+import {FormCodeTextArea} from "../../../components/app/form/code-text-area";
+import {ListSelectorSelect as ResourceListSelector} from "../../../components/app/list-selector/select";
+import {sparqlTestFileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
+
 
 export const ListTableTripleMapFragment = (props) => {
     const {
@@ -154,7 +155,8 @@ export const ListTableTripleMapFragment = (props) => {
         {ruleTripleMapFragments.length > 0 && (
             <Box sx={{mb: 1}}>
                 {ruleTripleMapFragments.map(x => (
-                    <ListItem sx={{whiteSpace: "w"}} key={"triple_map_fragment_" + x.id}>{x.uri}</ListItem>
+                    <ListItem sx={{whiteSpace: "w"}}
+                              key={"triple_map_fragment_" + x.id}>{x.uri}</ListItem>
                 ))}
             </Box>
         )}
@@ -197,7 +199,8 @@ export const ListTableTripleMapFragment = (props) => {
                     <Typography variant="h6">
                         Mapping Rule Triple Map Fragment
                     </Typography>
-                    <Box container spacing={3}>
+                    <Box container
+                         spacing={3}>
                         <FormControl sx={{my: 2, width: '100%'}}>
                             <TextField
                                 fullWidth
@@ -206,9 +209,10 @@ export const ListTableTripleMapFragment = (props) => {
                                 select
                                 value={tripleMapFragment && tripleMapFragment._id}
                             >
-                                <MenuItem key="" value={null}>&nbsp;</MenuItem>
+                                <MenuItem value={null}>&nbsp;</MenuItem>
                                 {projectTripleMapFragments.map((x) => (
-                                    <MenuItem key={x.id} value={x.id}>{x.uri}</MenuItem>
+                                    <MenuItem key={x.id}
+                                              value={x.id}>{x.uri}</MenuItem>
                                 ))}
                             </TextField>
                         </FormControl>
@@ -216,7 +220,10 @@ export const ListTableTripleMapFragment = (props) => {
                     {tripleMapFragment && tripleMapFragment._id && (
                         <>
                             <Box>
-                                <Grid xs={12} md={12} pb={2} item={true}>
+                                <Grid xs={12}
+                                      md={12}
+                                      pb={2}
+                                      item>
                                     <FormControlLabel
                                         sx={{
                                             width: '100%'
@@ -235,7 +242,8 @@ export const ListTableTripleMapFragment = (props) => {
                             </Box>
                             {updateContent && (<Box>
                                     <Grid container>
-                                        <Grid xs={12} md={12}>
+                                        <Grid xs={12}
+                                              md={12}>
                                             <FormControl fullWidth>
                                                 <FormLabel
                                                     sx={{
@@ -256,7 +264,8 @@ export const ListTableTripleMapFragment = (props) => {
                                                 >
                                                     {Object.keys(genericTripleMapFragmentsApi.FILE_RESOURCE_FORMATS).map((key) => {
                                                         return (
-                                                            <MenuItem value={key} key={key}>
+                                                            <MenuItem value={key}
+                                                                      key={key}>
                                                                 {genericTripleMapFragmentsApi.FILE_RESOURCE_FORMATS[key]}
                                                             </MenuItem>
                                                         )
@@ -264,7 +273,9 @@ export const ListTableTripleMapFragment = (props) => {
                                                 </Select>
                                             </FormControl>
                                         </Grid>
-                                        <Grid xs={12} md={12} py={2}>
+                                        <Grid xs={12}
+                                              md={12}
+                                              py={2}>
                                             <FormCodeTextArea
                                                 formik={formik}
                                                 name="triple_map_content"
@@ -383,9 +394,11 @@ export const ListTableMappingPackages = (props) => {
                 <Typography variant="h6">
                     Mapping Rule Packages
                 </Typography>
-                <Box container spacing={3}>
+                <Box container
+                     spacing={3}>
                     <MappingPackageCheckboxList
-                        mappingPackages={tempMappingPackages} initProjectMappingPackages={projectMappingPackages}/>
+                        mappingPackages={tempMappingPackages}
+                        initProjectMappingPackages={projectMappingPackages}/>
                 </Box>
                 <Button
                     variant="contained"
@@ -426,7 +439,7 @@ export const ListTableSPARQLAssertions = (props) => {
     const sparqlTestFileResourcesDialog = useDialog();
 
     const handleSparqlTestFileResourcesUpdate = useCallback(async () => {
-        let values = {}
+        const values = {}
         values['id'] = item._id;
         values['sparql_assertions'] = tempSparqlResources;
         await conceptualMappingRulesApi.updateItem(values);
@@ -497,7 +510,8 @@ export const ListTableSPARQLAssertions = (props) => {
                     <Typography variant="h6">
                         SPARQL Assertions
                     </Typography>
-                    <Box container spacing={3}>
+                    <Box container
+                         spacing={3}>
                         <ResourceListSelector
                             valuesApi={sparqlTestFileResourcesApi}
                             listValues={tempSparqlResources}
@@ -621,7 +635,7 @@ export const ListTableRow = (props) => {
     const editorialNotesDialog = useDialog();
     const feedbackNotesDialog = useDialog();
 
-    return (<Fragment key={item_id}>
+    return (<>
         <TableRow
             hover
             key={`rule_${item_id}`}
@@ -744,11 +758,12 @@ export const ListTableRow = (props) => {
                         maxWidth="md"
                     >
                         <Card>
-                            <CardHeader title="Mapping Notes" sx={{mb: 2}}/>
+                            <CardHeader title="Mapping Notes"
+                                        sx={{mb: 2}}/>
                             <Divider/>
                             <CardContent sx={{pt: 1}}>
-                                {(item.mapping_notes || []).map(
-                                    (mapping_note) => <RuleComment
+                                {(item.mapping_notes ?? []).map((mapping_note,i) => <RuleComment
+                                        key={'note'+i}
                                         comment={mapping_note}
                                     />
                                 )}
@@ -772,12 +787,13 @@ export const ListTableRow = (props) => {
                         maxWidth="md"
                     >
                         <Card>
-                            <CardHeader title="Editorial Notes" sx={{mb: 2}}/>
+                            <CardHeader title="Editorial Notes"
+                                        sx={{mb: 2}}/>
                             <Divider/>
                             <CardContent sx={{pt: 1}}>
-                                {(item.editorial_notes || []).map(
-                                    (editorial_note) => <RuleComment
-                                        comment={editorial_note}
+                                {(item.editorial_notes || []).map((editorial_note,i) => <RuleComment
+                                    key={'note' + i}
+                                    comment={editorial_note}
                                     />
                                 )}
                             </CardContent>
@@ -800,11 +816,13 @@ export const ListTableRow = (props) => {
                         maxWidth="md"
                     >
                         <Card>
-                            <CardHeader title="Feedback Notes" sx={{mb: 2}}/>
+                            <CardHeader title="Feedback Notes"
+                                        sx={{mb: 2}}/>
                             <Divider/>
                             <CardContent sx={{pt: 1}}>
-                                {(item.feedback_notes || []).map(
-                                    (feedback_note) => <RuleComment
+                                {(item.feedback_notes ?? []).map(
+                                    (feedback_note, i) => <RuleComment
+                                        key={'note' + i}
                                         comment={feedback_note}
                                     />
                                 )}
@@ -883,7 +901,7 @@ export const ListTableRow = (props) => {
                 </CardContent>
             </TableCell>
         </TableRow>)}
-    </Fragment>)
+    </>)
 }
 
 export const ListTable = (props) => {
@@ -1016,21 +1034,24 @@ export const ListTable = (props) => {
                                 </TableSortLabel>
                             </Tooltip>
                         </TableCell>*/}
-                        <TableCell align="center" title="Mapping Notes"
+                        <TableCell align="center"
+                                   title="Mapping Notes"
                                    sx={{
                                        whiteSpace: "nowrap"
                                    }}
                         >
                             M-Notes
                         </TableCell>
-                        <TableCell align="center" title="Editorial Notes"
+                        <TableCell align="center"
+                                   title="Editorial Notes"
                                    sx={{
                                        whiteSpace: "nowrap"
                                    }}
                         >
                             E-Notes
                         </TableCell>
-                        <TableCell align="center" title="Feedback Notes"
+                        <TableCell align="center"
+                                   title="Feedback Notes"
                                    sx={{
                                        whiteSpace: "nowrap"
                                    }}
@@ -1057,7 +1078,8 @@ export const ListTable = (props) => {
                             item={item}
                             item_id={item_id}
                             isCurrent={isCurrent}
-                            handleItemToggle={handleItemToggle} sectionApi={sectionApi}
+                            handleItemToggle={handleItemToggle}
+                            sectionApi={sectionApi}
                             initProjectMappingPackages={projectMappingPackages}
                             initProjectTripleMapFragments={projectTripleMapFragments}
                             initProjectSPARQLResources={projectSPARQLResources}

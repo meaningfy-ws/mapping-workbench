@@ -12,14 +12,15 @@ import Typography from '@mui/material/Typography';
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 
-import {mappingPackagesApi as sectionApi} from 'src/api/mapping-packages';
-import {RouterLink} from 'src/components/router-link';
+import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
 import {Layout as AppLayout} from 'src/layouts/app';
-import {paths} from 'src/paths';
+import {mappingPackagesApi as sectionApi} from 'src/api/mapping-packages';
+import {RouterLink} from 'src/components/router-link';
 import {useRouter} from "src/hooks/use-router";
 import {useItem} from "src/contexts/app/section/for-item-data-state";
 import {FileResourceCollectionsCard} from 'src/sections/app/file-manager/file-resource-collections-card'
+
 import {PropertyList} from "../../../../components/property-list";
 import {PropertyListItem} from "../../../../components/property-list-item";
 import {shaclTestSuitesApi} from "../../../../api/shacl-test-suites";
