@@ -8,6 +8,8 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import Tooltip from "@mui/material/Tooltip";
 import TableSortLabel from "@mui/material/TableSortLabel";
+import Skeleton from "@mui/material/Skeleton";
+import Alert from "@mui/material/Alert";
 
 export const resultColor = (result) => {
     switch (result.toLowerCase()) {
@@ -34,7 +36,6 @@ export const ResultChip = ({label, color, clickable}) => {
 
 export const ResultFilter = ({currentState, onStateChange}) => {
     const reportValues = ["valid", "unverifiable", "warning", "invalid", "error", "unknown"]
-
 
     const FilterValue = ({label, value, currentState}) => {
         return (
@@ -120,3 +121,23 @@ export const sortItems = (items, sort) => {
                 })
         }
     }
+
+
+export const TableSkeleton = ({lines = 5}) => {
+    return new Array(lines).fill("").map((e, i) =>
+                <Skeleton key={'line' + i}
+                          height={50}/>)
+}
+
+export const TableNoData = () => {
+    return <Stack justifyContent="center"
+                       direction="row">
+                    <Alert severity="info">No Data !</Alert>
+                </Stack>
+}
+
+export const TableLoadWrapper = ({children, load, data, lines}) => {
+    if (load) return <TableSkeleton lines={lines}/>
+    if (data.length === 0) return <TableNoData/>
+    return children
+}
