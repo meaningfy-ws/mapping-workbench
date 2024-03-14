@@ -77,33 +77,30 @@ export const ProjectSwitch = (props) => {
     }
 
     return (
-        projectsStore.items.length ?
-            <TextField
-                error={!!(formik.touched.sessionProject && formik.errors.sessionProject)}
-                fullWidth
-                label="Project"
-                name="sessionProject"
-                onBlur={formik.handleBlur}
-                onChange={handleSessionProjectChange}
-                select={true}
-                value={formik.values.sessionProject}
-            >
-                {projectsStore.items.map((project) => (
-                    <MenuItem
-                        key={project.id}
-                        value={project.id}
+        <TextField
+            error={!!(formik.touched.sessionProject && formik.errors.sessionProject)}
+            fullWidth
+            label="Project"
+            name="sessionProject"
+            onBlur={formik.handleBlur}
+            onChange={handleSessionProjectChange}
+            select={true}
+            value={projectsStore.items.length ? formik.values.sessionProject : ""}
+        >
+            {projectsStore.items.map((project) => (
+                <MenuItem
+                    key={project.id}
+                    value={project.id}
+                >
+                    <Typography
+                        color="var(--nav-color)"
+                        variant="body2"
                     >
-                        <Typography
-                            color="var(--nav-color)"
-                            variant="body2"
-                        >
-                            {project.title}
-                        </Typography>
-                    </MenuItem>
-                ))}
-            </TextField>
-            : <TextField label="Project"
-                         disabled/>
+                        {project.title}
+                    </Typography>
+                </MenuItem>
+            ))}
+        </TextField>
     );
 };
 

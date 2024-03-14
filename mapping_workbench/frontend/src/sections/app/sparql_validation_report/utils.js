@@ -33,7 +33,7 @@ export const ResultChip = ({label, color, clickable}) => {
 }
 
 export const ResultFilter = ({currentState, onStateChange}) => {
-    const reportValues = ["valid","unverifiable","warning","invalid","error","unknown"]
+    const reportValues = ["valid", "unverifiable", "warning", "invalid", "error", "unknown"]
 
 
     const FilterValue = ({label, value, currentState}) => {
@@ -46,7 +46,8 @@ export const ResultFilter = ({currentState, onStateChange}) => {
                         <Typography
                             variant="subtitle2"
                         >
-                            <ResultChip clickable label={label}/>
+                            <ResultChip clickable
+                                        label={label}/>
                         </Typography>
                     </Box>
                 )}

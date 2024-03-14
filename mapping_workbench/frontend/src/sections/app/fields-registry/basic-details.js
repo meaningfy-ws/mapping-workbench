@@ -30,7 +30,7 @@ export const BasicDetails = (props) => {
                     <PropertyListItem
                         divider
                         label="Repeatable"
-                        value={item.repeatable}
+                        value={item.repeatable.toString()}
                     />
                     <PropertyListItem
                         divider

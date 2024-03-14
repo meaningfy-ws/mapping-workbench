@@ -1,46 +1,40 @@
+import {useCallback, useEffect, useState} from "react";
 import PropTypes from 'prop-types';
 import toast from 'react-hot-toast';
+import parse from 'html-react-parser';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
+
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Grid from '@mui/material/Unstable_Grid2';
 import Stack from '@mui/material/Stack';
-
-import {RouterLink} from 'src/components/router-link';
-import {paths} from 'src/paths';
-import {useRouter} from 'src/hooks/use-router';
-import {FormTextField} from "../../../components/app/form/text-field";
-import {FormTextArea} from "../../../components/app/form/text-area";
-import {sessionApi} from "../../../api/session";
-import {MappingPackageCheckboxList} from "../mapping-package/components/mapping-package-checkbox-list";
-import {fieldsRegistryApi} from "../../../api/fields-registry";
-import {genericTripleMapFragmentsApi} from "../../../api/triple-map-fragments/generic";
+import Alert from "@mui/material/Alert";
+import Divider from "@mui/material/Divider";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import * as React from "react";
-import {useCallback, useEffect, useState} from "react";
-import {sparqlTestFileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
-import {ListSelectorSelect as ResourceListSelector} from "../../../components/app/list-selector/select";
-import Alert from "@mui/material/Alert";
-import Divider from "@mui/material/Divider";
-
-
-import parse from 'html-react-parser';
-import {Box} from "@mui/system";
+import Box from "@mui/system/Box";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
 import Typography from "@mui/material/Typography";
-import {COMMENT_PRIORITY} from "../../../api/conceptual-mapping-rules";
 import Switch from "@mui/material/Switch";
-import Menu from "@mui/material/Menu";
-import {Dropdown} from "../../../components/dropdown";
 import Autocomplete from "@mui/material/Autocomplete";
-import {fieldsRegistryApi as sectionApi} from "../../../api/fields-registry";
+
+import {paths} from 'src/paths';
+import {useRouter} from 'src/hooks/use-router';
+import {RouterLink} from 'src/components/router-link';
+import {FormTextField} from "../../../components/app/form/text-field";
+import {sessionApi} from "../../../api/session";
+import {MappingPackageCheckboxList} from "../mapping-package/components/mapping-package-checkbox-list";
+import {fieldsRegistryApi} from "../../../api/fields-registry";
+import {genericTripleMapFragmentsApi} from "../../../api/triple-map-fragments/generic";
+import {sparqlTestFileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
+import {ListSelectorSelect as ResourceListSelector} from "../../../components/app/list-selector/select";
+import {COMMENT_PRIORITY} from "../../../api/conceptual-mapping-rules";
 
 const TermValidityInfo = (props) => {
     const {item, ...other} = props;
@@ -57,7 +51,10 @@ const TermValidityInfo = (props) => {
                sx={{
                    my: 2
                }}
-        ><b color="success">{term}</b> {info}</Alert>
+        >
+            <b color="success">{term}</b>
+            {info}
+        </Alert>
     )
 }
 
@@ -93,8 +90,12 @@ const RuleComment = (props) => {
                 {comment.title && <Box><b>{comment.title}</b></Box>}
 
                 <Box>{comment.comment}</Box>
-                <input name={titleName} value={comment.title} type="hidden"/>
-                <input name={commentName} value={comment.comment} type="hidden"/>
+                <input name={titleName}
+                       value={comment.title}
+                       type="hidden"/>
+                <input name={commentName}
+                       value={comment.comment}
+                       type="hidden"/>
             </Box>
             <Button
                 variant="text"
@@ -175,27 +176,27 @@ export const EditForm = (props) => {
             }
         }
 
-        let initialValues = {
-            source_structural_element: (item.source_structural_element && item.source_structural_element.id) || '',
-            min_sdk_version: item.min_sdk_version || '',
-            max_sdk_version: item.max_sdk_version || '',
-            mapping_group_id: item.mapping_group_id || '',
-            status: item.status || '',
-            target_class_path: item.target_class_path || '',
-            target_property_path: item.target_property_path || '',
-            refers_to_mapping_package_ids: item.refers_to_mapping_package_ids || [],
-            sparql_assertions: (item.sparql_assertions || []).map(x => x.id),
-            triple_map_fragment: (item.triple_map_fragment && item.triple_map_fragment.id) || '',
-            mapping_notes: (item.mapping_notes || []),
-            editorial_notes: (item.editorial_notes || []),
-            feedback_notes: (item.feedback_notes || []),
+        const initialValues = {
+            source_structural_element: (item.source_structural_element && item.source_structural_element.id) ?? '',
+            min_sdk_version: item.min_sdk_version ?? '',
+            max_sdk_version: item.max_sdk_version ?? '',
+            mapping_group_id: item.mapping_group_id ?? '',
+            status: item.status ?? '',
+            target_class_path: item.target_class_path ?? '',
+            target_property_path: item.target_property_path ?? '',
+            refers_to_mapping_package_ids: item.refers_to_mapping_package_ids ?? [],
+            sparql_assertions: (item.sparql_assertions ?? []).map(x => x.id),
+            triple_map_fragment: (item.triple_map_fragment && item.triple_map_fragment.id) ?? '',
+            mapping_notes: item.mapping_notes ?? [],
+            editorial_notes: item.editorial_notes ?? [],
+            feedback_notes: item.feedback_notes ?? [],
             mapping_note: initComment(),
             editorial_note: initComment(),
             feedback_note: initComment()
         };
 
         const formik = useFormik({
-            initialValues: initialValues,
+            initialValues,
             validationSchema: Yup.object({
             }),
             onSubmit: async (values, helpers) => {
@@ -214,8 +215,8 @@ export const EditForm = (props) => {
                     }
                     delete values['feedback_note'];
 
-                    requestValues['source_structural_element'] = values['source_structural_element'] || null;
-                    requestValues['triple_map_fragment'] = values['triple_map_fragment'] || null;
+                    requestValues['source_structural_element'] = values['source_structural_element'] ?? null;
+                    requestValues['triple_map_fragment'] = values['triple_map_fragment'] ?? null;
                     let response;
                     requestValues['project'] = sessionApi.getSessionProject();
                     if (itemctx.isNew) {
@@ -249,15 +250,15 @@ export const EditForm = (props) => {
             }
         });
 
-        const handleSourceStructuralElementSelect = useCallback((e) => {
-            let value = e.target.value;
+        const handleSourceStructuralElementSelect = e => {
+            const value = e.target.value;
             formik.setFieldValue('source_structural_element', value);
-        }, [formik]);
+        }
 
-        const handleTripleMapFragmentSelect = useCallback((e) => {
-            let value = e.target.value;
+        const handleTripleMapFragmentSelect = e => {
+            const value = e.target.value;
             formik.setFieldValue('triple_map_fragment', value);
-        }, [formik]);
+        }
 
         const sparqlResourcesForSelector = function (filters = {}) {
             return sparqlTestFileResourcesApi.getMappingRuleSPARQLAssertions(filters);
@@ -340,24 +341,39 @@ export const EditForm = (props) => {
         if (!isProjectDataReady) return null;
 
         return (
-            <form onSubmit={formik.handleSubmit} {...other}>
+            <form onSubmit={formik.handleSubmit}
+                  {...other}>
                 <Card>
                     <CardHeader title={(itemctx.isNew ? 'Create' : 'Edit') + ' ' + sectionApi.SECTION_ITEM_TITLE}/>
                     <CardContent sx={{pt: 0}}>
-                        <Grid container spacing={3}>
-                            <Grid xs={12} md={12}>
-                                <FormTextField formik={formik} name="min_sdk_version" label="Min SDK Version"/>
+                        <Grid container
+                              spacing={3}>
+                            <Grid xs={12}
+                                  md={12}>
+                                <FormTextField formik={formik}
+                                               name="min_sdk_version"
+                                               label="Min SDK Version"/>
                             </Grid>
-                            <Grid xs={12} md={12}>
-                                <FormTextField formik={formik} name="max_sdk_version" label="Max SDK Version"/>
+                            <Grid xs={12}
+                                  md={12}>
+                                <FormTextField formik={formik}
+                                               name="max_sdk_version"
+                                               label="Max SDK Version"/>
                             </Grid>
-                            <Grid xs={12} md={12}>
-                                <FormTextField formik={formik} name="mapping_group_id" label="Mapping Group ID"/>
+                            <Grid xs={12}
+                                  md={12}>
+                                <FormTextField formik={formik}
+                                               name="mapping_group_id"
+                                               label="Mapping Group ID"/>
                             </Grid>
-                            <Grid xs={12} md={12}>
-                                <FormTextField formik={formik} name="status" label="Status"/>
+                            <Grid xs={12}
+                                  md={12}>
+                                <FormTextField formik={formik}
+                                               name="status"
+                                               label="Status"/>
                             </Grid>
-                            <Grid xs={12} md={12}>
+                            <Grid xs={12}
+                                  md={12}>
                                 <Autocomplete
                                     freeSolo
                                     fullWidth
@@ -365,7 +381,7 @@ export const EditForm = (props) => {
                                     autoComplete={false}
                                     autoHighlight={false}
                                     id="target_class_path"
-                                    disableClearable={true}
+                                    disableClearable
                                     options={prefixedTerms}
                                     filterOptions={filterTerms}
                                     disableCloseOnSelect={false}
@@ -379,7 +395,8 @@ export const EditForm = (props) => {
                                     renderInput={(params) => (
                                         <FormTextField
                                             formik={formik}
-                                            name="target_class_path" label="Target Class Path"
+                                            name="target_class_path"
+                                            label="Target Class Path"
                                             onBlur={(e) => checkTermsValidity(
                                                 e.target.name, e.target.value
                                             )}
@@ -397,12 +414,14 @@ export const EditForm = (props) => {
                                     <Divider/>
                                 </>
                                 }
-                                {targetClassPathTermsValidityInfo.length > 0 && targetClassPathTermsValidityInfo.map(
-                                    (item) => <TermValidityInfo item={item}/>
+                                {targetClassPathTermsValidityInfo?.map((item, i) =>
+                                    <TermValidityInfo key={'target' + i}
+                                                      item={item}/>
                                 )}
                                 {targetClassPathTermsValidityInfo.length > 0 && <Divider/>}
                             </Grid>
-                            <Grid xs={12} md={12}>
+                            <Grid xs={12}
+                                  md={12}>
                                 <Autocomplete
                                     freeSolo
                                     fullWidth
@@ -410,7 +429,7 @@ export const EditForm = (props) => {
                                     autoComplete={false}
                                     autoHighlight={false}
                                     id="target_property_path"
-                                    disableClearable={true}
+                                    disableClearable
                                     options={prefixedTerms}
                                     filterOptions={filterTerms}
                                     disableCloseOnSelect={false}
@@ -424,7 +443,8 @@ export const EditForm = (props) => {
                                     renderInput={(params) => (
                                         <FormTextField
                                             formik={formik}
-                                            name="target_property_path" label="Target Property Path"
+                                            name="target_property_path"
+                                            label="Target Property Path"
                                             onBlur={(e) => checkTermsValidity(
                                                 e.target.name, e.target.value
                                             )}
@@ -442,8 +462,10 @@ export const EditForm = (props) => {
                                     <Divider/>
                                 </>
                                 }
-                                {targetPropertyPathTermsValidityInfo.length > 0 && targetPropertyPathTermsValidityInfo.map(
-                                    (item) => <TermValidityInfo item={item}/>
+                                {targetPropertyPathTermsValidityInfo?.map((item, i) =>
+                                    <TermValidityInfo
+                                        key={'target' + i}
+                                        item={item}/>
                                 )}
                                 {targetPropertyPathTermsValidityInfo.length > 0 && <Divider/>}
                             </Grid>
@@ -453,8 +475,10 @@ export const EditForm = (props) => {
                 <Card sx={{mt: 3}}>
                     <CardHeader title="Source Structural Element"/>
                     <CardContent sx={{pt: 0}}>
-                        <Grid container spacing={3}>
-                            <Grid xs={12} md={12}>
+                        <Grid container
+                              spacing={3}>
+                            <Grid xs={12}
+                                  md={12}>
                                 <FormControl sx={{my: 2, width: '100%'}}>
                                     <TextField
                                         fullWidth
@@ -463,9 +487,10 @@ export const EditForm = (props) => {
                                         select
                                         value={formik.values.source_structural_element}
                                     >
-                                        <MenuItem key="" value={null}>&nbsp;</MenuItem>
+                                        <MenuItem value={null}>&nbsp;</MenuItem>
                                         {projectSourceStructuralElements.map((x) => (
-                                            <MenuItem key={x.id} value={x.id}>{x.eforms_sdk_element_id}</MenuItem>
+                                            <MenuItem key={x.id}
+                                                      value={x.id}>{x.eforms_sdk_element_id}</MenuItem>
                                         ))}
                                     </TextField>
                                 </FormControl>
@@ -476,8 +501,10 @@ export const EditForm = (props) => {
                 <Card sx={{mt: 3}}>
                     <CardHeader title="RML Triple Map"/>
                     <CardContent sx={{pt: 0}}>
-                        <Grid container spacing={3}>
-                            <Grid xs={12} md={12}>
+                        <Grid container
+                              spacing={3}>
+                            <Grid xs={12}
+                                  md={12}>
                                 <FormControl sx={{my: 2, width: '100%'}}>
                                     <TextField
                                         fullWidth
@@ -486,9 +513,10 @@ export const EditForm = (props) => {
                                         select
                                         value={formik.values.triple_map_fragment}
                                     >
-                                        <MenuItem key="" value={null}>&nbsp;</MenuItem>
+                                        <MenuItem value={null}>&nbsp;</MenuItem>
                                         {projectTripleMapFragments.map((x) => (
-                                            <MenuItem key={x.id} value={x.id}>{x.uri}</MenuItem>
+                                            <MenuItem key={x.id}
+                                                      value={x.id}>{x.uri}</MenuItem>
                                         ))}
                                     </TextField>
                                 </FormControl>
@@ -499,8 +527,10 @@ export const EditForm = (props) => {
                 <Card sx={{mt: 3}}>
                     <CardHeader title="Mapping Packages"/>
                     <CardContent sx={{pt: 0}}>
-                        <Grid container spacing={3}>
-                            <Grid xs={12} md={12}>
+                        <Grid container
+                              spacing={3}>
+                            <Grid xs={12}
+                                  md={12}>
                                 <MappingPackageCheckboxList mappingPackages={formik.values.refers_to_mapping_package_ids}/>
                             </Grid>
                         </Grid>
@@ -509,8 +539,10 @@ export const EditForm = (props) => {
                 <Card sx={{mt: 3}}>
                     <CardHeader title="SPARQL Assertions"/>
                     <CardContent sx={{pt: 0}}>
-                        <Grid container spacing={3}>
-                            <Grid xs={12} md={12}>
+                        <Grid container
+                              spacing={3}>
+                            <Grid xs={12}
+                                  md={12}>
                                 <ResourceListSelector
                                     valuesApi={sparqlTestFileResourcesApi}
                                     listValues={formik.values.sparql_assertions}
@@ -540,13 +572,18 @@ export const EditForm = (props) => {
                         {showMappingNotes && <>
                             {formik.values.mapping_notes.map(
                                 (mapping_note, idx) => <RuleComment
+                                    key={idx}
                                     formik={formik}
-                                    fieldName="mapping_notes" idx={idx} handleDelete={handleDeleteComment}
+                                    fieldName="mapping_notes"
+                                    idx={idx}
+                                    handleDelete={handleDeleteComment}
                                 />
                             )}
                         </>}
                         <Divider sx={{py: 1}}/>
-                        <Grid xs={12} md={12} sx={{mt: 1}}>
+                        <Grid xs={12}
+                              md={12}
+                              sx={{mt: 1}}>
                             <Stack
                                 component={RadioGroup}
                                 defaultValue={COMMENT_PRIORITY.NORMAL}
@@ -645,13 +682,18 @@ export const EditForm = (props) => {
                         {showEditorialNotes && <>
                             {formik.values.editorial_notes.map(
                                 (editorial_note, idx) => <RuleComment
+                                    key={idx}
+                                    idx={idx}
                                     formik={formik}
-                                    fieldName="editorial_notes" idx={idx} handleDelete={handleDeleteComment}
+                                    fieldName="editorial_notes"
+                                    handleDelete={handleDeleteComment}
                                 />
                             )}
                         </>}
                         <Divider sx={{py: 1}}/>
-                        <Grid xs={12} md={12} sx={{mt: 1}}>
+                        <Grid xs={12}
+                              md={12}
+                              sx={{mt: 1}}>
                             <Stack
                                 component={RadioGroup}
                                 defaultValue={COMMENT_PRIORITY.NORMAL}
@@ -750,13 +792,18 @@ export const EditForm = (props) => {
                         {showFeedbackNotes && <>
                             {formik.values.feedback_notes.map(
                                 (feedback_note, idx) => <RuleComment
+                                    key={idx}
+                                    idx={idx}
                                     formik={formik}
-                                    fieldName="feedback_notes" idx={idx} handleDelete={handleDeleteComment}
+                                    fieldName="feedback_notes"
+                                    handleDelete={handleDeleteComment}
                                 />
                             )}
                         </>}
                         <Divider sx={{py: 1}}/>
-                        <Grid xs={12} md={12} sx={{mt: 1}}>
+                        <Grid xs={12}
+                              md={12}
+                              sx={{mt: 1}}>
                             <Stack
                                 component={RadioGroup}
                                 defaultValue={COMMENT_PRIORITY.NORMAL}
@@ -829,7 +876,7 @@ export const EditForm = (props) => {
                                 fullWidth
                                 label="Add new Feedback Note ..."
                                 helperText="... private"
-                                value={formik.values.feedback_note && formik.values.feedback_note.comment || ''}
+                                value={(formik.values.feedback_note && formik.values.feedback_note.comment) ?? ''}
                                 onBlur={formik.handleBlur}
                                 onChange={formik.handleChange}
                             />

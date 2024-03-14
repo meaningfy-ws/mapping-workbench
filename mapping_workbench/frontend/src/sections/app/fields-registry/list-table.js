@@ -14,18 +14,17 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-
-import {Scrollbar} from 'src/components/scrollbar';
-import {ListItemActions} from 'src/components/app/list/list-item-actions';
-
-import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import Tooltip from "@mui/material/Tooltip";
-import Grid from "@mui/material/Grid";
-import {PropertyList} from "../../../components/property-list";
-import {PropertyListItem} from "../../../components/property-list-item";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import {paths} from "../../../paths";
+import Tooltip from "@mui/material/Tooltip";
+import Grid from "@mui/material/Grid";
+
+import {paths} from "src/paths";
+import {Scrollbar} from 'src/components/scrollbar';
+import {ListItemActions} from 'src/components/app/list/list-item-actions';
+import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
+import {PropertyList} from "../../../components/property-list";
+import {PropertyListItem} from "../../../components/property-list-item";
 
 
 export const ListTable = (props) => {
@@ -191,6 +190,7 @@ export const ListTable = (props) => {
                                                 {item.versions.sort().map((version) => {
                                                     return (
                                                         <ListItem
+                                                            key={version}
                                                             sx={{
                                                                 padding: 0,
                                                                 margin: 0

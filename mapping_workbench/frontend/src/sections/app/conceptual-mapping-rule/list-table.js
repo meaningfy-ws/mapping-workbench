@@ -46,13 +46,13 @@ import {PropertyListItem} from 'src/components/property-list-item';
 import {Scrollbar} from 'src/components/scrollbar';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import {MappingPackageCheckboxList} from "../mapping-package/components/mapping-package-checkbox-list";
 
 import {useDialog} from "../../../hooks/use-dialog";
-import {COMMENT_PRIORITY, conceptualMappingRulesApi} from "../../../api/conceptual-mapping-rules";
 import {mappingPackagesApi} from "../../../api/mapping-packages";
-import {genericTripleMapFragmentsApi} from "../../../api/triple-map-fragments/generic";
 import {FormCodeTextArea} from "../../../components/app/form/code-text-area";
+import {genericTripleMapFragmentsApi} from "../../../api/triple-map-fragments/generic";
+import {MappingPackageCheckboxList} from "../mapping-package/components/mapping-package-checkbox-list";
+import {COMMENT_PRIORITY, conceptualMappingRulesApi} from "../../../api/conceptual-mapping-rules";
 import {ListSelectorSelect as ResourceListSelector} from "../../../components/app/list-selector/select";
 import {sparqlTestFileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
 
@@ -82,7 +82,7 @@ export const ListTableTripleMapFragment = (props) => {
 
     const [ruleTripleMapFragment, setRuleTripleMapFragment] = useState(triple_map_fragment_id);
 
-    let initialValues = {
+    const initialValues = {
         triple_map_uri: (tripleMapFragment && tripleMapFragment.triple_map_uri) || '',
         triple_map_content: (tripleMapFragment && tripleMapFragment.triple_map_content) || '',
         format: (tripleMapFragment && tripleMapFragment.format) || genericTripleMapFragmentsApi.FILE_RESOURCE_DEFAULT_FORMAT || '',
@@ -90,7 +90,7 @@ export const ListTableTripleMapFragment = (props) => {
 
     const formik = useFormik({
         enableReinitialize: true,
-        initialValues: initialValues,
+        initialValues,
         validationSchema: Yup.object({
             triple_map_uri: Yup
                 .string()
@@ -110,21 +110,21 @@ export const ListTableTripleMapFragment = (props) => {
 
     const [updateContent, setUpdateContent] = useState(false);
 
-    const handleTripleMapFragmentDialogOpen = useCallback(async () => {
+    const handleTripleMapFragmentDialogOpen = async () => {
         setUpdateContent(false);
         const tripleMapFragmentData = ruleTripleMapFragment ?
             await genericTripleMapFragmentsApi.getItem(ruleTripleMapFragment) : null;
         setTripleMapFragment(tripleMapFragmentData || {});
         tripleMapFragmentDialog.handleOpen();
-    }, [tripleMapFragmentDialog, ruleTripleMapFragment]);
+    }
 
-    const handleTripleMapFragmentDialogClose = useCallback(async () => {
+    const handleTripleMapFragmentDialogClose = async () => {
         tripleMapFragmentDialog.handleClose();
         setUpdateContent(false);
         setTripleMapFragment({});
-    }, [tripleMapFragmentDialog]);
+    }
 
-    const handleTripleMapFragmentUpdate = useCallback(async () => {
+    const handleTripleMapFragmentUpdate = async () => {
         let values = {}
         const tripleMapFragmentId = tripleMapFragment && tripleMapFragment._id || null;
         values['id'] = item._id;
@@ -143,12 +143,12 @@ export const ListTableTripleMapFragment = (props) => {
             toast.success(genericTripleMapFragmentsApi.SECTION_ITEM_TITLE + ' updated');
         }
         handleTripleMapFragmentDialogClose();
-    }, [tripleMapFragment, updateContent, handleTripleMapFragmentDialogClose, formik]);
+    }
 
-    const handleTripleMapFragmentSelect = useCallback(async (e) => {
+    const handleTripleMapFragmentSelect = async (e) => {
         setUpdateContent(false);
         await setTripleMapFragment(await genericTripleMapFragmentsApi.getItem(e.target.value));
-    }, [formik, tripleMapFragment]);
+    }
 
     const ruleTripleMapFragments = projectTripleMapFragments.filter(x => ruleTripleMapFragment === x.id);
     return (<>
@@ -199,7 +199,7 @@ export const ListTableTripleMapFragment = (props) => {
                     <Typography variant="h6">
                         Mapping Rule Triple Map Fragment
                     </Typography>
-                    <Box container
+                    <Box
                          spacing={3}>
                         <FormControl sx={{my: 2, width: '100%'}}>
                             <TextField
@@ -207,7 +207,7 @@ export const ListTableTripleMapFragment = (props) => {
                                 label={genericTripleMapFragmentsApi.SECTION_ITEM_TITLE}
                                 onChange={handleTripleMapFragmentSelect}
                                 select
-                                value={tripleMapFragment && tripleMapFragment._id}
+                                value={tripleMapFragment?._id ?? ""}
                             >
                                 <MenuItem value={null}>&nbsp;</MenuItem>
                                 {projectTripleMapFragments.map((x) => (
@@ -217,7 +217,7 @@ export const ListTableTripleMapFragment = (props) => {
                             </TextField>
                         </FormControl>
                     </Box>
-                    {tripleMapFragment && tripleMapFragment._id && (
+                    {tripleMapFragment?._id && (
                         <>
                             <Box>
                                 <Grid xs={12}
@@ -394,7 +394,7 @@ export const ListTableMappingPackages = (props) => {
                 <Typography variant="h6">
                     Mapping Rule Packages
                 </Typography>
-                <Box container
+                <Box
                      spacing={3}>
                     <MappingPackageCheckboxList
                         mappingPackages={tempMappingPackages}
@@ -510,7 +510,7 @@ export const ListTableSPARQLAssertions = (props) => {
                     <Typography variant="h6">
                         SPARQL Assertions
                     </Typography>
-                    <Box container
+                    <Box
                          spacing={3}>
                         <ResourceListSelector
                             valuesApi={sparqlTestFileResourcesApi}
@@ -600,8 +600,8 @@ export const ListTableRow = (props) => {
         if (!termsValidity) {
             return validityInfo;
         }
-        for (let termValidity of termsValidity) {
-            let color = termValidity.is_valid ? 'green' : 'red'
+        for (const termValidity of termsValidity) {
+            const color = termValidity.is_valid ? 'green' : 'red'
             validityInfo = validityInfo.replace(
                 new RegExp(termValidity.term, 'g'),
                 `<b style="color: ${color}">${termValidity.term}</b>`
@@ -914,19 +914,15 @@ export const ListTable = (props) => {
     const [currentItem, setCurrentItem] = useState(null);
     const [hoveredItem, setHoveredItem] = useState(null);
 
-    const handleItemToggle = useCallback((itemId) => {
+    const handleItemToggle = itemId => {
         setCurrentItem((prevItemId) => {
-            if (prevItemId === itemId) {
-                return null;
-            }
-
-            return itemId;
+            return prevItemId === itemId ? null : itemId
         });
-    }, []);
+    }
 
-    const handleItemHover = useCallback((itemId) => {
+    const handleItemHover = itemId => {
         setHoveredItem(itemId);
-    }, []);
+    }
 
     // const handleItemClose = useCallback(() => {
     //     setCurrentItem(null);

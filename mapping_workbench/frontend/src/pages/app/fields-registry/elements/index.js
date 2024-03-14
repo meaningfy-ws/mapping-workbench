@@ -1,17 +1,18 @@
 import {useCallback, useEffect, useState} from 'react';
+
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import {paths} from 'src/paths';
+import {Seo} from 'src/components/seo';
+import {Layout as AppLayout} from 'src/layouts/app';
 import {fieldsRegistryApi as sectionApi} from 'src/api/fields-registry';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {RouterLink} from 'src/components/router-link';
-import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
-import {Layout as AppLayout} from 'src/layouts/app';
-import {paths} from 'src/paths';
 import {ListSearch} from "src/sections/app/fields-registry/list-search";
 import {ListTable} from "src/sections/app/fields-registry/list-table";
 import {useMounted} from "src/hooks/use-mounted";

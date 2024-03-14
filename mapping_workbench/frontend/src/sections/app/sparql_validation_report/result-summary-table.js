@@ -12,7 +12,7 @@ import {Scrollbar} from 'src/components/scrollbar';
 import {resultColor, SorterHeader, sortItems} from "./utils";
 
 const ResultSummaryTable = ({items}) => {
-    const[sort,setSort] = useState({column:'',direction:''})
+    const[sort,setSort] = useState({column:"", direction:"desc"})
 
     const handleSort = (column) => {
         setSort(prevState=> ({ column,
