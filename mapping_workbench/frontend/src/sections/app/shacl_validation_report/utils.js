@@ -13,6 +13,7 @@ export const resultColor = (result) => {
     switch (result.toLowerCase()) {
         case "error":
         case "invalid":
+        case "violation":
             return "error"
         case "warning":
             return "warning"

@@ -96,51 +96,34 @@ export const ListTable = (props) => {
                 <Table sx={{minWidth: 1200}}>
                     <TableHead>
                         <TableRow>
-                            <TableCell width="25%">
-                                <SorterHeader fieldName="title"
-                                              title="Form Field"/>
-                            </TableCell>
                             <TableCell>
                                  <SorterHeader fieldName="test_suite"
                                                title="Test Suite"/>
                             </TableCell>
+                            <TableCell width="25%">
+                                <SorterHeader fieldName="conforms"
+                                              title="Conforms"/>
+                            </TableCell>
+
                             <TableCell>
-                                 <SorterHeader fieldName="query"
-                                               title="Query content"/>
+                                 <SorterHeader fieldName="result_path"
+                                               title="Result Path"/>
                             </TableCell>
                             <TableCell align="center">
-                                <SorterHeader fieldName="validCount"
-                                              title={<ResultChip label="Valid"
+                                <SorterHeader fieldName="infoCount"
+                                              title={<ResultChip label="Info"
                                                                  clickable/>}
                                               desc/>
                             </TableCell>
                             <TableCell align="center">
-                                <SorterHeader fieldName="unverifiableCount"
-                                              title={<ResultChip label="Unverifiable"
+                                <SorterHeader fieldName="warningCount"
+                                              title={<ResultChip label="Warning"
                                                                  clickable/>}
                                               desc/>
                             </TableCell>
                             <TableCell align="center">
-                                 <SorterHeader fieldName="warningCount"
-                                               title={<ResultChip label="Warning"
-                                                                  clickable/>}
-                                               desc/>
-                            </TableCell>
-                             <TableCell align="center">
-                                 <SorterHeader fieldName="invalidCount"
-                                               title={<ResultChip label="Invalid"
-                                                                clickable/>}
-                                               desc/>
-                            </TableCell>
-                             <TableCell align="center">
-                                 <SorterHeader fieldName="errorCount"
-                                               title={<ResultChip label="Error"
-                                                                  clickable/>}
-                                               desc/>
-                            </TableCell>
-                             <TableCell align="center">
-                                 <SorterHeader fieldName="unknownCount"
-                                               title={<ResultChip label="Unknown"
+                                 <SorterHeader fieldName="violationCount"
+                                               title={<ResultChip label="Violation"
                                                                   clickable/>}
                                                desc/>
                             </TableCell>
@@ -150,13 +133,11 @@ export const ListTable = (props) => {
                         {items?.map((item, key) => {
                             return (
                                 <TableRow key={key}>
-                                    <TableCell width="25%">
-                                        <Typography variant="subtitle3">
-                                            {item.title}
-                                        </Typography>
-                                    </TableCell>
                                     <TableCell>
                                         {item.test_suite}
+                                    </TableCell>
+                                    <TableCell>
+                                            {0}
                                     </TableCell>
                                     <TableCell>
                                         {item.query}
@@ -177,24 +158,6 @@ export const ListTable = (props) => {
                                         <ResultCell
                                             title={item.title}
                                             result={item.result.warning}
-                                            onClick={handleOpenDetails}/>
-                                    </TableCell>
-                                    <TableCell>
-                                        <ResultCell
-                                            title={item.title}
-                                            result={item.result.invalid}
-                                            onClick={handleOpenDetails}/>
-                                    </TableCell>
-                                    <TableCell>
-                                        <ResultCell
-                                            title={item.title}
-                                            result={item.result.error}
-                                            onClick={handleOpenDetails}/>
-                                    </TableCell>
-                                    <TableCell>
-                                        <ResultCell
-                                            title={item.title}
-                                            result={item.result.unknown}
                                             onClick={handleOpenDetails}/>
                                     </TableCell>
                                 </TableRow>

@@ -8,8 +8,8 @@ import Typography from "@mui/material/Typography";
 
 import ItemSearchInput from "../file-manager/item-search-input";
 import {ListTableFile} from "./list-table-file";
-import {QueryResultTable} from "./query-result-table";
 import {ResultFilter} from "./utils";
+import {ResultTable} from "./result-table";
 
 
 const useItemsSearch = (items) => {
@@ -167,8 +167,9 @@ const ShaclFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier }
             }
         </> :
         <>
-            <QueryResultTable
-                    items={validationReport}
+            <ResultTable
+                    items={[]}
+                    sectionApi={sectionApi}
                 />
             <Typography m={2}
                         variant="h4">
