@@ -2,23 +2,24 @@ import PropTypes from 'prop-types';
 import toast from 'react-hot-toast';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
+
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Grid from '@mui/material/Unstable_Grid2';
 import Stack from '@mui/material/Stack';
+import MenuItem from "@mui/material/MenuItem";
+import TextField from "@mui/material/TextField";
 
 import {RouterLink} from 'src/components/router-link';
 import {paths} from 'src/paths';
 import {useRouter} from 'src/hooks/use-router';
-import {FormTextField} from "../../../components/app/form/text-field";
+
 import {sessionApi} from "../../../api/session";
 import {MappingPackageFormSelect} from "../mapping-package/components/mapping-package-form-select";
+import {FormTextField} from "../../../components/app/form/text-field";
 import {FormCodeTextArea} from "../../../components/app/form/code-text-area";
-import MenuItem from "@mui/material/MenuItem";
-import TextField from "@mui/material/TextField";
-import * as React from "react";
 
 
 export const EditForm = (props) => {
@@ -27,16 +28,16 @@ export const EditForm = (props) => {
     const sectionApi = itemctx.api;
     const item = itemctx.data;
 
-    let initialValues = {
-        identifier: item.identifier || '',
-        triple_map_uri: item.triple_map_uri || '',
-        triple_map_content: item.triple_map_content || '',
-        format: item.format || sectionApi.FILE_RESOURCE_DEFAULT_FORMAT || '',
-        mapping_package_id: item.mapping_package_id || ''
+    const initialValues = {
+        identifier: item.identifier ?? '',
+        triple_map_uri: item.triple_map_uri ?? '',
+        triple_map_content: item.triple_map_content ?? '',
+        format: item.format ?? sectionApi.FILE_RESOURCE_DEFAULT_FORMAT ?? '',
+        mapping_package_id: item.mapping_package_id ?? ''
     };
 
     const formik = useFormik({
-        initialValues: initialValues,
+        initialValues,
         validationSchema: Yup.object({
             triple_map_uri: Yup
                 .string()
@@ -45,6 +46,7 @@ export const EditForm = (props) => {
             triple_map_content: Yup.string(),
             mapping_package_id: Yup.string().max(255).required('Package is required')
         }),
+
         onSubmit: async (values, helpers) => {
             try {
                 let response;
@@ -60,10 +62,8 @@ export const EditForm = (props) => {
                 toast.success(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "created" : "updated"));
                 if (response) {
                     if (itemctx.isNew) {
-                        console.log(response);
                         router.push({
-                            pathname: paths.app[sectionApi.section].edit,
-                            query: {id: response._id}
+                            pathname: paths.app[sectionApi.section].index,
                         });
                     } else if (itemctx.isStateable) {
                         itemctx.setState(response);

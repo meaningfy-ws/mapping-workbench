@@ -1,6 +1,7 @@
 import {Fragment, useCallback, useEffect, useState} from 'react';
-import PropTypes from 'prop-types';
 import {toast} from 'react-hot-toast';
+import PropTypes from 'prop-types';
+
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
 import CardContent from '@mui/material/CardContent';
@@ -15,22 +16,22 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import Typography from '@mui/material/Typography';
-import {useMounted} from 'src/hooks/use-mounted';
-
-import {Scrollbar} from 'src/components/scrollbar';
-import {useRouter} from "src/hooks/use-router";
-
-import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import Tooltip from "@mui/material/Tooltip";
-import {ListFileCollectionActions} from "src/components/app/list/list-file-collection-actions";
-import {PropertyListItem} from 'src/components/property-list-item';
-import {PropertyList} from "../../../components/property-list";
-import * as React from "react";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
-import {paths} from "../../../paths";
 import {Box} from "@mui/system";
+import Typography from '@mui/material/Typography';
+
+import {useMounted} from 'src/hooks/use-mounted';
+import {Scrollbar} from 'src/components/scrollbar';
+import {useRouter} from "src/hooks/use-router";
+import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
+import {ListFileCollectionActions} from "src/components/app/list/list-file-collection-actions";
+import {PropertyListItem} from 'src/components/property-list-item';
+
+import {paths} from "../../../paths";
+import {PropertyList} from "../../../components/property-list";
+
 
 
 export const ListTableRow = (props) => {
@@ -301,12 +302,17 @@ export const FileCollectionListTable = (props) => {
                             const item_id = item._id;
                             const isCurrent = item_id === currentItem;
 
-                            return (<ListTableRow
-                                item_id={item_id} item={item} isCurrent={isCurrent}
-                                handleItemToggle={handleItemToggle}
-                                sectionApi={sectionApi}
-                                router={router}
-                            />)
+                            return (
+                                <ListTableRow
+                                    key={item_id}
+                                    item={item}
+                                    item_id={item_id}
+                                    isCurrent={isCurrent}
+                                    handleItemToggle={handleItemToggle}
+                                    sectionApi={sectionApi}
+                                    router={router}
+                                />
+                            )
                         })}
                     </TableBody>
                 </Table>

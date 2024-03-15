@@ -1,17 +1,15 @@
 import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {ontologyNamespacesApi as sectionApi} from 'src/api/ontology-namespaces';
-import {RouterLink} from 'src/components/router-link';
+import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
+import {RouterLink} from 'src/components/router-link';
+import {ontologyNamespacesApi as sectionApi} from 'src/api/ontology-namespaces';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
-import {paths} from 'src/paths';
 import {EditForm} from 'src/sections/app/ontology-namespace/edit-form';
 import {ForItemCreateForm} from "src/contexts/app/section/for-item-form";
 

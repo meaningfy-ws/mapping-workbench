@@ -1,14 +1,12 @@
 import {useEffect, useState} from "react";
 import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
 
-import Skeleton from "@mui/material/Skeleton";
-import Stack from "@mui/material/Stack";
-import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
 
-import ItemSearchInput from "../file-manager/item-search-input";
+import {TableLoadWrapper} from "./utils";
 import {ListTable} from "./list-table";
 import ResultSummaryTable from "./result-summary-table";
+import ItemSearchInput from "../file-manager/item-search-input";
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
@@ -154,28 +152,24 @@ const SparqlTestDatasetReport = ({ sid, suiteId }) => {
 
     const itemsSearch = useItemsSearch(validationReport);
 
-    return dataLoad ?
+    return (
         <>
-            <Skeleton width="20%"
-                      height={80} />
-            {
-                new Array(5).fill("").map((e, i) =>
-                <Skeleton key={i}
-                          height={50}/>)
-            }
-        </> :
-        <>
-            <ResultSummaryTable items={validationReport}/>
+            <Typography m={2}
+                            variant="h4">
+                Results Summary
+            </Typography>
+            <TableLoadWrapper load={dataLoad}
+                              lines={6}
+                              data={validationReport}>
+                <ResultSummaryTable items={validationReport}/>
+            </TableLoadWrapper>
             <Typography m={2}
                         variant="h4">
                 Assertions
             </Typography>
-            {!validationReport?.length ?
-                <Stack justifyContent="center"
-                       direction="row">
-                    <Alert severity="info">No Data !</Alert>
-                </Stack> :
-                <>
+            <TableLoadWrapper load={dataLoad}
+                              lines={6}
+                              data={validationReport}>
                     <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
                     <ListTable
                             items={itemsSearch.pagedItems}
@@ -188,8 +182,7 @@ const SparqlTestDatasetReport = ({ sid, suiteId }) => {
                             sort={itemsSearch.state.sort}
                             sectionApi={sectionApi}
                     />
-                </>
-            }
-        </>
+            </TableLoadWrapper>
+        </>)
 }
 export default SparqlTestDatasetReport

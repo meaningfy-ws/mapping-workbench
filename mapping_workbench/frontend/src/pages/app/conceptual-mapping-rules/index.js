@@ -1,4 +1,6 @@
 import {useCallback, useEffect, useState} from 'react';
+import {useTranslation} from "react-i18next";
+
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
 import RefreshIcon from '@untitled-ui/icons-react/build/esm/Repeat02';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
@@ -9,18 +11,17 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {RouterLink} from 'src/components/router-link';
+import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
+import {RouterLink} from 'src/components/router-link';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
-import {paths} from 'src/paths';
+import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
+import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
+import {tokens} from "/src/locales/tokens";
 import {ListSearch} from "../../../sections/app/conceptual-mapping-rule/list-search";
 import {ListTable} from "../../../sections/app/conceptual-mapping-rule/list-table";
 import {useMounted} from "../../../hooks/use-mounted";
-import {useTranslation} from "react-i18next";
-import {tokens} from "/src/locales/tokens";
 
 const useItemsSearch = () => {
     const [state, setState] = useState({

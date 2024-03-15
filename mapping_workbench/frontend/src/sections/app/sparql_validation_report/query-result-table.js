@@ -5,14 +5,13 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
 
 import {Scrollbar} from 'src/components/scrollbar';
 import {resultColor, SorterHeader, sortItems} from "./utils";
 
 export const QueryResultTable = ({items}) => {
-    const[sort,setSort] = useState({column:'',direction:''})
+    const[sort,setSort] = useState({column:"", direction: "desc"})
 
     const handleSort = (column) => {
         setSort(prevState=> ({ column,
@@ -32,59 +31,53 @@ export const QueryResultTable = ({items}) => {
     const sortedItems = sortItems(itemsDisplay, sort)
 
     return (
-        <>
-            <Typography m={2}
-                        variant="h4">
-                    Results Summary
-            </Typography>
-            <Scrollbar>
-                <Table sx={{minWidth: 1200}}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell >
-                                <SorterHeader title="Result"
-                                              fieldName="itemName"
-                                              sort={sort}
-                                              onSort={handleSort}
-                                />
-                            </TableCell>
-                            <TableCell>
-                                <SorterHeader title="Count"
-                                              fieldName="itemCount"
-                                              sort={sort}
-                                              onSort={handleSort}
-                                />
-                            </TableCell>
-                            <TableCell>
-                                <SorterHeader title="Ratio(%)"
-                                              fieldName="itemPercent"
-                                              sort={sort}
-                                              onSort={handleSort}
-                                />
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {sortedItems?.map((item, key) => {
-                            return (
-                                <TableRow key={key}>
-                                    <TableCell>
-                                        <Chip label={item.itemName}
-                                              color={resultColor(item.itemName)}/>
-                                    </TableCell>
-                                    <TableCell>
-                                        {item.itemCount}
-                                    </TableCell>
-                                    <TableCell>
-                                        {`${item.itemPercent.toFixed(2)}%`}
-                                    </TableCell>
-                                </TableRow>
+        <Scrollbar>
+            <Table sx={{minWidth: 1200}}>
+                <TableHead>
+                    <TableRow>
+                        <TableCell >
+                            <SorterHeader title="Result"
+                                          fieldName="itemName"
+                                          sort={sort}
+                                          onSort={handleSort}
+                            />
+                        </TableCell>
+                        <TableCell>
+                            <SorterHeader title="Count"
+                                          fieldName="itemCount"
+                                          sort={sort}
+                                          onSort={handleSort}
+                            />
+                        </TableCell>
+                        <TableCell>
+                            <SorterHeader title="Ratio(%)"
+                                          fieldName="itemPercent"
+                                          sort={sort}
+                                          onSort={handleSort}
+                            />
+                        </TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {sortedItems?.map((item, key) => {
+                        return (
+                            <TableRow key={key}>
+                                <TableCell>
+                                    <Chip label={item.itemName}
+                                          color={resultColor(item.itemName)}/>
+                                </TableCell>
+                                <TableCell>
+                                    {item.itemCount}
+                                </TableCell>
+                                <TableCell>
+                                    {`${item.itemPercent.toFixed(2)}%`}
+                                </TableCell>
+                            </TableRow>
 
-                            );
-                        })}
-                    </TableBody>
-                </Table>
-            </Scrollbar>
-        </>
+                        );
+                    })}
+                </TableBody>
+            </Table>
+        </Scrollbar>
     );
 };

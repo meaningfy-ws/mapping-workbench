@@ -1,16 +1,12 @@
 import {useEffect, useState} from "react";
-import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
 
-import Skeleton from "@mui/material/Skeleton";
-import Stack from "@mui/material/Stack";
-import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
 
-import ItemSearchInput from "../file-manager/item-search-input";
+import {CoverageFilter, TableLoadWrapper} from "./utils";
 import {ListTable} from "./list-table";
 import CoverageReport from "./coverage_report";
-import {CoverageFilter} from "./utils";
-
+import ItemSearchInput from "../file-manager/item-search-input";
+import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
@@ -142,43 +138,40 @@ const XpathValidationReportSuite = ({  sid, suiteId, files, mappingSuiteIdentifi
         itemsSearch.handleFiltersChange({is_covered: e.target.value})
     }
 
-    return dataLoad ?
+    return (
         <>
-            <Skeleton width="20%"
-                      height={80} />
-            {
-                new Array(5).fill("").map((e, i) =>
-                <Skeleton key={i}
-                          height={50}/>)
-            }
-        </> :
-        <>
-            <CoverageReport validationReport={validationReport}
-                            mappingSuiteIdentifier={mappingSuiteIdentifier}/>
-            <Typography m={2}
-                        variant="h4">
-                Assertions
+             <Typography m={2}
+                         variant="h4">
+                Summary
             </Typography>
-            <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
-            <CoverageFilter onChange={handleCoverageFilterChange}
-                            filterState={itemsSearch.state.filters.is_covered}/>
-            {!validationReport?.length ?
-                <Stack justifyContent="center"
-                       direction="row">
-                    <Alert severity="info">No Data !</Alert>
-                </Stack> :
-                <ListTable
-                        items={itemsSearch.pagedItems}
-                        count={itemsSearch.count}
-                        onPageChange={itemsSearch.handlePageChange}
-                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        page={itemsSearch.state.page}
-                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                        onSort={itemsSearch.handleSort}
-                        sort={itemsSearch.state.sort}
-                        sectionApi={sectionApi}
-                />
-            }
+            <TableLoadWrapper load={dataLoad}
+                              data={validationReport}
+                              lines={3}>
+                <CoverageReport validationReport={validationReport}
+                                mappingSuiteIdentifier={mappingSuiteIdentifier}/>
+            </TableLoadWrapper>
+                <Typography m={2}
+                            variant="h4">
+                    Assertions
+                </Typography>
+            <TableLoadWrapper load={dataLoad}
+                              data={validationReport}>
+                <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
+                <CoverageFilter onChange={handleCoverageFilterChange}
+                                filterState={itemsSearch.state.filters.is_covered}/>
+                    <ListTable
+                            items={itemsSearch.pagedItems}
+                            count={itemsSearch.count}
+                            onPageChange={itemsSearch.handlePageChange}
+                            onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                            page={itemsSearch.state.page}
+                            rowsPerPage={itemsSearch.state.rowsPerPage}
+                            onSort={itemsSearch.handleSort}
+                            sort={itemsSearch.state.sort}
+                            sectionApi={sectionApi}
+                    />
+            </TableLoadWrapper>
         </>
+    )
 }
 export default  XpathValidationReportSuite

@@ -30,14 +30,14 @@ export const EditForm = (props) => {
     const sectionApi = itemctx.api;
     const item = itemctx.data;
 
-    let initialValues = {
+    const initialValues = {
         triple_map_uri: item.triple_map_uri || '',
         triple_map_content: item.triple_map_content || '',
         format: item.format || sectionApi.FILE_RESOURCE_DEFAULT_FORMAT || '',
     };
 
     const formik = useFormik({
-        initialValues: initialValues,
+        initialValues,
         validationSchema: Yup.object({
             triple_map_uri: Yup
                 .string()
@@ -65,7 +65,7 @@ export const EditForm = (props) => {
                 if (response) {
                     if (itemctx.isNew) {
                         router.push({
-                            pathname: paths.app[sectionApi.section].edit,
+                            pathname: paths.app[sectionApi.section].index,
                             query: {id: response._id}
                         });
                     } else if (itemctx.isStateable) {

@@ -13,10 +13,10 @@ import Tooltip from "@mui/material/Tooltip";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 
+import {paths} from "src/paths";
 import {Scrollbar} from 'src/components/scrollbar';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import {paths} from "../../../../paths";
 import exportPackage from "../../../../utils/export-mapping-package";
 
 export const ListTable = (props) => {

@@ -27,8 +27,8 @@ const useItemsSearch = () => {
         filters: {
             query: undefined
         },
-        page: 0,
-        rowsPerPage: 9,
+        page: sectionApi.DEFAULT_PAGE,
+        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE,
         sortBy: 'createdAt',
         sortDir: 'desc'
     });

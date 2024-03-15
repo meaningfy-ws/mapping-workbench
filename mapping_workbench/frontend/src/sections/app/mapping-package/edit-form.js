@@ -27,7 +27,7 @@ export const EditForm = (props) => {
     const sectionApi = itemctx.api;
     const item = itemctx.data;
 
-    let initialValues = {
+    const initialValues = {
         title: item.title || '',
         description: item.description || '',
         identifier: item.identifier || '',
@@ -42,7 +42,7 @@ export const EditForm = (props) => {
     };
 
     const formik = useFormik({
-        initialValues: initialValues,
+        initialValues,
         validationSchema: Yup.object({
             title: Yup
                 .string()
@@ -73,8 +73,7 @@ export const EditForm = (props) => {
                 if (response) {
                     if (itemctx.isNew) {
                         router.push({
-                            pathname: paths.app[sectionApi.section].edit,
-                            query: {id: response._id}
+                            pathname: paths.app[sectionApi.section].index,
                         });
                     } else if (itemctx.isStateable) {
                         itemctx.setState(response);

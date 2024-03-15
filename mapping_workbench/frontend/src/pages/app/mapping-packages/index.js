@@ -1,4 +1,5 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
+
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
 import {Upload04 as ImportIcon} from '@untitled-ui/icons-react/build/esm';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
@@ -9,17 +10,15 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {mappingPackagesApi as sectionApi} from 'src/api/mapping-packages';
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {RouterLink} from 'src/components/router-link';
-import {Seo} from 'src/components/seo';
-import {usePageView} from 'src/hooks/use-page-view';
-import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
+import {Seo} from 'src/components/seo';
+import {Layout as AppLayout} from 'src/layouts/app';
+import {mappingPackagesApi as sectionApi} from 'src/api/mapping-packages';
+import {RouterLink} from 'src/components/router-link';
+import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
+import {PackageImporter} from 'src/sections/app/mapping-package/package-importer';
 import {ListSearch} from "../../../sections/app/mapping-package/list-search";
 import {ListTable} from "../../../sections/app/mapping-package/list-table";
-import {useMounted} from "../../../hooks/use-mounted";
-import {PackageImporter} from 'src/sections/app/mapping-package/package-importer';
 import {useDialog} from "../../../hooks/use-dialog";
 
 const useItemsSearch = () => {
