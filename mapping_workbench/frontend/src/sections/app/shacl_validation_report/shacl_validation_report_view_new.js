@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 import Stack from "@mui/material/Stack";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
@@ -10,6 +10,7 @@ import ShaclPackageStateReport from "./shacl_validation_report_package_state";
 import ShaclTestDatasetReport from "./shacl_validation_report_test_dataset";
 import ShaclFileReport from "./shacl_validation_report_file";
 import CoverageFiles from "./coverage_files";
+import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
 
 const packageState = "package_state";
 const packageStateLabel = "Package State SHACL Coverage";
@@ -18,11 +19,28 @@ const testDatasetLabel = "Test Dataset SHACL Coverage";
 const fileCoverage =  "file_coverage";
 const fileCoverageLabel = "File SHACL Coverage"
 
-const ShaclValidationReportView = ({ sid, reportTree }) => {
+const ShaclValidationReportView = ({ sid }) => {
 
-    const [selectedPackageState, setSelectedPackageState] = useState(reportTree.test_data_suites[0])
-    const [selectedTestDataset, setSelectedTestDataset] = useState(reportTree.test_data_suites[0].test_data_states[0])
-    const [currentTab, setCurrentTab] = useState(packageState)
+    const [reportTree, setReportTree] = useState([])
+    const [selectedPackageState, setSelectedPackageState] = useState([])
+    const [selectedTestDataset, setSelectedTestDataset] = useState([])
+    const [currentTab, setCurrentTab] = useState()
+
+    useEffect(() => {
+        console.log("in effect ShaclValidationReportView")
+        handleValidationReportTreeGet(sid)
+    }, [sid]);
+
+    const handleValidationReportTreeGet = async (state_id) => {
+
+        try {
+            const result = await sectionApi.getShaclReportTree(state_id)
+            console.log(result.results)
+            setReportTree(result.results);
+        } catch (err) {
+            console.error(err);
+        }
+    }
 
     const handleSetPackageState = (file) => {
         setSelectedPackageState(file)

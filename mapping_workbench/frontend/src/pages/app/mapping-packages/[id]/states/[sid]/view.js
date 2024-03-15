@@ -80,7 +80,7 @@ const Page = () => {
         }
     }
 
-      const handleValidationReportTreeGet = async (state_id) => {
+    const handleValidationReportTreeGet = async (state_id) => {
           console.log('here')
         try {
             const result = await sectionApi.getValidationReportTree(state_id)
