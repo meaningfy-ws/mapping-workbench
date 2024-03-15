@@ -1,16 +1,12 @@
 import {useEffect, useState} from "react";
-import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
 
-import Skeleton from "@mui/material/Skeleton";
-import Stack from "@mui/material/Stack";
-import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
 
-import ItemSearchInput from "../file-manager/item-search-input";
+import {TableLoadWrapper} from "./utils";
 import {ListTable} from "./list-table";
-import XpathRulesPaths from "./xpath_rules_paths";
 import CoverageReport from "./coverage_report";
-
+import ItemSearchInput from "../file-manager/item-search-input";
+import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
@@ -79,7 +75,7 @@ const useItemsSearch = (items) => {
     }
 
     const handleFiltersChange = (filters) => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             filters,
             page: 0
@@ -87,7 +83,7 @@ const useItemsSearch = (items) => {
     }
 
     const handlePageChange = (event, page) => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             page
         }));
@@ -98,7 +94,7 @@ const useItemsSearch = (items) => {
                 direction: prevState.sort.column === column && prevState.sort.direction === "asc" ? "desc" : "asc"}}))
     }
     const handleRowsPerPageChange = (event) => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             rowsPerPage: parseInt(event.target.value, 10)
         }));
@@ -137,47 +133,38 @@ const XpathValidationReportTest= ({  sid, suiteId, testId, mappingSuiteIdentifie
 
     const itemsSearch = useItemsSearch(validationReport);
 
-    const { coveredReports, notCoveredReports } = validationReport.reduce((acc, report) => {
-        acc[report.is_covered ? "coveredReports" : "notCoveredReports"].push({ eforms_sdk_element_xpath: report.eforms_sdk_element_xpath })
-        return acc
-    }, {coveredReports:[], notCoveredReports:[]})
-
-    return dataLoad ?
+    return (
         <>
-            <Skeleton width="20%"
-                      height={80} />
-            {
-                new Array(5).fill("").map((e, i) =>
-                <Skeleton key={i}
-                          height={50}/>)
-            }
-        </> :
-        <>
-            {!validationReport?.length ?
-                <Stack justifyContent="center"
-                       direction="row">
-                    <Alert severity="info">No Data !</Alert>
-                </Stack> :
-                <>
+            <Typography m={2}
+                        variant="h4">
+                Summary
+            </Typography>
+            <TableLoadWrapper load={dataLoad}
+                              data={validationReport}
+                              lines={3}>
                     <CoverageReport validationReport={validationReport}
                         mappingSuiteIdentifier={mappingSuiteIdentifier}/>
+            </TableLoadWrapper>
                     <Typography m={2}
                                 variant="h4">
                         Assertions
                     </Typography>
-                    <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
-                    <ListTable
-                            items={itemsSearch.pagedItems}
-                            count={itemsSearch.count}
-                            onPageChange={itemsSearch.handlePageChange}
-                            onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                            page={itemsSearch.state.page}
-                            rowsPerPage={itemsSearch.state.rowsPerPage}
-                            onSort={itemsSearch.handleSort}
-                            sort={itemsSearch.state.sort}
-                            sectionApi={sectionApi}
-                    />
-                </>}
-            </>
+            <TableLoadWrapper load={dataLoad}
+                              data={validationReport}>
+                <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
+                <ListTable
+                        items={itemsSearch.pagedItems}
+                        count={itemsSearch.count}
+                        onPageChange={itemsSearch.handlePageChange}
+                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                        page={itemsSearch.state.page}
+                        rowsPerPage={itemsSearch.state.rowsPerPage}
+                        onSort={itemsSearch.handleSort}
+                        sort={itemsSearch.state.sort}
+                        sectionApi={sectionApi}
+                />
+            </TableLoadWrapper>
+        </>
+    )
 }
 export default  XpathValidationReportTest
