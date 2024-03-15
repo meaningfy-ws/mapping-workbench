@@ -15,7 +15,7 @@ const useItemsSearch = (items) => {
         sort: {
         },
         search: [],
-        searchColumns:["eforms_sdk_element_id","test_data_xpath"],
+        searchColumns:["eforms_sdk_element_id", "test_data_xpath"],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -142,13 +142,13 @@ const XpathValidationReportTest= ({  sid, suiteId, testId, mappingSuiteIdentifie
             <TableLoadWrapper load={dataLoad}
                               data={validationReport}
                               lines={3}>
-                    <CoverageReport validationReport={validationReport}
-                        mappingSuiteIdentifier={mappingSuiteIdentifier}/>
+                <CoverageReport validationReport={validationReport}
+                    mappingSuiteIdentifier={mappingSuiteIdentifier}/>
             </TableLoadWrapper>
-                    <Typography m={2}
-                                variant="h4">
-                        Assertions
-                    </Typography>
+                <Typography m={2}
+                            variant="h4">
+                    Assertions
+                </Typography>
             <TableLoadWrapper load={dataLoad}
                               data={validationReport}>
                 <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>

@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react';
+import dynamic from "next/dynamic";
 
 import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
 import {Upload04 as ExportIcon} from "@untitled-ui/icons-react/build/esm";
@@ -17,21 +18,22 @@ import Button from "@mui/material/Button";
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
+import {Layout as AppLayout} from 'src/layouts/app';
 import {mappingPackageStatesApi as sectionApi} from 'src/api/mapping-packages/states';
 import {mappingPackagesApi as previousSectionApi} from 'src/api/mapping-packages';
-import {RouterLink} from 'src/components/router-link';
-import {Layout as AppLayout} from 'src/layouts/app';
 import {useRouter} from "src/hooks/use-router";
+import {RouterLink} from 'src/components/router-link';
+import {sessionApi} from "../../../../../../api/session";
 import {PropertyList} from "../../../../../../components/property-list";
 import {PropertyListItem} from "../../../../../../components/property-list-item";
 import exportPackage from "../../../../../../utils/export-mapping-package";
-import {sessionApi} from "../../../../../../api/session";
-import ShaclValidationReport from "../../../../../../sections/app/shacl_validation_report/shacl_validation_report_view";
-import SparqlValidationReport
-    from "../../../../../../sections/app/sparql_validation_report/sparql_validation_report_view";
-import XpathValidationReportView
-    from "../../../../../../sections/app/xpath_validation_report/xpath_validation_report_view";
 
+const ShaclValidationReport =
+    dynamic(() => import("../../../../../../sections/app/shacl_validation_report/shacl_validation_report_view"));
+const SparqlValidationReport =
+    dynamic(() => import("../../../../../../sections/app/sparql_validation_report/sparql_validation_report_view"));
+const XpathValidationReportView =
+    dynamic(() => import("../../../../../../sections/app/xpath_validation_report/xpath_validation_report_view"));
 
 const tabs = [
     {label: 'Details', value: 'details'},
@@ -51,7 +53,6 @@ const Page = () => {
     const [validationReportFiles, setValidationReportFiles] = useState([])
     const [validationReportTree, setValidationReportTree] = useState([])
 
-
     useEffect(() => {
         if (id && sid) {
             handleItemsGet(sid);
@@ -59,6 +60,7 @@ const Page = () => {
             handleValidationReportTreeGet(sid)
         }
     }, [id, sid]);
+
     const handleItemsGet = async (sid) => {
         try {
             const response = await sectionApi.getState(sid);
@@ -78,7 +80,7 @@ const Page = () => {
         }
     }
 
-      const handleValidationReportTreeGet = async (state_id) => {
+    const handleValidationReportTreeGet = async (state_id) => {
         try {
             const result = await sectionApi.getValidationReportTree(state_id)
             setValidationReportTree(result);
@@ -90,6 +92,7 @@ const Page = () => {
     const handleTabsChange = (event, value) => {
         setCurrentTab(value)
     }
+
     const handleExport = (item) => {
         return exportPackage(sectionApi, id, setIsExporting, item)
     }
@@ -280,33 +283,33 @@ const Page = () => {
                     </Grid>
                 )}
                 {currentTab === 'shacl' && (
-                        <Card>
-                            <CardContent>
-                                <ShaclValidationReport project_id={sessionApi.getSessionProject()}
-                                                       id={id}
-                                                       sid={sid}
-                                                       files={validationReportFiles}/>
-                            </CardContent>
-                        </Card>
+                    <Card>
+                        <CardContent>
+                            <ShaclValidationReport project_id={sessionApi.getSessionProject()}
+                                                   id={id}
+                                                   sid={sid}
+                                                   files={validationReportFiles}/>
+                        </CardContent>
+                    </Card>
                 )}
                 {currentTab === 'sparql' && (
-                        <Card>
-                            <CardContent>
-                                <SparqlValidationReport project_id={sessionApi.getSessionProject()}
-                                                        filtes={validationReportFiles}
-                                                        sid={sid}
-                                                        reportTree={validationReportTree}/>
-                            </CardContent>
-                        </Card>
+                    <Card>
+                        <CardContent>
+                            <SparqlValidationReport project_id={sessionApi.getSessionProject()}
+                                                    filtes={validationReportFiles}
+                                                    sid={sid}
+                                                    reportTree={validationReportTree}/>
+                        </CardContent>
+                    </Card>
                 )}
                 {currentTab === 'xpath' && (
-                        <Card>
-                            <CardContent>
-                                <XpathValidationReportView
-                                                       sid={sid}
-                                                       reportTree={validationReportTree}/>
-                            </CardContent>
-                        </Card>
+                    <Card>
+                        <CardContent>
+                            <XpathValidationReportView
+                                                   sid={sid}
+                                                   reportTree={validationReportTree}/>
+                        </CardContent>
+                    </Card>
                 )}
             </Stack>
         </>
