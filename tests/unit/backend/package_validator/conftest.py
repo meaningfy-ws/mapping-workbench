@@ -103,6 +103,7 @@ def dummy_xml_test_data_suite(dummy_notice_xml_content) -> TestDataSuite:
         )],
     )
 
+
 @pytest.fixture
 def dummy_mapping_package() -> MappingPackage:
     return MappingPackage(
@@ -118,24 +119,25 @@ def dummy_mapping_package() -> MappingPackage:
         )
     )
 
+
 @pytest.fixture
 def dummy_mapping_package_state() -> MappingPackageState:
     return MappingPackageState(
-        id = "dummy_id",
-        mapping_package_oid = None,
+        id="dummy_id",
+        mapping_package_oid=None,
         title="dummy_mapping_package_title",
         description="dummy_mapping_package_description",
-        identifier = "dummy_identifier",
-        mapping_version = "dummy_mapping_version",
-        epo_version = "dummy_epo_version",
-        eform_subtypes = ["dummy_subtype_1", "dummy_subtype_2"],
-        start_date = "dummy_start_date",
-        end_date = "dummy_end_date",
-        eforms_sdk_versions = [ "dummy_eforms_sdk_version_1", "dummy_eforms_sdk_version_2"],
-        test_data_suites = [],
-        shacl_test_suites = [],
-        sparql_test_suites = [],
-        conceptual_mapping_rules = [],
-        triple_map_fragments = [],
-        resources = []
+        identifier="dummy_identifier",
+        mapping_version="dummy_mapping_version",
+        epo_version="dummy_epo_version",
+        eform_subtypes=["dummy_subtype_1", "dummy_subtype_2"],
+        start_date="dummy_start_date",
+        end_date="dummy_end_date",
+        eforms_sdk_versions=["dummy_eforms_sdk_version_1", "dummy_eforms_sdk_version_2"],
+        test_data_suites=[],
+        shacl_test_suites=[],
+        sparql_test_suites=[],
+        conceptual_mapping_rules=[],
+        triple_map_fragments=[],
+        resources=[]
     )
