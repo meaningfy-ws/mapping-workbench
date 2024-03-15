@@ -177,12 +177,13 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
 
     async def get_shacl_test_suites_states(self) -> List[SHACLTestSuiteState]:
         shacl_test_suites_states = []
-        if self.shacl_test_suites:
-            for shacl_test_suite in self.shacl_test_suites:
-                shacl_test_suite = await shacl_test_suite.fetch()
-                if shacl_test_suite:
-                    shacl_test_suite_state = await shacl_test_suite.get_state()
-                    shacl_test_suites_states.append(shacl_test_suite_state)
+        shacl_test_suites = await SHACLTestSuite.find(
+            Eq(SHACLTestSuite.project, self.project.to_ref())
+        ).to_list()
+        if shacl_test_suites:
+            for shacl_test_suite in shacl_test_suites:
+                shacl_test_suite_state = await shacl_test_suite.get_state()
+                shacl_test_suites_states.append(shacl_test_suite_state)
         return shacl_test_suites_states
 
     async def get_sparql_test_suites_states(

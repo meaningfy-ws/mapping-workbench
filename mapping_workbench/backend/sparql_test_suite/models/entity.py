@@ -46,6 +46,7 @@ class SPARQLTestState(ObjectState):
 
 
 class SPARQLTestSuiteState(ObjectState):
+    oid: Optional[PydanticObjectId] = None
     title: Optional[str] = None
     description: Optional[str] = None
     sparql_test_states: Optional[List[SPARQLTestState]] = []
@@ -67,6 +68,7 @@ class SPARQLTestSuite(FileResourceCollection, StatefulObjectABC):
     async def get_state(self) -> SPARQLTestSuiteState:
         sparql_test_states = await self.get_sparql_test_states()
         return SPARQLTestSuiteState(
+            oid=self.id,
             title=self.title,
             description=self.description,
             sparql_test_states=sparql_test_states
