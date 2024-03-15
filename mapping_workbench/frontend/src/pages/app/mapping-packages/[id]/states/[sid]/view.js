@@ -28,7 +28,7 @@ import {Upload04 as ExportIcon} from "@untitled-ui/icons-react/build/esm";
 
 import exportPackage from "../../../../../../utils/export-mapping-package";
 import {sessionApi} from "../../../../../../api/session";
-import ShaclValidationReport from "../../../../../../sections/app/shacl_validation_report/shacl_validation_report_view";
+import ShaclValidationReport from "../../../../../../sections/app/shacl_validation_report/shacl_validation_report_view_new";
 import SparqlValidationReport
     from "../../../../../../sections/app/sparql_validation_report/sparql_validation_report_view";
 import XpathValidationReportView
@@ -271,7 +271,8 @@ const Page = () => {
                                 <ShaclValidationReport project_id={sessionApi.getSessionProject()}
                                                        id={id}
                                                        sid={sid}
-                                                       files={validationReportFiles}/>
+                                                       files={validationReportFiles}
+                                                       reportTree={validationReportTree}/>
                             </CardContent>
                         </Card>
                 )}
@@ -279,7 +280,6 @@ const Page = () => {
                         <Card>
                             <CardContent>
                                 <SparqlValidationReport project_id={sessionApi.getSessionProject()}
-                                                        filtes={validationReportFiles}
                                                         sid={sid}
                                                         reportTree={validationReportTree}/>
                             </CardContent>
