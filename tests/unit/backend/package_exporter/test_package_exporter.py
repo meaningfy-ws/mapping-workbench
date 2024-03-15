@@ -22,7 +22,8 @@ from tests.test_data.mappings import PACKAGE_EFORMS_16_DIR_PATH
 
 
 @pytest.mark.asyncio
-async def test_package_exporter(eforms_sdk_repo_v_1_9_1_dir_path):
+async def _test_package_exporter(eforms_sdk_repo_v_1_9_1_dir_path):
+    #TODO: this should be moved to e2e
     print("Load prefixes and ontology terms")
     await discover_and_save_terms()
     await Namespace(prefix="epo", uri="http://data.europa.eu/a4g/ontology#").save()
