@@ -1,20 +1,9 @@
-import PropTypes from 'prop-types';
 import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import {ontologyNamespacesApi as sectionApi} from 'src/api/ontology-namespaces';
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
 
 import {PropertyList} from 'src/components/property-list';
 import {PropertyListItem} from 'src/components/property-list-item';
-import Button from "@mui/material/Button";
-import CardActions from "@mui/material/CardActions";
-import {useCallback} from "react";
-import {paths} from "../../../paths";
-import {useRouter} from "../../../hooks/use-router";
-import Switch from "@mui/material/Switch";
-import Stack from "@mui/material/Stack";
-import ListItem from "@mui/material/ListItem";
-import List from "@mui/material/List";
 
 export const BasicDetails = (props) => {
     const {item, ...other} = props;
@@ -75,18 +64,14 @@ export const BasicDetails = (props) => {
                     />
                     <small>
                         <List>
-                            {item.versions.map((version) => {
-                                return (
-                                    <ListItem>{version}</ListItem>
-                                )
-                            })}
+                            {item.versions.map((version, i) =>
+                                <ListItem key={"version" + i}>{version}</ListItem>
+                            )}
                         </List>
                         <List>
-                            {item.descriptions.map((description) => {
-                                return (
-                                    <ListItem>{description}</ListItem>
-                                )
-                            })}
+                            {item.descriptions.map((description, i) =>
+                                <ListItem key={"description" + i}>{description}</ListItem>
+                            )}
                         </List>
                     </small>
                 </PropertyList>

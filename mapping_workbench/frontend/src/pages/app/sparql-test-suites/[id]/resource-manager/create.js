@@ -1,20 +1,18 @@
 import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
+import {paths} from 'src/paths';
+import {Seo} from 'src/components/seo';
+import {useRouter} from 'src/hooks/use-router';
+import {Layout as AppLayout} from 'src/layouts/app';
 import {sparqlTestFileResourcesApi as sectionApi} from 'src/api/sparql-test-suites/file-resources';
 import {RouterLink} from 'src/components/router-link';
-import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
-import {Layout as AppLayout} from 'src/layouts/app';
-import {paths} from 'src/paths';
 import {FileResourceEditForm} from 'src/sections/app/file-manager/file-resource-edit-form';
 import {ForItemCreateForm} from "src/contexts/app/section/for-item-form";
-import {useRouter} from "src/hooks/use-router";
 
 const Page = () => {
     const router = useRouter();

@@ -1,12 +1,13 @@
-import {Button} from '@mui/material';
+import {useState} from "react";
+import {useRouter} from "next/router";
 
-import {usePopover} from 'src/hooks/use-popover';
-import {useCallback, useState} from "react";
+import {Button} from '@mui/material';
+import {Box} from "@mui/system";
+
 import {paths} from 'src/paths';
-import {useRouter} from "../../../hooks/use-router";
+import {usePopover} from 'src/hooks/use-popover';
 import {ACTION} from "../../../api/section";
 import ConfirmDialog from "../dialog/confirm-dialog";
-import {Box} from "@mui/system";
 
 export const ListItemActions = (props) => {
     const router = useRouter();
@@ -14,34 +15,33 @@ export const ListItemActions = (props) => {
     const {itemctx, pathnames} = props;
     const popover = usePopover();
 
-    //console.log("itemctx: ", itemctx);    
-
-    const handleViewAction = useCallback(async () => {
+    const handleViewAction = () => {
         const viewPathname = pathnames?.view ?? paths.app[itemctx.api.section].view;
-
         router.push({
             pathname: viewPathname,
             query: {id: itemctx.id}
         });
+    }
 
-    }, [router, itemctx]);
-
-    const handleEditAction = useCallback(async () => {
+    const handleEditAction = () => {
         router.push({
             pathname: paths.app[itemctx.api.section].edit,
             query: {id: itemctx.id}
         });
 
-    }, [router, itemctx]);
+    }
 
-    const handleDeleteAction = useCallback(async () => {
-        const response = await itemctx.api.deleteItem(itemctx.id);
-
-        router.push({
-            pathname: paths.app[itemctx.api.section].index
-        });
-        window.location.reload();
-    }, [router, itemctx]);
+    const handleDeleteAction = async () => {
+        itemctx.api.deleteItem(itemctx.id)
+            .finally(() =>
+                {
+                    router.push({
+                        pathname: paths.app[itemctx.api.section].index
+                    });
+                    router.reload()
+                }
+        )
+    }
 
     const [confirmOpen, setConfirmOpen] = useState(false);
 

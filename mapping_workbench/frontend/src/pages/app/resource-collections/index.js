@@ -1,4 +1,5 @@
 import {useCallback, useEffect, useState} from 'react';
+
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
@@ -7,14 +8,15 @@ import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
+
+import {paths} from 'src/paths';
+import {Seo} from 'src/components/seo';
+import {Layout as AppLayout} from 'src/layouts/app';
 import {resourceCollectionsApi as sectionApi} from 'src/api/resource-collections';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {RouterLink} from 'src/components/router-link';
-import {Seo} from 'src/components/seo';
 import {useMounted} from 'src/hooks/use-mounted';
 import {usePageView} from 'src/hooks/use-page-view';
-import {Layout as AppLayout} from 'src/layouts/app';
-import {paths} from 'src/paths';
 import {FileCollectionListSearch} from 'src/sections/app/file-manager/file-collection-list-search';
 import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
 
@@ -85,9 +87,7 @@ const useItemsStore = (searchState) => {
 
 
     useEffect(() => {
-            handleItemsGet().then(response => {
-                console.log("RESPONSE: ", response);
-            });
+            handleItemsGet()
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [searchState]);
@@ -117,8 +117,6 @@ const useItemsStoreFiles = (id) => {
                 itemsFCount: response2.count
             });
             //console.log("collections: ", collection);
-            console.log("response2: ", response2);
-
         } catch (err) {
             console.error(err);
         }

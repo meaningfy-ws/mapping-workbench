@@ -1,18 +1,18 @@
 import PropTypes from 'prop-types';
+
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import CardActions from "@mui/material/CardActions";
+
+import {paths} from "../../../paths";
+import {useRouter} from "next/router";
+
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {projectsApi} from 'src/api/projects';
-
 import {PropertyList} from 'src/components/property-list';
 import {PropertyListItem} from 'src/components/property-list-item';
-import Button from "@mui/material/Button";
-import CardActions from "@mui/material/CardActions";
-import {useCallback} from "react";
-import {paths} from "../../../paths";
-import {useRouter} from "../../../hooks/use-router";
-import Stack from "@mui/material/Stack";
-import {RouterLink} from "../../../components/router-link";
 
 export const BasicDetails = (props) => {
     const {
@@ -24,27 +24,23 @@ export const BasicDetails = (props) => {
     const router = useRouter();
     const itemctx = new ForListItemAction(id, projectsApi);
 
-    console.log("props: ", props);
-    console.log("intemctx: ", typeof (itemctx));
 
-
-    const handleEditAction = useCallback(async () => {
+    const handleEditAction = async () => {
         router.push({
-            //pathname: paths.app[item.api.section].edit,
             pathname: paths.app.projects.edit,
             query: {id: id}
         });
 
-    }, [router]);
+    }
 
-    const handleDeleteAction = useCallback(async () => {
-        const response = await itemctx.api.deleteItem(id);
-
-        router.push({
-            pathname: paths.app.projects.index
-        });
-        //window.location.reload();
-    }, [router, itemctx]);
+    const handleDeleteAction = async () => {
+        itemctx.api.deleteItem(id)
+            .then(() => {
+                router.push({
+                    pathname: paths.app.projects.index
+                });
+            })
+    }
 
     return (
         <>

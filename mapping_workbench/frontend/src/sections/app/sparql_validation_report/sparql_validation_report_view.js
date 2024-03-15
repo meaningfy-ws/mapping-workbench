@@ -6,7 +6,7 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 
-import SparqlValidationReport from "./sparql_validation_report_package_state";
+import SparqlPackageStateReport from "./sparql_validation_report_package_state";
 import CoverageFiles from "../xpath_validation_report/coverage_files";
 import SparqlTestDatasetReport from "./sparql_validation_report_test_dataset";
 import SparqlFileReport from "./sparql_validation_report_file";
@@ -61,7 +61,7 @@ const SparqlValidationReportView = ({ sid, reportTree }) => {
                 <>
                     <CoverageFiles files={reportTree.test_data_suites}
                                    onClick={handleSetPackageState}/>
-                    <SparqlValidationReport sid={sid}
+                    <SparqlPackageStateReport sid={sid}
                                     files={reportTree.test_data_suites}/>
                 </>
             }

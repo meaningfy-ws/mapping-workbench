@@ -1,24 +1,21 @@
-import PropTypes from 'prop-types';
 import toast from 'react-hot-toast';
+import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
+
 import Button from '@mui/material/Button';
-import {MenuItem} from '@mui/material';
+import MenuItem from '@mui/material/MenuItem';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Grid from '@mui/material/Unstable_Grid2';
 import Stack from '@mui/material/Stack';
+import TextField from "@mui/material/TextField";
 
-import {RouterLink} from 'src/components/router-link';
 import {paths} from 'src/paths';
 import {useRouter} from 'src/hooks/use-router';
+import {RouterLink} from 'src/components/router-link';
 import {FormTextField} from "../../../components/app/form/text-field";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
-import MenuList from "@mui/material/MenuList";
-import TextField from "@mui/material/TextField";
-import * as React from "react";
 
 
 export const EditForm = (props) => {
@@ -27,9 +24,9 @@ export const EditForm = (props) => {
     const sectionApi = itemctx.api;
     const item = itemctx.data;
 
-    let initialValues = {
-        term: item.term || '',
-        type: item.type || '',
+    const initialValues = {
+        term: item.term ?? '',
+        type: item.type ?? '',
     };
 
     const formik = useFormik({
@@ -57,8 +54,7 @@ export const EditForm = (props) => {
                 if (response) {
                     if (itemctx.isNew) {
                         router.push({
-                            pathname: paths.app[sectionApi.section].edit,
-                            query: {id: response._id}
+                            pathname: paths.app[sectionApi.section].index,
                         });
                     } else if (itemctx.isStateable) {
                         itemctx.setState(response);
@@ -85,10 +81,15 @@ export const EditForm = (props) => {
                         container
                         spacing={3}
                     >
-                        <Grid xs={12} md={12}>
-                            <FormTextField formik={formik} name="term" label="Term" required={true}/>
+                        <Grid xs={12}
+                              md={12}>
+                            <FormTextField formik={formik}
+                                           name="term"
+                                           label="Term"
+                                           required={true}/>
                         </Grid>
-                        <Grid xs={12} md={12}>
+                        <Grid xs={12}
+                              md={12}>
                             <TextField
                                 error={!!(formik.touched.type && formik.errors.type)}
                                 fullWidth
@@ -101,9 +102,11 @@ export const EditForm = (props) => {
                                 select
                                 value={formik.values.type}
                             >
-                                <MenuItem key="none" value="">&nbsp;</MenuItem>
+                                <MenuItem key="none"
+                                          value="">&nbsp;</MenuItem>
                                 {Object.keys(sectionApi.TERM_TYPES).map((key) => (
-                                    <MenuItem key={key} value={key}>
+                                    <MenuItem key={key}
+                                              value={key}>
                                         {sectionApi.TERM_TYPES[key]}
                                     </MenuItem>
                                 ))}

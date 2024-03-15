@@ -1,22 +1,24 @@
-import PropTypes from 'prop-types';
 import toast from 'react-hot-toast';
+import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
+
 import Button from '@mui/material/Button';
-import {MenuItem} from '@mui/material';
+import MenuItem from '@mui/material/MenuItem';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Grid from '@mui/material/Unstable_Grid2';
+import Switch from "@mui/material/Switch";
+import MenuList from "@mui/material/MenuList";
 import Stack from '@mui/material/Stack';
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 import {RouterLink} from 'src/components/router-link';
 import {paths} from 'src/paths';
 import {useRouter} from 'src/hooks/use-router';
+
 import {FormTextField} from "../../../components/app/form/text-field";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
-import MenuList from "@mui/material/MenuList";
 
 
 export const EditForm = (props) => {
@@ -25,14 +27,14 @@ export const EditForm = (props) => {
     const sectionApi = itemctx.api;
     const item = itemctx.data;
 
-    let initialValues = {
-        prefix: item.prefix || '',
-        uri: item.uri || '',
+    const initialValues = {
+        prefix: item.prefix ?? '',
+        uri: item.uri ?? '',
         is_syncable: item.is_syncable !== null ? item.is_syncable : true
     };
 
     const formik = useFormik({
-        initialValues: initialValues,
+        initialValues,
         validationSchema: Yup.object({
             prefix: Yup
                 .string()
@@ -56,8 +58,7 @@ export const EditForm = (props) => {
                 if (response) {
                     if (itemctx.isNew) {
                         router.push({
-                            pathname: paths.app[sectionApi.section].edit,
-                            query: {id: response._id}
+                            pathname: paths.app[sectionApi.section].index,
                         });
                     } else if (itemctx.isStateable) {
                         itemctx.setState(response);
@@ -84,11 +85,18 @@ export const EditForm = (props) => {
                         container
                         spacing={3}
                     >
-                        <Grid xs={12} md={12}>
-                            <FormTextField formik={formik} name="prefix" label="Prefix" required={true}/>
+                        <Grid xs={12}
+                              md={12}>
+                            <FormTextField formik={formik}
+                                           name="prefix"
+                                           label="Prefix"
+                                           required={true}/>
                         </Grid>
-                        <Grid xs={12} md={12}>
-                            <FormTextField formik={formik} name="uri" label="URI"/>
+                        <Grid xs={12}
+                              md={12}>
+                            <FormTextField formik={formik}
+                                           name="uri"
+                                           label="URI"/>
                         </Grid>
                         <MenuList>
                             <MenuItem key={0}>
