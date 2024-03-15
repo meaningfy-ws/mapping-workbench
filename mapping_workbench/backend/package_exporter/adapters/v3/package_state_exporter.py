@@ -156,7 +156,7 @@ class PackageStateExporter:
                     sparql_validation_result = test_data.validation.sparql.model_dump(
                         exclude={'id'}
                     )
-                    sparql_str = json.dumps(sparql_validation_result, indent=4)
+                    sparql_str = json.dumps(sparql_validation_result, indent=4, default=str)
                     self.write_to_file(test_data_reports_output_path / "sparql_validation_report.json", sparql_str)
                     if test_data.validation.sparql.results:
                         export_dict_list = []
@@ -171,7 +171,7 @@ class PackageStateExporter:
                 if test_data.validation.shacl:
                     shacl_str = json.dumps(test_data.validation.shacl.model_dump(
                         exclude={'id'}
-                    ), indent=4)
+                    ), indent=4, default=str)
                     self.write_to_file(test_data_reports_output_path / "shacl_validation_report.json", shacl_str)
                     shacl_dict = json.loads(shacl_str)
                     results = shacl_dict["results_dict"]["results"]["bindings"]
