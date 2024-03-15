@@ -25,8 +25,10 @@ class SPARQLValidator(TestDataValidator):
     @validate_call
     def __init__(self, test_data: TestDataState, test_data_suite: TestDataSuiteState = None, **data: Any):
         super().__init__(**data)
-        self.rdf_graph = rdflib.Graph().parse(data=test_data.rdf_manifestation.content,
-                                              format=RDF_FORMAT)
+        self.rdf_graph = rdflib.Graph().parse(
+            data=test_data.rdf_manifestation.content,
+            format=RDF_FORMAT
+        )
         self.test_data = test_data
         self.test_data_suite = test_data_suite
 

@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Optional, List
 
 import pymongo
-from beanie import Link
+from beanie import Link, PydanticObjectId
 from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
@@ -20,6 +20,7 @@ class SHACLTestFileResourceFormat(Enum):
 
 
 class SHACLTestState(ObjectState):
+    oid: Optional[PydanticObjectId] = None
     format: Optional[SHACLTestFileResourceFormat] = None
     title: Optional[str] = None
     filename: Optional[str] = None
@@ -27,6 +28,7 @@ class SHACLTestState(ObjectState):
 
 
 class SHACLTestSuiteState(ObjectState):
+    oid: Optional[PydanticObjectId] = None
     title: Optional[str] = None
     description: Optional[str] = None
     shacl_test_states: Optional[List[SHACLTestState]] = []
@@ -47,6 +49,7 @@ class SHACLTestSuite(FileResourceCollection, StatefulObjectABC):
     async def get_state(self) -> SHACLTestSuiteState:
         shacl_test_states = await self.get_shacl_test_states()
         return SHACLTestSuiteState(
+            oid=self.id,
             title=self.title,
             description=self.description,
             shacl_test_states=shacl_test_states
@@ -76,6 +79,7 @@ class SHACLTestFileResource(FileResource, StatefulObjectABC):
 
     async def get_state(self) -> SHACLTestState:
         return SHACLTestState(
+            oid=self.id,
             format=self.format,
             title=self.title,
             filename=self.filename,
