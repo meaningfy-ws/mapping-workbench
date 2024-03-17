@@ -68,7 +68,8 @@ const SparqlValidationReportView = ({ sid, reportTree }) => {
             {currentTab === testDataset &&
                 <>
                     <CoverageFiles files={selectedPackageState?.test_data_states}
-                                   onClick={handleSetTestDataset}/>
+                                   onClick={handleSetTestDataset}
+                                   fileIcon/>
                     <SparqlTestDatasetReport sid={sid}
                                         suiteId={selectedPackageState.oid}/>
                 </>
