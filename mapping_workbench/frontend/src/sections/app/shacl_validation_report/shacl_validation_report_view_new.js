@@ -19,28 +19,12 @@ const testDatasetLabel = "Test Dataset SHACL Coverage";
 const fileCoverage =  "file_coverage";
 const fileCoverageLabel = "File SHACL Coverage"
 
-const ShaclValidationReportView = ({ sid }) => {
+const ShaclValidationReportView = ({ sid, reportTree }) => {
 
-    const [reportTree, setReportTree] = useState([])
-    const [selectedPackageState, setSelectedPackageState] = useState([])
-    const [selectedTestDataset, setSelectedTestDataset] = useState([])
-    const [currentTab, setCurrentTab] = useState()
+    const [selectedPackageState, setSelectedPackageState] = useState(reportTree.test_data_suites[0])
+    const [selectedTestDataset, setSelectedTestDataset] = useState(selectedPackageState.test_data_states[0])
+    const [currentTab, setCurrentTab] = useState(packageState)
 
-    useEffect(() => {
-        console.log("in effect ShaclValidationReportView")
-        handleValidationReportTreeGet(sid)
-    }, [sid]);
-
-    const handleValidationReportTreeGet = async (state_id) => {
-
-        try {
-            const result = await sectionApi.getShaclReportTree(state_id)
-            console.log(result.results)
-            setReportTree(result.results);
-        } catch (err) {
-            console.error(err);
-        }
-    }
 
     const handleSetPackageState = (file) => {
         setSelectedPackageState(file)

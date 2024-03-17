@@ -2,7 +2,8 @@ import {ACTION, SectionApi} from "src/api/section";
 import {appApi} from "src/api/app";
 
 
-import shaclReportTree from "./shaclTree.json"
+import shaclTestData from "./shaclTestData.json"
+import shaclAgregations from "./shaclAgregations.json"
 
 export class MappingPackageStatesApi extends SectionApi {
 
@@ -71,9 +72,9 @@ export class MappingPackageStatesApi extends SectionApi {
         return Promise.resolve(data);
     }
 
-    async getShaclReportTree(sid) {
-        console.log("shaclReportTree",shaclReportTree)
-        return await shaclReportTree
+    async getShaclAgregetions(sid) {
+        console.log("shaclReportTree",shaclAgregations)
+        return await shaclAgregations
 
         // const endpoint = this.paths['shacl_reports']
         // const data = await appApi.get(endpoint(sid))
@@ -101,8 +102,8 @@ export class MappingPackageStatesApi extends SectionApi {
     }
 
     async getShaclReports(params) {
-        console.log("shaclReportTree",shaclReportTree)
-        return await shaclReportTree
+        console.log("shaclTestData",shaclTestData)
+        return await shaclTestData
         // const endpoint = this.paths['shacl_reports']
         // const data = await appApi.get(endpoint, params);
         // return Promise.resolve(data);

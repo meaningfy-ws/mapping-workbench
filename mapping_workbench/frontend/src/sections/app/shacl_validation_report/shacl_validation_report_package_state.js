@@ -127,8 +127,9 @@ const ShaclPackageStateReport = ({ sid }) => {
 
     const handleValidationReportsGet = async (sid) => {
         try {
-            const result = await sectionApi.getSparqlReports(sid)
-            setValidationReport(mapSparqlResults(result.summary))
+            const result = await sectionApi.getShaclReports(sid)
+            // setValidationReport(mapSparqlResults(result.summary))
+            setValidationReport(result.results)
         } catch (err) {
             console.error(err);
         } finally {
