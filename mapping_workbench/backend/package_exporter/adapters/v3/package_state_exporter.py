@@ -128,34 +128,6 @@ class PackageStateExporter:
             for sparql_test in sparql_test_suite.sparql_test_states:
                 self.write_to_file(sparql_test_suite_path / sparql_test.filename, sparql_test.content)
 
-    async def get_validation_reports(self):
-        return self.package_state.test_data_suites
-
-    async def get_sparql_reports(self):
-        result = {}
-        for test_data_suite in self.package_state.test_data_suites:
-            for test_data in test_data_suite.test_data_states:
-                if test_data.validation.sparql:
-                    result[test_data.identifier] = test_data.validation.sparql.results
-        return result
-
-    async def get_shacl_reports(self):
-        result = {}
-        for test_data_suite in self.package_state.test_data_suites:
-            for test_data in test_data_suite.test_data_states:
-                if test_data.validation.shacl:
-                    result[test_data.identifier] = test_data.validation.shacl.results_dict["results"]["bindings"]
-        return result
-
-    async def get_validation_report_files(self):
-        files = []
-        for test_data_suite in self.package_state.test_data_suites:
-            for test_data in test_data_suite.test_data_states:
-                if test_data.identifier:
-                    files.append(test_data.identifier)
-        return files
-
-
     async def add_output(self):
         for test_data_suite in self.package_state.test_data_suites:
             test_data_suite_output_path = self.package_output_path / test_data_suite.title
@@ -184,7 +156,7 @@ class PackageStateExporter:
                     sparql_validation_result = test_data.validation.sparql.model_dump(
                         exclude={'id'}
                     )
-                    sparql_str = json.dumps(sparql_validation_result, indent=4)
+                    sparql_str = json.dumps(sparql_validation_result, indent=4, default=str)
                     self.write_to_file(test_data_reports_output_path / "sparql_validation_report.json", sparql_str)
                     if test_data.validation.sparql.results:
                         export_dict_list = []
@@ -199,7 +171,7 @@ class PackageStateExporter:
                 if test_data.validation.shacl:
                     shacl_str = json.dumps(test_data.validation.shacl.model_dump(
                         exclude={'id'}
-                    ), indent=4)
+                    ), indent=4, default=str)
                     self.write_to_file(test_data_reports_output_path / "shacl_validation_report.json", shacl_str)
                     shacl_dict = json.loads(shacl_str)
                     results = shacl_dict["results_dict"]["results"]["bindings"]

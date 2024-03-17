@@ -22,7 +22,6 @@ export const ItemListCard = (props) => {
     const popover = usePopover();
 
     const handleEdit = (item_id) => {
-        console.log('handleEdit',item_id)
         router.push({
             pathname: paths.app[sectionApi.section].resource_manager.edit,
             query: {id: collection._id, fid: item_id}

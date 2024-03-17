@@ -1,11 +1,10 @@
 from typing import List
 
-from beanie import PydanticObjectId
-
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState
 from mapping_workbench.backend.package_validator.adapters.sparql_validator import SPARQLValidator
 from mapping_workbench.backend.package_validator.models.sparql_validation import SPARQLQueryResult, \
     SPARQLValidationSummary, SPARQLQueryRefinedResultType, SPARQLTestDataValidationResult
+from mapping_workbench.backend.package_validator.services.validation import add_summary_result_test_data
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestState
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataException, TestDataState, TestDataSuiteState
 
@@ -35,13 +34,6 @@ def validate_tests_data_with_sparql_tests(
             pass
 
     return tests_data
-
-
-def add_summary_result_test_data(test_datas, test_data) -> bool:
-    if not any(d.test_data_oid == test_data.test_data_oid for d in test_datas):
-        test_datas.append(test_data)
-        return True
-    return False
 
 
 def aggregate_sparql_tests_summary(
@@ -105,8 +97,9 @@ def validate_mapping_package_state_with_sparql(mapping_package_state: MappingPac
     state_results = []
     for idx, test_data_suite in enumerate(mapping_package_state.test_data_suites):
         mapping_package_state.test_data_suites[idx].test_data_states = \
-            validate_tests_data_with_sparql_tests(test_data_suite.test_data_states,
-                                                  sparql_assertions, test_data_suite)
+            validate_tests_data_with_sparql_tests(
+                test_data_suite.test_data_states, sparql_assertions, test_data_suite
+            )
 
         test_data_suite_results = []
         for test_data_state in mapping_package_state.test_data_suites[idx].test_data_states:

@@ -101,7 +101,7 @@ export const FileCollectionEditForm = (props) => {
                 if (response) {
                     if (itemctx.isNew) {
                         router.push({
-                            pathname: paths.app[sectionApi.section].edit,
+                            pathname: paths.app[sectionApi.section].index,
                             query: {id: response._id}
                         });
                     } else if (itemctx.isStateable) {

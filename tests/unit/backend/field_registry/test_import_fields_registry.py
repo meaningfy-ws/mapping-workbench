@@ -31,8 +31,9 @@ async def test_import_eforms_fields_from_folder(eforms_sdk_repo_v_1_9_1_dir_path
 
 
 @pytest.mark.asyncio
-async def test_import_eforms_fields_from_github_repository(eforms_sdk_github_repository_url,
+async def _test_import_eforms_fields_from_github_repository(eforms_sdk_github_repository_url,
                                                            eforms_sdk_github_repository_v1_9_1_tag_name):
+    #TODO: this should be moved to e2e
     await import_eforms_fields_from_github_repository(github_repository_url=eforms_sdk_github_repository_url,
                                                       branch_or_tag_name=eforms_sdk_github_repository_v1_9_1_tag_name)
 

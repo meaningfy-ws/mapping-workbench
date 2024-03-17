@@ -8,7 +8,8 @@ from mapping_workbench.backend.fields_registry.services.import_fields_registry i
 GITHUB_LICENSE_FILE_NAME = "LICENSE"
 
 
-def test_github_downloader(eforms_sdk_github_repository_url, eforms_sdk_github_repository_v1_9_1_tag_name):
+def _test_github_downloader(eforms_sdk_github_repository_url, eforms_sdk_github_repository_v1_9_1_tag_name):
+    #TODO: this should be moved to e2e
     with tempfile.TemporaryDirectory() as tmp_dir:
         temp_dir_path = pathlib.Path(tmp_dir)
         github_downloader = GithubDownloader(github_repository_url=eforms_sdk_github_repository_url,

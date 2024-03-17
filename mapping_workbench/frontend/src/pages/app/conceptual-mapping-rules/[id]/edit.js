@@ -5,15 +5,15 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
-import {RouterLink} from 'src/components/router-link';
-import {Seo} from 'src/components/seo';
-import {usePageView} from 'src/hooks/use-page-view';
-import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
+import {Seo} from 'src/components/seo';
+import {useRouter} from "src/hooks/use-router";
+import {usePageView} from 'src/hooks/use-page-view';
+import {RouterLink} from 'src/components/router-link';
+import {Layout as AppLayout} from 'src/layouts/app';
+import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
 import {ForItemEditForm} from "src/contexts/app/section/for-item-form";
 import {useItem} from "src/contexts/app/section/for-item-data-state";
-import {useRouter} from "src/hooks/use-router";
 import {EditForm} from "../../../../sections/app/conceptual-mapping-rule/edit-form";
 
 
@@ -76,7 +76,7 @@ const Page = () => {
                         >
                             <Stack spacing={1}>
                                 <Typography variant="h4">
-                                    {item.field_title || item.field_id}
+                                    {item.field_title ?? item.field_id}
                                 </Typography>
                                 <Stack
                                     alignItems="center"

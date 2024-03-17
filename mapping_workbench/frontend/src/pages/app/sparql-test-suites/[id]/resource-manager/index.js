@@ -1,9 +1,8 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
+
 import Upload01Icon from '@untitled-ui/icons-react/build/esm/Upload01';
 import Plus from '@untitled-ui/icons-react/build/esm/Plus';
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
@@ -29,8 +28,8 @@ const useItemsSearch = () => {
         filters: {
             query: undefined
         },
-        page: 0,
-        rowsPerPage: 9,
+        page: sectionApi.DEFAULT_PAGE,
+        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE,
         sortBy: 'createdAt',
         sortDir: 'desc'
     });
@@ -129,13 +128,12 @@ const Page = () => {
         return;
     }
 
-    const handleCreate = useCallback(async () => {
+    const handleCreate = async () => {
         router.push({
             pathname: paths.app[sectionApi.section].resource_manager.create,
             query: {id: id}
         });
-
-    }, [router, sectionApi]);
+    }
 
     const settings = useSettings();
     const itemsSearch = useItemsSearch();

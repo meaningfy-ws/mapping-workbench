@@ -5,6 +5,8 @@ import Box from "@mui/material/Box";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
 import Typography from "@mui/material/Typography";
+import Skeleton from "@mui/material/Skeleton";
+import Alert from "@mui/material/Alert";
 
 export const CoverageFilter = ({onChange,filterState}) => {
     return(
@@ -77,4 +79,24 @@ export const CoverageFilter = ({onChange,filterState}) => {
             </Stack>
         </Box>
     )
+}
+
+
+export const TableSkeleton = ({lines = 5}) => {
+    return new Array(lines).fill("").map((e, i) =>
+                <Skeleton key={'line' + i}
+                          height={50}/>)
+}
+
+export const TableNoData = () => {
+    return <Stack justifyContent="center"
+                       direction="row">
+                    <Alert severity="info">No Data !</Alert>
+                </Stack>
+}
+
+export const TableLoadWrapper = ({children, load, data, lines}) => {
+    if (load) return <TableSkeleton lines={lines}/>
+    if (data.length === 0) return <TableNoData/>
+    return children
 }

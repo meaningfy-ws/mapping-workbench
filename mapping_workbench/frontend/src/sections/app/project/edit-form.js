@@ -1,7 +1,8 @@
-import PropTypes from 'prop-types';
 import toast from 'react-hot-toast';
+import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
+
 import Button from '@mui/material/Button';
 import { MenuItem } from '@mui/material';
 import Card from '@mui/material/Card';
@@ -11,11 +12,9 @@ import Grid from '@mui/material/Unstable_Grid2';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 
-import {RouterLink} from 'src/components/router-link';
 import {paths} from 'src/paths';
-import {wait} from 'src/utils/wait';
+import {RouterLink} from 'src/components/router-link';
 import {useRouter} from 'src/hooks/use-router';
-import {useCallback} from "react";
 import {FormTextField} from "../../../components/app/form/text-field";
 import {FormTextArea} from "../../../components/app/form/text-area";
 
@@ -35,26 +34,26 @@ export const EditForm = (props) => {
         }
     ];
 
-    let initialValues = {
-        title: item.title || '',
-        description: item.description || '',
-        version: item.version || '',
+    const initialValues = {
+        title: item.title ?? '',
+        description: item.description ?? '',
+        version: item.version ?? '',
         source_schema: {
-            title: item.source_schema && item.source_schema.title || '',
-            description: item.source_schema && item.source_schema.description || '',
-            version: item.source_schema && item.source_schema.version || '',
-            type: item.source_schema && item.source_schema.type || 'JSON'
+            title: item.source_schema?.title ?? '',
+            description: item.source_schema?.description ?? '',
+            version: item.source_schema?.version ?? '',
+            type: item.source_schema?.type ?? 'JSON'
         },
         target_ontology: {
-            title: item.target_ontology && item.target_ontology.title || '',
-            description: item.target_ontology && item.target_ontology.description || '',
-            version: item.target_ontology && item.target_ontology.version || '',
-            uri: item.target_ontology && item.target_ontology.uri || ''
+            title: item.target_ontology?.title ?? '',
+            description: item.target_ontology?.description ?? '',
+            version: item.target_ontology?.version ?? '',
+            uri: item.target_ontology?.uri ?? ''
         }
     };
 
     const formik = useFormik({
-        initialValues: initialValues,
+        initialValues,
         validationSchema: Yup.object({
             title: Yup
                 .string()
@@ -69,6 +68,7 @@ export const EditForm = (props) => {
             //     type: Yup.string().max(255)
             // }
         }),
+
         onSubmit: async (values, helpers) => {
             try {
                 let response;
@@ -80,14 +80,12 @@ export const EditForm = (props) => {
                 }
                 helpers.setStatus({success: true});
                 helpers.setSubmitting(false);
-                toast.success(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "created" : "updated"));
+                toast.success(`${sectionApi.SECTION_ITEM_TITLE} ${itemctx.isNew ? "created" : "updated"}`);
                 if (response) {
                     if (itemctx.isNew) {
                         router.push({
-                            pathname: paths.app[sectionApi.section].edit,
-                            query: {id: response._id}
+                            pathname: paths.app[sectionApi.section].index,
                         });
-                        router.reload();
                     } else if (itemctx.isStateable) {
                         itemctx.setState(response);
                     }
@@ -107,20 +105,30 @@ export const EditForm = (props) => {
             onSubmit={formik.handleSubmit}
             {...other}>
             <Card>
-                <CardHeader title={(itemctx.isNew ? 'Create' : 'Edit') + ' ' + sectionApi.SECTION_ITEM_TITLE}/>
+                <CardHeader title={`${itemctx.isNew ? 'Create' : 'Edit'} ${sectionApi.SECTION_ITEM_TITLE}`}/>
                 <CardContent sx={{pt: 0}}>
                     <Grid
                         container
                         spacing={3}
                     >
-                        <Grid xs={12} md={12}>
-                            <FormTextField formik={formik} name="title" label="Title" required={true}/>
+                        <Grid xs={12}
+                              md={12}>
+                            <FormTextField formik={formik}
+                                           name="title"
+                                           label="Title"
+                                           required/>
                         </Grid>
-                        <Grid xs={12} md={12}>
-                            <FormTextArea formik={formik} name="description" label="Description"/>
+                        <Grid xs={12}
+                              md={12}>
+                            <FormTextArea formik={formik}
+                                          name="description"
+                                          label="Description"/>
                         </Grid>
-                        <Grid xs={12} md={12}>
-                            <FormTextField formik={formik} name="version" label="Version"/>
+                        <Grid xs={12}
+                              md={12}>
+                            <FormTextField formik={formik}
+                                           name="version"
+                                           label="Version"/>
                         </Grid>
                     </Grid>
                 </CardContent>
@@ -131,7 +139,6 @@ export const EditForm = (props) => {
                 spacing={3}
             >
                 <Grid
-                    item
                     xs={12}
                     md={6}
                 >
@@ -203,7 +210,8 @@ export const EditForm = (props) => {
                                     value={formik.values.source_schema.type}
                                 >
                                     {sourceSchemaTypes.map((option) => (
-                                        <MenuItem key={option.value} value={option.value}>
+                                        <MenuItem key={option.value}
+                                                  value={option.value}>
                                             {option.value}
                                         </MenuItem>
                                     ))}
@@ -213,7 +221,6 @@ export const EditForm = (props) => {
                     </Card>
                 </Grid>
                 <Grid
-                    item
                     xs={12}
                     md={6}
                 >

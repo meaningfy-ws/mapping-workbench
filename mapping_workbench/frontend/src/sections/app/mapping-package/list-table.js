@@ -390,7 +390,7 @@ export const ListTable = (props) => {
                                     </TableSortLabel>
                                 </Tooltip>
                             </TableCell>
-                            <TableCell align="right">
+                            <TableCell align="center">
                                 Actions
                             </TableCell>
                         </TableRow>
@@ -445,7 +445,7 @@ export const ListTable = (props) => {
                                         <TableCell align="left">
                                             {(item.created_at).replace("T", " ").split(".")[0]}
                                         </TableCell>
-                                        <TableCell align="right">
+                                        <TableCell align="center">
                                             <ListItemActions
                                                 itemctx={new ForListItemAction(item_id, sectionApi)}/>
                                         </TableCell>

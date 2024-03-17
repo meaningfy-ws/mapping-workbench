@@ -1,4 +1,5 @@
-import {useCallback, useState} from 'react';
+import {useState} from 'react';
+
 import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -9,21 +10,23 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
-import {fieldsRegistryApi as sectionApi} from 'src/api/fields-registry';
-import {RouterLink} from 'src/components/router-link';
-import {Seo} from 'src/components/seo';
-import {usePageView} from 'src/hooks/use-page-view';
-import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
+import {Seo} from 'src/components/seo';
+import {Layout as AppLayout} from 'src/layouts/app';
+import {fieldsRegistryApi as sectionApi} from 'src/api/fields-registry';
 import {BasicDetails} from 'src/sections/app/fields-registry/basic-details';
-import {useRouter} from "src/hooks/use-router";
 import {useItem} from "src/contexts/app/section/for-item-data-state";
+import {RouterLink} from 'src/components/router-link';
+import {usePageView} from 'src/hooks/use-page-view';
+import {useRouter} from "src/hooks/use-router";
 
 const tabs = [
     {label: 'Details', value: 'details'}
 ];
 
 const Page = () => {
+    const [currentTab, setCurrentTab] = useState('details');
+
     const router = useRouter();
     if (!router.isReady) return;
 
@@ -37,11 +40,10 @@ const Page = () => {
     const item = formState.item;
 
     usePageView();
-    const [currentTab, setCurrentTab] = useState('details');
 
-    const handleTabsChange = useCallback((event, value) => {
+    const handleTabsChange = (event, value) => {
         setCurrentTab(value);
-    }, []);
+    }
 
     if (!item) {
         return;

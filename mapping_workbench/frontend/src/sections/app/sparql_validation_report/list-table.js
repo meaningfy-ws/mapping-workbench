@@ -1,4 +1,5 @@
 import {useState} from "react";
+import PropTypes from 'prop-types';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -14,15 +15,13 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import DialogContentText from "@mui/material/DialogContentText";
 import Stack from "@mui/material/Stack";
 
 import {Scrollbar} from 'src/components/scrollbar';
-import PropTypes from 'prop-types';
 import {ResultChip} from "./utils";
 
 export const ListTable = (props) => {
-    const [descriptionDialog, setDescriptionDialog] = useState({open:false, title:"", text:""})
+    const [descriptionDialog, setDescriptionDialog] = useState({open:false, title:"", description:""})
 
     const {
         count = 0,
@@ -38,10 +37,11 @@ export const ListTable = (props) => {
 
     const mapNotices = (notices) => {
         return(
-            <ul>
-                {notices.map((notice,i) => <li key={`notice${i}`}>
-                    {notice.test_data_id}{notice.test_data_suite_id}
-                </li>)}
+            <ul style={{listStyleType: "circle"}}>
+                {notices.map((notice,i) =>
+                    <li key={'notice' + i}>
+                        {`${notice.test_data_suite_id} / ${notice.test_data_id}`}
+                    </li>)}
             </ul>
         )
     }
@@ -147,9 +147,9 @@ export const ListTable = (props) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {items?.map((item, key) => {
+                        {items?.map((item, i) => {
                             return (
-                                <TableRow key={key}>
+                                <TableRow key={'row' + i}>
                                     <TableCell width="25%">
                                         <Typography variant="subtitle3">
                                             {item.title}
@@ -220,15 +220,13 @@ export const ListTable = (props) => {
                 aria-describedby="alert-dialog-description"
             >
                 <DialogTitle id="alert-dialog-title">
-                  {descriptionDialog.title}
+                    {descriptionDialog.title}
                 </DialogTitle>
                 <DialogContent>
-                  <DialogContentText id="alert-dialog-description">
-                      {descriptionDialog.description}
-                  </DialogContentText>
+                    {descriptionDialog.description}
                 </DialogContent>
                 <DialogActions>
-                  <Button onClick={handleClose}>Close</Button>
+                    <Button onClick={handleClose}>Close</Button>
                 </DialogActions>
             </Dialog>
         </>

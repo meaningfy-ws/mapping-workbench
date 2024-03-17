@@ -1,5 +1,6 @@
 import {Fragment, useCallback, useState} from 'react';
 import PropTypes from 'prop-types';
+
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
 import CardContent from '@mui/material/CardContent';
@@ -15,6 +16,9 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
+import Tooltip from "@mui/material/Tooltip";
+import {Button} from "@mui/material";
+
 import {PropertyList} from 'src/components/property-list';
 import {PropertyListItem} from 'src/components/property-list-item';
 
@@ -22,12 +26,11 @@ import {Scrollbar} from 'src/components/scrollbar';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import Tooltip from "@mui/material/Tooltip";
-import {Button} from "@mui/material";
 import {sessionApi} from "../../../api/session";
 import {useRouter} from "../../../hooks/use-router";
 import toast from "react-hot-toast";
 import {SeverityPill} from "../../../components/severity-pill";
+import {paths} from "../../../paths";
 
 
 export const ListTable = (props) => {
@@ -58,15 +61,21 @@ export const ListTable = (props) => {
         });
     }, []);
 
-    const handleSelectAction = useCallback(async (itemId) => {
-        try {
-            toast.loading('Selecting project...');
-            await sessionApi.setSessionProject(itemId);
-            router.reload();
-        } catch (e) {
-            toast.error('Something went wrong!');
+    const handleSelectAction = async (itemId, section) => {
+            const loadingToast = toast.loading('Selecting project...');
+            sessionApi.setSessionProject(itemId)
+                .then(() => {
+                    toast.success('Package selected')
+                     router.push({
+                         pathname: paths.app[section.section].view,
+                         query: {id: itemId}
+                    });
+                })
+                .catch(() => {
+                    toast.error('Something went wrong!');
+                })
+                .finally(() => toast.dismiss(loadingToast))
         }
-    }, [sessionApi, router]);
 
     // const handleItemClose = useCallback(() => {
     //     setCurrentItem(null);
@@ -81,6 +90,7 @@ export const ListTable = (props) => {
 
     //     toast.error('Item cannot be deleted');
     // }, []);
+
 
     return (
         <div>
@@ -247,7 +257,7 @@ export const ListTable = (props) => {
                                                 variant="text"
                                                 size="small"
                                                 color="warning"
-                                                onClick={() => handleSelectAction(item_id)}
+                                                onClick={() => handleSelectAction(item_id, sectionApi)}
                                             >
                                                 Select
                                             </Button>
@@ -293,7 +303,8 @@ export const ListTable = (props) => {
                                                                     md={6}
                                                                     xs={12}
                                                                 >
-                                                                    <Typography sx={{paddingLeft: "24px"}} variant="h6">
+                                                                    <Typography sx={{paddingLeft: "24px"}}
+                                                                                variant="h6">
                                                                         Source Schema
                                                                     </Typography>
                                                                     <Divider sx={{my: 2}}/>
@@ -331,7 +342,8 @@ export const ListTable = (props) => {
                                                                     md={6}
                                                                     xs={12}
                                                                 >
-                                                                    <Typography sx={{paddingLeft: "24px"}} variant="h6">
+                                                                    <Typography sx={{paddingLeft: "24px"}}
+                                                                                variant="h6">
                                                                         Target Ontology
                                                                     </Typography>
                                                                     <Divider sx={{my: 2}}/>

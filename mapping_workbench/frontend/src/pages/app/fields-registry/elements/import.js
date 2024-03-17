@@ -1,23 +1,28 @@
-import Stack from '@mui/material/Stack';
-
-import {fieldsRegistryApi as sectionApi} from 'src/api/fields-registry';
-import {usePageView} from 'src/hooks/use-page-view';
-import {Layout as AppLayout} from 'src/layouts/app';
-import Button from "@mui/material/Button";
+import {useState} from "react";
+import toast from "react-hot-toast";
 import {useFormik} from "formik";
 import * as Yup from "yup";
-import {sessionApi} from "../../../../api/session";
-import toast from "react-hot-toast";
-import Card from "@mui/material/Card";
+import {useRouter} from "next/router";
+
+import Stack from '@mui/material/Stack';
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Unstable_Grid2";
+import Button from "@mui/material/Button";
+
+import Card from "@mui/material/Card";
+import {usePageView} from 'src/hooks/use-page-view';
 import {FormTextField} from "src/components/app/form/text-field";
-import {useState} from "react";
+import {Layout as AppLayout} from 'src/layouts/app';
+
+import {fieldsRegistryApi as sectionApi} from 'src/api/fields-registry';
+import {sessionApi} from "../../../../api/session";
+import {paths} from "../../../../paths";
 
 
 const Page = () => {
     usePageView();
+    const router = useRouter()
 
     const [isRunning, setIsRunning] = useState(false);
 
@@ -54,6 +59,9 @@ const Page = () => {
                     return `eForm Fields import failed: ${err.message}.`;
                 }
             }).then(r => {
+                router.push({
+                    pathname: paths.app[sectionApi.section].elements.index
+                })
             })
         }
     });

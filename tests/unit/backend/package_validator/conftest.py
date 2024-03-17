@@ -1,21 +1,17 @@
 import pathlib
 
 import pytest
-from bson import ObjectId
-
-from mapping_workbench.backend.project.models.entity import Project
-from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestFileResource, \
-    SHACLTestFileResourceFormat
-from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuite, SPARQLTestFileResource, \
-    SPARQLTestFileResourceFormat
-from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
-    TestDataFileResourceFormat
-from tests import TEST_DATA_SPARQL_TEST_SUITE_PATH, TEST_DATA_SHACL_TEST_SUITE_PATH
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
-from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
-
+from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageState
+from mapping_workbench.backend.project.models.entity import Project
+from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestFileResourceFormat, SHACLTestSuiteState, \
+    SHACLTestState
+from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResourceFormat, SPARQLTestState
+from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
+    TestDataFileResourceFormat
+from tests import TEST_DATA_SPARQL_TEST_SUITE_PATH, TEST_DATA_SHACL_TEST_SUITE_PATH
 from tests import TEST_DATA_VALIDATION_PATH
 
 
@@ -44,24 +40,33 @@ def dummy_rdf_test_data_file_resource(sparql_test_data_file_path: pathlib.Path) 
     return TestDataFileResource(
         rdf_manifestation=sparql_test_data_file_path.read_text(encoding="utf-8"),
         filename=sparql_test_data_file_path.name,
-        format=TestDataFileResourceFormat.RDF
+        format=TestDataFileResourceFormat.RDF,
+        identifier="dummy_identifier"
     )
 
 
 @pytest.fixture
-def dummy_sparql_test_suite(sparql_test_resources_file_path: pathlib.Path) -> SPARQLTestSuite:
-    return SPARQLTestSuite(
-        file_resources=[SPARQLTestFileResource(content=sparql_test_resources_file_path.read_text(encoding="utf-8"),
-                                               filename=sparql_test_resources_file_path.name,
-                                               format=SPARQLTestFileResourceFormat.RQ)])
+def dummy_sparql_test_suite(sparql_test_resources_file_path: pathlib.Path) -> SPARQLTestState:
+    return SPARQLTestState(
+        content=sparql_test_resources_file_path.read_text(encoding="utf-8"),
+        filename=sparql_test_resources_file_path.name,
+        format=SPARQLTestFileResourceFormat.RQ
+    )
 
 
 @pytest.fixture
-def dummy_shacl_test_suite(shacl_test_resources_file_path: pathlib.Path) -> SHACLTestSuite:
-    return SHACLTestSuite(
-        file_resources=[SHACLTestFileResource(content=shacl_test_resources_file_path.read_text(encoding="utf-8"),
-                                              filename=shacl_test_resources_file_path.name,
-                                              format=SHACLTestFileResourceFormat.XML)])
+def dummy_shacl_test_suite(shacl_test_resources_file_path: pathlib.Path) -> SHACLTestSuiteState:
+    return SHACLTestSuiteState(
+        shacl_test_states=[SHACLTestState(
+            content=shacl_test_resources_file_path.read_text(encoding="utf-8"),
+            filename=shacl_test_resources_file_path.name,
+            format=SHACLTestFileResourceFormat.XML,
+            identifier="dummy_identifier"
+        )])
+    # return SHACLTestSuite(
+    #     file_resources=[SHACLTestFileResource(content=shacl_test_resources_file_path.read_text(encoding="utf-8"),
+    #                                           filename=shacl_test_resources_file_path.name,
+    #                                           format=SHACLTestFileResourceFormat.XML)])
 
 
 @pytest.fixture
@@ -104,5 +109,35 @@ def dummy_mapping_package() -> MappingPackage:
     return MappingPackage(
         title="dummy_mapping_package_title",
         description="dummy_mapping_package_description",
-        base_xpath="/TED_EXPORT/FORM_SECTION/F03_2014"
+        base_xpath="/TED_EXPORT/FORM_SECTION/F03_2014",
+        project=Project(
+            title="dummy_title_for_project",
+            description="dummy_description_for_project",
+            version="dummy_version_for_project",
+            source_schema=None,
+            target_ontology=None
+        )
+    )
+
+
+@pytest.fixture
+def dummy_mapping_package_state() -> MappingPackageState:
+    return MappingPackageState(
+        id="dummy_id",
+        mapping_package_oid=None,
+        title="dummy_mapping_package_title",
+        description="dummy_mapping_package_description",
+        identifier="dummy_identifier",
+        mapping_version="dummy_mapping_version",
+        epo_version="dummy_epo_version",
+        eform_subtypes=["dummy_subtype_1", "dummy_subtype_2"],
+        start_date="dummy_start_date",
+        end_date="dummy_end_date",
+        eforms_sdk_versions=["dummy_eforms_sdk_version_1", "dummy_eforms_sdk_version_2"],
+        test_data_suites=[],
+        shacl_test_suites=[],
+        sparql_test_suites=[],
+        conceptual_mapping_rules=[],
+        triple_map_fragments=[],
+        resources=[]
     )

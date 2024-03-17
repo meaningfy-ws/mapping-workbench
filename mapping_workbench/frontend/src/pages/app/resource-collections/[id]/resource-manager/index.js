@@ -1,4 +1,5 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
+
 import Upload01Icon from '@untitled-ui/icons-react/build/esm/Upload01';
 import Plus from '@untitled-ui/icons-react/build/esm/Plus';
 import Button from '@mui/material/Button';
@@ -7,27 +8,27 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
+import {paths} from "src/paths";
+import {Layout as AppLayout} from 'src/layouts/app';
 import {resourceCollectionsApi as sectionApi} from 'src/api/resource-collections';
 import {resourceFilesApi as fileResourcesApi} from 'src/api/resource-collections/file-resources';
 import {Seo} from 'src/components/seo';
 import {useDialog} from 'src/hooks/use-dialog';
 import {useMounted} from 'src/hooks/use-mounted';
 import {usePageView} from 'src/hooks/use-page-view';
-import {Layout as AppLayout} from 'src/layouts/app';
 import {FileUploader} from 'src/sections/app/file-manager/file-uploader';
 import {ItemDrawer} from 'src/sections/app/file-manager/item-drawer';
 import {ItemList} from 'src/sections/app/file-manager/item-list';
 import {ItemSearch} from 'src/sections/app/file-manager/item-search';
 import {useRouter} from "src/hooks/use-router";
-import {paths} from "../../../../../paths";
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
         filters: {
             query: undefined
         },
-        page: 0,
-        rowsPerPage: 9,
+        page: sectionApi.DEFAULT_PAGE,
+        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE,
         sortBy: 'createdAt',
         sortDir: 'desc'
     });

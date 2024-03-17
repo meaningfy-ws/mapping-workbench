@@ -263,8 +263,7 @@ export const ListSearch = (props) => {
 
             <Box sx={{p: 2.5, display: 'flex'}}
                  direction="row">
-                <FormControlLabel fullWidth
-                                  control={
+                <FormControlLabel control={
                                         <Switch
                                             checked={detailedView}
                                             value={detailedView}

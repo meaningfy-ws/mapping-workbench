@@ -12,7 +12,6 @@ import Typography from '@mui/material/Typography';
 
 import {MultiSelect} from 'src/components/multi-select';
 
-
 const statusOptions = [
     {
         label: 'Published',
@@ -25,13 +24,16 @@ const statusOptions = [
 ];
 
 export const ListSearch = (props) => {
+    const firstUpdate = useRef(true);
     const {onFiltersChange, showStatus, ...other} = props;
     const queryRef = useRef(null);
     const [chips, setChips] = useState([]);
 
 
     useEffect(() => {
-        handleChipsUpdate();
+        if (firstUpdate.current)
+            firstUpdate.current = false
+        else handleChipsUpdate();
     }, [chips]);
 
     const handleChipsUpdate = () => {

@@ -1,8 +1,7 @@
 import {useCallback, useState} from 'react';
+
 import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
-import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Unstable_Grid2';
 import Link from '@mui/material/Link';
@@ -12,15 +11,15 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
+import {paths} from 'src/paths';
+import {Layout as AppLayout} from 'src/layouts/app';
+import {usePageView} from 'src/hooks/use-page-view';
+import {Seo} from 'src/components/seo';
 import {testDataSuitesApi as sectionApi} from 'src/api/test-data-suites';
 import {RouterLink} from 'src/components/router-link';
-import {Seo} from 'src/components/seo';
-import {usePageView} from 'src/hooks/use-page-view';
-import {Layout as AppLayout} from 'src/layouts/app';
-import {paths} from 'src/paths';
-import {FileCollectionBasicDetails} from 'src/sections/app/file-manager/file-collection-basic-details';
 import {useRouter} from "src/hooks/use-router";
 import {useItem} from "src/contexts/app/section/for-item-data-state";
+import {FileCollectionBasicDetails} from 'src/sections/app/file-manager/file-collection-basic-details';
 
 const tabs = [
     {label: 'Details', value: 'details'}
