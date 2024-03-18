@@ -117,7 +117,7 @@ const useItemsSearch = (items) => {
 
 const SparqlValidationReport = ({ sid }) => {
     const [validationReport, setValidationReport] = useState([])
-    const [dataLoad, setDataLoad] = useState(true)
+    const [dataState, setDataState] = useState({load:true, error:false})
 
     useEffect(()=>{
         handleValidationReportsGet(sid)
@@ -125,12 +125,13 @@ const SparqlValidationReport = ({ sid }) => {
 
     const handleValidationReportsGet = async (sid) => {
         try {
+            setDataState({load:true, error: false})
             const result = await sectionApi.getSparqlReports(sid)
             setValidationReport(mapSparqlResults(result.summary))
+            setDataState(e=> ({...e, load:false}))
         } catch (err) {
             console.error(err);
-        } finally {
-            setDataLoad(false)
+            setDataState({load:false, error:true})
         }
     }
 
@@ -161,7 +162,7 @@ const SparqlValidationReport = ({ sid }) => {
                             variant="h4">
                 Results Summary
             </Typography>
-            <TableLoadWrapper load={dataLoad}
+            <TableLoadWrapper dataState={dataState}
                               lines={6}
                               data={validationReport}>
                 <ResultSummaryTable items={validationReport}/>
@@ -170,7 +171,7 @@ const SparqlValidationReport = ({ sid }) => {
                         variant="h4">
                 Assertions
             </Typography>
-            <TableLoadWrapper load={dataLoad}
+            <TableLoadWrapper dataState={dataState}
                               lines={6}
                               data={validationReport}>
                 <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>

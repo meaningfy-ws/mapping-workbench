@@ -114,7 +114,7 @@ const useItemsSearch = (items) => {
 
 const XpathValidationReportTest= ({  sid, suiteId, testId, mappingSuiteIdentifier }) => {
     const [validationReport, setValidationReport] = useState([])
-    const [dataLoad, setDataLoad] = useState(true)
+    const [dataState, setDataState] = useState({load: true, error: false})
 
     useEffect(()=>{
         handleValidationReportsTestGet(sid, suiteId, testId)
@@ -122,12 +122,13 @@ const XpathValidationReportTest= ({  sid, suiteId, testId, mappingSuiteIdentifie
 
     const handleValidationReportsTestGet = async (sid, suiteId, testId) => {
         try {
+            setDataState({load: true, error: false})
             const result = await sectionApi.getXpathReportsTest(sid, suiteId, testId)
             setValidationReport(result.results)
+            setDataState(e=> ({...e, load: false}))
         } catch (err) {
             console.error(err);
-        } finally {
-            setDataLoad(false)
+            setDataState({load: false, error: true})
         }
     }
 
@@ -139,7 +140,7 @@ const XpathValidationReportTest= ({  sid, suiteId, testId, mappingSuiteIdentifie
                         variant="h4">
                 Summary
             </Typography>
-            <TableLoadWrapper load={dataLoad}
+            <TableLoadWrapper dataState={dataState}
                               data={validationReport}
                               lines={3}>
                 <CoverageReport validationReport={validationReport}
@@ -149,7 +150,7 @@ const XpathValidationReportTest= ({  sid, suiteId, testId, mappingSuiteIdentifie
                             variant="h4">
                     Assertions
                 </Typography>
-            <TableLoadWrapper load={dataLoad}
+            <TableLoadWrapper dataState={dataState}
                               data={validationReport}>
                 <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
                 <ListTable

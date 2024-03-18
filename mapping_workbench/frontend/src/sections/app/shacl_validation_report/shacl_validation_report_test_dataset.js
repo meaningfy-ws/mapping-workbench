@@ -116,7 +116,8 @@ const useItemsSearch = (items) => {
 
 const ShaclTestDatasetReport = ({ sid, suiteId }) => {
     const [validationReport, setValidationReport] = useState([])
-    const [dataLoad, setDataLoad] = useState(true)
+    const [dataState, setDataState] = useState({load:true, error:false})
+
 
     useEffect(()=>{
         handleValidationReportsGet(sid, suiteId)
@@ -124,12 +125,13 @@ const ShaclTestDatasetReport = ({ sid, suiteId }) => {
 
     const handleValidationReportsGet = async (sid, suiteId) => {
         try {
+            setDataState({load:true, error: false})
             const result = await sectionApi.getShaclReportsSuite(sid, suiteId)
             setValidationReport(mapShaclResults(result.summary))
+            setDataState(e=>({...e, load: false}))
         } catch (err) {
             console.error(err);
-        } finally {
-            setDataLoad(false)
+            setDataState({load:false, error: true})
         }
     }
 
@@ -155,7 +157,7 @@ const ShaclTestDatasetReport = ({ sid, suiteId }) => {
                         variant="h4">
                 Results Summary
             </Typography>
-            <TableLoadWrapper load={dataLoad}
+            <TableLoadWrapper dataState={dataState}
                               data={validationReport}>
                 <ResultSummaryTable items={validationReport}/>
             </TableLoadWrapper>
@@ -163,7 +165,7 @@ const ShaclTestDatasetReport = ({ sid, suiteId }) => {
                         variant="h4">
                 Assertions
             </Typography>
-            <TableLoadWrapper load={dataLoad}
+            <TableLoadWrapper dataState={dataState}
                               data={validationReport}>
                 <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
                 <ListTable

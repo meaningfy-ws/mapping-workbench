@@ -136,8 +136,16 @@ export const TableNoData = () => {
                 </Stack>
 }
 
-export const TableLoadWrapper = ({children, load, data, lines}) => {
-    if (load) return <TableSkeleton lines={lines}/>
+export const TableErrorFetching = () => {
+    return <Stack justifyContent="center"
+                       direction="row">
+                    <Alert severity="error">Error on fetching data !</Alert>
+                </Stack>
+}
+
+export const TableLoadWrapper = ({children, data, dataState, lines}) => {
+    if (dataState.load) return <TableSkeleton lines={lines}/>
+    if (dataState.error) return <TableErrorFetching/>
     if (data.length === 0) return <TableNoData/>
     return children
 }

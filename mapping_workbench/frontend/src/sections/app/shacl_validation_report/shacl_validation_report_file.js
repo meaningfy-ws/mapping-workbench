@@ -118,7 +118,7 @@ const useItemsSearch = (items) => {
 const ShaclFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier }) => {
     const [validationReport, setValidationReport] = useState([])
     const [validationResult, setValidationResult] = useState([])
-    const [dataLoad, setDataLoad] = useState(true)
+    const [dataState, setDataState] = useState({load:true, error:false})
 
     useEffect(()=>{
         handleValidationReportsGet(sid, suiteId, testId)
@@ -126,13 +126,14 @@ const ShaclFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier }
 
     const handleValidationReportsGet = async (sid, suiteId, testId) => {
         try {
+            setDataState({load: true, error: false})
             const result = await sectionApi.getSparqlReportsFile(sid, suiteId, testId)
             setValidationReport(mapShaclFileResults(result.results?.[0]?.results?.[0]?.results))
             setValidationResult(mapShaclFileStates(result.results?.[0]));
+            setDataState(e=>({...e, load: false}))
         } catch (err) {
             console.error(err);
-        } finally {
-            setDataLoad(false)
+            setDataState({load: false, error: true})
         }
     }
 
@@ -152,7 +153,7 @@ const ShaclFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier }
                         variant="h4">
                 Results
             </Typography>
-            <TableLoadWrapper load={dataLoad}
+            <TableLoadWrapper dataState={dataState}
                               data={validationResult}
                               lines={2}>
                 <ResultTable items={validationResult}
@@ -162,7 +163,7 @@ const ShaclFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier }
                         variant="h4">
                 Assertions
             </Typography>
-            <TableLoadWrapper load={dataLoad}
+            <TableLoadWrapper dataState={dataState}
                               data={validationReport}>
                     <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
                     <ListTableFile
