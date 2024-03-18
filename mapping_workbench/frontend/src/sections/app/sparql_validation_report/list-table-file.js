@@ -40,8 +40,8 @@ export const ListTableFile = (props) => {
         setDescriptionDialog({open: true, title, description});
     };
 
-    const handleOpenDetails = ({title, query, query_result}) => {
-        const description = <><li>{`Query result: ${query_result}`}</li><li>{query}</li></>
+    const handleOpenDetails = ({title, fields_covered, query_result}) => {
+        const description = <><li>{`Query result: ${query_result}`}</li><li>{`Fields covered: ${fields_covered}`}</li></>
         setDescriptionDialog({open: true, title, description});
     }
 

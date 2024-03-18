@@ -17,7 +17,7 @@ const useItemsSearch = (items) => {
         sort: {
         },
         search: [],
-        searchColumns:[],
+        searchColumns: ["title","query"],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -144,6 +144,7 @@ const SparqlFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier 
         )
         resultArray["query"] = queryAsArray.slice(4, queryAsArray.length).join("\n")
         resultArray["query_result"] = e.query_result
+        resultArray["fields_covered"] = e.fields_covered
         resultArray["result"] = e.result
         return resultArray;
     })

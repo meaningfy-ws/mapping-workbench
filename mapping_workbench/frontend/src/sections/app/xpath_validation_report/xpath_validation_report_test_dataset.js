@@ -132,8 +132,6 @@ const XpathValidationReportSuite = ({  sid, suiteId, files, mappingSuiteIdentifi
         }
     }
 
-    console.log(validationReport)
-
     const itemsSearch = useItemsSearch(validationReport);
 
     const handleCoverageFilterChange = e => {
