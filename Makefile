@@ -211,4 +211,4 @@ stop-traefik:
 init-rml-mapper:
 	@ echo -e "RMLMapper folder initialization!"
 	@ mkdir -p ./.rmlmapper
-	@ wget -c https://github.com/RMLio/rmlmapper-java/releases/download/v6.3.0/rmlmapper-6.3.0-r371-all.jar -O ./.rmlmapper/rmlmapper.jar
+	@ wget https://github.com/RMLio/rmlmapper-java/releases/download/v6.2.2/rmlmapper-6.2.2-r371-all.jar -O ./.rmlmapper/rmlmapper.jar
