@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 import Stack from "@mui/material/Stack";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
@@ -6,23 +6,25 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 
-import SparqlPackageStateReport from "./sparql_validation_report_package_state";
-import CoverageFiles from "../xpath_validation_report/coverage_files";
-import SparqlTestDatasetReport from "./sparql_validation_report_test_dataset";
-import SparqlFileReport from "./sparql_validation_report_file";
+import ShaclPackageStateReport from "./shacl_validation_report_package_state";
+import ShaclTestDatasetReport from "./shacl_validation_report_test_dataset";
+import ShaclFileReport from "./shacl_validation_report_file";
+import CoverageFiles from "./coverage_files";
+import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
 
 const packageState = "package_state";
-const packageStateLabel = "Package State SPARQL Coverage";
+const packageStateLabel = "Package State SHACL Coverage";
 const testDataset = "test_dataset";
-const testDatasetLabel = "Test Dataset SPARQL Coverage";
+const testDatasetLabel = "Test Dataset SHACL Coverage";
 const fileCoverage =  "file_coverage";
-const fileCoverageLabel = "File SPARQL Coverage"
+const fileCoverageLabel = "File SHACL Coverage"
 
-const SparqlValidationReportView = ({ sid, reportTree }) => {
+const ShaclValidationReportView = ({ sid, reportTree }) => {
 
     const [selectedPackageState, setSelectedPackageState] = useState(reportTree.test_data_suites[0])
-    const [selectedTestDataset, setSelectedTestDataset] = useState(reportTree.test_data_suites[0].test_data_states[0])
+    const [selectedTestDataset, setSelectedTestDataset] = useState(selectedPackageState.test_data_states[0])
     const [currentTab, setCurrentTab] = useState(packageState)
+
 
     const handleSetPackageState = (file) => {
         setSelectedPackageState(file)
@@ -61,21 +63,20 @@ const SparqlValidationReportView = ({ sid, reportTree }) => {
                 <>
                     <CoverageFiles files={reportTree.test_data_suites}
                                    onClick={handleSetPackageState}/>
-                    <SparqlPackageStateReport sid={sid}
+                    <ShaclPackageStateReport sid={sid}
                                     files={reportTree.test_data_suites}/>
                 </>
             }
             {currentTab === testDataset &&
                 <>
                     <CoverageFiles files={selectedPackageState?.test_data_states}
-                                   onClick={handleSetTestDataset}
-                                   fileIcon/>
-                    <SparqlTestDatasetReport sid={sid}
+                                   onClick={handleSetTestDataset}/>
+                    <ShaclTestDatasetReport sid={sid}
                                         suiteId={selectedPackageState.oid}/>
                 </>
             }
             {currentTab === fileCoverage &&
-                <SparqlFileReport sid={sid}
+                <ShaclFileReport sid={sid}
                                   suiteId={selectedPackageState.oid}
                                   testId={selectedTestDataset.oid}/>
             }
@@ -83,4 +84,4 @@ const SparqlValidationReportView = ({ sid, reportTree }) => {
     )
 }
 
-export default SparqlValidationReportView
+export default ShaclValidationReportView

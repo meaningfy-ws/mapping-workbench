@@ -1,6 +1,10 @@
 import {ACTION, SectionApi} from "src/api/section";
 import {appApi} from "src/api/app";
 
+
+import shaclTestData from "./shaclTestData.json"
+import shaclAgregations from "./shaclAgregations.json"
+
 export class MappingPackageStatesApi extends SectionApi {
 
     get SECTION_TITLE() {
@@ -68,6 +72,15 @@ export class MappingPackageStatesApi extends SectionApi {
         return Promise.resolve(data);
     }
 
+    async getShaclAgregetions(sid) {
+        console.log("shaclReportTree",shaclAgregations)
+        return await shaclAgregations
+
+        // const endpoint = this.paths['shacl_reports']
+        // const data = await appApi.get(endpoint(sid))
+        // return Promise.resolve(data);
+    }
+
 
     async getSparqlReports(sid) {
         const endpoint = this.paths['sparql_reports']
@@ -89,9 +102,11 @@ export class MappingPackageStatesApi extends SectionApi {
     }
 
     async getShaclReports(params) {
-        const endpoint = this.paths['shacl_reports']
-        const data = await appApi.get(endpoint, params);
-        return Promise.resolve(data);
+        console.log("shaclTestData",shaclTestData)
+        return await shaclTestData
+        // const endpoint = this.paths['shacl_reports']
+        // const data = await appApi.get(endpoint, params);
+        // return Promise.resolve(data);
     }
 
     async getValidationReportFiles(params) {

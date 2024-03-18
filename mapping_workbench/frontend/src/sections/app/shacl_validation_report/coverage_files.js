@@ -4,12 +4,8 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import Typography from "@mui/material/Typography";
 
-import FolderIcon from '@mui/icons-material/FolderOpen';
-import FileIcon from '@mui/icons-material/Description';
-
-import ListItemIcon from "@mui/material/ListItemIcon";
-
-const CoverageFiles = ({files, fileIcon, onClick}) => {
+const CoverageFiles = ({files, onClick}) => {
+    console.log("files",files)
     return (
         <>
             <Typography m={2}
@@ -21,7 +17,6 @@ const CoverageFiles = ({files, fileIcon, onClick}) => {
                     <ListItem key={file.oid}
                               disablePadding>
                         <ListItemButton onClick={() => onClick(file)}>
-                            <ListItemIcon>{fileIcon ? <FileIcon/> : <FolderIcon/>}</ListItemIcon>
                             <ListItemText primary={file.identifier} />
                         </ListItemButton>
                     </ListItem>)}

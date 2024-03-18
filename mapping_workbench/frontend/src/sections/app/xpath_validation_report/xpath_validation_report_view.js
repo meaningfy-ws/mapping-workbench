@@ -68,7 +68,8 @@ const XpathValidationReportView = ({ sid, reportTree }) => {
             {currentTab === testDataset &&
                 <>
                     <CoverageFiles files={selectedPackageState?.test_data_states}
-                                   onClick={handleSetTestDataset}/>
+                                   onClick={handleSetTestDataset}
+                                   fileIcon/>
                     <XpathValidationReportSuite sid={sid}
                                         suiteId={selectedPackageState.oid}
                                         files={selectedPackageState?.test_data_states}
