@@ -8,7 +8,6 @@ import Typography from "@mui/material/Typography";
 
 import ItemSearchInput from "../file-manager/item-search-input";
 import {ListTableFile} from "./list-table-file";
-import {ResultFilter} from "./utils";
 import {ResultTable} from "./result-table";
 
 
@@ -118,6 +117,7 @@ const useItemsSearch = (items) => {
 
 const ShaclFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier }) => {
     const [validationReport, setValidationReport] = useState([])
+    const [validationResult, setValidationResult] = useState([])
     const [dataLoad, setDataLoad] = useState(true)
 
     useEffect(()=>{
@@ -126,8 +126,9 @@ const ShaclFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier }
 
     const handleValidationReportsGet = async (sid, suiteId, testId) => {
         try {
-            const result = await sectionApi.getSparqlReportsTest(sid, suiteId, testId)
-            setValidationReport(mapSparqlResults(result.results))
+            const result = await sectionApi.getSparqlReportsFile(sid, suiteId, testId)
+            setValidationReport(mapShaclFileResults(result.results?.[0]?.results?.[0]?.results))
+            setValidationResult(mapShaclFileStates(result.results?.[0]));
         } catch (err) {
             console.error(err);
         } finally {
@@ -135,18 +136,24 @@ const ShaclFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier }
         }
     }
 
-    const mapSparqlResults = (result) => result.map(e=> {
-        const queryAsArray = e.query.content.split("\n")
-        const values = queryAsArray.slice(0,3)
+    console.log(validationResult)
+
+    const mapShaclFileStates = (states) => {
+        return states.results.map(e => ({
+            conforms: e.conforms, error: e.error, title: states.shacl_suite.shacl_suite_id
+        }))
+    }
+
+    const mapShaclFileResults = (result) => result.map(e=> {
+        console.log(e)
         const resultArray = {}
-        values.forEach(e => {
-                const res = e.split(": ")
-                resultArray[res[0].substring(1)] = res[1]
-            }
-        )
-        resultArray["query"] = queryAsArray.slice(4, queryAsArray.length).join("\n")
-        resultArray["query_result"] = e.query_result
-        resultArray["result"] = e.result
+
+        resultArray["focus_node"] = e.binding.focus_node
+        resultArray["message"] = e.binding.message
+        resultArray["result_path"] = e.binding.result_path
+        resultArray["result_severity"] = e.binding.result_severity
+        resultArray["source_constraint_component"] = e.binding.source_constraint_component
+
         return resultArray;
     })
 
@@ -167,10 +174,7 @@ const ShaclFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier }
             }
         </> :
         <>
-            <ResultTable
-                    items={[]}
-                    sectionApi={sectionApi}
-                />
+            <ResultTable items={validationResult} sectionApi={sectionApi}/>
             <Typography m={2}
                         variant="h4">
                 Assertions
@@ -182,8 +186,6 @@ const ShaclFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier }
                 </Stack> :
                 <>
                     <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
-                    <ResultFilter onStateChange={handleResultFilterChange}
-                          currentState={itemsSearch.state.filters.result}/>
                     <ListTableFile
                             items={itemsSearch.pagedItems}
                             count={itemsSearch.count}

@@ -225,6 +225,7 @@ export const apiPaths = {
         sparql_reports_test: (sid, suiteId, testId) => `/package_validator/sparql/state/${sid}/suite/${suiteId}/test/${testId}`,
         shacl_reports: (sid) => `/package_validator/shacl/state/${sid}`,
         shacl_reports_suite: (sid, suiteId) => `/package_validator/shacl/state/${sid}/suite/${suiteId}`,
+        shacl_reports_test: (sid, suiteId, testId) => `/package_validator/shacl/state/${sid}/suite/${suiteId}/test/${testId}`,
 
         validation_report_files: '/package_exporter/get_validation_report_files'
     },

@@ -72,16 +72,6 @@ export class MappingPackageStatesApi extends SectionApi {
         return Promise.resolve(data);
     }
 
-    async getShaclAgregetions(sid) {
-        console.log("shaclReportTree",shaclAgregations)
-        return await shaclAgregations
-
-        // const endpoint = this.paths['shacl_reports']
-        // const data = await appApi.get(endpoint(sid))
-        // return Promise.resolve(data);
-    }
-
-
     async getSparqlReports(sid) {
         const endpoint = this.paths['sparql_reports']
         const data = await appApi.get(endpoint(sid));
@@ -110,6 +100,12 @@ export class MappingPackageStatesApi extends SectionApi {
     async getShaclReportsSuite(sid, suiteId) {
         const endpoint = this.paths['shacl_reports_suite']
         const data = await appApi.get(endpoint(sid, suiteId));
+        return Promise.resolve(data);
+    }
+
+    async getSparqlReportsFile(sid, suiteId, testId) {
+        const endpoint = this.paths['shacl_reports_test']
+        const data = await appApi.get(endpoint(sid, suiteId, testId));
         return Promise.resolve(data);
     }
 

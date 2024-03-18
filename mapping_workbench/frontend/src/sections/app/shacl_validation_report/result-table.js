@@ -11,7 +11,6 @@ import Tooltip from "@mui/material/Tooltip";
 
 import PropTypes from 'prop-types';
 import {Scrollbar} from 'src/components/scrollbar';
-import {useRouter} from "../../../hooks/use-router";
 import {useState} from "react";
 
 export const ResultTable = (props) => {
@@ -27,9 +26,6 @@ export const ResultTable = (props) => {
 
     const[sort,setSort] = useState({column:'',direction:''})
 
-
-    const router = useRouter();
-    if (!router.isReady) return;
 
     const SorterHeader = ({fieldName, title}) => {
         return <Tooltip enterDelay={300}
@@ -76,14 +72,14 @@ export const ResultTable = (props) => {
                                 <TableRow key={key}>
                                     <TableCell width="25%">
                                         <Typography variant="subtitle3">
-                                            {item.focusNode}
+                                            {item.title}
                                         </Typography>
                                     </TableCell>
                                     <TableCell>
-                                        {item.resultPath}
+                                        {item.conforms.toString()}
                                     </TableCell>
                                     <TableCell>
-                                        {item.resultSeverity}
+                                        {item.error}
                                     </TableCell>
                                 </TableRow>
                             );
