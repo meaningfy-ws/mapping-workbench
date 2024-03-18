@@ -101,12 +101,16 @@ export class MappingPackageStatesApi extends SectionApi {
         return Promise.resolve(data);
     }
 
-    async getShaclReports(params) {
-        console.log("shaclTestData",shaclTestData)
-        return await shaclTestData
-        // const endpoint = this.paths['shacl_reports']
-        // const data = await appApi.get(endpoint, params);
-        // return Promise.resolve(data);
+    async getShaclReports(sid) {
+        const endpoint = this.paths['shacl_reports']
+        const data = await appApi.get(endpoint(sid));
+        return Promise.resolve(data);
+    }
+
+    async getShaclReportsSuite(sid, suiteId) {
+        const endpoint = this.paths['shacl_reports_suite']
+        const data = await appApi.get(endpoint(sid, suiteId));
+        return Promise.resolve(data);
     }
 
     async getValidationReportFiles(params) {

@@ -1,4 +1,5 @@
 import {useState} from "react";
+import PropTypes from 'prop-types';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -7,7 +8,6 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import Typography from '@mui/material/Typography';
 import Tooltip from "@mui/material/Tooltip";
 import Button from "@mui/material/Button";
 import Dialog from '@mui/material/Dialog';
@@ -18,7 +18,6 @@ import DialogContentText from "@mui/material/DialogContentText";
 import Stack from "@mui/material/Stack";
 
 import {Scrollbar} from 'src/components/scrollbar';
-import PropTypes from 'prop-types';
 import {ResultChip} from "./utils";
 
 export const ListTable = (props) => {
@@ -116,6 +115,12 @@ export const ListTable = (props) => {
                                               desc/>
                             </TableCell>
                             <TableCell align="center">
+                                <SorterHeader fieldName="validCount"
+                                              title={<ResultChip label="Valid"
+                                                                 clickable/>}
+                                              desc/>
+                            </TableCell>
+                            <TableCell align="center">
                                 <SorterHeader fieldName="warningCount"
                                               title={<ResultChip label="Warning"
                                                                  clickable/>}
@@ -134,13 +139,19 @@ export const ListTable = (props) => {
                             return (
                                 <TableRow key={key}>
                                     <TableCell>
-                                        {item.test_suite}
+                                        {item.shacl_suite}
                                     </TableCell>
                                     <TableCell>
                                             {0}
                                     </TableCell>
                                     <TableCell>
-                                        {item.query}
+                                        {item.result_path}
+                                    </TableCell>
+                                    <TableCell>
+                                        <ResultCell
+                                            title={item.title}
+                                            result={item.result.info}
+                                            onClick={handleOpenDetails}/>
                                     </TableCell>
                                     <TableCell>
                                         <ResultCell
@@ -151,13 +162,13 @@ export const ListTable = (props) => {
                                     <TableCell>
                                         <ResultCell
                                             title={item.title}
-                                            result={item.result.unverifiable}
+                                            result={item.result.warning}
                                             onClick={handleOpenDetails}/>
                                     </TableCell>
                                     <TableCell>
                                         <ResultCell
                                             title={item.title}
-                                            result={item.result.warning}
+                                            result={item.result.violation}
                                             onClick={handleOpenDetails}/>
                                     </TableCell>
                                 </TableRow>

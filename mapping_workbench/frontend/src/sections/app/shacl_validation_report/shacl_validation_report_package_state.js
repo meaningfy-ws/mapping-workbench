@@ -128,8 +128,7 @@ const ShaclPackageStateReport = ({ sid }) => {
     const handleValidationReportsGet = async (sid) => {
         try {
             const result = await sectionApi.getShaclReports(sid)
-            // setValidationReport(mapSparqlResults(result.summary))
-            setValidationReport(result.results)
+            setValidationReport(mapShaclResults(result.summary))
         } catch (err) {
             console.error(err);
         } finally {
@@ -137,24 +136,19 @@ const ShaclPackageStateReport = ({ sid }) => {
         }
     }
 
-    const mapSparqlResults = (result) => result.map(e => {
-        const queryAsArray = e.query.content.split("\n")
-        const values = queryAsArray.slice(0,3)
-        const resultArray = {}
-        values.forEach(e => {
-                const res = e.split(": ")
-                resultArray[res[0].substring(1)] = res[1]
-            }
-        )
-        resultArray["query"] = queryAsArray.slice(4, queryAsArray.length).join("\n")
-        resultArray["test_suite"] = e.query.filename
-        resultArray["result"] = e.result
-        Object.entries(e.result).forEach(entrie => {
-            const [key,value] = entrie
-            resultArray[`${key}Count`] = value.count
+    const mapShaclResults = (result) => {
+        return result.results.map(e => {
+            const resultArray = {}
+            resultArray["shacl_suite"] = result.shacl_suites?.[0]?.shacl_suite_id
+            resultArray["result_path"] = e.result_path
+            resultArray["result"] = e.result
+            Object.entries(e.result).forEach(entrie => {
+                const [key, value] = entrie
+                resultArray[`${key}Count`] = value.count
+            })
+            return resultArray;
         })
-        return resultArray;
-    })
+    }
 
     const itemsSearch = useItemsSearch(validationReport);
 

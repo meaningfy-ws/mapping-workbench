@@ -29,7 +29,7 @@ import {PropertyListItem} from "../../../../../../components/property-list-item"
 import exportPackage from "../../../../../../utils/export-mapping-package";
 
 const ShaclValidationReport =
-    dynamic(() => import("../../../../../../sections/app/shacl_validation_report/shacl_validation_report_view"));
+    dynamic(() => import("../../../../../../sections/app/shacl_validation_report/shacl_validation_report_view_new"));
 const SparqlValidationReport =
     dynamic(() => import("../../../../../../sections/app/sparql_validation_report/sparql_validation_report_view"));
 const XpathValidationReportView =
@@ -56,7 +56,7 @@ const Page = () => {
     useEffect(() => {
         if (id && sid) {
             handleItemsGet(sid);
-            handleValidationReportsFilesGet(sessionApi.getSessionProject(), id, sid)
+            // handleValidationReportsFilesGet(sessionApi.getSessionProject(), id, sid)
             handleValidationReportTreeGet(sid)
         }
     }, [id, sid]);
@@ -70,15 +70,15 @@ const Page = () => {
         }
     }
 
-    const handleValidationReportsFilesGet = async (project_id, package_id, state_id) => {
-        const data = { project_id, package_id, state_id }
-        try {
-            const result = await sectionApi.getValidationReportFiles(data)
-            setValidationReportFiles(result);
-        } catch (err) {
-            console.error(err);
-        }
-    }
+    // const handleValidationReportsFilesGet = async (project_id, package_id, state_id) => {
+    //     const data = { project_id, package_id, state_id }
+    //     try {
+    //         const result = await sectionApi.getValidationReportFiles(data)
+    //         setValidationReportFiles(result);
+    //     } catch (err) {
+    //         console.error(err);
+    //     }
+    // }
 
     const handleValidationReportTreeGet = async (state_id) => {
         try {
@@ -285,19 +285,15 @@ const Page = () => {
                 {currentTab === 'shacl' && (
                     <Card>
                         <CardContent>
-                            <ShaclValidationReport project_id={sessionApi.getSessionProject()}
-                                                   id={id}
-                                                   sid={sid}
-                                                   files={validationReportFiles}/>
+                            <ShaclValidationReport sid={sid}
+                                                   reportTree={validationReportTree}/>
                         </CardContent>
                     </Card>
                 )}
                 {currentTab === 'sparql' && (
                     <Card>
                         <CardContent>
-                            <SparqlValidationReport project_id={sessionApi.getSessionProject()}
-                                                    filtes={validationReportFiles}
-                                                    sid={sid}
+                            <SparqlValidationReport sid={sid}
                                                     reportTree={validationReportTree}/>
                         </CardContent>
                     </Card>
@@ -305,9 +301,8 @@ const Page = () => {
                 {currentTab === 'xpath' && (
                     <Card>
                         <CardContent>
-                            <XpathValidationReportView
-                                                   sid={sid}
-                                                   reportTree={validationReportTree}/>
+                            <XpathValidationReportView sid={sid}
+                                                       reportTree={validationReportTree}/>
                         </CardContent>
                     </Card>
                 )}

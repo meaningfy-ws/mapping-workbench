@@ -26,6 +26,8 @@ const ShaclValidationReportView = ({ sid, reportTree }) => {
     const [currentTab, setCurrentTab] = useState(packageState)
 
 
+    console.log(selectedPackageState,selectedTestDataset)
+
     const handleSetPackageState = (file) => {
         setSelectedPackageState(file)
         setCurrentTab(testDataset)
@@ -64,7 +66,7 @@ const ShaclValidationReportView = ({ sid, reportTree }) => {
                     <CoverageFiles files={reportTree.test_data_suites}
                                    onClick={handleSetPackageState}/>
                     <ShaclPackageStateReport sid={sid}
-                                    files={reportTree.test_data_suites}/>
+                                             files={reportTree.test_data_suites}/>
                 </>
             }
             {currentTab === testDataset &&
@@ -72,7 +74,7 @@ const ShaclValidationReportView = ({ sid, reportTree }) => {
                     <CoverageFiles files={selectedPackageState?.test_data_states}
                                    onClick={handleSetTestDataset}/>
                     <ShaclTestDatasetReport sid={sid}
-                                        suiteId={selectedPackageState.oid}/>
+                                            suiteId={selectedPackageState.oid}/>
                 </>
             }
             {currentTab === fileCoverage &&

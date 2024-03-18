@@ -27,7 +27,7 @@ const ResultSummaryTable = ({items}) => {
                 }
             )
             return acc
-        },{valid:0,unverifiable:0,warning:0,invalid:0,error:0,unknown:0})
+        },{info:0, valid:0, violation:0, warning:0})
 
     const itemsDisplay = Object.entries(itemsReduce)?.map(item => {
         const [itemName, itemCount] = item
