@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 import Typography from "@mui/material/Typography";
 
 import {TableLoadWrapper} from "./utils";
-import {ListTable} from "./list-table";
+import {ListTable} from "./list-table-file";
 import CoverageReport from "./coverage_report";
 import ItemSearchInput from "../file-manager/item-search-input";
 import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";

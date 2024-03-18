@@ -19,7 +19,7 @@ const useItemsSearch = (items) => {
             direction: "desc"
         },
         search: [],
-        searchColumns:[],
+        searchColumns:["focus_node","message","result_path","result_severity","source_constraint_component"],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -128,8 +128,8 @@ const ShaclFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier }
         try {
             setDataState({load: true, error: false})
             const result = await sectionApi.getSparqlReportsFile(sid, suiteId, testId)
-            setValidationReport(mapShaclFileResults(result.results?.[0]?.results?.[0]?.results))
-            setValidationResult(mapShaclFileStates(result.results?.[0]));
+            setValidationReport(mapShaclFileResults(result.results?.[0]?.results?.[0]?.results) ?? [])
+            setValidationResult(mapShaclFileStates(result.results?.[0]) ?? []);
             setDataState(e=>({...e, load: false}))
         } catch (err) {
             console.error(err);
@@ -138,12 +138,12 @@ const ShaclFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier }
     }
 
     const mapShaclFileStates = (states) => {
-        return states.results.map(e => ({
+        return states?.results.map(e => ({
             conforms: e.conforms, error: e.error, title: states.shacl_suite.shacl_suite_id
         }))
     }
 
-    const mapShaclFileResults = (result) => result.map(e=> ({...e.binding}))
+    const mapShaclFileResults = (result) => result?.map(e=> ({...e.binding}))
 
     const itemsSearch = useItemsSearch(validationReport);
 

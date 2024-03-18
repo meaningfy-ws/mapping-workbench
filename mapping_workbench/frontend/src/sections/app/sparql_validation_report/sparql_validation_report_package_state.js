@@ -17,7 +17,7 @@ const useItemsSearch = (items) => {
         sort: {
         },
         search: [],
-        searchColumns:[],
+        searchColumns:["eforms_sdk_element_id","eforms_sdk_element_xpath"],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });

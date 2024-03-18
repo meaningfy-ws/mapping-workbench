@@ -1,10 +1,6 @@
 import {ACTION, SectionApi} from "src/api/section";
 import {appApi} from "src/api/app";
 
-
-import shaclTestData from "./shaclTestData.json"
-import shaclAgregations from "./shaclAgregations.json"
-
 export class MappingPackageStatesApi extends SectionApi {
 
     get SECTION_TITLE() {

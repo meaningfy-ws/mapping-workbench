@@ -17,7 +17,7 @@ const useItemsSearch = (items) => {
             direction: "desc"
         },
         search: [],
-        searchColumns:[],
+        searchColumns:["test_suite","result_path"],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });

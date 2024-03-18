@@ -16,7 +16,7 @@ const useItemsSearch = (items) => {
         sort: {
         },
         search: [],
-        searchColumns:["eforms_sdk_element_id","test_data_xpath"],
+        searchColumns:["eforms_sdk_element_id","eforms_sdk_element_xpath"],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -131,6 +131,8 @@ const XpathValidationReportSuite = ({  sid, suiteId, files, mappingSuiteIdentifi
             setDataState({load: false, error: true})
         }
     }
+
+    console.log(validationReport)
 
     const itemsSearch = useItemsSearch(validationReport);
 
