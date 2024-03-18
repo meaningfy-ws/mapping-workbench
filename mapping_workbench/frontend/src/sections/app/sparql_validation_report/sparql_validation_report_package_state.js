@@ -1,9 +1,6 @@
 import {useEffect, useState} from "react";
 import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
 
-import Skeleton from "@mui/material/Skeleton";
-import Stack from "@mui/material/Stack";
-import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
 
 import ItemSearchInput from "../file-manager/item-search-input";

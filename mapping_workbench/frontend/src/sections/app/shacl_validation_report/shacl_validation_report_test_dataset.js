@@ -1,20 +1,20 @@
 import {useEffect, useState} from "react";
 import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
 
-import Skeleton from "@mui/material/Skeleton";
-import Stack from "@mui/material/Stack";
-import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
 
 import ItemSearchInput from "../file-manager/item-search-input";
-import {ListTable} from "./list-table1";
+import {ListTable} from "./list-table";
 import ResultSummaryTable from "./result-summary-table";
+import {TableLoadWrapper} from "./utils";
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
         filters: {
         },
         sort: {
+            column: "",
+            direction: "desc"
         },
         search: [],
         searchColumns:[],
@@ -118,8 +118,6 @@ const ShaclTestDatasetReport = ({ sid, suiteId }) => {
     const [validationReport, setValidationReport] = useState([])
     const [dataLoad, setDataLoad] = useState(true)
 
-    console.log(sid,suiteId)
-
     useEffect(()=>{
         handleValidationReportsGet(sid, suiteId)
     },[])
@@ -151,42 +149,36 @@ const ShaclTestDatasetReport = ({ sid, suiteId }) => {
 
     const itemsSearch = useItemsSearch(validationReport);
 
-    return dataLoad ?
+    return (
         <>
-            <Skeleton width="20%"
-                      height={80} />
-            {
-                new Array(5).fill("").map((e, i) =>
-                <Skeleton key={i}
-                          height={50}/>)
-            }
-        </> :
-        <>
-            <ResultSummaryTable items={validationReport}/>
+            <Typography m={2}
+                        variant="h4">
+                Results Summary
+            </Typography>
+            <TableLoadWrapper load={dataLoad}
+                              data={validationReport}>
+                <ResultSummaryTable items={validationReport}/>
+            </TableLoadWrapper>
             <Typography m={2}
                         variant="h4">
                 Assertions
             </Typography>
-            {!validationReport?.length ?
-                <Stack justifyContent="center"
-                       direction="row">
-                    <Alert severity="info">No Data !</Alert>
-                </Stack> :
-                <>
-                    <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
-                    <ListTable
-                            items={itemsSearch.pagedItems}
-                            count={itemsSearch.count}
-                            onPageChange={itemsSearch.handlePageChange}
-                            onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                            page={itemsSearch.state.page}
-                            rowsPerPage={itemsSearch.state.rowsPerPage}
-                            onSort={itemsSearch.handleSort}
-                            sort={itemsSearch.state.sort}
-                            sectionApi={sectionApi}
-                    />
-                </>
-            }
+            <TableLoadWrapper load={dataLoad}
+                              data={validationReport}>
+                <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
+                <ListTable
+                        items={itemsSearch.pagedItems}
+                        count={itemsSearch.count}
+                        onPageChange={itemsSearch.handlePageChange}
+                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                        page={itemsSearch.state.page}
+                        rowsPerPage={itemsSearch.state.rowsPerPage}
+                        onSort={itemsSearch.handleSort}
+                        sort={itemsSearch.state.sort}
+                        sectionApi={sectionApi}
+                />
+            </TableLoadWrapper>
         </>
+    )
 }
 export default ShaclTestDatasetReport

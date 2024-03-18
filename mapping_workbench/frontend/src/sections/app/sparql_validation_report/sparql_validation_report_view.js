@@ -6,8 +6,8 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 
+import CoverageFiles from "./coverage_files";
 import SparqlPackageStateReport from "./sparql_validation_report_package_state";
-import CoverageFiles from "../xpath_validation_report/coverage_files";
 import SparqlTestDatasetReport from "./sparql_validation_report_test_dataset";
 import SparqlFileReport from "./sparql_validation_report_file";
 

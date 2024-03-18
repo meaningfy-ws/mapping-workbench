@@ -29,7 +29,7 @@ import {PropertyListItem} from "../../../../../../components/property-list-item"
 import exportPackage from "../../../../../../utils/export-mapping-package";
 
 const ShaclValidationReport =
-    dynamic(() => import("../../../../../../sections/app/shacl_validation_report/shacl_validation_report_view_new"));
+    dynamic(() => import("../../../../../../sections/app/shacl_validation_report/shacl_validation_report_view"));
 const SparqlValidationReport =
     dynamic(() => import("../../../../../../sections/app/sparql_validation_report/sparql_validation_report_view"));
 const XpathValidationReportView =

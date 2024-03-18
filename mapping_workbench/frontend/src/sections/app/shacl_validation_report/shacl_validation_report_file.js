@@ -1,14 +1,12 @@
 import {useEffect, useState} from "react";
 import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
 
-import Skeleton from "@mui/material/Skeleton";
-import Stack from "@mui/material/Stack";
-import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
 
 import ItemSearchInput from "../file-manager/item-search-input";
 import {ListTableFile} from "./list-table-file";
 import {ResultTable} from "./result-table";
+import {TableLoadWrapper} from "./utils";
 
 
 const useItemsSearch = (items) => {
@@ -17,6 +15,8 @@ const useItemsSearch = (items) => {
             result: ""
         },
         sort: {
+            column: "",
+            direction: "desc"
         },
         search: [],
         searchColumns:[],
@@ -136,55 +136,34 @@ const ShaclFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier }
         }
     }
 
-    console.log(validationResult)
-
     const mapShaclFileStates = (states) => {
         return states.results.map(e => ({
             conforms: e.conforms, error: e.error, title: states.shacl_suite.shacl_suite_id
         }))
     }
 
-    const mapShaclFileResults = (result) => result.map(e=> {
-        console.log(e)
-        const resultArray = {}
-
-        resultArray["focus_node"] = e.binding.focus_node
-        resultArray["message"] = e.binding.message
-        resultArray["result_path"] = e.binding.result_path
-        resultArray["result_severity"] = e.binding.result_severity
-        resultArray["source_constraint_component"] = e.binding.source_constraint_component
-
-        return resultArray;
-    })
+    const mapShaclFileResults = (result) => result.map(e=> ({...e.binding}))
 
     const itemsSearch = useItemsSearch(validationReport);
 
-    const handleResultFilterChange = e => {
-        itemsSearch.handleFiltersChange({result: e.target.value})
-    }
-
-    return dataLoad ?
+    return (
         <>
-            <Skeleton width="20%"
-                      height={80} />
-            {
-                new Array(5).fill("").map((e, i) =>
-                <Skeleton key={i}
-                          height={50}/>)
-            }
-        </> :
-        <>
-            <ResultTable items={validationResult} sectionApi={sectionApi}/>
+             <Typography m={2}
+                        variant="h4">
+                Results
+            </Typography>
+            <TableLoadWrapper load={dataLoad}
+                              data={validationResult}
+                              lines={2}>
+                <ResultTable items={validationResult}
+                         sectionApi={sectionApi}/>
+            </TableLoadWrapper>
             <Typography m={2}
                         variant="h4">
                 Assertions
             </Typography>
-            {!validationReport?.length ?
-                <Stack justifyContent="center"
-                       direction="row">
-                    <Alert severity="info">No Data !</Alert>
-                </Stack> :
-                <>
+            <TableLoadWrapper load={dataLoad}
+                              data={validationReport}>
                     <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
                     <ListTableFile
                             items={itemsSearch.pagedItems}
@@ -197,8 +176,8 @@ const ShaclFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier }
                             sort={itemsSearch.state.sort}
                             sectionApi={sectionApi}
                     />
-                </>
-            }
+            </TableLoadWrapper>
         </>
+    )
 }
 export default  ShaclFileReport

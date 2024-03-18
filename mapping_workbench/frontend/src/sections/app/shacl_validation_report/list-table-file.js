@@ -2,14 +2,13 @@
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableSortLabel from '@mui/material/TableSortLabel';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import Tooltip from "@mui/material/Tooltip";
 
 import {Scrollbar} from 'src/components/scrollbar';
 import PropTypes from 'prop-types';
+import {SorterHeader as UtilsSorterHeader} from "./utils";
 
 export const ListTableFile = (props) => {
 
@@ -25,18 +24,10 @@ export const ListTableFile = (props) => {
         sectionApi
     } = props;
 
-    const SorterHeader = ({fieldName, title}) => {
-        return <Tooltip enterDelay={300}
-                       title="Sort"
-               >
-                   <TableSortLabel
-                        active={sort.column === fieldName}
-                        direction={sort.direction}
-                        onClick={() => onSort(fieldName)}>
-                        {title ?? fieldName}
-                    </TableSortLabel>
-               </Tooltip>
-    }
+    const SorterHeader = (props) => <UtilsSorterHeader sort={sort}
+                                                       onSort={onSort}
+                                                       {...props}
+                                                        />
 
     return (
         <>
@@ -53,11 +44,11 @@ export const ListTableFile = (props) => {
                 <Table sx={{minWidth: 1200}}>
                     <TableHead>
                         <TableRow>
-                            <TableCell width="25%">
+                            <TableCell>
                                 <SorterHeader fieldName="focus_node"
                                               title="Focus Node"/>
                             </TableCell>
-                            <TableCell width="25%">
+                            <TableCell>
                                 <SorterHeader fieldName="message"
                                               title="Message"/>
                             </TableCell>
@@ -65,11 +56,11 @@ export const ListTableFile = (props) => {
                                  <SorterHeader fieldName="result_path"
                                                title="Result Path"/>
                             </TableCell>
-                            <TableCell align="left">
+                            <TableCell>
                                 <SorterHeader fieldName="result_severity"
                                               title="Result Severity"/>
                             </TableCell>
-                             <TableCell align="left">
+                             <TableCell>
                                 <SorterHeader fieldName="source_constraint_component"
                                               title="Source Constraint Component"/>
                             </TableCell>

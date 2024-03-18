@@ -1,13 +1,9 @@
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
-import {Box} from "@mui/system";
-import Paper from "@mui/material/Paper";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
 import Tooltip from "@mui/material/Tooltip";
 import TableSortLabel from "@mui/material/TableSortLabel";
+import Skeleton from "@mui/material/Skeleton";
+import Alert from "@mui/material/Alert";
 
 export const resultColor = (result) => {
     switch (result.toLowerCase()) {
@@ -33,71 +29,15 @@ export const ResultChip = ({label, color, clickable}) => {
     )
 }
 
-export const ResultFilter = ({currentState, onStateChange}) => {
-    const reportValues = ["valid","unverifiable","warning","invalid","error","unknown"]
 
-
-    const FilterValue = ({label, value, currentState}) => {
-        return (
-            <FormControlLabel
-                control={<Radio/>}
-                checked={currentState === (value ?? label.toLowerCase())}
-                label={(
-                    <Box sx={{ml: 0, mr: 1}}>
-                        <Typography
-                            variant="subtitle2"
-                        >
-                            <ResultChip clickable label={label}/>
-                        </Typography>
-                    </Box>
-                )}
-                value={value ?? label.toLowerCase()}
-            />)
-    }
-
-    return(
-        <Box sx={{p: 2.5, display: 'flex'}}
-                 direction="row">
-            <Stack
-                component={RadioGroup}
-                name="terms_validity"
-                spacing={3}
-                onChange={onStateChange}
-            >
-                <Paper
-                    sx={{
-                        alignItems: 'flex-start',
-                        display: 'flex',
-                        p: 2
-                    }}
-                    variant="outlined"
-                >
-                    <Box sx={{mr: 2, mt: 1}}>
-                        <b>Filter Results:</b>
-                    </Box>
-                    <FilterValue label="all"
-                                 value=""
-                                 currentState={currentState}/>
-                    {reportValues.map(value =>
-                        <FilterValue key={value}
-                                     label={value}
-                                     currentState={currentState}/>)}
-
-
-                </Paper>
-            </Stack>
-        </Box>
-    )
-}
-
-export const SorterHeader = ({fieldName, title, sort, onSort}) => {
+export const SorterHeader = ({fieldName, title, desc, sort, onSort}) => {
     return <Tooltip enterDelay={300}
                    title="Sort"
            >
                <TableSortLabel
                     active={sort.column === fieldName}
                     direction={sort.direction}
-                    onClick={() => onSort(fieldName)}>
+                    onClick={() => onSort(fieldName, desc)}>
                     {title ?? fieldName}
                 </TableSortLabel>
            </Tooltip>
@@ -120,3 +60,22 @@ export const sortItems = (items, sort) => {
                 })
         }
     }
+
+export const TableSkeleton = ({lines = 5}) => {
+    return new Array(lines).fill("").map((e, i) =>
+                <Skeleton key={'line' + i}
+                          height={50}/>)
+}
+
+export const TableNoData = () => {
+    return <Stack justifyContent="center"
+                       direction="row">
+                    <Alert severity="info">No Data !</Alert>
+                </Stack>
+}
+
+export const TableLoadWrapper = ({children, load, data, lines}) => {
+    if (load) return <TableSkeleton lines={lines}/>
+    if (data.length === 0) return <TableNoData/>
+    return children
+}
