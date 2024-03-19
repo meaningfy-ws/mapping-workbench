@@ -23,7 +23,7 @@ const ConfirmDialog = (props) => {
                     id="no_dialog_button"
                     variant="contained"
                     onClick={() => setOpen(false)}
-                    color="secondary"
+                    color="inherit"
                 >
                     No
                 </Button>

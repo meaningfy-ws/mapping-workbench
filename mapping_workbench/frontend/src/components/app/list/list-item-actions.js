@@ -16,11 +16,13 @@ export const ListItemActions = (props) => {
     const popover = usePopover();
 
     const handleViewAction = () => {
-        const viewPathname = pathnames?.view ?? paths.app[itemctx.api.section].view;
-        router.push({
-            pathname: viewPathname,
-            query: {id: itemctx.id}
-        });
+        if (pathnames?.view)
+            router.push(pathnames.view())
+        else
+            router.push({
+                pathname: paths.app[itemctx.api.section].view,
+                query: {id: itemctx.id}
+            });
     }
 
     const handleEditAction = () => {
