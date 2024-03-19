@@ -46,6 +46,7 @@ export const EditForm = (props) => {
         onSubmit: async (values, helpers) => {
             try {
                 let response;
+                values['is_syncable'] = values['is_syncable'] || false;
                 if (itemctx.isNew) {
                     response = await sectionApi.createItem(values);
                 } else {

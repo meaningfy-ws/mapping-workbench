@@ -141,5 +141,4 @@ package-lock.json
 infra/backend/src
 .rmlmapper
 activate_venv.sh
-tests/test_data/mappings/package_eforms_16_1.5/transformation/~$conceptual_mappings.xlsx
 tmp/
