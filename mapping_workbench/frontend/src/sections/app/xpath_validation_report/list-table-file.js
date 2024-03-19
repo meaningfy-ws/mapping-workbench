@@ -15,11 +15,11 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContentText from "@mui/material/DialogContentText";
-import Stack from "@mui/material/Stack";
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
 
 import {Scrollbar} from 'src/components/scrollbar';
 import PropTypes from 'prop-types';
-import {ResultChip} from "./utils";
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open:false, title:"", text:""})
@@ -31,54 +31,27 @@ export const ListTable = (props) => {
         onRowsPerPageChange,
         page = 0,
         rowsPerPage = 0,
-        sort,
+        sectionApi,
         onSort,
-        sectionApi
+        sort
     } = props;
-
-    const mapNotices = (notices) => {
-        return(
-            <ul>
-                {notices.map((notice,i) => <li key={`notice${i}`}>
-                    {notice.test_data_id}{notice.test_data_suite_id}
-                </li>)}
-            </ul>
-        )
-    }
-
-    const handleOpenDetails = ({title, notices}) => {
-        const description = mapNotices(notices)
-        setDescriptionDialog({open: true, title, description});
-    }
 
     const handleClose = () => {
         setDescriptionDialog(e=>({...e, open: false}));
     };
 
-    const SorterHeader = ({fieldName, title, desc}) => {
-        return <Tooltip enterDelay={300}
+
+    const SorterHeader = ({fieldName, title}) => {
+       return <Tooltip enterDelay={300}
                        title="Sort"
                >
                    <TableSortLabel
                         active={sort.column === fieldName}
                         direction={sort.direction}
-                        onClick={() => onSort(fieldName, desc)}>
+                        onClick={() => onSort(fieldName)}>
                         {title ?? fieldName}
                     </TableSortLabel>
                </Tooltip>
-    }
-
-    const ResultCell = ({title, result, onClick}) => {
-        return <Stack direction="column"
-        alignItems="center"
-        justifyContent="start"
-        height={100}>
-                    {result.count}
-                    {!!result.count && <Button variant="outlined"
-                    onClick={()=> onClick({title, notices: result.test_datas})}>
-                        Details
-                    </Button>}
-                </Stack>
     }
 
     return (
@@ -96,69 +69,35 @@ export const ListTable = (props) => {
                 <Table sx={{minWidth: 1200}}>
                     <TableHead>
                         <TableRow>
-                            <TableCell>
-                                 <SorterHeader fieldName="test_suite"
-                                               title="Test Suite"/>
-                            </TableCell>
                             <TableCell width="25%">
-                                <SorterHeader fieldName="conforms"
-                                              title="Conforms"/>
+                                <SorterHeader fieldName="eforms_sdk_element_id"
+                                              title="Form Field"/>
                             </TableCell>
-
                             <TableCell>
-                                 <SorterHeader fieldName="result_path"
-                                               title="Result Path"/>
+                                <SorterHeader fieldName="eforms_sdk_element_xpath"
+                                              title="Xpath"/>
                             </TableCell>
-                            <TableCell align="center">
-                                <SorterHeader fieldName="infoCount"
-                                              title={<ResultChip label="Info"
-                                                                 clickable/>}
-                                              desc/>
-                            </TableCell>
-                            <TableCell align="center">
-                                <SorterHeader fieldName="warningCount"
-                                              title={<ResultChip label="Warning"
-                                                                 clickable/>}
-                                              desc/>
-                            </TableCell>
-                            <TableCell align="center">
-                                 <SorterHeader fieldName="violationCount"
-                                               title={<ResultChip label="Violation"
-                                                                  clickable/>}
-                                               desc/>
+                            <TableCell width="10%">
+                                <SorterHeader fieldName="is_covered"
+                                               title="Found"/>
                             </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {items?.map((item, key) => {
+                            const notices = item.test_data_xpaths.map(e=> `"${e.test_data_id}":${e.xpaths.length}`)
                             return (
                                 <TableRow key={key}>
-                                    <TableCell>
-                                        {item.test_suite}
+                                    <TableCell width="25%">
+                                        <Typography variant="subtitle3">
+                                            {item.eforms_sdk_element_id}
+                                        </Typography>
                                     </TableCell>
                                     <TableCell>
-                                            {0}
+                                        {item.eforms_sdk_element_xpath}
                                     </TableCell>
-                                    <TableCell>
-                                        {item.query}
-                                    </TableCell>
-                                    <TableCell>
-                                        <ResultCell
-                                            title={item.title}
-                                            result={item.result.valid}
-                                            onClick={handleOpenDetails}/>
-                                    </TableCell>
-                                    <TableCell>
-                                        <ResultCell
-                                            title={item.title}
-                                            result={item.result.unverifiable}
-                                            onClick={handleOpenDetails}/>
-                                    </TableCell>
-                                    <TableCell>
-                                        <ResultCell
-                                            title={item.title}
-                                            result={item.result.warning}
-                                            onClick={handleOpenDetails}/>
+                                    <TableCell align="center">
+                                        {item.is_covered ? <CheckIcon color="success"/> : <CloseIcon color="error"/>}
                                     </TableCell>
                                 </TableRow>
 

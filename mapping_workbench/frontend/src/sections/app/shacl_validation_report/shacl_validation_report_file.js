@@ -1,15 +1,12 @@
 import {useEffect, useState} from "react";
 import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
 
-import Skeleton from "@mui/material/Skeleton";
-import Stack from "@mui/material/Stack";
-import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
 
 import ItemSearchInput from "../file-manager/item-search-input";
 import {ListTableFile} from "./list-table-file";
-import {ResultFilter} from "./utils";
 import {ResultTable} from "./result-table";
+import {TableLoadWrapper} from "./utils";
 
 
 const useItemsSearch = (items) => {
@@ -18,9 +15,11 @@ const useItemsSearch = (items) => {
             result: ""
         },
         sort: {
+            column: "",
+            direction: "desc"
         },
         search: [],
-        searchColumns:[],
+        searchColumns:["focus_node","message","result_path","result_severity","source_constraint_component"],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -118,7 +117,8 @@ const useItemsSearch = (items) => {
 
 const ShaclFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier }) => {
     const [validationReport, setValidationReport] = useState([])
-    const [dataLoad, setDataLoad] = useState(true)
+    const [validationResult, setValidationResult] = useState([])
+    const [dataState, setDataState] = useState({load:true, error:false})
 
     useEffect(()=>{
         handleValidationReportsGet(sid, suiteId, testId)
@@ -126,64 +126,46 @@ const ShaclFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier }
 
     const handleValidationReportsGet = async (sid, suiteId, testId) => {
         try {
-            const result = await sectionApi.getSparqlReportsTest(sid, suiteId, testId)
-            setValidationReport(mapSparqlResults(result.results))
+            setDataState({load: true, error: false})
+            const result = await sectionApi.getSparqlReportsFile(sid, suiteId, testId)
+            setValidationReport(mapShaclFileResults(result.results?.[0]?.results?.[0]?.results) ?? [])
+            setValidationResult(mapShaclFileStates(result.results?.[0]) ?? []);
+            setDataState(e=>({...e, load: false}))
         } catch (err) {
             console.error(err);
-        } finally {
-            setDataLoad(false)
+            setDataState({load: false, error: true})
         }
     }
 
-    const mapSparqlResults = (result) => result.map(e=> {
-        const queryAsArray = e.query.content.split("\n")
-        const values = queryAsArray.slice(0,3)
-        const resultArray = {}
-        values.forEach(e => {
-                const res = e.split(": ")
-                resultArray[res[0].substring(1)] = res[1]
-            }
-        )
-        resultArray["query"] = queryAsArray.slice(4, queryAsArray.length).join("\n")
-        resultArray["query_result"] = e.query_result
-        resultArray["result"] = e.result
-        return resultArray;
-    })
+    const mapShaclFileStates = (states) => {
+        return states?.results.map(e => ({
+            conforms: e.conforms, error: e.error, title: states.shacl_suite.shacl_suite_id
+        }))
+    }
+
+    const mapShaclFileResults = (result) => result?.map(e=> ({...e.binding}))
 
     const itemsSearch = useItemsSearch(validationReport);
 
-    const handleResultFilterChange = e => {
-        itemsSearch.handleFiltersChange({result: e.target.value})
-    }
-
-    return dataLoad ?
+    return (
         <>
-            <Skeleton width="20%"
-                      height={80} />
-            {
-                new Array(5).fill("").map((e, i) =>
-                <Skeleton key={i}
-                          height={50}/>)
-            }
-        </> :
-        <>
-            <ResultTable
-                    items={[]}
-                    sectionApi={sectionApi}
-                />
+             <Typography m={2}
+                        variant="h4">
+                Results
+            </Typography>
+            <TableLoadWrapper dataState={dataState}
+                              data={validationResult}
+                              lines={2}>
+                <ResultTable items={validationResult}
+                         sectionApi={sectionApi}/>
+            </TableLoadWrapper>
             <Typography m={2}
                         variant="h4">
                 Assertions
             </Typography>
-            {!validationReport?.length ?
-                <Stack justifyContent="center"
-                       direction="row">
-                    <Alert severity="info">No Data !</Alert>
-                </Stack> :
-                <>
+            <TableLoadWrapper dataState={dataState}
+                              data={validationReport}>
                     <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
-                    <ResultFilter onStateChange={handleResultFilterChange}
-                          currentState={itemsSearch.state.filters.result}/>
                     <ListTableFile
                             items={itemsSearch.pagedItems}
                             count={itemsSearch.count}
@@ -195,8 +177,8 @@ const ShaclFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier }
                             sort={itemsSearch.state.sort}
                             sectionApi={sectionApi}
                     />
-                </>
-            }
+            </TableLoadWrapper>
         </>
+    )
 }
 export default  ShaclFileReport

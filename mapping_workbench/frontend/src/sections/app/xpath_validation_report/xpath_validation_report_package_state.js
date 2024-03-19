@@ -16,7 +16,7 @@ const useItemsSearch = (items) => {
         sort: {
         },
         search: [],
-        searchColumns:["eforms_sdk_element_id","test_data_xpath"],
+        searchColumns:["eforms_sdk_element_id","eforms_sdk_element_xpath"],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -113,7 +113,7 @@ const useItemsSearch = (items) => {
 
 const XpathValidationReport = ({ sid, files, mappingSuiteIdentifier }) => {
     const [validationReport, setValidationReport] = useState([])
-    const [dataLoad, setDataLoad] = useState(true)
+    const [dataState, setDataState] = useState({load:true, error: false})
 
     useEffect(()=>{
         handleValidationReportsGet(sid)
@@ -121,12 +121,13 @@ const XpathValidationReport = ({ sid, files, mappingSuiteIdentifier }) => {
 
     const handleValidationReportsGet = async (sid) => {
         try {
+            setDataState({load: true, error: false})
             const result = await sectionApi.getXpathReports(sid)
             setValidationReport(result.results.map(e => ({...e, notice_count: e.test_data_xpaths.length})))
+            setDataState(e=> ({...e, load: false}))
         } catch (err) {
             console.error(err);
-        } finally {
-            setDataLoad(false)
+            setDataState({load: false, error: true})
         }
     }
 
@@ -135,15 +136,16 @@ const XpathValidationReport = ({ sid, files, mappingSuiteIdentifier }) => {
         itemsSearch.handleFiltersChange({is_covered: e.target.value})
     }
 
+
     return (
         <>
             <Typography m={2}
                         variant="h4">
                     Summary
             </Typography>
-            <TableLoadWrapper load={dataLoad}
-                       data={validationReport}
-                       lines={3}>
+            <TableLoadWrapper data={validationReport}
+                              dataState={dataState}
+                              lines={3}>
                 <CoverageReport validationReport={validationReport}
                                 mappingSuiteIdentifier={mappingSuiteIdentifier}/>
             </TableLoadWrapper>
@@ -152,8 +154,8 @@ const XpathValidationReport = ({ sid, files, mappingSuiteIdentifier }) => {
                         variant="h4">
                 Assertions
             </Typography>
-            <TableLoadWrapper load={dataLoad}
-                              data={validationReport}>
+            <TableLoadWrapper data={validationReport}
+                              dataState={dataState}>
                 <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
                 <CoverageFilter onChange={handleCoverageFilterChange}
                                 filterState={itemsSearch.state.filters.is_covered}/>

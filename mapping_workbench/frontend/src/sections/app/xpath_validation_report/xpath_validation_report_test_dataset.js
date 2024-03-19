@@ -16,7 +16,7 @@ const useItemsSearch = (items) => {
         sort: {
         },
         search: [],
-        searchColumns:["eforms_sdk_element_id","test_data_xpath"],
+        searchColumns:["eforms_sdk_element_id","eforms_sdk_element_xpath"],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -114,7 +114,7 @@ const useItemsSearch = (items) => {
 
 const XpathValidationReportSuite = ({  sid, suiteId, files, mappingSuiteIdentifier }) => {
     const [validationReport, setValidationReport] = useState([])
-    const [dataLoad, setDataLoad] = useState(true)
+    const [dataState, setDataState] = useState({load: true, error: false})
 
     useEffect(()=>{
         handleValidationReportsSuiteGet(sid,suiteId)
@@ -122,13 +122,13 @@ const XpathValidationReportSuite = ({  sid, suiteId, files, mappingSuiteIdentifi
 
     const handleValidationReportsSuiteGet = async (sid, suiteId) => {
         try {
-            setDataLoad(true)
+            setDataState({load: true, error: false})
             const result = await sectionApi.getXpathReportsSuite(sid, suiteId)
             setValidationReport(result.results.map(e => ({...e, notice_count: e.test_data_xpaths.length})))
+            setDataState(e=>({...e, load: false}))
         } catch (err) {
             console.error(err);
-        } finally {
-            setDataLoad(false)
+            setDataState({load: false, error: true})
         }
     }
 
@@ -144,7 +144,7 @@ const XpathValidationReportSuite = ({  sid, suiteId, files, mappingSuiteIdentifi
                          variant="h4">
                 Summary
             </Typography>
-            <TableLoadWrapper load={dataLoad}
+            <TableLoadWrapper dataState={dataState}
                               data={validationReport}
                               lines={3}>
                 <CoverageReport validationReport={validationReport}
@@ -154,7 +154,7 @@ const XpathValidationReportSuite = ({  sid, suiteId, files, mappingSuiteIdentifi
                             variant="h4">
                     Assertions
                 </Typography>
-            <TableLoadWrapper load={dataLoad}
+            <TableLoadWrapper dataState={dataState}
                               data={validationReport}>
                 <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
                 <CoverageFilter onChange={handleCoverageFilterChange}

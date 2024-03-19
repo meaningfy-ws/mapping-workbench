@@ -1,23 +1,23 @@
 import {useEffect, useState} from "react";
 import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
 
-import Skeleton from "@mui/material/Skeleton";
-import Stack from "@mui/material/Stack";
-import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
 
 import ItemSearchInput from "../file-manager/item-search-input";
-import {ListTable} from "./list-table1";
+import {ListTable} from "./list-table";
 import ResultSummaryTable from "./result-summary-table";
+import {TableLoadWrapper} from "./utils";
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
         filters: {
         },
         sort: {
+            column: "",
+            direction: "desc"
         },
         search: [],
-        searchColumns:[],
+        searchColumns:["test_suite","result_path"],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -116,7 +116,8 @@ const useItemsSearch = (items) => {
 
 const ShaclTestDatasetReport = ({ sid, suiteId }) => {
     const [validationReport, setValidationReport] = useState([])
-    const [dataLoad, setDataLoad] = useState(true)
+    const [dataState, setDataState] = useState({load:true, error:false})
+
 
     useEffect(()=>{
         handleValidationReportsGet(sid, suiteId)
@@ -124,72 +125,62 @@ const ShaclTestDatasetReport = ({ sid, suiteId }) => {
 
     const handleValidationReportsGet = async (sid, suiteId) => {
         try {
-            const result = await sectionApi.getSparqlReportsSuite(sid, suiteId)
-            setValidationReport(mapSparqlResults(result.summary))
+            setDataState({load:true, error: false})
+            const result = await sectionApi.getShaclReportsSuite(sid, suiteId)
+            setValidationReport(mapShaclResults(result.summary))
+            setDataState(e=>({...e, load: false}))
         } catch (err) {
             console.error(err);
-        } finally {
-            setDataLoad(false)
+            setDataState({load:false, error: true})
         }
     }
 
-    const mapSparqlResults = (result) => result.map(e=> {
-        const queryAsArray = e.query.content.split("\n")
-        const values = queryAsArray.slice(0,3)
-        const resultArray = {}
-        values.forEach(e => {
-                const res = e.split(": ")
-                resultArray[res[0].substring(1)] = res[1]
-            }
-        )
-        resultArray["query"] = queryAsArray.slice(4, queryAsArray.length).join("\n")
-        resultArray["test_suite"] = e.query.filename
-        resultArray["result"] = e.result
-        Object.entries(e.result).forEach(entrie => {
-            const [key,value] = entrie
-            resultArray[`${key}Count`] = value.count
+     const mapShaclResults = (result) => {
+        return result.results.map(e => {
+            const resultArray = {}
+            resultArray["shacl_suite"] = result.shacl_suites?.[0]?.shacl_suite_id
+            resultArray["result_path"] = e.result_path
+            resultArray["result"] = e.result
+            Object.entries(e.result).forEach(entrie => {
+                const [key, value] = entrie
+                resultArray[`${key}Count`] = value.count
+            })
+            return resultArray;
         })
-        return resultArray;
-    })
+    }
 
     const itemsSearch = useItemsSearch(validationReport);
 
-    return dataLoad ?
+    return (
         <>
-            <Skeleton width="20%"
-                      height={80} />
-            {
-                new Array(5).fill("").map((e, i) =>
-                <Skeleton key={i}
-                          height={50}/>)
-            }
-        </> :
-        <>
-            <ResultSummaryTable items={validationReport}/>
+            <Typography m={2}
+                        variant="h4">
+                Results Summary
+            </Typography>
+            <TableLoadWrapper dataState={dataState}
+                              data={validationReport}>
+                <ResultSummaryTable items={validationReport}/>
+            </TableLoadWrapper>
             <Typography m={2}
                         variant="h4">
                 Assertions
             </Typography>
-            {!validationReport?.length ?
-                <Stack justifyContent="center"
-                       direction="row">
-                    <Alert severity="info">No Data !</Alert>
-                </Stack> :
-                <>
-                    <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
-                    <ListTable
-                            items={itemsSearch.pagedItems}
-                            count={itemsSearch.count}
-                            onPageChange={itemsSearch.handlePageChange}
-                            onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                            page={itemsSearch.state.page}
-                            rowsPerPage={itemsSearch.state.rowsPerPage}
-                            onSort={itemsSearch.handleSort}
-                            sort={itemsSearch.state.sort}
-                            sectionApi={sectionApi}
-                    />
-                </>
-            }
+            <TableLoadWrapper dataState={dataState}
+                              data={validationReport}>
+                <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
+                <ListTable
+                        items={itemsSearch.pagedItems}
+                        count={itemsSearch.count}
+                        onPageChange={itemsSearch.handlePageChange}
+                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                        page={itemsSearch.state.page}
+                        rowsPerPage={itemsSearch.state.rowsPerPage}
+                        onSort={itemsSearch.handleSort}
+                        sort={itemsSearch.state.sort}
+                        sectionApi={sectionApi}
+                />
+            </TableLoadWrapper>
         </>
+    )
 }
 export default ShaclTestDatasetReport

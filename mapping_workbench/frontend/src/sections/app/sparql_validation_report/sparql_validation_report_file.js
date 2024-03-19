@@ -17,7 +17,7 @@ const useItemsSearch = (items) => {
         sort: {
         },
         search: [],
-        searchColumns:[],
+        searchColumns: ["title","query"],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -115,7 +115,7 @@ const useItemsSearch = (items) => {
 
 const SparqlFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier }) => {
     const [validationReport, setValidationReport] = useState([])
-    const [dataLoad, setDataLoad] = useState(true)
+    const [dataState, setDataState] = useState({load:true, error:false})
 
     useEffect(()=>{
         handleValidationReportsGet(sid, suiteId, testId)
@@ -123,12 +123,13 @@ const SparqlFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier 
 
     const handleValidationReportsGet = async (sid, suiteId, testId) => {
         try {
+            setDataState({load:true, error:false})
             const result = await sectionApi.getSparqlReportsTest(sid, suiteId, testId)
             setValidationReport(mapSparqlResults(result.results))
+            setDataState(e=>({...e, load: false}))
         } catch (err) {
             console.error(err);
-        } finally {
-            setDataLoad(false)
+            setDataState({load:false, error:true})
         }
     }
 
@@ -143,6 +144,7 @@ const SparqlFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier 
         )
         resultArray["query"] = queryAsArray.slice(4, queryAsArray.length).join("\n")
         resultArray["query_result"] = e.query_result
+        resultArray["fields_covered"] = e.fields_covered
         resultArray["result"] = e.result
         return resultArray;
     })
@@ -159,7 +161,7 @@ const SparqlFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier 
                         variant="h4">
                 Results Summary
             </Typography>
-            <TableLoadWrapper load={dataLoad}
+            <TableLoadWrapper dataState={dataState}
                               lines={6}
                               data={validationReport}>
                 <QueryResultTable
@@ -170,7 +172,7 @@ const SparqlFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier 
                         variant="h4">
                 Assertions
             </Typography>
-            <TableLoadWrapper load={dataLoad}
+            <TableLoadWrapper dataState={dataState}
                               data={validationReport}>
                     <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
                     <ResultFilter onStateChange={handleResultFilterChange}

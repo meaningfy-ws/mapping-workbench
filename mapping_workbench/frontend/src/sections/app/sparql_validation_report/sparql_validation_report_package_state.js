@@ -1,9 +1,6 @@
 import {useEffect, useState} from "react";
 import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
 
-import Skeleton from "@mui/material/Skeleton";
-import Stack from "@mui/material/Stack";
-import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
 
 import ItemSearchInput from "../file-manager/item-search-input";
@@ -20,7 +17,7 @@ const useItemsSearch = (items) => {
         sort: {
         },
         search: [],
-        searchColumns:[],
+        searchColumns:["eforms_sdk_element_id","eforms_sdk_element_xpath"],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -120,7 +117,7 @@ const useItemsSearch = (items) => {
 
 const SparqlValidationReport = ({ sid }) => {
     const [validationReport, setValidationReport] = useState([])
-    const [dataLoad, setDataLoad] = useState(true)
+    const [dataState, setDataState] = useState({load:true, error:false})
 
     useEffect(()=>{
         handleValidationReportsGet(sid)
@@ -128,12 +125,13 @@ const SparqlValidationReport = ({ sid }) => {
 
     const handleValidationReportsGet = async (sid) => {
         try {
+            setDataState({load:true, error: false})
             const result = await sectionApi.getSparqlReports(sid)
             setValidationReport(mapSparqlResults(result.summary))
+            setDataState(e=> ({...e, load:false}))
         } catch (err) {
             console.error(err);
-        } finally {
-            setDataLoad(false)
+            setDataState({load:false, error:true})
         }
     }
 
@@ -164,7 +162,7 @@ const SparqlValidationReport = ({ sid }) => {
                             variant="h4">
                 Results Summary
             </Typography>
-            <TableLoadWrapper load={dataLoad}
+            <TableLoadWrapper dataState={dataState}
                               lines={6}
                               data={validationReport}>
                 <ResultSummaryTable items={validationReport}/>
@@ -173,7 +171,7 @@ const SparqlValidationReport = ({ sid }) => {
                         variant="h4">
                 Assertions
             </Typography>
-            <TableLoadWrapper load={dataLoad}
+            <TableLoadWrapper dataState={dataState}
                               lines={6}
                               data={validationReport}>
                 <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>

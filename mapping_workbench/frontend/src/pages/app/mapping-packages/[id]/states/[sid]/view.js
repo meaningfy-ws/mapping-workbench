@@ -5,7 +5,6 @@ import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
 import {Upload04 as ExportIcon} from "@untitled-ui/icons-react/build/esm";
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
-import Grid from '@mui/material/Unstable_Grid2';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
@@ -23,11 +22,10 @@ import {mappingPackageStatesApi as sectionApi} from 'src/api/mapping-packages/st
 import {mappingPackagesApi as previousSectionApi} from 'src/api/mapping-packages';
 import {useRouter} from "src/hooks/use-router";
 import {RouterLink} from 'src/components/router-link';
-import {sessionApi} from "../../../../../../api/session";
-import {PropertyList} from "../../../../../../components/property-list";
-import {PropertyListItem} from "../../../../../../components/property-list-item";
 import exportPackage from "../../../../../../utils/export-mapping-package";
 
+const StateDetails =
+    dynamic(() => import("../../../../../../sections/app/mapping-package/state/state-details"));
 const ShaclValidationReport =
     dynamic(() => import("../../../../../../sections/app/shacl_validation_report/shacl_validation_report_view"));
 const SparqlValidationReport =
@@ -47,19 +45,17 @@ const Page = () => {
 
     const {id,sid} = router.query;
 
-    const [currentTab, setCurrentTab] = useState('details');
     const [item, setItem] = useState({})
+    const [currentTab, setCurrentTab] = useState('details');
     const [isExporting, setIsExporting] = useState()
-    const [validationReportFiles, setValidationReportFiles] = useState([])
     const [validationReportTree, setValidationReportTree] = useState([])
 
     useEffect(() => {
-        if (id && sid) {
+        if (sid) {
             handleItemsGet(sid);
-            handleValidationReportsFilesGet(sessionApi.getSessionProject(), id, sid)
             handleValidationReportTreeGet(sid)
         }
-    }, [id, sid]);
+    }, [sid]);
 
     const handleItemsGet = async (sid) => {
         try {
@@ -70,28 +66,16 @@ const Page = () => {
         }
     }
 
-    const handleValidationReportsFilesGet = async (project_id, package_id, state_id) => {
-        const data = { project_id, package_id, state_id }
+    const handleValidationReportTreeGet = async (sid) => {
         try {
-            const result = await sectionApi.getValidationReportFiles(data)
-            setValidationReportFiles(result);
-        } catch (err) {
-            console.error(err);
-        }
-    }
-
-    const handleValidationReportTreeGet = async (state_id) => {
-        try {
-            const result = await sectionApi.getValidationReportTree(state_id)
+            const result = await sectionApi.getValidationReportTree(sid)
             setValidationReportTree(result);
         } catch (err) {
             console.error(err);
         }
     }
 
-    const handleTabsChange = (event, value) => {
-        setCurrentTab(value)
-    }
+    const handleTabsChange = (event, value) => setCurrentTab(value)
 
     const handleExport = (item) => {
         return exportPackage(sectionApi, id, setIsExporting, item)
@@ -201,103 +185,20 @@ const Page = () => {
                     <Divider/>
                 </Stack>
                 {currentTab === 'details' && (
-                    <Grid container
-                          spacing={3}>
-                        <Grid md={12}
-                              xs={12}>
-                            <Card>
-                                <CardContent>
-                                    <Grid
-                                        item={item}
-                                        md={12}
-                                        xs={12}
-                                    >
-                                        <PropertyList>
-                                            <PropertyListItem
-                                                label="Description"
-                                                value={item.description}
-                                                sx={{
-                                                    whiteSpace: "pre-wrap",
-                                                    px: 3,
-                                                    py: 1.5
-                                                }}
-                                            />
-                                            <Divider/>
-                                            <Grid container
-                                                  spacing={3}>
-                                                <Grid md={6}
-                                                      xs={12}>
-                                                    <PropertyListItem
-                                                        label="Identifier"
-                                                        value={item.identifier}
-                                                    />
-                                                </Grid>
-                                                <Grid md={12}
-                                                      xs={12}>
-                                                    <PropertyListItem
-                                                        label="Mapping Version"
-                                                        value={item.mapping_version}
-                                                    />
-                                                </Grid>
-                                                <Grid md={12}
-                                                      xs={12}>
-                                                    <PropertyListItem
-                                                        label="EPO Version"
-                                                        value={item.epo_version}
-                                                    />
-                                                </Grid>
-                                                <Grid md={12}
-                                                      xs={12}>
-                                                    <PropertyListItem
-                                                        label="eForms Subtype"
-                                                        value={item.eform_subtypes?.join(', ')}
-                                                    />
-                                                </Grid>
-                                                <Grid md={12}
-                                                      xs={12}>
-                                                    <PropertyListItem
-                                                        label="Start Date"
-                                                        value={item.start_date}
-                                                    />
-                                                </Grid>
-                                                <Grid md={12}
-                                                      xs={12}>
-                                                    <PropertyListItem
-                                                        label="End Date"
-                                                        value={item.end_date}
-                                                    />
-                                                </Grid>
-                                                <Grid md={12}
-                                                      xs={12}>
-                                                    <PropertyListItem
-                                                        label="eForms SDK version"
-                                                        value={item.eforms_sdk_versions?.join(', ')}
-                                                    />
-                                                </Grid>
-                                            </Grid>
-                                        </PropertyList>
-                                    </Grid>
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                    </Grid>
+                    <StateDetails item={item}/>
                 )}
                 {currentTab === 'shacl' && (
                     <Card>
                         <CardContent>
-                            <ShaclValidationReport project_id={sessionApi.getSessionProject()}
-                                                   id={id}
-                                                   sid={sid}
-                                                   files={validationReportFiles}/>
+                            <ShaclValidationReport sid={sid}
+                                                   reportTree={validationReportTree}/>
                         </CardContent>
                     </Card>
                 )}
                 {currentTab === 'sparql' && (
                     <Card>
                         <CardContent>
-                            <SparqlValidationReport project_id={sessionApi.getSessionProject()}
-                                                    filtes={validationReportFiles}
-                                                    sid={sid}
+                            <SparqlValidationReport sid={sid}
                                                     reportTree={validationReportTree}/>
                         </CardContent>
                     </Card>
@@ -305,9 +206,8 @@ const Page = () => {
                 {currentTab === 'xpath' && (
                     <Card>
                         <CardContent>
-                            <XpathValidationReportView
-                                                   sid={sid}
-                                                   reportTree={validationReportTree}/>
+                            <XpathValidationReportView sid={sid}
+                                                       reportTree={validationReportTree}/>
                         </CardContent>
                     </Card>
                 )}

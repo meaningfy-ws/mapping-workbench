@@ -1,10 +1,6 @@
 import {ACTION, SectionApi} from "src/api/section";
 import {appApi} from "src/api/app";
 
-
-import shaclTestData from "./shaclTestData.json"
-import shaclAgregations from "./shaclAgregations.json"
-
 export class MappingPackageStatesApi extends SectionApi {
 
     get SECTION_TITLE() {
@@ -72,16 +68,6 @@ export class MappingPackageStatesApi extends SectionApi {
         return Promise.resolve(data);
     }
 
-    async getShaclAgregetions(sid) {
-        console.log("shaclReportTree",shaclAgregations)
-        return await shaclAgregations
-
-        // const endpoint = this.paths['shacl_reports']
-        // const data = await appApi.get(endpoint(sid))
-        // return Promise.resolve(data);
-    }
-
-
     async getSparqlReports(sid) {
         const endpoint = this.paths['sparql_reports']
         const data = await appApi.get(endpoint(sid));
@@ -101,12 +87,22 @@ export class MappingPackageStatesApi extends SectionApi {
         return Promise.resolve(data);
     }
 
-    async getShaclReports(params) {
-        console.log("shaclTestData",shaclTestData)
-        return await shaclTestData
-        // const endpoint = this.paths['shacl_reports']
-        // const data = await appApi.get(endpoint, params);
-        // return Promise.resolve(data);
+    async getShaclReports(sid) {
+        const endpoint = this.paths['shacl_reports']
+        const data = await appApi.get(endpoint(sid));
+        return Promise.resolve(data);
+    }
+
+    async getShaclReportsSuite(sid, suiteId) {
+        const endpoint = this.paths['shacl_reports_suite']
+        const data = await appApi.get(endpoint(sid, suiteId));
+        return Promise.resolve(data);
+    }
+
+    async getSparqlReportsFile(sid, suiteId, testId) {
+        const endpoint = this.paths['shacl_reports_test']
+        const data = await appApi.get(endpoint(sid, suiteId, testId));
+        return Promise.resolve(data);
     }
 
     async getValidationReportFiles(params) {

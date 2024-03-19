@@ -13,13 +13,13 @@ const CoverageReport = ({validationReport, mappingSuiteIdentifier}) => {
     return(
             <List>
                 <ListItem>
-                    Mapping suite identifier: {mappingSuiteIdentifier}
+                    <b>Mapping suite identifier</b>: {mappingSuiteIdentifier}
                 </ListItem>
                 <ListItem>
-                    XPATHs covered: {coveredReports.length} / {coveredReportPercent}%
+                    <b>XPATHs covered</b>: {coveredReports.length} / {coveredReportPercent}%
                 </ListItem>
                 <ListItem>
-                    XPATHs not covered: {notCoveredReports.length} / {notCoveredReportPercent}%
+                    <b>XPATHs not covered</b>: {notCoveredReports.length} / {notCoveredReportPercent}%
                 </ListItem>
             </List>
     )
