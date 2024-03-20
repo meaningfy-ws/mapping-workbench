@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import toast from "react-hot-toast";
 import {useRouter} from "next/router";
 import PropTypes from 'prop-types';
@@ -7,6 +7,7 @@ import {useFormik} from "formik";
 import * as Yup from "yup";
 
 import EditIcon from '@untitled-ui/icons-react/build/esm/Edit05';
+import InfoIcon from '@mui/icons-material/Info';
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
 import CardContent from '@mui/material/CardContent';
@@ -83,9 +84,9 @@ export const ListTableTripleMapFragment = (props) => {
     const [ruleTripleMapFragment, setRuleTripleMapFragment] = useState(triple_map_fragment_id);
 
     const initialValues = {
-        triple_map_uri: (tripleMapFragment && tripleMapFragment.triple_map_uri) || '',
-        triple_map_content: (tripleMapFragment && tripleMapFragment.triple_map_content) || '',
-        format: (tripleMapFragment && tripleMapFragment.format) || genericTripleMapFragmentsApi.FILE_RESOURCE_DEFAULT_FORMAT || '',
+        triple_map_uri: (tripleMapFragment && tripleMapFragment.triple_map_uri) ?? '',
+        triple_map_content: (tripleMapFragment && tripleMapFragment.triple_map_content) ?? '',
+        format: (tripleMapFragment && tripleMapFragment.format) ?? genericTripleMapFragmentsApi.FILE_RESOURCE_DEFAULT_FORMAT ?? '',
     };
 
     const formik = useFormik({
@@ -108,13 +109,19 @@ export const ListTableTripleMapFragment = (props) => {
 
     const tripleMapFragmentDialog = useDialog();
 
+    const tripleMapFragmentDetailsDialog = useDialog()
+
     const [updateContent, setUpdateContent] = useState(false);
+
+    const handleTripleMapFragmentDetailsDialogOpen = () => {
+        tripleMapFragmentDetailsDialog.handleOpen();
+    }
 
     const handleTripleMapFragmentDialogOpen = async () => {
         setUpdateContent(false);
         const tripleMapFragmentData = ruleTripleMapFragment ?
             await genericTripleMapFragmentsApi.getItem(ruleTripleMapFragment) : null;
-        setTripleMapFragment(tripleMapFragmentData || {});
+        setTripleMapFragment(tripleMapFragmentData ?? {});
         tripleMapFragmentDialog.handleOpen();
     }
 
@@ -125,8 +132,8 @@ export const ListTableTripleMapFragment = (props) => {
     }
 
     const handleTripleMapFragmentUpdate = async () => {
-        let values = {}
-        const tripleMapFragmentId = tripleMapFragment && tripleMapFragment._id || null;
+        const values = {}
+        const tripleMapFragmentId = tripleMapFragment?._id ?? null;
         values['id'] = item._id;
         values['triple_map_fragment'] = tripleMapFragmentId;
         await conceptualMappingRulesApi.updateItem(values);
@@ -134,7 +141,7 @@ export const ListTableTripleMapFragment = (props) => {
         toast.success(conceptualMappingRulesApi.SECTION_ITEM_TITLE + ' updated');
 
         if (updateContent) {
-            let contentValues = {
+            const contentValues = {
                 id: tripleMapFragment._id,
                 format: formik.values.format,
                 triple_map_content: formik.values.triple_map_content
@@ -151,36 +158,56 @@ export const ListTableTripleMapFragment = (props) => {
     }
 
     const ruleTripleMapFragments = projectTripleMapFragments.filter(x => ruleTripleMapFragment === x.id);
+
+    const RuleTripleMapFragments = () => <Box sx={{mb: 1}}>
+                            {ruleTripleMapFragments.map(x => (
+                                <ListItem sx={{whiteSpace: "w"}}
+                                          key={"triple_map_fragment_" + x.id}>{x.uri}</ListItem>
+                            ))}
+                        </Box>
+
     return (<>
-        {ruleTripleMapFragments.length > 0 && (
-            <Box sx={{mb: 1}}>
-                {ruleTripleMapFragments.map(x => (
-                    <ListItem sx={{whiteSpace: "w"}}
-                              key={"triple_map_fragment_" + x.id}>{x.uri}</ListItem>
-                ))}
-            </Box>
-        )}
         <Box sx={{
             position: "absolute",
             left: "50%",
             top: "50%",
         }}>
-            {isHovered && <Button
-                aria-describedby={"triple_map_fragment_dialog_" + item._id}
-                variant="contained"
-                size="small"
-                color="primary"
-                onClick={handleTripleMapFragmentDialogOpen}
-                component={Link}
-                sx={{
-                    marginLeft: "-50%",
-                    marginTop: "-50%"
-                }}
-            >
-                <SvgIcon fontSize="small">
-                    <EditIcon/>
-                </SvgIcon>
-            </Button>}
+            {isHovered && <Tooltip enterDelay={300}
+                         title={<RuleTripleMapFragments/>}>
+                <Stack display="flex"
+                       direction="column"
+                       gap={1}
+                       sx={{
+                            marginTop: "-50%",
+                            transform: "translate(-50%)"
+                        }}
+                >
+                    <Button
+                        aria-describedby={"triple_map_fragment_dialog_" + item._id}
+                        variant="outlined"
+                        size="small"
+                        color="primary"
+                        onClick={handleTripleMapFragmentDetailsDialogOpen}
+                        component={Link}
+                    >
+                        <SvgIcon fontSize="small">
+                            <InfoIcon/>
+                        </SvgIcon>
+                    </Button>
+                    <Button
+                        aria-describedby={"triple_map_fragment_dialog_" + item._id}
+                        variant="contained"
+                        size="small"
+                        color="primary"
+                        onClick={handleTripleMapFragmentDialogOpen}
+                        component={Link}
+                    >
+                        <SvgIcon fontSize="small">
+                            <EditIcon/>
+                        </SvgIcon>
+                    </Button>
+                </Stack>
+            </Tooltip>}
         </Box>
         <Dialog
             id={"triple_map_fragment_dialog_" + item._id}
@@ -240,7 +267,8 @@ export const ListTableTripleMapFragment = (props) => {
                                     />
                                 </Grid>
                             </Box>
-                            {updateContent && (<Box>
+                            {updateContent &&
+                                <Box>
                                     <Grid container>
                                         <Grid xs={12}
                                               md={12}>
@@ -286,7 +314,7 @@ export const ListTableTripleMapFragment = (props) => {
                                         </Grid>
                                     </Grid>
                                 </Box>
-                            )}
+                            }
                         </>
                     )}
                     <Button
@@ -302,6 +330,26 @@ export const ListTableTripleMapFragment = (props) => {
                 </form>
             </Stack>
         </Dialog>
+        <Dialog
+            id={"triple_map_fragment_details_dialog_" + item._id}
+            onClose={tripleMapFragmentDetailsDialog.handleClose}
+            open={tripleMapFragmentDetailsDialog.open}
+            fullWidth
+            maxWidth="sm"
+        >
+            <Stack
+                spacing={3}
+                sx={{
+                    px: 3, py: 2
+                }}
+            >
+                <Typography variant="h6">
+                    Mapping Rule Triple Map Fragment Details
+                </Typography>
+                <Divider/>
+                <RuleTripleMapFragments/>
+            </Stack>
+        </Dialog>
     </>)
 }
 
@@ -313,9 +361,9 @@ export const ListTableMappingPackages = (props) => {
         isHovered
     } = props;
 
-    let ruleFilteredMappingPackages = item.refers_to_mapping_package_ids || [];
+    const ruleFilteredMappingPackages = item.refers_to_mapping_package_ids ?? [];
     const [mappingPackages, setMappingPackages] = useState(ruleFilteredMappingPackages);
-    const [projectMappingPackages, setProjectMappingPackages] = useState(initProjectMappingPackages || []);
+    const [projectMappingPackages, setProjectMappingPackages] = useState(initProjectMappingPackages ?? []);
     const [tempMappingPackages, setTempMappingPackages] =
         useState(JSON.parse(JSON.stringify(ruleFilteredMappingPackages)));
 
@@ -329,8 +377,8 @@ export const ListTableMappingPackages = (props) => {
 
     const mappingPackagesDialog = useDialog();
 
-    const handleMappingPackagesUpdate = useCallback(async () => {
-        let values = {}
+    const handleMappingPackagesUpdate = async () => {
+        const values = {}
         values['id'] = item._id;
         values['refers_to_mapping_package_ids'] = tempMappingPackages;
         await conceptualMappingRulesApi.updateItem(values);
@@ -339,14 +387,14 @@ export const ListTableMappingPackages = (props) => {
         toast.success(conceptualMappingRulesApi.SECTION_ITEM_TITLE + ' updated');
         mappingPackagesDialog.handleClose();
         onPackagesUpdate()
-    }, [item, onPackagesUpdate, tempMappingPackages]);
+    };
 
     const ruleMappingPackages = projectMappingPackages.filter(x => mappingPackages.includes(x.id))
 
-    const mappingPackagesDialogHandleClose = useCallback(() => {
+    const mappingPackagesDialogHandleClose = () => {
         mappingPackagesDialog.handleClose();
         setTempMappingPackages(JSON.parse(JSON.stringify(ruleFilteredMappingPackages)));
-    }, [mappingPackagesDialog])
+    }
 
     return (<>
         {ruleMappingPackages.length > 0 && (
@@ -361,7 +409,8 @@ export const ListTableMappingPackages = (props) => {
             left: "50%",
             top: "50%",
         }}>
-            {isHovered && <Button
+            {isHovered &&
+               <Button
                 aria-describedby={"mapping_packages_dialog_" + item._id}
                 variant="contained"
                 size="small"
@@ -376,7 +425,8 @@ export const ListTableMappingPackages = (props) => {
                 <SvgIcon fontSize="small">
                     <EditIcon/>
                 </SvgIcon>
-            </Button>}
+            </Button>
+           }
         </Box>
         <Dialog
             id={"mapping_packages_dialog_" + item._id}
@@ -421,9 +471,9 @@ export const ListTableSPARQLAssertions = (props) => {
         initProjectSPARQLResources = null
     } = props;
 
-    let ruleFilteredSparqlResources = (item.sparql_assertions || []).map(x => x.id);
+    const ruleFilteredSparqlResources = (item.sparql_assertions ?? []).map(x => x.id);
     const [sparqlResources, setSparqlResources] = useState(ruleFilteredSparqlResources);
-    const [projectSPARQLResources, setProjectSPARQLResources] = useState(initProjectSPARQLResources || []);
+    const [projectSPARQLResources, setProjectSPARQLResources] = useState(initProjectSPARQLResources ?? []);
     const [tempSparqlResources, setTempSparqlResources] = useState(
         JSON.parse(JSON.stringify(ruleFilteredSparqlResources))
     );
@@ -438,7 +488,7 @@ export const ListTableSPARQLAssertions = (props) => {
 
     const sparqlTestFileResourcesDialog = useDialog();
 
-    const handleSparqlTestFileResourcesUpdate = useCallback(async () => {
+    const handleSparqlTestFileResourcesUpdate = async () => {
         const values = {}
         values['id'] = item._id;
         values['sparql_assertions'] = tempSparqlResources;
@@ -449,16 +499,16 @@ export const ListTableSPARQLAssertions = (props) => {
         });
         toast.success(conceptualMappingRulesApi.SECTION_ITEM_TITLE + ' updated');
         sparqlTestFileResourcesDialog.handleClose();
-    }, [tempSparqlResources]);
+    }
 
     const sparqlResourcesForSelector = function (filters = {}) {
         return sparqlTestFileResourcesApi.getMappingRuleSPARQLAssertions(filters);
     }
 
-    const sparqlTestFileResourcesDialogHandleClose = useCallback(() => {
+    const sparqlTestFileResourcesDialogHandleClose = () => {
         sparqlTestFileResourcesDialog.handleClose();
         setTempSparqlResources(JSON.parse(JSON.stringify(ruleFilteredSparqlResources)));
-    }, [sparqlTestFileResourcesDialog])
+    }
 
     const ruleSPARQLResources = projectSPARQLResources.filter(x => sparqlResources.includes(x.id))
 
@@ -535,7 +585,7 @@ export const ListTableSPARQLAssertions = (props) => {
 }
 
 const RuleComment = (props) => {
-    let {comment, ...other} = props;
+    const {comment, ...other} = props;
 
     let severity;
     switch (comment.priority) {
@@ -586,13 +636,12 @@ export const ListTableRow = (props) => {
 
     const TRUNCATE_LENGTH = 35;
 
-    const handleViewAction = useCallback(async (item_id) => {
+    const handleViewAction = async (item_id) => {
         router.push({
             pathname: paths.app[sectionApi.section].view,
             query: {id: item_id}
         });
-
-    }, [router]);
+    }
 
 
     const generateValidityInfo = (termsValidity, pathName, pathValue) => {
@@ -677,9 +726,7 @@ export const ListTableRow = (props) => {
                 >
                     <Typography variant="subtitle2">
                         <Box>
-                            {item.source_structural_element &&
-                                item.source_structural_element.eforms_sdk_element_id
-                            }
+                            {item.source_structural_element?.eforms_sdk_element_id}
                             {item.mapping_group_id && " / "}
                             {item.mapping_group_id}
 
@@ -695,8 +742,8 @@ export const ListTableRow = (props) => {
                         </Alert>}
                     {!detailedView && (
                         <>
-                            {item.target_class_path && item.target_class_path.length > TRUNCATE_LENGTH && "..."}
-                            {item.target_class_path && item.target_class_path.substring(item.target_class_path.length - TRUNCATE_LENGTH)}
+                            {item.target_class_path?.length > TRUNCATE_LENGTH && "..."}
+                            {item.target_class_path?.substring(item.target_class_path.length - TRUNCATE_LENGTH)}
                         </>
                     )}
                 </Box>
@@ -724,13 +771,13 @@ export const ListTableRow = (props) => {
                 />
             </TableCell>
             <TableCell sx={{position: "relative", wordBreak: "normal"}}>
-                <ListTableMappingPackages
-                    item={item}
-                    initProjectMappingPackages={initProjectMappingPackages}
-                    onPackagesUpdate={onPackagesUpdate}
-                    isCurrent={isCurrent}
-                    isHovered={isHovered}
-                />
+                    <ListTableMappingPackages
+                        item={item}
+                        initProjectMappingPackages={initProjectMappingPackages}
+                        onPackagesUpdate={onPackagesUpdate}
+                        isCurrent={isCurrent}
+                        isHovered={isHovered}
+                    />
             </TableCell>
             <TableCell sx={{position: "relative"}}>
                 <ListTableSPARQLAssertions
@@ -1069,21 +1116,22 @@ export const ListTable = (props) => {
                         const isCurrent = item_id === currentItem;
                         const isHovered = item_id === hoveredItem;
 
-                        return (<ListTableRow
-                            key={`rules_list_row_${item_id}`}
-                            item={item}
-                            item_id={item_id}
-                            isCurrent={isCurrent}
-                            handleItemToggle={handleItemToggle}
-                            sectionApi={sectionApi}
-                            initProjectMappingPackages={projectMappingPackages}
-                            initProjectTripleMapFragments={projectTripleMapFragments}
-                            initProjectSPARQLResources={projectSPARQLResources}
-                            onPackagesUpdate={onPackagesUpdate}
-                            handleItemHover={handleItemHover}
-                            isHovered={isHovered}
-                            detailedView={detailedView}
-                        />)
+                        return (
+                            <ListTableRow
+                                key={`rules_list_row_${item_id}`}
+                                item={item}
+                                item_id={item_id}
+                                isCurrent={isCurrent}
+                                handleItemToggle={handleItemToggle}
+                                sectionApi={sectionApi}
+                                initProjectMappingPackages={projectMappingPackages}
+                                initProjectTripleMapFragments={projectTripleMapFragments}
+                                initProjectSPARQLResources={projectSPARQLResources}
+                                onPackagesUpdate={onPackagesUpdate}
+                                handleItemHover={handleItemHover}
+                                isHovered={isHovered}
+                                detailedView={detailedView}
+                            />)
                     })}
                 </TableBody>
             </Table>
