@@ -10,7 +10,6 @@ from mapping_workbench.backend.file_resource.services.file_resource_form_data im
     file_resource_data_from_form_request
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
-
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
     TestDataFileResourceUpdateIn, TestDataFileResourceCreateIn
 from mapping_workbench.backend.test_data_suite.models.entity_api_response import \
@@ -40,6 +39,50 @@ router = APIRouter(
     prefix=ROUTE_PREFIX,
     tags=[TAG]
 )
+
+
+@router.get(
+    "/file_resources_struct_tree",
+    description=f"Get {FILE_RESOURCE_NAME_FOR_MANY} struct tree",
+    name=f"{FILE_RESOURCE_NAME_FOR_MANY}:get_struct_tree"
+)
+async def route_get_test_data_file_resources_struct_tree(
+        project: PydanticObjectId = None,
+) -> dict:
+    test_data_suites: List[TestDataSuite] = await TestDataSuite.find(
+        TestDataSuite.project == Project.link_from_id(project),
+        projection_model=TestDataSuite,
+        fetch_links=False,
+        sort=TestDataSuite.title
+    ).to_list()
+
+    result: dict = {
+        "test_data_suites": [
+
+        ]
+    }
+    if test_data_suites:
+        for test_data_suite in test_data_suites:
+            suite_dict = {
+                "suite_id": str(test_data_suite.id),
+                "suite_title": test_data_suite.title,
+                "test_datas": []
+            }
+            test_datas: List[TestDataFileResource] = await TestDataFileResource.find(
+                TestDataFileResource.test_data_suite == TestDataSuite.link_from_id(test_data_suite.id),
+                fetch_links=False,
+                sort=TestDataFileResource.title
+            ).to_list()
+            if test_datas:
+                for test_data in test_datas:
+                    suite_dict["test_datas"].append({
+                        "test_data_id": str(test_data.id),
+                        "test_data_title": test_data.title
+                    })
+
+            result["test_data_suites"].append(suite_dict)
+
+    return result
 
 
 @router.get(
@@ -235,9 +278,10 @@ async def route_test_data_sparql_validation(
         filters: APIRequestWithProject,
         user: User = Depends(current_active_user)
 ):
-    #TODO: Implement this with latest changes.
+    # TODO: Implement this with latest changes.
     raise NotImplementedError()
-    #return await test_data_sparql_validation_for_project(project_id=filters.project, user=user)
+    # return await test_data_sparql_validation_for_project(project_id=filters.project, user=user)
+
 
 @router.get(
     "/file_resources/{id}/content",
@@ -247,4 +291,4 @@ async def route_test_data_sparql_validation(
 async def route_get_test_data_file_resource_content(
         test_data_file_resource: TestDataFileResource = Depends(get_test_data_file_resource)
 ) -> dict:
-    return {"content" :test_data_file_resource.content}
+    return {"content": test_data_file_resource.content}
