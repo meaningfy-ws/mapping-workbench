@@ -114,11 +114,9 @@ export const ListTable = (props) => {
                                             <ListItemActions
                                                 itemctx={new ForListItemAction(item_id, sectionApi)}
                                                 pathnames={{
-                                                    view: paths.app[sectionApi.section].states.view.replace("[pid]", id),
+                                                    view: () => paths.app[sectionApi.section].states.view(id,item_id),
                                                 }}
-                                                actions={{
-                                                    delete: sectionApi.deleteState
-                                                }}/>
+                                            />
                                             <Button
                                                 onClick={() => handleExport(item)}
                                                 disabled={isExporting}>

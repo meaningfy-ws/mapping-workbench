@@ -85,7 +85,7 @@ export const paths = {
             import: '/app/mapping-packages/import',
             states: {
                 index: '/app/mapping-packages/[pid]/states',
-                view: '/app/mapping-packages/[pid]/states/[id]/view',
+                view: (pid,id) => `/app/mapping-packages/${pid}/states/${id}/view`,
             }
         },
 
