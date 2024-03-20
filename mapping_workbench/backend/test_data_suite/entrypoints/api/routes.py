@@ -238,3 +238,13 @@ async def route_test_data_sparql_validation(
     #TODO: Implement this with latest changes.
     raise NotImplementedError()
     #return await test_data_sparql_validation_for_project(project_id=filters.project, user=user)
+
+@router.get(
+    "/file_resources/{id}/content",
+    description=f"Get {FILE_RESOURCE_NAME_FOR_ONE} content",
+    name=f"{FILE_RESOURCE_NAME_FOR_MANY}:get_{FILE_RESOURCE_NAME_FOR_ONE}_content"
+)
+async def route_get_test_data_file_resource_content(
+        test_data_file_resource: TestDataFileResource = Depends(get_test_data_file_resource)
+) -> dict:
+    return {"content" :test_data_file_resource.content}
