@@ -25,7 +25,8 @@ from mapping_workbench.backend.test_data_suite.services.api import (
     get_test_data_file_resource,
     delete_test_data_file_resource, update_test_data_file_resource
 )
-from mapping_workbench.backend.test_data_suite.services.transform_test_data import transform_test_data_for_project
+from mapping_workbench.backend.test_data_suite.services.transform_test_data import transform_test_data_for_project, \
+    transform_test_data_file_resource
 from mapping_workbench.backend.user.models.user import User
 
 ROUTE_PREFIX = "/test_data_suites"
@@ -292,3 +293,22 @@ async def route_get_test_data_file_resource_content(
         test_data_file_resource: TestDataFileResource = Depends(get_test_data_file_resource)
 ) -> dict:
     return {"content": test_data_file_resource.content}
+
+
+@router.post(
+    "/file_resources/{id}/transform",
+    description=f"Transform Test Data",
+    name=f"{FILE_RESOURCE_NAME_FOR_ONE}:transform"
+)
+async def route_transform_test_data_file_resource(
+        test_data_file_resource: TestDataFileResource = Depends(get_test_data_file_resource),
+        user: User = Depends(current_active_user),
+        save: bool = True
+) -> dict:
+    test_data_file_resource = await transform_test_data_file_resource(
+        test_data_file_resource=test_data_file_resource,
+        user=user,
+        save=save
+    )
+
+    return {"rdf_manifestation": test_data_file_resource.rdf_manifestation}
