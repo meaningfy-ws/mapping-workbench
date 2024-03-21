@@ -68,7 +68,7 @@ async def process_mapping_package(
             cleanup=True,
             user=user
         )
-    print("   ... DONE")
+        print("   ... DONE")
 
     print("   Initializing Package State ...")
     mapping_package_state: MappingPackageState = await create_mapping_package_state(mapping_package)

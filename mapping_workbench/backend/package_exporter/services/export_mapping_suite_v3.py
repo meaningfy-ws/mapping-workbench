@@ -8,21 +8,6 @@ from mapping_workbench.backend.package_exporter.adapters.v3.package_state_export
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.project.services.api import get_project
 
-TEST_DATA_DIR_NAME = "test_data"
-TRANSFORMATION_DIR_NAME = "transformation"
-VALIDATION_DIR_NAME = "validation"
-CONCEPTUAL_MAPPINGS_FILE_NAME = "conceptual_mappings.xlsx"
-SHACL_VALIDATION_DIR_NAME = "shacl"
-SPARQL_VALIDATION_DIR_NAME = "sparql"
-TRANSFORMATION_RESOURCES_DIR_NAME = "resources"
-TRANSFORMATION_MAPPINGS_DIR_NAME = "mappings"
-SHACL_RESULT_QUERY_FILE_NAME = "shacl_result_query.rq"
-
-METADATA_SHEET_NAME = "Metadata"
-RESOURCES_SHEET_NAME = "Resources"
-CONCEPTUAL_RULES_SHEET_NAME = "Rules"
-LIST_COLUMN_NAMES = ["eForms Subtype", "eForms SDK version"]
-
 
 async def export_latest_package_state(mapping_package: MappingPackage) -> bytes:
     """
@@ -66,6 +51,7 @@ async def export_specific_package_state(
         mapping_package_state=mapping_package_state,
         project=project
     )
+
 
 async def export_package_state(mapping_package_state: MappingPackageState, project: Project) -> bytes:
     exporter: PackageStateExporter = PackageStateExporter(

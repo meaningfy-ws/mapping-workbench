@@ -16,11 +16,12 @@ class ObjectState(BaseModel):
     """
 
     created_at: Optional[datetime] = datetime.now()
-    created_by: Optional[Link[User]] = None
+
+    # created_by: Optional[Link[User]] = None
 
     def on_create(self, user: User):
-        if user:
-            self.created_by = User.link_from_id(user.id)
+        # if user:
+        #     self.created_by = User.link_from_id(user.id)
         self.created_at = datetime.now()
         return self
 

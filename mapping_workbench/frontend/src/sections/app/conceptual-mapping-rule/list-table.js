@@ -160,11 +160,11 @@ export const ListTableTripleMapFragment = (props) => {
     const ruleTripleMapFragments = projectTripleMapFragments.filter(x => ruleTripleMapFragment === x.id);
 
     const RuleTripleMapFragments = () => <Box sx={{mb: 1}}>
-                            {ruleTripleMapFragments.map(x => (
-                                <ListItem sx={{whiteSpace: "w"}}
-                                          key={"triple_map_fragment_" + x.id}>{x.uri}</ListItem>
-                            ))}
-                        </Box>
+        {ruleTripleMapFragments.map(x => (
+            <ListItem sx={{whiteSpace: "w"}}
+                      key={"triple_map_fragment_" + x.id}>{x.uri}</ListItem>
+        ))}
+    </Box>
 
     return (<>
         <Box sx={{
@@ -173,14 +173,14 @@ export const ListTableTripleMapFragment = (props) => {
             top: "50%",
         }}>
             {isHovered && <Tooltip enterDelay={300}
-                         title={<RuleTripleMapFragments/>}>
+                                   title={<RuleTripleMapFragments/>}>
                 <Stack display="flex"
                        direction="column"
                        gap={1}
                        sx={{
-                            marginTop: "-50%",
-                            transform: "translate(-50%)"
-                        }}
+                           marginTop: "-50%",
+                           transform: "translate(-50%)"
+                       }}
                 >
                     <Button
                         aria-describedby={"triple_map_fragment_dialog_" + item._id}
@@ -227,7 +227,7 @@ export const ListTableTripleMapFragment = (props) => {
                         Mapping Rule Triple Map Fragment
                     </Typography>
                     <Box
-                         spacing={3}>
+                        spacing={3}>
                         <FormControl sx={{my: 2, width: '100%'}}>
                             <TextField
                                 fullWidth
@@ -410,23 +410,23 @@ export const ListTableMappingPackages = (props) => {
             top: "50%",
         }}>
             {isHovered &&
-               <Button
-                aria-describedby={"mapping_packages_dialog_" + item._id}
-                variant="contained"
-                size="small"
-                color="primary"
-                onClick={mappingPackagesDialog.handleOpen}
-                component={Link}
-                sx={{
-                    marginLeft: "-50%",
-                    marginTop: "-50%"
-                }}
-            >
-                <SvgIcon fontSize="small">
-                    <EditIcon/>
-                </SvgIcon>
-            </Button>
-           }
+                <Button
+                    aria-describedby={"mapping_packages_dialog_" + item._id}
+                    variant="contained"
+                    size="small"
+                    color="primary"
+                    onClick={mappingPackagesDialog.handleOpen}
+                    component={Link}
+                    sx={{
+                        marginLeft: "-50%",
+                        marginTop: "-50%"
+                    }}
+                >
+                    <SvgIcon fontSize="small">
+                        <EditIcon/>
+                    </SvgIcon>
+                </Button>
+            }
         </Box>
         <Dialog
             id={"mapping_packages_dialog_" + item._id}
@@ -445,7 +445,7 @@ export const ListTableMappingPackages = (props) => {
                     Mapping Rule Packages
                 </Typography>
                 <Box
-                     spacing={3}>
+                    spacing={3}>
                     <MappingPackageCheckboxList
                         mappingPackages={tempMappingPackages}
                         initProjectMappingPackages={projectMappingPackages}/>
@@ -561,7 +561,7 @@ export const ListTableSPARQLAssertions = (props) => {
                         SPARQL Assertions
                     </Typography>
                     <Box
-                         spacing={3}>
+                        spacing={3}>
                         <ResourceListSelector
                             valuesApi={sparqlTestFileResourcesApi}
                             listValues={tempSparqlResources}
@@ -734,6 +734,8 @@ export const ListTableRow = (props) => {
                     </Typography>
                 </Link>
             </TableCell>
+            <TableCell>{item.min_sdk_version}</TableCell>
+            <TableCell>{item.max_sdk_version}</TableCell>
             <TableCell>
                 <Box title={item.target_class_path}>
                     {detailedView && item.target_class_path &&
@@ -771,13 +773,13 @@ export const ListTableRow = (props) => {
                 />
             </TableCell>
             <TableCell sx={{position: "relative", wordBreak: "normal"}}>
-                    <ListTableMappingPackages
-                        item={item}
-                        initProjectMappingPackages={initProjectMappingPackages}
-                        onPackagesUpdate={onPackagesUpdate}
-                        isCurrent={isCurrent}
-                        isHovered={isHovered}
-                    />
+                <ListTableMappingPackages
+                    item={item}
+                    initProjectMappingPackages={initProjectMappingPackages}
+                    onPackagesUpdate={onPackagesUpdate}
+                    isCurrent={isCurrent}
+                    isHovered={isHovered}
+                />
             </TableCell>
             <TableCell sx={{position: "relative"}}>
                 <ListTableSPARQLAssertions
@@ -809,8 +811,8 @@ export const ListTableRow = (props) => {
                                         sx={{mb: 2}}/>
                             <Divider/>
                             <CardContent sx={{pt: 1}}>
-                                {(item.mapping_notes ?? []).map((mapping_note,i) => <RuleComment
-                                        key={'note'+i}
+                                {(item.mapping_notes ?? []).map((mapping_note, i) => <RuleComment
+                                        key={'note' + i}
                                         comment={mapping_note}
                                     />
                                 )}
@@ -838,9 +840,9 @@ export const ListTableRow = (props) => {
                                         sx={{mb: 2}}/>
                             <Divider/>
                             <CardContent sx={{pt: 1}}>
-                                {(item.editorial_notes || []).map((editorial_note,i) => <RuleComment
-                                    key={'note' + i}
-                                    comment={editorial_note}
+                                {(item.editorial_notes || []).map((editorial_note, i) => <RuleComment
+                                        key={'note' + i}
+                                        comment={editorial_note}
                                     />
                                 )}
                             </CardContent>
@@ -1030,6 +1032,12 @@ export const ListTable = (props) => {
                                     Conceptual Field/Group
                                 </TableSortLabel>
                             </Tooltip>
+                        </TableCell>
+                        <TableCell>
+                            Min SDK
+                        </TableCell>
+                        <TableCell>
+                            Max SDK
                         </TableCell>
                         <TableCell width="18%">
                             <Tooltip

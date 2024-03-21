@@ -80,6 +80,7 @@ class MappingPackageState(TestDataValidation, ObjectState):
     identifier: Optional[str] = None
     mapping_version: str = None
     epo_version: str = None
+    created_at: Optional[datetime] = None
     eform_subtypes: List[str] = None
     start_date: Optional[str] = None
     end_date: Optional[str] = None
@@ -263,6 +264,7 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
             identifier=self.identifier,
             mapping_version=self.mapping_version,
             epo_version=self.epo_version,
+            created_at=self.created_at,
             eform_subtypes=self.eform_subtypes,
             start_date=self.start_date,
             end_date=self.end_date,

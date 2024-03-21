@@ -3,6 +3,7 @@ from typing import Dict, Tuple
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule, \
     ConceptualMappingRuleComment
+from mapping_workbench.backend.conceptual_mapping_rule.services.data import get_conceptual_mapping_rule_by_key
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
 from mapping_workbench.backend.fields_registry.services.data import get_structural_element_by_unique_fields
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
@@ -57,7 +58,8 @@ class PackageImporter:
         for mono_resource_collection in mono_package.test_data_resources:
             test_data_suite: TestDataSuite = await TestDataSuite.find_one(
                 TestDataSuite.project == self.project_link,
-                TestDataSuite.title == mono_resource_collection.name
+                TestDataSuite.title == mono_resource_collection.name,
+                TestDataSuite.mapping_package_id == self.package.id
             )
 
             if not test_data_suite:
@@ -137,6 +139,7 @@ class PackageImporter:
         """
             Extracts a dictionary of metadata from a SPARQL query
         """
+
         def _process_line(line) -> Tuple[str, str]:
             if ":" in line:
                 key_part, value_part = line.split(":", 1)
@@ -302,6 +305,7 @@ class PackageImporter:
 
     async def add_mapping_package_from_mono(self, mono_package: ImportedMappingSuite):
         package: MappingPackage = await MappingPackage.find_one(
+            TestDataSuite.project == self.project_link,
             MappingPackage.identifier == mono_package.metadata.identifier
         )
 
@@ -318,27 +322,30 @@ class PackageImporter:
 
         self.package = package
 
-
     async def add_mapping_rules_from_mono(self, mono_package: ImportedMappingSuite):
         for mono_rule in mono_package.conceptual_rules:
             source_structural_element: StructuralElement = await get_structural_element_by_unique_fields(
                 eforms_sdk_element_id=mono_rule.eforms_sdk_id,
                 name=mono_rule.field_name,
                 bt_id=mono_rule.bt_id,
-                absolute_xpath=mono_rule.absolute_xpath
+                absolute_xpath=mono_rule.absolute_xpath,
+                project_id=self.project.id
             )
 
-            # if not source_structural_element:
-            #     continue
+            if not source_structural_element:
+                continue
 
-            # rule: ConceptualMappingRule = await get_conceptual_mapping_rule_by_key(source_structural_element)
+            rule: ConceptualMappingRule = await get_conceptual_mapping_rule_by_key(
+                element=source_structural_element,
+                project_id=self.project.id
+            )
 
-            # if not rule:
-            #     rule = ConceptualMappingRule(
-            #         source_structural_element=StructuralElement.link_from_id(source_structural_element.id)
-            #     )
+            if not rule:
+                rule = ConceptualMappingRule(
+                    source_structural_element=StructuralElement.link_from_id(source_structural_element.id)
+                )
 
-            rule: ConceptualMappingRule = ConceptualMappingRule()
+            # rule: ConceptualMappingRule = ConceptualMappingRule()
             rule.project = self.project
             if source_structural_element:
                 rule.source_structural_element = source_structural_element

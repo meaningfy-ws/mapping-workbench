@@ -36,7 +36,8 @@ async def route_get_mapping_package_state_xpath_validation(
 ):
     state: MappingPackageState = await get_specific_mapping_package_state(mapping_package_state.id)
     validation: TestDataValidationContainer = state.validation
-    return validation.xpath
+
+    return validation.xpath or {}
 
 
 @router.get(
@@ -52,7 +53,7 @@ async def route_get_mapping_package_state_test_data_suite_xpath_validation(
     validation: TestDataValidationContainer = await get_state_test_data_suite_validatiton(
         mapping_package_state, test_data_suite_id
     )
-    return validation.xpath
+    return validation.xpath or {}
 
 
 @router.get(
@@ -69,7 +70,7 @@ async def route_get_mapping_package_state_test_data_xpath_validation(
     validation: TestDataValidationContainer = await get_state_test_data_validatiton(
         mapping_package_state, test_data_suite_id, test_data_id
     )
-    return validation.xpath
+    return validation.xpath or {}
 
 
 @router.get(
@@ -83,7 +84,7 @@ async def route_get_mapping_package_state_sparql_validation(
 ):
     state: MappingPackageState = await get_specific_mapping_package_state(mapping_package_state.id)
     validation: TestDataValidationContainer = state.validation
-    return validation.sparql
+    return validation.sparql or {}
 
 
 @router.get(
@@ -99,7 +100,7 @@ async def route_get_mapping_package_state_test_data_suite_sparql_validation(
     validation: TestDataValidationContainer = await get_state_test_data_suite_validatiton(
         mapping_package_state, test_data_suite_id
     )
-    return validation.sparql
+    return validation.sparql or {}
 
 
 @router.get(
@@ -116,7 +117,7 @@ async def route_get_mapping_package_state_test_data_sparql_validation(
     validation: TestDataValidationContainer = await get_state_test_data_validatiton(
         mapping_package_state, test_data_suite_id, test_data_id
     )
-    return validation.sparql
+    return validation.sparql or {}
 
 
 @router.get(
@@ -130,7 +131,8 @@ async def route_get_mapping_package_state_shacl_validation(
 ):
     state: MappingPackageState = await get_specific_mapping_package_state(mapping_package_state.id)
     validation: TestDataValidationContainer = state.validation
-    return validation.shacl
+
+    return validation.shacl or {}
 
 
 @router.get(
@@ -146,7 +148,7 @@ async def route_get_mapping_package_state_test_data_suite_shacl_validation(
     validation: TestDataValidationContainer = await get_state_test_data_suite_validatiton(
         mapping_package_state, test_data_suite_id
     )
-    return validation.shacl
+    return validation.shacl or {}
 
 
 @router.get(
@@ -163,7 +165,7 @@ async def route_get_mapping_package_state_test_data_shacl_validation(
     validation: TestDataValidationContainer = await get_state_test_data_validatiton(
         mapping_package_state, test_data_suite_id, test_data_id
     )
-    return validation.shacl
+    return validation.shacl or {}
 
 
 @router.get(
@@ -177,4 +179,5 @@ async def route_get_mapping_package_state_reports_tree(
 ):
     state: MappingPackageState = await get_specific_mapping_package_state(mapping_package_state.id)
     validation_reports_tree = await generate_validation_reports_tree(state, mapping_package_state.id)
-    return validation_reports_tree
+
+    return validation_reports_tree or {}
