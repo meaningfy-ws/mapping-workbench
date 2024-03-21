@@ -178,7 +178,8 @@ export const apiPaths = {
         file_resource: '/test_data_suites/file_resources/:id',
         tasks: {
             transform_test_data: '/test_data_suites/tasks/transform_test_data',
-        }
+        },
+        file_resources_struct_tree: '/test_data_suites/file_resources_struct_tree/'
     },
     sparql_test_suites: {
         items: '/sparql_test_suites',
@@ -244,12 +245,13 @@ export const apiPaths = {
 
     triple_map_fragments: {
         items: '/triple_map_fragments',
-        item: '/triple_map_fragments/:id'
+        item: '/triple_map_fragments/:id',
     },
 
     generic_triple_map_fragments: {
         items: '/generic_triple_map_fragments',
-        item: '/generic_triple_map_fragments/:id'
+        item: '/generic_triple_map_fragments/:id',
+        tree:'/test_data_suites/file_resources_struct_tree'
     },
 
     specific_triple_map_fragments: {

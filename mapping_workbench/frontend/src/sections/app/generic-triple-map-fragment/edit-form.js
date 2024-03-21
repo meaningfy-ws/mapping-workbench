@@ -22,12 +22,13 @@ import {FormCodeTextArea} from "../../../components/app/form/code-text-area";
 
 
 export const EditForm = (props) => {
-    const {itemctx, ...other} = props;
+    const {itemctx, tree, ...other} = props;
     const router = useRouter();
     const sectionApi = itemctx.api;
     const item = itemctx.data;
 
     const initialValues = {
+        tree: tree[0].test_datas[0].test_data_id,
         triple_map_uri: item.triple_map_uri ?? '',
         triple_map_content: item.triple_map_content ?? '',
         format: item.format ?? sectionApi.FILE_RESOURCE_DEFAULT_FORMAT ?? '',
@@ -80,7 +81,8 @@ export const EditForm = (props) => {
     });
 
     return (
-        <form onSubmit={formik.handleSubmit} {...other}>
+        <form onSubmit={formik.handleSubmit}
+              {...other}>
             <Card>
                 <CardHeader title={(itemctx.isNew ? 'Create' : 'Edit') + ' ' + sectionApi.SECTION_ITEM_TITLE}/>
                 <CardContent sx={{pt: 0}}>
@@ -127,6 +129,46 @@ export const EditForm = (props) => {
                                 language={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['language']}
                             />
                         </Grid>
+                        <Grid xs={12}
+                              md={12}>
+                            <TextField
+                                error={!!(formik.touched.tree && formik.errors.tree)}
+                                fullWidth
+                                helperText={formik.touched.tree && formik.errors.tree}
+                                onBlur={formik.handleBlur}
+                                label="Tree"
+                                onChange={e =>
+                                    formik.setFieldValue("tree", e.target.value)
+                                }
+                                select
+                                value={formik.values.tree}
+                            >
+                                {tree.map(suite =>
+                                    [<MenuItem key={suite.suite_id}
+                                                   value={suite.suite_id}
+                                                 disabled>{suite.suite_title}
+
+                                        </MenuItem>,
+                                        suite.test_datas.map(testData =>
+                                                <MenuItem key={testData.test_data_id}
+                                                          value={testData.test_data_id}
+                                                          style={{paddingLeft: 40}}>
+                                                    {testData.test_data_title}
+                                                </MenuItem>)])
+                                }
+                            </TextField>
+                        </Grid>
+                        <Grid xs={12}
+                              md={12}>
+                            <FormCodeTextArea
+                                disabled={formik.isSubmitting}
+                                formik={formik}
+                                name="triple_map_content"
+                                label="Content"
+                                grammar={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['grammar']}
+                                language={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['language']}
+                            />
+                        </Grid>
                     </Grid>
                 </CardContent>
             </Card>
@@ -148,13 +190,13 @@ export const EditForm = (props) => {
                     >
                         {itemctx.isNew ? 'Create' : 'Update'}
                     </Button>
-                    {!<Button
+                    <Button
                         disabled={formik.isSubmitting}
                         type="submit"
                         variant="outlined"
                     >
                         Update and Transform
-                    </Button>}
+                    </Button>
                     <Button
                         color="inherit"
                         component={RouterLink}
