@@ -51,12 +51,21 @@ export class TripleMapFragmentsApi extends SectionApi {
 
     async getTripleMapFragmentTree(params) {
        const endpoint = this.paths['tree']
-        console.log(this.paths,endpoint)
         const data = await appApi.get(endpoint, params);
-           console.log('res data',data)
         return Promise.resolve(data);
     }
 
+    async getTripleMapHtmlContent(id) {
+        const endpoint = this.paths['content']
+        const data = await appApi.get(endpoint(id));
+        return Promise.resolve(data)
+    }
+
+    async getTripleMapHtmlResultContent(id) {
+        const endpoint = this.paths['result_content']
+        const data = await appApi.post(endpoint(id));
+        return Promise.resolve(data)
+    }
 
 }
 

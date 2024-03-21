@@ -251,7 +251,9 @@ export const apiPaths = {
     generic_triple_map_fragments: {
         items: '/generic_triple_map_fragments',
         item: '/generic_triple_map_fragments/:id',
-        tree:'/test_data_suites/file_resources_struct_tree'
+        tree:'/test_data_suites/file_resources_struct_tree',
+        content: (id) => `/test_data_suites/file_resources/${id}/content`,
+        result_content: (id) => `/test_data_suites/file_resources/${id}/transform`
     },
 
     specific_triple_map_fragments: {

@@ -7,7 +7,6 @@ import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
-import Select from "@mui/material/Select";
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
@@ -36,15 +35,17 @@ const Page = () => {
         handleGetTripleMapFragmentTree()
     }, []);
 
+
     const handleGetTripleMapFragmentTree = () => {
         const project = window.sessionStorage.getItem('sessionProject')
         sectionApi.getTripleMapFragmentTree({project})
             .then(res=> {
-                console.log(res.test_data_suites)
                 setTripleMapFragmentTree(res.test_data_suites)
             })
 
     }
+
+
 
     const formState = useItem(sectionApi, id);
     const item = formState.item;

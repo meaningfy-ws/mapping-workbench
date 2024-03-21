@@ -18,6 +18,8 @@ import {useRouter} from 'src/hooks/use-router';
 import {FormTextField} from "../../../components/app/form/text-field";
 import {sessionApi} from "../../../api/session";
 import {FormCodeTextArea} from "../../../components/app/form/code-text-area";
+import {FormCodeHtmlArea} from "../../../components/app/form/code-html-area";
+import {useEffect, useState} from "react";
 
 
 
@@ -26,6 +28,9 @@ export const EditForm = (props) => {
     const router = useRouter();
     const sectionApi = itemctx.api;
     const item = itemctx.data;
+
+    const [htmlContent, setHtmlContent] = useState("")
+    const [htmlResultContent, setHtmlResultContent] = useState("")
 
     const initialValues = {
         tree: tree[0].test_datas[0].test_data_id,
@@ -47,8 +52,11 @@ export const EditForm = (props) => {
                 .max(255)
                 .required('Format is required')
         }),
-        onSubmit: async (values, helpers) => {
+        onSubmit: async (propValues, helpers) => {
             try {
+                const { format, triple_map_content, triple_map_uri } = propValues
+                const  values =  { format, triple_map_content, triple_map_uri }
+
                 let response;
                 values['project'] = sessionApi.getSessionProject();
                 if (itemctx.isNew) {
@@ -79,6 +87,40 @@ export const EditForm = (props) => {
             }
         }
     });
+
+    useEffect(() => {
+        formik.values.tree && handleGetHtmlContent(formik.values.tree)
+    }, [formik.values.tree]);
+
+
+    const handleGetHtmlContent = (id) => {
+        sectionApi.getTripleMapHtmlContent(id)
+            .then(res => {
+                setHtmlContent(res.content);
+            })
+    }
+
+    const handleGetHtmlResultContent = (id) => {
+        sectionApi.getTripleMapHtmlResultContent(id)
+            .then(res => {
+                setHtmlResultContent(res.rdf_manifestation)
+            })
+    }
+
+    const onUpdateAndTransform = (propValues, helpers) => {
+                const { format, triple_map_content, triple_map_uri } = propValues
+                const  values =  { format, triple_map_content, triple_map_uri }
+
+                values['project'] = sessionApi.getSessionProject();
+                values['id'] = item._id;
+                sectionApi.updateItem(values)
+                    .then(() => handleGetHtmlResultContent(formik.values.tree))
+
+        }
+
+    const handleUpdateAndSubmit = () => {
+        onUpdateAndTransform(formik.values)
+    }
 
     return (
         <form onSubmit={formik.handleSubmit}
@@ -160,11 +202,20 @@ export const EditForm = (props) => {
                         </Grid>
                         <Grid xs={12}
                               md={12}>
-                            <FormCodeTextArea
+                            <FormCodeHtmlArea
                                 disabled={formik.isSubmitting}
-                                formik={formik}
                                 name="triple_map_content"
-                                label="Content"
+                                label="HTML Content"
+                                defaultContent={htmlContent}
+                            />
+                        </Grid>
+                          <Grid xs={12}
+                              md={12}>
+                            <FormCodeHtmlArea
+                                disabled={formik.isSubmitting}
+                                name="triple_map_content"
+                                label="HTML Result"
+                                defaultContent={htmlResultContent}
                                 grammar={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['grammar']}
                                 language={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['language']}
                             />
@@ -192,8 +243,9 @@ export const EditForm = (props) => {
                     </Button>
                     <Button
                         disabled={formik.isSubmitting}
-                        type="submit"
+                        // type="submit"
                         variant="outlined"
+                        onClick={handleUpdateAndSubmit}
                     >
                         Update and Transform
                     </Button>
