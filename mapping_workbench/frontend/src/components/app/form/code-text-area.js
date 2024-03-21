@@ -26,6 +26,7 @@ export const FormCodeTextArea = (props) => {
         formik, name, label,
         required = false,
         grammar = null, language = null,
+        disabled,
         ...other
     } = props;
 
@@ -78,7 +79,8 @@ export const FormCodeTextArea = (props) => {
                                 width: '100%',
                                 outline: 'none',
                                 border: 0,
-                                boxShadow: 'none'
+                                boxShadow: 'none',
+                                opacity: disabled ? .7 : 1
                             }}
                             textareaClassName={styles['code-textarea']}
                             preClassName={styles['code-textarea-pre']}

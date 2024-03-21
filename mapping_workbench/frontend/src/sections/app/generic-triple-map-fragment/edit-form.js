@@ -1,27 +1,24 @@
-import PropTypes from 'prop-types';
 import toast from 'react-hot-toast';
+import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
+
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Grid from '@mui/material/Unstable_Grid2';
 import Stack from '@mui/material/Stack';
+import MenuItem from "@mui/material/MenuItem";
+import TextField from "@mui/material/TextField";
 
 import {RouterLink} from 'src/components/router-link';
 import {paths} from 'src/paths';
 import {useRouter} from 'src/hooks/use-router';
 import {FormTextField} from "../../../components/app/form/text-field";
-import {FormTextArea} from "../../../components/app/form/text-area";
 import {sessionApi} from "../../../api/session";
 import {FormCodeTextArea} from "../../../components/app/form/code-text-area";
-import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import TextField from "@mui/material/TextField";
-import * as React from "react";
+
 
 
 export const EditForm = (props) => {
@@ -31,9 +28,9 @@ export const EditForm = (props) => {
     const item = itemctx.data;
 
     const initialValues = {
-        triple_map_uri: item.triple_map_uri || '',
-        triple_map_content: item.triple_map_content || '',
-        format: item.format || sectionApi.FILE_RESOURCE_DEFAULT_FORMAT || '',
+        triple_map_uri: item.triple_map_uri ?? '',
+        triple_map_content: item.triple_map_content ?? '',
+        format: item.format ?? sectionApi.FILE_RESOURCE_DEFAULT_FORMAT ?? '',
     };
 
     const formik = useFormik({
@@ -87,11 +84,17 @@ export const EditForm = (props) => {
             <Card>
                 <CardHeader title={(itemctx.isNew ? 'Create' : 'Edit') + ' ' + sectionApi.SECTION_ITEM_TITLE}/>
                 <CardContent sx={{pt: 0}}>
-                    <Grid container spacing={3}>
-                        <Grid xs={12} md={12}>
-                            <FormTextField formik={formik} name="triple_map_uri" label="URI" required={true}/>
+                    <Grid container
+                          spacing={3}>
+                        <Grid xs={12}
+                              md={12}>
+                            <FormTextField formik={formik}
+                                           name="triple_map_uri"
+                                           label="URI"
+                                           required={true}/>
                         </Grid>
-                        <Grid xs={12} md={12}>
+                        <Grid xs={12}
+                              md={12}>
                             <TextField
                                 error={!!(formik.touched.format && formik.errors.format)}
                                 fullWidth
@@ -106,14 +109,17 @@ export const EditForm = (props) => {
                                 value={formik.values.format}
                             >
                                 {Object.keys(sectionApi.FILE_RESOURCE_FORMATS).map((key) => (
-                                    <MenuItem key={key} value={key}>
+                                    <MenuItem key={key}
+                                              value={key}>
                                         {sectionApi.FILE_RESOURCE_FORMATS[key]}
                                     </MenuItem>
                                 ))}
                             </TextField>
                         </Grid>
-                        <Grid xs={12} md={12}>
+                        <Grid xs={12}
+                              md={12}>
                             <FormCodeTextArea
+                                disabled={formik.isSubmitting}
                                 formik={formik}
                                 name="triple_map_content"
                                 label="Content"
@@ -142,6 +148,13 @@ export const EditForm = (props) => {
                     >
                         {itemctx.isNew ? 'Create' : 'Update'}
                     </Button>
+                    {!<Button
+                        disabled={formik.isSubmitting}
+                        type="submit"
+                        variant="outlined"
+                    >
+                        Update and Transform
+                    </Button>}
                     <Button
                         color="inherit"
                         component={RouterLink}
