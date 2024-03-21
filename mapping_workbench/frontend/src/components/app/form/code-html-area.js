@@ -25,7 +25,6 @@ export const FormCodeHtmlArea = (props) => {
     const {
         defaultContent = '', name, label,
         grammar = 'html', language = null,
-        disabled,
         ...other
     } = props;
 
@@ -44,15 +43,6 @@ export const FormCodeHtmlArea = (props) => {
     return (
         <div className={styles['form-control-code-textarea']}>
             <FormControl fullWidth>
-                <FormLabel
-                    sx={{
-                        color: 'text.primary',
-                        mb: 1,
-                    }}
-                    htmlFor={name}
-                >
-                    {label}
-                </FormLabel>
                 <Box
                     sx={{
                         height: eval(variables['codeTextareaHeight']),
@@ -75,7 +65,6 @@ export const FormCodeHtmlArea = (props) => {
                                 outline: 'none',
                                 border: 0,
                                 boxShadow: 'none',
-                                opacity: disabled ? .7 : 1
                             }}
                             textareaClassName={styles['code-textarea']}
                             preClassName={styles['code-textarea-pre']}
