@@ -16,6 +16,9 @@ from mapping_workbench.backend.package_importer.models.imported_mapping_suite im
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.user.models.user import User
 
+METADATA_FILE_NAME = "metadata.json"
+OUTPUT_DIR_NAME = "output"
+
 TEST_DATA_DIR_NAME = "test_data"
 TRANSFORMATION_DIR_NAME = "transformation"
 VALIDATION_DIR_NAME = "validation"
@@ -76,11 +79,12 @@ def import_mapping_resource_file_names(conceptual_mappings_file_path: pathlib.Pa
 def import_mapping_conceptual_rules(conceptual_mappings_file_path: pathlib.Path) -> List[MappingConceptualRule]:
     conceptual_rules_df = pd.read_excel(conceptual_mappings_file_path, sheet_name=CONCEPTUAL_RULES_SHEET_NAME)
     conceptual_rules_df.replace({np.nan: None}, inplace=True)
-    #TODO: this is a quick fix of 'Min/Max SDK Version' being autocast to number, which trigger Pydantic validation error on populating
     mapping_conceptual_rules = []
     for conceptual_rule_dict in conceptual_rules_df.to_dict(orient="records"):
-        conceptual_rule_dict['Min SDK Version'] = str(conceptual_rule_dict['Min SDK Version'])
-        conceptual_rule_dict['Max SDK Version'] = str(conceptual_rule_dict['Max SDK Version'])
+        if conceptual_rule_dict['Min SDK Version']:
+            conceptual_rule_dict['Min SDK Version'] = str(conceptual_rule_dict['Min SDK Version'])
+        if conceptual_rule_dict['Max SDK Version']:
+            conceptual_rule_dict['Max SDK Version'] = str(conceptual_rule_dict['Max SDK Version'])
         mapping_conceptual_rules.append(MappingConceptualRule(**conceptual_rule_dict))
 
     return mapping_conceptual_rules

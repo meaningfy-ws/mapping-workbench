@@ -20,7 +20,8 @@ class BaseEntity(Document):
     def on_create(self, user: User):
         if user:
             self.created_by = User.link_from_id(user.id)
-        self.created_at = datetime.now()
+        if not self.created_at:
+            self.created_at = datetime.now()
         return self
 
     def on_update(self, user: User):

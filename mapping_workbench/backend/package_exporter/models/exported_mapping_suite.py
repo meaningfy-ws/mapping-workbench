@@ -1,3 +1,4 @@
+from datetime import datetime
 from enum import Enum
 from typing import List, Optional
 
@@ -26,11 +27,13 @@ class MappingMetadataConstraints(BaseModel):
 class MappingMetadataExport(BaseModel):
     identifier: str
     title: str
+    created_at: str
     description: str
     mapping_version: str
     ontology_version: str
     mapping_type: MappingSuiteType = MappingSuiteType.ELECTRONIC_FORMS
     metadata_constraints: MappingMetadataConstraints
+    mapping_suite_hash_digest: str
 
 
 class MappingConceptualRule(BaseModel):
