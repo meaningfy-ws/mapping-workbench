@@ -23,13 +23,8 @@ const Page = () => {
     const [tripleMapFragmentTree,setTripleMapFragmentTree] = useState([])
 
     const router = useRouter();
-    if (!router.isReady) return;
-
     const {id} = router.query;
 
-    if (!id) {
-        return;
-    }
 
     useEffect(() => {
         handleGetTripleMapFragmentTree()
@@ -45,10 +40,8 @@ const Page = () => {
 
     }
 
-
-
     const formState = useItem(sectionApi, id);
-    const item = formState.item;
+    const { item } = formState;
 
     usePageView();
 

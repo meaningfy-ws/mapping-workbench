@@ -1,5 +1,5 @@
-import {useMounted} from "../../../hooks/use-mounted";
 import {useEffect, useState} from "react";
+import {useMounted} from "../../../hooks/use-mounted";
 
 export class ForItemDataState {
     constructor(item, setState) {
@@ -9,7 +9,6 @@ export class ForItemDataState {
 }
 
 export const useItem = (sectionApi, id, path = null) => {
-    console.log('useItem')
     const isMounted = useMounted();
     const [item, setItem] = useState(null);
 
@@ -23,10 +22,10 @@ export const useItem = (sectionApi, id, path = null) => {
     };
 
     useEffect(() => {
-            isMounted() && handleItemGet();
+            id && isMounted() && handleItemGet();
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [isMounted()]);
+        [id, isMounted()]);
 
     return new ForItemDataState(item, setItem);
     // return item

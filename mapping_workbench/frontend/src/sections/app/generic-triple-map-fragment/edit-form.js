@@ -1,7 +1,8 @@
+import {useEffect, useState} from "react";
 import toast from 'react-hot-toast';
 import PropTypes from 'prop-types';
-import * as Yup from 'yup';
 import {useFormik} from 'formik';
+import * as Yup from 'yup';
 
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -11,6 +12,10 @@ import Grid from '@mui/material/Unstable_Grid2';
 import Stack from '@mui/material/Stack';
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
+import Accordion from "@mui/material/Accordion";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import {RouterLink} from 'src/components/router-link';
 import {paths} from 'src/paths';
@@ -19,13 +24,6 @@ import {FormTextField} from "../../../components/app/form/text-field";
 import {sessionApi} from "../../../api/session";
 import {FormCodeTextArea} from "../../../components/app/form/code-text-area";
 import {FormCodeHtmlArea} from "../../../components/app/form/code-html-area";
-import {useEffect, useState} from "react";
-import Accordion from "@mui/material/Accordion";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-
-
 
 export const EditForm = (props) => {
     const {itemctx, tree, ...other} = props;
@@ -33,11 +31,11 @@ export const EditForm = (props) => {
     const sectionApi = itemctx.api;
     const item = itemctx.data;
 
+    const [selectedTree, setSelectedTree] = useState(tree?.[0]?.test_datas?.[0]?.test_data_id)
     const [htmlContent, setHtmlContent] = useState("")
     const [htmlResultContent, setHtmlResultContent] = useState("")
 
     const initialValues = {
-        tree: itemctx.isNew ? undefined : tree[0].test_datas[0].test_data_id,
         triple_map_uri: item.triple_map_uri ?? '',
         triple_map_content: item.triple_map_content ?? '',
         format: item.format ?? sectionApi.FILE_RESOURCE_DEFAULT_FORMAT ?? '',
@@ -56,11 +54,8 @@ export const EditForm = (props) => {
                 .max(255)
                 .required('Format is required')
         }),
-        onSubmit: async (propValues, helpers) => {
+        onSubmit: async (values, helpers) => {
             try {
-                const { format, triple_map_content, triple_map_uri } = propValues
-                const  values =  { format, triple_map_content, triple_map_uri }
-
                 let response;
                 values['project'] = sessionApi.getSessionProject();
                 if (itemctx.isNew) {
@@ -93,8 +88,8 @@ export const EditForm = (props) => {
     });
 
     useEffect(() => {
-        formik.values.tree && handleGetHtmlContent(formik.values.tree)
-    }, [formik.values.tree]);
+        selectedTree && handleGetHtmlContent(selectedTree)
+    }, [selectedTree]);
 
 
     const handleGetHtmlContent = (id) => {
@@ -105,40 +100,42 @@ export const EditForm = (props) => {
     }
 
 
-    const onUpdateAndTransform = (propValues, helpers) => {
-                const { format, triple_map_content, triple_map_uri } = propValues
-                const  values =  { format, triple_map_content, triple_map_uri }
+    const onUpdateAndTransform = (values, helpers) => {
 
-                values['project'] = sessionApi.getSessionProject();
-                values['id'] = item._id;
-                formik.setSubmitting(true)
-                const toastId = toast.loading("Updating Content")
-                sectionApi.updateItem(values)
-                    .then((res) => {
-                        if (res) {
-                            toast.loading("Transforming Content", {id: toastId})
-                            sectionApi.getTripleMapHtmlResultContent(formik.values.tree)
-                                .then(res => {
-                                    if(res) {
-                                        setHtmlResultContent(res.rdf_manifestation)
-                                        toast.success('Transformed Successfully', {id: toastId})
-                                    }
-                                    else throw 'Something went wrong!'
-                                })
-                        }
-                        else throw 'Something went wrong!'
-                    })
-                    .catch((err) => {
-                        toast.error(err.message,{id: toastId})
-                         formik.setStatus({success: false});
-                         formik.setErrors({submit: err.message});
-                    })
-                    .finally(() => formik.setSubmitting(false))
-        }
+        values['project'] = sessionApi.getSessionProject();
+        values['id'] = item._id;
+        formik.setSubmitting(true)
+        const toastId = toast.loading("Updating Content")
+        sectionApi.updateItem(values)
+            .then((res) => {
+                if (res) {
+                    toast.loading("Transforming Content", {id: toastId})
+                    sectionApi.getTripleMapHtmlResultContent(selectedTree)
+                        .then(res => {
+                            if(res) {
+                                setHtmlResultContent(res.rdf_manifestation)
+                                toast.success('Transformed Successfully', {id: toastId})
+                            }
+                            else throw 'Something went wrong!'
+                        })
+                        .finally(() => formik.setSubmitting(false))
+                }
+                else throw 'Something went wrong!'
+            })
+            .catch((err) => {
+                toast.error(err.message,{id: toastId})
+                 formik.setStatus({success: false});
+                 formik.setErrors({submit: err.message});
+                 formik.setSubmitting(false);
+            })
+    }
 
     const handleUpdateAndSubmit = () => {
         onUpdateAndTransform(formik.values)
     }
+
+    console.log(formik)
+
 
     return (
         <form onSubmit={formik.handleSubmit}
@@ -198,11 +195,9 @@ export const EditForm = (props) => {
                                     helperText={formik.touched.tree && formik.errors.tree}
                                     onBlur={formik.handleBlur}
                                     label="Tree"
-                                    onChange={e =>
-                                        formik.setFieldValue("tree", e.target.value)
-                                    }
+                                    onChange={e => setSelectedTree(e.target.value)}
                                     select
-                                    value={formik.values.tree}
+                                    value={selectedTree}
                                 >
                                     {tree.map(suite =>
                                         [<MenuItem key={suite.suite_id}
@@ -275,9 +270,8 @@ export const EditForm = (props) => {
                     >
                         {itemctx.isNew ? 'Create' : 'Update'}
                     </Button>
-                    {!itemctx.isNew &&<Button
+                    {!itemctx.isNew && <Button
                         disabled={formik.isSubmitting}
-                        // type="submit"
                         variant="outlined"
                         onClick={handleUpdateAndSubmit}
                     >
