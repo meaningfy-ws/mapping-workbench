@@ -12,7 +12,6 @@ import 'prismjs/plugins/toolbar/prism-toolbar';
 import 'prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard';
 import 'prismjs/plugins/show-language/prism-show-language';
 import 'prismjs/themes/prism-dark.css';
-import FormLabel from "@mui/material/FormLabel";
 import FormControl from "@mui/material/FormControl";
 import {Box} from '@mui/system';
 import styles from './style/code-text-area.module.scss';

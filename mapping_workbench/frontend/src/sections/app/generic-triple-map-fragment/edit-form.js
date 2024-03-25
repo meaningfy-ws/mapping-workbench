@@ -134,9 +134,6 @@ export const EditForm = (props) => {
         onUpdateAndTransform(formik.values)
     }
 
-    console.log(formik)
-
-
     return (
         <form onSubmit={formik.handleSubmit}
               {...other}>
@@ -190,10 +187,7 @@ export const EditForm = (props) => {
                             <Grid xs={12}
                                   md={12}>
                                 <TextField
-                                    error={!!(formik.touched.tree && formik.errors.tree)}
                                     fullWidth
-                                    helperText={formik.touched.tree && formik.errors.tree}
-                                    onBlur={formik.handleBlur}
                                     label="Tree"
                                     onChange={e => setSelectedTree(e.target.value)}
                                     select
