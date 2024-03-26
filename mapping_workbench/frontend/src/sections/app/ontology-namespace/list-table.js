@@ -63,6 +63,14 @@ export const ListTable = (props) => {
     //     toast.error('Item cannot be deleted');
     // }, []);
 
+    const handleDeleteAction = (id) => {
+        const itemctx= new ForListItemAction(id, sectionApi)
+        itemctx.api.deleteItem(id)
+            .then(res => {
+                res && onPageChange(0)
+            })
+    }
+
     return (
         <div>
             <TablePagination
@@ -195,7 +203,9 @@ export const ListTable = (props) => {
                                         </TableCell>
                                         <TableCell align="right">
                                             <ListItemActions
-                                                itemctx={new ForListItemAction(item_id, sectionApi)}/>
+                                                itemctx={new ForListItemAction(item_id, sectionApi)}
+                                                onDeleteAction={() => handleDeleteAction(item_id)}
+                                            />
                                         </TableCell>
                                     </TableRow>
                                     {isCurrent && (
