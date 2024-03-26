@@ -645,6 +645,7 @@ export const ListTableRow = (props) => {
 
 
     const generateValidityInfo = (termsValidity, pathName, pathValue) => {
+        console.log(termsValidity,pathValue)
         let validityInfo = pathValue;
         if (!termsValidity) {
             return validityInfo;

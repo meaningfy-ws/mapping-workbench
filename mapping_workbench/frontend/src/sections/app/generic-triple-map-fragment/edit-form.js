@@ -1,7 +1,8 @@
+import {useEffect, useState} from "react";
 import toast from 'react-hot-toast';
 import PropTypes from 'prop-types';
-import * as Yup from 'yup';
 import {useFormik} from 'formik';
+import * as Yup from 'yup';
 
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -11,6 +12,10 @@ import Grid from '@mui/material/Unstable_Grid2';
 import Stack from '@mui/material/Stack';
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
+import Accordion from "@mui/material/Accordion";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import {RouterLink} from 'src/components/router-link';
 import {paths} from 'src/paths';
@@ -18,14 +23,17 @@ import {useRouter} from 'src/hooks/use-router';
 import {FormTextField} from "../../../components/app/form/text-field";
 import {sessionApi} from "../../../api/session";
 import {FormCodeTextArea} from "../../../components/app/form/code-text-area";
-
-
+import {FormCodeReadOnlyArea} from "../../../components/app/form/code-read-only-area";
 
 export const EditForm = (props) => {
-    const {itemctx, ...other} = props;
+    const {itemctx, tree, ...other} = props;
     const router = useRouter();
     const sectionApi = itemctx.api;
     const item = itemctx.data;
+
+    const [selectedTree, setSelectedTree] = useState(tree?.[0]?.test_datas?.[0]?.test_data_id)
+    const [xmlContent, setXmlContent] = useState("")
+    const [rdfResultContent, setRdfResultContent] = useState("")
 
     const initialValues = {
         triple_map_uri: item.triple_map_uri ?? '',
@@ -79,8 +87,62 @@ export const EditForm = (props) => {
         }
     });
 
+    useEffect(() => {
+        selectedTree && handleGetXmlContent(selectedTree)
+    }, [selectedTree]);
+
+
+    const handleGetXmlContent = (id) => {
+        sectionApi.getTripleMapXmlContent(id)
+            .then(res => {
+                setXmlContent(res.content);
+            })
+    }
+
+    const onUpdateAndTransform = (values, helpers) => {
+
+        values['project'] = sessionApi.getSessionProject();
+        values['id'] = item._id;
+        formik.setSubmitting(true)
+        const toastId = toast.loading("Updating Content")
+        sectionApi.updateItem(values)
+            .then((res) => {
+                if (res) {
+                    toast.loading("Transforming Content", {id: toastId})
+                    sectionApi.getTripleMapRdfResultContent(selectedTree)
+                        .then(res => {
+                            if(res) {
+                                setRdfResultContent(res.rdf_manifestation)
+                                toast.success('Transformed Successfully', {id: toastId})
+                            }
+                            else throw 'Something went wrong!'
+                        })
+                        .catch(err => {
+                            toast.error(err,{id: toastId})
+                             formik.setStatus({success: false});
+                             formik.setErrors({submit: err.message});
+                             formik.setSubmitting(false);
+                        })
+                        .finally(() => formik.setSubmitting(false))
+                }
+                else throw 'Something went wrong!'
+            })
+            .catch(err => {
+                toast.error(err,{id: toastId})
+                 formik.setStatus({success: false});
+                 formik.setErrors({submit: err.message});
+                 formik.setSubmitting(false);
+            })
+
+    }
+
+    const handleUpdateAndSubmit = () => {
+        onUpdateAndTransform(formik.values)
+    }
+
     return (
-        <form onSubmit={formik.handleSubmit} {...other}>
+        <form onSubmit={formik.handleSubmit}
+              {...other}>
             <Card>
                 <CardHeader title={(itemctx.isNew ? 'Create' : 'Edit') + ' ' + sectionApi.SECTION_ITEM_TITLE}/>
                 <CardContent sx={{pt: 0}}>
@@ -127,6 +189,66 @@ export const EditForm = (props) => {
                                 language={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['language']}
                             />
                         </Grid>
+                        {!itemctx.isNew && <>
+                            <Grid xs={12}
+                                  md={12}>
+                                <TextField
+                                    fullWidth
+                                    label="Tree"
+                                    onChange={e => setSelectedTree(e.target.value)}
+                                    select
+                                    value={selectedTree}
+                                >
+                                    {tree.map(suite =>
+                                        [<MenuItem key={suite.suite_id}
+                                                       value={suite.suite_id}
+                                                     disabled>{suite.suite_title}
+
+                                            </MenuItem>,
+                                            suite.test_datas.map(testData =>
+                                                    <MenuItem key={testData.test_data_id}
+                                                              value={testData.test_data_id}
+                                                              style={{paddingLeft: 40}}>
+                                                        {testData.test_data_title}
+                                                    </MenuItem>)])
+                                    }
+                                </TextField>
+                            </Grid>
+                            <Grid xs={12}
+                                  md={12}>
+                                <Accordion>
+                                    <AccordionSummary  expandIcon={<ExpandMoreIcon />}>
+                                        XML Content
+                                    </AccordionSummary>
+                                    <AccordionDetails>
+                                        <FormCodeReadOnlyArea
+                                            disabled
+                                            name="triple_map_content"
+                                            label="XML Content"
+                                            defaultContent={xmlContent}
+                                        />
+                                    </AccordionDetails>
+                                </Accordion>
+                            </Grid>
+                            <Grid xs={12}
+                                  md={12}>
+                                <Accordion disabled={!rdfResultContent}>
+                                    <AccordionSummary  expandIcon={<ExpandMoreIcon />}>
+                                        RDF Result
+                                    </AccordionSummary>
+                                    <AccordionDetails>
+                                        <FormCodeReadOnlyArea
+                                            disabled
+                                            name="triple_map_content"
+                                            label="RDF Result"
+                                            defaultContent={rdfResultContent}
+                                            grammar={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['grammar']}
+                                            language={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['language']}
+                                        />
+                                    </AccordionDetails>
+                                </Accordion>
+                            </Grid>
+                            </>}
                     </Grid>
                 </CardContent>
             </Card>
@@ -148,10 +270,10 @@ export const EditForm = (props) => {
                     >
                         {itemctx.isNew ? 'Create' : 'Update'}
                     </Button>
-                    {!<Button
+                    {!itemctx.isNew && <Button
                         disabled={formik.isSubmitting}
-                        type="submit"
                         variant="outlined"
+                        onClick={handleUpdateAndSubmit}
                     >
                         Update and Transform
                     </Button>}

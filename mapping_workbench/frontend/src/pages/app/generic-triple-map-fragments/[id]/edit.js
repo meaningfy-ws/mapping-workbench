@@ -1,18 +1,18 @@
+import {useEffect, useState} from "react";
+import {genericTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/generic';
+
 import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
-import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {genericTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/generic';
-import {RouterLink} from 'src/components/router-link';
+import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
+import {RouterLink} from 'src/components/router-link';
 import {Layout as AppLayout} from 'src/layouts/app';
-import {paths} from 'src/paths';
 import {ForItemEditForm} from "src/contexts/app/section/for-item-form";
 import {useItem} from "src/contexts/app/section/for-item-data-state";
 import {useRouter} from "src/hooks/use-router";
@@ -20,17 +20,28 @@ import {EditForm} from "../../../../sections/app/generic-triple-map-fragment/edi
 
 
 const Page = () => {
-    const router = useRouter();
-    if (!router.isReady) return;
+    const [tripleMapFragmentTree,setTripleMapFragmentTree] = useState([])
 
+    const router = useRouter();
     const {id} = router.query;
 
-    if (!id) {
-        return;
+
+    useEffect(() => {
+        handleGetTripleMapFragmentTree()
+    }, []);
+
+
+    const handleGetTripleMapFragmentTree = () => {
+        const project = window.sessionStorage.getItem('sessionProject')
+        sectionApi.getTripleMapFragmentTree({project})
+            .then(res=> {
+                setTripleMapFragmentTree(res.test_data_suites)
+            })
+
     }
 
     const formState = useItem(sectionApi, id);
-    const item = formState.item;
+    const { item } = formState;
 
     usePageView();
 
@@ -94,7 +105,8 @@ const Page = () => {
                         </Stack>
                     </Stack>
                 </Stack>
-                <EditForm itemctx={new ForItemEditForm(item, sectionApi, formState.setState)}/>
+                <EditForm itemctx={new ForItemEditForm(item, sectionApi, formState.setState)}
+                          tree={tripleMapFragmentTree}/>
             </Stack>
         </>
     );
