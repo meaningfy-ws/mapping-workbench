@@ -23,7 +23,7 @@ import {useRouter} from 'src/hooks/use-router';
 import {FormTextField} from "../../../components/app/form/text-field";
 import {sessionApi} from "../../../api/session";
 import {FormCodeTextArea} from "../../../components/app/form/code-text-area";
-import {FormCodeHtmlArea} from "../../../components/app/form/code-html-area";
+import {FormCodeReadOnlyArea} from "../../../components/app/form/code-read-only-area";
 
 export const EditForm = (props) => {
     const {itemctx, tree, ...other} = props;
@@ -32,8 +32,8 @@ export const EditForm = (props) => {
     const item = itemctx.data;
 
     const [selectedTree, setSelectedTree] = useState(tree?.[0]?.test_datas?.[0]?.test_data_id)
-    const [htmlContent, setHtmlContent] = useState("")
-    const [htmlResultContent, setHtmlResultContent] = useState("")
+    const [xmlContent, setXmlContent] = useState("")
+    const [rdfResultContent, setRdfResultContent] = useState("")
 
     const initialValues = {
         triple_map_uri: item.triple_map_uri ?? '',
@@ -88,17 +88,16 @@ export const EditForm = (props) => {
     });
 
     useEffect(() => {
-        selectedTree && handleGetHtmlContent(selectedTree)
+        selectedTree && handleGetXmlContent(selectedTree)
     }, [selectedTree]);
 
 
-    const handleGetHtmlContent = (id) => {
-        sectionApi.getTripleMapHtmlContent(id)
+    const handleGetXmlContent = (id) => {
+        sectionApi.getTripleMapXmlContent(id)
             .then(res => {
-                setHtmlContent(res.content);
+                setXmlContent(res.content);
             })
     }
-
 
     const onUpdateAndTransform = (values, helpers) => {
 
@@ -110,24 +109,31 @@ export const EditForm = (props) => {
             .then((res) => {
                 if (res) {
                     toast.loading("Transforming Content", {id: toastId})
-                    sectionApi.getTripleMapHtmlResultContent(selectedTree)
+                    sectionApi.getTripleMapRdfResultContent(selectedTree)
                         .then(res => {
                             if(res) {
-                                setHtmlResultContent(res.rdf_manifestation)
+                                setRdfResultContent(res.rdf_manifestation)
                                 toast.success('Transformed Successfully', {id: toastId})
                             }
                             else throw 'Something went wrong!'
+                        })
+                        .catch(err => {
+                            toast.error(err,{id: toastId})
+                             formik.setStatus({success: false});
+                             formik.setErrors({submit: err.message});
+                             formik.setSubmitting(false);
                         })
                         .finally(() => formik.setSubmitting(false))
                 }
                 else throw 'Something went wrong!'
             })
-            .catch((err) => {
-                toast.error(err.message,{id: toastId})
+            .catch(err => {
+                toast.error(err,{id: toastId})
                  formik.setStatus({success: false});
                  formik.setErrors({submit: err.message});
                  formik.setSubmitting(false);
             })
+
     }
 
     const handleUpdateAndSubmit = () => {
@@ -212,30 +218,30 @@ export const EditForm = (props) => {
                                   md={12}>
                                 <Accordion>
                                     <AccordionSummary  expandIcon={<ExpandMoreIcon />}>
-                                        Html Content
+                                        XML Content
                                     </AccordionSummary>
                                     <AccordionDetails>
-                                        <FormCodeHtmlArea
+                                        <FormCodeReadOnlyArea
                                             disabled
                                             name="triple_map_content"
-                                            label="HTML Content"
-                                            defaultContent={htmlContent}
+                                            label="XML Content"
+                                            defaultContent={xmlContent}
                                         />
                                     </AccordionDetails>
                                 </Accordion>
                             </Grid>
                             <Grid xs={12}
                                   md={12}>
-                                <Accordion disabled={!htmlResultContent}>
+                                <Accordion disabled={!rdfResultContent}>
                                     <AccordionSummary  expandIcon={<ExpandMoreIcon />}>
                                         RDF Result
                                     </AccordionSummary>
                                     <AccordionDetails>
-                                        <FormCodeHtmlArea
+                                        <FormCodeReadOnlyArea
                                             disabled
                                             name="triple_map_content"
-                                            label="HTML Result"
-                                            defaultContent={htmlResultContent}
+                                            label="RDF Result"
+                                            defaultContent={rdfResultContent}
                                             grammar={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['grammar']}
                                             language={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['language']}
                                         />

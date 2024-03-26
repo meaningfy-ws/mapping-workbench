@@ -55,13 +55,13 @@ export class TripleMapFragmentsApi extends SectionApi {
         return Promise.resolve(data);
     }
 
-    async getTripleMapHtmlContent(id) {
+    async getTripleMapXmlContent(id) {
         const endpoint = this.paths['content']
         const data = await appApi.get(endpoint(id));
         return Promise.resolve(data)
     }
 
-    async getTripleMapHtmlResultContent(id) {
+    async getTripleMapRdfResultContent(id) {
         const endpoint = this.paths['result_content']
         const data = await appApi.post(endpoint(id));
         return Promise.resolve(data)

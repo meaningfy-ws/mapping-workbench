@@ -20,7 +20,7 @@ import variables from './style/variables.code-text-area.module.scss';
 const DEFAULT_GRAMMAR = 'text';
 const DEFAULT_LANGUAGE = 'html';
 
-export const FormCodeHtmlArea = (props) => {
+export const FormCodeReadOnlyArea = (props) => {
     const {
         defaultContent = '', name, label,
         grammar = 'html', language = null,
