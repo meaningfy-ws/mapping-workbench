@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -14,6 +13,8 @@ import Switch from "@mui/material/Switch";
 import {Scrollbar} from 'src/components/scrollbar';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
+import toast from "react-hot-toast";
+
 
 
 export const ListTable = (props) => {
@@ -27,6 +28,20 @@ export const ListTable = (props) => {
         rowsPerPage = 0,
         sectionApi
     } = props;
+
+    const handleDeleteAction = (id) => {
+        const toastId= toast.loading("Deleting")
+        const itemctx= new ForListItemAction(id, sectionApi)
+        itemctx.api.deleteItem(id)
+            .then(res => {
+                if(res)
+                {
+                    toast.success("Deleted", {id: toastId})
+                    onPageChange(0)
+                }
+                else toast.error("Error deleting",{id: toastId})
+            })
+    }
 
     return (
         <div>
@@ -101,7 +116,9 @@ export const ListTable = (props) => {
                                         </TableCell>
                                         <TableCell align="right">
                                             <ListItemActions
-                                                itemctx={new ForListItemAction(item_id, sectionApi)}/>
+                                                itemctx={new ForListItemAction(item_id, sectionApi)}
+                                                onDeleteAction={() => handleDeleteAction(item_id)}
+                                            />
                                         </TableCell>
                                     </TableRow>
                             );

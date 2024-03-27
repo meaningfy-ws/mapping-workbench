@@ -1,5 +1,6 @@
 import {useState} from "react";
 import {useRouter} from "next/router";
+import PropTypes from 'prop-types';
 
 import {Button} from '@mui/material';
 import {Box} from "@mui/system";
@@ -12,7 +13,7 @@ import ConfirmDialog from "../dialog/confirm-dialog";
 export const ListItemActions = (props) => {
     const router = useRouter();
 
-    const {itemctx, pathnames} = props;
+    const {itemctx, pathnames, onDeleteAction} = props;
     const popover = usePopover();
 
     const handleViewAction = () => {
@@ -90,7 +91,7 @@ export const ListItemActions = (props) => {
                     title="Delete It?"
                     open={confirmOpen}
                     setOpen={setConfirmOpen}
-                    onConfirm={handleDeleteAction}
+                    onConfirm={onDeleteAction ?? handleDeleteAction}
                 >
                     Are you sure you want to delete it?
                 </ConfirmDialog>
@@ -153,3 +154,10 @@ export const ListItemActions = (props) => {
         </Box>
     );
 };
+
+
+ListItemActions.propTypes = {
+    itemctx: PropTypes.object,
+    pathnames: PropTypes.object,
+    onDeleteAction: PropTypes.func
+}
