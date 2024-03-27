@@ -7,6 +7,8 @@ import {useFormik} from "formik";
 import * as Yup from "yup";
 
 import EditIcon from '@untitled-ui/icons-react/build/esm/Edit05';
+import CheckIcon from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
 import InfoIcon from '@mui/icons-material/Info';
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
@@ -166,34 +168,40 @@ export const ListTableTripleMapFragment = (props) => {
         ))}
     </Box>
 
+    const isRuleTripleMapFragments = !!ruleTripleMapFragments.length
+
     return (<>
+        <Box sx={{mb: 1}}>
+            {isRuleTripleMapFragments ? <CheckIcon color="success"/> : <CloseIcon color="error"/>}
+        </Box>
         <Box sx={{
             position: "absolute",
             left: "50%",
             top: "50%",
         }}>
             {isHovered && <Tooltip enterDelay={300}
-                                   title={<RuleTripleMapFragments/>}>
+                                   title={isRuleTripleMapFragments && <RuleTripleMapFragments/>}>
                 <Stack display="flex"
                        direction="column"
                        gap={1}
                        sx={{
-                           marginTop: "-50%",
+                           marginTop: isRuleTripleMapFragments ? "-50%" : "-31%",
                            transform: "translate(-50%)"
                        }}
                 >
-                    <Button
+                    {isRuleTripleMapFragments && <Button
+                        // sx={{backgroundColor: "#fff"}}
                         aria-describedby={"triple_map_fragment_dialog_" + item._id}
-                        variant="outlined"
+                        variant="contained"
                         size="small"
-                        color="primary"
+                        color="secondary"
                         onClick={handleTripleMapFragmentDetailsDialogOpen}
                         component={Link}
                     >
                         <SvgIcon fontSize="small">
                             <InfoIcon/>
                         </SvgIcon>
-                    </Button>
+                    </Button>}
                     <Button
                         aria-describedby={"triple_map_fragment_dialog_" + item._id}
                         variant="contained"
@@ -645,7 +653,6 @@ export const ListTableRow = (props) => {
 
 
     const generateValidityInfo = (termsValidity, pathName, pathValue) => {
-        console.log(termsValidity,pathValue)
         let validityInfo = pathValue;
         if (!termsValidity) {
             return validityInfo;
@@ -673,13 +680,10 @@ export const ListTableRow = (props) => {
     );
 
     const hasTargetPropertyPathValidityErrors =
-        item.target_property_path_terms_validity
-            ? item.target_property_path_terms_validity.some(x => !x.is_valid)
-            : false;
+        item.target_property_path_terms_validity?.some(x => !x.is_valid);
+
     const hasTargetClassPathValidityErrors =
-        item.target_class_path_terms_validity
-            ? item.target_class_path_terms_validity.some(x => !x.is_valid)
-            : false;
+        item.target_class_path_terms_validity?.some(x => !x.is_valid);
 
     const mappingNotesDialog = useDialog();
     const editorialNotesDialog = useDialog();
@@ -974,20 +978,6 @@ export const ListTable = (props) => {
         setHoveredItem(itemId);
     }
 
-    // const handleItemClose = useCallback(() => {
-    //     setCurrentItem(null);
-    // }, []);
-
-    // const handleItemUpdate = useCallback(() => {
-    //     setCurrentItem(null);
-    //     toast.success('Item updated');
-    // }, []);
-
-    // const handleItemDelete = useCallback(() => {
-
-    //     toast.error('Item cannot be deleted');
-    // }, []);
-
     const [isProjectDataReady, setIsProjectDataReady] = useState(false);
 
     const [projectTripleMapFragments, setProjectTripleMapFragments] = useState([]);
@@ -1073,19 +1063,6 @@ export const ListTable = (props) => {
                         <TableCell>
                             SPARQL assertions
                         </TableCell>
-                        {/*<TableCell align="left">
-                            <Tooltip
-                                enterDelay={300}
-                                title="Sort"
-                            >
-                                <TableSortLabel
-                                    active
-                                    direction="desc"
-                                >
-                                    Created
-                                </TableSortLabel>
-                            </Tooltip>
-                        </TableCell>*/}
                         <TableCell align="center"
                                    title="Mapping Notes"
                                    sx={{
