@@ -1,5 +1,6 @@
 import {useState} from "react";
 import {useRouter} from "next/router";
+import PropTypes from 'prop-types';
 
 import {Button} from '@mui/material';
 import {Box} from "@mui/system";
@@ -153,3 +154,10 @@ export const ListItemActions = (props) => {
         </Box>
     );
 };
+
+
+ListItemActions.propTypes = {
+    itemctx: PropTypes.object,
+    pathnames: PropTypes.object,
+    onDeleteAction: PropTypes.func
+}
