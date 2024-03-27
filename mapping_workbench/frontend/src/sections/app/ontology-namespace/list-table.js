@@ -13,6 +13,7 @@ import Switch from "@mui/material/Switch";
 import {Scrollbar} from 'src/components/scrollbar';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
+import toast from "react-hot-toast";
 
 
 
@@ -29,10 +30,16 @@ export const ListTable = (props) => {
     } = props;
 
     const handleDeleteAction = (id) => {
+        const toastId= toast.loading("Deleting")
         const itemctx= new ForListItemAction(id, sectionApi)
         itemctx.api.deleteItem(id)
             .then(res => {
-                res && onPageChange(0)
+                if(res)
+                {
+                    toast.success("Deleted", {id: toastId})
+                    onPageChange(0)
+                }
+                else toast.error("Error deleting",{id: toastId})
             })
     }
 
