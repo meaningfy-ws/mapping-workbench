@@ -32,7 +32,7 @@ export const EditForm = (props) => {
     const item = itemctx.data;
 
     const [selectedTree, setSelectedTree] = useState(tree?.[0]?.test_datas?.[0]?.test_data_id)
-    const [xmlContent, setXmlContent] = useState("")
+    const [testDataContent, setTestDataContent] = useState("")
     const [rdfResultContent, setRdfResultContent] = useState("")
 
     const initialValues = {
@@ -95,7 +95,7 @@ export const EditForm = (props) => {
     const handleGetXmlContent = (id) => {
         sectionApi.getTripleMapXmlContent(id)
             .then(res => {
-                setXmlContent(res.content);
+                setTestDataContent(res.content);
             })
     }
 
@@ -194,7 +194,7 @@ export const EditForm = (props) => {
                                   md={12}>
                                 <TextField
                                     fullWidth
-                                    label="Tree"
+                                    label="Select Test Data"
                                     onChange={e => setSelectedTree(e.target.value)}
                                     select
                                     value={selectedTree}
@@ -218,14 +218,14 @@ export const EditForm = (props) => {
                                   md={12}>
                                 <Accordion>
                                     <AccordionSummary  expandIcon={<ExpandMoreIcon />}>
-                                        XML Content
+                                        Test Data Content
                                     </AccordionSummary>
                                     <AccordionDetails>
                                         <FormCodeReadOnlyArea
                                             disabled
-                                            name="triple_map_content"
-                                            label="XML Content"
-                                            defaultContent={xmlContent}
+                                            name="test_data_content"
+                                            label="Test Data Content"
+                                            defaultContent={testDataContent}
                                         />
                                     </AccordionDetails>
                                 </Accordion>
