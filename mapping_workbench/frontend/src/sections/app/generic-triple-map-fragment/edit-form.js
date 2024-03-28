@@ -105,6 +105,8 @@ export const EditForm = (props) => {
         values['id'] = item._id;
         formik.setSubmitting(true)
         const toastId = toast.loading("Updating Content")
+        const err = 'Something went wrong!'
+
         sectionApi.updateItem(values)
             .then((res) => {
                 if (res) {
@@ -115,25 +117,22 @@ export const EditForm = (props) => {
                                 setRdfResultContent(res.rdf_manifestation)
                                 toast.success('Transformed Successfully', {id: toastId})
                             }
-                            else throw 'Something went wrong!'
-                        })
-                        .catch(err => {
-                            toast.error(err,{id: toastId})
-                             formik.setStatus({success: false});
-                             formik.setErrors({submit: err.message});
-                             formik.setSubmitting(false);
+                            else {
+                                toast.error(err,{id: toastId})
+                                formik.setStatus({success: false});
+                                formik.setErrors({submit: err});
+                                formik.setSubmitting(false);
+                            }
                         })
                         .finally(() => formik.setSubmitting(false))
                 }
-                else throw 'Something went wrong!'
+                else {
+                    toast.error(err,{id: toastId})
+                    formik.setStatus({success: false});
+                    formik.setErrors({submit: err});
+                    formik.setSubmitting(false);
+                }
             })
-            .catch(err => {
-                toast.error(err,{id: toastId})
-                 formik.setStatus({success: false});
-                 formik.setErrors({submit: err.message});
-                 formik.setSubmitting(false);
-            })
-
     }
 
     const handleUpdateAndSubmit = () => {
