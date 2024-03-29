@@ -39,6 +39,12 @@ export const FileUploader = (props) => {
           reader.readAsText(file);
     });
 
+    const handleUploadAndRefresh = () => {
+        handleUpload()
+            .then(router.reload())
+    }
+
+
     const handleUpload = async () => {
         nProgress.start();
         const incStep = 100 / files.length;
@@ -62,7 +68,7 @@ export const FileUploader = (props) => {
         //     pathname: paths.app[sectionApi.section].resource_manager.index,
         //     query: {id: collection_id}
         // });
-        router.reload();
+        // router.reload();
     }
 
     const handleDrop = newFiles => {
@@ -146,7 +152,7 @@ export const FileUploader = (props) => {
                     onDrop={handleDrop}
                     onRemove={handleRemove}
                     onRemoveAll={handleRemoveAll}
-                    onUpload={handleUpload}
+                    onUpload={handleUploadAndRefresh}
                 />
 
             </DialogContent>
