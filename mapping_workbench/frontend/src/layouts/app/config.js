@@ -1,6 +1,7 @@
 import {useTranslation} from 'react-i18next';
-import SvgIcon from '@mui/material/SvgIcon';
+import {sessionApi} from "../../api/session";
 
+import SvgIcon from '@mui/material/SvgIcon';
 import FlareIcon from '@mui/icons-material/Flare';
 import BiotechIcon from '@mui/icons-material/Biotech';
 import HubIcon from '@mui/icons-material/Hub';
@@ -16,7 +17,6 @@ import LayoutAlt02 from 'src/icons/ui/duocolor/layout-alt-02';
 import Users03Icon from 'src/icons/ui/duocolor/users-03';
 import {tokens} from 'src/locales/tokens';
 import {paths} from 'src/paths';
-import {sessionApi} from "../../api/session";
 
 
 export const useSections = () => {
@@ -61,13 +61,13 @@ export const useSections = () => {
         ]
     });
 
-    let sections = {
+    const sections = {
         subheader: t(tokens.nav.resources),
         items: []
     };
 
-    let sessionProject = sessionApi.getSessionProject();
-    if (sessionProject && sessionProject !== 'null') {
+    const sessionProject = sessionApi.getSessionProject();
+    if (!!sessionProject) {
         sections.items.push(
             {
                 title: t(tokens.nav.test_data_suites),
@@ -76,17 +76,7 @@ export const useSections = () => {
                     <SvgIcon fontSize="small">
                         <BiotechIcon/>
                     </SvgIcon>
-                ),
-                items: [
-                    {
-                        title: t(tokens.nav.list),
-                        path: paths.app.test_data_suites.index
-                    },
-                    {
-                        title: t(tokens.nav.create),
-                        path: paths.app.test_data_suites.create
-                    }
-                ]
+                )
             },
             {
                 title: t(tokens.nav.sparql_test_suites),
@@ -95,17 +85,7 @@ export const useSections = () => {
                     <SvgIcon fontSize="small">
                         <FlareIcon/>
                     </SvgIcon>
-                ),
-                items: [
-                    {
-                        title: t(tokens.nav.list),
-                        path: paths.app.sparql_test_suites.index
-                    },
-                    {
-                        title: t(tokens.nav.create),
-                        path: paths.app.sparql_test_suites.create
-                    }
-                ]
+                )
             },
             {
                 title: t(tokens.nav.shacl_test_suites),
@@ -114,17 +94,7 @@ export const useSections = () => {
                     <SvgIcon fontSize="small">
                         <ContentCutIcon/>
                     </SvgIcon>
-                ),
-                items: [
-                    {
-                        title: t(tokens.nav.list),
-                        path: paths.app.shacl_test_suites.index
-                    },
-                    {
-                        title: t(tokens.nav.create),
-                        path: paths.app.shacl_test_suites.create
-                    }
-                ]
+                )
             },
             {
                 title: t(tokens.nav.ontology_file_collections),
@@ -133,17 +103,7 @@ export const useSections = () => {
                     <SvgIcon fontSize="small">
                         <SchemaIcon/>
                     </SvgIcon>
-                ),
-                items: [
-                    {
-                        title: t(tokens.nav.list),
-                        path: paths.app.ontology_file_collections.index
-                    },
-                    {
-                        title: t(tokens.nav.create),
-                        path: paths.app.ontology_file_collections.create
-                    }
-                ]
+                )
             },
             {
                 title: t(tokens.nav.resource_collections),
@@ -152,17 +112,7 @@ export const useSections = () => {
                     <SvgIcon fontSize="small">
                         <HubIcon/>
                     </SvgIcon>
-                ),
-                items: [
-                    {
-                        title: t(tokens.nav.list),
-                        path: paths.app.resource_collections.index
-                    },
-                    {
-                        title: t(tokens.nav.create),
-                        path: paths.app.resource_collections.create
-                    }
-                ]
+                )
             },
 
             {
@@ -172,21 +122,7 @@ export const useSections = () => {
                     <SvgIcon fontSize="small">
                         <FolderOpenIcon/>
                     </SvgIcon>
-                ),
-                items: [
-                    {
-                        title: t(tokens.nav.list),
-                        path: paths.app.mapping_packages.index
-                    },
-                    {
-                        title: t(tokens.nav.create),
-                        path: paths.app.mapping_packages.create
-                    },
-                    {
-                        title: t(tokens.nav.import),
-                        path: paths.app.mapping_packages.import
-                    }
-                ]
+                )
             },
 
             {
@@ -196,17 +132,7 @@ export const useSections = () => {
                     <SvgIcon fontSize="small">
                         <MapIcon/>
                     </SvgIcon>
-                ),
-                items: [
-                    {
-                        title: t(tokens.nav.list),
-                        path: paths.app.conceptual_mapping_rules.index
-                    },
-                    {
-                        title: t(tokens.nav.create),
-                        path: paths.app.conceptual_mapping_rules.create
-                    }
-                ]
+                )
             },
 
             {
