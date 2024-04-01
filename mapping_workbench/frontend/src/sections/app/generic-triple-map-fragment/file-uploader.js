@@ -10,11 +10,12 @@ import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
+import LinearProgress from '@mui/material/LinearProgress';
 
 import {sessionApi} from "../../../api/session";
 import {FileDropzone} from 'src/components/file-dropzone';
 import {useRouter} from 'src/hooks/use-router';
-import nProgress from 'nprogress';
+import {Box} from "@mui/system";
 
 
 export const FileUploader = (props) => {
@@ -27,6 +28,9 @@ export const FileUploader = (props) => {
     const [files, setFiles] = useState([]);
     const [format, setFormat] = useState(defaultFormatValue);
     const [type, setType] = useState(sectionApi.FILE_RESOURCE_DEFAULT_TYPE || "");
+    const [progress, setProgress] = useState(0);
+    const [uploading, setUploading] = useState(false)
+
 
     useEffect(() => {
         setFiles([]);
@@ -39,16 +43,11 @@ export const FileUploader = (props) => {
           reader.readAsText(file);
     });
 
-    const handleUploadAndRefresh = () => {
-        handleUpload()
-            .then(router.reload())
-    }
-
 
     const handleUpload = async () => {
-        nProgress.start();
         const incStep = 100 / files.length;
-        await files.forEach(file => {
+        setUploading(true)
+        files.forEach((file, index) => {
             getFileContent(file)
                 .then(res => {
                     const request = {
@@ -58,17 +57,18 @@ export const FileUploader = (props) => {
                         project: sessionApi.getSessionProject()
                     }
 
-                    sectionApi.createItem(request);
-                    nProgress.inc(incStep);
+                    sectionApi.createItem(request)
+                        .finally(() => {
+                            setProgress(e => e + incStep)
+                            if (index + 1 === files.length) {
+                                setProgress(0)
+                                setUploading(false)
+                                router.reload()
+                            }
+                        });
+
                 })
         })
-        nProgress.done();
-        onClose();
-        // router.push({
-        //     pathname: paths.app[sectionApi.section].resource_manager.index,
-        //     query: {id: collection_id}
-        // });
-        // router.reload();
     }
 
     const handleDrop = newFiles => {
@@ -82,6 +82,23 @@ export const FileUploader = (props) => {
     }
 
     const handleRemoveAll = () => setFiles([]);
+
+    const LinearProgressWithLabel = (props) => {
+       return (
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ width: '100%', mr: 1 }}>
+                <LinearProgress variant="determinate"
+                                {...props} />
+            </Box>
+                <Box sx={{ minWidth: 35 }}>
+                <Typography variant="body2"
+                            color="text.secondary">{`${Math.round(
+                  props.value,
+                )}%`}</Typography>
+            </Box>
+        </Box>
+       );
+    }
 
     return (
         <Dialog
@@ -104,6 +121,7 @@ export const FileUploader = (props) => {
                     Upload Files
                 </Typography>
                 <IconButton
+                    disabled={uploading}
                     color="inherit"
                     onClick={onClose}
                 >
@@ -123,7 +141,8 @@ export const FileUploader = (props) => {
                     sx={{mb: 3}}
                 >
                     {Object.keys(sectionApi.FILE_RESOURCE_FORMATS).map((key) => (
-                        <MenuItem key={key} value={key}>
+                        <MenuItem key={key}
+                                  value={key}>
                             {sectionApi.FILE_RESOURCE_FORMATS[key]}
                         </MenuItem>
                     ))}
@@ -148,14 +167,16 @@ export const FileUploader = (props) => {
                 <FileDropzone
                     accept={{'*/*': []}}
                     caption="Max file size is 3 MB"
+                    disabled={uploading}
                     files={files}
                     onDrop={handleDrop}
                     onRemove={handleRemove}
                     onRemoveAll={handleRemoveAll}
-                    onUpload={handleUploadAndRefresh}
+                    onUpload={handleUpload}
                 />
-
             </DialogContent>
+            {uploading && <LinearProgressWithLabel value={progress}/>}
+
         </Dialog>
     );
 };
