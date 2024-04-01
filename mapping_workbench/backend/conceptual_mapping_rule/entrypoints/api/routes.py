@@ -18,7 +18,6 @@ from mapping_workbench.backend.conceptual_mapping_rule.services.api import (
     delete_conceptual_mapping_rule, get_conceptual_mapping_rule_out, clone_conceptual_mapping_rule
 )
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
-from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.package_validator.services.sparql_cm_assertions import \
     generate_and_save_cm_assertions_queries
 from mapping_workbench.backend.project.models.entity import Project
@@ -48,7 +47,9 @@ async def route_list_conceptual_mapping_rules(
         page: int = None,
         limit: int = None,
         q: str = None,
-        terms_validity: ConceptualMappingRuleTermsValidity = None
+        terms_validity: ConceptualMappingRuleTermsValidity = None,
+        sort_field: str = None,
+        sort_dir: int = None
 ):
     filters: dict = {}
     if project:
@@ -60,7 +61,7 @@ async def route_list_conceptual_mapping_rules(
     if terms_validity:
         filters['terms_validity'] = terms_validity
 
-    items, total_count = await list_conceptual_mapping_rules(filters, page, limit)
+    items, total_count = await list_conceptual_mapping_rules(filters, page, limit, sort_field, sort_dir)
     return APIListConceptualMappingRulesPaginatedResponse(
         items=items,
         count=total_count

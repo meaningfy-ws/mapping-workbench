@@ -323,6 +323,7 @@ class PackageImporter:
         self.package = package
 
     async def add_mapping_rules_from_mono(self, mono_package: ImportedMappingSuite):
+        sort_order: int = 0
         for mono_rule in mono_package.conceptual_rules:
             source_structural_element: StructuralElement = await get_structural_element_by_unique_fields(
                 eforms_sdk_element_id=mono_rule.eforms_sdk_id,
@@ -363,6 +364,7 @@ class PackageImporter:
             rule.target_class_path = mono_rule.class_path
             rule.target_property_path = mono_rule.property_path
             rule.status = mono_rule.status
+            rule.sort_order = sort_order
             if mono_rule.mapping_notes:
                 rule.mapping_notes = [ConceptualMappingRuleComment(comment=mono_rule.mapping_notes)]
             if mono_rule.editorial_notes:
@@ -371,6 +373,8 @@ class PackageImporter:
                 rule.feedback_notes = [ConceptualMappingRuleComment(comment=mono_rule.feedback_notes)]
 
             await rule.on_update(self.user).save() if rule.id else await rule.on_create(self.user).create()
+
+            sort_order += 1
 
     @classmethod
     async def clear_project_data(cls, project: Project):
