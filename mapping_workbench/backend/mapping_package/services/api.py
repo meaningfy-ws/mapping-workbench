@@ -74,8 +74,8 @@ async def delete_mapping_package(mapping_package: MappingPackage):
 
 # Mapping Package States
 
-async def list_mapping_package_states(filters: dict = None, page: int = None, limit: int = None, sort_field: str = None,
-                                      sort_dir: int = None) -> \
+async def list_mapping_package_states(filters: dict = None, page: int = None, limit: int = None,
+                                      sort_field: str = None, sort_dir: int = None) -> \
         (List[MappingPackageStateGate], int):
     query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
 
