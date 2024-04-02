@@ -13,6 +13,7 @@ const toastClose = (content, id) => (
             {id && <IconButton onClick={() => toast.dismiss(id)}><CloseIcon/></IconButton>}
         </Stack>
     )
+export const getToastId = () => toast();
 
 export const toastLoad = (content, id) => (
     toast.loading(toastClose(content, id), {id})
