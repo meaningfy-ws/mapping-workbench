@@ -722,7 +722,7 @@ export const ListTableRow = (props) => {
                     </SvgIcon>
                 </IconButton>
             </TableCell>
-            <TableCell>{item.order}</TableCell>
+            <TableCell>{item.sort_order}</TableCell>
             <TableCell sx={{
                 wordBreak: "normal"
             }}>
