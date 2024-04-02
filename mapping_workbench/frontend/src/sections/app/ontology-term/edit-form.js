@@ -1,4 +1,3 @@
-import toast from 'react-hot-toast';
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
@@ -16,6 +15,7 @@ import {paths} from 'src/paths';
 import {useRouter} from 'src/hooks/use-router';
 import {RouterLink} from 'src/components/router-link';
 import {FormTextField} from "../../../components/app/form/text-field";
+import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 
 
 export const EditForm = (props) => {
@@ -38,9 +38,10 @@ export const EditForm = (props) => {
                 .required('Term is required')
         }),
         onSubmit: async (values, helpers) => {
+            const toastId = toastLoad(itemctx.isNew ? "Creating..." : "Updating...")
             try {
+                const requestValues = values;
                 let response;
-                let requestValues = values;
                 requestValues['type'] = values['type'] || null;
                 if (itemctx.isNew) {
                     response = await sectionApi.createItem(requestValues);
@@ -50,7 +51,7 @@ export const EditForm = (props) => {
                 }
                 helpers.setStatus({success: true});
                 helpers.setSubmitting(false);
-                toast.success(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "created" : "updated"));
+                toastSuccess(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "created" : "updated"), toastId);
                 if (response) {
                     if (itemctx.isNew) {
                         router.push({
@@ -60,9 +61,10 @@ export const EditForm = (props) => {
                         itemctx.setState(response);
                     }
                 }
+                else throw 'Something went wrong!'
             } catch (err) {
                 console.error(err);
-                toast.error('Something went wrong!');
+                toastError('Something went wrong!', toastId);
                 helpers.setStatus({success: false});
                 helpers.setErrors({submit: err.message});
                 helpers.setSubmitting(false);
