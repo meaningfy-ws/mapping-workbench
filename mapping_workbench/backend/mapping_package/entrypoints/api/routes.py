@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, status
 
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageOut, MappingPackageCreateIn, \
-    MappingPackageUpdateIn, MappingPackage, MappingPackageState, MappingPackageStateGate
+    MappingPackageUpdateIn, MappingPackage, MappingPackageStateGate
 from mapping_workbench.backend.mapping_package.models.entity_api_response import \
     APIListMappingPackagesPaginatedResponse, APIListMappingPackageStatesPaginatedResponse
 from mapping_workbench.backend.mapping_package.services.api import (
