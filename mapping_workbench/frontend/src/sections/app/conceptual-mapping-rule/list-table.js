@@ -722,6 +722,7 @@ export const ListTableRow = (props) => {
                     </SvgIcon>
                 </IconButton>
             </TableCell>
+            <TableCell>{item.sort_order}</TableCell>
             <TableCell sx={{
                 wordBreak: "normal"
             }}>
@@ -1010,6 +1011,9 @@ export const ListTable = (props) => {
                 <TableHead>
                     <TableRow>
                         <TableCell/>
+                        <TableCell>
+                            CM Rule Order
+                        </TableCell>
                         <TableCell width="10%">
                             <Tooltip
                                 enterDelay={300}
