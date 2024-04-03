@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import toast from 'react-hot-toast';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
+
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -9,21 +10,16 @@ import CardHeader from '@mui/material/CardHeader';
 import Grid from '@mui/material/Unstable_Grid2';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
+import MenuItem from "@mui/material/MenuItem";
 
 import {RouterLink} from 'src/components/router-link';
 import {paths} from 'src/paths';
 import {useRouter} from 'src/hooks/use-router';
-import {useCallback} from "react";
 import {sessionApi} from "../../../api/session";
-import FormControl from "@mui/material/FormControl";
-import {genericTripleMapFragmentsApi} from "../../../api/triple-map-fragments/generic";
-import MenuItem from "@mui/material/MenuItem";
-import * as React from "react";
-import FormLabel from "@mui/material/FormLabel";
-import Select from "@mui/material/Select";
 import {FormTextField} from "../../../components/app/form/text-field";
 import {FormTextArea} from "../../../components/app/form/text-area";
 import {MappingPackageFormSelect} from "../mapping-package/components/mapping-package-form-select";
+import {toastError, toastSuccess} from "../../../components/app-toast";
 
 
 export const FileCollectionEditForm = (props) => {
@@ -33,25 +29,23 @@ export const FileCollectionEditForm = (props) => {
     const item = itemctx.data;
     let customPathName = "";
 
-    const handleResourceManagerAction = useCallback(async () => {
+    const handleResourceManagerAction = () =>
         router.push({
             pathname: paths.app[itemctx.api.section].resource_manager.index,
             query: {id: item._id}
         });
 
-    }, [router, itemctx]);
-
-    let initialValues = {
-        title: item.title || '',
-        description: item.description || ''
+    const initialValues = {
+        title: item.title ?? '',
+        description: item.description ?? ''
     };
 
     if (sectionApi.hasFileCollectionType) {
-        initialValues['type'] = item.type || null;
+        initialValues['type'] = item.type ?? null;
     }
 
     if (sectionApi.hasMappingPackage) {
-        initialValues['mapping_package_id'] = item.mapping_package_id || '';
+        initialValues['mapping_package_id'] = item.mapping_package_id ?? '';
     }
 
     switch (sectionApi.section) {
@@ -76,7 +70,7 @@ export const FileCollectionEditForm = (props) => {
     }
 
     const formik = useFormik({
-        initialValues: initialValues,
+        initialValues,
         validationSchema: Yup.object({
             title: Yup
                 .string()
@@ -85,6 +79,7 @@ export const FileCollectionEditForm = (props) => {
             description: Yup.string().max(2048)
         }),
         onSubmit: async (values, helpers) => {
+            const toastId = toast()
             try {
                 let response;
                 values['project'] = sessionApi.getSessionProject();
@@ -97,7 +92,7 @@ export const FileCollectionEditForm = (props) => {
 
                 helpers.setStatus({success: true});
                 helpers.setSubmitting(false);
-                toast.success(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "created" : "updated"));
+                toastSuccess(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "created" : "updated"), toastId);
                 if (response) {
                     if (itemctx.isNew) {
                         router.push({
@@ -111,7 +106,7 @@ export const FileCollectionEditForm = (props) => {
                 }
             } catch (err) {
                 console.error(err);
-                toast.error('Something went wrong!');
+                toastError('Something went wrong!', toastId);
                 helpers.setStatus({success: false});
                 helpers.setErrors({submit: err.message});
                 helpers.setSubmitting(false);

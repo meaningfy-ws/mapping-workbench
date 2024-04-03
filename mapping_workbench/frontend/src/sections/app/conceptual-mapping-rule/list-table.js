@@ -1,5 +1,4 @@
 import {useEffect, useState} from 'react';
-import toast from "react-hot-toast";
 import {useRouter} from "next/router";
 import PropTypes from 'prop-types';
 import parse from "html-react-parser";
@@ -58,6 +57,7 @@ import {MappingPackageCheckboxList} from "../mapping-package/components/mapping-
 import {COMMENT_PRIORITY, conceptualMappingRulesApi} from "../../../api/conceptual-mapping-rules";
 import {ListSelectorSelect as ResourceListSelector} from "../../../components/app/list-selector/select";
 import {sparqlTestFileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
+import {toastSuccess} from "../../../components/app-toast";
 
 
 export const ListTableTripleMapFragment = (props) => {
@@ -140,7 +140,7 @@ export const ListTableTripleMapFragment = (props) => {
         values['triple_map_fragment'] = tripleMapFragmentId;
         await conceptualMappingRulesApi.updateItem(values);
         setRuleTripleMapFragment(tripleMapFragmentId);
-        toast.success(conceptualMappingRulesApi.SECTION_ITEM_TITLE + ' updated');
+        toastSuccess(conceptualMappingRulesApi.SECTION_ITEM_TITLE + ' updated');
 
         if (updateContent) {
             const contentValues = {
@@ -149,7 +149,7 @@ export const ListTableTripleMapFragment = (props) => {
                 triple_map_content: formik.values.triple_map_content
             }
             await genericTripleMapFragmentsApi.updateItem(contentValues);
-            toast.success(genericTripleMapFragmentsApi.SECTION_ITEM_TITLE + ' updated');
+            toastSuccess(genericTripleMapFragmentsApi.SECTION_ITEM_TITLE + ' updated');
         }
         handleTripleMapFragmentDialogClose();
     }
@@ -245,9 +245,9 @@ export const ListTableTripleMapFragment = (props) => {
                                 value={tripleMapFragment?._id ?? ""}
                             >
                                 <MenuItem value={null}>&nbsp;</MenuItem>
-                                {projectTripleMapFragments.map((x) => (
-                                    <MenuItem key={x.id}
-                                              value={x.id}>{x.uri}</MenuItem>
+                                {projectTripleMapFragments.map(({id, uri}) => (
+                                    <MenuItem key={id}
+                                              value={id}>{uri}</MenuItem>
                                 ))}
                             </TextField>
                         </FormControl>
@@ -392,7 +392,7 @@ export const ListTableMappingPackages = (props) => {
         await conceptualMappingRulesApi.updateItem(values);
         setMappingPackages(tempMappingPackages);
         item.refers_to_mapping_package_ids = tempMappingPackages;
-        toast.success(conceptualMappingRulesApi.SECTION_ITEM_TITLE + ' updated');
+        toastSuccess(conceptualMappingRulesApi.SECTION_ITEM_TITLE + ' updated');
         mappingPackagesDialog.handleClose();
         onPackagesUpdate()
     };
@@ -505,7 +505,7 @@ export const ListTableSPARQLAssertions = (props) => {
         item.sparql_assertions = tempSparqlResources.map(x => {
             return {id: x}
         });
-        toast.success(conceptualMappingRulesApi.SECTION_ITEM_TITLE + ' updated');
+        toastSuccess(conceptualMappingRulesApi.SECTION_ITEM_TITLE + ' updated');
         sparqlTestFileResourcesDialog.handleClose();
     }
 

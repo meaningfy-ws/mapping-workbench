@@ -1,25 +1,27 @@
+import {useState} from "react";
+import {useTranslation} from "react-i18next";
+import nProgress from "nprogress";
+import {useFormik} from "formik";
+
+import {Play as RunIcon} from "@untitled-ui/icons-react/build/esm";
+import Button from "@mui/material/Button";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
+import TaskIcon from "@mui/icons-material/TaskAlt";
+import Divider from "@mui/material/Divider";
+
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
-import {Play as RunIcon} from "@untitled-ui/icons-react/build/esm";
-import Button from "@mui/material/Button";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
 import {BreadcrumbsSeparator} from "/src/components/breadcrumbs-separator";
-import {useTranslation} from "react-i18next";
 import {tokens} from "/src/locales/tokens";
-import {useCallback, useState} from "react";
-import nProgress from "nprogress";
 import {testDataSuitesApi as sectionApi} from "/src/api/test-data-suites";
-import toast from "react-hot-toast";
-import TaskIcon from "@mui/icons-material/TaskAlt";
-import Divider from "@mui/material/Divider";
-import {useFormik} from "formik";
+import {toastError, toastLoad, toastSuccess} from "../../../../components/app-toast";
 
 
 const Page = () => {
@@ -30,34 +32,21 @@ const Page = () => {
     const {t} = useTranslation();
     const taskTitle = t(tokens.nav.transform_test_data);
 
-    const formik = useFormik({
-        initialValues: {
-        },
-        onSubmit: async (values, helpers) => {
-        }
-    });
-
-    const handleTask = useCallback(() => {
+    const handleTask = () => {
         setIsRunning(true);
         nProgress.start();
         let request = {
             'filters': {}
         }
 
-        toast.promise(sectionApi.transformTestData(request), {
-            loading: `Running "${taskTitle}" task ... `,
-            success: (response) => {
-                setIsRunning(false);
-                return `"${taskTitle}" successfully finished.`;
-            },
-            error: (err) => {
-                setIsRunning(false);
-                return `"${taskTitle}" failed: ${err.message}.`;
-            }
-        }).then(r => {
-        })
+        const toastId = toastLoad(`Running "${taskTitle}" task ... `)
+        sectionApi.transformTestData(request)
+            .then(() => toastSuccess(`"${taskTitle}" successfully finished.`, toastId))
+            .catch(err => toastError(`"${taskTitle}" failed: ${err.message}.`, toastId))
+            .finally(() => setIsRunning(false))
+
         nProgress.done();
-    }, [formik]);
+    }
 
     return (
         <>

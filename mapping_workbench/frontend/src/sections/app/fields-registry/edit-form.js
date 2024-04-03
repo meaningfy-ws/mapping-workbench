@@ -13,6 +13,7 @@ import {RouterLink} from 'src/components/router-link';
 import {paths} from 'src/paths';
 import {useRouter} from 'src/hooks/use-router';
 import {FormTextField} from "../../../components/app/form/text-field";
+import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 
 
 export const EditForm = (props) => {
@@ -21,12 +22,12 @@ export const EditForm = (props) => {
     const sectionApi = itemctx.api;
     const item = itemctx.data;
 
-    let initialValues = {
-        title: item.title || ''
+    const initialValues = {
+        title: item.title ?? ''
     };
 
     const formik = useFormik({
-        initialValues: initialValues,
+        initialValues,
         validationSchema: Yup.object({
             title: Yup
                 .string()
@@ -34,6 +35,7 @@ export const EditForm = (props) => {
                 .required('Title is required')
         }),
         onSubmit: async (values, helpers) => {
+            const toastId = toastLoad(itemctx.isNew ? "Creating..." : "Updating...")
             try {
                 let response;
                 if (itemctx.isNew) {
@@ -44,7 +46,7 @@ export const EditForm = (props) => {
                 }
                 helpers.setStatus({success: true});
                 helpers.setSubmitting(false);
-                toast.success(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "created" : "updated"));
+                toastSuccess(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "Created" : "Updated"), toastError());
                 if (response) {
                     if (itemctx.isNew) {
                         router.push({
@@ -55,9 +57,10 @@ export const EditForm = (props) => {
                         itemctx.setState(response);
                     }
                 }
+                else throw 'Something went wrong!'
             } catch (err) {
                 console.error(err);
-                toast.error('Something went wrong!');
+                toastError('Something went wrong!', toastId);
                 helpers.setStatus({success: false});
                 helpers.setErrors({submit: err.message});
                 helpers.setSubmitting(false);
@@ -76,8 +79,12 @@ export const EditForm = (props) => {
                         container
                         spacing={3}
                     >
-                        <Grid xs={12} md={12}>
-                            <FormTextField formik={formik} name="title" label="Title" required={true}/>
+                        <Grid xs={12}
+                              md={12}>
+                            <FormTextField formik={formik}
+                                           name="title"
+                                           label="Title"
+                                           required/>
                         </Grid>
                     </Grid>
                 </CardContent>

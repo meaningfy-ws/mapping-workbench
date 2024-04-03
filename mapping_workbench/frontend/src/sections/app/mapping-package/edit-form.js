@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import toast from 'react-hot-toast';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
 import Button from '@mui/material/Button';
@@ -19,6 +18,7 @@ import {sessionApi} from "../../../api/session";
 //import {testDataSuitesApi} from "../../../api/test-data-suites";
 import {shaclTestSuitesApi} from "../../../api/shacl-test-suites";
 import {ListSelectorSelect as ResourceListSelector} from "src/components/app/list-selector/select";
+import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 
 
 export const EditForm = (props) => {
@@ -52,6 +52,7 @@ export const EditForm = (props) => {
             identifier: Yup.string().max(255).required('Identifier is required')
         }),
         onSubmit: async (values, helpers) => {
+            const toastId = toastLoad(itemctx.isNew ? "Updating..." : "Creating...")
             try {
                 values['eform_subtypes'] = (typeof values['eform_subtypes'] == 'string') ?
                     values['eform_subtypes'].split(',').map(s => s.trim()) : values['eform_subtypes'];
@@ -69,7 +70,7 @@ export const EditForm = (props) => {
                 }
                 helpers.setStatus({success: true});
                 helpers.setSubmitting(false);
-                toast.success(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "created" : "updated"));
+                toastSuccess(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "created" : "updated"), toastId);
                 if (response) {
                     if (itemctx.isNew) {
                         router.push({
@@ -79,9 +80,10 @@ export const EditForm = (props) => {
                         itemctx.setState(response);
                     }
                 }
+                else throw 'Something went wrong!'
             } catch (err) {
                 console.error(err);
-                toast.error('Something went wrong!');
+                toastError('Something went wrong!', toastId);
                 helpers.setStatus({success: false});
                 helpers.setErrors({submit: err.message});
                 helpers.setSubmitting(false);
@@ -90,37 +92,68 @@ export const EditForm = (props) => {
     });
 
     return (
-        <form onSubmit={formik.handleSubmit} {...other}>
+        <form onSubmit={formik.handleSubmit}
+              {...other}>
             <Card>
                 <CardHeader title={(itemctx.isNew ? 'Create' : 'Edit') + ' ' + sectionApi.SECTION_ITEM_TITLE}/>
                 <CardContent sx={{pt: 0}}>
-                    <Grid container spacing={3}>
-                        <Grid xs={12} md={12}>
-                            <FormTextField formik={formik} name="title" label="Title" required={true}/>
+                    <Grid container
+                          spacing={3}>
+                        <Grid xs={12}
+                              md={12}>
+                            <FormTextField formik={formik}
+                                           name="title"
+                                           label="Title"
+                                           required/>
                         </Grid>
-                        <Grid xs={12} md={12}>
-                            <FormTextArea formik={formik} name="description" label="Description"/>
+                        <Grid xs={12}
+                              md={12}>
+                            <FormTextArea formik={formik}
+                                          name="description"
+                                          label="Description"/>
                         </Grid>
-                        <Grid xs={12} md={12}>
-                            <FormTextField formik={formik} name="identifier" label="Identifier" required={true}/>
+                        <Grid xs={12}
+                              md={12}>
+                            <FormTextField formik={formik}
+                                           name="identifier"
+                                           label="Identifier"
+                                           required/>
                         </Grid>
-                        <Grid xs={12} md={12}>
-                            <FormTextField formik={formik} name="mapping_version" label="Mapping Version"/>
+                        <Grid xs={12}
+                              md={12}>
+                            <FormTextField formik={formik}
+                                           name="mapping_version"
+                                           label="Mapping Version"/>
                         </Grid>
-                        <Grid xs={12} md={12}>
-                            <FormTextField formik={formik} name="epo_version" label="EPO Version"/>
+                        <Grid xs={12}
+                              md={12}>
+                            <FormTextField formik={formik}
+                                           name="epo_version"
+                                           label="EPO Version"/>
                         </Grid>
-                        <Grid xs={12} md={12}>
-                            <FormTextField formik={formik} name="eform_subtypes" label="eForms Subtype"/>
+                        <Grid xs={12}
+                              md={12}>
+                            <FormTextField formik={formik}
+                                           name="eform_subtypes"
+                                           label="eForms Subtype"/>
                         </Grid>
-                        <Grid xs={12} md={6}>
-                            <FormDateField formik={formik} name="start_date" label="Start Date"/>
+                        <Grid xs={12}
+                              md={6}>
+                            <FormDateField formik={formik}
+                                           name="start_date"
+                                           label="Start Date"/>
                         </Grid>
-                        <Grid xs={12} md={6}>
-                            <FormDateField formik={formik} name="end_date" label="End Date"/>
+                        <Grid xs={12}
+                              md={6}>
+                            <FormDateField formik={formik}
+                                           name="end_date"
+                                           label="End Date"/>
                         </Grid>
-                        <Grid xs={12} md={12}>
-                            <FormTextField formik={formik} name="eforms_sdk_versions" label="eForms SDK version"/>
+                        <Grid xs={12}
+                              md={12}>
+                            <FormTextField formik={formik}
+                                           name="eforms_sdk_versions"
+                                           label="eForms SDK version"/>
                         </Grid>
                     </Grid>
                 </CardContent>
@@ -128,8 +161,10 @@ export const EditForm = (props) => {
             {false && <Card sx={{mt: 3}}>
                 <CardHeader title={testDataSuitesApi.SECTION_TITLE}/>
                 <CardContent sx={{pt: 0}}>
-                    <Grid container spacing={3}>
-                        <Grid xs={12} md={12}>
+                    <Grid container
+                          spacing={3}>
+                        <Grid xs={12}
+                              md={12}>
                             <ResourceListSelector
                                 valuesApi={testDataSuitesApi}
                                 listValues={formik.values.test_data_suites}/>
@@ -140,8 +175,10 @@ export const EditForm = (props) => {
             <Card sx={{mt: 3}}>
                 <CardHeader title={shaclTestSuitesApi.SECTION_TITLE}/>
                 <CardContent sx={{pt: 0}}>
-                    <Grid container spacing={3}>
-                        <Grid xs={12} md={12}>
+                    <Grid container
+                          spacing={3}>
+                        <Grid xs={12}
+                              md={12}>
                             <ResourceListSelector
                                 valuesApi={shaclTestSuitesApi}
                                 listValues={formik.values.shacl_test_suites}/>

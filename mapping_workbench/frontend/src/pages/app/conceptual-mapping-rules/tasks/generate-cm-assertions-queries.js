@@ -1,35 +1,36 @@
+import {useCallback, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {useFormik} from "formik";
+
+import RefreshIcon from '@untitled-ui/icons-react/build/esm/Repeat02';
+import {Play as RunIcon} from "@untitled-ui/icons-react/build/esm";
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
+import Button from "@mui/material/Button";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
+import Divider from "@mui/material/Divider";
+import Paper from "@mui/material/Paper";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+
+import {BreadcrumbsSeparator} from "/src/components/breadcrumbs-separator";
+import {tokens} from "/src/locales/tokens";
+import nProgress from "nprogress";
+import {conceptualMappingRulesApi as sectionApi} from "/src/api/conceptual-mapping-rules";
+import {toastError, toastLoad, toastSuccess} from "../../../../components/app-toast";
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
-import {Play as RunIcon} from "@untitled-ui/icons-react/build/esm";
-import Button from "@mui/material/Button";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
-import {BreadcrumbsSeparator} from "/src/components/breadcrumbs-separator";
-import {useTranslation} from "react-i18next";
-import {tokens} from "/src/locales/tokens";
-import {useCallback, useState} from "react";
-import nProgress from "nprogress";
-import {conceptualMappingRulesApi as sectionApi} from "/src/api/conceptual-mapping-rules";
-import toast from "react-hot-toast";
-import RefreshIcon from '@untitled-ui/icons-react/build/esm/Repeat02';
-import Divider from "@mui/material/Divider";
-import Paper from "@mui/material/Paper";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import {useFormik} from "formik";
-import Checkbox from "@mui/material/Checkbox";
 
 
 const Page = () => {
     usePageView();
 
     const [isRunning, setIsRunning] = useState(false);
-
     const {t} = useTranslation();
     const taskTitle = t(tokens.nav.generate_cm_assertions_queries);
 
@@ -41,7 +42,7 @@ const Page = () => {
         }
     });
 
-    const handleTask = useCallback(() => {
+    const handleTask = () => {
         setIsRunning(true);
         nProgress.start();
         let request = {
@@ -52,20 +53,13 @@ const Page = () => {
             request['filters']['cleanup'] = formik.values['cleanup'];
         }
 
-        toast.promise(sectionApi.generateCMAssertionsQueries(request), {
-            loading: `Running "${taskTitle}" task ... `,
-            success: (response) => {
-                setIsRunning(false);
-                return `"${taskTitle}" successfully finished.`;
-            },
-            error: (err) => {
-                setIsRunning(false);
-                return `"${taskTitle}" failed: ${err.message}.`;
-            }
-        }).then(r => {
-        })
+        const toastId = toastLoad(`Running "${taskTitle}" task ... `)
+        sectionApi.generateCMAssertionsQueries(request)
+            .then(res => toastSuccess(`"${taskTitle}" successfully finished.`, toastId))
+            .catch(err => toastError(`"${taskTitle}" failed: ${err.message}.`, toastId))
+            .finally(() => setIsRunning(false))
         nProgress.done();
-    }, [formik]);
+    }
 
     const handleCleanupChange = useCallback((event) => {
         formik.setFieldValue('cleanup', event.target.checked);

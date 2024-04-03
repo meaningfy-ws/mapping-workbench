@@ -1,5 +1,4 @@
 import {useState} from "react";
-import toast from "react-hot-toast";
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import {useRouter} from "next/router";
@@ -9,15 +8,15 @@ import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Unstable_Grid2";
 import Button from "@mui/material/Button";
-
 import Card from "@mui/material/Card";
+
 import {usePageView} from 'src/hooks/use-page-view';
 import {FormTextField} from "src/components/app/form/text-field";
 import {Layout as AppLayout} from 'src/layouts/app';
-
 import {fieldsRegistryApi as sectionApi} from 'src/api/fields-registry';
 import {sessionApi} from "../../../../api/session";
 import {paths} from "../../../../paths";
+import {toastError, toastLoad, toastSuccess} from "../../../../components/app-toast";
 
 
 const Page = () => {
@@ -44,25 +43,21 @@ const Page = () => {
         onSubmit: async (values, helpers) => {
             setIsRunning(true)
             values['project_id'] = sessionApi.getSessionProject();
-
-            toast.promise(sectionApi.importEFormsFromGithub(values), {
-                loading: `Importing eForm Fields ... `,
-                success: (response) => {
-                    setIsRunning(false);
+            const toastId = toastLoad(`Importing eForm Fields ... `)
+            sectionApi.importEFormsFromGithub(values)
+                .then(() => {
                     helpers.setStatus({success: true});
-                    return `eForm Fields successfully imported.`;
-                },
-                error: (err) => {
-                    setIsRunning(false);
+                    toastSuccess('eForm Fields successfully imported.', toastId);
+                    router.push({
+                        pathname: paths.app[sectionApi.section].elements.index
+                    })
+                })
+                .catch(err => {
                     helpers.setStatus({success: false});
                     helpers.setErrors({submit: err.message});
-                    return `eForm Fields import failed: ${err.message}.`;
-                }
-            }).then(r => {
-                router.push({
-                    pathname: paths.app[sectionApi.section].elements.index
+                    toastError(`eForm Fields import failed: ${err.message}.`, toastId);
                 })
-            })
+                .finally(setIsRunning(false))
         }
     });
 
@@ -71,14 +66,21 @@ const Page = () => {
             <Card>
                 <CardHeader title="Import eForms SDK from GitHub"/>
                 <CardContent sx={{pt: 0}}>
-                    <Grid container spacing={3}>
-                        <Grid xs={12} md={12}>
-                            <FormTextField formik={formik} name="github_repository_url" label="GitHub Repository URL"
-                                           required={true}/>
+                    <Grid container
+                          spacing={3}>
+                        <Grid xs={12}
+                              md={12}>
+                            <FormTextField formik={formik}
+                                           name="github_repository_url"
+                                           label="GitHub Repository URL"
+                                           required/>
                         </Grid>
-                        <Grid xs={12} md={12}>
-                            <FormTextField formik={formik} name="branch_or_tag_name" label="Branch or Tag name"
-                                           required={true}/>
+                        <Grid xs={12}
+                              md={12}>
+                            <FormTextField formik={formik}
+                                           name="branch_or_tag_name"
+                                           label="Branch or Tag name"
+                                           required/>
                         </Grid>
                     </Grid>
                 </CardContent>
