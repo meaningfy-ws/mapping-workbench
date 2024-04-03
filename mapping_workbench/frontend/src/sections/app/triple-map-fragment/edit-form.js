@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import toast from 'react-hot-toast';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
 import Button from '@mui/material/Button';
@@ -75,16 +74,25 @@ export const EditForm = (props) => {
     });
 
     return (
-        <form onSubmit={formik.handleSubmit} {...other}>
+        <form onSubmit={formik.handleSubmit}
+              {...other}>
             <Card>
                 <CardHeader title={(itemctx.isNew ? 'Create' : 'Edit') + ' ' + sectionApi.SECTION_ITEM_TITLE}/>
                 <CardContent sx={{pt: 0}}>
-                    <Grid container spacing={3}>
-                        <Grid xs={12} md={12}>
-                            <FormTextField formik={formik} name="triple_map_uri" label="URI" required={true}/>
+                    <Grid container
+                          spacing={3}>
+                        <Grid xs={12}
+                              md={12}>
+                            <FormTextField formik={formik}
+                                           name="triple_map_uri"
+                                           label="URI"
+                                           required/>
                         </Grid>
-                        <Grid xs={12} md={12}>
-                            <FormTextArea formik={formik} name="triple_map_content" label="Content"/>
+                        <Grid xs={12}
+                              md={12}>
+                            <FormTextArea formik={formik}
+                                          name="triple_map_content"
+                                          label="Content"/>
                         </Grid>
                     </Grid>
                 </CardContent>
