@@ -34,10 +34,7 @@ const Page = () => {
     const handleGetTripleMapFragmentTree = () => {
         const project = window.sessionStorage.getItem('sessionProject')
         sectionApi.getTripleMapFragmentTree({project})
-            .then(res=> {
-                setTripleMapFragmentTree(res.test_data_suites)
-            })
-
+            .then(res=> setTripleMapFragmentTree(res.test_data_suites))
     }
 
     const formState = useItem(sectionApi, id);

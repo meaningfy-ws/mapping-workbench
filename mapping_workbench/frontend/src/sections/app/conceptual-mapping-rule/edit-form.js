@@ -239,10 +239,9 @@ export const EditForm = (props) => {
                             formik.values.feedback_note = initComment();
                         }
                     }
-                    else throw 'Something went wrong!'
                 } catch (err) {
                     console.error(err);
-                    toastError('Something went wrong!', toastId);
+                    toastError(err.message, toastId);
                     helpers.setStatus({success: false});
                     helpers.setErrors({submit: err.message});
                     helpers.setSubmitting(false);

@@ -61,7 +61,7 @@ export const CustomerEditForm = (props) => {
         toastSuccess('Customer updated', toastId);
       } catch (err) {
         console.error(err);
-        toastError('Something went wrong!', toastId);
+        toastError(err.message, toastId);
         helpers.setStatus({ success: false });
         helpers.setErrors({ submit: err.message });
         helpers.setSubmitting(false);

@@ -80,7 +80,7 @@ export const EditForm = (props) => {
                 }
             } catch (err) {
                 console.error(err);
-                toastError('Something went wrong!', toastId);
+                toastError(err.message, toastId);
                 helpers.setStatus({success: false});
                 helpers.setErrors({submit: err.message});
                 helpers.setSubmitting(false);
@@ -106,34 +106,26 @@ export const EditForm = (props) => {
         values['id'] = item._id;
         formik.setSubmitting(true)
         const toastId = toastLoad("Updating Content")
-        const err = 'Something went wrong!'
+        const catchError = (err) => {
+            toastError(err.message, toastId)
+            formik.setStatus({success: false});
+            formik.setErrors({submit: err.message});
+            formik.setSubmitting(false);
+        }
 
         sectionApi.updateItem(values)
-            .then((res) => {
-                if (res) {
-                    toastLoad("Transforming Content", toastId)
-                    sectionApi.getTripleMapRdfResultContent(selectedTree)
-                        .then(res => {
-                            if(res) {
-                                setRdfResultContent(res.rdf_manifestation)
-                                toastSuccess('Transformed Successfully', toastId)
-                            }
-                            else {
-                                toastError(err, toastId)
-                                formik.setStatus({success: false});
-                                formik.setErrors({submit: err});
-                                formik.setSubmitting(false);
-                            }
-                        })
-                        .finally(() => formik.setSubmitting(false))
-                }
-                else {
-                    toastError(err, toastId)
-                    formik.setStatus({success: false});
-                    formik.setErrors({submit: err});
-                    formik.setSubmitting(false);
-                }
+            .then(res => {
+                toastLoad("Transforming Content", toastId)
+                sectionApi.getTripleMapRdfResultContent(selectedTree)
+                    .then(res => {
+                        setRdfResultContent(res.data.rdf_manifestation)
+                        toastSuccess('Transformed Successfully', toastId)
+                    })
+                    .catch(err => catchError(err))
             })
+            .catch(err => catchError(err))
+            .finally(() => formik.setSubmitting(false))
+
     }
 
     const handleUpdateAndSubmit = () => {
