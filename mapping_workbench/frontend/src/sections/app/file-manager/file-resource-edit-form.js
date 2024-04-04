@@ -97,10 +97,9 @@ export const FileResourceEditForm = (props) => {
                         router.reload();
                     }
                 }
-                else throw 'Something went wrong!'
             } catch (err) {
                 console.error(err);
-                toastError('Something went wrong!', toastId);
+                toastError(err.message, toastId);
                 helpers.setStatus({success: false});
                 helpers.setErrors({submit: err.message});
                 helpers.setSubmitting(false);

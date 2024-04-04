@@ -62,9 +62,7 @@ export const ListTable = (props) => {
                     });
                     router.reload()
                 })
-                .catch(() => {
-                    toastError('Something went wrong!', toastId);
-                })
+                .catch(err => toastError(err.message, toastId))
         }
 
     return (
