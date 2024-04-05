@@ -41,7 +41,7 @@ export const AccountPopover = (props) => {
             router.reload();
         } catch (err) {
             console.error(err);
-            toastError(err.message);
+            toastError(err);
         }
     }
 

@@ -62,7 +62,7 @@ export const ListTable = (props) => {
                     });
                     router.reload()
                 })
-                .catch(err => toastError(err.message, toastId))
+                .catch(err => toastError(err, toastId))
         }
 
     return (
