@@ -1,31 +1,33 @@
+import {useCallback, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {useFormik} from "formik";
+import nProgress from "nprogress";
+
+import {Play as RunIcon} from "@untitled-ui/icons-react/build/esm";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
-import {RouterLink} from 'src/components/router-link';
-import {Seo} from 'src/components/seo';
-import {usePageView} from 'src/hooks/use-page-view';
-import {Layout as AppLayout} from 'src/layouts/app';
-import {paths} from 'src/paths';
-import {Play as RunIcon} from "@untitled-ui/icons-react/build/esm";
 import Button from "@mui/material/Button";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
-import {BreadcrumbsSeparator} from "/src/components/breadcrumbs-separator";
-import {useTranslation} from "react-i18next";
-import {tokens} from "/src/locales/tokens";
-import {useCallback, useState} from "react";
-import nProgress from "nprogress";
-import {tasksApi} from "/src/api/tasks";
-import toast from "react-hot-toast";
 import TaskIcon from "@mui/icons-material/TaskAlt";
 import Divider from "@mui/material/Divider";
 import RadioGroup from "@mui/material/RadioGroup";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
+
+import {tasksApi} from "/src/api/tasks";
+import {BreadcrumbsSeparator} from "/src/components/breadcrumbs-separator";
+import {tokens} from "/src/locales/tokens";
+import {RouterLink} from 'src/components/router-link';
+import {Seo} from 'src/components/seo';
+import {usePageView} from 'src/hooks/use-page-view';
+import {Layout as AppLayout} from 'src/layouts/app';
+import {paths} from 'src/paths';
 import {sessionApi} from "../../../../api/session";
-import {useFormik} from "formik";
+import {toastError, toastLoad, toastSuccess} from "../../../../components/app-toast";
 
 
 const Page = () => {
@@ -55,18 +57,12 @@ const Page = () => {
         if (formik.values['project']) {
             request['filters']['project'] = formik.values['project'];
         }
-        toast.promise(tasksApi.runTransformTestData(request), {
-            loading: `Running "${taskTitle}" task ... `,
-            success: (response) => {
-                setIsRunning(false);
-                return `"${taskTitle}" successfully finished.`;
-            },
-            error: (err) => {
-                setIsRunning(false);
-                return `"${taskTitle}" failed: ${err.message}.`;
-            }
-        }).then(r => {
-        })
+        const toastId = toastLoad(`Running "${taskTitle}" task ... `)
+        tasksApi.runTransformTestData(request)
+            .then(() => toastSuccess(`"${taskTitle}" successfully finished.`, toastId))
+            .catch(err => toastError(`"${taskTitle}" failed: ${err.message}.`, toastId))
+            .finally(() => setIsRunning(false))
+
         nProgress.done();
     }, [formik]);
 

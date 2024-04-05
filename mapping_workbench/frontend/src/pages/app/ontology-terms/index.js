@@ -19,8 +19,8 @@ import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
 import {ListSearch} from "../../../sections/app/ontology-term/list-search";
 import {ListTable} from "../../../sections/app/ontology-term/list-table";
-import toast from "react-hot-toast";
 import {useRouter} from "../../../hooks/use-router";
+import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -71,7 +71,7 @@ const useItemsStore = (searchState) => {
         itemsCount: 0
     });
 
-    const handleItemsGet = useCallback(async () => {
+    const handleItemsGet = async () => {
         try {
             const response = await sectionApi.getItems(searchState);
             if (isMounted()) {
@@ -83,7 +83,7 @@ const useItemsStore = (searchState) => {
         } catch (err) {
             console.error(err);
         }
-    }, [searchState, isMounted]);
+    }
 
     useEffect(() => {
             handleItemsGet();
@@ -103,16 +103,15 @@ const Page = () => {
 
     usePageView();
 
-    const handleDiscover = useCallback(async () => {
-        toast.promise(sectionApi.discoverTerms(), {
-            loading: `Discovering terms ... `,
-            success: () => `Terms successfully discovered.`,
-            error: (err) => `Discovering terms failed: ${err.message}.`
-        }).then(r => {
-            router.reload();
-        })
-
-    }, [router]);
+    const handleDiscover = async () => {
+        const toastId = toastLoad('Discovering terms ...')
+        sectionApi.discoverTerms()
+            .then(() => {
+                toastSuccess('Terms successfully discovered.', toastId)
+                router.reload()
+            })
+            .catch(err => toastError(`Discovering terms failed: ${err.message}.`, toastId))
+    };
 
     return (
         <>

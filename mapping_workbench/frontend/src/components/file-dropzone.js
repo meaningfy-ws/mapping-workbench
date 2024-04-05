@@ -14,14 +14,12 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import {sparqlTestFileResourcesApi as sectionApi} from 'src/api/sparql-test-suites/file-resources';
-
 
 import { FileIcon } from 'src/components/file-icon';
 import { bytesToSize } from 'src/utils/bytes-to-size';
 
 export const FileDropzone = (props) => {
-  const { caption, files = [], onRemove, onRemoveAll, onUpload, ...other } = props;
+  const { caption, files = [], onRemove, onRemoveAll, onUpload, disabled, ...other } = props;
   const { getRootProps, getInputProps, isDragActive } = useDropzone(other);
 
   const hasAnyFiles = files.length > 0;
@@ -50,7 +48,7 @@ export const FileDropzone = (props) => {
           }
         }}
         {...getRootProps()}>
-        <input {...getInputProps()} />
+        <input {...getInputProps()}/>
         <Stack
           alignItems="center"
           direction="row"
@@ -117,6 +115,7 @@ export const FileDropzone = (props) => {
                   <Tooltip title="Remove">
                     <IconButton
                       edge="end"
+                      disabled={disabled}
                       onClick={() => onRemove?.(file)}
                     >
                       <SvgIcon>
@@ -137,6 +136,7 @@ export const FileDropzone = (props) => {
           >
             <Button
               id="remove-all_button"
+              disabled={disabled}
               color="inherit"
               onClick={onRemoveAll}
               size="small"
@@ -147,6 +147,7 @@ export const FileDropzone = (props) => {
             <Button
               id="upload_button"
               onClick={onUpload}
+              disabled={disabled}
               size="small"
               type="button"
               variant="contained"

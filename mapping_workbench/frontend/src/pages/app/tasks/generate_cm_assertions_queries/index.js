@@ -27,6 +27,7 @@ import Radio from "@mui/material/Radio";
 import {sessionApi} from "../../../../api/session";
 import {useFormik} from "formik";
 import Checkbox from "@mui/material/Checkbox";
+import {toastError, toastLoad, toastSuccess} from "../../../../components/app-toast";
 
 
 const Page = () => {
@@ -61,18 +62,11 @@ const Page = () => {
             request['filters']['cleanup'] = formik.values['cleanup'];
         }
 
-        toast.promise(tasksApi.runGenerateCMAssertionsQueries(request), {
-            loading: `Running "${taskTitle}" task ... `,
-            success: (response) => {
-                setIsRunning(false);
-                return `"${taskTitle}" successfully finished.`;
-            },
-            error: (err) => {
-                setIsRunning(false);
-                return `"${taskTitle}" failed: ${err.message}.`;
-            }
-        }).then(r => {
-        })
+        const toastId = toastLoad(`Running "${taskTitle}" task ... `)
+        tasksApi.runGenerateCMAssertionsQueries(request)
+            .then(() => toastSuccess(`"${taskTitle}" successfully finished.`, toastId))
+            .catch(err => toastError(`"${taskTitle}" failed: ${err.message}.`, toastId))
+            .finally(() => setIsRunning(false))
         nProgress.done();
     }, [formik]);
 

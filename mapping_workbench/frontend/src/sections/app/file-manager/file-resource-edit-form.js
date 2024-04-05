@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import toast from 'react-hot-toast';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
 
@@ -21,6 +20,7 @@ import {FormTextArea} from "../../../components/app/form/text-area";
 import {FormTextField} from "../../../components/app/form/text-field";
 import {sessionApi} from "../../../api/session";
 import {FormCodeTextArea} from "../../../components/app/form/code-text-area";
+import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 
 export const FileResourceEditForm = (props) => {
     const router = useRouter();
@@ -68,6 +68,7 @@ export const FileResourceEditForm = (props) => {
                 .required('Format is required'),
         }),
         onSubmit: async (values, helpers) => {
+            const toastId = toastLoad(itemctx.isNew ? "Creating..." : "Updating...")
             try {
                 values['path'] = (typeof values['path'] == 'string') ?
                     values['path'].split('\n').map(s => s.trim()).filter(s => s !== '').join(',') : values['path'];
@@ -85,7 +86,7 @@ export const FileResourceEditForm = (props) => {
 
                 helpers.setStatus({success: true});
                 helpers.setSubmitting(false);
-                toast.success(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "created" : "updated"));
+                toastSuccess(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "Created" : "Updated"), toastId);
                 if (response) {
                     if (itemctx.isNew) {
                         router.push({
@@ -98,7 +99,7 @@ export const FileResourceEditForm = (props) => {
                 }
             } catch (err) {
                 console.error(err);
-                toast.error('Something went wrong!');
+                toastError(err.message, toastId);
                 helpers.setStatus({success: false});
                 helpers.setErrors({submit: err.message});
                 helpers.setSubmitting(false);

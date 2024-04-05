@@ -1,5 +1,4 @@
 import {useEffect, useState} from "react";
-import toast from 'react-hot-toast';
 import PropTypes from 'prop-types';
 import {useFormik} from 'formik';
 import * as Yup from 'yup';
@@ -24,6 +23,7 @@ import {FormTextField} from "../../../components/app/form/text-field";
 import {sessionApi} from "../../../api/session";
 import {FormCodeTextArea} from "../../../components/app/form/code-text-area";
 import {FormCodeReadOnlyArea} from "../../../components/app/form/code-read-only-area";
+import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 
 export const EditForm = (props) => {
     const {itemctx, tree, ...other} = props;
@@ -55,6 +55,7 @@ export const EditForm = (props) => {
                 .required('Format is required')
         }),
         onSubmit: async (values, helpers) => {
+                const toastId = toastLoad("Updating...")
             try {
                 let response;
                 values['project'] = sessionApi.getSessionProject();
@@ -66,7 +67,7 @@ export const EditForm = (props) => {
                 }
                 helpers.setStatus({success: true});
                 helpers.setSubmitting(false);
-                toast.success(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "created" : "updated"));
+                toastSuccess(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "created" : "updated"), toastId);
                 if (response) {
                     if (itemctx.isNew) {
                         router.push({
@@ -79,7 +80,7 @@ export const EditForm = (props) => {
                 }
             } catch (err) {
                 console.error(err);
-                toast.error('Something went wrong!');
+                toastError(err.message, toastId);
                 helpers.setStatus({success: false});
                 helpers.setErrors({submit: err.message});
                 helpers.setSubmitting(false);
@@ -104,35 +105,27 @@ export const EditForm = (props) => {
         values['project'] = sessionApi.getSessionProject();
         values['id'] = item._id;
         formik.setSubmitting(true)
-        const toastId = toast.loading("Updating Content")
-        const err = 'Something went wrong!'
+        const toastId = toastLoad("Updating Content")
+        const catchError = (err) => {
+            toastError(err.message, toastId)
+            formik.setStatus({success: false});
+            formik.setErrors({submit: err.message});
+            formik.setSubmitting(false);
+        }
 
         sectionApi.updateItem(values)
-            .then((res) => {
-                if (res) {
-                    toast.loading("Transforming Content", {id: toastId})
-                    sectionApi.getTripleMapRdfResultContent(selectedTree)
-                        .then(res => {
-                            if(res) {
-                                setRdfResultContent(res.rdf_manifestation)
-                                toast.success('Transformed Successfully', {id: toastId})
-                            }
-                            else {
-                                toast.error(err,{id: toastId})
-                                formik.setStatus({success: false});
-                                formik.setErrors({submit: err});
-                                formik.setSubmitting(false);
-                            }
-                        })
-                        .finally(() => formik.setSubmitting(false))
-                }
-                else {
-                    toast.error(err,{id: toastId})
-                    formik.setStatus({success: false});
-                    formik.setErrors({submit: err});
-                    formik.setSubmitting(false);
-                }
+            .then(res => {
+                toastLoad("Transforming Content", toastId)
+                sectionApi.getTripleMapRdfResultContent(selectedTree)
+                    .then(res => {
+                        setRdfResultContent(res.data.rdf_manifestation)
+                        toastSuccess('Transformed Successfully', toastId)
+                    })
+                    .catch(err => catchError(err))
             })
+            .catch(err => catchError(err))
+            .finally(() => formik.setSubmitting(false))
+
     }
 
     const handleUpdateAndSubmit = () => {

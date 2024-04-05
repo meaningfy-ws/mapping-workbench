@@ -1,5 +1,4 @@
 import {useEffect, useState} from "react";
-import toast from "react-hot-toast";
 import {useRouter} from "next/router";
 import {useFormik} from "formik";
 import * as Yup from "yup";
@@ -12,6 +11,7 @@ import Typography from "@mui/material/Typography";
 import {projectsApi} from "../../../api/projects";
 import {sessionApi} from "../../../api/session";
 import {useMounted} from "../../../hooks/use-mounted";
+import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 
 const useProjectsStore = () => {
     const isMounted = useMounted();
@@ -60,17 +60,17 @@ export const ProjectSwitch = (props) => {
         onSubmit: async (values, helpers) => {
             try {
                 // NOTE: Make API request
-                toast.success('Project changed');
+                toastSuccess('Project changed');
             } catch (err) {
                 console.error(err);
-                toast.error('Something went wrong!');
+                toastError(err.message);
             }
         },
     });
 
     const handleSessionProjectChange = async (event) => {
         const value = event.target.value;
-        toast.loading('Selecting project...');
+        toastLoad('Selecting project...');
         await sessionApi.setSessionProject(value);
         formik.setFieldValue('sessionProject', value);
         router.reload();

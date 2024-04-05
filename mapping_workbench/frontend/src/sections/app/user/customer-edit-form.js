@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
-import toast from 'react-hot-toast';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
+
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -16,20 +16,21 @@ import Typography from '@mui/material/Typography';
 import { RouterLink } from 'src/components/router-link';
 import { paths } from 'src/paths';
 import { wait } from 'src/utils/wait';
+import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 
 export const CustomerEditForm = (props) => {
   const { customer, ...other } = props;
   const formik = useFormik({
     initialValues: {
-      address1: customer.address1 || '',
-      address2: customer.address2 || '',
-      country: customer.country || '',
-      email: customer.email || '',
-      hasDiscount: customer.hasDiscount || false,
-      isVerified: customer.isVerified || false,
-      name: customer.name || '',
-      phone: customer.phone || '',
-      state: customer.state || '',
+      address1: customer.address1 ?? '',
+      address2: customer.address2 ?? '',
+      country: customer.country ?? '',
+      email: customer.email ?? '',
+      hasDiscount: customer.hasDiscount ?? false,
+      isVerified: customer.isVerified ?? false,
+      name: customer.name ?? '',
+      phone: customer.phone ?? '',
+      state: customer.state ?? '',
       submit: null
     },
     validationSchema: Yup.object({
@@ -51,15 +52,16 @@ export const CustomerEditForm = (props) => {
       state: Yup.string().max(255)
     }),
     onSubmit: async (values, helpers) => {
+      const toastId = toastLoad('Updating Customer...')
       try {
         // NOTE: Make API request
         await wait(500);
         helpers.setStatus({ success: true });
         helpers.setSubmitting(false);
-        toast.success('Customer updated');
+        toastSuccess('Customer updated', toastId);
       } catch (err) {
         console.error(err);
-        toast.error('Something went wrong!');
+        toastError(err.message, toastId);
         helpers.setStatus({ success: false });
         helpers.setErrors({ submit: err.message });
         helpers.setSubmitting(false);
