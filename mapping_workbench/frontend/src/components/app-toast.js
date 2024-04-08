@@ -31,6 +31,8 @@ const toastClose = (content, id) => (
 
 const ToastErrorModel = ({err, id}) => {
     const [show, setShow] = useState(false)
+    let detailStr = err.response?.data?.detail
+    detailStr = !Array.isArray(detailStr) ? detailStr : detailStr?.[0]?.msg
     return (
         <Stack sx={{
             position: 'relative'
@@ -46,12 +48,12 @@ const ToastErrorModel = ({err, id}) => {
                     <CloseIcon/>
                 </IconButton>}
             </Stack>
-            {!show && err.detail && <Button onClick={() => setShow(true)}
+            {!show && detailStr && <Button onClick={() => setShow(true)}
                               variant="primary">Show details...</Button>}
             <Collapse in={show}>
                 <Typography sx={{overflowX: "auto"}}
                             variant="subtitle2">
-                    {err.detail}
+                    {detailStr}
                 </Typography>
             </Collapse>
         </Stack>
