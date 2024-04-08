@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import toast from 'react-hot-toast';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
 import Button from '@mui/material/Button';
@@ -59,7 +58,7 @@ export const EditForm = (props) => {
                 }
             } catch (err) {
                 console.error(err);
-                toastError(err.message, toastId);
+                toastError(err, toastId);
                 helpers.setStatus({success: false});
                 helpers.setErrors({submit: err.message});
                 helpers.setSubmitting(false);

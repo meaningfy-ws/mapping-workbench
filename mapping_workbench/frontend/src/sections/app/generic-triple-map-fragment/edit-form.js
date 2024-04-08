@@ -80,7 +80,7 @@ export const EditForm = (props) => {
                 }
             } catch (err) {
                 console.error(err);
-                toastError(err.message, toastId);
+                toastError(err, toastId);
                 helpers.setStatus({success: false});
                 helpers.setErrors({submit: err.message});
                 helpers.setSubmitting(false);
@@ -107,7 +107,7 @@ export const EditForm = (props) => {
         formik.setSubmitting(true)
         const toastId = toastLoad("Updating Content")
         const catchError = (err) => {
-            toastError(err.message, toastId)
+            toastError(err, toastId)
             formik.setStatus({success: false});
             formik.setErrors({submit: err.message});
             formik.setSubmitting(false);

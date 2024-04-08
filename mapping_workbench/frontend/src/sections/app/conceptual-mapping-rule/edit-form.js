@@ -241,7 +241,7 @@ export const EditForm = (props) => {
                     }
                 } catch (err) {
                     console.error(err);
-                    toastError(err.message, toastId);
+                    toastError(err, toastId);
                     helpers.setStatus({success: false});
                     helpers.setErrors({submit: err.message});
                     helpers.setSubmitting(false);

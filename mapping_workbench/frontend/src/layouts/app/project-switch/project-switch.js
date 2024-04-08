@@ -63,7 +63,7 @@ export const ProjectSwitch = (props) => {
                 toastSuccess('Project changed');
             } catch (err) {
                 console.error(err);
-                toastError(err.message);
+                toastError(err);
             }
         },
     });
