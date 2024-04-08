@@ -46,12 +46,12 @@ const ToastErrorModel = ({err, id}) => {
                     <CloseIcon/>
                 </IconButton>}
             </Stack>
-            {!show && err.details && <Button onClick={() => setShow(true)}
+            {!show && err.detail && <Button onClick={() => setShow(true)}
                               variant="primary">Show details...</Button>}
             <Collapse in={show}>
                 <Typography sx={{overflowX: "auto"}}
                             variant="subtitle2">
-                    {err.details}
+                    {err.detail}
                 </Typography>
             </Collapse>
         </Stack>
