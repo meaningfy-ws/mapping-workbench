@@ -25,16 +25,9 @@ Given('Session Login', () => {
 })
 
 //create projects
-Then('I expand projects', () => {
-    cy.get('#nav_projects').click()
-})
 
-When('I click on packages list', () => {
-    cy.get("#nav_packages_list").click()
-})
-
-When('I click on project list', () => {
-    cy.get("#nav_projects_list").click()
+When('I click on projects', () => {
+    cy.get("#nav_projects").click()
 })
 
 Then('I get redirected to projects list page', () => {
@@ -116,12 +109,8 @@ Then('I get success import', () => {
 
 
 //generating conceptual mappings
-Given('I expand conceptual mappings', () => {
+Given('I click on conceptual mappings', () => {
     cy.get('#nav_conceptual\\ mappings').click()
-})
-
-When('I click on conceptual mappings list', () => {
-    cy.get("#nav_conceptual\\ mappings_list").click()
 })
 
 Then('I get redirected to  conceptual mappings list page', () => {
@@ -154,16 +143,16 @@ When('I click on run button for transform data', () => {
 })
 
 Then('I get success generate', () => {
-    cy.wait('@run').its('response.statusCode').should('eq', 200)
+    cy.wait('@run_conceptual_test_data').its('response.statusCode').should('eq', 200)
 })
 
 
 //importing packages
-Given('I expand packages', () => {
-    cy.get('#nav_packages').click()
+Given('I go to packages', () => {
+    cy.get('#nav_mapping\\ packages').click()
 })
 When('I click on packages import', () => {
-    cy.get("#nav_packages_import").click()
+    cy.get("#import_package_button").click()
 })
 
 Then('I get redirected to mapping_packages import page', () => {
@@ -198,7 +187,7 @@ Then('I click on transform test data', () => {
 })
 
 Then('I click on run button', () => {
-    cy.intercept('POST', 'http://localhost:8000/api/v1/tasks/transform_test_data',).as('run_test_data')
+    cy.intercept('POST', 'http://localhost:8000/api/v1/conceptual_mapping_rules/tasks/generate_cm_assertions_queries',).as('run_conceptual_test_data')
     cy.get('#run_button').click()
 })
 

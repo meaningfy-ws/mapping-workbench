@@ -157,6 +157,7 @@ const Page = () => {
                         </Button>
                         <Button
                             onClick={importDialog.handleOpen}
+                            id="import_package_button"
                             startIcon={(
                                 <SvgIcon>
                                     <ImportIcon/>
