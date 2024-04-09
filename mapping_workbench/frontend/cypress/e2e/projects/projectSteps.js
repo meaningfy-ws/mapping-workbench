@@ -2,6 +2,10 @@ import {Given, Then, When} from "cypress-cucumber-preprocessor/steps";
 
 
 const project_name ='TEST_PROJECT'
+const projectDescription = 'some description'
+const appURLPrefix = 'http://localhost:8000/api/v1/'
+
+
 Given('Go Home', () => {
     cy.visit('localhost:3000')
 })
@@ -19,7 +23,7 @@ Given('Session Login', () => {
     })
 })
 
-Then('I expand projects', () => {
+Then('I click on projects', () => {
     cy.get('#nav_projects').click()
 })
 
@@ -46,7 +50,7 @@ Then('I type project name', () => {
 })
 
 When('I click create button', () => {
-    cy.intercept('POST', 'http://localhost:8000/api/v1/projects',).as('create')
+    cy.intercept('POST', appURLPrefix + 'projects',).as('create')
     cy.get('#create_button').click()
 })
 
@@ -59,7 +63,7 @@ When('I click back to projects link', () => {
 })
 
 Then('I search for project', () => {
-    cy.intercept('GET', 'http://localhost:8000/api/v1/projects*',).as('get')
+    cy.intercept('GET', appURLPrefix + '/projects*',).as('get')
     cy.get('input[type=text]').clear().type(project_name+'{enter}')
 })
 
@@ -68,7 +72,7 @@ Then('I receive project', () => {
 })
 
 When('I select project', () => {
-    cy.intercept('POST', 'http://localhost:8000/api/v1/users/set_project_for_current_user_session',).as('select')
+    cy.intercept('POST', appURLPrefix + 'users/set_project_for_current_user_session',).as('select')
     cy.get('#select_button').click()
 })
 
@@ -76,14 +80,48 @@ Then('I get success select', () => {
     cy.wait('@select').its('response.statusCode').should('eq',200)
 })
 
+//edit project
+When('I click on edit button', () => {
+    cy.get('#edit_button').click()
+})
+
+Then('I get redirected to project edit page', () => {
+    cy.url().should('include','/edit')
+})
+
+Then('I update project description', () => {
+    cy.get('textarea[name=description]').clear().type(projectDescription + '{enter}')
+})
+
+Then('I click on update button', () => {
+    cy.intercept('PATCH', appURLPrefix + 'projects/*',).as('updateProject')
+    cy.get('#create_button').click()
+})
+
+Then('I receive update success', () => {
+    cy.wait('@updateProject').its('response.statusCode').should('eq',200)
+})
+
+//edit project
+When('I click on view button', () => {
+    cy.get('#view_button').click()
+})
+
+Then('I get redirected to project view page', () => {
+    cy.url().should('include','/view')
+})
+
+Then('I read description', () => {
+    cy.get('h6:contains("Description")').first().next().should('have.text', projectDescription+'\n')
+})
 
 //delete project
-When('I click delete button', () => {
+When('I click on delete button', () => {
     cy.get('#delete_button').click()
 })
 
 Then('I click yes button', () => {
-    cy.intercept('DELETE', 'http://localhost:8000/api/v1/projects/*',).as('delete')
+    cy.intercept('DELETE', appURLPrefix + 'projects/*',).as('delete')
     cy.get('#yes_dialog_button').click()
 })
 
