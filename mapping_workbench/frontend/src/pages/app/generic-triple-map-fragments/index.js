@@ -156,6 +156,7 @@ const Page = () => {
                                     <Upload01Icon/>
                                 </SvgIcon>
                             )}
+                            id="upload_fragment_button"
                             variant="contained"
                         >
                             Upload

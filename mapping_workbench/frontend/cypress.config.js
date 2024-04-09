@@ -11,6 +11,7 @@ module.exports = defineConfig({
     specPattern:[
         "cypress/e2e/login.feature",
         "cypress/e2e/scenarioOne.feature",
+        "cypress/e2e/scenarioTwo.feature",
         "cypress/e2e/cleanUp.feature",
         "cypress/e2e/projects.feature",
         "cypress/e2e/fieldsRegistry.feature",

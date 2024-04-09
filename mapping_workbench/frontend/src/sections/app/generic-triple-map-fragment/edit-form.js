@@ -266,6 +266,7 @@ export const EditForm = (props) => {
                         disabled={formik.isSubmitting}
                         variant="outlined"
                         onClick={handleUpdateAndSubmit}
+                        id="update_and_transform_button"
                     >
                         Update and Transform
                     </Button>}
