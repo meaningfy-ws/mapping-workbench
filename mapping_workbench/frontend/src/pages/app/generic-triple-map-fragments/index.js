@@ -18,6 +18,9 @@ import {paths} from 'src/paths';
 import {ListSearch} from "../../../sections/app/generic-triple-map-fragment/list-search";
 import {ListTable} from "../../../sections/app/generic-triple-map-fragment/list-table";
 import {useMounted} from "../../../hooks/use-mounted";
+import {useDialog} from "../../../hooks/use-dialog";
+import Upload01Icon from "@untitled-ui/icons-react/build/esm/Upload01";
+import {FileUploader} from "../../../sections/app/generic-triple-map-fragment/file-uploader";
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -99,6 +102,8 @@ const Page = () => {
     const itemsSearch = useItemsSearch();
     const itemsStore = useItemsStore(itemsSearch.state);
 
+    const uploadDialog = useDialog();
+
     usePageView();
 
     return (
@@ -145,6 +150,17 @@ const Page = () => {
                         spacing={3}
                     >
                         <Button
+                            onClick={uploadDialog.handleOpen}
+                            startIcon={(
+                                <SvgIcon>
+                                    <Upload01Icon/>
+                                </SvgIcon>
+                            )}
+                            variant="contained"
+                        >
+                            Upload
+                        </Button>
+                        <Button
                             component={RouterLink}
                             href={paths.app[sectionApi.section].create}
                             startIcon={(
@@ -170,6 +186,11 @@ const Page = () => {
                         sectionApi={sectionApi}
                     />
                 </Card>
+                <FileUploader
+                    onClose={uploadDialog.handleClose}
+                    open={uploadDialog.open}
+                    sectionApi={sectionApi}
+                />
             </Stack>
         </>
     );

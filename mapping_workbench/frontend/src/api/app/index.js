@@ -126,13 +126,12 @@ class AppApi {
         let $this = this;
         return axios
             .request(config)
-            .then(function (response) {
-                return response.data;
-            })
-            .catch(function (error) {
-                console.log(method, "REQUEST");
+            .then(response => response.data)
+            .catch(error => {
+                console.log(method, "REQUEST",error.response?.status);
                 $this.processError(error);
                 console.log(error, "error");
+                throw error
             });
     }
 

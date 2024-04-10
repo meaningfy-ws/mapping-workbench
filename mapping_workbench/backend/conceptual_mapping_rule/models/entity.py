@@ -83,6 +83,7 @@ class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema):
     mapping_notes: Optional[List[ConceptualMappingRuleComment]] = None
     editorial_notes: Optional[List[ConceptualMappingRuleComment]] = None
     feedback_notes: Optional[List[ConceptualMappingRuleComment]] = None
+    sort_order: Optional[float] = None
 
 
 class ConceptualMappingRuleState(ObjectState):
@@ -98,6 +99,7 @@ class ConceptualMappingRuleState(ObjectState):
     mapping_notes: Optional[List[ConceptualMappingRuleComment]] = None
     editorial_notes: Optional[List[ConceptualMappingRuleComment]] = None
     feedback_notes: Optional[List[ConceptualMappingRuleComment]] = None
+    sort_order: Optional[float] = None
 
 
 class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
@@ -117,6 +119,7 @@ class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
     mapping_notes: Optional[List[ConceptualMappingRuleComment]] = None
     editorial_notes: Optional[List[ConceptualMappingRuleComment]] = None
     feedback_notes: Optional[List[ConceptualMappingRuleComment]] = None
+    sort_order: Optional[float] = None
 
     async def get_state(self) -> ConceptualMappingRuleState:
         source_structural_element = await self.source_structural_element.fetch() \
@@ -141,7 +144,8 @@ class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
             status=self.status,
             mapping_notes=self.mapping_notes,
             editorial_notes=self.editorial_notes,
-            feedback_notes=self.feedback_notes
+            feedback_notes=self.feedback_notes,
+            sort_order=self.sort_order
         )
 
     def set_state(self, state: ConceptualMappingRuleState):

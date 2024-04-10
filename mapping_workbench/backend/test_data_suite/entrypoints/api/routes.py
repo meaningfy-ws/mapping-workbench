@@ -1,7 +1,7 @@
 from typing import List, Annotated
 
 from beanie import PydanticObjectId
-from fastapi import APIRouter, status, Depends, Query
+from fastapi import APIRouter, status, Depends, Query, HTTPException
 from starlette.requests import Request
 
 from mapping_workbench.backend.core.models.api_request import APIRequestWithProject
@@ -10,6 +10,7 @@ from mapping_workbench.backend.file_resource.services.file_resource_form_data im
     file_resource_data_from_form_request
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
+from mapping_workbench.backend.test_data_suite.adapters.rml_mapper import RMLMapperException
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
     TestDataFileResourceUpdateIn, TestDataFileResourceCreateIn
 from mapping_workbench.backend.test_data_suite.models.entity_api_response import \
@@ -267,7 +268,12 @@ async def route_transform_test_data(
         filters: APIRequestWithProject,
         user: User = Depends(current_active_user)
 ):
-    return await transform_test_data_for_project(project_id=filters.project, user=user)
+    try:
+        return await transform_test_data_for_project(project_id=filters.project, user=user)
+    except RMLMapperException as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Server error")
 
 
 @router.post(
@@ -305,10 +311,15 @@ async def route_transform_test_data_file_resource(
         user: User = Depends(current_active_user),
         save: bool = True
 ) -> dict:
-    test_data_file_resource = await transform_test_data_file_resource(
-        test_data_file_resource=test_data_file_resource,
-        user=user,
-        save=save
-    )
+    try:
+        test_data_file_resource = await transform_test_data_file_resource(
+            test_data_file_resource=test_data_file_resource,
+            user=user,
+            save=save
+        )
+    except RMLMapperException as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Server error")
 
     return {"rdf_manifestation": test_data_file_resource.rdf_manifestation}

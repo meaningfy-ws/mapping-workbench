@@ -1,5 +1,4 @@
 import {useEffect, useState} from 'react';
-import toast from "react-hot-toast";
 import {useRouter} from "next/router";
 import PropTypes from 'prop-types';
 import parse from "html-react-parser";
@@ -7,6 +6,8 @@ import {useFormik} from "formik";
 import * as Yup from "yup";
 
 import EditIcon from '@untitled-ui/icons-react/build/esm/Edit05';
+import CheckIcon from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
 import InfoIcon from '@mui/icons-material/Info';
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
@@ -56,6 +57,7 @@ import {MappingPackageCheckboxList} from "../mapping-package/components/mapping-
 import {COMMENT_PRIORITY, conceptualMappingRulesApi} from "../../../api/conceptual-mapping-rules";
 import {ListSelectorSelect as ResourceListSelector} from "../../../components/app/list-selector/select";
 import {sparqlTestFileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
+import {toastSuccess} from "../../../components/app-toast";
 
 
 export const ListTableTripleMapFragment = (props) => {
@@ -138,7 +140,7 @@ export const ListTableTripleMapFragment = (props) => {
         values['triple_map_fragment'] = tripleMapFragmentId;
         await conceptualMappingRulesApi.updateItem(values);
         setRuleTripleMapFragment(tripleMapFragmentId);
-        toast.success(conceptualMappingRulesApi.SECTION_ITEM_TITLE + ' updated');
+        toastSuccess(conceptualMappingRulesApi.SECTION_ITEM_TITLE + ' updated');
 
         if (updateContent) {
             const contentValues = {
@@ -147,7 +149,7 @@ export const ListTableTripleMapFragment = (props) => {
                 triple_map_content: formik.values.triple_map_content
             }
             await genericTripleMapFragmentsApi.updateItem(contentValues);
-            toast.success(genericTripleMapFragmentsApi.SECTION_ITEM_TITLE + ' updated');
+            toastSuccess(genericTripleMapFragmentsApi.SECTION_ITEM_TITLE + ' updated');
         }
         handleTripleMapFragmentDialogClose();
     }
@@ -166,34 +168,40 @@ export const ListTableTripleMapFragment = (props) => {
         ))}
     </Box>
 
+    const isRuleTripleMapFragments = !!ruleTripleMapFragments.length
+
     return (<>
+        <Box sx={{mb: 1}}>
+            {isRuleTripleMapFragments ? <CheckIcon color="success"/> : <CloseIcon color="error"/>}
+        </Box>
         <Box sx={{
             position: "absolute",
             left: "50%",
             top: "50%",
         }}>
             {isHovered && <Tooltip enterDelay={300}
-                                   title={<RuleTripleMapFragments/>}>
+                                   title={isRuleTripleMapFragments && <RuleTripleMapFragments/>}>
                 <Stack display="flex"
                        direction="column"
                        gap={1}
                        sx={{
-                           marginTop: "-50%",
+                           marginTop: isRuleTripleMapFragments ? "-50%" : "-31%",
                            transform: "translate(-50%)"
                        }}
                 >
-                    <Button
+                    {isRuleTripleMapFragments && <Button
+                        // sx={{backgroundColor: "#fff"}}
                         aria-describedby={"triple_map_fragment_dialog_" + item._id}
-                        variant="outlined"
+                        variant="contained"
                         size="small"
-                        color="primary"
+                        color="secondary"
                         onClick={handleTripleMapFragmentDetailsDialogOpen}
                         component={Link}
                     >
                         <SvgIcon fontSize="small">
                             <InfoIcon/>
                         </SvgIcon>
-                    </Button>
+                    </Button>}
                     <Button
                         aria-describedby={"triple_map_fragment_dialog_" + item._id}
                         variant="contained"
@@ -237,9 +245,9 @@ export const ListTableTripleMapFragment = (props) => {
                                 value={tripleMapFragment?._id ?? ""}
                             >
                                 <MenuItem value={null}>&nbsp;</MenuItem>
-                                {projectTripleMapFragments.map((x) => (
-                                    <MenuItem key={x.id}
-                                              value={x.id}>{x.uri}</MenuItem>
+                                {projectTripleMapFragments.map(({id, uri}) => (
+                                    <MenuItem key={id}
+                                              value={id}>{uri}</MenuItem>
                                 ))}
                             </TextField>
                         </FormControl>
@@ -384,7 +392,7 @@ export const ListTableMappingPackages = (props) => {
         await conceptualMappingRulesApi.updateItem(values);
         setMappingPackages(tempMappingPackages);
         item.refers_to_mapping_package_ids = tempMappingPackages;
-        toast.success(conceptualMappingRulesApi.SECTION_ITEM_TITLE + ' updated');
+        toastSuccess(conceptualMappingRulesApi.SECTION_ITEM_TITLE + ' updated');
         mappingPackagesDialog.handleClose();
         onPackagesUpdate()
     };
@@ -497,7 +505,7 @@ export const ListTableSPARQLAssertions = (props) => {
         item.sparql_assertions = tempSparqlResources.map(x => {
             return {id: x}
         });
-        toast.success(conceptualMappingRulesApi.SECTION_ITEM_TITLE + ' updated');
+        toastSuccess(conceptualMappingRulesApi.SECTION_ITEM_TITLE + ' updated');
         sparqlTestFileResourcesDialog.handleClose();
     }
 
@@ -672,13 +680,10 @@ export const ListTableRow = (props) => {
     );
 
     const hasTargetPropertyPathValidityErrors =
-        item.target_property_path_terms_validity
-            ? item.target_property_path_terms_validity.some(x => !x.is_valid)
-            : false;
+        item.target_property_path_terms_validity?.some(x => !x.is_valid);
+
     const hasTargetClassPathValidityErrors =
-        item.target_class_path_terms_validity
-            ? item.target_class_path_terms_validity.some(x => !x.is_valid)
-            : false;
+        item.target_class_path_terms_validity?.some(x => !x.is_valid);
 
     const mappingNotesDialog = useDialog();
     const editorialNotesDialog = useDialog();
@@ -717,6 +722,7 @@ export const ListTableRow = (props) => {
                     </SvgIcon>
                 </IconButton>
             </TableCell>
+            <TableCell>{item.sort_order}</TableCell>
             <TableCell sx={{
                 wordBreak: "normal"
             }}>
@@ -973,20 +979,6 @@ export const ListTable = (props) => {
         setHoveredItem(itemId);
     }
 
-    // const handleItemClose = useCallback(() => {
-    //     setCurrentItem(null);
-    // }, []);
-
-    // const handleItemUpdate = useCallback(() => {
-    //     setCurrentItem(null);
-    //     toast.success('Item updated');
-    // }, []);
-
-    // const handleItemDelete = useCallback(() => {
-
-    //     toast.error('Item cannot be deleted');
-    // }, []);
-
     const [isProjectDataReady, setIsProjectDataReady] = useState(false);
 
     const [projectTripleMapFragments, setProjectTripleMapFragments] = useState([]);
@@ -1019,6 +1011,9 @@ export const ListTable = (props) => {
                 <TableHead>
                     <TableRow>
                         <TableCell/>
+                        <TableCell>
+                            CM Rule Order
+                        </TableCell>
                         <TableCell width="10%">
                             <Tooltip
                                 enterDelay={300}
@@ -1072,19 +1067,6 @@ export const ListTable = (props) => {
                         <TableCell>
                             SPARQL assertions
                         </TableCell>
-                        {/*<TableCell align="left">
-                            <Tooltip
-                                enterDelay={300}
-                                title="Sort"
-                            >
-                                <TableSortLabel
-                                    active
-                                    direction="desc"
-                                >
-                                    Created
-                                </TableSortLabel>
-                            </Tooltip>
-                        </TableCell>*/}
                         <TableCell align="center"
                                    title="Mapping Notes"
                                    sx={{

@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import toast from 'react-hot-toast';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
 
@@ -20,6 +19,7 @@ import {sessionApi} from "../../../api/session";
 import {MappingPackageFormSelect} from "../mapping-package/components/mapping-package-form-select";
 import {FormTextField} from "../../../components/app/form/text-field";
 import {FormCodeTextArea} from "../../../components/app/form/code-text-area";
+import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 
 
 export const EditForm = (props) => {
@@ -48,6 +48,7 @@ export const EditForm = (props) => {
         }),
 
         onSubmit: async (values, helpers) => {
+            const toastId = toastLoad(itemctx.isNew ? "Creating..." : "Updating...")
             try {
                 let response;
                 values['project'] = sessionApi.getSessionProject();
@@ -59,7 +60,7 @@ export const EditForm = (props) => {
                 }
                 helpers.setStatus({success: true});
                 helpers.setSubmitting(false);
-                toast.success(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "created" : "updated"));
+                toastSuccess(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "created" : "updated"), toastId);
                 if (response) {
                     if (itemctx.isNew) {
                         router.push({
@@ -71,7 +72,7 @@ export const EditForm = (props) => {
                 }
             } catch (err) {
                 console.error(err);
-                toast.error('Something went wrong!');
+                toastError(err, toastId);
                 helpers.setStatus({success: false});
                 helpers.setErrors({submit: err.message});
                 helpers.setSubmitting(false);
@@ -80,21 +81,32 @@ export const EditForm = (props) => {
     });
 
     return (
-        <form onSubmit={formik.handleSubmit} {...other}>
+        <form onSubmit={formik.handleSubmit}
+              {...other}>
             <Card>
                 <CardHeader title={(itemctx.isNew ? 'Create' : 'Edit') + ' ' + sectionApi.SECTION_ITEM_TITLE}/>
                 <CardContent sx={{pt: 0}}>
-                    <Grid container spacing={3}>
-                        <Grid xs={12} md={12}>
+                    <Grid container
+                          spacing={3}>
+                        <Grid xs={12}
+                              md={12}>
                             <MappingPackageFormSelect formik={formik}/>
                         </Grid>
-                        <Grid xs={12} md={12}>
-                            <FormTextField formik={formik} name="identifier" label="Identifier" required={false}/>
+                        <Grid xs={12}
+                              md={12}>
+                            <FormTextField formik={formik}
+                                           name="identifier"
+                                           label="Identifier"/>
                         </Grid>
-                        <Grid xs={12} md={12}>
-                            <FormTextField formik={formik} name="triple_map_uri" label="URI" required={true}/>
+                        <Grid xs={12}
+                              md={12}>
+                            <FormTextField formik={formik}
+                                           name="triple_map_uri"
+                                           label="URI"
+                                           required/>
                         </Grid>
-                        <Grid xs={12} md={12}>
+                        <Grid xs={12}
+                              md={12}>
                             <TextField
                                 error={!!(formik.touched.format && formik.errors.format)}
                                 fullWidth
@@ -109,13 +121,15 @@ export const EditForm = (props) => {
                                 value={formik.values.format}
                             >
                                 {Object.keys(sectionApi.FILE_RESOURCE_FORMATS).map((key) => (
-                                    <MenuItem key={key} value={key}>
+                                    <MenuItem key={key}
+                                              value={key}>
                                         {sectionApi.FILE_RESOURCE_FORMATS[key]}
                                     </MenuItem>
                                 ))}
                             </TextField>
                         </Grid>
-                        <Grid xs={12} md={12}>
+                        <Grid xs={12}
+                              md={12}>
                             <FormCodeTextArea
                                 formik={formik}
                                 name="triple_map_content"

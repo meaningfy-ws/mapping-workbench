@@ -1,6 +1,6 @@
 import { saveAs } from 'file-saver';
 import { sessionApi } from "../api/session";
-import toast from "react-hot-toast";
+import {toastError, toastLoad, toastSuccess} from "../components/app-toast";
 
 const exportPackage = (api, package_id, setLoading, item ) => {
         setLoading(true);
@@ -10,18 +10,14 @@ const exportPackage = (api, package_id, setLoading, item ) => {
             package_id,
             state_id: item._id
         }
-        toast.promise(api.exportPackage(data), {
-            loading: `Exporting "${item.identifier}" ... This may take a while. Please, be patient.`,
-            success: (response) => {
-                setLoading(false);
-                saveAs(new Blob([response], {type: "application/x-zip-compressed"}), `${item.identifier} ${item._id}.zip`);
-                return `"${item.identifier}" successfully exported.`
-            },
-            error: (err) => {
-                setLoading(false);
-                return `Exporting "${item.identifier}" failed: ${err.message}.`
-            }
-        })
+        const toastId = toastLoad(`Exporting "${item.identifier}" ... This may take a while. Please, be patient.`)
+        api.exportPackage(data)
+            .then(res => {
+                saveAs(new Blob([res], {type: "application/x-zip-compressed"}), `${item.identifier} ${item._id}.zip`);
+                toastSuccess(`"${item.identifier}" successfully exported.`, toastId)
+            })
+            .catch(err => toastError(`Exporting "${item.identifier}" failed: ${err.message}.`, toastId))
+            .finally(() => setLoading(false))
     };
 
 export default exportPackage

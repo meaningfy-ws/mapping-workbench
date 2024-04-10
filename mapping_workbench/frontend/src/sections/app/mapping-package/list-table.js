@@ -1,5 +1,6 @@
-import {Fragment, useCallback, useState} from 'react';
+import {Fragment, useState} from 'react';
 import PropTypes from 'prop-types';
+
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
 import CardContent from '@mui/material/CardContent';
@@ -15,26 +16,25 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import {PropertyList} from 'src/components/property-list';
-import {PropertyListItem} from 'src/components/property-list-item';
-
-import {Scrollbar} from 'src/components/scrollbar';
-import {ListItemActions} from 'src/components/app/list/list-item-actions';
-
-import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import Tooltip from "@mui/material/Tooltip";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
+import Switch from "@mui/material/Switch";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Box from "@mui/system/Box";
+
+import {PropertyList} from 'src/components/property-list';
+import {PropertyListItem} from 'src/components/property-list-item';
+import {Scrollbar} from 'src/components/scrollbar';
+import {ListItemActions} from 'src/components/app/list/list-item-actions';
+
+import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import {sessionApi} from "../../../api/session";
-import toast from "react-hot-toast";
-import Switch from "@mui/material/Switch";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import {Box} from "@mui/system";
-
 import { saveAs } from 'file-saver';
+import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 
 
 
@@ -52,15 +52,14 @@ const PackageRow = (props) => {
             transform_test_data: true,
             generate_cm_assertions: true,
             validate_package: true,
-            validate_package_xpath: true,
-            validate_package_sparql: true,
+            validate_package_xpath_sparql: true,
             validate_package_shacl: true
         },
         validationSchema: Yup.object({}),
         onSubmit: async (values, helpers) => {
             setIsProcessing(true)
 
-            let tasks_to_run = [];
+            const tasks_to_run = [];
             if (values['transform_test_data']) {
                 tasks_to_run.push('transform_test_data');
             }
@@ -70,16 +69,14 @@ const PackageRow = (props) => {
             if (values['validate_package']) {
                 tasks_to_run.push('validate_package');
             }
-            if (values['validate_package_xpath']) {
+            if (values['validate_package_xpath_sparql']) {
                 tasks_to_run.push('validate_package_xpath');
-            }
-            if (values['validate_package_sparql']) {
                 tasks_to_run.push('validate_package_sparql');
             }
             if (values['validate_package_shacl']) {
                 tasks_to_run.push('validate_package_shacl');
             }
-            let data = {
+            const data = {
                 package_id: item._id,
                 project_id: sessionApi.getSessionProject(),
                 use_latest_package_state: values['use_latest_package_state']
@@ -87,41 +84,30 @@ const PackageRow = (props) => {
             if (tasks_to_run.length > 0) {
                 data.tasks_to_run = tasks_to_run.join(',');
             }
-            toast.promise(sectionApi.processPackage(data), {
-                loading: `Processing "${item.identifier}" ... This may take a while. Please, be patient.`,
-                success: (response) => {
-                    setIsProcessing(false);
-                    return `"${response.result.title}" successfully processed in ${(response.task.duration / 60).toFixed(2)} minutes.`
-                },
-                error: (err) => {
-                    setIsProcessing(false);
-                    return `Processing "${item.identifier}" failed: ${err.message}.`
-                }
-            }).then(r => {
-            })
+            const toastId = toastLoad(`Processing "${item.identifier}" ... This may take a while. Please, be patient.`)
+            sectionApi.processPackage(data)
+                .then(res => toastSuccess(`"${res.result.title}" successfully processed in ${(res.task.duration / 60).toFixed(2)} minutes.`, toastId))
+                .catch(err => toastError(`Processing "${item.identifier}" failed: ${err.message}.`, toastId))
+                .finally(() => setIsProcessing(false))
         }
     });
 
-    const handleExport = useCallback((itemId) => {
+    const handleExport = itemId => {
         setIsExporting(true)
-        let data = {
+        const data = {
             package_id: item._id,
             project_id: sessionApi.getSessionProject()
         }
-        toast.promise(sectionApi.exportPackage(data), {
-            loading: `Exporting "${item.identifier}" ... This may take a while. Please, be patient.`,
-            success: (response) => {
-                setIsExporting(false);
-                saveAs(new Blob([response], {type: "application/x-zip-compressed"}), `${item.identifier}.zip`);
-                return `"${item.identifier}" successfully exported.`
-            },
-            error: (err) => {
-                setIsExporting(false);
-                return `Exporting "${item.identifier}" failed: ${err.message}.`
-            }
-        }).then(r => {
-        })
-    }, []);
+
+        const toastId = toastLoad(`Exporting "${item.identifier}" ... This may take a while. Please, be patient.`)
+        sectionApi.exportPackage(data)
+            .then(response => {
+                    saveAs(new Blob([response], {type: "application/x-zip-compressed"}), `${item.identifier}.zip`);
+                    toastSuccess(`"${item.identifier}" successfully exported.`, toastId)
+                })
+            .catch(err => toastError(`Exporting "${item.identifier}" failed: ${err.message}.`, toastId))
+            .finally(() => setIsExporting(false))
+    }
 
     return (<>
             <CardContent>
@@ -252,27 +238,12 @@ const PackageRow = (props) => {
                                                 }}
                                                 control={
                                                     <Switch
-                                                        checked={formik.values.validate_package_xpath && formik.values.validate_package}
+                                                        checked={formik.values.validate_package_xpath_sparql && formik.values.validate_package}
                                                         disabled={!formik.values.validate_package}
-                                                        onChange={(event) => formik.setFieldValue('validate_package_xpath', event.target.checked)}
+                                                        onChange={(event) => formik.setFieldValue('validate_package_xpath_sparql', event.target.checked)}
                                                     />
                                                 }
-                                                label="XPATH"
-                                            />
-                                        </li>
-                                        <li>
-                                            <FormControlLabel
-                                                sx={{
-                                                    width: '100%'
-                                                }}
-                                                control={
-                                                    <Switch
-                                                        checked={formik.values.validate_package_sparql && formik.values.validate_package}
-                                                        disabled={!formik.values.validate_package}
-                                                        onChange={(event) => formik.setFieldValue('validate_package_sparql', event.target.checked)}
-                                                    />
-                                                }
-                                                label="SPARQL"
+                                                label="XPATH / SPARQL"
                                             />
                                         </li>
                                     </ul>
@@ -285,10 +256,9 @@ const PackageRow = (props) => {
                             type="button"
                             variant="contained"
                             color="primary"
-                            onClick={() => handleExport()}
+                            onClick={handleExport}
                         >
-                            {!isExporting && "Export Latest"}
-                            {isExporting && "Exporting Latest ..."}
+                            {isExporting ? "Exporting Latest ..." : "Export Latest"}
                         </Button>
                     </Stack>
                 </form>
@@ -309,11 +279,9 @@ export const ListTable = (props) => {
         sectionApi
     } = props;
 
-    //console.log("PROJECT PROPS: ", props);
-
     const [currentItem, setCurrentItem] = useState(null);
 
-    const handleItemToggle = useCallback((itemId) => {
+    const handleItemToggle = itemId => {
         setCurrentItem((prevItemId) => {
             if (prevItemId === itemId) {
                 return null;
@@ -321,21 +289,7 @@ export const ListTable = (props) => {
 
             return itemId;
         });
-    }, []);
-
-    // const handleItemClose = useCallback(() => {
-    //     setCurrentItem(null);
-    // }, []);
-
-    // const handleItemUpdate = useCallback(() => {
-    //     setCurrentItem(null);
-    //     toast.success('Item updated');
-    // }, []);
-
-    // const handleItemDelete = useCallback(() => {
-
-    //     toast.error('Item cannot be deleted');
-    // }, []);
+    }
 
     return (
         <div>

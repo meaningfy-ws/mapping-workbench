@@ -1,6 +1,5 @@
-import {useCallback, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import PropTypes from 'prop-types';
-import toast from 'react-hot-toast';
 import parse from 'html-react-parser';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
@@ -35,6 +34,7 @@ import {genericTripleMapFragmentsApi} from "../../../api/triple-map-fragments/ge
 import {sparqlTestFileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
 import {ListSelectorSelect as ResourceListSelector} from "../../../components/app/list-selector/select";
 import {COMMENT_PRIORITY} from "../../../api/conceptual-mapping-rules";
+import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 
 const TermValidityInfo = (props) => {
     const {item, ...other} = props;
@@ -59,9 +59,9 @@ const TermValidityInfo = (props) => {
 }
 
 const RuleComment = (props) => {
-    let {formik, fieldName, idx, handleDelete, ...other} = props;
+    const {formik, fieldName, idx, handleDelete, ...other} = props;
 
-    let comment = formik.values[fieldName][idx];
+    const comment = formik.values[fieldName][idx];
     let severity;
     switch (comment.priority) {
         case COMMENT_PRIORITY.HIGH:
@@ -129,7 +129,7 @@ export const EditForm = (props) => {
         const [targetClassPathValidityInfo, setTargetClassPathValidityInfo] = useState("");
         const [targetClassPathTermsValidityInfo, setTargetClassPathTermsValidityInfo] = useState([]);
 
-        const checkTermsValidity = useCallback((elName, value, hasNotification = true) => {
+        const checkTermsValidity = (elName, value, hasNotification = true) => {
             const checkTermsValidityOnSuccess = (termsValidity) => {
                 let validityInfo = value;
                 for (let termValidity of termsValidity) {
@@ -152,21 +152,18 @@ export const EditForm = (props) => {
             }
             const checkTermsValidityPromise = sectionApi.checkTermsValidity(value);
             if (hasNotification) {
-                toast.promise(checkTermsValidityPromise, {
-                    loading: `Checking terms validity ... `,
-                    success: (termsValidity) => {
-                        checkTermsValidityOnSuccess(termsValidity);
-                        return `Terms checked for validity.`;
-                    },
-                    error: (err) => `Checking terms validity failed: ${err.message}.`
-                }).then(r => {
-                })
+                const toastId = toastLoad(`Checking terms validity ... `)
+                checkTermsValidityPromise
+                    .then(res => {
+                        checkTermsValidityOnSuccess(res)
+                        toastSuccess(`Terms checked for validity.`, toastId)
+                    })
+                    .catch(err => toastError(`Checking terms validity failed: ${err.message}.`, toastId))
             } else {
-                checkTermsValidityPromise.then(termsValidity => {
-                    checkTermsValidityOnSuccess(termsValidity);
-                })
+                checkTermsValidityPromise
+                    .then(termsValidity => checkTermsValidityOnSuccess(termsValidity))
             }
-        }, [sectionApi])
+        }
 
         const initComment = () => {
             return {
@@ -200,17 +197,18 @@ export const EditForm = (props) => {
             validationSchema: Yup.object({
             }),
             onSubmit: async (values, helpers) => {
+                const toastId = toastLoad(itemctx.isNew ? 'Creating...' : 'Updating...')
                 try {
-                    let requestValues = values;
-                    if (values['mapping_note']['comment']) {
+                    const requestValues = values;
+                    if (values['mapping_note']?.['comment']) {
                         values['mapping_notes'].push(values['mapping_note']);
                     }
                     delete values['mapping_note'];
-                    if (values['editorial_note']['comment']) {
+                    if (values['editorial_note']?.['comment']) {
                         values['editorial_notes'].push(values['editorial_note']);
                     }
                     delete values['editorial_note'];
-                    if (values['feedback_note']['comment']) {
+                    if (values['feedback_note']?.['comment']) {
                         values['feedback_notes'].push(values['feedback_note']);
                     }
                     delete values['feedback_note'];
@@ -227,8 +225,9 @@ export const EditForm = (props) => {
                     }
                     helpers.setStatus({success: true});
                     helpers.setSubmitting(false);
-                    toast.success(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "created" : "updated"));
+                    toastSuccess(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "Created" : "Updated"), toastId);
                     if (response) {
+                        console.log(response)
                         if (itemctx.isNew) {
                             router.push({
                                 pathname: paths.app[sectionApi.section].index,
@@ -242,7 +241,7 @@ export const EditForm = (props) => {
                     }
                 } catch (err) {
                     console.error(err);
-                    toast.error('Something went wrong!');
+                    toastError(err, toastId);
                     helpers.setStatus({success: false});
                     helpers.setErrors({submit: err.message});
                     helpers.setSubmitting(false);
@@ -269,28 +268,24 @@ export const EditForm = (props) => {
             checkTermsValidity('target_class_path', formik.values.target_class_path, false)
         }, [])
 
-        const handleCloneAction = useCallback(async (e) => {
-            toast.promise(sectionApi.cloneItem(item._id), {
-                loading: `Cloning rule ... `,
-                success: (response) => {
+        const handleCloneAction = async () => {
+            const toastId = toastLoad('Cloning rule ... ')
+            sectionApi.cloneItem(item._id)
+                .then(res => {
+                    itemctx.setState(res);
+                    toastSuccess('Rule successfully cloned.', toastId)
                     router.push({
                         pathname: paths.app[sectionApi.section].edit,
-                        query: {id: response._id}
+                        query: {id: res._id}
                     });
-                    itemctx.setState(response);
-                    return `Rule successfully cloned.`
-                },
-                error: (err) => `Cloning rule failed: ${err.message}.`
-            })
+                })
+                .catch(err => toastError(`Cloning rule failed: ${err.message}.`, toastId))
+        }
 
-            return false;
-
-        }, [router, sectionApi, item, itemctx]);
-
-        const handleDeleteComment = useCallback((idx, fieldName) => {
-            let values = formik.values[fieldName]
+        const handleDeleteComment = (idx, fieldName) => {
+            const values = formik.values[fieldName]
             formik.setFieldValue(fieldName, values.slice(0, idx).concat(values.slice(idx + 1)));
-        }, [formik]);
+        }
 
         const hasTargetPropertyPathValidityErrors = targetPropertyPathTermsValidityInfo.some(x => !x.is_valid);
         const hasTargetClassPathValidityErrors = targetClassPathTermsValidityInfo.some(x => !x.is_valid);
@@ -397,9 +392,7 @@ export const EditForm = (props) => {
                                             formik={formik}
                                             name="target_class_path"
                                             label="Target Class Path"
-                                            onBlur={(e) => checkTermsValidity(
-                                                e.target.name, e.target.value
-                                            )}
+                                            onBlur={(e) => checkTermsValidity(e.target.name, e.target.value)}
                                             {...params}
                                         />
                                     )}
@@ -445,9 +438,7 @@ export const EditForm = (props) => {
                                             formik={formik}
                                             name="target_property_path"
                                             label="Target Property Path"
-                                            onBlur={(e) => checkTermsValidity(
-                                                e.target.name, e.target.value
-                                            )}
+                                            onBlur={(e) => checkTermsValidity(e.target.name, e.target.value)}
                                             {...params}
                                         />
                                     )}
@@ -766,7 +757,7 @@ export const EditForm = (props) => {
                                 fullWidth
                                 label="Add new Editorial Note ..."
                                 helperText="... private"
-                                value={formik.values.editorial_note && formik.values.editorial_note.comment || ''}
+                                value={(formik.values.editorial_note && formik.values.editorial_note?.comment) ?? ''}
                                 onBlur={formik.handleBlur}
                                 onChange={formik.handleChange}
                             />
@@ -876,7 +867,7 @@ export const EditForm = (props) => {
                                 fullWidth
                                 label="Add new Feedback Note ..."
                                 helperText="... private"
-                                value={(formik.values.feedback_note && formik.values.feedback_note.comment) ?? ''}
+                                value={(formik.values.feedback_note && formik.values.feedback_note?.comment) ?? ''}
                                 onBlur={formik.handleBlur}
                                 onChange={formik.handleChange}
                             />
@@ -903,7 +894,7 @@ export const EditForm = (props) => {
                             {itemctx.isNew ? 'Create' : 'Update'}
                         </Button>
                         <Button
-                            onClick={(e) => handleCloneAction(e)}
+                            onClick={handleCloneAction}
                             variant="text"
                             type="button"
                             disabled={formik.isSubmitting}

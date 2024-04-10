@@ -1,6 +1,4 @@
-import {useCallback} from 'react';
 import PropTypes from 'prop-types';
-import toast from 'react-hot-toast';
 import Settings04Icon from '@untitled-ui/icons-react/build/esm/Settings04';
 import User03Icon from '@untitled-ui/icons-react/build/esm/User03';
 import {LogOut01 as LogOutIcon} from '@untitled-ui/icons-react/build/esm';
@@ -18,19 +16,20 @@ import {useAuth} from 'src/hooks/use-auth';
 import {useRouter} from 'src/hooks/use-router';
 import {paths} from 'src/paths';
 import {Issuer} from 'src/utils/auth';
+import {toastError, toastLoad} from "../../../components/app-toast";
 
 export const AccountPopover = (props) => {
     const {anchorEl, onClose, open, ...other} = props;
     const router = useRouter();
     const auth = useAuth();
 
-    const handleLogout = useCallback(async () => {
+    const handleLogout = async () => {
         try {
             onClose?.();
 
             switch (auth.issuer) {
                 case Issuer.JWT: {
-                    toast.loading("Logging out...");
+                    toastLoad("Logging out...");
                     await auth.signOut();
                     break;
                 }
@@ -39,13 +38,12 @@ export const AccountPopover = (props) => {
                     console.warn('Using an unknown Auth Issuer, did not log out');
                 }
             }
-
             router.reload();
         } catch (err) {
             console.error(err);
-            toast.error('Something went wrong!');
+            toastError(err);
         }
-    }, [auth, router, onClose]);
+    }
 
     return (
         <Popover

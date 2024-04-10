@@ -1,5 +1,6 @@
 from typing import List, Dict
 
+import pymongo
 from beanie import PydanticObjectId
 from pymongo.errors import DuplicateKeyError
 
@@ -10,22 +11,27 @@ from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersS
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException, DuplicateKeyException
 from mapping_workbench.backend.core.services.request import request_update_data, request_create_data, \
     api_entity_is_found, pagination_params, prepare_search_param
-from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
 from mapping_workbench.backend.ontology.services.terms import check_content_terms_validity
 from mapping_workbench.backend.user.models.user import User
 
 
-async def list_conceptual_mapping_rules(filters: dict = None, page: int = None, limit: int = None) -> \
+async def list_conceptual_mapping_rules(filters: dict = None, page: int = None, limit: int = None,
+                                        sort_field: str = None, sort_dir: int = None) -> \
         (List[ConceptualMappingRuleOut], int):
     query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
 
     prepare_search_param(query_filters)
     skip, limit = pagination_params(page, limit)
 
+    if sort_field is None:
+        sort_field = ConceptualMappingRule.sort_order
+    sort = [(sort_field, sort_dir or pymongo.ASCENDING)]
+
     items: List[ConceptualMappingRuleOut] = await ConceptualMappingRule.find(
         query_filters,
         projection_model=ConceptualMappingRuleOut,
         fetch_links=False,
+        sort=sort,
         skip=skip,
         limit=limit
     ).to_list()

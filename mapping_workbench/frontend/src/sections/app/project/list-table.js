@@ -1,4 +1,5 @@
-import {Fragment, useCallback, useState} from 'react';
+import {Fragment, useState} from 'react';
+import {useRouter} from "next/router";
 import PropTypes from 'prop-types';
 
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
@@ -17,20 +18,17 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import Tooltip from "@mui/material/Tooltip";
-import {Button} from "@mui/material";
+import Button from "@mui/material/Button";
 
 import {PropertyList} from 'src/components/property-list';
 import {PropertyListItem} from 'src/components/property-list-item';
-
 import {Scrollbar} from 'src/components/scrollbar';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
-
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {sessionApi} from "../../../api/session";
-import {useRouter} from "../../../hooks/use-router";
-import toast from "react-hot-toast";
 import {SeverityPill} from "../../../components/severity-pill";
 import {paths} from "../../../paths";
+import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 
 
 export const ListTable = (props) => {
@@ -51,46 +49,21 @@ export const ListTable = (props) => {
 
     const sessionProject = sessionApi.getSessionProject()
 
-    const handleItemToggle = useCallback((itemId) => {
-        setCurrentItem((prevItemId) => {
-            if (prevItemId === itemId) {
-                return null;
-            }
-
-            return itemId;
-        });
-    }, []);
+    const handleItemToggle = itemId => setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
 
     const handleSelectAction = async (itemId, section) => {
-            const loadingToast = toast.loading('Selecting project...');
+            const toastId = toastLoad('Selecting project...');
             sessionApi.setSessionProject(itemId)
                 .then(() => {
-                    toast.success('Package selected')
+                    toastSuccess('Package selected', toastId)
                      router.push({
                          pathname: paths.app[section.section].view,
                          query: {id: itemId}
                     });
+                    router.reload()
                 })
-                .catch(() => {
-                    toast.error('Something went wrong!');
-                })
-                .finally(() => toast.dismiss(loadingToast))
+                .catch(err => toastError(err, toastId))
         }
-
-    // const handleItemClose = useCallback(() => {
-    //     setCurrentItem(null);
-    // }, []);
-
-    // const handleItemUpdate = useCallback(() => {
-    //     setCurrentItem(null);
-    //     toast.success('Item updated');
-    // }, []);
-
-    // const handleItemDelete = useCallback(() => {
-
-    //     toast.error('Item cannot be deleted');
-    // }, []);
-
 
     return (
         <div>

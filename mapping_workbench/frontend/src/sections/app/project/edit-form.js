@@ -1,10 +1,9 @@
-import toast from 'react-hot-toast';
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
 
 import Button from '@mui/material/Button';
-import { MenuItem } from '@mui/material';
+import MenuItem from '@mui/material/MenuItem';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
@@ -17,6 +16,7 @@ import {RouterLink} from 'src/components/router-link';
 import {useRouter} from 'src/hooks/use-router';
 import {FormTextField} from "../../../components/app/form/text-field";
 import {FormTextArea} from "../../../components/app/form/text-area";
+import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 
 
 export const EditForm = (props) => {
@@ -70,6 +70,7 @@ export const EditForm = (props) => {
         }),
 
         onSubmit: async (values, helpers) => {
+            const toastId = toastLoad(itemctx.isNew ? "Creating..." : "Updating...")
             try {
                 let response;
                 if (itemctx.isNew) {
@@ -80,7 +81,7 @@ export const EditForm = (props) => {
                 }
                 helpers.setStatus({success: true});
                 helpers.setSubmitting(false);
-                toast.success(`${sectionApi.SECTION_ITEM_TITLE} ${itemctx.isNew ? "created" : "updated"}`);
+                toastSuccess(`${sectionApi.SECTION_ITEM_TITLE} ${itemctx.isNew ? "Created" : "Updated"}`, toastId);
                 if (response) {
                     if (itemctx.isNew) {
                         router.push({
@@ -92,7 +93,7 @@ export const EditForm = (props) => {
                 }
             } catch (err) {
                 console.error(err);
-                toast.error('Something went wrong!');
+                toastError(err, toastId);
                 helpers.setStatus({success: false});
                 helpers.setErrors({submit: err.message});
                 helpers.setSubmitting(false);

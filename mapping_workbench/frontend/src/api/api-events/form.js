@@ -1,15 +1,17 @@
-import toast from "react-hot-toast";
 import {paths} from "../../paths";
+import {getToastId, toastError, toastSuccess} from "../../components/app-toast";
 
 export const onApiFormError = ((err, formHelpers) => {
-    toast.error('Something went wrong2: ' + err.message);
+    const toastId = getToastId()
+    toastError('Something went wrong: ' + err.message, toastId);
     formHelpers.setStatus({success: false});
     formHelpers.setErrors({submit: err.message});
     formHelpers.setSubmitting(false);
 });
 
 export const onApiFormSuccess = ((formHelpers, sectionApi, itemCtx) => {
-    toast.success(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemCtx.isNew ? "created" : "updated"));
+    const toastId = getToastId()
+    toastSuccess(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemCtx.isNew ? "created" : "updated"), toastId);
     formHelpers.setStatus({success: true});
     formHelpers.setSubmitting(false);
 });

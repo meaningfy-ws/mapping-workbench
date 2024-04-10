@@ -1,4 +1,3 @@
-import toast from 'react-hot-toast';
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
@@ -19,6 +18,7 @@ import {paths} from 'src/paths';
 import {useRouter} from 'src/hooks/use-router';
 
 import {FormTextField} from "../../../components/app/form/text-field";
+import {getToastId, toastError, toastSuccess} from "../../../components/app-toast";
 
 
 export const EditForm = (props) => {
@@ -44,6 +44,7 @@ export const EditForm = (props) => {
             is_syncable: Yup.boolean()
         }),
         onSubmit: async (values, helpers) => {
+            const toastId = getToastId()
             try {
                 let response;
                 values['is_syncable'] = values['is_syncable'] || false;
@@ -55,7 +56,7 @@ export const EditForm = (props) => {
                 }
                 helpers.setStatus({success: true});
                 helpers.setSubmitting(false);
-                toast.success(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "created" : "updated"));
+                toastSuccess(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "created" : "updated"), toastId);
                 if (response) {
                     if (itemctx.isNew) {
                         router.push({
@@ -67,7 +68,7 @@ export const EditForm = (props) => {
                 }
             } catch (err) {
                 console.error(err);
-                toast.error('Something went wrong!');
+                toastError(err, toastId);
                 helpers.setStatus({success: false});
                 helpers.setErrors({submit: err.message});
                 helpers.setSubmitting(false);
