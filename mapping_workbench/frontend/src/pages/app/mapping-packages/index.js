@@ -145,6 +145,7 @@ const Page = () => {
                     >
                         <Button
                             component={RouterLink}
+                            id="add_package_button"
                             href={paths.app[sectionApi.section].create}
                             startIcon={(
                                 <SvgIcon>
