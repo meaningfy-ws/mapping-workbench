@@ -7,7 +7,6 @@ Feature: Import Fields Registry
     Then Go Home
     Then I expand projects
 
-    When I click on project list
     Then I get redirected to projects list page
     Then I search for project
     Then I select project

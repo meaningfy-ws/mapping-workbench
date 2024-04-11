@@ -148,7 +148,7 @@ export const paths = {
                 index: '/app/fields-registry/elements',
                 //create: '/app/fields-registry/elements/create',
                 //edit: '/app/fields-registry/elements/[id]/edit',
-                view: '/app/fields-registry/elements/[id]/view',
+                view: (id) => `/app/fields-registry/elements/${id}/view`,
                 import: '/app/fields-registry/elements/import'
             }
         },
