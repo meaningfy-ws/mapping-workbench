@@ -1,6 +1,7 @@
 import { Given, When, Then} from 'cypress-cucumber-preprocessor/steps'
 
 const gitUrl = "https://github.com/OP-TED/eForms-SDK"
+const appURLPrefix = 'http://localhost:8000/api/v1/'
 const branchVersion = "1.9.1"
 const projectName = 'TEST_PROJECT'
 let sessionProject = ''
@@ -75,10 +76,31 @@ Then('I type branch name', () => {
 })
 
 When('I click on import button', () => {
-    cy.intercept('POST', 'http://localhost:8000/api/v1/fields_registry/import_eforms_from_github',).as('import')
+    cy.intercept('POST', appURLPrefix + 'fields_registry/import_eforms_from_github',).as('import')
     cy.get('#import').click()
 })
 
 Then('I get success import', () => {
     cy.wait('@import',{responseTimeout: 999999}).its('response.statusCode').should('eq', 200)
+})
+
+When('I click on fields registry elements', () => {
+    cy.intercept('GET', appURLPrefix + 'fields_registry/elements*',).as('getFields')
+    cy.get("#nav_fields\\ registry_elements").click()
+})
+
+Then('I get redirected to fields registry elements', () => {
+    cy.url().should('include','fields-registry/elements')
+})
+
+And('I receive fields', () => {
+    cy.wait('@getFields')
+})
+
+Then('I click on view button', () => {
+    cy.get('#view_button').click()
+})
+
+When('I get redirected to view page', () => {
+    cy.url().should('include','/view')
 })

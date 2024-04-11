@@ -24,3 +24,14 @@ Feature: Import Fields Registry
 
     When I click on import button
     Then I get success import
+
+  Scenario: View Fields Registry
+    Given Session Login
+    Then Go Home
+    Then I expand fields registry
+
+    When I click on fields registry elements
+    Then I get redirected to fields registry elements
+    And I receive fields
+
+    When I click on view button
