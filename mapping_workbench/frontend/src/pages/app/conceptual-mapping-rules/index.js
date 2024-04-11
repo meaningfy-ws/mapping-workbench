@@ -174,6 +174,7 @@ const Page = () => {
                         <Button
                             component={RouterLink}
                             href={paths.app[sectionApi.section].create}
+                            id="add-mapping-rules-button"
                             startIcon={(
                                 <SvgIcon>
                                     <PlusIcon/>

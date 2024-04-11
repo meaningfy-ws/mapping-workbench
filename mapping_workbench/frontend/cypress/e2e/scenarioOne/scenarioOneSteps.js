@@ -6,6 +6,8 @@ const gitUrl = "https://github.com/OP-TED/eForms-SDK"
 const branchVersion = "1.9.1"
 const project_name ='TEST_PROJECT'
 let sessionProject = ''
+const appURLPrefix = 'http://localhost:8000/api/v1/'
+
 Given('Go Home', () => {
     cy.visit('localhost:3000')
 })
@@ -47,12 +49,13 @@ Then('I type project name', () => {
 })
 
 When('I click create button', () => {
-    cy.intercept('POST', 'http://localhost:8000/api/v1/projects',).as('create')
+    cy.log(appURLPrefix + 'projects')
+    cy.intercept('POST', appURLPrefix + 'projects',).as('create')
     cy.get('#create_button').click()
 })
 
 Then('I get success created', () => {
-    cy.wait('@create').its('response.statusCode').should('eq',201)
+    cy.wait('@create',{responseTimeout: 10000}).its('response.statusCode').should('eq',201)
 })
 
 When('I click back to projects link', () => {
@@ -65,7 +68,7 @@ Then('I search for project', () => {
 })
 
 When('I select project', () => {
-    cy.intercept('POST', 'http://localhost:8000/api/v1/users/set_project_for_current_user_session',).as('select')
+    cy.intercept('POST', appURLPrefix + 'users/set_project_for_current_user_session',).as('select')
     cy.get('#select_button').click()
 })
 
@@ -99,7 +102,7 @@ Then('I type branch name', () => {
 })
 
 When('I click on import button', () => {
-    cy.intercept('POST', 'http://localhost:8000/api/v1/fields_registry/import_eforms_from_github',).as('import')
+    cy.intercept('POST', appURLPrefix + 'fields_registry/import_eforms_from_github',).as('import')
     cy.get('#import').click()
 })
 
@@ -138,7 +141,7 @@ Then('I get redirected to transform test data page', () => {
 })
 
 When('I click on run button for transform data', () => {
-    cy.intercept('POST', 'http://localhost:8000/api/v1/tasks/transform_test_data',).as('run_test_data')
+    cy.intercept('POST', appURLPrefix + 'tasks/transform_test_data',).as('run_test_data')
     cy.get('#run_button').click()
 })
 

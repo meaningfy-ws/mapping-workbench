@@ -3,6 +3,7 @@ import { Given, When, Then} from 'cypress-cucumber-preprocessor/steps'
 const gitUrl = "https://github.com/OP-TED/eForms-SDK"
 const branchVersion = "1.9.1"
 const projectName = 'TEST_PROJECT'
+const appURLPrefix = 'http://localhost:8000/api/v1/'
 let sessionProject = ''
 Given('Go Home', () => {
     cy.visit('localhost:3000')
@@ -22,7 +23,7 @@ Given('Session Login', () => {
     if(sessionProject) cy.window().then(win => win.sessionStorage.setItem('sessionProject',sessionProject))
 })
 
-Then('I expand projects', () => {
+Then('I click on projects', () => {
     cy.get('#nav_projects').click()
 })
 
@@ -55,14 +56,13 @@ Then('Check home title', () => {
 
 Given('I expand conceptual mappings', () => {
     cy.get('#nav_conceptual\\ mappings').click()
+    cy.intercept('GET', appURLPrefix + 'conceptual_mapping_rules*').as('rulesList')
 })
 
-When('I click on conceptual mappings list', () => {
-    cy.get("#nav_conceptual\\ mappings_list").click()
-})
 
 Then('I get redirected to  conceptual mappings list page', () => {
     cy.url().should('include','conceptual-mapping-rules') // => true
+    cy.wait('@rulesList')
 })
 
 Then('I type git url', () => {
@@ -90,3 +90,32 @@ When('I click on run button', () => {
 Then('I get success generate', () => {
     cy.wait('@run').its('response.statusCode').should('eq', 200)
 })
+
+When('I click on add button', () => {
+    cy.get('#add-mapping-rules-button').click()
+})
+
+Then('I get redirected to create mapping', () => {
+    cy.url().should('include','conceptual-mapping-rules/create')
+})
+
+When('I click on edit button', () => {
+    cy.get('#edit_button').click()
+})
+
+
+Then('I get redirected to edit rules', () => {
+    cy.url().should('include','/edit')
+})
+
+
+When('I click on delete button', () => {
+    cy.intercept('DELETE', appURLPrefix + 'conceptual_mapping_rules*').as('delete')
+    cy.get('#delete_button').click()
+    cy.get('#yes_dialog_button').click()
+})
+
+Then('I get Success delete', () => {
+    cy.wait('@delete')
+})
+
