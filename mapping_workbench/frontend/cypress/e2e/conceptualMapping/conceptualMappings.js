@@ -116,6 +116,6 @@ When('I click on delete button', () => {
 })
 
 Then('I get Success delete', () => {
-    cy.wait('@delete')
+    cy.wait('@delete').its('response.statusCode').should('eq', 200)
 })
 

@@ -169,6 +169,7 @@ const Page = () => {
                                     <PlusIcon/>
                                 </SvgIcon>
                             )}
+                            id="add_button"
                             variant="contained"
                         >
                             Add

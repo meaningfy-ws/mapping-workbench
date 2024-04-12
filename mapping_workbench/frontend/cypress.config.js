@@ -18,6 +18,7 @@ module.exports = defineConfig({
         "cypress/e2e/packages.feature",
         "cypress/e2e/transformTestData.feature",
         "cypress/e2e/conceptualMapping.feature",
+        "cypress/e2e/genericTripleMaps.feature",
         "cypress/e2e/cleanUp.feature",
         "cypress/e2e/removeTripleMap.feature",
     ],
