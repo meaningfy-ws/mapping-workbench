@@ -100,6 +100,9 @@ class ResourceFile(FileResource, StatefulObjectABC):
     def set_state(self, state: ResourceFileState):
         raise Exception("Setting the state of a Resource File is not supported.")
 
+    def guess_name(self) -> str:
+        return self.filename or self.title or str(self.id)
+
     class Settings(FileResource.Settings):
         name = "resource_files"
 
