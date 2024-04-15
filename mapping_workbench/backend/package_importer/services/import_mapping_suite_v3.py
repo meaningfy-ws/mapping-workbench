@@ -1,13 +1,11 @@
 import io
+import pathlib
 import tempfile
 import zipfile
 from typing import List
 
-import pandas as pd
 import numpy as np
-import pathlib
-
-from beanie import PydanticObjectId
+import pandas as pd
 
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.package_importer.adapters.v3.importer import PackageImporter
@@ -140,8 +138,9 @@ async def import_mapping_package(mapping_package_dir_path: pathlib.Path, project
     return package
 
 
-async def import_mapping_package_from_archive(file_content: bytes, project: Project,
-                                              user: User = None) -> MappingPackage:
+async def import_mapping_package_from_archive(
+        file_content: bytes, project: Project, user: User = None
+) -> MappingPackage:
     zf = zipfile.ZipFile(io.BytesIO(file_content))
     tempdir = tempfile.TemporaryDirectory()
     tempdir_name = tempdir.name
