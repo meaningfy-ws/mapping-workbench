@@ -5,7 +5,7 @@ const password = 'p4$$'
 const projectName = 'TEST_PROJECT'
 let sessionProject = ''
 const appURLPrefix = 'http://localhost:8000/api/v1/'
-const sparql_suite_name = 'test_suite'
+const shacl_suite_name = 'test_suite'
 
 Given('Session Login', () => {
     // Caching session when logging in via page visit
@@ -41,15 +41,15 @@ Then('I get success select', () => {
     cy.window().then(win => sessionProject = win.sessionStorage.getItem('sessionProject'))
 })
 
-//add sparql test suite
+//add shacl test suite
 
-Then('I click on Sparql Test Suites', () => {
-    cy.intercept('GET', appURLPrefix + 'sparql_test_suites*').as('get')
-    cy.get('#nav_sparql\\ test\\ suites').click()
+Then('I click on Shacl Test Suites', () => {
+    cy.intercept('GET', appURLPrefix + 'shacl_test_suites*').as('get')
+    cy.get('#nav_shacl\\ test\\ suites').click()
 })
 
-Then('I get redirected to Sparql Test Suites', () => {
-    cy.url().should('include','sparql-test-suites')
+Then('I get redirected to Shacl Test Suites', () => {
+    cy.url().should('include','shacl-test-suites')
     cy.wait('@get').its('response.statusCode').should('eq', 200)
 })
 
@@ -58,13 +58,13 @@ Then('I click on add button', () => {
 })
 
 Then('I get redirected to create page', () => {
-    cy.url().should('include','sparql-test-suites/create') // => true
+    cy.url().should('include','shacl-test-suites/create') // => true
 })
 
 
 Then('I enter name', () => {
     cy.intercept('POST', appURLPrefix + "shacl_test_suites").as('create')
-    cy.get("input[name=title]").clear().type(sparql_suite_name)
+    cy.get("input[name=title]").clear().type(shacl_suite_name)
     cy.get("button[type=submit]").click()
 })
 
@@ -76,7 +76,7 @@ Then('I successfully create suite', () => {
 // update
 
 Then('I search for suite', () => {
-    cy.get('input[type=text]').clear().type(sparql_suite_name+'{enter}')
+    cy.get('input[type=text]').clear().type(shacl_suite_name+'{enter}')
 })
 
 Then('I receive suite', () => {
@@ -93,7 +93,7 @@ Then('I get redirected to edit page', () => {
 
 Then('I enter updated name', () => {
     cy.intercept('PATCH', appURLPrefix + 'shacl_test_suites/*').as('update')
-    cy.get("input[name=title]").clear().type(sparql_suite_name + 1 +'{enter}')
+    cy.get("input[name=title]").clear().type(shacl_suite_name + 1 +'{enter}')
 })
 
 Then('I get success update', () => {
@@ -101,7 +101,7 @@ Then('I get success update', () => {
 })
 
 Then('I search for updated suite', () => {
-    cy.get('input[type=text]').clear().type(sparql_suite_name+1+'{enter}')
+    cy.get('input[type=text]').clear().type(shacl_suite_name+1+'{enter}')
 })
 
 Then('I click delete button', () => {

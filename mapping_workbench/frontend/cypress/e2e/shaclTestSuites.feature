@@ -12,22 +12,22 @@ Feature: Transform Test Data
     Then I get success select
     Then I get redirected to projects list page
 
-  Scenario: Add SPARQL Suite
+  Scenario: Add Shacl Suite
     Given Session Login
     Then Go Home
-    Then I click on Sparql Test Suites
-    Then I get redirected to Sparql Test Suites
+    Then I click on Shacl Test Suites
+    Then I get redirected to Shacl Test Suites
 
     When I click on add button
     Then I get redirected to create page
     Then I enter name
     Then I successfully create suite
 
-  Scenario: Update Sparql Test Suite
+  Scenario: Update Shacl Test Suite
     Given Session Login
     Then Go Home
-    Then I click on Sparql Test Suites
-    Then I get redirected to Sparql Test Suites
+    Then I click on Shacl Test Suites
+    Then I get redirected to Shacl Test Suites
 
     Then I search for suite
     Then I receive suite
@@ -37,11 +37,11 @@ Feature: Transform Test Data
     When I enter updated name
     Then I get success update
 
-  Scenario: Delete Sparql Test Suite
+  Scenario: Delete Shacl Test Suites
     Given Session Login
     Then Go Home
-    Then I click on Sparql Test Suites
-    Then I get redirected to Sparql Test Suites
+    Then I click on Shacl Test Suites
+    Then I get redirected to Shacl Test Suites
 
     Then I search for updated suite
     Then I receive suite
