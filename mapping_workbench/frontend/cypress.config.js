@@ -21,7 +21,8 @@ module.exports = defineConfig({
         "cypress/e2e/genericTripleMaps.feature",
         "cypress/e2e/cleanUp.feature",
         "cypress/e2e/removeTripleMap.feature",
-        "cypress/e2e/testDataSuites.feature"
+        "cypress/e2e/testDataSuites.feature",
+        "cypress/e2e/sparqlTestSuites.feature"
     ],
     video: false,
     // reporter: 'junit',
