@@ -11,18 +11,18 @@ Feature: Transform Test Data
     When I select project
     Then I get success select
     Then I get redirected to projects list page
-#
-#  Scenario: Process test data
-#    Given Session Login
-#    Then Go Home
-#    Then I click on test data suites
-#    Then I get redirected to test data suites
-#
-#    When I click on transform test data
-#    Then I get redirected to transform test data page
-#
-#    When I click on run button
-#    Then I get success transform
+
+  Scenario: Process test data
+    Given Session Login
+    Then Go Home
+    Then I click on test data suites
+    Then I get redirected to test data suites
+
+    When I click on transform test data
+    Then I get redirected to transform test data page
+
+    When I click on run button
+    Then I get success transform
 
   Scenario: Add Test Data
     Given Session Login
