@@ -22,9 +22,15 @@ TURTLE_SERIALIZATION_FORMAT = SerializationFormat.TURTLE
 class RMLMapperException(Exception):
     """Base class for RML Mapper exceptions"""
 
-    def __init__(self, message, error_trace):
+    def __init__(self, message=None, error_trace=None):
         super().__init__(message)
         self.error_trace = error_trace
+        rml_mapper_error = error_trace.partition("\n")[0]
+        if error_trace.startswith("Exception"):
+            rml_mapper_error = rml_mapper_error.partition(": ")[2]
+        else:
+            rml_mapper_error = rml_mapper_error.partition("- ")[2]
+        self.message = f'Error on running RML Mapper: {rml_mapper_error}'
 
 
 class RMLMapperABC(abc.ABC):
@@ -85,12 +91,9 @@ class RMLMapper(RMLMapperABC):
         )
         output, error = process.communicate()
         error = error.decode(encoding="utf-8")
+
         if error:
-            rml_mapper_error = error.partition("\n")[0]
-            if error.startswith("Exception"):
-                rml_mapper_error = rml_mapper_error.partition(": ")[2]
-            else:
-                rml_mapper_error = rml_mapper_error.partition("- ")[2]
-            raise RMLMapperException(message=f'Error on running RML Mapper: {rml_mapper_error}',
-                                     error_trace=error)
+            raise RMLMapperException(
+                error_trace=error
+            )
         return output.decode(encoding="utf-8")
