@@ -228,11 +228,16 @@ async def route_update_test_data_file_resource(
         transform_test_data = req_data['transform_test_data'] == 'true'
         del req_data['transform_test_data']
     data = TestDataFileResourceUpdateIn(**req_data)
-    return await update_test_data_file_resource(
-        test_data_file_resource, data,
-        user=user,
-        transform_test_data=transform_test_data
-    )
+    try:
+        return await update_test_data_file_resource(
+            test_data_file_resource, data,
+            user=user,
+            transform_test_data=transform_test_data
+        )
+    except RMLMapperException as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Server error")
 
 
 @router.get(
@@ -271,7 +276,7 @@ async def route_transform_test_data(
     try:
         return await transform_test_data_for_project(project_id=filters.project, user=user)
     except RMLMapperException as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     except Exception:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Server error")
 
@@ -318,7 +323,7 @@ async def route_transform_test_data_file_resource(
             save=save
         )
     except RMLMapperException as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     except Exception:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Server error")
 
