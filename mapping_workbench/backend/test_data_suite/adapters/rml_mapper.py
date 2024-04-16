@@ -30,7 +30,10 @@ class RMLMapperException(Exception):
             rml_mapper_error = rml_mapper_error.partition(": ")[2]
         else:
             rml_mapper_error = rml_mapper_error.partition("- ")[2]
-        self.message = f'Error on running RML Mapper: {rml_mapper_error}'
+        self.message = f'{rml_mapper_error}'
+
+    def __str__(self) -> str:
+        return f"Error on running RML Mapper: {self.message}"
 
 
 class RMLMapperABC(abc.ABC):
@@ -91,7 +94,6 @@ class RMLMapper(RMLMapperABC):
         )
         output, error = process.communicate()
         error = error.decode(encoding="utf-8")
-
         if error:
             raise RMLMapperException(
                 error_trace=error
