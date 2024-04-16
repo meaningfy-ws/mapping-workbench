@@ -24,10 +24,14 @@ const statusOptions = [
 export const FileCollectionListSearch = (props) => {
     const {onFiltersChange, ...other} = props;
     const queryRef = useRef(null);
+    const firstUpdate = useRef(true)
     const [chips, setChips] = useState([]);
 
     useEffect(() => {
-        handleChipsUpdate();
+        if(firstUpdate.current)
+            firstUpdate.current = false
+        else
+            handleChipsUpdate();
     }, [chips]);
 
 

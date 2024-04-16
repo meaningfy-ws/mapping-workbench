@@ -1,7 +1,6 @@
 import {useState} from "react";
 import {useTranslation} from "react-i18next";
 import nProgress from "nprogress";
-import {useFormik} from "formik";
 
 import {Play as RunIcon} from "@untitled-ui/icons-react/build/esm";
 import Button from "@mui/material/Button";
@@ -106,6 +105,7 @@ const Page = () => {
                         </SvgIcon>
                     )}
                     variant="contained"
+                    id="run_button"
                 >
                     Run
                 </Button>

@@ -21,11 +21,18 @@ module.exports = defineConfig({
         "cypress/e2e/genericTripleMaps.feature",
         "cypress/e2e/cleanUp.feature",
         "cypress/e2e/removeTripleMap.feature",
+        "cypress/e2e/testDataSuites.feature"
     ],
     video: false,
-    reporter: 'junit',
+    // reporter: 'junit',
     reporterOptions: {
-        mochaFile: 'results/test-results-[hash].xml',
+        // mochaFile: 'cypress/results/test-results-[hash].xml',
+        // toConsole: true,
+        // outputs: true,
+        // charts: true,
+        // reportPageTitle: 'Cypress Inline Reporter',
+        // embeddedScreenshots: true,
+        // inlineAssets: true, //Adds the asserts inline
     },
     retries: 1,
     defaultCommandTimeout: 60000,
