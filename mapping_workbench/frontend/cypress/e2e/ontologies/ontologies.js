@@ -41,7 +41,7 @@ Then('I get success select', () => {
     cy.window().then(win => sessionProject = win.sessionStorage.getItem('sessionProject'))
 })
 
-//add shacl test suite
+//add ontology
 
 Then('I click on Ontology', () => {
     cy.intercept('GET', appURLPrefix + 'ontology*').as('get')
