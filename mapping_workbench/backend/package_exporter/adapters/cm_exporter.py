@@ -100,7 +100,7 @@ class EFormsCMExporter(CMExporter):
                 cm_rule.source_structural_element.eforms_sdk_element_id,
                 cm_rule.source_structural_element.name,
                 cm_rule.source_structural_element.bt_id,
-                cm_rule.mapping_group_id,
+                #cm_rule.mapping_group_id,
                 cm_rule.source_structural_element.absolute_xpath,
                 "",  # TODO: Update Structural element or cm rule with XPath Condition
                 cm_rule.target_class_path,

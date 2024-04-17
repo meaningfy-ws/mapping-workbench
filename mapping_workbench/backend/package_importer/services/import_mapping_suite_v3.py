@@ -1,16 +1,15 @@
 import io
+import pathlib
 import tempfile
 import zipfile
 from typing import List
 
-import pandas as pd
 import numpy as np
-import pathlib
-
-from beanie import PydanticObjectId
+import pandas as pd
 
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.package_importer.adapters.v3.importer import PackageImporter
+from mapping_workbench.backend.package_importer.models.imported_mapping_suite import ImportedMappingGroup
 from mapping_workbench.backend.package_importer.models.imported_mapping_suite import MappingMetadata, \
     MappingConceptualRule, ImportedCollectionResource, ImportedFileResource, ImportedMappingSuite
 from mapping_workbench.backend.project.models.entity import Project
@@ -32,6 +31,7 @@ SHACL_RESULT_QUERY_FILE_NAME = "shacl_result_query.rq"
 METADATA_SHEET_NAME = "Metadata"
 RESOURCES_SHEET_NAME = "Resources"
 CONCEPTUAL_RULES_SHEET_NAME = "Rules"
+MAPPING_GROUPS_SHEET_NAME = "Mapping Groups"
 LIST_COLUMN_NAMES = ["eForms Subtype", "eForms SDK version"]
 
 
@@ -90,6 +90,16 @@ def import_mapping_conceptual_rules(conceptual_mappings_file_path: pathlib.Path)
     return mapping_conceptual_rules
 
 
+def import_mapping_groups(conceptual_mappings_file_path: pathlib.Path) -> List[ImportedMappingGroup]:
+    mapping_groups_df = pd.read_excel(conceptual_mappings_file_path, sheet_name=MAPPING_GROUPS_SHEET_NAME)
+    mapping_groups_df.replace({np.nan: None}, inplace=True)
+    mapping_groups: List[ImportedMappingGroup] = []
+    for mapping_group_dict in mapping_groups_df.to_dict(orient="records"):
+        mapping_groups.append(ImportedMappingGroup(**mapping_group_dict))
+
+    return mapping_groups
+
+
 def import_mapping_suite_from_file_system(mapping_suite_dir_path: pathlib.Path) -> ImportedMappingSuite:
     transformation_dir_path = mapping_suite_dir_path / TRANSFORMATION_DIR_NAME
     test_data_dir_path = mapping_suite_dir_path / TEST_DATA_DIR_NAME
@@ -114,6 +124,7 @@ def import_mapping_suite_from_file_system(mapping_suite_dir_path: pathlib.Path) 
 
     mapping_suite_metadata = import_mapping_metadata(conceptual_mappings_file_path)
     mapping_conceptual_rules = import_mapping_conceptual_rules(conceptual_mappings_file_path)
+    mapping_groups = import_mapping_groups(conceptual_mappings_file_path)
     mapping_transformation_resources = import_collection_resource(transformation_resources_dir_path)
     mapping_transformation_mappings = import_collection_resource(transformation_mappings_dir_path)
     mapping_test_data_resources = import_collection_resources(test_data_dir_path)
@@ -123,6 +134,7 @@ def import_mapping_suite_from_file_system(mapping_suite_dir_path: pathlib.Path) 
 
     mapping_suite = ImportedMappingSuite(metadata=mapping_suite_metadata,
                                          conceptual_rules=mapping_conceptual_rules,
+                                         mapping_groups=mapping_groups,
                                          transformation_resources=mapping_transformation_resources,
                                          transformation_mappings=mapping_transformation_mappings,
                                          test_data_resources=mapping_test_data_resources,
