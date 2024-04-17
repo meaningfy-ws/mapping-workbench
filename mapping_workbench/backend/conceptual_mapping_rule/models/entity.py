@@ -145,7 +145,8 @@ class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
             mapping_notes=self.mapping_notes,
             editorial_notes=self.editorial_notes,
             feedback_notes=self.feedback_notes,
-            sort_order=self.sort_order
+            sort_order=self.sort_order,
+            mapping_group_id=self.mapping_group_id,
         )
 
     def set_state(self, state: ConceptualMappingRuleState):
