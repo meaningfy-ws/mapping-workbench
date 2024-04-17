@@ -24,7 +24,8 @@ module.exports = defineConfig({
         "cypress/e2e/testDataSuites.feature",
         "cypress/e2e/sparqlTestSuites.feature",
         "cypress/e2e/shaclTestSuites.feature",
-        "cypress/e2e/ontologies.feature"
+        "cypress/e2e/ontologies.feature",
+        "cypress/e2e/resources.feature"
     ],
     video: false,
     // reporter: 'junit',
