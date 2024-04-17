@@ -1,21 +1,16 @@
 import {Given, Then, When} from "cypress-cucumber-preprocessor/steps";
 
-const username = 'admin@mw.com'
-const password = 'p4$$'
-const gitUrl = "https://github.com/OP-TED/eForms-SDK"
-const branchVersion = "1.9.1"
-const project_name ='TEST_PROJECT'
+const {username, password, homeURL, appURLPrefix, projectName, gitUrl, branchVersion} = Cypress.env()
 let sessionProject = ''
-const appURLPrefix = 'http://localhost:8000/api/v1/'
 
 Given('Go Home', () => {
-    cy.visit('localhost:3000')
+    cy.visit(homeURL)
 })
 
 Given('Session Login', () => {
     // Caching session when logging in via page visit
     cy.session([username,password], () => {
-        cy.visit('localhost:3000')
+        cy.visit(homeURL)
         cy.get('[name=username]').clear().type(username)
         cy.get('[name=password]').clear().type(password)
         cy.get('button[type="submit"]').click()
@@ -45,7 +40,7 @@ Then('I get redirected to projects create page', () => {
 })
 
 Then('I type project name', () => {
-    cy.get('input[name=title]').clear().type(project_name)
+    cy.get('input[name=title]').clear().type(projectName)
 })
 
 When('I click create button', () => {

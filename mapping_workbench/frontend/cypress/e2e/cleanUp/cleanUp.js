@@ -1,13 +1,11 @@
 import { Given, Then, And} from 'cypress-cucumber-preprocessor/steps'
 
-const project_name ='TEST_PROJECT'
+const {username, password, homeURL, projectName} = Cypress.env()
 
 Given('Session Login', () => {
     // Caching session when logging in via page visit
-    const username = 'admin@mw.com'
-    const password = 'p4$$'
     cy.session([username,password], () => {
-        cy.visit('localhost:3000')
+        cy.visit(homeURL)
         cy.get('[name=username]').clear().type(username)
         cy.get('[name=password]').clear().type(password)
         cy.get('button[type="submit"]').click()
@@ -30,7 +28,7 @@ Then('I receive projects', () => {
 
 And('I delete test project', () => {
 
-    cy.get('input[type=text]').clear().type(project_name + '{enter}')
+    cy.get('input[type=text]').clear().type(projectName + '{enter}')
     cy.wait('@getProjects').then(interception => {
         if (interception.response.statusCode === 200 && interception.response.body.count > 0) {
             cy.get("#delete_button").click()

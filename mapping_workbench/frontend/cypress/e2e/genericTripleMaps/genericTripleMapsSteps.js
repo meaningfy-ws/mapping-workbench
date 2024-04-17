@@ -1,20 +1,16 @@
 import {Given, Then, When} from "cypress-cucumber-preprocessor/steps";
 
-const username = 'admin@mw.com'
-const password = 'p4$$'
-const projectName ='TEST_PROJECT'
-
+const {username, password, homeURL, appURLPrefix, projectName, tripleMapFragment} = Cypress.env()
 let sessionProject = ''
-const tripleMapFragment = 'test.rml.ttl'
-const appURLPrefix = 'http://localhost:8000/api/v1/'
+
 Given('Go Home', () => {
-    cy.visit('localhost:3000')
+    cy.visit(homeURL)
 })
 
 Given('Session Login', () => {
     // Caching session when logging in via page visit
     cy.session([username,password], () => {
-        cy.visit('localhost:3000')
+        cy.visit(homeURL)
         cy.get('[name=username]').clear().type(username)
         cy.get('[name=password]').clear().type(password)
         cy.get('button[type="submit"]').click()

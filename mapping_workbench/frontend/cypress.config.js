@@ -3,6 +3,17 @@ const cucumber = require('cypress-cucumber-preprocessor').default;
 const { defineConfig } = require('cypress')
 
 module.exports = defineConfig({
+  env: {
+    username : 'admin@mw.com',
+    password : 'p4$$',
+    gitUrl : "https://github.com/OP-TED/eForms-SDK",
+    branchVersion : "1.9.1",
+    projectName : 'TEST_PROJECT',
+    appURLPrefix : 'http://localhost:8000/api/v1/',
+    homeURL : 'http://localhost:3000',
+    tripleMapFragment : 'test.rml.ttl',
+    packageFile : 'package_eforms_16_1.5.zip'
+  },
   e2e: {
     baseUrl: "http://localhost:3000",
     chromeWebSecurity: false,

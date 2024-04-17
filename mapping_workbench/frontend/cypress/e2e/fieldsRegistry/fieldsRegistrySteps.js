@@ -1,20 +1,16 @@
 import { Given, When, Then} from 'cypress-cucumber-preprocessor/steps'
 
-const gitUrl = "https://github.com/OP-TED/eForms-SDK"
-const appURLPrefix = 'http://localhost:8000/api/v1/'
-const branchVersion = "1.9.1"
-const projectName = 'TEST_PROJECT'
+const {username, password, homeURL, appURLPrefix, projectName, gitUrl, branchVersion} = Cypress.env()
 let sessionProject = ''
+
 Given('Go Home', () => {
-    cy.visit('localhost:3000')
+    cy.visit(homeURL)
 })
 
 Given('Session Login', () => {
     // Caching session when logging in via page visit
-    const username = 'admin@mw.com'
-    const password = 'p4$$'
     cy.session([username,password], () => {
-        cy.visit('localhost:3000')
+        cy.visit(homeURL)
         cy.get('[name=username]').clear().type(username)
         cy.get('[name=password]').clear().type(password)
         cy.get('button[type="submit"]').click()
