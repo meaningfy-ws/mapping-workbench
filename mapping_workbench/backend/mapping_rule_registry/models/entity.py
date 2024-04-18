@@ -70,7 +70,7 @@ class MappingGroupState(ObjectState):
 
 
 class MappingGroup(BaseProjectResourceEntity):
-    name: Indexed(str, unique=True)
+    name: Indexed(str, unique=True) = None
     class_uri: Optional[str] = None
     iterator_xpath: Optional[str] = None
     instance_uri_template: Optional[str] = None
