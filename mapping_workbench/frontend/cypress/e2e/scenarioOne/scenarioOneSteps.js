@@ -59,7 +59,7 @@ When('I click back to projects link', () => {
 
 //Select project
 Then('I search for project', () => {
-    cy.get('input[type=text]').clear().type(project_name+'{enter}')
+    cy.get('input[type=text]').clear().type(projectName + '{enter}')
 })
 
 When('I select project', () => {
@@ -185,7 +185,7 @@ Then('I click on transform test data', () => {
 })
 
 Then('I click on run button', () => {
-    cy.intercept('POST', 'http://localhost:8000/api/v1/conceptual_mapping_rules/tasks/generate_cm_assertions_queries',).as('run_conceptual_test_data')
+    cy.intercept('POST', appURLPrefix + 'conceptual_mapping_rules/tasks/generate_cm_assertions_queries',).as('run_conceptual_test_data')
     cy.get('#run_button').click()
 })
 
@@ -209,7 +209,7 @@ Then('I click on expand arrow', () => {
 })
 
 When('I click process button', () => {
-    cy.intercept('POST', 'http://localhost:8000/api/v1/package_processor/process',).as('process')
+    cy.intercept('POST', appURLPrefix + 'package_processor/process',).as('process')
     cy.get('#process_button').click()
 })
 
@@ -218,7 +218,7 @@ Then('I get processed', () => {
 })
 
 When('I click export latest button', () => {
-    cy.intercept('GET', 'http://localhost:8000/api/v1/package_exporter/export_latest_package_state*',).as('export')
+    cy.intercept('GET', appURLPrefix + 'package_exporter/export_latest_package_state*',).as('export')
     cy.get('#export_latest_button').click()
 })
 

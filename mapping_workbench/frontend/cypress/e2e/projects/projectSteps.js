@@ -1,19 +1,16 @@
 import {Given, Then, When} from "cypress-cucumber-preprocessor/steps";
 
+const {username, password, homeURL, appURLPrefix, projectName} = Cypress.env()
 
-const project_name ='TEST_PROJECT'
 const projectDescription = 'some description'
-const appURLPrefix = 'http://localhost:8000/api/v1/'
 
 
 Given('Go Home', () => {
-    cy.visit('localhost:3000')
+    cy.visit(homeURL)
 })
 
 Given('Session Login', () => {
     // Caching session when logging in via page visit
-    const username = 'admin@mw.com'
-    const password = 'p4$$'
     cy.session([username,password], () => {
         cy.visit('localhost:3000')
         cy.get('[name=username]').clear().type(username)
@@ -46,7 +43,7 @@ Then('I get redirected to projects create page', () => {
 
 
 Then('I type project name', () => {
-    cy.get('input[name=title]').clear().type(project_name)
+    cy.get('input[name=title]').clear().type(projectName)
 })
 
 When('I click create button', () => {
@@ -64,7 +61,7 @@ When('I click back to projects link', () => {
 
 Then('I search for project', () => {
     cy.intercept('GET', appURLPrefix + '/projects*',).as('get')
-    cy.get('input[type=text]').clear().type(project_name+'{enter}')
+    cy.get('input[type=text]').clear().type(projectName + '{enter}')
 })
 
 Then('I receive project', () => {

@@ -36,7 +36,7 @@ Then('I search for project', () => {
 })
 
 When('I select project', () => {
-    cy.intercept('POST', 'http://localhost:8000/api/v1/users/set_project_for_current_user_session',).as('select')
+    cy.intercept('POST', appURLPrefix + 'users/set_project_for_current_user_session',).as('select')
     cy.get('#select_button').click()
 })
 

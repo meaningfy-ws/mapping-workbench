@@ -28,7 +28,7 @@ Given('I go to packages', () => {
 
 
 Then('I get redirected to mapping_packages list page', () => {
-    cy.intercept('GET', 'http://localhost:8000/api/v1/mapping_packages*',).as('getPackages')
+    cy.intercept('GET', appURLPrefix + 'mapping_packages*',).as('getPackages')
     cy.title().should('eq','App: Mapping Packages List | Mapping Workbench')
 })
 
@@ -67,7 +67,7 @@ Then('I click on import button', () => {
 })
 
 Then('I click on upload button', () => {
-    cy.intercept('POST', 'http://localhost:8000/api/v1/package_importer/import/v3',).as('upload')
+    cy.intercept('POST', appURLPrefix + 'package_importer/import/v3',).as('upload')
     cy.get('#upload_button').click()
 })
 

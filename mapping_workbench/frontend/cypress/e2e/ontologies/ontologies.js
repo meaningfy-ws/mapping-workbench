@@ -97,7 +97,7 @@ Then('I get success update', () => {
     cy.wait('@update').its('response.statusCode').should('eq', 200)
 })
 
-Then('I search for updated suite', () => {
+Then('I search for updated ontology', () => {
     cy.get('input[type=text]').clear().type(ontology_name+1+'{enter}')
 })
 

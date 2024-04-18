@@ -1,16 +1,14 @@
 import { Given, When, Then} from 'cypress-cucumber-preprocessor/steps'
 
-const username = 'admin@mw.com'
-const password = 'p4$$'
-const projectName = 'TEST_PROJECT'
+const {username, password, homeURL, appURLPrefix, projectName} = Cypress.env()
+
 let sessionProject = ''
-const appURLPrefix = 'http://localhost:8000/api/v1/'
 const resource_name = 'test_resource'
 
 Given('Session Login', () => {
     // Caching session when logging in via page visit
     cy.session([username,password], () => {
-        cy.visit('localhost:3000')
+        cy.visit(homeURL)
         cy.get('[name=username]').clear().type(username)
         cy.get('[name=password]').clear().type(password)
         cy.get('button[type="submit"]').click()
@@ -20,7 +18,7 @@ Given('Session Login', () => {
 })
 
 Given('Go Home', () => {
-    cy.visit('localhost:3000')
+    cy.visit(homeURL)
 })
 
 Then('I get redirected to projects list page', () => {
@@ -100,7 +98,7 @@ Then('I get success update', () => {
     cy.wait('@update').its('response.statusCode').should('eq', 200)
 })
 
-Then('I search for updated suite', () => {
+Then('I search for updated resource', () => {
     cy.get('input[type=text]').clear().type(resource_name+1+'{enter}')
 })
 

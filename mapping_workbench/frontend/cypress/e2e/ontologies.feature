@@ -43,7 +43,7 @@ Feature: Transform Test Data
     Then I click on Ontology
     Then I get redirected to Ontologies
 
-    Then I search for ontology
+    Then I search for updated ontology
     Then I receive ontology
     Then I click delete button
     Then I get success delete

@@ -36,7 +36,7 @@ Then('I search for project', () => {
 })
 
 When('I select project', () => {
-    cy.intercept('POST', 'http://localhost:8000/api/v1/users/set_project_for_current_user_session',).as('select')
+    cy.intercept('POST', appURLPrefix + 'users/set_project_for_current_user_session',).as('select')
     cy.get('#select_button').click()
 })
 
@@ -79,7 +79,7 @@ Then('I get redirected to tasks', () => {
 })
 
 When('I click on run button', () => {
-    cy.intercept('POST', 'http://localhost:8000/api/v1/conceptual_mapping_rules/tasks/generate_cm_assertions_queries',).as('run')
+    cy.intercept('POST', appURLPrefix + 'conceptual_mapping_rules/tasks/generate_cm_assertions_queries',).as('run')
     cy.get('#run_button').click()
 })
 

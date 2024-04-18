@@ -1,6 +1,6 @@
 import { Given, Then, And} from 'cypress-cucumber-preprocessor/steps'
 
-const {username, password, homeURL, projectName} = Cypress.env()
+const {username, password, homeURL, projectName, appURLPrefix} = Cypress.env()
 
 Given('Session Login', () => {
     // Caching session when logging in via page visit
@@ -14,11 +14,11 @@ Given('Session Login', () => {
 })
 
 Given('Go Home', () => {
-    cy.visit('localhost:3000')
+    cy.visit(homeURL)
 })
 
 Then('Check home title', () => {
-    cy.intercept('GET', 'http://localhost:8000/api/v1/projects*',).as('getProjects')
+    cy.intercept('GET',  appURLPrefix, 'projects*',).as('getProjects')
     cy.title().should('eq','App: Projects List | Mapping Workbench')
 })
 
@@ -32,7 +32,7 @@ And('I delete test project', () => {
     cy.wait('@getProjects').then(interception => {
         if (interception.response.statusCode === 200 && interception.response.body.count > 0) {
             cy.get("#delete_button").click()
-            cy.intercept('DELETE', 'http://localhost:8000/api/v1/projects*',).as('deleteProjects')
+            cy.intercept('DELETE', appURLPrefix + 'projects*',).as('deleteProjects')
             cy.get('#yes_dialog_button').click();
 
         }

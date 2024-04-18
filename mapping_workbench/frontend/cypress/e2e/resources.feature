@@ -43,7 +43,7 @@ Feature: Transform Test Data
     Then I click on Resources
     Then I get redirected to Resources
 
-    Then I search for resource
+    Then I search for updated resource
     Then I receive resources
     Then I click delete button
     Then I get success delete

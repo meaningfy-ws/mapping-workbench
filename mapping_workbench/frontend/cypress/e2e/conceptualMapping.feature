@@ -36,7 +36,6 @@ Feature: Import Fields Registry
     Given Session Login
     Then Go Home
     Then I expand conceptual mappings
-    Then I get redirected to  conceptual mappings list page
 
     When I click on edit button
     Then I get redirected to edit rules
