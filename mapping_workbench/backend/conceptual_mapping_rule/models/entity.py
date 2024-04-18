@@ -139,6 +139,8 @@ class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
                 mapping_groups_states = [await mapping_group.get_state() for mapping_group in mapping_groups]
 
         return ConceptualMappingRuleState(
+            min_sdk_version=self.min_sdk_version,
+            max_sdk_version=self.max_sdk_version,
             source_structural_element=(
                 await source_structural_element.get_state()
             ) if source_structural_element else None,

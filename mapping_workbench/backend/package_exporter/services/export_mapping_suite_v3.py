@@ -26,10 +26,8 @@ async def export_latest_package_state(mapping_package: MappingPackage) -> bytes:
     """
 
     mapping_package_state: MappingPackageState = await get_latest_mapping_package_state(mapping_package)
-    print("sa dus")
     if not mapping_package_state:
         raise ResourceNotFoundException()
-    print("sa dus aici")
     project = await get_project(mapping_package.project.to_ref().id)
 
     return await export_package_state(

@@ -17,8 +17,7 @@ class CMExporterException(Exception):
 class CMExporter(ABC):
 
     @abstractmethod
-    def export(self, mapping_package: MappingPackage,
-               cm_rules: List[ConceptualMappingRule]) -> 'CMExporter':
+    def export(self, mapping_package: MappingPackage) -> 'CMExporter':
         pass
 
     @abstractmethod
@@ -30,6 +29,7 @@ class EFormsCMSheetsNameEnum(str, Enum):
     METADATA = "Metadata"
     RULES = "Rules"
     MAPPING_GROUPS = "Mapping Groups"
+    RESOURCES = "Resources"
 
 
 class EFormsCMExporter(CMExporter):
@@ -38,14 +38,17 @@ class EFormsCMExporter(CMExporter):
         self.metadata_table_name: str = EFormsCMSheetsNameEnum.METADATA.value
         self.rules_table_name: str = EFormsCMSheetsNameEnum.RULES.value
         self.mapping_groups_table_name: str = EFormsCMSheetsNameEnum.MAPPING_GROUPS.value
+        self.resources_table_name: str = EFormsCMSheetsNameEnum.RESOURCES.value
 
         self.cm_tables: dict = {
             self.metadata_table_name: None,
             self.rules_table_name: None,
-            self.mapping_groups_table_name: None
+            self.mapping_groups_table_name: None,
+            self.resources_table_name: None
         }
 
-    def _generate_metadata_table(self, mapping_package_state: MappingPackageState) -> DataFrame:
+    @classmethod
+    def generate_metadata_table(cls, mapping_package_state: MappingPackageState) -> DataFrame:
         meta_field_col_name = "Field"
         meta_value_col_name = "Value"
         meta_comment_col_name = "Comment"
@@ -75,7 +78,11 @@ class EFormsCMExporter(CMExporter):
 
         return metadata_table
 
-    def _generate_rules_table(self, cm_rules: List[ConceptualMappingRule]) -> DataFrame:
+    @classmethod
+    def generate_rules_table(cls, mapping_package_state: MappingPackageState) -> DataFrame:
+        def prepare_notes(notes: List) -> str:
+            return '; '.join(note.comment for note in notes) if notes else ""
+
         rules_table: DataFrame = pd.DataFrame(columns=[
             "Min SDK Version",
             "Max SDK Version",
@@ -92,43 +99,62 @@ class EFormsCMExporter(CMExporter):
             "Editorial Notes (private)",
             "Feedback Notes (private)"
         ])
-        cm_rules = sorted(cm_rules, key=lambda x: x.sort_order)
-        for iter, cm_rule in enumerate(cm_rules):
-            rules_table.loc[iter] = [
+        cm_rules = sorted(mapping_package_state.conceptual_mapping_rules, key=lambda x: x.sort_order)
+        for idx, cm_rule in enumerate(cm_rules):
+            mapping_groups_ids = map(lambda x: x.name, cm_rule.mapping_groups)
+            rules_table.loc[idx] = [
                 cm_rule.min_sdk_version,
                 cm_rule.max_sdk_version,
                 cm_rule.source_structural_element.eforms_sdk_element_id,
                 cm_rule.source_structural_element.name,
                 cm_rule.source_structural_element.bt_id,
-                #cm_rule.mapping_group_id,
+                ', '.join(mapping_groups_ids),
                 cm_rule.source_structural_element.absolute_xpath,
                 "",  # TODO: Update Structural element or cm rule with XPath Condition
                 cm_rule.target_class_path,
                 cm_rule.target_property_path,
                 cm_rule.status,
-                "",  # TODO: see how to work with comments #", ".join( [str(note) for note in cm_rule.mapping_notes] ),
-                "",  # ", ".join( [str(note) for note in cm_rule.editorial_notes] ),
-                "",  # ", ".join( [str(note) for note in cm_rule.feedback_notes] )
+                prepare_notes(cm_rule.mapping_notes),
+                prepare_notes(cm_rule.editorial_notes),
+                prepare_notes(cm_rule.feedback_notes)
             ]
         return rules_table
 
-    def _generate_mapping_groups_table(self, cm_rules: List[ConceptualMappingRule]) -> DataFrame:
-        metadata_table: DataFrame = pd.DataFrame(columns=[
+    @classmethod
+    def generate_mapping_groups_table(cls, mapping_package_state: MappingPackageState) -> DataFrame:
+        mapping_groups_table: DataFrame = pd.DataFrame(columns=[
             "Mapping Group ID",
             "Instance Type (ontology Class)",
-            "Related Node ID",
-            "Related Node XPath"
+            "Iterator XPath",
+            "Instance URI Template",
+            "TripleMap"
         ])
-        # TODO: Implement the logic to fill the metadata_table DataFrame
-        return metadata_table
+        for idx, mapping_group in enumerate(mapping_package_state.mapping_groups):
+            mapping_groups_table.loc[idx] = [
+                mapping_group.name,
+                mapping_group.class_uri,
+                mapping_group.iterator_xpath,
+                mapping_group.instance_uri_template,
+                mapping_group.triple_map.triple_map_uri if mapping_group.triple_map else ""
+            ]
+        return mapping_groups_table
 
-    def export(self,
-               mapping_package_state: MappingPackageState,
-               cm_rules: List[ConceptualMappingRule]) -> 'CMExporter':
+    @classmethod
+    def generate_resources_table(cls, mapping_package_state: MappingPackageState) -> DataFrame:
+        filename_col_name = "File name"
+        resources_table: DataFrame = pd.DataFrame(columns=[filename_col_name])
 
-        self.cm_tables[self.metadata_table_name] = self._generate_metadata_table(mapping_package_state)
-        self.cm_tables[self.rules_table_name] = self._generate_rules_table(cm_rules)
-        self.cm_tables[self.mapping_groups_table_name] = self._generate_mapping_groups_table(cm_rules)
+        for idx, resource in enumerate(mapping_package_state.resources):
+            resources_table.loc[idx] = [resource.filename]
+
+        return resources_table
+
+    def export(self, mapping_package_state: MappingPackageState) -> 'CMExporter':
+
+        self.cm_tables[self.metadata_table_name] = self.generate_metadata_table(mapping_package_state)
+        self.cm_tables[self.rules_table_name] = self.generate_rules_table(mapping_package_state)
+        self.cm_tables[self.mapping_groups_table_name] = self.generate_mapping_groups_table(mapping_package_state)
+        self.cm_tables[self.resources_table_name] = self.generate_resources_table(mapping_package_state)
 
         return self
 

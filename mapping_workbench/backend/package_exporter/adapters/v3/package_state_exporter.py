@@ -114,9 +114,6 @@ class PackageStateExporter:
         )
 
     async def add_conceptual_mappings(self):
-        # df = pd.DataFrame()
-        # with pd.ExcelWriter(self.package_transformation_path / CONCEPTUAL_MAPPINGS_FILE_NAME) as writer:
-        #     df.to_excel(writer)
         with open(self.package_transformation_path / CONCEPTUAL_MAPPINGS_FILE_NAME, 'wb') as f:
             excel_bytes: bytes = await generate_eforms_conceptual_mapping_excel_by_mapping_package_state(self.package_state)
             f.write(excel_bytes)
