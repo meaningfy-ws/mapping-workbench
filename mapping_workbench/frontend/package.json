@@ -112,6 +112,7 @@
   },
   "cypress-cucumber-preprocessor": {
     "nonGlobalStepDefinitions": true,
-    "step_definitions": "cypress/e2e/"
+    "step_definitions": "cypress/e2e/",
+    "commonPath" : "cypress/e2e/common"
   }
 }

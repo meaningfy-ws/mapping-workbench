@@ -17,9 +17,6 @@ Given('Session Login', () => {
     if(sessionProject) cy.window().then(win => win.sessionStorage.setItem('sessionProject',sessionProject))
 })
 
-Given('Go Home', () => {
-    cy.visit(homeURL)
-})
 
 Then('I get redirected to projects list page', () => {
     cy.title().should('eq','App: Projects List | Mapping Workbench')

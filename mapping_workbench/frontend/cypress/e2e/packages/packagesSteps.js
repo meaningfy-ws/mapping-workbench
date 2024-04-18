@@ -3,9 +3,6 @@ import { Given, When, Then} from 'cypress-cucumber-preprocessor/steps'
 const {username, password, homeURL, appURLPrefix, packageFile} = Cypress.env()
 const testPacakgeName = 'test_package'
 
-Given('Go Home', () => {
-    cy.visit(homeURL)
-})
 
 Given('Session Login', () => {
     // Caching session when logging in via page visit

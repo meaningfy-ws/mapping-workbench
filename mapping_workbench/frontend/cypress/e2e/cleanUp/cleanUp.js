@@ -13,10 +13,6 @@ Given('Session Login', () => {
     })
 })
 
-Given('Go Home', () => {
-    cy.visit(homeURL)
-})
-
 Then('Check home title', () => {
     cy.intercept('GET',  appURLPrefix, 'projects*',).as('getProjects')
     cy.title().should('eq','App: Projects List | Mapping Workbench')

@@ -4,11 +4,6 @@ const {username, password, homeURL, appURLPrefix, projectName} = Cypress.env()
 
 const projectDescription = 'some description'
 
-
-Given('Go Home', () => {
-    cy.visit(homeURL)
-})
-
 Given('Session Login', () => {
     // Caching session when logging in via page visit
     cy.session([username,password], () => {

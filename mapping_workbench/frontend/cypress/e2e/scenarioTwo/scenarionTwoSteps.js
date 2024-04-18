@@ -5,9 +5,6 @@ const {username, password, homeURL, appURLPrefix} = Cypress.env()
 const tripleMapFragment = 'test.rml.ttl'
 let sessionProject = ''
 
-Given('Go Home', () => {
-    cy.visit('localhost:3000')
-})
 
 Given('Session Login', () => {
     // Caching session when logging in via page visit

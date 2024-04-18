@@ -3,10 +3,6 @@ import {Given, Then, When} from "cypress-cucumber-preprocessor/steps";
 const {username, password, homeURL, appURLPrefix, projectName, tripleMapFragment} = Cypress.env()
 let sessionProject = ''
 
-Given('Go Home', () => {
-    cy.visit(homeURL)
-})
-
 Given('Session Login', () => {
     // Caching session when logging in via page visit
     cy.session([username,password], () => {

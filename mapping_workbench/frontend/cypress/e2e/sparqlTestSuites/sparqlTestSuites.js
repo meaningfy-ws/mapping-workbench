@@ -18,10 +18,6 @@ Given('Session Login', () => {
     if(sessionProject) cy.window().then(win => win.sessionStorage.setItem('sessionProject',sessionProject))
 })
 
-Given('Go Home', () => {
-    cy.visit(homeURL)
-})
-
 Then('I get redirected to projects list page', () => {
     cy.title().should('eq','App: Projects List | Mapping Workbench')
 })
@@ -62,7 +58,7 @@ Then('I get redirected to create page', () => {
 
 
 Then('I enter name', () => {
-    cy.intercept('POST', appURLPrefix + "shacl_test_suites").as('create')
+    cy.intercept('POST', appURLPrefix + "sparql_test_suites").as('create')
     cy.get("input[name=title]").clear().type(sparql_suite_name)
     cy.get("button[type=submit]").click()
 })
@@ -91,7 +87,7 @@ Then('I get redirected to edit page', () => {
 })
 
 Then('I enter updated name', () => {
-    cy.intercept('PATCH', appURLPrefix + 'shacl_test_suites/*').as('update')
+    cy.intercept('PATCH', appURLPrefix + 'sparql_test_suites/*').as('update')
     cy.get("input[name=title]").clear().type(sparql_suite_name + 1 +'{enter}')
 })
 

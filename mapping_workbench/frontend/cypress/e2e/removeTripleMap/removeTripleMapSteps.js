@@ -15,9 +15,6 @@ Given('Session Login', () => {
     })
 })
 
-Given('Go Home', () => {
-    cy.visit(homeURL)
-})
 
 Then('Check home title', () => {
     cy.title().should('eq','App: Projects List | Mapping Workbench')
