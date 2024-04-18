@@ -114,7 +114,7 @@
         }
     </style>
 </head>
-<h1>SPARQL Validation Summary Report</h1>
+<h1>SHACL Validation Summary Report</h1>
 <hr>
 <h2>Report details: </h2>
 <table class="dataTable report-details">
@@ -133,55 +133,31 @@
     <thead class="center aligned">
     <tr>
         <th>Test Suite</th>
-        <th class="center">Conforms</th>
         <th>Result Path</th>
         {% for result_value in result_values %}
-            <th class="center"><span class="strong {{ result_value }}">{{ result_value }}</span></th>
+            <th><span class="strong {{ result_value }}">{{ result_value }}</span></th>
         {%  endfor %}
     </tr>
     </thead>
     <tbody>
-    {% for result in validation_results %}
+    {% for result in summary.results %}
         <tr>
-            <td>{{ result.test_suite_identifier }}</td>
-            <td class="center">
-                <div><span class="strong{% if result.conforms.count > 0 %} success{% endif %}">{{ result.conforms.count }}</span></div>
-                {% if result.conforms.count > 0 %}
-                    <br>
-                    <button class="open-dialog">Details</button>
-                    <div class="dialog" title="{{ result.test_suite_identifier }}">
-                        {% if result.conforms.notices|length > 0 %}
-                            <h4>Notices:</h4>
-                            <ol>
-                                {% for notice in result.conforms.notices %}
-                                    <li>
-                                        <a href="file://{{ template_metadata.output_path }}/mappings/{{ notice.mapping_suite_identifier }}/output/{{ notice.path }}/test_suite_report" target="_blank">{{ notice.notice_id }}</a>
-                                        in <a href="file://{{ template_metadata.output_path }}/mappings/{{ notice.mapping_suite_identifier }}/output" target="_blank"><b>{{ notice.mapping_suite_identifier }}</b></a>
-                                        at <a href="file://{{ template_metadata.output_path }}/mappings/{{ notice.mapping_suite_identifier }}/output/{{ notice.path }}" target="_blank"><b>{{ notice.path }}</b></a>
-                                    </li>
-                                {% endfor %}
-                            </ol>
-                        {% endif %}
-                    </div>
-                {% endif %}
-            </td>
-            <td>{{ result.query.result_path }}</td>
+            <td>{{ result.shacl_suite.shacl_suite_id }}</td>
+            <td>{{ result.result_path }}</td>
             {% for result_value in result_values %}
-                <td class="center">
-                    {% set _value = result.result_severity[result_value] %}
-                    <div><span class="strong{% if _value.count > 0 %} {{ result_value }}{% endif %}">{{ _value.count }}</span></div>
+                <td>
+                    {% set _value = result.result[result_value] %}
+                    <span class="strong{% if _value.count > 0 %} {{ result_value }}{% endif %}">{{ _value.count }}</span>
                     {% if _value.count > 0 %}
-                        <br>
+                        &nbsp;
                         <button class="open-dialog">Details</button>
                         <div class="dialog" title="[{{ result_value|upper }}]">
-                            {% if _value.notices|length > 0 %}
-                                <h4>Notices:</h4>
+                            {% if _value.test_datas|length > 0 %}
+                                <h4>Test Datas:</h4>
                                 <ol>
-                                    {% for notice in _value.notices %}
+                                    {% for test_data in _value.test_datas %}
                                         <li>
-                                            <a href="file://{{ template_metadata.output_path }}/mappings/{{ notice.mapping_suite_identifier }}/output/{{ notice.path }}/test_suite_report" target="_blank">{{ notice.notice_id }}</a>
-                                            in <a href="file://{{ template_metadata.output_path }}/mappings/{{ notice.mapping_suite_identifier }}/output" target="_blank"><b>{{ notice.mapping_suite_identifier }}</b></a>
-                                            at <a href="file://{{ template_metadata.output_path }}/mappings/{{ notice.mapping_suite_identifier }}/output/{{ notice.path }}" target="_blank"><b>{{ notice.path }}</b></a>
+                                            <b>{{ test_data.test_data_id }}</b> in <b>{{ test_data.test_data_suite_id }}</b>
                                         </li>
                                     {% endfor %}
                                 </ol>

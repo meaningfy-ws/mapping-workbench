@@ -6,41 +6,69 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>XPATH Coverage Report</title>
     <link href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 
     <style type="text/css">
         body {
             font-family: Arial, sans-serif;
-                margin: 25px auto;
-                width: 80%;
+            margin: 25px auto;
+            width: 80%;
         }
+
         h2 {
             padding-top: 20px;
         }
+
         .error {
             color: red;
         }
+
         .success {
             color: green;
         }
+        .strong {
+            font-weight: bold;
+        }
+        .center {
+            text-align: center;
+        }
+        .dialog h4 {
+            margin: 0 0 10px;
+        }
+        .dialog ul, .dialog ol {
+            margin-top: 0;
+        }
+        .dialog {
+            display: none;
+        }
+        .dialog li {
+            margin-bottom: 8px;
+        }
+
         table.dataTable thead th {
             text-align: left;
             padding-left: 10px;
         }
+
         td.break-word {
             word-break: break-word;
             overflow-wrap: break-word;
         }
+
         table td {
             vertical-align: top;
         }
+
         div.clear {
             clear: both;
         }
+
         div.hr {
             height: 5px;
             margin: 5px 0;
             background: #ccc;
         }
+
         div.hr.small {
             height: 2px;
         }
@@ -61,33 +89,49 @@
     <li><b>Date created:</b> {{ created_at }}</li>
 </ul>
 {% if results|length > 0 %}
-<hr>
-<h2>XPATH Assertions</h2>
-<table class="display results" data-order='[[0, "asc"]]'>
-    <thead>
-    <tr>
-        <th>Form Field</th>
-        <th>XPATH</th>
-        <th>Found</th>
-        <th>Notices</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for item in results %}
-    <tr>
-        <td>{{ item.eforms_sdk_element_id }} - {{ item.eforms_sdk_element_title }}</td>
-        <td class="break-word">{{ item.eforms_sdk_element_xpath }}</td>
-        <td class="{% if item.is_covered %}success{% else %}error{% endif %}">{{ item.is_covered }}</td>
-        <td>{{ item.test_data_xpaths|length}}</td>
-    </tr>
-    {% endfor %}
-    </tbody>
-</table>
+    <hr>
+    <h2>XPATH Assertions</h2>
+    <table class="display results" data-order='[[0, "asc"]]'>
+        <thead>
+        <tr>
+            <th>Form Field</th>
+            <th>XPATH</th>
+            <th>Found</th>
+            <th>Notices</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in results %}
+            <tr>
+                <td>{{ item.eforms_sdk_element_id }} - {{ item.eforms_sdk_element_title }}</td>
+                <td class="break-word">{{ item.eforms_sdk_element_xpath }}</td>
+                <td class="{% if item.is_covered %}success{% else %}error{% endif %}">{{ item.is_covered }}</td>
+                <td>
+                    {% set _count = item.test_data_xpaths|length %}
+                    <span class="strong">{{ _count }}</span>
+                    {% if _count > 0 %}
+                        &nbsp;
+                        <button class="open-dialog">Details</button>
+                        <div class="dialog" title="Test Datas">
+                            <ol>
+                                {% for test_data in item.test_data_xpaths %}
+                                    <li>
+                                        <b>{{ test_data.test_data_id }}</b> in <b>{{ test_data.test_data_suite_id }}</b>
+                                    </li>
+                                {% endfor %}
+                            </ol>
+                        </div>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endif %}
 <hr>
 </body>
 </html>
-<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.4/js/dataTables.buttons.min.js"></script>
@@ -103,7 +147,7 @@
                 details: true
             },
             columnDefs: [
-                { "width": "50%", "targets": [1] }
+                {"width": "50%", "targets": [1]}
             ]
         });
 
@@ -115,6 +159,24 @@
             responsive: {
                 details: true
             }
+        });
+
+        $(document).on('click', '.open-dialog', function () {
+            $dialog = $(this).next('.dialog');
+            $dialog.dialog({
+                width: 800,
+                modal: true,
+                buttons: {
+                    "Close": function(event, ui) {
+                        $dialog.dialog('destroy');
+                    }
+                },
+                close: function(event, ui) {
+                    $dialog.dialog('destroy');
+                }
+            })
+            $dialog.dialog('open');
+            return false;
         });
     });
 

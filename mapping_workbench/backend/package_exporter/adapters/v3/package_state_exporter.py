@@ -195,6 +195,19 @@ class PackageStateExporter:
                 df = pd.DataFrame(export_dict_list)
                 df.to_csv(path / f"{filename}.csv")
 
+                html_report = MappingPackageReporter.sparql_html_report(data.validation.sparql)
+                self.write_to_file(path / f"{filename}.html", html_report)
+
+    def add_validation_summary_report(self, path: Path, data: TestDataValidation, filename: str):
+        if data.validation.shacl:
+            validation_summary_result = data.validation.model_dump()
+            summary_str = json.dumps(validation_summary_result, indent=4, default=str)
+            self.write_to_file(path / f"{filename}.json", summary_str)
+
+            html_report = MappingPackageReporter.validation_summary_html_report(data.validation)
+
+            self.write_to_file(path / f"{filename}.html", html_report)
+
     def add_sparql_summary_report(self, path: Path, data: TestDataValidation, filename: str):
         if data.validation.sparql:
             sparql_validation_result = data.validation.sparql.model_dump()
@@ -227,6 +240,9 @@ class PackageStateExporter:
                 df = pd.DataFrame(export_dict_list)
                 df.to_csv(path / f"{filename}.csv")
 
+                html_report = MappingPackageReporter.sparql_summary_html_report(data.validation.sparql)
+                self.write_to_file(path / f"{filename}.html", html_report)
+
     async def add_output(self):
         self.add_xpath_report(self.package_output_path, self.package_state, "xpath_coverage_report")
         self.add_shacl_report(self.package_output_path, self.package_state, "shacl_summary_report", True)
@@ -257,3 +273,7 @@ class PackageStateExporter:
                 self.add_xpath_report(test_data_reports_output_path, test_data, "xpath_coverage_report")
                 self.add_sparql_report(test_data_reports_output_path, test_data, "sparql_validation_report")
                 self.add_shacl_report(test_data_reports_output_path, test_data, "shacl_validation_report")
+
+        self.add_validation_summary_report(
+            self.package_output_path, self.package_state, "validation_summary_report"
+        )

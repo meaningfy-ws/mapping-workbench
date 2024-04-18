@@ -1,4 +1,5 @@
 {% set result_values = ['valid', 'unverifiable', 'warning', 'invalid', 'error', 'unknown'] %}
+{% set validation_results = summary %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -6,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{% include '_ms_meta_title_pre.jinja2' %}SPARQL Validation Summary Report</title>
+    <title>SPARQL Validation Summary Report</title>
     <link href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <style type="text/css">
@@ -110,41 +111,8 @@
     <tbody>
         <tr>
             <th>Date created</th>
-            <td>{{ created }}</td>
+            <td>{{ created_at }}</td>
         </tr>
-        {% if mapping_suite_ids %}
-        <tr>
-            <th>Mapping Suites</th>
-            <td>{{ mapping_suite_ids|join("<br>") }}</td>
-        </tr>
-        {% endif %}
-        {% if test_suite_ids %}
-        <tr>
-            <th>Test Suites</th>
-            <td>{{ test_suite_ids|join("<br>") }}</td>
-        </tr>
-        {% endif %}
-        {% if notices %}
-        <tr>
-            {% set notice_ids = notices|map(attribute='notice_id')|unique|list %}
-            {% set nr_notices = notice_ids|length %}
-            {% if nr_notices > 1 %}
-                <th>Notice identifiers ({{ nr_notices }})</th>
-            <td><div data-role="collapsible" data-state="collapsed"
-                class="collapsible-wrapper">
-                <h4><a href="#"></a></h4>
-                <div class="ui-collapsible-content">
-                    {% for notice_id in notice_ids %}
-                        {{ notice_id }}<br>
-                    {% endfor %}
-                </div>
-            </div></td>
-            {% elif nr_notices == 1 %}
-                <th>Notice identifier</th>
-                <td>{{ notice_ids[0] }}</td>
-            {% endif %}
-        </tr>
-        {% endif %}
     </tbody>
     </table>
 
@@ -160,7 +128,7 @@
             <tbody>
             {% for _value in result_values  %}
             <tr>
-                {% set _results = validation_results|map(attribute="aggregate")|map(attribute=_value)|map(attribute="count")|sum %}
+                {% set _results = validation_results|map(attribute="result")|map(attribute=_value)|map(attribute="count")|sum %}
                 <td class="strong {{ _value }}">{{ _value }}</td>
                 <td>{{ _results }}</td>
             </tr>
@@ -173,7 +141,6 @@
      <thead class="center aligned">
         <tr>
             <th>Form Field</th>
-            <th>Test Suite</th>
             <th>Query</th>
             {% for result_value in result_values %}
                 <th><span class="strong {{ result_value }}">{{ result_value }}</span></th>
@@ -184,24 +151,21 @@
         {% for result in validation_results %}
             <tr>
                 <td>{{ result.query.title }}</td>
-                <td>{{ result.test_suite_identifier }}</td>
-                <td>{{ result.query.query | e | replace('\n', '<br>') }}</td>
+                <td>{{ result.query.content | e | replace('\n', '<br>') }}</td>
                 {% for result_value in result_values %}
                     <td class="center">
-                        {% set _aggregate = result.aggregate[result_value] %}
+                        {% set _aggregate = result.result[result_value] %}
                         <div><span class="strong{% if _aggregate.count > 0 %} {{ result_value }}{% endif %}">{{ _aggregate.count }}</span></div>
                         {% if _aggregate.count > 0 %}
                         <br>
                         <button class="open-dialog">Details</button>
                         <div class="dialog" title="[{{ result_value|upper }}] {{ result.query.title }}">
-                            {% if _aggregate.notices|length > 0 %}
-                            <h4>Notices:</h4>
+                            {% if _aggregate.test_datas|length > 0 %}
+                            <h4>Test Datas:</h4>
                             <ol>
-                                {% for notice in _aggregate.notices %}
+                                {% for test_data in _aggregate.test_datas %}
                                     <li>
-                                        <a href="file://{{ template_metadata.output_path }}/mappings/{{ notice.mapping_suite_identifier }}/output/{{ notice.path }}/test_suite_report" target="_blank">{{ notice.notice_id }}</a>
-                                        in <a href="file://{{ template_metadata.output_path }}/mappings/{{ notice.mapping_suite_identifier }}/output" target="_blank"><b>{{ notice.mapping_suite_identifier }}</b></a>
-                                        at <a href="file://{{ template_metadata.output_path }}/mappings/{{ notice.mapping_suite_identifier }}/output/{{ notice.path }}" target="_blank"><b>{{ notice.path }}</b></a>
+                                        <b>{{ test_data.test_data_id }}</b> in <b>{{ test_data.test_data_suite_id }}</b>
                                     </li>
                                 {% endfor %}
                             </ol>
