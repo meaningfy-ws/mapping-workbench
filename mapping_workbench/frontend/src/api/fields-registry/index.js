@@ -16,6 +16,7 @@ class FieldsRegistryApi extends SectionApi {
 
     constructor() {
         super("fields_registry");
+        this.isProjectResource = true;
     }
 
     importEFormsFromGithub(request) {
