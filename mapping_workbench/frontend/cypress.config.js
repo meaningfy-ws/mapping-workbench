@@ -37,7 +37,10 @@ module.exports = defineConfig({
         "cypress/e2e/shaclTestSuites.feature",
         "cypress/e2e/ontologies.feature",
         "cypress/e2e/resources.feature",
-        "cypress/e2e/specificTripleMaps.feature"
+        "cypress/e2e/specificTripleMaps.feature",
+        "cypress/e2e/termValidator.feature",
+        "cypress/e2e/sparqlQueries.feature"
+
     ],
     video: false,
     // reporter: 'junit',

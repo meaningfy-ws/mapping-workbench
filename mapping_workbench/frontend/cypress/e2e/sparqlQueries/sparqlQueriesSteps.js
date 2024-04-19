@@ -1,9 +1,8 @@
 import { Given, When, Then} from 'cypress-cucumber-preprocessor/steps'
 
-
 const {username, password, homeURL, appURLPrefix, projectName} = Cypress.env()
-let sessionProject = ''
 
+let sessionProject = ''
 
 Given('Session Login', () => {
     // Caching session when logging in via page visit
@@ -17,12 +16,13 @@ Given('Session Login', () => {
     if(sessionProject) cy.window().then(win => win.sessionStorage.setItem('sessionProject',sessionProject))
 })
 
+
 Then('I get redirected to projects list page', () => {
     cy.title().should('eq','App: Projects List | Mapping Workbench')
 })
 
 Then('I search for project', () => {
-    cy.get('input[type=text]').clear().type(projectName+'{enter}')
+    cy.get('input[type=text]').clear().type(projectName + '{enter}')
 })
 
 When('I select project', () => {
@@ -35,24 +35,27 @@ Then('I get success select', () => {
     cy.window().then(win => sessionProject = win.sessionStorage.getItem('sessionProject'))
 })
 
-Then('I expand tasks', () => {
+
+Then('I expand Tasks', () => {
     cy.get('#nav_tasks').click()
 })
 
-When('I click on transform test data', () => {
-    cy.get("#nav_tasks_transform\\ test\\ data").click()
+Then('I click on SPARQL Queries', () => {
+    cy.get('#nav_tasks_sparql\\ queries').click()
 })
 
-Then('I get redirected to transform test data page', () => {
-    cy.url().should('include','tasks/transform_test_data') // => true
-    cy.title().should('eq','App: Task Transform Test Data | Mapping Workbench')
+Then('I get redirected to SPARQL Queries', () => {
+    cy.url().should('include','tasks/generate_cm_assertions_queries')
+    cy.title().should('eq','App: Task Generate CM Assertions Queries | Mapping Workbench')
 })
+
 
 Then('I click on run button', () => {
-    cy.intercept('POST', appURLPrefix + 'tasks/transform_test_data',).as('run_test_data')
+    cy.intercept('POST', appURLPrefix + 'tasks/generate_cm_assertions_queries',).as('run_generate_cm_assertions_queries')
     cy.get('#run_button').click()
 })
 
-Then('I get success transform', () => {
-    cy.wait('@run_test_data',{responseTimeout: 999999}).its('response.statusCode').should('eq', 200)
+Then('I get success result', () => {
+    cy.wait('@run_generate_cm_assertions_queries',{responseTimeout: 999999}).its('response.statusCode').should('eq', 200)
 })
+
