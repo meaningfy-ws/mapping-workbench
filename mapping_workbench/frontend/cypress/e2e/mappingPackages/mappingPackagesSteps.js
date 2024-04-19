@@ -15,21 +15,16 @@ Given('Session Login', () => {
     })
 })
 
-Then('Check home title', () => {
-    cy.title().should('eq','App: Projects List | Mapping Workbench')
-})
-
-Given('I go to packages', () => {
+Given('I go to Mapping Packages', () => {
     cy.get('#nav_mapping\\ packages').click()
 })
 
-
-Then('I get redirected to mapping_packages list page', () => {
+Then('I get redirected to Mapping Packages list page', () => {
     cy.intercept('GET', appURLPrefix + 'mapping_packages*',).as('getPackages')
     cy.title().should('eq','App: Mapping Packages List | Mapping Workbench')
 })
 
-Then('I receive packages', () => {
+Then('I receive Mapping Packages', () => {
     cy.wait('@getPackages').its('response.statusCode').should('eq',200)
 })
 
@@ -38,15 +33,15 @@ When('I expand first package details', () => {
 })
 
 
-When('I click on add packages button', () => {
+When('I click on add Mapping Packages button', () => {
     cy.get("#add_package_button").click()
 })
 
-Then('I get redirected to mapping_packages create page', () => {
+Then('I get redirected to Mapping Packages create page', () => {
     cy.title().should('eq','App: Mapping Package Create | Mapping Workbench')
 })
 
-When('I click on packages import', () => {
+When('I click on Mapping Packages import', () => {
     cy.get("#import_package_button").click()
 })
 
@@ -86,11 +81,11 @@ Then('I get success create', () => {
     cy.wait('@create')
 })
 
-Then('I search for package', () => {
+Then('I search for Mapping Package', () => {
     cy.get('input[type=text]').clear().type(testPacakgeName+'{enter}')
 })
 
-When('I edit package', () => {
+When('I edit Mapping Package', () => {
     cy.get('#edit_button').click()
 })
 
@@ -103,11 +98,11 @@ Then('I get success update', () => {
     cy.wait('@update')
 })
 
-Then('I search for updated package', () => {
+Then('I search for updated Mapping Package', () => {
     cy.get('input[type=text]').clear().type(testPacakgeName + 1 +'{enter}')
 })
 
-When('I delete package', () => {
+When('I delete Mapping Package', () => {
     cy.intercept('DELETE',appURLPrefix + 'mapping_packages/*').as('delete')
     cy.get('#delete_button').click()
 })

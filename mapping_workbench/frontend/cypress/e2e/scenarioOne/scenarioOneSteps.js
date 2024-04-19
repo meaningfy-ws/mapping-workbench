@@ -142,11 +142,11 @@ Then('I get success generate', () => {
 })
 
 
-//importing packages
-Given('I go to packages', () => {
+//importing mappingPackages
+Given('I go to mappingPackages', () => {
     cy.get('#nav_mapping\\ packages').click()
 })
-When('I click on packages import', () => {
+When('I click on mappingPackages import', () => {
     cy.get("#import_package_button").click()
 })
 
@@ -197,7 +197,7 @@ Then('I get redirected to mapping_packages list page', () => {
     cy.title().should('eq','App: Mapping Packages List | Mapping Workbench')
 })
 
-Then('I receive packages', () => {
+Then('I receive mappingPackages', () => {
     cy.wait('@getPackages').its('response.statusCode').should('eq',200)
 })
 

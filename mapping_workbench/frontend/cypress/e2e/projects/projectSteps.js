@@ -19,7 +19,7 @@ Then('I click on projects', () => {
     cy.get('#nav_projects').click()
 })
 
-When('I click on packages list', () => {
+When('I click on mappingPackages list', () => {
     cy.get("#nav_projects_list").click()
 })
 

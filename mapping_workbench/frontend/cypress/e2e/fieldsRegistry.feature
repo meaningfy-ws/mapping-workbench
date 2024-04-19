@@ -5,7 +5,7 @@ Feature: Import Fields Registry
   Scenario: Select Project
     Given Session Login
     Then Go Home
-    Then I expand projects
+    Then I click on projects
 
     Then I get redirected to projects list page
     Then I search for project

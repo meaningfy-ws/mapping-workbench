@@ -28,9 +28,8 @@ Feature: Import Fields Registry
     Given Session Login
     Then Go Home
     Then I expand conceptual mappings
-
-    When I click on add button
     Then I get redirected to create mapping
+    When I click on add button
 
   Scenario: Edit Conceptual mapping
     Given Session Login
