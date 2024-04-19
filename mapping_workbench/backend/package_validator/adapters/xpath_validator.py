@@ -47,10 +47,10 @@ class XPATHValidator(TestDataValidator):
     @classmethod
     def check_xpath_expression(cls, xpath_expression: str, xp: PyXPathProcessor) -> bool:
         try:
-            item = xp.evaluate(xpath_expression)
-            print("K :: ", item.size, item.item_at(0).get_string_value())
+            item = xp.evaluate_single(xpath_expression)
             return True if item else False
-        except PySaxonApiError:
+        except PySaxonApiError as e:
+            print("KERR :: ", str(e))
             return False
 
     def get_unique_xpaths(self, xml_content, xpath_expression) -> List[XPathAssertionEntry]:
@@ -60,7 +60,6 @@ class XPATHValidator(TestDataValidator):
         xpaths = []
 
         xp = self.init_xp_processor(xml_content)
-
         if xpath_expression not in unique_xpaths and self.check_xpath_expression(xpath_expression, xp):
             unique_xpaths.add(xpath_expression)
 
