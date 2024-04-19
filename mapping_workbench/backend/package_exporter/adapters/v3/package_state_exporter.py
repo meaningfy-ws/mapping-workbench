@@ -11,12 +11,12 @@ from mapping_workbench.backend.package_exporter.adapters.mapping_package_hasher 
 from mapping_workbench.backend.package_exporter.adapters.mapping_package_reporter import MappingPackageReporter
 from mapping_workbench.backend.package_exporter.models.exported_mapping_suite import EFormsConstraints, \
     MappingMetadataExport, MappingMetadataConstraints
-
+from mapping_workbench.backend.package_exporter.services.export_conceptual_mapping import \
+    generate_eforms_conceptual_mapping_excel_by_mapping_package_state
 from mapping_workbench.backend.package_importer.services.import_mapping_suite_v3 import TEST_DATA_DIR_NAME, \
     TRANSFORMATION_DIR_NAME, TRANSFORMATION_MAPPINGS_DIR_NAME, TRANSFORMATION_RESOURCES_DIR_NAME, VALIDATION_DIR_NAME, \
     SHACL_VALIDATION_DIR_NAME, SPARQL_VALIDATION_DIR_NAME, CONCEPTUAL_MAPPINGS_FILE_NAME, METADATA_FILE_NAME, \
     OUTPUT_DIR_NAME
-
 from mapping_workbench.backend.package_validator.models.sparql_validation import SPARQLQueryRefinedResultType
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataValidation
@@ -114,9 +114,10 @@ class PackageStateExporter:
         )
 
     async def add_conceptual_mappings(self):
-        df = pd.DataFrame()
-        with pd.ExcelWriter(self.package_transformation_path / CONCEPTUAL_MAPPINGS_FILE_NAME) as writer:
-            df.to_excel(writer)
+        with open(self.package_transformation_path / CONCEPTUAL_MAPPINGS_FILE_NAME, 'wb') as f:
+            excel_bytes: bytes = await generate_eforms_conceptual_mapping_excel_by_mapping_package_state(self.package_state)
+            f.write(excel_bytes)
+
 
     async def add_transformation_mappings(self):
         for triple_map_fragment in self.package_state.triple_map_fragments:

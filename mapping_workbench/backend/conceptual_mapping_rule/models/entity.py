@@ -10,10 +10,11 @@ from pymongo import IndexModel
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement, StructuralElementState
+from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroup, MappingGroupState
 from mapping_workbench.backend.ontology.models.term import TermValidityResponse
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResource, SPARQLTestState
 from mapping_workbench.backend.state_manager.models.state_object import ObjectState, StatefulObjectABC
-from mapping_workbench.backend.triple_map_fragment.models.entity import GenericTripleMapFragment
+from mapping_workbench.backend.triple_map_fragment.models.entity import GenericTripleMapFragment, TripleMapFragmentState
 from mapping_workbench.backend.user.models.user import User
 
 
@@ -46,7 +47,7 @@ class ConceptualMappingRuleIn(BaseProjectResourceEntityInSchema):
     min_sdk_version: Optional[str] = None
     max_sdk_version: Optional[str] = None
     source_structural_element: Optional[Link[StructuralElement]] = None
-    mapping_group_id: Optional[str] = None
+    mapping_groups: Optional[List[Link[MappingGroup]]] = None
     target_class_path: Optional[str] = None
     target_property_path: Optional[str] = None
     refers_to_mapping_package_ids: Optional[List[PydanticObjectId]] = []
@@ -70,7 +71,7 @@ class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema):
     min_sdk_version: Optional[str] = None
     max_sdk_version: Optional[str] = None
     source_structural_element: Optional[Link[StructuralElement]] = None
-    mapping_group_id: Optional[str] = None
+    mapping_groups: Optional[List[Link[MappingGroup]]] = None
     target_class_path: Optional[str] = None
     target_class_path_terms_validity: Optional[List[TermValidityResponse]] = None
     target_property_path: Optional[str] = None
@@ -90,10 +91,10 @@ class ConceptualMappingRuleState(ObjectState):
     min_sdk_version: Optional[str] = None
     max_sdk_version: Optional[str] = None
     source_structural_element: Optional[StructuralElementState] = None
-    mapping_group_id: Optional[str] = None
+    mapping_groups: Optional[List[MappingGroupState]] = None
     target_class_path: Optional[str] = None
     target_property_path: Optional[str] = None
-    triple_map_fragment: Optional[GenericTripleMapFragment] = None
+    triple_map_fragment: Optional[TripleMapFragmentState] = None
     sparql_assertions: Optional[List[SPARQLTestState]] = None
     status: Optional[str] = None
     mapping_notes: Optional[List[ConceptualMappingRuleComment]] = None
@@ -106,7 +107,7 @@ class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
     min_sdk_version: Optional[str] = None
     max_sdk_version: Optional[str] = None
     source_structural_element: Optional[Link[StructuralElement]] = None
-    mapping_group_id: Optional[str] = None
+    mapping_groups: Optional[List[Link[MappingGroup]]] = None
     target_class_path: Optional[str] = None
     target_class_path_terms_validity: Optional[List[TermValidityResponse]] = None
     target_property_path: Optional[str] = None
@@ -131,7 +132,15 @@ class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
             sparql_assertions_states = [await sparql_assertion.get_state() for sparql_assertion in
                                         sparql_assertions] if sparql_assertions else []
 
+        mapping_groups_states = []
+        if self.mapping_groups:
+            mapping_groups = [await mapping_group.fetch() for mapping_group in self.mapping_groups]
+            if mapping_groups:
+                mapping_groups_states = [await mapping_group.get_state() for mapping_group in mapping_groups]
+
         return ConceptualMappingRuleState(
+            min_sdk_version=self.min_sdk_version,
+            max_sdk_version=self.max_sdk_version,
             source_structural_element=(
                 await source_structural_element.get_state()
             ) if source_structural_element else None,
@@ -145,7 +154,8 @@ class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
             mapping_notes=self.mapping_notes,
             editorial_notes=self.editorial_notes,
             feedback_notes=self.feedback_notes,
-            sort_order=self.sort_order
+            sort_order=self.sort_order,
+            mapping_groups=mapping_groups_states,
         )
 
     def set_state(self, state: ConceptualMappingRuleState):

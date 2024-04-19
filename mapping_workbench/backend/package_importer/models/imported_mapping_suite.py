@@ -38,6 +38,17 @@ class MappingConceptualRule(BaseModel):
     )
 
 
+class ImportedMappingGroup(BaseModel):
+    mapping_group_id: Optional[str] = Field(None, alias="Mapping Group ID")
+    ontology_class: Optional[str] = Field(None, alias="Instance Type (ontology Class)")
+    iterator_xpath: str = Field(..., alias="Iterator XPath")
+    triple_map: Optional[str] = Field(None, alias="TripleMap")
+
+    model_config = ConfigDict(
+        populate_by_name=True,
+    )
+
+
 class ImportedFileResource(BaseModel):
     name: str
     format: str
@@ -52,12 +63,10 @@ class ImportedCollectionResource(BaseModel):
 class ImportedMappingSuite(BaseModel):
     metadata: MappingMetadata
     conceptual_rules: List[MappingConceptualRule] = []
+    mapping_groups: List[ImportedMappingGroup] = []
     transformation_resources: ImportedCollectionResource
     transformation_mappings: ImportedCollectionResource
     test_data_resources: List[ImportedCollectionResource] = []
     shacl_validation_resources: List[ImportedCollectionResource] = []
     sparql_validation_resources: List[ImportedCollectionResource] = []
     shacl_result_query: str
-
-
-
