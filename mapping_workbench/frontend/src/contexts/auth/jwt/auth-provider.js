@@ -111,9 +111,9 @@ export const AuthProvider = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []);
 
-  const signIn = useCallback(async (username, password) => {
+  const signIn = useCallback(async (username, password, remember_me) => {
     const toastId = toast.loading("Logging in...");
-    const user = await authApi.signInWithSessionInit({ username, password });
+    const user = await authApi.signInWithSessionInit({ username, password, remember_me });
     toast.dismiss(toastId);
     dispatch({
       type: ActionType.SIGN_IN,
@@ -154,7 +154,7 @@ export const AuthProvider = (props) => {
     <AuthContext.Provider
       value={{
         ...state,
-        issuer: Issuer.JWT,
+        issuer: Issuer.DEFAULT,
         signIn,
         signUp,
         verifyAuth,

@@ -24,12 +24,16 @@ import {Layout as AuthLayout} from 'src/layouts/auth/classic-layout';
 import {paths} from 'src/paths';
 import {Issuer} from 'src/utils/auth';
 import {users} from 'src/api/auth/data';
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import {useState} from "react";
 
 const user = users[0];
 
 const initialValues = {
     username: user.username,
     password: user.password,
+    remember_me: true,
     submit: null
 };
 
@@ -56,7 +60,8 @@ const Page = () => {
         validationSchema,
         onSubmit: async (values, helpers) => {
             try {
-                await signIn(values.username, values.password);
+                console.log(values)
+                await signIn(values.username, values.password, values.remember_me);
 
                 if (isMounted()) {
                     router.push(returnTo || paths.app.index);
@@ -129,6 +134,17 @@ const Page = () => {
                                     type="password"
                                     value={formik.values.password}
                                 />
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={formik.values.remember_me}
+                                            onChange={formik.handleChange}
+                                            inputProps={{ 'aria-label': 'controlled checkbox' }}
+                                            name="remember_me"
+                                        />
+                                    }
+                                    label="Remember me (for 24 hours)"
+                                />
                             </Stack>
                             {formik.errors.submit && (
                                 <FormHelperText
@@ -138,6 +154,7 @@ const Page = () => {
                                     {formik.errors.submit}
                                 </FormHelperText>
                             )}
+
                             <Button
                                 disabled={formik.isSubmitting}
                                 fullWidth

@@ -4,6 +4,9 @@ export const paths = {
         jwt: {
             login: '/auth/jwt/login',
             register: '/auth/jwt/register'
+        },
+        auth0: {
+            login: '/auth/auth0/login'
         }
     },
     app: {

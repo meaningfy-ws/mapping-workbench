@@ -150,7 +150,8 @@ class EFormsCMExporter(CMExporter):
         return resources_table
 
     def export(self, mapping_package_state: MappingPackageState) -> 'CMExporter':
-
+        if not isinstance(mapping_package_state, MappingPackageState):
+            raise CMExporterException()
         self.cm_tables[self.metadata_table_name] = self.generate_metadata_table(mapping_package_state)
         self.cm_tables[self.rules_table_name] = self.generate_rules_table(mapping_package_state)
         self.cm_tables[self.mapping_groups_table_name] = self.generate_mapping_groups_table(mapping_package_state)
