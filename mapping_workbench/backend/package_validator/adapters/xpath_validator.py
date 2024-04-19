@@ -13,15 +13,15 @@ class XPATHValidator(TestDataValidator):
     """
     """
 
-    xml_content: Any = None
+    xp: Any = None
 
     @validate_call
     def __init__(self, xml_content, **data: Any):
         super().__init__(**data)
-        self.xml_content = xml_content
+        self.xp = self.init_xp_processor(xml_content)
 
     def validate(self, xpath_expression) -> List[XPathAssertionEntry]:
-        return self.get_unique_xpaths(self.xml_content, xpath_expression)
+        return self.get_unique_xpaths(xpath_expression)
 
     @classmethod
     def extract_namespaces(cls, xml_content):
@@ -44,23 +44,20 @@ class XPATHValidator(TestDataValidator):
 
         return xp
 
-    @classmethod
-    def check_xpath_expression(cls, xpath_expression: str, xp: PyXPathProcessor) -> bool:
+    def check_xpath_expression(self, xpath_expression: str) -> bool:
         try:
-            item = xp.evaluate_single(xpath_expression)
-            return True if item else False
-        except PySaxonApiError as e:
-            print("KERR :: ", str(e))
+            items = self.xp.evaluate(xpath_expression)
+            return True if items.size > 0 else False
+        except PySaxonApiError:
             return False
 
-    def get_unique_xpaths(self, xml_content, xpath_expression) -> List[XPathAssertionEntry]:
+    def get_unique_xpaths(self, xpath_expression) -> List[XPathAssertionEntry]:
         """Get unique XPaths that cover elements matching e XPath expression."""
 
         unique_xpaths = set()
         xpaths = []
 
-        xp = self.init_xp_processor(xml_content)
-        if xpath_expression not in unique_xpaths and self.check_xpath_expression(xpath_expression, xp):
+        if xpath_expression not in unique_xpaths and self.check_xpath_expression(xpath_expression):
             unique_xpaths.add(xpath_expression)
 
             xpaths.append(XPathAssertionEntry(

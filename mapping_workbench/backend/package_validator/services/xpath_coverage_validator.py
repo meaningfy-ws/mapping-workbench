@@ -102,21 +102,22 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
     test_data_suites: List[TestDataSuiteState] = mapping_package_state.test_data_suites
 
     conceptual_mapping_rule_states = mapping_package_state.conceptual_mapping_rules
-    for conceptual_mapping_rule_state in conceptual_mapping_rule_states:
-        structural_element = conceptual_mapping_rule_state.source_structural_element
-        if structural_element:
-            cm_xpath = structural_element.absolute_xpath
-            cm_sdk_id = structural_element.eforms_sdk_element_id
-            cm_sdk_title = structural_element.name
+    for test_data_suite in test_data_suites:
+        test_data_states: List[TestDataState] = test_data_suite.test_data_states
+        for test_data_state in test_data_states:
+            xml_content = test_data_state.xml_manifestation.content
+            xpath_validator: XPATHValidator = XPATHValidator(xml_content)
 
-            for test_data_suite in test_data_suites:
-                test_data_states: List[TestDataState] = test_data_suite.test_data_states
-                for test_data_state in test_data_states:
-                    xml_content = test_data_state.xml_manifestation.content
+            for conceptual_mapping_rule_state in conceptual_mapping_rule_states:
+                structural_element = conceptual_mapping_rule_state.source_structural_element
+                if structural_element:
+                    cm_xpath = structural_element.absolute_xpath
+                    cm_sdk_id = structural_element.eforms_sdk_element_id
+                    cm_sdk_title = structural_element.name
+
                     validation_message = None
                     xpaths: List[XPathAssertionEntry] = []
                     try:
-                        xpath_validator: XPATHValidator = XPATHValidator(xml_content)
                         xpaths = xpath_validator.validate(cm_xpath)
                     except Exception as e:
                         validation_message = str(e)
