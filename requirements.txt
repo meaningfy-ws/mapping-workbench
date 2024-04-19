@@ -5,6 +5,7 @@ python-dotenv~=1.0.0
 pydantic~=2.4
 pydantic-settings~=2.0
 beanie==1.22
+#python-jose~=3.3
 fastapi~=0.103
 fastapi-users[beanie,oauth]==12.1
 uvicorn[standard]

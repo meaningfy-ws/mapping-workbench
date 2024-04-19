@@ -8,7 +8,9 @@ TAGS = ["auth"]
 
 router = APIRouter()
 router.include_router(
-    fastapi_users.get_auth_router(auth_backend), prefix=f"{ROUTE_PREFIX}/jwt", tags=TAGS
+    fastapi_users.get_auth_router(auth_backend),
+    prefix=f"{ROUTE_PREFIX}/jwt",
+    tags=TAGS
 )
 router.include_router(
     fastapi_users.get_register_router(UserRead, UserCreate),
@@ -25,6 +27,11 @@ router.include_router(
     prefix=ROUTE_PREFIX,
     tags=TAGS,
 )
+
+
+@router.get("/keep-alive")
+async def route_keep_alive(user: User = Depends(current_active_user)):
+    return {"message": f"Hello {user.email}!"}
 
 
 @router.get("/authenticated-route")
