@@ -15,13 +15,6 @@ Given('Session Login', () => {
     })
 })
 
-Then('I click on projects', () => {
-    cy.get('#nav_projects').click()
-})
-
-When('I click on mappingPackages list', () => {
-    cy.get("#nav_projects_list").click()
-})
 
 Then('I get redirected to projects list page', () => {
     cy.title().should('eq','App: Projects List | Mapping Workbench')

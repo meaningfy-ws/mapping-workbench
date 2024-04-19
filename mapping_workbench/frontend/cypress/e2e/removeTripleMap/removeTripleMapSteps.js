@@ -16,17 +16,13 @@ Given('Session Login', () => {
 })
 
 
-Then('Check home title', () => {
-    cy.title().should('eq','App: Projects List | Mapping Workbench')
-})
-
 Then('Go Triple Maps', () => {
-    cy.visit('localhost:3000/app/generic-triple-map-fragments')
+    cy.visit(homeURL + 'app/generic-triple-map-fragments')
 })
 
 Then('Check Triple Map url', () => {
     cy.intercept('GET', appURLPrefix + 'generic_triple_map_fragments*',).as('getFragments')
-    cy.url().should('eq','http://localhost:3000/app/generic-triple-map-fragments')
+    cy.url().should('eq','app/generic-triple-map-fragments')
 })
 
 

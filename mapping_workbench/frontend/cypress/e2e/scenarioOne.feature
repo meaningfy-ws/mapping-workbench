@@ -42,10 +42,10 @@ Feature: Scenario One
   Scenario: Import Package
     Given Session Login
     Then Go Home
-    Then I go to packages
+    Then I go to Mapping Packages
 
-    When I click on packages import
-    Then I click on package importer
+    When I click on Mapping Packages import
+    Then I click on Mapping Packages importer
     Then I click on upload button
     Then I get success upload
 
@@ -79,9 +79,9 @@ Feature: Scenario One
     Then Go Home
     Then I get redirected to projects list page
 
-    When I go to packages
-    Then I get redirected to mapping_packages list page
-    Then I receive packages
+    When I go to Mapping Packages
+    Then I get redirected to Mapping Packages list page
+    Then I receive Mapping Packages
     Then I click on expand arrow
 
     When I click process button
@@ -92,9 +92,9 @@ Feature: Scenario One
     Then Go Home
     Then I get redirected to projects list page
 
-    When I go to packages
-    Then I get redirected to mapping_packages list page
-    Then I receive packages
+    When I go to Mapping Packages
+    Then I get redirected to Mapping Packages list page
+    Then I receive Mapping Packages
     Then I click on expand arrow
 
     When I click export latest button

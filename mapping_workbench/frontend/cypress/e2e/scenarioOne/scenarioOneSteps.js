@@ -20,14 +20,6 @@ Given('Session Login', () => {
 
 //create projects
 
-When('I click on projects', () => {
-    cy.get("#nav_projects").click()
-})
-
-Then('I get redirected to projects list page', () => {
-    cy.title().should('eq','App: Projects List | Mapping Workbench')
-})
-
 When('I click on add project button', () => {
     cy.get('#add_button').click()
 })
@@ -142,23 +134,23 @@ Then('I get success generate', () => {
 })
 
 
-//importing mappingPackages
-Given('I go to mappingPackages', () => {
+//importing Mapping Packages
+Given('I go to Mapping Packages', () => {
     cy.get('#nav_mapping\\ packages').click()
 })
-When('I click on mappingPackages import', () => {
+When('I click on Mapping Packages import', () => {
     cy.get("#import_package_button").click()
 })
 
-Then('I get redirected to mapping_packages import page', () => {
+Then('I get redirected to Mapping Packages import page', () => {
     cy.title().should('eq','App: Mapping Package Import | Mapping Workbench')
 })
 
-Then('I click on package import button', () => {
+Then('I click on Mapping Packages import button', () => {
     cy.get('#import_button').click()
 })
 
-Then('I click on package importer', () => {
+Then('I click on Mapping Packages importer', () => {
     cy.get('.MuiBox-root > input').selectFile('package_eforms_16_1.5.zip', { force: true })
 })
 
@@ -190,14 +182,14 @@ Then('I get success transform', () => {
     cy.wait('@run_test_data',{responseTimeout: 999999}).its('response.statusCode').should('eq', 200)
 })
 
-//process package
+//process Mapping Packages
 
-Then('I get redirected to mapping_packages list page', () => {
+Then('I get redirected to Mapping Packages list page', () => {
     cy.intercept('GET', 'http://localhost:8000/api/v1/mapping_packages*',).as('getPackages')
     cy.title().should('eq','App: Mapping Packages List | Mapping Workbench')
 })
 
-Then('I receive mappingPackages', () => {
+Then('I receive Mapping Packages', () => {
     cy.wait('@getPackages').its('response.statusCode').should('eq',200)
 })
 
