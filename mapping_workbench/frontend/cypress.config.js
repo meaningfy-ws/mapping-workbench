@@ -39,8 +39,9 @@ module.exports = defineConfig({
         "cypress/e2e/resources.feature",
         "cypress/e2e/specificTripleMaps.feature",
         "cypress/e2e/termValidator.feature",
-        "cypress/e2e/sparqlQueries.feature"
-
+        "cypress/e2e/sparqlQueries.feature",
+        "cypress/e2e/ontologyNamespaces.feature",
+        "cypress/e2e/ontologyTerms.feature"
     ],
     video: false,
     // reporter: 'junit',
