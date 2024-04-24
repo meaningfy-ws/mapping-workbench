@@ -25,10 +25,8 @@ import {PropertyListItem} from 'src/components/property-list-item';
 import {Scrollbar} from 'src/components/scrollbar';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import {sessionApi} from "../../../api/session";
 import {SeverityPill} from "../../../components/severity-pill";
-import {paths} from "../../../paths";
-import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
+import {useProjects} from "../../../hooks/use-projects";
 
 
 export const ListTable = (props) => {
@@ -46,24 +44,9 @@ export const ListTable = (props) => {
     const router = useRouter();
 
     const [currentItem, setCurrentItem] = useState(null);
-
-    const sessionProject = sessionApi.getSessionProject()
+    const projectStore = useProjects()
 
     const handleItemToggle = itemId => setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
-
-    const handleSelectAction = async (itemId, section) => {
-            const toastId = toastLoad('Selecting project...');
-            sessionApi.setSessionProject(itemId)
-                .then(() => {
-                    toastSuccess('Package selected', toastId)
-                     router.push({
-                         pathname: paths.app[section.section].view,
-                         query: {id: itemId}
-                    });
-                    router.reload()
-                })
-                .catch(err => toastError(err, toastId))
-        }
 
     return (
         <div>
@@ -145,7 +128,7 @@ export const ListTable = (props) => {
                         {items.map((item) => {
                             const item_id = item._id;
                             const isCurrent = item_id === currentItem;
-                            const isSessionProject = item_id === sessionProject
+                            const isSessionProject = item_id === projectStore.sessionProject
                             const statusColor = isSessionProject ? 'success' : 'primary';
 
                             return (
@@ -230,11 +213,12 @@ export const ListTable = (props) => {
                                                 variant="text"
                                                 size="small"
                                                 color="warning"
-                                                onClick={() => handleSelectAction(item_id, sectionApi)}
+                                                onClick={() => projectStore.handleSessionProjectChange(item_id)}
                                             >
                                                 Select
                                             </Button>
                                             <ListItemActions
+                                                onDeleteAction={() => projectStore.handleDeleteProject(item_id)}
                                                 itemctx={new ForListItemAction(item_id, sectionApi)}/>
                                         </TableCell>
                                     </TableRow>

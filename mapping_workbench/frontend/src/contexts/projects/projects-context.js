@@ -2,10 +2,13 @@ import { createContext } from 'react';
 
 export const initialState = {
   isInitialized: false,
-  selectedProject: '',
-  projects: []
+  sessionProject: '',
+  items: []
 };
 
 export const ProjectsContext = createContext({
-  ...initialState
+  ...initialState,
+  handleSessionProjectChange: () => {},
+  handleDeleteProject: () => {},
+  getProjects: () => {}
 });

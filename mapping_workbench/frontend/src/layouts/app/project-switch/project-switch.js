@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useContext} from "react";
 import {useRouter} from "next/router";
 import {useFormik} from "formik";
 import * as Yup from "yup";
@@ -8,47 +8,20 @@ import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 
-import {projectsApi} from "../../../api/projects";
 import {sessionApi} from "../../../api/session";
-import {useMounted} from "../../../hooks/use-mounted";
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
-
-const useProjectsStore = () => {
-    const isMounted = useMounted();
-    const [state, setState] = useState({
-        items: []
-    });
-
-
-    const handleProjectsGet = async () => {
-        try {
-            if (isMounted()) {
-                const projects = await projectsApi.getSessionProjects();
-                setState({
-                    items: projects,
-                });
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    }
-
-    useEffect(() => {
-        handleProjectsGet();
-        },[isMounted]);
-
-    return {
-        ...state
-    };
-};
+import {ProjectsContext} from "../../../contexts/projects";
 
 export const ProjectSwitch = (props) => {
 
     const router = useRouter();
-    const projectsStore = useProjectsStore();
+    const projectsStore = useContext(ProjectsContext)
+
+
+    console.log('projectsStore',projectsStore)
 
     const initialValues = {
-        sessionProject: sessionApi.getSessionProject() ?? ''
+        sessionProject: projectsStore.selectedProject ?? ''
     };
 
     const validationSchema = Yup.object({
@@ -79,19 +52,17 @@ export const ProjectSwitch = (props) => {
 
     return (
         <TextField
-            error={!!(formik.touched.sessionProject && formik.errors.sessionProject)}
             fullWidth
             label="Project"
             name="sessionProject"
-            onBlur={formik.handleBlur}
-            onChange={handleSessionProjectChange}
-            select={true}
-            value={projectsStore.items.length ? formik.values.sessionProject : ""}
+            onChange={event => projectsStore.handleSessionProjectChange(event.target.value)}
+            value={projectsStore.sessionProject}
+            select
         >
-            {projectsStore.items.map((project) => (
+            {projectsStore.items?.map(project => (
                 <MenuItem
-                    key={project.id}
-                    value={project.id}
+                    key={project._id}
+                    value={project._id}
                 >
                     <Typography
                         color="var(--nav-color)"

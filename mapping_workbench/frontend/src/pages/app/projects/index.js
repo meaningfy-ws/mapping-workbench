@@ -18,6 +18,7 @@ import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
 import {ListSearch} from 'src/sections/app/project/list-search';
 import {ListTable} from 'src/sections/app/project/list-table';
+import {useProjects} from "../../../hooks/use-projects";
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -61,40 +62,41 @@ const useItemsSearch = () => {
     };
 };
 
-const useItemsStore = (searchState) => {
-    const [state, setState] = useState({
-        items: [],
-        itemsCount: 0
-    });
-
-    const handleItemsGet = async () => {
-        try {
-            const response = await sectionApi.getItems(searchState);
-                setState({
-                    items: response.items,
-                    itemsCount: response.count
-                });
-        } catch (err) {
-            console.error(err);
-        }
-    };
-
-    useEffect(() => {
-            handleItemsGet();
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState]);
-
-    return {
-        ...state
-    };
-};
+// const useItemsStore = (searchState) => {
+//     const [state, setState] = useState({
+//         items: [],
+//         itemsCount: 0
+//     });
+//
+//     const handleItemsGet = async () => {
+//         try {
+//             const response = await sectionApi.getItems(searchState);
+//                 setState({
+//                     items: response.items,
+//                     itemsCount: response.count
+//                 });
+//         } catch (err) {
+//             console.error(err);
+//         }
+//     };
+//
+//     useEffect(() => {
+//             handleItemsGet();
+//         },
+//         // eslint-disable-next-line react-hooks/exhaustive-deps
+//         [searchState]);
+//
+//     return {
+//         ...state
+//     };
+// };
 
 export const Page = ({projects}) => {
 
     console.log('projects', projects)
     const itemsSearch = useItemsSearch();
-    const itemsStore = useItemsStore(itemsSearch.state);
+    // const itemsStore = useItemsStore(itemsSearch.state);
+    const itemsStore = useProjects();
 
     return (
         <>

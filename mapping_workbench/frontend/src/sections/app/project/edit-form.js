@@ -17,6 +17,7 @@ import {useRouter} from 'src/hooks/use-router';
 import {FormTextField} from "../../../components/app/form/text-field";
 import {FormTextArea} from "../../../components/app/form/text-area";
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
+import {useProjects} from "../../../hooks/use-projects";
 
 
 export const EditForm = (props) => {
@@ -24,6 +25,7 @@ export const EditForm = (props) => {
     const router = useRouter();
     const sectionApi = itemctx.api;
     const item = itemctx.data;
+    const projectsStore = useProjects()
 
     const sourceSchemaTypes = [
         {
@@ -83,7 +85,9 @@ export const EditForm = (props) => {
                 helpers.setSubmitting(false);
                 toastSuccess(`${sectionApi.SECTION_ITEM_TITLE} ${itemctx.isNew ? "Created" : "Updated"}`, toastId);
                 if (response) {
+                    projectsStore.getProjects()
                     if (itemctx.isNew) {
+                        projectsStore.handleSessionProjectChange(response._id)
                         router.push({
                             pathname: paths.app[sectionApi.section].index,
                         });
