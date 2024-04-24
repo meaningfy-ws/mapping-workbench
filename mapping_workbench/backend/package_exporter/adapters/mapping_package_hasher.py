@@ -2,12 +2,13 @@
 
 """ """
 import hashlib
+import json
 import pathlib
 import re
 from typing import Tuple, List
 
 from mapping_workbench.backend.package_importer.services.import_mapping_suite_v3 import TRANSFORMATION_DIR_NAME, \
-    TRANSFORMATION_MAPPINGS_DIR_NAME, TRANSFORMATION_RESOURCES_DIR_NAME, CONCEPTUAL_MAPPINGS_FILE_NAME
+    TRANSFORMATION_MAPPINGS_DIR_NAME, TRANSFORMATION_RESOURCES_DIR_NAME
 
 
 class MappingPackageHasher:
@@ -15,8 +16,9 @@ class MappingPackageHasher:
 
     """
 
-    def __init__(self, mapping_package_path: pathlib.Path):
+    def __init__(self, mapping_package_path: pathlib.Path, mapping_package_metadata: dict):
         self.package_path = mapping_package_path
+        self.package_metadata = mapping_package_metadata
 
     def hash_a_file(self, file_path: pathlib.Path) -> Tuple[str, str]:
         """
@@ -38,9 +40,7 @@ class MappingPackageHasher:
                 ensure a deterministic order.
         """
 
-        files_to_hash = [
-            self.package_path / TRANSFORMATION_DIR_NAME / CONCEPTUAL_MAPPINGS_FILE_NAME,
-        ]
+        files_to_hash = []
 
         mapping_files = filter(
             lambda item: item.is_file(),
@@ -60,6 +60,11 @@ class MappingPackageHasher:
 
         return result
 
+    def hash_mapping_metadata(self) -> str:
+        return hashlib.sha256(
+            json.dumps(self.package_metadata).encode('utf-8')
+        ).hexdigest()
+
     def hash_mapping_package(self, with_version: str = "") -> str:
         """
             Returns a hash of the mapping package.
@@ -72,6 +77,8 @@ class MappingPackageHasher:
         """
         list_of_hashes = self.hash_critical_mapping_files()
         signatures = [signature[1] for signature in list_of_hashes]
+        signatures.append(self.hash_mapping_metadata())
+
         if with_version:
             signatures += with_version
         return hashlib.sha256(str.encode(",".join(signatures))).hexdigest()

@@ -1,4 +1,5 @@
 import json
+import json
 import tempfile
 from io import StringIO
 from pathlib import Path
@@ -10,7 +11,7 @@ from mapping_workbench.backend.mapping_package.models.entity import MappingPacka
 from mapping_workbench.backend.package_exporter.adapters.mapping_package_hasher import MappingPackageHasher
 from mapping_workbench.backend.package_exporter.adapters.mapping_package_reporter import MappingPackageReporter
 from mapping_workbench.backend.package_exporter.models.exported_mapping_suite import EFormsConstraints, \
-    MappingMetadataExport, MappingMetadataConstraints
+    MappingMetadataConstraints, MappingMetadataExportBase, MappingMetadataExport
 from mapping_workbench.backend.package_exporter.services.export_conceptual_mapping import \
     generate_eforms_conceptual_mapping_excel_by_mapping_package_state
 from mapping_workbench.backend.package_importer.services.import_mapping_suite_v3 import TEST_DATA_DIR_NAME, \
@@ -95,18 +96,25 @@ class PackageStateExporter:
                                                eforms_sdk_versions=self.package_state.eforms_sdk_versions
                                                )
         metadata_constraints = MappingMetadataConstraints(constraints=eforms_constraints)
-        mapping_suite_hash_digest = MappingPackageHasher(self.package_path).hash_mapping_package(
-            with_version=self.package_state.mapping_version
+        mapping_metadata_base = MappingMetadataExportBase(
+            identifier=self.package_state.identifier,
+            title=self.package_state.title,
+            created_at=str(self.package_state.created_at),
+            description=self.package_state.description,
+            mapping_version=self.package_state.mapping_version,
+            ontology_version=self.package_state.epo_version,
+            metadata_constraints=metadata_constraints
         )
-        mapping_metadata = MappingMetadataExport(identifier=self.package_state.identifier,
-                                                 title=self.package_state.title,
-                                                 created_at=str(self.package_state.created_at),
-                                                 description=self.package_state.description,
-                                                 mapping_version=self.package_state.mapping_version,
-                                                 ontology_version=self.package_state.epo_version,
-                                                 metadata_constraints=metadata_constraints,
-                                                 mapping_suite_hash_digest=mapping_suite_hash_digest
-                                                 )
+
+        mapping_suite_hash_digest = MappingPackageHasher(
+            mapping_package_path=self.package_path,
+            mapping_package_metadata=mapping_metadata_base.model_dump()
+        ).hash_mapping_package(with_version=self.package_state.mapping_version)
+
+        mapping_metadata = MappingMetadataExport(
+            **mapping_metadata_base.model_dump(),
+            mapping_suite_hash_digest=mapping_suite_hash_digest
+        )
 
         self.write_to_file(
             self.package_path / METADATA_FILE_NAME,
@@ -114,10 +122,11 @@ class PackageStateExporter:
         )
 
     async def add_conceptual_mappings(self):
-        with open(self.package_transformation_path / CONCEPTUAL_MAPPINGS_FILE_NAME, 'wb') as f:
-            excel_bytes: bytes = await generate_eforms_conceptual_mapping_excel_by_mapping_package_state(self.package_state)
+        filepath = self.package_transformation_path / CONCEPTUAL_MAPPINGS_FILE_NAME
+        with open(filepath, 'wb') as f:
+            excel_bytes: bytes = await generate_eforms_conceptual_mapping_excel_by_mapping_package_state(
+                self.package_state)
             f.write(excel_bytes)
-
 
     async def add_transformation_mappings(self):
         for triple_map_fragment in self.package_state.triple_map_fragments:

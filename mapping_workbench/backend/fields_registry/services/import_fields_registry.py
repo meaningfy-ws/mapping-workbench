@@ -45,7 +45,10 @@ async def import_eforms_fields(eforms_fields_content: dict, project_link: Link[D
                                                 element_type="node"
                                                 )
         id_to_hash_mapping[eforms_node.id] = new_structural_node.id
-        old_structural_node = await StructuralElement.get(new_structural_node.id)
+        old_structural_node = await StructuralElement.find_one(
+            StructuralElement.id == new_structural_node.id,
+            StructuralElement.project == project_link
+        )
         if old_structural_node:
             old_structural_node.versions.append(eforms_sdk_version)
             old_structural_node.versions = list(set(old_structural_node.versions))
