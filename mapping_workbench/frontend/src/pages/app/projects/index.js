@@ -27,7 +27,7 @@ const useItemsSearch = (items) => {
             column: "",
             direction: "desc"
         },
-        search: [],
+        search: '',
         searchColumns:["title","description"],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
