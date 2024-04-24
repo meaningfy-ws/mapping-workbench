@@ -81,4 +81,5 @@ class MappingPackageHasher:
 
         if with_version:
             signatures += with_version
+
         return hashlib.sha256(str.encode(",".join(signatures))).hexdigest()

@@ -34,8 +34,8 @@ export const EditForm = (props) => {
         mapping_version: item.mapping_version || '',
         epo_version: item.epo_version || '',
         eform_subtypes: item.eform_subtypes || '',
-        start_date: item.start_date && new Date(item.start_date) || '',
-        end_date: item.end_date && new Date(item.end_date) || '',
+        start_date: item.start_date || '',
+        end_date: item.end_date || '',
         eforms_sdk_versions: item.eforms_sdk_versions || '',
         //test_data_suites: (item.test_data_suites || []).map(x => x.id),
         shacl_test_suites: (item.shacl_test_suites || []).map(x => x.id)
@@ -60,6 +60,7 @@ export const EditForm = (props) => {
                     values['eforms_sdk_versions'].split(',').map(s => s.trim()) : values['eforms_sdk_versions'];
                 values['start_date'] = values['start_date'] || null;
                 values['end_date'] = values['end_date'] || null;
+
                 let response;
                 values['project'] = sessionApi.getSessionProject();
                 if (itemctx.isNew) {
@@ -138,15 +139,19 @@ export const EditForm = (props) => {
                         </Grid>
                         <Grid xs={12}
                               md={6}>
-                            <FormDateField formik={formik}
+                            <FormTextField formik={formik}
                                            name="start_date"
-                                           label="Start Date"/>
+                                           label="Start Date"
+                                           helperText="YYYY-MM-DD"
+                            />
                         </Grid>
                         <Grid xs={12}
                               md={6}>
-                            <FormDateField formik={formik}
+                            <FormTextField formik={formik}
                                            name="end_date"
-                                           label="End Date"/>
+                                           label="End Date"
+                                           helperText="YYYY-MM-DD"
+                            />
                         </Grid>
                         <Grid xs={12}
                               md={12}>

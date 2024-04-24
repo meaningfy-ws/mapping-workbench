@@ -1,5 +1,4 @@
 import json
-import json
 import tempfile
 from io import StringIO
 from pathlib import Path
@@ -11,7 +10,7 @@ from mapping_workbench.backend.mapping_package.models.entity import MappingPacka
 from mapping_workbench.backend.package_exporter.adapters.mapping_package_hasher import MappingPackageHasher
 from mapping_workbench.backend.package_exporter.adapters.mapping_package_reporter import MappingPackageReporter
 from mapping_workbench.backend.package_exporter.models.exported_mapping_suite import EFormsConstraints, \
-    MappingMetadataConstraints, MappingMetadataExportBase, MappingMetadataExport
+    MappingMetadataConstraints, MappingMetadataExportBaseForEForms, MappingMetadataExportForEForms, MappingSuiteType
 from mapping_workbench.backend.package_exporter.services.export_conceptual_mapping import \
     generate_eforms_conceptual_mapping_excel_by_mapping_package_state
 from mapping_workbench.backend.package_importer.services.import_mapping_suite_v3 import TEST_DATA_DIR_NAME, \
@@ -62,7 +61,7 @@ class PackageStateExporter:
         await self.add_validation_sparql()
         await self.add_conceptual_mappings()
         await self.add_output()
-        await self.add_metadata()
+        self.add_metadata()
 
         self.archiver.make_archive(self.package_path, self.archive_file_path)
 
@@ -89,20 +88,21 @@ class PackageStateExporter:
         self.create_dir(self.package_validation_shacl_path)
         self.create_dir(self.package_validation_sparql_path)
 
-    async def add_metadata(self):
+    def generate_metadata_for_eforms(self) -> dict:
         eforms_constraints = EFormsConstraints(eforms_subtype=self.package_state.eform_subtypes,
                                                start_date=self.package_state.start_date,
                                                end_date=self.package_state.end_date,
                                                eforms_sdk_versions=self.package_state.eforms_sdk_versions
                                                )
         metadata_constraints = MappingMetadataConstraints(constraints=eforms_constraints)
-        mapping_metadata_base = MappingMetadataExportBase(
+        mapping_metadata_base = MappingMetadataExportBaseForEForms(
             identifier=self.package_state.identifier,
             title=self.package_state.title,
             created_at=str(self.package_state.created_at),
             description=self.package_state.description,
             mapping_version=self.package_state.mapping_version,
             ontology_version=self.package_state.epo_version,
+            mapping_type=MappingSuiteType.ELECTRONIC_FORMS,
             metadata_constraints=metadata_constraints
         )
 
@@ -111,14 +111,20 @@ class PackageStateExporter:
             mapping_package_metadata=mapping_metadata_base.model_dump()
         ).hash_mapping_package(with_version=self.package_state.mapping_version)
 
-        mapping_metadata = MappingMetadataExport(
+        mapping_metadata = MappingMetadataExportForEForms(
             **mapping_metadata_base.model_dump(),
             mapping_suite_hash_digest=mapping_suite_hash_digest
         )
 
+        return mapping_metadata.model_dump()
+
+    def add_metadata(self):
+
+        mapping_metadata = self.generate_metadata_for_eforms()
+
         self.write_to_file(
             self.package_path / METADATA_FILE_NAME,
-            json.dumps(mapping_metadata.model_dump(), indent=4)
+            json.dumps(mapping_metadata, indent=4)
         )
 
     async def add_conceptual_mappings(self):
@@ -277,7 +283,7 @@ class PackageStateExporter:
                     self.write_to_file(test_data_output_path / test_data.rdf_manifestation.filename,
                                        test_data.rdf_manifestation.content)
 
-                test_data_reports_output_path = test_data_suite_output_path / test_data.identifier / "reports"
+                test_data_reports_output_path = test_data_suite_output_path / test_data.identifier / "test_suite_report"
                 test_data_reports_output_path.mkdir(parents=True, exist_ok=True)
 
                 self.add_xpath_report(test_data_reports_output_path, test_data, "xpath_coverage_report")
