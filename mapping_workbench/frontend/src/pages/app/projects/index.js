@@ -1,4 +1,4 @@
-import { useEffect, useState} from 'react';
+import { useState } from 'react';
 
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
 
@@ -20,83 +20,113 @@ import {ListSearch} from 'src/sections/app/project/list-search';
 import {ListTable} from 'src/sections/app/project/list-table';
 import {useProjects} from "../../../hooks/use-projects";
 
-const useItemsSearch = () => {
+const useItemsSearch = (items) => {
     const [state, setState] = useState({
-        filters: {
-            name: undefined,
-            category: [],
-            status: [],
-            inStock: undefined
+        filters: {},
+        sort: {
+            column: "",
+            direction: "desc"
         },
+        search: [],
+        searchColumns:["title","description"],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
 
+    const {show, ...filters} = state.filters
+
+    const searchItems = state.search ? items.filter(item => {
+        let returnItem = null;
+        state.searchColumns.forEach(column => {
+            if(item[column]?.toLowerCase()?.includes(state.search.toLowerCase()))
+                returnItem = item
+        })
+        return returnItem
+    }) : items
+
+    const filteredItems = searchItems.filter((item) => {
+        let returnItem = item;
+        Object.entries(filters).forEach(filter=> {
+            const [key, value] = filter
+            if(value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
+                returnItem = null
+            if(value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase))
+                returnItem = null
+        })
+        return returnItem
+    })
+
+    const sortedItems = () => {
+        const sortColumn = state.sort.column
+        if(!sortColumn) {
+            return filteredItems
+        } else {
+            return filteredItems.sort((a,b) => {
+                if (typeof a[sortColumn] === "string")
+                    return state.sort.direction === "asc" ?
+                        a[sortColumn]?.localeCompare(b[sortColumn]) :
+                        b[sortColumn]?.localeCompare(a[sortColumn])
+                else
+                    return state.sort.direction === "asc" ?
+                        a[sortColumn] - b[sortColumn] :
+                        b[sortColumn] - a[sortColumn]
+                })
+        }
+    }
+
+    const pagedItems = sortedItems().filter((item, i) => {
+        const pageSize = state.page * state.rowsPerPage
+        if((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
+            return item
+    })
+
+    const handleSearchItems = (filters) => {
+        setState(prevState => ({...prevState, search: filters.q }))
+    }
+
     const handleFiltersChange = (filters) => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             filters,
             page: 0
         }));
-    };
+    }
 
     const handlePageChange = (event, page) => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             page
         }));
-    };
+    }
 
-    const handleRowsPerPageChange = event => {
-        setState((prevState) => ({
+    const handleSort = (column, desc) => {
+        setState(prevState=> ({ ...prevState, sort: {column,
+               direction: prevState.sort.column === column ? prevState.sort.direction === "asc" ? "desc" : "asc" : desc ? "desc" : "asc" }}))
+
+    }
+
+    const handleRowsPerPageChange = (event) => {
+        setState(prevState => ({
             ...prevState,
             rowsPerPage: parseInt(event.target.value, 10)
         }));
-    };
+    }
 
     return {
         handleFiltersChange,
         handlePageChange,
         handleRowsPerPageChange,
+        handleSort,
+        handleSearchItems,
+        pagedItems,
+        count: filteredItems.length,
         state
     };
 };
 
-// const useItemsStore = (searchState) => {
-//     const [state, setState] = useState({
-//         items: [],
-//         itemsCount: 0
-//     });
-//
-//     const handleItemsGet = async () => {
-//         try {
-//             const response = await sectionApi.getItems(searchState);
-//                 setState({
-//                     items: response.items,
-//                     itemsCount: response.count
-//                 });
-//         } catch (err) {
-//             console.error(err);
-//         }
-//     };
-//
-//     useEffect(() => {
-//             handleItemsGet();
-//         },
-//         // eslint-disable-next-line react-hooks/exhaustive-deps
-//         [searchState]);
-//
-//     return {
-//         ...state
-//     };
-// };
-
-export const Page = ({projects}) => {
-
-    console.log('projects', projects)
-    const itemsSearch = useItemsSearch();
-    // const itemsStore = useItemsStore(itemsSearch.state);
+export const Page = () => {
     const itemsStore = useProjects();
+    const itemsSearch = useItemsSearch(itemsStore.items);
 
     return (
         <>
@@ -157,13 +187,13 @@ export const Page = ({projects}) => {
                     </Stack>
                 </Stack>
                 <Card>
-                    <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
+                    <ListSearch onFiltersChange={itemsSearch.handleSearchItems}/>
                     <ListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                         page={itemsSearch.state.page}
-                        items={itemsStore.items}
-                        count={itemsStore.itemsCount}
+                        items={itemsSearch.pagedItems}
+                        count={itemsSearch.count}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
                     />

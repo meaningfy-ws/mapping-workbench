@@ -34,12 +34,8 @@ const clientSideEmotionCache = createEmotionCache();
 
 const CustomApp = (props) => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
-
   useNprogress();
-
   const getLayout = Component.getLayout ?? ((page) => page);
-
-  console.log('app',Component)
 
   return (
     <CacheProvider value={emotionCache}>
