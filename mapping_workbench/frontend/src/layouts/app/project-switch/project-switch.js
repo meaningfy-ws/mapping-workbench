@@ -19,6 +19,7 @@ const useProjectsStore = () => {
         items: []
     });
 
+
     const handleProjectsGet = async () => {
         try {
             if (isMounted()) {
@@ -73,7 +74,7 @@ export const ProjectSwitch = (props) => {
         toastLoad('Selecting project...');
         await sessionApi.setSessionProject(value);
         formik.setFieldValue('sessionProject', value);
-        router.reload();
+        // router.reload();
     }
 
     return (

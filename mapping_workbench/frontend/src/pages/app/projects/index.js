@@ -90,7 +90,9 @@ const useItemsStore = (searchState) => {
     };
 };
 
-export const Page = () => {
+export const Page = ({projects}) => {
+
+    console.log('projects', projects)
     const itemsSearch = useItemsSearch();
     const itemsStore = useItemsStore(itemsSearch.state);
 
