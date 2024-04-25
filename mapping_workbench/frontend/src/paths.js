@@ -288,6 +288,7 @@ export const apiPaths = {
     },
 
     tasks: {
+        items: '/tasks',
         terms_validator: '/tasks/terms_validator',
         generate_cm_assertions_queries: '/tasks/generate_cm_assertions_queries',
         transform_test_data: '/tasks/transform_test_data'

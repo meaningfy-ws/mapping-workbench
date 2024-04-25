@@ -2,7 +2,7 @@ import {SectionApi} from "../section";
 import {appApi} from "../app";
 import {apiPaths} from "../../paths";
 
-class TasksApi {
+class TasksApi extends SectionApi{
     get TASKS_TITLE() {
         return "Tasks";
     }
@@ -12,6 +12,7 @@ class TasksApi {
     }
 
     constructor() {
+        super("tasks")
         this.section = "tasks";
         this.paths = apiPaths[this.section];
     }
@@ -49,6 +50,10 @@ class TasksApi {
             return appApi.post(endpoint, filters);
         } catch (err) {
         }
+    }
+
+    async cancelTask(reuquest = {}) {
+        // appApi.post(endpoint, filt)
     }
 }
 

@@ -1,6 +1,6 @@
 import { useEffect, useState} from 'react';
 
-import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
+import AutorenewIcon from '@mui/icons-material/Autorenew';
 
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
@@ -10,7 +10,7 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {projectsApi as sectionApi} from 'src/api/projects';
+import {tasksApi as sectionApi} from 'src/api/tasks';
 import {paths} from 'src/paths';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
@@ -18,6 +18,8 @@ import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
 import {ListSearch} from 'src/sections/app/tasks/list-search';
 import {ListTable} from 'src/sections/app/tasks/list-table';
+
+import mockData from '../../../sections/app/tasks/mock.json'
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -61,7 +63,9 @@ const useItemsSearch = () => {
     };
 };
 
-const useItemsStore = (searchState) => {
+export const Page = () => {
+    const itemsSearch = useItemsSearch();
+
     const [state, setState] = useState({
         items: [],
         itemsCount: 0
@@ -69,12 +73,13 @@ const useItemsStore = (searchState) => {
 
     const handleItemsGet = async () => {
         try {
-            const response = await sectionApi.getItems(searchState);
+            const response = await sectionApi.getItems(itemsSearch.state);
                 setState({
                     items: response.items,
                     itemsCount: response.count
                 });
         } catch (err) {
+            setState({items: mockData, itemsCount: mockData.length})
             console.error(err);
         }
     };
@@ -83,16 +88,7 @@ const useItemsStore = (searchState) => {
             handleItemsGet();
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState]);
-
-    return {
-        ...state
-    };
-};
-
-export const Page = () => {
-    const itemsSearch = useItemsSearch();
-    const itemsStore = useItemsStore(itemsSearch.state);
+[itemsSearch.state]);
 
     return (
         <>
@@ -139,16 +135,12 @@ export const Page = () => {
                     >
                         <Button
                             id="add_button"
-                            component={RouterLink}
-                            href={paths.app[sectionApi.section].create}
-                            startIcon={(
-                                <SvgIcon>
-                                    <PlusIcon/>
-                                </SvgIcon>
-                            )}
+                            color="inherit"
+                            startIcon={<SvgIcon><AutorenewIcon/></SvgIcon>}
                             variant="contained"
+                            onClick={handleItemsGet}
                         >
-                            Add
+                            Refresh
                         </Button>
                     </Stack>
                 </Stack>
@@ -158,8 +150,8 @@ export const Page = () => {
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                         page={itemsSearch.state.page}
-                        items={itemsStore.items}
-                        count={itemsStore.itemsCount}
+                        items={state.items}
+                        count={state.itemsCount}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
                     />
