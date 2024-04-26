@@ -71,16 +71,11 @@ export const ListTable = (props) => {
 
     const handleItemToggle = itemId => setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
 
-    const handleSelectAction = async (itemId, section) => {
+    const handleCancelAction = async (itemId, section) => {
             const toastId = toastLoad('Selecting project...');
-            sessionApi.setSessionProject(itemId)
+            section.cancel(itemId)
                 .then(() => {
                     toastSuccess('Package selected', toastId)
-                     router.push({
-                         pathname: paths.app[section.section].view,
-                         query: {id: itemId}
-                    });
-                    router.reload()
                 })
                 .catch(err => toastError(err, toastId))
         }
@@ -134,8 +129,6 @@ export const ListTable = (props) => {
                         {items.map((item) => {
                             const item_id = item.task_id;
                             const isCurrent = item_id === currentItem;
-                            const isSessionProject = item_id === sessionProject
-                            const statusColor = isSessionProject ? 'success' : 'primary';
 
                             return (
                                 <Fragment key={item_id}>
@@ -194,6 +187,7 @@ export const ListTable = (props) => {
                                                 variant="text"
                                                 size="small"
                                                 color="error"
+                                                disabled={![taskStatuses.QUEUED,taskStatuses.RUNNING].includes(item.task_status)}
                                                 onClick={() => handleSelectAction(item_id, sectionApi)}
                                             >
                                                 Cancel

@@ -1,4 +1,4 @@
-import { useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 
@@ -10,8 +10,8 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {tasksApi as sectionApi} from 'src/api/tasks';
 import {paths} from 'src/paths';
+import {tasksApi as sectionApi} from 'src/api/tasks';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {RouterLink} from 'src/components/router-link';
@@ -92,7 +92,7 @@ export const Page = () => {
 
     return (
         <>
-            <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
+            <Seo title={`App: ${sectionApi.TASKS_TITLE} List`}/>
             <Stack spacing={4}>
                 <Stack
                     direction="row"
@@ -101,7 +101,7 @@ export const Page = () => {
                 >
                     <Stack spacing={1}>
                         <Typography variant="h4">
-                            {sectionApi.SECTION_TITLE}
+                            {sectionApi.TASKS_TITLE}
                         </Typography>
                         <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
                             <Link

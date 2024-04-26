@@ -5,7 +5,7 @@
 "started_at": "DateTime",
 "started_by": "started_by",
 "finished_at": "DateTime",
-"task_status": "QUERING",
+"task_status": "QUEUED",
 "exception_message": "exception_message"
 },
 {
