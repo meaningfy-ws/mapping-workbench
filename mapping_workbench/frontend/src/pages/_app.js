@@ -21,6 +21,7 @@ import {SettingsDrawer} from 'src/components/settings/settings-drawer';
 import {Toaster} from 'src/components/toaster';
 import {AuthConsumer, AuthProvider} from 'src/contexts/auth/jwt';
 import {SettingsConsumer, SettingsProvider} from 'src/contexts/settings';
+import {ProjectsConsumer, ProjectsProvider} from "../contexts/projects";
 import {useNprogress} from 'src/hooks/use-nprogress';
 import {store} from 'src/store';
 import {createTheme} from 'src/theme';
@@ -33,9 +34,7 @@ const clientSideEmotionCache = createEmotionCache();
 
 const CustomApp = (props) => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
-
   useNprogress();
-
   const getLayout = Component.getLayout ?? ((page) => page);
 
   return (
@@ -91,9 +90,15 @@ const CustomApp = (props) => {
                               ? <SplashScreen />
                               : (
                                 <>
-                                  {getLayout(
-                                    <Component {...pageProps} />
-                                  )}
+                                  <ProjectsProvider>
+                                    <ProjectsConsumer>
+                                      {(projects) => (
+                                        getLayout(
+                                            <Component projects={projects}
+                                                       {...pageProps} />
+                                        ))}
+                                      </ProjectsConsumer>
+                                  </ProjectsProvider>
                                   <SettingsButton onClick={settings.handleDrawerOpen} />
                                   <SettingsDrawer
                                     canReset={settings.isCustom}

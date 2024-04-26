@@ -1,96 +1,29 @@
-import {useEffect, useState} from "react";
-import {useRouter} from "next/router";
-import {useFormik} from "formik";
-import * as Yup from "yup";
+import {useContext} from "react";
 import PropTypes from 'prop-types';
 
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 
-import {projectsApi} from "../../../api/projects";
-import {sessionApi} from "../../../api/session";
-import {useMounted} from "../../../hooks/use-mounted";
-import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
+import {ProjectsContext} from "../../../contexts/projects";
 
-const useProjectsStore = () => {
-    const isMounted = useMounted();
-    const [state, setState] = useState({
-        items: []
-    });
+export const ProjectSwitch = () => {
 
-    const handleProjectsGet = async () => {
-        try {
-            if (isMounted()) {
-                const projects = await projectsApi.getSessionProjects();
-                setState({
-                    items: projects,
-                });
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    }
-
-    useEffect(() => {
-        handleProjectsGet();
-        },[isMounted]);
-
-    return {
-        ...state
-    };
-};
-
-export const ProjectSwitch = (props) => {
-
-    const router = useRouter();
-    const projectsStore = useProjectsStore();
-
-    const initialValues = {
-        sessionProject: sessionApi.getSessionProject() ?? ''
-    };
-
-    const validationSchema = Yup.object({
-        sessionProject: Yup.string().required()
-    });
-
-    const formik = useFormik({
-        initialValues,
-        validationSchema,
-        onSubmit: async (values, helpers) => {
-            try {
-                // NOTE: Make API request
-                toastSuccess('Project changed');
-            } catch (err) {
-                console.error(err);
-                toastError(err);
-            }
-        },
-    });
-
-    const handleSessionProjectChange = async (event) => {
-        const value = event.target.value;
-        toastLoad('Selecting project...');
-        await sessionApi.setSessionProject(value);
-        formik.setFieldValue('sessionProject', value);
-        router.reload();
-    }
+    const projectsStore = useContext(ProjectsContext)
 
     return (
         <TextField
-            error={!!(formik.touched.sessionProject && formik.errors.sessionProject)}
             fullWidth
             label="Project"
             name="sessionProject"
-            onBlur={formik.handleBlur}
-            onChange={handleSessionProjectChange}
-            select={true}
-            value={projectsStore.items.length ? formik.values.sessionProject : ""}
+            onChange={event => projectsStore.handleSessionProjectChange(event.target.value)}
+            value={projectsStore.sessionProject}
+            select
         >
-            {projectsStore.items.map((project) => (
+            {projectsStore.items?.map(project => (
                 <MenuItem
-                    key={project.id}
-                    value={project.id}
+                    key={project._id}
+                    value={project._id}
                 >
                     <Typography
                         color="var(--nav-color)"
@@ -102,8 +35,4 @@ export const ProjectSwitch = (props) => {
             ))}
         </TextField>
     );
-};
-
-ProjectSwitch.propTypes = {
-    sx: PropTypes.object
 };
