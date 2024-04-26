@@ -36,7 +36,7 @@ export const PackageImporter = (props) => {
             formData.append("project", sessionApi.getSessionProject());
             const toastId = toastLoad(`Importing "${file.name}" ... `)
             sectionApi.importPackage(formData)
-                .then(res => toastSuccess(`"${res.title}" successfully imported.`, toastId))
+                .then(res => toastSuccess(`${res.task_name} successfully started.`, toastId))
                 .catch(err => toastError(`Importing "${file.name}" failed: ${err.message}.`, toastId))
 
             nProgress.inc(incStep);

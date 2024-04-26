@@ -7,11 +7,15 @@ from mapping_workbench.backend.package_importer.services.import_mapping_suite_v3
 from mapping_workbench.backend.package_importer.services.importer import import_package
 from mapping_workbench.backend.project.services.api import get_project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
+from mapping_workbench.backend.task_manager.adapters.task import Task
+from mapping_workbench.backend.task_manager.entrypoints import AppTaskManager
 from mapping_workbench.backend.user.models.user import User
 
 ROUTE_PREFIX = "/package_importer"
 TAG = "package_importer"
 NAME_FOR_ONE = "package"
+
+TASK_IMPORT_PACKAGE_NAME = f"{NAME_FOR_ONE}:tasks:import"
 
 router = APIRouter(
     prefix=ROUTE_PREFIX,
@@ -62,3 +66,25 @@ async def route_import_package_v3(
     )
 
     return mapping_package.model_dump()
+
+
+@router.post(
+    "/tasks/import",
+    description=f"Task Import {NAME_FOR_ONE}",
+    name=TASK_IMPORT_PACKAGE_NAME,
+    status_code=status.HTTP_201_CREATED
+)
+async def route_task_import_package(
+        project: PydanticObjectId = Form(...),
+        file: UploadFile = Form(...),
+        user: User = Depends(current_active_user)
+):
+    task = Task(
+        task_function=import_mapping_package_v3,
+        task_name=TASK_IMPORT_PACKAGE_NAME,
+        file_content=file.file.read(),
+        project=await get_project(project),
+        user=user
+    )
+    AppTaskManager.add_task(task)
+    return task.task_metadata

@@ -10,8 +10,6 @@ from mapping_workbench.backend.ontology.models.namespace import Namespace
 from mapping_workbench.backend.ontology.models.term import Term
 from mapping_workbench.backend.ontology_file_collection.models.entity import OntologyFileCollection, \
     OntologyFileResource
-from mapping_workbench.backend.package_validator.models.shacl_validation import SHACLTestDataValidationResult
-from mapping_workbench.backend.package_validator.models.sparql_validation import SPARQLTestDataValidationResult
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.resource_collection.models.entity import ResourceCollection, ResourceFile
 from mapping_workbench.backend.security.models.security import AccessToken

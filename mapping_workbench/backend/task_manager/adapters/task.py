@@ -5,6 +5,8 @@ from typing import Callable, Optional, List
 from pebble import ProcessFuture
 from pydantic import BaseModel
 
+from mapping_workbench.backend.config import settings
+
 
 class TaskStatus(str, Enum):
     """
@@ -88,7 +90,8 @@ class Task:
     - getting task id
     """
 
-    def __init__(self, task_function: Callable, task_name: str, task_timeout: Optional[float], *args, **kwargs):
+    def __init__(self, task_function: Callable, task_name: str,
+                 task_timeout: Optional[float] = settings.TASK_TIMEOUT, *args, **kwargs):
         """
         :param task_function: task function to be executed by task
         :param task_name: task name to be used in task id

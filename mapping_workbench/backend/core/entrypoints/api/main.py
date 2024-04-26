@@ -23,6 +23,7 @@ from mapping_workbench.backend.security.entrypoints.api import routes as securit
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.shacl_test_suite.entrypoints.api import routes as shacl_test_suite_routes
 from mapping_workbench.backend.sparql_test_suite.entrypoints.api import routes as sparql_test_suite_routes
+from mapping_workbench.backend.task_manager.entrypoints.api import routes as task_manager_routes
 from mapping_workbench.backend.tasks.entrypoints.api import routes as tasks_routes
 from mapping_workbench.backend.test_data_suite.entrypoints.api import routes as test_data_suite_routes
 from mapping_workbench.backend.triple_map_fragment.entrypoints.api import \
@@ -86,6 +87,7 @@ secured_routers: list = [
     generic_triple_map_fragment_routes.router,
     config_routes.router,
     ontology_routes.router,
+    task_manager_routes.router,
     tasks_routes.router,
     fields_registry.router
 ]
