@@ -1,3 +1,5 @@
+import asyncio
+import inspect
 from datetime import datetime
 from enum import Enum
 from typing import Callable, Optional, List
@@ -64,7 +66,10 @@ class TaskExecutor(Callable):
         task_result = TaskResult()
         task_result.started_at = datetime.now()
         try:
-            self.task_function(*args, **kwargs)
+            if inspect.iscoroutinefunction(self.task_function):
+                asyncio.run(self.task_function(*args, **kwargs))
+            else:
+                self.task_function(*args, **kwargs)
             task_result.task_status = TaskStatus.FINISHED
         except Exception as e:
             task_result.exception_message = str(e)

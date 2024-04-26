@@ -1,6 +1,7 @@
 from beanie import PydanticObjectId
 from fastapi import APIRouter, status, Form, UploadFile, Depends
 
+from mapping_workbench.backend.config import settings
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.package_importer.services.import_mapping_suite_v3 import \
     import_mapping_package_from_archive as import_mapping_package_v3, clear_project_data
@@ -79,12 +80,17 @@ async def route_task_import_package(
         file: UploadFile = Form(...),
         user: User = Depends(current_active_user)
 ):
-    task = Task(
-        task_function=import_mapping_package_v3,
-        task_name=TASK_IMPORT_PACKAGE_NAME,
-        file_content=file.file.read(),
-        project=await get_project(project),
-        user=user
+    mapping_package: MappingPackage = await import_mapping_package_v3(
+        file.file.read(), await get_project(project), user
     )
-    AppTaskManager.add_task(task)
-    return task.task_metadata
+
+    return mapping_package.model_dump()
+    #
+    # task = Task(
+    #     import_mapping_package_v3,
+    #     TASK_IMPORT_PACKAGE_NAME,
+    #     settings.TASK_TIMEOUT,
+    #     file.file.read(), await get_project(project), user
+    # )
+    # AppTaskManager.add_task(task)
+    # return task.task_metadata
