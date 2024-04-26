@@ -1,5 +1,4 @@
 import {Fragment, useState} from 'react';
-import {useRouter} from "next/router";
 import PropTypes from 'prop-types';
 
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
@@ -21,11 +20,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Button from "@mui/material/Button";
 
 import {Scrollbar} from 'src/components/scrollbar';
-import {sessionApi} from "../../../api/session";
 import {SeverityPill} from "../../../components/severity-pill";
-import {paths} from "../../../paths";
-import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
-
 
 export const ListTable = (props) => {
     const {
@@ -36,7 +31,9 @@ export const ListTable = (props) => {
         onRowsPerPageChange,
         page = 0,
         rowsPerPage = 0,
-        sectionApi
+        sectionApi,
+        onCancelAction,
+        onDeleteAction
     } = props;
 
     const taskStatuses = {
@@ -63,22 +60,12 @@ export const ListTable = (props) => {
         }
     }
 
-    const router = useRouter();
 
     const [currentItem, setCurrentItem] = useState(null);
 
-    const sessionProject = sessionApi.getSessionProject()
-
     const handleItemToggle = itemId => setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
 
-    const handleCancelAction = async (itemId, section) => {
-            const toastId = toastLoad('Selecting project...');
-            section.cancel(itemId)
-                .then(() => {
-                    toastSuccess('Package selected', toastId)
-                })
-                .catch(err => toastError(err, toastId))
-        }
+
 
     return (
         <div>
@@ -166,20 +153,18 @@ export const ListTable = (props) => {
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            {item.started_at}
+                                            {(item.started_at).replace("T", " ").split(".")[0]}
                                         </TableCell>
                                         <TableCell>
                                             {item.started_by}
                                         </TableCell>
                                           <TableCell>
-                                            {item.finished_at}
+                                            {(item.finished_at).replace("T", " ").split(".")[0]}
                                         </TableCell>
                                         <TableCell align="left">
                                                <SeverityPill color={mapStatusColor(item.task_status)}>
                                                     {item.task_status}
                                                 </SeverityPill>
-
-                                            {/*{(item.created_at).replace("T", " ").split(".")[0]}*/}
                                         </TableCell>
                                         <TableCell align="right">
                                             <Button
@@ -188,9 +173,18 @@ export const ListTable = (props) => {
                                                 size="small"
                                                 color="error"
                                                 disabled={![taskStatuses.QUEUED,taskStatuses.RUNNING].includes(item.task_status)}
-                                                onClick={() => handleSelectAction(item_id, sectionApi)}
+                                                onClick={() => onCancelAction(item_id)}
                                             >
                                                 Cancel
+                                            </Button>
+                                            <Button
+                                                id="delete_button"
+                                                variant="text"
+                                                size="small"
+                                                color="error"
+                                                onClick={() => onDeleteAction(item_id)}
+                                            >
+                                                Delete
                                             </Button>
                                         </TableCell>
                                     </TableRow>

@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 
 import AutorenewIcon from '@mui/icons-material/Autorenew';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
@@ -20,6 +21,8 @@ import {ListSearch} from 'src/sections/app/tasks/list-search';
 import {ListTable} from 'src/sections/app/tasks/list-table';
 
 import mockData from '../../../sections/app/tasks/mock.json'
+import {TableLoadWrapper} from "../../../sections/app/shacl_validation_report/utils";
+import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -68,21 +71,53 @@ export const Page = () => {
 
     const [state, setState] = useState({
         items: [],
-        itemsCount: 0
+        itemsCount: 0,
     });
 
     const handleItemsGet = async () => {
-        try {
-            const response = await sectionApi.getItems(itemsSearch.state);
+        setState(prevState => ({...prevState, load: true}))
+        sectionApi.getItems(itemsSearch.state)
+            .then(res =>
                 setState({
-                    items: response.items,
-                    itemsCount: response.count
-                });
-        } catch (err) {
-            setState({items: mockData, itemsCount: mockData.length})
-            console.error(err);
-        }
-    };
+                    items: res.items,
+                    itemsCount: res.count})
+            )
+            .catch(err => {
+                setState({items: mockData, itemsCount: mockData.length})
+                console.error(err)
+            });
+    }
+
+    const handleDeleteAllTasks = async  () => {
+        const toastId = toastLoad('Deleting all tasks...');
+        sectionApi.deleteAllTasks()
+            .then(res => {
+                toastSuccess('All tasks deleted successfully', toastId)
+                handleItemsGet()
+            })
+            .catch(err => toastError(err, toastId))
+    }
+
+
+    const handleCancelAction = async (itemId) => {
+        const toastId = toastLoad('Canceling task...');
+        sectionApi.cancelTask(itemId)
+        .then(() => {
+            toastSuccess('Task canceled successfully', toastId)
+            handleItemsGet()
+        })
+        .catch(err => toastError(err, toastId))
+    }
+
+    const handleDeleteAction = async (itemId) => {
+        const toastId = toastLoad('Deleting task...');
+        sectionApi.deleteTask(itemId)
+        .then(() => {
+            toastSuccess('Task delete successfully', toastId)
+            handleItemsGet()
+        })
+        .catch(err => toastError(err, toastId))
+    }
 
     useEffect(() => {
             handleItemsGet();
@@ -142,19 +177,34 @@ export const Page = () => {
                         >
                             Refresh
                         </Button>
+                        <Button
+                            id="delete_all__button"
+                            color="error"
+                            startIcon={<SvgIcon><DeleteOutlineIcon/></SvgIcon>}
+                            variant="contained"
+                            onClick={handleDeleteAllTasks}
+                        >
+                            Delete All Tasks
+                        </Button>
                     </Stack>
                 </Stack>
                 <Card>
                     <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
-                    <ListTable
-                        onPageChange={itemsSearch.handlePageChange}
-                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        page={itemsSearch.state.page}
-                        items={state.items}
-                        count={state.itemsCount}
-                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                        sectionApi={sectionApi}
-                    />
+                        <TableLoadWrapper dataState={{load: state.load}}
+                                          lines={5}
+                                          data={state.items}>
+                            <ListTable
+                                onPageChange={itemsSearch.handlePageChange}
+                                onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                                page={itemsSearch.state.page}
+                                items={state.items}
+                                count={state.itemsCount}
+                                rowsPerPage={itemsSearch.state.rowsPerPage}
+                                sectionApi={sectionApi}
+                                onCancelAction={handleCancelAction}
+                                onDeleteAction={handleDeleteAction}
+                            />
+                        </TableLoadWrapper>
                 </Card>
             </Stack>
         </>

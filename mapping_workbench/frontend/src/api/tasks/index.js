@@ -52,8 +52,19 @@ class TasksApi extends SectionApi{
         }
     }
 
-    async cancelTask(reuquest = {}) {
-        // appApi.post(endpoint, filt)
+    async cancelTask(id) {
+        const endpoint = this.paths['task_cancel'];
+        return appApi.post(endpoint(id));
+    }
+
+    async deleteTask(id) {
+        const endpoint = this.paths['task_delete'];
+        return appApi.post(endpoint(id));
+    }
+
+    async deleteAllTasks() {
+        const endpoint = this.paths['task_delete_all'];
+        return appApi.post(endpoint);
     }
 }
 
