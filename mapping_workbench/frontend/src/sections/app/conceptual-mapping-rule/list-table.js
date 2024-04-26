@@ -58,6 +58,7 @@ import {COMMENT_PRIORITY, conceptualMappingRulesApi} from "../../../api/conceptu
 import {ListSelectorSelect as ResourceListSelector} from "../../../components/app/list-selector/select";
 import {sparqlTestFileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
 import {toastSuccess} from "../../../components/app-toast";
+import {TermValidityInfo} from "./term-validity";
 
 
 export const ListTableTripleMapFragment = (props) => {
@@ -939,17 +940,56 @@ export const ListTableRow = (props) => {
                                         />}
                                     </>
                                 )}
+                            </PropertyList>
+                            <PropertyList>
                                 {item.target_class_path && (<PropertyListItem
                                     key="target_class_path"
                                     label="Ontology Fragment Class path"
                                     value={item.target_class_path}
                                 />)}
+                                {item.target_class_path_terms_validity && <>
+                                    <Alert severity={hasTargetClassPathValidityErrors ? "error" : "success"}
+                                           sx={{
+                                               my: 1,
+                                               mx: 5
+                                           }}
+                                    >{parse(targetClassPathValidityInfo)}</Alert>
+                                </>
+                                }
+                                {item.target_class_path_terms_validity?.map((item, i) =>
+                                    <TermValidityInfo
+                                        key={'target' + i}
+                                        item={item}
+                                        sx={{
+                                            my: 1,
+                                            mx: 5
+                                        }}
+                                    />
+                                )}
                                 {item.target_property_path && (<PropertyListItem
                                     key="target_property_path"
                                     label="Ontology Fragment Property path"
                                     value={item.target_property_path}
                                 />)}
-
+                                {item.target_property_path_terms_validity && <>
+                                    <Alert severity={hasTargetPropertyPathValidityErrors ? "error" : "success"}
+                                           sx={{
+                                               my: 1,
+                                               mx: 5
+                                           }}
+                                    >{parse(targetPropertyPathValidityInfo)}</Alert>
+                                </>
+                                }
+                                {item.target_property_path_terms_validity?.map((item, i) =>
+                                    <TermValidityInfo
+                                        key={'target' + i}
+                                        item={item}
+                                        sx={{
+                                            my: 1,
+                                            mx: 5
+                                        }}
+                                    />
+                                )}
                             </PropertyList>
                         </Grid>
                     </Grid>

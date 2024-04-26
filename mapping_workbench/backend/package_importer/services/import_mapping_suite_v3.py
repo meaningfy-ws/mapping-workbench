@@ -147,6 +147,7 @@ def import_mapping_suite_from_file_system(mapping_suite_dir_path: pathlib.Path) 
 async def import_mapping_package(mapping_package_dir_path: pathlib.Path, project: Project,
                                  user: User = None) -> MappingPackage:
     monolith_mapping_suite: ImportedMappingSuite = import_mapping_suite_from_file_system(mapping_package_dir_path)
+
     importer: PackageImporter = PackageImporter(project=project, user=user)
     package: MappingPackage = await importer.import_from_mono_mapping_suite(monolith_mapping_suite)
     return package

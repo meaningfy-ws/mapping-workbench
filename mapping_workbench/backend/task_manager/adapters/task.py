@@ -1,9 +1,13 @@
+import asyncio
+import inspect
 from datetime import datetime
 from enum import Enum
 from typing import Callable, Optional, List
 
 from pebble import ProcessFuture
 from pydantic import BaseModel
+
+from mapping_workbench.backend.config import settings
 
 
 class TaskStatus(str, Enum):
@@ -62,7 +66,10 @@ class TaskExecutor(Callable):
         task_result = TaskResult()
         task_result.started_at = datetime.now()
         try:
-            self.task_function(*args, **kwargs)
+            if inspect.iscoroutinefunction(self.task_function):
+                asyncio.run(self.task_function(*args, **kwargs))
+            else:
+                self.task_function(*args, **kwargs)
             task_result.task_status = TaskStatus.FINISHED
         except Exception as e:
             task_result.exception_message = str(e)
@@ -88,7 +95,8 @@ class Task:
     - getting task id
     """
 
-    def __init__(self, task_function: Callable, task_name: str, task_timeout: Optional[float], *args, **kwargs):
+    def __init__(self, task_function: Callable, task_name: str,
+                 task_timeout: Optional[float] = settings.TASK_TIMEOUT, *args, **kwargs):
         """
         :param task_function: task function to be executed by task
         :param task_name: task name to be used in task id
