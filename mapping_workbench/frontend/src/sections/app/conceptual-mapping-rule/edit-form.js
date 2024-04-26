@@ -279,7 +279,7 @@ export const EditForm = (props) => {
                         query: {id: res._id}
                     });
                 })
-                .catch(err => toastError(`Cloning rule failed: ${err.message}.`, toastId))
+                .catch(err => toastError(err, toastId))
         }
 
         const handleDeleteComment = (idx, fieldName) => {

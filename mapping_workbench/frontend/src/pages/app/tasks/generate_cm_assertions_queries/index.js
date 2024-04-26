@@ -192,6 +192,7 @@ const Page = () => {
                 pt={4}
             >
                 <Button
+                    id="run_button"
                     onClick={handleTask}
                     disabled={isRunning}
                     startIcon={(

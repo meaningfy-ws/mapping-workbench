@@ -161,6 +161,7 @@ const Page = () => {
                                 </SvgIcon>
                             )}
                             variant="contained"
+                            id="add_button"
                         >
                             Add
                         </Button>
@@ -173,6 +174,7 @@ const Page = () => {
                                 </SvgIcon>
                             )}
                             variant="contained"
+                            id="transform-test-data_button"
                         >
                             {t(tokens.nav.transform_test_data)}
                         </Button>

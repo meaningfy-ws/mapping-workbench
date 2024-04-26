@@ -1,13 +1,11 @@
 import { Given, Then, And} from 'cypress-cucumber-preprocessor/steps'
 
-const project_name ='TEST_PROJECT'
+const {username, password, homeURL, projectName, appURLPrefix} = Cypress.env()
 
 Given('Session Login', () => {
     // Caching session when logging in via page visit
-    const username = 'admin@mw.com'
-    const password = 'p4$$'
     cy.session([username,password], () => {
-        cy.visit('localhost:3000')
+        cy.visit(homeURL)
         cy.get('[name=username]').clear().type(username)
         cy.get('[name=password]').clear().type(password)
         cy.get('button[type="submit"]').click()
@@ -15,12 +13,8 @@ Given('Session Login', () => {
     })
 })
 
-Given('Go Home', () => {
-    cy.visit('localhost:3000')
-})
-
 Then('Check home title', () => {
-    cy.intercept('GET', 'http://localhost:8000/api/v1/projects*',).as('getProjects')
+    cy.intercept('GET',  appURLPrefix, 'projects*',).as('getProjects')
     cy.title().should('eq','App: Projects List | Mapping Workbench')
 })
 
@@ -30,11 +24,11 @@ Then('I receive projects', () => {
 
 And('I delete test project', () => {
 
-    cy.get('input[type=text]').clear().type(project_name + '{enter}')
+    cy.get('input[type=text]').clear().type(projectName + '{enter}')
     cy.wait('@getProjects').then(interception => {
         if (interception.response.statusCode === 200 && interception.response.body.count > 0) {
             cy.get("#delete_button").click()
-            cy.intercept('DELETE', 'http://localhost:8000/api/v1/projects*',).as('deleteProjects')
+            cy.intercept('DELETE', appURLPrefix + 'projects*',).as('deleteProjects')
             cy.get('#yes_dialog_button').click();
 
         }

@@ -157,6 +157,7 @@ const Page = () => {
                         spacing={3}
                     >
                         <Button
+                            id="discover_button"
                             onClick={handleDiscover}
                             startIcon={(
                                 <SvgIcon>
@@ -168,6 +169,7 @@ const Page = () => {
                             Discover
                         </Button>
                         <Button
+                            id="add_button"
                             component={RouterLink}
                             href={paths.app[sectionApi.section].create}
                             startIcon={(

@@ -1,19 +1,12 @@
 import { Given, When, Then} from 'cypress-cucumber-preprocessor/steps'
 
-const gitUrl = "https://github.com/OP-TED/eForms-SDK"
-const branchVersion = "1.9.1"
-const projectName = 'TEST_PROJECT'
+const {username, password, homeURL, appURLPrefix, projectName, gitUrl, branchVersion} = Cypress.env()
 let sessionProject = ''
-Given('Go Home', () => {
-    cy.visit('localhost:3000')
-})
 
 Given('Session Login', () => {
     // Caching session when logging in via page visit
-    const username = 'admin@mw.com'
-    const password = 'p4$$'
     cy.session([username,password], () => {
-        cy.visit('localhost:3000')
+        cy.visit(homeURL)
         cy.get('[name=username]').clear().type(username)
         cy.get('[name=password]').clear().type(password)
         cy.get('button[type="submit"]').click()
@@ -22,26 +15,6 @@ Given('Session Login', () => {
     if(sessionProject) cy.window().then(win => win.sessionStorage.setItem('sessionProject',sessionProject))
 })
 
-Then('I expand projects', () => {
-    cy.get('#nav_projects').click()
-})
-
-When('I click on project list', () => {
-    cy.get("#nav_projects_list").click()
-})
-
-Then('I get redirected to projects list page', () => {
-    cy.title().should('eq','App: Projects List | Mapping Workbench')
-})
-
-Then('I search for project', () => {
-    cy.get('input[type=text]').clear().type(projectName+'{enter}')
-})
-
-When('I select project', () => {
-    cy.intercept('POST', 'http://localhost:8000/api/v1/users/set_project_for_current_user_session',).as('select')
-    cy.get('#select_button').click()
-})
 
 Then('I get success select', () => {
     cy.wait('@select').its('response.statusCode').should('eq',200)
@@ -75,10 +48,31 @@ Then('I type branch name', () => {
 })
 
 When('I click on import button', () => {
-    cy.intercept('POST', 'http://localhost:8000/api/v1/fields_registry/import_eforms_from_github',).as('import')
+    cy.intercept('POST', appURLPrefix + 'fields_registry/import_eforms_from_github',).as('import')
     cy.get('#import').click()
 })
 
 Then('I get success import', () => {
     cy.wait('@import',{responseTimeout: 999999}).its('response.statusCode').should('eq', 200)
+})
+
+When('I click on fields registry elements', () => {
+    cy.intercept('GET', appURLPrefix + 'fields_registry/elements*',).as('getFields')
+    cy.get("#nav_fields\\ registry_elements").click()
+})
+
+Then('I get redirected to fields registry elements', () => {
+    cy.url().should('include','fields-registry/elements')
+})
+
+And('I receive fields', () => {
+    cy.wait('@getFields')
+})
+
+Then('I click on view button', () => {
+    cy.get('#view_button').click()
+})
+
+When('I get redirected to view page', () => {
+    cy.url().should('include','/view')
 })
