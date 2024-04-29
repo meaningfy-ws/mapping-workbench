@@ -79,11 +79,10 @@ export const Page = () => {
         sectionApi.getItems(itemsSearch.state)
             .then(res =>
                 setState({
-                    items: res.items,
-                    itemsCount: res.count})
+                    items: res.tasks_metadata,
+                    itemsCount: res.tasks_metadata.length})
             )
             .catch(err => {
-                setState({items: mockData, itemsCount: mockData.length})
                 console.error(err)
             });
     }
