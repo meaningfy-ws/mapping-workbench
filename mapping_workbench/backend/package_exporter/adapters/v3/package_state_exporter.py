@@ -8,14 +8,15 @@ import pandas as pd
 from mapping_workbench.backend.core.adapters.archiver import ZipArchiver, ARCHIVE_ZIP_FORMAT
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState
 from mapping_workbench.backend.package_exporter.adapters.mapping_package_hasher import MappingPackageHasher
+from mapping_workbench.backend.package_exporter.adapters.mapping_package_reporter import MappingPackageReporter
 from mapping_workbench.backend.package_exporter.models.exported_mapping_suite import EFormsConstraints, \
-    MappingMetadataExport, MappingMetadataConstraints
-
+    MappingMetadataConstraints, MappingMetadataExportBaseForEForms, MappingMetadataExportForEForms, MappingSuiteType
+from mapping_workbench.backend.package_exporter.services.export_conceptual_mapping import \
+    generate_eforms_conceptual_mapping_excel_by_mapping_package_state
 from mapping_workbench.backend.package_importer.services.import_mapping_suite_v3 import TEST_DATA_DIR_NAME, \
     TRANSFORMATION_DIR_NAME, TRANSFORMATION_MAPPINGS_DIR_NAME, TRANSFORMATION_RESOURCES_DIR_NAME, VALIDATION_DIR_NAME, \
     SHACL_VALIDATION_DIR_NAME, SPARQL_VALIDATION_DIR_NAME, CONCEPTUAL_MAPPINGS_FILE_NAME, METADATA_FILE_NAME, \
     OUTPUT_DIR_NAME
-
 from mapping_workbench.backend.package_validator.models.sparql_validation import SPARQLQueryRefinedResultType
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataValidation
@@ -60,7 +61,7 @@ class PackageStateExporter:
         await self.add_validation_sparql()
         await self.add_conceptual_mappings()
         await self.add_output()
-        await self.add_metadata()
+        self.add_metadata()
 
         self.archiver.make_archive(self.package_path, self.archive_file_path)
 
@@ -87,35 +88,51 @@ class PackageStateExporter:
         self.create_dir(self.package_validation_shacl_path)
         self.create_dir(self.package_validation_sparql_path)
 
-    async def add_metadata(self):
+    def generate_metadata_for_eforms(self) -> dict:
         eforms_constraints = EFormsConstraints(eforms_subtype=self.package_state.eform_subtypes,
                                                start_date=self.package_state.start_date,
                                                end_date=self.package_state.end_date,
                                                eforms_sdk_versions=self.package_state.eforms_sdk_versions
                                                )
         metadata_constraints = MappingMetadataConstraints(constraints=eforms_constraints)
-        mapping_suite_hash_digest = MappingPackageHasher(self.package_path).hash_mapping_package(
-            with_version=self.package_state.mapping_version
+        mapping_metadata_base = MappingMetadataExportBaseForEForms(
+            identifier=self.package_state.identifier,
+            title=self.package_state.title,
+            created_at=str(self.package_state.created_at),
+            description=self.package_state.description,
+            mapping_version=self.package_state.mapping_version,
+            ontology_version=self.package_state.epo_version,
+            mapping_type=MappingSuiteType.ELECTRONIC_FORMS,
+            metadata_constraints=metadata_constraints
         )
-        mapping_metadata = MappingMetadataExport(identifier=self.package_state.identifier,
-                                                 title=self.package_state.title,
-                                                 created_at=str(self.package_state.created_at),
-                                                 description=self.package_state.description,
-                                                 mapping_version=self.package_state.mapping_version,
-                                                 ontology_version=self.package_state.epo_version,
-                                                 metadata_constraints=metadata_constraints,
-                                                 mapping_suite_hash_digest=mapping_suite_hash_digest
-                                                 )
+
+        mapping_suite_hash_digest = MappingPackageHasher(
+            mapping_package_path=self.package_path,
+            mapping_package_metadata=mapping_metadata_base.model_dump()
+        ).hash_mapping_package(with_version=self.package_state.mapping_version)
+
+        mapping_metadata = MappingMetadataExportForEForms(
+            **mapping_metadata_base.model_dump(),
+            mapping_suite_hash_digest=mapping_suite_hash_digest
+        )
+
+        return mapping_metadata.model_dump()
+
+    def add_metadata(self):
+
+        mapping_metadata = self.generate_metadata_for_eforms()
 
         self.write_to_file(
             self.package_path / METADATA_FILE_NAME,
-            json.dumps(mapping_metadata.model_dump(), indent=4)
+            json.dumps(mapping_metadata, indent=4)
         )
 
     async def add_conceptual_mappings(self):
-        df = pd.DataFrame()
-        with pd.ExcelWriter(self.package_transformation_path / CONCEPTUAL_MAPPINGS_FILE_NAME) as writer:
-            df.to_excel(writer)
+        filepath = self.package_transformation_path / CONCEPTUAL_MAPPINGS_FILE_NAME
+        with open(filepath, 'wb') as f:
+            excel_bytes: bytes = await generate_eforms_conceptual_mapping_excel_by_mapping_package_state(
+                self.package_state)
+            f.write(excel_bytes)
 
     async def add_transformation_mappings(self):
         for triple_map_fragment in self.package_state.triple_map_fragments:
@@ -153,23 +170,59 @@ class PackageStateExporter:
 
     def add_xpath_report(self, path: Path, data: TestDataValidation, filename: str):
         if data.validation.xpath:
+            xpath_validation_result = data.validation.xpath.model_dump()
             xpaths_str = json.dumps(
-                [
-                    xpath_validation_result.model_dump()
-                    for xpath_validation_result in data.validation.xpath.results
-                ],
-                indent=4
+                xpath_validation_result,
+                indent=4,
+                default=str
             )
             self.write_to_file(path / f"{filename}.json", xpaths_str)
             if xpaths_str:
                 df = pd.read_json(StringIO(xpaths_str))
                 df.to_csv(path / f"{filename}.csv")
 
-    def add_shacl_report(self, path: Path, data: TestDataValidation, filename: str):
+            html_report = MappingPackageReporter.xpath_coverage_html_report(data.validation.xpath)
+            self.write_to_file(path / f"{filename}.html", html_report)
+
+    def add_shacl_report(self, path: Path, data: TestDataValidation, filename: str, is_summary: bool = False):
         if data.validation.shacl:
             shacl_validation_result = data.validation.shacl.model_dump()
             shacl_str = json.dumps(shacl_validation_result, indent=4, default=str)
             self.write_to_file(path / f"{filename}.json", shacl_str)
+
+            if is_summary:
+                html_report = MappingPackageReporter.shacl_summary_html_report(data.validation.shacl)
+            else:
+                html_report = MappingPackageReporter.shacl_html_report(data.validation.shacl)
+            self.write_to_file(path / f"{filename}.html", html_report)
+
+    def add_sparql_report(self, path: Path, data: TestDataValidation, filename: str):
+        if data.validation.sparql:
+            sparql_validation_result = data.validation.sparql.model_dump()
+            sparql_str = json.dumps(sparql_validation_result, indent=4, default=str)
+            self.write_to_file(path / f"{filename}.json", sparql_str)
+            if data.validation.sparql.results:
+                export_dict_list = []
+                for sparql_validation_result in data.validation.sparql.results:
+                    export_dict = sparql_validation_result.query.model_dump()
+                    export_dict["query_result"] = sparql_validation_result.query_result
+                    export_dict_list.append(export_dict)
+
+                df = pd.DataFrame(export_dict_list)
+                df.to_csv(path / f"{filename}.csv")
+
+                html_report = MappingPackageReporter.sparql_html_report(data.validation.sparql)
+                self.write_to_file(path / f"{filename}.html", html_report)
+
+    def add_validation_summary_report(self, path: Path, data: TestDataValidation, filename: str):
+        if data.validation.shacl:
+            validation_summary_result = data.validation.model_dump()
+            summary_str = json.dumps(validation_summary_result, indent=4, default=str)
+            self.write_to_file(path / f"{filename}.json", summary_str)
+
+            html_report = MappingPackageReporter.validation_summary_html_report(data.validation)
+
+            self.write_to_file(path / f"{filename}.html", html_report)
 
     def add_sparql_summary_report(self, path: Path, data: TestDataValidation, filename: str):
         if data.validation.sparql:
@@ -203,9 +256,12 @@ class PackageStateExporter:
                 df = pd.DataFrame(export_dict_list)
                 df.to_csv(path / f"{filename}.csv")
 
+                html_report = MappingPackageReporter.sparql_summary_html_report(data.validation.sparql)
+                self.write_to_file(path / f"{filename}.html", html_report)
+
     async def add_output(self):
         self.add_xpath_report(self.package_output_path, self.package_state, "xpath_coverage_report")
-        self.add_shacl_report(self.package_output_path, self.package_state, "shacl_summary_report")
+        self.add_shacl_report(self.package_output_path, self.package_state, "shacl_summary_report", True)
         self.add_sparql_summary_report(
             self.package_output_path, self.package_state, "sparql_summary_report"
         )
@@ -214,7 +270,7 @@ class PackageStateExporter:
             test_data_suite_output_path.mkdir(parents=True, exist_ok=True)
 
             self.add_xpath_report(test_data_suite_output_path, test_data_suite, "xpath_coverage_report")
-            self.add_shacl_report(test_data_suite_output_path, test_data_suite, "shacl_summary_report")
+            self.add_shacl_report(test_data_suite_output_path, test_data_suite, "shacl_summary_report", True)
             self.add_sparql_summary_report(
                 test_data_suite_output_path, test_data_suite, "sparql_summary_report"
             )
@@ -227,23 +283,13 @@ class PackageStateExporter:
                     self.write_to_file(test_data_output_path / test_data.rdf_manifestation.filename,
                                        test_data.rdf_manifestation.content)
 
-                test_data_reports_output_path = test_data_suite_output_path / test_data.identifier / "reports"
+                test_data_reports_output_path = test_data_suite_output_path / test_data.identifier / "test_suite_report"
                 test_data_reports_output_path.mkdir(parents=True, exist_ok=True)
 
                 self.add_xpath_report(test_data_reports_output_path, test_data, "xpath_coverage_report")
-
-                if test_data.validation.sparql:
-                    sparql_validation_result = test_data.validation.sparql.model_dump()
-                    sparql_str = json.dumps(sparql_validation_result, indent=4, default=str)
-                    self.write_to_file(test_data_reports_output_path / "sparql_validation_report.json", sparql_str)
-                    if test_data.validation.sparql.results:
-                        export_dict_list = []
-                        for sparql_validation_result in test_data.validation.sparql.results:
-                            export_dict = sparql_validation_result.query.model_dump()
-                            export_dict["query_result"] = sparql_validation_result.query_result
-                            export_dict_list.append(export_dict)
-
-                        df = pd.DataFrame(export_dict_list)
-                        df.to_csv(test_data_reports_output_path / "sparql_assertions_report.csv")
-
+                self.add_sparql_report(test_data_reports_output_path, test_data, "sparql_validation_report")
                 self.add_shacl_report(test_data_reports_output_path, test_data, "shacl_validation_report")
+
+        self.add_validation_summary_report(
+            self.package_output_path, self.package_state, "validation_summary_report"
+        )

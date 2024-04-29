@@ -1,17 +1,22 @@
 from beanie import PydanticObjectId
 from fastapi import APIRouter, status, Form, UploadFile, Depends
 
+from mapping_workbench.backend.config import settings
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.package_importer.services.import_mapping_suite_v3 import \
     import_mapping_package_from_archive as import_mapping_package_v3, clear_project_data
 from mapping_workbench.backend.package_importer.services.importer import import_package
 from mapping_workbench.backend.project.services.api import get_project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
+from mapping_workbench.backend.task_manager.adapters.task import Task
+from mapping_workbench.backend.task_manager.entrypoints import AppTaskManager
 from mapping_workbench.backend.user.models.user import User
 
 ROUTE_PREFIX = "/package_importer"
 TAG = "package_importer"
 NAME_FOR_ONE = "package"
+
+TASK_IMPORT_PACKAGE_NAME = f"{NAME_FOR_ONE}:tasks:import"
 
 router = APIRouter(
     prefix=ROUTE_PREFIX,
@@ -62,3 +67,30 @@ async def route_import_package_v3(
     )
 
     return mapping_package.model_dump()
+
+
+@router.post(
+    "/tasks/import",
+    description=f"Task Import {NAME_FOR_ONE}",
+    name=TASK_IMPORT_PACKAGE_NAME,
+    status_code=status.HTTP_201_CREATED
+)
+async def route_task_import_package(
+        project: PydanticObjectId = Form(...),
+        file: UploadFile = Form(...),
+        user: User = Depends(current_active_user)
+):
+    mapping_package: MappingPackage = await import_mapping_package_v3(
+        file.file.read(), await get_project(project), user
+    )
+
+    return mapping_package.model_dump()
+    #
+    # task = Task(
+    #     import_mapping_package_v3,
+    #     TASK_IMPORT_PACKAGE_NAME,
+    #     settings.TASK_TIMEOUT,
+    #     file.file.read(), await get_project(project), user
+    # )
+    # AppTaskManager.add_task(task)
+    # return task.task_metadata

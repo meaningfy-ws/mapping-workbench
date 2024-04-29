@@ -12,6 +12,7 @@ from mapping_workbench.backend.conceptual_mapping_rule.models.entity import Conc
 from mapping_workbench.backend.core.models.base_entity import BaseTitledEntityListFiltersSchema, BaseEntity
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
+from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroupState, MappingGroup
 from mapping_workbench.backend.package_validator.services.sparql_cm_assertions import SPARQL_CM_ASSERTIONS_SUITE_TITLE
 from mapping_workbench.backend.resource_collection.models.entity import ResourceCollectionState, ResourceCollection, \
     ResourceFileState
@@ -89,6 +90,7 @@ class MappingPackageState(TestDataValidation, ObjectState):
     shacl_test_suites: Optional[List[SHACLTestSuiteState]] = []
     sparql_test_suites: Optional[List[SPARQLTestSuiteState]] = []
     conceptual_mapping_rules: Optional[List[ConceptualMappingRuleState]] = []
+    mapping_groups: Optional[List[MappingGroupState]] = []
     triple_map_fragments: Optional[List[TripleMapFragmentState]] = []
     resources: Optional[List[ResourceFileState]] = []
 
@@ -167,6 +169,13 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
         conceptual_mapping_rule_states = [await conceptual_mapping_rule.get_state() for conceptual_mapping_rule in
                                           conceptual_mapping_rules]
         return conceptual_mapping_rule_states
+
+    async def get_mapping_groups_states(self) -> List[MappingGroupState]:
+        mapping_groups = await MappingGroup.find(
+            Eq(MappingGroup.project, self.project.to_ref())
+        ).to_list()
+        mapping_groups_states = [await mapping_group.get_state() for mapping_group in mapping_groups]
+        return mapping_groups_states
 
     async def get_test_data_suites_states(self) -> List[TestDataSuiteState]:
         test_data_suites = await TestDataSuite.find(
@@ -249,6 +258,7 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
 
     async def get_state(self) -> MappingPackageState:
         conceptual_mapping_rules = await self.get_conceptual_mapping_rules_states()
+        mapping_groups = await self.get_mapping_groups_states()
         test_data_suites = await self.get_test_data_suites_states()
         shacl_test_suites = await self.get_shacl_test_suites_states()
         sparql_test_suites = await self.get_sparql_test_suites_states(
@@ -273,6 +283,7 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
             shacl_test_suites=shacl_test_suites,
             sparql_test_suites=sparql_test_suites,
             conceptual_mapping_rules=conceptual_mapping_rules,
+            mapping_groups=mapping_groups,
             triple_map_fragments=triple_map_fragments,
             resources=resources
         )

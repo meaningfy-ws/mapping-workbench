@@ -8,7 +8,9 @@ TAGS = ["auth"]
 
 router = APIRouter()
 router.include_router(
-    fastapi_users.get_auth_router(auth_backend), prefix=f"{ROUTE_PREFIX}/jwt", tags=TAGS
+    fastapi_users.get_auth_router(auth_backend),
+    prefix=f"{ROUTE_PREFIX}/jwt",
+    tags=TAGS
 )
 router.include_router(
     fastapi_users.get_register_router(UserRead, UserCreate),

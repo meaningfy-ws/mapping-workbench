@@ -14,7 +14,7 @@ import {Layout as AppLayout} from 'src/layouts/app';
 import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
 import {ForItemEditForm} from "src/contexts/app/section/for-item-form";
 import {useItem} from "src/contexts/app/section/for-item-data-state";
-import {EditForm} from "../../../../sections/app/conceptual-mapping-rule/edit-form";
+import {EditForm} from "src/sections/app/conceptual-mapping-rule/edit-form";
 
 
 const Page = () => {

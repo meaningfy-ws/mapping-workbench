@@ -6,8 +6,8 @@ from starlette.responses import StreamingResponse
 
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.mapping_package.services.api import get_mapping_package
-from mapping_workbench.backend.package_exporter.services.export_mapping_suite_v3 import \
-    export_latest_package_state, export_specific_package_state
+from mapping_workbench.backend.package_exporter.services.export_mapping_suite_v3 import export_latest_package_state, \
+    export_specific_package_state
 
 ROUTE_PREFIX = "/package_exporter"
 TAG = "package_exporter"
@@ -53,3 +53,19 @@ async def route_export_specific_package_state(
         io.BytesIO(archive),
         media_type="application/x-zip-compressed"
     )
+
+# @router.get(
+#     "/export_cm",
+#     description=f"Export cm",
+#     name=f"cm:export_specific_package_state",
+#     status_code=status.HTTP_200_OK
+# )
+# async def route_export_specific_cm_tmp(
+#         package_id: PydanticObjectId,
+# ):
+#     mapping_package: MappingPackage = await get_mapping_package(package_id)
+#     result_excel = await generate_eforms_conceptual_mapping_excel_by_mapping_package(mapping_package)
+#     return StreamingResponse(
+#         io.BytesIO(result_excel),
+#         media_type="application/excel"
+#     )

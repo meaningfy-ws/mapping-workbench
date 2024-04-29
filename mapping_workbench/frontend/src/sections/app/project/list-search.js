@@ -27,10 +27,13 @@ const statusOptions = [
 export const ListSearch = (props) => {
     const {onFiltersChange, showStatus, ...other} = props;
     const queryRef = useRef(null);
+    const firstUpdate = useRef(true)
     const [chips, setChips] = useState([]);
 
      useEffect(() => {
-        handleChipsUpdate();
+         if (firstUpdate.current)
+            firstUpdate.current = false
+         else handleChipsUpdate();
     }, [chips]);
 
     const handleChipsUpdate = () => {

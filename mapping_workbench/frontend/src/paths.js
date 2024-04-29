@@ -4,6 +4,9 @@ export const paths = {
         jwt: {
             login: '/auth/jwt/login',
             register: '/auth/jwt/register'
+        },
+        auth0: {
+            login: '/auth/auth0/login'
         }
     },
     app: {
@@ -148,7 +151,7 @@ export const paths = {
                 index: '/app/fields-registry/elements',
                 //create: '/app/fields-registry/elements/create',
                 //edit: '/app/fields-registry/elements/[id]/edit',
-                view: '/app/fields-registry/elements/[id]/view',
+                view: (id) => `/app/fields-registry/elements/${id}/view`,
                 import: '/app/fields-registry/elements/import'
             }
         },
@@ -210,7 +213,7 @@ export const apiPaths = {
     mapping_packages: {
         items: '/mapping_packages',
         item: '/mapping_packages/:id',
-        import: '/package_importer/import/v3',
+        import: '/package_importer/tasks/import',
         process: '/package_processor/process',
         export: '/package_exporter/export_latest_package_state',
         export_specific: '/package_exporter/export_specific_package_state',

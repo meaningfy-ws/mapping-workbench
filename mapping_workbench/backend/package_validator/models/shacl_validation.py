@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Optional, List
 
 from beanie import PydanticObjectId
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from mapping_workbench.backend.package_validator.models.test_data_validation import TestDataValidationResult, \
     ValidationTestDataEntry
@@ -58,6 +58,8 @@ class SHACLQueryResult(ValidationSHACLQuery, BaseModel):
     result: Optional[SHACLQueryRefinedResultType] = None
     binding: Optional[SHACLQueryResultBinding]
     test_data: Optional[SHACLQueryTestDataEntry] = None
+
+    model_config = ConfigDict(use_enum_values=True)
 
 
 class SHACLQueryTestDataResult(BaseModel):

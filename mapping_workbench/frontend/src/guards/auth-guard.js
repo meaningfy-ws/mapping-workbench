@@ -5,9 +5,9 @@ import {useAuth} from 'src/hooks/use-auth';
 import {useRouter} from 'src/hooks/use-router';
 import {paths} from 'src/paths';
 import {Issuer} from 'src/utils/auth';
-import {authApi} from "../api/auth";
 
 const loginPaths = {
+  [Issuer.Auth0]: paths.auth.auth0.login,
   [Issuer.JWT]: paths.auth.jwt.login
 };
 

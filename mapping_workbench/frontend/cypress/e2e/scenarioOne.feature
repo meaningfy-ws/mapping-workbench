@@ -5,9 +5,8 @@ Feature: Scenario One
   Scenario: Create Project
     Given Session Login
     Then Go Home
-    Then I expand projects
 
-    When I click on project list
+    When I click on projects
     Then I get redirected to projects list page
 
     When I click on add project button
@@ -43,21 +42,18 @@ Feature: Scenario One
   Scenario: Import Package
     Given Session Login
     Then Go Home
-    Then I expand packages
+    Then I go to Mapping Packages
 
-    When I click on packages import
-    Then I get redirected to mapping_packages import page
-    Then I click on package import button
-    Then I click on package importer
+    When I click on Mapping Packages import
+    Then I click on Mapping Packages importer
     Then I click on upload button
     Then I get success upload
 
   Scenario: Generate Conceptual mappings
     Given Session Login
     Then Go Home
-    Then I expand conceptual mappings
 
-    When I click on conceptual mappings list
+    When I click on conceptual mappings
     Then I get redirected to  conceptual mappings list page
 
     When I click on generate button
@@ -82,11 +78,10 @@ Feature: Scenario One
     Given Session Login
     Then Go Home
     Then I get redirected to projects list page
-    Then I expand packages
 
-    When I click on packages list
-    Then I get redirected to mapping_packages list page
-    Then I receive packages
+    When I go to Mapping Packages
+    Then I get redirected to Mapping Packages list page
+    Then I receive Mapping Packages
     Then I click on expand arrow
 
     When I click process button
@@ -96,11 +91,10 @@ Feature: Scenario One
     Given Session Login
     Then Go Home
     Then I get redirected to projects list page
-    Then I expand packages
 
-    When I click on packages list
-    Then I get redirected to mapping_packages list page
-    Then I receive packages
+    When I go to Mapping Packages
+    Then I get redirected to Mapping Packages list page
+    Then I receive Mapping Packages
     Then I click on expand arrow
 
     When I click export latest button

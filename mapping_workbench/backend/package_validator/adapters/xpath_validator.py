@@ -1,7 +1,10 @@
-from typing import List, Any
+import io
+import re
+from typing import List, Any, Union
+from xml.etree import ElementTree
 
-from lxml import etree
 from pydantic import validate_call
+from saxonche import PySaxonProcessor, PySaxonApiError, PyXPathProcessor, PyXdmNode, PyXdmValue
 
 from mapping_workbench.backend.package_validator.adapters.data_validator import TestDataValidator
 from mapping_workbench.backend.package_validator.models.xpath_validation import XPathAssertionEntry
@@ -11,61 +14,91 @@ class XPATHValidator(TestDataValidator):
     """
     """
 
-    xml_content: Any = None
-    DEFAULT_XML_NS_PREFIX: str = 'ns'
+    xp: Any = None
+    namespaces: Any = None
+    prefixes: Any = None
+    DEFAULT_XML_NS_PREFIX: str = ''
 
     @validate_call
     def __init__(self, xml_content, **data: Any):
         super().__init__(**data)
-        self.xml_content = xml_content
+        self.namespaces = self.extract_namespaces(xml_content)
+        self.prefixes = {v: k for k, v in self.namespaces.items()}
+        self.xp = self.init_xp_processor(xml_content)
 
     def validate(self, xpath_expression) -> List[XPathAssertionEntry]:
-        xpaths = self.get_unique_xpaths(self.xml_content, xpath_expression)
-        return xpaths
+        return self.get_unique_xpaths(xpath_expression)
+
+    def get_ns_tag(self, node: PyXdmNode) -> Union[str, None]:
+        if node.name is None:
+            return None
+        xpath = node.local_name
+        match = re.match(r"Q{(.*)}(.*)", node.name)
+        if match:
+            ns = match.group(1)
+            tag = match.group(2)
+            prefix = self.prefixes[ns]
+            return f"{prefix}:{tag}" if prefix else tag
+        return xpath
+
+    def get_node_xpath(self, node: PyXdmNode) -> Union[str, None]:
+        """Recursively get XPath for each element in the tree."""
+        xpath = self.get_ns_tag(node)
+        if xpath is None:
+            return None
+        path_parts = [xpath]
+        parent = node.get_parent()
+        while isinstance(parent, PyXdmNode):
+            xpath = self.get_ns_tag(parent)
+            if xpath is not None:
+                path_parts.insert(0, xpath)
+            parent = parent.get_parent()
+
+        return '/'.join(path_parts)
 
     @classmethod
-    def get_ns_tag(cls, node):
-        if hasattr(node, 'prefix'):
-            prefix = ""
-            if node.prefix is not None:
-                prefix = f"{node.prefix}:"
-            return f"{prefix}{node.tag[len('{' + node.nsmap[node.prefix] + '}'):]}" \
-                if node.prefix in node.nsmap else node.tag
-        else:
-            return node
+    def get_node_text_value(cls, node: PyXdmNode) -> Union[str, None]:
+        return node.get_string_value() if len(node.children) == 1 else None
 
-    def get_element_xpath(self, element) -> str:
-        """Recursively get XPath for each element in the tree."""
-        path = [self.get_ns_tag(element)]
-        parent = element.getparent()
-        while parent is not None:
-            path.insert(0, self.get_ns_tag(parent))
-            parent = parent.getparent()
-        return '/'.join(path)
+    def extract_namespaces(self, xml_content):
+        xml_file = io.StringIO(xml_content)
+        namespaces = dict()
+        for event, elem in ElementTree.iterparse(xml_file, events=('start-ns',)):
+            ns, url = elem
+            if ns == '':
+                ns = self.DEFAULT_XML_NS_PREFIX
+            namespaces[ns] = url
+        return namespaces
 
-    def get_unique_xpaths(self, xml_content, xpath_expression) -> List[XPathAssertionEntry]:
-        unique_xpaths = set()
-        xpaths = []
+    def init_xp_processor(self, xml_content: str) -> PyXPathProcessor:
+        proc = PySaxonProcessor(license=False)
+        xp = proc.new_xpath_processor()
+        for prefix, ns_uri in self.namespaces.items():
+            xp.declare_namespace(prefix, ns_uri)
+        document = proc.parse_xml(xml_text=xml_content)
+        xp.set_context(xdm_item=document)
 
-        """Get unique XPaths that cover elements matching the XPath expression."""
-        root = etree.fromstring(bytes(xml_content, encoding="utf-8"))
+        return xp
 
-        namespaces = root.nsmap
-        if None in namespaces:
-            namespaces[self.DEFAULT_XML_NS_PREFIX] = namespaces.pop(None)
+    def check_xpath_expression(self, xpath_expression: str) -> Union[PyXdmValue, None]:
+        try:
+            return self.xp.evaluate(xpath_expression)
+        except PySaxonApiError:
+            return None
 
-        matching_elements = root.xpath(xpath_expression, namespaces=namespaces)
-        for element in matching_elements:
-            xpath = self.get_element_xpath(element)
+    def get_unique_xpaths(self, xpath_expression) -> List[XPathAssertionEntry]:
+        """Get unique XPaths that cover elements matching e XPath expression."""
 
-            if xpath not in unique_xpaths:
-                unique_xpaths.add(xpath)
-                value = None
-                if hasattr(element, 'text'):
-                    value = element.text
-                xpaths.append(XPathAssertionEntry(
-                    xpath=xpath,
-                    value=value
-                ))
+        xpath_assertions = []
+        matching_elements = self.check_xpath_expression(xpath_expression)
 
-        return xpaths
+        if matching_elements and matching_elements.size > 0:
+            for element in matching_elements:
+                xpath_node: PyXdmNode = element.get_node_value()
+                xpath = self.get_node_xpath(xpath_node)
+                if xpath:
+                    xpath_assertions.append(XPathAssertionEntry(
+                        xpath=xpath,
+                        value=self.get_node_text_value(xpath_node)
+                    ))
+        return xpath_assertions

@@ -1,19 +1,13 @@
 import {Given, Then, When} from "cypress-cucumber-preprocessor/steps";
 
-const username = 'admin@mw.com'
-const password = 'p4$$'
-const gitUrl = "https://github.com/OP-TED/eForms-SDK"
-const branchVersion = "1.9.1"
-const project_name ='TEST_PROJECT'
+const {username, password, homeURL, appURLPrefix, projectName, gitUrl, branchVersion} = Cypress.env()
 let sessionProject = ''
-Given('Go Home', () => {
-    cy.visit('localhost:3000')
-})
+
 
 Given('Session Login', () => {
     // Caching session when logging in via page visit
     cy.session([username,password], () => {
-        cy.visit('localhost:3000')
+        cy.visit(homeURL)
         cy.get('[name=username]').clear().type(username)
         cy.get('[name=password]').clear().type(password)
         cy.get('button[type="submit"]').click()
@@ -25,21 +19,6 @@ Given('Session Login', () => {
 })
 
 //create projects
-Then('I expand projects', () => {
-    cy.get('#nav_projects').click()
-})
-
-When('I click on packages list', () => {
-    cy.get("#nav_packages_list").click()
-})
-
-When('I click on project list', () => {
-    cy.get("#nav_projects_list").click()
-})
-
-Then('I get redirected to projects list page', () => {
-    cy.title().should('eq','App: Projects List | Mapping Workbench')
-})
 
 When('I click on add project button', () => {
     cy.get('#add_button').click()
@@ -50,16 +29,17 @@ Then('I get redirected to projects create page', () => {
 })
 
 Then('I type project name', () => {
-    cy.get('input[name=title]').clear().type(project_name)
+    cy.get('input[name=title]').clear().type(projectName)
 })
 
 When('I click create button', () => {
-    cy.intercept('POST', 'http://localhost:8000/api/v1/projects',).as('create')
+    cy.log(appURLPrefix + 'projects')
+    cy.intercept('POST', appURLPrefix + 'projects',).as('create')
     cy.get('#create_button').click()
 })
 
 Then('I get success created', () => {
-    cy.wait('@create').its('response.statusCode').should('eq',201)
+    cy.wait('@create',{responseTimeout: 10000}).its('response.statusCode').should('eq',201)
 })
 
 When('I click back to projects link', () => {
@@ -68,11 +48,11 @@ When('I click back to projects link', () => {
 
 //Select project
 Then('I search for project', () => {
-    cy.get('input[type=text]').clear().type(project_name+'{enter}')
+    cy.get('input[type=text]').clear().type(projectName + '{enter}')
 })
 
 When('I select project', () => {
-    cy.intercept('POST', 'http://localhost:8000/api/v1/users/set_project_for_current_user_session',).as('select')
+    cy.intercept('POST', appURLPrefix + 'users/set_project_for_current_user_session',).as('select')
     cy.get('#select_button').click()
 })
 
@@ -106,7 +86,7 @@ Then('I type branch name', () => {
 })
 
 When('I click on import button', () => {
-    cy.intercept('POST', 'http://localhost:8000/api/v1/fields_registry/import_eforms_from_github',).as('import')
+    cy.intercept('POST', appURLPrefix + 'fields_registry/import_eforms_from_github',).as('import')
     cy.get('#import').click()
 })
 
@@ -116,12 +96,8 @@ Then('I get success import', () => {
 
 
 //generating conceptual mappings
-Given('I expand conceptual mappings', () => {
+Given('I click on conceptual mappings', () => {
     cy.get('#nav_conceptual\\ mappings').click()
-})
-
-When('I click on conceptual mappings list', () => {
-    cy.get("#nav_conceptual\\ mappings_list").click()
 })
 
 Then('I get redirected to  conceptual mappings list page', () => {
@@ -149,32 +125,32 @@ Then('I get redirected to transform test data page', () => {
 })
 
 When('I click on run button for transform data', () => {
-    cy.intercept('POST', 'http://localhost:8000/api/v1/tasks/transform_test_data',).as('run_test_data')
+    cy.intercept('POST', appURLPrefix + 'tasks/transform_test_data',).as('run_test_data')
     cy.get('#run_button').click()
 })
 
 Then('I get success generate', () => {
-    cy.wait('@run').its('response.statusCode').should('eq', 200)
+    cy.wait('@run_conceptual_test_data').its('response.statusCode').should('eq', 200)
 })
 
 
-//importing packages
-Given('I expand packages', () => {
-    cy.get('#nav_packages').click()
+//importing Mapping Packages
+Given('I go to Mapping Packages', () => {
+    cy.get('#nav_mapping\\ packages').click()
 })
-When('I click on packages import', () => {
-    cy.get("#nav_packages_import").click()
+When('I click on Mapping Packages import', () => {
+    cy.get("#import_package_button").click()
 })
 
-Then('I get redirected to mapping_packages import page', () => {
+Then('I get redirected to Mapping Packages import page', () => {
     cy.title().should('eq','App: Mapping Package Import | Mapping Workbench')
 })
 
-Then('I click on package import button', () => {
+Then('I click on Mapping Packages import button', () => {
     cy.get('#import_button').click()
 })
 
-Then('I click on package importer', () => {
+Then('I click on Mapping Packages importer', () => {
     cy.get('.MuiBox-root > input').selectFile('package_eforms_16_1.5.zip', { force: true })
 })
 
@@ -198,7 +174,7 @@ Then('I click on transform test data', () => {
 })
 
 Then('I click on run button', () => {
-    cy.intercept('POST', 'http://localhost:8000/api/v1/tasks/transform_test_data',).as('run_test_data')
+    cy.intercept('POST', appURLPrefix + 'conceptual_mapping_rules/tasks/generate_cm_assertions_queries',).as('run_conceptual_test_data')
     cy.get('#run_button').click()
 })
 
@@ -206,14 +182,14 @@ Then('I get success transform', () => {
     cy.wait('@run_test_data',{responseTimeout: 999999}).its('response.statusCode').should('eq', 200)
 })
 
-//process package
+//process Mapping Packages
 
-Then('I get redirected to mapping_packages list page', () => {
+Then('I get redirected to Mapping Packages list page', () => {
     cy.intercept('GET', 'http://localhost:8000/api/v1/mapping_packages*',).as('getPackages')
     cy.title().should('eq','App: Mapping Packages List | Mapping Workbench')
 })
 
-Then('I receive packages', () => {
+Then('I receive Mapping Packages', () => {
     cy.wait('@getPackages').its('response.statusCode').should('eq',200)
 })
 
@@ -222,7 +198,7 @@ Then('I click on expand arrow', () => {
 })
 
 When('I click process button', () => {
-    cy.intercept('POST', 'http://localhost:8000/api/v1/package_processor/process',).as('process')
+    cy.intercept('POST', appURLPrefix + 'package_processor/process',).as('process')
     cy.get('#process_button').click()
 })
 
@@ -231,7 +207,7 @@ Then('I get processed', () => {
 })
 
 When('I click export latest button', () => {
-    cy.intercept('GET', 'http://localhost:8000/api/v1/package_exporter/export_latest_package_state*',).as('export')
+    cy.intercept('GET', appURLPrefix + 'package_exporter/export_latest_package_state*',).as('export')
     cy.get('#export_latest_button').click()
 })
 

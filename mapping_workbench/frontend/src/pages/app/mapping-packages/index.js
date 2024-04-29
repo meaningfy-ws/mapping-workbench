@@ -145,6 +145,7 @@ const Page = () => {
                     >
                         <Button
                             component={RouterLink}
+                            id="add_package_button"
                             href={paths.app[sectionApi.section].create}
                             startIcon={(
                                 <SvgIcon>
@@ -157,6 +158,7 @@ const Page = () => {
                         </Button>
                         <Button
                             onClick={importDialog.handleOpen}
+                            id="import_package_button"
                             startIcon={(
                                 <SvgIcon>
                                     <ImportIcon/>

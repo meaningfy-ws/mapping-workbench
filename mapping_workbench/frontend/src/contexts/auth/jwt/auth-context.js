@@ -9,7 +9,7 @@ export const initialState = {
 
 export const AuthContext = createContext({
   ...initialState,
-  issuer: Issuer.JWT,
+  issuer: Issuer.DEFAULT,
   signIn: () => Promise.resolve(),
   signUp: () => Promise.resolve(),
   verifyAuth: () => Promise.resolve(),

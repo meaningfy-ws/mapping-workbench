@@ -61,6 +61,7 @@ export const ListFileCollectionActions = (props) => {
                 View
                 </Button>*/}
                 <Button
+                    id="resources_button"
                     variant="text"
                     size="small"
                     color="info"
@@ -69,6 +70,7 @@ export const ListFileCollectionActions = (props) => {
                     Resources
                 </Button>
                 <Button
+                    id="edit_button"
                     variant="text"
                     size="small"
                     color="success"
@@ -77,6 +79,7 @@ export const ListFileCollectionActions = (props) => {
                     Edit
                 </Button>
                 <Button
+                    id="delete_button"
                     variant="text"
                     size="small"
                     color="error"

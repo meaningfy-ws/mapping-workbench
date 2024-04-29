@@ -1,8 +1,7 @@
-from datetime import datetime
 from enum import Enum
-from typing import List, Optional
+from typing import List, Optional, Union
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class MappingSuiteType(str, Enum):
@@ -13,6 +12,17 @@ class MappingSuiteType(str, Enum):
         return self.value
 
 
+class StandardFormConstraints(BaseModel):
+    """
+    Metadata constraints structure for Standard forms
+    """
+    eforms_subtype: List[str]
+    start_date: Optional[List[str]]
+    end_date: Optional[List[str]]
+    min_xsd_version: List[str]
+    max_xsd_version: Optional[List[str]]
+
+
 class EFormsConstraints(BaseModel):
     eforms_subtype: List[str]
     start_date: Optional[str]
@@ -21,10 +31,10 @@ class EFormsConstraints(BaseModel):
 
 
 class MappingMetadataConstraints(BaseModel):
-    constraints: EFormsConstraints
+    constraints: Union[StandardFormConstraints, EFormsConstraints]
 
 
-class MappingMetadataExport(BaseModel):
+class MappingMetadataExportBaseForEForms(BaseModel):
     identifier: str
     title: str
     created_at: str
@@ -33,6 +43,12 @@ class MappingMetadataExport(BaseModel):
     ontology_version: str
     mapping_type: MappingSuiteType = MappingSuiteType.ELECTRONIC_FORMS
     metadata_constraints: MappingMetadataConstraints
+
+    model_config = ConfigDict(use_enum_values=True)
+
+
+
+class MappingMetadataExportForEForms(MappingMetadataExportBaseForEForms):
     mapping_suite_hash_digest: str
 
 
@@ -64,7 +80,7 @@ class ExportedCollectionResource(BaseModel):
 
 
 class ExportedMappingSuite(BaseModel):
-    metadata: MappingMetadataExport
+    metadata: Union[MappingMetadataExportForEForms]
     conceptual_rules: List[MappingConceptualRule] = []
     transformation_resources: ExportedCollectionResource
     transformation_mappings: ExportedCollectionResource

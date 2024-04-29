@@ -50,7 +50,8 @@ async def transform_test_data_file_resource_content(
             resources_path = data_path / TRANSFORMATION_PATH_NAME / RESOURCES_PATH_NAME
             resources_path.mkdir(parents=True, exist_ok=True)
             for idx, resource in enumerate(resources):
-                resource_path = resources_path / resource.filename
+                resource_name = resource.guess_name()
+                resource_path = resources_path / resource_name
                 with resource_path.open("w", encoding="utf-8") as file:
                     file.write(resource.content)
 

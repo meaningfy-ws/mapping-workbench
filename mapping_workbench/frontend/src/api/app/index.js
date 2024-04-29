@@ -168,7 +168,7 @@ class AppApi {
     }
 
     async signIn(request) {
-        const {username, password} = request;
+        const {username, password, remember_me} = request;
 
         const config = {
             headers: {
@@ -176,11 +176,15 @@ class AppApi {
             }
         }
         let $this = this;
+        let data = {
+            "username": username,
+            "password": password
+        }
+        if (remember_me) {
+            data['remember_me'] = true
+        }
         return axios
-            .post(this.url(LOGIN_ENDPOINT), {
-                "username": username,
-                "password": password
-            }, config)
+            .post(this.url(LOGIN_ENDPOINT), data, config)
             .then(function (response) {
                 let accessToken = response.data.access_token;
                 $this.setAccessToken(accessToken);

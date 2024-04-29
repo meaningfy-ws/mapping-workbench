@@ -14,9 +14,8 @@ from mapping_workbench.backend.security.adapters.user_session import get_user_db
 from mapping_workbench.backend.user.models.user import User
 from mapping_workbench.backend.config import settings
 
-
 JWT_SECRET = settings.JWT_SECRET
-JWT_EXPIRES_IN = settings.JWT_EXPIRES_IN
+JWT_EXPIRES_IN = 60 * 60 * 24  # settings.JWT_EXPIRES_IN
 JWT_ALGORITHM = "HS256"
 
 

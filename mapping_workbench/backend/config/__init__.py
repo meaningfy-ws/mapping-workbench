@@ -73,6 +73,10 @@ class TaskManagerSettings(BaseSettings):
     def TASK_MANAGER_MAX_WORKERS(self, config_value: str) -> int:
         return int(config_value)
 
+    @env_property(config_key='MW_TASK_TIMEOUT', default_value="300")
+    def TASK_TIMEOUT(self, config_value: str) -> int:
+        return int(config_value)
+
 
 class Settings(
     AppSettings,

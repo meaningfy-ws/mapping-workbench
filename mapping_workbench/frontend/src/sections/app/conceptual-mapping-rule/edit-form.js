@@ -36,27 +36,7 @@ import {ListSelectorSelect as ResourceListSelector} from "../../../components/ap
 import {COMMENT_PRIORITY} from "../../../api/conceptual-mapping-rules";
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 
-const TermValidityInfo = (props) => {
-    const {item, ...other} = props;
-
-    let severity = 'success';
-    let info = `is a known term`;
-    let term = item.term
-    if (!item.is_valid) {
-        severity = 'error';
-        info = `is an unknown term`;
-    }
-    return (
-        <Alert severity={severity}
-               sx={{
-                   my: 2
-               }}
-        >
-            <b color="success">{term}</b>
-            {info}
-        </Alert>
-    )
-}
+import {TermValidityInfo} from "./term-validity";
 
 const RuleComment = (props) => {
     const {formik, fieldName, idx, handleDelete, ...other} = props;
@@ -194,8 +174,7 @@ export const EditForm = (props) => {
 
         const formik = useFormik({
             initialValues,
-            validationSchema: Yup.object({
-            }),
+            validationSchema: Yup.object({}),
             onSubmit: async (values, helpers) => {
                 const toastId = toastLoad(itemctx.isNew ? 'Creating...' : 'Updating...')
                 try {
@@ -279,7 +258,7 @@ export const EditForm = (props) => {
                         query: {id: res._id}
                     });
                 })
-                .catch(err => toastError(`Cloning rule failed: ${err.message}.`, toastId))
+                .catch(err => toastError(err, toastId))
         }
 
         const handleDeleteComment = (idx, fieldName) => {

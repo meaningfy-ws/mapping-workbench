@@ -28,7 +28,7 @@ export const AccountPopover = (props) => {
             onClose?.();
 
             switch (auth.issuer) {
-                case Issuer.JWT: {
+                case Issuer.DEFAULT: {
                     toastLoad("Logging out...");
                     await auth.signOut();
                     break;

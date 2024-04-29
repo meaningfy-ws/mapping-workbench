@@ -34,17 +34,7 @@ export const useSections = () => {
                 <SvgIcon fontSize="small">
                     <LayoutAlt02/>
                 </SvgIcon>
-            ),
-            items: [
-                {
-                    title: t(tokens.nav.list),
-                    path: paths.app.projects.index
-                },
-                {
-                    title: t(tokens.nav.create),
-                    path: paths.app.projects.create
-                }
-            ]
+            )
         }]
     });
     items.resources.push({
