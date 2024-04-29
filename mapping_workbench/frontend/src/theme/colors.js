@@ -97,10 +97,10 @@ export const error = withAlphas({
 });
 
 export const yellow = withAlphas({
-  lightest: '#f1eede',
-  light: '#efe498',
-  main: '#f0d138',
-  dark: '#a48d15',
-  darkest: '#4d4110',
+  lightest: '#eeecc4',
+  light: '#eee655',
+  main: '#eee409',
+  dark: '#aba308',
+  darkest: '#504d02',
   contrastText: '#FFFFFF'
 });
