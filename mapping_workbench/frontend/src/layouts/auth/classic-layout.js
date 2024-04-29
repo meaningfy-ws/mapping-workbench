@@ -4,10 +4,9 @@ import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import {styled} from '@mui/material/styles';
 
-import {Logo} from 'src/components/logo';
+import {Logo} from 'src/components/logoWithName';
 import {RouterLink} from 'src/components/router-link';
 import {paths} from 'src/paths';
-import Typography from "@mui/material/Typography";
 
 const TOP_NAV_HEIGHT = 160;
 
@@ -72,32 +71,7 @@ export const Layout = (props) => {
                             spacing={1}
                             sx={{textDecoration: 'none'}}
                         >
-                            <Box
-                                sx={{
-                                    display: 'inline-flex',
-                                    height: 100,
-                                    width: 100
-                                }}
-                            >
-                                <Logo/>
-                            </Box>
-                            <Box
-                                sx={{
-                                    color: 'text.primary',
-                                    fontFamily: '\'Plus Jakarta Sans\', sans-serif',
-                                    fontSize: 14,
-                                    fontWeight: 800,
-                                    letterSpacing: '0.3px',
-                                    lineHeight: 2.5,
-                                    '& span': {
-                                        color: 'primary.main'
-                                    }
-                                }}
-                            >
-                                <Typography variant="h6">
-                                    Mapping <span>Workbench</span>
-                                </Typography>
-                            </Box>
+                            <Logo/>
                         </Stack>
                     </Stack>
                     {children}
