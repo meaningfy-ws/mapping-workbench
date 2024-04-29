@@ -909,90 +909,89 @@ export const ListTableRow = (props) => {
                 }}
             >
                 <CardContent>
-                    <Grid container>
-                        <Grid
-                            item
-                            md={12}
-                            xs={12}
-                        >
-                            <PropertyList>
-                                {item.source_structural_element && (
-                                    <>
-                                        {item.source_structural_element.eforms_sdk_element_id && <PropertyListItem
-                                            key="eforms_sdk_element_id"
-                                            label="eForms SDK ID"
-                                            value={item.source_structural_element.eforms_sdk_element_id}
-                                        />}
-                                        {item.source_structural_element.absolute_xpath && <PropertyListItem
-                                            key="absolute_xpath"
-                                            label="Absolute XPath"
-                                            value={item.source_structural_element.absolute_xpath}
-                                        />}
-                                        {item.source_structural_element.name && <PropertyListItem
-                                            key="name"
-                                            label="Field Name"
-                                            value={item.source_structural_element.name}
-                                        />}
-                                        {item.source_structural_element.bt_id && <PropertyListItem
-                                            key="bt_id"
-                                            label="BT ID"
-                                            value={item.source_structural_element.bt_id}
-                                        />}
+                    <Stack direction='column'>
+                        <PropertyList>
+                            {item.source_structural_element && (
+                                <>
+                                    {item.source_structural_element.eforms_sdk_element_id && <PropertyListItem
+                                        key="eforms_sdk_element_id"
+                                        label="Field/Node ID"
+                                        value={item.source_structural_element.eforms_sdk_element_id}
+                                    />}
+                                    {item.source_structural_element.absolute_xpath && <PropertyListItem
+                                        key="absolute_xpath"
+                                        label="Absolute XPath"
+                                        value={item.source_structural_element.absolute_xpath}
+                                    />}
+                                    {item.source_structural_element.name && <PropertyListItem
+                                        key="name"
+                                        label="Field Name"
+                                        value={item.source_structural_element.name}
+                                    />}
+                                </>
+                            )}
+                        </PropertyList>
+                        <PropertyList>
+                            <Grid container>
+                                <Grid item
+                                      xl={6}
+                                      md={12}>
+                                    {item.target_class_path && (<PropertyListItem
+                                        key="target_class_path"
+                                        label="Ontology Fragment Class path"
+                                        value={item.target_class_path}
+                                    />)}
+                                    {item.target_class_path_terms_validity && <>
+                                        <Alert severity={hasTargetClassPathValidityErrors ? "error" : "success"}
+                                               sx={{
+                                                   my: 1,
+                                                   mx: 5
+                                               }}
+                                        >{parse(targetClassPathValidityInfo)}</Alert>
                                     </>
-                                )}
-                            </PropertyList>
-                            <PropertyList>
-                                {item.target_class_path && (<PropertyListItem
-                                    key="target_class_path"
-                                    label="Ontology Fragment Class path"
-                                    value={item.target_class_path}
-                                />)}
-                                {item.target_class_path_terms_validity && <>
-                                    <Alert severity={hasTargetClassPathValidityErrors ? "error" : "success"}
-                                           sx={{
-                                               my: 1,
-                                               mx: 5
-                                           }}
-                                    >{parse(targetClassPathValidityInfo)}</Alert>
-                                </>
-                                }
-                                {item.target_class_path_terms_validity?.map((item, i) =>
-                                    <TermValidityInfo
-                                        key={'target' + i}
-                                        item={item}
-                                        sx={{
-                                            my: 1,
-                                            mx: 5
-                                        }}
-                                    />
-                                )}
-                                {item.target_property_path && (<PropertyListItem
-                                    key="target_property_path"
-                                    label="Ontology Fragment Property path"
-                                    value={item.target_property_path}
-                                />)}
-                                {item.target_property_path_terms_validity && <>
-                                    <Alert severity={hasTargetPropertyPathValidityErrors ? "error" : "success"}
-                                           sx={{
-                                               my: 1,
-                                               mx: 5
-                                           }}
-                                    >{parse(targetPropertyPathValidityInfo)}</Alert>
-                                </>
-                                }
-                                {item.target_property_path_terms_validity?.map((item, i) =>
-                                    <TermValidityInfo
-                                        key={'target' + i}
-                                        item={item}
-                                        sx={{
-                                            my: 1,
-                                            mx: 5
-                                        }}
-                                    />
-                                )}
-                            </PropertyList>
-                        </Grid>
-                    </Grid>
+                                    }
+                                    {item.target_class_path_terms_validity?.map((item, i) =>
+                                        <TermValidityInfo
+                                            key={'target' + i}
+                                            item={item}
+                                            sx={{
+                                                my: 1,
+                                                mx: 5
+                                            }}
+                                        />
+                                    )}
+                                </Grid>
+                                <Grid item
+                                      xl={6}
+                                      md={12}>
+                                    {item.target_property_path && (<PropertyListItem
+                                        key="target_property_path"
+                                        label="Ontology Fragment Property path"
+                                        value={item.target_property_path}
+                                    />)}
+                                    {item.target_property_path_terms_validity && <>
+                                        <Alert severity={hasTargetPropertyPathValidityErrors ? "error" : "success"}
+                                               sx={{
+                                                   my: 1,
+                                                   mx: 5
+                                               }}
+                                        >{parse(targetPropertyPathValidityInfo)}</Alert>
+                                    </>
+                                    }
+                                    {item.target_property_path_terms_validity?.map((item, i) =>
+                                        <TermValidityInfo
+                                            key={'target' + i}
+                                            item={item}
+                                            sx={{
+                                                my: 1,
+                                                mx: 5
+                                            }}
+                                        />
+                                    )}
+                                </Grid>
+                            </Grid>
+                        </PropertyList>
+                    </Stack>
                 </CardContent>
             </TableCell>
         </TableRow>)}
