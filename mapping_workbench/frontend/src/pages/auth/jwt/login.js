@@ -168,16 +168,16 @@ const Page = () => {
                         </form>
                     </CardContent>
                 </Card>
-                <Stack
-                    spacing={3}
-                    sx={{mt: 3}}
-                >
-                    <Alert severity="error">
-                        <div>
-                            You can use <b>{user.username}</b> and password <b>{user.password}</b>
-                        </div>
-                    </Alert>
-                </Stack>
+                {/*<Stack*/}
+                {/*    spacing={3}*/}
+                {/*    sx={{mt: 3}}*/}
+                {/*>*/}
+                {/*    <Alert severity="error">*/}
+                {/*        <div>*/}
+                {/*            You can use <b>{user.username}</b> and password <b>{user.password}</b>*/}
+                {/*        </div>*/}
+                {/*    </Alert>*/}
+                {/*</Stack>*/}
             </div>
         </>
     );

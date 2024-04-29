@@ -9,7 +9,7 @@ import {RouterLink} from 'src/components/router-link';
 import {paths} from 'src/paths';
 import Typography from "@mui/material/Typography";
 
-const TOP_NAV_HEIGHT = 64;
+const TOP_NAV_HEIGHT = 160;
 
 const LayoutRoot = styled('div')(({theme}) => ({
     backgroundColor: theme.palette.background.default,
@@ -66,7 +66,7 @@ export const Layout = (props) => {
                         <Stack
                             alignItems="center"
                             component={RouterLink}
-                            direction="row"
+                            direction="column"
                             display="inline-flex"
                             href={paths.index}
                             spacing={1}
@@ -75,8 +75,8 @@ export const Layout = (props) => {
                             <Box
                                 sx={{
                                     display: 'inline-flex',
-                                    height: 24,
-                                    width: 24
+                                    height: 100,
+                                    width: 100
                                 }}
                             >
                                 <Logo/>

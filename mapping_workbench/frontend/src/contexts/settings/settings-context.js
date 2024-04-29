@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 
 export const defaultSettings = {
-  colorPreset: 'yellow',
+  colorPreset: 'blue',
   contrast: 'high',
   direction: 'ltr',
   layout: 'vertical',
