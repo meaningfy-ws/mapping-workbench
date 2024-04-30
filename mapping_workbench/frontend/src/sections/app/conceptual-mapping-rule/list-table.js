@@ -640,6 +640,7 @@ export const ListTableRow = (props) => {
         initProjectSPARQLResources = null,
         onPackagesUpdate = () => {
         },
+        handleNotesDialogOpen,
         detailedView
     } = props;
 
@@ -685,10 +686,6 @@ export const ListTableRow = (props) => {
 
     const hasTargetClassPathValidityErrors =
         item.target_class_path_terms_validity?.some(x => !x.is_valid);
-
-    const mappingNotesDialog = useDialog();
-    const editorialNotesDialog = useDialog();
-    const feedbackNotesDialog = useDialog();
 
     return (<>
         <TableRow
@@ -796,96 +793,13 @@ export const ListTableRow = (props) => {
                     isHovered={isHovered}
                 />
             </TableCell>
-            {/*<TableCell align="left">
-                {(item.created_at).replace("T", " ").split(".")[0]}
-            </TableCell>*/}
             <TableCell align="center">
-                {item.mapping_notes && item.mapping_notes.length > 0 && <>
-                    <Button variant="text"
+                {!!(item.mapping_notes?.length || item.editorial_notes?.length || item.feedback_notes?.length) &&
+                 <Button variant="text"
                             size="small"
                             color="warning"
-                            onClick={mappingNotesDialog.handleOpen}
-                    >{(item.mapping_notes || []).length}</Button>
-                    <Dialog
-                        id={"mapping_notes_" + item._id}
-                        onClose={mappingNotesDialog.handleClose}
-                        open={mappingNotesDialog.open}
-                        fullWidth
-                        maxWidth="md"
-                    >
-                        <Card>
-                            <CardHeader title="Mapping Notes"
-                                        sx={{mb: 2}}/>
-                            <Divider/>
-                            <CardContent sx={{pt: 1}}>
-                                {(item.mapping_notes ?? []).map((mapping_note, i) => <RuleComment
-                                        key={'note' + i}
-                                        comment={mapping_note}
-                                    />
-                                )}
-                            </CardContent>
-                        </Card>
-                    </Dialog>
-                </>}
-            </TableCell>
-            <TableCell align="center">
-                {item.editorial_notes && item.editorial_notes.length > 0 && <>
-                    <Button variant="text"
-                            size="small"
-                            color="warning"
-                            onClick={editorialNotesDialog.handleOpen}
-                    >{(item.editorial_notes || []).length}</Button>
-                    <Dialog
-                        id={"editorial_notes_" + item._id}
-                        onClose={editorialNotesDialog.handleClose}
-                        open={editorialNotesDialog.open}
-                        fullWidth
-                        maxWidth="md"
-                    >
-                        <Card>
-                            <CardHeader title="Editorial Notes"
-                                        sx={{mb: 2}}/>
-                            <Divider/>
-                            <CardContent sx={{pt: 1}}>
-                                {(item.editorial_notes || []).map((editorial_note, i) => <RuleComment
-                                        key={'note' + i}
-                                        comment={editorial_note}
-                                    />
-                                )}
-                            </CardContent>
-                        </Card>
-                    </Dialog>
-                </>}
-            </TableCell>
-            <TableCell align="center">
-                {item.feedback_notes && item.feedback_notes.length > 0 && <>
-                    <Button variant="text"
-                            size="small"
-                            color="warning"
-                            onClick={feedbackNotesDialog.handleOpen}
-                    >{(item.feedback_notes || []).length}</Button>
-                    <Dialog
-                        id={"feedback_notes_" + item._id}
-                        onClose={feedbackNotesDialog.handleClose}
-                        open={feedbackNotesDialog.open}
-                        fullWidth
-                        maxWidth="md"
-                    >
-                        <Card>
-                            <CardHeader title="Feedback Notes"
-                                        sx={{mb: 2}}/>
-                            <Divider/>
-                            <CardContent sx={{pt: 1}}>
-                                {(item.feedback_notes ?? []).map(
-                                    (feedback_note, i) => <RuleComment
-                                        key={'note' + i}
-                                        comment={feedback_note}
-                                    />
-                                )}
-                            </CardContent>
-                        </Card>
-                    </Dialog>
-                </>}
+                            onClick={() => handleNotesDialogOpen(item)}
+                 >{[item.mapping_notes?.length, item.editorial_notes?.length, item.feedback_notes?.length].join(' ').trim()}</Button>}
             </TableCell>
 
             <TableCell align="right">
@@ -1007,6 +921,7 @@ export const ListTable = (props) => {
 
     const [currentItem, setCurrentItem] = useState(null);
     const [hoveredItem, setHoveredItem] = useState(null);
+    const notesDialog = useDialog()
 
     const handleItemToggle = itemId => {
         setCurrentItem((prevItemId) => {
@@ -1107,28 +1022,12 @@ export const ListTable = (props) => {
                             SPARQL assertions
                         </TableCell>
                         <TableCell align="center"
-                                   title="Mapping Notes"
-                                   sx={{
-                                       whiteSpace: "nowrap"
-                                   }}
+                               title="Notes"
+                               sx={{
+                                   whiteSpace: "nowrap"
+                               }}
                         >
-                            M-Notes
-                        </TableCell>
-                        <TableCell align="center"
-                                   title="Editorial Notes"
-                                   sx={{
-                                       whiteSpace: "nowrap"
-                                   }}
-                        >
-                            E-Notes
-                        </TableCell>
-                        <TableCell align="center"
-                                   title="Feedback Notes"
-                                   sx={{
-                                       whiteSpace: "nowrap"
-                                   }}
-                        >
-                            F-Notes
+                            Notes
                         </TableCell>
                         <TableCell align="right"
                                    sx={{
@@ -1160,8 +1059,48 @@ export const ListTable = (props) => {
                                 handleItemHover={handleItemHover}
                                 isHovered={isHovered}
                                 detailedView={detailedView}
+                                handleNotesDialogOpen={notesDialog.handleOpen}
                             />)
                     })}
+                    <Dialog
+                        id='notes_dialog'
+                        onClose={notesDialog.handleClose}
+                        open={notesDialog.open}
+                        fullWidth
+                        maxWidth="md"
+                    >
+                        <Card>
+                            <CardHeader title="Notes"
+                                        sx={{mb: 2}}/>
+                            <Divider/>
+                            <CardContent sx={{pt: 1}}>
+                                {notesDialog.data?.mapping_notes && <>
+                                    <Typography>Mapping Notes:</Typography>
+                                    {notesDialog.data.mapping_notes.map((mapping_note, i) => <RuleComment
+                                        key={'mapping_note' + i}
+                                        comment={mapping_note}
+                                        />
+                                    )}
+                                </>}
+                                {notesDialog.data?.editorial_notes && <>
+                                    <Typography>Mapping Notes:</Typography>
+                                    {notesDialog.data.editorial_notes.map((editorial_note, i) => <RuleComment
+                                        key={'mapping_note' + i}
+                                        comment={editorial_note}
+                                        />
+                                    )}
+                                </>}
+                                {notesDialog.data?.feedback_notes && <>
+                                    <Typography>Mapping Notes:</Typography>
+                                    {notesDialog.data.feedback_notes.map((feedback_note, i) => <RuleComment
+                                        key={'mapping_note' + i}
+                                        comment={feedback_note}
+                                        />
+                                    )}
+                                </>}
+                            </CardContent>
+                        </Card>
+                    </Dialog>
                 </TableBody>
             </Table>
         </Scrollbar>
