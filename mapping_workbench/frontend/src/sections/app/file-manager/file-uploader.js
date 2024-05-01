@@ -7,17 +7,16 @@ import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
+import Box from "@mui/system/Box";
+import LinearProgress from "@mui/material/LinearProgress";
 
 import {FileDropzone} from 'src/components/file-dropzone';
-import MenuItem from "@mui/material/MenuItem";
-import {useRouter} from 'src/hooks/use-router';
-import nProgress from 'nprogress';
 import {sessionApi} from "../../../api/session";
-import TextField from "@mui/material/TextField";
 
 
 export const FileUploader = (props) => {
-    const router = useRouter();
 
     const {onClose, open = false, collectionId, sectionApi} = props;
 
@@ -26,17 +25,18 @@ export const FileUploader = (props) => {
     const [files, setFiles] = useState([]);
     const [format, setFormat] = useState(defaultFormatValue);
     const [type, setType] = useState(sectionApi.FILE_RESOURCE_DEFAULT_TYPE || "");
+    const [progress, setProgress] = useState(0);
+    const [uploading, setUploading] = useState(false)
 
     useEffect(() => {
         setFiles([]);
     }, [open]);
 
     const handleUpload = async () => {
-        nProgress.start();
-        let incStep = 100 / files.length;
-        await files.forEach(file => {
+        setUploading(true)
+        const incStep = 100 / files.length;
+        files.forEach((file, index) => {
             const formData = new FormData();
-
             formData.append("title", file.name);
             formData.append("format", format);
             if (sectionApi.hasFileResourceType) {
@@ -45,20 +45,20 @@ export const FileUploader = (props) => {
             formData.append("file", file);
             formData.append("content",file.content)
             formData.append("project", sessionApi.getSessionProject());
-            sectionApi.createCollectionFileResource(collectionId, formData);
-            nProgress.inc(incStep);
+            sectionApi.createCollectionFileResource(collectionId, formData)
+                .finally(() => {
+                    setProgress(e => e + incStep)
+                    if (index + 1 === files.length) {
+                        setProgress(0)
+                        setUploading(false)
+                        onClose()
+                    }
+                })
         })
-        nProgress.done();
-        onClose();
-        // router.push({
-        //     pathname: paths.app[sectionApi.section].resource_manager.index,
-        //     query: {id: collection_id}
-        // });
-        router.reload();
     }
 
     const handleDrop = newFiles => {
-        setFiles((prevFiles) => {
+        setFiles(prevFiles => {
             return [...prevFiles, ...newFiles];
         });
     }
@@ -68,6 +68,23 @@ export const FileUploader = (props) => {
     }
 
     const handleRemoveAll = () => setFiles([]);
+
+     const LinearProgressWithLabel = (props) => {
+       return (
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ width: '100%', mr: 1 }}>
+                <LinearProgress variant="determinate"
+                                {...props} />
+            </Box>
+                <Box sx={{ minWidth: 35 }}>
+                <Typography variant="body2"
+                            color="text.secondary">{`${Math.round(
+                  props.value,
+                )}%`}</Typography>
+            </Box>
+        </Box>
+       );
+    }
 
     return (
         <Dialog
@@ -90,6 +107,7 @@ export const FileUploader = (props) => {
                     Upload Files
                 </Typography>
                 <IconButton
+                    disabled={uploading}
                     color="inherit"
                     onClick={onClose}
                 >
@@ -109,7 +127,8 @@ export const FileUploader = (props) => {
                     sx={{mb: 3}}
                 >
                     {Object.keys(sectionApi.FILE_RESOURCE_FORMATS).map((key) => (
-                        <MenuItem key={key} value={key}>
+                        <MenuItem key={key}
+                                  value={key}>
                             {sectionApi.FILE_RESOURCE_FORMATS[key]}
                         </MenuItem>
                     ))}
@@ -134,6 +153,7 @@ export const FileUploader = (props) => {
                 <FileDropzone
                     accept={{'*/*': []}}
                     caption="Max file size is 3 MB"
+                    disabled={uploading}
                     files={files}
                     onDrop={handleDrop}
                     onRemove={handleRemove}
@@ -142,6 +162,7 @@ export const FileUploader = (props) => {
                 />
 
             </DialogContent>
+            {uploading && <LinearProgressWithLabel value={progress}/>}
         </Dialog>
     );
 };

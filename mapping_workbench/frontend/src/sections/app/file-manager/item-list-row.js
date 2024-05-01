@@ -1,4 +1,3 @@
-import {useCallback} from 'react';
 import PropTypes from 'prop-types';
 import DotsVerticalIcon from '@untitled-ui/icons-react/build/esm/DotsVertical';
 import Box from '@mui/material/Box';
@@ -19,7 +18,7 @@ import {useRouter} from "src/hooks/use-router";
 export const ItemListRow = (props) => {
     const router = useRouter();
 
-    const {item, collection, sectionApi, fileResourcesApi} = props;
+    const {item, collection, sectionApi, fileResourcesApi, onGetItems} = props;
     const popover = usePopover();
 
     const handleEdit = (item_id) => {
@@ -29,18 +28,10 @@ export const ItemListRow = (props) => {
         });
     }
 
-    const handleDelete = useCallback(async () => {
-        const response = await fileResourcesApi.deleteFileResource(item._id);
-        router.reload();
-        router.push({
-            pathname: paths.app[sectionApi.section].resource_manager.index,
-            query: {
-                id: collection._id,
-                refreshed: Date.now()
-            }
-        });
-
-    }, [router, item, collection, sectionApi]);
+    const handleDelete = async () => {
+        fileResourcesApi.deleteFileResource(item._id)
+            .then(() => onGetItems ? onGetItems() : router.reload())
+    };
 
     return (
         <>
