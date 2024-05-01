@@ -1083,17 +1083,17 @@ export const ListTable = (props) => {
                                     )}
                                 </>}
                                 {notesDialog.data?.editorial_notes && <>
-                                    <Typography>Mapping Notes:</Typography>
+                                    <Typography>Editorial Notes:</Typography>
                                     {notesDialog.data.editorial_notes.map((editorial_note, i) => <RuleComment
-                                        key={'mapping_note' + i}
+                                        key={'editorial_notes' + i}
                                         comment={editorial_note}
                                         />
                                     )}
                                 </>}
                                 {notesDialog.data?.feedback_notes && <>
-                                    <Typography>Mapping Notes:</Typography>
+                                    <Typography>Feedback Notes:</Typography>
                                     {notesDialog.data.feedback_notes.map((feedback_note, i) => <RuleComment
-                                        key={'mapping_note' + i}
+                                        key={'feedback_notes' + i}
                                         comment={feedback_note}
                                         />
                                     )}
