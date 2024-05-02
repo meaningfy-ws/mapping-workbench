@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
@@ -33,27 +33,27 @@ const useItemsSearch = () => {
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
 
-    const handleFiltersChange = useCallback((filters) => {
-        setState((prevState) => ({
+    const handleFiltersChange = filters => {
+        setState(prevState => ({
             ...prevState,
             filters,
             page: 0
         }));
-    }, []);
+    }
 
-    const handlePageChange = useCallback((event, page) => {
-        setState((prevState) => ({
+    const handlePageChange = (event, page) => {
+        setState(prevState => ({
             ...prevState,
             page
         }));
-    }, []);
+    }
 
-    const handleRowsPerPageChange = useCallback((event) => {
-        setState((prevState) => ({
+    const handleRowsPerPageChange = event => {
+        setState(prevState => ({
             ...prevState,
             rowsPerPage: parseInt(event.target.value, 10)
         }));
-    }, []);
+    }
 
     return {
         handleFiltersChange,
@@ -70,20 +70,15 @@ const useItemsStore = (searchState) => {
         itemsCount: 0
     });
 
-    const handleItemsGet = useCallback(async () => {
-        try {
-            const response = await sectionApi.getItems(searchState);
-
-            if (isMounted()) {
-                setState({
-                    items: response.items,
-                    itemsCount: response.count
-                });
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    }, [searchState, isMounted]);
+    const handleItemsGet = async () => {
+        sectionApi.getItems(searchState)
+            .then(res =>
+                 setState({
+                    items: res.items,
+                    itemsCount: res.count
+                }))
+            .catch(err => console.log(err))
+    }
 
 
     useEffect(() => {
@@ -138,14 +133,6 @@ const useItemsStoreFiles = (id) => {
 const Page = () => {
     const itemsSearch = useItemsSearch();
     const itemsStore = useItemsStore(itemsSearch.state);
-
-    //console.log("itemsStoreCollection ID: ", itemsStore.items[0]._id)
-
-
-    //console.log("itemsStore: ", itemsStore);
-    //console.log("itemsStoreCollection ID: ", itemsStore.items[0]._id);
-    //const itemsStoreFiles = useItemsStoreFiles("648b05000cf7d4c31a8a4b1d");
-    //console.log("itemsStoreFiles: ", itemsStoreFiles);      
 
     usePageView();
 
