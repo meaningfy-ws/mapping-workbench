@@ -736,12 +736,11 @@ export const ListTableRow = (props) => {
                     <Typography variant="subtitle2">
                         <Box>
                             {item.source_structural_element?.eforms_sdk_element_id}
-                            {item.mapping_group_id && " / "}
-                            {item.mapping_group_id}
-
+                            {item.mapping_group_id && ` / ${item.mapping_group_id}`}
                         </Box>
                     </Typography>
                 </Link>
+                {item.source_structural_element.name}
             </TableCell>
             <TableCell>{item.min_sdk_version}</TableCell>
             <TableCell>{item.max_sdk_version}</TableCell>
@@ -943,34 +942,34 @@ export const ListTableRow = (props) => {
                         <Grid item
                               xl={6}
                               md={12}>
-                            {!!(item.target_class_path_terms_validity.length || item.target_property_path_terms_validity.length) &&
-                            <PropertyList>
-                                 <Typography variant='h5' >
-                                    Target
-                                 </Typography>
-                                 {!!item.target_class_path_terms_validity.length && <>
-                                    <Typography variant="subtitle2">
-                                        Ontology Fragment Class path
-                                    </Typography>
-                                    <Alert severity={hasTargetClassPathValidityErrors ? "error" : "success"}
-                                           sx={{
-                                               my: 1,
-                                               mx: 5
-                                           }}
-                                    >{parse(targetClassPathValidityInfo)}</Alert>
-                                </>}
-                                {!!item.target_property_path_terms_validity.length && <>
-                                    <Typography variant="subtitle2">
-                                        Ontology Fragment Property path
-                                    </Typography>
-                                    <Alert severity={hasTargetPropertyPathValidityErrors ? "error" : "success"}
-                                           sx={{
-                                               my: 1,
-                                               mx: 5
-                                           }}
-                                    >{parse(targetPropertyPathValidityInfo)}</Alert>
-                                </>}
-                            </PropertyList>}
+                            {item.target_class_path_terms_validity.length || item.target_property_path_terms_validity.length &&
+                                <PropertyList>
+                                     <Typography variant='h5' >
+                                        Target
+                                     </Typography>
+                                     {!!item.target_class_path_terms_validity.length && <>
+                                        <Typography variant="subtitle2">
+                                            Ontology Fragment Class path
+                                        </Typography>
+                                        <Alert severity={hasTargetClassPathValidityErrors ? "error" : "success"}
+                                               sx={{
+                                                   my: 1,
+                                                   mx: 5
+                                               }}
+                                        >{parse(targetClassPathValidityInfo)}</Alert>
+                                    </>}
+                                    {!!item.target_property_path_terms_validity.length && <>
+                                        <Typography variant="subtitle2">
+                                            Ontology Fragment Property path
+                                        </Typography>
+                                        <Alert severity={hasTargetPropertyPathValidityErrors ? "error" : "success"}
+                                               sx={{
+                                                   my: 1,
+                                                   mx: 5
+                                               }}
+                                        >{parse(targetPropertyPathValidityInfo)}</Alert>
+                                    </>}
+                                </PropertyList>}
                         </Grid>
                     </Grid>
                 </CardContent>
@@ -1015,6 +1014,8 @@ export const ListTable = (props) => {
     }, [genericTripleMapFragmentsApi])
 
     if (!isProjectDataReady) return null;
+
+    console.log(items.filter((e,i) => e.name))
 
     return (<div>
         <TablePagination
