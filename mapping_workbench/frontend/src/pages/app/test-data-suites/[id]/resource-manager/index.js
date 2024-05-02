@@ -41,7 +41,7 @@ const useItemsSearch = () => {
     }
 
     const handleSortChange = sortDir => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             sortDir
         }));

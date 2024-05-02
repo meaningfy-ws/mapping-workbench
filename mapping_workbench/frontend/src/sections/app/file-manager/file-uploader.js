@@ -14,6 +14,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 
 import {FileDropzone} from 'src/components/file-dropzone';
 import {sessionApi} from "../../../api/session";
+import {useRouter} from "../../../hooks/use-router";
 
 
 export const FileUploader = (props) => {
@@ -27,6 +28,8 @@ export const FileUploader = (props) => {
     const [type, setType] = useState(sectionApi.FILE_RESOURCE_DEFAULT_TYPE || "");
     const [progress, setProgress] = useState(0);
     const [uploading, setUploading] = useState(false)
+
+    const router = useRouter();
 
     useEffect(() => {
         setFiles([]);
@@ -51,7 +54,7 @@ export const FileUploader = (props) => {
                     if (index + 1 === files.length) {
                         setProgress(0)
                         setUploading(false)
-                        onGetItems?.()
+                        onGetItems ? onGetItems() : router.reload()
                         onClose()
                     }
                 })
