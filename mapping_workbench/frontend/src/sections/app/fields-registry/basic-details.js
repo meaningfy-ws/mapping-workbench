@@ -19,6 +19,16 @@ export const BasicDetails = (props) => {
                     />
                     <PropertyListItem
                         divider
+                        label="Name"
+                        value={item.name}
+                    />
+                    <PropertyListItem
+                        divider
+                        label="Parent ID"
+                        value={item.parent_node_id}
+                    />
+                    <PropertyListItem
+                        divider
                         label="Absolute XPath"
                         value={item.absolute_xpath}
                     />
@@ -31,16 +41,6 @@ export const BasicDetails = (props) => {
                         divider
                         label="Repeatable"
                         value={item.repeatable}
-                    />
-                    <PropertyListItem
-                        divider
-                        label="Parent ID"
-                        value={item.parent_node_id}
-                    />
-                    <PropertyListItem
-                        divider
-                        label="Name"
-                        value={item.name}
                     />
                     <PropertyListItem
                         divider
