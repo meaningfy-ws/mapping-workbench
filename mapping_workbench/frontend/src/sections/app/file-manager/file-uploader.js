@@ -18,7 +18,7 @@ import {sessionApi} from "../../../api/session";
 
 export const FileUploader = (props) => {
 
-    const {onClose, open = false, collectionId, sectionApi} = props;
+    const {onClose, open = false, collectionId, sectionApi, onGetItems} = props;
 
     const defaultFormatValue = sectionApi.FILE_RESOURCE_DEFAULT_FORMAT;
 
@@ -51,6 +51,7 @@ export const FileUploader = (props) => {
                     if (index + 1 === files.length) {
                         setProgress(0)
                         setUploading(false)
+                        onGetItems?.()
                         onClose()
                     }
                 })

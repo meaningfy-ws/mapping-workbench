@@ -92,10 +92,17 @@ const Page = () => {
     const detailsDialog = useDialog();
     const itemsSearch = useItemsSearch();
 
-    usePageView();
+    const currentItem = useCurrentItem(state.items, detailsDialog.data);
 
     const router = useRouter();
     const {id} = router.query;
+
+    usePageView();
+
+     useEffect(() => {
+        id && handleItemsGet();
+     // eslint-disable-next-line react-hooks/exhaustive-deps
+     },[itemsSearch.state, id]);
 
     const handleItemsGet = async () => {
         try {
@@ -111,18 +118,6 @@ const Page = () => {
             console.error(err);
         }
     };
-
-    const handleAfterUpload = () => {
-        handleItemsGet()
-        uploadDialog.handleClose()
-    }
-
-    useEffect(() => {
-        id && handleItemsGet();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[itemsSearch.state, id]);
-
-    const currentItem = useCurrentItem(state.items, detailsDialog.data);
 
     return (
         <>
@@ -221,8 +216,9 @@ const Page = () => {
                 open={detailsDialog.open}
             />
             <FileUploader
-                onClose={handleAfterUpload}
+                onClose={uploadDialog.handleClose}
                 open={uploadDialog.open}
+                onGetItems={handleItemsGet}
                 collectionId={id}
                 sectionApi={fileResourcesApi}
             />
