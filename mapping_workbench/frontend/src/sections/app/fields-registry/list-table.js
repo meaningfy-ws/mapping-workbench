@@ -90,7 +90,7 @@ export const ListTable = (props) => {
                                     <TableSortLabel
                                         direction="asc"
                                     >
-                                        Element ID
+                                        Element
                                     </TableSortLabel>
                                 </Tooltip>
                             </TableCell>
@@ -102,24 +102,9 @@ export const ListTable = (props) => {
                                     <TableSortLabel
                                         direction="asc"
                                     >
-                                        Parent ID
+                                        Parent
                                     </TableSortLabel>
                                 </Tooltip>
-                            </TableCell>
-                            <TableCell>
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        BT ID
-                                    </TableSortLabel>
-                                </Tooltip>
-                            </TableCell>
-                            <TableCell>
-                                Name
                             </TableCell>
                             <TableCell>
                                 Versions
@@ -171,15 +156,10 @@ export const ListTable = (props) => {
                                             <Typography variant="subtitle2">
                                                 {item.eforms_sdk_element_id}
                                             </Typography>
+                                            {item.name}
                                         </TableCell>
                                         <TableCell>
                                             {item.parent_node_id}
-                                        </TableCell>
-                                        <TableCell>
-                                            {item.bt_id}
-                                        </TableCell>
-                                        <TableCell>
-                                            {item.name}
                                         </TableCell>
                                         <TableCell>
                                             <List sx={{

@@ -44,11 +44,6 @@ export const BasicDetails = (props) => {
                     />
                     <PropertyListItem
                         divider
-                        label="BT ID"
-                        value={item.bt_id}
-                    />
-                    <PropertyListItem
-                        divider
                         label="Value Type"
                         value={item.value_type}
                     />
