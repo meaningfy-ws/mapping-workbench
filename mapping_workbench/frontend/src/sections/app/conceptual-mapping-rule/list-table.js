@@ -948,30 +948,12 @@ export const ListTableRow = (props) => {
                                      <Typography variant='h5'>
                                         Target
                                      </Typography>
-                                     {!!item.target_class_path_terms_validity.length && <>
-                                        <Typography variant="subtitle2"
-                                                    sx={{pt: 1.5}}>
-                                            Ontology Fragment Class path
-                                        </Typography>
-                                        <Alert severity={hasTargetClassPathValidityErrors ? "error" : "success"}
-                                               sx={{
-                                                   my: 1,
-                                                   mx: 5
-                                               }}
-                                        >{parse(targetClassPathValidityInfo)}</Alert>
-                                    </>}
-                                    {!!item.target_property_path_terms_validity.length && <>
-                                        <Typography variant="subtitle2"
-                                                    sx={{pt: 1.5}}>
-                                            Ontology Fragment Property path
-                                        </Typography>
-                                        <Alert severity={hasTargetPropertyPathValidityErrors ? "error" : "success"}
-                                               sx={{
-                                                   my: 1,
-                                                   mx: 5
-                                               }}
-                                        >{parse(targetPropertyPathValidityInfo)}</Alert>
-                                    </>}
+                                     {!!item.target_class_path_terms_validity.length &&
+                                         <PropertyListItem label='Ontology Fragment Class path'
+                                                           value={parse(targetClassPathValidityInfo)}/>}
+                                     {!!item.target_property_path_terms_validity.length &&
+                                        <PropertyListItem label='Ontology Fragment Property path'
+                                                          value={parse(targetPropertyPathValidityInfo)}/>}
                                 </PropertyList>}
                         </Grid>
                     </Grid>
