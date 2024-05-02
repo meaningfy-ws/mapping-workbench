@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 
 import Upload01Icon from '@untitled-ui/icons-react/build/esm/Upload01';
 import Plus from '@untitled-ui/icons-react/build/esm/Plus';
@@ -12,9 +12,7 @@ import {sparqlTestSuitesApi as sectionApi} from 'src/api/sparql-test-suites';
 import {sparqlTestFileResourcesApi as fileResourcesApi} from 'src/api/sparql-test-suites/file-resources';
 import {Seo} from 'src/components/seo';
 import {useDialog} from 'src/hooks/use-dialog';
-import {useMounted} from 'src/hooks/use-mounted';
 import {usePageView} from 'src/hooks/use-page-view';
-import {useSettings} from 'src/hooks/use-settings';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {FileUploader} from 'src/sections/app/file-manager/file-uploader';
 import {ItemDrawer} from 'src/sections/app/file-manager/item-drawer';
@@ -22,6 +20,7 @@ import {ItemList} from 'src/sections/app/file-manager/item-list';
 import {ItemSearch} from 'src/sections/app/file-manager/item-search';
 import {useRouter} from "src/hooks/use-router";
 import {paths} from "../../../../../paths";
+import Link from "next/link";
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -34,33 +33,33 @@ const useItemsSearch = () => {
         sortDir: 'desc'
     });
 
-    const handleFiltersChange = useCallback((filters) => {
-        setState((prevState) => ({
+    const handleFiltersChange = filters => {
+        setState(prevState => ({
             ...prevState,
             filters
         }));
-    }, []);
+    }
 
-    const handleSortChange = useCallback((sortDir) => {
+    const handleSortChange = sortDir => {
         setState((prevState) => ({
             ...prevState,
             sortDir
         }));
-    }, []);
+    }
 
-    const handlePageChange = useCallback((event, page) => {
-        setState((prevState) => ({
+    const handlePageChange = (event, page) => {
+        setState(prevState => ({
             ...prevState,
             page
         }));
-    }, []);
+    }
 
-    const handleRowsPerPageChange = useCallback((event) => {
-        setState((prevState) => ({
+    const handleRowsPerPageChange = event => {
+        setState(prevState => ({
             ...prevState,
             rowsPerPage: parseInt(event.target.value, 10)
         }));
-    }, []);
+    }
 
     return {
         handleFiltersChange,
@@ -70,43 +69,6 @@ const useItemsSearch = () => {
         state
     };
 };
-
-const useItemsStore = (id, searchState) => {
-    const isMounted = useMounted();
-    const [state, setState] = useState({
-        collection: {},
-        items: [],
-        itemsCount: 0
-    });
-
-    const handleItemsGet = useCallback(async () => {
-        try {
-            const response = await sectionApi.getFileResources(id, searchState);
-            const collection = await sectionApi.getItem(id);
-
-            if (isMounted()) {
-                setState({
-                    collection: collection,
-                    items: response.items,
-                    itemsCount: response.count
-                });
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    }, [searchState, isMounted]);
-
-    useEffect(() => {
-            handleItemsGet();
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState]);
-
-    return {
-        ...state
-    };
-};
-
 
 const useCurrentItem = (items, itemId) => {
     return useMemo(() => {
@@ -119,31 +81,45 @@ const useCurrentItem = (items, itemId) => {
 };
 
 const Page = () => {
-    const router = useRouter();
-    if (!router.isReady) return;
-
-    const {id} = router.query;
-
-    if (!id) {
-        return;
-    }
-
-    const handleCreate = async () => {
-        router.push({
-            pathname: paths.app[sectionApi.section].resource_manager.create,
-            query: {id: id}
-        });
-    }
-
-    const settings = useSettings();
-    const itemsSearch = useItemsSearch();
-    const itemsStore = useItemsStore(id, itemsSearch.state);
     const [view, setView] = useState('grid');
+    const [state, setState] = useState({
+        collection: {},
+        items: [],
+        itemsCount: 0
+    });
+
     const uploadDialog = useDialog();
     const detailsDialog = useDialog();
-    const currentItem = useCurrentItem(itemsStore.items, detailsDialog.data);
+    const itemsSearch = useItemsSearch();
+
+    const currentItem = useCurrentItem(state.items, detailsDialog.data);
+
+    const router = useRouter();
+    const {id} = router.query;
 
     usePageView();
+
+    useEffect(() => {
+        id && handleItemsGet();
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [itemsSearch.state, id]);
+
+    const handleItemsGet = async () => {
+        try {
+            const response = await sectionApi.getFileResources(id, itemsSearch);
+            const collection = await sectionApi.getItem(id);
+
+            setState({
+                collection: collection,
+                items: response.items,
+                itemsCount: response.count
+            });
+        } catch (err) {
+            console.error(err);
+        }
+
+    }
 
     return (
         <>
@@ -163,7 +139,7 @@ const Page = () => {
                     >
                         <div>
                             <Typography variant="h4">
-                                {itemsStore.collection.title}
+                                {state.collection.title}
                             </Typography>
                             <Typography variant="h5">
                                 Resource Manager
@@ -186,7 +162,8 @@ const Page = () => {
                                 Upload
                             </Button>
                             <Button
-                                onClick={handleCreate}
+                                component={Link}
+                                href={paths.app[sectionApi.section].resource_manager.create.replace('[id]', id)}
                                 startIcon={(
                                     <SvgIcon>
                                         <Plus/>
@@ -218,9 +195,9 @@ const Page = () => {
                             view={view}
                         />
                         <ItemList
-                            count={itemsStore.itemsCount}
-                            items={itemsStore.items}
-                            collection={itemsStore.collection}
+                            count={state.itemsCount}
+                            items={state.items}
+                            collection={state.collection}
                             onPageChange={itemsSearch.handlePageChange}
                             onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                             page={itemsSearch.state.page}
@@ -228,6 +205,7 @@ const Page = () => {
                             view={view}
                             sectionApi={sectionApi}
                             fileResourcesApi={fileResourcesApi}
+                            onGetItems={handleItemsGet}
                         />
                     </Stack>
                 </Grid>
@@ -243,6 +221,7 @@ const Page = () => {
                 open={uploadDialog.open}
                 collectionId={id}
                 sectionApi={fileResourcesApi}
+                onGetItems={handleItemsGet}
             />
         </>
     );

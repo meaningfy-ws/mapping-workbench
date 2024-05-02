@@ -20,6 +20,7 @@ import {ItemList} from 'src/sections/app/file-manager/item-list';
 import {ItemSearch} from 'src/sections/app/file-manager/item-search';
 import {useRouter} from "src/hooks/use-router";
 import {paths} from "../../../../../paths";
+import Link from "next/link";
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -54,7 +55,7 @@ const useItemsSearch = () => {
     }
 
     const handleRowsPerPageChange = event => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             rowsPerPage: parseInt(event.target.value, 10)
         }));
@@ -80,13 +81,12 @@ const useCurrentItem = (items, itemId) => {
 };
 
 const Page = () => {
+    const [view, setView] = useState('grid');
     const [state, setState] = useState({
         collection: {},
         items: [],
         itemsCount: 0
     });
-
-    const [view, setView] = useState('grid');
 
     const uploadDialog = useDialog();
     const detailsDialog = useDialog();
@@ -100,13 +100,13 @@ const Page = () => {
     usePageView();
 
     useEffect(() => {
-        id && handleItemsGet(itemsSearch);
+        id && handleItemsGet();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[itemsSearch.state, id]);
 
-    const handleItemsGet = async (searchState) => {
+    const handleItemsGet = async () => {
         try {
-            const response = await sectionApi.getFileResources(id, searchState);
+            const response = await sectionApi.getFileResources(id, state);
             const collection = await sectionApi.getItem(id);
 
                 setState({
@@ -117,13 +117,6 @@ const Page = () => {
         } catch (err) {
             console.error(err);
         }
-    }
-
-    const handleCreate = async () => {
-        router.push({
-            pathname: paths.app[sectionApi.section].resource_manager.create,
-            query: {id}
-        });
     }
 
     return (
@@ -168,7 +161,8 @@ const Page = () => {
                                 Upload
                             </Button>
                             <Button
-                                onClick={handleCreate}
+                                component={Link}
+                                href={paths.app[sectionApi.section].resource_manager.create.replace('[id]', id)}
                                 startIcon={(
                                     <SvgIcon>
                                         <Plus/>
