@@ -1015,8 +1015,6 @@ export const ListTable = (props) => {
 
     if (!isProjectDataReady) return null;
 
-    console.log(items.filter((e,i) => e.name))
-
     return (<div>
         <TablePagination
             component="div"
