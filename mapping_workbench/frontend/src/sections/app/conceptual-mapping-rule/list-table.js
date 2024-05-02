@@ -944,7 +944,8 @@ export const ListTableRow = (props) => {
                               md={12}>
                             {!!(item.target_class_path_terms_validity.length || item.target_property_path_terms_validity.length) &&
                                 <PropertyList>
-                                     <Typography variant='h5' >
+                                     <Typography variant='h5'
+                                                 sx={{pb: 1.5}}>
                                         Target
                                      </Typography>
                                      {!!item.target_class_path_terms_validity.length && <>
