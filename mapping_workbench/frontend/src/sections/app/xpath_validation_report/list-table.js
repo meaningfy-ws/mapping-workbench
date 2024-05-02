@@ -75,11 +75,11 @@ export const ListTable = (props) => {
                         <TableRow>
                             <TableCell width="25%">
                                 <SorterHeader fieldName="eforms_sdk_element_id"
-                                              title="Form Field"/>
+                                              title="Field"/>
                             </TableCell>
                             <TableCell>
                                 <SorterHeader fieldName="eforms_sdk_element_xpath"
-                                              title="Xpath"/>
+                                              title="XPath"/>
                             </TableCell>
                             <TableCell width="10%">
                                  <SorterHeader fieldName="notice_count"
