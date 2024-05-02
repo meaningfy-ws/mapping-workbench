@@ -942,7 +942,7 @@ export const ListTableRow = (props) => {
                         <Grid item
                               xl={6}
                               md={12}>
-                            {item.target_class_path_terms_validity.length || item.target_property_path_terms_validity.length &&
+                            {!!(item.target_class_path_terms_validity.length || item.target_property_path_terms_validity.length) &&
                                 <PropertyList>
                                      <Typography variant='h5' >
                                         Target
