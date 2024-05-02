@@ -910,7 +910,8 @@ export const ListTableRow = (props) => {
                 }}
             >
                 <CardContent>
-                    <Grid container>
+                    <Grid container
+                          rowSpacing={2}>
                         <Grid item
                               xl={6}
                               md={12}>
@@ -944,12 +945,12 @@ export const ListTableRow = (props) => {
                               md={12}>
                             {!!(item.target_class_path_terms_validity.length || item.target_property_path_terms_validity.length) &&
                                 <PropertyList>
-                                     <Typography variant='h5'
-                                                 sx={{pb: 1.5}}>
+                                     <Typography variant='h5'>
                                         Target
                                      </Typography>
                                      {!!item.target_class_path_terms_validity.length && <>
-                                        <Typography variant="subtitle2">
+                                        <Typography variant="subtitle2"
+                                                    sx={{pt: 1.5}}>
                                             Ontology Fragment Class path
                                         </Typography>
                                         <Alert severity={hasTargetClassPathValidityErrors ? "error" : "success"}
@@ -960,7 +961,8 @@ export const ListTableRow = (props) => {
                                         >{parse(targetClassPathValidityInfo)}</Alert>
                                     </>}
                                     {!!item.target_property_path_terms_validity.length && <>
-                                        <Typography variant="subtitle2">
+                                        <Typography variant="subtitle2"
+                                                    sx={{pt: 1.5}}>
                                             Ontology Fragment Property path
                                         </Typography>
                                         <Alert severity={hasTargetPropertyPathValidityErrors ? "error" : "success"}

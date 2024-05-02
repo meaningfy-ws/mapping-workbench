@@ -35,6 +35,8 @@ export const PropertyListItem = (props) => {
               <Typography
                 color="text.secondary"
                 variant="body2"
+                sx={{overflow: 'hidden',
+                  textOverflow: 'ellipsis'}}
               >
                 {value}
               </Typography>
