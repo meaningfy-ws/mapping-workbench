@@ -925,15 +925,15 @@ export const ListTableRow = (props) => {
                                             label="Field/Node ID"
                                             value={item.source_structural_element.eforms_sdk_element_id}
                                         />}
-                                        {item.source_structural_element.absolute_xpath && <PropertyListItem
-                                            key="absolute_xpath"
-                                            label="Absolute XPath"
-                                            value={item.source_structural_element.absolute_xpath}
-                                        />}
                                         {item.source_structural_element.name && <PropertyListItem
                                             key="name"
                                             label="Field Name"
                                             value={item.source_structural_element.name}
+                                        />}
+                                        {item.source_structural_element.absolute_xpath && <PropertyListItem
+                                            key="absolute_xpath"
+                                            label="Absolute XPath"
+                                            value={item.source_structural_element.absolute_xpath}
                                         />}
                                     </>
                                 )}
