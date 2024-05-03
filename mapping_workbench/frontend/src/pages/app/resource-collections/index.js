@@ -12,11 +12,10 @@ import Typography from '@mui/material/Typography';
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
 import {Layout as AppLayout} from 'src/layouts/app';
-import {resourceCollectionsApi as sectionApi} from 'src/api/resource-collections';
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {RouterLink} from 'src/components/router-link';
-import {useMounted} from 'src/hooks/use-mounted';
 import {usePageView} from 'src/hooks/use-page-view';
+import {RouterLink} from 'src/components/router-link';
+import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
+import {resourceCollectionsApi as sectionApi} from 'src/api/resource-collections';
 import {FileCollectionListSearch} from 'src/sections/app/file-manager/file-collection-list-search';
 import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
 
@@ -64,20 +63,19 @@ const useItemsSearch = () => {
 };
 
 const useItemsStore = (searchState) => {
-    const isMounted = useMounted();
     const [state, setState] = useState({
         items: [],
         itemsCount: 0
     });
 
-    const handleItemsGet = async () => {
+    const handleItemsGet = () => {
         sectionApi.getItems(searchState)
             .then(res =>
                  setState({
                     items: res.items,
                     itemsCount: res.count
                 }))
-            .catch(err => console.log(err))
+            .catch(err => console.warn(err))
     }
 
 
@@ -85,50 +83,13 @@ const useItemsStore = (searchState) => {
             handleItemsGet()
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState]);
+        [searchState.state]);
 
     return {
         ...state
     };
 };
 
-///////////////////////////////////////////////////
-
-const useItemsStoreFiles = (id) => {
-
-    const [stateFile, setStateFile] = useState({
-        items: [],
-        itemsCount: 0
-    });
-
-    const handleItemsGetFiles = useCallback(async () => {
-        try {
-            const response2 = await sectionApi.getFileResources(id);
-            //const collection = await sectionApi.getItem(id);
-
-            setStateFile({
-                //collection: collection,
-                itemsF: response2.items,
-                itemsFCount: response2.count
-            });
-            //console.log("collections: ", collection);
-        } catch (err) {
-            console.error(err);
-        }
-    }, []);
-
-    useEffect(() => {
-            handleItemsGet();
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        []);
-
-    return {
-        ...stateFile
-    };
-};
-
-///////////////////////////////////////////////////
 
 const Page = () => {
     const itemsSearch = useItemsSearch();
