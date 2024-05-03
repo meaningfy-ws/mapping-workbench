@@ -98,7 +98,7 @@ export const ListTable = (props) => {
                         <TableRow>
                             <TableCell width="25%">
                                 <SorterHeader fieldName="title"
-                                              title="Form Field"/>
+                                              title="Field"/>
                             </TableCell>
                             <TableCell>
                                  <SorterHeader fieldName="test_suite"
@@ -106,7 +106,7 @@ export const ListTable = (props) => {
                             </TableCell>
                             <TableCell>
                                  <SorterHeader fieldName="query"
-                                               title="Query content"/>
+                                               title="Query"/>
                             </TableCell>
                             <TableCell align="center">
                                 <SorterHeader fieldName="validCount"

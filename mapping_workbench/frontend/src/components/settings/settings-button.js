@@ -11,12 +11,17 @@ export const SettingsButton = (props) => (
       sx={{
         backgroundColor: 'background.paper',
         borderRadius: '50%',
-        bottom: 0,
+        bottom: 56,
         boxShadow: 16,
         margin: (theme) => theme.spacing(4),
         position: 'fixed',
         right: 0,
-        zIndex: (theme) => theme.zIndex.speedDial
+        opacity: 0.4,
+        transition: 'linear 0.3s',
+        zIndex: (theme) => theme.zIndex.speedDial,
+          ':hover': {
+            opacity: 1
+          }
       }}
       {...props}>
       <ButtonBase

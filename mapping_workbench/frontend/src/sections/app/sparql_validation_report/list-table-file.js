@@ -79,14 +79,14 @@ export const ListTableFile = (props) => {
                         <TableRow>
                             <TableCell width="25%">
                                 <SorterHeader fieldName="title"
-                                              title="Form Field"/>
+                                              title="Field"/>
                             </TableCell>
                             <TableCell>
                                 Description
                             </TableCell>
                             <TableCell>
                                  <SorterHeader fieldName="query"
-                                               title="Query content"/>
+                                               title="Query"/>
                             </TableCell>
                             <TableCell align="left">
                                 <SorterHeader fieldName="result"
