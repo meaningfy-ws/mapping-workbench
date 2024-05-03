@@ -59,6 +59,7 @@ import {ListSelectorSelect as ResourceListSelector} from "../../../components/ap
 import {sparqlTestFileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
 import {toastSuccess} from "../../../components/app-toast";
 import {TermValidityInfo} from "./term-validity";
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
 
 export const ListTableTripleMapFragment = (props) => {
@@ -934,7 +935,14 @@ export const ListTableRow = (props) => {
                                         {item.source_structural_element.absolute_xpath && <PropertyListItem
                                             key="absolute_xpath"
                                             label="Absolute XPath"
-                                            value={item.source_structural_element.absolute_xpath}
+                                            value={
+                                                <SyntaxHighlighter
+                                                    language="xquery"
+                                                    wrapLines={true}
+                                                    lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
+                                                    {item.source_structural_element.absolute_xpath}
+                                                </SyntaxHighlighter>
+                                            }
                                         />}
                                     </>
                                 )}
@@ -949,11 +957,27 @@ export const ListTableRow = (props) => {
                                         Target
                                      </Typography>
                                      {!!item.target_class_path_terms_validity.length &&
-                                         <PropertyListItem label='Ontology Fragment Class path'
-                                                           value={parse(targetClassPathValidityInfo)}/>}
+                                        <PropertyListItem
+                                            label='Ontology Fragment Class path'
+                                            value={
+                                                <SyntaxHighlighter
+                                                    language="sparql"
+                                                    wrapLines={true}
+                                                    lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
+                                                    {item.target_class_path}
+                                                </SyntaxHighlighter>
+                                            } />}
                                      {!!item.target_property_path_terms_validity.length &&
-                                        <PropertyListItem label='Ontology Fragment Property path'
-                                                          value={parse(targetPropertyPathValidityInfo)}/>}
+                                        <PropertyListItem
+                                            label='Ontology Fragment Property path'
+                                            value={
+                                                <SyntaxHighlighter
+                                                    language="sparql"
+                                                    wrapLines={true}
+                                                    lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
+                                                    {item.target_property_path}
+                                                </SyntaxHighlighter>
+                                            } />}
                                 </PropertyList>}
                         </Grid>
                     </Grid>
