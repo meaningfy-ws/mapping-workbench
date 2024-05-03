@@ -1,4 +1,5 @@
 import datetime
+from types import NoneType
 
 import pytest
 
@@ -31,7 +32,7 @@ def test_logger_record_has_correct_fields_type(dummy_log_record_info: LogRecord,
     assert type(dummy_log_record_error.message) == str
     assert type(dummy_log_record_info.timestamp) == datetime.datetime
     assert type(dummy_log_record_error.timestamp) == datetime.datetime
-    assert type(dummy_log_record_info.stack_trace) == str
+    assert type(dummy_log_record_info.stack_trace) == NoneType
     assert type(dummy_log_record_error.stack_trace) == str
     assert type(dummy_log_record_info.log_severity) == LogSeverity
     assert type(dummy_log_record_error.log_severity) == LogSeverity
