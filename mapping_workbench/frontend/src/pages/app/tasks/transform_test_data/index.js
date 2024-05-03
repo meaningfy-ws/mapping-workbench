@@ -59,7 +59,7 @@ const Page = () => {
         }
         const toastId = toastLoad(`Running "${taskTitle}" task ... `)
         tasksApi.runTransformTestData(request)
-            .then(() => toastSuccess(`"${taskTitle}" successfully finished.`, toastId))
+            .then((res) => toastSuccess(`${res.task_name} successfully started.`, toastId))
             .catch(err => toastError(`"${taskTitle}" failed: ${err.message}.`, toastId))
             .finally(() => setIsRunning(false))
 

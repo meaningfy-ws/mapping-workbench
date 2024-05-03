@@ -13,7 +13,7 @@ from mapping_workbench.backend.package_exporter.models.exported_mapping_suite im
     MappingMetadataConstraints, MappingMetadataExportBaseForEForms, MappingMetadataExportForEForms, MappingSuiteType
 from mapping_workbench.backend.package_exporter.services.export_conceptual_mapping import \
     generate_eforms_conceptual_mapping_excel_by_mapping_package_state
-from mapping_workbench.backend.package_importer.services.import_mapping_suite_v3 import TEST_DATA_DIR_NAME, \
+from mapping_workbench.backend.package_importer.services.import_mapping_suite import TEST_DATA_DIR_NAME, \
     TRANSFORMATION_DIR_NAME, TRANSFORMATION_MAPPINGS_DIR_NAME, TRANSFORMATION_RESOURCES_DIR_NAME, VALIDATION_DIR_NAME, \
     SHACL_VALIDATION_DIR_NAME, SPARQL_VALIDATION_DIR_NAME, CONCEPTUAL_MAPPINGS_FILE_NAME, METADATA_FILE_NAME, \
     OUTPUT_DIR_NAME

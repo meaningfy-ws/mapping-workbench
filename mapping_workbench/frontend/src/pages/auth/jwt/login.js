@@ -60,7 +60,6 @@ const Page = () => {
         validationSchema,
         onSubmit: async (values, helpers) => {
             try {
-                console.log(values)
                 await signIn(values.username, values.password, values.remember_me);
 
                 if (isMounted()) {

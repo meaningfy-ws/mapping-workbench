@@ -22,12 +22,12 @@ Then('I get success select', () => {
 })
 
 When('I click on discover button', () => {
-    cy.intercept('POST', appURLPrefix + 'ontology/discover_terms').as('discover')
+    cy.intercept('POST', appURLPrefix + 'ontology/tasks/discover_terms').as('discover')
     cy.get('#discover_button').click()
 })
 
 Then('I successfully discover Ontology Terms', () => {
-    cy.wait('@discover').its('response.statusCode').should('eq',200)
+    cy.wait('@discover').its('response.statusCode').should('eq',201)
 })
 
 //add Ontology Namespace

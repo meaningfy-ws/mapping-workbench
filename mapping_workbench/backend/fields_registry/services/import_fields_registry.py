@@ -167,9 +167,11 @@ async def import_eforms_fields_from_folder(eforms_fields_folder_path: pathlib.Pa
                 project_link=project_link)
 
 
-async def import_eforms_fields_from_github_repository(github_repository_url: str,
-                                                      branch_or_tag_name: str,
-                                                      project_link: Link[Document] = None):
+async def import_eforms_fields_from_github_repository(
+        github_repository_url: str,
+        branch_or_tag_name: str,
+        project_link: Link[Document] = None
+):
     github_downloader = GithubDownloader(github_repository_url=github_repository_url,
                                          branch_or_tag_name=branch_or_tag_name)
 

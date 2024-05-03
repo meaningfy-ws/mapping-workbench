@@ -45,9 +45,9 @@ const Page = () => {
             values['project_id'] = sessionApi.getSessionProject();
             const toastId = toastLoad(`Importing eForm Fields ... `)
             sectionApi.importEFormsFromGithub(values)
-                .then(() => {
+                .then((res) => {
                     helpers.setStatus({success: true});
-                    toastSuccess('eForm Fields successfully imported.', toastId);
+                    toastSuccess(`${res.task_name} successfully started.`, toastId)
                     router.push({
                         pathname: paths.app[sectionApi.section].elements.index
                     })

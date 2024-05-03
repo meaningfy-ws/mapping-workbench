@@ -86,7 +86,7 @@ const PackageRow = (props) => {
             }
             const toastId = toastLoad(`Processing "${item.identifier}" ... This may take a while. Please, be patient.`)
             sectionApi.processPackage(data)
-                .then(res => toastSuccess(`"${res.result.title}" successfully processed in ${(res.task.duration / 60).toFixed(2)} minutes.`, toastId))
+                .then(res => toastSuccess(`${res.task_name} successfully started.`, toastId))
                 .catch(err => toastError(`Processing "${item.identifier}" failed: ${err.message}.`, toastId))
                 .finally(() => setIsProcessing(false))
         }

@@ -43,6 +43,6 @@ Then('I click on run button', () => {
 })
 
 Then('I get success result', () => {
-    cy.wait('@run_generate_cm_assertions_queries',{responseTimeout: 999999}).its('response.statusCode').should('eq', 200)
+    cy.wait('@run_generate_cm_assertions_queries',{responseTimeout: 999999}).its('response.statusCode').should('eq', 201)
 })
 

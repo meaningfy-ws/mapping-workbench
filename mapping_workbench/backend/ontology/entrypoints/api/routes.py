@@ -7,6 +7,7 @@ from mapping_workbench.backend.ontology.models.entity_api_response import APILis
     APIListTermsPaginatedResponse
 from mapping_workbench.backend.ontology.models.namespace import Namespace, NamespaceIn, NamespaceOut
 from mapping_workbench.backend.ontology.models.term import TermOut, TermIn, Term
+from mapping_workbench.backend.ontology.services import tasks
 from mapping_workbench.backend.ontology.services.api_for_namespaces import (
     list_namespaces,
     create_namespace,
@@ -17,15 +18,18 @@ from mapping_workbench.backend.ontology.services.api_for_namespaces import (
 )
 from mapping_workbench.backend.ontology.services.api_for_terms import list_terms, create_term, update_term, \
     get_term_out, get_term, delete_term
-from mapping_workbench.backend.ontology.services.terms import discover_and_save_terms, list_known_terms, is_known_term, \
+from mapping_workbench.backend.ontology.services.terms import list_known_terms, is_known_term, \
     check_content_terms_validity, search_terms, get_prefixed_terms
 from mapping_workbench.backend.security.services.user_manager import current_active_user
+from mapping_workbench.backend.task_manager.services.task_wrapper import add_task
 from mapping_workbench.backend.user.models.user import User
 
 ROUTE_PREFIX = "/ontology"
 TAG = "ontology"
 NAME_FOR_MANY = "ontologies"
 NAME_FOR_ONE = "ontology"
+
+TASK_DISCOVER_TERMS_NAME = f"{NAME_FOR_ONE}:tasks:discover_terms"
 
 router = APIRouter(
     prefix=ROUTE_PREFIX,
@@ -185,12 +189,18 @@ async def route_list_known_terms(saved: bool = True):
 
 
 @router.post(
-    "/discover_terms",
-    description=f"Discover {NAME_FOR_ONE} terms",
-    name=f"{NAME_FOR_MANY}:discover_{NAME_FOR_ONE}_terms"
+    "/tasks/discover_terms",
+    description=f"Task Discover {NAME_FOR_ONE} Terms",
+    name=TASK_DISCOVER_TERMS_NAME,
+    status_code=status.HTTP_201_CREATED
 )
-async def route_discover_terms(user: User = Depends(current_active_user)):
-    return await discover_and_save_terms(user=user)
+async def route_task_discover_terms(user: User = Depends(current_active_user)):
+    return add_task(
+        tasks.task_discover_terms,
+        TASK_DISCOVER_TERMS_NAME,
+        None,
+        user
+    )
 
 
 @router.post(

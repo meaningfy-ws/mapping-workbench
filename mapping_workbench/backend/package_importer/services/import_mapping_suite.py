@@ -1,4 +1,5 @@
 import io
+import io
 import pathlib
 import tempfile
 import zipfile
@@ -8,7 +9,7 @@ import numpy as np
 import pandas as pd
 
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
-from mapping_workbench.backend.package_importer.adapters.v3.importer import PackageImporter
+from mapping_workbench.backend.package_importer.adapters.eforms.importer import PackageImporter
 from mapping_workbench.backend.package_importer.models.imported_mapping_suite import ImportedMappingGroup
 from mapping_workbench.backend.package_importer.models.imported_mapping_suite import MappingMetadata, \
     MappingConceptualRule, ImportedCollectionResource, ImportedFileResource, ImportedMappingSuite

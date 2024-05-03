@@ -8,7 +8,7 @@ from bson.objectid import ObjectId
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
-from mapping_workbench.backend.package_importer.services.import_mapping_suite_v3 import \
+from mapping_workbench.backend.package_importer.services.import_mapping_suite import \
     import_mapping_suite_from_file_system, import_mapping_package_from_archive, import_mapping_package
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.resource_collection.models.entity import ResourceFile, ResourceCollection

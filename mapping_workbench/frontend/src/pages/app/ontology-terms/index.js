@@ -106,8 +106,8 @@ const Page = () => {
     const handleDiscover = async () => {
         const toastId = toastLoad('Discovering terms ...')
         sectionApi.discoverTerms()
-            .then(() => {
-                toastSuccess('Terms successfully discovered.', toastId)
+            .then((res) => {
+                toastSuccess(`${res.task_name} successfully started.`, toastId)
                 router.reload()
             })
             .catch(err => toastError(`Discovering terms failed: ${err.message}.`, toastId))
