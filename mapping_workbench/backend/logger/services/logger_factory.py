@@ -1,9 +1,7 @@
 from enum import Enum
 
-from mapping_workbench.backend.logger.adapters.console_logger import ConsoleLogger
-from mapping_workbench.backend.logger.adapters.file_logger import FileLogger
 from mapping_workbench.backend.logger.adapters.logger_abc import LoggerException, LoggerABC
-from mapping_workbench.backend.logger.models.logger_record import LogRecord
+from mapping_workbench.backend.logger.models.logger_record import LogRecord, LogSeverity
 
 
 class LoggerName(str, Enum):
@@ -13,10 +11,7 @@ class LoggerName(str, Enum):
 
 class LoggerFactory:
     def __init__(self):
-        self.loggers: dict = {
-            LoggerName.CONSOLE_LOGGER: ConsoleLogger(),
-            LoggerName.FILE_LOGGER: FileLogger()
-        }
+        self.loggers: dict = {}
 
     def get_logger(self, logger_name: LoggerName):
         if logger_name not in self.loggers:
@@ -35,7 +30,7 @@ class LoggerFactory:
 
     def log_all_error(self, message: str, stack_trace: str):
         log_record = LogRecord(
-            log_severity=LogRecord.LogSeverity.ERROR,
+            log_severity=LogSeverity.ERROR,
             message=message,
             stack_trace=stack_trace
         )
@@ -44,7 +39,7 @@ class LoggerFactory:
 
     def log_all_info(self, message: str):
         log_record = LogRecord(
-            log_severity=LogRecord.LogSeverity.INFO,
+            log_severity=LogSeverity.INFO,
             message=message
         )
         for logger in self.loggers.values():
