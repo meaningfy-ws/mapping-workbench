@@ -16,6 +16,7 @@ import Stack from "@mui/material/Stack";
 
 import {Scrollbar} from 'src/components/scrollbar';
 import {ResultChip, SorterHeader as UtilsSorterHeader} from "./utils";
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open:false, title:"", text:""})
@@ -135,7 +136,12 @@ export const ListTable = (props) => {
                                             {0}
                                     </TableCell>
                                     <TableCell>
-                                        {item.result_path}
+                                        <SyntaxHighlighter
+                                            language="turtle"
+                                            wrapLines={true}
+                                            lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
+                                            {item.result_path}
+                                        </SyntaxHighlighter>
                                     </TableCell>
                                     <TableCell>
                                         <ResultCell

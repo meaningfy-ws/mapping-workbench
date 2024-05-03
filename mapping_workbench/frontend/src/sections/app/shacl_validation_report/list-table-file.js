@@ -9,6 +9,7 @@ import TableRow from '@mui/material/TableRow';
 import {Scrollbar} from 'src/components/scrollbar';
 import PropTypes from 'prop-types';
 import {SorterHeader as UtilsSorterHeader} from "./utils";
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
 export const ListTableFile = (props) => {
 
@@ -71,22 +72,46 @@ export const ListTableFile = (props) => {
                             return (
                                 <TableRow key={key}>
                                     <TableCell width="25%">
-                                        {item.focus_node}
+                                        <SyntaxHighlighter
+                                            language="turtle"
+                                            wrapLines={true}
+                                            lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
+                                            {item.focus_node}
+                                        </SyntaxHighlighter>
                                     </TableCell>
                                     <TableCell>
-                                        {item.message}
+                                        <SyntaxHighlighter
+                                            language="turtle"
+                                            wrapLines={true}
+                                            lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
+                                            {item.message}
+                                        </SyntaxHighlighter>
                                     </TableCell>
                                     <TableCell>
-                                        {item.result_path}
+                                        <SyntaxHighlighter
+                                            language="sparql"
+                                            wrapLines={true}
+                                            lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
+                                            {item.result_path}
+                                        </SyntaxHighlighter>
                                     </TableCell>
                                     <TableCell>
-                                        {item.result_severity}
+                                        <SyntaxHighlighter
+                                            language="turtle"
+                                            wrapLines={true}
+                                            lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
+                                            {item.result_severity}
+                                        </SyntaxHighlighter>
                                     </TableCell>
                                     <TableCell>
-                                        {item.source_constraint_component}
+                                        <SyntaxHighlighter
+                                            language="turtle"
+                                            wrapLines={true}
+                                            lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
+                                            {item.source_constraint_component}
+                                        </SyntaxHighlighter>
                                     </TableCell>
                                 </TableRow>
-
                             );
                         })}
                     </TableBody>

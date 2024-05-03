@@ -24,6 +24,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import {Scrollbar} from 'src/components/scrollbar';
 import PropTypes from 'prop-types';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open:false, title:"", text:""})
@@ -102,7 +103,14 @@ export const ListTable = (props) => {
                                         </Typography>
                                     </TableCell>
                                     <TableCell>
-                                        {item.eforms_sdk_element_xpath}
+                                        {
+                                            <SyntaxHighlighter
+                                                language="xquery"
+                                                wrapLines={true}
+                                                lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
+                                                {item.eforms_sdk_element_xpath}
+                                            </SyntaxHighlighter>
+                                        }
                                     </TableCell>
                                      <TableCell>
                                          <Accordion
