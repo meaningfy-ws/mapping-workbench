@@ -25,6 +25,7 @@ import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {PropertyList} from "../../../components/property-list";
 import {PropertyListItem} from "../../../components/property-list-item";
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
 
 export const ListTable = (props) => {
@@ -220,7 +221,14 @@ export const ListTable = (props) => {
                                                             <PropertyList>
                                                                 <PropertyListItem
                                                                     label="Absolute XPath"
-                                                                    value={item.absolute_xpath}
+                                                                    value={
+                                                                        <SyntaxHighlighter
+                                                                            language="xquery"
+                                                                            wrapLines={true}
+                                                                            lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
+                                                                            {item.absolute_xpath}
+                                                                        </SyntaxHighlighter>
+                                                                    }
                                                                     sx={{
                                                                         whiteSpace: "pre-wrap",
                                                                         px: 3,
@@ -229,7 +237,14 @@ export const ListTable = (props) => {
                                                                 />
                                                                 <PropertyListItem
                                                                     label="Relative XPath"
-                                                                    value={item.relative_xpath}
+                                                                    value={
+                                                                        <SyntaxHighlighter
+                                                                            language="xquery"
+                                                                            wrapLines={true}
+                                                                            lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
+                                                                            {item.relative_xpath}
+                                                                        </SyntaxHighlighter>
+                                                                    }
                                                                     sx={{
                                                                         whiteSpace: "pre-wrap",
                                                                         px: 3,
