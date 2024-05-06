@@ -66,7 +66,6 @@ export const ListTable = (props) => {
     const handleItemToggle = itemId => setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
 
 
-
     return (
         <div>
             <TablePagination
@@ -94,6 +93,9 @@ export const ListTable = (props) => {
                                         Title
                                     </TableSortLabel>
                                 </Tooltip>
+                            </TableCell>
+                            <TableCell>
+                                Created at
                             </TableCell>
                             <TableCell>
                                 Start Time
@@ -153,30 +155,34 @@ export const ListTable = (props) => {
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            {(item.started_at).replace("T", " ").split(".")[0]}
+                                            {item.created_at && item.created_at.replace("T", " ").split(".")[0]}
+                                        </TableCell>
+                                        <TableCell>
+                                            {item.started_at && item.started_at.replace("T", " ").split(".")[0]}
                                         </TableCell>
                                         <TableCell>
                                             {item.started_by}
                                         </TableCell>
-                                          <TableCell>
-                                            {(item.finished_at).replace("T", " ").split(".")[0]}
+                                        <TableCell>
+                                            {item.finished_at && item.finished_at.replace("T", " ").split(".")[0]}
                                         </TableCell>
                                         <TableCell align="left">
-                                               <SeverityPill color={mapStatusColor(item.task_status)}>
-                                                    {item.task_status}
-                                                </SeverityPill>
+                                            <SeverityPill color={mapStatusColor(item.task_status)}>
+                                                {item.task_status}
+                                            </SeverityPill>
                                         </TableCell>
                                         <TableCell align="right">
-                                            <Button
-                                                id="cancel_button"
-                                                variant="text"
-                                                size="small"
-                                                color="error"
-                                                disabled={![taskStatuses.QUEUED,taskStatuses.RUNNING].includes(item.task_status)}
-                                                onClick={() => onCancelAction(item_id)}
-                                            >
-                                                Cancel
-                                            </Button>
+                                            {[taskStatuses.QUEUED, taskStatuses.RUNNING].includes(item.task_status)
+                                                && <Button
+                                                    id="cancel_button"
+                                                    variant="text"
+                                                    size="small"
+                                                    color="warning"
+                                                    onClick={() => onCancelAction(item_id)}
+                                                >
+                                                    Cancel
+                                                </Button>
+                                            }
                                             <Button
                                                 id="delete_button"
                                                 variant="text"
@@ -191,7 +197,7 @@ export const ListTable = (props) => {
                                     {isCurrent && (
                                         <TableRow>
                                             <TableCell
-                                                colSpan={7}
+                                                colSpan={8}
                                                 sx={{
                                                     p: 0,
                                                     position: 'relative',
@@ -219,7 +225,7 @@ export const ListTable = (props) => {
                                                         </Typography>
                                                         <Divider/>
                                                         <Typography sx={{paddingLeft: "24px"}}>
-                                                          {item.exception_message}
+                                                            {item.exception_message}
                                                         </Typography>
                                                     </Grid>
                                                 </CardContent>

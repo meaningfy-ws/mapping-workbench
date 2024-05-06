@@ -66,10 +66,7 @@ class TaskExecutor(Callable):
         task_result = TaskResult()
         task_result.started_at = datetime.now()
         try:
-            if inspect.iscoroutinefunction(self.task_function):
-                asyncio.run(self.task_function(*args, **kwargs))
-            else:
-                self.task_function(*args, **kwargs)
+            self.task_function(*args, **kwargs)
             task_result.task_status = TaskStatus.FINISHED
         except Exception as e:
             task_result.exception_message = str(e)

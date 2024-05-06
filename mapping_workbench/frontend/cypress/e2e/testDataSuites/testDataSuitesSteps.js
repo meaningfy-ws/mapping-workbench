@@ -46,7 +46,7 @@ Then('I click on run button', () => {
 })
 
 Then('I get success transform', () => {
-    cy.wait('@run_test_data',{responseTimeout: 999999}).its('response.statusCode').should('eq', 200)
+    cy.wait('@run_test_data',{responseTimeout: 999999}).its('response.statusCode').should('eq', 201)
 })
 
 Then('I click on add button', () => {
