@@ -168,7 +168,7 @@ export const Page = () => {
                         spacing={3}
                     >
                         <Button
-                            id="add_button"
+                            id="refresh_button"
                             color="inherit"
                             startIcon={<SvgIcon><AutorenewIcon/></SvgIcon>}
                             variant="contained"
@@ -177,7 +177,7 @@ export const Page = () => {
                             Refresh
                         </Button>
                         <Button
-                            id="delete_all__button"
+                            id="delete_all_button"
                             color="error"
                             startIcon={<SvgIcon><DeleteOutlineIcon/></SvgIcon>}
                             variant="contained"

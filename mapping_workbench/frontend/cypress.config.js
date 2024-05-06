@@ -41,7 +41,8 @@ module.exports = defineConfig({
         "cypress/e2e/termValidator.feature",
         "cypress/e2e/sparqlQueries.feature",
         "cypress/e2e/ontologyNamespaces.feature",
-        "cypress/e2e/ontologyTerms.feature"
+        "cypress/e2e/ontologyTerms.feature",
+        "cypress/e2e/tasks.feature"
     ],
     video: false,
     // reporter: 'junit',

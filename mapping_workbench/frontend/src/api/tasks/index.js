@@ -59,12 +59,12 @@ class TasksApi extends SectionApi{
 
     async deleteTask(id) {
         const endpoint = this.paths['task_delete'];
-        return appApi.post(endpoint(id));
+        return appApi.delete(endpoint(id));
     }
 
     async deleteAllTasks() {
         const endpoint = this.paths['task_delete_all'];
-        return appApi.post(endpoint);
+        return appApi.delete(endpoint);
     }
 }
 
