@@ -799,7 +799,7 @@ export const ListTableRow = (props) => {
                             size="small"
                             color="warning"
                             onClick={() => handleNotesDialogOpen(item)}
-                 >{[item.mapping_notes?.length, item.editorial_notes?.length, item.feedback_notes?.length].join(' ').trim()}</Button>}
+                 >{item.mapping_notes?.length ?? 0 + item.editorial_notes?.length ?? 0 + item.feedback_notes?.length ?? 0}</Button>}
             </TableCell>
 
             <TableCell align="right">
