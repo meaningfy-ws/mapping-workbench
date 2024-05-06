@@ -48,12 +48,12 @@ Then('I type branch name', () => {
 })
 
 When('I click on import button', () => {
-    cy.intercept('POST', appURLPrefix + 'fields_registry/import_eforms_from_github',).as('import')
+    cy.intercept('POST', appURLPrefix + 'fields_registry/tasks/import_eforms_from_github',).as('import')
     cy.get('#import').click()
 })
 
 Then('I get success import', () => {
-    cy.wait('@import',{responseTimeout: 999999}).its('response.statusCode').should('eq', 200)
+    cy.wait('@import',{responseTimeout: 999999}).its('response.statusCode').should('eq', 201)
 })
 
 When('I click on fields registry elements', () => {

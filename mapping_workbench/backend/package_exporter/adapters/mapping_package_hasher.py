@@ -7,7 +7,7 @@ import pathlib
 import re
 from typing import Tuple, List
 
-from mapping_workbench.backend.package_importer.services.import_mapping_suite_v3 import TRANSFORMATION_DIR_NAME, \
+from mapping_workbench.backend.package_importer.services.import_mapping_suite import TRANSFORMATION_DIR_NAME, \
     TRANSFORMATION_MAPPINGS_DIR_NAME, TRANSFORMATION_RESOURCES_DIR_NAME
 
 

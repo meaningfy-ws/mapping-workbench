@@ -214,7 +214,7 @@ export const apiPaths = {
         items: '/mapping_packages',
         item: '/mapping_packages/:id',
         import: '/package_importer/tasks/import',
-        process: '/package_processor/process',
+        process: '/package_processor/tasks/process',
         export: '/package_exporter/export_latest_package_state',
         export_specific: '/package_exporter/export_specific_package_state',
         states: '/mapping_packages/:id/states',
@@ -272,7 +272,7 @@ export const apiPaths = {
     ontology_terms: {
         items: '/ontology/terms',
         item: '/ontology/terms/:id',
-        discover_terms: '/ontology/discover_terms',
+        discover_terms: '/ontology/tasks/discover_terms',
         known_terms: '/ontology/known_terms'
     },
 
@@ -285,7 +285,7 @@ export const apiPaths = {
     fields_registry: {
         items: '/fields_registry',
         item: '/fields_registry/:id',
-        import_eforms_from_github: '/fields_registry/import_eforms_from_github',
+        import_eforms_from_github: '/fields_registry/tasks/import_eforms_from_github',
         elements: '/fields_registry/elements',
         element: '/fields_registry/elements/:id',
     },

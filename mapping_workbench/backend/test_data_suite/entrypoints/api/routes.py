@@ -10,11 +10,13 @@ from mapping_workbench.backend.file_resource.services.file_resource_form_data im
     file_resource_data_from_form_request
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
+from mapping_workbench.backend.task_manager.services.task_wrapper import add_task
 from mapping_workbench.backend.test_data_suite.adapters.rml_mapper import RMLMapperException
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
     TestDataFileResourceUpdateIn, TestDataFileResourceCreateIn
 from mapping_workbench.backend.test_data_suite.models.entity_api_response import \
     APIListTestDataSuitesPaginatedResponse, APIListTestDataFileResourcesPaginatedResponse
+from mapping_workbench.backend.test_data_suite.services import tasks
 from mapping_workbench.backend.test_data_suite.services.api import (
     list_test_data_suites,
     create_test_data_suite,
@@ -26,8 +28,7 @@ from mapping_workbench.backend.test_data_suite.services.api import (
     get_test_data_file_resource,
     delete_test_data_file_resource, update_test_data_file_resource
 )
-from mapping_workbench.backend.test_data_suite.services.transform_test_data import transform_test_data_for_project, \
-    transform_test_data_file_resource
+from mapping_workbench.backend.test_data_suite.services.transform_test_data import transform_test_data_file_resource
 from mapping_workbench.backend.user.models.user import User
 
 ROUTE_PREFIX = "/test_data_suites"
@@ -36,6 +37,8 @@ NAME_FOR_MANY = "test_data_suites"
 NAME_FOR_ONE = "test_data_suite"
 FILE_RESOURCE_NAME_FOR_MANY = "test_data_file_resources"
 FILE_RESOURCE_NAME_FOR_ONE = "test_data_file_resource"
+
+TASK_TRANSFORM_TEST_DATA_NAME = f"{NAME_FOR_ONE}:tasks:transform_test_data"
 
 router = APIRouter(
     prefix=ROUTE_PREFIX,
@@ -266,19 +269,20 @@ async def route_delete_test_data_file_resource(
 
 @router.post(
     "/tasks/transform_test_data",
-    description=f"Transform Test Data",
-    name=f"transform_test_data"
+    description=f"Task Transform Test Data",
+    name=TASK_TRANSFORM_TEST_DATA_NAME,
+    status_code=status.HTTP_201_CREATED
 )
-async def route_transform_test_data(
+async def route_task_transform_test_data(
         filters: APIRequestWithProject,
         user: User = Depends(current_active_user)
 ):
-    try:
-        return await transform_test_data_for_project(project_id=filters.project, user=user)
-    except RMLMapperException as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
-    except Exception:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Server error")
+    return add_task(
+        tasks.task_transform_test_data,
+        TASK_TRANSFORM_TEST_DATA_NAME,
+        None,
+        filters, user
+    )
 
 
 @router.post(

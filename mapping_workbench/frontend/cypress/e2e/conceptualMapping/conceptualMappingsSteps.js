@@ -61,7 +61,7 @@ When('I click on run button', () => {
 })
 
 Then('I get success generate', () => {
-    cy.wait('@run').its('response.statusCode').should('eq', 200)
+    cy.wait('@run').its('response.statusCode').should('eq', 201)
 })
 
 When('I click on add button', () => {

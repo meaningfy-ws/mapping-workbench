@@ -86,12 +86,12 @@ Then('I type branch name', () => {
 })
 
 When('I click on import button', () => {
-    cy.intercept('POST', appURLPrefix + 'fields_registry/import_eforms_from_github',).as('import')
+    cy.intercept('POST', appURLPrefix + 'fields_registry/tasks/import_eforms_from_github',).as('import')
     cy.get('#import').click()
 })
 
 Then('I get success import', () => {
-    cy.wait('@import',{responseTimeout: 999999}).its('response.statusCode').should('eq', 200)
+    cy.wait('@import',{responseTimeout: 999999}).its('response.statusCode').should('eq', 201)
 })
 
 
@@ -130,7 +130,7 @@ When('I click on run button for transform data', () => {
 })
 
 Then('I get success generate', () => {
-    cy.wait('@run_conceptual_test_data').its('response.statusCode').should('eq', 200)
+    cy.wait('@run_conceptual_test_data').its('response.statusCode').should('eq', 201)
 })
 
 
@@ -155,7 +155,7 @@ Then('I click on Mapping Packages importer', () => {
 })
 
 Then('I click on upload button', () => {
-    cy.intercept('POST', 'http://localhost:8000/api/v1/package_importer/import/v3',).as('upload')
+    cy.intercept('POST', 'http://localhost:8000/api/v1/package_importer/import/archive',).as('upload')
     cy.get('#upload_button').click()
 })
 
@@ -179,7 +179,7 @@ Then('I click on run button', () => {
 })
 
 Then('I get success transform', () => {
-    cy.wait('@run_test_data',{responseTimeout: 999999}).its('response.statusCode').should('eq', 200)
+    cy.wait('@run_test_data',{responseTimeout: 999999}).its('response.statusCode').should('eq', 201)
 })
 
 //process Mapping Packages

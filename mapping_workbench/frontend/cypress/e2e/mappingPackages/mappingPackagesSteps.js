@@ -50,7 +50,7 @@ Then("I click select file", () => {
 })
 
 Then('I click on upload button', () => {
-    cy.intercept('POST', appURLPrefix + 'package_importer/import/v3',).as('upload')
+    cy.intercept('POST', appURLPrefix + 'package_importer/import/archive',).as('upload')
     cy.get('#upload_button').click()
 })
 
@@ -59,7 +59,7 @@ Then('I click on import button', () => {
 })
 
 Then('I click on upload button', () => {
-    cy.intercept('POST', appURLPrefix + 'package_importer/import/v3',).as('upload')
+    cy.intercept('POST', appURLPrefix + 'package_importer/import/archive',).as('upload')
     cy.get('#upload_button').click()
 })
 

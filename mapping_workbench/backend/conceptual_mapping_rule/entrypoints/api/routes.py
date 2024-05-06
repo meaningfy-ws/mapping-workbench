@@ -10,6 +10,7 @@ from mapping_workbench.backend.conceptual_mapping_rule.models.entity import Conc
     ConceptualMappingRuleUpdateIn, ConceptualMappingRule, ConceptualMappingRuleTermsValidity
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity_api_response import \
     APIListConceptualMappingRulesPaginatedResponse
+from mapping_workbench.backend.conceptual_mapping_rule.services import tasks
 from mapping_workbench.backend.conceptual_mapping_rule.services.api import (
     list_conceptual_mapping_rules,
     create_conceptual_mapping_rule,
@@ -22,12 +23,15 @@ from mapping_workbench.backend.package_validator.services.sparql_cm_assertions i
     generate_and_save_cm_assertions_queries
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
+from mapping_workbench.backend.task_manager.services.task_wrapper import add_task
 from mapping_workbench.backend.user.models.user import User
 
 ROUTE_PREFIX = "/conceptual_mapping_rules"
 TAG = "conceptual_mapping_rules"
 NAME_FOR_MANY = "conceptual_mapping_rules"
 NAME_FOR_ONE = "conceptual_mapping_rule"
+
+TASK_GENERATE_CM_ASSERTIONS_QUERIES_NAME = f"{NAME_FOR_ONE}:tasks:generate_cm_assertions_queries"
 
 router = APIRouter(
     prefix=ROUTE_PREFIX,
@@ -135,14 +139,16 @@ async def route_clone_conceptual_mapping_rule(
 @router.post(
     "/tasks/generate_cm_assertions_queries",
     description=f"Generate CM Assertions Queries",
-    name=f"generate_cm_assertions_queries"
+    name=f"generate_cm_assertions_queries",
+    status_code=status.HTTP_201_CREATED
 )
-async def route_generate_cm_assertions_queries(
+async def route_task_generate_cm_assertions_queries(
         filters: APIRequestForGenerateCMAssertionsQueries,
         user: User = Depends(current_active_user)
 ):
-    return await generate_and_save_cm_assertions_queries(
-        project_id=filters.project,
-        cleanup=bool(filters.cleanup),
-        user=user
+    return add_task(
+        tasks.task_generate_cm_assertions_queries,
+        TASK_GENERATE_CM_ASSERTIONS_QUERIES_NAME,
+        None,
+        filters.project, bool(filters.cleanup), user
     )

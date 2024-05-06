@@ -34,7 +34,7 @@ jobs:
           envkey_VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
           envkey_VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
       - name: Run unit tests
-        run: make test
+        run: make test-unit-backend
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
