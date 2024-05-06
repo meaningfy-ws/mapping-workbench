@@ -1,7 +1,8 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useTranslation} from "react-i18next";
 
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
+import TaskIcon from "@mui/icons-material/TaskAlt";
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -10,15 +11,13 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import TaskIcon from "@mui/icons-material/TaskAlt";
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
 import {Layout as AppLayout} from 'src/layouts/app';
+import {usePageView} from 'src/hooks/use-page-view';
+import {RouterLink} from 'src/components/router-link';
 import {testDataSuitesApi as sectionApi} from 'src/api/test-data-suites';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {RouterLink} from 'src/components/router-link';
-import {useMounted} from 'src/hooks/use-mounted';
-import {usePageView} from 'src/hooks/use-page-view';
 import {FileCollectionListSearch} from 'src/sections/app/file-manager/file-collection-list-search';
 import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
 import {tokens} from "/src/locales/tokens";
@@ -36,27 +35,28 @@ const useItemsSearch = () => {
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
 
-    const handleFiltersChange = useCallback((filters) => {
-        setState((prevState) => ({
+    const handleFiltersChange = filters => {
+        setState(prevState => ({
             ...prevState,
             filters,
             page: 0
         }));
-    }, []);
+    }
 
-    const handlePageChange = useCallback((event, page) => {
-        setState((prevState) => ({
+    const handlePageChange = (event, page) => {
+        setState(prevState => ({
             ...prevState,
             page
         }));
-    }, []);
+    }
 
-    const handleRowsPerPageChange = useCallback((event) => {
-        setState((prevState) => ({
+    const handleRowsPerPageChange = event => {
+        console.log('handleRowsPerPageChange')
+        setState(prevState => ({
             ...prevState,
             rowsPerPage: parseInt(event.target.value, 10)
         }));
-    }, []);
+    }
 
     return {
         handleFiltersChange,
@@ -67,28 +67,19 @@ const useItemsSearch = () => {
 };
 
 const useItemsStore = (searchState) => {
-    const isMounted = useMounted();
     const [state, setState] = useState({
         items: [],
         itemsCount: 0
     });
 
-    const handleItemsGet = useCallback(async () => {
-        try {
-            const response = await sectionApi.getItems(searchState);
-
-            if (isMounted()) {
-                setState({
-                    items: response.items,
-                    itemsCount: response.count
-                });
-
-            }
-
-        } catch (err) {
-            console.error(err);
-        }
-    }, [searchState, isMounted]);
+    const handleItemsGet = () => {
+        sectionApi.getItems(searchState)
+            .then(res => setState({
+                items: res.items,
+                itemsCount: res.count
+            }))
+            .catch(err => console.warn(err))
+    }
 
     useEffect(() => {
             handleItemsGet();

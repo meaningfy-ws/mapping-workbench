@@ -88,7 +88,10 @@ const Page = () => {
                             spacing={2}
                         >
                             <Stack spacing={1}>
-                                <Typography variant="h4">
+                                {item.name && <Typography variant="h4">
+                                    {item.name}
+                                </Typography>}
+                                <Typography variant={item.name ? "h5" : "h4"}>
                                     {item.eforms_sdk_element_id}
                                 </Typography>
                             </Stack>

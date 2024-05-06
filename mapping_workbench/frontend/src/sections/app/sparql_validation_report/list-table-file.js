@@ -20,6 +20,7 @@ import Chip from "@mui/material/Chip";
 import {Scrollbar} from 'src/components/scrollbar';
 import PropTypes from 'prop-types';
 import {resultColor} from "./utils";
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
 export const ListTableFile = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open:false, title:"", text:""})
@@ -79,14 +80,14 @@ export const ListTableFile = (props) => {
                         <TableRow>
                             <TableCell width="25%">
                                 <SorterHeader fieldName="title"
-                                              title="Form Field"/>
+                                              title="Field"/>
                             </TableCell>
                             <TableCell>
                                 Description
                             </TableCell>
                             <TableCell>
                                  <SorterHeader fieldName="query"
-                                               title="Query content"/>
+                                               title="Query"/>
                             </TableCell>
                             <TableCell align="left">
                                 <SorterHeader fieldName="result"
@@ -113,7 +114,12 @@ export const ListTableFile = (props) => {
                                         </Button>
                                     </TableCell>
                                     <TableCell>
-                                        {item.query}
+                                        <SyntaxHighlighter
+                                            language="sparql"
+                                            wrapLines={true}
+                                            lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
+                                            {item.query}
+                                        </SyntaxHighlighter>
                                     </TableCell>
                                     <TableCell align="left">
                                         <Chip label={item.result}

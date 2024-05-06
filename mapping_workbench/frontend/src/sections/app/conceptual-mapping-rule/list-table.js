@@ -59,6 +59,7 @@ import {ListSelectorSelect as ResourceListSelector} from "../../../components/ap
 import {sparqlTestFileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
 import {toastSuccess} from "../../../components/app-toast";
 import {TermValidityInfo} from "./term-validity";
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
 
 export const ListTableTripleMapFragment = (props) => {
@@ -670,11 +671,13 @@ export const ListTableRow = (props) => {
         return validityInfo;
     }
 
-    const targetPropertyPathValidityInfo = generateValidityInfo(
-        item.target_property_path_terms_validity,
-        "target_property_path",
-        item.target_property_path
-    );
+
+    const targetPropertyPathValidityInfo= generateValidityInfo(
+            item.target_property_path_terms_validity,
+            "target_property_path",
+            item.target_property_path
+        );
+
     const targetClassPathValidityInfo = generateValidityInfo(
         item.target_class_path_terms_validity,
         "target_class_path",
@@ -731,12 +734,11 @@ export const ListTableRow = (props) => {
                     <Typography variant="subtitle2">
                         <Box>
                             {item.source_structural_element?.eforms_sdk_element_id}
-                            {item.mapping_group_id && " / "}
-                            {item.mapping_group_id}
-
+                            {item.mapping_group_id && ` / ${item.mapping_group_id}`}
                         </Box>
                     </Typography>
                 </Link>
+                {item.source_structural_element.name}
             </TableCell>
             <TableCell>{item.min_sdk_version}</TableCell>
             <TableCell>{item.max_sdk_version}</TableCell>
@@ -823,89 +825,76 @@ export const ListTableRow = (props) => {
                 }}
             >
                 <CardContent>
-                    <Stack direction='column'>
-                        <PropertyList>
-                            {item.source_structural_element && (
-                                <>
-                                    {item.source_structural_element.eforms_sdk_element_id && <PropertyListItem
-                                        key="eforms_sdk_element_id"
-                                        label="Field/Node ID"
-                                        value={item.source_structural_element.eforms_sdk_element_id}
-                                    />}
-                                    {item.source_structural_element.absolute_xpath && <PropertyListItem
-                                        key="absolute_xpath"
-                                        label="Absolute XPath"
-                                        value={item.source_structural_element.absolute_xpath}
-                                    />}
-                                    {item.source_structural_element.name && <PropertyListItem
-                                        key="name"
-                                        label="Field Name"
-                                        value={item.source_structural_element.name}
-                                    />}
-                                </>
-                            )}
-                        </PropertyList>
-                        <PropertyList>
-                            <Grid container>
-                                <Grid item
-                                      xl={6}
-                                      md={12}>
-                                    {item.target_class_path && (<PropertyListItem
-                                        key="target_class_path"
-                                        label="Ontology Fragment Class path"
-                                        value={item.target_class_path}
-                                    />)}
-                                    {item.target_class_path_terms_validity && <>
-                                        <Alert severity={hasTargetClassPathValidityErrors ? "error" : "success"}
-                                               sx={{
-                                                   my: 1,
-                                                   mx: 5
-                                               }}
-                                        >{parse(targetClassPathValidityInfo)}</Alert>
+                    <Grid container
+                          rowSpacing={2}>
+                        <Grid item
+                              xl={6}
+                              md={12}>
+                            <PropertyList>
+                                {item.source_structural_element && (
+                                    <>
+                                        <Typography variant='h5' >
+                                            Source
+                                        </Typography>
+                                        {item.source_structural_element.eforms_sdk_element_id && <PropertyListItem
+                                            key="eforms_sdk_element_id"
+                                            label="Field/Node ID"
+                                            value={item.source_structural_element.eforms_sdk_element_id}
+                                        />}
+                                        {item.source_structural_element.name && <PropertyListItem
+                                            key="name"
+                                            label="Field Name"
+                                            value={item.source_structural_element.name}
+                                        />}
+                                        {item.source_structural_element.absolute_xpath && <PropertyListItem
+                                            key="absolute_xpath"
+                                            label="Absolute XPath"
+                                            value={
+                                                <SyntaxHighlighter
+                                                    language="xquery"
+                                                    wrapLines={true}
+                                                    lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
+                                                    {item.source_structural_element.absolute_xpath}
+                                                </SyntaxHighlighter>
+                                            }
+                                        />}
                                     </>
-                                    }
-                                    {item.target_class_path_terms_validity?.map((item, i) =>
-                                        <TermValidityInfo
-                                            key={'target' + i}
-                                            item={item}
-                                            sx={{
-                                                my: 1,
-                                                mx: 5
-                                            }}
-                                        />
-                                    )}
-                                </Grid>
-                                <Grid item
-                                      xl={6}
-                                      md={12}>
-                                    {item.target_property_path && (<PropertyListItem
-                                        key="target_property_path"
-                                        label="Ontology Fragment Property path"
-                                        value={item.target_property_path}
-                                    />)}
-                                    {item.target_property_path_terms_validity && <>
-                                        <Alert severity={hasTargetPropertyPathValidityErrors ? "error" : "success"}
-                                               sx={{
-                                                   my: 1,
-                                                   mx: 5
-                                               }}
-                                        >{parse(targetPropertyPathValidityInfo)}</Alert>
-                                    </>
-                                    }
-                                    {item.target_property_path_terms_validity?.map((item, i) =>
-                                        <TermValidityInfo
-                                            key={'target' + i}
-                                            item={item}
-                                            sx={{
-                                                my: 1,
-                                                mx: 5
-                                            }}
-                                        />
-                                    )}
-                                </Grid>
-                            </Grid>
-                        </PropertyList>
-                    </Stack>
+                                )}
+                            </PropertyList>
+                        </Grid>
+                        <Grid item
+                              xl={6}
+                              md={12}>
+                            {!!(item.target_class_path_terms_validity.length || item.target_property_path_terms_validity.length) &&
+                                <PropertyList>
+                                     <Typography variant='h5'>
+                                        Target
+                                     </Typography>
+                                     {!!item.target_class_path_terms_validity.length &&
+                                        <PropertyListItem
+                                            label='Ontology Fragment Class path'
+                                            value={
+                                                <SyntaxHighlighter
+                                                    language="sparql"
+                                                    wrapLines={true}
+                                                    lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
+                                                    {item.target_class_path}
+                                                </SyntaxHighlighter>
+                                            } />}
+                                     {!!item.target_property_path_terms_validity.length &&
+                                        <PropertyListItem
+                                            label='Ontology Fragment Property path'
+                                            value={
+                                                <SyntaxHighlighter
+                                                    language="sparql"
+                                                    wrapLines={true}
+                                                    lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
+                                                    {item.target_property_path}
+                                                </SyntaxHighlighter>
+                                            } />}
+                                </PropertyList>}
+                        </Grid>
+                    </Grid>
                 </CardContent>
             </TableCell>
         </TableRow>)}

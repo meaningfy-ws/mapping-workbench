@@ -23,10 +23,12 @@ export const ItemList = (props) => {
         onRowsPerPageChange,
         page = 0,
         rowsPerPage = 0,
-        view = 'grid'
+        view = 'grid',
+        onGetItems
     } = props;
 
     const content = view === 'grid' ?
+        <Box sx={{p: 3}}>
             <Box
                 sx={{
                     display: 'grid',
@@ -41,9 +43,11 @@ export const ItemList = (props) => {
                         collection={collection}
                         sectionApi={sectionApi}
                         fileResourcesApi={fileResourcesApi}
+                        onGetItems={onGetItems}
                     />
                 ))}
             </Box>
+        </Box>
         :
         // Negative margin is a fix for the box shadow. The virtual scrollbar cuts it.
             <Box sx={{m: -3}}>
@@ -64,6 +68,7 @@ export const ItemList = (props) => {
                                         collection={collection}
                                         sectionApi={sectionApi}
                                         fileResourcesApi={fileResourcesApi}
+                                        onGetItems={onGetItems}
                                     />
                                 ))}
                             </TableBody>

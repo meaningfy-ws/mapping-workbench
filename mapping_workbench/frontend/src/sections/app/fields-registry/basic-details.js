@@ -4,6 +4,7 @@ import ListItem from "@mui/material/ListItem";
 
 import {PropertyList} from 'src/components/property-list';
 import {PropertyListItem} from 'src/components/property-list-item';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
 export const BasicDetails = (props) => {
     const {item, ...other} = props;
@@ -19,18 +20,8 @@ export const BasicDetails = (props) => {
                     />
                     <PropertyListItem
                         divider
-                        label="Absolute XPath"
-                        value={item.absolute_xpath}
-                    />
-                    <PropertyListItem
-                        divider
-                        label="Relative XPath"
-                        value={item.relative_xpath}
-                    />
-                    <PropertyListItem
-                        divider
-                        label="Repeatable"
-                        value={item.repeatable}
+                        label="Name"
+                        value={item.name}
                     />
                     <PropertyListItem
                         divider
@@ -39,13 +30,18 @@ export const BasicDetails = (props) => {
                     />
                     <PropertyListItem
                         divider
-                        label="Name"
-                        value={item.name}
+                        label="Absolute XPath"
+                        value={<SyntaxHighlighter language="xquery">{item.absolute_xpath}</SyntaxHighlighter>}
                     />
                     <PropertyListItem
                         divider
-                        label="BT ID"
-                        value={item.bt_id}
+                        label="Relative XPath"
+                        value={<SyntaxHighlighter language="xquery">{item.relative_xpath}</SyntaxHighlighter>}
+                    />
+                    <PropertyListItem
+                        divider
+                        label="Repeatable"
+                        value={item.repeatable}
                     />
                     <PropertyListItem
                         divider

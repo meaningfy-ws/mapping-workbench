@@ -33,6 +33,7 @@ async def import_eforms_fields(eforms_fields_content: dict, project_link: Link[D
     eforms_sdk_version = eforms_sdk_fields.sdk_version
     result_dict = {VERSION_KEY: eforms_sdk_version}
     id_to_hash_mapping = {}
+
     for eforms_node in eforms_sdk_fields.xml_structure:
 
         new_structural_node = StructuralElement(id=eforms_node.generate_hash_id(),
@@ -71,7 +72,10 @@ async def import_eforms_fields(eforms_fields_content: dict, project_link: Link[D
                                                  project=project_link
                                                  )
         id_to_hash_mapping[eforms_field.id] = new_structural_field.id
-        old_structural_field = await StructuralElement.get(new_structural_field.id)
+        old_structural_field = await StructuralElement.find_one(
+            StructuralElement.id == new_structural_field.id,
+            StructuralElement.project == project_link
+        )
         if old_structural_field:
             old_structural_field.versions.append(eforms_sdk_version)
             old_structural_field.versions = list(set(old_structural_field.versions))

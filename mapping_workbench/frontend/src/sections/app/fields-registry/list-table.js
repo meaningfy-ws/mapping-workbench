@@ -25,6 +25,7 @@ import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {PropertyList} from "../../../components/property-list";
 import {PropertyListItem} from "../../../components/property-list-item";
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
 
 export const ListTable = (props) => {
@@ -90,7 +91,7 @@ export const ListTable = (props) => {
                                     <TableSortLabel
                                         direction="asc"
                                     >
-                                        Element ID
+                                        Element
                                     </TableSortLabel>
                                 </Tooltip>
                             </TableCell>
@@ -102,24 +103,9 @@ export const ListTable = (props) => {
                                     <TableSortLabel
                                         direction="asc"
                                     >
-                                        Parent ID
+                                        Parent
                                     </TableSortLabel>
                                 </Tooltip>
-                            </TableCell>
-                            <TableCell>
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        BT ID
-                                    </TableSortLabel>
-                                </Tooltip>
-                            </TableCell>
-                            <TableCell>
-                                Name
                             </TableCell>
                             <TableCell>
                                 Versions
@@ -171,15 +157,10 @@ export const ListTable = (props) => {
                                             <Typography variant="subtitle2">
                                                 {item.eforms_sdk_element_id}
                                             </Typography>
+                                            {item.name}
                                         </TableCell>
                                         <TableCell>
                                             {item.parent_node_id}
-                                        </TableCell>
-                                        <TableCell>
-                                            {item.bt_id}
-                                        </TableCell>
-                                        <TableCell>
-                                            {item.name}
                                         </TableCell>
                                         <TableCell>
                                             <List sx={{
@@ -240,7 +221,14 @@ export const ListTable = (props) => {
                                                             <PropertyList>
                                                                 <PropertyListItem
                                                                     label="Absolute XPath"
-                                                                    value={item.absolute_xpath}
+                                                                    value={
+                                                                        <SyntaxHighlighter
+                                                                            language="xquery"
+                                                                            wrapLines={true}
+                                                                            lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
+                                                                            {item.absolute_xpath}
+                                                                        </SyntaxHighlighter>
+                                                                    }
                                                                     sx={{
                                                                         whiteSpace: "pre-wrap",
                                                                         px: 3,
@@ -249,7 +237,14 @@ export const ListTable = (props) => {
                                                                 />
                                                                 <PropertyListItem
                                                                     label="Relative XPath"
-                                                                    value={item.relative_xpath}
+                                                                    value={
+                                                                        <SyntaxHighlighter
+                                                                            language="xquery"
+                                                                            wrapLines={true}
+                                                                            lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
+                                                                            {item.relative_xpath}
+                                                                        </SyntaxHighlighter>
+                                                                    }
                                                                     sx={{
                                                                         whiteSpace: "pre-wrap",
                                                                         px: 3,

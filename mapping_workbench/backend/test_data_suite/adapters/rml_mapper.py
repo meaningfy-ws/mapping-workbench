@@ -28,8 +28,6 @@ class RMLMapperException(Exception):
         rml_mapper_error = error_trace.partition("\n")[0]
         if error_trace.startswith("Exception"):
             rml_mapper_error = rml_mapper_error.partition(": ")[2]
-        else:
-            rml_mapper_error = rml_mapper_error.partition("- ")[2]
         self.message = f'{rml_mapper_error}'
 
     def __str__(self) -> str:

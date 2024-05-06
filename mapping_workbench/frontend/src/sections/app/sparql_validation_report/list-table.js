@@ -19,6 +19,7 @@ import Stack from "@mui/material/Stack";
 
 import {Scrollbar} from 'src/components/scrollbar';
 import {ResultChip} from "./utils";
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open:false, title:"", description:""})
@@ -98,7 +99,7 @@ export const ListTable = (props) => {
                         <TableRow>
                             <TableCell width="25%">
                                 <SorterHeader fieldName="title"
-                                              title="Form Field"/>
+                                              title="Field"/>
                             </TableCell>
                             <TableCell>
                                  <SorterHeader fieldName="test_suite"
@@ -106,7 +107,7 @@ export const ListTable = (props) => {
                             </TableCell>
                             <TableCell>
                                  <SorterHeader fieldName="query"
-                                               title="Query content"/>
+                                               title="Query"/>
                             </TableCell>
                             <TableCell align="center">
                                 <SorterHeader fieldName="validCount"
@@ -159,7 +160,12 @@ export const ListTable = (props) => {
                                         {item.test_suite}
                                     </TableCell>
                                     <TableCell>
-                                        {item.query}
+                                        <SyntaxHighlighter
+                                            language="sparql"
+                                            wrapLines={true}
+                                            lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
+                                            {item.query}
+                                        </SyntaxHighlighter>
                                     </TableCell>
                                     <TableCell>
                                         <ResultCell
