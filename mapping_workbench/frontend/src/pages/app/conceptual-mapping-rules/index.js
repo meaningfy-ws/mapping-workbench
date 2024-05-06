@@ -82,7 +82,6 @@ const useItemsStore = (searchState) => {
 
     const handleItemsGet = useCallback(async () => {
         try {
-            console.log(sectionApi)
             const response = await sectionApi.getItems(searchState);
             if (isMounted()) {
                 setState({

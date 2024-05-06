@@ -850,15 +850,14 @@ export const ListTableRow = (props) => {
                                         {item.source_structural_element.absolute_xpath && <PropertyListItem
                                             key="absolute_xpath"
                                             label="Absolute XPath"
-                                            value={
-                                                <SyntaxHighlighter
+                                        >
+                                            <SyntaxHighlighter
                                                     language="xquery"
-                                                    wrapLines={true}
+                                                    wrapLines
                                                     lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
                                                     {item.source_structural_element.absolute_xpath}
                                                 </SyntaxHighlighter>
-                                            }
-                                        />}
+                                        </PropertyListItem>}
                                     </>
                                 )}
                             </PropertyList>
@@ -872,27 +871,23 @@ export const ListTableRow = (props) => {
                                         Target
                                      </Typography>
                                      {!!item.target_class_path_terms_validity.length &&
-                                        <PropertyListItem
-                                            label='Ontology Fragment Class path'
-                                            value={
-                                                <SyntaxHighlighter
-                                                    language="sparql"
-                                                    wrapLines={true}
-                                                    lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
-                                                    {item.target_class_path}
-                                                </SyntaxHighlighter>
-                                            } />}
+                                        <PropertyListItem label='Ontology Fragment Class path'>
+                                            <SyntaxHighlighter
+                                                language="sparql"
+                                                wrapLines
+                                                lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
+                                                {item.target_class_path}
+                                            </SyntaxHighlighter>
+                                        </PropertyListItem>}
                                      {!!item.target_property_path_terms_validity.length &&
-                                        <PropertyListItem
-                                            label='Ontology Fragment Property path'
-                                            value={
-                                                <SyntaxHighlighter
-                                                    language="sparql"
-                                                    wrapLines={true}
-                                                    lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
-                                                    {item.target_property_path}
-                                                </SyntaxHighlighter>
-                                            } />}
+                                        <PropertyListItem label='Ontology Fragment Property path'>
+                                            <SyntaxHighlighter
+                                                language="sparql"
+                                                wrapLines
+                                                lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
+                                                {item.target_property_path}
+                                            </SyntaxHighlighter>
+                                        </PropertyListItem>}
                                 </PropertyList>}
                         </Grid>
                     </Grid>
