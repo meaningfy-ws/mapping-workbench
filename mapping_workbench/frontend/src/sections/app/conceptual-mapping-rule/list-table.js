@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import {useRouter} from "next/router";
 import PropTypes from 'prop-types';
 import parse from "html-react-parser";
@@ -58,7 +58,6 @@ import {COMMENT_PRIORITY, conceptualMappingRulesApi} from "../../../api/conceptu
 import {ListSelectorSelect as ResourceListSelector} from "../../../components/app/list-selector/select";
 import {sparqlTestFileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
 import {toastSuccess} from "../../../components/app-toast";
-import {TermValidityInfo} from "./term-validity";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
 
@@ -690,6 +689,8 @@ export const ListTableRow = (props) => {
     const hasTargetClassPathValidityErrors =
         item.target_class_path_terms_validity?.some(x => !x.is_valid);
 
+    const notesCount = (item.mapping_notes?.length ?? 0) + (item.editorial_notes?.length ?? 0) + (item.feedback_notes?.length ?? 0)
+
     return (<>
         <TableRow
             hover
@@ -796,12 +797,12 @@ export const ListTableRow = (props) => {
                 />
             </TableCell>
             <TableCell align="center">
-                {!!(item.mapping_notes?.length || item.editorial_notes?.length || item.feedback_notes?.length) &&
+                {!!notesCount &&
                  <Button variant="text"
                             size="small"
                             color="warning"
                             onClick={() => handleNotesDialogOpen(item)}
-                 >{item.mapping_notes?.length ?? 0 + item.editorial_notes?.length ?? 0 + item.feedback_notes?.length ?? 0}</Button>}
+                 >{notesCount}</Button>}
             </TableCell>
 
             <TableCell align="right">
