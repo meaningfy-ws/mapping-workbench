@@ -197,7 +197,7 @@ export const ListTable = (props) => {
                                     {isCurrent && (
                                         <TableRow>
                                             <TableCell
-                                                colSpan={7}
+                                                colSpan={8}
                                                 sx={{
                                                     p: 0,
                                                     position: 'relative',
