@@ -2,7 +2,7 @@ import {SectionApi} from "../section";
 import {appApi} from "../app";
 import {apiPaths} from "../../paths";
 
-class TasksApi {
+class TasksApi extends SectionApi{
     get TASKS_TITLE() {
         return "Tasks";
     }
@@ -12,6 +12,7 @@ class TasksApi {
     }
 
     constructor() {
+        super("tasks")
         this.section = "tasks";
         this.paths = apiPaths[this.section];
     }
@@ -49,6 +50,21 @@ class TasksApi {
             return appApi.post(endpoint, filters);
         } catch (err) {
         }
+    }
+
+    async cancelTask(id) {
+        const endpoint = this.paths['task_cancel'];
+        return appApi.post(endpoint(id));
+    }
+
+    async deleteTask(id) {
+        const endpoint = this.paths['task_delete'];
+        return appApi.post(endpoint(id));
+    }
+
+    async deleteAllTasks() {
+        const endpoint = this.paths['task_delete_all'];
+        return appApi.post(endpoint);
     }
 }
 

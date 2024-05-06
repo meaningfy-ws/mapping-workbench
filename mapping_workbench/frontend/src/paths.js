@@ -291,6 +291,10 @@ export const apiPaths = {
     },
 
     tasks: {
+        items: '/task_manager',
+        task_cancel: (task_id) => `/task_manager/cancel/${task_id}`,
+        task_delete: (task_id) => `/task_manager/delete/${task_id}`,
+        task_delete_all:'/task_manager/delete_all',
         terms_validator: '/tasks/terms_validator',
         generate_cm_assertions_queries: '/tasks/generate_cm_assertions_queries',
         transform_test_data: '/tasks/transform_test_data'
