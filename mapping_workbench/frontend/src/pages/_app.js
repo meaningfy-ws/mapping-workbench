@@ -30,6 +30,13 @@ import {createEmotionCache} from 'src/utils/create-emotion-cache';
 // Remove if locales are not used
 import 'src/locales/i18n';
 
+import dynamic from 'next/dynamic'
+
+const Tour = dynamic(
+  () => import('../components/app-tour'),
+  { ssr: false }
+)
+
 const clientSideEmotionCache = createEmotionCache();
 
 const CustomApp = (props) => {
@@ -84,6 +91,7 @@ const CustomApp = (props) => {
                               content={theme.palette.neutral[900]}
                             />
                           </Head>
+                          <Tour/>
                           <RTL direction={settings.direction}>
                             <CssBaseline />
                             {showSplashScreen
@@ -94,7 +102,7 @@ const CustomApp = (props) => {
                                     <ProjectsConsumer>
                                       {(projects) => (
                                         getLayout(
-                                            <Component projects={projects}
+                                              <Component projects={projects}
                                                        {...pageProps} />
                                         ))}
                                       </ProjectsConsumer>
