@@ -3,6 +3,7 @@ import pathlib
 import tempfile
 from collections import defaultdict
 from typing import List, Union
+import logging
 
 from beanie import Link, Document
 
@@ -12,6 +13,8 @@ from mapping_workbench.backend.fields_registry.models.field_registry import Stru
     StructuralElement
 from mapping_workbench.backend.fields_registry.models.notice_types import NoticeTypeGroupInfoSelector, \
     NoticeTypeFieldInfoSelector, NoticeTypesInfoSelector, NoticeTypeStructureInfoSelector
+
+logger = logging.getLogger("uvicorn")
 
 FIELDS_PATH_NAME = "fields"
 FIELDS_JSON_FILE_NAME = "fields.json"
@@ -157,7 +160,9 @@ async def import_eforms_fields_from_folder(eforms_fields_folder_path: pathlib.Pa
 
         notice_types_info_selector = NoticeTypesInfoSelector(**notice_types_info)
 
+        logger.info("Processing eForm notice subtypes")
         for notice_sub_type in notice_types_info_selector.notice_sub_types:
+            logger.info(f"Extracting structure of eForm subtype {notice_sub_type.sub_type_id}")
             notice_sub_type_file_path = notice_types_dir_path / f"{notice_sub_type.sub_type_id}.json"
             notice_sub_type_info = json.loads(notice_sub_type_file_path.read_text(encoding="utf-8"))
             notice_type_structure = NoticeTypeStructureInfoSelector(**notice_sub_type_info)
@@ -175,7 +180,9 @@ async def import_eforms_fields_from_github_repository(github_repository_url: str
 
     with tempfile.TemporaryDirectory() as tmp_dir:
         temp_dir_path = pathlib.Path(tmp_dir)
+        logger.info(f"Getting fields from {github_repository_url}")
         github_downloader.download(result_dir_path=temp_dir_path,
                                    download_resources_filter=[FIELDS_PATH_NAME, NOTICE_TYPES_PATH_NAME])
+        logger.info(f"Importing fields into the registry")
         await import_eforms_fields_from_folder(eforms_fields_folder_path=temp_dir_path,
                                                project_link=project_link)

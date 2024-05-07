@@ -129,6 +129,7 @@ async def transform_test_data_file_resources(
     rml_mapper: RMLMapper = RMLMapper(rml_mapper_path=Path(settings.RML_MAPPER_PATH))
 
     for test_data_file_resource in test_data_file_resources:
+        print("       ", test_data_file_resource.filename)
         await transform_test_data_file_resource(
             test_data_file_resource=test_data_file_resource,
             user=user,
