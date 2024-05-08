@@ -22,3 +22,6 @@ class Namespace(BaseEntity):
     prefix: Indexed(str, unique=True, index_type=pymongo.TEXT)
     uri: str
     is_syncable: bool
+
+    class Settings(BaseEntity.Settings):
+        name = "namespaces"
