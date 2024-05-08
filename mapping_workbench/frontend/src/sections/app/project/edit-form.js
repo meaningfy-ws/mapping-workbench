@@ -10,6 +10,7 @@ import CardHeader from '@mui/material/CardHeader';
 import Grid from '@mui/material/Unstable_Grid2';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
+import Checkbox from '@mui/material/Checkbox'
 
 import {paths} from 'src/paths';
 import {RouterLink} from 'src/components/router-link';
@@ -18,7 +19,6 @@ import {FormTextField} from "../../../components/app/form/text-field";
 import {FormTextArea} from "../../../components/app/form/text-area";
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 import {useProjects} from "../../../hooks/use-projects";
-
 
 export const EditForm = (props) => {
     const {itemctx, ...other} = props;
@@ -51,8 +51,19 @@ export const EditForm = (props) => {
             description: item.target_ontology?.description ?? '',
             version: item.target_ontology?.version ?? '',
             uri: item.target_ontology?.uri ?? ''
+        },
+        import_eform: {
+            checked: item.import_eform?.checked ?? true,
+            github_repository_url: item.import_eform?.github_repository_url ?? '',
+            branch_or_tag_name: item.import_eform?.branch_or_tag_name ?? '',
         }
-    };
+    }
+
+
+    ,
+      validationSchema = {
+
+      }
 
     const formik = useFormik({
         initialValues,
@@ -73,13 +84,15 @@ export const EditForm = (props) => {
 
         onSubmit: async (values, helpers) => {
             const toastId = toastLoad(itemctx.isNew ? "Creating..." : "Updating...")
+            const {import_eform: importEformValues, ...projectValues} = values
             try {
+                console.log(values,projectValues)
                 let response;
                 if (itemctx.isNew) {
-                    response = await sectionApi.createItem(values);
+                    response = await sectionApi.createItem(projectValues);
                 } else {
-                    values['id'] = item._id;
-                    response = await sectionApi.updateItem(values);
+                    projectValues['id'] = item._id;
+                    response = await sectionApi.updateItem(projectValues);
                 }
                 helpers.setStatus({success: true});
                 helpers.setSubmitting(false);
@@ -105,6 +118,7 @@ export const EditForm = (props) => {
         }
     });
 
+    console.log(formik)
     return (
         <form
             onSubmit={formik.handleSubmit}
@@ -143,6 +157,70 @@ export const EditForm = (props) => {
                 sx={{pt: 3}}
                 spacing={3}
             >
+                 <Grid
+                    xs={12}
+                    md={6}
+                >
+                    <Card>
+                        <CardHeader title="Target Ontology"/>
+                        <CardContent sx={{pt: 0}}>
+                            <Grid
+                                xs={12}
+                                md={12}
+                            >
+                                <TextField
+                                    fullWidth
+                                    label="Title"
+                                    name="target_ontology.title"
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
+                                    value={formik.values.target_ontology.title}
+                                />
+                            </Grid>
+                            <Grid
+                                xs={12}
+                                md={12}
+                            >
+                                <TextField
+                                    fullWidth
+                                    minRows={5}
+                                    multiline
+                                    label="Description"
+                                    name="target_ontology.description"
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
+                                    value={formik.values.target_ontology.description}
+                                />
+                            </Grid>
+                            <Grid
+                                xs={12}
+                                md={12}
+                            >
+                                <TextField
+                                    fullWidth
+                                    label="Version"
+                                    name="target_ontology.version"
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
+                                    value={formik.values.target_ontology.version}
+                                />
+                            </Grid>
+                            <Grid
+                                xs={12}
+                                md={12}
+                            >
+                                <TextField
+                                    fullWidth
+                                    label="URI"
+                                    name="target_ontology.uri"
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
+                                    value={formik.values.target_ontology.uri}
+                                />
+                            </Grid>
+                        </CardContent>
+                    </Card>
+                </Grid>
                 <Grid
                     xs={12}
                     md={6}
@@ -155,9 +233,7 @@ export const EditForm = (props) => {
                                 md={12}
                             >
                                 <TextField
-                                    //error={!!(formik.touched.source_schema && formik.touched.source_schema.title && formik.errors.source_schema && formik.errors.source_schema.title)}
                                     fullWidth
-                                    //helperText={formik.touched.source_schema && formik.touched.source_schema.title && formik.errors.source_schema && formik.errors.source_schema.title}
                                     label="Title"
                                     name="source_schema.title"
                                     onBlur={formik.handleBlur}
@@ -170,11 +246,9 @@ export const EditForm = (props) => {
                                 md={12}
                             >
                                 <TextField
-                                    //error={!!(formik.touched.source_schema && formik.touched.source_schema.description && formik.errors.source_schema.description)}
                                     fullWidth
                                     minRows={5}
                                     multiline
-                                    //helperText={formik.touched.source_schema && formik.touched.source_schema.description && formik.errors.source_schema.description}
                                     label="Description"
                                     name="source_schema.description"
                                     onBlur={formik.handleBlur}
@@ -187,9 +261,7 @@ export const EditForm = (props) => {
                                 md={12}
                             >
                                 <TextField
-                                    //error={!!(formik.touched.source_schema && formik.touched.source_schema.version && formik.errors.source_schema.version)}
                                     fullWidth
-                                    //helperText={formik.touched.source_schema && formik.touched.source_schema.version && formik.errors.source_schema.version}
                                     label="Version"
                                     name="source_schema.version"
                                     onBlur={formik.handleBlur}
@@ -202,12 +274,12 @@ export const EditForm = (props) => {
                                 md={12}
                             >
                                 <TextField
-                                    error={!!(formik.touched.source_schema && formik.touched.source_schema.type && formik.errors.source_schema && formik.errors.source_schema.type)}
+                                    error={!!(formik.touched.source_schema?.type && formik.errors.source_schema?.type)}
                                     id="ssType"
                                     fullWidth
                                     select
                                     defaultValue="JSON"
-                                    helperText={formik.touched.source_schema && formik.touched.source_schema.type && formik.errors.source_schema && formik.errors.source_schema.type}
+                                    helperText={formik.touched.source_schema?.type && formik.errors.source_schema?.type}
                                     label="Type"
                                     name="source_schema.type"
                                     onBlur={formik.handleBlur}
@@ -225,79 +297,37 @@ export const EditForm = (props) => {
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid
-                    xs={12}
-                    md={6}
-                >
-                    <Card>
-                        <CardHeader title="Target Ontology"/>
-                        <CardContent sx={{pt: 0}}>
-                            <Grid
-                                xs={12}
-                                md={12}
-                            >
-                                <TextField
-                                    //error={!!(formik.touched.target_ontology && formik.touched.target_ontology.title && formik.errors.target_ontology && formik.errors.target_ontology.title)}
-                                    fullWidth
-                                    //helperText={formik.touched.target_ontology && formik.touched.target_ontology.title && formik.errors.target_ontology && formik.errors.target_ontology.title}
-                                    label="Title"
-                                    name="target_ontology.title"
-                                    onBlur={formik.handleBlur}
-                                    onChange={formik.handleChange}
-                                    value={formik.values.target_ontology.title}
-                                />
-                            </Grid>
-                            <Grid
-                                xs={12}
-                                md={12}
-                            >
-                                <TextField
-                                    //error={!!(formik.touched.target_ontology && formik.touched.target_ontology.description && formik.errors.target_ontology.description)}
-                                    fullWidth
-                                    minRows={5}
-                                    multiline
-                                    //helperText={formik.touched.target_ontology && formik.touched.target_ontology.description && formik.errors.target_ontology.description}
-                                    label="Description"
-                                    name="target_ontology.description"
-                                    onBlur={formik.handleBlur}
-                                    onChange={formik.handleChange}
-                                    value={formik.values.target_ontology.description}
-                                />
-                            </Grid>
-                            <Grid
-                                xs={12}
-                                md={12}
-                            >
-                                <TextField
-                                    //error={!!(formik.touched.target_ontology && formik.touched.target_ontology.version && formik.errors.target_ontology.version)}
-                                    fullWidth
-                                    //helperText={formik.touched.target_ontology && formik.touched.target_ontology.version && formik.errors.target_ontology.version}
-                                    label="Version"
-                                    name="target_ontology.version"
-                                    onBlur={formik.handleBlur}
-                                    onChange={formik.handleChange}
-                                    value={formik.values.target_ontology.version}
-                                />
-                            </Grid>
-                            <Grid
-                                xs={12}
-                                md={12}
-                            >
-                                <TextField
-                                    //error={!!(formik.touched.target_ontology && formik.touched.target_ontology.uri && formik.errors.target_ontology.uri)}
-                                    fullWidth
-                                    //helperText={formik.touched.target_ontology && formik.touched.target_ontology.uri && formik.errors.target_ontology.uri}
-                                    label="URI"
-                                    name="target_ontology.uri"
-                                    onBlur={formik.handleBlur}
-                                    onChange={formik.handleChange}
-                                    value={formik.values.target_ontology.uri}
-                                />
-                            </Grid>
-                        </CardContent>
-                    </Card>
-                </Grid>
             </Grid>
+            {formik.values.source_schema.type === 'JSON' && <Card sx={{mt: 3}}>
+                 <CardHeader title="Import eForms SDK from GitHub"
+                             action={
+                                <Checkbox checked={formik.values.import_eform.checked}
+                                          name="import_eform.checked"
+                                          onChange={formik.handleChange}/>
+                             }>
+                 </CardHeader>
+                <CardContent sx={{pt: 0}}>
+                    <Grid container
+                          spacing={3}>
+                        <Grid xs={12}
+                              md={12}>
+                            <FormTextField formik={formik}
+                                           name="import_eform.github_repository_url"
+                                           label="GitHub Repository URL"
+                                           disabled={!formik.values.import_eform.checked}
+                                           required/>
+                        </Grid>
+                        <Grid xs={12}
+                              md={12}>
+                            <FormTextField formik={formik}
+                                           name="import_eform.branch_or_tag_name"
+                                           label="Branch or Tag name"
+                                           disabled={!formik.values.import_eform.checked}
+                                           required/>
+                        </Grid>
+                    </Grid>
+                </CardContent>
+            </Card>}
 
             <Card sx={{mt: 3}}>
                 <Stack
