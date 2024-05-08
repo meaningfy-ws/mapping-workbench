@@ -19,6 +19,10 @@ import {FormTextField} from "../../../components/app/form/text-field";
 import {FormTextArea} from "../../../components/app/form/text-area";
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 import {useProjects} from "../../../hooks/use-projects";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormGroup from "@mui/material/FormGroup";
+import Typography from "@mui/material/Typography";
+import {fieldsRegistryApi} from "../../../api/fields-registry";
 
 export const EditForm = (props) => {
     const {itemctx, ...other} = props;
@@ -40,6 +44,8 @@ export const EditForm = (props) => {
         title: item.title ?? '',
         description: item.description ?? '',
         version: item.version ?? '',
+        triger_namespaces_discovery: item.triger_namespaces_discovery ?? true,
+        triger_specific_namespaces: item.triger_specific_namespaces ?? true,
         source_schema: {
             title: item.source_schema?.title ?? '',
             description: item.source_schema?.description ?? '',
@@ -58,12 +64,6 @@ export const EditForm = (props) => {
             branch_or_tag_name: item.import_eform?.branch_or_tag_name ?? '',
         }
     }
-
-
-    ,
-      validationSchema = {
-
-      }
 
     const formik = useFormik({
         initialValues,
@@ -84,7 +84,7 @@ export const EditForm = (props) => {
 
         onSubmit: async (values, helpers) => {
             const toastId = toastLoad(itemctx.isNew ? "Creating..." : "Updating...")
-            const {import_eform: importEformValues, ...projectValues} = values
+            const {triger_namespaces_discovery, triger_specific_namespaces, import_eform, ...projectValues} = values
             try {
                 console.log(values,projectValues)
                 let response;
@@ -99,6 +99,18 @@ export const EditForm = (props) => {
                 toastSuccess(`${sectionApi.SECTION_ITEM_TITLE} ${itemctx.isNew ? "Created" : "Updated"}`, toastId);
                 if (response) {
                     projectsStore.getProjects()
+                    if(formik.values.source_schema.type === 'JSON') {
+                        if(formik.values.import_eform.checked) {
+                            let fieldsRegistryToastId = toastLoad(`Importing eForm Fields ... `)
+                            fieldsRegistryApi.importEFormsFromGithub({
+                                ...import_eform,
+                                project_id: response._id,
+                                checked: undefined
+                            })
+                                .then(res => toastSuccess(`${res.task_name} successfully started.`, fieldsRegistryToastId))
+                                .catch(err => toastError(`eForm Fields import failed: ${err.message}.`))
+                        }
+                    }
                     if (itemctx.isNew) {
                         projectsStore.handleSessionProjectChange(response._id)
                         router.push({
@@ -157,7 +169,7 @@ export const EditForm = (props) => {
                 sx={{pt: 3}}
                 spacing={3}
             >
-                 <Grid
+                <Grid
                     xs={12}
                     md={6}
                 >
@@ -299,16 +311,33 @@ export const EditForm = (props) => {
                 </Grid>
             </Grid>
             {formik.values.source_schema.type === 'JSON' && <Card sx={{mt: 3}}>
-                 <CardHeader title="Import eForms SDK from GitHub"
-                             action={
-                                <Checkbox checked={formik.values.import_eform.checked}
-                                          name="import_eform.checked"
-                                          onChange={formik.handleChange}/>
-                             }>
-                 </CardHeader>
                 <CardContent sx={{pt: 0}}>
                     <Grid container
                           spacing={3}>
+                        <FormGroup sx={{mt:3,ml:2}}>
+                                <FormControlLabel
+                                    control={<Checkbox checked={formik.values.triger_namespaces_discovery}
+                                                       onChange={formik.handleChange}
+                                                       name="triger_namespaces_discovery"/>
+                                    }
+                                    label={<Typography variant='h6'>Triger Namespace Discovery</Typography>}
+
+                                />
+                                <FormControlLabel
+                                    control={<Checkbox checked={formik.values.triger_specific_namespaces}
+                                                       onChange={formik.handleChange}
+                                                       name="triger_specific_namespaces"/>
+                                    }
+                                    label={<Typography variant='h6'>Triger Specific Namespaces</Typography>}
+                                />
+                                <FormControlLabel
+                                    control={<Checkbox checked={formik.values.import_eform.checked}
+                                                       onChange={formik.handleChange}
+                                                       name="import_eform.checked"/>
+                                    }
+                                    label={<Typography variant='h6'>Import eForms SDK from GitHub</Typography>}
+                                />
+                        </FormGroup>
                         <Grid xs={12}
                               md={12}>
                             <FormTextField formik={formik}
