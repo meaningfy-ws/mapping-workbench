@@ -13,6 +13,7 @@ import {paths} from 'src/paths';
 import {SideNavSection} from './side-nav-section';
 import {ProjectSwitch} from "../project-switch";
 import {AppTitle} from "../../../components/app-title";
+import {useProjects} from "../../../hooks/use-projects";
 
 const SIDE_NAV_WIDTH = 280;
 
@@ -148,6 +149,7 @@ export const SideNav = (props) => {
     const {color = 'evident', sections = []} = props;
     const pathname = usePathname();
     const cssVars = useCssVars(color);
+    const projects = useProjects()
 
     return (
         <Drawer
@@ -227,7 +229,7 @@ export const SideNav = (props) => {
                             }}>
                             <ProjectSwitch/>
                         </Stack>
-                        {sections.resources.map((section, index) => (
+                        {projects.sessionProject && sections.resources.map((section, index) => (
                             <SideNavSection
                                 items={section.items}
                                 key={index}
