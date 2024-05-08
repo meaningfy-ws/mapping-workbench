@@ -23,6 +23,8 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import FormGroup from "@mui/material/FormGroup";
 import Typography from "@mui/material/Typography";
 import {fieldsRegistryApi} from "../../../api/fields-registry";
+import {ontologyNamespacesApi} from "../../../api/ontology-namespaces";
+import {ontologyTermsApi} from "../../../api/ontology-terms";
 
 export const EditForm = (props) => {
     const {itemctx, ...other} = props;
@@ -65,6 +67,31 @@ export const EditForm = (props) => {
         }
     }
 
+    const namespaces = [
+        { prefix: 'epo',uri: 'http://data.europa.eu/a4g/ontology#',is_syncable: false },
+        { prefix: 'epo-not',uri: 'http://data.europa.eu/a4g/ontology#',is_syncable: false },
+        { prefix: 'cpov',uri: 'http://data.europa.eu/a4g/ontology#',is_syncable: false },
+        { prefix: 'dct',uri: 'http://data.europa.eu/a4g/ontology#',is_syncable: false }
+    ]
+
+    const handleDiscover = () => {
+        const toastId = toastLoad('Discovering terms ...')
+        ontologyTermsApi.discoverTerms()
+            .then(res => toastSuccess(`${res.task_name} successfully started.`, toastId))
+            .catch(err => toastError(`Discovering terms failed: ${err.message}.`, toastId))
+    };
+
+    const handleImportFieldRegestry = (values, projectId) => {
+        const toastId = toastLoad(`Importing eForm Fields ... `)
+        fieldsRegistryApi.importEFormsFromGithub({
+            ...values,
+            project_id: projectId,
+            checked: undefined
+        })
+            .then(res => toastSuccess(`${res.task_name} successfully started.`, toastId))
+            .catch(err => toastError(`eForm Fields import failed: ${err.message}.`, toastId))
+    }
+
     const formik = useFormik({
         initialValues,
         validationSchema: Yup.object({
@@ -74,12 +101,6 @@ export const EditForm = (props) => {
                 .required('Title is required'),
             description: Yup.string().max(2048),
             version: Yup.string().max(255)
-            // source_schema: {
-            //     title: Yup.string().max(255),
-            //     description: Yup.string().max(2048),
-            //     version: Yup.string().max(255),
-            //     type: Yup.string().max(255)
-            // }
         }),
 
         onSubmit: async (values, helpers) => {
@@ -101,14 +122,14 @@ export const EditForm = (props) => {
                     projectsStore.getProjects()
                     if(formik.values.source_schema.type === 'JSON') {
                         if(formik.values.import_eform.checked) {
-                            let fieldsRegistryToastId = toastLoad(`Importing eForm Fields ... `)
-                            fieldsRegistryApi.importEFormsFromGithub({
-                                ...import_eform,
-                                project_id: response._id,
-                                checked: undefined
-                            })
-                                .then(res => toastSuccess(`${res.task_name} successfully started.`, fieldsRegistryToastId))
-                                .catch(err => toastError(`eForm Fields import failed: ${err.message}.`))
+                            handleImportFieldRegestry(import_eform, response._id)
+                        }
+                        if(formik.values.triger_specific_namespaces) {
+
+                            // ontologyNamespacesApi.createItem()
+                        }
+                        if(formik.values.triger_namespaces_discovery) {
+                            handleDiscover()
                         }
                     }
                     if (itemctx.isNew) {
