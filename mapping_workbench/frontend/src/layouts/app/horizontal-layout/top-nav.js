@@ -153,9 +153,8 @@ const useCssVars = (color) => {
 };
 
 export const TopNav = (props) => {
-        const {color = 'evident', onMobileNav, sections = []} = props;
+        const {color = 'evident', onMobileNav, sections = [], mdUp} = props;
         const pathname = usePathname();
-        const mdUp = useMediaQuery((theme) => theme.breakpoints.up('md'));
         const cssVars = useCssVars(color);
         const projects = useProjects()
 
@@ -300,5 +299,6 @@ export const TopNav = (props) => {
 TopNav.propTypes = {
     color: PropTypes.oneOf(['blend-in', 'discrete', 'evident']),
     onMobileNav: PropTypes.func,
-    sections: PropTypes.array
+    sections: PropTypes.array,
+    mdUp: PropTypes.bool
 };
