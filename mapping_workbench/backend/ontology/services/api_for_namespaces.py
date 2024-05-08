@@ -49,7 +49,7 @@ async def create_namespaces(namespaces_in: List[NamespaceIn], user: User) -> Lis
         try:
             await namespace.create()
         except DuplicateKeyError as e:
-            logging.warning("Namespace already exists")
+            logging.warning(f"Namespace {namespace_in.prefix} already exists")
         else:
             namespaces.append(NamespaceOut(**namespace.model_dump()))
     return namespaces
