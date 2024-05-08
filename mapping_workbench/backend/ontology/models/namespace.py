@@ -2,7 +2,6 @@ from typing import Optional
 
 import pymongo
 from beanie import Indexed
-from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntity, BaseEntityInSchema, BaseEntityOutSchema
 
@@ -20,19 +19,6 @@ class NamespaceOut(BaseEntityOutSchema):
 
 
 class Namespace(BaseEntity):
-    prefix: Indexed(str, unique=False)
-    uri: Optional[str] = None
-    is_syncable: Optional[bool] = True
-
-    class Settings(BaseEntity.Settings):
-        name = "namespaces"
-
-        indexes = [
-            IndexModel(
-                [
-                    ("prefix", pymongo.TEXT),
-                    ("uri", pymongo.TEXT)
-                ],
-                name="search_text_idx"
-            )
-        ]
+    prefix: Indexed(str, unique=True, index_type=pymongo.TEXT)
+    uri: str
+    is_syncable: bool

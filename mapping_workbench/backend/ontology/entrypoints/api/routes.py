@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List
 
 from fastapi import APIRouter, Depends, status
 
@@ -14,7 +14,7 @@ from mapping_workbench.backend.ontology.services.api_for_namespaces import (
     update_namespace,
     get_namespace,
     get_namespace_out,
-    delete_namespace
+    delete_namespace, create_namespaces
 )
 from mapping_workbench.backend.ontology.services.api_for_terms import list_terms, create_term, update_term, \
     get_term_out, get_term, delete_term
@@ -71,6 +71,20 @@ async def route_create_namespace(
         user: User = Depends(current_active_user)
 ):
     return await create_namespace(data, user=user)
+
+
+@router.post(
+    "/namespaces/bulk",
+    description=f"Create {NAME_FOR_ONE} namespaces",
+    name=f"{NAME_FOR_MANY}:create_{NAME_FOR_ONE}_namespaces",
+    response_model=List[NamespaceOut],
+    status_code=status.HTTP_201_CREATED
+)
+async def route_create_namespaces(
+        data: List[NamespaceIn],
+        user: User = Depends(current_active_user)
+):
+    return await create_namespaces(data, user=user)
 
 
 @router.patch(

@@ -1,3 +1,4 @@
+import logging
 from typing import List
 
 from beanie import PydanticObjectId
@@ -39,6 +40,19 @@ async def create_namespace(data: NamespaceIn, user: User) -> NamespaceOut:
     except DuplicateKeyError as e:
         raise DuplicateKeyException(e)
     return NamespaceOut(**namespace.model_dump())
+
+
+async def create_namespaces(namespaces_in: List[NamespaceIn], user: User) -> List[NamespaceOut]:
+    namespaces: List[NamespaceOut] = []
+    for namespace_in in namespaces_in:
+        namespace: Namespace = Namespace(**request_create_data(namespace_in, user=user))
+        try:
+            await namespace.create()
+        except DuplicateKeyError as e:
+            logging.warning("Namespace already exists")
+        else:
+            namespaces.append(NamespaceOut(**namespace.model_dump()))
+    return namespaces
 
 
 async def update_namespace(
