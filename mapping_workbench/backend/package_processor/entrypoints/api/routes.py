@@ -30,7 +30,7 @@ async def route_task_process_package(
         tasks_to_run: str = Form(...),
         user: User = Depends(current_active_user)
 ):
-    task_timeout = 2 * 60 * 60 # 2 hours
+    task_timeout = 4 * 60 * 60  # 4 hours
     return add_task(
         tasks.task_process_mapping_package,
         TASK_PROCESS_PACKAGE_NAME,
