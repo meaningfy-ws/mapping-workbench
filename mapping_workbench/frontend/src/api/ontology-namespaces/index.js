@@ -1,4 +1,5 @@
 import {SectionApi} from "../section";
+import {appApi} from "../app";
 
 class OntologyNamespacesApi extends SectionApi {
     get SECTION_TITLE() {
@@ -12,6 +13,15 @@ class OntologyNamespacesApi extends SectionApi {
     constructor() {
         super("ontology_namespaces");
     }
+
+    createNamespaces(request) {
+        try {
+            const endpoint = this.paths['create_namespaces'];
+            return appApi.post(endpoint, request, null);
+        } catch (err) {
+        }
+    }
+
 }
 
 export const ontologyNamespacesApi = new OntologyNamespacesApi();

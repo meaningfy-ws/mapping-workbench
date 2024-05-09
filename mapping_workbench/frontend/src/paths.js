@@ -266,7 +266,8 @@ export const apiPaths = {
 
     ontology_namespaces: {
         items: '/ontology/namespaces',
-        item: '/ontology/namespaces/:id'
+        item: '/ontology/namespaces/:id',
+        create_namespaces: '/ontology/namespaces/bulk'
     },
 
     ontology_terms: {

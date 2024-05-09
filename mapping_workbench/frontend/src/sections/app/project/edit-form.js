@@ -11,20 +11,20 @@ import Grid from '@mui/material/Unstable_Grid2';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Checkbox from '@mui/material/Checkbox'
-
-import {paths} from 'src/paths';
-import {RouterLink} from 'src/components/router-link';
-import {useRouter} from 'src/hooks/use-router';
-import {FormTextField} from "../../../components/app/form/text-field";
-import {FormTextArea} from "../../../components/app/form/text-area";
-import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
-import {useProjects} from "../../../hooks/use-projects";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormGroup from "@mui/material/FormGroup";
 import Typography from "@mui/material/Typography";
-import {fieldsRegistryApi} from "../../../api/fields-registry";
-import {ontologyNamespacesApi} from "../../../api/ontology-namespaces";
-import {ontologyTermsApi} from "../../../api/ontology-terms";
+
+import {paths} from 'src/paths';
+import {useRouter} from 'src/hooks/use-router';
+import {useProjects} from "src/hooks/use-projects";
+import {RouterLink} from 'src/components/router-link';
+import {FormTextField} from "src/components/app/form/text-field";
+import {FormTextArea} from "src/components/app/form/text-area";
+import {fieldsRegistryApi} from "src/api/fields-registry";
+import {ontologyNamespacesApi} from "src/api/ontology-namespaces";
+import {ontologyTermsApi} from "src/api/ontology-terms";
+import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 
 export const EditForm = (props) => {
     const {itemctx, ...other} = props;
@@ -95,13 +95,10 @@ export const EditForm = (props) => {
             { prefix: 'dct',uri: 'http://data.europa.eu/a4g/ontology#',is_syncable: false }
         ]
 
-        namespaces.forEach(namespace => {
-            const toastId = toastLoad(`Creating ${namespace.prefix}`)
-            ontologyNamespacesApi.createItem(namespace)
-                .then(res => toastSuccess(`${namespace.prefix} Created.`, toastId))
-                .catch(err => toastError(`Fail Creating ${namespace.prefix} ${err.message}.`, toastId))
-            }
-        )
+        const toastId = toastLoad(`Creating Namespaces`)
+        ontologyNamespacesApi.createNamespaces(namespaces)
+            .then(res => toastSuccess(`Namespaces Created.`, toastId))
+            .catch(err => toastError(err.message, toastId))
     }
 
     const formik = useFormik({
@@ -119,7 +116,6 @@ export const EditForm = (props) => {
             const toastId = toastLoad(itemctx.isNew ? "Creating..." : "Updating...")
             const {triger_namespaces_discovery, triger_specific_namespaces, import_eform, ...projectValues} = values
             try {
-                console.log(values,projectValues)
                 let response;
                 if (itemctx.isNew) {
                     response = await sectionApi.createItem(projectValues);
@@ -159,7 +155,6 @@ export const EditForm = (props) => {
         }
     });
 
-    console.log(formik)
     return (
         <form
             onSubmit={formik.handleSubmit}
