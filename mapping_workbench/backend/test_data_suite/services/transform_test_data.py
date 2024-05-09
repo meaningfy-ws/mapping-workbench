@@ -5,6 +5,7 @@ from typing import List
 from beanie import PydanticObjectId
 
 from mapping_workbench.backend.config import settings
+from mapping_workbench.backend.logger.services.log import log_info
 from mapping_workbench.backend.resource_collection.models.entity import ResourceFile
 from mapping_workbench.backend.resource_collection.services.data import get_resource_files_for_project
 from mapping_workbench.backend.test_data_suite.adapters.rml_mapper import RMLMapperABC, RMLMapper
@@ -129,7 +130,7 @@ async def transform_test_data_file_resources(
     rml_mapper: RMLMapper = RMLMapper(rml_mapper_path=Path(settings.RML_MAPPER_PATH))
 
     for test_data_file_resource in test_data_file_resources:
-        print("       ", test_data_file_resource.filename)
+        log_info(f"Transform Test Data :: {test_data_file_resource.filename}")
         await transform_test_data_file_resource(
             test_data_file_resource=test_data_file_resource,
             user=user,

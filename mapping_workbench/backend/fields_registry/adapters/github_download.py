@@ -3,9 +3,8 @@ import shutil
 import subprocess
 import tempfile
 from typing import List
-import logging
 
-logger = logging.getLogger("uvicorn")
+from mapping_workbench.backend.logger.services.log import log_info
 
 
 class GithubDownloader:
@@ -31,12 +30,12 @@ class GithubDownloader:
         with tempfile.TemporaryDirectory() as tmp_dir:
             temp_dir_path = pathlib.Path(tmp_dir)
             bash_script = f"cd {temp_dir_path} && git clone --depth=1 --single-branch --branch {self.branch_or_tag_name} {self.github_repository_url}"
-            logger.info(f"Running command {bash_script}")
+            log_info(f"Running command {bash_script}")
             subprocess.run(bash_script, shell=True,
                            stdout=subprocess.DEVNULL,
                            stderr=subprocess.STDOUT)
             dir_contents = list(temp_dir_path.iterdir())
-            logger.info(f"Downloaded path {dir_contents}")
+            log_info(f"Downloaded path {dir_contents}")
 
             # FIXME this is not good, we should raise an exception instead
             assert len(dir_contents) == 1
