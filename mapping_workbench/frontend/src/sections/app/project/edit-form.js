@@ -67,12 +67,7 @@ export const EditForm = (props) => {
         }
     }
 
-    const namespaces = [
-        { prefix: 'epo',uri: 'http://data.europa.eu/a4g/ontology#',is_syncable: false },
-        { prefix: 'epo-not',uri: 'http://data.europa.eu/a4g/ontology#',is_syncable: false },
-        { prefix: 'cpov',uri: 'http://data.europa.eu/a4g/ontology#',is_syncable: false },
-        { prefix: 'dct',uri: 'http://data.europa.eu/a4g/ontology#',is_syncable: false }
-    ]
+
 
     const handleDiscover = () => {
         const toastId = toastLoad('Discovering terms ...')
@@ -90,6 +85,23 @@ export const EditForm = (props) => {
         })
             .then(res => toastSuccess(`${res.task_name} successfully started.`, toastId))
             .catch(err => toastError(`eForm Fields import failed: ${err.message}.`, toastId))
+    }
+
+    const handleCreateNamespaces = () => {
+        const namespaces = [
+            { prefix: 'epo',uri: 'http://data.europa.eu/a4g/ontology#',is_syncable: false },
+            { prefix: 'epo-not',uri: 'http://data.europa.eu/a4g/ontology#',is_syncable: false },
+            { prefix: 'cpov',uri: 'http://data.europa.eu/a4g/ontology#',is_syncable: false },
+            { prefix: 'dct',uri: 'http://data.europa.eu/a4g/ontology#',is_syncable: false }
+        ]
+
+        namespaces.forEach(namespace => {
+            const toastId = toastLoad(`Creating ${namespace.prefix}`)
+            ontologyNamespacesApi.createItem(namespace)
+                .then(res => toastSuccess(`${namespace.prefix} Created.`, toastId))
+                .catch(err => toastError(`Fail Creating ${namespace.prefix} ${err.message}.`, toastId))
+            }
+        )
     }
 
     const formik = useFormik({
@@ -121,16 +133,12 @@ export const EditForm = (props) => {
                 if (response) {
                     projectsStore.getProjects()
                     if(formik.values.source_schema.type === 'JSON') {
-                        if(formik.values.import_eform.checked) {
+                        if(formik.values.import_eform.checked)
                             handleImportFieldRegestry(import_eform, response._id)
-                        }
-                        if(formik.values.triger_specific_namespaces) {
-
-                            // ontologyNamespacesApi.createItem()
-                        }
-                        if(formik.values.triger_namespaces_discovery) {
+                        if(formik.values.triger_specific_namespaces)
+                            handleCreateNamespaces()
+                        if(formik.values.triger_namespaces_discovery)
                             handleDiscover()
-                        }
                     }
                     if (itemctx.isNew) {
                         projectsStore.handleSessionProjectChange(response._id)
