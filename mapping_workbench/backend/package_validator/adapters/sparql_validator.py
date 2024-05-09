@@ -36,6 +36,7 @@ class SPARQLValidator(TestDataValidator):
         results = []
 
         for sparql_query in sparql_queries:
+            print("            Running assertion for", sparql_query.cm_rule.eforms_sdk_element_title)
             sparql_query_result: SPARQLQueryResult = SPARQLQueryResult(
                 query=sparql_query,
                 result=None,

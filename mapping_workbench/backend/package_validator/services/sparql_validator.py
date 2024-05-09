@@ -18,6 +18,7 @@ def validate_tests_data_with_sparql_tests(
 
     """
     for idx, test_data in enumerate(tests_data):
+        print("       ", test_data.filename)
         try:
             if test_data.rdf_manifestation is None:
                 raise TestDataException("Test data must have a rdf manifestation")
