@@ -7,6 +7,7 @@ from mapping_workbench.backend.logger.models.logger_record import LogRecord, Log
 class LoggerName(str, Enum):
     CONSOLE_LOGGER = "CONSOLE_LOGGER"
     FILE_LOGGER = "FILE_LOGGER"
+    SYS_LOGGER = "SYS_LOGGER"
 
 
 class LoggerFactory:
