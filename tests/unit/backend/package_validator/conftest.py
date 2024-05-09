@@ -5,12 +5,15 @@ import pytest
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageState
+from mapping_workbench.backend.package_importer.adapters.eforms.importer import PackageImporter
+from mapping_workbench.backend.package_validator.models.test_data_validation import CMRuleSDKElement
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestFileResourceFormat, SHACLTestSuiteState, \
     SHACLTestState
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResourceFormat, SPARQLTestState
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
     TestDataFileResourceFormat
+from mapping_workbench.backend.user.models.user import User
 from tests import TEST_DATA_SPARQL_TEST_SUITE_PATH, TEST_DATA_SHACL_TEST_SUITE_PATH
 from tests import TEST_DATA_VALIDATION_PATH
 
@@ -46,11 +49,33 @@ def dummy_rdf_test_data_file_resource(sparql_test_data_file_path: pathlib.Path) 
 
 
 @pytest.fixture
-def dummy_sparql_test_suite(sparql_test_resources_file_path: pathlib.Path) -> SPARQLTestState:
+def dummy_package_importer(dummy_mapping_package: MappingPackage) -> PackageImporter:
+    return PackageImporter(
+        user=User(),
+        project=Project(
+            title="dummy_title_for_project",
+            description="dummy_description_for_project",
+            version="dummy_version_for_project",
+            source_schema=None,
+            target_ontology=None,
+        ),
+    )
+
+
+@pytest.fixture
+def dummy_sparql_test_suite(sparql_test_resources_file_path: pathlib.Path, dummy_package_importer: PackageImporter) -> SPARQLTestState:
+    metadata = dummy_package_importer.extract_metadata_from_sparql_query(
+        sparql_test_resources_file_path.read_text(encoding="utf-8")
+    )
+    cm_rule_sdk_element = CMRuleSDKElement(
+        eforms_sdk_element_id=None,
+        eforms_sdk_element_title=metadata['title']
+    )
     return SPARQLTestState(
         content=sparql_test_resources_file_path.read_text(encoding="utf-8"),
         filename=sparql_test_resources_file_path.name,
-        format=SPARQLTestFileResourceFormat.RQ
+        format=SPARQLTestFileResourceFormat.RQ,
+        cm_rule=cm_rule_sdk_element
     )
 
 

@@ -30,6 +30,7 @@ class LogRecord(BaseModel):
         return self
 
     def __str__(self) -> str:
+        self.timestamp = datetime.now()
         if self.stack_trace:
             return f"{self.timestamp} - {self.log_severity.value}: {self.message} - Stack trace: {self.stack_trace}"
-        return f"{self.timestamp} - {self.log_severity.value}: {self.message}"
+        return f"{self.message}"

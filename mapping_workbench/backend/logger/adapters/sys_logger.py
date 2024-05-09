@@ -1,0 +1,18 @@
+import logging
+
+from mapping_workbench.backend.logger.models.logger_record import LogSeverity, LogRecord
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(levelname)s :: %(name)s - %(asctime)s :: %(message)s'
+)
+logger = logging.getLogger("MW_SYS")
+
+
+class LoggerSys():
+    @classmethod
+    def log(cls, log_record: LogRecord):
+        if log_record.log_severity == LogSeverity.ERROR:
+            logger.error(str(log_record))
+        else:
+            logger.info(str(log_record))
