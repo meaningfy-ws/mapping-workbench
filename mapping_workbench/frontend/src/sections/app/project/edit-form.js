@@ -35,10 +35,12 @@ export const EditForm = (props) => {
 
     const sourceSchemaTypes = [
         {
-            value: 'JSON'
+            value: 'JSON',
+            label: 'JSON (eForms)'
         },
         {
-            value: 'XSD'
+            value: 'XSD',
+            label: 'XSD'
         }
     ];
 
@@ -46,8 +48,8 @@ export const EditForm = (props) => {
         title: item.title ?? '',
         description: item.description ?? '',
         version: item.version ?? '',
-        triger_namespaces_discovery: item.triger_namespaces_discovery ?? true,
-        triger_specific_namespaces: item.triger_specific_namespaces ?? true,
+        automatically_discover_namespaces: item.automatically_discover_namespaces ?? true,
+        add_specific_namespaces: item.add_specific_namespaces ?? true,
         source_schema: {
             title: item.source_schema?.title ?? '',
             description: item.source_schema?.description ?? '',
@@ -131,10 +133,11 @@ export const EditForm = (props) => {
                     if(formik.values.source_schema.type === 'JSON') {
                         if(formik.values.import_eform.checked)
                             handleImportFieldRegestry(import_eform, response._id)
-                        if(formik.values.triger_specific_namespaces)
-                            handleCreateNamespaces()
-                        if(formik.values.triger_namespaces_discovery)
+                        if(formik.values.automatically_discover_namespaces) {
                             handleDiscover()
+                        if(formik.values.add_specific_namespaces)
+                            handleCreateNamespaces()
+                        }
                     }
                     if (itemctx.isNew) {
                         projectsStore.handleSessionProjectChange(response._id)
@@ -325,7 +328,7 @@ export const EditForm = (props) => {
                                     {sourceSchemaTypes.map((option) => (
                                         <MenuItem key={option.value}
                                                   value={option.value}>
-                                            {option.value}
+                                            {option.label}
                                         </MenuItem>
                                     ))}
                                 </TextField>
@@ -340,19 +343,19 @@ export const EditForm = (props) => {
                           spacing={3}>
                         <FormGroup sx={{mt:3,ml:2}}>
                                 <FormControlLabel
-                                    control={<Checkbox checked={formik.values.triger_namespaces_discovery}
+                                    control={<Checkbox checked={formik.values.automatically_discover_namespaces}
                                                        onChange={formik.handleChange}
-                                                       name="triger_namespaces_discovery"/>
+                                                       name="automatically_discover_namespaces"/>
                                     }
-                                    label={<Typography variant='h6'>Triger Namespace Discovery</Typography>}
+                                    label={<Typography variant='h6'>Automatically discover namespaces</Typography>}
 
                                 />
                                 <FormControlLabel
-                                    control={<Checkbox checked={formik.values.triger_specific_namespaces}
+                                    control={<Checkbox checked={formik.values.add_specific_namespaces}
                                                        onChange={formik.handleChange}
-                                                       name="triger_specific_namespaces"/>
+                                                       name="add_specific_namespaces"/>
                                     }
-                                    label={<Typography variant='h6'>Triger Specific Namespaces</Typography>}
+                                    label={<Typography variant='h6'>Add eForms-specific (ePO) namespaces</Typography>}
                                 />
                                 <FormControlLabel
                                     control={<Checkbox checked={formik.values.import_eform.checked}
