@@ -18,6 +18,10 @@ class SessionApi {
         this.getStorage().setItem(SESSION_PROJECT_KEY, project);
     }
 
+    removeLocalSessionProject() {
+        this.getStorage().removeItem(SESSION_PROJECT_KEY)
+    }
+
     getSessionProject() {
         return this.getStorage().getItem(SESSION_PROJECT_KEY);
     }

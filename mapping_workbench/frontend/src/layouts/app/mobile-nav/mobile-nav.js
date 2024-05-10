@@ -13,6 +13,7 @@ import {usePathname} from 'src/hooks/use-pathname';
 import {paths} from 'src/paths';
 import {MobileNavSection} from './mobile-nav-section';
 import {ProjectSwitch} from "../project-switch";
+import {useProjects} from "../../../hooks/use-projects";
 
 const MOBILE_NAV_WIDTH = 280;
 
@@ -108,6 +109,7 @@ export const MobileNav = (props) => {
   const { color = 'evident', open, onClose, sections = [] } = props;
   const pathname = usePathname();
   const cssVars = useCssVars(color);
+  const projects = useProjects()
 
   return (
     <Drawer
@@ -186,7 +188,7 @@ export const MobileNav = (props) => {
                 }}>
               <ProjectSwitch/>
             </Stack>
-            {sections.resources.map((section, index) => (
+            {projects.sessionProject && sections.resources.map((section, index) => (
                 <MobileNavSection
                     items={section.items}
                     key={index}

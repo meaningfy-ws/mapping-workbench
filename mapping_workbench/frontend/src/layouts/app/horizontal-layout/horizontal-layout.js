@@ -23,7 +23,7 @@ const HorizontalLayoutContainer = styled('div')({
 
 export const HorizontalLayout = (props) => {
     const {children, navColor, sections} = props;
-    const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
+    const mdUp = useMediaQuery((theme) => theme.breakpoints.up('md'));
     const mobileNav = useMobileNav();
     const settings = useSettings();
 
@@ -33,8 +33,9 @@ export const HorizontalLayout = (props) => {
                 color={navColor}
                 onMobileNav={mobileNav.handleOpen}
                 sections={sections}
+                mdUp={mdUp}
             />
-            {!lgUp && (
+            {!mdUp && (
                 <MobileNav
                     color={navColor}
                     onClose={mobileNav.handleClose}
