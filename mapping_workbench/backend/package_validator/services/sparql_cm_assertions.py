@@ -73,6 +73,11 @@ async def generate_and_save_cm_assertions_queries(
 
     cm_rules: List[ConceptualMappingRule] = await get_conceptual_mapping_rules_for_project(project_id=project_id)
     for index, cm_rule in enumerate(cm_rules):
+        # skip early if there is no mapping because there is nothing to generate (unmapped rule)
+        # FIXME requires guarding in any caller of the state against invalid objects
+        if not cm_rule.target_class_path and not cm_rule.target_property_path:
+            continue
+
         subject_type = generate_subject_type_for_cm_assertion(cm_rule.target_class_path) \
             if cm_rule.target_class_path and '?this' in cm_rule.target_property_path else ''
 
@@ -105,6 +110,7 @@ async def generate_and_save_cm_assertions_queries(
             if prefix in prefixes_definitions:
                 prefix_value = prefixes_definitions.get(prefix)
             else:
+                # FIXME why enforce a syntactic error and not avoid it altogether? very hard to notice and misleading
                 # the prefix value is set to "^" on purpose, to generate a syntactically incorrect SPARQL query
                 prefix_value = "^"
 
