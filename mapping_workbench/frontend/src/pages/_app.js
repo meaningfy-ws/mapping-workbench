@@ -28,16 +28,19 @@ import {createTheme} from 'src/theme';
 import {createEmotionCache} from 'src/utils/create-emotion-cache';
 
 // Remove if locales are not used
+import {SessionProvider} from "next-auth/react";
 import 'src/locales/i18n';
 
 const clientSideEmotionCache = createEmotionCache();
 
 const CustomApp = (props) => {
-  const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+  const { Component, emotionCache = clientSideEmotionCache, pageProps, session } = props;
   useNprogress();
   const getLayout = Component.getLayout ?? ((page) => page);
 
   return (
+    <SessionProvider session={session}>
+
     <CacheProvider value={emotionCache}>
       <Head>
         <title>
@@ -48,11 +51,9 @@ const CustomApp = (props) => {
           content="initial-scale=1, width=device-width"
         />
       </Head>
+
       <ReduxProvider store={store}>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <AuthProvider>
-            <AuthConsumer>
-              {(auth) => (
                 <SettingsProvider>
                   <SettingsConsumer>
                     {(settings) => {
@@ -70,7 +71,8 @@ const CustomApp = (props) => {
                       });
 
                       // Prevent guards from redirecting
-                      const showSplashScreen = !auth.isInitialized;
+                      const showSplashScreen = false
+                        // !auth.isInitialized;
 
                       return (
                         <ThemeProvider theme={theme}>
@@ -96,6 +98,7 @@ const CustomApp = (props) => {
                                         getLayout(
                                             <Component projects={projects}
                                                        {...pageProps} />
+
                                         ))}
                                       </ProjectsConsumer>
                                   </ProjectsProvider>
@@ -126,12 +129,12 @@ const CustomApp = (props) => {
                     }}
                   </SettingsConsumer>
                 </SettingsProvider>
-              )}
-            </AuthConsumer>
-          </AuthProvider>
         </LocalizationProvider>
       </ReduxProvider>
+
     </CacheProvider>
+           </SessionProvider>
+
   );
 };
 
