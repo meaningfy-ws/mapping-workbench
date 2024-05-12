@@ -39,7 +39,6 @@ const CustomApp = (props) => {
   const getLayout = Component.getLayout ?? ((page) => page);
 
   return (
-    <SessionProvider session={session}>
 
     <CacheProvider value={emotionCache}>
       <Head>
@@ -92,6 +91,8 @@ const CustomApp = (props) => {
                               ? <SplashScreen />
                               : (
                                 <>
+                                <SessionProvider session={session}>
+
                                   <ProjectsProvider>
                                     <ProjectsConsumer>
                                       {(projects) => (
@@ -102,6 +103,8 @@ const CustomApp = (props) => {
                                         ))}
                                       </ProjectsConsumer>
                                   </ProjectsProvider>
+           </SessionProvider>
+
                                   <SettingsButton onClick={settings.handleDrawerOpen} />
                                   <SettingsDrawer
                                     canReset={settings.isCustom}
@@ -133,7 +136,6 @@ const CustomApp = (props) => {
       </ReduxProvider>
 
     </CacheProvider>
-           </SessionProvider>
 
   );
 };

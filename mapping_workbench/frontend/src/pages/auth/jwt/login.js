@@ -27,6 +27,9 @@ import {users} from 'src/api/auth/data';
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import {useState} from "react";
+import { signIn } from 'next-auth/react';
+import GoogleIcon from '@mui/icons-material/Google';
+
 
 const user = users[0];
 
@@ -54,7 +57,7 @@ const Page = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const returnTo = searchParams.get('returnTo');
-    const {issuer, signIn} = useAuth();
+    // const {issuer, signIn} = useAuth();
     const formik = useFormik({
         initialValues,
         validationSchema,
@@ -138,13 +141,19 @@ const Page = () => {
                                         <Checkbox
                                             checked={formik.values.remember_me}
                                             onChange={formik.handleChange}
-                                            inputProps={{ 'aria-label': 'controlled checkbox' }}
+                                            inputProps={{'aria-label': 'controlled checkbox'}}
                                             name="remember_me"
                                         />
                                     }
                                     label="Remember me (for 24 hours)"
                                 />
                             </Stack>
+                            <div>
+                                <Button startIcon={<GoogleIcon/>}
+                                onClick={() => signIn('google')}>
+                                Sign in with Google
+                                </Button>
+                            </div>
                             {formik.errors.submit && (
                                 <FormHelperText
                                     error

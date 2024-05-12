@@ -70,6 +70,7 @@
     "react-dom": "18.2.0",
     "react-draft-wysiwyg": "1.15.0",
     "react-dropzone": "14.2.3",
+    "react-google-recaptcha": "^3.1.0",
     "react-hot-toast": "2.4.1",
     "react-i18next": "12.2.2",
     "react-map-gl": "7.0.23",

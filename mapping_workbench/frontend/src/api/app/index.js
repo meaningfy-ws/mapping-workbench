@@ -7,7 +7,7 @@ import {apiPaths, paths} from "../../paths";
 
 
 // const LOGIN_ENDPOINT = "/auth/jwt/login";
-const LOGIN_ENDPOINT = "/auth/oauth2/login";
+const LOGIN_ENDPOINT = "/auth/jwt/login";
 const LOGOUT_ENDPOINT = "/auth/jwt/logout";
 const REGISTER_ENDPOINT = "/auth/register";
 const VERIFY_TOKEN_ENDPOINT = "/auth/verify";

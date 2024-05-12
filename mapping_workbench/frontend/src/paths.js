@@ -2,7 +2,7 @@ export const paths = {
     index: '/',
     auth: {
         jwt: {
-            login: '/auth/oauth2/login',
+            login: '/auth/jwt/login',
             register: '/auth/jwt/register'
         },
         auth0: {
