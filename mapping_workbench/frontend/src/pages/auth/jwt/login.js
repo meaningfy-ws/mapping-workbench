@@ -26,7 +26,8 @@ import {Issuer} from 'src/utils/auth';
 import {users} from 'src/api/auth/data';
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import {useState} from "react";
+import {useRef, useState} from "react";
+import ReCAPTCHA from 'react-google-recaptcha'
 
 const user = users[0];
 
@@ -34,7 +35,8 @@ const initialValues = {
     username: user.username,
     password: user.password,
     remember_me: true,
-    submit: null
+    submit: null,
+    reCaptcha: ""
 };
 
 const validationSchema = Yup.object({
@@ -50,8 +52,10 @@ const validationSchema = Yup.object({
 });
 
 const Page = () => {
+    const [captchaToken, setCaptchaToken] = useState(null)
     const isMounted = useMounted();
     const router = useRouter();
+    const recaptcha = useRef(null);
     const searchParams = useSearchParams();
     const returnTo = searchParams.get('returnTo');
     const {issuer, signIn} = useAuth();
@@ -60,11 +64,14 @@ const Page = () => {
         validationSchema,
         onSubmit: async (values, helpers) => {
             try {
-                await signIn(values.username, values.password, values.remember_me);
+                if(captchaToken) {
+                    await signIn(values.username, values.password, values.remember_me);
 
-                if (isMounted()) {
-                    router.push(returnTo || paths.app.index);
+                    if (isMounted()) {
+                        router.push(returnTo || paths.app.index);
+                    }
                 }
+                else throw 'no captcha'
             } catch (err) {
                 console.error(err);
                 if (isMounted()) {
@@ -75,6 +82,11 @@ const Page = () => {
             }
         }
     });
+
+    const verify = () => {
+        recaptcha.current.getResponse()
+            .then(res => setCaptchaToken(res))
+    }
 
     usePageView();
 
@@ -144,7 +156,14 @@ const Page = () => {
                                     }
                                     label="Remember me (for 24 hours)"
                                 />
+                                <ReCAPTCHA ref={recaptcha}
+                                           style={{display:'flex', justifyContent:'center'}}
+                                           sitekey={"process.env.GOOGLE_ID"}
+                                           onChange={formik.handleChange}/>
+                                {formik.errors.recaptcha && formik.touched.recaptcha &&
+                                    <p>{formik.errors.recaptcha}</p>}
                             </Stack>
+
                             {formik.errors.submit && (
                                 <FormHelperText
                                     error
