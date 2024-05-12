@@ -29,6 +29,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import {useState} from "react";
 import { signIn } from 'next-auth/react';
 import GoogleIcon from '@mui/icons-material/Google';
+import Divider from "@mui/material/Divider";
 
 
 const user = users[0];
@@ -57,13 +58,13 @@ const Page = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const returnTo = searchParams.get('returnTo');
-    // const {issuer, signIn} = useAuth();
+    const {issuer, signIn: singInJWT} = useAuth();
     const formik = useFormik({
         initialValues,
         validationSchema,
         onSubmit: async (values, helpers) => {
             try {
-                await signIn(values.username, values.password, values.remember_me);
+                await singInJWT(values.username, values.password, values.remember_me);
 
                 if (isMounted()) {
                     router.push(returnTo || paths.app.index);
@@ -148,12 +149,6 @@ const Page = () => {
                                     label="Remember me (for 24 hours)"
                                 />
                             </Stack>
-                            <div>
-                                <Button startIcon={<GoogleIcon/>}
-                                onClick={() => signIn('google')}>
-                                Sign in with Google
-                                </Button>
-                            </div>
                             {formik.errors.submit && (
                                 <FormHelperText
                                     error
@@ -162,7 +157,7 @@ const Page = () => {
                                     {formik.errors.submit}
                                 </FormHelperText>
                             )}
-
+<Stack gap={3}>
                             <Button
                                 disabled={formik.isSubmitting}
                                 fullWidth
@@ -173,6 +168,13 @@ const Page = () => {
                             >
                                 Log In
                             </Button>
+                            <Divider>or</Divider>
+                             <Button fullWidth
+                                     startIcon={<GoogleIcon/>}
+                                onClick={() => signIn('google')}>
+                                Sign in with Google
+                            </Button>
+    </Stack>
                         </form>
                     </CardContent>
                 </Card>

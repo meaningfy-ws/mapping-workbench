@@ -53,6 +53,9 @@ const CustomApp = (props) => {
 
       <ReduxProvider store={store}>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <AuthProvider>
+            <AuthConsumer>
+              {(auth) => (
                 <SettingsProvider>
                   <SettingsConsumer>
                     {(settings) => {
@@ -70,8 +73,7 @@ const CustomApp = (props) => {
                       });
 
                       // Prevent guards from redirecting
-                      const showSplashScreen = false
-                        // !auth.isInitialized;
+                      const showSplashScreen =  !auth.isInitialized;
 
                       return (
                         <ThemeProvider theme={theme}>
@@ -85,6 +87,8 @@ const CustomApp = (props) => {
                               content={theme.palette.neutral[900]}
                             />
                           </Head>
+                                   {/*<AuthProvider>*/}
+                                   {/*             <AuthConsumer>*/}
                           <RTL direction={settings.direction}>
                             <CssBaseline />
                             {showSplashScreen
@@ -93,17 +97,18 @@ const CustomApp = (props) => {
                                 <>
                                 <SessionProvider session={session}>
 
+
                                   <ProjectsProvider>
                                     <ProjectsConsumer>
                                       {(projects) => (
                                         getLayout(
                                             <Component projects={projects}
                                                        {...pageProps} />
-
                                         ))}
                                       </ProjectsConsumer>
                                   </ProjectsProvider>
-           </SessionProvider>
+
+                               </SessionProvider>
 
                                   <SettingsButton onClick={settings.handleDrawerOpen} />
                                   <SettingsDrawer
@@ -132,6 +137,9 @@ const CustomApp = (props) => {
                     }}
                   </SettingsConsumer>
                 </SettingsProvider>
+                               )}
+            </AuthConsumer>
+          </AuthProvider>
         </LocalizationProvider>
       </ReduxProvider>
 
