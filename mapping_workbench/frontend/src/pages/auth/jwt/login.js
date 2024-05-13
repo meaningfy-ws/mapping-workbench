@@ -1,6 +1,5 @@
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
-import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -26,8 +25,7 @@ import {Issuer} from 'src/utils/auth';
 import {users} from 'src/api/auth/data';
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import {useState} from "react";
-import { signIn } from 'next-auth/react';
+import { signIn, useSession, signOut } from 'next-auth/react';
 import GoogleIcon from '@mui/icons-material/Google';
 import Divider from "@mui/material/Divider";
 
@@ -59,6 +57,8 @@ const Page = () => {
     const searchParams = useSearchParams();
     const returnTo = searchParams.get('returnTo');
     const {issuer, signIn: singInJWT} = useAuth();
+      const { data: session } = useSession()
+    console.log("session",session)
     const formik = useFormik({
         initialValues,
         validationSchema,
@@ -169,11 +169,17 @@ const Page = () => {
                                 Log In
                             </Button>
                             <Divider>or</Divider>
-                             <Button fullWidth
+    {session?.user?.email ?
+        <Button fullWidth
+                                     startIcon={<GoogleIcon/>}
+                                onClick={() => signOut()}>
+                                Sign Out
+                            </Button> :
+        <Button fullWidth
                                      startIcon={<GoogleIcon/>}
                                 onClick={() => signIn('google')}>
                                 Sign in with Google
-                            </Button>
+                            </Button>}
     </Stack>
                         </form>
                     </CardContent>

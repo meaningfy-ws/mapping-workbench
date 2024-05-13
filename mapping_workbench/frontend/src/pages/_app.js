@@ -53,7 +53,7 @@ const CustomApp = (props) => {
 
       <ReduxProvider store={store}>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <AuthProvider>
+          <AuthProvider>
             <AuthConsumer>
               {(auth) => (
                 <SettingsProvider>
@@ -87,49 +87,41 @@ const CustomApp = (props) => {
                               content={theme.palette.neutral[900]}
                             />
                           </Head>
-                                   {/*<AuthProvider>*/}
-                                   {/*             <AuthConsumer>*/}
                           <RTL direction={settings.direction}>
                             <CssBaseline />
-                            {showSplashScreen
-                              ? <SplashScreen />
-                              : (
-                                <>
-                                <SessionProvider session={session}>
-
-
-                                  <ProjectsProvider>
-                                    <ProjectsConsumer>
-                                      {(projects) => (
-                                        getLayout(
+                            <SessionProvider session={session}>
+                              {showSplashScreen
+                                ? <SplashScreen />
+                                : <>
+                                    <ProjectsProvider>
+                                      <ProjectsConsumer>
+                                        {(projects) => (
+                                          getLayout(
                                             <Component projects={projects}
                                                        {...pageProps} />
-                                        ))}
-                                      </ProjectsConsumer>
-                                  </ProjectsProvider>
-
-                               </SessionProvider>
-
-                                  <SettingsButton onClick={settings.handleDrawerOpen} />
-                                  <SettingsDrawer
-                                    canReset={settings.isCustom}
-                                    onClose={settings.handleDrawerClose}
-                                    onReset={settings.handleReset}
-                                    onUpdate={settings.handleUpdate}
-                                    open={settings.openDrawer}
-                                    values={{
-                                      colorPreset: settings.colorPreset,
-                                      contrast: settings.contrast,
-                                      direction: settings.direction,
-                                      paletteMode: settings.paletteMode,
-                                      responsiveFontSizes: settings.responsiveFontSizes,
-                                      stretch: settings.stretch,
-                                      layout: settings.layout,
-                                      navColor: settings.navColor
-                                    }}
-                                  />
-                                </>
-                              )}
+                                          ))}
+                                        </ProjectsConsumer>
+                                    </ProjectsProvider>
+                                    <SettingsButton onClick={settings.handleDrawerOpen} />
+                                    <SettingsDrawer
+                                      canReset={settings.isCustom}
+                                      onClose={settings.handleDrawerClose}
+                                      onReset={settings.handleReset}
+                                      onUpdate={settings.handleUpdate}
+                                      open={settings.openDrawer}
+                                      values={{
+                                        colorPreset: settings.colorPreset,
+                                        contrast: settings.contrast,
+                                        direction: settings.direction,
+                                        paletteMode: settings.paletteMode,
+                                        responsiveFontSizes: settings.responsiveFontSizes,
+                                        stretch: settings.stretch,
+                                        layout: settings.layout,
+                                        navColor: settings.navColor
+                                      }}
+                                    />
+                                  </>}
+                              </SessionProvider>
                             <Toaster />
                           </RTL>
                         </ThemeProvider>

@@ -5,6 +5,7 @@ import {useAuth} from 'src/hooks/use-auth';
 import {useRouter} from 'src/hooks/use-router';
 import {paths} from 'src/paths';
 import {Issuer} from 'src/utils/auth';
+import {useSession} from "next-auth/react";
 
 const loginPaths = {
   [Issuer.Auth0]: paths.auth.auth0.login,
@@ -15,17 +16,19 @@ export const AuthGuard = (props) => {
   const { children } = props;
   const router = useRouter();
   const auth = useAuth();
+  const {data} = useSession()
   const [checked, setChecked] = useState(false);
-  const check = useCallback(async () => {
+  const check = async () => {
+    console.log('session',data)
     //await auth.verifyAuth();
-    if (!auth.isAuthenticated) {
+    if (!auth.isAuthenticated || !data.user) {
       const searchParams = new URLSearchParams({ returnTo: window.location.pathname }).toString();
       const href = loginPaths[auth.issuer] + `?${searchParams}`;
       await router.replace(href);
     } else {
       setChecked(true);
     }
-  }, [auth, router]);
+  }
 
   // Only check on mount, this allows us to redirect the user manually when auth state changes
   useEffect(() => {
