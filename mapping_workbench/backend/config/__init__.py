@@ -1,7 +1,4 @@
-from pathlib import Path
-
 import dotenv
-import os
 from pydantic_settings import BaseSettings
 
 from mapping_workbench.backend.config.adapters.config_resolver import env_property
@@ -48,6 +45,14 @@ class DatabaseSettings(BaseSettings):
     def DATABASE_NAME(self, config_value: str) -> str:
         return config_value
 
+    @env_property(config_key='MW_ADMIN_USERNAME')
+    def DATABASE_ADMIN_NAME(self, config_value: str) -> str:
+        return config_value
+
+    @env_property(config_key='MW_ADMIN_PASSWORD')
+    def DATABASE_ADMIN_PASSWORD(self, config_value: str) -> str:
+        return config_value
+
 
 class SecuritySettings(BaseSettings):
 
@@ -78,13 +83,21 @@ class TaskManagerSettings(BaseSettings):
         return int(config_value)
 
 
+class EnvironmentSettings(BaseSettings):
+
+    @env_property()
+    def ENVIRONMENT(self, config_value: str) -> str:
+        return config_value
+
+
 class Settings(
     AppSettings,
     ServerSettings,
     DatabaseSettings,
     SecuritySettings,
     RMLMapperSettings,
-    TaskManagerSettings
+    TaskManagerSettings,
+    EnvironmentSettings
 ):
     pass
 
