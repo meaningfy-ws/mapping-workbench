@@ -23,10 +23,10 @@ class LogRecord(BaseModel):
 
     @model_validator(mode='after')
     def stack_trace_must_exist_on_error(self) -> Self:
-        # if self.log_severity == LogSeverity.ERROR and not self.stack_trace:
-        #     raise ValueError(f"Stack trace must exist if log severity is {LogSeverity.ERROR}")
-        # if self.log_severity == LogSeverity.INFO and self.stack_trace:
-        #     raise ValueError(f"Stack trace must not exist if log severity is {LogSeverity.INFO}")
+        if self.log_severity == LogSeverity.ERROR and not self.stack_trace:
+            raise ValueError(f"Stack trace must exist if log severity is {LogSeverity.ERROR}")
+        if self.log_severity == LogSeverity.INFO and self.stack_trace:
+            raise ValueError(f"Stack trace must not exist if log severity is {LogSeverity.INFO}")
         return self
 
     def __str__(self) -> str:
