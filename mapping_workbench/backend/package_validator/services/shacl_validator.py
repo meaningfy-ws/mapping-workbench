@@ -1,5 +1,6 @@
 from typing import List
 
+from mapping_workbench.backend.logger.services.log import log_error
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState
 from mapping_workbench.backend.package_validator.adapters.shacl_validator import SHACLValidator
 from mapping_workbench.backend.package_validator.models.shacl_validation import SHACLQueryResult, \
@@ -120,7 +121,7 @@ def validate_tests_data_with_shacl_test_suites(
                 )
             )
         except Exception as e:
-            print("ERROR :: SHACL Validation :: ", e)
+            log_error(f"ERROR :: SHACL Validation :: {str(e)}")
 
     return tests_data
 

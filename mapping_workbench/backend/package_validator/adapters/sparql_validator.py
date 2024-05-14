@@ -3,6 +3,7 @@ from typing import Any, List
 import rdflib
 from pydantic import validate_call
 
+from mapping_workbench.backend.logger.services.log import log_info, log_error
 from mapping_workbench.backend.package_validator.adapters.data_validator import TestDataValidator
 from mapping_workbench.backend.package_validator.models.sparql_validation import SPARQLTestDataValidationResult, \
     SPARQLQueryResult, SPARQLQueryRefinedResultType, SPARQLQueryTestDataEntry
@@ -36,6 +37,7 @@ class SPARQLValidator(TestDataValidator):
         results = []
 
         for sparql_query in sparql_queries:
+            log_info(f"Running assertion for {sparql_query.cm_rule.eforms_sdk_element_title}")
             sparql_query_result: SPARQLQueryResult = SPARQLQueryResult(
                 query=sparql_query,
                 result=None,
@@ -53,7 +55,7 @@ class SPARQLValidator(TestDataValidator):
             except Exception as e:
                 sparql_query_result.error = str(e)[:100]
                 sparql_query_result.result = SPARQLQueryRefinedResultType.ERROR.value
-                print("ERROR :: SPARQL Validation :: ", e)
+                log_error(f"ERROR :: SPARQL Validation :: {str(e)}")
 
             results.append(sparql_query_result)
 

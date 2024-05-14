@@ -49,6 +49,7 @@ export const ProjectsProvider = ({children}) => {
         const toastId = toastLoad('Deleting project...');
         sectionApi.deleteItem(id)
             .then(res => {
+                sessionApi.removeLocalSessionProject()
                 getProjects()
                 toastSuccess('Project Deleted', toastId)
             })
