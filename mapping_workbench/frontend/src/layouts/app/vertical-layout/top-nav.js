@@ -11,6 +11,7 @@ import { AccountButton } from '../account-button';
 import { LanguageSwitch } from '../language-switch';
 import { NotificationsButton } from '../notifications-button';
 import { SearchButton } from '../search-button';
+import TimeSwitch from "../time-switch/time-switch";
 
 const TOP_NAV_HEIGHT = 64;
 const SIDE_NAV_WIDTH = 280;
@@ -66,6 +67,7 @@ export const TopNav = (props) => {
                     spacing={2}
                 >
                     <LanguageSwitch />
+                    <TimeSwitch/>
                     <NotificationsButton />
                     <AccountButton />
                 </Stack>
