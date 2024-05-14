@@ -1,9 +1,9 @@
 from mapping_workbench.backend.logger.models.logger_record import LogRecord, LogSeverity
-from mapping_workbench.backend.logger.services import logger_factory, LoggerName
+from mapping_workbench.backend.logger.services import mwb_logger, LoggerName
 
 
 def get_logger():
-    return logger_factory.get_logger(LoggerName.SYS_LOGGER)
+    return mwb_logger.get_logger(LoggerName.SYS_LOGGER)
 
 
 def log_error(message: str, stack_trace: str = None):
