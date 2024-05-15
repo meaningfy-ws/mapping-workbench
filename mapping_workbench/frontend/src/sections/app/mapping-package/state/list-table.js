@@ -18,6 +18,8 @@ import {Scrollbar} from 'src/components/scrollbar';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import exportPackage from "../../../../utils/export-mapping-package";
+import timeTransformer from "../../../../utils/time-transformer";
+import {useGlobalState} from "../../../../hooks/use-global-state";
 
 export const ListTable = (props) => {
     const {
@@ -35,8 +37,8 @@ export const ListTable = (props) => {
     } = props;
 
     const [isExporting, setIsExporting] = useState(false);
-
-    const handleExport = (item) => {
+    const {timeSetting} = useGlobalState()
+    const handleExport = item => {
         return exportPackage(sectionApi, id, setIsExporting, item)
     }
 
@@ -104,7 +106,7 @@ export const ListTable = (props) => {
                                         {item.mapping_version}
                                     </TableCell>
                                     <TableCell align="left">
-                                        {(item.created_at).replace("T", " ").split(".")[0]}
+                                        {timeTransformer(item.created_at, timeSetting)}
                                     </TableCell>
                                     <TableCell align="right">
                                         <Stack

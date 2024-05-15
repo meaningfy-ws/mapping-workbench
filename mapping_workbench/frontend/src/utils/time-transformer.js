@@ -1,15 +1,14 @@
-import {useGlobalState} from "../hooks/use-global-state";
 import moment from "moment-timezone";
 
-const TimeTransformer = ({date}) => {
-    const {timeSetting} = useGlobalState()
+const timeTransformer = (date, timeSetting) => {
+    if(!date)
+        return '-'
     const format = 'YYYY-MM-DD HH:mm:ss'
     if(timeSetting === 'luxembourg') {
-        const luxembourgDate = moment(date).tz('Europe/Luxembourg'); // Example date
-        return <>{luxembourgDate.format(format)}</>
+        const luxembourgDate = moment(date).tz('Europe/Luxembourg');
+        return luxembourgDate.format(format)
     }
-    return <>{moment(date).format(format)}</>
-
+    return moment(date).format(format)
 }
 
-export default TimeTransformer
+export default timeTransformer

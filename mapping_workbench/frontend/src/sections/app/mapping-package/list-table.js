@@ -35,6 +35,8 @@ import * as Yup from "yup";
 import {sessionApi} from "../../../api/session";
 import { saveAs } from 'file-saver';
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
+import timeTransformer from "../../../utils/time-transformer";
+import {useGlobalState} from "../../../hooks/use-global-state";
 
 
 
@@ -280,15 +282,10 @@ export const ListTable = (props) => {
     } = props;
 
     const [currentItem, setCurrentItem] = useState(null);
+    const {timeSetting} = useGlobalState();
 
     const handleItemToggle = itemId => {
-        setCurrentItem((prevItemId) => {
-            if (prevItemId === itemId) {
-                return null;
-            }
-
-            return itemId;
-        });
+        setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
     }
 
     return (
@@ -397,7 +394,7 @@ export const ListTable = (props) => {
                                             {item.identifier}
                                         </TableCell>
                                         <TableCell align="left">
-                                            {(item.created_at).replace("T", " ").split(".")[0]}
+                                            {timeTransformer(item.created_at, timeSetting)}
                                         </TableCell>
                                         <TableCell align="center">
                                             <ListItemActions

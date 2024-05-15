@@ -21,6 +21,8 @@ import Button from "@mui/material/Button";
 
 import {Scrollbar} from 'src/components/scrollbar';
 import {SeverityPill} from "../../../components/severity-pill";
+import timeTransformer from "../../../utils/time-transformer";
+import {useGlobalState} from "../../../hooks/use-global-state";
 
 export const ListTable = (props) => {
     const {
@@ -62,6 +64,7 @@ export const ListTable = (props) => {
 
 
     const [currentItem, setCurrentItem] = useState(null);
+    const {timeSetting} = useGlobalState()
 
     const handleItemToggle = itemId => setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
 
@@ -155,16 +158,16 @@ export const ListTable = (props) => {
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            {item.created_at && item.created_at.replace("T", " ").split(".")[0]}
+                                            {timeTransformer(item.created_at, timeSetting)}
                                         </TableCell>
                                         <TableCell>
-                                            {item.started_at && item.started_at.replace("T", " ").split(".")[0]}
+                                            {timeTransformer(item.started_at, timeSetting)}
                                         </TableCell>
                                         <TableCell>
                                             {item.started_by}
                                         </TableCell>
                                         <TableCell>
-                                            {item.finished_at && item.finished_at.replace("T", " ").split(".")[0]}
+                                            {timeTransformer(item.finished_at, timeSetting)}
                                         </TableCell>
                                         <TableCell align="left">
                                             <SeverityPill color={mapStatusColor(item.task_status)}>

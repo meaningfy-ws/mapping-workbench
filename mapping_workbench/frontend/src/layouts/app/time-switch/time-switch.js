@@ -42,8 +42,12 @@ const TimeSwitch = () => {
                }}
                PaperProps={{ sx: { width: 220 } }}
       >
-        <MenuItem onClick={() => handleTimeUpdate('luxembourg')}><Typography color={isActive && 'primary'}>Luxembourg Time</Typography></MenuItem>
-          <MenuItem onClick={() => handleTimeUpdate('local')}><Typography color={!isActive && 'primary'}>Local Time</Typography></MenuItem>
+        <MenuItem onClick={() => handleTimeUpdate('luxembourg')}>
+            <Typography color={isActive && 'primary'}>Luxembourg Time</Typography>
+        </MenuItem>
+        <MenuItem onClick={() => handleTimeUpdate('local')}>
+            <Typography color={!isActive && 'primary'}>Local Time</Typography>
+        </MenuItem>
       </Popover>
     </>
     );

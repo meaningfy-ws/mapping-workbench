@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
@@ -8,19 +8,18 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
+import Upload01Icon from "@untitled-ui/icons-react/build/esm/Upload01";
+import {paths} from 'src/paths';
+import {Seo} from 'src/components/seo';
+import {RouterLink} from 'src/components/router-link';
+import {Layout as AppLayout} from 'src/layouts/app';
+import {usePageView} from 'src/hooks/use-page-view';
 import {genericTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/generic';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {RouterLink} from 'src/components/router-link';
-import {Seo} from 'src/components/seo';
-import {usePageView} from 'src/hooks/use-page-view';
-import {Layout as AppLayout} from 'src/layouts/app';
-import {paths} from 'src/paths';
-import {ListSearch} from "../../../sections/app/generic-triple-map-fragment/list-search";
-import {ListTable} from "../../../sections/app/generic-triple-map-fragment/list-table";
-import {useMounted} from "../../../hooks/use-mounted";
-import {useDialog} from "../../../hooks/use-dialog";
-import Upload01Icon from "@untitled-ui/icons-react/build/esm/Upload01";
-import {FileUploader} from "../../../sections/app/generic-triple-map-fragment/file-uploader";
+import {ListSearch} from "src/sections/app/generic-triple-map-fragment/list-search";
+import {ListTable} from "src/sections/app/generic-triple-map-fragment/list-table";
+import {useDialog} from "src/hooks/use-dialog";
+import {FileUploader} from "src/sections/app/generic-triple-map-fragment/file-uploader";
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -34,27 +33,27 @@ const useItemsSearch = () => {
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
 
-    const handleFiltersChange = useCallback((filters) => {
-        setState((prevState) => ({
+    const handleFiltersChange = filters => {
+        setState(prevState => ({
             ...prevState,
             filters,
             page: 0
         }));
-    }, []);
+    }
 
-    const handlePageChange = useCallback((event, page) => {
-        setState((prevState) => ({
+    const handlePageChange = (event, page) => {
+        setState(prevState => ({
             ...prevState,
             page
         }));
-    }, []);
+    }
 
-    const handleRowsPerPageChange = useCallback((event) => {
-        setState((prevState) => ({
+    const handleRowsPerPageChange = event => {
+        setState(prevState => ({
             ...prevState,
             rowsPerPage: parseInt(event.target.value, 10)
         }));
-    }, []);
+    }
 
     return {
         handleFiltersChange,
@@ -65,32 +64,27 @@ const useItemsSearch = () => {
 };
 
 
-const useItemsStore = (searchState) => {
-    const isMounted = useMounted();
+const useItemsStore = searchState => {
     const [state, setState] = useState({
         items: [],
         itemsCount: 0
     });
 
-    const handleItemsGet = useCallback(async () => {
-        try {
-            const response = await sectionApi.getItems(searchState);
-            if (isMounted()) {
+    const handleItemsGet = () => {
+        sectionApi.getItems(searchState)
+            .then(res =>
                 setState({
-                    items: response.items,
-                    itemsCount: response.count
-                });
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    }, [searchState, isMounted]);
+                    items: res.items,
+                    itemsCount: res.count
+                }))
+            .catch(err => console.warn(err))
+    }
 
     useEffect(() => {
-            handleItemsGet();
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState]);
+        handleItemsGet();
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [searchState]);
 
     return {
         ...state
