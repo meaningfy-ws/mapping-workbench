@@ -116,7 +116,7 @@ export const EditForm = (props) => {
 
         onSubmit: async (values, helpers) => {
             const toastId = toastLoad(itemctx.isNew ? "Creating..." : "Updating...")
-            const {triger_namespaces_discovery, triger_specific_namespaces, import_eform, ...projectValues} = values
+            const {automatically_discover_namespaces, add_specific_namespaces, import_eform, ...projectValues} = values
             try {
                 let response;
                 if (itemctx.isNew) {
