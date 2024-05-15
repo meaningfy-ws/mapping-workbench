@@ -1,5 +1,4 @@
 import {Fragment, useState} from 'react';
-import {useRouter} from "next/router";
 import PropTypes from 'prop-types';
 
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
@@ -41,8 +40,6 @@ export const ListTable = (props) => {
         sectionApi
     } = props;
 
-    const router = useRouter();
-
     const [currentItem, setCurrentItem] = useState(null);
     const projectStore = useProjects()
 
@@ -58,24 +55,14 @@ export const ListTable = (props) => {
                 page={page}
                 rowsPerPage={rowsPerPage}
                 rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+                showFirstButton
+                showLastButton
             />
             <Scrollbar>
                 <Table sx={{minWidth: 1200}}>
                     <TableHead>
                         <TableRow>
                             <TableCell/>
-                            {/* <TableCell width="25%">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        Name
-                                    </TableSortLabel>
-                                </Tooltip>
-                            </TableCell> */}
                             <TableCell width="25%">
                                 <Tooltip
                                     enterDelay={300}
@@ -103,9 +90,6 @@ export const ListTable = (props) => {
                                     </TableSortLabel>
                                 </Tooltip>
                             </TableCell>
-                            {/* <TableCell>
-                                Status
-                            </TableCell> */}
                             <TableCell align="left">
                                 <Tooltip
                                     enterDelay={300}
@@ -125,7 +109,7 @@ export const ListTable = (props) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {items.map((item) => {
+                        {items.map(item => {
                             const item_id = item._id;
                             const isCurrent = item_id === currentItem;
                             const isSessionProject = item_id === projectStore.sessionProject
@@ -161,25 +145,6 @@ export const ListTable = (props) => {
                                                 </SvgIcon>
                                             </IconButton>
                                         </TableCell>
-                                        {/* <TableCell width="25%">
-                                            <Box
-                                                sx={{
-                                                    alignItems: 'center',
-                                                    display: 'flex'
-                                                }}
-                                            >
-                                                <Box
-                                                    sx={{
-                                                        cursor: 'pointer',
-                                                        ml: 2
-                                                    }}
-                                                >
-                                                    <Typography variant="subtitle2">
-                                                        {item.name}
-                                                    </Typography>
-                                                </Box>
-                                            </Box>
-                                        </TableCell> */}
                                         <TableCell
                                             width="25%"
                                         >
@@ -199,11 +164,6 @@ export const ListTable = (props) => {
                                         <TableCell>
                                             {item.version}
                                         </TableCell>
-                                        {/* <TableCell>
-                                            <SeverityPill color={statusColor}>
-                                                {item.status}
-                                            </SeverityPill>
-                                        </TableCell> */}
                                         <TableCell align="left">
                                             {(item.created_at).replace("T", " ").split(".")[0]}
                                         </TableCell>
@@ -265,12 +225,6 @@ export const ListTable = (props) => {
                                                                         Source Schema
                                                                     </Typography>
                                                                     <Divider sx={{my: 2}}/>
-                                                                    {/* <TextField
-                                                                        defaultValue={item.title}
-                                                                        fullWidth
-                                                                        label="Title"
-                                                                        name="title"
-                                                                    /> */}
                                                                     {item.source_schema && <PropertyList>
                                                                         <PropertyListItem
                                                                             divider
@@ -334,12 +288,6 @@ export const ListTable = (props) => {
                                                                     md={6}
                                                                     xs={12}
                                                                 >
-                                                                    {/* <TextField
-                                                                        defaultValue={item.version}
-                                                                        fullWidth
-                                                                        label="Version"
-                                                                        name="version"
-                                                                    /> */}
                                                                 </Grid>
                                                             </Grid>
                                                         </Grid>
@@ -363,6 +311,8 @@ export const ListTable = (props) => {
                 page={page}
                 rowsPerPage={rowsPerPage}
                 rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+                showFirstButton
+                showLastButton
             />
         </div>
     );

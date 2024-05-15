@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 
 import Stack from "@mui/material/Stack";
 import Alert from "@mui/material/Alert";
@@ -8,7 +8,6 @@ import CardContent from "@mui/material/CardContent";
 import {mappingPackageStatesApi as sectionApi} from 'src/api/mapping-packages/states';
 import {ListTable} from "./list-table";
 import {FileCollectionListSearch} from "../../file-manager/file-collection-list-search";
-import {useMounted} from "../../../../hooks/use-mounted";
 
 
 
@@ -21,23 +20,23 @@ const useItemsSearch = () => {
         sortDirection: undefined,
     });
 
-    const handleFiltersChange = useCallback((filters) => {
-        setState((prevState) => ({
+    const handleFiltersChange = filters => {
+        setState(prevState => ({
             ...prevState,
             filters,
             page: 0
         }));
-    }, []);
+    }
 
     const handlePageChange = (event, page) => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             page
         }));
     };
 
     const handleRowsPerPageChange = (event) => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             rowsPerPage: parseInt(event.target.value, 10)
         }));
@@ -60,32 +59,28 @@ const useItemsSearch = () => {
 
 
 const useItemsStore = (id, searchState) => {
-    const isMounted = useMounted();
     const [state, setState] = useState({
         items: [],
         itemsCount: 0
     });
 
-    const handleItemsGet = useCallback(async () => {
-        try {
-            const response = await sectionApi.getStates(id, searchState);
-            if (isMounted()) {
+    const handleItemsGet = () => {
+        sectionApi.getStates(id, searchState)
+            .then(res =>
                 setState({
-                    items: response.items,
-                    itemsCount: response.count
-                });
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    }, [searchState, isMounted]);
+                    items: res.items,
+                    itemsCount: res.count
+                })
+            )
+            .catch(err => console.warn(err))
+    }
 
 
     useEffect(() => {
-            handleItemsGet()
+            id && handleItemsGet()
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState]);
+        [id, searchState]);
 
     return {
         ...state
