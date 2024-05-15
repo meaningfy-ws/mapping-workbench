@@ -27,6 +27,7 @@ import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {SeverityPill} from "../../../components/severity-pill";
 import {useProjects} from "../../../hooks/use-projects";
+import TimeTransformer from "../../../utils/time-transformer";
 
 
 export const ListTable = (props) => {
@@ -205,7 +206,8 @@ export const ListTable = (props) => {
                                             </SeverityPill>
                                         </TableCell> */}
                                         <TableCell align="left">
-                                            {(item.created_at).replace("T", " ").split(".")[0]}
+                                            {/*{(item.created_at).replace("T", " ").split(".")[0]}*/}
+                                            <TimeTransformer date={item.created_at}/>
                                         </TableCell>
                                         <TableCell align="right">
                                             <Button
