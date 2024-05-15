@@ -66,8 +66,8 @@ export const TopNav = (props) => {
                     direction="row"
                     spacing={2}
                 >
-                    <LanguageSwitch />
                     <TimeSwitch/>
+                    <LanguageSwitch />
                     <NotificationsButton />
                     <AccountButton />
                 </Stack>
