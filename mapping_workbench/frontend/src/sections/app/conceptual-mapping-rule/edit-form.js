@@ -157,7 +157,7 @@ export const EditForm = (props) => {
             source_structural_element: (item.source_structural_element && item.source_structural_element.id) ?? '',
             min_sdk_version: item.min_sdk_version ?? '',
             max_sdk_version: item.max_sdk_version ?? '',
-            mapping_group_id: item.mapping_group_id ?? '',
+            //mapping_group_id: item.mapping_group_id ?? '',
             status: item.status ?? '',
             target_class_path: item.target_class_path ?? '',
             target_property_path: item.target_property_path ?? '',
@@ -192,8 +192,8 @@ export const EditForm = (props) => {
                     }
                     delete values['feedback_note'];
 
-                    requestValues['source_structural_element'] = values['source_structural_element'] ?? null;
-                    requestValues['triple_map_fragment'] = values['triple_map_fragment'] ?? null;
+                    requestValues['source_structural_element'] = values['source_structural_element'] || null;
+                    requestValues['triple_map_fragment'] = values['triple_map_fragment'] || null;
                     let response;
                     requestValues['project'] = sessionApi.getSessionProject();
                     if (itemctx.isNew) {
@@ -334,12 +334,12 @@ export const EditForm = (props) => {
                                                name="max_sdk_version"
                                                label="Max SDK Version"/>
                             </Grid>
-                            <Grid xs={12}
-                                  md={12}>
-                                <FormTextField formik={formik}
-                                               name="mapping_group_id"
-                                               label="Mapping Group ID"/>
-                            </Grid>
+                            {/*<Grid xs={12}*/}
+                            {/*      md={12}>*/}
+                            {/*    <FormTextField formik={formik}*/}
+                            {/*                   name="mapping_group_id"*/}
+                            {/*                   label="Mapping Group ID"/>*/}
+                            {/*</Grid>*/}
                             <Grid xs={12}
                                   md={12}>
                                 <FormTextField formik={formik}

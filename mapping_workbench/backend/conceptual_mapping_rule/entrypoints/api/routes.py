@@ -19,8 +19,6 @@ from mapping_workbench.backend.conceptual_mapping_rule.services.api import (
     delete_conceptual_mapping_rule, get_conceptual_mapping_rule_out, clone_conceptual_mapping_rule
 )
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
-from mapping_workbench.backend.package_validator.services.sparql_cm_assertions import \
-    generate_and_save_cm_assertions_queries
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.task_manager.services.task_wrapper import add_task
