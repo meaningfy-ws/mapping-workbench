@@ -20,7 +20,7 @@ def delete_mwb_db():
     logging.info("Clearing MWB database...")
     back_slash = "\\"
     subprocess_result = subprocess.run(
-        [f'mongosh {settings.DATABASE_URL}{settings.DATABASE_NAME} --eval "{settings.MW_RESET_MONGO_DB_QUERY.replace("$", f"{back_slash}$") }"'],
+        [f'mongosh {settings.DATABASE_URL}{settings.DATABASE_NAME} --eval "{settings.MW_RESET_MONGODB_QUERY.replace("$", f"{back_slash}$") }"'],
         capture_output=True, text=True, shell=True)
     logging.info(subprocess_result.stdout)
     if subprocess_result.returncode != 0:
