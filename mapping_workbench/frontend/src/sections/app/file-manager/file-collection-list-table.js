@@ -1,4 +1,4 @@
-import {Fragment, useCallback, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {toast} from 'react-hot-toast';
 import PropTypes from 'prop-types';
 
@@ -14,7 +14,6 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Tooltip from "@mui/material/Tooltip";
 import Stack from "@mui/material/Stack";
@@ -22,7 +21,6 @@ import Button from "@mui/material/Button";
 import {Box} from "@mui/system";
 import Typography from '@mui/material/Typography';
 
-import {useMounted} from 'src/hooks/use-mounted';
 import {Scrollbar} from 'src/components/scrollbar';
 import {useRouter} from "src/hooks/use-router";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
@@ -31,7 +29,7 @@ import {PropertyListItem} from 'src/components/property-list-item';
 
 import {paths} from "../../../paths";
 import {PropertyList} from "../../../components/property-list";
-
+import TablePagination from "../../components/table-pagination";
 
 
 export const ListTableRow = (props) => {
@@ -47,22 +45,19 @@ export const ListTableRow = (props) => {
     const [collectionResources, setCollectionResources] = useState([]);
 
     useEffect(() => {
-        (async () => {
-            await setCollectionResources((await sectionApi.getFileResources(item_id)).items);
-        })()
+        sectionApi.getFileResources(item_id)
+            .then(res => setCollectionResources(res.items))
     }, [sectionApi])
 
-
-    const handleResourceEdit = useCallback(async (resource_id) => {
+    const handleResourceEdit = resource_id => {
         router.push({
             pathname: paths.app[sectionApi.section].resource_manager.edit,
             query: {id: item_id, fid: resource_id}
         });
-
-    }, [router, item, sectionApi]);
+    }
 
     return (
-        <Fragment key={item_id}>
+        <>
             <TableRow
                 hover
                 key={item_id}
@@ -196,7 +191,7 @@ export const ListTableRow = (props) => {
                     </TableCell>
                 </TableRow>
             )}
-        </Fragment>
+        </>
     );
 }
 export const FileCollectionListTable = (props) => {
@@ -213,43 +208,24 @@ export const FileCollectionListTable = (props) => {
 
     const router = useRouter();
 
-
     const [currentItem, setCurrentItem] = useState(null);
-    const isMounted = useMounted();
 
-    // if(isMounted()){
-    //     console.log("itemsWEneed: ", items[0]._id);
-    //     const itemFileCollection = useItemsStoreFiles(items[0]._id);
-    // }
-    //const itemFileCollection = useItemsStoreFiles(items[0]._id);
-    //console.log("itemFileCollection: ", itemFileCollection);
+    const handleItemToggle = itemId => {
+        setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId)
+    }
 
-    const handleItemToggle = useCallback((itemId) => {
-        setCurrentItem((prevItemId) => {
-            if (prevItemId === itemId) {
-                return null;
-            }
-
-            return itemId;
-        });
-        //useItemsStoreFiles(itemId);
-    }, []);
-
-    const handleItemClose = useCallback(() => {
+    const handleItemClose = () => {
         setCurrentItem(null);
-    }, []);
+    }
 
-    const handleItemUpdate = useCallback(() => {
+    const handleItemUpdate = () => {
         setCurrentItem(null);
         toast.success('Item updated');
-    }, []);
+    }
 
-    const handleItemDelete = useCallback(() => {
+    const handleItemDelete = () => {
         toast.error('Item cannot be deleted');
-    }, []);
-
-    //console.log("date before: ", items);
-    //console.log(" items[0].created_at ",(items[0].created_at).replace("T", " ").split(".")[0]);
+    }
 
     return (
         <div>
@@ -261,71 +237,65 @@ export const FileCollectionListTable = (props) => {
                 page={page}
                 rowsPerPage={rowsPerPage}
                 rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-            />
-            <Scrollbar>
-                <Table sx={{minWidth: 1200}}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell/>
-                            <TableCell width="25%">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        direction="asc"
+                showFirstButton
+                showLastButton
+            >
+                <Scrollbar>
+                    <Table sx={{minWidth: 1200}}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell/>
+                                <TableCell width="25%">
+                                    <Tooltip
+                                        enterDelay={300}
+                                        title="Sort"
                                     >
-                                        Title
-                                    </TableSortLabel>
-                                </Tooltip>
-                            </TableCell>
-                            <TableCell align="left">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        active
-                                        direction="desc"
+                                        <TableSortLabel
+                                            direction="asc"
+                                        >
+                                            Title
+                                        </TableSortLabel>
+                                    </Tooltip>
+                                </TableCell>
+                                <TableCell align="left">
+                                    <Tooltip
+                                        enterDelay={300}
+                                        title="Sort"
                                     >
-                                        Created
-                                    </TableSortLabel>
-                                </Tooltip>
-                            </TableCell>
-                            <TableCell align="right">
-                                Actions
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {items.map((item) => {
-                            const item_id = item._id;
-                            const isCurrent = item_id === currentItem;
+                                        <TableSortLabel
+                                            active
+                                            direction="desc"
+                                        >
+                                            Created
+                                        </TableSortLabel>
+                                    </Tooltip>
+                                </TableCell>
+                                <TableCell align="right">
+                                    Actions
+                                </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {items.map((item) => {
+                                const item_id = item._id;
+                                const isCurrent = item_id === currentItem;
 
-                            return (
-                                <ListTableRow
-                                    key={item_id}
-                                    item={item}
-                                    item_id={item_id}
-                                    isCurrent={isCurrent}
-                                    handleItemToggle={handleItemToggle}
-                                    sectionApi={sectionApi}
-                                    router={router}
-                                />
-                            )
-                        })}
-                    </TableBody>
-                </Table>
-            </Scrollbar>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-            />
+                                return (
+                                    <ListTableRow
+                                        key={item_id}
+                                        item={item}
+                                        item_id={item_id}
+                                        isCurrent={isCurrent}
+                                        handleItemToggle={handleItemToggle}
+                                        sectionApi={sectionApi}
+                                        router={router}
+                                    />
+                                )
+                            })}
+                        </TableBody>
+                    </Table>
+                </Scrollbar>
+            </TablePagination>
         </div>
     );
 };

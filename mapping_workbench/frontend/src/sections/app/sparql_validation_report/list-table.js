@@ -6,7 +6,6 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import Tooltip from "@mui/material/Tooltip";
@@ -20,6 +19,7 @@ import Stack from "@mui/material/Stack";
 import {Scrollbar} from 'src/components/scrollbar';
 import {ResultChip} from "./utils";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import TablePagination from "../../components/table-pagination";
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open:false, title:"", description:""})
@@ -92,133 +92,127 @@ export const ListTable = (props) => {
                 page={page}
                 rowsPerPage={rowsPerPage}
                 rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-            />
-            <Scrollbar>
-                <Table sx={{minWidth: 1200}}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell width="25%">
-                                <SorterHeader fieldName="title"
-                                              title="Field"/>
-                            </TableCell>
-                            <TableCell>
-                                 <SorterHeader fieldName="test_suite"
-                                               title="Test Suite"/>
-                            </TableCell>
-                            <TableCell>
-                                 <SorterHeader fieldName="query"
-                                               title="Query"/>
-                            </TableCell>
-                            <TableCell align="center">
-                                <SorterHeader fieldName="validCount"
-                                              title={<ResultChip label="Valid"
-                                                                 clickable/>}
-                                              desc/>
-                            </TableCell>
-                            <TableCell align="center">
-                                <SorterHeader fieldName="unverifiableCount"
-                                              title={<ResultChip label="Unverifiable"
-                                                                 clickable/>}
-                                              desc/>
-                            </TableCell>
-                            <TableCell align="center">
-                                 <SorterHeader fieldName="warningCount"
-                                               title={<ResultChip label="Warning"
-                                                                  clickable/>}
-                                               desc/>
-                            </TableCell>
-                             <TableCell align="center">
-                                 <SorterHeader fieldName="invalidCount"
-                                               title={<ResultChip label="Invalid"
-                                                                clickable/>}
-                                               desc/>
-                            </TableCell>
-                             <TableCell align="center">
-                                 <SorterHeader fieldName="errorCount"
-                                               title={<ResultChip label="Error"
-                                                                  clickable/>}
-                                               desc/>
-                            </TableCell>
-                             <TableCell align="center">
-                                 <SorterHeader fieldName="unknownCount"
-                                               title={<ResultChip label="Unknown"
-                                                                  clickable/>}
-                                               desc/>
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {items?.map((item, i) => {
-                            return (
-                                <TableRow key={'row' + i}>
-                                    <TableCell width="25%">
-                                        <Typography variant="subtitle3">
-                                            {item.title}
-                                        </Typography>
-                                    </TableCell>
-                                    <TableCell>
-                                        {item.test_suite}
-                                    </TableCell>
-                                    <TableCell>
-                                        <SyntaxHighlighter
-                                            language="sparql"
-                                            wrapLines={true}
-                                            lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
-                                            {item.query}
-                                        </SyntaxHighlighter>
-                                    </TableCell>
-                                    <TableCell>
-                                        <ResultCell
-                                            title={item.title}
-                                            result={item.result.valid}
-                                            onClick={handleOpenDetails}/>
-                                    </TableCell>
-                                    <TableCell>
-                                        <ResultCell
-                                            title={item.title}
-                                            result={item.result.unverifiable}
-                                            onClick={handleOpenDetails}/>
-                                    </TableCell>
-                                    <TableCell>
-                                        <ResultCell
-                                            title={item.title}
-                                            result={item.result.warning}
-                                            onClick={handleOpenDetails}/>
-                                    </TableCell>
-                                    <TableCell>
-                                        <ResultCell
-                                            title={item.title}
-                                            result={item.result.invalid}
-                                            onClick={handleOpenDetails}/>
-                                    </TableCell>
-                                    <TableCell>
-                                        <ResultCell
-                                            title={item.title}
-                                            result={item.result.error}
-                                            onClick={handleOpenDetails}/>
-                                    </TableCell>
-                                    <TableCell>
-                                        <ResultCell
-                                            title={item.title}
-                                            result={item.result.unknown}
-                                            onClick={handleOpenDetails}/>
-                                    </TableCell>
-                                </TableRow>
+                showFirstButton
+                showLastButton
+            >
+                <Scrollbar>
+                    <Table sx={{minWidth: 1200}}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell width="25%">
+                                    <SorterHeader fieldName="title"
+                                                  title="Field"/>
+                                </TableCell>
+                                <TableCell>
+                                     <SorterHeader fieldName="test_suite"
+                                                   title="Test Suite"/>
+                                </TableCell>
+                                <TableCell>
+                                     <SorterHeader fieldName="query"
+                                                   title="Query"/>
+                                </TableCell>
+                                <TableCell align="center">
+                                    <SorterHeader fieldName="validCount"
+                                                  title={<ResultChip label="Valid"
+                                                                     clickable/>}
+                                                  desc/>
+                                </TableCell>
+                                <TableCell align="center">
+                                    <SorterHeader fieldName="unverifiableCount"
+                                                  title={<ResultChip label="Unverifiable"
+                                                                     clickable/>}
+                                                  desc/>
+                                </TableCell>
+                                <TableCell align="center">
+                                     <SorterHeader fieldName="warningCount"
+                                                   title={<ResultChip label="Warning"
+                                                                      clickable/>}
+                                                   desc/>
+                                </TableCell>
+                                 <TableCell align="center">
+                                     <SorterHeader fieldName="invalidCount"
+                                                   title={<ResultChip label="Invalid"
+                                                                    clickable/>}
+                                                   desc/>
+                                </TableCell>
+                                 <TableCell align="center">
+                                     <SorterHeader fieldName="errorCount"
+                                                   title={<ResultChip label="Error"
+                                                                      clickable/>}
+                                                   desc/>
+                                </TableCell>
+                                 <TableCell align="center">
+                                     <SorterHeader fieldName="unknownCount"
+                                                   title={<ResultChip label="Unknown"
+                                                                      clickable/>}
+                                                   desc/>
+                                </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {items?.map((item, i) => {
+                                return (
+                                    <TableRow key={'row' + i}>
+                                        <TableCell width="25%">
+                                            <Typography variant="subtitle3">
+                                                {item.title}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell>
+                                            {item.test_suite}
+                                        </TableCell>
+                                        <TableCell>
+                                            <SyntaxHighlighter
+                                                language="sparql"
+                                                wrapLines={true}
+                                                lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
+                                                {item.query}
+                                            </SyntaxHighlighter>
+                                        </TableCell>
+                                        <TableCell>
+                                            <ResultCell
+                                                title={item.title}
+                                                result={item.result.valid}
+                                                onClick={handleOpenDetails}/>
+                                        </TableCell>
+                                        <TableCell>
+                                            <ResultCell
+                                                title={item.title}
+                                                result={item.result.unverifiable}
+                                                onClick={handleOpenDetails}/>
+                                        </TableCell>
+                                        <TableCell>
+                                            <ResultCell
+                                                title={item.title}
+                                                result={item.result.warning}
+                                                onClick={handleOpenDetails}/>
+                                        </TableCell>
+                                        <TableCell>
+                                            <ResultCell
+                                                title={item.title}
+                                                result={item.result.invalid}
+                                                onClick={handleOpenDetails}/>
+                                        </TableCell>
+                                        <TableCell>
+                                            <ResultCell
+                                                title={item.title}
+                                                result={item.result.error}
+                                                onClick={handleOpenDetails}/>
+                                        </TableCell>
+                                        <TableCell>
+                                            <ResultCell
+                                                title={item.title}
+                                                result={item.result.unknown}
+                                                onClick={handleOpenDetails}/>
+                                        </TableCell>
+                                    </TableRow>
 
-                            );
-                        })}
-                    </TableBody>
-                </Table>
-            </Scrollbar>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-            />
+                                );
+                            })}
+                        </TableBody>
+                    </Table>
+                </Scrollbar>
+            </TablePagination>
             <Dialog
                 open={descriptionDialog.open}
                 onClose={handleClose}

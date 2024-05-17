@@ -3,13 +3,13 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 
 import {Scrollbar} from 'src/components/scrollbar';
 import PropTypes from 'prop-types';
 import {SorterHeader as UtilsSorterHeader} from "./utils";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import TablePagination from "../../components/table-pagination";
 
 export const ListTableFile = (props) => {
 
@@ -40,92 +40,86 @@ export const ListTableFile = (props) => {
                 page={page}
                 rowsPerPage={rowsPerPage}
                 rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-            />
-            <Scrollbar>
-                <Table sx={{minWidth: 1200}}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>
-                                <SorterHeader fieldName="focus_node"
-                                              title="Focus Node"/>
-                            </TableCell>
-                            <TableCell>
-                                <SorterHeader fieldName="message"
-                                              title="Message"/>
-                            </TableCell>
-                            <TableCell>
-                                 <SorterHeader fieldName="result_path"
-                                               title="Result Path"/>
-                            </TableCell>
-                            <TableCell>
-                                <SorterHeader fieldName="result_severity"
-                                              title="Result Severity"/>
-                            </TableCell>
-                             <TableCell>
-                                <SorterHeader fieldName="source_constraint_component"
-                                              title="Source Constraint Component"/>
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {items?.map((item, key) => {
-                            return (
-                                <TableRow key={key}>
-                                    <TableCell width="25%">
-                                        <SyntaxHighlighter
-                                            language="turtle"
-                                            wrapLines={true}
-                                            lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
-                                            {item.focus_node}
-                                        </SyntaxHighlighter>
-                                    </TableCell>
-                                    <TableCell>
-                                        <SyntaxHighlighter
-                                            language="turtle"
-                                            wrapLines={true}
-                                            lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
-                                            {item.message}
-                                        </SyntaxHighlighter>
-                                    </TableCell>
-                                    <TableCell>
-                                        <SyntaxHighlighter
-                                            language="sparql"
-                                            wrapLines={true}
-                                            lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
-                                            {item.result_path}
-                                        </SyntaxHighlighter>
-                                    </TableCell>
-                                    <TableCell>
-                                        <SyntaxHighlighter
-                                            language="turtle"
-                                            wrapLines={true}
-                                            lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
-                                            {item.result_severity}
-                                        </SyntaxHighlighter>
-                                    </TableCell>
-                                    <TableCell>
-                                        <SyntaxHighlighter
-                                            language="turtle"
-                                            wrapLines={true}
-                                            lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
-                                            {item.source_constraint_component}
-                                        </SyntaxHighlighter>
-                                    </TableCell>
-                                </TableRow>
-                            );
-                        })}
-                    </TableBody>
-                </Table>
-            </Scrollbar>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-            />
+                showFirstButton
+                showLastButton
+            >
+                <Scrollbar>
+                    <Table sx={{minWidth: 1200}}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>
+                                    <SorterHeader fieldName="focus_node"
+                                                  title="Focus Node"/>
+                                </TableCell>
+                                <TableCell>
+                                    <SorterHeader fieldName="message"
+                                                  title="Message"/>
+                                </TableCell>
+                                <TableCell>
+                                     <SorterHeader fieldName="result_path"
+                                                   title="Result Path"/>
+                                </TableCell>
+                                <TableCell>
+                                    <SorterHeader fieldName="result_severity"
+                                                  title="Result Severity"/>
+                                </TableCell>
+                                 <TableCell>
+                                    <SorterHeader fieldName="source_constraint_component"
+                                                  title="Source Constraint Component"/>
+                                </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {items?.map((item, key) => {
+                                return (
+                                    <TableRow key={key}>
+                                        <TableCell width="25%">
+                                            <SyntaxHighlighter
+                                                language="turtle"
+                                                wrapLines={true}
+                                                lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
+                                                {item.focus_node}
+                                            </SyntaxHighlighter>
+                                        </TableCell>
+                                        <TableCell>
+                                            <SyntaxHighlighter
+                                                language="turtle"
+                                                wrapLines={true}
+                                                lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
+                                                {item.message}
+                                            </SyntaxHighlighter>
+                                        </TableCell>
+                                        <TableCell>
+                                            <SyntaxHighlighter
+                                                language="sparql"
+                                                wrapLines={true}
+                                                lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
+                                                {item.result_path}
+                                            </SyntaxHighlighter>
+                                        </TableCell>
+                                        <TableCell>
+                                            <SyntaxHighlighter
+                                                language="turtle"
+                                                wrapLines={true}
+                                                lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
+                                                {item.result_severity}
+                                            </SyntaxHighlighter>
+                                        </TableCell>
+                                        <TableCell>
+                                            <SyntaxHighlighter
+                                                language="turtle"
+                                                wrapLines={true}
+                                                lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
+                                                {item.source_constraint_component}
+                                            </SyntaxHighlighter>
+                                        </TableCell>
+                                    </TableRow>
+                                );
+                            })}
+                        </TableBody>
+                    </Table>
+                </Scrollbar>
+            </TablePagination>
         </>
     );
 };

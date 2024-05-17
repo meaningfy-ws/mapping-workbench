@@ -8,7 +8,6 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import Tooltip from "@mui/material/Tooltip";
@@ -25,6 +24,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import {Scrollbar} from 'src/components/scrollbar';
 import PropTypes from 'prop-types';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import TablePagination from "../../components/table-pagination";
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open:false, title:"", text:""})
@@ -69,81 +69,75 @@ export const ListTable = (props) => {
                 page={page}
                 rowsPerPage={rowsPerPage}
                 rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-            />
-            <Scrollbar>
-                <Table sx={{minWidth: 1200}}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell width="25%">
-                                <SorterHeader fieldName="eforms_sdk_element_id"
-                                              title="Field"/>
-                            </TableCell>
-                            <TableCell>
-                                <SorterHeader fieldName="eforms_sdk_element_xpath"
-                                              title="XPath"/>
-                            </TableCell>
-                            <TableCell width="10%">
-                                 <SorterHeader fieldName="notice_count"
-                                               title="Notices"/>
-                            </TableCell>
-                            <TableCell width="10%">
-                                <SorterHeader fieldName="is_covered"
-                                               title="Found"/>
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {items?.map((item, key) => {
-                            const notices = item.test_data_xpaths.map(e=> `"${e.test_data_id}":${e.xpaths.length}`)
-                            return (
-                                <TableRow key={key}>
-                                    <TableCell width="25%">
-                                        <Typography variant="subtitle3">
-                                            {item.eforms_sdk_element_id}
-                                        </Typography>
-                                    </TableCell>
-                                    <TableCell>
-                                        {
-                                            <SyntaxHighlighter
-                                                language="xquery"
-                                                wrapLines={true}
-                                                lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
-                                                {item.eforms_sdk_element_xpath}
-                                            </SyntaxHighlighter>
-                                        }
-                                    </TableCell>
-                                     <TableCell>
-                                         <Accordion
-                                            disabled={!item.notice_count}>
-                                             <AccordionSummary
+                showFirstButton
+                showLastButton
+            >
+                <Scrollbar>
+                    <Table sx={{minWidth: 1200}}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell width="25%">
+                                    <SorterHeader fieldName="eforms_sdk_element_id"
+                                                  title="Field"/>
+                                </TableCell>
+                                <TableCell>
+                                    <SorterHeader fieldName="eforms_sdk_element_xpath"
+                                                  title="XPath"/>
+                                </TableCell>
+                                <TableCell width="10%">
+                                     <SorterHeader fieldName="notice_count"
+                                                   title="Notices"/>
+                                </TableCell>
+                                <TableCell width="10%">
+                                    <SorterHeader fieldName="is_covered"
+                                                   title="Found"/>
+                                </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {items?.map((item, key) => {
+                                const notices = item.test_data_xpaths.map(e=> `"${e.test_data_id}":${e.xpaths.length}`)
+                                return (
+                                    <TableRow key={key}>
+                                        <TableCell width="25%">
+                                            <Typography variant="subtitle3">
+                                                {item.eforms_sdk_element_id}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell>
+                                            {
+                                                <SyntaxHighlighter
+                                                    language="xquery"
+                                                    wrapLines={true}
+                                                    lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
+                                                    {item.eforms_sdk_element_xpath}
+                                                </SyntaxHighlighter>
+                                            }
+                                        </TableCell>
+                                         <TableCell>
+                                             <Accordion
+                                                disabled={!item.notice_count}>
+                                                 <AccordionSummary
 
-                                                expandIcon={<ExpandMoreIcon />}>
-                                                {item.notice_count}
-                                             </AccordionSummary>
-                                             <AccordionDetails>
-                                                 {notices.join(',\n')}
-                                             </AccordionDetails>
-                                         </Accordion>
-                                    </TableCell>
-                                    <TableCell align="center">
-                                        {item.is_covered ? <CheckIcon color="success"/> : <CloseIcon color="error"/>}
-                                    </TableCell>
-                                </TableRow>
+                                                    expandIcon={<ExpandMoreIcon />}>
+                                                    {item.notice_count}
+                                                 </AccordionSummary>
+                                                 <AccordionDetails>
+                                                     {notices.join(',\n')}
+                                                 </AccordionDetails>
+                                             </Accordion>
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            {item.is_covered ? <CheckIcon color="success"/> : <CloseIcon color="error"/>}
+                                        </TableCell>
+                                    </TableRow>
 
-                            );
-                        })}
-                    </TableBody>
-                </Table>
-            </Scrollbar>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-            />
+                                );
+                            })}
+                        </TableBody>
+                    </Table>
+                </Scrollbar>
+            </TablePagination>
             <Dialog
                 open={descriptionDialog.open}
                 onClose={handleClose}

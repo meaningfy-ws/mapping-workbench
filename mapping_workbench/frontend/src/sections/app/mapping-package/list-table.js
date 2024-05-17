@@ -13,7 +13,6 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import Tooltip from "@mui/material/Tooltip";
@@ -35,6 +34,7 @@ import * as Yup from "yup";
 import {sessionApi} from "../../../api/session";
 import { saveAs } from 'file-saver';
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
+import TablePagination from "../../components/table-pagination";
 
 
 
@@ -301,149 +301,143 @@ export const ListTable = (props) => {
                 page={page}
                 rowsPerPage={rowsPerPage}
                 rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-            />
-            <Scrollbar>
-                <Table sx={{minWidth: 1200}}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell/>
-                            <TableCell width="25%">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        direction="asc"
+                showFirstButton
+                showLastButton
+            >
+                <Scrollbar>
+                    <Table sx={{minWidth: 1200}}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell/>
+                                <TableCell width="25%">
+                                    <Tooltip
+                                        enterDelay={300}
+                                        title="Sort"
                                     >
-                                        Title
-                                    </TableSortLabel>
-                                </Tooltip>
-                            </TableCell>
-                            <TableCell>
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        Identifier
-                                    </TableSortLabel>
-                                </Tooltip>
-                            </TableCell>
-                            <TableCell align="left">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        active
-                                        direction="desc"
-                                    >
-                                        Created
-                                    </TableSortLabel>
-                                </Tooltip>
-                            </TableCell>
-                            <TableCell align="center">
-                                Actions
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {items.map((item) => {
-                            const item_id = item._id;
-                            const isCurrent = item_id === currentItem;
-                            const statusColor = item.status === 'published' ? 'success' : 'info';
-
-                            return (
-                                <Fragment key={item_id}>
-                                    <TableRow
-                                        hover
-                                        key={item_id}
-                                        id={item_id}
-                                    >
-                                        <TableCell
-                                            padding="checkbox"
-                                            sx={{
-                                                ...(isCurrent && {
-                                                    position: 'relative',
-                                                    '&:after': {
-                                                        position: 'absolute',
-                                                        content: '" "',
-                                                        top: 0,
-                                                        left: 0,
-                                                        backgroundColor: 'primary.main',
-                                                        width: 3,
-                                                        height: 'calc(100% + 1px)'
-                                                    }
-                                                })
-                                            }}
-                                            width="25%"
+                                        <TableSortLabel
+                                            direction="asc"
                                         >
-                                            <IconButton onClick={() => handleItemToggle(item_id)}
-                                                        id="expand_button">
-                                                <SvgIcon>
-                                                    {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
-                                                </SvgIcon>
-                                            </IconButton>
-                                        </TableCell>
+                                            Title
+                                        </TableSortLabel>
+                                    </Tooltip>
+                                </TableCell>
+                                <TableCell>
+                                    <Tooltip
+                                        enterDelay={300}
+                                        title="Sort"
+                                    >
+                                        <TableSortLabel
+                                            direction="asc"
+                                        >
+                                            Identifier
+                                        </TableSortLabel>
+                                    </Tooltip>
+                                </TableCell>
+                                <TableCell align="left">
+                                    <Tooltip
+                                        enterDelay={300}
+                                        title="Sort"
+                                    >
+                                        <TableSortLabel
+                                            active
+                                            direction="desc"
+                                        >
+                                            Created
+                                        </TableSortLabel>
+                                    </Tooltip>
+                                </TableCell>
+                                <TableCell align="center">
+                                    Actions
+                                </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {items.map((item) => {
+                                const item_id = item._id;
+                                const isCurrent = item_id === currentItem;
+                                const statusColor = item.status === 'published' ? 'success' : 'info';
 
-                                        <TableCell width="25%">
-                                            <Typography variant="subtitle2">
-                                                {item.title}
-                                            </Typography>
-                                        </TableCell>
-                                        <TableCell>
-                                            {item.identifier}
-                                        </TableCell>
-                                        <TableCell align="left">
-                                            {(item.created_at).replace("T", " ").split(".")[0]}
-                                        </TableCell>
-                                        <TableCell align="center">
-                                            <ListItemActions
-                                                itemctx={new ForListItemAction(item_id, sectionApi)}/>
-                                        </TableCell>
-                                    </TableRow>
-                                    {isCurrent && (
-                                        <TableRow>
+                                return (
+                                    <Fragment key={item_id}>
+                                        <TableRow
+                                            hover
+                                            key={item_id}
+                                            id={item_id}
+                                        >
                                             <TableCell
-                                                colSpan={7}
+                                                padding="checkbox"
                                                 sx={{
-                                                    p: 0,
-                                                    position: 'relative',
-                                                    '&:after': {
-                                                        position: 'absolute',
-                                                        content: '" "',
-                                                        top: 0,
-                                                        left: 0,
-                                                        backgroundColor: 'primary.main',
-                                                        width: 3,
-                                                        height: 'calc(100% + 1px)'
-                                                    }
+                                                    ...(isCurrent && {
+                                                        position: 'relative',
+                                                        '&:after': {
+                                                            position: 'absolute',
+                                                            content: '" "',
+                                                            top: 0,
+                                                            left: 0,
+                                                            backgroundColor: 'primary.main',
+                                                            width: 3,
+                                                            height: 'calc(100% + 1px)'
+                                                        }
+                                                    })
                                                 }}
+                                                width="25%"
                                             >
-                                                <PackageRow
-                                                    item={item}
-                                                    sectionApi={sectionApi}
-                                                />
+                                                <IconButton onClick={() => handleItemToggle(item_id)}
+                                                            id="expand_button">
+                                                    <SvgIcon>
+                                                        {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
+                                                    </SvgIcon>
+                                                </IconButton>
+                                            </TableCell>
+
+                                            <TableCell width="25%">
+                                                <Typography variant="subtitle2">
+                                                    {item.title}
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell>
+                                                {item.identifier}
+                                            </TableCell>
+                                            <TableCell align="left">
+                                                {(item.created_at).replace("T", " ").split(".")[0]}
+                                            </TableCell>
+                                            <TableCell align="center">
+                                                <ListItemActions
+                                                    itemctx={new ForListItemAction(item_id, sectionApi)}/>
                                             </TableCell>
                                         </TableRow>
-                                    )}
-                                </Fragment>
-                            );
-                        })}
-                    </TableBody>
-                </Table>
-            </Scrollbar>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-            />
+                                        {isCurrent && (
+                                            <TableRow>
+                                                <TableCell
+                                                    colSpan={7}
+                                                    sx={{
+                                                        p: 0,
+                                                        position: 'relative',
+                                                        '&:after': {
+                                                            position: 'absolute',
+                                                            content: '" "',
+                                                            top: 0,
+                                                            left: 0,
+                                                            backgroundColor: 'primary.main',
+                                                            width: 3,
+                                                            height: 'calc(100% + 1px)'
+                                                        }
+                                                    }}
+                                                >
+                                                    <PackageRow
+                                                        item={item}
+                                                        sectionApi={sectionApi}
+                                                    />
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
+                                    </Fragment>
+                                );
+                            })}
+                        </TableBody>
+                    </Table>
+                </Scrollbar>
+            </TablePagination>
         </div>
     );
 };

@@ -11,7 +11,6 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import {PropertyList} from 'src/components/property-list';
@@ -23,6 +22,7 @@ import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import Tooltip from "@mui/material/Tooltip";
 import {mappingPackagesApi} from "../../../api/mapping-packages";
+import TablePagination from "../../components/table-pagination";
 
 
 export const ListTable = (props) => {
@@ -84,16 +84,17 @@ export const ListTable = (props) => {
     // }, []);
 
     return (
-        <div>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-            />
+        <TablePagination
+            component="div"
+            count={count}
+            onPageChange={onPageChange}
+            onRowsPerPageChange={onRowsPerPageChange}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+            showFirstButton
+            showLastButton
+        >
             <Scrollbar>
                 <Table sx={{minWidth: 1200}}>
                     <TableHead>
@@ -243,16 +244,7 @@ export const ListTable = (props) => {
                     </TableBody>
                 </Table>
             </Scrollbar>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-            />
-        </div>
+        </TablePagination>
     );
 };
 

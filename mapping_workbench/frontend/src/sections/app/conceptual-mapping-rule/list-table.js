@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useRouter} from "next/router";
 import PropTypes from 'prop-types';
 import parse from "html-react-parser";
@@ -20,7 +20,6 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import Tooltip from "@mui/material/Tooltip";
@@ -59,6 +58,7 @@ import {ListSelectorSelect as ResourceListSelector} from "../../../components/ap
 import {sparqlTestFileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
 import {toastSuccess} from "../../../components/app-toast";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import TablePagination from "../../components/table-pagination";
 
 
 export const ListTableTripleMapFragment = (props) => {
@@ -739,7 +739,7 @@ export const ListTableRow = (props) => {
                         </Box>
                     </Typography>
                 </Link>
-                {item.source_structural_element.name}
+                {item.source_structural_element?.name}
             </TableCell>
             <TableCell>{item.min_sdk_version}</TableCell>
             <TableCell>{item.max_sdk_version}</TableCell>
@@ -935,7 +935,7 @@ export const ListTable = (props) => {
 
     if (!isProjectDataReady) return null;
 
-    return (<div>
+    return (
         <TablePagination
             component="div"
             count={count}
@@ -944,161 +944,155 @@ export const ListTable = (props) => {
             page={page}
             rowsPerPage={rowsPerPage}
             rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-        />
-        <Scrollbar>
-            <Table sx={{minWidth: 1200}}>
-                <TableHead>
-                    <TableRow>
-                        <TableCell/>
-                        <TableCell>
-                            CM Rule Order
-                        </TableCell>
-                        <TableCell width="10%">
-                            <Tooltip
-                                enterDelay={300}
-                                title="Sort"
-                            >
-                                <TableSortLabel
-                                    active
-                                    direction={sortDir}
-                                    onClick={handleSort}
+            showFirstButton
+            showLastButton
+        >
+            <Scrollbar>
+                <Table sx={{minWidth: 1200}}>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell/>
+                            <TableCell>
+                                CM Rule Order
+                            </TableCell>
+                            <TableCell width="10%">
+                                <Tooltip
+                                    enterDelay={300}
+                                    title="Sort"
                                 >
-                                    Conceptual Field/Group
-                                </TableSortLabel>
-                            </Tooltip>
-                        </TableCell>
-                        <TableCell>
-                            Min SDK
-                        </TableCell>
-                        <TableCell>
-                            Max SDK
-                        </TableCell>
-                        <TableCell width="18%">
-                            <Tooltip
-                                enterDelay={300}
-                                title="Sort"
-                            >
-                                <TableSortLabel
-                                    direction="asc"
+                                    <TableSortLabel
+                                        active
+                                        direction={sortDir}
+                                        onClick={handleSort}
+                                    >
+                                        Conceptual Field/Group
+                                    </TableSortLabel>
+                                </Tooltip>
+                            </TableCell>
+                            <TableCell>
+                                Min SDK
+                            </TableCell>
+                            <TableCell>
+                                Max SDK
+                            </TableCell>
+                            <TableCell width="18%">
+                                <Tooltip
+                                    enterDelay={300}
+                                    title="Sort"
                                 >
-                                    Ontology Fragment Class path
-                                </TableSortLabel>
-                            </Tooltip>
-                        </TableCell>
-                        <TableCell width="18%">
-                            <Tooltip
-                                enterDelay={300}
-                                title="Sort"
-                            >
-                                <TableSortLabel
-                                    direction="asc"
+                                    <TableSortLabel
+                                        direction="asc"
+                                    >
+                                        Ontology Fragment Class path
+                                    </TableSortLabel>
+                                </Tooltip>
+                            </TableCell>
+                            <TableCell width="18%">
+                                <Tooltip
+                                    enterDelay={300}
+                                    title="Sort"
                                 >
-                                    Ontology Fragment Property path
-                                </TableSortLabel>
-                            </Tooltip>
-                        </TableCell>
-                        <TableCell>
-                            RML Triple Map
-                        </TableCell>
-                        <TableCell>
-                            Mapping Package
-                        </TableCell>
-                        <TableCell>
-                            SPARQL assertions
-                        </TableCell>
-                        <TableCell align="center"
-                               title="Notes"
-                               sx={{
-                                   whiteSpace: "nowrap"
-                               }}
-                        >
-                            Notes
-                        </TableCell>
-                        <TableCell align="right"
+                                    <TableSortLabel
+                                        direction="asc"
+                                    >
+                                        Ontology Fragment Property path
+                                    </TableSortLabel>
+                                </Tooltip>
+                            </TableCell>
+                            <TableCell>
+                                RML Triple Map
+                            </TableCell>
+                            <TableCell>
+                                Mapping Package
+                            </TableCell>
+                            <TableCell>
+                                SPARQL assertions
+                            </TableCell>
+                            <TableCell align="center"
+                                   title="Notes"
                                    sx={{
                                        whiteSpace: "nowrap"
                                    }}
-                        >
-                            Actions
-                        </TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {items.map((item) => {
-                        const item_id = item._id;
-                        const isCurrent = item_id === currentItem;
-                        const isHovered = item_id === hoveredItem;
+                            >
+                                Notes
+                            </TableCell>
+                            <TableCell align="right"
+                                       sx={{
+                                           whiteSpace: "nowrap"
+                                       }}
+                            >
+                                Actions
+                            </TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {items.map((item) => {
+                            const item_id = item._id;
+                            const isCurrent = item_id === currentItem;
+                            const isHovered = item_id === hoveredItem;
 
-                        return (
-                            <ListTableRow
-                                key={`rules_list_row_${item_id}`}
-                                item={item}
-                                item_id={item_id}
-                                isCurrent={isCurrent}
-                                handleItemToggle={handleItemToggle}
-                                sectionApi={sectionApi}
-                                initProjectMappingPackages={projectMappingPackages}
-                                initProjectTripleMapFragments={projectTripleMapFragments}
-                                initProjectSPARQLResources={projectSPARQLResources}
-                                onPackagesUpdate={onPackagesUpdate}
-                                handleItemHover={handleItemHover}
-                                isHovered={isHovered}
-                                detailedView={detailedView}
-                                handleNotesDialogOpen={notesDialog.handleOpen}
-                            />)
-                    })}
-                    <Dialog
-                        id='notes_dialog'
-                        onClose={notesDialog.handleClose}
-                        open={notesDialog.open}
-                        fullWidth
-                        maxWidth="md"
-                    >
-                        <Card>
-                            <CardHeader title="Notes"
-                                        sx={{mb: 2}}/>
-                            <Divider/>
-                            <CardContent sx={{pt: 1}}>
-                                {notesDialog.data?.mapping_notes && <>
-                                    <Typography>Mapping Notes:</Typography>
-                                    {notesDialog.data.mapping_notes.map((mapping_note, i) => <RuleComment
-                                        key={'mapping_note' + i}
-                                        comment={mapping_note}
-                                        />
-                                    )}
-                                </>}
-                                {notesDialog.data?.editorial_notes && <>
-                                    <Typography>Editorial Notes:</Typography>
-                                    {notesDialog.data.editorial_notes.map((editorial_note, i) => <RuleComment
-                                        key={'editorial_notes' + i}
-                                        comment={editorial_note}
-                                        />
-                                    )}
-                                </>}
-                                {notesDialog.data?.feedback_notes && <>
-                                    <Typography>Feedback Notes:</Typography>
-                                    {notesDialog.data.feedback_notes.map((feedback_note, i) => <RuleComment
-                                        key={'feedback_notes' + i}
-                                        comment={feedback_note}
-                                        />
-                                    )}
-                                </>}
-                            </CardContent>
-                        </Card>
-                    </Dialog>
-                </TableBody>
-            </Table>
-        </Scrollbar>
-        <TablePagination
-            component="div"
-            count={count}
-            onPageChange={onPageChange}
-            onRowsPerPageChange={onRowsPerPageChange}
-            page={page}
-            rowsPerPage={rowsPerPage}
-            rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-        />
-    </div>);
+                            return (
+                                <ListTableRow
+                                    key={`rules_list_row_${item_id}`}
+                                    item={item}
+                                    item_id={item_id}
+                                    isCurrent={isCurrent}
+                                    handleItemToggle={handleItemToggle}
+                                    sectionApi={sectionApi}
+                                    initProjectMappingPackages={projectMappingPackages}
+                                    initProjectTripleMapFragments={projectTripleMapFragments}
+                                    initProjectSPARQLResources={projectSPARQLResources}
+                                    onPackagesUpdate={onPackagesUpdate}
+                                    handleItemHover={handleItemHover}
+                                    isHovered={isHovered}
+                                    detailedView={detailedView}
+                                    handleNotesDialogOpen={notesDialog.handleOpen}
+                                />)
+                        })}
+                        <Dialog
+                            id='notes_dialog'
+                            onClose={notesDialog.handleClose}
+                            open={notesDialog.open}
+                            fullWidth
+                            maxWidth="md"
+                        >
+                            <Card>
+                                <CardHeader title="Notes"
+                                            sx={{mb: 2}}/>
+                                <Divider/>
+                                <CardContent sx={{pt: 1}}>
+                                    {notesDialog.data?.mapping_notes && <>
+                                        <Typography>Mapping Notes:</Typography>
+                                        {notesDialog.data.mapping_notes.map((mapping_note, i) => <RuleComment
+                                            key={'mapping_note' + i}
+                                            comment={mapping_note}
+                                            />
+                                        )}
+                                    </>}
+                                    {notesDialog.data?.editorial_notes && <>
+                                        <Typography>Editorial Notes:</Typography>
+                                        {notesDialog.data.editorial_notes.map((editorial_note, i) => <RuleComment
+                                            key={'editorial_notes' + i}
+                                            comment={editorial_note}
+                                            />
+                                        )}
+                                    </>}
+                                    {notesDialog.data?.feedback_notes && <>
+                                        <Typography>Feedback Notes:</Typography>
+                                        {notesDialog.data.feedback_notes.map((feedback_note, i) => <RuleComment
+                                            key={'feedback_notes' + i}
+                                            comment={feedback_note}
+                                            />
+                                        )}
+                                    </>}
+                                </CardContent>
+                            </Card>
+                        </Dialog>
+                    </TableBody>
+                </Table>
+            </Scrollbar>
+        </TablePagination>
+    );
 };
 
 ListTable.propTypes = {
