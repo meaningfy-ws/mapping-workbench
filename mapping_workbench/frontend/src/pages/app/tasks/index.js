@@ -20,7 +20,6 @@ import {Seo} from 'src/components/seo';
 import {ListSearch} from 'src/sections/app/tasks/list-search';
 import {ListTable} from 'src/sections/app/tasks/list-table';
 
-import mockData from '../../../sections/app/tasks/mock.json'
 import {TableLoadWrapper} from "../../../sections/app/shacl_validation_report/utils";
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 
@@ -37,7 +36,7 @@ const useItemsSearch = () => {
     });
 
     const handleFiltersChange = (filters) => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             filters,
             page: 0
@@ -45,14 +44,14 @@ const useItemsSearch = () => {
     };
 
     const handlePageChange = (event, page) => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             page
         }));
     };
 
     const handleRowsPerPageChange = event => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             rowsPerPage: parseInt(event.target.value, 10)
         }));
@@ -74,7 +73,7 @@ export const Page = () => {
         itemsCount: 0,
     });
 
-    const handleItemsGet = async () => {
+    const handleItemsGet = () => {
         setState(prevState => ({...prevState, load: true}))
         sectionApi.getItems(itemsSearch.state)
             .then(res =>
@@ -87,7 +86,7 @@ export const Page = () => {
             });
     }
 
-    const handleDeleteAllTasks = async  () => {
+    const handleDeleteAllTasks = () => {
         const toastId = toastLoad('Deleting all tasks...');
         sectionApi.deleteAllTasks()
             .then(res => {
@@ -98,7 +97,7 @@ export const Page = () => {
     }
 
 
-    const handleCancelAction = async (itemId) => {
+    const handleCancelAction = itemId => {
         const toastId = toastLoad('Canceling task...');
         sectionApi.cancelTask(itemId)
         .then(() => {
@@ -108,7 +107,7 @@ export const Page = () => {
         .catch(err => toastError(err, toastId))
     }
 
-    const handleDeleteAction = async (itemId) => {
+    const handleDeleteAction = itemId => {
         const toastId = toastLoad('Deleting task...');
         sectionApi.deleteTask(itemId)
         .then(() => {

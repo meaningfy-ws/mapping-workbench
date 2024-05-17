@@ -1,4 +1,4 @@
-import {Fragment, useCallback, useEffect, useState} from 'react';
+import {Fragment, useEffect, useState} from 'react';
 import {toast} from 'react-hot-toast';
 import PropTypes from 'prop-types';
 
@@ -22,7 +22,6 @@ import Button from "@mui/material/Button";
 import {Box} from "@mui/system";
 import Typography from '@mui/material/Typography';
 
-import {useMounted} from 'src/hooks/use-mounted';
 import {Scrollbar} from 'src/components/scrollbar';
 import {useRouter} from "src/hooks/use-router";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
@@ -31,6 +30,8 @@ import {PropertyListItem} from 'src/components/property-list-item';
 
 import {paths} from "../../../paths";
 import {PropertyList} from "../../../components/property-list";
+import timeTransformer from "../../../utils/time-transformer";
+import {useGlobalState} from "../../../hooks/use-global-state";
 
 
 
@@ -44,22 +45,20 @@ export const ListTableRow = (props) => {
         router
     } = props;
 
+    const {timeSetting} = useGlobalState()
     const [collectionResources, setCollectionResources] = useState([]);
 
     useEffect(() => {
-        (async () => {
-            await setCollectionResources((await sectionApi.getFileResources(item_id)).items);
-        })()
+        sectionApi.getFileResources(item_id)
+            .then(res => setCollectionResources(res.items))
     }, [sectionApi])
 
-
-    const handleResourceEdit = useCallback(async (resource_id) => {
+    const handleResourceEdit = resource_id => {
         router.push({
             pathname: paths.app[sectionApi.section].resource_manager.edit,
             query: {id: item_id, fid: resource_id}
         });
-
-    }, [router, item, sectionApi]);
+    }
 
     return (
         <Fragment key={item_id}>
@@ -97,7 +96,7 @@ export const ListTableRow = (props) => {
                     </Typography>
                 </TableCell>
                 <TableCell align="left">
-                    {(item.created_at).replace("T", " ").split(".")[0]}
+                    {timeTransformer(item.created_at, timeSetting)}
                 </TableCell>
                 <TableCell align="right">
                     <ListFileCollectionActions
@@ -142,6 +141,7 @@ export const ListTableRow = (props) => {
                                     </PropertyList>)}
                                 </Grid>
                                 <Grid
+                                    item
                                     md={12}
                                     xs={12}
                                     sx={{px: 3}}
@@ -215,41 +215,23 @@ export const FileCollectionListTable = (props) => {
 
 
     const [currentItem, setCurrentItem] = useState(null);
-    const isMounted = useMounted();
 
-    // if(isMounted()){
-    //     console.log("itemsWEneed: ", items[0]._id);
-    //     const itemFileCollection = useItemsStoreFiles(items[0]._id);
-    // }
-    //const itemFileCollection = useItemsStoreFiles(items[0]._id);
-    //console.log("itemFileCollection: ", itemFileCollection);
+    const handleItemToggle = itemId => {
+        setCurrentItem((prevItemId) => prevItemId === itemId ? null : itemId);
+    }
 
-    const handleItemToggle = useCallback((itemId) => {
-        setCurrentItem((prevItemId) => {
-            if (prevItemId === itemId) {
-                return null;
-            }
-
-            return itemId;
-        });
-        //useItemsStoreFiles(itemId);
-    }, []);
-
-    const handleItemClose = useCallback(() => {
+    const handleItemClose = () => {
         setCurrentItem(null);
-    }, []);
+    }
 
-    const handleItemUpdate = useCallback(() => {
+    const handleItemUpdate = () => {
         setCurrentItem(null);
         toast.success('Item updated');
-    }, []);
+    }
 
-    const handleItemDelete = useCallback(() => {
+    const handleItemDelete = () => {
         toast.error('Item cannot be deleted');
-    }, []);
-
-    //console.log("date before: ", items);
-    //console.log(" items[0].created_at ",(items[0].created_at).replace("T", " ").split(".")[0]);
+    }
 
     return (
         <div>

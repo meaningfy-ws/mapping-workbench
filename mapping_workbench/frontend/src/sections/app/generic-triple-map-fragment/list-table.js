@@ -1,4 +1,4 @@
-import {Fragment, useCallback, useState} from 'react';
+import {Fragment, useState} from 'react';
 import PropTypes from 'prop-types';
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
@@ -22,6 +22,8 @@ import {ListItemActions} from 'src/components/app/list/list-item-actions';
 
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import Tooltip from "@mui/material/Tooltip";
+import timeTransformer from "../../../utils/time-transformer";
+import {useGlobalState} from "../../../hooks/use-global-state";
 
 
 export const ListTable = (props) => {
@@ -36,33 +38,11 @@ export const ListTable = (props) => {
         sectionApi
     } = props;
 
-    //console.log("PROJECT PROPS: ", props);
 
     const [currentItem, setCurrentItem] = useState(null);
+    const {timeSetting} = useGlobalState()
 
-    const handleItemToggle = useCallback((itemId) => {
-        setCurrentItem((prevItemId) => {
-            if (prevItemId === itemId) {
-                return null;
-            }
-
-            return itemId;
-        });
-    }, []);
-
-    // const handleItemClose = useCallback(() => {
-    //     setCurrentItem(null);
-    // }, []);
-
-    // const handleItemUpdate = useCallback(() => {
-    //     setCurrentItem(null);
-    //     toast.success('Item updated');
-    // }, []);
-
-    // const handleItemDelete = useCallback(() => {
-        
-    //     toast.error('Item cannot be deleted');
-    // }, []);
+    const handleItemToggle = itemId => setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
 
     return (
         <div>
@@ -152,7 +132,7 @@ export const ListTable = (props) => {
                                             </Typography>
                                         </TableCell>
                                         <TableCell align="left">
-                                        {(item.created_at).replace("T", " ").split(".")[0]}                                            
+                                            {timeTransformer(item.created_at, timeSetting)}
                                         </TableCell>
                                         <TableCell align="right">
                                             <ListItemActions

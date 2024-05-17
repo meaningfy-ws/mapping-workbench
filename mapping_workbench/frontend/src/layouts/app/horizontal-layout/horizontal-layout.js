@@ -65,5 +65,5 @@ export const HorizontalLayout = (props) => {
 HorizontalLayout.propTypes = {
     children: PropTypes.node,
     navColor: PropTypes.oneOf(['blend-in', 'discrete', 'evident']),
-    sections: PropTypes.array
+    sections: PropTypes.object
 };
