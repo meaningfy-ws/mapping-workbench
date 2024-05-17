@@ -4,7 +4,7 @@ from typing import List
 from beanie import PydanticObjectId
 
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
-from mapping_workbench.backend.logger.services.log import log_info
+from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState, MappingPackageValidationTree
 from mapping_workbench.backend.mapping_package.services.data import get_specific_mapping_package_state
 from mapping_workbench.backend.package_validator.services.shacl_validator import \
@@ -32,15 +32,15 @@ def validate_mapping_package(mapping_package_state: MappingPackageState, tasks_t
     :type mapping_package_state: MappingPackageState
     """
     if tasks_to_run is None or TaskToRun.VALIDATE_PACKAGE_XPATH.value in tasks_to_run:
-        log_info("Validating Package State ... XPATH")
+        mwb_logger.log_all_info("Validating Package State ... XPATH")
         compute_xpath_assertions_for_mapping_package(mapping_package_state)
 
     if tasks_to_run is None or TaskToRun.VALIDATE_PACKAGE_SHACL.value in tasks_to_run:
-        log_info("Validating Package State ... SHACL")
+        mwb_logger.log_all_info("Validating Package State ... SHACL")
         validate_mapping_package_state_with_shacl(mapping_package_state)
 
     if tasks_to_run is None or TaskToRun.VALIDATE_PACKAGE_SPARQL.value in tasks_to_run:
-        log_info("Validating Package State ... SPARQL")
+        mwb_logger.log_all_info("Validating Package State ... SPARQL")
         validate_mapping_package_state_with_sparql(mapping_package_state)
 
 
