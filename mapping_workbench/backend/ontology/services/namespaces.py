@@ -5,7 +5,7 @@ from beanie import PydanticObjectId
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
 from mapping_workbench.backend.ontology.adapters.namespace_handler import NamespaceInventory
-from mapping_workbench.backend.ontology.models.namespace import Namespace
+from mapping_workbench.backend.ontology.models.namespace import Namespace, NamespaceCustom
 from mapping_workbench.backend.project.models.entity import Project
 
 
@@ -20,7 +20,7 @@ async def discover_and_save_mapping_rule_prefixes(project_id: PydanticObjectId, 
             )
 
 
-async def discover_and_save_prefix_namespace(project_id: PydanticObjectId, prefix: str, uri: str = None):
+async def init_prefix_namespace(project_id: PydanticObjectId, prefix: str, uri: str = None) -> Namespace:
     project_link = Project.link_from_id(project_id)
     namespace: Namespace = (await get_namespace_by_prefix(
         prefix=prefix,
@@ -30,11 +30,18 @@ async def discover_and_save_prefix_namespace(project_id: PydanticObjectId, prefi
         prefix=prefix,
         uri=uri
     )
+    return namespace
 
+
+async def discover_and_save_prefix_namespace(
+        project_id: PydanticObjectId, prefix: str, uri: str = None,
+        discover: bool = True
+):
+    namespace: Namespace = await init_prefix_namespace(project_id, prefix, uri)
     if namespace.is_syncable:
         if uri:
             namespace.uri = uri
-        else:
+        elif discover:
             ns_handler: NamespaceInventory = NamespaceInventory()
             try:
                 namespace.uri = ns_handler.prefix_to_ns_uri(prefix=prefix)
@@ -47,6 +54,10 @@ async def get_prefixes_definitions(project_id: PydanticObjectId) -> Dict[str, st
     return {x.prefix: (x.uri or '') for x in (await Namespace.find(
         Namespace.project == Project.link_from_id(project_id)
     ).to_list())}
+
+
+async def get_custom_prefixes_definitions() -> Dict[str, str]:
+    return {x.prefix: (x.uri or '') for x in (await NamespaceCustom.find_all().to_list())}
 
 
 async def get_ns_handler(project_id: PydanticObjectId) -> NamespaceInventory:

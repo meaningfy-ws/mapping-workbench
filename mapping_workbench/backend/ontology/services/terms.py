@@ -1,5 +1,5 @@
 import re
-from typing import List
+from typing import List, Dict
 
 import rdflib
 from beanie import PydanticObjectId
@@ -10,7 +10,7 @@ from mapping_workbench.backend.ontology.adapters.namespace_handler import Namesp
     NamespaceInventoryException
 from mapping_workbench.backend.ontology.models.term import Term, TermValidityResponse
 from mapping_workbench.backend.ontology.services.namespaces import discover_and_save_prefix_namespace, get_ns_handler, \
-    get_prefixes_definitions
+    get_prefixes_definitions, get_custom_prefixes_definitions
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.user.models.user import User
 
@@ -79,7 +79,14 @@ async def discover_and_save_terms(project_id: PydanticObjectId, user: User = Non
 
     project_link = Project.link_from_id(project_id)
 
+    custom_prefixes: Dict = await get_custom_prefixes_definitions()
+
+    for prefix, uri in custom_prefixes.items():
+        await discover_and_save_prefix_namespace(project_id, prefix, uri, False)
+
     for prefix, uri in g.namespaces():
+        if prefix in custom_prefixes:
+            continue
         await discover_and_save_prefix_namespace(project_id, prefix, uri)
 
     classes = await list_terms_by_query(QUERY_FOR_CLASSES, g=g)

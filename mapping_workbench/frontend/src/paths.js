@@ -134,6 +134,11 @@ export const paths = {
             edit: '/app/customers/:customerId/edit',
         },
         account: '/app/account',
+        ontology_namespaces_custom: {
+            index: '/app/ontology-namespaces-custom',
+            create: '/app/ontology-namespaces-custom/create',
+            edit: '/app/ontology-namespaces-custom/[id]/edit'
+        },
         ontology_namespaces: {
             index: '/app/ontology-namespaces',
             create: '/app/ontology-namespaces/create',
@@ -262,6 +267,11 @@ export const apiPaths = {
     specific_triple_map_fragments: {
         items: '/specific_triple_map_fragments',
         item: '/specific_triple_map_fragments/:id'
+    },
+
+    ontology_namespaces_custom: {
+        items: '/ontology/namespaces_custom',
+        item: '/ontology/namespaces_custom/:id'
     },
 
     ontology_namespaces: {

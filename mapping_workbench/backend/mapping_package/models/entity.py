@@ -13,6 +13,8 @@ from mapping_workbench.backend.core.models.base_entity import BaseTitledEntityLi
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
 from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroupState, MappingGroup
+from mapping_workbench.backend.ontology.models.namespace import NamespaceState, Namespace
+from mapping_workbench.backend.ontology.models.term import TermState, Term
 from mapping_workbench.backend.package_validator.services.sparql_cm_assertions import SPARQL_CM_ASSERTIONS_SUITE_TITLE
 from mapping_workbench.backend.resource_collection.models.entity import ResourceCollectionState, ResourceCollection, \
     ResourceFileState
@@ -93,6 +95,8 @@ class MappingPackageState(TestDataValidation, ObjectState):
     mapping_groups: Optional[List[MappingGroupState]] = []
     triple_map_fragments: Optional[List[TripleMapFragmentState]] = []
     resources: Optional[List[ResourceFileState]] = []
+    terms: Optional[List[TermState]] = []
+    namespaces: Optional[List[NamespaceState]] = []
 
 
 class MappingPackageTestDataValidationTree(BaseModel):
@@ -256,6 +260,20 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
 
         return resources_states
 
+    async def get_terms_states(self) -> List[TermState]:
+        terms = await Term.find(
+            Eq(Term.project, self.project.to_ref())
+        ).to_list()
+        terms_states = [await term.get_state() for term in terms]
+        return terms_states
+
+    async def get_namespaces_states(self) -> List[NamespaceState]:
+        namespaces = await Namespace.find(
+            Eq(Namespace.project, self.project.to_ref())
+        ).to_list()
+        namespaces_states = [await namespace.get_state() for namespace in namespaces]
+        return namespaces_states
+
     async def get_state(self) -> MappingPackageState:
         conceptual_mapping_rules = await self.get_conceptual_mapping_rules_states()
         mapping_groups = await self.get_mapping_groups_states()
@@ -266,6 +284,8 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
         )
         triple_map_fragments = await self.get_triple_map_fragments_states()
         resources = await self.get_resources_states()
+        terms = await self.get_terms_states()
+        namespaces = await self.get_namespaces_states()
 
         return MappingPackageState(
             mapping_package_oid=self.id,
@@ -285,7 +305,9 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
             conceptual_mapping_rules=conceptual_mapping_rules,
             mapping_groups=mapping_groups,
             triple_map_fragments=triple_map_fragments,
-            resources=resources
+            resources=resources,
+            terms=terms,
+            namespaces=namespaces
         )
 
     def set_state(self, state: MappingPackageState):

@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import List
 
 from beanie import PydanticObjectId
 from fastapi import APIRouter, Depends, status
@@ -6,8 +6,9 @@ from fastapi import APIRouter, Depends, status
 from mapping_workbench.backend.core.models.api_request import APIRequestWithProject, APIRequestWithProjectAndContent
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
 from mapping_workbench.backend.ontology.models.entity_api_response import APIListNamespacesPaginatedResponse, \
-    APIListTermsPaginatedResponse
-from mapping_workbench.backend.ontology.models.namespace import Namespace, NamespaceIn, NamespaceOut
+    APIListTermsPaginatedResponse, APIListNamespacesCustomPaginatedResponse
+from mapping_workbench.backend.ontology.models.namespace import Namespace, NamespaceIn, NamespaceOut, \
+    NamespaceCustomOut, NamespaceCustomIn, NamespaceCustom
 from mapping_workbench.backend.ontology.models.term import TermOut, TermIn, Term
 from mapping_workbench.backend.ontology.services import tasks
 from mapping_workbench.backend.ontology.services.api_for_namespaces import (
@@ -16,7 +17,8 @@ from mapping_workbench.backend.ontology.services.api_for_namespaces import (
     update_namespace,
     get_namespace,
     get_namespace_out,
-    delete_namespace, create_namespaces
+    delete_namespace, create_namespaces, list_namespaces_custom, create_namespace_custom, get_namespace_custom,
+    update_namespace_custom, get_namespace_custom_out, delete_namespace_custom
 )
 from mapping_workbench.backend.ontology.services.api_for_terms import list_terms, create_term, update_term, \
     get_term_out, get_term, delete_term
@@ -125,6 +127,77 @@ async def route_get_namespace(namespace: NamespaceOut = Depends(get_namespace_ou
 )
 async def route_delete_namespace(namespace: Namespace = Depends(get_namespace)):
     await delete_namespace(namespace)
+    return APIEmptyContentWithIdResponse(id=namespace.id)
+
+
+@router.get(
+    "/namespaces_custom",
+    description=f"List {NAME_FOR_MANY} custom namespaces",
+    name=f"{NAME_FOR_MANY}:list_namespaces_custom",
+    response_model=APIListNamespacesCustomPaginatedResponse
+)
+async def route_list_namespaces_custom(
+        page: int = None,
+        limit: int = None,
+        q: str = None
+):
+    filters: dict = {}
+    if q is not None:
+        filters['q'] = q
+
+    items, total_count = await list_namespaces_custom(filters, page, limit)
+    return APIListNamespacesCustomPaginatedResponse(
+        items=items,
+        count=total_count
+    )
+
+
+@router.post(
+    "/namespaces_custom",
+    description=f"Create {NAME_FOR_ONE} custom namespace",
+    name=f"{NAME_FOR_MANY}:create_{NAME_FOR_ONE}_namespace_custom",
+    response_model=NamespaceCustomOut,
+    status_code=status.HTTP_201_CREATED
+)
+async def route_create_namespace_custom(
+        data: NamespaceCustomIn,
+        user: User = Depends(current_active_user)
+):
+    return await create_namespace_custom(data, user=user)
+
+
+@router.patch(
+    "/namespaces_custom/{id}",
+    description=f"Update {NAME_FOR_ONE} custom namespace",
+    name=f"{NAME_FOR_MANY}:update_{NAME_FOR_ONE}_namespace_custom",
+    response_model=NamespaceCustomOut
+)
+async def route_update_namespace_custom(
+        data: NamespaceCustomIn,
+        namespace: NamespaceCustom = Depends(get_namespace_custom),
+        user: User = Depends(current_active_user)
+):
+    return await update_namespace_custom(namespace, data, user=user)
+
+
+@router.get(
+    "/namespaces_custom/{id}",
+    description=f"Get {NAME_FOR_ONE} custom namespace",
+    name=f"{NAME_FOR_MANY}:get_{NAME_FOR_ONE}_namespace_custom",
+    response_model=NamespaceOut
+)
+async def route_get_namespace_custom(namespace: NamespaceCustomOut = Depends(get_namespace_custom_out)):
+    return namespace
+
+
+@router.delete(
+    "/namespaces_custom/{id}",
+    description=f"Delete {NAME_FOR_ONE} custom namespace",
+    name=f"{NAME_FOR_MANY}:delete_{NAME_FOR_ONE}_namespace_custom",
+    response_model=APIEmptyContentWithIdResponse
+)
+async def route_delete_namespace_custom(namespace: NamespaceCustom = Depends(get_namespace_custom)):
+    await delete_namespace_custom(namespace)
     return APIEmptyContentWithIdResponse(id=namespace.id)
 
 

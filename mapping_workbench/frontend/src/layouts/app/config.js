@@ -190,6 +190,15 @@ export const useSections = () => {
             subheader: t(tokens.nav.admin),
             items: [
                 {
+                    title: t(tokens.nav.namespaces_custom),
+                    path: paths.app.ontology_namespaces_custom.index,
+                    icon: (
+                        <SvgIcon fontSize="small">
+                            <HiveIcon/>
+                        </SvgIcon>
+                    )
+                },
+                {
                     title: t(tokens.nav.tasks),
                     path: paths.app.tasks.index,
                     icon: (
