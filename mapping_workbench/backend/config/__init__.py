@@ -93,7 +93,7 @@ class EnvironmentSettings(BaseSettings):
 class ResetMWBSettings(BaseSettings):
 
     @env_property()
-    def MW_RESET_MONGO_DB_QUERY(self, config_value: str) -> str:
+    def MW_RESET_MONGODB_QUERY(self, config_value: str) -> str:
         return config_value
 
 
