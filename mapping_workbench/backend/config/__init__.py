@@ -90,6 +90,13 @@ class EnvironmentSettings(BaseSettings):
         return config_value
 
 
+class ResetMWBSettings(BaseSettings):
+
+    @env_property()
+    def MW_RESET_MONGO_DB_QUERY(self, config_value: str) -> str:
+        return config_value
+
+
 class Settings(
     AppSettings,
     ServerSettings,
@@ -97,7 +104,8 @@ class Settings(
     SecuritySettings,
     RMLMapperSettings,
     TaskManagerSettings,
-    EnvironmentSettings
+    EnvironmentSettings,
+    ResetMWBSettings
 ):
     pass
 
