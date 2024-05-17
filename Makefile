@@ -139,7 +139,9 @@ stop-mongo:
 	@ echo "Stopping the Mongo services"
 	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/mongodb/docker-compose.yml --env-file ${ENV_FILE} down
 
-
+reset_mwb_script:
+	@ echo "Resetting the Mapping Workbench"
+	@ python3 reset_mwb.py
 #-----------------------------------------------------------------------------
 # DEVELOPMENT
 #-----------------------------------------------------------------------------
