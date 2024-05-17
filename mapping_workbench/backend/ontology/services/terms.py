@@ -158,14 +158,18 @@ async def search_terms(q: str) -> List[str]:
     return [x.term for x in await Term.find(query_filters).to_list()]
 
 
+def get_prefixed_ns_term(ns_term, ns_definitions: dict):
+    parts = ns_term.split('#')
+    ns = parts[0] + '#'
+    term_value = parts[1] if len(parts) == 2 else ''
+    prefix = ns_definitions[ns] if ns in ns_definitions else ''
+    return f"{prefix}:{term_value}"
+
+
 async def get_prefixed_terms(project_id: PydanticObjectId):
     prefixes = invert_dict(await get_prefixes_definitions(project_id))
     terms = [x.term for x in await Term.find().to_list()]
     prefixed_terms = []
     for term in terms:
-        parts = term.split('#')
-        ns = parts[0] + '#'
-        term_value = parts[1] if len(parts) == 2 else ''
-        prefix = prefixes[ns] if ns in prefixes else ''
-        prefixed_terms.append(f"{prefix}:{term_value}")
+        prefixed_terms.append(get_prefixed_ns_term(term, prefixes))
     return list(set(prefixed_terms))
