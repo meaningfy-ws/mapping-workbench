@@ -191,6 +191,8 @@ export const Page = () => {
                     <ListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                        onSort={itemsSearch.handleSort}
+                        sort={itemsSearch.state.sort}
                         page={itemsSearch.state.page}
                         items={itemsSearch.pagedItems}
                         count={itemsSearch.count}

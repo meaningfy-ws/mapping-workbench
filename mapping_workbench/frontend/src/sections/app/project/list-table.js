@@ -11,12 +11,9 @@ import SvgIcon from '@mui/material/SvgIcon';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableSortLabel from '@mui/material/TableSortLabel';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import Tooltip from "@mui/material/Tooltip";
 import Button from "@mui/material/Button";
 
 import {PropertyList} from 'src/components/property-list';
@@ -26,14 +23,18 @@ import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {SeverityPill} from "../../../components/severity-pill";
 import {useProjects} from "../../../hooks/use-projects";
+import TablePagination from "../../components/table-pagination";
+import TableSorterHeader from "../../components/table-sorter-header";
+
 
 
 export const ListTable = (props) => {
     const {
         count = 0,
         items = [],
-        onPageChange = () => {
-        },
+        onPageChange = () => {},
+        onSort = () => {},
+        sort,
         onRowsPerPageChange,
         page = 0,
         rowsPerPage = 0,
@@ -45,63 +46,40 @@ export const ListTable = (props) => {
 
     const handleItemToggle = itemId => setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
 
+    const SorterHeader = (props) => <TableSorterHeader sort={sort}
+                                                       onSort={onSort}
+                                                       {...props}
+                                                        />
+
     return (
-        <div>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-                showFirstButton
-                showLastButton
-            />
+        <TablePagination
+            component="div"
+            count={count}
+            onPageChange={onPageChange}
+            onRowsPerPageChange={onRowsPerPageChange}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+            showFirstButton
+            showLastButton
+        >
             <Scrollbar>
                 <Table sx={{minWidth: 1200}}>
                     <TableHead>
                         <TableRow>
                             <TableCell/>
                             <TableCell width="25%">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        Title
-                                    </TableSortLabel>
-                                </Tooltip>
+                                <SorterHeader fieldName="title"/>
                             </TableCell>
                             <TableCell>
-                                Description
+                                <SorterHeader fieldName="description"/>
                             </TableCell>
                             <TableCell>
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        Version
-                                    </TableSortLabel>
-                                </Tooltip>
+                                <SorterHeader fieldName="version"/>
                             </TableCell>
                             <TableCell align="left">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        active
-                                        direction="desc"
-                                    >
-                                        Created
-                                    </TableSortLabel>
-                                </Tooltip>
+                                <SorterHeader fieldName="created_at"
+                                              title="created"/>
                             </TableCell>
                             <TableCell align="right">
                                 Actions
@@ -303,18 +281,7 @@ export const ListTable = (props) => {
                     </TableBody>
                 </Table>
             </Scrollbar>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-                showFirstButton
-                showLastButton
-            />
-        </div>
+        </TablePagination>
     );
 };
 

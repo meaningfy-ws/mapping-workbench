@@ -29,6 +29,8 @@ const useItemsSearch = () => {
             status: [],
             inStock: undefined
         },
+        sortDirection: undefined,
+        sortField: '',
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -40,6 +42,10 @@ const useItemsSearch = () => {
             page: 0
         }));
     };
+
+    const handleSorterChange = sortField => {
+        setState(prevState => ({sortField, sortDirection: state.sortField === sortField && prevState.sortDirection === -1 ? 1 : -1 }))
+    }
 
     const handlePageChange = (event, page) => {
         setState((prevState) => ({
@@ -59,6 +65,7 @@ const useItemsSearch = () => {
         handleFiltersChange,
         handlePageChange,
         handleRowsPerPageChange,
+        handleSorterChange,
         state
     };
 };
@@ -179,6 +186,8 @@ const Page = () => {
                         page={itemsSearch.state.page}
                         items={itemsStore.items}
                         count={itemsStore.itemsCount}
+                        onSort={itemsSearch.handleSorterChange}
+                        sort={{direction: itemsSearch.state.sortDirection, column: itemsSearch.state.sortField}}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
                     />

@@ -246,29 +246,10 @@ export const FileCollectionListTable = (props) => {
                             <TableRow>
                                 <TableCell/>
                                 <TableCell width="25%">
-                                    <Tooltip
-                                        enterDelay={300}
-                                        title="Sort"
-                                    >
-                                        <TableSortLabel
-                                            direction="asc"
-                                        >
-                                            Title
-                                        </TableSortLabel>
-                                    </Tooltip>
+                                    Title
                                 </TableCell>
                                 <TableCell align="left">
-                                    <Tooltip
-                                        enterDelay={300}
-                                        title="Sort"
-                                    >
-                                        <TableSortLabel
-                                            active
-                                            direction="desc"
-                                        >
-                                            Created
-                                        </TableSortLabel>
-                                    </Tooltip>
+                                    Created
                                 </TableCell>
                                 <TableCell align="right">
                                     Actions

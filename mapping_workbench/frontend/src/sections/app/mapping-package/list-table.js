@@ -35,6 +35,7 @@ import {sessionApi} from "../../../api/session";
 import { saveAs } from 'file-saver';
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 import TablePagination from "../../components/table-pagination";
+import TableSorterHeader from "../../components/table-sorter-header";
 
 
 
@@ -274,6 +275,8 @@ export const ListTable = (props) => {
         onPageChange = () => {
         },
         onRowsPerPageChange,
+        sort,
+        onSort,
         page = 0,
         rowsPerPage = 0,
         sectionApi
@@ -289,6 +292,17 @@ export const ListTable = (props) => {
 
             return itemId;
         });
+    }
+
+    const SorterHeader = (props) => {
+        console.log(sort.column, sort.direction)
+        const direction = props.fieldName === sort.column && sort.direction === 1 ? 'asc' : 'desc';
+        return(
+            <TableSorterHeader sort={{direction, column: sort.column}}
+                           onSort={onSort}
+                           {...props}
+            />
+        )
     }
 
     return (
@@ -310,41 +324,14 @@ export const ListTable = (props) => {
                             <TableRow>
                                 <TableCell/>
                                 <TableCell width="25%">
-                                    <Tooltip
-                                        enterDelay={300}
-                                        title="Sort"
-                                    >
-                                        <TableSortLabel
-                                            direction="asc"
-                                        >
-                                            Title
-                                        </TableSortLabel>
-                                    </Tooltip>
+                                    <SorterHeader fieldName='title'/>
                                 </TableCell>
                                 <TableCell>
-                                    <Tooltip
-                                        enterDelay={300}
-                                        title="Sort"
-                                    >
-                                        <TableSortLabel
-                                            direction="asc"
-                                        >
-                                            Identifier
-                                        </TableSortLabel>
-                                    </Tooltip>
+                                      <SorterHeader fieldName='identifier'/>
                                 </TableCell>
                                 <TableCell align="left">
-                                    <Tooltip
-                                        enterDelay={300}
-                                        title="Sort"
-                                    >
-                                        <TableSortLabel
-                                            active
-                                            direction="desc"
-                                        >
-                                            Created
-                                        </TableSortLabel>
-                                    </Tooltip>
+                                      <SorterHeader fieldName='created_at'
+                                                    title='Created'/>
                                 </TableCell>
                                 <TableCell align="center">
                                     Actions

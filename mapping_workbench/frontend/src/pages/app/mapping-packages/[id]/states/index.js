@@ -57,9 +57,7 @@ const useItemsSearch = () => {
     }
 
     const handleSort = (sortField) => {
-        if(state.sortField === sortField)
-            setState(prevState => ({ ...prevState, sortDirection: prevState.sortDirection > 0 ? -1 : 1 }))
-        else setState(prevState => ({ ...prevState, sortField, sortDirection: -1 }))
+        setState(prevState => ({sortField, sortDirection: state.sortField === sortField && prevState.sortDirection === -1 ? 1 : -1 }))
     }
 
     return {

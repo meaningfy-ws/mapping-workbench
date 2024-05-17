@@ -46,7 +46,7 @@ export const ListTable = (props) => {
         >
             <TableSortLabel
                 active={sortField === fieldName}
-                direction={sortDirection > 0 ? "asc" : "desc"}
+                direction={sortField === fieldName && sortDirection === 1 ? "asc" : "desc"}
                 onClick={() => onSort(fieldName)}>
                 {title ?? fieldName}
             </TableSortLabel>
