@@ -100,7 +100,7 @@ def reset_mwb():
         logging.error("DEBUG_MODE is disabled. Please enable DEBUG_MODE in .env file.")
         return
 
-    if not settings.MW_RESET_MONGO_DB_QUERY:
+    if not settings.MW_RESET_MONGODB_QUERY:
         logging.error(
             f"RESET QUERY does not exist. Ensure that you have have updated the .env file with the correct RESET QUERY.")
         return
@@ -119,5 +119,4 @@ def reset_mwb():
 
 
 if __name__ == "__main__":
-    #print(settings.MW_RESET_MONGO_DB_QUERY)
     reset_mwb()
