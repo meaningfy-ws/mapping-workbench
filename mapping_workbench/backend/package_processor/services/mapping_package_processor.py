@@ -3,7 +3,7 @@ from typing import List
 
 from beanie import PydanticObjectId
 
-from mapping_workbench.backend.logger.services.log import log_info
+from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState, MappingPackage, \
     MappingPackageStateGate
 from mapping_workbench.backend.mapping_package.services.api import get_mapping_package
@@ -49,41 +49,41 @@ async def process_mapping_package(
     mapping_package: MappingPackage = await get_mapping_package(package_id)
     project_id: PydanticObjectId = mapping_package.project.to_ref().id
 
-    log_info(f"Processing Mapping Package `{mapping_package.identifier}` ... ")
+    mwb_logger.log_all_info(f"Processing Mapping Package '{mapping_package.identifier}' ... ")
 
     if TaskToRun.TRANSFORM_TEST_DATA.value in tasks_to_run:
-        log_info(f"Transforming `{mapping_package.identifier}` Test Data ...")
+        mwb_logger.log_all_info(f"Transforming '{mapping_package.identifier}' Test Data ...")
         await transform_mapping_package(
             mapping_package=mapping_package,
             user=user
         )
-        log_info(f"Transforming `{mapping_package.identifier}` Test Data ... DONE")
+        mwb_logger.log_all_info(f"Transforming '{mapping_package.identifier}' Test Data ... DONE")
 
     if TaskToRun.GENERATE_CM_ASSERTIONS.value in tasks_to_run:
-        log_info("Generating CM Assertions Queries ...")
+        mwb_logger.log_all_info("Generating CM Assertions Queries ...")
         await generate_and_save_cm_assertions_queries(
             project_id=project_id,
             cleanup=True,
             user=user
         )
-        log_info("Generating CM Assertions Queries ... DONE")
+        mwb_logger.log_all_info("Generating CM Assertions Queries ... DONE")
 
-    log_info("Initializing Package State ...")
+    mwb_logger.log_all_info("Initializing Package State ...")
     mapping_package_state: MappingPackageState = await create_mapping_package_state(mapping_package)
-    log_info("Initializing Package State ... DONE")
+    mwb_logger.log_all_info("Initializing Package State ... DONE")
 
     if TaskToRun.VALIDATE_PACKAGE.value in tasks_to_run:
-        log_info("Validating Package State ...")
+        mwb_logger.log_all_info("Validating Package State ...")
         validate_mapping_package(mapping_package_state, tasks_to_run)
-        log_info("Validating Package State ... DONE")
+        mwb_logger.log_all_info("Validating Package State ... DONE")
 
-    log_info("Saving Package State ...")
+    mwb_logger.log_all_info("Saving Package State ...")
     state_id = await save_object_state(mapping_package_state.on_create(user=user))
     mapping_package_state_gate: MappingPackageStateGate = MappingPackageStateGate(**mapping_package_state.model_dump())
     mapping_package_state_gate.id = state_id
     await mapping_package_state_gate.on_create(user=user).save()
-    log_info("Saving Package State ... DONE")
+    mwb_logger.log_all_info("Saving Package State ... DONE")
 
-    log_info("Processing Mapping Package `{mapping_package.identifier}` ... DONE")
+    mwb_logger.log_all_info("Processing Mapping Package '{mapping_package.identifier}' ... DONE")
 
     return mapping_package_state
