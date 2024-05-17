@@ -11,6 +11,7 @@ class OntologyNamespacesApi extends SectionApi {
 
     constructor() {
         super("ontology_namespaces");
+        this.isProjectResource = true;
     }
 }
 

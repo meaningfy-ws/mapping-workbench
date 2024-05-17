@@ -16,6 +16,7 @@ import {useRouter} from 'src/hooks/use-router';
 import {RouterLink} from 'src/components/router-link';
 import {FormTextField} from "../../../components/app/form/text-field";
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
+import {sessionApi} from "../../../api/session";
 
 
 export const EditForm = (props) => {
@@ -42,6 +43,7 @@ export const EditForm = (props) => {
             try {
                 const requestValues = values;
                 let response;
+                requestValues['project'] = sessionApi.getSessionProject();
                 requestValues['type'] = values['type'] || null;
                 if (itemctx.isNew) {
                     response = await sectionApi.createItem(requestValues);

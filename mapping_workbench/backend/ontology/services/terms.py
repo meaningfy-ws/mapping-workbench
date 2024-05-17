@@ -2,6 +2,7 @@ import re
 from typing import List
 
 import rdflib
+from beanie import PydanticObjectId
 from rdflib import RDF
 
 from mapping_workbench.backend.ontology.adapters import invert_dict
@@ -10,6 +11,7 @@ from mapping_workbench.backend.ontology.adapters.namespace_handler import Namesp
 from mapping_workbench.backend.ontology.models.term import Term, TermValidityResponse
 from mapping_workbench.backend.ontology.services.namespaces import discover_and_save_prefix_namespace, get_ns_handler, \
     get_prefixes_definitions
+from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.user.models.user import User
 
 EPO_OWL_SOURCE_CONTENT = \
@@ -72,27 +74,33 @@ async def list_known_terms(saved: bool = False) -> List:
     return list(set(classes + properties))
 
 
-async def discover_and_save_terms(user: User = None):
+async def discover_and_save_terms(project_id: PydanticObjectId, user: User = None):
     g = init_rdflib_graph()
 
+    project_link = Project.link_from_id(project_id)
+
     for prefix, uri in g.namespaces():
-        await discover_and_save_prefix_namespace(prefix, uri)
+        await discover_and_save_prefix_namespace(project_id, prefix, uri)
 
     classes = await list_terms_by_query(QUERY_FOR_CLASSES, g=g)
     properties = await list_terms_by_query(QUERY_FOR_PROPERTIES, g=g)
     for term in list(set(classes + properties)):
-        if not await Term.find_one(
-                Term.term == term
+        if not await get_term(
+                term=term,
+                project_id=project_id
         ):
-            await Term(term=term).on_create(user=user).save()
+            await Term(
+                project=project_link,
+                term=term
+            ).on_create(user=user).save()
 
 
 async def is_known_term(term: str) -> bool:
     return True
 
 
-async def check_content_terms_validity(content: str) -> List[TermValidityResponse]:
-    ns_handler: NamespaceInventory = await get_ns_handler()
+async def check_content_terms_validity(content: str, project_id: PydanticObjectId) -> List[TermValidityResponse]:
+    ns_handler: NamespaceInventory = await get_ns_handler(project_id)
 
     terms_validity: List[TermValidityResponse] = []
     terms = sorted(list(set(re.findall(r"([\w.\-_]+:[\w.\-_]+)", content))))
@@ -105,12 +113,22 @@ async def check_content_terms_validity(content: str) -> List[TermValidityRespons
         try:
             ns_term = ns_handler.qname_to_uri(term, error_fail=True)
             term_validity.ns_term = ns_term
-            term_validity.is_valid = True if await Term.find_one(Term.term == ns_term) else False
+            term_validity.is_valid = True if (await get_term(
+                term=ns_term,
+                project_id=project_id
+            )) else False
         except NamespaceInventoryException as e:
             term_validity.is_valid = False
             term_validity.info = e.info or str(e)
         terms_validity.append(term_validity)
     return terms_validity
+
+
+async def get_term(term: str, project_id: PydanticObjectId) -> Term:
+    return await Term.find_one(
+        Term.term == term,
+        Term.project == Project.link_from_id(project_id)
+    )
 
 
 def last_term_for_search(q: str) -> str:
@@ -133,8 +151,8 @@ async def search_terms(q: str) -> List[str]:
     return [x.term for x in await Term.find(query_filters).to_list()]
 
 
-async def get_prefixed_terms():
-    prefixes = invert_dict(await get_prefixes_definitions())
+async def get_prefixed_terms(project_id: PydanticObjectId):
+    prefixes = invert_dict(await get_prefixes_definitions(project_id))
     terms = [x.term for x in await Term.find().to_list()]
     prefixed_terms = []
     for term in terms:

@@ -19,9 +19,8 @@ export const AuthGuard = (props) => {
   const {data} = useSession()
   const [checked, setChecked] = useState(false);
   const check = async () => {
-    console.log('session',data)
     //await auth.verifyAuth();
-    if (!auth.isAuthenticated || !data.user) {
+    if (!auth.isAuthenticated || (data && !data.user)) {
       const searchParams = new URLSearchParams({ returnTo: window.location.pathname }).toString();
       const href = loginPaths[auth.issuer] + `?${searchParams}`;
       await router.replace(href);

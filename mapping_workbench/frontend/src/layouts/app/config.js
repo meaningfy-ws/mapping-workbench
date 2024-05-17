@@ -162,32 +162,33 @@ export const useSections = () => {
                         path: paths.app.fields_registry.elements.import
                     }
                 ]
-            });
+            },
+            {
+                title: t(tokens.nav.ontology),
+                path: paths.app.ontology_namespaces.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <SchemaIcon/>
+                    </SvgIcon>
+                ),
+                items: [
+                    {
+                        title: t(tokens.nav.namespaces),
+                        path: paths.app.ontology_namespaces.index
+                    },
+                    {
+                        title: t(tokens.nav.terms),
+                        path: paths.app.ontology_terms.index
+                    }
+                ]
+            }
+        );
     }
     items.resources.push(sections);
     items.admin.push(
         {
             subheader: t(tokens.nav.admin),
             items: [
-                {
-                    title: t(tokens.nav.ontology),
-                    path: paths.app.ontology_namespaces.index,
-                    icon: (
-                        <SvgIcon fontSize="small">
-                            <SchemaIcon/>
-                        </SvgIcon>
-                    ),
-                    items: [
-                        {
-                            title: t(tokens.nav.namespaces),
-                            path: paths.app.ontology_namespaces.index
-                        },
-                        {
-                            title: t(tokens.nav.terms),
-                            path: paths.app.ontology_terms.index
-                        }
-                    ]
-                },
                 {
                     title: t(tokens.nav.tasks),
                     path: paths.app.tasks.index,

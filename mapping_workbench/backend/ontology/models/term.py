@@ -6,7 +6,9 @@ from beanie import Indexed
 from pydantic import BaseModel
 from pymongo import IndexModel
 
-from mapping_workbench.backend.core.models.base_entity import BaseEntity, BaseEntityInSchema, BaseEntityOutSchema
+from mapping_workbench.backend.core.models.base_entity import BaseEntity
+from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntityInSchema, \
+    BaseProjectResourceEntityOutSchema, BaseProjectResourceEntity
 
 
 class TermType(Enum):
@@ -14,17 +16,17 @@ class TermType(Enum):
     PROPERTY = "PROPERTY"
 
 
-class TermIn(BaseEntityInSchema):
+class TermIn(BaseProjectResourceEntityInSchema):
     term: Optional[str] = None
     type: Optional[TermType] = None
 
 
-class TermOut(BaseEntityOutSchema):
+class TermOut(BaseProjectResourceEntityOutSchema):
     term: Optional[str] = None
     type: Optional[TermType] = None
 
 
-class Term(BaseEntity):
+class Term(BaseProjectResourceEntity):
     term: Indexed(str)
     type: Optional[TermType] = None
 

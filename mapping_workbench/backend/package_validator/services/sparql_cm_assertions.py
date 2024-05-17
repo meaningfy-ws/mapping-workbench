@@ -69,7 +69,7 @@ async def generate_and_save_cm_assertions_queries(
     sparql_test_suite_link = SPARQLTestSuite.link_from_id(sparql_test_suite.id)
 
     if prefixes_definitions is None:
-        prefixes_definitions = await get_prefixes_definitions()
+        prefixes_definitions = await get_prefixes_definitions(project_id)
 
     cm_rules: List[ConceptualMappingRule] = await get_conceptual_mapping_rules_for_project(project_id=project_id)
     for index, cm_rule in enumerate(cm_rules):

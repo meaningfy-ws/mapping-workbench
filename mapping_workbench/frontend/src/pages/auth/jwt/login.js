@@ -25,7 +25,7 @@ import {Issuer} from 'src/utils/auth';
 import {users} from 'src/api/auth/data';
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import { signIn, useSession, signOut } from 'next-auth/react';
+import {signIn, useSession, signOut} from 'next-auth/react';
 import GoogleIcon from '@mui/icons-material/Google';
 import Divider from "@mui/material/Divider";
 
@@ -57,8 +57,8 @@ const Page = () => {
     const searchParams = useSearchParams();
     const returnTo = searchParams.get('returnTo');
     const {issuer, signIn: singInJWT} = useAuth();
-      const { data: session } = useSession()
-    console.log("session",session)
+    const {data: session} = useSession()
+
     const formik = useFormik({
         initialValues,
         validationSchema,
@@ -157,30 +157,30 @@ const Page = () => {
                                     {formik.errors.submit}
                                 </FormHelperText>
                             )}
-<Stack gap={3}>
-                            <Button
-                                disabled={formik.isSubmitting}
-                                fullWidth
-                                size="large"
-                                sx={{mt: 2}}
-                                type="submit"
-                                variant="contained"
-                            >
-                                Log In
-                            </Button>
-                            <Divider>or</Divider>
-    {session?.user?.email ?
-        <Button fullWidth
-                                     startIcon={<GoogleIcon/>}
-                                onClick={() => signOut()}>
-                                Sign Out
-                            </Button> :
-        <Button fullWidth
-                                     startIcon={<GoogleIcon/>}
-                                onClick={() => signIn('google')}>
-                                Sign in with Google
-                            </Button>}
-    </Stack>
+                            <Stack gap={3}>
+                                <Button
+                                    disabled={formik.isSubmitting}
+                                    fullWidth
+                                    size="large"
+                                    sx={{mt: 2}}
+                                    type="submit"
+                                    variant="contained"
+                                >
+                                    Log In
+                                </Button>
+                                <Divider>or</Divider>
+                                {session?.user?.email ?
+                                    <Button fullWidth
+                                            startIcon={<GoogleIcon/>}
+                                            onClick={() => signOut()}>
+                                        Sign Out
+                                    </Button> :
+                                    <Button fullWidth
+                                            startIcon={<GoogleIcon/>}
+                                            onClick={() => signIn('google')}>
+                                        Sign in with Google
+                                    </Button>}
+                            </Stack>
                         </form>
                     </CardContent>
                 </Card>
