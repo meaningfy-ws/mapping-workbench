@@ -94,6 +94,7 @@ const CustomApp = (props) => {
                                 </Head>
                                 <RTL direction={settings.direction}>
                                   <CssBaseline />
+                                  <SessionProvider session={session}>
                                   {showSplashScreen
                                     ? <SplashScreen />
                                     : (
@@ -127,6 +128,7 @@ const CustomApp = (props) => {
                                         />
                                       </>
                                     )}
+                                     </SessionProvider>
                                   <Toaster />
                                 </RTL>
                               </ThemeProvider>

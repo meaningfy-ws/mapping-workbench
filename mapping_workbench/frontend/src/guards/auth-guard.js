@@ -16,7 +16,7 @@ export const AuthGuard = (props) => {
   const { children } = props;
   const router = useRouter();
   const auth = useAuth();
-  const {data} = useSession()
+  const {data} = useSession();
   const [checked, setChecked] = useState(false);
   const check = async () => {
     //await auth.verifyAuth();
