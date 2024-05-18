@@ -5,7 +5,7 @@ import rdflib
 from pydantic import validate_call
 from pyshacl import validate
 
-from mapping_workbench.backend.logger.services.log import log_error
+from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.ontology.services.terms import get_prefixed_ns_term
 from mapping_workbench.backend.package_validator.adapters.data_validator import TestDataValidator
 from mapping_workbench.backend.package_validator.models.shacl_validation import SHACLQueryTestDataResult, \
@@ -125,7 +125,7 @@ class SHACLValidator(TestDataValidator):
                 shacl_validation_result.results = results
 
         except Exception as e:
-            log_error("ERROR :: SHACL_VALIDATION :: " + str(e))
+            mwb_logger.log_all_error("Exception occurred while running SHACL validation", str(e))
             shacl_validation_result.error = str(e)[:100]
 
         return shacl_validation_result

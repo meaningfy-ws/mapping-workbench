@@ -154,16 +154,16 @@ export const EditForm = (props) => {
         }
 
         const initialValues = {
-            source_structural_element: (item.source_structural_element && item.source_structural_element.id) ?? '',
+            source_structural_element: item.source_structural_element?.id ?? '',
             min_sdk_version: item.min_sdk_version ?? '',
             max_sdk_version: item.max_sdk_version ?? '',
-            //mapping_group_id: item.mapping_group_id ?? '',
+            // mapping_group_id: item.mapping_group_id ?? '',
             status: item.status ?? '',
             target_class_path: item.target_class_path ?? '',
             target_property_path: item.target_property_path ?? '',
             refers_to_mapping_package_ids: item.refers_to_mapping_package_ids ?? [],
-            sparql_assertions: (item.sparql_assertions ?? []).map(x => x.id),
-            triple_map_fragment: (item.triple_map_fragment && item.triple_map_fragment.id) ?? '',
+            sparql_assertions: item.sparql_assertions?.map(x => x.id),
+            triple_map_fragment: item.triple_map_fragment?.id ?? '',
             mapping_notes: item.mapping_notes ?? [],
             editorial_notes: item.editorial_notes ?? [],
             feedback_notes: item.feedback_notes ?? [],

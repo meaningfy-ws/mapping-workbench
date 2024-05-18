@@ -143,3 +143,4 @@ infra/backend/src
 activate_venv.sh
 tmp/
 logs/
+.mongodump

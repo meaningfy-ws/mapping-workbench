@@ -32,7 +32,7 @@ class NamespaceState(ObjectState):
 
 
 class Namespace(BaseProjectResourceEntity, StatefulObjectABC):
-    prefix: Indexed(str, index_type=pymongo.TEXT)
+    prefix: Indexed(str, index_type=pymongo.TEXT, unique=True)
     uri: Optional[str] = None
     is_syncable: Optional[bool] = True
 

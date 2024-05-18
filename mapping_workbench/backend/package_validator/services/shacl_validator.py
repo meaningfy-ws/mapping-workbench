@@ -1,6 +1,6 @@
 from typing import List
 
-from mapping_workbench.backend.logger.services.log import log_error
+from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState
 from mapping_workbench.backend.mapping_package.services.data import get_mapping_package_state_ns_definitions
 from mapping_workbench.backend.ontology.services.terms import get_prefixed_ns_term
@@ -135,7 +135,7 @@ def validate_tests_data_with_shacl_test_suites(
                 )
             )
         except Exception as e:
-            log_error(f"ERROR :: SHACL Validation :: {str(e)}")
+            mwb_logger.log_all_info(f"ERROR :: SHACL Validation :: {str(e)}")
 
     return tests_data
 

@@ -27,6 +27,9 @@ import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {SeverityPill} from "../../../components/severity-pill";
 import {useProjects} from "../../../hooks/use-projects";
+import TimeTransformer from "../../../utils/time-transformer";
+import {useGlobalState} from "../../../hooks/use-global-state";
+import timeTransformer from "../../../utils/time-transformer";
 
 
 export const ListTable = (props) => {
@@ -40,6 +43,8 @@ export const ListTable = (props) => {
         rowsPerPage = 0,
         sectionApi
     } = props;
+
+    const {timeSetting} = useGlobalState()
 
     const router = useRouter();
 
@@ -205,7 +210,7 @@ export const ListTable = (props) => {
                                             </SeverityPill>
                                         </TableCell> */}
                                         <TableCell align="left">
-                                            {(item.created_at).replace("T", " ").split(".")[0]}
+                                            {timeTransformer(item.created_at, timeSetting)}
                                         </TableCell>
                                         <TableCell align="right">
                                             <Button
