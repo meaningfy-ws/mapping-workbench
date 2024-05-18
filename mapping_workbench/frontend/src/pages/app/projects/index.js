@@ -101,7 +101,11 @@ const useItemsSearch = (items) => {
 
     const handleSort = (column, desc) => {
         setState(prevState=> ({ ...prevState, sort: {column,
-               direction: prevState.sort.column === column ? prevState.sort.direction === "asc" ? "desc" : "asc" : desc ? "desc" : "asc" }}))
+               direction: prevState.sort.column === column
+                   ? prevState.sort.direction === "asc"
+                       ? "desc"
+                       : "asc"
+                   : "desc"}}))
 
     }
 

@@ -24,11 +24,9 @@ import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {SeverityPill} from "../../../components/severity-pill";
 import {useProjects} from "../../../hooks/use-projects";
 import TablePagination from "../../components/table-pagination";
-import TableSorterHeader from "../../components/table-sorter-header";
-
-import TimeTransformer from "../../../utils/time-transformer";
 import {useGlobalState} from "../../../hooks/use-global-state";
 import timeTransformer from "../../../utils/time-transformer";
+import TableSorterHeader from "../../components/table-sorter-header";
 
 
 export const ListTable = (props) => {
@@ -50,6 +48,11 @@ export const ListTable = (props) => {
     const projectStore = useProjects()
 
     const handleItemToggle = itemId => setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
+
+    const SorterHeader = (props) => <TableSorterHeader sort={sort}
+                                                       onSort={onSort}
+                                                       {...props}
+                                                        />
 
     return (
         <TablePagination
@@ -95,10 +98,7 @@ export const ListTable = (props) => {
 
                             return (
                                 <Fragment key={item_id}>
-                                    <TableRow
-                                        hover
-                                        key={item_id}
-                                    >
+                                    <TableRow hover>
                                         <TableCell
                                             padding="checkbox"
                                             sx={{
@@ -129,11 +129,11 @@ export const ListTable = (props) => {
                                             <Typography
                                                 variant="subtitle3"
                                             >
-                                                {isSessionProject && <SeverityPill color={statusColor}>
-                                                    <b>{item.title}</b>
-                                                </SeverityPill>
-                                                }
-                                                {!isSessionProject && item.title}
+                                                {isSessionProject
+                                                    ? <SeverityPill color={statusColor}>
+                                                        <b>{item.title}</b>
+                                                    </SeverityPill>
+                                                    : item.title}
                                             </Typography>
                                         </TableCell>
                                         <TableCell>

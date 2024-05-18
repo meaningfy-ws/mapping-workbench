@@ -44,7 +44,7 @@ const useItemsSearch = () => {
     };
 
     const handleSorterChange = sortField => {
-        setState(prevState => ({sortField, sortDirection: state.sortField === sortField && prevState.sortDirection === -1 ? 1 : -1 }))
+        setState(prevState => ({...prevState, sortField, sortDirection: state.sortField === sortField && prevState.sortDirection === -1 ? 1 : -1 }))
     }
 
     const handlePageChange = (event, page) => {

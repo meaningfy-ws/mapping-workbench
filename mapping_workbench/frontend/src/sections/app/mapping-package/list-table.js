@@ -292,6 +292,13 @@ export const ListTable = (props) => {
         setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
     }
 
+    console.log(sort)
+
+    const SorterHeader = (props) => <TableSorterHeader sort={{direction:sort.direction === 1 ? 'asc' : 'desc',column: sort.column}}
+                                                       onSort={onSort}
+                                                       {...props}
+                                                        />
+
     return (
         <div>
             <TablePagination
