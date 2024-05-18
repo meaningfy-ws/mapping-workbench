@@ -37,7 +37,7 @@ async def discover_and_save_prefix_namespace(
         project_id: PydanticObjectId, prefix: str, uri: str = None,
         discover: bool = True
 ):
-    namespace: Namespace = await init_prefix_namespace(project_id, prefix, uri)
+    namespace: Namespace = await init_prefix_namespace(project_id, prefix, uri, is_syncable=True)
     if namespace.is_syncable:
         if uri:
             namespace.uri = uri

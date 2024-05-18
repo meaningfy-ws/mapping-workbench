@@ -18,19 +18,19 @@ class LogRecord(BaseModel):
 
     log_severity: LogSeverity
     message: str
-    timestamp: Optional[datetime] = datetime.now()
+    timestamp: Optional[datetime] = datetime.utcnow()
     stack_trace: Optional[str] = None
 
     @model_validator(mode='after')
     def stack_trace_must_exist_on_error(self) -> Self:
-        # if self.log_severity == LogSeverity.ERROR and not self.stack_trace:
-        #     raise ValueError(f"Stack trace must exist if log severity is {LogSeverity.ERROR}")
-        # if self.log_severity == LogSeverity.INFO and self.stack_trace:
-        #     raise ValueError(f"Stack trace must not exist if log severity is {LogSeverity.INFO}")
+        if self.log_severity == LogSeverity.ERROR and not self.stack_trace:
+            raise ValueError(f"Stack trace must exist if log severity is {LogSeverity.ERROR}")
+        if self.log_severity == LogSeverity.INFO and self.stack_trace:
+            raise ValueError(f"Stack trace must not exist if log severity is {LogSeverity.INFO}")
         return self
 
     def __str__(self) -> str:
-        self.timestamp = datetime.now()
+        return_str = f"{self.timestamp} - {self.log_severity.value}: {self.message}"
         if self.stack_trace:
-            return f"{self.timestamp} - {self.log_severity.value}: {self.message} - Stack trace: {self.stack_trace}"
-        return f"{self.message}"
+            return_str = return_str + f"- Stack trace: {self.stack_trace}"
+        return return_str

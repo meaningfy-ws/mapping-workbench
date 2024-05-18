@@ -10,15 +10,21 @@ import CardHeader from '@mui/material/CardHeader';
 import Grid from '@mui/material/Unstable_Grid2';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
+import Checkbox from '@mui/material/Checkbox'
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormGroup from "@mui/material/FormGroup";
+import Typography from "@mui/material/Typography";
 
 import {paths} from 'src/paths';
-import {RouterLink} from 'src/components/router-link';
 import {useRouter} from 'src/hooks/use-router';
-import {FormTextField} from "../../../components/app/form/text-field";
-import {FormTextArea} from "../../../components/app/form/text-area";
-import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
-import {useProjects} from "../../../hooks/use-projects";
-
+import {useProjects} from "src/hooks/use-projects";
+import {RouterLink} from 'src/components/router-link';
+import {FormTextField} from "src/components/app/form/text-field";
+import {FormTextArea} from "src/components/app/form/text-area";
+import {fieldsRegistryApi} from "src/api/fields-registry";
+import {ontologyNamespacesApi} from "src/api/ontology-namespaces";
+import {ontologyTermsApi} from "src/api/ontology-terms";
+import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 
 export const EditForm = (props) => {
     const {itemctx, ...other} = props;
@@ -29,10 +35,12 @@ export const EditForm = (props) => {
 
     const sourceSchemaTypes = [
         {
-            value: 'JSON'
+            value: 'JSON',
+            label: 'JSON (eForms)'
         },
         {
-            value: 'XSD'
+            value: 'XSD',
+            label: 'XSD'
         }
     ];
 
@@ -40,6 +48,8 @@ export const EditForm = (props) => {
         title: item.title ?? '',
         description: item.description ?? '',
         version: item.version ?? '',
+        automatically_discover_namespaces: item.automatically_discover_namespaces ?? true,
+        add_specific_namespaces: item.add_specific_namespaces ?? true,
         source_schema: {
             title: item.source_schema?.title ?? '',
             description: item.source_schema?.description ?? '',
@@ -51,8 +61,47 @@ export const EditForm = (props) => {
             description: item.target_ontology?.description ?? '',
             version: item.target_ontology?.version ?? '',
             uri: item.target_ontology?.uri ?? ''
+        },
+        import_eform: {
+            checked: item.import_eform?.checked ?? true,
+            github_repository_url: item.import_eform?.github_repository_url ?? '',
+            branch_or_tag_name: item.import_eform?.branch_or_tag_name ?? '',
         }
+    }
+
+
+
+    const handleDiscover = () => {
+        const toastId = toastLoad('Discovering terms ...')
+        ontologyTermsApi.discoverTerms()
+            .then(res => toastSuccess(`${res.task_name} successfully started.`, toastId))
+            .catch(err => toastError(`Discovering terms failed: ${err.message}.`, toastId))
     };
+
+    const handleImportFieldRegestry = (values, projectId) => {
+        const toastId = toastLoad(`Importing eForm Fields ... `)
+        fieldsRegistryApi.importEFormsFromGithub({
+            ...values,
+            project_id: projectId,
+            checked: undefined
+        })
+            .then(res => toastSuccess(`${res.task_name} successfully started.`, toastId))
+            .catch(err => toastError(`eForm Fields import failed: ${err.message}.`, toastId))
+    }
+
+    const handleCreateNamespaces = () => {
+        const namespaces = [
+            { prefix: 'epo',uri: 'http://data.europa.eu/a4g/ontology#',is_syncable: false },
+            { prefix: 'epo-not',uri: 'http://data.europa.eu/a4g/ontology#',is_syncable: false },
+            { prefix: 'cpov',uri: 'http://data.europa.eu/a4g/ontology#',is_syncable: false },
+            { prefix: 'dct',uri: 'http://data.europa.eu/a4g/ontology#',is_syncable: false }
+        ]
+
+        const toastId = toastLoad(`Creating Namespaces`)
+        ontologyNamespacesApi.createNamespaces(namespaces)
+            .then(res => toastSuccess(`Namespaces Created.`, toastId))
+            .catch(err => toastError(err.message, toastId))
+    }
 
     const formik = useFormik({
         initialValues,
@@ -63,29 +112,33 @@ export const EditForm = (props) => {
                 .required('Title is required'),
             description: Yup.string().max(2048),
             version: Yup.string().max(255)
-            // source_schema: {
-            //     title: Yup.string().max(255),
-            //     description: Yup.string().max(2048),
-            //     version: Yup.string().max(255),
-            //     type: Yup.string().max(255)
-            // }
         }),
 
         onSubmit: async (values, helpers) => {
             const toastId = toastLoad(itemctx.isNew ? "Creating..." : "Updating...")
+            const {automatically_discover_namespaces, add_specific_namespaces, import_eform, ...projectValues} = values
             try {
                 let response;
                 if (itemctx.isNew) {
-                    response = await sectionApi.createItem(values);
+                    response = await sectionApi.createItem(projectValues);
                 } else {
-                    values['id'] = item._id;
-                    response = await sectionApi.updateItem(values);
+                    projectValues['id'] = item._id;
+                    response = await sectionApi.updateItem(projectValues);
                 }
                 helpers.setStatus({success: true});
                 helpers.setSubmitting(false);
                 toastSuccess(`${sectionApi.SECTION_ITEM_TITLE} ${itemctx.isNew ? "Created" : "Updated"}`, toastId);
                 if (response) {
                     projectsStore.getProjects()
+                    if(formik.values.source_schema.type === 'JSON') {
+                        if(formik.values.import_eform.checked)
+                            handleImportFieldRegestry(import_eform, response._id)
+                        if(formik.values.automatically_discover_namespaces) {
+                            handleDiscover()
+                        if(formik.values.add_specific_namespaces)
+                            handleCreateNamespaces()
+                        }
+                    }
                     if (itemctx.isNew) {
                         projectsStore.handleSessionProjectChange(response._id)
                         router.push({
@@ -148,88 +201,6 @@ export const EditForm = (props) => {
                     md={6}
                 >
                     <Card>
-                        <CardHeader title="Source Schema"/>
-                        <CardContent sx={{pt: 0}}>
-                            <Grid
-                                xs={12}
-                                md={12}
-                            >
-                                <TextField
-                                    //error={!!(formik.touched.source_schema && formik.touched.source_schema.title && formik.errors.source_schema && formik.errors.source_schema.title)}
-                                    fullWidth
-                                    //helperText={formik.touched.source_schema && formik.touched.source_schema.title && formik.errors.source_schema && formik.errors.source_schema.title}
-                                    label="Title"
-                                    name="source_schema.title"
-                                    onBlur={formik.handleBlur}
-                                    onChange={formik.handleChange}
-                                    value={formik.values.source_schema.title}
-                                />
-                            </Grid>
-                            <Grid
-                                xs={12}
-                                md={12}
-                            >
-                                <TextField
-                                    //error={!!(formik.touched.source_schema && formik.touched.source_schema.description && formik.errors.source_schema.description)}
-                                    fullWidth
-                                    minRows={5}
-                                    multiline
-                                    //helperText={formik.touched.source_schema && formik.touched.source_schema.description && formik.errors.source_schema.description}
-                                    label="Description"
-                                    name="source_schema.description"
-                                    onBlur={formik.handleBlur}
-                                    onChange={formik.handleChange}
-                                    value={formik.values.source_schema.description}
-                                />
-                            </Grid>
-                            <Grid
-                                xs={12}
-                                md={12}
-                            >
-                                <TextField
-                                    //error={!!(formik.touched.source_schema && formik.touched.source_schema.version && formik.errors.source_schema.version)}
-                                    fullWidth
-                                    //helperText={formik.touched.source_schema && formik.touched.source_schema.version && formik.errors.source_schema.version}
-                                    label="Version"
-                                    name="source_schema.version"
-                                    onBlur={formik.handleBlur}
-                                    onChange={formik.handleChange}
-                                    value={formik.values.source_schema.version}
-                                />
-                            </Grid>
-                            <Grid
-                                xs={12}
-                                md={12}
-                            >
-                                <TextField
-                                    error={!!(formik.touched.source_schema && formik.touched.source_schema.type && formik.errors.source_schema && formik.errors.source_schema.type)}
-                                    id="ssType"
-                                    fullWidth
-                                    select
-                                    defaultValue="JSON"
-                                    helperText={formik.touched.source_schema && formik.touched.source_schema.type && formik.errors.source_schema && formik.errors.source_schema.type}
-                                    label="Type"
-                                    name="source_schema.type"
-                                    onBlur={formik.handleBlur}
-                                    onChange={formik.handleChange}
-                                    value={formik.values.source_schema.type}
-                                >
-                                    {sourceSchemaTypes.map((option) => (
-                                        <MenuItem key={option.value}
-                                                  value={option.value}>
-                                            {option.value}
-                                        </MenuItem>
-                                    ))}
-                                </TextField>
-                            </Grid>
-                        </CardContent>
-                    </Card>
-                </Grid>
-                <Grid
-                    xs={12}
-                    md={6}
-                >
-                    <Card>
                         <CardHeader title="Target Ontology"/>
                         <CardContent sx={{pt: 0}}>
                             <Grid
@@ -237,9 +208,7 @@ export const EditForm = (props) => {
                                 md={12}
                             >
                                 <TextField
-                                    //error={!!(formik.touched.target_ontology && formik.touched.target_ontology.title && formik.errors.target_ontology && formik.errors.target_ontology.title)}
                                     fullWidth
-                                    //helperText={formik.touched.target_ontology && formik.touched.target_ontology.title && formik.errors.target_ontology && formik.errors.target_ontology.title}
                                     label="Title"
                                     name="target_ontology.title"
                                     onBlur={formik.handleBlur}
@@ -252,11 +221,9 @@ export const EditForm = (props) => {
                                 md={12}
                             >
                                 <TextField
-                                    //error={!!(formik.touched.target_ontology && formik.touched.target_ontology.description && formik.errors.target_ontology.description)}
                                     fullWidth
                                     minRows={5}
                                     multiline
-                                    //helperText={formik.touched.target_ontology && formik.touched.target_ontology.description && formik.errors.target_ontology.description}
                                     label="Description"
                                     name="target_ontology.description"
                                     onBlur={formik.handleBlur}
@@ -269,9 +236,7 @@ export const EditForm = (props) => {
                                 md={12}
                             >
                                 <TextField
-                                    //error={!!(formik.touched.target_ontology && formik.touched.target_ontology.version && formik.errors.target_ontology.version)}
                                     fullWidth
-                                    //helperText={formik.touched.target_ontology && formik.touched.target_ontology.version && formik.errors.target_ontology.version}
                                     label="Version"
                                     name="target_ontology.version"
                                     onBlur={formik.handleBlur}
@@ -284,9 +249,7 @@ export const EditForm = (props) => {
                                 md={12}
                             >
                                 <TextField
-                                    //error={!!(formik.touched.target_ontology && formik.touched.target_ontology.uri && formik.errors.target_ontology.uri)}
                                     fullWidth
-                                    //helperText={formik.touched.target_ontology && formik.touched.target_ontology.uri && formik.errors.target_ontology.uri}
                                     label="URI"
                                     name="target_ontology.uri"
                                     onBlur={formik.handleBlur}
@@ -297,7 +260,130 @@ export const EditForm = (props) => {
                         </CardContent>
                     </Card>
                 </Grid>
+                <Grid
+                    xs={12}
+                    md={6}
+                >
+                    <Card>
+                        <CardHeader title="Source Schema"/>
+                        <CardContent sx={{pt: 0}}>
+                            <Grid
+                                xs={12}
+                                md={12}
+                            >
+                                <TextField
+                                    fullWidth
+                                    label="Title"
+                                    name="source_schema.title"
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
+                                    value={formik.values.source_schema.title}
+                                />
+                            </Grid>
+                            <Grid
+                                xs={12}
+                                md={12}
+                            >
+                                <TextField
+                                    fullWidth
+                                    minRows={5}
+                                    multiline
+                                    label="Description"
+                                    name="source_schema.description"
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
+                                    value={formik.values.source_schema.description}
+                                />
+                            </Grid>
+                            <Grid
+                                xs={12}
+                                md={12}
+                            >
+                                <TextField
+                                    fullWidth
+                                    label="Version"
+                                    name="source_schema.version"
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
+                                    value={formik.values.source_schema.version}
+                                />
+                            </Grid>
+                            <Grid
+                                xs={12}
+                                md={12}
+                            >
+                                <TextField
+                                    error={!!(formik.touched.source_schema?.type && formik.errors.source_schema?.type)}
+                                    id="ssType"
+                                    fullWidth
+                                    select
+                                    defaultValue="JSON"
+                                    helperText={formik.touched.source_schema?.type && formik.errors.source_schema?.type}
+                                    label="Type"
+                                    name="source_schema.type"
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
+                                    value={formik.values.source_schema.type}
+                                >
+                                    {sourceSchemaTypes.map((option) => (
+                                        <MenuItem key={option.value}
+                                                  value={option.value}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))}
+                                </TextField>
+                            </Grid>
+                        </CardContent>
+                    </Card>
+                </Grid>
             </Grid>
+            {formik.values.source_schema.type === 'JSON' && <Card sx={{mt: 3}}>
+                <CardContent sx={{pt: 0}}>
+                    <Grid container
+                          spacing={3}>
+                        <FormGroup sx={{mt:3,ml:2}}>
+                                <FormControlLabel
+                                    control={<Checkbox checked={formik.values.automatically_discover_namespaces}
+                                                       onChange={formik.handleChange}
+                                                       name="automatically_discover_namespaces"/>
+                                    }
+                                    label={<Typography variant='h6'>Automatically discover namespaces</Typography>}
+
+                                />
+                                <FormControlLabel
+                                    control={<Checkbox checked={formik.values.add_specific_namespaces}
+                                                       onChange={formik.handleChange}
+                                                       name="add_specific_namespaces"/>
+                                    }
+                                    label={<Typography variant='h6'>Add eForms-specific (ePO) namespaces</Typography>}
+                                />
+                                <FormControlLabel
+                                    control={<Checkbox checked={formik.values.import_eform.checked}
+                                                       onChange={formik.handleChange}
+                                                       name="import_eform.checked"/>
+                                    }
+                                    label={<Typography variant='h6'>Import eForms SDK from GitHub</Typography>}
+                                />
+                        </FormGroup>
+                        <Grid xs={12}
+                              md={12}>
+                            <FormTextField formik={formik}
+                                           name="import_eform.github_repository_url"
+                                           label="GitHub Repository URL"
+                                           disabled={!formik.values.import_eform.checked}
+                                           required/>
+                        </Grid>
+                        <Grid xs={12}
+                              md={12}>
+                            <FormTextField formik={formik}
+                                           name="import_eform.branch_or_tag_name"
+                                           label="Branch or Tag name"
+                                           disabled={!formik.values.import_eform.checked}
+                                           required/>
+                        </Grid>
+                    </Grid>
+                </CardContent>
+            </Card>}
 
             <Card sx={{mt: 3}}>
                 <Stack
