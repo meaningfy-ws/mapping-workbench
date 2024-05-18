@@ -1,10 +1,11 @@
 from typing import List
 
 from beanie import PydanticObjectId
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, HTTPException
 
 from mapping_workbench.backend.core.models.api_request import APIRequestWithProject, APIRequestWithProjectAndContent
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
+from mapping_workbench.backend.core.services.exceptions import UNPROCESSABLE_ENTITY_ERROR
 from mapping_workbench.backend.ontology.models.entity_api_response import APIListNamespacesPaginatedResponse, \
     APIListTermsPaginatedResponse, APIListNamespacesCustomPaginatedResponse
 from mapping_workbench.backend.ontology.models.namespace import Namespace, NamespaceIn, NamespaceOut, \
@@ -163,7 +164,10 @@ async def route_create_namespace_custom(
         data: NamespaceCustomIn,
         user: User = Depends(current_active_user)
 ):
-    return await create_namespace_custom(data, user=user)
+    try:
+        return await create_namespace_custom(data, user=user)
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=UNPROCESSABLE_ENTITY_ERROR)
 
 
 @router.patch(
@@ -177,7 +181,11 @@ async def route_update_namespace_custom(
         namespace: NamespaceCustom = Depends(get_namespace_custom),
         user: User = Depends(current_active_user)
 ):
-    return await update_namespace_custom(namespace, data, user=user)
+    try:
+        return await update_namespace_custom(namespace, data, user=user)
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=UNPROCESSABLE_ENTITY_ERROR)
+
 
 
 @router.get(

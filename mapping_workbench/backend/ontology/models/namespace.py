@@ -2,6 +2,7 @@ from typing import Optional
 
 import pymongo
 from beanie import Indexed
+from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntity, BaseEntityInSchema, BaseEntityOutSchema
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntityInSchema, \
@@ -73,3 +74,11 @@ class NamespaceCustom(BaseEntity, StatefulObjectABC):
 
     class Settings(BaseEntity.Settings):
         name = "namespaces_custom"
+        indexes = [
+            IndexModel(
+                [
+                    ("prefix", pymongo.ASCENDING),
+                    ("project", pymongo.ASCENDING)
+                ], name="unique_key", unique=True
+            )
+        ]
