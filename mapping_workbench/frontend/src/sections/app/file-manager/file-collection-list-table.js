@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {Fragment, useCallback, useEffect, useState} from 'react';
 import {toast} from 'react-hot-toast';
 import PropTypes from 'prop-types';
 
@@ -30,6 +30,9 @@ import {PropertyListItem} from 'src/components/property-list-item';
 import {paths} from "../../../paths";
 import {PropertyList} from "../../../components/property-list";
 import TablePagination from "../../components/table-pagination";
+import timeTransformer from "../../../utils/time-transformer";
+import {useGlobalState} from "../../../hooks/use-global-state";
+
 
 
 export const ListTableRow = (props) => {
@@ -42,6 +45,7 @@ export const ListTableRow = (props) => {
         router
     } = props;
 
+    const {timeSetting} = useGlobalState()
     const [collectionResources, setCollectionResources] = useState([]);
 
     useEffect(() => {
@@ -92,7 +96,7 @@ export const ListTableRow = (props) => {
                     </Typography>
                 </TableCell>
                 <TableCell align="left">
-                    {(item.created_at).replace("T", " ").split(".")[0]}
+                    {timeTransformer(item.created_at, timeSetting)}
                 </TableCell>
                 <TableCell align="right">
                     <ListFileCollectionActions
@@ -137,6 +141,7 @@ export const ListTableRow = (props) => {
                                     </PropertyList>)}
                                 </Grid>
                                 <Grid
+                                    item
                                     md={12}
                                     xs={12}
                                     sx={{px: 3}}
@@ -228,56 +233,54 @@ export const FileCollectionListTable = (props) => {
     }
 
     return (
-        <div>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-                showFirstButton
-                showLastButton
-            >
-                <Scrollbar>
-                    <Table sx={{minWidth: 1200}}>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell/>
-                                <TableCell width="25%">
-                                    Title
-                                </TableCell>
-                                <TableCell align="left">
-                                    Created
-                                </TableCell>
-                                <TableCell align="right">
-                                    Actions
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {items.map((item) => {
-                                const item_id = item._id;
-                                const isCurrent = item_id === currentItem;
+        <TablePagination
+            component="div"
+            count={count}
+            onPageChange={onPageChange}
+            onRowsPerPageChange={onRowsPerPageChange}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+            showFirstButton
+            showLastButton
+        >
+            <Scrollbar>
+                <Table sx={{minWidth: 1200}}>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell/>
+                            <TableCell width="25%">
+                                Title
+                            </TableCell>
+                            <TableCell align="left">
+                                Created
+                            </TableCell>
+                            <TableCell align="right">
+                                Actions
+                            </TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {items.map((item) => {
+                            const item_id = item._id;
+                            const isCurrent = item_id === currentItem;
 
-                                return (
-                                    <ListTableRow
-                                        key={item_id}
-                                        item={item}
-                                        item_id={item_id}
-                                        isCurrent={isCurrent}
-                                        handleItemToggle={handleItemToggle}
-                                        sectionApi={sectionApi}
-                                        router={router}
-                                    />
-                                )
-                            })}
-                        </TableBody>
-                    </Table>
-                </Scrollbar>
-            </TablePagination>
-        </div>
+                            return (
+                                <ListTableRow
+                                    key={item_id}
+                                    item={item}
+                                    item_id={item_id}
+                                    isCurrent={isCurrent}
+                                    handleItemToggle={handleItemToggle}
+                                    sectionApi={sectionApi}
+                                    router={router}
+                                />
+                            )
+                        })}
+                    </TableBody>
+                </Table>
+            </Scrollbar>
+        </TablePagination>
     );
 };
 

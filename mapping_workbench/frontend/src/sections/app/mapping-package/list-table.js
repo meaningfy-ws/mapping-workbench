@@ -36,6 +36,9 @@ import { saveAs } from 'file-saver';
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 import TablePagination from "../../components/table-pagination";
 import TableSorterHeader from "../../components/table-sorter-header";
+import timeTransformer from "../../../utils/time-transformer";
+import {useGlobalState} from "../../../hooks/use-global-state";
+import SorterHeader from "../../components/table-sorter-header";
 
 
 
@@ -283,26 +286,10 @@ export const ListTable = (props) => {
     } = props;
 
     const [currentItem, setCurrentItem] = useState(null);
+    const {timeSetting} = useGlobalState();
 
     const handleItemToggle = itemId => {
-        setCurrentItem((prevItemId) => {
-            if (prevItemId === itemId) {
-                return null;
-            }
-
-            return itemId;
-        });
-    }
-
-    const SorterHeader = (props) => {
-        console.log(sort.column, sort.direction)
-        const direction = props.fieldName === sort.column && sort.direction === 1 ? 'asc' : 'desc';
-        return(
-            <TableSorterHeader sort={{direction, column: sort.column}}
-                           onSort={onSort}
-                           {...props}
-            />
-        )
+        setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
     }
 
     return (
@@ -327,11 +314,11 @@ export const ListTable = (props) => {
                                     <SorterHeader fieldName='title'/>
                                 </TableCell>
                                 <TableCell>
-                                      <SorterHeader fieldName='identifier'/>
+                                    <SorterHeader fieldName='identifier'/>
                                 </TableCell>
                                 <TableCell align="left">
-                                      <SorterHeader fieldName='created_at'
-                                                    title='Created'/>
+                                    <SorterHeader fieldName='created_at'
+                                                  title='Created'/>
                                 </TableCell>
                                 <TableCell align="center">
                                     Actions
@@ -386,7 +373,7 @@ export const ListTable = (props) => {
                                                 {item.identifier}
                                             </TableCell>
                                             <TableCell align="left">
-                                                {(item.created_at).replace("T", " ").split(".")[0]}
+                                                {timeTransformer(item.created_at, timeSetting)}
                                             </TableCell>
                                             <TableCell align="center">
                                                 <ListItemActions

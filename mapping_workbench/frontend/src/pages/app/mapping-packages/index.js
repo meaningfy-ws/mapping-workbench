@@ -48,14 +48,14 @@ const useItemsSearch = () => {
     }
 
     const handlePageChange = (event, page) => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             page
         }));
     };
 
     const handleRowsPerPageChange = event => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             rowsPerPage: parseInt(event.target.value, 10)
         }));
@@ -71,7 +71,7 @@ const useItemsSearch = () => {
 };
 
 
-const useItemsStore = (searchState) => {
+const useItemsStore = searchState => {
     const [state, setState] = useState({
         items: [],
         itemsCount: 0

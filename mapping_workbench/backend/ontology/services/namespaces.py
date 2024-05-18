@@ -15,7 +15,7 @@ async def discover_and_save_mapping_rule_prefixes(rule: ConceptualMappingRule):
 
 
 async def discover_and_save_prefix_namespace(prefix: str, uri: str = None):
-    namespace: Namespace = (await Namespace.find_one(Namespace.prefix == prefix)) or Namespace(prefix=prefix)
+    namespace: Namespace = (await Namespace.find_one(Namespace.prefix == prefix)) or Namespace(prefix=prefix, is_syncable=True, uri=uri)
     if namespace.is_syncable:
         if uri:
             namespace.uri = uri

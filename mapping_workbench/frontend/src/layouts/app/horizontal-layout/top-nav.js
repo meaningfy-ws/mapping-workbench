@@ -21,6 +21,7 @@ import {NotificationsButton} from '../notifications-button';
 import {TopNavSection} from './top-nav-section';
 import {ProjectSwitch} from "../project-switch";
 import {useProjects} from "../../../hooks/use-projects";
+import TimeSwitch from "../time-switch/time-switch";
 
 const useCssVars = (color) => {
     const theme = useTheme();
@@ -219,6 +220,7 @@ export const TopNav = (props) => {
                         direction="row"
                         spacing={2}
                     >
+                        <TimeSwitch/>
                         <LanguageSwitch/>
                         <NotificationsButton/>
                         <AccountButton/>
@@ -299,6 +301,6 @@ export const TopNav = (props) => {
 TopNav.propTypes = {
     color: PropTypes.oneOf(['blend-in', 'discrete', 'evident']),
     onMobileNav: PropTypes.func,
-    sections: PropTypes.array,
+    sections: PropTypes.object,
     mdUp: PropTypes.bool
 };

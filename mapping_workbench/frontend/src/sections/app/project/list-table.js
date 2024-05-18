@@ -26,6 +26,9 @@ import {useProjects} from "../../../hooks/use-projects";
 import TablePagination from "../../components/table-pagination";
 import TableSorterHeader from "../../components/table-sorter-header";
 
+import TimeTransformer from "../../../utils/time-transformer";
+import {useGlobalState} from "../../../hooks/use-global-state";
+import timeTransformer from "../../../utils/time-transformer";
 
 
 export const ListTable = (props) => {
@@ -41,15 +44,12 @@ export const ListTable = (props) => {
         sectionApi
     } = props;
 
+    const {timeSetting} = useGlobalState()
+
     const [currentItem, setCurrentItem] = useState(null);
     const projectStore = useProjects()
 
     const handleItemToggle = itemId => setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
-
-    const SorterHeader = (props) => <TableSorterHeader sort={sort}
-                                                       onSort={onSort}
-                                                       {...props}
-                                                        />
 
     return (
         <TablePagination
@@ -143,7 +143,7 @@ export const ListTable = (props) => {
                                             {item.version}
                                         </TableCell>
                                         <TableCell align="left">
-                                            {(item.created_at).replace("T", " ").split(".")[0]}
+                                            {timeTransformer(item.created_at, timeSetting)}
                                         </TableCell>
                                         <TableCell align="right">
                                             <Button

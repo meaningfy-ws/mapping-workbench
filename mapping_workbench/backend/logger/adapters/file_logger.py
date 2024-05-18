@@ -12,7 +12,7 @@ class LoggerFile(LoggerABC):
         self.folder_path: Path = folder_path
         self.folder_path.mkdir(parents=True, exist_ok=True)
 
-    def log(self, log_record=LogRecord):
+    def log(self, log_record: LogRecord):
         file_path = self.folder_path / f"{log_record.timestamp.strftime('%Y-%m-%d')}.log"
         log_record_str = str(log_record).replace('\n', ' ')
         with file_path.open('a') as file:
