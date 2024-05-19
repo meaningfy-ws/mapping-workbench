@@ -1,6 +1,5 @@
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
-import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -26,7 +25,10 @@ import {Issuer} from 'src/utils/auth';
 import {users} from 'src/api/auth/data';
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import {useState} from "react";
+import {signIn, useSession, signOut} from 'next-auth/react';
+import GoogleIcon from '@mui/icons-material/Google';
+import Divider from "@mui/material/Divider";
+
 
 const user = users[0];
 
@@ -54,13 +56,15 @@ const Page = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const returnTo = searchParams.get('returnTo');
-    const {issuer, signIn} = useAuth();
+    const {issuer, signIn: singInJWT} = useAuth();
+    const {data: session} = useSession()
+
     const formik = useFormik({
         initialValues,
         validationSchema,
         onSubmit: async (values, helpers) => {
             try {
-                await signIn(values.username, values.password, values.remember_me);
+                await singInJWT(values.username, values.password, values.remember_me);
 
                 if (isMounted()) {
                     router.push(returnTo || paths.app.index);
@@ -138,7 +142,7 @@ const Page = () => {
                                         <Checkbox
                                             checked={formik.values.remember_me}
                                             onChange={formik.handleChange}
-                                            inputProps={{ 'aria-label': 'controlled checkbox' }}
+                                            inputProps={{'aria-label': 'controlled checkbox'}}
                                             name="remember_me"
                                         />
                                     }
@@ -153,17 +157,30 @@ const Page = () => {
                                     {formik.errors.submit}
                                 </FormHelperText>
                             )}
-
-                            <Button
-                                disabled={formik.isSubmitting}
-                                fullWidth
-                                size="large"
-                                sx={{mt: 2}}
-                                type="submit"
-                                variant="contained"
-                            >
-                                Log In
-                            </Button>
+                            <Stack gap={3}>
+                                <Button
+                                    disabled={formik.isSubmitting}
+                                    fullWidth
+                                    size="large"
+                                    sx={{mt: 2}}
+                                    type="submit"
+                                    variant="contained"
+                                >
+                                    Log In
+                                </Button>
+                                <Divider>or</Divider>
+                                {session?.user?.email ?
+                                    <Button fullWidth
+                                            startIcon={<GoogleIcon/>}
+                                            onClick={() => signOut()}>
+                                        Sign Out
+                                    </Button> :
+                                    <Button fullWidth
+                                            startIcon={<GoogleIcon/>}
+                                            onClick={() => signIn('google')}>
+                                        Sign in with Google
+                                    </Button>}
+                            </Stack>
                         </form>
                     </CardContent>
                 </Card>

@@ -1,11 +1,15 @@
-from typing import Dict
+from typing import List
 
-from fastapi import APIRouter, Depends, status
+from beanie import PydanticObjectId
+from fastapi import APIRouter, Depends, status, HTTPException
 
+from mapping_workbench.backend.core.models.api_request import APIRequestWithProject, APIRequestWithProjectAndContent
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
+from mapping_workbench.backend.core.services.exceptions import UNPROCESSABLE_ENTITY_ERROR
 from mapping_workbench.backend.ontology.models.entity_api_response import APIListNamespacesPaginatedResponse, \
-    APIListTermsPaginatedResponse
-from mapping_workbench.backend.ontology.models.namespace import Namespace, NamespaceIn, NamespaceOut
+    APIListTermsPaginatedResponse, APIListNamespacesCustomPaginatedResponse
+from mapping_workbench.backend.ontology.models.namespace import Namespace, NamespaceIn, NamespaceOut, \
+    NamespaceCustomOut, NamespaceCustomIn, NamespaceCustom
 from mapping_workbench.backend.ontology.models.term import TermOut, TermIn, Term
 from mapping_workbench.backend.ontology.services import tasks
 from mapping_workbench.backend.ontology.services.api_for_namespaces import (
@@ -14,12 +18,14 @@ from mapping_workbench.backend.ontology.services.api_for_namespaces import (
     update_namespace,
     get_namespace,
     get_namespace_out,
-    delete_namespace
+    delete_namespace, create_namespaces, list_namespaces_custom, create_namespace_custom, get_namespace_custom,
+    update_namespace_custom, get_namespace_custom_out, delete_namespace_custom
 )
 from mapping_workbench.backend.ontology.services.api_for_terms import list_terms, create_term, update_term, \
     get_term_out, get_term, delete_term
 from mapping_workbench.backend.ontology.services.terms import list_known_terms, is_known_term, \
     check_content_terms_validity, search_terms, get_prefixed_terms
+from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.task_manager.services.task_wrapper import add_task
 from mapping_workbench.backend.user.models.user import User
@@ -44,11 +50,14 @@ router = APIRouter(
     response_model=APIListNamespacesPaginatedResponse
 )
 async def route_list_namespaces(
+        project: PydanticObjectId = None,
         page: int = None,
         limit: int = None,
         q: str = None
 ):
     filters: dict = {}
+    if project:
+        filters['project'] = Project.link_from_id(project)
     if q is not None:
         filters['q'] = q
 
@@ -71,6 +80,20 @@ async def route_create_namespace(
         user: User = Depends(current_active_user)
 ):
     return await create_namespace(data, user=user)
+
+
+@router.post(
+    "/namespaces/bulk",
+    description=f"Create {NAME_FOR_ONE} namespaces",
+    name=f"{NAME_FOR_MANY}:create_{NAME_FOR_ONE}_namespaces",
+    response_model=List[NamespaceOut],
+    status_code=status.HTTP_201_CREATED
+)
+async def route_create_namespaces(
+        data: List[NamespaceIn],
+        user: User = Depends(current_active_user)
+):
+    return await create_namespaces(data, user=user)
 
 
 @router.patch(
@@ -109,17 +132,97 @@ async def route_delete_namespace(namespace: Namespace = Depends(get_namespace)):
 
 
 @router.get(
+    "/namespaces_custom",
+    description=f"List {NAME_FOR_MANY} custom namespaces",
+    name=f"{NAME_FOR_MANY}:list_namespaces_custom",
+    response_model=APIListNamespacesCustomPaginatedResponse
+)
+async def route_list_namespaces_custom(
+        page: int = None,
+        limit: int = None,
+        q: str = None
+):
+    filters: dict = {}
+    if q is not None:
+        filters['q'] = q
+
+    items, total_count = await list_namespaces_custom(filters, page, limit)
+    return APIListNamespacesCustomPaginatedResponse(
+        items=items,
+        count=total_count
+    )
+
+
+@router.post(
+    "/namespaces_custom",
+    description=f"Create {NAME_FOR_ONE} custom namespace",
+    name=f"{NAME_FOR_MANY}:create_{NAME_FOR_ONE}_namespace_custom",
+    response_model=NamespaceCustomOut,
+    status_code=status.HTTP_201_CREATED
+)
+async def route_create_namespace_custom(
+        data: NamespaceCustomIn,
+        user: User = Depends(current_active_user)
+):
+    # try:
+    return await create_namespace_custom(data, user=user)
+    # except Exception:
+    #    raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=UNPROCESSABLE_ENTITY_ERROR)
+
+
+@router.patch(
+    "/namespaces_custom/{id}",
+    description=f"Update {NAME_FOR_ONE} custom namespace",
+    name=f"{NAME_FOR_MANY}:update_{NAME_FOR_ONE}_namespace_custom",
+    response_model=NamespaceCustomOut
+)
+async def route_update_namespace_custom(
+        data: NamespaceCustomIn,
+        namespace: NamespaceCustom = Depends(get_namespace_custom),
+        user: User = Depends(current_active_user)
+):
+    try:
+        return await update_namespace_custom(namespace, data, user=user)
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=UNPROCESSABLE_ENTITY_ERROR)
+
+
+@router.get(
+    "/namespaces_custom/{id}",
+    description=f"Get {NAME_FOR_ONE} custom namespace",
+    name=f"{NAME_FOR_MANY}:get_{NAME_FOR_ONE}_namespace_custom",
+    response_model=NamespaceOut
+)
+async def route_get_namespace_custom(namespace: NamespaceCustomOut = Depends(get_namespace_custom_out)):
+    return namespace
+
+
+@router.delete(
+    "/namespaces_custom/{id}",
+    description=f"Delete {NAME_FOR_ONE} custom namespace",
+    name=f"{NAME_FOR_MANY}:delete_{NAME_FOR_ONE}_namespace_custom",
+    response_model=APIEmptyContentWithIdResponse
+)
+async def route_delete_namespace_custom(namespace: NamespaceCustom = Depends(get_namespace_custom)):
+    await delete_namespace_custom(namespace)
+    return APIEmptyContentWithIdResponse(id=namespace.id)
+
+
+@router.get(
     "/terms",
     description=f"List {NAME_FOR_MANY} terms",
     name=f"{NAME_FOR_MANY}:list_terms",
     response_model=APIListTermsPaginatedResponse
 )
 async def route_list_terms(
+        project: PydanticObjectId = None,
         page: int = None,
         limit: int = None,
         q: str = None
 ):
     filters: dict = {}
+    if project:
+        filters['project'] = Project.link_from_id(project)
     if q is not None:
         filters['q'] = q
 
@@ -194,12 +297,15 @@ async def route_list_known_terms(saved: bool = True):
     name=TASK_DISCOVER_TERMS_NAME,
     status_code=status.HTTP_201_CREATED
 )
-async def route_task_discover_terms(user: User = Depends(current_active_user)):
+async def route_task_discover_terms(
+        req: APIRequestWithProject,
+        user: User = Depends(current_active_user)
+):
     return add_task(
         tasks.task_discover_terms,
         TASK_DISCOVER_TERMS_NAME,
         None,
-        user
+        req.project, user
     )
 
 
@@ -208,8 +314,11 @@ async def route_task_discover_terms(user: User = Depends(current_active_user)):
     description=f"Check {NAME_FOR_ONE} content terms validity",
     name=f"{NAME_FOR_MANY}:check_{NAME_FOR_ONE}_content_terms_validity"
 )
-async def route_check_content_terms_validity(data: Dict):
-    return await check_content_terms_validity(data['content'])
+async def route_check_content_terms_validity(data: APIRequestWithProjectAndContent):
+    return await check_content_terms_validity(
+        content=data.content,
+        project_id=data.project
+    )
 
 
 @router.get(
@@ -236,6 +345,8 @@ async def route_search_terms(q: str):
     description=f"Prefixed {NAME_FOR_ONE} terms",
     name=f"{NAME_FOR_MANY}:prefixed_{NAME_FOR_ONE}_terms"
 )
-async def route_prefixed_terms():
-    prefixed_terms = await get_prefixed_terms()
+async def route_prefixed_terms(
+        project: PydanticObjectId = None
+):
+    prefixed_terms = await get_prefixed_terms(project)
     return prefixed_terms

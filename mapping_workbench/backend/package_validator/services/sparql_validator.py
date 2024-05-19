@@ -1,5 +1,6 @@
 from typing import List
 
+from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState
 from mapping_workbench.backend.package_validator.adapters.sparql_validator import SPARQLValidator
 from mapping_workbench.backend.package_validator.models.sparql_validation import SPARQLQueryResult, \
@@ -18,6 +19,7 @@ def validate_tests_data_with_sparql_tests(
 
     """
     for idx, test_data in enumerate(tests_data):
+        mwb_logger.log_all_info(f"Validate SPARQL for {test_data.filename}")
         try:
             if test_data.rdf_manifestation is None:
                 raise TestDataException("Test data must have a rdf manifestation")
@@ -30,7 +32,7 @@ def validate_tests_data_with_sparql_tests(
                 False
             )
         except Exception as e:
-            print("ERROR :: SPARQL Validation :: ", e)
+            mwb_logger.log_all_error(message="ERROR :: SPARQL Validation :: Stack trace: ", stack_trace=str(e))
             pass
 
     return tests_data

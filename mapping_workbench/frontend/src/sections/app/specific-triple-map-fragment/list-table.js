@@ -1,4 +1,4 @@
-import {Fragment, useCallback, useEffect, useState} from 'react';
+import {Fragment, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
@@ -23,6 +23,8 @@ import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import Tooltip from "@mui/material/Tooltip";
 import {mappingPackagesApi} from "../../../api/mapping-packages";
+import timeTransformer from "../../../utils/time-transformer";
+import {useGlobalState} from "../../../hooks/use-global-state";
 
 
 export const ListTable = (props) => {
@@ -37,25 +39,17 @@ export const ListTable = (props) => {
         sectionApi
     } = props;
 
-    //console.log("PROJECT PROPS: ", props);
-
     const [currentItem, setCurrentItem] = useState(null);
-
-    const handleItemToggle = useCallback((itemId) => {
-        setCurrentItem((prevItemId) => {
-            if (prevItemId === itemId) {
-                return null;
-            }
-
-            return itemId;
-        });
-    }, []);
+    const {timeSetting} = useGlobalState()
+    const handleItemToggle = itemId => {
+        setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
+    }
 
     const [projectMappingPackages, setProjectMappingPackages] = useState([]);
+
     useEffect(() => {
-        (async () => {
-            setProjectMappingPackages(await mappingPackagesApi.getProjectPackages());
-        })()
+        mappingPackagesApi.getProjectPackages()
+            .then(res => setProjectMappingPackages(res))
     }, [])
 
     const [projectMappingPackagesMap, setProjectMappingPackagesMap] = useState({});
@@ -68,20 +62,6 @@ export const ListTable = (props) => {
             }, {}));
         })()
     }, [projectMappingPackages])
-
-    // const handleItemClose = useCallback(() => {
-    //     setCurrentItem(null);
-    // }, []);
-
-    // const handleItemUpdate = useCallback(() => {
-    //     setCurrentItem(null);
-    //     toast.success('Item updated');
-    // }, []);
-
-    // const handleItemDelete = useCallback(() => {
-
-    //     toast.error('Item cannot be deleted');
-    // }, []);
 
     return (
         <div>
@@ -186,9 +166,7 @@ export const ListTable = (props) => {
                                             {item.mapping_package && projectMappingPackagesMap[item.mapping_package.id]}
                                         </TableCell>
                                         <TableCell align="left">
-                                            {
-                                                item.created_at
-                                                && (item.created_at).replace("T", " ").split(".")[0]}
+                                            {timeTransformer(item.created_at, timeSetting)}
                                         </TableCell>
                                         <TableCell align="right">
                                             <ListItemActions

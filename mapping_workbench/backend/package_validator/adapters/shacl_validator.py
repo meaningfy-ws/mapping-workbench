@@ -5,6 +5,8 @@ import rdflib
 from pydantic import validate_call
 from pyshacl import validate
 
+from mapping_workbench.backend.logger.services import mwb_logger
+from mapping_workbench.backend.ontology.services.terms import get_prefixed_ns_term
 from mapping_workbench.backend.package_validator.adapters.data_validator import TestDataValidator
 from mapping_workbench.backend.package_validator.models.shacl_validation import SHACLQueryTestDataResult, \
     SHACLQueryTestDataEntry, SHACLQueryResult, SHACLQueryResultBinding, \
@@ -23,11 +25,13 @@ class SHACLValidator(TestDataValidator):
     rdf_graph: Any = None
     test_data: Any = None
     test_data_suite: Any = None
+    ns_definitions: Any = None
     shacl_shape_result_query: str = ""
 
     @validate_call
     def __init__(self, test_data: TestDataState,
                  test_data_suite: TestDataSuiteState = None,
+                 ns_definitions: dict = None,
                  shacl_shape_result_query: str = None, **data: Any
                  ):
         super().__init__(**data)
@@ -37,6 +41,7 @@ class SHACLValidator(TestDataValidator):
         )
         self.test_data = test_data
         self.test_data_suite = test_data_suite
+        self.ns_definitions = ns_definitions
         self.shacl_shape_result_query = shacl_shape_result_query or SHACL_RESULT_QUERY_PATH.read_text()
 
     def validate(self, shacl_test_suite: SHACLTestSuiteState) -> SHACLQueryTestDataResult:
@@ -91,6 +96,7 @@ class SHACLValidator(TestDataValidator):
                         binding=SHACLQueryResultBinding(
                             focus_node=binding.focusNode.value,
                             result_path=binding.resultPath.value,
+                            prefixed_result_path=None,
                             result_severity=binding.resultSeverity.value,
                             source_constraint_component=binding.sourceConstraintComponent.value,
                             message=binding.message.value
@@ -98,6 +104,12 @@ class SHACLValidator(TestDataValidator):
                         test_data=result_test_data
                     )
                     shacl_result.result_path = shacl_result.binding.result_path
+                    if self.ns_definitions:
+                        shacl_result.binding.prefixed_result_path = get_prefixed_ns_term(
+                            ns_term=shacl_result.binding.result_path,
+                            ns_definitions=self.ns_definitions
+                        )
+                        shacl_result.prefixed_result_path = shacl_result.binding.prefixed_result_path
                     shacl_refined_result = None
                     if shacl_result.binding.result_severity.endswith("#Violation"):
                         shacl_refined_result = SHACLQueryRefinedResultType.VIOLATION.value
@@ -113,7 +125,7 @@ class SHACLValidator(TestDataValidator):
                 shacl_validation_result.results = results
 
         except Exception as e:
-            print("ERROR :: SHACL_VALIDATION :: " + str(e))
+            mwb_logger.log_all_error("Exception occurred while running SHACL validation", str(e))
             shacl_validation_result.error = str(e)[:100]
 
         return shacl_validation_result

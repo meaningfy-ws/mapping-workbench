@@ -739,7 +739,7 @@ export const ListTableRow = (props) => {
                         </Box>
                     </Typography>
                 </Link>
-                {item.source_structural_element.name}
+                {item.source_structural_element?.name}
             </TableCell>
             <TableCell>{item.min_sdk_version}</TableCell>
             <TableCell>{item.max_sdk_version}</TableCell>

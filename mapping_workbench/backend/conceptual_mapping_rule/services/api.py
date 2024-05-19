@@ -94,10 +94,15 @@ async def delete_conceptual_mapping_rule(conceptual_mapping_rule: ConceptualMapp
 
 
 async def rule_terms_validator(rule: ConceptualMappingRule) -> ConceptualMappingRule:
+    project_id: PydanticObjectId = rule.project.to_ref().id
     rule.target_class_path_terms_validity = await check_content_terms_validity(
-        rule.target_class_path) if rule.target_class_path else []
+        content=rule.target_class_path,
+        project_id=project_id
+    ) if rule.target_class_path else []
     rule.target_property_path_terms_validity = await check_content_terms_validity(
-        rule.target_property_path) if rule.target_property_path else []
+        content=rule.target_property_path,
+        project_id=project_id
+    ) if rule.target_property_path else []
     rule.terms_validity = ConceptualMappingRuleTermsValidity.INVALID \
         if (
                    rule.target_class_path_terms_validity
@@ -113,7 +118,9 @@ async def rule_terms_validator(rule: ConceptualMappingRule) -> ConceptualMapping
 
 
 async def rule_validated_data(data: dict) -> dict:
-    terms_validated_rule = await rule_terms_validator(ConceptualMappingRule(**data))
+    terms_validated_rule = await rule_terms_validator(
+        rule=ConceptualMappingRule(**data)
+    )
     data['target_class_path_terms_validity'] = terms_validated_rule.target_class_path_terms_validity
     data['target_property_path_terms_validity'] = terms_validated_rule.target_property_path_terms_validity
     data['terms_validity'] = terms_validated_rule.terms_validity
@@ -130,5 +137,7 @@ async def validate_and_save_rules_terms(query_filters: Dict = None):
     """
 
     for item in await ConceptualMappingRule.find(query_filters or {}).to_list():
-        item = await rule_terms_validator(item)
+        item = await rule_terms_validator(
+            rule=item
+        )
         await item.save()

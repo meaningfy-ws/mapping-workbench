@@ -18,7 +18,7 @@ class LogRecord(BaseModel):
 
     log_severity: LogSeverity
     message: str
-    timestamp: Optional[datetime] = datetime.now()
+    timestamp: Optional[datetime] = datetime.utcnow()
     stack_trace: Optional[str] = None
 
     @model_validator(mode='after')
@@ -30,6 +30,7 @@ class LogRecord(BaseModel):
         return self
 
     def __str__(self) -> str:
+        return_str = f"{self.timestamp} - {self.log_severity.value}: {self.message}"
         if self.stack_trace:
-            return f"{self.timestamp} - {self.log_severity.value}: {self.message} - Stack trace: {self.stack_trace}"
-        return f"{self.timestamp} - {self.log_severity.value}: {self.message}"
+            return_str = return_str + f" - Stack trace: {self.stack_trace}"
+        return return_str

@@ -32,6 +32,7 @@ class SHACLQueryTestDataEntry(ValidationTestDataEntry):
 class ValidationSHACLQuery(BaseModel):
     shacl_suite: Optional[SHACLValidationSuiteEntry] = None
     result_path: Optional[str] = None
+    prefixed_result_path: Optional[str] = None
 
 
 class SHACLGraphResultBindingValue(BaseModel):
@@ -49,6 +50,7 @@ class SHACLGraphResultBinding(BaseModel):
 class SHACLQueryResultBinding(BaseModel):
     focus_node: Optional[str] = None
     result_path: Optional[str] = None
+    prefixed_result_path: Optional[str] = None
     result_severity: Optional[str] = None
     source_constraint_component: Optional[str] = None
     message: Optional[str] = None

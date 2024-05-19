@@ -4,7 +4,7 @@ from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundE
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageState
 from mapping_workbench.backend.mapping_package.services.data import get_latest_mapping_package_state, \
     get_specific_mapping_package_state
-from mapping_workbench.backend.package_exporter.adapters.v3.package_state_exporter import PackageStateExporter
+from mapping_workbench.backend.package_exporter.adapters.eforms.package_state_exporter import PackageStateExporter
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.project.services.api import get_project
 

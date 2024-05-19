@@ -1,6 +1,9 @@
 from typing import List
 
+from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState
+from mapping_workbench.backend.mapping_package.services.data import get_mapping_package_state_ns_definitions
+from mapping_workbench.backend.ontology.services.terms import get_prefixed_ns_term
 from mapping_workbench.backend.package_validator.adapters.shacl_validator import SHACLValidator
 from mapping_workbench.backend.package_validator.models.shacl_validation import SHACLQueryResult, \
     SHACLValidationSummary, SHACLQueryRefinedResultType, SHACLTestDataValidationResult, SHACLSuiteQueryTestDataResult, \
@@ -13,6 +16,7 @@ from mapping_workbench.backend.test_data_suite.models.entity import TestDataExce
 
 def aggregate_shacl_tests_summary(
         results: List[SHACLQueryResult],
+        ns_definitions: dict,
         use_grouping: bool = True
 ) -> List[SHACLValidationSummaryRow]:
     def get_path_uniq_key(shacl_suite_oid, result_path):
@@ -28,7 +32,11 @@ def aggregate_shacl_tests_summary(
             paths_uniq_keys.add(path_uniq_key)
             shacl_result_paths.append(ValidationSHACLQuery(
                 shacl_suite=result.shacl_suite,
-                result_path=result_path
+                result_path=result_path,
+                prefixed_result_path=get_prefixed_ns_term(
+                    ns_term=result_path,
+                    ns_definitions=ns_definitions
+                )
             ))
 
     summary_results: List[SHACLValidationSummaryRow] = []
@@ -41,7 +49,11 @@ def aggregate_shacl_tests_summary(
             summary_results.append(
                 SHACLValidationSummaryRow(
                     shacl_suite=shacl_result_path.shacl_suite,
-                    result_path=shacl_result_path.result_path
+                    result_path=shacl_result_path.result_path,
+                    prefixed_result_path=get_prefixed_ns_term(
+                        ns_term=shacl_result_path.result_path,
+                        ns_definitions=ns_definitions
+                    )
                 )
             )
             idx = len(summary_results) - 1
@@ -75,6 +87,7 @@ def aggregate_shacl_tests_summary(
 def validate_tests_data_with_shacl_test_suites(
         tests_data: List[TestDataState],
         shacl_test_suites: List[SHACLTestSuiteState],
+        ns_definitions: dict,
         test_data_suite: TestDataSuiteState = None
 ) -> List[TestDataState]:
     """
@@ -93,7 +106,8 @@ def validate_tests_data_with_shacl_test_suites(
             for shacl_test_suite in shacl_test_suites:
                 shacl_runner = SHACLValidator(
                     test_data=test_data,
-                    test_data_suite=test_data_suite
+                    test_data_suite=test_data_suite,
+                    ns_definitions=ns_definitions
                 )
                 shacl_suite = SHACLValidationSuiteEntry(
                     shacl_suite_oid=shacl_test_suite.oid,
@@ -116,11 +130,12 @@ def validate_tests_data_with_shacl_test_suites(
                 shacl_suites=shacl_suites,
                 results=aggregate_shacl_tests_summary(
                     results=union_shacl_suites_results(tests_data[idx].validation.shacl.results),
+                    ns_definitions=ns_definitions,
                     use_grouping=False
                 )
             )
         except Exception as e:
-            print("ERROR :: SHACL Validation :: ", e)
+            mwb_logger.log_all_info(f"ERROR :: SHACL Validation :: {str(e)}")
 
     return tests_data
 
@@ -136,6 +151,8 @@ def union_shacl_suites_results(
 
 
 def validate_mapping_package_state_with_shacl(mapping_package_state: MappingPackageState):
+    ns_definitions = get_mapping_package_state_ns_definitions(mapping_package_state)
+
     state_results = []
     shacl_suites = []
 
@@ -148,9 +165,10 @@ def validate_mapping_package_state_with_shacl(mapping_package_state: MappingPack
     for idx, test_data_suite in enumerate(mapping_package_state.test_data_suites):
         mapping_package_state.test_data_suites[idx].test_data_states = \
             validate_tests_data_with_shacl_test_suites(
-                test_data_suite.test_data_states,
-                mapping_package_state.shacl_test_suites,
-                test_data_suite
+                tests_data=test_data_suite.test_data_states,
+                shacl_test_suites=mapping_package_state.shacl_test_suites,
+                test_data_suite=test_data_suite,
+                ns_definitions=ns_definitions
             )
 
         test_data_suite_results = []
@@ -165,7 +183,8 @@ def validate_mapping_package_state_with_shacl(mapping_package_state: MappingPack
             summary=SHACLValidationSummary(
                 shacl_suites=shacl_suites,
                 results=aggregate_shacl_tests_summary(
-                    results=test_data_suite_results
+                    results=test_data_suite_results,
+                    ns_definitions=ns_definitions
                 )
             )
         )
@@ -174,7 +193,8 @@ def validate_mapping_package_state_with_shacl(mapping_package_state: MappingPack
         summary=SHACLValidationSummary(
             shacl_suites=shacl_suites,
             results=aggregate_shacl_tests_summary(
-                results=state_results
+                results=state_results,
+                ns_definitions=ns_definitions
             )
         )
     )

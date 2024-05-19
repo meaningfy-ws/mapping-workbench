@@ -28,16 +28,19 @@ import {createTheme} from 'src/theme';
 import {createEmotionCache} from 'src/utils/create-emotion-cache';
 
 // Remove if locales are not used
+import {SessionProvider} from "next-auth/react";
 import 'src/locales/i18n';
+import {GlobalStateConsumer, GlobalStateProvider} from "../contexts/globalState";
 
 const clientSideEmotionCache = createEmotionCache();
 
 const CustomApp = (props) => {
-  const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+  const { Component, emotionCache = clientSideEmotionCache, pageProps, session } = props;
   useNprogress();
   const getLayout = Component.getLayout ?? ((page) => page);
 
   return (
+
     <CacheProvider value={emotionCache}>
       <Head>
         <title>
@@ -48,90 +51,102 @@ const CustomApp = (props) => {
           content="initial-scale=1, width=device-width"
         />
       </Head>
+
       <ReduxProvider store={store}>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <AuthProvider>
             <AuthConsumer>
               {(auth) => (
-                <SettingsProvider>
-                  <SettingsConsumer>
-                    {(settings) => {
-                      // Prevent theme flicker when restoring custom settings from browser storage
-                      if (!settings.isInitialized) {
-                        //return null;
-                      }
+                  <GlobalStateProvider>
+                    <GlobalStateConsumer>
+                      {() => (
 
-                      const theme = createTheme({
-                        colorPreset: settings.colorPreset,
-                        contrast: settings.contrast,
-                        direction: settings.direction,
-                        paletteMode: settings.paletteMode,
-                        responsiveFontSizes: settings.responsiveFontSizes
-                      });
+                      <SettingsProvider>
+                        <SettingsConsumer>
+                          {(settings) => {
+                            // Prevent theme flicker when restoring custom settings from browser storage
+                            if (!settings.isInitialized) {
+                              //return null;
+                            }
 
-                      // Prevent guards from redirecting
-                      const showSplashScreen = !auth.isInitialized;
+                            const theme = createTheme({
+                              colorPreset: settings.colorPreset,
+                              contrast: settings.contrast,
+                              direction: settings.direction,
+                              paletteMode: settings.paletteMode,
+                              responsiveFontSizes: settings.responsiveFontSizes
+                            });
 
-                      return (
-                        <ThemeProvider theme={theme}>
-                          <Head>
-                            <meta
-                              name="color-scheme"
-                              content={settings.paletteMode}
-                            />
-                            <meta
-                              name="theme-color"
-                              content={theme.palette.neutral[900]}
-                            />
-                          </Head>
-                          <RTL direction={settings.direction}>
-                            <CssBaseline />
-                            {showSplashScreen
-                              ? <SplashScreen />
-                              : (
-                                <>
-                                  <ProjectsProvider>
-                                    <ProjectsConsumer>
-                                      {(projects) => (
-                                        getLayout(
-                                            <Component projects={projects}
-                                                       {...pageProps} />
-                                        ))}
-                                      </ProjectsConsumer>
-                                  </ProjectsProvider>
-                                  <SettingsButton onClick={settings.handleDrawerOpen} />
-                                  <SettingsDrawer
-                                    canReset={settings.isCustom}
-                                    onClose={settings.handleDrawerClose}
-                                    onReset={settings.handleReset}
-                                    onUpdate={settings.handleUpdate}
-                                    open={settings.openDrawer}
-                                    values={{
-                                      colorPreset: settings.colorPreset,
-                                      contrast: settings.contrast,
-                                      direction: settings.direction,
-                                      paletteMode: settings.paletteMode,
-                                      responsiveFontSizes: settings.responsiveFontSizes,
-                                      stretch: settings.stretch,
-                                      layout: settings.layout,
-                                      navColor: settings.navColor
-                                    }}
+                            // Prevent guards from redirecting
+                            const showSplashScreen = !auth.isInitialized;
+
+                            return (
+                              <ThemeProvider theme={theme}>
+                                <Head>
+                                  <meta
+                                    name="color-scheme"
+                                    content={settings.paletteMode}
                                   />
-                                </>
-                              )}
-                            <Toaster />
-                          </RTL>
-                        </ThemeProvider>
-                      );
-                    }}
-                  </SettingsConsumer>
-                </SettingsProvider>
+                                  <meta
+                                    name="theme-color"
+                                    content={theme.palette.neutral[900]}
+                                  />
+                                </Head>
+                                <RTL direction={settings.direction}>
+                                  <CssBaseline />
+                                  <SessionProvider session={session}>
+                                  {showSplashScreen
+                                    ? <SplashScreen />
+                                    : (
+                                      <>
+                                        <ProjectsProvider>
+                                          <ProjectsConsumer>
+                                            {(projects) => (
+                                              getLayout(
+                                                  <Component projects={projects}
+                                                             {...pageProps} />
+                                              ))}
+                                            </ProjectsConsumer>
+                                        </ProjectsProvider>
+                                        <SettingsButton onClick={settings.handleDrawerOpen} />
+                                        <SettingsDrawer
+                                          canReset={settings.isCustom}
+                                          onClose={settings.handleDrawerClose}
+                                          onReset={settings.handleReset}
+                                          onUpdate={settings.handleUpdate}
+                                          open={settings.openDrawer}
+                                          values={{
+                                            colorPreset: settings.colorPreset,
+                                            contrast: settings.contrast,
+                                            direction: settings.direction,
+                                            paletteMode: settings.paletteMode,
+                                            responsiveFontSizes: settings.responsiveFontSizes,
+                                            stretch: settings.stretch,
+                                            layout: settings.layout,
+                                            navColor: settings.navColor
+                                          }}
+                                        />
+                                      </>
+                                    )}
+                                     </SessionProvider>
+                                  <Toaster />
+                                </RTL>
+                              </ThemeProvider>
+                            );
+                          }}
+                        </SettingsConsumer>
+                      </SettingsProvider>
+                          )}
+                    </GlobalStateConsumer>
+                  </GlobalStateProvider>
               )}
             </AuthConsumer>
           </AuthProvider>
         </LocalizationProvider>
       </ReduxProvider>
+
     </CacheProvider>
+
   );
 };
 

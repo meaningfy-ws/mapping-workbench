@@ -4,6 +4,8 @@ import subprocess
 import tempfile
 from typing import List
 
+from mapping_workbench.backend.logger.services import mwb_logger
+
 
 class GithubDownloader:
 
@@ -28,11 +30,14 @@ class GithubDownloader:
         with tempfile.TemporaryDirectory() as tmp_dir:
             temp_dir_path = pathlib.Path(tmp_dir)
             bash_script = f"cd {temp_dir_path} && git clone --depth=1 --single-branch --branch {self.branch_or_tag_name} {self.github_repository_url}"
+            mwb_logger.log_all_info(f"Running command {bash_script}")
             subprocess.run(bash_script, shell=True,
                            stdout=subprocess.DEVNULL,
                            stderr=subprocess.STDOUT)
             dir_contents = list(temp_dir_path.iterdir())
+            mwb_logger.log_all_info(f"Downloaded path {dir_contents}")
 
+            # FIXME this is not good, we should raise an exception instead
             assert len(dir_contents) == 1
             repository_name = dir_contents[0].name
 

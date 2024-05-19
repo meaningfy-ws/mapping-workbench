@@ -19,10 +19,7 @@ def run_task(task_to_run, *args):
         await init_task()
         await task_to_run(*args)
 
-    try:
-        loop.run_until_complete(task())
-    finally:
-        loop.close()
+    loop.run_until_complete(task())
 
 
 def add_task(task_to_run, task_name, task_timeout, *args):

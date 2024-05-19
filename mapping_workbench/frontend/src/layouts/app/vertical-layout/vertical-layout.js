@@ -36,20 +36,19 @@ export const VerticalLayout = (props) => {
     return (
         <>
             <TopNav onMobileNavOpen={mobileNav.handleOpen}/>
-            {lgUp && (
+            {lgUp ?
                 <SideNav
                     color={navColor}
                     sections={sections}
                 />
-            )}
-            {!lgUp && (
+                :
                 <MobileNav
                     color={navColor}
                     onClose={mobileNav.handleClose}
                     open={mobileNav.open}
                     sections={sections}
                 />
-            )}
+            }
             <VerticalLayoutRoot>
                 <VerticalLayoutContainer>
                     <Box

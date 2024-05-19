@@ -134,6 +134,11 @@ export const paths = {
             edit: '/app/customers/:customerId/edit',
         },
         account: '/app/account',
+        ontology_namespaces_custom: {
+            index: '/app/ontology-namespaces-custom',
+            create: '/app/ontology-namespaces-custom/create',
+            edit: '/app/ontology-namespaces-custom/[id]/edit'
+        },
         ontology_namespaces: {
             index: '/app/ontology-namespaces',
             create: '/app/ontology-namespaces/create',
@@ -256,7 +261,7 @@ export const apiPaths = {
         item: '/generic_triple_map_fragments/:id',
         tree:'/test_data_suites/file_resources_struct_tree',
         content: (id) => `/test_data_suites/file_resources/${id}/content`,
-        result_content: (id) => `/test_data_suites/file_resources/${id}/transform`
+        transform_result_content: (id, triple_map_id) => `/test_data_suites/file_resources/${id}/transform/generic_triple_map/${triple_map_id}`
     },
 
     specific_triple_map_fragments: {
@@ -264,9 +269,15 @@ export const apiPaths = {
         item: '/specific_triple_map_fragments/:id'
     },
 
+    ontology_namespaces_custom: {
+        items: '/ontology/namespaces_custom',
+        item: '/ontology/namespaces_custom/:id'
+    },
+
     ontology_namespaces: {
         items: '/ontology/namespaces',
-        item: '/ontology/namespaces/:id'
+        item: '/ontology/namespaces/:id',
+        create_namespaces: '/ontology/namespaces/bulk'
     },
 
     ontology_terms: {

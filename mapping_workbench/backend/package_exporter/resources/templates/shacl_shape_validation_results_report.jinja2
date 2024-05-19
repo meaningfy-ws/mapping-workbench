@@ -100,7 +100,7 @@
             {% for binding_result in result.results %}
                 <tr>
                     <td class="break-word">{{ binding_result.binding.focus_node }}</td>
-                    <td class="break-word">{{ binding_result.binding.result_path }}</td>
+                    <td class="break-word">{{ binding_result.binding.prefixed_result_path }}</td>
                     <td class="break-word">{{ binding_result.binding.result_severity }}</td>
                     <td class="break-word">{{ binding_result.binding.source_constraint_component }}</td>
                     <td class="break-word">{{ binding_result.binding.message.value }}</td>

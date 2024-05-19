@@ -1,3 +1,4 @@
+import logging
 from typing import List
 
 from beanie import PydanticObjectId
@@ -7,7 +8,8 @@ from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersS
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException, DuplicateKeyException
 from mapping_workbench.backend.core.services.request import request_update_data, request_create_data, \
     api_entity_is_found, prepare_search_param, pagination_params
-from mapping_workbench.backend.ontology.models.namespace import Namespace, NamespaceIn, NamespaceOut
+from mapping_workbench.backend.ontology.models.namespace import Namespace, NamespaceIn, NamespaceOut, \
+    NamespaceCustomOut, NamespaceCustom, NamespaceCustomIn
 from mapping_workbench.backend.user.models.user import User
 
 
@@ -41,6 +43,19 @@ async def create_namespace(data: NamespaceIn, user: User) -> NamespaceOut:
     return NamespaceOut(**namespace.model_dump())
 
 
+async def create_namespaces(namespaces_in: List[NamespaceIn], user: User) -> List[NamespaceOut]:
+    namespaces: List[NamespaceOut] = []
+    for namespace_in in namespaces_in:
+        namespace: Namespace = Namespace(**request_create_data(namespace_in, user=user))
+        try:
+            await namespace.create()
+        except DuplicateKeyError as e:
+            logging.warning(f"Namespace {namespace_in.prefix} already exists")
+        else:
+            namespaces.append(NamespaceOut(**namespace.model_dump()))
+    return namespaces
+
+
 async def update_namespace(
         namespace: Namespace,
         data: NamespaceIn,
@@ -64,4 +79,60 @@ async def get_namespace_out(id: PydanticObjectId) -> NamespaceOut:
 
 
 async def delete_namespace(namespace: Namespace):
+    return await namespace.delete()
+
+
+async def list_namespaces_custom(filters: dict = None, page: int = None, limit: int = None) -> \
+        (List[NamespaceCustomOut], int):
+    query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
+
+    prepare_search_param(query_filters)
+    skip, limit = pagination_params(page, limit)
+
+    items: List[NamespaceCustomOut] = await NamespaceCustom.find(
+        query_filters,
+        projection_model=NamespaceCustomOut,
+        fetch_links=False,
+        skip=skip,
+        limit=limit
+    ).to_list()
+    total_count: int = await NamespaceCustom.find(query_filters).count()
+    return items, total_count
+
+
+async def create_namespace_custom(data: NamespaceCustomIn, user: User) -> NamespaceCustomOut:
+    namespace: NamespaceCustom = \
+        NamespaceCustom(
+            **request_create_data(data, user=user)
+        )
+    try:
+        await namespace.create()
+    except DuplicateKeyError as e:
+        raise DuplicateKeyException(e)
+    return NamespaceCustomOut(**namespace.model_dump())
+
+
+async def update_namespace_custom(
+        namespace: NamespaceCustom,
+        data: NamespaceCustomIn,
+        user: User
+) -> NamespaceCustomOut:
+    return NamespaceCustomOut(**(
+        await namespace.set(request_update_data(data, user=user))
+    ).model_dump())
+
+
+async def get_namespace_custom(id: PydanticObjectId) -> NamespaceCustom:
+    namespace: NamespaceCustom = await NamespaceCustom.get(id)
+    if not api_entity_is_found(namespace):
+        raise ResourceNotFoundException()
+    return namespace
+
+
+async def get_namespace_custom_out(id: PydanticObjectId) -> NamespaceCustomOut:
+    namespace: NamespaceCustom = await get_namespace_custom(id)
+    return NamespaceCustomOut(**namespace.model_dump(by_alias=False))
+
+
+async def delete_namespace_custom(namespace: NamespaceCustom):
     return await namespace.delete()

@@ -28,7 +28,10 @@ class ConceptualMappingRulesApi extends SectionApi {
 
     async checkTermsValidity(content){
         let endpoint = this.paths['check_content_terms_validity'];
-        return appApi.post(endpoint, {"content": content});
+        return appApi.post(endpoint, {
+            "content": content,
+            "project": sessionApi.getSessionProject()
+        });
     }
 
     async searchTerms(q){
@@ -38,7 +41,9 @@ class ConceptualMappingRulesApi extends SectionApi {
 
     async getPrefixedTerms(q){
         let endpoint = this.paths['prefixed_terms'];
-        return appApi.get(endpoint);
+        let params = {}
+        params['project'] = sessionApi.getSessionProject();
+        return appApi.get(endpoint, params);
     }
 
     async cloneItem(id){
