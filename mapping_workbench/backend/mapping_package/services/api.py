@@ -30,10 +30,6 @@ async def list_mapping_packages(filters: dict = None, page: int = None, limit: i
         limit=limit
     ).to_list()
 
-    # Unfortunately beanie at the moment can't retrieve timezone from mongodb
-    for item in items:
-        item.created_at = item.created_at.astimezone(timezone('UTC'))
-
     total_count: int = await MappingPackage.find(query_filters).count()
     return items, total_count
 

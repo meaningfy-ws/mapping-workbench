@@ -3,8 +3,11 @@ from typing import Optional
 
 from beanie import Document, Link, PydanticObjectId
 from dateutil.tz import tzlocal
-from pydantic import BaseModel, Field, Extra, ConfigDict
+from pydantic import BaseModel, Field, Extra, ConfigDict, model_validator
+from pytz import timezone
+from typing_extensions import Self
 
+from mapping_workbench.backend import DEFAULT_TIMEZONE
 from mapping_workbench.backend.user.models.user import User
 
 
@@ -17,6 +20,15 @@ class BaseEntity(Document):
     created_by: Optional[Link[User]] = None
     updated_by: Optional[Link[User]] = None
     is_deleted: bool = False
+
+    @model_validator(mode='after')
+    def update_model_date_times_with_default_timezone(self) -> Self:
+        if self.created_at is not None:
+            self.created_at = self.created_at.astimezone(timezone(DEFAULT_TIMEZONE))
+
+        if self.updated_at is not None:
+            self.updated_at = self.updated_at.astimezone(timezone(DEFAULT_TIMEZONE))
+        return self
 
     def on_create(self, user: User):
         if user:
@@ -43,6 +55,15 @@ class BaseEntityOutSchema(BaseModel):
     # updated_by: Optional[Any]
     created_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(tzlocal()))
     updated_at: Optional[datetime] = None
+
+    @model_validator(mode='after')
+    def update_model_date_times_with_default_timezone(self) -> Self:
+        if self.created_at is not None:
+            self.created_at = self.created_at.astimezone(timezone(DEFAULT_TIMEZONE))
+
+        if self.updated_at is not None:
+            self.updated_at = self.updated_at.astimezone(timezone(DEFAULT_TIMEZONE))
+        return self
 
     model_config = ConfigDict(
         populate_by_name=True
