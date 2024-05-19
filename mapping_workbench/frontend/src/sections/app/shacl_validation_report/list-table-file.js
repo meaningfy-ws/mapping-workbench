@@ -54,7 +54,7 @@ export const ListTableFile = (props) => {
                                               title="Message"/>
                             </TableCell>
                             <TableCell>
-                                 <SorterHeader fieldName="result_path"
+                                 <SorterHeader fieldName="prefixed_result_path"
                                                title="Result Path"/>
                             </TableCell>
                             <TableCell>
@@ -92,7 +92,7 @@ export const ListTableFile = (props) => {
                                             language="sparql"
                                             wrapLines={true}
                                             lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
-                                            {item.result_path}
+                                            {item.prefixed_result_path}
                                         </SyntaxHighlighter>
                                     </TableCell>
                                     <TableCell>

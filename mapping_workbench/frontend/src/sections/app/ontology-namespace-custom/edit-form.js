@@ -3,19 +3,18 @@ import * as Yup from 'yup';
 import {useFormik} from 'formik';
 
 import Button from '@mui/material/Button';
-import MenuItem from '@mui/material/MenuItem';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Grid from '@mui/material/Unstable_Grid2';
 import Stack from '@mui/material/Stack';
-import TextField from "@mui/material/TextField";
 
+import {RouterLink} from 'src/components/router-link';
 import {paths} from 'src/paths';
 import {useRouter} from 'src/hooks/use-router';
-import {RouterLink} from 'src/components/router-link';
+
 import {FormTextField} from "../../../components/app/form/text-field";
-import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
+import {getToastId, toastError, toastSuccess} from "../../../components/app-toast";
 import {sessionApi} from "../../../api/session";
 
 
@@ -26,30 +25,28 @@ export const EditForm = (props) => {
     const item = itemctx.data;
 
     const initialValues = {
-        term: item.term ?? '',
-        type: item.type ?? '',
+        prefix: item.prefix ?? '',
+        uri: item.uri ?? ''
     };
 
     const formik = useFormik({
-        initialValues: initialValues,
+        initialValues,
         validationSchema: Yup.object({
-            term: Yup
+            prefix: Yup
                 .string()
                 .max(255)
-                .required('Term is required')
+                .required('Prefix is required'),
+            uri: Yup.string().max(2048)
         }),
         onSubmit: async (values, helpers) => {
-            const toastId = toastLoad(itemctx.isNew ? "Creating..." : "Updating...")
+            const toastId = getToastId()
             try {
-                const requestValues = values;
                 let response;
-                requestValues['project'] = sessionApi.getSessionProject();
-                requestValues['type'] = values['type'] || null;
                 if (itemctx.isNew) {
-                    response = await sectionApi.createItem(requestValues);
+                    response = await sectionApi.createItem(values);
                 } else {
-                    requestValues['id'] = item._id;
-                    response = await sectionApi.updateItem(requestValues);
+                    values['id'] = item._id;
+                    response = await sectionApi.updateItem(values);
                 }
                 helpers.setStatus({success: true});
                 helpers.setSubmitting(false);
@@ -87,33 +84,15 @@ export const EditForm = (props) => {
                         <Grid xs={12}
                               md={12}>
                             <FormTextField formik={formik}
-                                           name="term"
-                                           label="Term"
+                                           name="prefix"
+                                           label="Prefix"
                                            required={true}/>
                         </Grid>
                         <Grid xs={12}
                               md={12}>
-                            <TextField
-                                error={!!(formik.touched.type && formik.errors.type)}
-                                fullWidth
-                                helperText={formik.touched.type && formik.errors.type}
-                                onBlur={formik.handleBlur}
-                                label="Type"
-                                onChange={e => {
-                                    formik.setFieldValue("type", e.target.value);
-                                }}
-                                select
-                                value={formik.values.type}
-                            >
-                                <MenuItem key="none"
-                                          value="">&nbsp;</MenuItem>
-                                {Object.keys(sectionApi.TERM_TYPES).map((key) => (
-                                    <MenuItem key={key}
-                                              value={key}>
-                                        {sectionApi.TERM_TYPES[key]}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
+                            <FormTextField formik={formik}
+                                           name="uri"
+                                           label="URI"/>
                         </Grid>
                     </Grid>
                 </CardContent>
@@ -140,7 +119,7 @@ export const EditForm = (props) => {
                         color="inherit"
                         component={RouterLink}
                         disabled={formik.isSubmitting}
-                        href={paths.app.ontology_terms.index}
+                        href={paths.app.ontology_namespaces_custom.index}
                     >
                         Cancel
                     </Button>

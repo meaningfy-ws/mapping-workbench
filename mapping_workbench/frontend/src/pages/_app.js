@@ -28,17 +28,19 @@ import {createTheme} from 'src/theme';
 import {createEmotionCache} from 'src/utils/create-emotion-cache';
 
 // Remove if locales are not used
+import {SessionProvider} from "next-auth/react";
 import 'src/locales/i18n';
 import {GlobalStateConsumer, GlobalStateProvider} from "../contexts/globalState";
 
 const clientSideEmotionCache = createEmotionCache();
 
 const CustomApp = (props) => {
-  const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+  const { Component, emotionCache = clientSideEmotionCache, pageProps, session } = props;
   useNprogress();
   const getLayout = Component.getLayout ?? ((page) => page);
 
   return (
+
     <CacheProvider value={emotionCache}>
       <Head>
         <title>
@@ -49,6 +51,7 @@ const CustomApp = (props) => {
           content="initial-scale=1, width=device-width"
         />
       </Head>
+
       <ReduxProvider store={store}>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <AuthProvider>
@@ -91,6 +94,7 @@ const CustomApp = (props) => {
                                 </Head>
                                 <RTL direction={settings.direction}>
                                   <CssBaseline />
+                                  <SessionProvider session={session}>
                                   {showSplashScreen
                                     ? <SplashScreen />
                                     : (
@@ -124,6 +128,7 @@ const CustomApp = (props) => {
                                         />
                                       </>
                                     )}
+                                     </SessionProvider>
                                   <Toaster />
                                 </RTL>
                               </ThemeProvider>
@@ -139,7 +144,9 @@ const CustomApp = (props) => {
           </AuthProvider>
         </LocalizationProvider>
       </ReduxProvider>
+
     </CacheProvider>
+
   );
 };
 

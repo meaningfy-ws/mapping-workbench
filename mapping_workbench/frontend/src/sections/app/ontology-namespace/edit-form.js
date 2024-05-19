@@ -19,6 +19,7 @@ import {useRouter} from 'src/hooks/use-router';
 
 import {FormTextField} from "../../../components/app/form/text-field";
 import {getToastId, toastError, toastSuccess} from "../../../components/app-toast";
+import {sessionApi} from "../../../api/session";
 
 
 export const EditForm = (props) => {
@@ -47,6 +48,7 @@ export const EditForm = (props) => {
             const toastId = getToastId()
             try {
                 let response;
+                values['project'] = sessionApi.getSessionProject();
                 values['is_syncable'] = values['is_syncable'] || false;
                 if (itemctx.isNew) {
                     response = await sectionApi.createItem(values);

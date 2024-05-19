@@ -1,5 +1,6 @@
 import {SectionApi} from "../section";
 import {appApi} from "../app";
+import {sessionApi} from "../session";
 
 class OntologyTermsApi extends SectionApi {
     get SECTION_TITLE() {
@@ -19,12 +20,15 @@ class OntologyTermsApi extends SectionApi {
 
     constructor() {
         super("ontology_terms");
+        this.isProjectResource = true;
     }
 
     discoverTerms(request) {
         try {
             let endpoint = this.paths['discover_terms'];
-            return appApi.post(endpoint);
+            let filters = {}
+            filters['project'] = sessionApi.getSessionProject();
+            return appApi.post(endpoint, filters);
         } catch (err) {
         }
     }

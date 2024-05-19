@@ -3,6 +3,8 @@ from typing import Any, Optional, Dict
 from fastapi import HTTPException, status
 from pymongo.errors import DuplicateKeyError
 
+UNPROCESSABLE_ENTITY_ERROR = "Unprocessable Entity"
+
 
 class ResourceNotFoundException(HTTPException):
     def __init__(
@@ -23,7 +25,8 @@ class DuplicateKeyException(HTTPException):
             self,
             e: DuplicateKeyError = None
     ) -> None:
+        details = str(e.details['keyValue']) if hasattr(e, 'details') else str(e)
         super().__init__(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Duplicate key: {e.details['keyValue']}!"
+            detail=f"Duplicate key: {details}!"
         )

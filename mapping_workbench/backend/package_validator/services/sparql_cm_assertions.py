@@ -35,6 +35,10 @@ def generate_subject_type_for_cm_assertion(class_path: str) -> str:
     return f"?this rdf:type {subject_reference} ." if subject_reference else ''
 
 
+def is_cm_rule_assertable(cm_rule: ConceptualMappingRule) -> bool:
+    return bool(cm_rule.target_class_path or cm_rule.target_property_path)
+
+
 async def generate_and_save_cm_assertions_queries(
         project_id: PydanticObjectId,
         cleanup: bool = True,
@@ -69,10 +73,12 @@ async def generate_and_save_cm_assertions_queries(
     sparql_test_suite_link = SPARQLTestSuite.link_from_id(sparql_test_suite.id)
 
     if prefixes_definitions is None:
-        prefixes_definitions = await get_prefixes_definitions()
+        prefixes_definitions = await get_prefixes_definitions(project_id)
 
     cm_rules: List[ConceptualMappingRule] = await get_conceptual_mapping_rules_for_project(project_id=project_id)
     for index, cm_rule in enumerate(cm_rules):
+        if not is_cm_rule_assertable(cm_rule):
+            continue
         subject_type = generate_subject_type_for_cm_assertion(cm_rule.target_class_path) \
             if cm_rule.target_class_path and '?this' in cm_rule.target_property_path else ''
 
