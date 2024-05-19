@@ -3,11 +3,13 @@ from typing import List
 import pymongo
 from beanie import PydanticObjectId
 from pymongo.errors import DuplicateKeyError
+from pytz import timezone
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException, DuplicateKeyException
 from mapping_workbench.backend.core.services.request import request_update_data, request_create_data, \
     api_entity_is_found, prepare_search_param, pagination_params
+from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageCreateIn, \
     MappingPackageUpdateIn, MappingPackageOut, MappingPackageStateGate
 from mapping_workbench.backend.user.models.user import User
@@ -27,6 +29,11 @@ async def list_mapping_packages(filters: dict = None, page: int = None, limit: i
         skip=skip,
         limit=limit
     ).to_list()
+
+    # Unfortunately beanie at the moment can't retrieve timezone from mongodb
+    for item in items:
+        item.created_at = item.created_at.astimezone(timezone('UTC'))
+
     total_count: int = await MappingPackage.find(query_filters).count()
     return items, total_count
 

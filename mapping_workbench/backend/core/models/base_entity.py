@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Optional
 
 from beanie import Document, Link, PydanticObjectId
+from dateutil.tz import tzlocal
 from pydantic import BaseModel, Field, Extra, ConfigDict
 
 from mapping_workbench.backend.user.models.user import User
@@ -11,7 +12,7 @@ class BaseEntity(Document):
     """
     The general model for entities
     """
-    created_at: Optional[datetime] = None
+    created_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(tzlocal()))
     updated_at: Optional[datetime] = None
     created_by: Optional[Link[User]] = None
     updated_by: Optional[Link[User]] = None
@@ -21,13 +22,13 @@ class BaseEntity(Document):
         if user:
             self.created_by = User.link_from_id(user.id)
         if not self.created_at:
-            self.created_at = datetime.now()
+            self.created_at = datetime.now(tzlocal())
         return self
 
     def on_update(self, user: User):
         if user:
             self.updated_by = User.link_from_id(user.id)
-        self.updated_at = datetime.now()
+        self.updated_at = datetime.now(tzlocal())
         return self
 
     class Settings:
@@ -40,7 +41,7 @@ class BaseEntityOutSchema(BaseModel):
     # is_deleted: Optional[bool]
     # created_by: Optional[Any]
     # updated_by: Optional[Any]
-    created_at: Optional[datetime] = None
+    created_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(tzlocal()))
     updated_at: Optional[datetime] = None
 
     model_config = ConfigDict(
