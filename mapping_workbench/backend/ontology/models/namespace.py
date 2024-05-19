@@ -52,12 +52,12 @@ class Namespace(BaseProjectResourceEntity, StatefulObjectABC):
 
 class NamespaceCustomIn(BaseEntityInSchema):
     prefix: str
-    uri: HttpUrl
+    uri: Annotated[HttpUrl, AfterValidator(str)]
 
 
 class NamespaceCustomOut(BaseEntityOutSchema):
     prefix: Optional[str] = None
-    uri: Annotated[HttpUrl, AfterValidator(str)]
+    uri: str
 
 
 class NamespaceCustom(BaseEntity, StatefulObjectABC):

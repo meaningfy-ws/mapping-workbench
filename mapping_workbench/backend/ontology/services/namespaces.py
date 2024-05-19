@@ -2,8 +2,10 @@ import re
 from typing import Dict
 
 from beanie import PydanticObjectId
+from beanie.exceptions import RevisionIdWasChanged
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
+from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.ontology.adapters.namespace_handler import NamespaceInventory
 from mapping_workbench.backend.ontology.models.namespace import Namespace, NamespaceCustom
 from mapping_workbench.backend.project.models.entity import Project
@@ -46,8 +48,15 @@ async def discover_and_save_prefix_namespace(
             try:
                 namespace.uri = ns_handler.prefix_to_ns_uri(prefix=prefix)
             except ValueError as e:
-                pass
-        await namespace.save()
+                mwb_logger.log_all_error(message="Prefix namespace discovery error", stack_trace=e)
+        try:
+            await namespace.save()
+        except RevisionIdWasChanged:
+            mwb_logger.log_all_info(message=f"Namespace: {namespace.prefix} already exists")
+            pass
+        except Exception as e:
+            mwb_logger.log_all_error(message=f"Namespace saving error", stack_trace=str(
+                e) or f"No stack trace provided. Exception Name: {e.__class__.__name__}")
 
 
 async def get_prefixes_definitions(project_id: PydanticObjectId) -> Dict[str, str]:
