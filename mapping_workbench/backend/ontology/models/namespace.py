@@ -1,7 +1,8 @@
-from typing import Optional
+from typing import Optional, Annotated
 
 import pymongo
 from beanie import Indexed
+from pydantic import HttpUrl, field_serializer, AfterValidator
 from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntity, BaseEntityInSchema, BaseEntityOutSchema
@@ -50,18 +51,18 @@ class Namespace(BaseProjectResourceEntity, StatefulObjectABC):
 
 
 class NamespaceCustomIn(BaseEntityInSchema):
-    prefix: Optional[str] = None
-    uri: Optional[str] = None
+    prefix: str
+    uri: HttpUrl
 
 
 class NamespaceCustomOut(BaseEntityOutSchema):
     prefix: Optional[str] = None
-    uri: Optional[str] = None
+    uri: Annotated[HttpUrl, AfterValidator(str)]
 
 
 class NamespaceCustom(BaseEntity, StatefulObjectABC):
-    prefix: Indexed(str, index_type=pymongo.TEXT)
-    uri: Optional[str] = None
+    prefix: Indexed(str, index_type=pymongo.TEXT, unique=True)
+    uri: Annotated[HttpUrl, AfterValidator(str)]
 
     async def get_state(self) -> NamespaceState:
         return NamespaceState(

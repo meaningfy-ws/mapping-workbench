@@ -164,10 +164,10 @@ async def route_create_namespace_custom(
         data: NamespaceCustomIn,
         user: User = Depends(current_active_user)
 ):
-    try:
-        return await create_namespace_custom(data, user=user)
-    except Exception:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=UNPROCESSABLE_ENTITY_ERROR)
+    # try:
+    return await create_namespace_custom(data, user=user)
+    # except Exception:
+    #    raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=UNPROCESSABLE_ENTITY_ERROR)
 
 
 @router.patch(
@@ -185,7 +185,6 @@ async def route_update_namespace_custom(
         return await update_namespace_custom(namespace, data, user=user)
     except Exception:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=UNPROCESSABLE_ENTITY_ERROR)
-
 
 
 @router.get(
