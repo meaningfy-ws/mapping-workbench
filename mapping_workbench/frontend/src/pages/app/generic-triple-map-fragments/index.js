@@ -29,6 +29,8 @@ const useItemsSearch = () => {
             status: [],
             inStock: undefined
         },
+        sortDirection: undefined,
+        sortField: '',
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -55,7 +57,12 @@ const useItemsSearch = () => {
         }));
     }
 
+    const handleSorterChange = sortField => {
+        setState(prevState => ({...prevState, sortField, sortDirection: state.sortField === sortField && prevState.sortDirection === -1 ? 1 : -1 }))
+    }
+
     return {
+        handleSorterChange,
         handleFiltersChange,
         handlePageChange,
         handleRowsPerPageChange,
@@ -178,6 +185,8 @@ const Page = () => {
                         page={itemsSearch.state.page}
                         items={itemsStore.items}
                         count={itemsStore.itemsCount}
+                        onSort={itemsSearch.handleSorterChange}
+                        sort={{direction: itemsSearch.state.sortDirection, column: itemsSearch.state.sortField}}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
                     />

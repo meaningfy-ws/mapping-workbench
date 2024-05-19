@@ -24,6 +24,7 @@ import Tooltip from "@mui/material/Tooltip";
 import TablePagination from "../../components/table-pagination";
 import timeTransformer from "../../../utils/time-transformer";
 import {useGlobalState} from "../../../hooks/use-global-state";
+import TableSorterHeader from "../../components/table-sorter-header";
 
 
 export const ListTable = (props) => {
@@ -34,6 +35,8 @@ export const ListTable = (props) => {
         },
         onRowsPerPageChange,
         page = 0,
+        sort,
+        onSort = () => {},
         rowsPerPage = 0,
         sectionApi
     } = props;
@@ -43,6 +46,16 @@ export const ListTable = (props) => {
     const {timeSetting} = useGlobalState()
 
     const handleItemToggle = itemId => setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
+
+    const SorterHeader = (props) => {
+        const direction = props.fieldName === sort.column && sort.direction === 1 ? 'asc' : 'desc';
+        return(
+            <TableSorterHeader sort={{direction, column: sort.column}}
+                           onSort={onSort}
+                           {...props}
+            />
+        )
+    }
 
     return (
         <div>
@@ -63,29 +76,10 @@ export const ListTable = (props) => {
                             <TableRow>
                                 <TableCell/>
                                 <TableCell width="25%">
-                                    <Tooltip
-                                        enterDelay={300}
-                                        title="Sort"
-                                    >
-                                        <TableSortLabel
-                                            direction="asc"
-                                        >
-                                            URI
-                                        </TableSortLabel>
-                                    </Tooltip>
+                                    URI
                                 </TableCell>
                                 <TableCell align="left">
-                                    <Tooltip
-                                        enterDelay={300}
-                                        title="Sort"
-                                    >
-                                        <TableSortLabel
-                                            active
-                                            direction="desc"
-                                        >
-                                            Created
-                                        </TableSortLabel>
-                                    </Tooltip>
+                                    Created
                                 </TableCell>
                                 <TableCell align="right">
                                     Actions

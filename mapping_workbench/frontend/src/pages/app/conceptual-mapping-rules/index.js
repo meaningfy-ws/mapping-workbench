@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useTranslation} from "react-i18next";
 
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
@@ -21,7 +21,6 @@ import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {tokens} from "/src/locales/tokens";
 import {ListSearch} from "../../../sections/app/conceptual-mapping-rule/list-search";
 import {ListTable} from "../../../sections/app/conceptual-mapping-rule/list-table";
-import {useMounted} from "../../../hooks/use-mounted";
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -29,41 +28,48 @@ const useItemsSearch = () => {
             q: undefined,
             terms_validity: undefined
         },
+        sortField: '',
+        sortDirection: undefined,
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE,
         detailedView: true
     });
 
-    const handleFiltersChange = useCallback((filters) => {
-        setState((prevState) => ({
+    const handleFiltersChange = filters => {
+        setState(prevState => ({
             ...prevState,
             filters,
             page: 0
         }));
-    }, []);
+    }
 
-    const handlePageChange = useCallback((event, page) => {
-        setState((prevState) => ({
+    const handlePageChange = (event, page) => {
+        setState(prevState => ({
             ...prevState,
             page
         }));
-    }, []);
+    }
 
-    const handleRowsPerPageChange = useCallback((event) => {
-        setState((prevState) => ({
+    const handleRowsPerPageChange = event => {
+        setState(prevState => ({
             ...prevState,
             rowsPerPage: parseInt(event.target.value, 10)
         }));
-    }, []);
+    }
 
-    const handleDetailedViewChange = useCallback((event, detailedView) => {
-        setState((prevState) => ({
+    const handleDetailedViewChange = (event, detailedView) => {
+        setState(prevState => ({
             ...prevState,
             detailedView
         }));
-    }, []);
+    }
+
+    const handleSorterChange = sortField => {
+        setState(prevState => ({...prevState, sortField, sortDirection: state.sortField === sortField && prevState.sortDirection === -1 ? 1 : -1 }))
+    }
 
     return {
+        handleSorterChange,
         handleFiltersChange,
         handlePageChange,
         handleRowsPerPageChange,
@@ -74,25 +80,16 @@ const useItemsSearch = () => {
 
 
 const useItemsStore = (searchState) => {
-    const isMounted = useMounted();
     const [state, setState] = useState({
         items: [],
         itemsCount: 0
     });
 
-    const handleItemsGet = useCallback(async () => {
-        try {
-            const response = await sectionApi.getItems(searchState);
-            if (isMounted()) {
-                setState({
-                    items: response.items,
-                    itemsCount: response.count
-                });
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    }, [searchState, isMounted]);
+    const handleItemsGet = () => {
+        sectionApi.getItems(searchState)
+            .then(res => setState({items: res.items, itemsCount: res.count}))
+            .catch(err => console.warn(err))
+    }
 
     useEffect(() => {
             handleItemsGet();
@@ -117,15 +114,9 @@ const Page = () => {
     const [sortDir, setSortDir] = useState('desc');
     const [sortField, setSortField] = useState('1');
 
-    const handleSort = useCallback(() => {
-        setSortDir((prevState) => {
-            if (prevState === 'asc') {
-                return 'desc';
-            }
-
-            return 'asc';
-        });
-    }, []);
+    const handleSort = () => {
+        setSortDir(prevState => prevState === 'asc' ? 'desc' : 'asc');
+    }
 
     return (
         <>
@@ -211,9 +202,8 @@ const Page = () => {
                         count={itemsStore.itemsCount}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
-                        sortDir={sortDir}
-                        sortField={sortField}
-                        handleSort={handleSort}
+                        onSort={itemsSearch.handleSorterChange}
+                        sort={{direction: itemsSearch.state.sortDirection, column: itemsSearch.state.sortField}}
                         detailedView={itemsSearch.state.detailedView}
                     />
                 </Card>

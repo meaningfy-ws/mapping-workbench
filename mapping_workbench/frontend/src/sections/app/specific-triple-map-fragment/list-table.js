@@ -50,6 +50,7 @@ export const ListTable = (props) => {
     useEffect(() => {
         mappingPackagesApi.getProjectPackages()
             .then(res => setProjectMappingPackages(res))
+            .catch(err => console.warn(err))
     }, [])
 
     const [projectMappingPackagesMap, setProjectMappingPackagesMap] = useState({});
@@ -81,41 +82,13 @@ export const ListTable = (props) => {
                         <TableRow>
                             <TableCell/>
                             <TableCell width="25%">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        URI
-                                    </TableSortLabel>
-                                </Tooltip>
+                                URI
                             </TableCell>
                             <TableCell>
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        Package
-                                    </TableSortLabel>
-                                </Tooltip>
+                                Package
                             </TableCell>
                             <TableCell align="left">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        active
-                                        direction="desc"
-                                    >
-                                        Created
-                                    </TableSortLabel>
-                                </Tooltip>
+                                Created
                             </TableCell>
                             <TableCell align="right">
                                 Actions

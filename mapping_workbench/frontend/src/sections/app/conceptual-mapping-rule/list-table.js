@@ -59,6 +59,7 @@ import {sparqlTestFileResourcesApi} from "../../../api/sparql-test-suites/file-r
 import {toastSuccess} from "../../../components/app-toast";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import TablePagination from "../../components/table-pagination";
+import TableSorterHeader from "../../components/table-sorter-header";
 
 
 export const ListTableTripleMapFragment = (props) => {
@@ -901,7 +902,7 @@ export const ListTable = (props) => {
     const {
         count = 0, items = [], onPageChange = () => {
         }, onRowsPerPageChange, page = 0, rowsPerPage = 0, sectionApi, onPackagesUpdate = () => {
-        }, sortDir, sortField, handleSort, detailedView
+        }, sort, sortField, onSort, detailedView
     } = props;
 
     const [currentItem, setCurrentItem] = useState(null);
@@ -933,6 +934,16 @@ export const ListTable = (props) => {
         })()
     }, [genericTripleMapFragmentsApi])
 
+   const SorterHeader = (props) => {
+        const direction = props.fieldName === sort.column && sort.direction === 1 ? 'asc' : 'desc';
+        return(
+            <TableSorterHeader sort={{direction, column: sort.column}}
+                           onSort={onSort}
+                           {...props}
+            />
+        )
+    }
+
     if (!isProjectDataReady) return null;
 
     return (
@@ -956,18 +967,7 @@ export const ListTable = (props) => {
                                 CM Rule Order
                             </TableCell>
                             <TableCell width="10%">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        active
-                                        direction={sortDir}
-                                        onClick={handleSort}
-                                    >
-                                        Conceptual Field/Group
-                                    </TableSortLabel>
-                                </Tooltip>
+                                Conceptual Field/Group
                             </TableCell>
                             <TableCell>
                                 Min SDK
@@ -976,28 +976,10 @@ export const ListTable = (props) => {
                                 Max SDK
                             </TableCell>
                             <TableCell width="18%">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        Ontology Fragment Class path
-                                    </TableSortLabel>
-                                </Tooltip>
+                                Ontology Fragment Class path
                             </TableCell>
                             <TableCell width="18%">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        Ontology Fragment Property path
-                                    </TableSortLabel>
-                                </Tooltip>
+                                Ontology Fragment Property path
                             </TableCell>
                             <TableCell>
                                 RML Triple Map
