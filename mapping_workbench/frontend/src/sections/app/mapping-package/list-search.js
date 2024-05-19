@@ -24,8 +24,8 @@ const statusOptions = [
 ];
 
 export const ListSearch = (props) => {
-    const firstUpdate = useRef(true);
     const {onFiltersChange, showStatus, ...other} = props;
+    const firstUpdate = useRef(true);
     const queryRef = useRef(null);
     const [chips, setChips] = useState([]);
 

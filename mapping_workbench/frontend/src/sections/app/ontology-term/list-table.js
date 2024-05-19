@@ -34,33 +34,12 @@ export const ListTable = (props) => {
         sectionApi
     } = props;
 
-    //console.log("PROJECT PROPS: ", props);
 
     const [currentItem, setCurrentItem] = useState(null);
 
-    const handleItemToggle = useCallback((itemId) => {
-        setCurrentItem((prevItemId) => {
-            if (prevItemId === itemId) {
-                return null;
-            }
-
-            return itemId;
-        });
-    }, []);
-
-    // const handleItemClose = useCallback(() => {
-    //     setCurrentItem(null);
-    // }, []);
-
-    // const handleItemUpdate = useCallback(() => {
-    //     setCurrentItem(null);
-    //     toast.success('Item updated');
-    // }, []);
-
-    // const handleItemDelete = useCallback(() => {
-        
-    //     toast.error('Item cannot be deleted');
-    // }, []);
+    const handleItemToggle = itemId => {
+        setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
+    }
 
     return (
         <div>
@@ -80,29 +59,8 @@ export const ListTable = (props) => {
                         <TableHead>
                             <TableRow>
                                 <TableCell/>
-                                {/* <TableCell width="25%">
-                                    <Tooltip
-                                        enterDelay={300}
-                                        title="Sort"
-                                    >
-                                        <TableSortLabel
-                                            direction="asc"
-                                        >
-                                            Name
-                                        </TableSortLabel>
-                                    </Tooltip>
-                                </TableCell> */}
                                 <TableCell width="25%">
-                                    <Tooltip
-                                        enterDelay={300}
-                                        title="Sort"
-                                    >
-                                        <TableSortLabel
-                                            direction="asc"
-                                        >
-                                            Term
-                                        </TableSortLabel>
-                                    </Tooltip>
+                                    Term
                                 </TableCell>
                                 <TableCell>
                                     Type
@@ -148,25 +106,6 @@ export const ListTable = (props) => {
                                                     </SvgIcon>
                                                 </IconButton>
                                             </TableCell>
-                                            {/* <TableCell width="25%">
-                                                <Box
-                                                    sx={{
-                                                        alignItems: 'center',
-                                                        display: 'flex'
-                                                    }}
-                                                >
-                                                    <Box
-                                                        sx={{
-                                                            cursor: 'pointer',
-                                                            ml: 2
-                                                        }}
-                                                    >
-                                                        <Typography variant="subtitle2">
-                                                            {item.name}
-                                                        </Typography>
-                                                    </Box>
-                                                </Box>
-                                            </TableCell> */}
                                             <TableCell width="25%">
                                                 <Typography variant="subtitle2">
                                                     {item.term}
