@@ -87,16 +87,7 @@ export const ListTable = (props) => {
                         <TableRow>
                             <TableCell/>
                             <TableCell width="25%">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        Title
-                                    </TableSortLabel>
-                                </Tooltip>
+                                Title
                             </TableCell>
                             <TableCell>
                                 Created at
