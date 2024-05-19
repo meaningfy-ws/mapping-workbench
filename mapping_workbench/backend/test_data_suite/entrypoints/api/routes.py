@@ -29,6 +29,7 @@ from mapping_workbench.backend.test_data_suite.services.api import (
     delete_test_data_file_resource, update_test_data_file_resource
 )
 from mapping_workbench.backend.test_data_suite.services.transform_test_data import transform_test_data_file_resource
+from mapping_workbench.backend.triple_map_fragment.services.api_for_generic import get_generic_triple_map_fragment
 from mapping_workbench.backend.user.models.user import User
 
 ROUTE_PREFIX = "/test_data_suites"
@@ -311,20 +312,20 @@ async def route_get_test_data_file_resource_content(
 
 
 @router.post(
-    "/file_resources/{id}/transform",
-    description=f"Transform Test Data",
+    "/file_resources/{id}/transform/generic_triple_map/{generic_triple_map_id}",
+    description=f"Transform Test Data using Triple Map",
     name=f"{FILE_RESOURCE_NAME_FOR_ONE}:transform"
 )
-async def route_transform_test_data_file_resource(
+async def route_transform_test_data_file_resource_with_triple_map(
+        generic_triple_map_id: PydanticObjectId,
         test_data_file_resource: TestDataFileResource = Depends(get_test_data_file_resource),
-        user: User = Depends(current_active_user),
-        save: bool = True
+        user: User = Depends(current_active_user)
 ) -> dict:
     try:
         test_data_file_resource = await transform_test_data_file_resource(
             test_data_file_resource=test_data_file_resource,
-            user=user,
-            save=save
+            mappings=[await get_generic_triple_map_fragment(generic_triple_map_id)],
+            user=user
         )
     except RMLMapperException as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))

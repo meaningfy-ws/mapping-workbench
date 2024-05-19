@@ -63,6 +63,7 @@ export const tokens = {
         resource_collections: 'nav.resource_collections',
         ontology: 'nav.ontology',
         namespaces: 'nav.namespaces',
+        namespaces_custom: 'nav.namespaces_custom',
         terms: 'nav.terms',
 
         mapping_packages: 'nav.mapping_packages',

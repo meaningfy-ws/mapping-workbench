@@ -63,6 +63,7 @@ export const en = {
   [tokens.nav.ontology_file_collections]: 'Ontologies',
   [tokens.nav.ontology]: 'Ontology',
   [tokens.nav.namespaces]: 'Namespaces',
+  [tokens.nav.namespaces_custom]: 'Custom Namespaces',
   [tokens.nav.terms]: 'Terms',
   [tokens.nav.resource_collections]: 'Resources',
   [tokens.nav.mapping_packages]: 'Mapping Packages',

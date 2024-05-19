@@ -11,6 +11,8 @@ import HiveIcon from '@mui/icons-material/Hive';
 import MapIcon from '@mui/icons-material/Map';
 import SchemaIcon from '@mui/icons-material/Schema';
 import TaskIcon from '@mui/icons-material/TaskAlt';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import WindowIcon from '@mui/icons-material/Window';
 
 import HomeSmileIcon from 'src/icons/ui/duocolor/home-smile';
 import LayoutAlt02 from 'src/icons/ui/duocolor/layout-alt-02';
@@ -149,7 +151,7 @@ export const useSections = () => {
                 path: paths.app.fields_registry.elements.index,
                 icon: (
                     <SvgIcon fontSize="small">
-                        <HiveIcon/>
+                        <WindowIcon/>
                     </SvgIcon>
                 ),
                 items: [
@@ -162,7 +164,27 @@ export const useSections = () => {
                         path: paths.app.fields_registry.elements.import
                     }
                 ]
-            });
+            },
+            {
+                title: t(tokens.nav.ontology),
+                path: paths.app.ontology_namespaces.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <SchemaIcon/>
+                    </SvgIcon>
+                ),
+                items: [
+                    {
+                        title: t(tokens.nav.namespaces),
+                        path: paths.app.ontology_namespaces.index
+                    },
+                    {
+                        title: t(tokens.nav.terms),
+                        path: paths.app.ontology_terms.index
+                    }
+                ]
+            }
+        );
     }
     items.resources.push(sections);
     items.admin.push(
@@ -170,23 +192,13 @@ export const useSections = () => {
             subheader: t(tokens.nav.admin),
             items: [
                 {
-                    title: t(tokens.nav.ontology),
-                    path: paths.app.ontology_namespaces.index,
+                    title: t(tokens.nav.namespaces_custom),
+                    path: paths.app.ontology_namespaces_custom.index,
                     icon: (
                         <SvgIcon fontSize="small">
-                            <SchemaIcon/>
+                            <AccountTreeIcon/>
                         </SvgIcon>
-                    ),
-                    items: [
-                        {
-                            title: t(tokens.nav.namespaces),
-                            path: paths.app.ontology_namespaces.index
-                        },
-                        {
-                            title: t(tokens.nav.terms),
-                            path: paths.app.ontology_terms.index
-                        }
-                    ]
+                    )
                 },
                 {
                     title: t(tokens.nav.tasks),

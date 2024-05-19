@@ -15,3 +15,8 @@ class APIRequestForUpdateMany(BaseModel):
 
 class APIRequestWithProject(BaseModel):
     project: Optional[PydanticObjectId] = None
+
+
+class APIRequestWithProjectAndContent(BaseModel):
+    project: Optional[PydanticObjectId] = None
+    content: Optional[str] = None

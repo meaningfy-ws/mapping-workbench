@@ -6,7 +6,7 @@ from mapping_workbench.backend.fields_registry.models.field_registry import Stru
     StructuralElement
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageStateGate
 from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingRuleRegistry, MappingGroup
-from mapping_workbench.backend.ontology.models.namespace import Namespace
+from mapping_workbench.backend.ontology.models.namespace import Namespace, NamespaceCustom
 from mapping_workbench.backend.ontology.models.term import Term
 from mapping_workbench.backend.ontology_file_collection.models.entity import OntologyFileCollection, \
     OntologyFileResource
@@ -48,6 +48,7 @@ async def init_project_models(mongodb_database: AsyncIOMotorDatabase):
             SpecificTripleMapFragment,
             GenericTripleMapFragment,
             Namespace,
+            NamespaceCustom,
             Term,
             StructuralElement,
             StructuralElementsVersionedView

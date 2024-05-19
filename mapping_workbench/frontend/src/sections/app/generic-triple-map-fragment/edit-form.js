@@ -113,12 +113,17 @@ export const EditForm = (props) => {
             formik.setSubmitting(false);
         }
 
+        if (!selectedTree) {
+            catchError(Error("Select Test Data"));
+            return false;
+        }
+
         sectionApi.updateItem(values)
             .then(res => {
-                toastLoad("Transforming Content", toastId)
-                sectionApi.getTripleMapRdfResultContent(selectedTree)
+                toastLoad("Transforming Content", toastId);
+                sectionApi.getTripleMapRdfResultContent(item._id, selectedTree)
                     .then(res => {
-                        setRdfResultContent(res.data.rdf_manifestation)
+                        setRdfResultContent(res.rdf_manifestation)
                         toastSuccess('Transformed Successfully', toastId)
                     })
                     .catch(err => catchError(err))

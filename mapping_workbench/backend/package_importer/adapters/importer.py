@@ -457,7 +457,10 @@ class PackageImporter:
                 await existing_rule.on_update(self.user).save()
                 duplicates.append(rule)
 
-            await discover_and_save_mapping_rule_prefixes(rule)
+            await discover_and_save_mapping_rule_prefixes(
+                project_id=self.project.id,
+                rule=rule
+            )
 
         print("RULES_DUPLICATES :: ", len(duplicates))
 

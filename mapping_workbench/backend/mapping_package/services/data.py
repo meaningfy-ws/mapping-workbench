@@ -35,3 +35,16 @@ async def get_specific_mapping_package_state(mapping_package_state_id: PydanticO
         state_id=mapping_package_state_id,
         object_class=MappingPackageState
     )
+
+
+def get_mapping_package_state_ns_definitions(mapping_package_state: MappingPackageState) -> dict:
+    ns_definitions = {
+        (x.uri or ''): x.prefix
+        for x in sorted(
+            list(filter(lambda x: x.prefix, mapping_package_state.namespaces)),
+            key=lambda namespace: (namespace.uri or '', namespace.prefix),
+            reverse=True
+        )
+    }
+    return ns_definitions
+

@@ -60,11 +60,15 @@ class ConceptualMappingRuleIn(BaseProjectResourceEntityInSchema):
 
 
 class ConceptualMappingRuleCreateIn(ConceptualMappingRuleIn):
-    pass
+    """
+
+    """
 
 
 class ConceptualMappingRuleUpdateIn(ConceptualMappingRuleIn):
-    pass
+    """
+
+    """
 
 
 class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema):
