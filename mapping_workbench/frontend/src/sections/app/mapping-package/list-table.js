@@ -292,12 +292,15 @@ export const ListTable = (props) => {
         setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
     }
 
-    console.log(sort)
-
-    const SorterHeader = (props) => <TableSorterHeader sort={{direction:sort.direction === 1 ? 'asc' : 'desc',column: sort.column}}
-                                                       onSort={onSort}
-                                                       {...props}
-                                                        />
+   const SorterHeader = (props) => {
+        const direction = props.fieldName === sort.column && sort.direction === 1 ? 'asc' : 'desc';
+        return(
+            <TableSorterHeader sort={{direction, column: sort.column}}
+                           onSort={onSort}
+                           {...props}
+            />
+        )
+    }
 
     return (
         <div>
@@ -318,14 +321,13 @@ export const ListTable = (props) => {
                             <TableRow>
                                 <TableCell/>
                                 <TableCell width="25%">
-                                    <SorterHeader fieldName='title'/>
+                                    Title
                                 </TableCell>
                                 <TableCell>
-                                    <SorterHeader fieldName='identifier'/>
+                                    Identifier
                                 </TableCell>
                                 <TableCell align="left">
-                                    <SorterHeader fieldName='created_at'
-                                                  title='Created'/>
+                                    Created
                                 </TableCell>
                                 <TableCell align="center">
                                     Actions

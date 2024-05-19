@@ -29,6 +29,7 @@ import timeTransformer from "../../../utils/time-transformer";
 import TableSorterHeader from "../../components/table-sorter-header";
 
 
+
 export const ListTable = (props) => {
     const {
         count = 0,
@@ -49,11 +50,15 @@ export const ListTable = (props) => {
 
     const handleItemToggle = itemId => setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
 
-    const SorterHeader = (props) => <TableSorterHeader sort={sort}
-                                                       onSort={onSort}
-                                                       {...props}
-                                                        />
-
+    const SorterHeader = (props) => {
+        const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
+        return(
+            <TableSorterHeader sort={{direction, column: sort.column}}
+                           onSort={onSort}
+                           {...props}
+            />
+        )
+    }
     return (
         <TablePagination
             component="div"
@@ -283,6 +288,7 @@ export const ListTable = (props) => {
             </Scrollbar>
         </TablePagination>
     );
+
 };
 
 ListTable.propTypes = {
