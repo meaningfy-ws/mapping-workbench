@@ -1,35 +1,35 @@
-import {useCallback, useEffect, useState} from "react";
-import {specificTripleMapFragmentsApi} from "../../../api/triple-map-fragments/specific";
+import { useEffect, useState} from "react";
+
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Unstable_Grid2";
-import {ListSelectorSelect as ResourceListSelector} from "../../../components/app/list-selector/select";
 import FormControl from "@mui/material/FormControl";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
-import toast from "react-hot-toast";
+
+import {specificTripleMapFragmentsApi} from "../../../api/triple-map-fragments/specific";
+import {ListSelectorSelect as ResourceListSelector} from "../../../components/app/list-selector/select";
+import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 
 const TripleMapping = (props) => {
     const {id} = props
     const [tripleMapFragments, setTripleMapFragments] = useState([]);
 
     useEffect(() => {
-        getTripleMapFragments()
-    }, [specificTripleMapFragmentsApi, id])
+        id && getTripleMapFragments()
+    }, [id])
 
-     const getTripleMapFragments = async () => {
-        setTripleMapFragments((await specificTripleMapFragmentsApi.getValuesForSelector({
-                filters: {
-                    mapping_package: id
-                }
-            })).map(x => x.id))
+     const getTripleMapFragments = () => {
+         specificTripleMapFragmentsApi.getValuesForSelector({filters: {mapping_package: id}})
+             .then(res => setTripleMapFragments(res.map(x => x.id)))
     }
 
     const handleTripleMapFragmentsUpdate = async () => {
-        await specificTripleMapFragmentsApi.update_specific_mapping_package(id, tripleMapFragments);
-        toast.success(specificTripleMapFragmentsApi.SECTION_TITLE + ' updated');
+        const toastId = toastLoad(`Updating ${specificTripleMapFragmentsApi.SECTION_TITLE}...`)
+        specificTripleMapFragmentsApi.update_specific_mapping_package(id, tripleMapFragments)
+            .then(res => toastSuccess(`${specificTripleMapFragmentsApi.SECTION_TITLE} Updated`, toastId))
+            .catch(err => toastError(err, toastId))
     }
-
 
 
     return(
