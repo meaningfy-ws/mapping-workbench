@@ -5,7 +5,6 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Button from "@mui/material/Button";
 import Dialog from '@mui/material/Dialog';
@@ -17,6 +16,7 @@ import Stack from "@mui/material/Stack";
 import {Scrollbar} from 'src/components/scrollbar';
 import {ResultChip, SorterHeader as UtilsSorterHeader} from "./utils";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import TablePagination from "../../components/table-pagination";
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open:false, title:"", text:""})
@@ -81,19 +81,21 @@ export const ListTable = (props) => {
                 page={page}
                 rowsPerPage={rowsPerPage}
                 rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-            />
-            <Scrollbar>
-                <Table sx={{minWidth: 1200}}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>
-                                 <SorterHeader fieldName="test_suite"
-                                               title="Test Suite"/>
-                            </TableCell>
-                            <TableCell width="25%">
-                                <SorterHeader fieldName="conforms"
-                                              title="Conforms"/>
-                            </TableCell>
+                showFirstButton
+                showLastButton
+            >
+                <Scrollbar>
+                    <Table sx={{minWidth: 1200}}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>
+                                     <SorterHeader fieldName="test_suite"
+                                                   title="Test Suite"/>
+                                </TableCell>
+                                <TableCell width="25%">
+                                    <SorterHeader fieldName="conforms"
+                                                  title="Conforms"/>
+                                </TableCell>
 
                             <TableCell>
                                  <SorterHeader fieldName="prefixed_result_path"
@@ -169,20 +171,12 @@ export const ListTable = (props) => {
                                     </TableCell>
                                 </TableRow>
 
-                            );
-                        })}
-                    </TableBody>
-                </Table>
-            </Scrollbar>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-            />
+                                );
+                            })}
+                        </TableBody>
+                    </Table>
+                </Scrollbar>
+            </TablePagination>
             <Dialog
                 open={descriptionDialog.open}
                 onClose={handleClose}

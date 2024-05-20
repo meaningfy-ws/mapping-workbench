@@ -11,7 +11,6 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import {PropertyList} from 'src/components/property-list';
@@ -22,8 +21,10 @@ import {ListItemActions} from 'src/components/app/list/list-item-actions';
 
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import Tooltip from "@mui/material/Tooltip";
+import TablePagination from "../../components/table-pagination";
 import timeTransformer from "../../../utils/time-transformer";
 import {useGlobalState} from "../../../hooks/use-global-state";
+import TableSorterHeader from "../../components/table-sorter-header";
 
 
 export const ListTable = (props) => {
@@ -34,6 +35,8 @@ export const ListTable = (props) => {
         },
         onRowsPerPageChange,
         page = 0,
+        sort,
+        onSort = () => {},
         rowsPerPage = 0,
         sectionApi
     } = props;
@@ -43,6 +46,16 @@ export const ListTable = (props) => {
     const {timeSetting} = useGlobalState()
 
     const handleItemToggle = itemId => setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
+
+    const SorterHeader = (props) => {
+        const direction = props.fieldName === sort.column && sort.direction === 1 ? 'asc' : 'desc';
+        return(
+            <TableSorterHeader sort={{direction, column: sort.column}}
+                           onSort={onSort}
+                           {...props}
+            />
+        )
+    }
 
     return (
         <div>
@@ -54,148 +67,123 @@ export const ListTable = (props) => {
                 page={page}
                 rowsPerPage={rowsPerPage}
                 rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-            />
-            <Scrollbar>
-                <Table sx={{minWidth: 1200}}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell/>
-                            <TableCell width="25%">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        URI
-                                    </TableSortLabel>
-                                </Tooltip>
-                            </TableCell>
-                            <TableCell align="left">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        active
-                                        direction="desc"
-                                    >
-                                        Created
-                                    </TableSortLabel>
-                                </Tooltip>
-                            </TableCell>
-                            <TableCell align="right">
-                                Actions
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {items.map((item) => {
-                            const item_id = item._id;
-                            const isCurrent = item_id === currentItem;
+                showFirstButton
+                showLastButton
+            >
+                <Scrollbar>
+                    <Table sx={{minWidth: 1200}}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell/>
+                                <TableCell width="25%">
+                                    URI
+                                </TableCell>
+                                <TableCell align="left">
+                                    Created
+                                </TableCell>
+                                <TableCell align="right">
+                                    Actions
+                                </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {items.map((item) => {
+                                const item_id = item._id;
+                                const isCurrent = item_id === currentItem;
 
-                            return (
-                                <Fragment key={item_id}>
-                                    <TableRow
-                                        hover
-                                        key={item_id}
-                                    >
-                                        <TableCell
-                                            padding="checkbox"
-                                            sx={{
-                                                ...(isCurrent && {
-                                                    position: 'relative',
-                                                    '&:after': {
-                                                        position: 'absolute',
-                                                        content: '" "',
-                                                        top: 0,
-                                                        left: 0,
-                                                        backgroundColor: 'primary.main',
-                                                        width: 3,
-                                                        height: 'calc(100% + 1px)'
-                                                    }
-                                                })
-                                            }}
-                                            width="25%"
+                                return (
+                                    <Fragment key={item_id}>
+                                        <TableRow
+                                            hover
+                                            key={item_id}
                                         >
-                                            <IconButton onClick={() => handleItemToggle(item_id)}>
-                                                <SvgIcon>
-                                                    {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
-                                                </SvgIcon>
-                                            </IconButton>
-                                        </TableCell>
-
-                                        <TableCell width="25%">
-                                            <Typography variant="subtitle2">
-                                                {item.triple_map_uri}
-                                            </Typography>
-                                        </TableCell>
-                                        <TableCell align="left">
-                                            {timeTransformer(item.created_at, timeSetting)}
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            <ListItemActions
-                                                itemctx={new ForListItemAction(item_id, sectionApi)}/>
-                                        </TableCell>
-                                    </TableRow>
-                                    {isCurrent && (
-                                        <TableRow>
                                             <TableCell
-                                                colSpan={7}
+                                                padding="checkbox"
                                                 sx={{
-                                                    p: 0,
-                                                    position: 'relative',
-                                                    '&:after': {
-                                                        position: 'absolute',
-                                                        content: '" "',
-                                                        top: 0,
-                                                        left: 0,
-                                                        backgroundColor: 'primary.main',
-                                                        width: 3,
-                                                        height: 'calc(100% + 1px)'
-                                                    }
+                                                    ...(isCurrent && {
+                                                        position: 'relative',
+                                                        '&:after': {
+                                                            position: 'absolute',
+                                                            content: '" "',
+                                                            top: 0,
+                                                            left: 0,
+                                                            backgroundColor: 'primary.main',
+                                                            width: 3,
+                                                            height: 'calc(100% + 1px)'
+                                                        }
+                                                    })
                                                 }}
+                                                width="25%"
                                             >
-                                                <CardContent>
-                                                    <Grid container>
-                                                        <Grid
-                                                            item
-                                                            md={12}
-                                                            xs={12}
-                                                        >
-                                                            <PropertyList>
-                                                                <PropertyListItem
-                                                                    label="Content"
-                                                                    value={item.triple_map_content}
-                                                                    sx={{
-                                                                        whiteSpace: "pre-wrap",
-                                                                        px: 3,
-                                                                        py: 1.5
-                                                                    }}
-                                                                />
-                                                            </PropertyList>
-                                                        </Grid>
-                                                    </Grid>
-                                                </CardContent>
+                                                <IconButton onClick={() => handleItemToggle(item_id)}>
+                                                    <SvgIcon>
+                                                        {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
+                                                    </SvgIcon>
+                                                </IconButton>
+                                            </TableCell>
+
+                                            <TableCell width="25%">
+                                                <Typography variant="subtitle2">
+                                                    {item.triple_map_uri}
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell align="left">
+                                            {timeTransformer(item.created_at, timeSetting)}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                <ListItemActions
+                                                    itemctx={new ForListItemAction(item_id, sectionApi)}/>
                                             </TableCell>
                                         </TableRow>
-                                    )}
-                                </Fragment>
-                            );
-                        })}
-                    </TableBody>
-                </Table>
-            </Scrollbar>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-            />
+                                        {isCurrent && (
+                                            <TableRow>
+                                                <TableCell
+                                                    colSpan={7}
+                                                    sx={{
+                                                        p: 0,
+                                                        position: 'relative',
+                                                        '&:after': {
+                                                            position: 'absolute',
+                                                            content: '" "',
+                                                            top: 0,
+                                                            left: 0,
+                                                            backgroundColor: 'primary.main',
+                                                            width: 3,
+                                                            height: 'calc(100% + 1px)'
+                                                        }
+                                                    }}
+                                                >
+                                                    <CardContent>
+                                                        <Grid container>
+                                                            <Grid
+                                                                item
+                                                                md={12}
+                                                                xs={12}
+                                                            >
+                                                                <PropertyList>
+                                                                    <PropertyListItem
+                                                                        label="Content"
+                                                                        value={item.triple_map_content}
+                                                                        sx={{
+                                                                            whiteSpace: "pre-wrap",
+                                                                            px: 3,
+                                                                            py: 1.5
+                                                                        }}
+                                                                    />
+                                                                </PropertyList>
+                                                            </Grid>
+                                                        </Grid>
+                                                    </CardContent>
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
+                                    </Fragment>
+                                );
+                            })}
+                        </TableBody>
+                    </Table>
+                </Scrollbar>
+            </TablePagination>
         </div>
     );
 };

@@ -31,6 +31,8 @@ const useItemsSearch = () => {
             status: [],
             inStock: undefined
         },
+        sortField: '',
+        sortDirection: undefined,
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });

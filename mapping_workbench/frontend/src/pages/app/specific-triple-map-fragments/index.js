@@ -1,10 +1,8 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
-import Box from '@mui/material/Box';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
@@ -19,7 +17,6 @@ import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
 import {ListSearch} from "../../../sections/app/specific-triple-map-fragment/list-search";
 import {ListTable} from "../../../sections/app/specific-triple-map-fragment/list-table";
-import {useMounted} from "../../../hooks/use-mounted";
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -29,33 +26,40 @@ const useItemsSearch = () => {
             status: [],
             inStock: undefined
         },
+        sortDirection: undefined,
+        sortField: '',
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
 
-    const handleFiltersChange = useCallback((filters) => {
+    const handleFiltersChange = filters => {
         setState((prevState) => ({
             ...prevState,
             filters,
             page: 0
         }));
-    }, []);
+    }
 
-    const handlePageChange = useCallback((event, page) => {
+    const handlePageChange = (event, page) => {
         setState((prevState) => ({
             ...prevState,
             page
         }));
-    }, []);
+    }
 
-    const handleRowsPerPageChange = useCallback((event) => {
+    const handleRowsPerPageChange = event => {
         setState((prevState) => ({
             ...prevState,
             rowsPerPage: parseInt(event.target.value, 10)
         }));
-    }, []);
+    }
+
+    const handleSorterChange = sortField => {
+        setState(prevState => ({...prevState, sortField, sortDirection: state.sortField === sortField && prevState.sortDirection === -1 ? 1 : -1 }))
+    }
 
     return {
+        handleSorterChange,
         handleFiltersChange,
         handlePageChange,
         handleRowsPerPageChange,
@@ -64,26 +68,20 @@ const useItemsSearch = () => {
 };
 
 
-const useItemsStore = (searchState) => {
-    const isMounted = useMounted();
+const useItemsStore = searchState => {
     const [state, setState] = useState({
         items: [],
         itemsCount: 0
     });
 
-    const handleItemsGet = useCallback(async () => {
-        try {
-            const response = await sectionApi.getItems(searchState);
-            if (isMounted()) {
-                setState({
-                    items: response.items,
-                    itemsCount: response.count
-                });
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    }, [searchState, isMounted]);
+    const handleItemsGet = () => {
+        sectionApi.getItems(searchState)
+            .then(res => setState({
+                    items: res.items,
+                    itemsCount: res.count
+                }))
+            .catch(err => console.warn(err))
+    }
 
     useEffect(() => {
             handleItemsGet();
@@ -170,6 +168,8 @@ const Page = () => {
                         items={itemsStore.items}
                         count={itemsStore.itemsCount}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
+                        onSort={itemsSearch.handleSorterChange}
+                        sort={{direction: itemsSearch.state.sortDirection, column: itemsSearch.state.sortField}}
                         sectionApi={sectionApi}
                     />
                 </Card>

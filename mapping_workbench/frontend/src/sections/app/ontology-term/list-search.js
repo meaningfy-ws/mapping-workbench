@@ -1,4 +1,4 @@
-import {useCallback, useMemo, useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import PropTypes from 'prop-types';
 import SearchMdIcon from '@untitled-ui/icons-react/build/esm/SearchMd';
 import Box from '@mui/material/Box';
@@ -10,8 +10,6 @@ import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
 import {MultiSelect} from 'src/components/multi-select';
-import {useUpdateEffect} from 'src/hooks/use-update-effect';
-
 
 const statusOptions = [
     {
@@ -25,11 +23,12 @@ const statusOptions = [
 ];
 
 export const ListSearch = (props) => {
-    const {onFiltersChange, ...other} = props;
+    const {onFiltersChange, showStatus, ...other} = props;
+    const firstUpdate = useRef(true);
     const queryRef = useRef(null);
     const [chips, setChips] = useState([]);
 
-    const handleChipsUpdate = useCallback(() => {
+    const handleChipsUpdate = () => {
         const filters = {
             q: undefined,
             status: [],
@@ -51,13 +50,15 @@ export const ListSearch = (props) => {
         });
 
         onFiltersChange?.(filters);
-    }, [chips, onFiltersChange]);
+    }
 
-    useUpdateEffect(() => {
-        handleChipsUpdate();
-    }, [chips, handleChipsUpdate]);
+    useEffect(() => {
+        if (firstUpdate.current)
+            firstUpdate.current = false
+        else handleChipsUpdate();
+    }, [chips]);
 
-    const handleChipDelete = useCallback((deletedChip) => {
+    const handleChipDelete = deletedChip => {
         setChips((prevChips) => {
             return prevChips.filter((chip) => {
                 // There can exist multiple chips for the same field.
@@ -66,53 +67,41 @@ export const ListSearch = (props) => {
                 return !(deletedChip.field === chip.field && deletedChip.value === chip.value);
             });
         });
-    }, []);
+    }
 
-    const handleQueryChange = useCallback((event) => {
+    const handleQueryChange = event => {
         event.preventDefault();
 
-        const value = queryRef.current?.value || '';
+        const value = queryRef.current?.value ?? '';
 
-        setChips((prevChips) => {
-            const found = prevChips.find((chip) => chip.field === 'q');
+        setChips(prevChips => {
+            const found = prevChips?.find(chip => chip.field === 'q');
 
-            if (found && value) {
-                return prevChips.map((chip) => {
-                    if (chip.field === 'q') {
-                        return {
-                            ...chip,
-                            value: queryRef.current?.value || ''
-                        };
-                    }
-
-                    return chip;
-                });
+            if (found) {
+                if (value)
+                    return prevChips.map((chip) => chip.field === 'q' ? {...chip, value} : chip);
+                else
+                    return prevChips.filter((chip) => chip.field !== 'q');
             }
-
-            if (found && !value) {
-                return prevChips.filter((chip) => chip.field !== 'q');
+            else
+                if (value) {
+                    const chip = {
+                        label: 'Q',
+                        field: 'q',
+                        value
+                    };
+                    return [...prevChips, chip];
             }
-
-            if (!found && value) {
-                const chip = {
-                    label: 'Q',
-                    field: 'q',
-                    value
-                };
-
-                return [...prevChips, chip];
-            }
-
             return prevChips;
         });
 
         if (queryRef.current) {
             queryRef.current.value = '';
         }
-    }, []);
+    }
 
-    const handleStatusChange = useCallback((values) => {
-        setChips((prevChips) => {
+    const handleStatusChange = values => {
+        setChips(prevChips => {
             const valuesFound = [];
 
             // First cleanup the previous chips
@@ -150,15 +139,9 @@ export const ListSearch = (props) => {
 
             return newChips;
         });
-    }, []);
+    }
 
-
-    // We memoize this part to prevent re-render issues
-    const statusValues = useMemo(() => chips
-        .filter((chip) => chip.field === 'status')
-        .map((chip) => chip.value), [chips]);
-
-    const showChips = chips.length > 0;
+    const statusValues = chips?.filter(chip => chip.field === 'status').map(chip => chip.value)
 
     return (
         <div {...other}>
@@ -183,7 +166,7 @@ export const ListSearch = (props) => {
                 />
             </Stack>
             <Divider/>
-            {showChips
+            {chips?.length
                 ? (
                     <Stack
                         alignItems="center"
@@ -232,7 +215,7 @@ export const ListSearch = (props) => {
                     </Box>
                 )}
             <Divider/>
-            {false && <Stack
+            {showStatus && <Stack
                 alignItems="center"
                 direction="row"
                 flexWrap="wrap"
