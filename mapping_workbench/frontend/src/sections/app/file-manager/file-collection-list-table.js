@@ -1,4 +1,4 @@
-import {Fragment, useEffect, useState} from 'react';
+import {Fragment, useCallback, useEffect, useState} from 'react';
 import {toast} from 'react-hot-toast';
 import PropTypes from 'prop-types';
 
@@ -14,7 +14,6 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Tooltip from "@mui/material/Tooltip";
 import Stack from "@mui/material/Stack";
@@ -30,6 +29,7 @@ import {PropertyListItem} from 'src/components/property-list-item';
 
 import {paths} from "../../../paths";
 import {PropertyList} from "../../../components/property-list";
+import TablePagination from "../../components/table-pagination";
 import timeTransformer from "../../../utils/time-transformer";
 import {useGlobalState} from "../../../hooks/use-global-state";
 
@@ -61,7 +61,7 @@ export const ListTableRow = (props) => {
     }
 
     return (
-        <Fragment key={item_id}>
+        <>
             <TableRow
                 hover
                 key={item_id}
@@ -196,7 +196,7 @@ export const ListTableRow = (props) => {
                     </TableCell>
                 </TableRow>
             )}
-        </Fragment>
+        </>
     );
 }
 export const FileCollectionListTable = (props) => {
@@ -213,11 +213,10 @@ export const FileCollectionListTable = (props) => {
 
     const router = useRouter();
 
-
     const [currentItem, setCurrentItem] = useState(null);
 
     const handleItemToggle = itemId => {
-        setCurrentItem((prevItemId) => prevItemId === itemId ? null : itemId);
+        setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId)
     }
 
     const handleItemClose = () => {
@@ -234,45 +233,27 @@ export const FileCollectionListTable = (props) => {
     }
 
     return (
-        <div>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-            />
+        <TablePagination
+            component="div"
+            count={count}
+            onPageChange={onPageChange}
+            onRowsPerPageChange={onRowsPerPageChange}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+            showFirstButton
+            showLastButton
+        >
             <Scrollbar>
                 <Table sx={{minWidth: 1200}}>
                     <TableHead>
                         <TableRow>
                             <TableCell/>
                             <TableCell width="25%">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        Title
-                                    </TableSortLabel>
-                                </Tooltip>
+                                Title
                             </TableCell>
                             <TableCell align="left">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        active
-                                        direction="desc"
-                                    >
-                                        Created
-                                    </TableSortLabel>
-                                </Tooltip>
+                                Created
                             </TableCell>
                             <TableCell align="right">
                                 Actions
@@ -299,16 +280,7 @@ export const FileCollectionListTable = (props) => {
                     </TableBody>
                 </Table>
             </Scrollbar>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-            />
-        </div>
+        </TablePagination>
     );
 };
 

@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
 import SearchIcon from '@untitled-ui/icons-react/build/esm/SearchRefraction';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
@@ -13,7 +13,6 @@ import {ontologyTermsApi as sectionApi} from 'src/api/ontology-terms';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
-import {useMounted} from 'src/hooks/use-mounted';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
@@ -30,31 +29,33 @@ const useItemsSearch = () => {
             status: [],
             inStock: undefined
         },
+        sortField: '',
+        sortDirection: undefined,
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
 
-    const handleFiltersChange = useCallback((filters) => {
-        setState((prevState) => ({
+    const handleFiltersChange = filters => {
+        setState(prevState => ({
             ...prevState,
             filters,
             page: 0
         }));
-    }, []);
+    }
 
-    const handlePageChange = useCallback((event, page) => {
-        setState((prevState) => ({
+    const handlePageChange = (event, page) => {
+        setState(prevState => ({
             ...prevState,
             page
         }));
-    }, []);
+    }
 
-    const handleRowsPerPageChange = useCallback((event) => {
+    const handleRowsPerPageChange = event => {
         setState((prevState) => ({
             ...prevState,
             rowsPerPage: parseInt(event.target.value, 10)
         }));
-    }, []);
+    }
 
     return {
         handleFiltersChange,
@@ -65,24 +66,18 @@ const useItemsSearch = () => {
 };
 
 const useItemsStore = (searchState) => {
-    const isMounted = useMounted();
     const [state, setState] = useState({
         items: [],
         itemsCount: 0
     });
 
-    const handleItemsGet = async () => {
-        try {
-            const response = await sectionApi.getItems(searchState);
-            if (isMounted()) {
-                setState({
-                    items: response.items,
-                    itemsCount: response.count
-                });
-            }
-        } catch (err) {
-            console.error(err);
-        }
+    const handleItemsGet = () => {
+        sectionApi.getItems(searchState)
+            .then(res => setState({
+                    items: res.items,
+                    itemsCount: res.count
+                }))
+            .catch(err => console.warn(err))
     }
 
     useEffect(() => {
@@ -103,10 +98,10 @@ const Page = () => {
 
     usePageView();
 
-    const handleDiscover = async () => {
+    const handleDiscover = () => {
         const toastId = toastLoad('Discovering terms ...')
         sectionApi.discoverTerms()
-            .then((res) => {
+            .then(res => {
                 toastSuccess(`${res.task_name} successfully started.`, toastId)
                 router.reload()
             })

@@ -26,12 +26,14 @@ const useItemsSearch = () => {
             status: [],
             inStock: undefined
         },
+        sortField: '',
+        sortDirection: undefined,
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
 
     const handleFiltersChange = filters => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             filters,
             page: 0
@@ -39,14 +41,14 @@ const useItemsSearch = () => {
     }
 
     const handlePageChange = (event, page) => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             page
         }));
     }
 
     const handleRowsPerPageChange = event => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             rowsPerPage: parseInt(event.target.value, 10)
         }));
@@ -66,16 +68,14 @@ const useItemsStore = (searchState) => {
         itemsCount: 0
     });
 
-    const handleItemsGet = async () => {
-        try {
-                const response = await sectionApi.getItems(searchState);
-                setState({
-                    items: response.items,
-                    itemsCount: response.count
-                });
-        } catch (err) {
-            console.error(err);
-        }
+    const handleItemsGet = () => {
+       sectionApi.getItems(searchState)
+           .then(res =>
+               setState({
+                    items: res.items,
+                    itemsCount: res.count
+                }))
+           .catch(err => console.warn(err))
     }
 
     useEffect(() => {

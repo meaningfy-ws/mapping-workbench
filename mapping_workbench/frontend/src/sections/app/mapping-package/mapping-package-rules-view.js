@@ -5,7 +5,6 @@ import Card from "@mui/material/Card";
 import {conceptualMappingRulesApi} from "../../../api/conceptual-mapping-rules";
 import {ListSearch as MappingRulesListSearch} from "../conceptual-mapping-rule/list-search";
 import {ListTable as MappingRulesListTable} from "../conceptual-mapping-rule/list-table";
-import {useMounted} from "../../../hooks/use-mounted";
 
 
 const useMappingRulesSearch = () => {
@@ -66,18 +65,16 @@ const useMappingRulesStore = (searchState, mappingPackage) => {
     useEffect(() => {
         handleItemsGet();
     }, [searchState]);
-    const handleItemsGet = async () => {
-        try {
+    const handleItemsGet = () => {
             const request = searchState;
             request['filters']['mapping_packages'] = [mappingPackage];
-            const response = await conceptualMappingRulesApi.getItems(request);
-                setState({
-                    items: response.items,
-                    itemsCount: response.count
-                });
-        } catch (err) {
-            console.error(err);
-        }
+            conceptualMappingRulesApi.getItems(request)
+                .then(res =>
+                    setState({
+                        items: res.items,
+                        itemsCount: res.count
+                    }))
+                .catch(err => console.error(err))
     }
 
 

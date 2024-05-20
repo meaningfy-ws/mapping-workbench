@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
@@ -18,16 +18,15 @@ import {Layout as AppLayout} from 'src/layouts/app';
 import {mappingPackagesApi as sectionApi} from 'src/api/mapping-packages';
 import {RouterLink} from 'src/components/router-link';
 import {useRouter} from "src/hooks/use-router";
-import {useItem} from "src/contexts/app/section/for-item-data-state";
 import {FileResourceCollectionsCard} from 'src/sections/app/file-manager/file-resource-collections-card'
 
-import {PropertyList} from "../../../../components/property-list";
-import {PropertyListItem} from "../../../../components/property-list-item";
-import {shaclTestSuitesApi} from "../../../../api/shacl-test-suites";
+import {PropertyList} from "src/components/property-list";
+import {PropertyListItem} from "src/components/property-list-item";
+import {shaclTestSuitesApi} from "src/api/shacl-test-suites";
 
-import StatesView from "../../../../sections/app/mapping-package/state/states_view";
-import MappingPackageRulesView from "../../../../sections/app/mapping-package/mapping-package-rules-view";
-import TripleMapping from "../../../../sections/app/mapping-package/triple-mapping";
+import StatesView from "src/sections/app/mapping-package/state/states_view";
+import MappingPackageRulesView from "src/sections/app/mapping-package/mapping-package-rules-view";
+import TripleMapping from "src/sections/app/mapping-package/triple-mapping";
 
 const tabs = [
     {label: 'Details', value: 'details'},
@@ -37,29 +36,24 @@ const tabs = [
     {label: 'States', value: 'states'}
 ];
 
-
-
 const Page = () => {
     const [currentTab, setCurrentTab] = useState('details');
+    const [item, setItem] = useState()
 
     const router = useRouter();
-    if (!router.isReady) return;
-
     const {id} = router.query;
 
-    if (!id) {
-        return;
-    }
-
-    const { item } = useItem(sectionApi, id);
+    useEffect(() => {
+        id && sectionApi.getItem(id)
+            .then(res => setItem(res))
+    }, [id]);
 
     const handleTabsChange = (event, value) => {
         setCurrentTab(value);
     }
 
-    if (!item) {
-        return;
-    }
+    if(!item)
+        return
 
     return (
         <>
@@ -220,24 +214,6 @@ const Page = () => {
                 {currentTab === 'resources' && (
                     <Grid container
                           spacing={3}>
-                        {/*<Grid md={12} xs={12}>*/}
-                        {/*    <FileResourceCollectionsCard*/}
-                        {/*        collectionApi={testDataSuitesApi}*/}
-                        {/*        filters={{*/}
-                        {/*            ids: ((item.test_data_suites || []).length > 0*/}
-                        {/*                && item.test_data_suites.map(x => x.id)) || ''*/}
-                        {/*        }}*/}
-                        {/*    />*/}
-                        {/*</Grid>*/}
-                        {/*<Grid md={12} xs={12}>*/}
-                        {/*    <FileResourceCollectionsCard*/}
-                        {/*        collectionApi={sparqlTestSuitesApi}*/}
-                        {/*        filters={{*/}
-                        {/*            ids: ((item.sparql_test_suites || []).length > 0*/}
-                        {/*                && item.sparql_test_suites.map(x => x.id)) || ''*/}
-                        {/*        }}*/}
-                        {/*    />*/}
-                        {/*</Grid>*/}
                         <Grid md={12}
                               xs={12}>
                             <FileResourceCollectionsCard

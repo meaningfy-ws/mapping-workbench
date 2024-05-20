@@ -179,6 +179,9 @@ export const createComponents = () => {
     },
     MuiIconButton: {
       styleOverrides: {
+        root: {
+          color: 'inherit'
+        },
         sizeSmall: {
           padding: 4
         }

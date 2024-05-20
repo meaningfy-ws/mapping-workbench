@@ -5,11 +5,11 @@ import Card from "@mui/material/Card";
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TablePagination from '@mui/material/TablePagination';
 
 import {Scrollbar} from 'src/components/scrollbar';
 import {ItemListCard} from './item-list-card';
 import {ItemListRow} from './item-list-row';
+import TablePagination from "../../components/table-pagination";
 
 export const ItemList = (props) => {
     const {
@@ -80,25 +80,19 @@ export const ItemList = (props) => {
     return (
         <Card>
             <Stack spacing={4}>
-                    <TablePagination
-                        component="div"
-                        count={count}
-                        onPageChange={onPageChange}
-                        onRowsPerPageChange={onRowsPerPageChange}
-                        page={page}
-                        rowsPerPage={rowsPerPage}
-                        rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-                    />
+                <TablePagination
+                    component="div"
+                    count={count}
+                    onPageChange={onPageChange}
+                    onRowsPerPageChange={onRowsPerPageChange}
+                    page={page}
+                    rowsPerPage={rowsPerPage}
+                    rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+                    showFirstButton
+                    showLastButton
+                >
                     {content}
-                    <TablePagination
-                        component="div"
-                        count={count}
-                        onPageChange={onPageChange}
-                        onRowsPerPageChange={onRowsPerPageChange}
-                        page={page}
-                        rowsPerPage={rowsPerPage}
-                        rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-                    />
+                </TablePagination>
             </Stack>
         </Card>
 

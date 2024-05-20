@@ -1,5 +1,4 @@
 import {Fragment, useState} from 'react';
-import {useRouter} from "next/router";
 import PropTypes from 'prop-types';
 
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
@@ -12,12 +11,9 @@ import SvgIcon from '@mui/material/SvgIcon';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableSortLabel from '@mui/material/TableSortLabel';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import Tooltip from "@mui/material/Tooltip";
 import Button from "@mui/material/Button";
 
 import {PropertyList} from 'src/components/property-list';
@@ -27,17 +23,20 @@ import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {SeverityPill} from "../../../components/severity-pill";
 import {useProjects} from "../../../hooks/use-projects";
-import TimeTransformer from "../../../utils/time-transformer";
+import TablePagination from "../../components/table-pagination";
 import {useGlobalState} from "../../../hooks/use-global-state";
 import timeTransformer from "../../../utils/time-transformer";
+import TableSorterHeader from "../../components/table-sorter-header";
+
 
 
 export const ListTable = (props) => {
     const {
         count = 0,
         items = [],
-        onPageChange = () => {
-        },
+        onPageChange = () => {},
+        onSort = () => {},
+        sort,
         onRowsPerPageChange,
         page = 0,
         rowsPerPage = 0,
@@ -46,83 +45,49 @@ export const ListTable = (props) => {
 
     const {timeSetting} = useGlobalState()
 
-    const router = useRouter();
-
     const [currentItem, setCurrentItem] = useState(null);
     const projectStore = useProjects()
 
     const handleItemToggle = itemId => setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
 
-    return (
-        <div>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+    const SorterHeader = (props) => {
+        const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
+        return(
+            <TableSorterHeader sort={{direction, column: sort.column}}
+                           onSort={onSort}
+                           {...props}
             />
+        )
+    }
+    return (
+        <TablePagination
+            component="div"
+            count={count}
+            onPageChange={onPageChange}
+            onRowsPerPageChange={onRowsPerPageChange}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+            showFirstButton
+            showLastButton
+        >
             <Scrollbar>
                 <Table sx={{minWidth: 1200}}>
                     <TableHead>
                         <TableRow>
                             <TableCell/>
-                            {/* <TableCell width="25%">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        Name
-                                    </TableSortLabel>
-                                </Tooltip>
-                            </TableCell> */}
                             <TableCell width="25%">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        Title
-                                    </TableSortLabel>
-                                </Tooltip>
+                                <SorterHeader fieldName="title"/>
                             </TableCell>
                             <TableCell>
-                                Description
+                                <SorterHeader fieldName="description"/>
                             </TableCell>
                             <TableCell>
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        Version
-                                    </TableSortLabel>
-                                </Tooltip>
+                                <SorterHeader fieldName="version"/>
                             </TableCell>
-                            {/* <TableCell>
-                                Status
-                            </TableCell> */}
                             <TableCell align="left">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        active
-                                        direction="desc"
-                                    >
-                                        Created
-                                    </TableSortLabel>
-                                </Tooltip>
+                                <SorterHeader fieldName="created_at"
+                                              title="created"/>
                             </TableCell>
                             <TableCell align="right">
                                 Actions
@@ -130,7 +95,7 @@ export const ListTable = (props) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {items.map((item) => {
+                        {items.map(item => {
                             const item_id = item._id;
                             const isCurrent = item_id === currentItem;
                             const isSessionProject = item_id === projectStore.sessionProject
@@ -138,10 +103,7 @@ export const ListTable = (props) => {
 
                             return (
                                 <Fragment key={item_id}>
-                                    <TableRow
-                                        hover
-                                        key={item_id}
-                                    >
+                                    <TableRow hover>
                                         <TableCell
                                             padding="checkbox"
                                             sx={{
@@ -166,36 +128,17 @@ export const ListTable = (props) => {
                                                 </SvgIcon>
                                             </IconButton>
                                         </TableCell>
-                                        {/* <TableCell width="25%">
-                                            <Box
-                                                sx={{
-                                                    alignItems: 'center',
-                                                    display: 'flex'
-                                                }}
-                                            >
-                                                <Box
-                                                    sx={{
-                                                        cursor: 'pointer',
-                                                        ml: 2
-                                                    }}
-                                                >
-                                                    <Typography variant="subtitle2">
-                                                        {item.name}
-                                                    </Typography>
-                                                </Box>
-                                            </Box>
-                                        </TableCell> */}
                                         <TableCell
                                             width="25%"
                                         >
                                             <Typography
                                                 variant="subtitle3"
                                             >
-                                                {isSessionProject && <SeverityPill color={statusColor}>
-                                                    <b>{item.title}</b>
-                                                </SeverityPill>
-                                                }
-                                                {!isSessionProject && item.title}
+                                                {isSessionProject
+                                                    ? <SeverityPill color={statusColor}>
+                                                        <b>{item.title}</b>
+                                                    </SeverityPill>
+                                                    : item.title}
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
@@ -204,11 +147,6 @@ export const ListTable = (props) => {
                                         <TableCell>
                                             {item.version}
                                         </TableCell>
-                                        {/* <TableCell>
-                                            <SeverityPill color={statusColor}>
-                                                {item.status}
-                                            </SeverityPill>
-                                        </TableCell> */}
                                         <TableCell align="left">
                                             {timeTransformer(item.created_at, timeSetting)}
                                         </TableCell>
@@ -270,12 +208,6 @@ export const ListTable = (props) => {
                                                                         Source Schema
                                                                     </Typography>
                                                                     <Divider sx={{my: 2}}/>
-                                                                    {/* <TextField
-                                                                        defaultValue={item.title}
-                                                                        fullWidth
-                                                                        label="Title"
-                                                                        name="title"
-                                                                    /> */}
                                                                     {item.source_schema && <PropertyList>
                                                                         <PropertyListItem
                                                                             divider
@@ -339,12 +271,6 @@ export const ListTable = (props) => {
                                                                     md={6}
                                                                     xs={12}
                                                                 >
-                                                                    {/* <TextField
-                                                                        defaultValue={item.version}
-                                                                        fullWidth
-                                                                        label="Version"
-                                                                        name="version"
-                                                                    /> */}
                                                                 </Grid>
                                                             </Grid>
                                                         </Grid>
@@ -360,17 +286,9 @@ export const ListTable = (props) => {
                     </TableBody>
                 </Table>
             </Scrollbar>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-            />
-        </div>
+        </TablePagination>
     );
+
 };
 
 ListTable.propTypes = {

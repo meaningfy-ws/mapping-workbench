@@ -1,22 +1,23 @@
-import {Layout as AppLayout} from "../../../../../layouts/app";
-import {Seo} from "../../../../../components/seo";
+import {useEffect, useState} from "react";
+
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
-import {BreadcrumbsSeparator} from "../../../../../components/breadcrumbs-separator";
 import Link from "@mui/material/Link";
-import {RouterLink} from "../../../../../components/router-link";
-import {paths} from "../../../../../paths";
 import Card from "@mui/material/Card";
-import {FileCollectionListSearch} from "../../../../../sections/app/file-manager/file-collection-list-search";
-import {useCallback, useEffect, useState} from "react";
-import {useMounted} from "../../../../../hooks/use-mounted";
-import {usePageView} from "../../../../../hooks/use-page-view";
-import {mappingPackageStatesApi as sectionApi} from "../../../../../api/mapping-packages/states";
-import {mappingPackagesApi as upperSectionApi} from "../../../../../api/mapping-packages";
-import {useRouter} from "../../../../../hooks/use-router";
-import {ListTable} from "../../../../../sections/app/mapping-package/state/list-table";
 import Chip from "@mui/material/Chip";
+
+import {paths} from "src/paths";
+import {Seo} from "src/components/seo";
+import {Layout as AppLayout} from "src/layouts/app";
+import {BreadcrumbsSeparator} from "src/components/breadcrumbs-separator";
+import {RouterLink} from "src/components/router-link";
+import {FileCollectionListSearch} from "src/sections/app/file-manager/file-collection-list-search";
+import {usePageView} from "src/hooks/use-page-view";
+import {useRouter} from "src/hooks/use-router";
+import {ListTable} from "src/sections/app/mapping-package/state/list-table";
+import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
+import {mappingPackagesApi as upperSectionApi} from "src/api/mapping-packages";
 
 
 const useItemsSearch = () => {
@@ -25,35 +26,42 @@ const useItemsSearch = () => {
             name: undefined,
             category: [],
             status: [],
-            inStock: undefined
+            inStock: undefined,
+            sortField: "",
+            sortDirection: undefined,
         },
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
 
-    const handleFiltersChange = useCallback((filters) => {
-        setState((prevState) => ({
+    const handleFiltersChange = filters => {
+        setState(prevState => ({
             ...prevState,
             filters,
             page: 0
         }));
-    }, []);
+    }
 
-    const handlePageChange = useCallback((event, page) => {
-        setState((prevState) => ({
+    const handlePageChange = (event, page) => {
+        setState(prevState => ({
             ...prevState,
             page
         }));
-    }, []);
+    }
 
-    const handleRowsPerPageChange = useCallback((event) => {
-        setState((prevState) => ({
+    const handleRowsPerPageChange = event => {
+        setState(prevState => ({
             ...prevState,
             rowsPerPage: parseInt(event.target.value, 10)
         }));
-    }, []);
+    }
+
+    const handleSort = (sortField) => {
+        setState(prevState => ({sortField, sortDirection: state.sortField === sortField && prevState.sortDirection === -1 ? 1 : -1 }))
+    }
 
     return {
+        handleSort,
         handleFiltersChange,
         handlePageChange,
         handleRowsPerPageChange,
@@ -61,54 +69,33 @@ const useItemsSearch = () => {
     };
 };
 
-
-const useItemsStore = (id, searchState) => {
-    const isMounted = useMounted();
+const Page = () => {
     const [state, setState] = useState({
         items: [],
         itemsCount: 0
     });
 
-    const handleItemsGet = useCallback(async () => {
-        try {
-            const response = await sectionApi.getStates(id, searchState);
-            if (isMounted()) {
-                setState({
-                    items: response.items,
-                    itemsCount: response.count
-                });
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    }, [searchState, isMounted]);
-
-
-    useEffect(() => {
-            handleItemsGet().then(response => {
-            });
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState]);
-
-    return {
-        ...state
-    };
-};
-
-const Page = () => {
-
     const router = useRouter();
-    if (!router.isReady) return;
+    const itemsSearch = useItemsSearch();
 
     const {id} = router.query;
 
-    if (!id) {
-        return;
+    const handleItemsGet = () => {
+        sectionApi.getStates(id, itemsSearch.state)
+            .then(res =>
+                setState({
+                    items: res.items,
+                    itemsCount: res.count
+                })
+            )
+            .catch(err => console.warn(err))
     }
 
-    const itemsSearch = useItemsSearch();
-    const itemsStore = useItemsStore(id, itemsSearch.state);
+    useEffect(() => {
+        id && handleItemsGet()
+    },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    [id, itemsSearch.state]);
 
     usePageView();
 
@@ -176,12 +163,15 @@ const Page = () => {
                 <Card>
                     <FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
                     <ListTable
-                        items={itemsStore.items}
-                        count={itemsStore.itemsCount}
+                        items={state.items}
+                        count={state.itemsCount}
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                         page={itemsSearch.state.page}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
+                        onSort={itemsSearch.handleSort}
+                        sortField={itemsSearch.state.sortField}
+                        sortDirection={itemsSearch.state.sortDirection}
                         sectionApi={sectionApi}
                     />
                 </Card>

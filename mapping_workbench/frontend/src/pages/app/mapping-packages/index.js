@@ -29,6 +29,8 @@ const useItemsSearch = () => {
             status: [],
             inStock: undefined
         },
+        sortDirection: undefined,
+        sortField: '',
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -40,6 +42,10 @@ const useItemsSearch = () => {
             page: 0
         }));
     };
+
+    const handleSorterChange = sortField => {
+        setState(prevState => ({...prevState, sortField, sortDirection: state.sortField === sortField && prevState.sortDirection === -1 ? 1 : -1 }))
+    }
 
     const handlePageChange = (event, page) => {
         setState(prevState => ({
@@ -59,6 +65,7 @@ const useItemsSearch = () => {
         handleFiltersChange,
         handlePageChange,
         handleRowsPerPageChange,
+        handleSorterChange,
         state
     };
 };
@@ -70,16 +77,13 @@ const useItemsStore = searchState => {
         itemsCount: 0
     });
 
-    const handleItemsGet = async () => {
-        try {
-            const response = await sectionApi.getItems(searchState);
-                setState({
-                    items: response.items,
-                    itemsCount: response.count
-                });
-        } catch (err) {
-            console.error(err);
-        }
+    const handleItemsGet = () => {
+        sectionApi.getItems(searchState)
+            .then(res => setState({
+                    items: res.items,
+                    itemsCount: res.count
+                }))
+            .catch(err => console.warn(err))
     }
 
     useEffect(() => {
@@ -179,6 +183,8 @@ const Page = () => {
                         page={itemsSearch.state.page}
                         items={itemsStore.items}
                         count={itemsStore.itemsCount}
+                        onSort={itemsSearch.handleSorterChange}
+                        sort={{direction: itemsSearch.state.sortDirection, column: itemsSearch.state.sortField}}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
                     />

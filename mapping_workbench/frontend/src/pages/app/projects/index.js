@@ -101,7 +101,13 @@ const useItemsSearch = (items) => {
 
     const handleSort = (column, desc) => {
         setState(prevState=> ({ ...prevState, sort: {column,
-               direction: prevState.sort.column === column ? prevState.sort.direction === "asc" ? "desc" : "asc" : desc ? "desc" : "asc" }}))
+               direction: prevState.sort.column === column
+                   ? prevState.sort.direction === "desc"
+                       ? "asc"
+                       : "desc"
+                   : desc
+                       ? "desc"
+                       : "asc"}}))
 
     }
 
@@ -191,6 +197,8 @@ export const Page = () => {
                     <ListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                        onSort={itemsSearch.handleSort}
+                        sort={itemsSearch.state.sort}
                         page={itemsSearch.state.page}
                         items={itemsSearch.pagedItems}
                         count={itemsSearch.count}
