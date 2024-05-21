@@ -70,7 +70,7 @@ export const useSections = () => {
             },
             {
                 title: t(tokens.nav.ontology),
-                path: paths.app.index,
+                path: paths.app.ontology.index,
                 icon: (
                     <SvgIcon fontSize="small">
                         <SchemaIcon/>

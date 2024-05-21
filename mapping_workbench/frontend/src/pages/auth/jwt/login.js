@@ -169,17 +169,17 @@ const Page = () => {
                                     Log In
                                 </Button>
                                 <Divider>or</Divider>
-                                {session?.user?.email ?
-                                    <Button fullWidth
-                                            startIcon={<GoogleIcon/>}
-                                            onClick={() => signOut()}>
-                                        Sign Out
-                                    </Button> :
-                                    <Button fullWidth
-                                            startIcon={<GoogleIcon/>}
-                                            onClick={() => signIn('google')}>
-                                        Sign in with Google
-                                    </Button>}
+                                {/*{session?.user?.email ?*/}
+                                {/*    <Button fullWidth*/}
+                                {/*            startIcon={<GoogleIcon/>}*/}
+                                {/*            onClick={() => signOut()}>*/}
+                                {/*        Sign Out*/}
+                                {/*    </Button> :*/}
+                                {/*    <Button fullWidth*/}
+                                {/*            startIcon={<GoogleIcon/>}*/}
+                                {/*            onClick={() => signIn('google')}>*/}
+                                {/*        Sign in with Google*/}
+                                {/*    </Button>}*/}
                             </Stack>
                         </form>
                     </CardContent>

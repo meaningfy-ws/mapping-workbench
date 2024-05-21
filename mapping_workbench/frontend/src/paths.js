@@ -56,6 +56,11 @@ export const paths = {
                 view: '/app/shacl-test-suites/[id]/resource-manager/[fid]/view',
             }
         },
+        ontology: {
+            index: '/app/ontology',
+            create: '/app/ontology/create',
+            edit: '/app/ontology/[id]/edit',
+        },
         ontology_file_collections: {
             index: '/app/ontology-file-collections',
             create: '/app/ontology-file-collections/create',
@@ -134,6 +139,7 @@ export const paths = {
             edit: '/app/customers/:customerId/edit',
         },
         account: '/app/account',
+
         ontology_namespaces_custom: {
             index: '/app/ontology-namespaces-custom',
             create: '/app/ontology-namespaces-custom/create',
