@@ -135,8 +135,9 @@ class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
         if self.sparql_assertions:
             sparql_assertions = [await sparql_assertion.fetch() for sparql_assertion in self.sparql_assertions]
             if sparql_assertions:
-                sparql_assertions_states = [await sparql_assertion.get_state() for sparql_assertion in
-                                            sparql_assertions]
+                sparql_assertions_states = [
+                    await sparql_assertion.get_state() for sparql_assertion in sparql_assertions
+                ]
 
         mapping_groups_states = []
         if self.mapping_groups:

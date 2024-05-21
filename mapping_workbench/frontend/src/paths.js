@@ -194,7 +194,7 @@ export const apiPaths = {
         item: '/sparql_test_suites/:id',
         file_resources: '/sparql_test_suites/:id/file_resources',
         file_resource: '/sparql_test_suites/file_resources/:id',
-        free_file_resources: '/sparql_test_suites/free/file_resources'
+        project_file_resources: '/sparql_test_suites/project/file_resources'
     },
     shacl_test_suites: {
         items: '/shacl_test_suites',
