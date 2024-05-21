@@ -14,6 +14,7 @@ from mapping_workbench.backend.mapping_package.services.api import (
     delete_mapping_package, get_mapping_package_out, list_mapping_package_states, get_mapping_package_state,
     delete_mapping_package_state
 )
+from mapping_workbench.backend.mapping_package.services.data import get_latest_mapping_package_state_gate
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.user.models.user import User
@@ -156,3 +157,15 @@ async def route_delete_mapping_package_state(
         mapping_package_state: MappingPackageStateGate = Depends(get_mapping_package_state)):
     await delete_mapping_package_state(mapping_package_state)
     return APIEmptyContentWithIdResponse(id=mapping_package_state.id)
+
+
+@router.get(
+    "/{id}/latest_state",
+    description=f"Get {NAME_FOR_ONE} Latest State",
+    name=f"{NAME_FOR_MANY}:get_{NAME_FOR_ONE}_latest_state",
+    response_model=MappingPackageStateGate
+)
+async def route_get_latest_package_state(
+        mapping_package: MappingPackage = Depends(get_mapping_package)
+):
+    return await get_latest_mapping_package_state_gate(mapping_package)

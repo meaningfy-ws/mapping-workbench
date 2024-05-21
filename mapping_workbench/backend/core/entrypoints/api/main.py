@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -62,8 +62,7 @@ app.add_middleware(
 async def on_startup():
     await init_project_models(mongodb_database=DB.get_database())
 
-
-if settings.ENVIRONMENT != "prod":
+if not settings.is_env_production():
     @app.exception_handler(Exception)
     async def all_exception_handler(request: Request, exception: Exception):
         return JSONResponse(
