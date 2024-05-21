@@ -57,7 +57,7 @@ const Page = () => {
     const searchParams = useSearchParams();
     const returnTo = searchParams.get('returnTo');
     const {issuer, signIn: singInJWT} = useAuth();
-    const {data: session} = useSession()
+    // const {data: session} = useSession()
 
     const formik = useFormik({
         initialValues,

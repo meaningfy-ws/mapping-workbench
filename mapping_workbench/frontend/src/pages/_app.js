@@ -28,7 +28,7 @@ import {createTheme} from 'src/theme';
 import {createEmotionCache} from 'src/utils/create-emotion-cache';
 
 // Remove if locales are not used
-import {SessionProvider} from "next-auth/react";
+// import {SessionProvider} from "next-auth/react";
 import 'src/locales/i18n';
 import {GlobalStateConsumer, GlobalStateProvider} from "../contexts/globalState";
 
@@ -38,6 +38,8 @@ const CustomApp = (props) => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps, session } = props;
   useNprogress();
   const getLayout = Component.getLayout ?? ((page) => page);
+
+  console.log(session)
 
   return (
 
@@ -57,6 +59,8 @@ const CustomApp = (props) => {
           <AuthProvider>
             <AuthConsumer>
               {(auth) => (
+          // <SessionProvider session={session}>
+
                   <GlobalStateProvider>
                     <GlobalStateConsumer>
                       {() => (
@@ -94,41 +98,39 @@ const CustomApp = (props) => {
                                 </Head>
                                 <RTL direction={settings.direction}>
                                   <CssBaseline />
-                                  <SessionProvider session={session}>
-                                  {showSplashScreen
-                                    ? <SplashScreen />
-                                    : (
-                                      <>
-                                        <ProjectsProvider>
-                                          <ProjectsConsumer>
-                                            {(projects) => (
-                                              getLayout(
-                                                  <Component projects={projects}
-                                                             {...pageProps} />
-                                              ))}
-                                            </ProjectsConsumer>
-                                        </ProjectsProvider>
-                                        <SettingsButton onClick={settings.handleDrawerOpen} />
-                                        <SettingsDrawer
-                                          canReset={settings.isCustom}
-                                          onClose={settings.handleDrawerClose}
-                                          onReset={settings.handleReset}
-                                          onUpdate={settings.handleUpdate}
-                                          open={settings.openDrawer}
-                                          values={{
-                                            colorPreset: settings.colorPreset,
-                                            contrast: settings.contrast,
-                                            direction: settings.direction,
-                                            paletteMode: settings.paletteMode,
-                                            responsiveFontSizes: settings.responsiveFontSizes,
-                                            stretch: settings.stretch,
-                                            layout: settings.layout,
-                                            navColor: settings.navColor
-                                          }}
-                                        />
-                                      </>
-                                    )}
-                                     </SessionProvider>
+                                    {showSplashScreen
+                                      ? <SplashScreen />
+                                      : (
+                                        <>
+                                          <ProjectsProvider>
+                                            <ProjectsConsumer>
+                                              {(projects) => (
+                                                getLayout(
+                                                    <Component projects={projects}
+                                                               {...pageProps} />
+                                                ))}
+                                              </ProjectsConsumer>
+                                          </ProjectsProvider>
+                                          <SettingsButton onClick={settings.handleDrawerOpen} />
+                                          <SettingsDrawer
+                                            canReset={settings.isCustom}
+                                            onClose={settings.handleDrawerClose}
+                                            onReset={settings.handleReset}
+                                            onUpdate={settings.handleUpdate}
+                                            open={settings.openDrawer}
+                                            values={{
+                                              colorPreset: settings.colorPreset,
+                                              contrast: settings.contrast,
+                                              direction: settings.direction,
+                                              paletteMode: settings.paletteMode,
+                                              responsiveFontSizes: settings.responsiveFontSizes,
+                                              stretch: settings.stretch,
+                                              layout: settings.layout,
+                                              navColor: settings.navColor
+                                            }}
+                                          />
+                                        </>
+                                      )}
                                   <Toaster />
                                 </RTL>
                               </ThemeProvider>
@@ -139,7 +141,10 @@ const CustomApp = (props) => {
                           )}
                     </GlobalStateConsumer>
                   </GlobalStateProvider>
+          // </SessionProvider>
+
               )}
+
             </AuthConsumer>
           </AuthProvider>
         </LocalizationProvider>

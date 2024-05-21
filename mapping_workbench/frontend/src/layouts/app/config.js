@@ -13,6 +13,7 @@ import SchemaIcon from '@mui/icons-material/Schema';
 import TaskIcon from '@mui/icons-material/TaskAlt';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import WindowIcon from '@mui/icons-material/Window';
+import BubbleChartIcon from '@mui/icons-material/BubbleChart';
 
 import HomeSmileIcon from 'src/icons/ui/duocolor/home-smile';
 import LayoutAlt02 from 'src/icons/ui/duocolor/layout-alt-02';
@@ -25,10 +26,13 @@ export const useSections = () => {
     const {t} = useTranslation();
     let items = {
         projects: [],
+        overview: [],
+        projectSetup: [],
         resources: [],
         admin: []
     };
     items.projects.push({
+        subheader: t(tokens.nav.admin),
         items: [{
             title: t(tokens.nav.projects),
             path: paths.app.projects.index,
@@ -39,9 +43,9 @@ export const useSections = () => {
             )
         }]
     });
-    items.resources.push({
-        items: [
-            {
+    items.overview.push(
+        {
+            items:[{
                 title: t(tokens.nav.overview),
                 path: paths.app.index,
                 icon: (
@@ -50,7 +54,43 @@ export const useSections = () => {
                     </SvgIcon>
                 )
             }
-        ]
+        ]}
+    )
+    items.projectSetup.push({
+        subheader: t(tokens.nav.project_setup),
+        items: [
+            {
+                title: t(tokens.nav.schema),
+                path: paths.app.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <BubbleChartIcon/>
+                    </SvgIcon>
+                )
+            },
+            {
+                title: t(tokens.nav.ontology),
+                path: paths.app.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <SchemaIcon/>
+                    </SvgIcon>
+                )
+            },
+            {
+                title: t(tokens.nav.test_data),
+                path: paths.app.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <BiotechIcon/>
+                    </SvgIcon>
+                )
+            }
+        ],
+
+    })
+    items.resources.push({
+
     });
 
     const sections = {
