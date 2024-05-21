@@ -2,7 +2,8 @@ from datetime import datetime
 from enum import Enum
 from typing import Optional
 
-from pydantic import BaseModel, model_validator
+from dateutil.tz import tzlocal
+from pydantic import BaseModel, model_validator, Field
 from typing_extensions import Self
 
 from mapping_workbench.backend import STRICT_MODEL_CONFIG
@@ -18,7 +19,7 @@ class LogRecord(BaseModel):
 
     log_severity: LogSeverity
     message: str
-    timestamp: Optional[datetime] = datetime.utcnow()
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(tzlocal()))
     stack_trace: Optional[str] = None
 
     @model_validator(mode='after')
