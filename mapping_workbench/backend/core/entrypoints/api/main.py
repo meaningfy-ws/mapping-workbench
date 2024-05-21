@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -67,7 +67,7 @@ if settings.ENVIRONMENT != "prod":
     @app.exception_handler(Exception)
     async def all_exception_handler(request: Request, exception: Exception):
         return JSONResponse(
-            status_code=422,
+            status_code=500,
             content={"detail": [{"msg": f"Exception name: {exception.__class__.__name__} Error: {str(exception)}"}]},
         )
 
