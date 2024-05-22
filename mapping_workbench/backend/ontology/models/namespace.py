@@ -48,6 +48,14 @@ class Namespace(BaseProjectResourceEntity, StatefulObjectABC):
 
     class Settings(BaseEntity.Settings):
         name = "namespaces"
+        indexes = [
+            IndexModel(
+                [
+                    ("prefix", pymongo.ASCENDING),
+                    ("project", pymongo.ASCENDING)
+                ], name="unique_key", unique=True
+            )
+        ]
 
 
 class NamespaceCustomIn(BaseEntityInSchema):
