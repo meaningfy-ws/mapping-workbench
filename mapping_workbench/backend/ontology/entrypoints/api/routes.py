@@ -56,8 +56,6 @@ async def route_list_namespaces(
         q: str = None
 ):
     filters: dict = {}
-    if project:
-        filters['project'] = Project.link_from_id(project)
     if q is not None:
         filters['q'] = q
 
