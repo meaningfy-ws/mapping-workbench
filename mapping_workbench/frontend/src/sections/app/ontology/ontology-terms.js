@@ -2,10 +2,11 @@ import {useEffect, useState} from "react";
 
 import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
+import Stack from "@mui/material/Stack";
 
-import {ontologyTermsApi as sectionApi} from "../../../api/ontology-terms";
-import {ListTable} from "./list-table";
-import {ListSearch} from "./list-search";
+import {ontologyTermsApi as sectionApi} from "src/api/ontology-terms";
+import {ListSearch} from "../ontology-term/list-search";
+import {ListTable} from "../ontology-term/list-table";
 
 
 const useItemsSearch = () => {
@@ -84,7 +85,7 @@ const OntologyTerms = () => {
     const itemsStore = useItemsStore(itemsSearch.state);
 
     return (
-        <>
+        <Stack spacing={4}>
             <Typography variant='h5'>Terms</Typography>
             <Card>
                 <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
@@ -98,7 +99,7 @@ const OntologyTerms = () => {
                     sectionApi={sectionApi}
                 />
             </Card>
-        </>
+        </Stack>
     )
 }
 

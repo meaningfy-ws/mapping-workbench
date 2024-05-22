@@ -1,22 +1,13 @@
 import {useEffect, useState} from 'react';
-import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Button from '@mui/material/Button';
+
 import Card from '@mui/material/Card';
-import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
-import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {ontologyNamespacesApi as sectionApi} from 'src/api/ontology-namespaces';
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {RouterLink} from 'src/components/router-link';
-import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
-import {Layout as AppLayout} from 'src/layouts/app';
-import {paths} from 'src/paths';
-import {ListSearch} from "../../../sections/app/ontology-namespace/list-search";
-import {ListTable} from "../../../sections/app/ontology-namespace/list-table";
+import {ontologyNamespacesApi as sectionApi} from 'src/api/ontology-namespaces';
+import {ListSearch} from "src/sections/app/ontology-namespace/list-search";
+import {ListTable} from "src/sections/app/ontology-namespace/list-table";
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -96,54 +87,23 @@ const OntologyNamespaces = () => {
     usePageView();
 
     return (
-        <>
-            <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
-            <Stack spacing={4}>
-                <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    spacing={4}
-                >
-
-                    <Stack spacing={1}>
-                        <Typography variant="h5">
-                            {sectionApi.SECTION_TITLE}
-                        </Typography>
-                    </Stack>
-                    <Stack
-                        alignItems="center"
-                        direction="row"
-                        spacing={3}
-                    >
-                        <Button
-                            id="add_button"
-                            component={RouterLink}
-                            href={paths.app[sectionApi.section].create}
-                            startIcon={(
-                                <SvgIcon>
-                                    <PlusIcon/>
-                                </SvgIcon>
-                            )}
-                            variant="contained"
-                        >
-                            Add
-                        </Button>
-                    </Stack>
-                </Stack>
-                <Card>
-                    <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
-                    <ListTable
-                        onPageChange={itemsSearch.handlePageChange}
-                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        page={itemsSearch.state.page}
-                        items={itemsStore.items}
-                        count={itemsStore.itemsCount}
-                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                        sectionApi={sectionApi}
-                    />
-                </Card>
-            </Stack>
-        </>
+        <Stack spacing={5}>
+            <Typography variant="h5">
+                Discovered Namespaces
+            </Typography>
+            <Card>
+                <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
+                <ListTable
+                    onPageChange={itemsSearch.handlePageChange}
+                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                    page={itemsSearch.state.page}
+                    items={itemsStore.items}
+                    count={itemsStore.itemsCount}
+                    rowsPerPage={itemsSearch.state.rowsPerPage}
+                    sectionApi={sectionApi}
+                />
+            </Card>
+        </Stack>
     )
 };
 
