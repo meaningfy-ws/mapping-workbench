@@ -79,7 +79,7 @@ export const useSections = () => {
             },
             {
                 title: t(tokens.nav.test_data),
-                path: paths.app.index,
+                path: paths.app.test_data_suites.index,
                 icon: (
                     <SvgIcon fontSize="small">
                         <BiotechIcon/>
