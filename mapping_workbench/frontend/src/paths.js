@@ -61,6 +61,13 @@ export const paths = {
             create: '/app/ontology/create',
             edit: '/app/ontology/[id]/edit',
         },
+        schema: {
+            index: '/app/schema',
+            import: '/app/schema/import',
+            elements: {
+                view: (id) => `/app/schema/${id}/view`,
+            }
+        },
         ontology_file_collections: {
             index: '/app/ontology-file-collections',
             create: '/app/ontology-file-collections/create',
@@ -304,6 +311,13 @@ export const apiPaths = {
         item: '/fields_registry/:id',
         import_eforms_from_github: '/fields_registry/tasks/import_eforms_from_github',
         elements: '/fields_registry/elements',
+        element: '/fields_registry/elements/:id',
+    },
+
+    schema: {
+        items: '/fields_registry',
+        item: '/fields_registry/:id',
+        import_eforms_from_github: '/fields_registry/tasks/import_eforms_from_github',
         element: '/fields_registry/elements/:id',
     },
 

@@ -61,7 +61,7 @@ export const useSections = () => {
         items: [
             {
                 title: t(tokens.nav.schema),
-                path: paths.app.index,
+                path: paths.app.schema.index,
                 icon: (
                     <SvgIcon fontSize="small">
                         <BubbleChartIcon/>
