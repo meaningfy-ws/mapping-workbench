@@ -19,7 +19,7 @@ const useItemsSearch = (items) => {
             direction: "desc"
         },
         search: [],
-        searchColumns:["focus_node","message","prefixed_result_path","result_severity","source_constraint_component"],
+        searchColumns:["short_focus_node","message","short_result_path","short_result_severity","short_source_constraint_component"],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
