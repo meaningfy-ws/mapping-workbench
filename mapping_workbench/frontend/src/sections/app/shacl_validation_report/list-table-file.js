@@ -1,15 +1,16 @@
 
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import PropTypes from 'prop-types';
+
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
+
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-
-import {Scrollbar} from 'src/components/scrollbar';
-import PropTypes from 'prop-types';
 import {SorterHeader as UtilsSorterHeader} from "./utils";
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import TablePagination from "../../components/table-pagination";
+import {Scrollbar} from 'src/components/scrollbar';
+import TablePagination from '../../components/table-pagination';
 
 export const ListTableFile = (props) => {
 
@@ -31,16 +32,15 @@ export const ListTableFile = (props) => {
                                                         />
 
     return (
-        <>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-            />
+        <TablePagination
+            component="div"
+            count={count}
+            onPageChange={onPageChange}
+            onRowsPerPageChange={onRowsPerPageChange}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+        >
             <Scrollbar>
                 <Table sx={{minWidth: 1200}}>
                     <TableHead>
@@ -117,16 +117,7 @@ export const ListTableFile = (props) => {
                     </TableBody>
                 </Table>
             </Scrollbar>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-            />
-        </>
+        </TablePagination>
     );
 };
 
