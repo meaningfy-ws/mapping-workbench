@@ -1,5 +1,5 @@
 import re
-from typing import Dict
+from typing import Dict, List
 
 from beanie import PydanticObjectId
 from beanie.exceptions import RevisionIdWasChanged
@@ -78,3 +78,19 @@ async def get_namespace_by_prefix(prefix: str, project_id: PydanticObjectId) -> 
         Namespace.project == Project.link_from_id(project_id),
         Namespace.prefix == prefix
     )
+
+
+async def get_project_ns_definitions(project_id: PydanticObjectId) -> dict:
+    namespaces = await Namespace.find(
+        Namespace.project == Project.link_from_id(project_id)
+    ).to_list()
+
+    ns_definitions = {
+        (x.uri or ''): x.prefix
+        for x in sorted(
+            list(filter(lambda x: x.prefix, namespaces)),
+            key=lambda namespace: (namespace.uri or '', namespace.prefix),
+            reverse=True
+        )
+    }
+    return ns_definitions

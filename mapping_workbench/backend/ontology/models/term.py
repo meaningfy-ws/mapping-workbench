@@ -28,6 +28,7 @@ class TermIn(BaseProjectResourceEntityInSchema):
 
 class TermOut(BaseProjectResourceEntityOutSchema):
     term: Optional[str] = None
+    short_term: Optional[str] = None
     type: Optional[TermType] = None
 
 
@@ -38,6 +39,7 @@ class TermState(ObjectState):
 
 class Term(BaseProjectResourceEntity, StatefulObjectABC):
     term: Indexed(str)
+    short_term: Optional[str] = None
     type: Optional[TermType] = None
 
     async def get_state(self) -> TermState:
@@ -56,6 +58,7 @@ class Term(BaseProjectResourceEntity, StatefulObjectABC):
             IndexModel(
                 [
                     ("term", pymongo.TEXT),
+                    ("short_term", pymongo.TEXT),
                     ("type", pymongo.TEXT)
                 ],
                 name="search_text_idx"
