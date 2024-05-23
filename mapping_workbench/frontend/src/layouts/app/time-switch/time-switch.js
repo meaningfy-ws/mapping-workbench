@@ -21,6 +21,9 @@ const TimeSwitch = () => {
     }
 
     const localTimeZone = moment.tz.guess()
+    const localTimeZoneAbbr = moment.tz(localTimeZone).format('z')
+
+    console.log(localTimeZoneAbbr, moment.tz('America/Toronto').format('z'))
 
     const timeZoneItems = ['Europe/Luxembourg', localTimeZone]
 
@@ -33,7 +36,7 @@ const TimeSwitch = () => {
                 onClick={popover.handleOpen}
                 endIcon={<KeyboardArrowDownIcon />}
               >
-                  {globalState.timeSetting}
+                  {moment.tz(globalState.timeSetting).format('z')}
               </Button>
           </Tooltip>
           <Popover open={popover.open}
@@ -53,7 +56,7 @@ const TimeSwitch = () => {
               {timeZoneItems.map(timeZone =>
                 <MenuItem key={timeZone}
                           onClick={() => handleTimeUpdate(timeZone)}>
-                    <Typography color={timeZone === globalState.timeSetting && 'primary'}>{timeZone}</Typography>
+                    <Typography color={timeZone === globalState.timeSetting && 'primary'}>{moment.tz(timeZone).format('z')}</Typography>
                 </MenuItem>
               )}
           </Popover>
