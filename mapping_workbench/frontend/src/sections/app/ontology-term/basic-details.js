@@ -13,7 +13,7 @@ import {paths} from "../../../paths";
 import {useRouter} from "../../../hooks/use-router";
 
 export const BasicDetails = (props) => {
-    const {id, term, type, ...other} = props;
+    const {id, term, short_term, type, ...other} = props;
 
     const router = useRouter();
     const itemctx = new ForListItemAction(id, sectionApi);
@@ -41,6 +41,11 @@ export const BasicDetails = (props) => {
             <Card>
                 <CardHeader title="Details"/>
                 <PropertyList>
+                    <PropertyListItem
+                        divider
+                        label="Short Term"
+                        value={short_term}
+                    />
                     <PropertyListItem
                         divider
                         label="Term"

@@ -137,6 +137,7 @@ const Page = () => {
                                 <BasicDetails
                                     id={item._id}
                                     term={item.term}
+                                    short_term={item.short_term}
                                     type={item.type}
                                 />
                             </Grid>
