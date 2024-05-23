@@ -1,6 +1,8 @@
+import json
 import re
 from typing import Dict, List
 
+import importlib.resources as pkg_resources
 from beanie import PydanticObjectId
 from beanie.exceptions import RevisionIdWasChanged
 
@@ -10,6 +12,9 @@ from mapping_workbench.backend.ontology.adapters.namespace_handler import Namesp
 from mapping_workbench.backend.ontology.models.namespace import Namespace, NamespaceCustom
 from mapping_workbench.backend.project.models.entity import Project
 
+import mapping_workbench.backend.ontology.resources as ontology_resources
+
+DEFAULT_NAMESPACES_RESOURCE = "default_namespaces.json"
 
 async def discover_and_save_mapping_rule_prefixes(project_id: PydanticObjectId, rule: ConceptualMappingRule):
     from_content = rule.target_class_path + " " + rule.target_property_path
@@ -65,6 +70,11 @@ async def get_prefixes_definitions(project_id: PydanticObjectId) -> Dict[str, st
     ).to_list())}
 
 
+async def get_default_prefixes_definitions() -> Dict[str, str]:
+    with pkg_resources.path(ontology_resources, DEFAULT_NAMESPACES_RESOURCE) as path:
+        return json.loads(path.read_bytes())
+
+
 async def get_custom_prefixes_definitions() -> Dict[str, str]:
     return {x.prefix: (x.uri or '') for x in (await NamespaceCustom.find_all().to_list())}
 
@@ -77,6 +87,13 @@ async def get_namespace_by_prefix(prefix: str, project_id: PydanticObjectId) -> 
     return await Namespace.find_one(
         Namespace.project == Project.link_from_id(project_id),
         Namespace.prefix == prefix
+    )
+
+
+async def get_namespace_by_uri(uri: str, project_id: PydanticObjectId) -> Namespace:
+    return await Namespace.find_one(
+        Namespace.project == Project.link_from_id(project_id),
+        Namespace.uri == uri
     )
 
 

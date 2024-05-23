@@ -8,9 +8,11 @@ from rdflib import RDF
 from mapping_workbench.backend.ontology.adapters import invert_dict
 from mapping_workbench.backend.ontology.adapters.namespace_handler import NamespaceInventory, \
     NamespaceInventoryException
+from mapping_workbench.backend.ontology.models.namespace import Namespace
 from mapping_workbench.backend.ontology.models.term import Term, TermValidityResponse
 from mapping_workbench.backend.ontology.services.namespaces import discover_and_save_prefix_namespace, get_ns_handler, \
-    get_prefixes_definitions, get_custom_prefixes_definitions, get_project_ns_definitions
+    get_prefixes_definitions, get_custom_prefixes_definitions, get_project_ns_definitions, get_namespace_by_uri, \
+    get_default_prefixes_definitions
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.user.models.user import User
 
@@ -79,7 +81,10 @@ async def discover_and_save_terms(project_id: PydanticObjectId, user: User = Non
 
     project_link = Project.link_from_id(project_id)
 
-    custom_prefixes: Dict = await get_custom_prefixes_definitions()
+    custom_prefixes: Dict = {
+        **(await get_default_prefixes_definitions()),
+        **(await get_custom_prefixes_definitions())
+    }
 
     for prefix, uri in custom_prefixes.items():
         await discover_and_save_prefix_namespace(project_id, prefix, uri, False)
@@ -162,18 +167,31 @@ async def search_terms(q: str) -> List[str]:
     return [x.term for x in await Term.find(query_filters).to_list()]
 
 
+def get_ns_value_from_term(ns_term: str) -> (str, str):
+    parts = [ns_term, None]
+    for delimiter in ['#', '/']:
+        match = ns_term.rpartition(delimiter)
+        if match[1]:
+            parts = [match[0] + match[1], match[2]]
+            break
+    return tuple(parts)
+
+
 async def get_prefixed_term(ns_term: str, project_id: PydanticObjectId) -> str:
-    ns_definitions = await get_project_ns_definitions(project_id)
-    return get_prefixed_ns_term(ns_term, ns_definitions)
+    term_ns, term_value = get_ns_value_from_term(ns_term)
+    if not term_value:
+        return ns_term
+
+    namespace: Namespace = await get_namespace_by_uri(term_ns, project_id)
+    prefix = namespace.prefix if namespace else ''
+    return f"{prefix}:{term_value}"
 
 
 def get_prefixed_ns_term(ns_term: str, ns_definitions: dict) -> str:
-    parts = ns_term.split('#')
-    if len(parts) == 1:
+    term_ns, term_value = get_ns_value_from_term(ns_term)
+    if not term_value:
         return ns_term
-    ns = parts[0] + '#'
-    term_value = parts[1] if len(parts) == 2 else ''
-    prefix = ns_definitions[ns] if ns in ns_definitions else ''
+    prefix = ns_definitions[term_ns] if term_ns in ns_definitions else ''
     return f"{prefix}:{term_value}"
 
 
