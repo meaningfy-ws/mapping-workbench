@@ -96,11 +96,15 @@ export const useSections = () => {
             items: [
                 {
                     title: t(tokens.nav.ontology_file_collections),
-                    path: paths.app.ontology_file_collections.index,
+                    path: paths.app.ontology_file_collections.index
                 },
                 {
                     title: t(tokens.nav.namespaces),
                     path: paths.app.ontology_namespaces.index
+                },
+                {
+                    title: t(tokens.nav.namespaces_custom),
+                    path: paths.app.ontology_namespaces_custom.index
                 },
                 {
                     title: t(tokens.nav.terms),
@@ -185,15 +189,6 @@ export const useSections = () => {
         {
             subheader: t(tokens.nav.admin),
             items: [
-                {
-                    title: t(tokens.nav.namespaces_custom),
-                    path: paths.app.ontology_namespaces_custom.index,
-                    icon: (
-                        <SvgIcon fontSize="small">
-                            <AccountTreeIcon/>
-                        </SvgIcon>
-                    )
-                },
                 {
                     title: t(tokens.nav.tasks),
                     path: paths.app.tasks.index,
