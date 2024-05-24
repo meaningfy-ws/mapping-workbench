@@ -1,9 +1,8 @@
-import asyncio
-import inspect
 from datetime import datetime
 from enum import Enum
 from typing import Callable, Optional, List
 
+from dateutil.tz import tzlocal
 from pebble import ProcessFuture
 from pydantic import BaseModel
 
@@ -64,14 +63,14 @@ class TaskExecutor(Callable):
 
     def __call__(self, *args, **kwargs) -> TaskResult:
         task_result = TaskResult()
-        task_result.started_at = datetime.now()
+        task_result.started_at = datetime.now(tzlocal())
         try:
             self.task_function(*args, **kwargs)
             task_result.task_status = TaskStatus.FINISHED
         except Exception as e:
             task_result.exception_message = str(e)
             task_result.task_status = TaskStatus.FAILED
-        task_result.finished_at = datetime.now()
+        task_result.finished_at = datetime.now(tzlocal())
         return task_result
 
 
@@ -104,7 +103,7 @@ class Task:
         self.task_function = TaskExecutor(task_function)
         self.task_args = args
         self.task_kwargs = kwargs
-        created_at = datetime.now()
+        created_at = datetime.now(tzlocal())
         task_id = f"{task_name}_{created_at}"
         self.task_metadata = TaskMetadata(task_id=task_id, task_name=task_name,
                                           task_timeout=task_timeout, task_status=TaskStatus.QUEUED,

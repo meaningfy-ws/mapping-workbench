@@ -33,7 +33,7 @@ class NamespaceState(ObjectState):
 
 
 class Namespace(BaseProjectResourceEntity, StatefulObjectABC):
-    prefix: Indexed(str, index_type=pymongo.TEXT, unique=True)
+    prefix: Indexed(str, index_type=pymongo.TEXT)
     uri: Optional[str] = None
     is_syncable: Optional[bool] = True
 
@@ -48,6 +48,14 @@ class Namespace(BaseProjectResourceEntity, StatefulObjectABC):
 
     class Settings(BaseEntity.Settings):
         name = "namespaces"
+        indexes = [
+            IndexModel(
+                [
+                    ("prefix", pymongo.ASCENDING),
+                    ("project", pymongo.ASCENDING)
+                ], name="unique_key", unique=True
+            )
+        ]
 
 
 class NamespaceCustomIn(BaseEntityInSchema):
