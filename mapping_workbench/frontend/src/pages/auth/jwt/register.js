@@ -39,11 +39,11 @@ const validationSchema = Yup.object({
     .string()
     .email('Must be a valid email')
     .max(255)
-    .required('Username is required'),
+    .required('Email is required'),
   name: Yup
     .string()
     .max(255)
-    .required('Name is required'),
+    .required('Username is required'),
   password: Yup
     .string()
     .min(7)
@@ -120,7 +120,7 @@ const Page = () => {
                   error={!!(formik.touched.name && formik.errors.name)}
                   fullWidth
                   helperText={formik.touched.name && formik.errors.name}
-                  label="Name"
+                  label="Username"
                   name="name"
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
@@ -130,7 +130,7 @@ const Page = () => {
                   error={!!(formik.touched.username && formik.errors.username)}
                   fullWidth
                   helperText={formik.touched.username && formik.errors.username}
-                  label="Username"
+                  label="Email"
                   name="username"
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}

@@ -98,7 +98,7 @@ export const ListTable = (props) => {
                                 </TableCell>
 
                             <TableCell>
-                                 <SorterHeader fieldName="prefixed_result_path"
+                                 <SorterHeader fieldName="short_result_path"
                                                title="Result Path"/>
                             </TableCell>
                             <TableCell align="center">
@@ -142,7 +142,7 @@ export const ListTable = (props) => {
                                             language="turtle"
                                             wrapLines={true}
                                             lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
-                                            {item.prefixed_result_path}
+                                            {item.short_result_path}
                                         </SyntaxHighlighter>
                                     </TableCell>
                                     <TableCell>

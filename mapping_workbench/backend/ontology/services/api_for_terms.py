@@ -8,6 +8,7 @@ from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundE
 from mapping_workbench.backend.core.services.request import request_update_data, request_create_data, \
     api_entity_is_found, prepare_search_param, pagination_params
 from mapping_workbench.backend.ontology.models.term import Term, TermIn, TermOut
+from mapping_workbench.backend.ontology.services.terms import get_prefixed_term
 from mapping_workbench.backend.user.models.user import User
 
 
@@ -30,10 +31,17 @@ async def list_terms(filters: dict = None, page: int = None, limit: int = None) 
     return items, total_count
 
 
+async def on_create_update_term_data(data: dict, project_id: PydanticObjectId):
+    data['short_term'] = await get_prefixed_term(ns_term=data['term'], project_id=project_id)
+
+
 async def create_term(data: TermIn, user: User) -> TermOut:
+    create_data = request_create_data(data, user=user)
+    await on_create_update_term_data(create_data, data.project.to_ref().id)
+
     term: Term = \
         Term(
-            **request_create_data(data, user=user)
+            **create_data
         )
     try:
         await term.create()
@@ -47,8 +55,11 @@ async def update_term(
         data: TermIn,
         user: User
 ) -> TermOut:
+    update_data = request_update_data(data, user=user)
+    await on_create_update_term_data(update_data, data.project.to_ref().id)
+
     return TermOut(**(
-        await term.set(request_update_data(data, user=user))
+        await term.set(update_data)
     ).model_dump())
 
 
