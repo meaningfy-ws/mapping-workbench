@@ -17,8 +17,11 @@ import {RouterLink} from 'src/components/router-link';
 import {testDataSuitesApi as sectionApi} from 'src/api/test-data-suites';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {FileCollectionListSearch} from 'src/sections/app/file-manager/file-collection-list-search';
-import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
 import {Upload04 as ImportIcon} from '@untitled-ui/icons-react/build/esm';
+import {TestDataCollectionListTable} from "../../../sections/app/file-manager/test-data-collection-list-table";
+import {sparqlTestFileResourcesApi as fileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
+import {FileUploader} from "../../../sections/app/file-manager/file-uploader";
+import {useDialog} from "../../../hooks/use-dialog";
 
 
 const useItemsSearch = () => {
@@ -49,7 +52,6 @@ const useItemsSearch = () => {
     }
 
     const handleRowsPerPageChange = event => {
-        console.log('handleRowsPerPageChange')
         setState(prevState => ({
             ...prevState,
             rowsPerPage: parseInt(event.target.value, 10)
@@ -86,12 +88,14 @@ const useItemsStore = (searchState) => {
         [searchState]);
 
     return {
+        handleItemsGet,
         ...state
     };
 };
 
 const Page = () => {
 
+    const uploadDialog = useDialog()
     const itemsSearch = useItemsSearch();
     const itemsStore = useItemsStore(itemsSearch.state);
 
@@ -154,8 +158,8 @@ const Page = () => {
                             Create Test Data Suite
                         </Button>
                         <Button
-                            component={RouterLink}
-                            href={paths.app[sectionApi.section].tasks.transform_test_data}
+                            type='link'
+                            onClick={uploadDialog.handleOpen}
                             startIcon={(
                                 <SvgIcon>
                                     <ImportIcon/>
@@ -183,7 +187,7 @@ const Page = () => {
                 </Stack>
                 <Card>
                     <FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
-                    <FileCollectionListTable
+                    <TestDataCollectionListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                         page={itemsSearch.state.page}
@@ -191,8 +195,16 @@ const Page = () => {
                         count={itemsStore.itemsCount}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
+                        getItem={itemsStore.handleItemsGet}
                     />
                 </Card>
+                <FileUploader
+                    onClose={uploadDialog.handleClose}
+                    open={uploadDialog.open}
+                    collectionId={uploadDialog.data?.id}
+                    sectionApi={fileResourcesApi}
+                    onGetItems={itemsStore.handleItemsGet}
+                />
             </Stack>
         </>
     );
