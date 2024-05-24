@@ -33,8 +33,8 @@ import Divider from "@mui/material/Divider";
 const user = users[0];
 
 const initialValues = {
-    username: user.username,
-    password: user.password,
+    username: '',
+    password: '',
     remember_me: true,
     submit: null
 };
