@@ -866,12 +866,12 @@ export const ListTableRow = (props) => {
                         <Grid item
                               xl={6}
                               md={12}>
-                            {!!(item.target_class_path_terms_validity.length || item.target_property_path_terms_validity.length) &&
+                            {!!(item.target_class_path_terms_validity?.length || item.target_property_path_terms_validity?.length) &&
                                 <PropertyList>
                                      <Typography variant='h5'>
                                         Target
                                      </Typography>
-                                     {!!item.target_class_path_terms_validity.length &&
+                                     {!!item.target_class_path_terms_validity?.length &&
                                         <PropertyListItem label='Ontology Fragment Class path'>
                                             <SyntaxHighlighter
                                                 language="sparql"
@@ -880,7 +880,7 @@ export const ListTableRow = (props) => {
                                                 {item.target_class_path}
                                             </SyntaxHighlighter>
                                         </PropertyListItem>}
-                                     {!!item.target_property_path_terms_validity.length &&
+                                     {!!item.target_property_path_terms_validity?.length &&
                                         <PropertyListItem label='Ontology Fragment Property path'>
                                             <SyntaxHighlighter
                                                 language="sparql"
