@@ -306,7 +306,7 @@ export const ListTable = (props) => {
     const handleGoLastState = (id) => {
         sectionApi.getLatestState(id)
             .then(res => {
-                router.push(paths.app[sectionApi.section].states.view(id, res))
+                router.push(paths.app[sectionApi.section].states.view(id, res._id))
             })
             .catch(err => console.error(err))
     }
