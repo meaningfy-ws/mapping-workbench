@@ -3,7 +3,7 @@ from typing import Optional, List
 
 import pymongo
 from beanie import Indexed, Link, PydanticObjectId
-from beanie.odm.operators.find.comparison import Eq, NE
+from beanie.odm.operators.find.comparison import Eq, NE, In
 from dateutil.tz import tzlocal
 from pydantic import BaseModel, Field
 from pymongo import IndexModel
@@ -66,8 +66,8 @@ class MappingPackageOut(BaseProjectResourceEntityOutSchema):
     mapping_version: str = None
     epo_version: str = None
     eform_subtypes: List[str] = None
-    #start_date: Optional[datetime] = None
-    #end_date: Optional[datetime] = None
+    # start_date: Optional[datetime] = None
+    # end_date: Optional[datetime] = None
     eforms_sdk_versions: List[str] = None
     shacl_test_suites: Optional[List[Link[SHACLTestSuite]]] = None
 
@@ -171,8 +171,9 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
             Eq(ConceptualMappingRule.refers_to_mapping_package_ids, self.id),
             Eq(ConceptualMappingRule.project, self.project.to_ref())
         ).to_list()
-        conceptual_mapping_rule_states = [await conceptual_mapping_rule.get_state() for conceptual_mapping_rule in
-                                          conceptual_mapping_rules]
+        conceptual_mapping_rule_states = [
+            await conceptual_mapping_rule.get_state() for conceptual_mapping_rule in conceptual_mapping_rules
+        ]
         return conceptual_mapping_rule_states
 
     async def get_mapping_groups_states(self) -> List[MappingGroupState]:
@@ -192,7 +193,9 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
 
     async def get_shacl_test_suites_states(self) -> List[SHACLTestSuiteState]:
         shacl_test_suites_states = []
+        shacl_test_suites_ids = [shacl_test_suite.to_ref().id for shacl_test_suite in self.shacl_test_suites]
         shacl_test_suites = await SHACLTestSuite.find(
+            In(SHACLTestSuite.id, shacl_test_suites_ids),
             Eq(SHACLTestSuite.project, self.project.to_ref())
         ).to_list()
         if shacl_test_suites:

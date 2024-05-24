@@ -57,12 +57,16 @@ async def delete_sparql_test_suite(sparql_test_suite: SPARQLTestSuite):
 
 
 async def list_sparql_test_file_resources(
-        filters=None
+        filters=None, page: int = None, limit: int = None
 ) -> List[SPARQLTestFileResource]:
     query_filters: dict = dict(filters or {}) | dict(BaseEntityFiltersSchema())
+    skip, limit = pagination_params(page, limit)
+
     return await SPARQLTestFileResource.find(
         query_filters,
-        fetch_links=False
+        fetch_links=False,
+        skip=skip,
+        limit=limit
     ).to_list()
 
 
