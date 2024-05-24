@@ -225,6 +225,7 @@ export const apiPaths = {
         states: '/mapping_packages/:id/states',
         state: '/mapping_packages/state/:id',
         validation_reports: '/package_exporter/get_validation_reports',
+        latest_state: (package_id) => `/mapping_packages/${package_id}/latest_state`,
         validation_reports_tree: (sid) => `/package_validator/validation_reports_tree/state/${sid}`,
         xpath_reports: (sid) => `/package_validator/xpath/state/${sid}`,
         xpath_reports_suite: (sid, suiteId) => `/package_validator/xpath/state/${sid}/suite/${suiteId}`,
