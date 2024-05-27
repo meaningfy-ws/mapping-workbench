@@ -182,7 +182,7 @@ const Page = () => {
                         count={itemsStore.itemsCount}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
-                        getItem={itemsStore.handleItemsGet}
+                        getItems={itemsStore.handleItemsGet}
                     />
                 </Card>
                 <FileUploader

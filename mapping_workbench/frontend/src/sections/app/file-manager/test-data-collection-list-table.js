@@ -45,6 +45,7 @@ export const ListTableRow = (props) => {
         handleItemToggle,
         sectionApi,
         router,
+        getItems
     } = props;
 
     const {timeSetting} = useGlobalState()
@@ -69,8 +70,13 @@ export const ListTableRow = (props) => {
         });
     }
 
-
     const handleDeleteAction = () => {
+        sectionApi.deleteItem(item_id)
+            .then(res => getItems())
+    }
+
+
+    const handleDeleteResourceAction = () => {
         fileResourcesApi.deleteFileResource(item_id)
             .then(res => getFileResources())
     }
@@ -88,7 +94,7 @@ export const ListTableRow = (props) => {
                     title="Delete It?"
                     open={!!confirmOpen}
                     setOpen={setConfirmOpen}
-                    onConfirm={() => handleDeleteAction(confirmOpen)}
+                    onConfirm={() => handleDeleteResourceAction(confirmOpen)}
                 >
                     Are you sure you want to delete it?
                 </ConfirmDialog>
@@ -135,7 +141,8 @@ export const ListTableRow = (props) => {
                         <Button type='link'
                                 onClick={() => uploadDialog.handleOpen({id:item_id})}>Import test data</Button>
                         <ListItemActions
-                            itemctx={new ForListItemAction(item_id, sectionApi)}/>
+                            itemctx={new ForListItemAction(item_id, sectionApi)}
+                        onDeleteAction={handleDeleteAction}/>
                     </Stack>
                 </TableCell>
             </TableRow>
@@ -252,6 +259,7 @@ export const TestDataCollectionListTable = (props) => {
         page = 0,
         rowsPerPage = 0,
         sectionApi,
+        getItems
     } = props;
 
     const router = useRouter();
@@ -308,7 +316,6 @@ export const TestDataCollectionListTable = (props) => {
                         {items.map((item) => {
                             const item_id = item._id;
                             const isCurrent = item_id === currentItem;
-                            console.log(item)
                             return (
                                 <ListTableRow
                                     key={item_id}
@@ -318,6 +325,7 @@ export const TestDataCollectionListTable = (props) => {
                                     handleItemToggle={handleItemToggle}
                                     sectionApi={sectionApi}
                                     router={router}
+                                    getItems={getItems}
                                 />
                             )
                         })}
