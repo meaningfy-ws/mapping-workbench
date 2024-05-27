@@ -30,9 +30,10 @@ import timeTransformer from "../../../utils/time-transformer";
 import {useGlobalState} from "../../../hooks/use-global-state";
 import {ListItemActions} from "../../../components/app/list/list-item-actions";
 import {FileUploader} from "./file-uploader";
-import {sparqlTestFileResourcesApi as fileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
+import {testDataFileResourcesApi as fileResourcesApi} from "src/api/test-data-suites/file-resources";
 import {useDialog} from "../../../hooks/use-dialog";
 import {PropertyListItem} from "../../../components/property-list-item";
+import ConfirmDialog from "../../../components/app/dialog/confirm-dialog";
 
 
 
@@ -44,16 +45,22 @@ export const ListTableRow = (props) => {
         handleItemToggle,
         sectionApi,
         router,
-        openDialog
     } = props;
 
     const {timeSetting} = useGlobalState()
     const [collectionResources, setCollectionResources] = useState([]);
+    const [confirmOpen, setConfirmOpen] = useState(false);
+    const uploadDialog = useDialog()
+
 
     useEffect(() => {
+        getFileResources()
+    }, [])
+
+    const getFileResources = () => {
         sectionApi.getFileResources(item_id)
             .then(res => setCollectionResources(res.items))
-    }, [sectionApi])
+    }
 
     const handleResourceEdit = resource_id => {
         router.push({
@@ -62,8 +69,29 @@ export const ListTableRow = (props) => {
         });
     }
 
+
+    const handleDeleteAction = () => {
+        fileResourcesApi.deleteFileResource(item_id)
+            .then(res => getFileResources())
+    }
+
     return (
         <>
+            <FileUploader
+                onClose={uploadDialog.handleClose}
+                open={uploadDialog.open}
+                collectionId={uploadDialog.data?.id}
+                sectionApi={fileResourcesApi}
+                onGetItems={getFileResources}
+            />
+            <ConfirmDialog
+                    title="Delete It?"
+                    open={!!confirmOpen}
+                    setOpen={setConfirmOpen}
+                    onConfirm={() => handleDeleteAction(confirmOpen)}
+                >
+                    Are you sure you want to delete it?
+                </ConfirmDialog>
             <TableRow
                 hover
                 key={item_id}
@@ -105,7 +133,7 @@ export const ListTableRow = (props) => {
                            alignItems='center'
                            direction='row'>
                         <Button type='link'
-                                onClick={() => openDialog({id:item_id})}>Import test data</Button>
+                                onClick={() => uploadDialog.handleOpen({id:item_id})}>Import test data</Button>
                         <ListItemActions
                             itemctx={new ForListItemAction(item_id, sectionApi)}/>
                     </Stack>
@@ -188,8 +216,15 @@ export const ListTableRow = (props) => {
                                                                 <Button
                                                                     size="small"
                                                                     onClick={() => handleResourceEdit?.(resource._id)}
-                                                                    color="success"
-                                                                >Edit</Button>
+                                                                    color="success">
+                                                                    Edit
+                                                                </Button>
+                                                                <Button
+                                                                    size="small"
+                                                                    onClick={() => setConfirmOpen(resource._id)}
+                                                                    color="error">
+                                                                    Delete
+                                                                </Button>
                                                             </Stack>
                                                         </Stack>
                                                     );
@@ -217,11 +252,9 @@ export const TestDataCollectionListTable = (props) => {
         page = 0,
         rowsPerPage = 0,
         sectionApi,
-        getItem
     } = props;
 
     const router = useRouter();
-    const uploadDialog = useDialog()
 
     const [currentItem, setCurrentItem] = useState(null);
 
@@ -241,6 +274,7 @@ export const TestDataCollectionListTable = (props) => {
     const handleItemDelete = () => {
         toast.error('Item cannot be deleted');
     }
+
 
     return (
         <TablePagination
@@ -284,20 +318,14 @@ export const TestDataCollectionListTable = (props) => {
                                     handleItemToggle={handleItemToggle}
                                     sectionApi={sectionApi}
                                     router={router}
-                                    openDialog={uploadDialog.handleOpen}
                                 />
                             )
                         })}
                     </TableBody>
                 </Table>
             </Scrollbar>
-            <FileUploader
-                onClose={uploadDialog.handleClose}
-                open={uploadDialog.open}
-                collectionId={uploadDialog.data?.id}
-                sectionApi={fileResourcesApi}
-                onGetItems={getItem}
-            />
+
+
         </TablePagination>
     );
 };

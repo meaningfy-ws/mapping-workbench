@@ -19,9 +19,9 @@ import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {FileCollectionListSearch} from 'src/sections/app/file-manager/file-collection-list-search';
 import {Upload04 as ImportIcon} from '@untitled-ui/icons-react/build/esm';
 import {TestDataCollectionListTable} from "../../../sections/app/file-manager/test-data-collection-list-table";
-import {sparqlTestFileResourcesApi as fileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
-import {FileUploader} from "../../../sections/app/file-manager/file-uploader";
-import {useDialog} from "../../../hooks/use-dialog";
+import {testDataFileResourcesApi as fileResourcesApi} from "src/api/test-data-suites/file-resources";
+import {FileUploader} from "src/sections/app/file-manager/file-uploader";
+import {useDialog} from "src/hooks/use-dialog";
 
 
 const useItemsSearch = () => {
@@ -170,19 +170,6 @@ const Page = () => {
                         >
                             Import Test Data Suites
                         </Button>
-                        {/*<Button*/}
-                        {/*    component={RouterLink}*/}
-                        {/*    href={paths.app[sectionApi.section].tasks.transform_test_data}*/}
-                        {/*    startIcon={(*/}
-                        {/*        <SvgIcon>*/}
-                        {/*            <TaskIcon/>*/}
-                        {/*        </SvgIcon>*/}
-                        {/*    )}*/}
-                        {/*    variant="contained"*/}
-                        {/*    id="transform-test-data_button"*/}
-                        {/*>*/}
-                        {/*    {t(tokens.nav.transform_test_data)}*/}
-                        {/*</Button>*/}
                     </Stack>
                 </Stack>
                 <Card>
