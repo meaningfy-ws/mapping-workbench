@@ -1,4 +1,4 @@
-import moment from "moment-timezone";
+import moment from "moment"
 
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import Tooltip from '@mui/material/Tooltip';
@@ -20,13 +20,14 @@ const TimeSwitch = () => {
         globalState.handleGlobalStateUpdate('timeSetting', timeZone)
     }
 
-    const localTimeZone = moment.tz.guess()
-    const localTimeZoneAbbr = moment.tz(localTimeZone).format('z')
+    const localTimeZone = moment().utcOffset()
+    const getUTC = (timeZone) => {
+        return `UTC ${timeZone > 0 && '+'}${timeZone/60}`
+    }
+    const timeZoneItems = [120, 180]
 
-    console.log(localTimeZoneAbbr, moment.tz('America/Toronto').format('z'))
-
-    const timeZoneItems = ['Europe/Luxembourg', localTimeZone]
-
+    if(localTimeZone === 120)
+        return <Button disabled>{getUTC(localTimeZone)}</Button>
     return (
         <>
           <Tooltip title="Change time zone">
@@ -36,7 +37,7 @@ const TimeSwitch = () => {
                 onClick={popover.handleOpen}
                 endIcon={<KeyboardArrowDownIcon />}
               >
-                  {moment.tz(globalState.timeSetting).format('z')}
+                  {getUTC(globalState.timeSetting)}
               </Button>
           </Tooltip>
           <Popover open={popover.open}
@@ -56,7 +57,7 @@ const TimeSwitch = () => {
               {timeZoneItems.map(timeZone =>
                 <MenuItem key={timeZone}
                           onClick={() => handleTimeUpdate(timeZone)}>
-                    <Typography color={timeZone === globalState.timeSetting && 'primary'}>{moment.tz(timeZone).format('z')}</Typography>
+                    <Typography color={timeZone === globalState.timeSetting && 'primary'}>{getUTC(timeZone)}</Typography>
                 </MenuItem>
               )}
           </Popover>
