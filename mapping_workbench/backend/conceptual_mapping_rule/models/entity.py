@@ -4,7 +4,8 @@ from typing import Optional, List
 
 import pymongo
 from beanie import Link, PydanticObjectId
-from pydantic import BaseModel
+from dateutil.tz import tzlocal
+from pydantic import BaseModel, Field
 from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
@@ -37,7 +38,7 @@ class ConceptualMappingRuleComment(BaseModel):
     title: Optional[str] = None
     comment: Optional[str] = None
     priority: Optional[ConceptualMappingRuleCommentPriority] = ConceptualMappingRuleCommentPriority.NORMAL
-    created_at: Optional[datetime] = None
+    created_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(tzlocal()))
     created_by: Optional[Link[User]] = None
     updated_at: Optional[datetime] = None
     updated_by: Optional[Link[User]] = None
