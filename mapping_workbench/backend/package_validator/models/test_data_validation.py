@@ -2,14 +2,15 @@ from datetime import datetime
 from typing import Optional
 
 from beanie import PydanticObjectId
-from pydantic import BaseModel
+from dateutil.tz import tzlocal
+from pydantic import BaseModel, Field
 
 
 class TestDataValidationResult(BaseModel):
     """
 
     """
-    created_at: Optional[datetime] = datetime.now()
+    created_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(tzlocal()))
 
 
 class CMRuleSDKElement(BaseModel):

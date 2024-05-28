@@ -2,6 +2,7 @@ import datetime
 from types import NoneType
 
 import pytest
+from dateutil.tz import tzlocal
 
 from mapping_workbench.backend import STRICT_MODEL_CONFIG
 from mapping_workbench.backend.logger.models.logger_record import LogSeverity, LogRecord
@@ -18,12 +19,12 @@ def test_logger_record_is_strict_model(dummy_log_record_info: LogRecord,
     with pytest.raises(ValueError):
         LogRecord(log_severity=LogSeverity.ERROR,
                   message="This is a test log message",
-                  timestamp=datetime.datetime.now())
+                  timestamp=datetime.datetime.now(tzlocal()))
 
     with pytest.raises(ValueError):
         LogRecord(log_severity=LogSeverity.INFO,
                   message="This is a test log message",
-                  timestamp=datetime.datetime.now(),
+                  timestamp=datetime.datetime.now(tzlocal()),
                   stack_trace="This is a test stack trace")
 
 

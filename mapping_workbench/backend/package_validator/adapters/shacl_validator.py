@@ -95,21 +95,36 @@ class SHACLValidator(TestDataValidator):
                         result=None,
                         binding=SHACLQueryResultBinding(
                             focus_node=binding.focusNode.value,
+                            short_focus_node=None,
                             result_path=binding.resultPath.value,
-                            prefixed_result_path=None,
+                            short_result_path=None,
                             result_severity=binding.resultSeverity.value,
+                            short_result_severity=None,
                             source_constraint_component=binding.sourceConstraintComponent.value,
+                            short_source_constraint_component=None,
                             message=binding.message.value
                         ),
                         test_data=result_test_data
                     )
                     shacl_result.result_path = shacl_result.binding.result_path
                     if self.ns_definitions:
-                        shacl_result.binding.prefixed_result_path = get_prefixed_ns_term(
+                        shacl_result.binding.short_result_path = get_prefixed_ns_term(
                             ns_term=shacl_result.binding.result_path,
                             ns_definitions=self.ns_definitions
                         )
-                        shacl_result.prefixed_result_path = shacl_result.binding.prefixed_result_path
+                        shacl_result.short_result_path = shacl_result.binding.short_result_path
+                        shacl_result.binding.short_focus_node = get_prefixed_ns_term(
+                            ns_term=shacl_result.binding.focus_node,
+                            ns_definitions=self.ns_definitions
+                        )
+                        shacl_result.binding.short_result_severity = get_prefixed_ns_term(
+                            ns_term=shacl_result.binding.result_severity,
+                            ns_definitions=self.ns_definitions
+                        )
+                        shacl_result.binding.short_source_constraint_component = get_prefixed_ns_term(
+                            ns_term=shacl_result.binding.source_constraint_component,
+                            ns_definitions=self.ns_definitions
+                        )
                     shacl_refined_result = None
                     if shacl_result.binding.result_severity.endswith("#Violation"):
                         shacl_refined_result = SHACLQueryRefinedResultType.VIOLATION.value

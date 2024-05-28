@@ -46,7 +46,7 @@ export const ListTableFile = (props) => {
                     <TableHead>
                         <TableRow>
                             <TableCell>
-                                <SorterHeader fieldName="focus_node"
+                                <SorterHeader fieldName="short_focus_node"
                                               title="Focus Node"/>
                             </TableCell>
                             <TableCell>
@@ -54,15 +54,15 @@ export const ListTableFile = (props) => {
                                               title="Message"/>
                             </TableCell>
                             <TableCell>
-                                 <SorterHeader fieldName="prefixed_result_path"
+                                 <SorterHeader fieldName="short_result_path"
                                                title="Result Path"/>
                             </TableCell>
                             <TableCell>
-                                <SorterHeader fieldName="result_severity"
+                                <SorterHeader fieldName="short_result_severity"
                                               title="Result Severity"/>
                             </TableCell>
                              <TableCell>
-                                <SorterHeader fieldName="source_constraint_component"
+                                <SorterHeader fieldName="short_source_constraint_component"
                                               title="Source Constraint Component"/>
                             </TableCell>
                         </TableRow>
@@ -76,7 +76,7 @@ export const ListTableFile = (props) => {
                                             language="turtle"
                                             wrapLines={true}
                                             lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
-                                            {item.focus_node}
+                                            {item.short_focus_node}
                                         </SyntaxHighlighter>
                                     </TableCell>
                                     <TableCell>
@@ -92,7 +92,7 @@ export const ListTableFile = (props) => {
                                             language="sparql"
                                             wrapLines={true}
                                             lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
-                                            {item.prefixed_result_path}
+                                            {item.short_result_path}
                                         </SyntaxHighlighter>
                                     </TableCell>
                                     <TableCell>
@@ -100,7 +100,7 @@ export const ListTableFile = (props) => {
                                             language="turtle"
                                             wrapLines={true}
                                             lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
-                                            {item.result_severity}
+                                            {item.short_result_severity}
                                         </SyntaxHighlighter>
                                     </TableCell>
                                     <TableCell>
@@ -108,7 +108,7 @@ export const ListTableFile = (props) => {
                                             language="turtle"
                                             wrapLines={true}
                                             lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
-                                            {item.source_constraint_component}
+                                            {item.short_source_constraint_component}
                                         </SyntaxHighlighter>
                                     </TableCell>
                                 </TableRow>

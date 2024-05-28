@@ -9,3 +9,5 @@ STRICT_MODEL_CONFIG = ConfigDict(extra='forbid',
                                   revalidate_instances='always',
                                   validate_default=True,
                                   validate_return=True)
+
+DEFAULT_TIMEZONE = 'UTC'

@@ -108,7 +108,7 @@ export const ListTable = (props) => {
                                             </TableCell>
                                             <TableCell width="25%">
                                                 <Typography variant="subtitle2">
-                                                    {item.term}
+                                                    {item.short_term}
                                                 </Typography>
                                             </TableCell>
                                             <TableCell>
@@ -138,6 +138,9 @@ export const ListTable = (props) => {
                                                     }}
                                                 >
                                                     <CardContent>
+                                                        <Typography variant="subtitle2">
+                                                            {item.term}
+                                                        </Typography>
                                                     </CardContent>
                                                     <Divider/>
                                                 </TableCell>
