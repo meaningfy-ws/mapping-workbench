@@ -16,7 +16,7 @@ const useItemsSearch = (items) => {
         sort: {
         },
         search: [],
-        searchColumns:["eforms_sdk_element_id","eforms_sdk_element_xpath"],
+        searchColumns: ["eforms_sdk_element_id", "eforms_sdk_element_xpath"],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -90,12 +90,12 @@ const useItemsSearch = (items) => {
     }
 
     const handleSort = (column) => {
-        setState(prevState=> ({ ...prevState, sort: {column,
-                direction: prevState.sort.column === column && prevState.sort.direction === "asc" ? "desc" : "asc"}}))
+        setState(prevState=> ({ ...prevState, sort: { column,
+                direction: prevState.sort.column === column && prevState.sort.direction === "asc" ? "desc" : "asc" }}))
     }
     const handleRowsPerPageChange = (event) => {
         setState(prevState => ({
-            ...prevState,
+            ...prevState, rowsPerPage: parseInt(event.target.value, 10)
         }));
     }
 
@@ -113,22 +113,23 @@ const useItemsSearch = (items) => {
 
 const XpathValidationReport = ({ sid, files, mappingSuiteIdentifier }) => {
     const [validationReport, setValidationReport] = useState([])
-    const [dataState, setDataState] = useState({load:true, error: false})
+    const [dataState, setDataState] = useState({load: true, error: false})
 
     useEffect(()=>{
         handleValidationReportsGet(sid)
     },[])
 
     const handleValidationReportsGet = async (sid) => {
-        try {
-            setDataState({load: true, error: false})
-            const result = await sectionApi.getXpathReports(sid)
-            setValidationReport(result.results.map(e => ({...e, notice_count: e.test_data_xpaths.length})))
-            setDataState(e=> ({...e, load: false}))
-        } catch (err) {
-            console.error(err);
-            setDataState({load: false, error: true})
-        }
+        setDataState({load: true, error: false})
+        sectionApi.getXpathReports(sid)
+            .then(res => {
+                setValidationReport(res.results.map(e => ({...e, notice_count: e.test_data_xpaths.length})))
+                setDataState(e=> ({...e, load: false }))
+            })
+            .catch(err => {
+                console.error(err);
+                setDataState({load: false, error: true})
+            })
     }
 
     const itemsSearch = useItemsSearch(validationReport);
