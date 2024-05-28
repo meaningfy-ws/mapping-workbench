@@ -22,15 +22,12 @@ import {useSearchParams} from 'src/hooks/use-search-params';
 import {Layout as AuthLayout} from 'src/layouts/auth/classic-layout';
 import {paths} from 'src/paths';
 import {Issuer} from 'src/utils/auth';
-import {users} from 'src/api/auth/data';
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import {signIn, useSession, signOut} from 'next-auth/react';
+import {signIn, signOut, useSession} from 'next-auth/react';
 import GoogleIcon from '@mui/icons-material/Google';
 import Divider from "@mui/material/Divider";
 
-
-const user = users[0];
 
 const initialValues = {
     username: '',
