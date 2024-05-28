@@ -33,7 +33,7 @@ def aggregate_shacl_tests_summary(
             shacl_result_paths.append(ValidationSHACLQuery(
                 shacl_suite=result.shacl_suite,
                 result_path=result_path,
-                prefixed_result_path=get_prefixed_ns_term(
+                short_result_path=get_prefixed_ns_term(
                     ns_term=result_path,
                     ns_definitions=ns_definitions
                 )
@@ -50,7 +50,7 @@ def aggregate_shacl_tests_summary(
                 SHACLValidationSummaryRow(
                     shacl_suite=shacl_result_path.shacl_suite,
                     result_path=shacl_result_path.result_path,
-                    prefixed_result_path=get_prefixed_ns_term(
+                    short_result_path=get_prefixed_ns_term(
                         ns_term=shacl_result_path.result_path,
                         ns_definitions=ns_definitions
                     )

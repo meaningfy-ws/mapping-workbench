@@ -143,7 +143,7 @@
     {% for result in summary.results %}
         <tr>
             <td>{{ result.shacl_suite.shacl_suite_id }}</td>
-            <td>{{ result.prefixed_result_path }}</td>
+            <td>{{ result.short_result_path }}</td>
             {% for result_value in result_values %}
                 <td>
                     {% set _value = result.result[result_value] %}
