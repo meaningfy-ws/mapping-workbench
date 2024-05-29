@@ -91,6 +91,9 @@ export const paths = {
                 view: (pid,id) => `/app/mapping-packages/${pid}/states/${id}/view`,
             }
         },
+        tree_view: {
+            index: '/app/tree-view'
+        },
 
         conceptual_mapping_rules: {
             index: '/app/conceptual-mapping-rules',
