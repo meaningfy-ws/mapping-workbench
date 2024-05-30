@@ -12,16 +12,13 @@ import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
 import {paths} from 'src/paths';
-import {tasksApi as sectionApi} from 'src/api/tasks';
+import {fieldsRegistryApi as sectionApi} from 'src/api/fields-registry';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
-import {ListSearch} from 'src/sections/app/tasks/list-search';
-import {ListTable} from 'src/sections/app/tasks/list-table';
-
-import {TableLoadWrapper} from "../../../sections/app/shacl_validation_report/utils";
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
+import TreeView from "../../../sections/app/tree-view/tree-view";
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
@@ -194,7 +191,7 @@ export const Page = () => {
 
     return (
         <>
-            <Seo title={`App: ${sectionApi.TASKS_TITLE} List`}/>
+            <Seo title={`App: ${sectionApi.SECTION_TREE_TITLE} List`}/>
             <Stack spacing={4}>
                 <Stack
                     direction="row"
@@ -203,7 +200,7 @@ export const Page = () => {
                 >
                     <Stack spacing={1}>
                         <Typography variant="h4">
-                            {sectionApi.TASKS_TITLE}
+                            {sectionApi.SECTION_TREE_TITLE}
                         </Typography>
                         <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
                             <Link
@@ -217,10 +214,10 @@ export const Page = () => {
                             <Link
                                 color="text.primary"
                                 component={RouterLink}
-                                href={paths.app[sectionApi.section].index}
+                                href={paths.app.tree_view.index}
                                 variant="subtitle2"
                             >
-                                {sectionApi.SECTION_TITLE}
+                                {sectionApi.SECTION_TREE_TITLE}
                             </Link>
                             <Typography
                                 color="text.secondary"
@@ -256,24 +253,7 @@ export const Page = () => {
                     </Stack>
                 </Stack>
                 <Card>
-                    <ListSearch onFiltersChange={itemsSearch.handleSearchItems}/>
-                        <TableLoadWrapper dataState={{load: state.load}}
-                                          lines={5}
-                                          data={state.items}>
-                            <ListTable
-                                onPageChange={itemsSearch.handlePageChange}
-                                onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                                onSort={itemsSearch.handleSort}
-                                sort={itemsSearch.state.sort}
-                                page={itemsSearch.state.page}
-                                items={itemsSearch.pagedItems}
-                                count={itemsSearch.count}
-                                rowsPerPage={itemsSearch.state.rowsPerPage}
-                                sectionApi={sectionApi}
-                                onCancelAction={handleCancelAction}
-                                onDeleteAction={handleDeleteAction}
-                            />
-                        </TableLoadWrapper>
+                    <TreeView sectionApi={sectionApi}/>
                 </Card>
             </Stack>
         </>

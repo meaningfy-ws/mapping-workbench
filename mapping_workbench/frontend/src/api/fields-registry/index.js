@@ -6,6 +6,10 @@ class FieldsRegistryApi extends SectionApi {
         return "Fields Registry";
     }
 
+    get SECTION_TREE_TITLE() {
+        return "Elements Tree"
+    }
+
     get SECTION_ITEM_TITLE() {
         return "Fields Registry";
     }
@@ -26,6 +30,28 @@ class FieldsRegistryApi extends SectionApi {
             return appApi.post(endpoint, request, null, headers);
         } catch (err) {
         }
+    }
+
+    async getItemsTree(request) {
+        return ([
+          {
+            id: 'grid',
+            label: 'Data Grid',
+            children: [
+              { id: 'grid-community', label: '@mui/x-data-grid' },
+              { id: 'grid-pro', label: '@mui/x-data-grid-pro' },
+              { id: 'grid-premium', label: '@mui/x-data-grid-premium' },
+            ],
+          },
+          {
+            id: 'pickers',
+            label: 'Date and Time Pickers',
+            children: [
+              { id: 'pickers-community', label: '@mui/x-date-pickers' },
+              { id: 'pickers-pro', label: '@mui/x-date-pickers-pro' },
+            ],
+          },
+        ])
     }
 
     async getStructuralElementsForSelector(request = {}) {
