@@ -19,7 +19,7 @@ const useItemsSearch = (items) => {
             direction: "desc"
         },
         search: [],
-        searchColumns:["test_suite","prefixed_result_path"],
+        searchColumns:["test_suite","short_result_path"],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -142,7 +142,7 @@ const ShaclPackageStateReport = ({ sid }) => {
         return result.results.map(e => {
             const resultArray = {}
             resultArray["shacl_suite"] = result.shacl_suites?.[0]?.shacl_suite_id
-            resultArray["prefixed_result_path"] = e.prefixed_result_path
+            resultArray["short_result_path"] = e.short_result_path
             resultArray["result"] = e.result
             Object.entries(e.result).forEach(entrie => {
                 const [key, value] = entrie

@@ -1,5 +1,8 @@
-from fastapi import FastAPI, APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from httpx_oauth.clients.google import GoogleOAuth2
 
 from mapping_workbench.backend.conceptual_mapping_rule.entrypoints.api import routes as conceptual_mapping_rule_routes
 from mapping_workbench.backend.config import settings
@@ -57,6 +60,14 @@ app.add_middleware(
 async def on_startup():
     await init_project_models(mongodb_database=DB.get_database())
 
+
+if settings.ENVIRONMENT != "prod":
+    @app.exception_handler(Exception)
+    async def all_exception_handler(request: Request, exception: Exception):
+        return JSONResponse(
+            status_code=500,
+            content={"detail": [{"msg": f"Exception name: {exception.__class__.__name__} Error: {str(exception)}"}]},
+        )
 
 app_router = APIRouter()
 

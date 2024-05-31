@@ -4,7 +4,8 @@ from typing import Optional, List
 import pymongo
 from beanie import Indexed, Link, PydanticObjectId
 from beanie.odm.operators.find.comparison import Eq, NE
-from pydantic import BaseModel
+from dateutil.tz import tzlocal
+from pydantic import BaseModel, Field
 from pymongo import IndexModel
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRuleState, \
@@ -40,8 +41,8 @@ class MappingPackageIn(BaseProjectResourceEntityInSchema):
     mapping_version: str = None
     epo_version: str = None
     eform_subtypes: List[str] = None
-    start_date: Optional[str] = None
-    end_date: Optional[str] = None
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
     eforms_sdk_versions: List[str] = None
     shacl_test_suites: Optional[List[Optional[Link[SHACLTestSuite]]]] = None
 
@@ -55,7 +56,7 @@ class MappingPackageUpdateIn(MappingPackageIn):
 
 
 class MappingPackageImportIn(MappingPackageIn):
-    created_at: Optional[datetime] = None
+    created_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(tzlocal()))
 
 
 class MappingPackageOut(BaseProjectResourceEntityOutSchema):
@@ -65,8 +66,8 @@ class MappingPackageOut(BaseProjectResourceEntityOutSchema):
     mapping_version: str = None
     epo_version: str = None
     eform_subtypes: List[str] = None
-    start_date: Optional[str] = None
-    end_date: Optional[str] = None
+    #start_date: Optional[datetime] = None
+    #end_date: Optional[datetime] = None
     eforms_sdk_versions: List[str] = None
     shacl_test_suites: Optional[List[Link[SHACLTestSuite]]] = None
 
@@ -83,7 +84,7 @@ class MappingPackageState(TestDataValidation, ObjectState):
     identifier: Optional[str] = None
     mapping_version: str = None
     epo_version: str = None
-    created_at: Optional[datetime] = None
+    created_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(tzlocal()))
     eform_subtypes: List[str] = None
     start_date: Optional[str] = None
     end_date: Optional[str] = None

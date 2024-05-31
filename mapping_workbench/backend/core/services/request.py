@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from beanie import Link, PydanticObjectId
+from dateutil.tz import tzlocal
 from pydantic import BaseModel
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntity
@@ -17,7 +18,7 @@ def request_update_data(entity_data: BaseModel, user: User = None) -> dict:
 
     if user:
         data['updated_by'] = User.link_from_id(user.id)
-    data['updated_at'] = datetime.now()
+    data['updated_at'] = datetime.now(tzlocal())
 
     return data
 
@@ -27,7 +28,7 @@ def request_create_data(entity_data: BaseModel, user: User = None) -> dict:
 
     if user:
         data['created_by'] = User.link_from_id(user.id)
-    data['created_at'] = datetime.now()
+    data['created_at'] = datetime.now(tzlocal())
 
     return data
 
