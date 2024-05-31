@@ -10,6 +10,7 @@ from mapping_workbench.backend.core.entrypoints.api import routes as core_routes
 from mapping_workbench.backend.core.services.project_initilisers import init_project_models
 from mapping_workbench.backend.database.adapters.mongodb import DB
 from mapping_workbench.backend.fields_registry.entrypoints.api import routes as fields_registry
+from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.entrypoints.api import routes as mapping_package_routes
 from mapping_workbench.backend.mapping_rule_registry.entrypoints.api import routes as mapping_rule_registry_routes
 from mapping_workbench.backend.ontology.entrypoints.api import routes as ontology_routes
@@ -60,14 +61,6 @@ async def on_startup():
     await init_project_models(mongodb_database=DB.get_database())
 
 
-if settings.ENVIRONMENT != "prod":
-    @app.exception_handler(Exception)
-    async def all_exception_handler(request: Request, exception: Exception):
-        return JSONResponse(
-            status_code=500,
-            content={"detail": [{"msg": f"Exception name: {exception.__class__.__name__} Error: {str(exception)}"}]},
-        )
-
 app_router = APIRouter()
 
 app_public_router = APIRouter()
@@ -109,3 +102,14 @@ app_router.include_router(security_routes.router)
 app_router.include_router(user_routes.router)
 
 app.include_router(app_router, prefix=ROOT_API_PATH)
+
+if settings.ENVIRONMENT != "prod":
+    @app.exception_handler(Exception)
+    async def all_exception_handler(request: Request, exception: Exception):
+        mwb_logger.log_all_error(f"Unexpected error of type: {exception.__class__.__name__}",
+                                 stack_trace=str(exception))
+        return JSONResponse(
+            status_code=500,
+            content={"detail": [{"msg": f"Exception name: {exception.__class__.__name__} Error: {str(exception)}"}]},
+            headers={"Access-Control-Allow-Origin": "*"}  # Allow all is a temporary solution
+        )

@@ -144,3 +144,4 @@ activate_venv.sh
 tmp/
 logs/
 .mongodump
+.mongodump_staging
