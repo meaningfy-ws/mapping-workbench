@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from httpx_oauth.clients.google import GoogleOAuth2
 
 from mapping_workbench.backend.conceptual_mapping_rule.entrypoints.api import routes as conceptual_mapping_rule_routes
 from mapping_workbench.backend.config import settings
@@ -37,8 +36,6 @@ from mapping_workbench.backend.triple_map_registry.entrypoints.api import routes
 from mapping_workbench.backend.user.entrypoints.api import routes as user_routes
 
 ROOT_API_PATH = "/api/v1"
-
-google_oauth_client = GoogleOAuth2("CLIENT_ID", "CLIENT_SECRET")
 
 app = FastAPI(
     title="Mapping Workbench",
