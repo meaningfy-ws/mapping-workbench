@@ -37,7 +37,7 @@ const TreeView = (props) => {
         )
     }
 
-    const FileIcon = () => <AdjustIcon />
+    const FileIcon = () => <AdjustIcon sx={{marginLeft: '17px'}} />
     const CollapseIcon = () => <Stack direction='row'><ExpandMoreIcon/><AlbumIcon/></Stack>
     const ExpandIcon = () => <Stack direction='row'><ChevronRightIcon/><AlbumIcon/></Stack>
 

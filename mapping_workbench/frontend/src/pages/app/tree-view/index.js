@@ -227,30 +227,30 @@ export const Page = () => {
                             </Typography>
                         </Breadcrumbs>
                     </Stack>
-                    <Stack
-                        alignItems="center"
-                        direction="row"
-                        spacing={3}
-                    >
-                        <Button
-                            id="refresh_button"
-                            color="inherit"
-                            startIcon={<SvgIcon><AutorenewIcon/></SvgIcon>}
-                            variant="contained"
-                            onClick={handleItemsGet}
-                        >
-                            Refresh
-                        </Button>
-                        <Button
-                            id="delete_all_button"
-                            color="error"
-                            startIcon={<SvgIcon><DeleteOutlineIcon/></SvgIcon>}
-                            variant="contained"
-                            onClick={handleDeleteAllTasks}
-                        >
-                            Delete All Tasks
-                        </Button>
-                    </Stack>
+                    {/*<Stack*/}
+                    {/*    alignItems="center"*/}
+                    {/*    direction="row"*/}
+                    {/*    spacing={3}*/}
+                    {/*>*/}
+                    {/*    <Button*/}
+                    {/*        id="refresh_button"*/}
+                    {/*        color="inherit"*/}
+                    {/*        startIcon={<SvgIcon><AutorenewIcon/></SvgIcon>}*/}
+                    {/*        variant="contained"*/}
+                    {/*        onClick={handleItemsGet}*/}
+                    {/*    >*/}
+                    {/*        Refresh*/}
+                    {/*    </Button>*/}
+                    {/*    <Button*/}
+                    {/*        id="delete_all_button"*/}
+                    {/*        color="error"*/}
+                    {/*        startIcon={<SvgIcon><DeleteOutlineIcon/></SvgIcon>}*/}
+                    {/*        variant="contained"*/}
+                    {/*        onClick={handleDeleteAllTasks}*/}
+                    {/*    >*/}
+                    {/*        Delete All Tasks*/}
+                    {/*    </Button>*/}
+                    {/*</Stack>*/}
                 </Stack>
                 <Card>
                     <TreeView sectionApi={sectionApi}/>

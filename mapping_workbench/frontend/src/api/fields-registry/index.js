@@ -35,22 +35,18 @@ class FieldsRegistryApi extends SectionApi {
     async getItemsTree(request) {
         return ([
           {
-            id: 'grid',
-            label: 'Data Grid',
+            id: 'ND-Root', label: 'ND-Root: /*',
             children: [
-              { id: 'grid-community', label: '@mui/x-data-grid' },
-              { id: 'grid-pro', label: '@mui/x-data-grid-pro' },
-              { id: 'grid-premium', label: '@mui/x-data-grid-premium' },
+              { id: 'BT-02-notice', label: 'Notice Type: /*/cbc:NoticeTypeCode' },
+              { id: 'BT-03-notice', label: 'Form Type: /*/cbc:NoticeTypeCode/@listName' },
+              { id: 'BT-04-notice', label: 'Procedure Identifier: /*/cbc:ContractFolderID' },
+              { id: 'ND-ContractingParty', label: 'ND-ContractingParty: /*/cac:ContractingParty',
+              children: [
+                  { id: 'BT-10-Procedure-Buyer', label: 'Activity Authority: /*/cac:ContractingParty/cac:ContractingActivity/cbc:ActivityTypeCode[@listName=\'authority-activity\']' },
+                  { id: 'BT-10-Procedure-Buyer-List', label: 'Activity Authority Listname: /*/cac:ContractingParty/cac:ContractingActivity/cbc:ActivityTypeCode[@listName=\'authority-activity\']/@listName'}
+              ] },
             ],
-          },
-          {
-            id: 'pickers',
-            label: 'Date and Time Pickers',
-            children: [
-              { id: 'pickers-community', label: '@mui/x-date-pickers' },
-              { id: 'pickers-pro', label: '@mui/x-date-pickers-pro' },
-            ],
-          },
+          }
         ])
     }
 
