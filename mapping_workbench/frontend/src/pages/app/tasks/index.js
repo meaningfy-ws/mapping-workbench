@@ -151,7 +151,7 @@ export const Page = () => {
                     itemsCount: res.tasks_metadata.length})
             )
             .catch(err => {
-                console.error(err)
+                toastError(err)
             });
     }
 
