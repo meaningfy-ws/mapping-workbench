@@ -27,7 +27,7 @@ from mapping_workbench.backend.user.models.user import User
 
 
 class PackageImporter:
-    mapping_package: MappingPackage
+    package: MappingPackage
 
     def __init__(self, project: Project, user: User):
         self.project = project
@@ -307,7 +307,7 @@ class PackageImporter:
 
     async def add_mapping_package_from_mono(self, mono_package: ImportedMappingSuite):
         package: MappingPackage = await MappingPackage.find_one(
-            TestDataSuite.project == self.project_link,
+            MappingPackage.project == self.project_link,
             MappingPackage.identifier == mono_package.metadata.identifier
         )
 

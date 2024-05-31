@@ -78,6 +78,8 @@ async def generate_and_save_cm_assertions_queries(
     cm_rules: List[ConceptualMappingRule] = await get_conceptual_mapping_rules_for_project(project_id=project_id)
     for index, cm_rule in enumerate(cm_rules):
         if not is_cm_rule_assertable(cm_rule):
+            cm_rule.sparql_assertions = None
+            await cm_rule.save()
             continue
         subject_type = generate_subject_type_for_cm_assertion(cm_rule.target_class_path) \
             if cm_rule.target_class_path and '?this' in cm_rule.target_property_path else ''

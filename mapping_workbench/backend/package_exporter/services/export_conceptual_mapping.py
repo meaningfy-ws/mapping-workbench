@@ -6,7 +6,6 @@ from mapping_workbench.backend.mapping_package.models.entity import MappingPacka
 from mapping_workbench.backend.package_exporter.adapters.cm_exporter import EFormsCMExporter
 
 
-
 async def generate_eforms_conceptual_mapping_excel_by_mapping_package_state(
         mapping_package_state: MappingPackageState) -> bytes:
     cm_exporter = EFormsCMExporter()

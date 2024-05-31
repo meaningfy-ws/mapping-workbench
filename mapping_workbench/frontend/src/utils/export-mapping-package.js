@@ -13,7 +13,7 @@ const exportPackage = (api, package_id, setLoading, item ) => {
         const toastId = toastLoad(`Exporting "${item.identifier}" ... This may take a while. Please, be patient.`)
         api.exportPackage(data)
             .then(res => {
-                saveAs(new Blob([res], {type: "application/x-zip-compressed"}), `${item.identifier} ${item._id}.zip`);
+                saveAs(new Blob([res], {type: "application/x-zip-compressed"}), `${item.identifier}_${item._id}.zip`);
                 toastSuccess(`"${item.identifier}" successfully exported.`, toastId)
             })
             .catch(err => toastError(`Exporting "${item.identifier}" failed: ${err.message}.`, toastId))

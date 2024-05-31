@@ -118,18 +118,23 @@ async def route_delete_sparql_test_suite(sparql_test_suite: SPARQLTestSuite = De
 
 
 @router.get(
-    "/free/file_resources",
+    "/project/file_resources",
     description=f"List all {FILE_RESOURCE_NAME_FOR_MANY}",
     name=f"{FILE_RESOURCE_NAME_FOR_MANY}:list_all_{FILE_RESOURCE_NAME_FOR_MANY}",
     response_model=APIListSPARQLTestFileResourcesPaginatedResponse
 )
 async def route_list_sparql_test_file_resources(
-        type: str = None
+        type: str = None,
+        project: PydanticObjectId = None,
+        page: int = None,
+        limit: int = None
 ):
     filters: dict = {}
+    if project:
+        filters['project'] = Project.link_from_id(project)
     if type:
         filters['type'] = type
-    items: List[SPARQLTestFileResource] = await list_sparql_test_file_resources(filters)
+    items: List[SPARQLTestFileResource] = await list_sparql_test_file_resources(filters, page, limit)
     return APIListSPARQLTestFileResourcesPaginatedResponse(items=items, count=len(items))
 
 
