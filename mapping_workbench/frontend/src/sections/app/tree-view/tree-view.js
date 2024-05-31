@@ -2,14 +2,13 @@ import {useEffect, useState} from "react";
 
 import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
 
-import FolderIcon from '@mui/icons-material/Folder';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import {TreeItem, treeItemClasses} from "@mui/x-tree-view";
 import Stack from "@mui/material/Stack";
-
+import AlbumIcon from '@mui/icons-material/Album';
+import AdjustIcon from '@mui/icons-material/Adjust';
 
 const TreeView = (props) => {
     const {sectionApi} = props;
@@ -38,9 +37,9 @@ const TreeView = (props) => {
         )
     }
 
-    const FileIcon = () => <InsertDriveFileIcon />
-    const CollapseIcon = () => <Stack direction='row'><ExpandMoreIcon/><FolderIcon/></Stack>
-    const ExpandIcon = () => <Stack direction='row'><ChevronRightIcon/><FolderIcon/></Stack>
+    const FileIcon = () => <AdjustIcon />
+    const CollapseIcon = () => <Stack direction='row'><ExpandMoreIcon/><AlbumIcon/></Stack>
+    const ExpandIcon = () => <Stack direction='row'><ChevronRightIcon/><AlbumIcon/></Stack>
 
     return(
         <SimpleTreeView slots={{
@@ -49,7 +48,7 @@ const TreeView = (props) => {
             endIcon: FileIcon
         }}
          sx={{ overflowX: 'hidden', minHeight: 270, flexGrow: 1,
-             [`& .${treeItemClasses.iconContainer}`]: { width: 40, color: 'gray'} }}>
+             [`& .${treeItemClasses.iconContainer}`]: { minWidth: 40, color: 'gray'} }}>
             {state?.map(treeMenu)}
         </SimpleTreeView>
     )
