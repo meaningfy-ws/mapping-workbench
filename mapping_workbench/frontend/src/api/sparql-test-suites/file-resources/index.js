@@ -50,10 +50,13 @@ class SPARQLTestFileResourcesApi extends FileResourcesApi {
     }
 
     async getMappingRuleSPARQLAssertions(request = {}) {
-        request['filters'] = {
+        request.filters = {
             type: FILE_RESOURCE_TYPE_CM_ASSERTION_VALUE
         };
-        let sparqlTestFileResourcesStore = await this.getItems(request, "free_file_resources");
+        request.page = 0;
+        request.rowsPerPage = -1;
+
+        let sparqlTestFileResourcesStore = await this.getItems(request, "project_file_resources");
         return sparqlTestFileResourcesStore.items.map(
             sparqlTestFileResource => ({
                 id: sparqlTestFileResource._id,

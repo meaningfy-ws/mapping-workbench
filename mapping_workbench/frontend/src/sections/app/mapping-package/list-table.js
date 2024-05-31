@@ -37,6 +37,8 @@ import TableSorterHeader from "../../components/table-sorter-header";
 import timeTransformer from "../../../utils/time-transformer";
 import {useGlobalState} from "../../../hooks/use-global-state";
 import SorterHeader from "../../components/table-sorter-header";
+import {useRouter} from "next/router";
+import {paths} from "../../../paths";
 
 
 
@@ -285,6 +287,7 @@ export const ListTable = (props) => {
 
     const [currentItem, setCurrentItem] = useState(null);
     const {timeSetting} = useGlobalState();
+    const router = useRouter();
 
     const handleItemToggle = itemId => {
         setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
@@ -298,6 +301,14 @@ export const ListTable = (props) => {
                            {...props}
             />
         )
+    }
+
+    const handleGoLastState = (id) => {
+        sectionApi.getLatestState(id)
+            .then(res => {
+                router.push(paths.app[sectionApi.section].states.view(id, res._id))
+            })
+            .catch(err => console.error(err))
     }
 
     return (
@@ -383,8 +394,17 @@ export const ListTable = (props) => {
                                                 {timeTransformer(item.created_at, timeSetting)}
                                             </TableCell>
                                             <TableCell align="center">
-                                                <ListItemActions
-                                                    itemctx={new ForListItemAction(item_id, sectionApi)}/>
+                                                <Stack direction='row'
+                                                       justifyContent='center'
+                                                       alignItems='center'>
+                                                    <Button type='link'
+                                                            size="small"
+                                                            onClick={() => handleGoLastState(item_id)}>
+                                                        View Last State
+                                                    </Button>
+                                                    <ListItemActions
+                                                        itemctx={new ForListItemAction(item_id, sectionApi)}/>
+                                                </Stack>
                                             </TableCell>
                                         </TableRow>
                                         {isCurrent && (
