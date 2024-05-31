@@ -22,9 +22,9 @@ const TimeSwitch = () => {
 
     const localTimeZone = moment().utcOffset()
     const getUTC = (timeZone) => {
-        return `UTC ${timeZone > 0 && '+'}${timeZone/60}`
+        return `UTC ${timeZone > 0 ? '+' : ''}${timeZone === 0 ? '' : timeZone/60}`
     }
-    const timeZoneItems = [120, 180]
+    const timeZoneItems = [0, 180]
 
     if(localTimeZone === 120)
         return <Button disabled>{getUTC(localTimeZone)}</Button>
