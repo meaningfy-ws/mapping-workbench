@@ -395,8 +395,10 @@ export const ListTable = (props) => {
                                             </TableCell>
                                             <TableCell align="center">
                                                 <Stack direction='row'
-                                                       justifyContent='center'>
+                                                       justifyContent='center'
+                                                       alignItems='center'>
                                                     <Button type='link'
+                                                            size="small"
                                                             onClick={() => handleGoLastState(item_id)}>
                                                         View Last State
                                                     </Button>
