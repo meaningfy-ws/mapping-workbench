@@ -1,8 +1,8 @@
 import { createContext } from 'react';
-import moment from "moment-timezone";
+import moment from "moment";
 
 export const initialState = {
-  timeSetting: moment.tz.guess(),
+  timeSetting: moment().utcOffset(),
 };
 
 export const GlobalStateContext = createContext({
