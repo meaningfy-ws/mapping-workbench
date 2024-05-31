@@ -54,7 +54,7 @@ const Page = () => {
     const searchParams = useSearchParams();
     const returnTo = searchParams.get('returnTo');
     const {issuer, signIn: singInJWT} = useAuth();
-    // const {data: session} = useSession()
+    const {data: session} = useSession()
 
     const formik = useFormik({
         initialValues,
@@ -165,18 +165,18 @@ const Page = () => {
                                 >
                                     Log In
                                 </Button>
-                                {/*<Divider>or</Divider>*/}
-                                {/*{session?.user?.email ?*/}
-                                {/*    <Button fullWidth*/}
-                                {/*            startIcon={<GoogleIcon/>}*/}
-                                {/*            onClick={() => signOut()}>*/}
-                                {/*        Sign Out*/}
-                                {/*    </Button> :*/}
-                                {/*    <Button fullWidth*/}
-                                {/*            startIcon={<GoogleIcon/>}*/}
-                                {/*            onClick={() => signIn('google')}>*/}
-                                {/*        Sign in with Google*/}
-                                {/*    </Button>}*/}
+                                <Divider>or</Divider>
+                                {session?.user?.email ?
+                                    <Button fullWidth
+                                            startIcon={<GoogleIcon/>}
+                                            onClick={() => signOut()}>
+                                        Sign Out
+                                    </Button> :
+                                    <Button fullWidth
+                                            startIcon={<GoogleIcon/>}
+                                            onClick={() => signIn('google')}>
+                                        Sign in with Google
+                                    </Button>}
                             </Stack>
                         </form>
                     </CardContent>
