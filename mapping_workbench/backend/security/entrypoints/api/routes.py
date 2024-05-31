@@ -1,10 +1,13 @@
 from fastapi import APIRouter, Depends
+from httpx_oauth.clients.google import GoogleOAuth2
 
-from mapping_workbench.backend.user.models.user import UserRead, UserCreate, User
+from mapping_workbench.backend.config import settings
 from mapping_workbench.backend.security.services.user_manager import auth_backend, fastapi_users, current_active_user
+from mapping_workbench.backend.user.models.user import UserRead, UserCreate, User
 
 ROUTE_PREFIX = "/auth"
 TAGS = ["auth"]
+google_oauth_client = GoogleOAuth2(settings.GOOGLE_ID, settings.GOOGLE_SECRET)
 
 router = APIRouter()
 router.include_router(
@@ -27,7 +30,15 @@ router.include_router(
     prefix=ROUTE_PREFIX,
     tags=TAGS,
 )
-
+router.include_router(
+    fastapi_users.get_oauth_router(google_oauth_client,
+                                   auth_backend,
+                                   settings.JWT_SECRET,
+                                   associate_by_email=True,
+                                   ),
+    prefix=f"{ROUTE_PREFIX}/google",
+    tags=["auth"],
+)
 
 @router.get("/authenticated-route")
 async def authenticated_route(user: User = Depends(current_active_user)):
