@@ -59,31 +59,13 @@ export const ListTable = (props) => {
                         <TableHead>
                             <TableRow>
                                 <TableCell width="25%">
-                                    <Tooltip
-                                        enterDelay={300}
-                                        title="Sort"
-                                    >
-                                        <TableSortLabel
-                                            direction="asc"
-                                        >
-                                            Prefix
-                                        </TableSortLabel>
-                                    </Tooltip>
+                                    Prefix
                                 </TableCell>
                                 <TableCell>
                                     URI
                                 </TableCell>
                                 <TableCell>
-                                    <Tooltip
-                                        enterDelay={300}
-                                        title="Sort"
-                                    >
-                                        <TableSortLabel
-                                            direction="asc"
-                                        >
-                                            Syncable
-                                        </TableSortLabel>
-                                    </Tooltip>
+                                    Syncable
                                 </TableCell>
                                 <TableCell align="right">
                                     Actions

@@ -11,11 +11,9 @@ import SvgIcon from '@mui/material/SvgIcon';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableSortLabel from '@mui/material/TableSortLabel';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import Tooltip from "@mui/material/Tooltip";
 import Button from "@mui/material/Button";
 
 import {Scrollbar} from 'src/components/scrollbar';
@@ -23,13 +21,15 @@ import {SeverityPill} from "../../../components/severity-pill";
 import TablePagination from "../../components/table-pagination";
 import timeTransformer from "../../../utils/time-transformer";
 import {useGlobalState} from "../../../hooks/use-global-state";
+import TableSorterHeader from "../../components/table-sorter-header";
 
 export const ListTable = (props) => {
     const {
         count = 0,
         items = [],
-        onPageChange = () => {
-        },
+        onPageChange = () => {},
+        onSort = () => {},
+        sort,
         onRowsPerPageChange,
         page = 0,
         rowsPerPage = 0,
@@ -68,6 +68,15 @@ export const ListTable = (props) => {
 
     const handleItemToggle = itemId => setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
 
+    const SorterHeader = (props) => {
+        const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
+        return(
+            <TableSorterHeader sort={{direction, column: sort.column}}
+                           onSort={onSort}
+                           {...props}
+            />
+        )
+    }
 
     return (
         <TablePagination
@@ -87,22 +96,27 @@ export const ListTable = (props) => {
                         <TableRow>
                             <TableCell/>
                             <TableCell width="25%">
-                                Title
+                                <SorterHeader fieldName="task_name"
+                                              title='Title'/>
                             </TableCell>
                             <TableCell>
-                                Created at
+                                <SorterHeader fieldName="created_at"
+                                              title='Created at'/>
                             </TableCell>
                             <TableCell>
-                                Start Time
+                                <SorterHeader fieldName="stated_at"
+                                              title='Start Time'/>
                             </TableCell>
                             <TableCell>
                                 Started By
                             </TableCell>
                             <TableCell>
-                                Finished At
+                                <SorterHeader fieldName="finished_at"
+                                              title='Finished At'/>
                             </TableCell>
                             <TableCell>
-                                Status
+                                <SorterHeader fieldName="task_status"
+                                              title='Status'/>
                             </TableCell>
                             <TableCell align="right">
                                 Actions
