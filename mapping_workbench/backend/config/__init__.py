@@ -90,6 +90,17 @@ class EnvironmentSettings(BaseSettings):
         return config_value
 
 
+class GoogleOAuthSettings(BaseSettings):
+
+    @env_property()
+    def GOOGLE_ID(self, config_value: str) -> str:
+        return config_value
+
+    @env_property()
+    def GOOGLE_SECRET(self, config_value: str) -> str:
+        return config_value
+
+
 class Settings(
     AppSettings,
     ServerSettings,
@@ -98,6 +109,7 @@ class Settings(
     RMLMapperSettings,
     TaskManagerSettings,
     EnvironmentSettings,
+    GoogleOAuthSettings,
 ):
     pass
 
