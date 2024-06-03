@@ -4,14 +4,14 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {testDataSuitesApi as sectionApi} from 'src/api/test-data-suites';
-import {RouterLink} from 'src/components/router-link';
-import {Seo} from 'src/components/seo';
-import {usePageView} from 'src/hooks/use-page-view';
-import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
-import {FileCollectionEditForm} from 'src/sections/app/file-manager/file-collection-edit-form';
+import {Seo} from 'src/components/seo';
+import {Layout as AppLayout} from 'src/layouts/app';
+import {usePageView} from 'src/hooks/use-page-view';
+import {RouterLink} from 'src/components/router-link';
 import {ForItemCreateForm} from "src/contexts/app/section/for-item-form";
+import {testDataSuitesApi as sectionApi} from 'src/api/test-data-suites';
+import {FileCollectionEditForm} from 'src/sections/app/file-manager/file-collection-edit-form';
 
 
 const Page = () => {

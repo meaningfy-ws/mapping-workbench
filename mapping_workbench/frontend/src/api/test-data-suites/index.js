@@ -14,7 +14,6 @@ class TestDataSuitesApi extends FileCollectionsApi {
     constructor() {
         super("test_data_suites");
         this.isProjectResource = true;
-        this.hasMappingPackage = true;
     }
 
     async getValuesForSelector(request = {}) {
