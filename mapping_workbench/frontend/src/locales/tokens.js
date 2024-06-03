@@ -50,15 +50,20 @@ export const tokens = {
         profile: 'nav.profile',
         register: 'nav.register',
         resetPassword: 'nav.resetPassword',
+        schema: 'nav.schema',
         socialMedia: 'nav.socialMedia',
         verifyCode: 'nav.verifyCode',
 
         sections: 'nav.sections',
+        source_topology: 'nav.source_topology',
         resources: 'nav.resources',
         projects: 'nav.projects',
+        test_data: 'nav.test_data',
         test_data_suites: 'nav.test_data_suites',
         sparql_test_suites: 'nav.sparql_test_suites',
         shacl_test_suites: 'nav.shacl_test_suites',
+        tree_view: 'nav.tree_view',
+        nodes: 'nav.nodes',
         ontology_file_collections: 'nav.ontology_file_collections',
         resource_collections: 'nav.resource_collections',
         ontology: 'nav.ontology',
@@ -76,6 +81,7 @@ export const tokens = {
 
         admin: 'nav.admin',
         users: 'nav.users',
+        project_setup: 'nav.project_setup',
         terms_validator: 'nav.terms_validator',
         tasks: 'nav.tasks',
 

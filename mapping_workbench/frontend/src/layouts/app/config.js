@@ -11,8 +11,11 @@ import HiveIcon from '@mui/icons-material/Hive';
 import MapIcon from '@mui/icons-material/Map';
 import SchemaIcon from '@mui/icons-material/Schema';
 import TaskIcon from '@mui/icons-material/TaskAlt';
-import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import TopicIcon from '@mui/icons-material/Topic';
+import MenuOpenIcon from '@mui/icons-material/MenuOpen';
+import SettingsInputCompositeIcon from '@mui/icons-material/SettingsInputComposite';
 import WindowIcon from '@mui/icons-material/Window';
+import BubbleChartIcon from '@mui/icons-material/BubbleChart';
 
 import HomeSmileIcon from 'src/icons/ui/duocolor/home-smile';
 import LayoutAlt02 from 'src/icons/ui/duocolor/layout-alt-02';
@@ -25,10 +28,14 @@ export const useSections = () => {
     const {t} = useTranslation();
     let items = {
         projects: [],
+        sourceTopology: [],
+        overview: [],
+        projectSetup: [],
         resources: [],
         admin: []
     };
     items.projects.push({
+        subheader: t(tokens.nav.admin),
         items: [{
             title: t(tokens.nav.projects),
             path: paths.app.projects.index,
@@ -39,9 +46,10 @@ export const useSections = () => {
             )
         }]
     });
-    items.resources.push({
-        items: [
-            {
+
+    items.overview.push(
+        {
+            items:[{
                 title: t(tokens.nav.overview),
                 path: paths.app.index,
                 icon: (
@@ -52,6 +60,73 @@ export const useSections = () => {
             }
         ]
     });
+
+    items.projectSetup.push({
+        subheader: t(tokens.nav.project_setup),
+        items: [
+            {
+                title: t(tokens.nav.schema),
+                path: paths.app.schema.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <BubbleChartIcon/>
+                    </SvgIcon>
+                )
+            },
+            {
+                title: t(tokens.nav.ontology),
+                path: paths.app.ontology.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <SchemaIcon/>
+                    </SvgIcon>
+                )
+            },
+            {
+                title: t(tokens.nav.test_data),
+                path: paths.app.test_data_suites.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <BiotechIcon/>
+                    </SvgIcon>
+                )
+            }
+        ],
+
+    })
+
+    items.sourceTopology.push({
+        subheader: t(tokens.nav.source_topology),
+        items: [
+            {
+                title: t(tokens.nav.tree_view),
+                path: paths.app.tree_view.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <TopicIcon/>
+                    </SvgIcon>
+                )
+            },
+            {
+                title: t(tokens.nav.elements),
+                path: paths.app.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <MenuOpenIcon/>
+                    </SvgIcon>
+                )
+            },
+            {
+                title: t(tokens.nav.nodes),
+                path: paths.app.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <SettingsInputCompositeIcon/>
+                    </SvgIcon>
+                )
+            }]
+    })
+
 
     const sections = {
         subheader: t(tokens.nav.resources),

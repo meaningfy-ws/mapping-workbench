@@ -106,10 +106,11 @@ app.include_router(app_router, prefix=ROOT_API_PATH)
 if settings.ENVIRONMENT != "prod":
     @app.exception_handler(Exception)
     async def all_exception_handler(request: Request, exception: Exception):
+        exception_traceback = str(exception) or "No traceback available"
         mwb_logger.log_all_error(f"Unexpected error of type: {exception.__class__.__name__}",
-                                 stack_trace=str(exception))
+                                 stack_trace=exception_traceback)
         return JSONResponse(
             status_code=500,
-            content={"detail": [{"msg": f"Exception name: {exception.__class__.__name__} Error: {str(exception)}"}]},
+            content={"detail": [{"msg": f"Exception name: {exception.__class__.__name__} Error: {exception_traceback}"}]},
             headers={"Access-Control-Allow-Origin": "*"}  # Allow all is a temporary solution
         )
