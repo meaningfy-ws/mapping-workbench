@@ -1,25 +1,26 @@
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Button from '@mui/material/Button';
+import SearchIcon from "@untitled-ui/icons-react/build/esm/SearchRefraction";
+
 import Link from '@mui/material/Link';
+import Grid from "@mui/material/Grid";
 import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
 
+import {paths} from 'src/paths';
+import {Seo} from 'src/components/seo';
+import {useRouter} from "src/hooks/use-router";
+import {Layout as AppLayout} from 'src/layouts/app';
+import {RouterLink} from 'src/components/router-link';
+import {usePageView} from 'src/hooks/use-page-view';
+import OntologyTerms from "src/sections/app/ontology/ontology-terms";
 import {ontologyTermsApi as sectionApi} from 'src/api/ontology-terms';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {RouterLink} from 'src/components/router-link';
-import {Seo} from 'src/components/seo';
-import {usePageView} from 'src/hooks/use-page-view';
-import {Layout as AppLayout} from 'src/layouts/app';
-import {paths} from 'src/paths';
-import OntologyTerms from "../../../sections/app/ontology/ontology-terms";
-import SearchIcon from "@untitled-ui/icons-react/build/esm/SearchRefraction";
-import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
-import {useRouter} from "src/hooks/use-router";
-import OntologyNamespacesCustom from "../../../sections/app/ontology/ontology-namespaces-custom";
-import OntologyNamespaces from "../../../sections/app/ontology/ontology-namespaces";
-import Grid from "@mui/material/Grid";
+import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
+import OntologyNamespaces from "src/sections/app/ontology/ontology-namespaces";
+import OntologyNamespacesCustom from "src/sections/app/ontology/ontology-namespaces-custom";
 
 
 const Page = () => {
@@ -45,7 +46,6 @@ const Page = () => {
                   spacing={4}>
                 <Grid item>
                     <Stack
-                        item
                         direction="row"
                         justifyContent="space-between"
                         spacing={4}
