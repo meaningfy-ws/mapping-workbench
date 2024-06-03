@@ -3,7 +3,7 @@ import ListItem from "@mui/material/ListItem";
 
 const CoverageReport = ({validationReport, mappingSuiteIdentifier}) => {
     const { coveredReports, notCoveredReports } = validationReport.reduce((acc, report) => {
-        acc[report.is_covered ? "coveredReports" : "notCoveredReports"].push({ eforms_sdk_element_xpath: report.eforms_sdk_element_xpath })
+        acc[report.is_covered ? "coveredReports" : "notCoveredReports"].push({ sdk_element_xpath: report.sdk_element_xpath })
         return acc
     }, {coveredReports:[], notCoveredReports:[]})
 

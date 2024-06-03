@@ -105,7 +105,7 @@ class EFormsCMExporter(CMExporter):
             rules_table.loc[idx] = [
                 cm_rule.min_sdk_version,
                 cm_rule.max_sdk_version,
-                cm_rule.source_structural_element.eforms_sdk_element_id,
+                cm_rule.source_structural_element.sdk_element_id,
                 cm_rule.source_structural_element.name,
                 cm_rule.source_structural_element.bt_id,
                 ', '.join(mapping_groups_ids),

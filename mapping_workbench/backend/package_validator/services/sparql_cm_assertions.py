@@ -99,7 +99,7 @@ async def generate_and_save_cm_assertions_queries(
         if cm_rule.source_structural_element:
             structural_element = await cm_rule.source_structural_element.fetch()
             if structural_element:
-                sparql_title = structural_element.eforms_sdk_element_id
+                sparql_title = structural_element.sdk_element_id
                 sparql_description = ", ".join(structural_element.descriptions or [])
                 sparql_xpath = structural_element.absolute_xpath
                 sparql_idx = structural_element.id
@@ -139,9 +139,9 @@ async def generate_and_save_cm_assertions_queries(
         )
 
         cm_rule_sdk_element = CMRuleSDKElement(
-            eforms_sdk_element_id=structural_element.eforms_sdk_element_id,
-            eforms_sdk_element_title=structural_element.name,
-            eforms_sdk_element_xpath=structural_element.absolute_xpath
+            sdk_element_id=structural_element.sdk_element_id,
+            sdk_element_title=structural_element.name,
+            sdk_element_xpath=structural_element.absolute_xpath
         )
 
         if not sparql_test_file_resource:

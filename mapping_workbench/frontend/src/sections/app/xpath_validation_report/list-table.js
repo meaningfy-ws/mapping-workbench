@@ -77,11 +77,11 @@ export const ListTable = (props) => {
                         <TableHead>
                             <TableRow>
                                 <TableCell width="25%">
-                                    <SorterHeader fieldName="eforms_sdk_element_id"
+                                    <SorterHeader fieldName="sdk_element_id"
                                                   title="Field"/>
                                 </TableCell>
                                 <TableCell>
-                                    <SorterHeader fieldName="eforms_sdk_element_xpath"
+                                    <SorterHeader fieldName="sdk_element_xpath"
                                                   title="XPath"/>
                                 </TableCell>
                                 <TableCell width="10%">
@@ -101,7 +101,7 @@ export const ListTable = (props) => {
                                     <TableRow key={key}>
                                         <TableCell width="25%">
                                             <Typography variant="subtitle3">
-                                                {item.eforms_sdk_element_id}
+                                                {item.sdk_element_id}
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
@@ -110,7 +110,7 @@ export const ListTable = (props) => {
                                                     language="xquery"
                                                     wrapLines={true}
                                                     lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
-                                                    {item.eforms_sdk_element_xpath}
+                                                    {item.sdk_element_xpath}
                                                 </SyntaxHighlighter>
                                             }
                                         </TableCell>

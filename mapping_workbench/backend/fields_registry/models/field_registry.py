@@ -1,12 +1,34 @@
+from typing import Optional, List, Literal, Any, Dict
+
 import pymongo
 from beanie import Link
-from typing import Optional, List, Literal, Set
-
+from pydantic import Field, model_validator
 from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.api_response import APIListPaginatedResponse
-from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
+from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
+    BaseProjectResourceEntityOutSchema
 from mapping_workbench.backend.state_manager.models.state_object import StatefulObjectABC, ObjectState
+
+
+class StructuralElementOut(BaseProjectResourceEntityOutSchema):
+    """
+
+    """
+    id: str = Field(..., alias='_id')
+    sdk_element_id: str = None
+    absolute_xpath: str = None
+    relative_xpath: str = None
+    repeatable: bool = None
+    parent_node_id: Optional[str] = None
+    descriptions: List[str] = []
+    versions: List[str] = []
+    is_used_in_conceptual_mapping_rules: bool = False
+    name: Optional[str] = None
+    bt_id: Optional[str] = None
+    value_type: Optional[str] = None
+    legal_type: Optional[str] = None
+    element_type: Literal["node", "field"] = "field"
 
 
 class StructuralElementState(ObjectState):
@@ -14,7 +36,7 @@ class StructuralElementState(ObjectState):
 
     """
     id: str
-    eforms_sdk_element_id: str = None
+    sdk_element_id: str = None
     absolute_xpath: str = None
     relative_xpath: str = None
     repeatable: bool = None
@@ -34,7 +56,7 @@ class StructuralElement(BaseProjectResourceEntity, StatefulObjectABC):
 
     """
     id: str = None
-    eforms_sdk_element_id: str = None
+    sdk_element_id: str = None
     absolute_xpath: str = None
     relative_xpath: str = None
     repeatable: bool = None
@@ -51,7 +73,7 @@ class StructuralElement(BaseProjectResourceEntity, StatefulObjectABC):
     async def get_state(self) -> StructuralElementState:
         return StructuralElementState(
             id=self.id,
-            eforms_sdk_element_id=self.eforms_sdk_element_id,
+            sdk_element_id=self.sdk_element_id,
             absolute_xpath=self.absolute_xpath,
             relative_xpath=self.relative_xpath,
             repeatable=self.repeatable,
@@ -75,7 +97,7 @@ class StructuralElement(BaseProjectResourceEntity, StatefulObjectABC):
         indexes = [
             IndexModel(
                 [
-                    ("eforms_sdk_element_id", pymongo.TEXT),
+                    ("sdk_element_id", pymongo.TEXT),
                     ("absolute_xpath", pymongo.TEXT),
                     ("relative_xpath", pymongo.TEXT),
                     ("parent_node_id", pymongo.TEXT),
