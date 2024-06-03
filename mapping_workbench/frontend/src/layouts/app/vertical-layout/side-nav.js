@@ -245,6 +245,14 @@ export const SideNav = (props) => {
                                 subheader={section.subheader}
                             />
                         ))}
+                        {projects.sessionProject && sections.sourceTopology.map((section, index) => (
+                            <SideNavSection
+                                items={section.items}
+                                key={index}
+                                pathname={pathname}
+                                subheader={section.subheader}
+                            />
+                        ))}
                         {projects.sessionProject && sections.resources.map((section, index) => (
                             <SideNavSection
                                 items={section.items}
