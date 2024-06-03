@@ -56,6 +56,18 @@ export const paths = {
                 view: '/app/shacl-test-suites/[id]/resource-manager/[fid]/view',
             }
         },
+        ontology: {
+            index: '/app/ontology',
+            create: '/app/ontology/create',
+            edit: '/app/ontology/[id]/edit',
+        },
+        schema: {
+            index: '/app/schema',
+            import: '/app/schema/import',
+            elements: {
+                view: (id) => `/app/schema/${id}/view`,
+            }
+        },
         ontology_file_collections: {
             index: '/app/ontology-file-collections',
             create: '/app/ontology-file-collections/create',
@@ -134,6 +146,7 @@ export const paths = {
             edit: '/app/customers/:customerId/edit',
         },
         account: '/app/account',
+
         ontology_namespaces_custom: {
             index: '/app/ontology-namespaces-custom',
             create: '/app/ontology-namespaces-custom/create',
@@ -299,6 +312,13 @@ export const apiPaths = {
         item: '/fields_registry/:id',
         import_eforms_from_github: '/fields_registry/tasks/import_eforms_from_github',
         elements: '/fields_registry/elements',
+        element: '/fields_registry/elements/:id',
+    },
+
+    schema: {
+        items: '/fields_registry',
+        item: '/fields_registry/:id',
+        import_eforms_from_github: '/fields_registry/tasks/import_eforms_from_github',
         element: '/fields_registry/elements/:id',
     },
 

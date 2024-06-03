@@ -1,0 +1,41 @@
+import {ACTION, SectionApi} from "../section";
+import {appApi} from "../app";
+
+class SchemaApi  extends SectionApi {
+    get SECTION_TITLE() {
+        return "Schema";
+    }
+
+    get SECTION_ITEM_TITLE() {
+        return "Schema";
+    }
+
+    get SECTION_LIST_ACTIONS() {
+        return [ACTION.VIEW];
+    }
+
+    constructor() {
+        super("schema");
+        this.isProjectResource = true;
+    }
+
+    importEFormsFromGithub(request) {
+        try {
+            const endpoint = this.paths['import_eforms_from_github'];
+            const headers = {"Content-Type": "multipart/form-data"};
+            return appApi.post(endpoint, request, null, headers);
+        } catch (err) {
+        }
+    }
+
+    async getStructuralElementsForSelector(request = {}) {
+        request.page = 0;
+        request.rowsPerPage = -1;
+        let structuralElementsStore = await this.getItems(request, 'elements');
+        return structuralElementsStore.items.map(
+            structuralElement => ({id: structuralElement._id, eforms_sdk_element_id: structuralElement.eforms_sdk_element_id})
+        ).sort((a, b) => a.eforms_sdk_element_id.localeCompare(b.eforms_sdk_element_id));
+    }
+}
+
+export const schemaApi = new SchemaApi();
