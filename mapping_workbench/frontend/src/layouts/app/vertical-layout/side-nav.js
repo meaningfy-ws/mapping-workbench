@@ -229,14 +229,6 @@ export const SideNav = (props) => {
                             }}>
                             <ProjectSwitch/>
                         </Stack>
-                         {projects.sessionProject && sections.sourceTopology.map((section, index) => (
-                            <SideNavSection
-                                items={section.items}
-                                key={index}
-                                pathname={pathname}
-                                subheader={section.subheader}
-                            />
-                        ))}
                          {sections.overview.map((section, index) => (
                             <SideNavSection
                                 items={section.items}
@@ -246,6 +238,14 @@ export const SideNav = (props) => {
                             />
                         ))}
                         {projects.sessionProject && sections.projectSetup.map((section, index) => (
+                            <SideNavSection
+                                items={section.items}
+                                key={index}
+                                pathname={pathname}
+                                subheader={section.subheader}
+                            />
+                        ))}
+                        {projects.sessionProject && sections.sourceTopology.map((section, index) => (
                             <SideNavSection
                                 items={section.items}
                                 key={index}

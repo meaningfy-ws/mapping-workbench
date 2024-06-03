@@ -188,14 +188,6 @@ export const MobileNav = (props) => {
                 }}>
               <ProjectSwitch/>
             </Stack>
-            {projects.sessionProject && sections.sourceTopology.map((section, index) => (
-                <MobileNavSection
-                    items={section.items}
-                    key={index}
-                    pathname={pathname}
-                    subheader={section.subheader}
-                />
-            ))}
             {sections.overview.map((section, index) => (
                  <MobileNavSection
                     items={section.items}
@@ -206,6 +198,14 @@ export const MobileNav = (props) => {
             ))}
             {projects.sessionProject && sections.projectSetup.map((section, index) => (
                  <MobileNavSection
+                    items={section.items}
+                    key={index}
+                    pathname={pathname}
+                    subheader={section.subheader}
+                />
+            ))}
+            {projects.sessionProject && sections.sourceTopology.map((section, index) => (
+                <MobileNavSection
                     items={section.items}
                     key={index}
                     pathname={pathname}
