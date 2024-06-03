@@ -57,6 +57,15 @@ class MappingPackagesApi extends SectionApi {
         } catch (err) {
         }
     }
+
+    getLatestState(package_id) {
+        try {
+            const endpoint = this.paths['latest_state'];
+            return appApi.get(endpoint(package_id));
+        } catch (err) {
+
+        }
+    }
 }
 
 export const mappingPackagesApi = new MappingPackagesApi();

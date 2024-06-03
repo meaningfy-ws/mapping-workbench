@@ -237,6 +237,22 @@ export const SideNav = (props) => {
                                 subheader={section.subheader}
                             />
                         ))}
+                         {sections.overview.map((section, index) => (
+                            <SideNavSection
+                                items={section.items}
+                                key={index}
+                                pathname={pathname}
+                                subheader={section.subheader}
+                            />
+                        ))}
+                        {projects.sessionProject && sections.projectSetup.map((section, index) => (
+                            <SideNavSection
+                                items={section.items}
+                                key={index}
+                                pathname={pathname}
+                                subheader={section.subheader}
+                            />
+                        ))}
                         {projects.sessionProject && sections.resources.map((section, index) => (
                             <SideNavSection
                                 items={section.items}

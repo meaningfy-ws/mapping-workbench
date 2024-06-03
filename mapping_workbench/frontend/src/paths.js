@@ -56,6 +56,18 @@ export const paths = {
                 view: '/app/shacl-test-suites/[id]/resource-manager/[fid]/view',
             }
         },
+        ontology: {
+            index: '/app/ontology',
+            create: '/app/ontology/create',
+            edit: '/app/ontology/[id]/edit',
+        },
+        schema: {
+            index: '/app/schema',
+            import: '/app/schema/import',
+            elements: {
+                view: (id) => `/app/schema/${id}/view`,
+            }
+        },
         ontology_file_collections: {
             index: '/app/ontology-file-collections',
             create: '/app/ontology-file-collections/create',
@@ -137,6 +149,7 @@ export const paths = {
             edit: '/app/customers/:customerId/edit',
         },
         account: '/app/account',
+
         ontology_namespaces_custom: {
             index: '/app/ontology-namespaces-custom',
             create: '/app/ontology-namespaces-custom/create',
@@ -197,7 +210,7 @@ export const apiPaths = {
         item: '/sparql_test_suites/:id',
         file_resources: '/sparql_test_suites/:id/file_resources',
         file_resource: '/sparql_test_suites/file_resources/:id',
-        free_file_resources: '/sparql_test_suites/free/file_resources'
+        project_file_resources: '/sparql_test_suites/project/file_resources'
     },
     shacl_test_suites: {
         items: '/shacl_test_suites',
@@ -228,6 +241,7 @@ export const apiPaths = {
         states: '/mapping_packages/:id/states',
         state: '/mapping_packages/state/:id',
         validation_reports: '/package_exporter/get_validation_reports',
+        latest_state: (package_id) => `/mapping_packages/${package_id}/latest_state`,
         validation_reports_tree: (sid) => `/package_validator/validation_reports_tree/state/${sid}`,
         xpath_reports: (sid) => `/package_validator/xpath/state/${sid}`,
         xpath_reports_suite: (sid, suiteId) => `/package_validator/xpath/state/${sid}/suite/${suiteId}`,
@@ -301,6 +315,13 @@ export const apiPaths = {
         item: '/fields_registry/:id',
         import_eforms_from_github: '/fields_registry/tasks/import_eforms_from_github',
         elements: '/fields_registry/elements',
+        element: '/fields_registry/elements/:id',
+    },
+
+    schema: {
+        items: '/fields_registry',
+        item: '/fields_registry/:id',
+        import_eforms_from_github: '/fields_registry/tasks/import_eforms_from_github',
         element: '/fields_registry/elements/:id',
     },
 

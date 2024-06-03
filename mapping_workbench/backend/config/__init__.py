@@ -3,6 +3,8 @@ from pydantic_settings import BaseSettings
 
 from mapping_workbench.backend.config.adapters.config_resolver import env_property
 
+ENV_PRODUCTION = "prod"
+
 dotenv.load_dotenv(verbose=True)
 
 
@@ -89,6 +91,20 @@ class EnvironmentSettings(BaseSettings):
     def ENVIRONMENT(self, config_value: str) -> str:
         return config_value
 
+    def is_env_production(self):
+        return self.ENVIRONMENT == ENV_PRODUCTION
+
+
+class GoogleOAuthSettings(BaseSettings):
+
+    @env_property()
+    def GOOGLE_ID(self, config_value: str) -> str:
+        return config_value
+
+    @env_property()
+    def GOOGLE_SECRET(self, config_value: str) -> str:
+        return config_value
+
 
 class Settings(
     AppSettings,
@@ -98,6 +114,7 @@ class Settings(
     RMLMapperSettings,
     TaskManagerSettings,
     EnvironmentSettings,
+    GoogleOAuthSettings,
 ):
     pass
 
