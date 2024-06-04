@@ -100,7 +100,7 @@ export const useSections = () => {
         items: [
             {
                 title: t(tokens.nav.tree_view),
-                path: paths.app.tree_view.index,
+                path: paths.app.fields_registry.elements.tree_view.index,
                 icon: (
                     <SvgIcon fontSize="small">
                         <TopicIcon/>

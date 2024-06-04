@@ -16,7 +16,7 @@ export const BasicDetails = (props) => {
                     <PropertyListItem
                         divider
                         label="Element ID"
-                        value={item.eforms_sdk_element_id}
+                        value={item.sdk_element_id}
                     />
                     <PropertyListItem
                         divider

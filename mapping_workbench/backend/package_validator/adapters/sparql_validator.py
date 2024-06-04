@@ -37,7 +37,7 @@ class SPARQLValidator(TestDataValidator):
         results = []
 
         for sparql_query in sparql_queries:
-            mwb_logger.log_all_info(f"Running assertion for {sparql_query.cm_rule.eforms_sdk_element_title}")
+            mwb_logger.log_all_info(f"Running assertion for {sparql_query.cm_rule.sdk_element_title}")
             sparql_query_result: SPARQLQueryResult = SPARQLQueryResult(
                 query=sparql_query,
                 result=None,
@@ -73,12 +73,12 @@ class SPARQLValidator(TestDataValidator):
             xpath_validation = self.test_data.validation.xpath
         if xpath_validation and xpath_validation.results:
             xpath_validation_results = xpath_validation.results
-            sparql_query_xpath = sparql_query_result.query.cm_rule.eforms_sdk_element_xpath.strip() \
+            sparql_query_xpath = sparql_query_result.query.cm_rule.sdk_element_xpath.strip() \
                 if sparql_query_result.query.cm_rule else None
             validation_xpaths = set()
             for xpath_assertion in xpath_validation_results:
                 if xpath_assertion.is_covered:
-                    validation_xpaths.add(xpath_assertion.eforms_sdk_element_xpath.strip())
+                    validation_xpaths.add(xpath_assertion.sdk_element_xpath.strip())
             sparql_query_result.fields_covered = (not sparql_query_xpath or (
                     sparql_query_xpath in validation_xpaths
             ))

@@ -26,15 +26,15 @@ def update_xpath_assertion(
     idx = next(
         (
             idx for idx, entry in enumerate(state.validation.xpath.results)
-            if entry.eforms_sdk_element_xpath == xpath
+            if entry.sdk_element_xpath == xpath
         ), -1
     )
     if idx < 0:
         state.validation.xpath.results.append(
             XPathAssertion(
-                eforms_sdk_element_id=element_id,
-                eforms_sdk_element_xpath=xpath,
-                eforms_sdk_element_title=element_title,
+                sdk_element_id=element_id,
+                sdk_element_xpath=xpath,
+                sdk_element_title=element_title,
                 is_covered=False,
                 test_data_xpaths=[],
                 message=validation_message
@@ -112,7 +112,7 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
                 structural_element = conceptual_mapping_rule_state.source_structural_element
                 if structural_element:
                     cm_xpath = structural_element.absolute_xpath
-                    cm_sdk_id = structural_element.eforms_sdk_element_id
+                    cm_sdk_id = structural_element.sdk_element_id
                     cm_sdk_title = structural_element.name
 
                     validation_message = None

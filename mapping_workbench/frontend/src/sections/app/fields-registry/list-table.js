@@ -139,7 +139,7 @@ export const ListTable = (props) => {
                                             </TableCell>
                                             <TableCell>
                                                 <Typography variant="subtitle2">
-                                                    {item.eforms_sdk_element_id}
+                                                    {item.sdk_element_id}
                                                 </Typography>
                                                 {item.name}
                                             </TableCell>

@@ -11,7 +11,8 @@ from mapping_workbench.backend.fields_registry.services import tasks
 from mapping_workbench.backend.fields_registry.services.api import list_structural_elements_versioned_view, \
     get_structural_elements_versioned_view, \
     delete_structural_elements_versioned_view, get_structural_elements_versioned_view_by_version, \
-    list_structural_elements, get_structural_element, delete_structural_element
+    list_structural_elements, get_structural_element, delete_structural_element, get_project_structural_elements
+from mapping_workbench.backend.fields_registry.services.data import tree_of_structural_elements
 from mapping_workbench.backend.fields_registry.services.generate_conceptual_mapping_rules import \
     generate_conceptual_mapping_rules
 from mapping_workbench.backend.project.models.entity import Project
@@ -177,3 +178,15 @@ async def route_generate_conceptual_mapping_rules(
         project_id: PydanticObjectId):
     project_link = Project.link_from_id(project_id)
     await generate_conceptual_mapping_rules(project_link=project_link)
+
+
+@router.get(
+    "/elements_tree",
+    description=f"Get tree of elements",
+    name=f"fields:elements_tree"
+)
+async def route_tree_structural_elements(
+        project: PydanticObjectId = None
+):
+    elements = await get_project_structural_elements(project)
+    return tree_of_structural_elements(elements)
