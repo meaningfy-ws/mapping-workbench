@@ -19,7 +19,7 @@ import {useRouter} from "../../../hooks/use-router";
 
 export const FileUploader = (props) => {
 
-    const {onClose, open = false, collectionId, sectionApi, onGetItems} = props;
+    const {onClose, open = false, collectionId, sectionApi, onGetItems, onlyAcceptedFormats, disableSelectFormat} = props;
 
     const defaultFormatValue = sectionApi.FILE_RESOURCE_DEFAULT_FORMAT;
 
@@ -90,6 +90,8 @@ export const FileUploader = (props) => {
        );
     }
 
+    const acceptedFormat = onlyAcceptedFormats && sectionApi.FILE_UPLOAD_FORMATS?.[format] ? {[sectionApi.FILE_UPLOAD_FORMATS[format]]: []} : {'*/*': []}
+
     return (
         <Dialog
             fullWidth
@@ -127,6 +129,7 @@ export const FileUploader = (props) => {
                     onChange={e => setFormat(e.target.value)}
                     select
                     required
+                    disabled={disableSelectFormat}
                     value={format}
                     sx={{mb: 3}}
                 >
@@ -155,7 +158,7 @@ export const FileUploader = (props) => {
                     </TextField>
                 )}
                 <FileDropzone
-                    accept={{'*/*': []}}
+                    accept={acceptedFormat}
                     caption="Max file size is 3 MB"
                     disabled={uploading}
                     files={files}

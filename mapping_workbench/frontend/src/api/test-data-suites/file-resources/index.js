@@ -16,6 +16,13 @@ class TestDataFileResourcesApi extends FileResourcesApi {
         };
     }
 
+    get FILE_UPLOAD_FORMATS() {
+        return {
+            "XML": "text/xml",
+            "JSON": "application/json"
+        }
+    }
+
     get FILE_RESOURCE_DEFAULT_FORMAT() {
         return "XML";
     }

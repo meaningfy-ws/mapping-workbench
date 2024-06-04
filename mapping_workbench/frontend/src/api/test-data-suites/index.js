@@ -16,6 +16,17 @@ class TestDataSuitesApi extends FileCollectionsApi {
         return [ACTION.VIEW, ACTION.DELETE]
     }
 
+    get FILE_RESOURCE_DEFAULT_FORMAT() {
+        return 'ZIP'
+    }
+
+    get FILE_RESOURCE_FORMATS() {
+        return {'ZIP':'ZIP'}
+    }
+
+    get FILE_UPLOAD_FORMATS() {
+        return {'ZIP': 'application/zip'}
+    }
 
     constructor() {
         super("test_data_suites");
