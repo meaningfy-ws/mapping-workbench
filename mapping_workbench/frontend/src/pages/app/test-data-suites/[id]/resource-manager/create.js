@@ -4,30 +4,28 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {testDataFileResourcesApi as sectionApi} from 'src/api/test-data-suites/file-resources';
-import {RouterLink} from 'src/components/router-link';
-import {Seo} from 'src/components/seo';
-import {usePageView} from 'src/hooks/use-page-view';
-import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
-import {FileResourceEditForm} from 'src/sections/app/file-manager/file-resource-edit-form';
-import {ForItemCreateForm} from "src/contexts/app/section/for-item-form";
+import {Seo} from 'src/components/seo';
 import {useRouter} from "src/hooks/use-router";
+import {Layout as AppLayout} from 'src/layouts/app';
+import {usePageView} from 'src/hooks/use-page-view';
+import {RouterLink} from 'src/components/router-link';
+import {ForItemCreateForm} from "src/contexts/app/section/for-item-form";
+import {FileResourceEditForm} from 'src/sections/app/file-manager/file-resource-edit-form';
+import {testDataFileResourcesApi as sectionApi} from 'src/api/test-data-suites/file-resources';
 
 
 const Page = () => {
     const router = useRouter();
+    usePageView();
+
     if (!router.isReady) return;
 
     const {id} = router.query;
 
-    if (!id) {
-        return;
-    }
+    if (!id) return;
 
     let item = {};
-
-    usePageView();
 
     return (
         <>
@@ -40,7 +38,7 @@ const Page = () => {
                             component={RouterLink}
                             href={{
                                 pathname: paths.app[sectionApi.section].resource_manager.index,
-                                query: {id: id}
+                                query: {id}
                             }}
                             sx={{
                                 alignItems: 'center',
