@@ -13,14 +13,13 @@ import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
 
 import {paths} from 'src/paths';
+import {sessionApi} from "src/api/session";
 import {useRouter} from 'src/hooks/use-router';
 import {RouterLink} from 'src/components/router-link';
-
-import {FormTextArea} from "../../../components/app/form/text-area";
-import {FormTextField} from "../../../components/app/form/text-field";
-import {sessionApi} from "../../../api/session";
-import {FormCodeTextArea} from "../../../components/app/form/code-text-area";
-import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
+import {FormTextArea} from "src/components/app/form/text-area";
+import {FormTextField} from "src/components/app/form/text-field";
+import {FormCodeTextArea} from "src/components/app/form/code-text-area";
+import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 
 export const FileResourceEditForm = (props) => {
     const router = useRouter();
