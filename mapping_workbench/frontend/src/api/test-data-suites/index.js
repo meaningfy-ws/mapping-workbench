@@ -1,6 +1,7 @@
 import {FileCollectionsApi} from "../file-collections";
 import {sessionApi} from "../session";
 import {appApi} from "../app";
+import {ACTION} from "../section";
 
 class TestDataSuitesApi extends FileCollectionsApi {
     get SECTION_TITLE() {
@@ -10,6 +11,11 @@ class TestDataSuitesApi extends FileCollectionsApi {
     get SECTION_ITEM_TITLE() {
         return "Test Data Suite";
     }
+
+    get SECTION_LIST_ACTIONS() {
+        return [ACTION.VIEW, ACTION.DELETE]
+    }
+
 
     constructor() {
         super("test_data_suites");

@@ -1,28 +1,24 @@
 import {useEffect, useState} from 'react';
 
-import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
-import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
 import {Layout as AppLayout} from 'src/layouts/app';
-import {usePageView} from 'src/hooks/use-page-view';
-import {RouterLink} from 'src/components/router-link';
-import {testDataSuitesApi as sectionApi} from 'src/api/test-data-suites';
+import {schemaApi as sectionApi} from 'src/api/schema';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {FileCollectionListSearch} from 'src/sections/app/file-manager/file-collection-list-search';
+import {RouterLink} from 'src/components/router-link';
+import {usePageView} from 'src/hooks/use-page-view';
+import {ListSearch} from "src/sections/app/fields-registry/list-search";
+import {ListTable} from "src/sections/app/fields-registry/list-table";
+import {useMounted} from "src/hooks/use-mounted";
+import Button from "@mui/material/Button";
+import SvgIcon from "@mui/material/SvgIcon";
 import {Upload04 as ImportIcon} from '@untitled-ui/icons-react/build/esm';
-import {TestDataCollectionListTable} from "../../../sections/app/file-manager/test-data-collection-list-table";
-import {testDataFileResourcesApi as fileResourcesApi} from "src/api/test-data-suites/file-resources";
-import {FileUploader} from "src/sections/app/file-manager/file-uploader";
-import {useDialog} from "src/hooks/use-dialog";
-
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -37,7 +33,7 @@ const useItemsSearch = () => {
     });
 
     const handleFiltersChange = filters => {
-        setState(prevState => ({
+        setState((prevState) => ({
             ...prevState,
             filters,
             page: 0
@@ -66,19 +62,21 @@ const useItemsSearch = () => {
     };
 };
 
+
 const useItemsStore = (searchState) => {
+    const isMounted = useMounted();
     const [state, setState] = useState({
         items: [],
         itemsCount: 0
     });
 
     const handleItemsGet = () => {
-        sectionApi.getItems(searchState)
+        sectionApi.getItems(searchState,null,'/fields_registry/elements')
             .then(res => setState({
                 items: res.items,
                 itemsCount: res.count
             }))
-            .catch(err => console.warn(err))
+            .catch(err => console.error(err))
     }
 
     useEffect(() => {
@@ -88,16 +86,15 @@ const useItemsStore = (searchState) => {
         [searchState]);
 
     return {
-        handleItemsGet,
         ...state
     };
 };
 
-const Page = () => {
 
-    const uploadDialog = useDialog()
+const Page = () => {
     const itemsSearch = useItemsSearch();
     const itemsStore = useItemsStore(itemsSearch.state);
+
 
     usePageView();
 
@@ -123,19 +120,11 @@ const Page = () => {
                             >
                                 App
                             </Link>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.app[sectionApi.section].index}
-                                variant="subtitle2"
-                            >
-                                {sectionApi.SECTION_TITLE}
-                            </Link>
                             <Typography
                                 color="text.secondary"
                                 variant="subtitle2"
                             >
-                                List
+                                Schema
                             </Typography>
                         </Breadcrumbs>
                     </Stack>
@@ -145,36 +134,24 @@ const Page = () => {
                         spacing={3}
                     >
                         <Button
+                            id="import_shema_button"
                             component={RouterLink}
-                            href={paths.app[sectionApi.section].create}
-                            startIcon={(
-                                <SvgIcon>
-                                    <PlusIcon/>
-                                </SvgIcon>
-                            )}
-                            variant="contained"
-                            id="add_button"
-                        >
-                            Create Test Data Suite
-                        </Button>
-                        <Button
-                            type='link'
-                            onClick={uploadDialog.handleOpen}
+                            href={paths.app[sectionApi.section].import}
                             startIcon={(
                                 <SvgIcon>
                                     <ImportIcon/>
                                 </SvgIcon>
                             )}
                             variant="contained"
-                            id="import-test-data_button"
                         >
-                            Import Test Data Suites
+                            Import schema from github
                         </Button>
                     </Stack>
+
                 </Stack>
                 <Card>
-                    <FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
-                    <TestDataCollectionListTable
+                    <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
+                    <ListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                         page={itemsSearch.state.page}
@@ -182,16 +159,8 @@ const Page = () => {
                         count={itemsStore.itemsCount}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
-                        getItems={itemsStore.handleItemsGet}
                     />
                 </Card>
-                <FileUploader
-                    onClose={uploadDialog.handleClose}
-                    open={uploadDialog.open}
-                    collectionId={uploadDialog.data?.id}
-                    sectionApi={fileResourcesApi}
-                    onGetItems={itemsStore.handleItemsGet}
-                />
             </Stack>
         </>
     );

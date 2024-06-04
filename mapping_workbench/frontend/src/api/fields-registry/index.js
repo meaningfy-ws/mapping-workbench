@@ -6,6 +6,10 @@ class FieldsRegistryApi extends SectionApi {
         return "Fields Registry";
     }
 
+    get SECTION_TREE_TITLE() {
+        return "Elements Tree"
+    }
+
     get SECTION_ITEM_TITLE() {
         return "Fields Registry";
     }
@@ -26,6 +30,24 @@ class FieldsRegistryApi extends SectionApi {
             return appApi.post(endpoint, request, null, headers);
         } catch (err) {
         }
+    }
+
+    async getItemsTree(request) {
+        return ([
+          {
+            id: 'ND-Root', label: 'ND-Root: /*',
+            children: [
+              { id: 'BT-02-notice', label: 'Notice Type: /*/cbc:NoticeTypeCode' },
+              { id: 'BT-03-notice', label: 'Form Type: /*/cbc:NoticeTypeCode/@listName' },
+              { id: 'BT-04-notice', label: 'Procedure Identifier: /*/cbc:ContractFolderID' },
+              { id: 'ND-ContractingParty', label: 'ND-ContractingParty: /*/cac:ContractingParty',
+              children: [
+                  { id: 'BT-10-Procedure-Buyer', label: 'Activity Authority: /*/cac:ContractingParty/cac:ContractingActivity/cbc:ActivityTypeCode[@listName=\'authority-activity\']' },
+                  { id: 'BT-10-Procedure-Buyer-List', label: 'Activity Authority Listname: /*/cac:ContractingParty/cac:ContractingActivity/cbc:ActivityTypeCode[@listName=\'authority-activity\']/@listName'}
+              ] },
+            ],
+          }
+        ])
     }
 
     async getStructuralElementsForSelector(request = {}) {

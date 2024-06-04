@@ -271,6 +271,32 @@ export const TopNav = (props) => {
                                 >
                                     <ProjectSwitch/>
                                 </Stack>
+                                {sections.overview.map((section, index) => (
+                                    <TopNavSection
+                                        items={section.items}
+                                        key={index}
+                                        pathname={pathname}
+                                        subheader={section.subheader}
+                                    />
+                                ))}
+
+                                {projects.sessionProject && sections.projectSetup.map((section, index) => (
+                                    <TopNavSection
+                                        items={section.items}
+                                        key={index}
+                                        pathname={pathname}
+                                        subheader={section.subheader}
+                                    />
+                                ))}
+
+                                {projects.sessionProject && sections.sourceTopology.map((section, index) => (
+                                    <TopNavSection
+                                        items={section.items}
+                                        key={index}
+                                        pathname={pathname}
+                                        subheader={section.subheader}
+                                    />
+                                ))}
 
                                 {projects.sessionProject && sections.resources.map((section, index) => (
                                     <TopNavSection
