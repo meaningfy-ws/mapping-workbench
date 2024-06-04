@@ -14,9 +14,9 @@ class TestDataValidationResult(BaseModel):
 
 
 class CMRuleSDKElement(BaseModel):
-    eforms_sdk_element_id: Optional[str] = None
-    eforms_sdk_element_title: Optional[str] = None
-    eforms_sdk_element_xpath: Optional[str] = None
+    sdk_element_id: Optional[str] = None
+    sdk_element_title: Optional[str] = None
+    sdk_element_xpath: Optional[str] = None
 
 
 class ValidationTestDataEntry(BaseModel):

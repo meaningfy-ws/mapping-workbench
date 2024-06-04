@@ -89,6 +89,7 @@ export const ListTableRow = (props) => {
                 collectionId={uploadDialog.data?.id}
                 sectionApi={fileResourcesApi}
                 onGetItems={getFileResources}
+                onlyAcceptedFormats
             />
             <ConfirmDialog
                     title="Delete It?"

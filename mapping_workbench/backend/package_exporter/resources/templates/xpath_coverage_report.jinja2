@@ -103,8 +103,8 @@
         <tbody>
         {% for item in results %}
             <tr>
-                <td>{{ item.eforms_sdk_element_id }} - {{ item.eforms_sdk_element_title }}</td>
-                <td class="break-word">{{ item.eforms_sdk_element_xpath }}</td>
+                <td>{{ item.sdk_element_id }} - {{ item.sdk_element_title }}</td>
+                <td class="break-word">{{ item.sdk_element_xpath }}</td>
                 <td class="{% if item.is_covered %}success{% else %}error{% endif %}">{{ item.is_covered }}</td>
                 <td>
                     {% set _count = item.test_data_xpaths|length %}

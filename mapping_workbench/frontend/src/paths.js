@@ -103,9 +103,6 @@ export const paths = {
                 view: (pid,id) => `/app/mapping-packages/${pid}/states/${id}/view`,
             }
         },
-        tree_view: {
-            index: '/app/tree-view'
-        },
 
         conceptual_mapping_rules: {
             index: '/app/conceptual-mapping-rules',
@@ -173,7 +170,10 @@ export const paths = {
                 //create: '/app/fields-registry/elements/create',
                 //edit: '/app/fields-registry/elements/[id]/edit',
                 view: (id) => `/app/fields-registry/elements/${id}/view`,
-                import: '/app/fields-registry/elements/import'
+                import: '/app/fields-registry/elements/import',
+                tree_view: {
+                    index: '/app/fields-registry/tree-view'
+                },
             }
         },
         tasks: {
@@ -315,6 +315,7 @@ export const apiPaths = {
         item: '/fields_registry/:id',
         import_eforms_from_github: '/fields_registry/tasks/import_eforms_from_github',
         elements: '/fields_registry/elements',
+        elements_tree: '/fields_registry/elements_tree',
         element: '/fields_registry/elements/:id',
     },
 

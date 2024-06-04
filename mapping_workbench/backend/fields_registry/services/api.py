@@ -6,7 +6,7 @@ from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersS
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
 from mapping_workbench.backend.core.services.request import api_entity_is_found, prepare_search_param, pagination_params
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement, \
-    StructuralElementsVersionedView
+    StructuralElementsVersionedView, StructuralElementOut
 from mapping_workbench.backend.project.models.entity import Project
 
 
@@ -26,6 +26,16 @@ async def list_structural_elements(filters: dict = None, page: int = None, limit
     ).to_list()
     total_count: int = await StructuralElement.find(query_filters).count()
     return items, total_count
+
+
+async def get_project_structural_elements(project_id: PydanticObjectId) -> List[StructuralElementOut]:
+    project_link = Project.link_from_id(project_id)
+    items: List[StructuralElementOut] = await StructuralElement.find(
+        StructuralElement.project == project_link,
+        projection_model=StructuralElementOut,
+        fetch_links=False
+    ).to_list()
+    return items
 
 
 async def list_structural_elements_versioned_view(filters: dict = None, page: int = None, limit: int = None) -> \

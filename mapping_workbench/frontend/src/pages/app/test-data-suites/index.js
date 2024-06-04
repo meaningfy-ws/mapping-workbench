@@ -189,8 +189,10 @@ const Page = () => {
                     onClose={uploadDialog.handleClose}
                     open={uploadDialog.open}
                     collectionId={uploadDialog.data?.id}
-                    sectionApi={fileResourcesApi}
+                    sectionApi={sectionApi}
                     onGetItems={itemsStore.handleItemsGet}
+                    onlyAcceptedFormats
+                    disableSelectFormat
                 />
             </Stack>
         </>

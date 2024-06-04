@@ -735,7 +735,7 @@ export const ListTableRow = (props) => {
                 >
                     <Typography variant="subtitle2">
                         <Box>
-                            {item.source_structural_element?.eforms_sdk_element_id}
+                            {item.source_structural_element?.sdk_element_id}
                             {item.mapping_group_id && ` / ${item.mapping_group_id}`}
                         </Box>
                     </Typography>
@@ -838,10 +838,10 @@ export const ListTableRow = (props) => {
                                         <Typography variant='h5' >
                                             Source
                                         </Typography>
-                                        {item.source_structural_element.eforms_sdk_element_id && <PropertyListItem
-                                            key="eforms_sdk_element_id"
+                                        {item.source_structural_element.sdk_element_id && <PropertyListItem
+                                            key="sdk_element_id"
                                             label="Field/Node ID"
-                                            value={item.source_structural_element.eforms_sdk_element_id}
+                                            value={item.source_structural_element.sdk_element_id}
                                         />}
                                         {item.source_structural_element.name && <PropertyListItem
                                             key="name"

@@ -90,7 +90,7 @@ const Page = () => {
                                     {item.name}
                                 </Typography>}
                                 <Typography variant={item.name ? "h5" : "h4"}>
-                                    {item.eforms_sdk_element_id}
+                                    {item.sdk_element_id}
                                 </Typography>
                             </Stack>
                         </Stack>

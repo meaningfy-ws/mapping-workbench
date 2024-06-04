@@ -460,7 +460,7 @@ export const EditForm = (props) => {
                                         <MenuItem value={null}>&nbsp;</MenuItem>
                                         {projectSourceStructuralElements.map((x) => (
                                             <MenuItem key={x.id}
-                                                      value={x.id}>{x.eforms_sdk_element_id}</MenuItem>
+                                                      value={x.id}>{x.sdk_element_id}</MenuItem>
                                         ))}
                                     </TextField>
                                 </FormControl>

@@ -188,9 +188,9 @@ class PackageImporter:
 
                 metadata = self.extract_metadata_from_sparql_query(resource_content)
                 cm_rule_sdk_element = CMRuleSDKElement(
-                    eforms_sdk_element_id=None,
-                    eforms_sdk_element_title=metadata['title'],
-                    eforms_sdk_element_xpath=metadata['xpath']
+                    sdk_element_id=None,
+                    sdk_element_title=metadata['title'],
+                    sdk_element_xpath=metadata['xpath']
                 )
 
                 if not sparql_test_file_resource:
@@ -349,7 +349,7 @@ class PackageImporter:
         sort_order: int = 0
         for mono_rule in mono_package.conceptual_rules:
             source_structural_element: StructuralElement = await get_structural_element_by_unique_fields(
-                eforms_sdk_element_id=mono_rule.eforms_sdk_id,
+                sdk_element_id=mono_rule.eforms_sdk_id,
                 name=mono_rule.field_name,
                 bt_id=mono_rule.bt_id,
                 absolute_xpath=mono_rule.absolute_xpath,
