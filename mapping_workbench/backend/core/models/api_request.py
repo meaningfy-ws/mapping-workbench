@@ -21,8 +21,3 @@ class APIRequestWithProject(BaseModel):
 class APIRequestWithProjectAndContent(BaseModel):
     project: Optional[PydanticObjectId] = None
     content: Optional[str] = None
-
-
-class APIRequestWithProjectAndFile(BaseModel):
-    project: Optional[PydanticObjectId] = None
-    file: Optional[UploadFile] = None
