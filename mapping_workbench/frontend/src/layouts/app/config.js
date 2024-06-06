@@ -26,11 +26,15 @@ import {paths} from 'src/paths';
 
 export const useSections = () => {
     const {t} = useTranslation();
-    let items = {
+    const items = {
         projects: [],
-        sourceTopology: [],
         overview: [],
         projectSetup: [],
+        fieldsAndNodes: [],
+        conceptualMappings: [],
+        technicalMappings: [],
+        qualityControl: [],
+        dimensions: [],
         resources: [],
         admin: []
     };
@@ -66,21 +70,34 @@ export const useSections = () => {
         items: [
             {
                 title: t(tokens.nav.schema),
-                path: paths.app.schema.index,
-                icon: (
-                    <SvgIcon fontSize="small">
-                        <BubbleChartIcon/>
-                    </SvgIcon>
-                )
+
+                items: [
+                    {title: 'Schema Files (dev)'},
+                    {
+                        title: 'Schema Elements',
+                        path: paths.app.schema.index,
+                        icon: (
+                            <SvgIcon fontSize="small">
+                                <BubbleChartIcon/>
+                            </SvgIcon>
+                        )
+                    }
+                ],
             },
             {
                 title: t(tokens.nav.ontology),
-                path: paths.app.ontology.index,
-                icon: (
-                    <SvgIcon fontSize="small">
-                        <SchemaIcon/>
-                    </SvgIcon>
-                )
+                items: [
+                    {title: 'Ontology Files (dev)'},
+                    {
+                        title: 'Ontology Terms',
+                        path: paths.app.ontology.index,
+                        icon: (
+                            <SvgIcon fontSize="small">
+                                <SchemaIcon/>
+                            </SvgIcon>
+                        )
+                    }
+                ]
             },
             {
                 title: t(tokens.nav.test_data),
@@ -90,13 +107,31 @@ export const useSections = () => {
                         <BiotechIcon/>
                     </SvgIcon>
                 )
-            }
+            },
+            {
+                title: t(tokens.nav.mapping_packages) + ' (dev)',
+                path: paths.app.mapping_packages.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <FolderOpenIcon/>
+                    </SvgIcon>
+                )
+            },
+            {
+                title: t(tokens.nav.resource_collections),
+                path: paths.app.resource_collections.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <HubIcon/>
+                    </SvgIcon>
+                )
+            },
         ],
 
     })
 
-    items.sourceTopology.push({
-        subheader: t(tokens.nav.source_topology),
+    items.fieldsAndNodes.push({
+        subheader: 'fields And Nodes',
         items: [
             {
                 title: t(tokens.nav.tree_view),
@@ -108,7 +143,7 @@ export const useSections = () => {
                 )
             },
             {
-                title: t(tokens.nav.elements),
+                title: 'Fields (dev)',
                 path: paths.app.index,
                 icon: (
                     <SvgIcon fontSize="small">
@@ -117,7 +152,7 @@ export const useSections = () => {
                 )
             },
             {
-                title: t(tokens.nav.nodes),
+                title: t(tokens.nav.nodes) + ' (dev)',
                 path: paths.app.index,
                 icon: (
                     <SvgIcon fontSize="small">
@@ -127,139 +162,172 @@ export const useSections = () => {
             }]
     })
 
+    items.conceptualMappings.push({
+        subheader: 'Conceptual Mappings',
+        items:[
+            {
+                title: "Create CM's (dev)"
+            },
+            {
+                title: t("Review CM's"),
+                path: paths.app.conceptual_mapping_rules.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <MapIcon/>
+                    </SvgIcon>
+                )
+            }]
+    })
 
-    const sections = {
+    items.technicalMappings.push({
+        subheader: 'Technical Mappings',
+        items:[
+            {
+                title: 'TM Files',
+                path: paths.app.generic_triple_map_fragments.index
+            },
+            {
+                title: 'Assign CMs and TMs (dev)',
+                path: paths.app.generic_triple_map_fragments.index
+            }
+        ]
+    })
+
+    items.qualityControl.push({
+        subheader: 'Technical Mappings',
+        items:[
+            {
+                title: 'MP Processing',
+                path: paths.app.mapping_packages.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <FolderOpenIcon/>
+                    </SvgIcon>
+                )
+            },
+            {
+                title: 'SHACL Report (dev)',
+            },
+            {
+                title: 'SPARQL Report (dev)',
+            },
+            {
+                title: 'XPath Coverage (dev)',
+            }
+        ]
+    })
+
+    items.dimensions.push({
+        subheader: 'Dimensions',
+        items:[
+            {
+                title: 'Export (dev)',
+                path: paths.app.mapping_packages.index
+            },
+            {
+                title: 'Commit to GitHub (dev)',
+            }
+        ]
+    })
+
+    items.resources.push({
         subheader: t(tokens.nav.resources),
-        items: []
-    };
+        items:[
+            {
+                title: t(tokens.nav.test_data_suites),
+                path: paths.app.test_data_suites.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <BiotechIcon/>
+                    </SvgIcon>
+                )
+            },
+            {
+                title: t(tokens.nav.sparql_test_suites),
+                path: paths.app.sparql_test_suites.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <FlareIcon/>
+                    </SvgIcon>
+                )
+            },
+            {
+                title: t(tokens.nav.shacl_test_suites),
+                path: paths.app.shacl_test_suites.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <ContentCutIcon/>
+                    </SvgIcon>
+                )
+            },
+            {
+                title: t(tokens.nav.ontology),
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <SchemaIcon/>
+                    </SvgIcon>
+                ),
+                items: [
+                    {
+                        title: t(tokens.nav.ontology_file_collections),
+                        path: paths.app.ontology_file_collections.index
+                    },
+                    {
+                        title: t(tokens.nav.namespaces),
+                        path: paths.app.ontology_namespaces.index
+                    },
+                    {
+                        title: t(tokens.nav.namespaces_custom),
+                        path: paths.app.ontology_namespaces_custom.index
+                    },
+                    {
+                        title: t(tokens.nav.terms),
+                        path: paths.app.ontology_terms.index
+                    },
+                ]
+            },
 
-    sections.items.push(
-        {
-            title: t(tokens.nav.test_data_suites),
-            path: paths.app.test_data_suites.index,
-            icon: (
-                <SvgIcon fontSize="small">
-                    <BiotechIcon/>
-                </SvgIcon>
-            )
-        },
-        {
-            title: t(tokens.nav.sparql_test_suites),
-            path: paths.app.sparql_test_suites.index,
-            icon: (
-                <SvgIcon fontSize="small">
-                    <FlareIcon/>
-                </SvgIcon>
-            )
-        },
-        {
-            title: t(tokens.nav.shacl_test_suites),
-            path: paths.app.shacl_test_suites.index,
-            icon: (
-                <SvgIcon fontSize="small">
-                    <ContentCutIcon/>
-                </SvgIcon>
-            )
-        },
-        {
-            title: t(tokens.nav.ontology),
-            icon: (
-                <SvgIcon fontSize="small">
-                    <SchemaIcon/>
-                </SvgIcon>
-            ),
-            items: [
-                {
-                    title: t(tokens.nav.ontology_file_collections),
-                    path: paths.app.ontology_file_collections.index
-                },
-                {
-                    title: t(tokens.nav.namespaces),
-                    path: paths.app.ontology_namespaces.index
-                },
-                {
-                    title: t(tokens.nav.namespaces_custom),
-                    path: paths.app.ontology_namespaces_custom.index
-                },
-                {
-                    title: t(tokens.nav.terms),
-                    path: paths.app.ontology_terms.index
-                },
-            ]
-        },
-        {
-            title: t(tokens.nav.resource_collections),
-            path: paths.app.resource_collections.index,
-            icon: (
-                <SvgIcon fontSize="small">
-                    <HubIcon/>
-                </SvgIcon>
-            )
-        },
-
-        {
-            title: t(tokens.nav.mapping_packages),
-            path: paths.app.mapping_packages.index,
-            icon: (
-                <SvgIcon fontSize="small">
-                    <FolderOpenIcon/>
-                </SvgIcon>
-            )
-        },
-
-        {
-            title: t(tokens.nav.conceptual_mapping_rules),
-            path: paths.app.conceptual_mapping_rules.index,
-            icon: (
-                <SvgIcon fontSize="small">
-                    <MapIcon/>
-                </SvgIcon>
-            )
-        },
-
-        {
-            title: t(tokens.nav.triple_map_fragments),
-            path: paths.app.triple_map_fragments.index,
-            icon: (
-                <SvgIcon fontSize="small">
-                    <HiveIcon/>
-                </SvgIcon>
-            ),
-            items: [
-                {
-                    title: t(tokens.nav.generic_triple_map_fragments),
-                    path: paths.app.generic_triple_map_fragments.index
-                },
-                {
-                    title: t(tokens.nav.specific_triple_map_fragments),
-                    path: paths.app.specific_triple_map_fragments.index
+            {
+                title: t(tokens.nav.triple_map_fragments),
+                path: paths.app.triple_map_fragments.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <HiveIcon/>
+                    </SvgIcon>
+                ),
+                items:[
+                    {
+                        title: t(tokens.nav.generic_triple_map_fragments),
+                        path: paths.app.generic_triple_map_fragments.index
+                    },
+                    {
+                        title: t(tokens.nav.specific_triple_map_fragments),
+                        path: paths.app.specific_triple_map_fragments.index
+                    }
+                ]
+            },
+            {
+                title: t(tokens.nav.fields_registry),
+                path: paths.app.fields_registry.elements.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <WindowIcon/>
+                    </SvgIcon>
+                ),
+                items: [
+                    {
+                        title: t(tokens.nav.elements),
+                        path: paths.app.fields_registry.elements.index
+                    },
+                    {
+                        title: t(tokens.nav.import),
+                        path: paths.app.fields_registry.elements.import
+                    }
+                ]
                 }
             ]
-        },
-        {
-            title: t(tokens.nav.fields_registry),
-            path: paths.app.fields_registry.elements.index,
-            icon: (
-                <SvgIcon fontSize="small">
-                    <WindowIcon/>
-                </SvgIcon>
-            ),
-            items: [
-                {
-                    title: t(tokens.nav.elements),
-                    path: paths.app.fields_registry.elements.index
-                },
-                {
-                    title: t(tokens.nav.import),
-                    path: paths.app.fields_registry.elements.import
-                }
-            ]
-        },
-    );
-    const sessionProject = sessionApi.getSessionProject();
-    if (!!sessionProject) {
-    }
-    items.resources.push(sections);
+    });
+
     items.admin.push(
         {
             subheader: t(tokens.nav.admin),
