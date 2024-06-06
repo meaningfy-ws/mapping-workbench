@@ -1,7 +1,6 @@
 from typing import Dict, Optional
 
 from beanie import PydanticObjectId
-from fastapi import UploadFile
 from pydantic import BaseModel
 
 
