@@ -24,9 +24,9 @@ import {paths} from 'src/paths';
 import {Issuer} from 'src/utils/auth';
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import {signIn, signOut, useSession} from 'next-auth/react';
-import GoogleIcon from '@mui/icons-material/Google';
 import Divider from "@mui/material/Divider";
+import GoogleIcon from '@mui/icons-material/Google';
+import {authApi} from "../../../api/auth";
 
 
 const initialValues = {
@@ -54,7 +54,13 @@ const Page = () => {
     const searchParams = useSearchParams();
     const returnTo = searchParams.get('returnTo');
     const {issuer, signIn: singInJWT} = useAuth();
-    // const {data: session} = useSession()
+
+    const googleAuthorize = async (returnTo) => {
+        const authorization_url = await authApi.getGoogleAuthorizationUrl();
+        if (authorization_url) {
+            await router.push(authorization_url)
+        }
+    }
 
     const formik = useFormik({
         initialValues,
@@ -166,17 +172,11 @@ const Page = () => {
                                     Log In
                                 </Button>
                                 <Divider>or</Divider>
-                                {/*{session?.user?.email ?*/}
-                                {/*    <Button fullWidth*/}
-                                {/*            startIcon={<GoogleIcon/>}*/}
-                                {/*            onClick={() => signOut()}>*/}
-                                {/*        Sign Out*/}
-                                {/*    </Button> :*/}
-                                {/*    <Button fullWidth*/}
-                                {/*            startIcon={<GoogleIcon/>}*/}
-                                {/*            onClick={() => signIn('google')}>*/}
-                                {/*        Sign in with Google*/}
-                                {/*    </Button>}*/}
+                                <Button fullWidth
+                                        startIcon={<GoogleIcon/>}
+                                        onClick={() => googleAuthorize(returnTo)}>
+                                    Sign in with Google
+                                </Button>
                             </Stack>
                         </form>
                     </CardContent>

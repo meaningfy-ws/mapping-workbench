@@ -1,5 +1,6 @@
 import {appApi} from "../app";
 import {sessionApi} from "../session";
+import {paths} from "../../paths";
 
 const STORAGE_KEY = 'users';
 
@@ -38,6 +39,10 @@ class AuthApi {
 
     async signInWithSessionInit(request) {
         await this.signIn(request);
+        return await this.initMyProfile();
+    }
+
+    async initMyProfile() {
         const user = await this.me();
         if (user.settings.session && user.settings.session.project) {
             sessionApi.setLocalSessionProject(user.settings.session.project);
@@ -47,8 +52,6 @@ class AuthApi {
         } else if (sessionApi.getLocalAppSettings()) {
             await sessionApi.setAppSettings(JSON.parse(sessionApi.getLocalAppSettings()), !!user);
         }
-
-        return user;
     }
 
     async signOut() {
@@ -65,6 +68,16 @@ class AuthApi {
 
     async verifyAuth() {
         return await appApi.verifyAuth();
+    }
+
+    async getGoogleAuthorizationUrl() {
+        const {authorization_url} = await appApi.get(paths.auth.google.authorize);
+        return authorization_url;
+    }
+
+    async sendGoogleResponse(params_string) {
+        const endpoint = paths.auth.google.callback + params_string;
+        return await appApi.get(endpoint);
     }
 }
 
