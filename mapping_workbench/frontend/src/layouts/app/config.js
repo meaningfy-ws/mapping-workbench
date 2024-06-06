@@ -252,20 +252,13 @@ export const useSections = () => {
                 ]
             },
             {
-                title: t(tokens.nav.schema),
-
-                items: [
-                    {title: 'Schema Files (dev)'},
-                    {
-                        title: 'Schema Elements',
-                        path: paths.app.schema.index,
-                        icon: (
-                            <SvgIcon fontSize="small">
-                                <BubbleChartIcon/>
-                            </SvgIcon>
-                        )
-                    }
-                ],
+                title: t(tokens.nav.resource_collections),
+                path: paths.app.resource_collections.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <HubIcon/>
+                    </SvgIcon>
+                )
             },
             {
                 title: t(tokens.nav.triple_map_fragments),
@@ -305,15 +298,7 @@ export const useSections = () => {
                     }
                 ]
                 },
-                {
-                    title: t(tokens.nav.resource_collections),
-                    path: paths.app.resource_collections.index,
-                    icon: (
-                        <SvgIcon fontSize="small">
-                            <HubIcon/>
-                        </SvgIcon>
-                    )
-                },
+
             ]
     });
 
