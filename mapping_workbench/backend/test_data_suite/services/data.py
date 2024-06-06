@@ -3,7 +3,8 @@ from typing import List
 from beanie import PydanticObjectId
 
 from mapping_workbench.backend.project.models.entity import Project
-from mapping_workbench.backend.test_data_suite.models.entity import TestDataFileResource, TestDataSuite
+from mapping_workbench.backend.test_data_suite.models.entity import TestDataFileResource, TestDataSuite, \
+    TestDataFileResourceFormat
 
 
 async def get_test_data_file_resources_for_project(project_id: PydanticObjectId) -> \
@@ -27,3 +28,7 @@ async def get_test_data_file_resources_for_package(package_id: PydanticObjectId)
         ).to_list()
 
     return test_data_file_resources
+
+
+def is_valid_test_data_format(test_format: str):
+    return test_format in [e.value for e in TestDataFileResourceFormat]

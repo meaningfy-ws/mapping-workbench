@@ -48,6 +48,7 @@ export const FileUploader = (props) => {
             formData.append("file", file);
             formData.append("content",file.content)
             formData.append("project", sessionApi.getSessionProject());
+
             sectionApi.createCollectionFileResource(collectionId, formData)
                 .finally(() => {
                     setProgress(e => e + incStep)

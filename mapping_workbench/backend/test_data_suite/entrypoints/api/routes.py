@@ -1,11 +1,11 @@
 from typing import List, Annotated
 
 from beanie import PydanticObjectId
-from fastapi import APIRouter, status, Depends, Query, HTTPException
+from fastapi import APIRouter, status, Depends, Query, HTTPException, Form, UploadFile
 from starlette.requests import Request
 
 from mapping_workbench.backend.core.models.api_request import APIRequestWithProject
-from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
+from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse, APIEmptyContentResponse
 from mapping_workbench.backend.file_resource.services.file_resource_form_data import \
     file_resource_data_from_form_request
 from mapping_workbench.backend.project.models.entity import Project
@@ -28,6 +28,8 @@ from mapping_workbench.backend.test_data_suite.services.api import (
     get_test_data_file_resource,
     delete_test_data_file_resource, update_test_data_file_resource
 )
+from mapping_workbench.backend.test_data_suite.services.import_test_data_suite import \
+    import_test_data_suites_from_archive
 from mapping_workbench.backend.test_data_suite.services.transform_test_data import transform_test_data_file_resource
 from mapping_workbench.backend.triple_map_fragment.services.api_for_generic import get_generic_triple_map_fragment
 from mapping_workbench.backend.user.models.user import User
@@ -40,6 +42,7 @@ FILE_RESOURCE_NAME_FOR_MANY = "test_data_file_resources"
 FILE_RESOURCE_NAME_FOR_ONE = "test_data_file_resource"
 
 TASK_TRANSFORM_TEST_DATA_NAME = f"{NAME_FOR_ONE}:tasks:transform_test_data"
+TASK_IMPORT_TEST_DATA_SUITES_NAME = f"{NAME_FOR_ONE}:tasks:import"
 
 router = APIRouter(
     prefix=ROUTE_PREFIX,
@@ -333,3 +336,18 @@ async def route_transform_test_data_file_resource_with_triple_map(
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Server error")
 
     return {"rdf_manifestation": test_data_file_resource.rdf_manifestation}
+
+
+@router.post(
+    "/tasks/import",
+    description=f"Import {NAME_FOR_ONE}",
+    name=TASK_IMPORT_TEST_DATA_SUITES_NAME,
+    status_code=status.HTTP_201_CREATED
+)
+async def route_task_import_test_data_suites(
+        project: PydanticObjectId = Form(...),
+        file: UploadFile = Form(...),
+        user: User = Depends(current_active_user)
+):
+    await import_test_data_suites_from_archive(project, file, user)
+    return APIEmptyContentResponse()
