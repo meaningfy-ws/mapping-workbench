@@ -22,6 +22,7 @@ import {TopNavSection} from './top-nav-section';
 import {ProjectSwitch} from "../project-switch";
 import {useProjects} from "../../../hooks/use-projects";
 import TimeSwitch from "../time-switch/time-switch";
+import {SideNavSection} from "../vertical-layout/side-nav-section";
 
 const useCssVars = (color) => {
     const theme = useTheme();
@@ -289,7 +290,39 @@ export const TopNav = (props) => {
                                     />
                                 ))}
 
-                                {projects.sessionProject && sections.sourceTopology.map((section, index) => (
+                                 {projects.sessionProject && sections.fieldsAndNodes.map((section, index) => (
+                                    <TopNavSection
+                                        items={section.items}
+                                        key={index}
+                                        pathname={pathname}
+                                        subheader={section.subheader}
+                                    />
+                                ))}
+                                {projects.sessionProject && sections.conceptualMappings.map((section, index) => (
+                                    <TopNavSection
+                                        items={section.items}
+                                        key={index}
+                                        pathname={pathname}
+                                        subheader={section.subheader}
+                                    />
+                                ))}
+                                {projects.sessionProject && sections.technicalMappings.map((section, index) => (
+                                    <TopNavSection
+                                        items={section.items}
+                                        key={index}
+                                        pathname={pathname}
+                                        subheader={section.subheader}
+                                    />
+                                ))}
+                                {projects.sessionProject && sections.qualityControl.map((section, index) => (
+                                    <TopNavSection
+                                        items={section.items}
+                                        key={index}
+                                        pathname={pathname}
+                                        subheader={section.subheader}
+                                    />
+                                ))}
+                                {projects.sessionProject && sections.dissemination.map((section, index) => (
                                     <TopNavSection
                                         items={section.items}
                                         key={index}

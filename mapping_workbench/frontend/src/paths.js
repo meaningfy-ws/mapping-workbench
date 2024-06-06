@@ -190,7 +190,8 @@ export const paths = {
     docs: 'https://material-kit-pro-react-docs.devias.io',
     notAuthorized: '/401',
     notFound: '/404',
-    serverError: '/500'
+    serverError: '/500',
+    underConstruction: '/under-construction'
 };
 
 

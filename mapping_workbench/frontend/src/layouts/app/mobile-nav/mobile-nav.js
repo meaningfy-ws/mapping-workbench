@@ -14,6 +14,7 @@ import {paths} from 'src/paths';
 import {MobileNavSection} from './mobile-nav-section';
 import {ProjectSwitch} from "../project-switch";
 import {useProjects} from "../../../hooks/use-projects";
+import {SideNavSection} from "../vertical-layout/side-nav-section";
 
 const MOBILE_NAV_WIDTH = 280;
 
@@ -196,7 +197,7 @@ export const MobileNav = (props) => {
                     subheader={section.subheader}
                 />
             ))}
-            {projects.sessionProject && sections.projectSetup.map((section, index) => (
+            {projects.sessionProject && sections.project.map((section, index) => (
                  <MobileNavSection
                     items={section.items}
                     key={index}
@@ -204,14 +205,46 @@ export const MobileNav = (props) => {
                     subheader={section.subheader}
                 />
             ))}
-            {projects.sessionProject && sections.sourceTopology.map((section, index) => (
-                <MobileNavSection
-                    items={section.items}
-                    key={index}
-                    pathname={pathname}
-                    subheader={section.subheader}
-                />
-            ))}
+             {projects.sessionProject && sections.fieldsRegistry.map((section, index) => (
+                            <SideNavSection
+                                items={section.items}
+                                key={index}
+                                pathname={pathname}
+                                subheader={section.subheader}
+                            />
+              ))}
+              {projects.sessionProject && sections.conceptualMappings.map((section, index) => (
+                  <SideNavSection
+                      items={section.items}
+                      key={index}
+                      pathname={pathname}
+                      subheader={section.subheader}
+                  />
+              ))}
+              {projects.sessionProject && sections.technicalMappings.map((section, index) => (
+                  <SideNavSection
+                      items={section.items}
+                      key={index}
+                      pathname={pathname}
+                      subheader={section.subheader}
+                  />
+              ))}
+              {projects.sessionProject && sections.qualityControl.map((section, index) => (
+                  <SideNavSection
+                      items={section.items}
+                      key={index}
+                      pathname={pathname}
+                      subheader={section.subheader}
+                  />
+              ))}
+              {projects.sessionProject && sections.dissemination.map((section, index) => (
+                  <SideNavSection
+                      items={section.items}
+                      key={index}
+                      pathname={pathname}
+                      subheader={section.subheader}
+                  />
+              ))}
             {projects.sessionProject && sections.resources.map((section, index) => (
                 <MobileNavSection
                     items={section.items}
