@@ -34,7 +34,7 @@ export const useSections = () => {
         conceptualMappings: [],
         technicalMappings: [],
         qualityControl: [],
-        dimensions: [],
+        dissemination: [],
         resources: [],
         admin: []
     };
@@ -217,7 +217,7 @@ export const useSections = () => {
         ]
     })
 
-    items.dimensions.push({
+    items.dissemination.push({
         subheader: 'Dimensions',
         items:[
             {
