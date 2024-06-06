@@ -35,10 +35,16 @@ router.include_router(
                                    auth_backend,
                                    settings.JWT_SECRET,
                                    associate_by_email=True,
+                                   is_verified_by_default=True,
+
+                                   # Redirect url to user according to the OAuth2.0 protocol flow
+                                   # see: https://datatracker.ietf.org/doc/html/rfc6749#section-1.2
+                                   redirect_url=f"{settings.MW_FRONTEND_ADDRESS}/auth/callback/google"
                                    ),
     prefix=f"{ROUTE_PREFIX}/google",
-    tags=["auth"],
+    tags=TAGS,
 )
+
 
 @router.get("/authenticated-route")
 async def authenticated_route(user: User = Depends(current_active_user)):
