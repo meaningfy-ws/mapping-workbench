@@ -70,7 +70,7 @@ export const en = {
   [tokens.nav.fields_tree]: 'Fields Tree',
   [tokens.nav.nodes]: 'Nodes',
   [tokens.nav.ontology_file_collections]: 'Ontologies',
-  [tokens.nav.ontology]: 'Ontology',
+  [tokens.nav.ontology]: 'Ontology Terms',
   [tokens.nav.namespaces]: 'Namespaces',
   [tokens.nav.namespaces_custom]: 'Custom Namespaces',
   [tokens.nav.terms]: 'Terms',

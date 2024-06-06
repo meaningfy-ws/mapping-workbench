@@ -73,13 +73,15 @@ export const useSections = () => {
                 path: paths.app.index
             },
             {
-                title: t(tokens.nav.schema_files) + ' (dev)'
+                title: t(tokens.nav.schema_files) + ' (dev)',
+                path: paths.underConstruction
             },
              {
-                title: t(tokens.nav.ontology_files) + ' (dev)'
+                title: t(tokens.nav.ontology_files) + ' (dev)',
+                path: paths.underConstruction
             },
             {
-                title: 'Ontology Terms',
+                title: t(tokens.nav.ontology),
                 path: paths.app.ontology.index,
                 icon: (
                     <SvgIcon fontSize="small">
@@ -129,7 +131,8 @@ export const useSections = () => {
         subheader: t(tokens.nav.conceptual_mappings),
         items:[
             {
-                title: t(tokens.nav.develop_cm) + ' (dev)'
+                title: t(tokens.nav.develop_cm) + ' (dev)',
+                path: paths.underConstruction
             },
             {
                 title: t(tokens.nav.review_cm),
@@ -141,10 +144,12 @@ export const useSections = () => {
                 )
             },
             {
-                title: t(tokens.nav.grouping_cm) + ' (dev)'
+                title: t(tokens.nav.grouping_cm) + ' (dev)',
+                path: paths.underConstruction
             },
             {
-                title: t(tokens.nav.packaging_cm) + ' (dev)'
+                title: t(tokens.nav.packaging_cm) + ' (dev)',
+                path: paths.underConstruction
             }]
     })
 
@@ -157,6 +162,7 @@ export const useSections = () => {
             },
             {
                 title: t(tokens.nav.link_cms_and_triple_maps) + ' (dev)',
+                path: paths.underConstruction
             },
             {
                 title: t(tokens.nav.value_mapping_resources),
@@ -170,9 +176,11 @@ export const useSections = () => {
         items:[
             {
                 title: t(tokens.nav.validation_execution) + ' (dev)',
+                path: paths.underConstruction
             },
             {
                 title: t(tokens.nav.validation_reports) + ' (dev)',
+                path: paths.underConstruction
             },
             {
                 title: t(tokens.nav.sparql_test_suites),
@@ -296,15 +304,6 @@ export const useSections = () => {
                         path: paths.app.fields_registry.elements.import
                     }
                 ]
-                },
-                {
-                    title: t(tokens.nav.test_data),
-                    path: paths.app.test_data_suites.index,
-                    icon: (
-                        <SvgIcon fontSize="small">
-                            <BiotechIcon/>
-                        </SvgIcon>
-                    )
                 },
                 {
                     title: t(tokens.nav.resource_collections),
