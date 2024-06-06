@@ -129,7 +129,7 @@ class AppApi {
             .request(config)
             .then(response => response.data)
             .catch(error => {
-                console.log(method, "REQUEST",error.response?.status);
+                console.log(method, "REQUEST", error.response?.status);
                 $this.processError(error);
                 console.log(error, "error");
                 throw error
@@ -168,6 +168,12 @@ class AppApi {
 
     }
 
+    authenticate(data) {
+        let accessToken = data.access_token;
+        this.setAccessToken(accessToken);
+        return {accessToken};
+    }
+
     async signIn(request) {
         const {username, password, remember_me} = request;
 
@@ -187,9 +193,7 @@ class AppApi {
         return axios
             .post(this.url(LOGIN_ENDPOINT), data, config)
             .then(function (response) {
-                let accessToken = response.data.access_token;
-                $this.setAccessToken(accessToken);
-                return {accessToken};
+                return $this.authenticate(response.data);
             })
             .catch(function (error) {
                 console.log(error, "error");

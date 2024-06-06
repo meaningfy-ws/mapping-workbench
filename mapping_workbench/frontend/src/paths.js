@@ -7,6 +7,10 @@ export const paths = {
         },
         auth0: {
             login: '/auth/auth0/login'
+        },
+        google: {
+            authorize: '/auth/google/authorize',
+            callback: '/auth/google/callback'
         }
     },
     app: {
