@@ -237,7 +237,7 @@ export const SideNav = (props) => {
                                 subheader={section.subheader}
                             />
                         ))}
-                        {projects.sessionProject && sections.projectSetup.map((section, index) => (
+                        {projects.sessionProject && sections.project.map((section, index) => (
                             <SideNavSection
                                 items={section.items}
                                 key={index}
@@ -245,7 +245,7 @@ export const SideNav = (props) => {
                                 subheader={section.subheader}
                             />
                         ))}
-                        {projects.sessionProject && sections.fieldsAndNodes.map((section, index) => (
+                        {projects.sessionProject && sections.fieldsRegistry.map((section, index) => (
                             <SideNavSection
                                 items={section.items}
                                 key={index}

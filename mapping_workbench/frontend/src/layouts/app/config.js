@@ -29,8 +29,8 @@ export const useSections = () => {
     const items = {
         projects: [],
         overview: [],
-        projectSetup: [],
-        fieldsAndNodes: [],
+        project: [],
+        fieldsRegistry: [],
         conceptualMappings: [],
         technicalMappings: [],
         qualityControl: [],
@@ -65,49 +65,29 @@ export const useSections = () => {
         ]
     });
 
-    items.projectSetup.push({
+    items.project.push({
         subheader: t(tokens.nav.project_setup),
         items: [
             {
-                title: t(tokens.nav.schema),
-
-                items: [
-                    {title: 'Schema Files (dev)'},
-                    {
-                        title: 'Schema Elements',
-                        path: paths.app.schema.index,
-                        icon: (
-                            <SvgIcon fontSize="small">
-                                <BubbleChartIcon/>
-                            </SvgIcon>
-                        )
-                    }
-                ],
+                title: t(tokens.nav.project_description) + ' (dev)',
+                path: paths.app.index
             },
             {
-                title: t(tokens.nav.ontology),
-                items: [
-                    {title: 'Ontology Files (dev)'},
-                    {
-                        title: 'Ontology Terms',
-                        path: paths.app.ontology.index,
-                        icon: (
-                            <SvgIcon fontSize="small">
-                                <SchemaIcon/>
-                            </SvgIcon>
-                        )
-                    }
-                ]
+                title: t(tokens.nav.schema_files) + ' (dev)'
+            },
+             {
+                title: t(tokens.nav.ontology_files) + ' (dev)'
             },
             {
-                title: t(tokens.nav.test_data),
-                path: paths.app.test_data_suites.index,
+                title: 'Ontology Terms',
+                path: paths.app.ontology.index,
                 icon: (
                     <SvgIcon fontSize="small">
-                        <BiotechIcon/>
+                        <SchemaIcon/>
                     </SvgIcon>
                 )
             },
+
             {
                 title: t(tokens.nav.mapping_packages) + ' (dev)',
                 path: paths.app.mapping_packages.index,
@@ -117,24 +97,16 @@ export const useSections = () => {
                     </SvgIcon>
                 )
             },
-            {
-                title: t(tokens.nav.resource_collections),
-                path: paths.app.resource_collections.index,
-                icon: (
-                    <SvgIcon fontSize="small">
-                        <HubIcon/>
-                    </SvgIcon>
-                )
-            },
+
         ],
 
     })
 
-    items.fieldsAndNodes.push({
-        subheader: 'fields And Nodes',
+    items.fieldsRegistry.push({
+        subheader: t(tokens.nav.fields_registry),
         items: [
             {
-                title: t(tokens.nav.tree_view),
+                title: t(tokens.nav.fields_tree),
                 path: paths.app.fields_registry.elements.tree_view.index,
                 icon: (
                     <SvgIcon fontSize="small">
@@ -143,104 +115,64 @@ export const useSections = () => {
                 )
             },
             {
-                title: 'Fields (dev)',
-                path: paths.app.index,
+                title: t(tokens.nav.fields_list),
+                path: paths.app.schema.index,
                 icon: (
                     <SvgIcon fontSize="small">
                         <MenuOpenIcon/>
-                    </SvgIcon>
-                )
-            },
-            {
-                title: t(tokens.nav.nodes) + ' (dev)',
-                path: paths.app.index,
-                icon: (
-                    <SvgIcon fontSize="small">
-                        <SettingsInputCompositeIcon/>
                     </SvgIcon>
                 )
             }]
     })
 
     items.conceptualMappings.push({
-        subheader: 'Conceptual Mappings',
+        subheader: t(tokens.nav.conceptual_mappings),
         items:[
             {
-                title: "Create CM's (dev)"
+                title: t(tokens.nav.develop_cm) + ' (dev)'
             },
             {
-                title: t("Review CM's"),
+                title: t(tokens.nav.review_cm),
                 path: paths.app.conceptual_mapping_rules.index,
                 icon: (
                     <SvgIcon fontSize="small">
                         <MapIcon/>
                     </SvgIcon>
                 )
+            },
+            {
+                title: t(tokens.nav.grouping_cm) + ' (dev)'
+            },
+            {
+                title: t(tokens.nav.packaging_cm) + ' (dev)'
             }]
     })
 
     items.technicalMappings.push({
-        subheader: 'Technical Mappings',
+        subheader: t(tokens.nav.technical_mappings),
         items:[
             {
-                title: 'TM Files',
+                title: t(tokens.nav.triple_map_fragments),
                 path: paths.app.generic_triple_map_fragments.index
             },
             {
-                title: 'Assign CMs and TMs (dev)',
-                path: paths.app.generic_triple_map_fragments.index
+                title: t(tokens.nav.link_cms_and_triple_maps) + ' (dev)',
+            },
+            {
+                title: t(tokens.nav.value_mapping_resources),
+                path: paths.app.resource_collections.index
             }
         ]
     })
 
     items.qualityControl.push({
-        subheader: 'Technical Mappings',
+        subheader: t(tokens.nav.quality_control),
         items:[
             {
-                title: 'MP Processing',
-                path: paths.app.mapping_packages.index,
-                icon: (
-                    <SvgIcon fontSize="small">
-                        <FolderOpenIcon/>
-                    </SvgIcon>
-                )
+                title: t(tokens.nav.validation_execution) + ' (dev)',
             },
             {
-                title: 'SHACL Report (dev)',
-            },
-            {
-                title: 'SPARQL Report (dev)',
-            },
-            {
-                title: 'XPath Coverage (dev)',
-            }
-        ]
-    })
-
-    items.dissemination.push({
-        subheader: 'Dimensions',
-        items:[
-            {
-                title: 'Export (dev)',
-                path: paths.app.mapping_packages.index
-            },
-            {
-                title: 'Commit to GitHub (dev)',
-            }
-        ]
-    })
-
-    items.resources.push({
-        subheader: t(tokens.nav.resources),
-        items:[
-            {
-                title: t(tokens.nav.test_data_suites),
-                path: paths.app.test_data_suites.index,
-                icon: (
-                    <SvgIcon fontSize="small">
-                        <BiotechIcon/>
-                    </SvgIcon>
-                )
+                title: t(tokens.nav.validation_reports) + ' (dev)',
             },
             {
                 title: t(tokens.nav.sparql_test_suites),
@@ -260,6 +192,31 @@ export const useSections = () => {
                     </SvgIcon>
                 )
             },
+            {
+                title: t(tokens.nav.test_data),
+                path: paths.app.test_data_suites.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <BiotechIcon/>
+                    </SvgIcon>
+                )
+            }
+        ]
+    })
+
+    items.dissemination.push({
+        subheader: t(tokens.nav.dissemination),
+        items:[
+            {
+                title: t(tokens.nav.export_mapping_package),
+                path: paths.app.mapping_packages.index
+            },
+        ]
+    })
+
+    items.resources.push({
+        subheader: t(tokens.nav.resources),
+        items:[
             {
                 title: t(tokens.nav.ontology),
                 icon: (
@@ -286,7 +243,22 @@ export const useSections = () => {
                     },
                 ]
             },
+            {
+                title: t(tokens.nav.schema),
 
+                items: [
+                    {title: 'Schema Files (dev)'},
+                    {
+                        title: 'Schema Elements',
+                        path: paths.app.schema.index,
+                        icon: (
+                            <SvgIcon fontSize="small">
+                                <BubbleChartIcon/>
+                            </SvgIcon>
+                        )
+                    }
+                ],
+            },
             {
                 title: t(tokens.nav.triple_map_fragments),
                 path: paths.app.triple_map_fragments.index,
@@ -324,7 +296,25 @@ export const useSections = () => {
                         path: paths.app.fields_registry.elements.import
                     }
                 ]
-                }
+                },
+                {
+                    title: t(tokens.nav.test_data),
+                    path: paths.app.test_data_suites.index,
+                    icon: (
+                        <SvgIcon fontSize="small">
+                            <BiotechIcon/>
+                        </SvgIcon>
+                    )
+                },
+                {
+                    title: t(tokens.nav.resource_collections),
+                    path: paths.app.resource_collections.index,
+                    icon: (
+                        <SvgIcon fontSize="small">
+                            <HubIcon/>
+                        </SvgIcon>
+                    )
+                },
             ]
     });
 
