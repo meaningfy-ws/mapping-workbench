@@ -202,6 +202,7 @@ export const apiPaths = {
         file_resource: '/test_data_suites/file_resources/:id',
         tasks: {
             transform_test_data: '/test_data_suites/tasks/transform_test_data',
+            import: '/test_data_suites/tasks/import',
         },
         file_resources_struct_tree: '/test_data_suites/file_resources_struct_tree/'
     },

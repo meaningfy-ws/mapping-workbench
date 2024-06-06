@@ -1,6 +1,7 @@
 from typing import Dict, Optional
 
 from beanie import PydanticObjectId
+from fastapi import UploadFile
 from pydantic import BaseModel
 
 
@@ -20,3 +21,8 @@ class APIRequestWithProject(BaseModel):
 class APIRequestWithProjectAndContent(BaseModel):
     project: Optional[PydanticObjectId] = None
     content: Optional[str] = None
+
+
+class APIRequestWithProjectAndFile(BaseModel):
+    project: Optional[PydanticObjectId] = None
+    file: Optional[UploadFile] = None
