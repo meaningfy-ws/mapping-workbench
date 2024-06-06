@@ -106,6 +106,21 @@ class GoogleOAuthSettings(BaseSettings):
         return config_value
 
 
+class FrontendSettings(BaseSettings):
+
+    @env_property()
+    def MW_FRONTEND_ADDRESS(self, config_value: str) -> str:
+        return config_value
+
+    @env_property()
+    def MW_FRONTEND_SERVER_HOST(self, config_value: str) -> str:
+        return config_value
+
+    @env_property()
+    def MW_FRONTEND_SERVER_PORT(self, config_value: str) -> str:
+        return config_value
+
+
 class Settings(
     AppSettings,
     ServerSettings,
@@ -115,6 +130,7 @@ class Settings(
     TaskManagerSettings,
     EnvironmentSettings,
     GoogleOAuthSettings,
+    FrontendSettings
 ):
     pass
 
