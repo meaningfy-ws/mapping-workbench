@@ -5,7 +5,7 @@ from mapping_workbench.backend.config.adapters.config_resolver import env_proper
 
 ENV_PRODUCTION = "prod"
 
-dotenv.load_dotenv(verbose=True)
+dotenv.load_dotenv(verbose=True, override=True)
 
 
 class AppSettings(BaseSettings):
