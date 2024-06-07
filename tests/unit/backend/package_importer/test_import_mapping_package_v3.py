@@ -58,6 +58,8 @@ async def test_import_mapping_package(dummy_project, dummy_project_link, dummy_s
     assert await SHACLTestSuite.count() > 0
     assert await SHACLTestFileResource.count() > 0
 
+    await dummy_structural_element.delete()
+
 
 @pytest.mark.asyncio
 async def test_import_mapping_package_from_archive(dummy_project, dummy_structural_element):
@@ -102,3 +104,5 @@ async def test_import_mapping_package_from_archive(dummy_project, dummy_structur
             assert await SPARQLTestFileResource.count() > 0
             assert await SHACLTestSuite.count() > 0
             assert await SHACLTestFileResource.count() > 0
+
+    await dummy_structural_element.delete()
