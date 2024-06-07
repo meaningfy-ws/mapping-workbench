@@ -33,7 +33,7 @@ class XSDFileResourceBeanieRepository(IRepository):
             XSDFileResource.project == project_link
         )
         if not xsd_file:
-            raise XSDFileResourceNotFoundException(f"XSD File {xsd_file_name} does't exist in project {project_id}")
+            raise XSDFileResourceNotFoundException(f"XSD File {xsd_file_name} doesn't exist in project {project_id}")
 
         return xsd_file
 

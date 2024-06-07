@@ -10,7 +10,6 @@ from mapping_workbench.backend.conceptual_mapping_rule.models.entity import Conc
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.package_importer.services.import_mapping_suite import \
     import_mapping_suite_from_file_system, import_mapping_package_from_archive, import_mapping_package
-from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.resource_collection.models.entity import ResourceFile, ResourceCollection
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestFileResource
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuite, SPARQLTestFileResource
@@ -38,9 +37,10 @@ def test_import_mapping_suite_v3():
 
 
 @pytest.mark.asyncio
-async def test_import_mapping_package():
+async def test_import_mapping_package(dummy_project, dummy_project_link, dummy_structural_element):
     assert PACKAGE_EFORMS_16_DIR_PATH.exists()
-    package = await import_mapping_package(PACKAGE_EFORMS_16_DIR_PATH, Project(id=ObjectId()))
+    await dummy_structural_element.create()
+    package = await import_mapping_package(PACKAGE_EFORMS_16_DIR_PATH, dummy_project)
     assert package.id
     assert await MappingPackage.count() > 0
     db_package = await MappingPackage.get(package.id)
@@ -60,9 +60,9 @@ async def test_import_mapping_package():
 
 
 @pytest.mark.asyncio
-async def test_import_mapping_package_from_archive():
+async def test_import_mapping_package_from_archive(dummy_project, dummy_structural_element):
     assert PACKAGE_EFORMS_16_DIR_PATH.exists()
-
+    await dummy_structural_element.create()
     def zip_directory(path, zip_file_handle):
         for root, _dirs, files in os.walk(path):
             for file in files:
@@ -72,7 +72,6 @@ async def test_import_mapping_package_from_archive():
                 )
 
     arch_name = "test_package.zip"
-    project_id = ObjectId()
 
     with tempfile.TemporaryDirectory() as tempdir_name:
         tempdir_path = pathlib.Path(tempdir_name)
@@ -85,7 +84,7 @@ async def test_import_mapping_package_from_archive():
         with open(arch_path, 'rb') as zip_file:
             package: MappingPackage = await import_mapping_package_from_archive(
                 file_content=zip_file.read(),
-                project=Project(id=project_id)
+                project=dummy_project
             )
             assert package.id
             assert await MappingPackage.count() > 0

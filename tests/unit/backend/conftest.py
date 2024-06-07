@@ -1,7 +1,7 @@
 import asyncio
 
 import pytest
-from beanie import PydanticObjectId
+from beanie import PydanticObjectId, Link
 from mongomock_motor import AsyncMongoMockClient
 
 from mapping_workbench.backend.core.services.project_initilisers import init_project_models
@@ -19,3 +19,7 @@ def dummy_project() -> Project:
         id=PydanticObjectId(),
         title="MOCK_PROJECT"
     )
+
+@pytest.fixture
+def dummy_project_link(dummy_project) -> Link:
+    return Project.link_from_id(dummy_project.id)
