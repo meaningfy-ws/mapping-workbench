@@ -19,7 +19,6 @@ class XSDFileResourceBeanieRepository(IRepository):
 
     async def get_all(self, project_id: PydanticObjectId) -> List[XSDFileResource]:
         project_link = await get_project_link(project_id)
-
         return await XSDFileResource.find_many(
             XSDFileResource.project == project_link
         ).to_list()
@@ -62,5 +61,5 @@ class XSDFileResourceBeanieRepository(IRepository):
         await xsd_file.delete()
         return None
 
-    def update(self, xsd_file: XSDFileResource) -> NotImplemented:
+    async def update(self, xsd_file: XSDFileResource) -> NotImplemented:
         raise NotImplementedError("XSD Files are read-only")

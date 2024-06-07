@@ -7,7 +7,7 @@ from mapping_workbench.backend.conceptual_mapping_rule.entrypoints.api import ro
 from mapping_workbench.backend.config import settings
 from mapping_workbench.backend.config.entrypoints.api import routes as config_routes
 from mapping_workbench.backend.core.entrypoints.api import routes as core_routes
-from mapping_workbench.backend.core.services.project_initilisers import init_project_models
+from mapping_workbench.backend.core.services.project_initilisers import init_project_models, init_admin_user
 from mapping_workbench.backend.database.adapters.mongodb import DB
 from mapping_workbench.backend.fields_registry.entrypoints.api import routes as fields_registry
 from mapping_workbench.backend.logger.services import mwb_logger
@@ -60,6 +60,7 @@ app.add_middleware(
 @app.on_event("startup")
 async def on_startup():
     await init_project_models(mongodb_database=DB.get_database())
+    await init_admin_user()
 
 
 app_router = APIRouter()

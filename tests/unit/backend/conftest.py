@@ -3,8 +3,8 @@ import asyncio
 import pytest
 from beanie import PydanticObjectId
 from mongomock_motor import AsyncMongoMockClient
-from mapping_workbench.backend.core.services.project_initilisers import init_project_models
 
+from mapping_workbench.backend.core.services.project_initilisers import init_project_models
 from mapping_workbench.backend.database.adapters.gridfs_storage import AsyncGridFSStorage
 from mapping_workbench.backend.project.models.entity import Project
 

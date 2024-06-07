@@ -55,6 +55,10 @@ class DatabaseSettings(BaseSettings):
     def DATABASE_ADMIN_PASSWORD(self, config_value: str) -> str:
         return config_value
 
+    @env_property(config_key='MW_ADMIN_HASHED_PASSWORD')
+    def DATABASE_ADMIN_HASHED_PASSWORD(self, config_value: str) -> str:
+        return config_value
+
 
 class SecuritySettings(BaseSettings):
 
