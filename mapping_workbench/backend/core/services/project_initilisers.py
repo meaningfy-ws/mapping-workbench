@@ -20,6 +20,7 @@ from mapping_workbench.backend.triple_map_fragment.models.entity import Specific
     GenericTripleMapFragment
 from mapping_workbench.backend.triple_map_registry.models.entity import TripleMapRegistry
 from mapping_workbench.backend.user.models.user import User
+from mapping_workbench.backend.xsd_schema.models.xsd_file_resource import XSDFileResource
 
 
 async def init_project_models(mongodb_database: AsyncIOMotorDatabase):
@@ -51,6 +52,7 @@ async def init_project_models(mongodb_database: AsyncIOMotorDatabase):
             NamespaceCustom,
             Term,
             StructuralElement,
-            StructuralElementsVersionedView
+            StructuralElementsVersionedView,
+            XSDFileResource,
         ],
     )

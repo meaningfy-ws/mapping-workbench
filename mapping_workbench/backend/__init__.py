@@ -1,6 +1,6 @@
 from pydantic import ConfigDict
 
-DEFAULT_MODEL_CONFIG = ConfigDict(extra='forbid',
+DEFAULT_MODEL_CONFIG = ConfigDict(extra='ignore',
                                   strict=True)
 
 STRICT_MODEL_CONFIG = ConfigDict(extra='forbid',

@@ -34,6 +34,7 @@ from mapping_workbench.backend.triple_map_fragment.entrypoints.api import \
     routes_for_specific as specific_triple_map_fragment_routes
 from mapping_workbench.backend.triple_map_registry.entrypoints.api import routes as triple_map_registry_routes
 from mapping_workbench.backend.user.entrypoints.api import routes as user_routes
+from mapping_workbench.backend.xsd_schema.entrypoints.api import routes as xsd_schema_router
 
 ROOT_API_PATH = "/api/v1"
 
@@ -90,7 +91,8 @@ secured_routers: list = [
     ontology_routes.router,
     task_manager_routes.router,
     tasks_routes.router,
-    fields_registry.router
+    fields_registry.router,
+    xsd_schema_router.router
 ]
 
 for secured_router in secured_routers:

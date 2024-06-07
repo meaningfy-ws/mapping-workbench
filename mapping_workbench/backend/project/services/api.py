@@ -1,13 +1,15 @@
 from typing import List
 
-from beanie import PydanticObjectId
+from beanie import PydanticObjectId, Link
+from bson import DBRef
 from pymongo.errors import DuplicateKeyError
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException, DuplicateKeyException
 from mapping_workbench.backend.core.services.request import request_update_data, request_create_data, \
     api_entity_is_found, prepare_search_param, pagination_params
-from mapping_workbench.backend.project.models.entity import Project, ProjectCreateIn, ProjectUpdateIn, ProjectOut
+from mapping_workbench.backend.project.models.entity import Project, ProjectCreateIn, ProjectUpdateIn, ProjectOut, \
+    ProjectNotFoundException
 from mapping_workbench.backend.user.models.user import User
 
 
@@ -66,3 +68,9 @@ async def get_project_out(id: PydanticObjectId) -> ProjectOut:
 
 async def delete_project(project: Project):
     return await project.delete()
+
+
+async def get_project_link(project_id: PydanticObjectId):
+    if await Project.get(project_id) is None:
+        raise ProjectNotFoundException(f"Project {project_id} doesn't exist")
+    return Link(DBRef(Project.Settings.name, project_id), Project)
