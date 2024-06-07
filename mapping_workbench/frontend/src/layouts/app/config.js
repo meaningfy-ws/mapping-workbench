@@ -1,5 +1,4 @@
 import {useTranslation} from 'react-i18next';
-import {sessionApi} from "../../api/session";
 
 import SvgIcon from '@mui/material/SvgIcon';
 import FlareIcon from '@mui/icons-material/Flare';
@@ -13,10 +12,8 @@ import SchemaIcon from '@mui/icons-material/Schema';
 import TaskIcon from '@mui/icons-material/TaskAlt';
 import TopicIcon from '@mui/icons-material/Topic';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
-import SettingsInputCompositeIcon from '@mui/icons-material/SettingsInputComposite';
 import WindowIcon from '@mui/icons-material/Window';
-import BubbleChartIcon from '@mui/icons-material/BubbleChart';
-
+import LogoDevIcon from '@mui/icons-material/LogoDev';
 import HomeSmileIcon from 'src/icons/ui/duocolor/home-smile';
 import LayoutAlt02 from 'src/icons/ui/duocolor/layout-alt-02';
 import Users03Icon from 'src/icons/ui/duocolor/users-03';
@@ -70,15 +67,30 @@ export const useSections = () => {
         items: [
             {
                 title: t(tokens.nav.project_description) + ' (dev)',
-                path: paths.app.index
+                path: paths.app.index,
+                icon:(
+                    <SvgIcon>
+                        <LogoDevIcon/>
+                    </SvgIcon>
+                )
             },
             {
                 title: t(tokens.nav.schema_files) + ' (dev)',
-                path: paths.underConstruction
+                path: paths.underConstruction,
+                icon:(
+                    <SvgIcon>
+                        <LogoDevIcon/>
+                    </SvgIcon>
+                )
             },
              {
                 title: t(tokens.nav.ontology_files) + ' (dev)',
-                path: paths.underConstruction
+                path: paths.underConstruction,
+                icon:(
+                    <SvgIcon>
+                        <LogoDevIcon/>
+                    </SvgIcon>
+                )
             },
             {
                 title: t(tokens.nav.ontology),
@@ -132,7 +144,12 @@ export const useSections = () => {
         items:[
             {
                 title: t(tokens.nav.develop_cm) + ' (dev)',
-                path: paths.underConstruction
+                path: paths.underConstruction,
+                icon:(
+                    <SvgIcon>
+                        <LogoDevIcon/>
+                    </SvgIcon>
+                )
             },
             {
                 title: t(tokens.nav.review_cm),
@@ -145,11 +162,21 @@ export const useSections = () => {
             },
             {
                 title: t(tokens.nav.grouping_cm) + ' (dev)',
-                path: paths.underConstruction
+                path: paths.underConstruction,
+                icon:(
+                    <SvgIcon>
+                        <LogoDevIcon/>
+                    </SvgIcon>
+                )
             },
             {
                 title: t(tokens.nav.packaging_cm) + ' (dev)',
-                path: paths.underConstruction
+                path: paths.underConstruction,
+                icon:(
+                    <SvgIcon>
+                        <LogoDevIcon/>
+                    </SvgIcon>
+                )
             }]
     })
 
@@ -158,15 +185,30 @@ export const useSections = () => {
         items:[
             {
                 title: t(tokens.nav.triple_map_fragments),
-                path: paths.app.generic_triple_map_fragments.index
+                path: paths.app.generic_triple_map_fragments.index,
+                icon:(
+                    <SvgIcon fontSize="small">
+                        <HiveIcon/>
+                    </SvgIcon>
+                )
             },
             {
                 title: t(tokens.nav.link_cms_and_triple_maps) + ' (dev)',
-                path: paths.underConstruction
+                path: paths.underConstruction,
+                icon:(
+                    <SvgIcon>
+                        <LogoDevIcon/>
+                    </SvgIcon>
+                )
             },
             {
                 title: t(tokens.nav.value_mapping_resources),
-                path: paths.app.resource_collections.index
+                path: paths.app.resource_collections.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <HubIcon/>
+                    </SvgIcon>
+                ),
             }
         ]
     })
@@ -176,11 +218,21 @@ export const useSections = () => {
         items:[
             {
                 title: t(tokens.nav.validation_execution) + ' (dev)',
-                path: paths.underConstruction
+                path: paths.underConstruction,
+                icon:(
+                    <SvgIcon>
+                        <LogoDevIcon/>
+                    </SvgIcon>
+                )
             },
             {
                 title: t(tokens.nav.validation_reports) + ' (dev)',
-                path: paths.underConstruction
+                path: paths.underConstruction,
+                icon:(
+                    <SvgIcon>
+                        <LogoDevIcon/>
+                    </SvgIcon>
+                )
             },
             {
                 title: t(tokens.nav.sparql_test_suites),
