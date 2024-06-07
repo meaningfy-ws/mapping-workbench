@@ -22,7 +22,7 @@ install: install-backend install-frontend
 
 install-dev: install-dev-backend install-frontend-dev
 
-install-backend: init-rml-mapper
+install-backend: init-rml-mapper setup-env-paths
 	@ echo "Installing BACKEND requirements :: START"
 	@ pip install --upgrade pip
 	@ pip install --no-cache-dir -r requirements.txt
@@ -77,7 +77,7 @@ dev-dotenv-file:
 	@ echo BACKEND_INFRA_FOLDER=${BACKEND_INFRA_FOLDER} >> ${ENV_FILE}
 	@ echo FRONTEND_INFRA_FOLDER=${FRONTEND_INFRA_FOLDER} >> ${ENV_FILE}
 	@ echo NODE_ENV=development >> ${ENV_FILE}
-	@ echo RML_MAPPER_PATH=${RML_MAPPER_PATH} >> .env
+	@ echo RML_MAPPER_PATH=${RML_MAPPER_PATH} >> ${ENV_FILE}
 	@ vault kv get -format="json" mapping-workbench-dev/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> ${ENV_FILE}
 
 staging-dotenv-file:
@@ -87,7 +87,7 @@ staging-dotenv-file:
 	@ echo BACKEND_INFRA_FOLDER=${BACKEND_INFRA_FOLDER} >> ${ENV_FILE}
 	@ echo FRONTEND_INFRA_FOLDER=${FRONTEND_INFRA_FOLDER} >> ${ENV_FILE}
 	@ echo NODE_ENV=development >> ${ENV_FILE}
-	@ echo RML_MAPPER_PATH=${RML_MAPPER_PATH} >> .env
+	@ echo RML_MAPPER_PATH=${RML_MAPPER_PATH} >> ${ENV_FILE}
 	@ vault kv get -format="json" mapping-workbench-staging/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> ${ENV_FILE}
 
 prod-dotenv-file:
@@ -97,7 +97,7 @@ prod-dotenv-file:
 	@ echo BACKEND_INFRA_FOLDER=${BACKEND_INFRA_FOLDER} >> ${ENV_FILE}
 	@ echo FRONTEND_INFRA_FOLDER=${FRONTEND_INFRA_FOLDER} >> ${ENV_FILE}
 	@ echo NODE_ENV=production >> ${ENV_FILE}
-	@ echo RML_MAPPER_PATH=${RML_MAPPER_PATH} >> .env
+	@ echo RML_MAPPER_PATH=${RML_MAPPER_PATH} >> ${ENV_FILE}
 	@ vault kv get -format="json" mapping-workbench-prod/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> ${ENV_FILE}
 
 
@@ -214,3 +214,7 @@ init-rml-mapper:
 	@ echo -e "RMLMapper folder initialization!"
 	@ mkdir -p ./.rmlmapper
 	@ wget https://github.com/RMLio/rmlmapper-java/releases/download/v6.2.2/rmlmapper-6.2.2-r371-all.jar -O ./.rmlmapper/rmlmapper.jar
+
+setup-env-paths:
+	@ perl -i -ne 'print unless /^RML_MAPPER_PATH/' ${ENV_FILE}
+	@ echo RML_MAPPER_PATH=${RML_MAPPER_PATH} >> ${ENV_FILE}
