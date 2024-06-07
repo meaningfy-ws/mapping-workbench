@@ -67,7 +67,7 @@ async def get_mappings_to_transform_test_data(
         project_id=project_id
     )
     specific_mappings = []
-    if not package_id is None:
+    if package_id is not None:
         specific_mappings = await get_specific_triple_map_fragments_for_package(
             package_id=package_id
         )
