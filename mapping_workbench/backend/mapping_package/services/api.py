@@ -3,15 +3,14 @@ from typing import List
 import pymongo
 from beanie import PydanticObjectId
 from pymongo.errors import DuplicateKeyError
-from pytz import timezone
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException, DuplicateKeyException
 from mapping_workbench.backend.core.services.request import request_update_data, request_create_data, \
     api_entity_is_found, prepare_search_param, pagination_params
-from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageCreateIn, \
     MappingPackageUpdateIn, MappingPackageOut, MappingPackageStateGate
+from mapping_workbench.backend.state_manager.services.object_state_manager import delete_object_state
 from mapping_workbench.backend.user.models.user import User
 
 
@@ -72,6 +71,7 @@ async def get_mapping_package_out(id: PydanticObjectId) -> MappingPackageOut:
 
 
 async def delete_mapping_package(mapping_package: MappingPackage):
+    await delete_mapping_package_states(mapping_package)
     return await mapping_package.delete()
 
 
@@ -107,5 +107,14 @@ async def get_mapping_package_state(id: PydanticObjectId) -> MappingPackageState
     return mapping_package_state
 
 
+async def delete_mapping_package_states(mapping_package: MappingPackage):
+    for mapping_package_state in await MappingPackageStateGate.find(
+            MappingPackageStateGate.mapping_package_oid == mapping_package.id,
+            fetch_links=False
+    ).to_list():
+        await delete_mapping_package_state(mapping_package_state)
+
+
 async def delete_mapping_package_state(mapping_package_state: MappingPackageStateGate):
+    await delete_object_state(mapping_package_state.id)
     return await mapping_package_state.delete()

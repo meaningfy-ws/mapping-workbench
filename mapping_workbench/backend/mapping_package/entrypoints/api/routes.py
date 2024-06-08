@@ -122,7 +122,7 @@ async def route_list_mapping_package_states(
         sort_dir: int = None
 ):
     filters: dict = {}
-    filters['identifier'] = mapping_package.identifier
+    filters['mapping_package_oid'] = mapping_package.id
     if project:
         filters['project'] = Project.link_from_id(project)
     if q is not None:
