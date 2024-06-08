@@ -7,8 +7,8 @@ from mapping_workbench.backend.fields_registry.services.import_fields_registry i
 
 
 @pytest.mark.asyncio
-async def test_import_eforms_fields_from_folder(eforms_sdk_repo_v_1_9_1_dir_path):
-    await import_eforms_fields_from_folder(eforms_fields_folder_path=eforms_sdk_repo_v_1_9_1_dir_path)
+async def test_import_eforms_fields_from_folder(eforms_sdk_repo_v_1_9_1_dir_path, dummy_project_link):
+    await import_eforms_fields_from_folder(eforms_fields_folder_path=eforms_sdk_repo_v_1_9_1_dir_path, project_link=dummy_project_link)
 
     imported_fields = await StructuralElement.find(StructuralElement.element_type == "field").to_list()
     assert imported_fields

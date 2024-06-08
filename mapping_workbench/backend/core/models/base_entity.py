@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Annotated
 
 from beanie import Document, Link, PydanticObjectId
 from dateutil.tz import tzlocal
@@ -15,7 +15,7 @@ class BaseEntity(Document):
     """
     The general model for entities
     """
-    created_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(tzlocal()))
+    created_at: Annotated[datetime, Field(default_factory=lambda: datetime.now(tzlocal()))]
     updated_at: Optional[datetime] = None
     created_by: Optional[Link[User]] = None
     updated_by: Optional[Link[User]] = None
@@ -25,9 +25,6 @@ class BaseEntity(Document):
     def update_model_date_times_with_default_timezone(self) -> Self:
         if self.created_at is not None:
             self.created_at = self.created_at.astimezone(timezone(DEFAULT_TIMEZONE))
-
-        if self.updated_at is not None:
-            self.updated_at = self.updated_at.astimezone(timezone(DEFAULT_TIMEZONE))
         return self
 
     def on_create(self, user: User):

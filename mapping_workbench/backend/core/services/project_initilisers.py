@@ -2,6 +2,7 @@ from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
+from mapping_workbench.backend.config import settings
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElementsVersionedView, \
     StructuralElement
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageStateGate
@@ -20,6 +21,23 @@ from mapping_workbench.backend.triple_map_fragment.models.entity import Specific
     GenericTripleMapFragment
 from mapping_workbench.backend.triple_map_registry.models.entity import TripleMapRegistry
 from mapping_workbench.backend.user.models.user import User
+from mapping_workbench.backend.xsd_schema.models.xsd_file_resource import XSDFileResource
+
+
+async def init_admin_user() -> None:
+    admin_user: User = User(
+        email=settings.DATABASE_ADMIN_NAME,
+        hashed_password=settings.DATABASE_ADMIN_HASHED_PASSWORD,
+        name="admin",
+        is_superuser=True,
+        is_verified=True
+    )
+
+    if await User.find_one(
+            User.email == admin_user.email
+    ).count() == 0:
+        await admin_user.create()
+    return
 
 
 async def init_project_models(mongodb_database: AsyncIOMotorDatabase):
@@ -51,6 +69,7 @@ async def init_project_models(mongodb_database: AsyncIOMotorDatabase):
             NamespaceCustom,
             Term,
             StructuralElement,
-            StructuralElementsVersionedView
+            StructuralElementsVersionedView,
+            XSDFileResource,
         ],
     )
