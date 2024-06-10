@@ -16,6 +16,8 @@ import {Layout as AppLayout} from 'src/layouts/app';
 import { FlureeClient } from '@fluree/fluree-client';
 import {ListTable} from "../../../sections/app/fluree/list-table";
 import {useEffect, useState} from "react";
+import Drawer from "@mui/material/Drawer";
+import Input from "@mui/material/Input";
 
 const client = await new FlureeClient({
   isFlureeHosted: true,
@@ -26,17 +28,15 @@ const client = await new FlureeClient({
 const Page = () => {
 
     const [items, setItems ] = useState([])
+    const [drawer, setDrawer] = useState({})
 
 const queryInstance = client.query({
-  "where": {
-    "@id": "freddy"
-  },
-  "select": "?s",
+      "select": { freddy: ['*'] },
   "from": "fluree-jld/387028092978552"
 });
 
 const transaction = client.transact({
-  insert: { '@id': 'freddy', name: 'Freddy' },
+  insert: { '@id': 'mark', name: 'Mark' },
 });
 //
 // const response = queryInstance.send()
@@ -95,14 +95,22 @@ const getDate = ( ) => {
                     </Stack>
                     <Button onClick={onInsert}>Click</Button>
                     <Button onClick={getDate}>Get</Button>
+                    <Button onClick={()=>setDrawer({open: true})}>Add item</Button>
 
                 </Stack>
                 <Card>
                     <ListTable
+                        onEdit={(id) => setDrawer({open:true, id})}
                         items={items}
                         sectionApi={sectionApi}/>
                 </Card>
             </Stack>
+            <Drawer
+            open={drawer.open}
+            onClose={() => setDrawer({})}>
+                <Typography>{drawer.id ? 'Edit' : 'Create'}</Typography>
+                <Input></Input>
+            </Drawer>
         </>
     )
 };

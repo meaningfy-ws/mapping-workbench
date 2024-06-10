@@ -1,43 +1,19 @@
 import {Fragment, useCallback, useState} from 'react';
 import PropTypes from 'prop-types';
-import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
-import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
-import CardContent from '@mui/material/CardContent';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import SvgIcon from '@mui/material/SvgIcon';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableSortLabel from '@mui/material/TableSortLabel';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Typography from '@mui/material/Typography';
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import Tooltip from "@mui/material/Tooltip";
-import Grid from "@mui/material/Grid";
 
-import {paths} from "src/paths";
 import {Scrollbar} from 'src/components/scrollbar';
-import {ListItemActions} from 'src/components/app/list/list-item-actions';
-import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import {PropertyList} from "../../../components/property-list";
-import {PropertyListItem} from "../../../components/property-list-item";
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import TablePagination from "../../components/table-pagination";
+import Button from "@mui/material/Button";
 
 
 export const ListTable = (props) => {
     const {
-        count = 0,
         items = [],
-        onPageChange = () => {
-        },
-        onRowsPerPageChange,
-        page = 0,
-        rowsPerPage = 0,
-        sectionApi
+        onEdit
     } = props;
 
 
@@ -74,10 +50,10 @@ export const ListTable = (props) => {
                         <TableHead>
                             <TableRow>
                                 <TableCell>
-                                    Element
+                                    Id
                                 </TableCell>
                                 <TableCell>
-                                    Parent
+                                    Name
                                 </TableCell>
                                 <TableCell>
                                     Versions
@@ -102,24 +78,16 @@ export const ListTable = (props) => {
                                             key={item_id}
                                         >
                                             <TableCell>
-                                                <Typography variant="subtitle2">
-                                                    {item.sdk_element_id}
-                                                </Typography>
-                                                {item.name}
+                                                {item["@id"]}
                                             </TableCell>
                                             <TableCell>
-                                                {item.parent_node_id}
+                                                {item.name}
                                             </TableCell>
                                             <TableCell>
                                                 {item.element_type}
                                             </TableCell>
                                             <TableCell align="right">
-                                                <ListItemActions
-                                                    itemctx={new ForListItemAction(item_id, sectionApi)}
-                                                    pathnames={{
-                                                        view: () => paths.app[sectionApi.section].elements.view(item_id)
-                                                    }}
-                                                />
+                                                <Button type='link' onClick={() => onEdit(item["@id"])}>Edit</Button>
                                             </TableCell>
                                         </TableRow>
                                     </Fragment>
