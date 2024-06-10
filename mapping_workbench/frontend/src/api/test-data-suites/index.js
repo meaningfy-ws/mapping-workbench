@@ -52,6 +52,15 @@ class TestDataSuitesApi extends FileCollectionsApi {
         } catch (err) {
         }
     }
+
+    importFileCollections(request) {
+        try {
+            let endpoint = this.paths['tasks']['import'];
+            const headers = {"Content-Type": "multipart/form-data"};
+            return appApi.post(endpoint, request, null, headers);
+        } catch (err) {
+        }
+    }
 }
 
 export const testDataSuitesApi = new TestDataSuitesApi();

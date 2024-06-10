@@ -5,7 +5,7 @@ from mapping_workbench.backend.config.adapters.config_resolver import env_proper
 
 ENV_PRODUCTION = "prod"
 
-dotenv.load_dotenv(verbose=True)
+dotenv.load_dotenv(verbose=True, override=True)
 
 
 class AppSettings(BaseSettings):
@@ -53,6 +53,10 @@ class DatabaseSettings(BaseSettings):
 
     @env_property(config_key='MW_ADMIN_PASSWORD')
     def DATABASE_ADMIN_PASSWORD(self, config_value: str) -> str:
+        return config_value
+
+    @env_property(config_key='MW_ADMIN_HASHED_PASSWORD')
+    def DATABASE_ADMIN_HASHED_PASSWORD(self, config_value: str) -> str:
         return config_value
 
 
@@ -106,6 +110,21 @@ class GoogleOAuthSettings(BaseSettings):
         return config_value
 
 
+class FrontendSettings(BaseSettings):
+
+    @env_property()
+    def MW_FRONTEND_ADDRESS(self, config_value: str) -> str:
+        return config_value
+
+    @env_property()
+    def MW_FRONTEND_SERVER_HOST(self, config_value: str) -> str:
+        return config_value
+
+    @env_property()
+    def MW_FRONTEND_SERVER_PORT(self, config_value: str) -> str:
+        return config_value
+
+
 class Settings(
     AppSettings,
     ServerSettings,
@@ -115,6 +134,7 @@ class Settings(
     TaskManagerSettings,
     EnvironmentSettings,
     GoogleOAuthSettings,
+    FrontendSettings
 ):
     pass
 

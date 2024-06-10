@@ -4,6 +4,10 @@ from beanie import PydanticObjectId
 from pydantic import BaseModel
 
 
+class APIEmptyContentResponse(BaseModel):
+    pass
+
+
 class APIEmptyContentWithIdResponse(BaseModel):
     id: PydanticObjectId
 

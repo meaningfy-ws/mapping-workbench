@@ -39,8 +39,6 @@ const CustomApp = (props) => {
   useNprogress();
   const getLayout = Component.getLayout ?? ((page) => page);
 
-  console.log(session)
-
   return (
 
     <CacheProvider value={emotionCache}>

@@ -60,6 +60,7 @@ import {toastSuccess} from "../../../components/app-toast";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import TablePagination from "../../components/table-pagination";
 import TableSorterHeader from "../../components/table-sorter-header";
+import {sessionApi} from "../../../api/session";
 
 
 export const ListTableTripleMapFragment = (props) => {
@@ -139,6 +140,7 @@ export const ListTableTripleMapFragment = (props) => {
         const values = {}
         const tripleMapFragmentId = tripleMapFragment?._id ?? null;
         values['id'] = item._id;
+        values['project'] = sessionApi.getSessionProject();
         values['triple_map_fragment'] = tripleMapFragmentId;
         await conceptualMappingRulesApi.updateItem(values);
         setRuleTripleMapFragment(tripleMapFragmentId);

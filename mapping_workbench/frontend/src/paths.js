@@ -7,6 +7,10 @@ export const paths = {
         },
         auth0: {
             login: '/auth/auth0/login'
+        },
+        google: {
+            authorize: '/auth/google/authorize',
+            callback: '/auth/google/callback'
         }
     },
     app: {
@@ -189,7 +193,8 @@ export const paths = {
     docs: 'https://material-kit-pro-react-docs.devias.io',
     notAuthorized: '/401',
     notFound: '/404',
-    serverError: '/500'
+    serverError: '/500',
+    underConstruction: '/under-construction'
 };
 
 
@@ -205,6 +210,7 @@ export const apiPaths = {
         file_resource: '/test_data_suites/file_resources/:id',
         tasks: {
             transform_test_data: '/test_data_suites/tasks/transform_test_data',
+            import: '/test_data_suites/tasks/import',
         },
         file_resources_struct_tree: '/test_data_suites/file_resources_struct_tree/'
     },

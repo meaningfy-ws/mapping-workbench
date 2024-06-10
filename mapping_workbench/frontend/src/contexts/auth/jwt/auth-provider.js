@@ -74,7 +74,6 @@ export const AuthProvider = (props) => {
     const initialize = useCallback(async () => {
         try {
             const accessToken = sessionApi.getStorage().getItem(STORAGE_KEY);
-
             if (accessToken) {
                 const user = await authApi.me({accessToken});
 

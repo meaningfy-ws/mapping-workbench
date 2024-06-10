@@ -30,3 +30,17 @@ class DuplicateKeyException(HTTPException):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Duplicate key: {details}!"
         )
+
+
+class ResourceConflictException(HTTPException):
+    def __init__(
+            self,
+            status_code: int = None,
+            detail: Any = None,
+            headers: Optional[Dict[str, Any]] = None,
+    ) -> None:
+        super().__init__(
+            status_code=(status_code or status.HTTP_409_CONFLICT),
+            detail=(detail or "Resource exists!"),
+            headers=headers
+        )

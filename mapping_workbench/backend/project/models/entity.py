@@ -20,6 +20,9 @@ from mapping_workbench.backend.core.models.base_entity import BaseEntity, BaseEn
 # from mapping_workbench.backend.triple_map_registry.models.entity import TripleMapRegistry
 
 
+class ProjectNotFoundException(Exception):
+    pass
+
 class SourceSchemaType(Enum):
     JSON = "JSON"
     XSD = "XSD"
