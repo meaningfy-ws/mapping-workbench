@@ -19,6 +19,8 @@ import {useFormik} from "formik";
 import {FormTextField} from "../../../components/app/form/text-field";
 import * as Yup from "yup";
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
+import {TableLoadWrapper} from "../../../sections/app/shacl_validation_report/utils";
+import CardContent from "@mui/material/CardContent";
 
 const client = await new FlureeClient({
   isFlureeHosted: true,
@@ -30,6 +32,7 @@ const Page = () => {
 
     const [items, setItems ] = useState([])
     const [state, setState] = useState({})
+    const [dataState, setDataState] = useState({})
 
     const postTransaction = (id, type, description) => client.transact({
           "@context": {
@@ -74,7 +77,7 @@ const Page = () => {
     })
 
     const addItem = (id, type, description) => {
-        setState(e=> ({...e, load: true}))
+        setState(e=> ({ ...e, load: true }))
         const toastId = toastLoad('Adding item...')
         postTransaction(id, type, description).send()
             .then(res => {
@@ -115,10 +118,13 @@ const Page = () => {
 
 
     const getItems = () => {
-      getTransaction.send()
-       .then(res => {
-            setItems(res)
-       })
+        setDataState(e=> ({...e, load: true}))
+        getTransaction.send()
+           .then(res => {
+               setDataState(e => ({}))
+               setItems(res)
+           })
+          .catch(err => setDataState({load: false, error: err}))
     }
 
     useEffect(() => {
@@ -177,12 +183,15 @@ const Page = () => {
 
                 </Stack>
                 <Card>
-                    <ListTable
-                        onEdit={(item) => setState({ drawerOpen: true, item })}
-                        onDelete={(item) => deleteItem(item["@id"],item['@type'])}
-                        items={items}
-                        disabled={state.load}
-                        sectionApi={sectionApi}/>
+                    <TableLoadWrapper dataState={dataState}
+                              data={items}>
+                        <ListTable
+                            onEdit={(item) => setState({ drawerOpen: true, item })}
+                            onDelete={(item) => deleteItem(item["@id"],item['@type'])}
+                            items={items}
+                            disabled={state.load}
+                            sectionApi={sectionApi}/>
+                    </TableLoadWrapper>
                 </Card>
             </Stack>
             <Drawer
@@ -191,24 +200,29 @@ const Page = () => {
                 onClose={() => setState(e=>({...e, drawerOpen: false}))}>
                 <form onSubmit={formik.handleSubmit}
                      >
-                    <Card>
-                        <CardHeader title={state.item ? 'Edit' : 'Create'}/>
-                        <Stack direction='column'
-                               gap={3}>
-                            <Typography></Typography>
-                            <FormTextField formik={formik}
-                                           name="@id"
-                                           label="Id"/>
-                            <FormTextField formik={formik}
-                                           name="@type"
-                                           label="Type"/>
-                            <FormTextField formik={formik}
-                                           name="schema:description"
-                                           label="Description"/>
-                        </Stack>
-                    </Card>
-                    <Button type='submit'
+
+                    <Card sx={{width: 400}} >
+                        <CardHeader title={state.item ? 'Edit Item' : 'Create Item'}/>
+                        <CardContent>
+                            <Stack direction='column'
+                                   gap={3}>
+                                <Typography></Typography>
+                                <FormTextField formik={formik}
+                                               name="@id"
+                                               label="Id"/>
+                                <FormTextField formik={formik}
+                                               name="@type"
+                                               label="Type"/>
+                                <FormTextField formik={formik}
+                                               name="schema:description"
+                                               label="Description"/>
+                            </Stack>
+                        </CardContent>
+                          <Button type='submit'
+                                  sx={{width: '100%'}}
                             disabled={state.load}>Save</Button>
+                    </Card>
+
                 </form>
             </Drawer>
         </>
