@@ -84,6 +84,7 @@ export const tokens = {
         project_setup: 'nav.project_setup',
         terms_validator: 'nav.terms_validator',
         tasks: 'nav.tasks',
+        fluree: 'nav.fluree',
 
         generate_cm_assertions_queries: 'nav.generate_cm_assertions_queries',
         assertions_queries: 'nav.assertions_queries',

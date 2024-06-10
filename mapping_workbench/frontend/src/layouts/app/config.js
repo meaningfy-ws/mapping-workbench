@@ -295,6 +295,10 @@ export const useSections = () => {
                             path: paths.app.users.edit
                         }
                     ]
+                },
+                {
+                    title: t(tokens.nav.fluree),
+                    path: paths.app.fluree.index
                 }
             ]
         });

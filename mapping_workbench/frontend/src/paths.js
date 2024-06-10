@@ -181,6 +181,9 @@ export const paths = {
             terms_validator: '/app/tasks/terms_validator',
             transform_test_data: '/app/tasks/transform_test_data',
             generate_cm_assertions_queries: '/app/tasks/generate_cm_assertions_queries'
+        },
+        fluree: {
+            index: '/app/fluree'
         }
     },
     docs: 'https://material-kit-pro-react-docs.devias.io',

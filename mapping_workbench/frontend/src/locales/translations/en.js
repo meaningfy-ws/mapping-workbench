@@ -84,4 +84,5 @@ export const en = {
   [tokens.nav.generate_cm_assertions_queries]: 'Generate CM Assertions Queries',
   [tokens.nav.assertions_queries]: 'SPARQL Queries',
   [tokens.nav.transform_test_data]: 'Transform Test Data',
+  [tokens.nav.fluree]: 'Fluree'
 };
