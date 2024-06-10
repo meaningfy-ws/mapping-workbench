@@ -1,4 +1,3 @@
-import {useCallback, useState} from 'react';
 import PropTypes from 'prop-types';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -14,7 +13,8 @@ export const ListTable = (props) => {
     const {
         items = [],
         onEdit,
-        onDelete
+        onDelete,
+        disabled
     } = props;
 
 
@@ -27,16 +27,21 @@ export const ListTable = (props) => {
                             Id
                         </TableCell>
                         <TableCell>
-                            Name
+                            Type
+                        </TableCell>
+                         <TableCell>
+                            Description
                         </TableCell>
                         <TableCell align="right">
-                            Actions
+                            Action
                         </TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {items.map((item) => {
                         const item_id = item["@id"];
+                        const item_type = item["@type"]
+                        const item_description= item["schema:description"]
 
                         return (
                                 <TableRow
@@ -46,15 +51,20 @@ export const ListTable = (props) => {
                                     <TableCell>
                                         {item_id}
                                     </TableCell>
+                                     <TableCell>
+                                        {item_type}
+                                    </TableCell>
                                     <TableCell>
-                                        {item.name}
+                                        {item_description}
                                     </TableCell>
                                     <TableCell align="right">
                                         <Button type='link'
                                                 color="success"
+                                                disabled={disabled}
                                                 onClick={() => onEdit(item)}>Edit</Button>
                                         <Button type='link'
                                                 color="error"
+                                                disabled={disabled}
                                                 onClick={() => onDelete(item)}>Delete</Button>
                                     </TableCell>
                                 </TableRow>

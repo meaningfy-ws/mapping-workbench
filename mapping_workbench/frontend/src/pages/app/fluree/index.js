@@ -18,6 +18,7 @@ import CardHeader from "@mui/material/CardHeader";
 import {useFormik} from "formik";
 import {FormTextField} from "../../../components/app/form/text-field";
 import * as Yup from "yup";
+import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 
 const client = await new FlureeClient({
   isFlureeHosted: true,
@@ -28,49 +29,95 @@ const client = await new FlureeClient({
 const Page = () => {
 
     const [items, setItems ] = useState([])
-    const [drawer, setDrawer] = useState({})
+    const [state, setState] = useState({})
 
-    const queryInstance = client.query({
-         "from": "fluree-jld/387028092978552",
-          "where": {
-            "@id": "?s",
-            "name": "?name"
+    const postTransaction = (id, type, description) => client.transact({
+          "@context": {
+            "ex": "http://example.org/",
+            "schema": "http://schema.org/"
           },
-          "select": { "?s": ["*"] }
-    });
-
-    const transaction = client.transact({
-      insert: { '@id': 'tom', name: 'Thomas' },
-    });
-
-    const deleteTransaction = (id) => client.transact({
-        delete: {'@id': id}
+          "insert": [
+            {
+              "@id": id,
+              "@type": type,
+              "schema:description": description
+            }
+          ]
     })
 
-    const addItem = (id,name) => {
-        client.transact({insert: {'@id': id, name}}).send()
+    const getTransaction = client.query({
+          "@context": {
+            "ex": "http://example.org/",
+            "schema": "http://schema.org/"
+          },
+          "from": "fluree-jld/387028092978552",
+          "where": {
+            "@id": "?s",
+            "schema:description": "?o"
+          },
+          "selectDistinct": { "?s": ["*"] }
+    })
+
+    const deleteTransaction = (id,type) => client.transact({
+        "@context": {
+            "ex":  "http://example.org/"
+        },
+        "ledger": "fluree-jld/387028092978552",
+        "where": {
+            "@id": id,
+            "?p": "?o"
+        },
+        "delete": {
+            "@id": id,
+            "?p": "?o"
+        }
+    })
+
+    const addItem = (id, type, description) => {
+        setState(e=> ({...e, load: true}))
+        const toastId = toastLoad('Adding item...')
+        postTransaction(id, type, description).send()
+            .then(res => {
+                toastSuccess('Added successfully', toastId)
+                getItems()
+                setState(e=>({ ...e, drawerOpen: false, load: false }))
+            })
+            .catch(err => toastError(err, toastId))
+    }
+
+    const updateItem = (oldId, id, type, description) => {
+        setState(e=>({ ...e, load: true }))
+        const toastId = toastLoad('Updating item...')
+        deleteTransaction(oldId).send()
+            .then(res => {
+                postTransaction(id, type, description).send()
+                    .then(res => {
+                        setState(e=>({ ...e, drawerOpen: false, load: false }))
+                        getItems()
+                        toastSuccess('Updated successfully',toastId)
+                    })
+                }
+            )
+            .catch(err => toastError(err, toastId))
+    }
+
+    const deleteItem = (id, type) => {
+        setState(e=>({...e, load: true}))
+        const toastId = toastLoad('Deleting item...')
+        deleteTransaction(id, type).send()
             .then(res => {
                 getItems()
-                setDrawer(e=>({...e, open:false}))
+                toastSuccess('Deleted successfully', toastId)
             })
+            .catch(err => toastError(err, toastId))
+            .finally(()=> setState(e => ({ ...e, load: false })))
     }
 
-    const deleteItem = (id, name) => {
-        client.transact({delete: {'@id': id, name}}).send()
-            .then(res => {
-                getItems()
-            })
-    }
-
-    const updateItem = (id,name) => {
-
-    }
 
     const getItems = () => {
-      queryInstance.send()
+      getTransaction.send()
        .then(res => {
             setItems(res)
-            console.log(res)
        })
     }
 
@@ -83,18 +130,21 @@ const Page = () => {
 
     const formik = useFormik({
         initialValues: {
-            '@id': drawer.item?.['@id'] || '',
-            name: drawer.item?.name || ''
+            '@id': state.item?.['@id'] || '',
+            '@type': state.item?.['@type'] || '',
+            'schema:description': state.item?.['schema:description'] || ''
         },
         validationSchema: Yup.object({
             "@id": Yup
                 .string()
                 .max(255)
                 .required('@Id is required'),
-            name: Yup.string().max(255).required('Name is required')
+            "@type": Yup.string().max(255).required('Type is required')
         }),
-        onSubmit: async (values, helpers) => {
-            addItem(values['@id'],values.name)
+        onSubmit: (values, helpers) => {
+            if(state.item?.['@id'])
+                updateItem(state.item['@id'], values['@id'], values['@type'], values['schema:description'])
+            else addItem(values['@id'],values['@type'], values['schema:description'])
         },
         enableReinitialize: true
     })
@@ -122,37 +172,43 @@ const Page = () => {
                             </Typography>
                         </Breadcrumbs>
                     </Stack>
-                    <Button onClick={()=>setDrawer({open: true})}>Add item</Button>
+                    <Button disabled={state.load}
+                            onClick={()=>setState({ drawerOpen: true })}>Add item</Button>
 
                 </Stack>
                 <Card>
                     <ListTable
-                        onEdit={(item) => setDrawer({open:true, item})}
-                        onDelete={(item) => deleteItem(item["@id"],item.name)}
+                        onEdit={(item) => setState({ drawerOpen: true, item })}
+                        onDelete={(item) => deleteItem(item["@id"],item['@type'])}
                         items={items}
+                        disabled={state.load}
                         sectionApi={sectionApi}/>
                 </Card>
             </Stack>
             <Drawer
                 anchor='right'
-                open={drawer.open}
-                onClose={() => setDrawer({})}>
+                open={state.drawerOpen}
+                onClose={() => setState(e=>({...e, drawerOpen: false}))}>
                 <form onSubmit={formik.handleSubmit}
                      >
                     <Card>
-                        <CardHeader title={drawer.item ? 'Edit' : 'Create'}/>
+                        <CardHeader title={state.item ? 'Edit' : 'Create'}/>
                         <Stack direction='column'
                                gap={3}>
                             <Typography></Typography>
                             <FormTextField formik={formik}
                                            name="@id"
                                            label="Id"/>
-                              <FormTextField formik={formik}
-                                   name="name"
-                                   label="Name"/>
+                            <FormTextField formik={formik}
+                                           name="@type"
+                                           label="Type"/>
+                            <FormTextField formik={formik}
+                                           name="schema:description"
+                                           label="Description"/>
                         </Stack>
                     </Card>
-                    <Button type='submit'>Save</Button>
+                    <Button type='submit'
+                            disabled={state.load}>Save</Button>
                 </form>
             </Drawer>
         </>
