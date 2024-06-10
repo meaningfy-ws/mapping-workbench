@@ -1,23 +1,20 @@
-import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
+import {useEffect, useState} from "react";
+import { FlureeClient } from '@fluree/fluree-client';
+
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
-import SvgIcon from '@mui/material/SvgIcon';
+import TextField from "@mui/material/TextField";
+import Drawer from "@mui/material/Drawer";
 import Typography from '@mui/material/Typography';
 
 import {flureeApi as sectionApi} from 'src/api/fluree';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
-import { FlureeClient } from '@fluree/fluree-client';
-import {ListTable} from "../../../sections/app/fluree/list-table";
-import {useEffect, useState} from "react";
-import Drawer from "@mui/material/Drawer";
-import Input from "@mui/material/Input";
+import {ListTable} from "src/sections/app/fluree/list-table";
 
 const client = await new FlureeClient({
   isFlureeHosted: true,
@@ -30,20 +27,18 @@ const Page = () => {
     const [items, setItems ] = useState([])
     const [drawer, setDrawer] = useState({})
 
-const queryInstance = client.query({
-      "select": { freddy: ['*'] },
-  "from": "fluree-jld/387028092978552"
-});
+    const queryInstance = client.query({
+         "from": "fluree-jld/387028092978552",
+          "where": {
+            "@id": "?s",
+            "name": "?name"
+          },
+          "select": { "?s": ["*"] }
+    });
 
-const transaction = client.transact({
-  insert: { '@id': 'mark', name: 'Mark' },
-});
-//
-// const response = queryInstance.send()
-//     .then(res => {
-//         setItems(res)
-//         console.log(res)
-//     })
+    const transaction = client.transact({
+      insert: { '@id': 'tom', name: 'Thomas' },
+    });
 
 
     useEffect(() => {
@@ -100,16 +95,28 @@ const getDate = ( ) => {
                 </Stack>
                 <Card>
                     <ListTable
-                        onEdit={(id) => setDrawer({open:true, id})}
+                        onEdit={(item) => setDrawer({open:true, item})}
                         items={items}
                         sectionApi={sectionApi}/>
                 </Card>
             </Stack>
             <Drawer
-            open={drawer.open}
-            onClose={() => setDrawer({})}>
-                <Typography>{drawer.id ? 'Edit' : 'Create'}</Typography>
-                <Input></Input>
+                anchor='right'
+                open={drawer.open}
+                onClose={() => setDrawer({})}>
+                <Card>
+                    <Stack direction='column'
+                           gap={3}>
+                        <Typography>{drawer.item ? 'Edit' : 'Create'}</Typography>
+                        <TextField
+                            label="@id"
+                            value={drawer.item?.['@id']}/>
+                        <TextField
+                            label="Name"
+                            value={drawer.item?.name}/>
+                    </Stack>
+                </Card>
+                <Button>Save</Button>
             </Drawer>
         </>
     )

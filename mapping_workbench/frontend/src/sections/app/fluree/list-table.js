@@ -1,4 +1,4 @@
-import {Fragment, useCallback, useState} from 'react';
+import {useCallback, useState} from 'react';
 import PropTypes from 'prop-types';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -17,86 +17,48 @@ export const ListTable = (props) => {
     } = props;
 
 
-    const [currentItem, setCurrentItem] = useState(null);
-
-    const handleItemToggle = useCallback((itemId) => {
-        setCurrentItem((prevItemId) => {
-            if (prevItemId === itemId) {
-                return null;
-            }
-
-            return itemId;
-        });
-    }, []);
-
-    // const handleItemClose = useCallback(() => {
-    //     setCurrentItem(null);
-    // }, []);
-
-    // const handleItemUpdate = useCallback(() => {
-    //     setCurrentItem(null);
-    //     toast.success('Item updated');
-    // }, []);
-
-    // const handleItemDelete = useCallback(() => {
-
-    //     toast.error('Item cannot be deleted');
-    // }, []);
-
     return (
-        <div>
-                <Scrollbar>
-                    <Table sx={{minWidth: 1200}}>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>
-                                    Id
-                                </TableCell>
-                                <TableCell>
-                                    Name
-                                </TableCell>
-                                <TableCell>
-                                    Versions
-                                </TableCell>
-                                <TableCell>
-                                    Type
-                                </TableCell>
-                                <TableCell align="right">
-                                    Actions
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {items.map((item) => {
-                                const item_id = item._id;
-                                const isCurrent = item_id === currentItem;
+        <Scrollbar>
+            <Table >
+                <TableHead>
+                    <TableRow>
+                        <TableCell>
+                            Id
+                        </TableCell>
+                        <TableCell>
+                            Name
+                        </TableCell>
+                        <TableCell align="right">
+                            Actions
+                        </TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {items.map((item) => {
+                        const item_id = item["@id"];
 
-                                return (
-                                    <Fragment key={item_id}>
-                                        <TableRow
-                                            hover
-                                            key={item_id}
-                                        >
-                                            <TableCell>
-                                                {item["@id"]}
-                                            </TableCell>
-                                            <TableCell>
-                                                {item.name}
-                                            </TableCell>
-                                            <TableCell>
-                                                {item.element_type}
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                <Button type='link' onClick={() => onEdit(item["@id"])}>Edit</Button>
-                                            </TableCell>
-                                        </TableRow>
-                                    </Fragment>
-                                );
-                            })}
-                        </TableBody>
-                    </Table>
-                </Scrollbar>
-        </div>
+                        return (
+                                <TableRow
+                                    hover
+                                    key={item_id}
+                                >
+                                    <TableCell>
+                                        {item_id}
+                                    </TableCell>
+                                    <TableCell>
+                                        {item.name}
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        <Button type='link'
+                                                color="success"
+                                                onClick={() => onEdit(item)}>Edit</Button>
+                                    </TableCell>
+                                </TableRow>
+                        );
+                    })}
+                </TableBody>
+            </Table>
+        </Scrollbar>
     );
 };
 

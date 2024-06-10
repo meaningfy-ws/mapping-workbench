@@ -4,7 +4,7 @@ import {sessionApi} from "../session";
 
 class FlureeApi extends SectionApi {
     get SECTION_TITLE() {
-        return "Fields Registry";
+        return "Fluree";
     }
 
     get SECTION_TREE_TITLE() {
@@ -19,19 +19,6 @@ class FlureeApi extends SectionApi {
         return [ACTION.VIEW];
     }
 
-    constructor() {
-        super("fields_registry");
-        this.isProjectResource = true;
-    }
-
-    importEFormsFromGithub(request) {
-        try {
-            let endpoint = this.paths['import_eforms_from_github'];
-            const headers = {"Content-Type": "multipart/form-data"};
-            return appApi.post(endpoint, request, null, headers);
-        } catch (err) {
-        }
-    }
 
     async getItemsTree() {
         let filters = {}
@@ -39,15 +26,6 @@ class FlureeApi extends SectionApi {
             filters['project'] = sessionApi.getSessionProject();
         }
         return await appApi.get(this.paths['elements_tree'], filters);
-    }
-
-    async getStructuralElementsForSelector(request = {}) {
-        request.page = 0;
-        request.rowsPerPage = -1;
-        let structuralElementsStore = await this.getItems(request, 'elements');
-        return structuralElementsStore.items.map(
-            structuralElement => ({id: structuralElement._id, sdk_element_id: structuralElement.sdk_element_id})
-        ).sort((a, b) => a.sdk_element_id.localeCompare(b.sdk_element_id));
     }
 }
 
