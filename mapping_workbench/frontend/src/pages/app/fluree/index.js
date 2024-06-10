@@ -5,7 +5,6 @@ import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-import TextField from "@mui/material/TextField";
 import Drawer from "@mui/material/Drawer";
 import Typography from '@mui/material/Typography';
 
@@ -15,6 +14,10 @@ import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {ListTable} from "src/sections/app/fluree/list-table";
+import CardHeader from "@mui/material/CardHeader";
+import {useFormik} from "formik";
+import {FormTextField} from "../../../components/app/form/text-field";
+import * as Yup from "yup";
 
 const client = await new FlureeClient({
   isFlureeHosted: true,
@@ -40,30 +43,61 @@ const Page = () => {
       insert: { '@id': 'tom', name: 'Thomas' },
     });
 
+    const deleteTransaction = (id) => client.transact({
+        delete: {'@id': id}
+    })
+
+    const addItem = (id,name) => {
+        client.transact({insert: {'@id': id, name}}).send()
+            .then(res => {
+                getItems()
+                setDrawer(e=>({...e, open:false}))
+            })
+    }
+
+    const deleteItem = (id, name) => {
+        client.transact({delete: {'@id': id, name}}).send()
+            .then(res => {
+                getItems()
+            })
+    }
+
+    const updateItem = (id,name) => {
+
+    }
+
+    const getItems = () => {
+      queryInstance.send()
+       .then(res => {
+            setItems(res)
+            console.log(res)
+       })
+    }
 
     useEffect(() => {
-
-       queryInstance.send()
-    .then(res => {
-        setItems(res)
-        console.log(res)
-    })
+        getItems()
     }, []);
-
-const getDate = ( ) => {
-
-       queryInstance.send()
-    .then(res => {
-        setItems(res)
-        console.log(res)
-    })
-}
 
     usePageView();
 
-    // console.log(txn)
 
-    const onInsert = () => transaction.send()
+    const formik = useFormik({
+        initialValues: {
+            '@id': drawer.item?.['@id'] || '',
+            name: drawer.item?.name || ''
+        },
+        validationSchema: Yup.object({
+            "@id": Yup
+                .string()
+                .max(255)
+                .required('@Id is required'),
+            name: Yup.string().max(255).required('Name is required')
+        }),
+        onSubmit: async (values, helpers) => {
+            addItem(values['@id'],values.name)
+        },
+        enableReinitialize: true
+    })
 
     return (
         <>
@@ -88,14 +122,13 @@ const getDate = ( ) => {
                             </Typography>
                         </Breadcrumbs>
                     </Stack>
-                    <Button onClick={onInsert}>Click</Button>
-                    <Button onClick={getDate}>Get</Button>
                     <Button onClick={()=>setDrawer({open: true})}>Add item</Button>
 
                 </Stack>
                 <Card>
                     <ListTable
                         onEdit={(item) => setDrawer({open:true, item})}
+                        onDelete={(item) => deleteItem(item["@id"],item.name)}
                         items={items}
                         sectionApi={sectionApi}/>
                 </Card>
@@ -104,22 +137,26 @@ const getDate = ( ) => {
                 anchor='right'
                 open={drawer.open}
                 onClose={() => setDrawer({})}>
-                <Card>
-                    <Stack direction='column'
-                           gap={3}>
-                        <Typography>{drawer.item ? 'Edit' : 'Create'}</Typography>
-                        <TextField
-                            label="@id"
-                            value={drawer.item?.['@id']}/>
-                        <TextField
-                            label="Name"
-                            value={drawer.item?.name}/>
-                    </Stack>
-                </Card>
-                <Button>Save</Button>
+                <form onSubmit={formik.handleSubmit}
+                     >
+                    <Card>
+                        <CardHeader title={drawer.item ? 'Edit' : 'Create'}/>
+                        <Stack direction='column'
+                               gap={3}>
+                            <Typography></Typography>
+                            <FormTextField formik={formik}
+                                           name="@id"
+                                           label="Id"/>
+                              <FormTextField formik={formik}
+                                   name="name"
+                                   label="Name"/>
+                        </Stack>
+                    </Card>
+                    <Button type='submit'>Save</Button>
+                </form>
             </Drawer>
         </>
-    )
+)
 };
 
 Page.getLayout = (page) => (

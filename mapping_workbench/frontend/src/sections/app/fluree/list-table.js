@@ -13,7 +13,8 @@ import Button from "@mui/material/Button";
 export const ListTable = (props) => {
     const {
         items = [],
-        onEdit
+        onEdit,
+        onDelete
     } = props;
 
 
@@ -52,6 +53,9 @@ export const ListTable = (props) => {
                                         <Button type='link'
                                                 color="success"
                                                 onClick={() => onEdit(item)}>Edit</Button>
+                                        <Button type='link'
+                                                color="error"
+                                                onClick={() => onDelete(item)}>Delete</Button>
                                     </TableCell>
                                 </TableRow>
                         );
