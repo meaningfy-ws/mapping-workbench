@@ -72,10 +72,10 @@ export const useSections = () => {
             //     title: t(tokens.nav.project_description) + ' (dev)',
             //     path: paths.app.index
             // },
-            // {
-            //     title: t(tokens.nav.schema_files) + ' (dev)',
-            //     path: paths.underConstruction
-            // },
+            {
+                title: t(tokens.nav.schema_files) + ' (dev)',
+                path: paths.app.schema_files.index
+            },
             //  {
             //     title: t(tokens.nav.ontology_files) + ' (dev)',
             //     path: paths.underConstruction
