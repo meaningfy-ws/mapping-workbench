@@ -68,18 +68,18 @@ export const useSections = () => {
     items.project.push({
         subheader: t(tokens.nav.project_setup),
         items: [
-            {
-                title: t(tokens.nav.project_description) + ' (dev)',
-                path: paths.app.index
-            },
-            {
-                title: t(tokens.nav.schema_files) + ' (dev)',
-                path: paths.underConstruction
-            },
-             {
-                title: t(tokens.nav.ontology_files) + ' (dev)',
-                path: paths.underConstruction
-            },
+            // {
+            //     title: t(tokens.nav.project_description) + ' (dev)',
+            //     path: paths.app.index
+            // },
+            // {
+            //     title: t(tokens.nav.schema_files) + ' (dev)',
+            //     path: paths.underConstruction
+            // },
+            //  {
+            //     title: t(tokens.nav.ontology_files) + ' (dev)',
+            //     path: paths.underConstruction
+            // },
             {
                 title: t(tokens.nav.ontology),
                 path: paths.app.ontology.index,
@@ -130,10 +130,10 @@ export const useSections = () => {
     items.conceptualMappings.push({
         subheader: t(tokens.nav.conceptual_mappings),
         items:[
-            {
-                title: t(tokens.nav.develop_cm) + ' (dev)',
-                path: paths.underConstruction
-            },
+            // {
+            //     title: t(tokens.nav.develop_cm) + ' (dev)',
+            //     path: paths.underConstruction
+            // },
             {
                 title: t(tokens.nav.review_cm),
                 path: paths.app.conceptual_mapping_rules.index,
@@ -143,14 +143,15 @@ export const useSections = () => {
                     </SvgIcon>
                 )
             },
-            {
-                title: t(tokens.nav.grouping_cm) + ' (dev)',
-                path: paths.underConstruction
-            },
-            {
-                title: t(tokens.nav.packaging_cm) + ' (dev)',
-                path: paths.underConstruction
-            }]
+            // {
+            //     title: t(tokens.nav.grouping_cm) + ' (dev)',
+            //     path: paths.underConstruction
+            // },
+            // {
+            //     title: t(tokens.nav.packaging_cm) + ' (dev)',
+            //     path: paths.underConstruction
+            // }
+            ]
     })
 
     items.technicalMappings.push({
@@ -160,10 +161,10 @@ export const useSections = () => {
                 title: t(tokens.nav.triple_map_fragments),
                 path: paths.app.generic_triple_map_fragments.index
             },
-            {
-                title: t(tokens.nav.link_cms_and_triple_maps) + ' (dev)',
-                path: paths.underConstruction
-            },
+            // {
+            //     title: t(tokens.nav.link_cms_and_triple_maps) + ' (dev)',
+            //     path: paths.underConstruction
+            // },
             {
                 title: t(tokens.nav.value_mapping_resources),
                 path: paths.app.resource_collections.index
@@ -174,14 +175,14 @@ export const useSections = () => {
     items.qualityControl.push({
         subheader: t(tokens.nav.quality_control),
         items:[
-            {
-                title: t(tokens.nav.validation_execution) + ' (dev)',
-                path: paths.underConstruction
-            },
-            {
-                title: t(tokens.nav.validation_reports) + ' (dev)',
-                path: paths.underConstruction
-            },
+            // {
+            //     title: t(tokens.nav.validation_execution) + ' (dev)',
+            //     path: paths.underConstruction
+            // },
+            // {
+            //     title: t(tokens.nav.validation_reports) + ' (dev)',
+            //     path: paths.underConstruction
+            // },
             {
                 title: t(tokens.nav.sparql_test_suites),
                 path: paths.app.sparql_test_suites.index,
