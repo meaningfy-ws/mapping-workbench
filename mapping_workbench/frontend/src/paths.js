@@ -336,7 +336,8 @@ export const apiPaths = {
     },
 
     schema_files: {
-        items: '/xsd_schema/xsd_files'
+        items: '/xsd_schema/xsd_files',
+        file: (id) => `/xsd_schema/xsd_files?project_id=${id}`
     },
 
     tasks: {

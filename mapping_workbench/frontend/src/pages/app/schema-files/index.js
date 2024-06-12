@@ -8,18 +8,17 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {paths} from "src/paths";
 import {Seo} from 'src/components/seo';
 import {Layout as AppLayout} from 'src/layouts/app';
-import {schemaFilesApi, schemaFilesApi as sectionApi} from 'src/api/schema-files';
+import {schemaFilesApi as sectionApi} from 'src/api/schema-files';
 import {useDialog} from 'src/hooks/use-dialog';
 import {usePageView} from 'src/hooks/use-page-view';
-import {FileUploader} from 'src/sections/app/file-manager/file-uploader';
+import {FileUploader} from 'src/sections/app/schema-files/file-uploader';
 import {ItemDrawer} from 'src/sections/app/file-manager/item-drawer';
-import {ItemList} from 'src/sections/app/file-manager/item-list';
 import {ItemSearch} from 'src/sections/app/file-manager/item-search';
-import {useRouter} from "src/hooks/use-router";
 import Link from "next/link";
+import {schemaFileResourcesApi as fileResourcesApi} from "../../../api/schema-files/file-resources";
+import {ItemList} from "../../../sections/app/file-manager/item-list";
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -106,8 +105,6 @@ const Page = () => {
             const response = await sectionApi.getXSDFiles();
             // const collection = await sectionApi.getItem(id);
 
-            console.log(response)
-
             setState({
                 items: response.items,
                 itemsCount: response.count
@@ -135,9 +132,6 @@ const Page = () => {
                         spacing={4}
                     >
                         <div>
-                            <Typography variant="h4">
-                                {state.collection.title}
-                            </Typography>
                             <Typography variant="h5">
                                 Resource Manager
                             </Typography>
@@ -202,7 +196,7 @@ const Page = () => {
                             rowsPerPage={itemsSearch.state.rowsPerPage}
                             view={view}
                             sectionApi={sectionApi}
-                            // fileResourcesApi={fileResourcesApi}
+                            fileResourcesApi={fileResourcesApi}
                             onGetItems={handleItemsGet}
                         />
                     </Stack>
@@ -218,8 +212,9 @@ const Page = () => {
                 onClose={uploadDialog.handleClose}
                 open={uploadDialog.open}
                 onGetItems={handleItemsGet}
-                // collectionId={id}
-                sectionApi={schemaFilesApi}
+                sectionApi={fileResourcesApi}
+                onlyAcceptedFormats
+                disableSelectFormat
             />
         </>
     );

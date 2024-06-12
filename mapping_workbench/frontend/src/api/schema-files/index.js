@@ -15,15 +15,6 @@ class SchemaFilesApi  extends SectionApi {
         return [ACTION.VIEW];
     }
 
-    get FILE_RESOURCE_DEFAULT_FORMAT() {
-        return 'XLS'
-    }
-
-    get FILE_RESOURCE_FORMATS() {
-         return {
-            "XLS": "XLS"
-         }
-    }
 
     constructor() {
         super("schema_files");
@@ -32,7 +23,7 @@ class SchemaFilesApi  extends SectionApi {
 
     async getXSDFiles () {
         const endpoint = this.paths['items'];
-        return appApi.get(endpoint, {project: sessionApi.getSessionProject()})
+        return appApi.get(endpoint, {project_id: sessionApi.getSessionProject()})
     }
 
 }
