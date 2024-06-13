@@ -75,6 +75,9 @@ export const paths = {
         schema_files: {
             index: '/app/schema-files'
         },
+        ontology_files: {
+            index: '/app/ontology-files'
+        },
         ontology_file_collections: {
             index: '/app/ontology-file-collections',
             create: '/app/ontology-file-collections/create',
