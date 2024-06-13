@@ -62,7 +62,7 @@ async def route_get_xsd_file_by_id(
     response_model=None,
     status_code=status.HTTP_200_OK
 )
-async def route_get_xsd_file_by_id(
+async def route_delete_xsd_file_by_id(
         project_id: PydanticObjectId,
         xsd_file_name: str
 ) -> None:

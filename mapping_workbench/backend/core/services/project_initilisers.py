@@ -9,8 +9,7 @@ from mapping_workbench.backend.mapping_package.models.entity import MappingPacka
 from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingRuleRegistry, MappingGroup
 from mapping_workbench.backend.ontology.models.namespace import Namespace, NamespaceCustom
 from mapping_workbench.backend.ontology.models.term import Term
-from mapping_workbench.backend.ontology_file_collection.models.entity import OntologyFileCollection, \
-    OntologyFileResource
+from mapping_workbench.backend.ontology_suite.models.ontology_file_resource import OntologyFileResource
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.resource_collection.models.entity import ResourceCollection, ResourceFile
 from mapping_workbench.backend.security.models.security import AccessToken
@@ -47,8 +46,8 @@ async def init_project_models(mongodb_database: AsyncIOMotorDatabase):
             User,
             AccessToken,
             Project,
-            OntologyFileCollection,
-            OntologyFileResource,
+            #OntologyFileCollection,
+            #OntologyFileResource,
             SPARQLTestSuite,
             SPARQLTestFileResource,
             SHACLTestSuite,
@@ -71,5 +70,6 @@ async def init_project_models(mongodb_database: AsyncIOMotorDatabase):
             StructuralElement,
             StructuralElementsVersionedView,
             XSDFileResource,
+            OntologyFileResource
         ],
     )
