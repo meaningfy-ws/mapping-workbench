@@ -14,7 +14,7 @@ from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.entrypoints.api import routes as mapping_package_routes
 from mapping_workbench.backend.mapping_rule_registry.entrypoints.api import routes as mapping_rule_registry_routes
 from mapping_workbench.backend.ontology.entrypoints.api import routes as ontology_routes
-from mapping_workbench.backend.ontology_file_collection.entrypoints.api import routes as ontology_file_collection_routes
+from mapping_workbench.backend.ontology_suite.entrypoints.api.routes import ontology_files_router
 from mapping_workbench.backend.package_exporter.entrypoints.api import routes as package_exporter_routes
 from mapping_workbench.backend.package_importer.entrypoints.api import routes as package_importer_routes
 from mapping_workbench.backend.package_processor.entrypoints.api import routes as package_processor_routes
@@ -70,13 +70,14 @@ app_router.include_router(app_public_router)
 
 app_secured_router = APIRouter(dependencies=[Depends(current_active_user)])
 
+ontology_routes.router.include_router(ontology_files_router)
+
 secured_routers: list = [
     core_routes.router,
     project_routes.router,
     test_data_suite_routes.router,
     sparql_test_suite_routes.router,
     shacl_test_suite_routes.router,
-    ontology_file_collection_routes.router,
     resource_collection_routes.router,
     mapping_package_routes.router,
     package_importer_routes.router,
