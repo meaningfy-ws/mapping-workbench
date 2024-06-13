@@ -80,7 +80,7 @@ export const ItemListRow = (props) => {
                         spacing={2}
                     >
                         <Box
-                            onClick={() => handleEdit?.(item.filename)}
+                            // onClick={() => handleEdit?.(item.filename)}
                             sx={{cursor: 'pointer'}}
                         >
                             <ItemIcon
@@ -91,7 +91,7 @@ export const ItemListRow = (props) => {
                         <div>
                             <Typography
                                 noWrap
-                                onClick={() => handleEdit?.(item.filename)}
+                                // onClick={() => handleEdit?.(item.filename)}
                                 sx={{cursor: 'pointer'}}
                                 variant="subtitle2"
                             >

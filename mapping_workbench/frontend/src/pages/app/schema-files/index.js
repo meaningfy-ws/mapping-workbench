@@ -1,7 +1,6 @@
 import {useEffect, useMemo, useState} from 'react';
 
 import Upload01Icon from '@untitled-ui/icons-react/build/esm/Upload01';
-import Plus from '@untitled-ui/icons-react/build/esm/Plus';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Unstable_Grid2';
 import Stack from '@mui/material/Stack';
@@ -13,12 +12,11 @@ import {Layout as AppLayout} from 'src/layouts/app';
 import {schemaFilesApi as sectionApi} from 'src/api/schema-files';
 import {useDialog} from 'src/hooks/use-dialog';
 import {usePageView} from 'src/hooks/use-page-view';
-import {FileUploader} from 'src/sections/app/schema-files/file-uploader';
+import {FileUploader} from 'src/sections/app/files-form//file-uploader';
 import {ItemDrawer} from 'src/sections/app/file-manager/item-drawer';
-import {ItemSearch} from 'src/sections/app/schema-files/item-search';
-import Link from "next/link";
+import {ItemSearch} from 'src/sections/app/files-form//item-search';
 import {schemaFileResourcesApi as fileResourcesApi} from "src/api/schema-files/file-resources";
-import {ItemList} from "src/sections/app/schema-files/item-list";
+import {ItemList} from "src/sections/app/files-form/item-list";
 import {sessionApi} from "src/api/session";
 
 const useItemsSearch = (items) => {
@@ -189,7 +187,7 @@ const Page = () => {
                     >
                         <div>
                             <Typography variant="h5">
-                                Resource Manager
+                                {sectionApi.SECTION_TITLE}
                             </Typography>
                         </div>
                         <Stack
@@ -207,19 +205,6 @@ const Page = () => {
                                 variant="contained"
                             >
                                 Upload
-                            </Button>
-                            <Button
-                                component={Link}
-                                href={'#'}
-                                // href={paths.app[sectionApi.section].resource_manager.create.replace('[id]', id)}
-                                startIcon={(
-                                    <SvgIcon>
-                                        <Plus/>
-                                    </SvgIcon>
-                                )}
-                                variant="contained"
-                            >
-                                Add
                             </Button>
                         </Stack>
                     </Stack>

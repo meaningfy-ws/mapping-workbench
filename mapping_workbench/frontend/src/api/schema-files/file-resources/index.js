@@ -44,7 +44,7 @@ class SchemaFileResourcesApi extends FileResourcesApi {
     async deleteFileResource(fileName) {
            try {
             const project = sessionApi.getSessionProject()
-            const endpoint = this.paths.deleteFile(project, fileName);
+            const endpoint = this.paths.deleteFile(fileName, project);
             return await appApi.delete(endpoint);
         } catch (err) {
         }

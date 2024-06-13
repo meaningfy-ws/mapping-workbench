@@ -16,6 +16,7 @@ import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import SettingsInputCompositeIcon from '@mui/icons-material/SettingsInputComposite';
 import WindowIcon from '@mui/icons-material/Window';
 import BubbleChartIcon from '@mui/icons-material/BubbleChart';
+import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
 
 import HomeSmileIcon from 'src/icons/ui/duocolor/home-smile';
 import LayoutAlt02 from 'src/icons/ui/duocolor/layout-alt-02';
@@ -73,8 +74,13 @@ export const useSections = () => {
             //     path: paths.app.index
             // },
             {
-                title: t(tokens.nav.schema_files) + ' (dev)',
-                path: paths.app.schema_files.index
+                title: t(tokens.nav.schema_files),
+                path: paths.app.schema_files.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <DocumentScannerIcon/>
+                    </SvgIcon>
+                )
             },
             //  {
             //     title: t(tokens.nav.ontology_files) + ' (dev)',

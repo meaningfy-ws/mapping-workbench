@@ -27,8 +27,6 @@ export const ItemList = (props) => {
         onGetItems
     } = props;
 
-    console.log('collection',collection)
-
 
     const content = view === 'grid' ?
         <Box sx={{p: 3}}>
