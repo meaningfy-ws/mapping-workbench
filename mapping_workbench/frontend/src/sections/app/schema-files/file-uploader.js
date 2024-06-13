@@ -52,7 +52,7 @@ export const FileUploader = (props) => {
                 .then(res => {
                     const request = {
                         filename: file.name,
-                        content: 'adfasdf',
+                        content: res,
                     }
 
                     sectionApi.createCollectionFileResource(request)

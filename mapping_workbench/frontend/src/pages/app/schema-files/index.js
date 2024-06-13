@@ -15,22 +15,75 @@ import {useDialog} from 'src/hooks/use-dialog';
 import {usePageView} from 'src/hooks/use-page-view';
 import {FileUploader} from 'src/sections/app/schema-files/file-uploader';
 import {ItemDrawer} from 'src/sections/app/file-manager/item-drawer';
-import {ItemSearch} from 'src/sections/app/file-manager/item-search';
+import {ItemSearch} from 'src/sections/app/schema-files/item-search';
 import Link from "next/link";
-import {schemaFileResourcesApi as fileResourcesApi} from "../../../api/schema-files/file-resources";
-import {ItemList} from "../../../sections/app/schema-files/item-list";
-import {sessionApi} from "../../../api/session";
+import {schemaFileResourcesApi as fileResourcesApi} from "src/api/schema-files/file-resources";
+import {ItemList} from "src/sections/app/schema-files/item-list";
+import {sessionApi} from "src/api/session";
 
-const useItemsSearch = () => {
+const useItemsSearch = (items) => {
     const [state, setState] = useState({
-        filters: {
-            query: undefined
-        },
+        filters: {},
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE,
-        sortBy: 'createdAt',
-        sortDir: 'desc'
+         sort: {
+            column: "filename",
+            direction: "desc"
+        },
+        search: '',
+        searchColumns:["filename"],
     });
+
+    const searchItems = state.search ? items.filter(item => {
+        let returnItem = null;
+        state.searchColumns.forEach(column => {
+            if(item[column]?.toLowerCase()?.includes(state.search.toLowerCase()))
+                returnItem = item
+        })
+        return returnItem
+    }) : items
+
+
+    const filteredItems = searchItems.filter((item) => {
+        let returnItem = item;
+        Object.entries(state.filters).forEach(filter=> {
+            const [key, value] = filter
+            if(value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
+                returnItem = null
+            if(value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase))
+                returnItem = null
+        })
+        return returnItem
+    })
+
+     const sortedItems = () => {
+        const sortColumn = state.sort.column
+        if(!sortColumn) {
+            return searchItems
+        } else {
+            return searchItems.sort((a,b) => {
+                if (typeof a[sortColumn] === "string")
+                    return state.sort.direction === "asc" ?
+                        a[sortColumn]?.localeCompare(b[sortColumn]) :
+                        b[sortColumn]?.localeCompare(a[sortColumn])
+                else
+                    return state.sort.direction === "asc" ?
+                        a[sortColumn] - b[sortColumn] :
+                        b[sortColumn] - a[sortColumn]
+                })
+        }
+    }
+
+    const pagedItems = sortedItems().filter((item, i) => {
+        const pageSize = state.page * state.rowsPerPage
+        if((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
+            return item
+    })
+
+    const handleSearchItems = (filters) => {
+        setState(prevState => ({...prevState, search: filters }))
+    }
+
 
     const handleFiltersChange = filters => {
         setState(prevState => ({
@@ -53,6 +106,17 @@ const useItemsSearch = () => {
         }));
     }
 
+    const handleSort = (column, desc) => {
+       setState(prevState=> ({ ...prevState, sort: {column,
+           direction: prevState.sort.column === column
+               ? prevState.sort.direction === "desc"
+                   ? "asc"
+                   : "desc"
+               : desc
+                   ? "desc"
+                   : "asc"}}))
+    }
+
     const handleRowsPerPageChange = event => {
         setState(prevState => ({
             ...prevState,
@@ -65,6 +129,9 @@ const useItemsSearch = () => {
         handleSortChange,
         handlePageChange,
         handleRowsPerPageChange,
+        handleSearchItems,
+        pagedItems,
+        count: filteredItems.length,
         state
     };
 };
@@ -81,14 +148,11 @@ const useCurrentItem = (items, itemId) => {
 
 const Page = () => {
     const [view, setView] = useState('grid');
-    const [state, setState] = useState({
-        items: [],
-        itemsCount: 0
-    });
+    const [state, setState] = useState([])
 
     const uploadDialog = useDialog();
     const detailsDialog = useDialog();
-    const itemsSearch = useItemsSearch();
+    const itemsSearch = useItemsSearch(state);
 
     const currentItem = useCurrentItem(state.items, detailsDialog.data);
 
@@ -98,11 +162,11 @@ const Page = () => {
      useEffect(() => {
         handleItemsGet();
      // eslint-disable-next-line react-hooks/exhaustive-deps
-     },[itemsSearch.state]);
+     },[]);
 
     const handleItemsGet = () => {
          sectionApi.getXSDFiles()
-             .then(res => setState({items: res, itemsCount: res.length}))
+             .then(res => setState( res))
              .catch(err => console.error(err));
         }
 
@@ -171,7 +235,7 @@ const Page = () => {
                         }}
                     >
                         <ItemSearch
-                            onFiltersChange={itemsSearch.handleFiltersChange}
+                            onFiltersChange={itemsSearch.handleSearchItems}
                             onSortChange={itemsSearch.handleSortChange}
                             onViewChange={setView}
                             sortBy={itemsSearch.state.sortBy}
@@ -179,8 +243,8 @@ const Page = () => {
                             view={view}
                         />
                         <ItemList
-                            count={state.itemsCount}
-                            items={state.items}
+                            count={itemsSearch.count}
+                            items={itemsSearch.pagedItems}
                             collection={sessionApi.getSessionProject()}
                             onPageChange={itemsSearch.handlePageChange}
                             onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}

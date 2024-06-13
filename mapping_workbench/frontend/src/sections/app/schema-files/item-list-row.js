@@ -28,7 +28,7 @@ export const ItemListRow = (props) => {
         });
     }
 
-    const handleDelete = async () => {
+    const handleDelete = () => {
         fileResourcesApi.deleteFileResource(item.filename)
             .then(() => onGetItems ? onGetItems() : router.reload())
     };
@@ -131,5 +131,5 @@ export const ItemListRow = (props) => {
 
 ItemListRow.propTypes = {
     item: PropTypes.object.isRequired,
-    collection: PropTypes.object.isRequired
+    collection: PropTypes.string.isRequired
 };
