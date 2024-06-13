@@ -18,7 +18,8 @@ import {ItemDrawer} from 'src/sections/app/file-manager/item-drawer';
 import {ItemSearch} from 'src/sections/app/file-manager/item-search';
 import Link from "next/link";
 import {schemaFileResourcesApi as fileResourcesApi} from "../../../api/schema-files/file-resources";
-import {ItemList} from "../../../sections/app/file-manager/item-list";
+import {ItemList} from "../../../sections/app/schema-files/item-list";
+import {sessionApi} from "../../../api/session";
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -81,7 +82,6 @@ const useCurrentItem = (items, itemId) => {
 const Page = () => {
     const [view, setView] = useState('grid');
     const [state, setState] = useState({
-        collection: {},
         items: [],
         itemsCount: 0
     });
@@ -100,19 +100,11 @@ const Page = () => {
      // eslint-disable-next-line react-hooks/exhaustive-deps
      },[itemsSearch.state]);
 
-    const handleItemsGet = async () => {
-        try {
-            const response = await sectionApi.getXSDFiles();
-            // const collection = await sectionApi.getItem(id);
-
-            setState({
-                items: response.items,
-                itemsCount: response.count
-            });
-        } catch (err) {
-            console.error(err);
+    const handleItemsGet = () => {
+         sectionApi.getXSDFiles()
+             .then(res => setState({items: res, itemsCount: res.length}))
+             .catch(err => console.error(err));
         }
-    };
 
     return (
         <>
@@ -189,7 +181,7 @@ const Page = () => {
                         <ItemList
                             count={state.itemsCount}
                             items={state.items}
-                            collection={state.collection}
+                            collection={sessionApi.getSessionProject()}
                             onPageChange={itemsSearch.handlePageChange}
                             onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                             page={itemsSearch.state.page}

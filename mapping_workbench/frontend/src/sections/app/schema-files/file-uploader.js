@@ -52,10 +52,10 @@ export const FileUploader = (props) => {
                 .then(res => {
                     const request = {
                         filename: file.name,
-                        content: res,
+                        content: 'adfasdf',
                     }
 
-                    sectionApi.createCollectionFileResource(project, request)
+                    sectionApi.createCollectionFileResource(request)
                         .finally(() => {
                             setProgress(e => e + incStep)
                             if (index + 1 === files.length) {

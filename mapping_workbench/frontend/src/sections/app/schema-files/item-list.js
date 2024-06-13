@@ -7,8 +7,8 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 
 import {Scrollbar} from 'src/components/scrollbar';
-import {ItemListCard} from '../file-manager/item-list-card';
-import {ItemListRow} from '../file-manager/item-list-row';
+import {ItemListCard} from './item-list-card';
+import {ItemListRow} from './item-list-row';
 import TablePagination from "../../components/table-pagination";
 
 export const ItemList = (props) => {
@@ -27,6 +27,9 @@ export const ItemList = (props) => {
         onGetItems
     } = props;
 
+    console.log('collection',collection)
+
+
     const content = view === 'grid' ?
         <Box sx={{p: 3}}>
             <Box
@@ -38,7 +41,7 @@ export const ItemList = (props) => {
             >
                 {items.map((item) => (
                     <ItemListCard
-                        key={item._id}
+                        key={item.filename}
                         item={item}
                         collection={collection}
                         sectionApi={sectionApi}
@@ -63,7 +66,7 @@ export const ItemList = (props) => {
                             <TableBody>
                                 {items.map((item) => (
                                     <ItemListRow
-                                        key={item._id}
+                                        key={item.filename}
                                         item={item}
                                         collection={collection}
                                         sectionApi={sectionApi}
@@ -101,7 +104,7 @@ export const ItemList = (props) => {
 
 ItemList.propTypes = {
     items: PropTypes.array,
-    collection: PropTypes.object,
+    collection: PropTypes.string,
     sectionApi: PropTypes.object,
     count: PropTypes.number,
     onPageChange: PropTypes.func,

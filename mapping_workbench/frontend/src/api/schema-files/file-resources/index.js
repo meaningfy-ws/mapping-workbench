@@ -1,5 +1,6 @@
 import {FileResourcesApi} from "../../file-collections/file-resources";
 import {appApi} from "../../app";
+import {sessionApi} from "../../session";
 
 class SchemaFileResourcesApi extends FileResourcesApi {
     get SECTION_TITLE() {
@@ -30,11 +31,21 @@ class SchemaFileResourcesApi extends FileResourcesApi {
         };
     }
 
-    async createCollectionFileResource(project_id, request) {
+    async createCollectionFileResource(request) {
         try {
-            const endpoint = this.paths.file(project_id);
-            const headers = {"Content-Type": "multipart/form-data"};
-            return await appApi.create(endpoint, request, headers);
+            const project = sessionApi.getSessionProject()
+            const endpoint = this.paths.file(project);
+            // const headers = {"Content-Type": "multipart/form-data"};
+            return await appApi.create(endpoint, request);
+        } catch (err) {
+        }
+    }
+
+    async deleteFileResource(fileName) {
+           try {
+            const project = sessionApi.getSessionProject()
+            const endpoint = this.paths.deleteFile(project, fileName);
+            return await appApi.delete(endpoint);
         } catch (err) {
         }
     }
