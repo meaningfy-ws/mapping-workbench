@@ -164,7 +164,7 @@ const Page = () => {
 
     const handleItemsGet = () => {
          sectionApi.getXSDFiles()
-             .then(res => setState( res))
+             .then(res => setState(res))
              .catch(err => console.error(err));
         }
 

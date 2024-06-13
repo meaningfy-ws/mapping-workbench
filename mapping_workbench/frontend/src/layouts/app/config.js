@@ -82,10 +82,10 @@ export const useSections = () => {
                     </SvgIcon>
                 )
             },
-            //  {
-            //     title: t(tokens.nav.ontology_files) + ' (dev)',
-            //     path: paths.underConstruction
-            // },
+            {
+                title: t(tokens.nav.ontology_files) + ' (dev)',
+                path: paths.underConstruction
+            },
             {
                 title: t(tokens.nav.ontology),
                 path: paths.app.ontology.index,
