@@ -15,7 +15,7 @@ import {usePageView} from 'src/hooks/use-page-view';
 import {FileUploader} from 'src/sections/app/files-form//file-uploader';
 import {ItemDrawer} from 'src/sections/app/file-manager/item-drawer';
 import {ItemSearch} from 'src/sections/app/files-form//item-search';
-import {schemaFileResourcesApi as fileResourcesApi} from "src/api/schema-files/file-resources";
+import {ontologyFileResourcesApi as fileResourcesApi} from "src/api/ontology-files/file-resources";
 import {ItemList} from "src/sections/app/files-form/item-list";
 import {sessionApi} from "src/api/session";
 

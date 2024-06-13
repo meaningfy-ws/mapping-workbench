@@ -31,8 +31,6 @@ export const FileUploader = (props) => {
 
     const router = useRouter();
 
-    const project =  sessionApi.getSessionProject()
-
     useEffect(() => {
         setFiles([]);
     }, [open]);
@@ -98,7 +96,10 @@ export const FileUploader = (props) => {
        );
     }
 
-    const acceptedFormat = onlyAcceptedFormats && sectionApi.FILE_UPLOAD_FORMATS?.[format] ? {[sectionApi.FILE_UPLOAD_FORMATS[format]]: []} : {'*/*': []}
+    const acceptedFormat = onlyAcceptedFormats && sectionApi.FILE_UPLOAD_FORMATS?.[format] ? sectionApi.FILE_UPLOAD_FORMATS[format] : {'*/*': []}
+    console.log(acceptedFormat, onlyAcceptedFormats, sectionApi.FILE_UPLOAD_FORMATS?.[format],format,sectionApi.FILE_UPLOAD_FORMATS )
+
+    console.log(sectionApi.FILE_UPLOAD_FORMATS?.[format])
 
     return (
         <Dialog

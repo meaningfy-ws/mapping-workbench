@@ -343,6 +343,11 @@ export const apiPaths = {
         file: (id) => `/xsd_schema/xsd_files?project_id=${id}`,
         deleteFile: (name, id) => `/xsd_schema/xsd_files/${name}?project_id=${id}`
     },
+    ontology_files: {
+        items: '/ontology/ontology_files',
+        file: (id) => `/ontology/ontology_files?project_id=${id}`,
+        deleteFile: (name, id) => `/ontology/ontology_files/${name}?project_id=${id}`
+    },
 
     tasks: {
         items: '/task_manager',
