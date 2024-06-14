@@ -303,8 +303,9 @@ async def route_task_discover_terms(
 ):
     return add_task(
         tasks.task_discover_terms,
-        TASK_DISCOVER_TERMS_NAME,
+        "Terms Discovery Task",
         None,
+        user.email,
         req.project, user
     )
 
@@ -350,3 +351,21 @@ async def route_prefixed_terms(
 ):
     prefixed_terms = await get_prefixed_terms(project)
     return prefixed_terms
+
+@router.post(
+    "/terms_validator",
+    description=f"Task Terms Validator",
+    name=f"{NAME_FOR_MANY}:terms validator",
+    status_code=status.HTTP_201_CREATED
+)
+async def route_task_terms_validator(
+        filters: APIRequestWithProject = None,
+        user: User = Depends(current_active_user)
+):
+    return add_task(
+        tasks.task_terms_validator,
+        "Terms Validation Task",
+        None,
+        user.email,
+        filters
+    )
