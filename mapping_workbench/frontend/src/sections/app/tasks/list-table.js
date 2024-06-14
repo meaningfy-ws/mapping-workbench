@@ -170,7 +170,7 @@ export const ListTable = (props) => {
                                             {timeTransformer(item.started_at, timeSetting)}
                                         </TableCell>
                                         <TableCell>
-                                            {item.started_by}
+                                            {item?.created_by}
                                         </TableCell>
                                         <TableCell>
                                             {timeTransformer(item.finished_at, timeSetting)}
