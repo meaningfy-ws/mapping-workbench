@@ -81,7 +81,8 @@ async def route_task_import_package(
 ):
     return add_task(
         tasks.task_import_mapping_package,
-        TASK_IMPORT_PACKAGE_NAME,
+        f"Importing package from {file.filename} archive",
         None,
+        user.email,
         file.file.read(), await get_project(project), user
     )

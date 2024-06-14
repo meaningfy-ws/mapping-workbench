@@ -353,7 +353,7 @@ async def route_prefixed_terms(
     return prefixed_terms
 
 @router.post(
-    "/terms_validator",
+    "/tasks/terms_validator",
     description=f"Task Terms Validator",
     name=f"{NAME_FOR_MANY}:terms validator",
     status_code=status.HTTP_201_CREATED
