@@ -345,7 +345,7 @@ export const apiPaths = {
     },
     ontology_files: {
         items: '/ontology/ontology_files',
-        file: (id) => `/ontology/ontology_files?project_id=${id}`,
+        file: (name, id) => `/ontology/ontology_files/${name}?project_id=${id}`,
         deleteFile: (name, id) => `/ontology/ontology_files/${name}?project_id=${id}`
     },
 

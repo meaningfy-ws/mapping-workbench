@@ -12,20 +12,16 @@ import {usePopover} from 'src/hooks/use-popover';
 
 import {ItemIcon} from '../file-manager/item-icon';
 import {ItemMenu} from '../file-manager/item-menu';
-import {paths} from "../../../paths";
 import {useRouter} from "src/hooks/use-router";
 
 export const ItemListCard = (props) => {
     const router = useRouter();
-    const {item, collection, sectionApi, fileResourcesApi, onGetItems} = props;
+    const {item, collection, sectionApi, fileResourcesApi, onGetItems, onViewDetails} = props;
     const popover = usePopover();
 
-    // const handleEdit = (item_id) => {
-    //     router.push({
-    //         pathname: paths.app[sectionApi.section].resource_manager.edit,
-    //         query: {id: collection._id, fid: item_id}
-    //     });
-    // }
+    const handleViewDetails = (item) => {
+        onViewDetails(item.filename)
+    }
 
     const handleDelete = () => {
         fileResourcesApi.deleteFileResource(item.filename)
@@ -60,7 +56,7 @@ export const ItemListCard = (props) => {
                     }}
                 >
                     <Typography
-                        // onClick={() => handleEdit?.(item._id)}
+                        onClick={() => handleViewDetails?.(item)}
                         sx={{cursor: 'pointer'}}
                         variant="subtitle2"
                     >
@@ -83,7 +79,7 @@ export const ItemListCard = (props) => {
                         }}
                     >
                         <Box
-                            // onClick={() => handleEdit?.(item.filename)}
+                            onClick={() => handleViewDetails?.(item)}
                             sx={{
                                 display: 'inline-flex',
                                 cursor: 'pointer'
@@ -124,7 +120,6 @@ export const ItemListCard = (props) => {
                 anchorEl={popover.anchorRef.current}
                 onClose={popover.handleClose}
                 onDelete={handleDelete}
-                // onEdit={() => handleEdit?.(item._id)}
                 open={popover.open}
             />
         </>

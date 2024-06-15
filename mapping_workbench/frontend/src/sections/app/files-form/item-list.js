@@ -24,7 +24,8 @@ export const ItemList = (props) => {
         page = 0,
         rowsPerPage = 0,
         view = 'grid',
-        onGetItems
+        onGetItems,
+        onViewDetails
     } = props;
 
 
@@ -45,6 +46,7 @@ export const ItemList = (props) => {
                         sectionApi={sectionApi}
                         fileResourcesApi={fileResourcesApi}
                         onGetItems={onGetItems}
+                        onViewDetails={onViewDetails}
                     />
                 ))}
             </Box>
@@ -70,6 +72,7 @@ export const ItemList = (props) => {
                                         sectionApi={sectionApi}
                                         fileResourcesApi={fileResourcesApi}
                                         onGetItems={onGetItems}
+                                        onViewDetails={onViewDetails}
                                     />
                                 ))}
                             </TableBody>
