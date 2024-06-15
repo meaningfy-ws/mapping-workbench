@@ -19,10 +19,6 @@ export const ItemListCard = (props) => {
     const {item, collection, sectionApi, fileResourcesApi, onGetItems, onViewDetails} = props;
     const popover = usePopover();
 
-    const handleViewDetails = (item) => {
-        onViewDetails(item.filename)
-    }
-
     const handleDelete = () => {
         fileResourcesApi.deleteFileResource(item.filename)
             .then(() => onGetItems ? onGetItems() : router.reload())
@@ -56,7 +52,7 @@ export const ItemListCard = (props) => {
                     }}
                 >
                     <Typography
-                        onClick={() => handleViewDetails?.(item)}
+                        onClick={() => onViewDetails?.(item.filename)}
                         sx={{cursor: 'pointer'}}
                         variant="subtitle2"
                     >
@@ -79,7 +75,7 @@ export const ItemListCard = (props) => {
                         }}
                     >
                         <Box
-                            onClick={() => handleViewDetails?.(item)}
+                            onClick={() => onViewDetails?.(item.filename)}
                             sx={{
                                 display: 'inline-flex',
                                 cursor: 'pointer'

@@ -26,6 +26,15 @@ class SchemaFilesApi  extends SectionApi {
         return appApi.get(endpoint, {project_id: sessionApi.getSessionProject()})
     }
 
+    async getXSDFile(fileName) {
+           try {
+            const project = sessionApi.getSessionProject()
+            const endpoint = this.paths.file(fileName, project);
+            return await appApi.get(endpoint);
+        } catch (err) {
+        }
+    }
+
 }
 
 export const schemaFilesApi = new SchemaFilesApi();

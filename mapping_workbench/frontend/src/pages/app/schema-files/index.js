@@ -18,6 +18,12 @@ import {ItemSearch} from 'src/sections/app/files-form//item-search';
 import {schemaFileResourcesApi as fileResourcesApi} from "src/api/schema-files/file-resources";
 import {ItemList} from "src/sections/app/files-form/item-list";
 import {sessionApi} from "src/api/session";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import {Box} from "@mui/system";
+import CircularProgress from "@mui/material/CircularProgress";
+import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
@@ -152,8 +158,6 @@ const Page = () => {
     const detailsDialog = useDialog();
     const itemsSearch = useItemsSearch(state);
 
-    const currentItem = useCurrentItem(state.items, detailsDialog.data);
-
 
     usePageView();
 
@@ -166,7 +170,14 @@ const Page = () => {
          sectionApi.getXSDFiles()
              .then(res => setState(res))
              .catch(err => console.error(err));
-        }
+    }
+
+    const handleItemGet = (name) => {
+         detailsDialog.handleOpen({load: true, fileName: name})
+         sectionApi.getXSDFile(name)
+            .then(res => detailsDialog.handleOpen({content: res.content, fileName: res.filename}))
+            .catch(err => console.log(err));
+    }
 
     return (
         <>
@@ -239,16 +250,35 @@ const Page = () => {
                             sectionApi={sectionApi}
                             fileResourcesApi={fileResourcesApi}
                             onGetItems={handleItemsGet}
+                            onViewDetails={handleItemGet}
                         />
                     </Stack>
                 </Grid>
             </Grid>
-
-            <ItemDrawer
-                item={currentItem}
-                onClose={detailsDialog.handleClose}
-                open={detailsDialog.open}
-            />
+            <Dialog
+              open={detailsDialog.open}
+              onClose={detailsDialog.handleClose}
+              fullWidth
+              maxWidth='xl'
+            >
+                <DialogTitle>
+                    {detailsDialog.data?.fileName}
+                </DialogTitle>
+                <DialogContent>
+                    {
+                        detailsDialog.data?.load ?
+                            <Box sx={{ display: 'flex', justifyContent: 'center', marginY:10 }}>
+                                <CircularProgress />
+                            </Box>:
+                            <SyntaxHighlighter
+                                language="xml"
+                                wrapLines
+                                lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
+                                {detailsDialog.data?.content}
+                            </SyntaxHighlighter>
+                    }
+                </DialogContent>
+            </Dialog>
             <FileUploader
                 onClose={uploadDialog.handleClose}
                 open={uploadDialog.open}
