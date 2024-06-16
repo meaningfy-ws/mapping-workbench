@@ -14,6 +14,9 @@ import {FileDropzone} from 'src/components/file-dropzone';
 import {useRouter} from 'src/hooks/use-router';
 import {sessionApi} from "../../../api/session";
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
+import MenuItem from "@mui/material/MenuItem";
+import TextField from "@mui/material/TextField";
+import {PACKAGE_TYPE} from "../../../api/mapping-packages";
 
 
 export const PackageImporter = (props) => {
@@ -21,7 +24,12 @@ export const PackageImporter = (props) => {
 
     const {onClose, open = false, sectionApi} = props;
 
+    const defaultPackageTypeValue = PACKAGE_TYPE.EFORMS;
+
     const [files, setFiles] = useState([]);
+    const [packageType, setPackageType] = useState(defaultPackageTypeValue);
+
+    console.log("K :: ", packageType);
     useEffect(() => {
         setFiles([]);
     }, [open]);
@@ -33,6 +41,7 @@ export const PackageImporter = (props) => {
         for (let file of files) {
             formData = new FormData();
             formData.append("file", file);
+            formData.append("package_type", packageType);
             formData.append("project", sessionApi.getSessionProject());
             const toastId = toastLoad(`Importing "${file.name}" ... `)
             sectionApi.importPackage(formData)
@@ -95,6 +104,19 @@ export const PackageImporter = (props) => {
                 </IconButton>
             </Stack>
             <DialogContent id="drop-zone">
+                <TextField
+                    fullWidth
+                    label="Type"
+                    onChange={e => setPackageType(e.target.value)}
+                    select
+                    required
+                    value={packageType}
+                    sx={{mb: 3}}
+                >
+                    {Object.keys(PACKAGE_TYPE).map((key) => (
+                        <MenuItem key={key} value={PACKAGE_TYPE[key]}>{PACKAGE_TYPE[key]}</MenuItem>
+                    ))}
+                </TextField>
                 <FileDropzone
                     accept={{'*/*': []}}
                     caption="Required name: {PACKAGE_NAME}.zip"

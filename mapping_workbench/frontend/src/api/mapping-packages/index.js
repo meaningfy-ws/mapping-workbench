@@ -1,6 +1,11 @@
 import {SectionApi} from "../section";
 import {appApi} from "../app";
 
+export const PACKAGE_TYPE = {
+    EFORMS: 'eforms',
+    STANDARD: 'standard'
+};
+
 class MappingPackagesApi extends SectionApi {
     get SECTION_TITLE() {
         return "Mapping Packages";

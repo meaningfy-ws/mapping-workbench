@@ -4,7 +4,7 @@ from fastapi import APIRouter, status, Form, UploadFile, Depends
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.package_importer.services import tasks
 from mapping_workbench.backend.package_importer.services.import_mapping_suite import \
-    import_mapping_package_from_archive, clear_project_data
+    import_mapping_package_from_archive, clear_project_data, PackageType
 from mapping_workbench.backend.package_importer.services.importer import import_package
 from mapping_workbench.backend.project.services.api import get_project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
@@ -76,6 +76,7 @@ async def route_import_package_archive(
 )
 async def route_task_import_package(
         project: PydanticObjectId = Form(...),
+        package_type: PackageType = Form(...),
         file: UploadFile = Form(...),
         user: User = Depends(current_active_user)
 ):
@@ -83,5 +84,5 @@ async def route_task_import_package(
         tasks.task_import_mapping_package,
         TASK_IMPORT_PACKAGE_NAME,
         None,
-        file.file.read(), await get_project(project), user
+        file.file.read(), await get_project(project), package_type, user
     )

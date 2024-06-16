@@ -3,6 +3,7 @@ import io
 import pathlib
 import tempfile
 import zipfile
+from enum import Enum
 from typing import List
 
 import numpy as np
@@ -10,6 +11,8 @@ import pandas as pd
 
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.package_importer.adapters.eforms.importer import PackageImporter
+from mapping_workbench.backend.package_importer.adapters.importer_abc import PackageImporterABC
+from mapping_workbench.backend.package_importer.adapters.importer_factory import PackageImporterFactory
 from mapping_workbench.backend.package_importer.models.imported_mapping_suite import ImportedMappingGroup
 from mapping_workbench.backend.package_importer.models.imported_mapping_suite import MappingMetadata, \
     MappingConceptualRule, ImportedCollectionResource, ImportedFileResource, ImportedMappingSuite
@@ -34,6 +37,11 @@ RESOURCES_SHEET_NAME = "Resources"
 CONCEPTUAL_RULES_SHEET_NAME = "Rules"
 MAPPING_GROUPS_SHEET_NAME = "Mapping Groups"
 LIST_COLUMN_NAMES = ["eForms Subtype", "eForms SDK version"]
+
+
+class PackageType(Enum):
+    EFORMS = "eforms"
+    STANDARD = "standard"
 
 
 def import_file_resource(file_path: pathlib.Path) -> ImportedFileResource:
@@ -146,16 +154,18 @@ def import_mapping_suite_from_file_system(mapping_suite_dir_path: pathlib.Path) 
 
 
 async def import_mapping_package(mapping_package_dir_path: pathlib.Path, project: Project,
-                                 user: User = None) -> MappingPackage:
+                                 package_type: PackageType, user: User = None) -> MappingPackage:
     monolith_mapping_suite: ImportedMappingSuite = import_mapping_suite_from_file_system(mapping_package_dir_path)
 
-    importer: PackageImporter = PackageImporter(project=project, user=user)
+    importer: PackageImporterABC = PackageImporterFactory.get_importer(
+        package_type=package_type, project=project, user=user
+    )
     package: MappingPackage = await importer.import_from_mono_mapping_suite(monolith_mapping_suite)
     return package
 
 
 async def import_mapping_package_from_archive(
-        file_content: bytes, project: Project, user: User = None
+        file_content: bytes, project: Project, package_type: PackageType, user: User = None
 ) -> MappingPackage:
     zf = zipfile.ZipFile(io.BytesIO(file_content))
     tempdir = tempfile.TemporaryDirectory()
@@ -165,7 +175,7 @@ async def import_mapping_package_from_archive(
     dir_contents = list(tempdir_path.iterdir())
     assert len(dir_contents) == 1
 
-    return await import_mapping_package(dir_contents[0], project, user)
+    return await import_mapping_package(dir_contents[0], project, package_type, user)
 
 
 async def clear_project_data(project: Project):
