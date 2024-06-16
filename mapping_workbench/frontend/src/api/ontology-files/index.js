@@ -2,13 +2,13 @@ import {ACTION, SectionApi} from "../section";
 import {appApi} from "../app";
 import {sessionApi} from "../session";
 
-class SchemaFilesApi  extends SectionApi {
+class OntologyFilesApi  extends SectionApi {
     get SECTION_TITLE() {
-        return "Schema Files";
+        return "Ontology Files";
     }
 
     get SECTION_ITEM_TITLE() {
-        return "Schema Files";
+        return "Ontology Files";
     }
 
     get SECTION_LIST_ACTIONS() {
@@ -17,24 +17,21 @@ class SchemaFilesApi  extends SectionApi {
 
 
     constructor() {
-        super("schema_files");
+        super("ontology_files");
         this.isProjectResource = true;
     }
 
-    async getXSDFiles () {
+    async getOntologyFiles () {
         const endpoint = this.paths['items'];
         return appApi.get(endpoint, {project_id: sessionApi.getSessionProject()})
     }
 
-    async getXSDFile(fileName) {
-           try {
-            const project = sessionApi.getSessionProject()
-            const endpoint = this.paths.file(fileName, project);
-            return await appApi.get(endpoint);
-        } catch (err) {
-        }
+    async getOntologyFile (fileName) {
+        const project = sessionApi.getSessionProject()
+        const endpoint = this.paths.file(fileName, project);
+        return appApi.get(endpoint)
     }
 
 }
 
-export const schemaFilesApi = new SchemaFilesApi();
+export const ontologyFilesApi = new OntologyFilesApi();

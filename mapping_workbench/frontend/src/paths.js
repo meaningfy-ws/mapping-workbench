@@ -75,6 +75,9 @@ export const paths = {
         schema_files: {
             index: '/app/schema-files'
         },
+        ontology_files: {
+            index: '/app/ontology-files'
+        },
         ontology_file_collections: {
             index: '/app/ontology-file-collections',
             create: '/app/ontology-file-collections/create',
@@ -340,8 +343,13 @@ export const apiPaths = {
 
     schema_files: {
         items: '/xsd_schema/xsd_files',
-        file: (id) => `/xsd_schema/xsd_files?project_id=${id}`,
+        file: (name, id) => `/xsd_schema/xsd_files/${name}?project_id=${id}`,
         deleteFile: (name, id) => `/xsd_schema/xsd_files/${name}?project_id=${id}`
+    },
+    ontology_files: {
+        items: '/ontology/ontology_files',
+        file: (name, id) => `/ontology/ontology_files/${name}?project_id=${id}`,
+        deleteFile: (name, id) => `/ontology/ontology_files/${name}?project_id=${id}`
     },
 
     tasks: {

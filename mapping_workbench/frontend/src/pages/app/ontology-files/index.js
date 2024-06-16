@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useState} from 'react';
+import {useEffect, useState} from 'react';
 
 import Upload01Icon from '@untitled-ui/icons-react/build/esm/Upload01';
 import Button from '@mui/material/Button';
@@ -6,25 +6,24 @@ import Grid from '@mui/material/Unstable_Grid2';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
-
-import {Seo} from 'src/components/seo';
-import {Layout as AppLayout} from 'src/layouts/app';
-import {schemaFilesApi as sectionApi} from 'src/api/schema-files';
-import {useDialog} from 'src/hooks/use-dialog';
-import {usePageView} from 'src/hooks/use-page-view';
-import {FileUploader} from 'src/sections/app/files-form//file-uploader';
-import {ItemDrawer} from 'src/sections/app/file-manager/item-drawer';
-import {ItemSearch} from 'src/sections/app/files-form//item-search';
-import {schemaFileResourcesApi as fileResourcesApi} from "src/api/schema-files/file-resources";
-import {ItemList} from "src/sections/app/files-form/item-list";
-import {sessionApi} from "src/api/session";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
-import {Box} from "@mui/system";
-import CircularProgress from "@mui/material/CircularProgress";
-import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
 
+import {Seo} from 'src/components/seo';
+import {Layout as AppLayout} from 'src/layouts/app';
+import {ontologyFilesApi as sectionApi} from 'src/api/ontology-files';
+import {useDialog} from 'src/hooks/use-dialog';
+import {usePageView} from 'src/hooks/use-page-view';
+import {FileUploader} from 'src/sections/app/files-form//file-uploader';
+import {ItemSearch} from 'src/sections/app/files-form//item-search';
+import {ontologyFileResourcesApi as fileResourcesApi} from "src/api/ontology-files/file-resources";
+import {ItemList} from "src/sections/app/files-form/item-list";
+import {sessionApi} from "src/api/session";
+
+import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
+import CircularProgress from "@mui/material/CircularProgress";
+import {Box} from "@mui/system";
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
@@ -141,16 +140,6 @@ const useItemsSearch = (items) => {
     };
 };
 
-const useCurrentItem = (items, itemId) => {
-    return useMemo(() => {
-        if (!itemId) {
-            return undefined;
-        }
-
-        return items.find((item) => item.id === itemId);
-    }, [items, itemId]);
-};
-
 const Page = () => {
     const [view, setView] = useState('grid');
     const [state, setState] = useState([])
@@ -159,7 +148,6 @@ const Page = () => {
     const detailsDialog = useDialog();
     const itemsSearch = useItemsSearch(state);
 
-
     usePageView();
 
      useEffect(() => {
@@ -167,17 +155,20 @@ const Page = () => {
      // eslint-disable-next-line react-hooks/exhaustive-deps
      },[]);
 
+
+
     const handleItemsGet = () => {
-         sectionApi.getXSDFiles()
+         sectionApi.getOntologyFiles()
              .then(res => setState(res))
              .catch(err => console.error(err));
-    }
+        }
+
 
     const handleItemGet = (name) => {
-         detailsDialog.handleOpen({load: true, fileName: name})
-         sectionApi.getXSDFile(name)
-            .then(res => detailsDialog.handleOpen({content: res.content, fileName: res.filename}))
-            .catch(err => console.log(err));
+     detailsDialog.handleOpen({load: true, fileName: name})
+     sectionApi.getOntologyFile(name)
+         .then(res => detailsDialog.handleOpen({content: res.content, fileName: res.filename}))
+         .catch(err => console.log(err));
     }
 
     return (
@@ -256,6 +247,7 @@ const Page = () => {
                     </Stack>
                 </Grid>
             </Grid>
+
             <Dialog
               open={detailsDialog.open}
               onClose={detailsDialog.handleClose}
@@ -272,7 +264,7 @@ const Page = () => {
                                 <CircularProgress />
                             </Box>:
                             <SyntaxHighlighter
-                                language="xml"
+                                language="turtle"
                                 wrapLines
                                 lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
                                 {detailsDialog.data?.content}
@@ -280,7 +272,6 @@ const Page = () => {
                     }
                 </DialogContent>
             </Dialog>
-
             <FileUploader
                 onClose={uploadDialog.handleClose}
                 open={uploadDialog.open}

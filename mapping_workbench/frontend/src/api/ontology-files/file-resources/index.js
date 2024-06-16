@@ -2,34 +2,27 @@ import {FileResourcesApi} from "../../file-collections/file-resources";
 import {appApi} from "../../app";
 import {sessionApi} from "../../session";
 
-class SchemaFileResourcesApi extends FileResourcesApi {
-    get SECTION_TITLE() {
-        return "SHACL Test File Resources";
-    }
-
-    get SECTION_ITEM_TITLE() {
-        return "SHACL Test File Resource";
-    }
+class OntologyFileResourcesApi extends FileResourcesApi {
 
     get FILE_RESOURCE_FORMATS() {
         return {
-            "XSD": "XSD"
+            "TTL": "TTL"
         };
     }
 
     get FILE_RESOURCE_DEFAULT_FORMAT() {
-        return "XSD";
+        return "TTL";
     }
 
    get FILE_UPLOAD_FORMATS() {
-        return {'XSD': {['text/xsd']:['.xsd']}}
+        return {'TTL': {['text/ttl']:['.ttl']}}
     }
 
     get FILE_RESOURCE_CODE() {
         return {
-            "XSD": {
-                "grammar": "xsd",
-                "language": "xsd"
+            "TTL": {
+                "grammar": "ttl",
+                "language": "ttl"
             }
         };
     }
@@ -54,9 +47,9 @@ class SchemaFileResourcesApi extends FileResourcesApi {
     }
 
     constructor() {
-        super("schema_files");
+        super("ontology_files");
         this.isProjectResource = true;
     }
 }
 
-export const schemaFileResourcesApi = new SchemaFileResourcesApi();
+export const ontologyFileResourcesApi = new OntologyFileResourcesApi();

@@ -17,6 +17,7 @@ import SettingsInputCompositeIcon from '@mui/icons-material/SettingsInputComposi
 import WindowIcon from '@mui/icons-material/Window';
 import BubbleChartIcon from '@mui/icons-material/BubbleChart';
 import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
+import NewspaperIcon from '@mui/icons-material/Newspaper';
 
 import HomeSmileIcon from 'src/icons/ui/duocolor/home-smile';
 import LayoutAlt02 from 'src/icons/ui/duocolor/layout-alt-02';
@@ -82,10 +83,15 @@ export const useSections = () => {
                     </SvgIcon>
                 )
             },
-            //  {
-            //     title: t(tokens.nav.ontology_files) + ' (dev)',
-            //     path: paths.underConstruction
-            // },
+            {
+                title: t(tokens.nav.ontology_files),
+                path: paths.app.ontology_files.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <NewspaperIcon/>
+                    </SvgIcon>
+                )
+            },
             {
                 title: t(tokens.nav.ontology),
                 path: paths.app.ontology.index,
