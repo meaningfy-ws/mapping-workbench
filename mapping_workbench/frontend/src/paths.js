@@ -72,6 +72,12 @@ export const paths = {
                 view: (id) => `/app/schema/${id}/view`,
             }
         },
+        schema_files: {
+            index: '/app/schema-files'
+        },
+        ontology_files: {
+            index: '/app/ontology-files'
+        },
         ontology_file_collections: {
             index: '/app/ontology-file-collections',
             create: '/app/ontology-file-collections/create',
@@ -185,6 +191,9 @@ export const paths = {
             terms_validator: '/app/tasks/terms_validator',
             transform_test_data: '/app/tasks/transform_test_data',
             generate_cm_assertions_queries: '/app/tasks/generate_cm_assertions_queries'
+        },
+        fluree: {
+            index: '/app/fluree'
         }
     },
     docs: 'https://material-kit-pro-react-docs.devias.io',
@@ -330,6 +339,17 @@ export const apiPaths = {
         item: '/fields_registry/:id',
         import_eforms_from_github: '/fields_registry/tasks/import_eforms_from_github',
         element: '/fields_registry/elements/:id',
+    },
+
+    schema_files: {
+        items: '/xsd_schema/xsd_files',
+        file: (name, id) => `/xsd_schema/xsd_files/${name}?project_id=${id}`,
+        deleteFile: (name, id) => `/xsd_schema/xsd_files/${name}?project_id=${id}`
+    },
+    ontology_files: {
+        items: '/ontology/ontology_files',
+        file: (name, id) => `/ontology/ontology_files/${name}?project_id=${id}`,
+        deleteFile: (name, id) => `/ontology/ontology_files/${name}?project_id=${id}`
     },
 
     tasks: {

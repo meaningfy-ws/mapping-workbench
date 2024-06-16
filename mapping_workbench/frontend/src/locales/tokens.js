@@ -101,6 +101,7 @@ export const tokens = {
         validation_execution: 'nav.validation_execution',
         validation_reports: 'nav.validation_reports',
         export_mapping_package: 'nav.export_mapping_package',
+        fluree: 'nav.fluree',
 
         generate_cm_assertions_queries: 'nav.generate_cm_assertions_queries',
         assertions_queries: 'nav.assertions_queries',
