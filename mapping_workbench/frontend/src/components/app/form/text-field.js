@@ -17,7 +17,7 @@ export const FormTextField = (props) => {
             name={name}
             onBlur={formik.handleBlur}
             onChange={formik.handleChange}
-            value={formik.values[name]}
+            value={formik.values?.[name]}
             required={required}
             type={type}
             {...other}
