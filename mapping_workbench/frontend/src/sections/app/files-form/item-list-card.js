@@ -18,7 +18,6 @@ export const ItemListCard = (props) => {
     const router = useRouter();
     const {item, collection, sectionApi, fileResourcesApi, onGetItems, onViewDetails} = props;
     const popover = usePopover();
-
     const handleDelete = () => {
         fileResourcesApi.deleteFileResource(item.filename)
             .then(() => onGetItems ? onGetItems() : router.reload())

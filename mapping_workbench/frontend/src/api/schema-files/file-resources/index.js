@@ -3,6 +3,13 @@ import {appApi} from "../../app";
 import {sessionApi} from "../../session";
 
 class SchemaFileResourcesApi extends FileResourcesApi {
+    get SECTION_TITLE() {
+        return "SHACL Test File Resources";
+    }
+
+    get SECTION_ITEM_TITLE() {
+        return "SHACL Test File Resource";
+    }
 
     get FILE_RESOURCE_FORMATS() {
         return {
@@ -17,7 +24,6 @@ class SchemaFileResourcesApi extends FileResourcesApi {
    get FILE_UPLOAD_FORMATS() {
         return {'XSD': {['text/xsd']:['.xsd']}}
     }
-
 
     get FILE_RESOURCE_CODE() {
         return {

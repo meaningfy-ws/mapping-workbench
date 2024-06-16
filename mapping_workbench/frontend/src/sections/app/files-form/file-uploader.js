@@ -31,6 +31,7 @@ export const FileUploader = (props) => {
 
     const router = useRouter();
 
+
     useEffect(() => {
         setFiles([]);
     }, [open]);

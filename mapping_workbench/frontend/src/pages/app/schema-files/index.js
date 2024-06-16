@@ -25,6 +25,7 @@ import {Box} from "@mui/system";
 import CircularProgress from "@mui/material/CircularProgress";
 import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
 
+
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
         filters: {},
@@ -279,6 +280,7 @@ const Page = () => {
                     }
                 </DialogContent>
             </Dialog>
+
             <FileUploader
                 onClose={uploadDialog.handleClose}
                 open={uploadDialog.open}
