@@ -43,6 +43,7 @@ class TaskMetadata(BaseModel):
     started_at: datetime = None
     finished_at: datetime = None
     exception_message: str = None
+    created_by: Optional[str] = None
 
 
 class APIListTaskMetadataResponse(BaseModel):
@@ -91,8 +92,12 @@ class Task:
     - getting task id
     """
 
-    def __init__(self, task_function: Callable, task_name: str,
-                 task_timeout: Optional[float] = settings.TASK_TIMEOUT, *args, **kwargs):
+    def __init__(self,
+                 task_function: Callable,
+                 task_name: str,
+                 task_timeout: Optional[float] = settings.TASK_TIMEOUT,
+                 created_by: Optional[str] = None,
+                 *args, **kwargs):
         """
         :param task_function: task function to be executed by task
         :param task_name: task name to be used in task id
@@ -105,9 +110,12 @@ class Task:
         self.task_kwargs = kwargs
         created_at = datetime.now(tzlocal())
         task_id = f"{task_name}_{created_at}"
-        self.task_metadata = TaskMetadata(task_id=task_id, task_name=task_name,
-                                          task_timeout=task_timeout, task_status=TaskStatus.QUEUED,
-                                          created_at=created_at)
+        self.task_metadata = TaskMetadata(task_id=task_id,
+                                          task_name=task_name,
+                                          task_timeout=task_timeout,
+                                          task_status=TaskStatus.QUEUED,
+                                          created_at=created_at,
+                                          created_by=created_by)
         self.future: Optional[ProcessFuture] = None
 
     def set_future(self, future: ProcessFuture):

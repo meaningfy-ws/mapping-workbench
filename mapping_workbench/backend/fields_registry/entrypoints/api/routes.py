@@ -16,7 +16,9 @@ from mapping_workbench.backend.fields_registry.services.data import tree_of_stru
 from mapping_workbench.backend.fields_registry.services.generate_conceptual_mapping_rules import \
     generate_conceptual_mapping_rules
 from mapping_workbench.backend.project.models.entity import Project
+from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.task_manager.services.task_wrapper import add_task
+from mapping_workbench.backend.user.models.user import User
 
 ROUTE_PREFIX = "/fields_registry"
 TAG = "fields_registry"
@@ -158,12 +160,14 @@ async def route_search_structural_elements_versioned_view_by_eforms_version(
 async def route_task_import_eforms_from_github(
         github_repository_url: str = Form(...),
         branch_or_tag_name: str = Form(...),
-        project_id: PydanticObjectId = Form(...)
+        project_id: PydanticObjectId = Form(...),
+        user: User = Depends(current_active_user)
 ):
     return add_task(
         tasks.task_import_eforms_from_github,
-        TASK_IMPORT_EFORMS_FROM_GITHUB_NAME,
+        f"Importing eForms from {github_repository_url}, branch: {branch_or_tag_name}",
         None,
+        user.email,
         github_repository_url, branch_or_tag_name, Project.link_from_id(project_id)
     )
 

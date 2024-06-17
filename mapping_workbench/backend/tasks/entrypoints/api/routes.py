@@ -17,7 +17,8 @@ TASK_GENERATE_CM_ASSERTIONS_QUERIES_NAME = f"{NAME_FOR_MANY}:{NAME_FOR_ONE}:gene
 
 router = APIRouter(
     prefix=ROUTE_PREFIX,
-    tags=[TAG]
+    tags=[TAG],
+    deprecated=True
 )
 
 
@@ -25,7 +26,8 @@ router = APIRouter(
     "/terms_validator",
     description=f"Task Terms Validator",
     name=TASK_TERMS_VALIDATOR_NAME,
-    status_code=status.HTTP_201_CREATED
+    status_code=status.HTTP_201_CREATED,
+    deprecated=True
 )
 async def route_task_terms_validator(
         filters: APIRequestWithProject = None
@@ -42,7 +44,8 @@ async def route_task_terms_validator(
     "/transform_test_data",
     description=f"Task Transform Test Data",
     name=TASK_TRANSFORM_TEST_DATA_NAME,
-    status_code=status.HTTP_201_CREATED
+    status_code=status.HTTP_201_CREATED,
+    deprecated=True
 )
 async def route_task_transform_test_data(
         filters: APIRequestWithProject = None
@@ -59,7 +62,8 @@ async def route_task_transform_test_data(
     "/generate_cm_assertions_queries",
     description=f"Task Generate CM Assertions Queries",
     name=TASK_GENERATE_CM_ASSERTIONS_QUERIES_NAME,
-    status_code=status.HTTP_201_CREATED
+    status_code=status.HTTP_201_CREATED,
+    deprecated=True
 )
 async def route_task_generate_cm_assertions_queries(
         filters: APIRequestForGenerateCMAssertionsQueries = None
