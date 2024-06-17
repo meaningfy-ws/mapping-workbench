@@ -140,16 +140,6 @@ const useItemsSearch = (items) => {
     };
 };
 
-const useCurrentItem = (items, itemId) => {
-    return useMemo(() => {
-        if (!itemId) {
-            return undefined;
-        }
-
-        return items.find((item) => item.id === itemId);
-    }, [items, itemId]);
-};
-
 const Page = () => {
     const [view, setView] = useState('grid');
     const [state, setState] = useState([])

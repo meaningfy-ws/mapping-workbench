@@ -13,7 +13,6 @@ import Box from "@mui/system/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 
 import {FileDropzone} from 'src/components/file-dropzone';
-import {sessionApi} from "../../../api/session";
 import {useRouter} from "../../../hooks/use-router";
 
 
