@@ -37,8 +37,7 @@ class SchemaFileResourcesApi extends FileResourcesApi {
     async createCollectionFileResource(request) {
         try {
             const project = sessionApi.getSessionProject()
-            const endpoint = this.paths.file(project);
-            // const headers = {"Content-Type": "multipart/form-data"};
+            const endpoint = this.paths.addFile(project);
             return await appApi.create(endpoint, request);
         } catch (err) {
         }
