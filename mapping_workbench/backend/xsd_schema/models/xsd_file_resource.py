@@ -20,8 +20,7 @@ class XSDFileResource(FileResource):
             IndexModel(
                 [("filename", pymongo.TEXT),
                  ("project", pymongo.TEXT)],
-                name="xsd_file_index",
-                unique=True
+                name="xsd_file_index"
             )
         ]
 
