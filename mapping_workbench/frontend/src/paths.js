@@ -124,6 +124,10 @@ export const paths = {
             }
         },
 
+        cm_rules_list: {
+            index: '/app/cm_rules_list'
+        },
+
         triple_map_fragments: {
             index: '/app/triple-map-fragments',
             create: '/app/triple-map-fragments/create',
