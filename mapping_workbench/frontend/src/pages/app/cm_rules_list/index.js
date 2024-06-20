@@ -28,6 +28,7 @@ import Card from "@mui/material/Card";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import MenuItem from "@mui/material/MenuItem";
+import CMCard from "../../../sections/app/cm-rules-list/cm-card";
 
 const Page = () => {
     const [view, setView] = useState('grid');
@@ -37,20 +38,6 @@ const Page = () => {
     const detailsDialog = useDialog();
 
 
-    const statusCM = [
-        {label: 'Under development', color: 'gray'},
-        {label: 'For internal review', color: 'yellow'},
-        {label: 'For internal consultation', color: 'yellow'},
-        {label: 'For OP consultation', color: 'pink'},
-        {label: 'For internal consultation(after review)', color: 'yellow'},
-        {label: 'Approved by first internal reviewer', color: 'lightblue'},
-        {label: 'Approved by second internal reviewer', color: 'lightblue'},
-        {label: 'For OP review (done)',  color: 'pink'},
-        {label: 'Approved by first OP reviewer', color: 'green'},
-        {label: 'Approved by OP (Accepted)', color: 'greener'},
-        {label: 'Change requested by OP', color: 'red'},
-        {label: 'Updated based on OP review', color: 'blue'}
-    ]
 
     usePageView();
 
@@ -128,46 +115,8 @@ const Page = () => {
                                        fullWidth>
 
                             </TextField>
-                            <Stack direction={{xs:'column', xl:'row-reverse'}}
-                                   justifyContent={{xs:'space-between'}}
-                                   margin={1}>
-                                <Stack direction={{xs:'row',xl:'column'}}
-                                       justifyContent='center'>
-                                    <TextField select
-                                               sx={{backgroundColor:'red'}}
-                                               label="Status"
-                                               name="statusCM">
-                                        {statusCM.map(status=>
-                                            <MenuItem
-                                                key={status.label}
-                                                value={status.label}
-                                            >
-                                                <Typography
-                                                    color="var(--nav-color)"
-                                                    variant="body2"
-                                                >
-                                                    {status.label}
-                                                </Typography>
-                                            </MenuItem>
-                                        )}
-                                    </TextField>
-                                    <Button>Editorial Notes</Button>
-                                    <Button>Feedback Notes</Button>
-                                    <Button>Mappings Notes</Button>
-                                </Stack>
-                                <Box margin={3}>
-
-                                    <Typography>Context</Typography>
-                                    <Box marginX={1}>
-                                        <Typography>min/max version</Typography>
-                                        <Typography>Parent ID</Typography>
-                                    </Box>
-                                    <Typography>Xpath expression of CM Rule</Typography>
-                                    <Box marginX={1}>
-                                        <Typography>Ontology Fragment</Typography>
-                                    </Box>
-                                </Box>
-                            </Stack>
+                            <CMCard/>
+                            <CMCard/>
                         </Card>
                     </Stack>
                 </Grid>
