@@ -10,7 +10,7 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {projectsApi as sectionApi} from 'src/api/projects';
+import {conceptualMappingRulesContentApi as sectionApi} from 'src/api/conceptual-mapping-rules-content';
 import {paths} from 'src/paths';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
@@ -19,6 +19,7 @@ import {Seo} from 'src/components/seo';
 import {ListSearch} from 'src/sections/app/conceptual-mapping-rule-content/list-search';
 import {ListTable} from 'src/sections/app/conceptual-mapping-rule-content/list-table';
 import {useProjects} from "../../../hooks/use-projects";
+import AddEditDrawer from "../../../sections/app/conceptual-mapping-rule-content/add-edit-drawer";
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
@@ -131,8 +132,21 @@ const useItemsSearch = (items) => {
 };
 
 export const Page = () => {
+    const [state, setState] = useState({})
     const itemsStore = useProjects();
     const itemsSearch = useItemsSearch(itemsStore.items);
+
+    const handleEdit = (item) => {
+        setState(e=>({...e, openDrawer: true, item}))
+    }
+
+    const handleAdd = () => {
+
+    }
+
+    const handleCloseDrawer = () => {
+        setState(e=>({...e, openDrawer: false}))
+    }
 
     return (
         <>
@@ -179,14 +193,13 @@ export const Page = () => {
                     >
                         <Button
                             id="add_button"
-                            component={RouterLink}
-                            href={paths.app[sectionApi.section].create}
                             startIcon={(
                                 <SvgIcon>
                                     <PlusIcon/>
                                 </SvgIcon>
                             )}
                             variant="contained"
+                            onClick={() => setState(e=>({...e, openDrawer:true,isEdit:false}))}
                         >
                             Add
                         </Button>
@@ -204,8 +217,12 @@ export const Page = () => {
                         count={itemsSearch.count}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
+                        onEdit={handleEdit}
                     />
                 </Card>
+                <AddEditDrawer open={state.openDrawer}
+                               onClose={handleCloseDrawer}
+                               item={state.item}/>
             </Stack>
         </>
     )

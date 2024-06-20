@@ -1,32 +1,20 @@
-import {Fragment, useState} from 'react';
 import PropTypes from 'prop-types';
 
-import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
-import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
-import CardContent from '@mui/material/CardContent';
-import Divider from '@mui/material/Divider';
-import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
-import SvgIcon from '@mui/material/SvgIcon';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import Button from "@mui/material/Button";
 
-import {PropertyList} from 'src/components/property-list';
-import {PropertyListItem} from 'src/components/property-list-item';
 import {Scrollbar} from 'src/components/scrollbar';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import {SeverityPill} from "../../../components/severity-pill";
-import {useProjects} from "../../../hooks/use-projects";
 import TablePagination from "../../components/table-pagination";
 import {useGlobalState} from "../../../hooks/use-global-state";
 import timeTransformer from "../../../utils/time-transformer";
 import TableSorterHeader from "../../components/table-sorter-header";
+import Button from "@mui/material/Button";
 
 
 
@@ -40,15 +28,12 @@ export const ListTable = (props) => {
         onRowsPerPageChange,
         page = 0,
         rowsPerPage = 0,
-        sectionApi
+        sectionApi,
+        onEdit
     } = props;
 
     const {timeSetting} = useGlobalState()
 
-    const [currentItem, setCurrentItem] = useState(null);
-    const projectStore = useProjects()
-
-    const handleItemToggle = itemId => setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
 
     const SorterHeader = (props) => {
         const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
@@ -108,13 +93,10 @@ export const ListTable = (props) => {
                     <TableBody>
                         {items.map(item => {
                             const item_id = item._id;
-                            const isCurrent = item_id === currentItem;
-                            const isSessionProject = item_id === projectStore.sessionProject
-                            const statusColor = isSessionProject ? 'success' : 'primary';
 
                             return (
-                                <Fragment key={item_id}>
-                                    <TableRow hover>
+                                    <TableRow hover
+                                              key={item_id}>
                                         <TableCell
                                             width="25%"
                                         >
@@ -135,20 +117,19 @@ export const ListTable = (props) => {
                                         <TableCell/>
                                         <TableCell align="right">
                                             <Button
-                                                id="select_button"
+                                                id="edit_button"
                                                 variant="text"
                                                 size="small"
-                                                color="warning"
-                                                onClick={() => projectStore.handleSessionProjectChange(item_id)}
+                                                color="primary"
+                                                onClick={() => onEdit(item)}
                                             >
-                                                Select
+                                                Edit
                                             </Button>
                                             <ListItemActions
                                                 onDeleteAction={() => projectStore.handleDeleteProject(item_id)}
                                                 itemctx={new ForListItemAction(item_id, sectionApi)}/>
                                         </TableCell>
                                     </TableRow>
-                                </Fragment>
                             );
                         })}
                     </TableBody>
@@ -165,5 +146,6 @@ ListTable.propTypes = {
     onPageChange: PropTypes.func,
     onRowsPerPageChange: PropTypes.func,
     page: PropTypes.number,
-    rowsPerPage: PropTypes.number
+    rowsPerPage: PropTypes.number,
+    onEdit: PropTypes.func
 };
