@@ -91,7 +91,7 @@ const PackageRow = (props) => {
             const toastId = toastLoad(`Processing "${item.identifier}" ... This may take a while. Please, be patient.`)
             sectionApi.processPackage(data)
                 .then(res => toastSuccess(`${res.task_name} successfully started.`, toastId))
-                .catch(err => toastError(`Processing "${item.identifier}" failed: ${err.message}.`, toastId))
+                .catch(err => toastError(err, toastId))
                 .finally(() => setIsProcessing(false))
         }
     });
@@ -102,14 +102,13 @@ const PackageRow = (props) => {
             package_id: item._id,
             project_id: sessionApi.getSessionProject()
         }
-
         const toastId = toastLoad(`Exporting "${item.identifier}" ... This may take a while. Please, be patient.`)
         sectionApi.exportPackage(data)
             .then(response => {
                     saveAs(new Blob([response], {type: "application/x-zip-compressed"}), `${item.identifier}.zip`);
                     toastSuccess(`"${item.identifier}" successfully exported.`, toastId)
                 })
-            .catch(err => toastError(`Exporting "${item.identifier}" failed: ${err.message}.`, toastId))
+            .catch(err => toastError(err, toastId))
             .finally(() => setIsExporting(false))
     }
 

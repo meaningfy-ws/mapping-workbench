@@ -1,9 +1,10 @@
 import io
 
 from beanie import PydanticObjectId
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, HTTPException
 from starlette.responses import StreamingResponse
 
+from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.mapping_package.services.api import get_mapping_package
 from mapping_workbench.backend.package_exporter.services.export_mapping_suite_v3 import export_latest_package_state, \
@@ -28,8 +29,11 @@ router = APIRouter(
 async def route_export_latest_package_state(
         package_id: PydanticObjectId
 ):
-    mapping_package: MappingPackage = await get_mapping_package(package_id)
-    archive: bytes = await export_latest_package_state(mapping_package)
+    try:
+        mapping_package: MappingPackage = await get_mapping_package(package_id)
+        archive: bytes = await export_latest_package_state(mapping_package)
+    except ResourceNotFoundException as http_exception:
+        raise http_exception
 
     return StreamingResponse(
         io.BytesIO(archive),
