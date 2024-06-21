@@ -354,6 +354,10 @@ export const useSections = () => {
                 {
                     title: t(tokens.nav.fluree),
                     path: paths.app.fluree.index
+                },
+                {
+                    title: t(tokens.nav.fluree_crypt),
+                    path: paths.app.fluree_crypt.index
                 }
             ]
         });
