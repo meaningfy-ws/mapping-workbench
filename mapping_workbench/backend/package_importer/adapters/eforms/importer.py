@@ -6,6 +6,7 @@ from mapping_workbench.backend.conceptual_mapping_rule.models.entity import Conc
 from mapping_workbench.backend.conceptual_mapping_rule.services.data import get_conceptual_mapping_rule_by_key
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
 from mapping_workbench.backend.fields_registry.services.data import get_structural_element_by_unique_fields
+from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroup
 from mapping_workbench.backend.package_importer.models.imported_mapping_suite import ImportedMappingSuite
@@ -359,15 +360,27 @@ class PackageImporter:
             if not source_structural_element:
                 continue
 
-            rule: ConceptualMappingRule = await get_conceptual_mapping_rule_by_key(
-                element=source_structural_element,
-                project_id=self.project.id
-            )
+            # rule: ConceptualMappingRule = await get_conceptual_mapping_rule_by_key(
+            #     element=source_structural_element,
+            #     project_id=self.project.id
+            # )
+            #
+            # if not rule:
 
-            if not rule:
-                rule = ConceptualMappingRule(
-                    source_structural_element=StructuralElement.link_from_id(source_structural_element.id)
-                )
+            # A conceptual mapping rule may have same structural element but different Ontology Fragment
+            rule: ConceptualMappingRule = await ConceptualMappingRule.find_one(
+                ConceptualMappingRule.source_structural_element == source_structural_element,
+                ConceptualMappingRule.project == Project.link_from_id(self.project.id),
+                ConceptualMappingRule.target_class_path == mono_rule.class_path,
+                ConceptualMappingRule.target_property_path == mono_rule.property_path
+            )
+            if rule:
+                mwb_logger.log_all_info(f"CM Rule with Ontology Fragment: {rule.target_class_path} | {rule.target_property_path} already exist")
+                continue
+
+            rule = ConceptualMappingRule(
+                source_structural_element=StructuralElement.link_from_id(source_structural_element.id)
+            )
 
             # rule: ConceptualMappingRule = ConceptualMappingRule()
             rule.project = self.project
@@ -406,7 +419,8 @@ class PackageImporter:
             if mono_rule.feedback_notes:
                 rule.feedback_notes = [ConceptualMappingRuleComment(comment=mono_rule.feedback_notes)]
 
-            await rule.on_update(self.user).save() if rule.id else await rule.on_create(self.user).create()
+            #await rule.on_update(self.user).save() if rule.id else \
+            await rule.on_create(self.user).create()
 
             sort_order += 1
 
