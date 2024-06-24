@@ -11,11 +11,20 @@ class MappingMetadata(BaseModel):
     eform_subtypes: List[str] = Field(None, alias="eForms Subtype")
     start_date: Optional[str] = Field(None, alias="Start Date")
     end_date: Optional[str] = Field(None, alias="End Date")
-    eforms_sdk_versions: List[str] = Field(None, alias="eForms SDK version")
 
     model_config = ConfigDict(
         populate_by_name=True,
     )
+
+
+class EFormsMappingMetadata(MappingMetadata):
+    eforms_sdk_versions: List[str] = Field(None, alias="eForms SDK version")
+
+
+class StandardMappingMetadata(MappingMetadata):
+    base_xpath: str = Field(None, alias="Base XPath")
+    min_xsd_version: str = Field(None, alias="Min XSD Version")
+    max_xsd_version: str = Field(None, alias="Max XSD Version")
 
 
 class MappingConceptualRule(BaseModel):
@@ -61,12 +70,19 @@ class ImportedCollectionResource(BaseModel):
 
 
 class ImportedMappingSuite(BaseModel):
-    metadata: MappingMetadata
     conceptual_rules: List[MappingConceptualRule] = []
-    mapping_groups: List[ImportedMappingGroup] = []
     transformation_resources: ImportedCollectionResource
     transformation_mappings: ImportedCollectionResource
     test_data_resources: List[ImportedCollectionResource] = []
     shacl_validation_resources: List[ImportedCollectionResource] = []
     sparql_validation_resources: List[ImportedCollectionResource] = []
     shacl_result_query: str
+
+
+class ImportedEFormsMappingSuite(ImportedMappingSuite):
+    metadata: EFormsMappingMetadata
+    mapping_groups: List[ImportedMappingGroup] = []
+
+
+class ImportedStandardMappingSuite(ImportedMappingSuite):
+    metadata: StandardMappingMetadata

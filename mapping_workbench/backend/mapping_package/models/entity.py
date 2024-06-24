@@ -16,6 +16,7 @@ from mapping_workbench.backend.core.models.base_project_resource_entity import B
 from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroupState, MappingGroup
 from mapping_workbench.backend.ontology.models.namespace import NamespaceState, Namespace
 from mapping_workbench.backend.ontology.models.term import TermState, Term
+from mapping_workbench.backend.package_importer.services.import_mapping_suite import PackageType
 from mapping_workbench.backend.package_validator.services.sparql_cm_assertions import SPARQL_CM_ASSERTIONS_SUITE_TITLE
 from mapping_workbench.backend.resource_collection.models.entity import ResourceCollectionState, ResourceCollection, \
     ResourceFileState
@@ -163,6 +164,7 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
     eform_subtypes: Optional[List[str]] = []
     start_date: Optional[str] = None
     end_date: Optional[str] = None
+    package_type: Optional[PackageType] = PackageType.EFORMS
     eforms_sdk_versions: Optional[List[str]] = []
     shacl_test_suites: Optional[List[Link[SHACLTestSuite]]] = None
 
@@ -302,6 +304,7 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
             eform_subtypes=self.eform_subtypes,
             start_date=self.start_date,
             end_date=self.end_date,
+            package_type=self.package_type,
             eforms_sdk_versions=self.eforms_sdk_versions,
             test_data_suites=test_data_suites,
             shacl_test_suites=shacl_test_suites,

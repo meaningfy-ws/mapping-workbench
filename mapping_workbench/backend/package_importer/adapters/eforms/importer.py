@@ -1,6 +1,3 @@
-from pathlib import Path
-from typing import Dict, Tuple
-
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule, \
     ConceptualMappingRuleComment
 from mapping_workbench.backend.conceptual_mapping_rule.services.data import get_conceptual_mapping_rule_by_key
@@ -10,20 +7,8 @@ from mapping_workbench.backend.mapping_package.models.entity import MappingPacka
 from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroup
 from mapping_workbench.backend.package_importer.adapters.importer_abc import PackageImporterABC
 from mapping_workbench.backend.package_importer.models.imported_mapping_suite import ImportedMappingSuite
-from mapping_workbench.backend.package_validator.models.test_data_validation import CMRuleSDKElement
 from mapping_workbench.backend.project.models.entity import Project
-from mapping_workbench.backend.resource_collection.models.entity import ResourceFile, ResourceCollection, \
-    ResourceFileFormat
-from mapping_workbench.backend.resource_collection.services.data import get_default_resource_collection, \
-    DEFAULT_RESOURCES_COLLECTION_NAME
-from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestFileResourceFormat, SHACLTestSuite, \
-    SHACLTestFileResource
-from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResourceFormat, SPARQLTestSuite, \
-    SPARQLTestFileResource, SPARQLQueryValidationType
-from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
-    TestDataFileResourceFormat
-from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragmentFormat, \
-    GenericTripleMapFragment, SpecificTripleMapFragment
+from mapping_workbench.backend.triple_map_fragment.models.entity import GenericTripleMapFragment
 from mapping_workbench.backend.user.models.user import User
 
 
