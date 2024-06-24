@@ -1,5 +1,4 @@
 import {useEffect, useState} from "react";
-import { FlureeClient } from '@fluree/fluree-client';
 
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
@@ -8,12 +7,12 @@ import Stack from '@mui/material/Stack';
 import Drawer from "@mui/material/Drawer";
 import Typography from '@mui/material/Typography';
 
-import {flureeApi as sectionApi} from 'src/api/fluree';
+import {flureeCryptApi as sectionApi} from 'src/api/fluree-crypt';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
-import {ListTable} from "src/sections/app/fluree/list-table";
+import {ListTable} from "src/sections/app/fluree-crypt/list-table";
 import CardHeader from "@mui/material/CardHeader";
 import {useFormik} from "formik";
 import {FormTextField} from "../../../components/app/form/text-field";
@@ -22,70 +21,20 @@ import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast
 import {TableLoadWrapper} from "../../../sections/app/shacl_validation_report/utils";
 import CardContent from "@mui/material/CardContent";
 import {generateKeyPair, getSinFromPublicKey, signQuery, signTransaction} from "@fluree/crypto-utils";
-import axios from "axios";
 
-// const client = await new FlureeClient({
-//   isFlureeHosted: true,
-//   apiKey: 'qjP6uJ9O7j30JAVShPh-T5x4UbGj7OZxfTd4dqT7KnEmAY-Ylf8e2tU6YwOTtSHjLZhKSGvpZKfW4T73oYvSgw',
-//   ledger: 'fluree-jld/387028092978552',
-// }).connect();
+    const { publicKey: authorityPubKey, privateKey: authorityPrivKey } = generateKeyPair();
+    const authorityAuthId = getSinFromPublicKey(authorityPubKey);
+    const authority = {
+        authId: authorityAuthId,
+        privKey: authorityPrivKey,
+    }
 
+    const { publicKey: userPubKey } = generateKeyPair();
+    const userAuthId = getSinFromPublicKey(userPubKey);
 
-const { publicKey: authorityPubKey, privateKey: authorityPrivKey } =  generateKeyPair();
-const authorityAuthId = getSinFromPublicKey(authorityPubKey);
-
-const authority = {
-  authId: authorityAuthId,
-  privKey: authorityPrivKey,
-};
-
-const { publicKey: userPubKey } = generateKeyPair();
-const userAuthId = getSinFromPublicKey(userPubKey);
-
-const user = {
-  authId: userAuthId,
-};
-
-
-const queryObj = {
-          "@context": {
-            "ex": "http://example.org/",
-            "schema": "http://schema.org/"
-          },
-          "where": {
-            "@id": "?s",
-            "schema:description": "?o"
-          },
-          "selectDistinct": { "?s": ["*"] },
-          "from": "fluree-jld/387028092978552",
-
+    const user = {
+      authId: userAuthId,
     };
-
-const queryString = JSON.stringify({
-  select: ["*"],
-  from: "_collection"
-});
-
-
-const queryAsUser = () =>
-  fetch(
-    `https://data.flur.ee/fluree/query`,
-    signQuery(
-      authority.privKey, //note the use of the authority's private key
-      queryString,
-      'query',
-      'test/one',
-      user.authId //note the use of the end user's auth id
-    )
-  )
-    .then((res) => res.json())
-    .then((res) =>
-      console.log(
-        'QUERY AS USER:\n\n',
-        JSON.stringify(res, null, 2),
-        '\n\n---\n'
-      )
-    );
 
 const Page = () => {
 
@@ -93,185 +42,116 @@ const Page = () => {
     const [state, setState] = useState({})
     const [dataState, setDataState] = useState({})
 
-
-    const command = signQuery(
-                  authority.privKey, //note the use of the authority's private key
-                  queryString,
-                  'query',
-                  "test/one",
-                //  user.authId //note the use of the end user's auth id
+    const queryAsUser = () =>
+  fetch(
+    `http://localhost:8090/fdb/authority/test/query`,
+    signQuery(
+      authority.privKey, //note the use of the authority's private key
+      sectionApi.queryString,
+      'query',
+      'authority/test',
+      user.authId //note the use of the end user's auth id
     )
-
-    // command.headers[":authority:"] = "data.flur.ee"
-    // command.headers[":method:"] = "POST"
-    // command.headers[":path:"] = "/fluree/query"
-    // command.headers[":scheme:"] = "https"
-    // command.headers["Content-Type"] = "application/json"
-    // command.headers["Authorization"] = "Bearer qjP6uJ9O7j30JAVShPh-T5x4UbGj7OZxfTd4dqT7KnEmAY-Ylf8e2tU6YwOTtSHjLZhKSGvpZKfW4T73oYvSgw"
-    // command.headers["Accept"] = "*/*"
-    // command.headers["Accept-Encoding"] = "gzip, deflate, br, zstd"
-    // command.headers["Accept-Language"] = "en-US,en;q=0.9"
-    //
-    //
-    //
-    //
-    // command.headers['Access-Control-Allow-Origin'] = '*'
-    // command.headers['Access-Control-Allow-Headers'] = '*'
-        // 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-    // command.headers['Access-Control-Allow-Credentials'] = 'true'
-    // command.headers["Access-Control-Allow-Methods"] = '*'
-    //     "GET, PUT, POST, DELETE, HEAD, OPTIONS"
-    // command.headers['mode']='no-cors'
-
-    // Object.assign(command, {"txid-only": false});
-
-    console.log(command)
-
-    const query = async () =>  {
-        const response = await axios.post('https://data.flur.ee/fluree/query',
-            command
+  )
+    .then((res) => res.json())
+    .then((res) => {
+        // setItems(res)
+            console.log(
+                'QUERY AS USER:\n\n',
+                JSON.stringify(res, null, 2),
+                '\n\n---\n'
             )
-    }
-    const queryAsUser = () => {
-        console.log(queryString)
-      fetch(
-        `http://localhost:58090/fluree/query`,
-
-              command
-      )
-        .then((res) => {
-            console.log(res)
-            return res.json()
-        })
-        .then((res) =>
-          console.log(
-            'QUERY AS USER:\n\n',
-            JSON.stringify(res, null, 2),
-            '\n\n---\n'
-          )
-        )
-          .catch(err => console.error(err));
         }
+    );
 
-       const queryAsUsers = () =>
-           axios.post(
-               `https://data.flur.ee/fluree/query`,
-               command
-           )
 
-        const flureeFetch = (path, method, body) =>
-  fetch( path, {
-    method,
+    const queryAsRoot = () =>
+  fetch(`http://localhost:8090/fdb/authority/test/query`, {
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(body),
-  }).then(() => delay(1000));
+    body: sectionApi.queryString,
+  })
+    .then((res) => res.json())
+    .then((res) =>{
+        setItems(res)
+      console.log('QUERY AS ROOT:\n\n', JSON.stringify(res, null, 2))
 
-    const flureeFetch2 = (path,body) =>
-        fetch(path,body)
-
-    const postTransaction = (id, type, description) => client.transact({
-          "@context": {
-            "ex": "http://example.org/",
-            "schema": "http://schema.org/"
-          },
-          "insert": [
-            {
-              "@id": id,
-              "@type": type,
-              "schema:description": description
-            }
-          ]
-    })
-
-    // const getTransaction = client.query({
-    //       "@context": {
-    //         "ex": "http://example.org/",
-    //         "schema": "http://schema.org/"
-    //       },
-    //       "from": "fluree-jld/387028092978552",
-    //       "where": {
-    //         "@id": "?s",
-    //         "schema:description": "?o"
-    //       },
-    //       "selectDistinct": { "?s": ["*"] }
-    // })
-
-    const deleteTransaction = (id,type) => client.transact({
-        "@context": {
-            "ex":  "http://example.org/"
-        },
-        "ledger": "fluree-jld/387028092978552",
-        "where": {
-            "@id": id,
-            "?p": "?o"
-        },
-        "delete": {
-            "@id": id,
-            "?p": "?o"
-        }
-    })
-
-    const ledger = "test/one"
-
-    const addItem = (id, type, description) => {
-        setState(e=> ({ ...e, load: true }))
-        const toastId = toastLoad('Adding item...')
-        postTransaction(id, type, description).send()
-            .then(res => {
-                toastSuccess('Added successfully', toastId)
-                getItems()
-                setState(e=>({ ...e, drawerOpen: false, load: false }))
-            })
-            .catch(err => toastError(err, toastId))
     }
-
-    const updateItem = (oldId, id, type, description) => {
-        setState(e=>({ ...e, load: true }))
-        const toastId = toastLoad('Updating item...')
-        deleteTransaction(oldId).send()
-            .then(res => {
-                postTransaction(id, type, description).send()
-                    .then(res => {
-                        setState(e=>({ ...e, drawerOpen: false, load: false }))
-                        getItems()
-                        toastSuccess('Updated successfully',toastId)
-                    })
-                }
-            )
-            .catch(err => toastError(err, toastId))
-    }
-
-    const deleteItem = (id, type) => {
-        setState(e=>({...e, load: true}))
-        const toastId = toastLoad('Deleting item...')
-        deleteTransaction(id, type).send()
-            .then(res => {
-                getItems()
-                toastSuccess('Deleted successfully', toastId)
-            })
-            .catch(err => toastError(err, toastId))
-            .finally(()=> setState(e => ({ ...e, load: false })))
-    }
+    );
 
 
-    const getItems = () => {
-        setDataState(e=> ({...e, load: true}))
-        getTransaction.send()
-           .then(res => {
-               setDataState(e => ({}))
-               setItems(res)
-           })
-          .catch(err => setDataState({load: false, error: err}))
-    }
+    // const addItem = (id, type, description) => {
+    //     setState(e=> ({ ...e, load: true }))
+    //     const toastId = toastLoad('Adding item...')
+    //     postTransaction(id, type, description).send()
+    //         .then(res => {
+    //             toastSuccess('Added successfully', toastId)
+    //             getItems()
+    //             setState(e=>({ ...e, drawerOpen: false, load: false }))
+    //         })
+    //         .catch(err => toastError(err, toastId))
+    // }
+    //
+    // const updateItem = (oldId, id, type, description) => {
+    //     setState(e=>({ ...e, load: true }))
+    //     const toastId = toastLoad('Updating item...')
+    //     deleteTransaction(oldId).send()
+    //         .then(res => {
+    //             postTransaction(id, type, description).send()
+    //                 .then(res => {
+    //                     setState(e=>({ ...e, drawerOpen: false, load: false }))
+    //                     getItems()
+    //                     toastSuccess('Updated successfully',toastId)
+    //                 })
+    //             }
+    //         )
+    //         .catch(err => toastError(err, toastId))
+    // }
+    //
+    // const deleteItem = (id, type) => {
+    //     setState(e=>({...e, load: true}))
+    //     const toastId = toastLoad('Deleting item...')
+    //     deleteTransaction(id, type).send()
+    //         .then(res => {
+    //             getItems()
+    //             toastSuccess('Deleted successfully', toastId)
+    //         })
+    //         .catch(err => toastError(err, toastId))
+    //         .finally(()=> setState(e => ({ ...e, load: false })))
+    // }
+    //
+    //
+    // const getItems = () => {
+    //     setDataState(e=> ({...e, load: true}))
+    //     getTransaction.send()
+    //        .then(res => {
+    //            setDataState(e => ({}))
+    //            setItems(res)
+    //        })
+    //       .catch(err => setDataState({load: false, error: err}))
+    // }
 
     useEffect(() => {
-        queryAsUser()
+        // createDb()
+        //   .then(transactSchemaData)
+        //   .then(transactSeedData)
+          queryAsUser()
+          .then(queryAsRoot)
+          .catch(console.error);
     }, []);
 
     usePageView();
 
+    const createDbAction = () => {
+        setState({load:true})
+            sectionApi.createDb()
+              .then(sectionApi.transactSchemaData)
+              .then(sectionApi.transactSeedData)
+    }
+
+    console.log('items',items)
 
     const formik = useFormik({
         initialValues: {
@@ -319,6 +199,8 @@ const Page = () => {
                     </Stack>
                     <Button disabled={state.load}
                             onClick={()=>setState({ drawerOpen: true })}>Add item</Button>
+                    <Button disabled={state.load}
+                            onClick={()=> createDbAction() }>Create DB</Button>
 
                 </Stack>
                 <Card>
