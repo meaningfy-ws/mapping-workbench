@@ -52,15 +52,13 @@ class MappingPackagesApi extends SectionApi {
     }
 
     exportPackage(params) {
-        try {
-            let endpoint = this.paths['export'];
-            const headers = {};
-            params['t'] = Date.now();
-             return appApi.get(endpoint, params, headers, {
-                responseType: 'blob'
-            });
-        } catch (err) {
-        }
+        let endpoint = this.paths['export'];
+        const headers = {};
+        params['t'] = Date.now();
+         return appApi.get(endpoint, params, headers, {
+            responseType: 'blob'
+        });
+
     }
 
     getLatestState(package_id) {

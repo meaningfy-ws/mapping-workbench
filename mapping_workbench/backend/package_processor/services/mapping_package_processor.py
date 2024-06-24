@@ -74,7 +74,7 @@ async def process_mapping_package(
 
     if TaskToRun.VALIDATE_PACKAGE.value in tasks_to_run:
         mwb_logger.log_all_info("Validating Package State ...")
-        validate_mapping_package(mapping_package_state, tasks_to_run)
+        await validate_mapping_package(mapping_package_state, tasks_to_run)
         mwb_logger.log_all_info("Validating Package State ... DONE")
 
     mwb_logger.log_all_info("Saving Package State ...")
@@ -84,6 +84,6 @@ async def process_mapping_package(
     await mapping_package_state_gate.on_create(user=user).save()
     mwb_logger.log_all_info("Saving Package State ... DONE")
 
-    mwb_logger.log_all_info("Processing Mapping Package '{mapping_package.identifier}' ... DONE")
+    mwb_logger.log_all_info(f"Processing Mapping Package '{mapping_package.identifier}' ... DONE")
 
     return mapping_package_state

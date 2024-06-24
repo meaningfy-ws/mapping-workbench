@@ -28,7 +28,7 @@ class OntologyFilesApi  extends SectionApi {
 
     async getOntologyFile (fileName) {
         const project = sessionApi.getSessionProject()
-        const endpoint = this.paths.file(fileName, project);
+        const endpoint = this.paths.item(fileName, project);
         return appApi.get(endpoint)
     }
 

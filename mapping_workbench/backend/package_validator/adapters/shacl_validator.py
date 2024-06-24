@@ -64,7 +64,8 @@ class SHACLValidator(TestDataValidator):
                 shacl_graph=shacl_shape_graph,
                 meta_shacl=False,
                 js=False,
-                debug=False
+                debug=False,
+                inference="rdfs" if len(shacl_files) > 0 else None
             )
 
             shacl_validation_result.conforms = conforms or False

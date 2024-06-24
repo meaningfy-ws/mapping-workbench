@@ -146,7 +146,8 @@ async def route_task_generate_cm_assertions_queries(
 ):
     return add_task(
         tasks.task_generate_cm_assertions_queries,
-        TASK_GENERATE_CM_ASSERTIONS_QUERIES_NAME,
+        "Generate CM assertions queries",
         None,
+        user.email,
         filters.project, bool(filters.cleanup), user
     )

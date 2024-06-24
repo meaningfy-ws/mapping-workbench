@@ -92,7 +92,7 @@ secured_routers: list = [
     config_routes.router,
     ontology_routes.router,
     task_manager_routes.router,
-    tasks_routes.router,
+    tasks_routes.router, # Depricated
     fields_registry.router,
     xsd_schema_router.router
 ]

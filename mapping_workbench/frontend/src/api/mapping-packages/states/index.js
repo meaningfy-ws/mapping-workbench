@@ -112,15 +112,12 @@ export class MappingPackageStatesApi extends SectionApi {
     }
 
     exportPackage(params) {
-        try {
-            const endpoint = this.paths['export_specific'];
-            const headers = {};
-            params['t'] = Date.now();
-             return appApi.get(endpoint, params, headers, {
-                responseType: 'blob'
-            });
-        } catch (err) {
-        }
+        const endpoint = this.paths['export_specific'];
+        const headers = {};
+        params['t'] = Date.now();
+         return appApi.get(endpoint, params, headers, {
+            responseType: 'blob'
+        });
     }
 }
 

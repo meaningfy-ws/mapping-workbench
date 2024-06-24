@@ -20,8 +20,7 @@ class OntologyFileResource(FileResource):
             IndexModel(
                 [("filename", pymongo.TEXT),
                  ("project", pymongo.TEXT)],
-                name="ontology_file_index",
-                unique=True
+                name="ontology_file_index"
             )
         ]
 

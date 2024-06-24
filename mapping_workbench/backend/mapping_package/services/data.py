@@ -2,6 +2,7 @@ from typing import List
 
 from beanie import PydanticObjectId
 
+from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageState, \
     MappingPackageStateGate
 from mapping_workbench.backend.state_manager.services.object_state_manager import load_object_state
@@ -14,6 +15,9 @@ async def get_latest_mapping_package_state_gate(mapping_package: MappingPackage)
         ).sort(
             -MappingPackageStateGate.created_at
         ).limit(1).to_list()
+
+    if len(mapping_package_state_gates) < 1:
+        raise ResourceNotFoundException(detail=f"There is no state for package {mapping_package.identifier}, please run the MP processing")
 
     if mapping_package_state_gates:
         return mapping_package_state_gates[0]

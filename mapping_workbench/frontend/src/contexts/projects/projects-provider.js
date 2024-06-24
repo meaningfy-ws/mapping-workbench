@@ -42,7 +42,8 @@ export const ProjectsProvider = ({children}) => {
                 .then(res => {
                     setState(prevState => ({...prevState, sessionProject: id}))
                     toastSuccess('Project Selected', toastId);
-                });
+                })
+                .finally(() => window.location.reload())
     }
 
    const handleDeleteProject = (id) => {
