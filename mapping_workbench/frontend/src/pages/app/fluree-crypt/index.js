@@ -52,16 +52,40 @@ const queryObj = {
             "ex": "http://example.org/",
             "schema": "http://schema.org/"
           },
-          "From": "fluree-jld/387028092978552",
           "where": {
             "@id": "?s",
             "schema:description": "?o"
           },
-          "selectDistinct": { "?s": ["*"] }
+          "selectDistinct": { "?s": ["*"] },
+          "from": "fluree-jld/387028092978552",
+
     };
 
-const queryString = JSON.stringify({select: ["*"], from: 'fluree-jld/387028092978552'});
+const queryString = JSON.stringify({
+  select: ["*"],
+  from: "_collection"
+});
 
+
+const queryAsUser = () =>
+  fetch(
+    `https://data.flur.ee/fluree/query`,
+    signQuery(
+      authority.privKey, //note the use of the authority's private key
+      queryString,
+      'query',
+      'test/one',
+      user.authId //note the use of the end user's auth id
+    )
+  )
+    .then((res) => res.json())
+    .then((res) =>
+      console.log(
+        'QUERY AS USER:\n\n',
+        JSON.stringify(res, null, 2),
+        '\n\n---\n'
+      )
+    );
 
 const Page = () => {
 
@@ -72,9 +96,9 @@ const Page = () => {
 
     const command = signQuery(
                   authority.privKey, //note the use of the authority's private key
-                  JSON.stringify(queryString),
+                  queryString,
                   'query',
-                  'fluree-jld/387028092978552',
+                  "test/one",
                 //  user.authId //note the use of the end user's auth id
     )
 
@@ -87,17 +111,19 @@ const Page = () => {
     // command.headers["Accept"] = "*/*"
     // command.headers["Accept-Encoding"] = "gzip, deflate, br, zstd"
     // command.headers["Accept-Language"] = "en-US,en;q=0.9"
-
-
-
-
+    //
+    //
+    //
+    //
     // command.headers['Access-Control-Allow-Origin'] = '*'
-    // command.headers['Access-Control-Allow-Headers'] = 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+    // command.headers['Access-Control-Allow-Headers'] = '*'
+        // 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
     // command.headers['Access-Control-Allow-Credentials'] = 'true'
-    // command.headers["Access-Control-Allow-Methods"] = "GET, PUT, POST, DELETE, HEAD, OPTIONS"
+    // command.headers["Access-Control-Allow-Methods"] = '*'
+    //     "GET, PUT, POST, DELETE, HEAD, OPTIONS"
     // command.headers['mode']='no-cors'
 
-    Object.assign(command, {"txid-only": false});
+    // Object.assign(command, {"txid-only": false});
 
     console.log(command)
 
@@ -109,7 +135,7 @@ const Page = () => {
     const queryAsUser = () => {
         console.log(queryString)
       fetch(
-        `https://data.flur.ee/fluree/query`,
+        `http://localhost:58090/fluree/query`,
 
               command
       )
@@ -134,13 +160,16 @@ const Page = () => {
            )
 
         const flureeFetch = (path, method, body) =>
-  fetch(`https://data.flur.ee/fluree/query`, {
+  fetch( path, {
     method,
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(body),
   }).then(() => delay(1000));
+
+    const flureeFetch2 = (path,body) =>
+        fetch(path,body)
 
     const postTransaction = (id, type, description) => client.transact({
           "@context": {
@@ -183,6 +212,8 @@ const Page = () => {
             "?p": "?o"
         }
     })
+
+    const ledger = "test/one"
 
     const addItem = (id, type, description) => {
         setState(e=> ({ ...e, load: true }))
@@ -236,7 +267,7 @@ const Page = () => {
     }
 
     useEffect(() => {
-        query()
+        queryAsUser()
     }, []);
 
     usePageView();
