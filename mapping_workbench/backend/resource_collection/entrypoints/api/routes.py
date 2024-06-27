@@ -154,6 +154,7 @@ async def route_create_resource_collection_file_resources(
         user: User = Depends(current_active_user)
 ):
     data = ResourceFileCreateIn(**(await file_resource_data_from_form_request(req)))
+
     return await create_resource_collection_file_resource(
         resource_collection=resource_collection,
         data=data,

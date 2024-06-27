@@ -136,3 +136,9 @@ class EFormsPackageImporter(PackageImporterABC):
     async def clear_project_data(cls, project: Project):
         await super().clear_project_data(project)
         await MappingGroup.find(MappingGroup.project == Project.link_from_id(project.id)).delete()
+
+
+class PackageImporter(EFormsPackageImporter):
+    """
+
+    """

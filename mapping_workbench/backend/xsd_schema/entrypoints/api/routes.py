@@ -86,7 +86,7 @@ async def route_create_xsd_file(
         xsd_file: XSDFileResourceIn
 ) -> None:
     try:
-        await xsd_file_repository.create(project_id=project_id, xsd_file=XSDFileResource(**xsd_file.dict()))
+        await xsd_file_repository.create(project_id=project_id, xsd_file=XSDFileResource(**xsd_file.model_dump()))
     except (
             XSDFileResourceExistsException,
             ProjectNotFoundException

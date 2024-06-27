@@ -16,7 +16,7 @@ from mapping_workbench.backend.core.models.base_project_resource_entity import B
 from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroupState, MappingGroup
 from mapping_workbench.backend.ontology.models.namespace import NamespaceState, Namespace
 from mapping_workbench.backend.ontology.models.term import TermState, Term
-from mapping_workbench.backend.package_importer.services.import_mapping_suite import PackageType
+from mapping_workbench.backend.mapping_package import PackageType
 from mapping_workbench.backend.package_validator.services.sparql_cm_assertions import SPARQL_CM_ASSERTIONS_SUITE_TITLE
 from mapping_workbench.backend.resource_collection.models.entity import ResourceCollectionState, ResourceCollection, \
     ResourceFileState

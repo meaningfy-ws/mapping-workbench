@@ -4,9 +4,9 @@ import tempfile
 import zipfile
 
 import pytest
-from bson.objectid import ObjectId
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
+from mapping_workbench.backend.mapping_package import PackageType
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.package_importer.services.import_mapping_suite import \
     import_mapping_suite_from_file_system, import_mapping_package_from_archive, import_mapping_package
@@ -37,10 +37,10 @@ def test_import_mapping_suite_v3():
 
 
 @pytest.mark.asyncio
-async def test_import_mapping_package(dummy_project, dummy_project_link, dummy_structural_element):
+async def test_import_eforms_mapping_package(dummy_project, dummy_project_link, dummy_structural_element):
     assert PACKAGE_EFORMS_16_DIR_PATH.exists()
     await dummy_structural_element.create()
-    package = await import_mapping_package(PACKAGE_EFORMS_16_DIR_PATH, dummy_project)
+    package = await import_mapping_package(PACKAGE_EFORMS_16_DIR_PATH, dummy_project, PackageType.EFORMS)
     assert package.id
     assert await MappingPackage.count() > 0
     db_package = await MappingPackage.get(package.id)
@@ -62,7 +62,7 @@ async def test_import_mapping_package(dummy_project, dummy_project_link, dummy_s
 
 
 @pytest.mark.asyncio
-async def test_import_mapping_package_from_archive(dummy_project, dummy_structural_element):
+async def test_import_eforms_mapping_package_from_archive(dummy_project, dummy_structural_element):
     assert PACKAGE_EFORMS_16_DIR_PATH.exists()
     await dummy_structural_element.create()
     def zip_directory(path, zip_file_handle):
@@ -86,7 +86,8 @@ async def test_import_mapping_package_from_archive(dummy_project, dummy_structur
         with open(arch_path, 'rb') as zip_file:
             package: MappingPackage = await import_mapping_package_from_archive(
                 file_content=zip_file.read(),
-                project=dummy_project
+                project=dummy_project,
+                package_type=PackageType.EFORMS
             )
             assert package.id
             assert await MappingPackage.count() > 0

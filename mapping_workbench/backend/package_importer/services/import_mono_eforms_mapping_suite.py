@@ -72,7 +72,7 @@ def import_mapping_suite_from_file_system(
     assert shacl_result_query_file_path.exists()
 
     mapping_suite_metadata = import_mapping_metadata(conceptual_mappings_file_path)
-    mapping_conceptual_rules = import_mapping_conceptual_rules(conceptual_mappings_file_path, package_type)
+    mapping_conceptual_rules = import_mapping_conceptual_rules(conceptual_mappings_file_path)
     mapping_transformation_resources = import_collection_resource(transformation_resources_dir_path)
     mapping_transformation_mappings = import_collection_resource(transformation_mappings_dir_path)
     mapping_test_data_resources = import_collection_resources(test_data_dir_path)

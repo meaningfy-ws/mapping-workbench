@@ -1,29 +1,18 @@
 import io
-import io
 import pathlib
 import tempfile
 import zipfile
-from enum import Enum
-from typing import List
 
-import numpy as np
-import pandas as pd
-
+from mapping_workbench.backend.mapping_package import PackageType
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.package_importer.adapters.eforms.importer import EFormsPackageImporter
 from mapping_workbench.backend.package_importer.adapters.importer_abc import PackageImporterABC
 from mapping_workbench.backend.package_importer.adapters.importer_factory import PackageImporterFactory
 from mapping_workbench.backend.package_importer.adapters.standard.importer import StandardPackageImporter
-from mapping_workbench.backend.package_importer.models.imported_mapping_suite import ImportedMappingGroup
-from mapping_workbench.backend.package_importer.models.imported_mapping_suite import MappingMetadata, \
-    MappingConceptualRule, ImportedCollectionResource, ImportedFileResource, ImportedMappingSuite
+from mapping_workbench.backend.package_importer.services.import_mono_eforms_mapping_suite import \
+    import_mapping_suite_from_file_system
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.user.models.user import User
-
-
-class PackageType(Enum):
-    EFORMS = "eforms"
-    STANDARD = "standard"
 
 
 async def import_mapping_package(
@@ -31,7 +20,7 @@ async def import_mapping_package(
         package_type: PackageType, user: User = None
 ) -> MappingPackage:
     monolith_mapping_suite = import_mapping_suite_from_file_system(
-        mapping_package_dir_path, package_type
+        mapping_package_dir_path
     )
 
     importer: PackageImporterABC = PackageImporterFactory.get_importer(
