@@ -26,27 +26,31 @@ import CardContent from "@mui/material/CardContent";
 
 
 const client = await new FlureeClient({
-    isFlureeHosted: true,
-    apiKey: 'qjP6uJ9O7j30JAVShPh-T5x4UbGj7OZxfTd4dqT7KnEmAY-Ylf8e2tU6YwOTtSHjLZhKSGvpZKfW4T73oYvSgw',
+    // isFlureeHosted: true,
+    // apiKey: 'qjP6uJ9O7j30JAVShPh-T5x4UbGj7OZxfTd4dqT7KnEmAY-Ylf8e2tU6YwOTtSHjLZhKSGvpZKfW4T73oYvSgw',
+    // ledger: 'fluree-jld/387028092978552',
     ledger: 'fluree-jld/387028092978552',
-    // privateKey: '2fd4ee98c23f427ef37500ddb296de883c9013b319c72ebd76e151a820defe57',
+    host: 'localhost',
+    port: 58090,
+    // create:true,
+    privateKey: '2fd4ee98c23f427ef37500ddb296de883c9013b319c72ebd76e151a820defe57',
     // signMessages: true,
+    // defaultContext:{
+    //                 "ex": "http://example.org/",
+    //                 "schema": "http://schema.org/"
+    //                }
 }).connect();
 
 // client.generateKeyPair()
 
 const did = client.getDid()
-console.log(did)
+
+// console.log(did)
 // client.generateKeyPair()
 // client.setKey(client.getPrivateKey())
 // console.log(client.getPrivateKey())
 
 // client.setKey(privateKey)
-
-client.setContext({
-            "ex": "http://example.org/",
-            "schema": "http://schema.org/"
-          })
 
 const Page = () => {
 
@@ -56,28 +60,89 @@ const Page = () => {
 
     const postTransaction = (id, type, description) => client.transact({
           "insert": [
-            {
-              "@id": id,
-              "@type": type,
-              "schema:description": description
-            }
+              {
+                  "@id": did,
+                  "@type": type,
+                  "schema:description": description,
+
+                  "f:role": {"@id": "ex:userRole"},
+              },
+
           ],
-         "opts": {
-             "did": did
-         }
+          // "opts": {
+          //           "did": did,
+          //        "role": "ex:userRole"
+          //       },
+         // "opts": {
+         //     "did": did
+         // }
     })
 
-    const getTransaction = client.query({
-          "from": "fluree-jld/387028092978552",
-          "where": {
-            "@id": "?s",
-            "schema:description": "?o"
-          },
-          "selectDistinct": { "?s": ["*"] },
-           "opts": {
-             "did": did
-         }
+
+
+    const notSignedgetTransaction = client.query({
+          // "from": "cookbook/base",
+          // "where": {
+          //   "@id": "?s",
+          //   "schema:description": "?o"
+          // },
+          // "selectDistinct": { "?s": ["*"] },
+          //    "opts": {
+          //           "did": did,
+          //        "role": "ex:userRole"
+          //       },
+
+
+  // "@context": {
+  //   "ex": "http://example.org/"
+  // },
+  // "from": "policy-view-age",
+  "select": {
+    "?person": [
+      "*"
+    ]
+  },
+  "where": {
+    "@id": "?person",
+    "@type": "Person"
+  }
+
     })
+
+
+     const getTransaction = client.query({
+  // "@context": {
+  //   "ex": "http://example.org/"
+  // },
+  // "from": "policy-view-age",
+  "select": {
+    "?person": [
+      "*"
+    ]
+  },
+  "where": {
+    "@id": "?person",
+    "@type": "Person"
+  },
+  "opts": {
+    "role": "ex:alice",
+      // did: did
+  }
+
+
+    }).sign()
+
+
+   // const signedTransaction = client
+   //      .transact({
+   //        insert: [
+   //          {
+   //            '@id': 'ex:alice',
+   //            'ex:secret': "alice's new secret",
+   //          },
+   //        ],
+   //      })
+   //      .sign();
 
 //
 // signedTransaction = client
@@ -88,17 +153,17 @@ const Page = () => {
 
 // const response = await signedTransaction.send();
 
-    const deleteTransaction = (id,type) => client.transact({
-        "ledger": "fluree-jld/387028092978552",
-        "where": {
-            "@id": id,
-            "?p": "?o"
-        },
-        "delete": {
-            "@id": id,
-            "?p": "?o"
-        }
-    })
+    // const deleteTransaction = (id,type) => client.transact({
+    //     "ledger": "fluree-jld/387028092978552",
+    //     "where": {
+    //         "@id": id,
+    //         "?p": "?o"
+    //     },
+    //     "delete": {
+    //         "@id": id,
+    //         "?p": "?o"
+    //     }
+    // })
 
     const addItem = (id, type, description) => {
         setState(e=> ({ ...e, load: true }))
@@ -140,9 +205,159 @@ const Page = () => {
             .finally(()=> setState(e => ({ ...e, load: false })))
     }
 
+    const setAccess = () => client
+        .transact({
+          '@context': {
+            'f:equals': { '@container': '@list' },
+          },
+          insert: [
+            {
+              '@id': 'ex:alice',
+              '@type': 'ex:User',
+              'ex:secret': "alice's secret",
+            },
+            {
+              '@id': 'ex:bob',
+              '@type': 'ex:User',
+              'ex:secret': "bob's secret",
+            },
+            {
+              '@id': 'ex:userPolicy',
+              '@type': ['f:Policy'],
+              'f:targetClass': {
+                '@id': 'ex:User',
+              },
+              'f:allow': [
+                {
+                  '@id': 'ex:globalViewAllow',
+                  'f:targetRole': {
+                    '@id': 'ex:userRole',
+                  },
+                  'f:action': [
+                    {
+                      '@id': 'f:view',
+                    },
+                  ],
+                },
+              ],
+              'f:property': [
+                {
+                  'f:path': {
+                    '@id': 'ex:secret',
+                  },
+                  'f:allow': [
+                    {
+                      '@id': 'ex:secretsRule',
+                      'f:targetRole': {
+                        '@id': 'ex:userRole',
+                      },
+                      'f:action': [
+                        {
+                          '@id': 'f:view',
+                        },
+                        {
+                          '@id': 'f:modify',
+                        },
+                      ],
+                      'f:equals': [
+                        {
+                          '@id': 'f:$identity',
+                        },
+                        {
+                          '@id': 'ex:user',
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              '@id': did,
+              'ex:user': {
+                '@id': 'ex:alice',
+              },
+              'f:role': {
+                '@id': 'ex:userRole',
+              },
+            },
+          ],
+        })
+        .send();
+
+
+    const addPeople = () => client.transact({
+  "ledger": "fluree-jld/387028092978552",
+  "@context": {
+    "ex": "http://example.org/"
+  },
+  "insert": [
+    {
+      "age": 35,
+      "name": "Souma Mukerjee",
+      "@type": "Person",
+      "@id": "2"
+    },
+    {
+      "age": 36,
+      "name": "Souradeep Das",
+      "@type": "Person",
+      "@id": "3"
+    },
+    {
+      "age": 24,
+      "name": "Tanmay Kumar",
+      "@type": "Person",
+      "@id": "ex:Tanmay"
+    }
+  ]
+}).send()
+
+
+    const addPeoplePolicy = () => client.transact({
+  "ledger": "fluree-jld/387028092978552",
+  "@context": {
+    "ex": "http://example.org/",
+    "f": "https://ns.flur.ee/ledger#"
+  },
+  "insert": [{
+    "@id": "did:fluree:2",
+    "ex:user": { "@id": "ex:Tanmay" },
+    "f:role": { "@id": "ex:nameViewRole" }
+  },
+  {
+    "@id": "ex:NameViewPolicy",
+    "@type": ["f:Policy"],
+    "f:targetClass": { "@id": "Person" },
+    "f:allow": [
+      {
+        "@id": "ex:nameViewAllow",
+        "f:targetRole": { "@id": "ex:nameViewRole" },
+        "f:action": [{ "@id": "f:view" }]
+      }
+    ],
+    "f:property": [
+      {
+        "@id": "ex:subsOnlyViewName",
+        "f:path": { "@id": "age" },
+        "f:allow": [
+          {
+            "@id": "ex:ageViewRule",
+            "f:targetRole": { "@id": "ex:nameViewRole" },
+            "f:action": [{ "@id": "f:view" }],
+            "f:equals": {
+              "@list": [{ "@id": "f:$identity" }, { "@id": "ex:user" }]
+            }
+          }
+        ]
+      }
+    ]
+  }]
+}).send()
 
     const getItems = () => {
         setDataState(e=> ({...e, load: true}))
+
         getTransaction.send()
            .then(res => {
                setDataState(e => ({}))
@@ -202,6 +417,7 @@ const Page = () => {
                             </Typography>
                         </Breadcrumbs>
                     </Stack>
+                    <Button onClick={()=>addPeoplePolicy()}>Set Access</Button>
                     <Button disabled={state.load}
                             onClick={()=>setState({ drawerOpen: true })}>Add item</Button>
 
