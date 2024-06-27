@@ -22,19 +22,23 @@ import {TableLoadWrapper} from "../../../sections/app/shacl_validation_report/ut
 import CardContent from "@mui/material/CardContent";
 import {generateKeyPair, getSinFromPublicKey, signQuery, signTransaction} from "@fluree/crypto-utils";
 
-    const { publicKey: authorityPubKey, privateKey: authorityPrivKey } = generateKeyPair();
-    const authorityAuthId = getSinFromPublicKey(authorityPubKey);
-    const authority = {
-        authId: authorityAuthId,
-        privKey: authorityPrivKey,
-    }
+const { publicKey: authorityPubKey, privateKey: authorityPrivKey } = generateKeyPair();
 
-    const { publicKey: userPubKey } = generateKeyPair();
-    const userAuthId = getSinFromPublicKey(userPubKey);
+const authorityAuthId = getSinFromPublicKey(authorityPubKey);
 
-    const user = {
-      authId: userAuthId,
-    };
+const authority = {
+    authId: authorityAuthId,
+    privKey: authorityPrivKey,
+}
+
+const { publicKey: userPubKey } = generateKeyPair();
+const userAuthId = getSinFromPublicKey(userPubKey);
+
+const user = {
+  authId: userAuthId,
+};
+
+console.log('user',user)
 
 const Page = () => {
 
@@ -64,7 +68,6 @@ const Page = () => {
         }
     );
 
-
     const queryAsRoot = () =>
   fetch(`http://localhost:8090/fdb/authority/test/query`, {
     method: 'POST',
@@ -75,24 +78,27 @@ const Page = () => {
   })
     .then((res) => res.json())
     .then((res) =>{
-        setItems(res)
+        console.log(res)
+        if(!res.status)
+            setItems(res)
       console.log('QUERY AS ROOT:\n\n', JSON.stringify(res, null, 2))
 
     }
-    );
+    )
+      .catch(err => console.log(err));
 
 
-    // const addItem = (id, type, description) => {
-    //     setState(e=> ({ ...e, load: true }))
-    //     const toastId = toastLoad('Adding item...')
-    //     postTransaction(id, type, description).send()
-    //         .then(res => {
-    //             toastSuccess('Added successfully', toastId)
-    //             getItems()
-    //             setState(e=>({ ...e, drawerOpen: false, load: false }))
-    //         })
-    //         .catch(err => toastError(err, toastId))
-    // }
+    const addItem = (id, type, description) => {
+        setState(e=> ({ ...e, load: true }))
+        const toastId = toastLoad('Adding item...')
+        sectionApi.transactInsertData(id, type, description)
+            .then(res => {
+                toastSuccess('Added successfully', toastId)
+                // getItems()
+                setState(e=>({ ...e, drawerOpen: false, load: false }))
+            })
+            .catch(err => toastError(err, toastId))
+    }
     //
     // const updateItem = (oldId, id, type, description) => {
     //     setState(e=>({ ...e, load: true }))
@@ -137,10 +143,15 @@ const Page = () => {
         // createDb()
         //   .then(transactSchemaData)
         //   .then(transactSeedData)
-          queryAsUser()
+        getQuery()
+    }, []);
+
+
+    const getQuery = () => {
+           queryAsUser()
           .then(queryAsRoot)
           .catch(console.error);
-    }, []);
+    }
 
     usePageView();
 
@@ -148,7 +159,8 @@ const Page = () => {
         setState({load:true})
             sectionApi.createDb()
               .then(sectionApi.transactSchemaData)
-              .then(sectionApi.transactSeedData)
+              .then(() => sectionApi.transactSeedData(user,authority))
+                .then(setState({load:false}))
     }
 
     console.log('items',items)
@@ -197,6 +209,8 @@ const Page = () => {
                             </Typography>
                         </Breadcrumbs>
                     </Stack>
+                      <Button disabled={state.load}
+                            onClick={getQuery}>Refresh</Button>
                     <Button disabled={state.load}
                             onClick={()=>setState({ drawerOpen: true })}>Add item</Button>
                     <Button disabled={state.load}

@@ -22,12 +22,26 @@ import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast
 import {TableLoadWrapper} from "../../../sections/app/shacl_validation_report/utils";
 import CardContent from "@mui/material/CardContent";
 
+
+
+
 const client = await new FlureeClient({
-  isFlureeHosted: true,
-  apiKey: 'qjP6uJ9O7j30JAVShPh-T5x4UbGj7OZxfTd4dqT7KnEmAY-Ylf8e2tU6YwOTtSHjLZhKSGvpZKfW4T73oYvSgw',
-  ledger: 'fluree-jld/387028092978552',
+    isFlureeHosted: true,
+    apiKey: 'qjP6uJ9O7j30JAVShPh-T5x4UbGj7OZxfTd4dqT7KnEmAY-Ylf8e2tU6YwOTtSHjLZhKSGvpZKfW4T73oYvSgw',
+    ledger: 'fluree-jld/387028092978552',
+    // privateKey: '2fd4ee98c23f427ef37500ddb296de883c9013b319c72ebd76e151a820defe57',
+    // signMessages: true,
 }).connect();
 
+client.generateKeyPair()
+
+const did = client.getDid()
+console.log(did)
+// client.generateKeyPair()
+// client.setKey(client.getPrivateKey())
+// console.log(client.getPrivateKey())
+
+// client.setKey(privateKey)
 const Page = () => {
 
     const [items, setItems ] = useState([])
@@ -45,7 +59,10 @@ const Page = () => {
               "@type": type,
               "schema:description": description
             }
-          ]
+          ],
+         "opts": {
+             "did": did
+         }
     })
 
     const getTransaction = client.query({
@@ -58,8 +75,20 @@ const Page = () => {
             "@id": "?s",
             "schema:description": "?o"
           },
-          "selectDistinct": { "?s": ["*"] }
-    })
+          "selectDistinct": { "?s": ["*"] },
+           "opts": {
+             "did": did
+         }
+    }).sign()
+
+//
+// signedTransaction = client
+//   .transact({
+//     insert: { '@id': 'freddy', name: 'Freddy' },
+//   })
+//   .sign();
+
+// const response = await signedTransaction.send();
 
     const deleteTransaction = (id,type) => client.transact({
         "@context": {
