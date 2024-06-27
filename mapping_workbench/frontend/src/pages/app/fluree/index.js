@@ -33,7 +33,7 @@ const client = await new FlureeClient({
     // signMessages: true,
 }).connect();
 
-client.generateKeyPair()
+// client.generateKeyPair()
 
 const did = client.getDid()
 console.log(did)
@@ -42,6 +42,12 @@ console.log(did)
 // console.log(client.getPrivateKey())
 
 // client.setKey(privateKey)
+
+client.setContext({
+            "ex": "http://example.org/",
+            "schema": "http://schema.org/"
+          })
+
 const Page = () => {
 
     const [items, setItems ] = useState([])
@@ -49,10 +55,6 @@ const Page = () => {
     const [dataState, setDataState] = useState({})
 
     const postTransaction = (id, type, description) => client.transact({
-          "@context": {
-            "ex": "http://example.org/",
-            "schema": "http://schema.org/"
-          },
           "insert": [
             {
               "@id": id,
@@ -66,10 +68,6 @@ const Page = () => {
     })
 
     const getTransaction = client.query({
-          "@context": {
-            "ex": "http://example.org/",
-            "schema": "http://schema.org/"
-          },
           "from": "fluree-jld/387028092978552",
           "where": {
             "@id": "?s",
@@ -79,7 +77,7 @@ const Page = () => {
            "opts": {
              "did": did
          }
-    }).sign()
+    })
 
 //
 // signedTransaction = client
@@ -91,9 +89,6 @@ const Page = () => {
 // const response = await signedTransaction.send();
 
     const deleteTransaction = (id,type) => client.transact({
-        "@context": {
-            "ex":  "http://example.org/"
-        },
         "ledger": "fluree-jld/387028092978552",
         "where": {
             "@id": id,
