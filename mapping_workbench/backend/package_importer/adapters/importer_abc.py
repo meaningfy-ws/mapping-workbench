@@ -11,6 +11,8 @@ from mapping_workbench.backend.mapping_package.models.entity import MappingPacka
 from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroup
 from mapping_workbench.backend.package_importer.models.imported_mapping_suite import ImportedMappingSuite
 from mapping_workbench.backend.package_validator.models.test_data_validation import CMRuleSDKElement
+from mapping_workbench.backend.package_validator.services.sparql_cm_assertions import SPARQL_CM_ASSERTIONS_SUITE_TITLE, \
+    SPARQL_INTEGRATION_TESTS_SUITE_TITLE
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.resource_collection.models.entity import ResourceFile, ResourceCollection, \
     ResourceFileFormat
@@ -152,11 +154,17 @@ class PackageImporterABC(ABC):
                 SPARQLTestSuite.title == mono_resource_collection.name
             )
 
+            sparql_test_type = SPARQLQueryValidationType.OTHER
+            if mono_resource_collection.name == SPARQL_CM_ASSERTIONS_SUITE_TITLE:
+                sparql_test_type = SPARQLQueryValidationType.CM_ASSERTION
+            elif mono_resource_collection.name == SPARQL_INTEGRATION_TESTS_SUITE_TITLE:
+                sparql_test_type = SPARQLQueryValidationType.INTEGRATION_TEST
+
             if not sparql_test_suite:
                 sparql_test_suite = SPARQLTestSuite(
                     project=self.project,
                     title=mono_resource_collection.name,
-                    type=SPARQLQueryValidationType.OTHER
+                    type=sparql_test_type
                 )
                 await sparql_test_suite.on_create(self.user).save()
 
@@ -180,8 +188,8 @@ class PackageImporterABC(ABC):
                 metadata = self.extract_metadata_from_sparql_query(resource_content)
                 cm_rule_sdk_element = CMRuleSDKElement(
                     sdk_element_id=None,
-                    sdk_element_title=metadata['title'],
-                    sdk_element_xpath=metadata['xpath']
+                    sdk_element_title=metadata['title'] if 'title' in metadata else None,
+                    sdk_element_xpath=metadata['xpath'] if 'xpath' in metadata else None
                 )
 
                 if not sparql_test_file_resource:

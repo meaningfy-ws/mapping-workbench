@@ -16,7 +16,7 @@ import {sessionApi} from "../../../api/session";
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
-import {PACKAGE_TYPE} from "../../../api/mapping-packages";
+import {DEFAULT_PACKAGE_TYPE, PACKAGE_TYPE} from "../../../api/mapping-packages";
 
 
 export const PackageImporter = (props) => {
@@ -24,12 +24,11 @@ export const PackageImporter = (props) => {
 
     const {onClose, open = false, sectionApi} = props;
 
-    const defaultPackageTypeValue = PACKAGE_TYPE.EFORMS;
+    const defaultPackageTypeValue = DEFAULT_PACKAGE_TYPE;
 
     const [files, setFiles] = useState([]);
     const [packageType, setPackageType] = useState(defaultPackageTypeValue);
 
-    console.log("K :: ", packageType);
     useEffect(() => {
         setFiles([]);
     }, [open]);
@@ -114,7 +113,7 @@ export const PackageImporter = (props) => {
                     sx={{mb: 3}}
                 >
                     {Object.keys(PACKAGE_TYPE).map((key) => (
-                        <MenuItem key={key} value={PACKAGE_TYPE[key]}>{PACKAGE_TYPE[key]}</MenuItem>
+                        <MenuItem key={key} value={key}>{PACKAGE_TYPE[key]}</MenuItem>
                     ))}
                 </TextField>
                 <FileDropzone
