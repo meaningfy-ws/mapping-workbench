@@ -125,16 +125,15 @@ class FlureeApi extends SectionApi {
         }
     }
 
-    deleteData(secret,user) {
+    deleteData(user,secret) {
         return {
             where: {
-             "@id": "?s",
-                "ex:yetiSecret": "?secret"
+             '@id': user,
+              'ex:yetiSecret': secret,
             },
              delete:
             {
-              '@id': user,
-              '@type': 'ex:Yeti',
+             '@id': user,
               'ex:yetiSecret': secret,
             }
         }

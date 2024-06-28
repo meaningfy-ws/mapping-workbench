@@ -40,13 +40,13 @@ export const ListTable = (props) => {
                         return (
                                 <TableRow
                                     hover
-                                    key={item[1]}
+                                    key={item.secret}
                                 >
                                     <TableCell>
-                                        {item[0]}
+                                        {item.user}
                                     </TableCell>
                                      <TableCell>
-                                        {item[1]}
+                                        {item.secret}
                                     </TableCell>
                                     <TableCell align="right">
                                         <Button type='link'

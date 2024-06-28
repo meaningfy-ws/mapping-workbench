@@ -40,10 +40,10 @@ const client = await new FlureeClient({
 
 // client.generateKeyPair()
 
-   client.setContext({
-        f: 'https://ns.flur.ee/ledger#',
-        ex: 'http://example.org/',
-      });
+client.setContext({
+    f: 'https://ns.flur.ee/ledger#',
+    ex: 'http://example.org/',
+  });
 
 
 const did = client.getDid()
@@ -63,25 +63,10 @@ const Page = () => {
           sectionApi.addData(secret))
               .sign()
 
-    const deleteTransaction1 = (id,type) => client.transact({
-        "@context": {
-            "ex":  "http://example.org/"
-        },
-        "ledger": "fluree-jld/387028092978552",
-        "where": {
-            "@id": id,
-            "?p": "?o"
-        },
-        "delete": {
-            "@id": id,
-            "?p": "?o"
-        }
-    })
 
-
-    const deleteTransaction = (secret,user) => client.transact(
-        sectionApi.deleteData(secret,user)
-    ).sign()
+    const deleteTransaction = (user, secret) => client.transact(
+        sectionApi.deleteData(user, secret))
+            .sign()
 
 
 
@@ -97,12 +82,12 @@ const Page = () => {
             .catch(err => toastError(err, toastId))
     }
 
-    const updateItem = (secret,user) => {
+    const updateItem = (oldSecret, secret, user) => {
         setState(e=>({ ...e, load: true }))
         const toastId = toastLoad('Updating item...')
-        deleteTransaction(secret,user).send()
+        deleteTransaction(user, oldSecret).send()
             .then(res => {
-                postTransaction(secret,user).send()
+                postTransaction(secret, user).send()
                     .then(res => {
                         setState(e=>({ ...e, drawerOpen: false, load: false }))
                         getItems()
@@ -113,10 +98,10 @@ const Page = () => {
             .catch(err => toastError(err, toastId))
     }
 
-    const deleteItem = (id, type) => {
+    const deleteItem = (user, secret) => {
         setState(e=>({...e, load: true}))
         const toastId = toastLoad('Deleting item...')
-        deleteTransaction(id, type).send()
+        deleteTransaction(user, secret).send()
             .then(res => {
                 getItems()
                 toastSuccess('Deleted successfully', toastId)
@@ -136,7 +121,7 @@ const Page = () => {
         getTransaction.send()
            .then(res => {
                setDataState(e => ({}))
-               setItems(res)
+               setItems(res.map(e=>({user:e[0],secret:e[1]})))
            })
           .catch(err => setDataState({load: false, error: err}))
     }
@@ -159,9 +144,8 @@ const Page = () => {
                 .required('Secret is required'),
         }),
         onSubmit: (values, helpers) => {
-            console.log(state.item)
-            if(state.item?.['@id'])
-                updateItem(state.item['@id'], values['@id'], values['@type'], values['schema:description'])
+            if(state.item)
+                updateItem(state.item?.secret, values['secret'], state.item?.user)
             else addItem(values['secret'])
         },
         enableReinitialize: true
@@ -200,7 +184,7 @@ const Page = () => {
                               data={items}>
                         <ListTable
                             onEdit={(item) => setState({ drawerOpen: true, item })}
-                            onDelete={(item) => deleteItem(item[0],item[1])}
+                            onDelete={(item) => deleteItem(item.user, item.secret)}
                             items={items}
                             disabled={state.load}
                             sectionApi={sectionApi}/>
