@@ -24,13 +24,10 @@ export const ListTable = (props) => {
                 <TableHead>
                     <TableRow>
                         <TableCell>
-                            Id
+                            User
                         </TableCell>
                         <TableCell>
-                            Type
-                        </TableCell>
-                         <TableCell>
-                            Description
+                            Secret
                         </TableCell>
                         <TableCell align="right">
                             Action
@@ -39,23 +36,17 @@ export const ListTable = (props) => {
                 </TableHead>
                 <TableBody>
                     {items.map((item) => {
-                        const item_id = item["@id"];
-                        const item_type = item["@type"]
-                        const item_description= item["schema:description"]
 
                         return (
                                 <TableRow
                                     hover
-                                    key={item_id}
+                                    key={item[1]}
                                 >
                                     <TableCell>
-                                        {item_id}
+                                        {item[0]}
                                     </TableCell>
                                      <TableCell>
-                                        {item_type}
-                                    </TableCell>
-                                    <TableCell>
-                                        {item_description}
+                                        {item[1]}
                                     </TableCell>
                                     <TableCell align="right">
                                         <Button type='link'

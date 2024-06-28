@@ -29,12 +29,9 @@ const client = await new FlureeClient({
     // isFlureeHosted: true,
     // apiKey: 'qjP6uJ9O7j30JAVShPh-T5x4UbGj7OZxfTd4dqT7KnEmAY-Ylf8e2tU6YwOTtSHjLZhKSGvpZKfW4T73oYvSgw',
     ledger: 'fluree-jld/387028092978552',
-    // ledger: 'fluree-jld/387028092978552',
     host: 'localhost',
     port: 58090,
-    // create:true,
     privateKey: '2fd4ee98c23f427ef37500ddb296de883c9013b319c72ebd76e151a820defe57',
-    // signMessages: true,
     // defaultContext:{
     //                 "ex": "http://example.org/",
     //                 "schema": "http://schema.org/"
@@ -51,157 +48,47 @@ const client = await new FlureeClient({
 
 const did = client.getDid()
 
-// console.log(did)
-// client.generateKeyPair()
-// client.setKey(client.getPrivateKey())
-// console.log(client.getPrivateKey())
-
-// client.setKey(privateKey)
-
 const Page = () => {
 
-    const [items, setItems ] = useState([])
+    const [items, setItems] = useState([])
     const [state, setState] = useState({})
     const [dataState, setDataState] = useState({})
 
-    const postTransaction = (id, type, description) => client.transact({
-          "insert": [
-              {
-                  "@id": did,
-                  "@type": type,
-                  "schema:description": description,
+    const getTransaction = client.query(
+         sectionApi.getData())
+            .sign()
 
-                  "f:role": {"@id": "ex:userRole"},
-              },
 
-          ],
-          // "opts": {
-          //           "did": did,
-          //        "role": "ex:userRole"
-          //       },
-         // "opts": {
-         //     "did": did
-         // }
+    const postTransaction = (secret) => client.transact(
+          sectionApi.addData(secret))
+              .sign()
+
+    const deleteTransaction1 = (id,type) => client.transact({
+        "@context": {
+            "ex":  "http://example.org/"
+        },
+        "ledger": "fluree-jld/387028092978552",
+        "where": {
+            "@id": id,
+            "?p": "?o"
+        },
+        "delete": {
+            "@id": id,
+            "?p": "?o"
+        }
     })
 
 
-        const did = client.getDid();
-
-        const signedInsertTransaction = client
-        .transact({
-          insert: [
-            {
-              '@id': 'ex:alice',
-              'ex:secret': "alice's new secret",
-                'f:role': {
-                '@id': 'ex:userRole',
-              },
-            },
-          ],
-        })
-        .sign();
-
-    const notSignedgetTransaction = client.query({
-          // "from": "cookbook/base",
-          // "where": {
-          //   "@id": "?s",
-          //   "schema:description": "?o"
-          // },
-          // "selectDistinct": { "?s": ["*"] },
-          //    "opts": {
-          //           "did": did,
-          //        "role": "ex:userRole"
-          //       },
+    const deleteTransaction = (secret,user) => client.transact(
+        sectionApi.deleteData(secret,user)
+    ).sign()
 
 
-  // "@context": {
-  //   "ex": "http://example.org/"
-  // },
-  // "from": "policy-view-age",
-  "select": {
-    "?person": [
-      "*"
-    ]
-  },
-  "where": {
-    "@id": "?person",
-    "@type": "Person"
-  }
 
-    })
-
-
-     const getTransaction = client.query({
-  // "@context": {
-  //   "ex": "http://example.org/"
-  // },
-  // "from": "policy-view-age",
-  // "select": {
-  //   "?person": [
-  //     "*"
-  //   ]
-  // },
-  // "where": {
-  //   "@id": "?person",
-  //   "@type": "Person"
-  // },
-  // "opts": {
-  //   // "role": "alice",
-  //     did: did
-  // }
-
-          "where": {
-            "@id": "?s",
-            "ex:yetiSecret": "?secret"
-          },
-          "select": "?secret"
-        })
-        .sign();
-// select : {
-//     "?role": ["*"]
-// },
-// where: {"@id":'ex:userRole'}
-//
-//     })
-// .sign()
-
-
-   // const signedTransaction = client
-   //      .transact({
-   //        insert: [
-   //          {
-   //            '@id': 'ex:alice',
-   //            'ex:secret': "alice's new secret",
-   //          },
-   //        ],
-   //      })
-   //      .sign();
-
-//
-// signedTransaction = client
-//   .transact({
-//     insert: { '@id': 'freddy', name: 'Freddy' },
-//   })
-//   .sign();
-
-// const response = await signedTransaction.send();
-
-    // const deleteTransaction = (id,type) => client.transact({
-    //     "ledger": "fluree-jld/387028092978552",
-    //     "where": {
-    //         "@id": id,
-    //         "?p": "?o"
-    //     },
-    //     "delete": {
-    //         "@id": id,
-    //         "?p": "?o"
-    //     }
-    // })
-
-    const addItem = (id, type, description) => {
+    const addItem = (secret) => {
         setState(e=> ({ ...e, load: true }))
         const toastId = toastLoad('Adding item...')
-        postTransaction(id, type, description).send()
+        postTransaction(secret).send()
             .then(res => {
                 toastSuccess('Added successfully', toastId)
                 getItems()
@@ -210,12 +97,12 @@ const Page = () => {
             .catch(err => toastError(err, toastId))
     }
 
-    const updateItem = (oldId, id, type, description) => {
+    const updateItem = (secret,user) => {
         setState(e=>({ ...e, load: true }))
         const toastId = toastLoad('Updating item...')
-        deleteTransaction(oldId).send()
+        deleteTransaction(secret,user).send()
             .then(res => {
-                postTransaction(id, type, description).send()
+                postTransaction(secret,user).send()
                     .then(res => {
                         setState(e=>({ ...e, drawerOpen: false, load: false }))
                         getItems()
@@ -239,235 +126,9 @@ const Page = () => {
     }
 
     const setAccess = () => client
-        .transact({
-          '@context': {
-            'f:equals': { '@container': '@list' },
-          },
-          insert: [
-            {
-              '@id': 'ex:alice',
-              '@type': 'ex:User',
-              'ex:secret': "alice's secret",
-            },
-            {
-              '@id': 'ex:bob',
-              '@type': 'ex:User',
-              'ex:secret': "bob's secret",
-            },
-            {
-              '@id': 'ex:userPolicy',
-              '@type': ['f:Policy'],
-              'f:targetClass': {
-                '@id': 'ex:User',
-              },
-              'f:allow': [
-                {
-                  '@id': 'ex:globalViewAllow',
-                  'f:targetRole': {
-                    '@id': 'ex:userRole',
-                  },
-                  'f:action': [
-                    {
-                      '@id': 'f:view',
-                    },
-                  ],
-                },
-              ],
-              'f:property': [
-                {
-                  'f:path': {
-                    '@id': 'ex:secret',
-                  },
-                  'f:allow': [
-                    {
-                      '@id': 'ex:secretsRule',
-                      'f:targetRole': {
-                        '@id': 'ex:userRole',
-                      },
-                      'f:action': [
-                        {
-                          '@id': 'f:view',
-                        },
-                        {
-                          '@id': 'f:modify',
-                        },
-                      ],
-                      'f:equals': [
-                        {
-                          '@id': 'f:$identity',
-                        },
-                        {
-                          '@id': 'ex:user',
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
-            {
-              '@id': did,
-              'ex:user': {
-                '@id': 'ex:alice',
-              },
-              'f:role': {
-                '@id': 'ex:userRole',
-              },
-            },
-          ],
-        })
+        .transact(sectionApi.setAccess(did))
         .send();
 
-
-    const setRemoteAccess = () => client
-        .transact({
-          '@context': {
-            'f:equals': { '@container': '@list' },
-          },
-          insert: [
-            {
-              '@id': 'ex:freddy',
-              '@type': 'ex:Yeti',
-              'ex:yetiSecret': "freddy's secret",
-            },
-            {
-              '@id': 'ex:letty',
-              '@type': 'ex:Yeti',
-              'ex:yetiSecret': "letty's secret",
-            },
-            {
-              '@id': 'ex:yetiPolicy',
-              '@type': ['f:Policy'],
-              'f:targetClass': {
-                '@id': 'ex:Yeti',
-              },
-              'f:allow': [
-                {
-                  '@id': 'ex:globalViewAllowForYetis',
-                  'f:targetRole': {
-                    '@id': 'ex:yetiRole',
-                  },
-                  'f:action': [
-                    {
-                      '@id': 'f:view',
-                    },
-                  ],
-                },
-              ],
-              'f:property': [
-                {
-                  '@id': 'ex:property2',
-                  'f:path': {
-                    '@id': 'ex:yetiSecret',
-                  },
-                  'f:allow': [
-                    {
-                      '@id': 'ex:yetiSecretsRule',
-                      'f:targetRole': {
-                        '@id': 'ex:yetiRole',
-                      },
-                      'f:action': [
-                        {
-                          '@id': 'f:view',
-                        },
-                        {
-                          '@id': 'f:modify',
-                        },
-                      ],
-                      'f:equals': [
-                        {
-                          '@id': 'f:$identity',
-                        },
-                        {
-                          '@id': 'ex:yeti',
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
-            {
-              '@id': did,
-              'ex:yeti': {
-                '@id': 'ex:freddy',
-              },
-              'f:role': {
-                '@id': 'ex:yetiRole',
-              },
-            },
-          ]
-        })
-        .send();
-
-    const addPeople = () => client.transact({
-  "ledger": "fluree-jld/387028092978552",
-  "@context": {
-    "ex": "http://example.org/"
-  },
-  "insert": [
-    {
-      "age": 35,
-      "name": "Souma Mukerjee",
-      "@type": "Person",
-      "@id": "2"
-    },
-    {
-      "age": 36,
-      "name": "Souradeep Das",
-      "@type": "Person",
-      "@id": "3"
-    },
-    {
-      "age": 24,
-      "name": "Tanmay Kumar",
-      "@type": "Person",
-      "@id": "ex:Tanmay"
-    }
-  ]
-}).send()
-
-
-    const addPeoplePolicy = () => client.transact({
-  "ledger": "fluree-jld/387028092978552",
-  "@context": {
-    "ex": "http://example.org/",
-    "f": "https://ns.flur.ee/ledger#"
-  },
-  "insert": [{
-    "@id": "did:fluree:2",
-    "ex:user": { "@id": "ex:Tanmay" },
-    "f:role": { "@id": "ex:nameViewRole" }
-  },
-  {
-    "@id": "ex:NameViewPolicy",
-    "@type": ["f:Policy"],
-    "f:targetClass": { "@id": "Person" },
-    "f:allow": [
-      {
-        "@id": "ex:nameViewAllow",
-        "f:targetRole": { "@id": "ex:nameViewRole" },
-        "f:action": [{ "@id": "f:view" }]
-      }
-    ],
-    "f:property": [
-      {
-        "@id": "ex:subsOnlyViewName",
-        "f:path": { "@id": "age" },
-        "f:allow": [
-          {
-            "@id": "ex:ageViewRule",
-            "f:targetRole": { "@id": "ex:nameViewRole" },
-            "f:action": [{ "@id": "f:view" }],
-            "f:equals": {
-              "@list": [{ "@id": "f:$identity" }, { "@id": "ex:user" }]
-            }
-          }
-        ]
-      }
-    ]
-  }]
-}).send()
 
     const getItems = () => {
         setDataState(e=> ({...e, load: true}))
@@ -489,21 +150,19 @@ const Page = () => {
 
     const formik = useFormik({
         initialValues: {
-            '@id': state.item?.['@id'] || '',
-            '@type': state.item?.['@type'] || '',
-            'schema:description': state.item?.['schema:description'] || ''
+            'secret': state.item?.secret || '',
         },
         validationSchema: Yup.object({
-            "@id": Yup
+            "secret": Yup
                 .string()
                 .max(255)
-                .required('@Id is required'),
-            "@type": Yup.string().max(255).required('Type is required')
+                .required('Secret is required'),
         }),
         onSubmit: (values, helpers) => {
+            console.log(state.item)
             if(state.item?.['@id'])
                 updateItem(state.item['@id'], values['@id'], values['@type'], values['schema:description'])
-            else addItem(values['@id'],values['@type'], values['schema:description'])
+            else addItem(values['secret'])
         },
         enableReinitialize: true
     })
@@ -531,8 +190,7 @@ const Page = () => {
                             </Typography>
                         </Breadcrumbs>
                     </Stack>
-                    <Button onClick={() => signedInsertTransaction.send()}>insert</Button>
-                    <Button onClick={()=>setRemoteAccess()}>Set Access</Button>
+                    <Button onClick={()=>setAccess()}>Set Access</Button>
                     <Button disabled={state.load}
                             onClick={()=>setState({ drawerOpen: true })}>Add item</Button>
 
@@ -542,7 +200,7 @@ const Page = () => {
                               data={items}>
                         <ListTable
                             onEdit={(item) => setState({ drawerOpen: true, item })}
-                            onDelete={(item) => deleteItem(item["@id"],item['@type'])}
+                            onDelete={(item) => deleteItem(item[0],item[1])}
                             items={items}
                             disabled={state.load}
                             sectionApi={sectionApi}/>
@@ -563,14 +221,8 @@ const Page = () => {
                                    gap={3}>
                                 <Typography></Typography>
                                 <FormTextField formik={formik}
-                                               name="@id"
-                                               label="Id"/>
-                                <FormTextField formik={formik}
-                                               name="@type"
-                                               label="Type"/>
-                                <FormTextField formik={formik}
-                                               name="schema:description"
-                                               label="Description"/>
+                                               name="secret"
+                                               label="Secret"/>
                             </Stack>
                         </CardContent>
                           <Button type='submit'
