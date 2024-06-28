@@ -28,8 +28,8 @@ import CardContent from "@mui/material/CardContent";
 const client = await new FlureeClient({
     // isFlureeHosted: true,
     // apiKey: 'qjP6uJ9O7j30JAVShPh-T5x4UbGj7OZxfTd4dqT7KnEmAY-Ylf8e2tU6YwOTtSHjLZhKSGvpZKfW4T73oYvSgw',
-    // ledger: 'fluree-jld/387028092978552',
     ledger: 'fluree-jld/387028092978552',
+    // ledger: 'fluree-jld/387028092978552',
     host: 'localhost',
     port: 58090,
     // create:true,
@@ -42,6 +42,12 @@ const client = await new FlureeClient({
 }).connect();
 
 // client.generateKeyPair()
+
+   client.setContext({
+        f: 'https://ns.flur.ee/ledger#',
+        ex: 'http://example.org/',
+      });
+
 
 const did = client.getDid()
 
@@ -79,6 +85,21 @@ const Page = () => {
     })
 
 
+        const did = client.getDid();
+
+        const signedInsertTransaction = client
+        .transact({
+          insert: [
+            {
+              '@id': 'ex:alice',
+              'ex:secret': "alice's new secret",
+                'f:role': {
+                '@id': 'ex:userRole',
+              },
+            },
+          ],
+        })
+        .sign();
 
     const notSignedgetTransaction = client.query({
           // "from": "cookbook/base",
@@ -115,22 +136,34 @@ const Page = () => {
   //   "ex": "http://example.org/"
   // },
   // "from": "policy-view-age",
-  "select": {
-    "?person": [
-      "*"
-    ]
-  },
-  "where": {
-    "@id": "?person",
-    "@type": "Person"
-  },
-  "opts": {
-    "role": "ex:alice",
-      // did: did
-  }
+  // "select": {
+  //   "?person": [
+  //     "*"
+  //   ]
+  // },
+  // "where": {
+  //   "@id": "?person",
+  //   "@type": "Person"
+  // },
+  // "opts": {
+  //   // "role": "alice",
+  //     did: did
+  // }
 
-
-    }).sign()
+          "where": {
+            "@id": "?s",
+            "ex:yetiSecret": "?secret"
+          },
+          "select": "?secret"
+        })
+        .sign();
+// select : {
+//     "?role": ["*"]
+// },
+// where: {"@id":'ex:userRole'}
+//
+//     })
+// .sign()
 
 
    // const signedTransaction = client
@@ -286,6 +319,87 @@ const Page = () => {
         .send();
 
 
+    const setRemoteAccess = () => client
+        .transact({
+          '@context': {
+            'f:equals': { '@container': '@list' },
+          },
+          insert: [
+            {
+              '@id': 'ex:freddy',
+              '@type': 'ex:Yeti',
+              'ex:yetiSecret': "freddy's secret",
+            },
+            {
+              '@id': 'ex:letty',
+              '@type': 'ex:Yeti',
+              'ex:yetiSecret': "letty's secret",
+            },
+            {
+              '@id': 'ex:yetiPolicy',
+              '@type': ['f:Policy'],
+              'f:targetClass': {
+                '@id': 'ex:Yeti',
+              },
+              'f:allow': [
+                {
+                  '@id': 'ex:globalViewAllowForYetis',
+                  'f:targetRole': {
+                    '@id': 'ex:yetiRole',
+                  },
+                  'f:action': [
+                    {
+                      '@id': 'f:view',
+                    },
+                  ],
+                },
+              ],
+              'f:property': [
+                {
+                  '@id': 'ex:property2',
+                  'f:path': {
+                    '@id': 'ex:yetiSecret',
+                  },
+                  'f:allow': [
+                    {
+                      '@id': 'ex:yetiSecretsRule',
+                      'f:targetRole': {
+                        '@id': 'ex:yetiRole',
+                      },
+                      'f:action': [
+                        {
+                          '@id': 'f:view',
+                        },
+                        {
+                          '@id': 'f:modify',
+                        },
+                      ],
+                      'f:equals': [
+                        {
+                          '@id': 'f:$identity',
+                        },
+                        {
+                          '@id': 'ex:yeti',
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              '@id': did,
+              'ex:yeti': {
+                '@id': 'ex:freddy',
+              },
+              'f:role': {
+                '@id': 'ex:yetiRole',
+              },
+            },
+          ]
+        })
+        .send();
+
     const addPeople = () => client.transact({
   "ledger": "fluree-jld/387028092978552",
   "@context": {
@@ -417,7 +531,8 @@ const Page = () => {
                             </Typography>
                         </Breadcrumbs>
                     </Stack>
-                    <Button onClick={()=>addPeoplePolicy()}>Set Access</Button>
+                    <Button onClick={() => signedInsertTransaction.send()}>insert</Button>
+                    <Button onClick={()=>setRemoteAccess()}>Set Access</Button>
                     <Button disabled={state.load}
                             onClick={()=>setState({ drawerOpen: true })}>Add item</Button>
 
