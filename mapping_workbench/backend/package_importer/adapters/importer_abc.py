@@ -45,7 +45,6 @@ class PackageImporterABC(ABC):
         :param mono_package:
         :return:
         """
-        pass
 
     async def add_test_data_from_mono(self, mono_package: ImportedMappingSuite):
         resource_formats = [e.value for e in TestDataFileResourceFormat]

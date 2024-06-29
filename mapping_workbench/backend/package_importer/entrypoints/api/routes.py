@@ -1,12 +1,11 @@
 from beanie import PydanticObjectId
 from fastapi import APIRouter, status, Form, UploadFile, Depends
 
+from mapping_workbench.backend.mapping_package import PackageType
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.package_importer.services import tasks
 from mapping_workbench.backend.package_importer.services.import_mapping_suite import \
     import_mapping_package_from_archive, clear_project_data
-from mapping_workbench.backend.mapping_package import PackageType
-from mapping_workbench.backend.package_importer.services.importer import import_package
 from mapping_workbench.backend.project.services.api import get_project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.task_manager.services.task_wrapper import add_task
@@ -22,24 +21,6 @@ router = APIRouter(
     prefix=ROUTE_PREFIX,
     tags=[TAG]
 )
-
-
-@router.post(
-    "/import",
-    description=f"Import {NAME_FOR_ONE}",
-    name=f"{NAME_FOR_ONE}:import",
-    status_code=status.HTTP_201_CREATED
-)
-async def route_import_package(
-        project: PydanticObjectId = Form(...),
-        file: UploadFile = Form(...),
-        user: User = Depends(current_active_user)
-):
-    mapping_package: MappingPackage = await import_package(
-        file.file.read(), file.filename, await get_project(project), user
-    )
-
-    return mapping_package.model_dump()
 
 
 @router.post(
@@ -59,11 +40,14 @@ async def route_clear_project_data(
 )
 async def route_import_package_archive(
         project: PydanticObjectId = Form(...),
+        package_type: PackageType = Form(...),
         file: UploadFile = Form(...),
         user: User = Depends(current_active_user)
 ):
+    if not package_type:
+        package_type = PackageType.EFORMS
     mapping_package: MappingPackage = await import_mapping_package_from_archive(
-        file.file.read(), await get_project(project), user
+        file.file.read(), await get_project(project), package_type, user
     )
 
     return mapping_package.model_dump()

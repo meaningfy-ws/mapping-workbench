@@ -65,9 +65,14 @@ def import_mapping_metadata_base(conceptual_mappings_file_path: pathlib.Path, li
 
 
 def import_mapping_resource_file_names(conceptual_mappings_file_path: pathlib.Path) -> List[str]:
-    resources_dependencies_df = pd.read_excel(conceptual_mappings_file_path, sheet_name=RESOURCES_SHEET_NAME)
-    resources_dependencies_df.replace({np.nan: None}, inplace=True)
-    return resources_dependencies_df["File name"].tolist()
+    """
+
+    :param conceptual_mappings_file_path:
+    :return:
+    """
+    # resources_dependencies_df = pd.read_excel(conceptual_mappings_file_path, sheet_name=RESOURCES_SHEET_NAME)
+    # resources_dependencies_df.replace({np.nan: None}, inplace=True)
+    # return resources_dependencies_df["File name"].tolist()
 
 
 def import_mapping_suite_base_from_file_system(

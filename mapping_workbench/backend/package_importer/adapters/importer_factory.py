@@ -1,3 +1,4 @@
+from mapping_workbench.backend.core.services.exceptions import InvalidPackageTypeException
 from mapping_workbench.backend.package_importer.adapters.eforms.importer import EFormsPackageImporter
 from mapping_workbench.backend.package_importer.adapters.importer_abc import PackageImporterABC
 from mapping_workbench.backend.package_importer.adapters.standard.importer import StandardPackageImporter
@@ -9,9 +10,7 @@ from mapping_workbench.backend.user.models.user import User
 class PackageImporterFactory:
     @classmethod
     def get_importer(cls, package_type: PackageType, project: Project, user: User) -> PackageImporterABC:
-        if package_type == PackageType.EFORMS:
-            return EFormsPackageImporter(project=project, user=user)
-        elif package_type == PackageType.STANDARD:
+        if package_type == PackageType.STANDARD:
             return StandardPackageImporter(project=project, user=user)
-        else:
-            raise ValueError(f"Invalid Package Type {package_type.value}")
+        else:  # package_type == PackageType.EFORMS:
+            return EFormsPackageImporter(project=project, user=user)

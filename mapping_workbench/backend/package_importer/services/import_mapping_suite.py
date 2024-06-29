@@ -3,7 +3,7 @@ import pathlib
 import tempfile
 import zipfile
 
-from mapping_workbench.backend.core.services.exceptions import InvalidResourceException
+from mapping_workbench.backend.core.services.exceptions import InvalidResourceException, InvalidPackageTypeException
 from mapping_workbench.backend.mapping_package import PackageType
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.package_importer.adapters.eforms.importer import EFormsPackageImporter
@@ -22,12 +22,10 @@ async def import_mapping_package(
         mapping_package_dir_path: pathlib.Path, project: Project,
         package_type: PackageType, user: User = None
 ) -> MappingPackage:
-    if package_type == PackageType.EFORMS:
-        monolith_mapping_suite = import_eforms_mapping_suite_from_file_system(mapping_package_dir_path)
-    elif package_type == PackageType.STANDARD:
+    if package_type == PackageType.STANDARD:
         monolith_mapping_suite = import_standard_mapping_suite_from_file_system(mapping_package_dir_path)
-    else:
-        raise NotImplemented(str(package_type))
+    else:  # package_type == PackageType.EFORMS:
+        monolith_mapping_suite = import_eforms_mapping_suite_from_file_system(mapping_package_dir_path)
 
     importer: PackageImporterABC = PackageImporterFactory.get_importer(
         package_type=package_type, project=project, user=user
@@ -58,4 +56,3 @@ async def clear_project_data(project: Project, package_type: PackageType = None)
         return await EFormsPackageImporter.clear_project_data(project)
     elif package_type == PackageType.STANDARD:
         return await StandardPackageImporter.clear_project_data(project)
-    return None
