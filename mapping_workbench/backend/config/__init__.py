@@ -22,10 +22,12 @@ class ServerSettings(BaseSettings):
 
     @env_property(config_key='MW_BACKEND_SERVER_HOST')
     def HOST(self, config_value: str) -> str:
+        print("K :: HOST :: " + config_value)
         return config_value
 
     @env_property(config_key='MW_BACKEND_SERVER_PORT')
     def PORT(self, config_value: str) -> int:
+        print("K :: PORT :: " + config_value)
         return int(config_value)
 
     @env_property(config_key='DOMAIN')
