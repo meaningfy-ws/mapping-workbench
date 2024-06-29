@@ -23,6 +23,7 @@ SPARQL_PREFIX_LINE = 'PREFIX {prefix}: <{value}>'
 SPARQL_XPATH_SEPARATOR = " ;; "
 
 SPARQL_CM_ASSERTIONS_SUITE_TITLE = "cm_assertions"
+SPARQL_INTEGRATION_TESTS_SUITE_TITLE = "integration_tests"
 
 
 def get_sparql_prefixes(sparql_q: str) -> list:

@@ -48,9 +48,10 @@ async def route_get_ontology_file_by_id(
     try:
         ontology_file = await ontology_file_repository.get_by_id(project_id=project_id,
                                                                  ontology_file_name=ontology_file_name)
-    except (ProjectNotFoundException,
+    except (
+            ProjectNotFoundException,
             OntologyFileResourceNotFoundException
-            ) as expected_exceptions:
+    ) as expected_exceptions:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(expected_exceptions))
     return OntologyFileResourceOut(**ontology_file.dict())
 

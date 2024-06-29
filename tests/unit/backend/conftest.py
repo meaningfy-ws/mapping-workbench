@@ -13,12 +13,17 @@ AsyncGridFSStorage.set_mongo_database(async_mongodb_database_mock)
 asyncio.run(init_project_models(mongodb_database=async_mongodb_database_mock))
 
 
-@pytest.fixture
-def dummy_project() -> Project:
+def dummy_project_object() -> Project:
     return Project(
-        id=PydanticObjectId(),
+        id="667b2849b959c27957bc3ace",
         title="MOCK_PROJECT"
     )
+
+
+@pytest.fixture
+def dummy_project() -> Project:
+    return dummy_project_object()
+
 
 @pytest.fixture
 def dummy_project_link(dummy_project) -> Link:

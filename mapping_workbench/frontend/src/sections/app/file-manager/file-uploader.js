@@ -19,7 +19,15 @@ import {useRouter} from "../../../hooks/use-router";
 
 export const FileUploader = (props) => {
 
-    const {onClose, open = false, collectionId, sectionApi, onGetItems, onlyAcceptedFormats, disableSelectFormat} = props;
+    const {
+        onClose,
+        open = false,
+        collectionId,
+        sectionApi,
+        onGetItems,
+        onlyAcceptedFormats,
+        disableSelectFormat
+    } = props;
 
     const defaultFormatValue = sectionApi.FILE_RESOURCE_DEFAULT_FORMAT;
 
@@ -46,7 +54,7 @@ export const FileUploader = (props) => {
                 formData.append("type", type);
             }
             formData.append("file", file);
-            formData.append("content",file.content)
+            formData.append("content", file.content)
             formData.append("project", sessionApi.getSessionProject());
 
             sectionApi.createCollectionFileResource(collectionId, formData)
@@ -74,21 +82,21 @@ export const FileUploader = (props) => {
 
     const handleRemoveAll = () => setFiles([]);
 
-     const LinearProgressWithLabel = (props) => {
-       return (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Box sx={{ width: '100%', mr: 1 }}>
-                <LinearProgress variant="determinate"
-                                {...props} />
+    const LinearProgressWithLabel = (props) => {
+        return (
+            <Box sx={{display: 'flex', alignItems: 'center'}}>
+                <Box sx={{width: '100%', mr: 1}}>
+                    <LinearProgress variant="determinate"
+                                    {...props} />
+                </Box>
+                <Box sx={{minWidth: 35}}>
+                    <Typography variant="body2"
+                                color="text.secondary">{`${Math.round(
+                        props.value,
+                    )}%`}</Typography>
+                </Box>
             </Box>
-                <Box sx={{ minWidth: 35 }}>
-                <Typography variant="body2"
-                            color="text.secondary">{`${Math.round(
-                  props.value,
-                )}%`}</Typography>
-            </Box>
-        </Box>
-       );
+        );
     }
 
     const acceptedFormat = onlyAcceptedFormats && sectionApi.FILE_UPLOAD_FORMATS?.[format] ? {[sectionApi.FILE_UPLOAD_FORMATS[format]]: []} : {'*/*': []}
@@ -137,8 +145,7 @@ export const FileUploader = (props) => {
                     sx={{mb: 3}}
                 >
                     {Object.keys(sectionApi.FILE_RESOURCE_FORMATS).map((key) => (
-                        <MenuItem key={key}
-                                  value={key}>
+                        <MenuItem key={key} value={key}>
                             {sectionApi.FILE_RESOURCE_FORMATS[key]}
                         </MenuItem>
                     ))}
