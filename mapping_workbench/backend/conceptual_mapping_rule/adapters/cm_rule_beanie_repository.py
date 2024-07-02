@@ -149,3 +149,12 @@ class CMRuleBeanieRepository(IRepository, IStatefulModelRepository):
         await cm_rule.on_update(user=None).update({"$set": {ConceptualMappingRule.status: cm_rule_status}})
 
         return None
+
+    async def get_cm_rules_by_structural_element(self,
+                                                 project_id: PydanticObjectId,
+                                                 structural_element_id: str) -> List[ConceptualMappingRule]:
+        return await ConceptualMappingRule.find_many(
+            ConceptualMappingRule.project.id == project_id,
+            ConceptualMappingRule.source_structural_element.sdk_element_id == structural_element_id,
+            fetch_links=True
+        ).to_list()

@@ -331,3 +331,20 @@ async def route_set_cm_rule_status(
         return await cm_rule_repo.set_status(project_id=project_id, cm_rule_id=cm_rule_id, cm_rule_status=cm_rule_status)
     except (CMRuleNotFoundException,) as expected_exception:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(expected_exception))
+
+
+@router.get(
+    path="/structural_element/list",
+    description="Returns List of CM Rules fetched by structural element label",
+    response_model=List[ConceptualMappingRule],
+    tags=[CM_RULE_REVIEW_PAGE_TAG],
+    status_code=status.HTTP_200_OK
+)
+async def route_cm_rules_by_structural_element(
+        project_id: PydanticObjectId,
+        structural_element_id: str
+) -> List[ConceptualMappingRule]:
+    try:
+        return await cm_rule_repo.get_cm_rules_by_structural_element(project_id, structural_element_id)
+    except (Exception,) as expected_exception:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(expected_exception))
