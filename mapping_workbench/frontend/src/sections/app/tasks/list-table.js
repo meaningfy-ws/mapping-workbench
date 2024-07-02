@@ -22,6 +22,7 @@ import TablePagination from "../../components/table-pagination";
 import timeTransformer from "../../../utils/time-transformer";
 import {useGlobalState} from "../../../hooks/use-global-state";
 import TableSorterHeader from "../../components/table-sorter-header";
+import moment from "moment";
 
 export const ListTable = (props) => {
     const {
@@ -115,6 +116,9 @@ export const ListTable = (props) => {
                                               title='Finished At'/>
                             </TableCell>
                             <TableCell>
+                                Task Duration
+                            </TableCell>
+                            <TableCell>
                                 <SorterHeader fieldName="task_status"
                                               title='Status'/>
                             </TableCell>
@@ -174,6 +178,9 @@ export const ListTable = (props) => {
                                         </TableCell>
                                         <TableCell>
                                             {timeTransformer(item.finished_at, timeSetting)}
+                                        </TableCell>
+                                        <TableCell>
+                                            {item.finished_at ? moment.utc(moment(item.finished_at).diff(moment(item.started_at))).format("HH:mm:ss") : '-'}
                                         </TableCell>
                                         <TableCell align="left">
                                             <SeverityPill color={mapStatusColor(item.task_status)}>
