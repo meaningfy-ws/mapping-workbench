@@ -163,6 +163,10 @@ export const useSections = () => {
             //     title: t(tokens.nav.packaging_cm) + ' (dev)',
             //     path: paths.underConstruction
             // }
+            {
+                title: 'CM RULE LIST',
+                path: paths.app.cm_rules_list.index
+            }
             ]
     })
 
