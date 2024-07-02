@@ -25,6 +25,7 @@
     "@emotion/react": "11.11.0",
     "@emotion/server": "11.11.0",
     "@emotion/styled": "11.11.0",
+    "@fluree/crypto-utils": "^1.10.0",
     "@fluree/fluree-client": "^1.0.6-beta1",
     "@fullcalendar/core": "6.1.7",
     "@fullcalendar/daygrid": "6.1.7",

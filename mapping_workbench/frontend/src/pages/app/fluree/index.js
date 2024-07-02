@@ -22,64 +22,58 @@ import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast
 import {TableLoadWrapper} from "../../../sections/app/shacl_validation_report/utils";
 import CardContent from "@mui/material/CardContent";
 
+
+
+
 const client = await new FlureeClient({
-  isFlureeHosted: true,
-  apiKey: 'qjP6uJ9O7j30JAVShPh-T5x4UbGj7OZxfTd4dqT7KnEmAY-Ylf8e2tU6YwOTtSHjLZhKSGvpZKfW4T73oYvSgw',
-  ledger: 'fluree-jld/387028092978552',
+    // isFlureeHosted: true,
+    // apiKey: 'qjP6uJ9O7j30JAVShPh-T5x4UbGj7OZxfTd4dqT7KnEmAY-Ylf8e2tU6YwOTtSHjLZhKSGvpZKfW4T73oYvSgw',
+    ledger: 'fluree-jld/387028092978552',
+    host: 'localhost',
+    port: 58090,
+    privateKey: '2fd4ee98c23f427ef37500ddb296de883c9013b319c72ebd76e151a820defe57',
+    // defaultContext:{
+    //                 "ex": "http://example.org/",
+    //                 "schema": "http://schema.org/"
+    //                }
 }).connect();
+
+// client.generateKeyPair()
+
+client.setContext({
+    f: 'https://ns.flur.ee/ledger#',
+    ex: 'http://example.org/',
+  });
+
+
+const did = client.getDid()
 
 const Page = () => {
 
-    const [items, setItems ] = useState([])
+    const [items, setItems] = useState([])
     const [state, setState] = useState({})
     const [dataState, setDataState] = useState({})
 
-    const postTransaction = (id, type, description) => client.transact({
-          "@context": {
-            "ex": "http://example.org/",
-            "schema": "http://schema.org/"
-          },
-          "insert": [
-            {
-              "@id": id,
-              "@type": type,
-              "schema:description": description
-            }
-          ]
-    })
+    const getTransaction = client.query(
+         sectionApi.getData())
+            .sign()
 
-    const getTransaction = client.query({
-          "@context": {
-            "ex": "http://example.org/",
-            "schema": "http://schema.org/"
-          },
-          "from": "fluree-jld/387028092978552",
-          "where": {
-            "@id": "?s",
-            "schema:description": "?o"
-          },
-          "selectDistinct": { "?s": ["*"] }
-    })
 
-    const deleteTransaction = (id,type) => client.transact({
-        "@context": {
-            "ex":  "http://example.org/"
-        },
-        "ledger": "fluree-jld/387028092978552",
-        "where": {
-            "@id": id,
-            "?p": "?o"
-        },
-        "delete": {
-            "@id": id,
-            "?p": "?o"
-        }
-    })
+    const postTransaction = (secret) => client.transact(
+          sectionApi.addData(secret))
+              .sign()
 
-    const addItem = (id, type, description) => {
+
+    const deleteTransaction = (user, secret) => client.transact(
+        sectionApi.deleteData(user, secret))
+            .sign()
+
+
+
+    const addItem = (secret) => {
         setState(e=> ({ ...e, load: true }))
         const toastId = toastLoad('Adding item...')
-        postTransaction(id, type, description).send()
+        postTransaction(secret).send()
             .then(res => {
                 toastSuccess('Added successfully', toastId)
                 getItems()
@@ -88,12 +82,12 @@ const Page = () => {
             .catch(err => toastError(err, toastId))
     }
 
-    const updateItem = (oldId, id, type, description) => {
+    const updateItem = (oldSecret, secret, user) => {
         setState(e=>({ ...e, load: true }))
         const toastId = toastLoad('Updating item...')
-        deleteTransaction(oldId).send()
+        deleteTransaction(user, oldSecret).send()
             .then(res => {
-                postTransaction(id, type, description).send()
+                postTransaction(secret, user).send()
                     .then(res => {
                         setState(e=>({ ...e, drawerOpen: false, load: false }))
                         getItems()
@@ -104,10 +98,10 @@ const Page = () => {
             .catch(err => toastError(err, toastId))
     }
 
-    const deleteItem = (id, type) => {
+    const deleteItem = (user, secret) => {
         setState(e=>({...e, load: true}))
         const toastId = toastLoad('Deleting item...')
-        deleteTransaction(id, type).send()
+        deleteTransaction(user, secret).send()
             .then(res => {
                 getItems()
                 toastSuccess('Deleted successfully', toastId)
@@ -116,13 +110,18 @@ const Page = () => {
             .finally(()=> setState(e => ({ ...e, load: false })))
     }
 
+    const setAccess = () => client
+        .transact(sectionApi.setAccess(did))
+        .send();
+
 
     const getItems = () => {
         setDataState(e=> ({...e, load: true}))
+
         getTransaction.send()
            .then(res => {
                setDataState(e => ({}))
-               setItems(res)
+               setItems(res.map(e=>({user:e[0],secret:e[1]})))
            })
           .catch(err => setDataState({load: false, error: err}))
     }
@@ -136,21 +135,18 @@ const Page = () => {
 
     const formik = useFormik({
         initialValues: {
-            '@id': state.item?.['@id'] || '',
-            '@type': state.item?.['@type'] || '',
-            'schema:description': state.item?.['schema:description'] || ''
+            'secret': state.item?.secret || '',
         },
         validationSchema: Yup.object({
-            "@id": Yup
+            "secret": Yup
                 .string()
                 .max(255)
-                .required('@Id is required'),
-            "@type": Yup.string().max(255).required('Type is required')
+                .required('Secret is required'),
         }),
         onSubmit: (values, helpers) => {
-            if(state.item?.['@id'])
-                updateItem(state.item['@id'], values['@id'], values['@type'], values['schema:description'])
-            else addItem(values['@id'],values['@type'], values['schema:description'])
+            if(state.item)
+                updateItem(state.item?.secret, values['secret'], state.item?.user)
+            else addItem(values['secret'])
         },
         enableReinitialize: true
     })
@@ -178,6 +174,7 @@ const Page = () => {
                             </Typography>
                         </Breadcrumbs>
                     </Stack>
+                    <Button onClick={()=>setAccess()}>Set Access</Button>
                     <Button disabled={state.load}
                             onClick={()=>setState({ drawerOpen: true })}>Add item</Button>
 
@@ -187,7 +184,7 @@ const Page = () => {
                               data={items}>
                         <ListTable
                             onEdit={(item) => setState({ drawerOpen: true, item })}
-                            onDelete={(item) => deleteItem(item["@id"],item['@type'])}
+                            onDelete={(item) => deleteItem(item.user, item.secret)}
                             items={items}
                             disabled={state.load}
                             sectionApi={sectionApi}/>
@@ -208,14 +205,8 @@ const Page = () => {
                                    gap={3}>
                                 <Typography></Typography>
                                 <FormTextField formik={formik}
-                                               name="@id"
-                                               label="Id"/>
-                                <FormTextField formik={formik}
-                                               name="@type"
-                                               label="Type"/>
-                                <FormTextField formik={formik}
-                                               name="schema:description"
-                                               label="Description"/>
+                                               name="secret"
+                                               label="Secret"/>
                             </Stack>
                         </CardContent>
                           <Button type='submit'
