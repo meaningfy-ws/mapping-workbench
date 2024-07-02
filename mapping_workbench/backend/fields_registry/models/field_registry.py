@@ -11,6 +11,13 @@ from mapping_workbench.backend.core.models.base_project_resource_entity import B
 from mapping_workbench.backend.state_manager.models.state_object import StatefulObjectABC, ObjectState
 
 
+class StructuralElementLabelOut(BaseProjectResourceEntityOutSchema):
+    """
+        Output model for CM Rule review page
+    """
+    id: str = Field(..., alias='_id')
+    sdk_element_id: str
+
 class StructuralElementOut(BaseProjectResourceEntityOutSchema):
     """
 

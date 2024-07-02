@@ -1,17 +1,19 @@
 from typing import List
 
 from beanie import PydanticObjectId
-from fastapi import APIRouter, Depends, status, Form
+from fastapi import APIRouter, Depends, status, Form, HTTPException
 
+from mapping_workbench.backend.conceptual_mapping_rule.entrypoints.api.routes import CM_RULE_REVIEW_PAGE_TAG
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement, \
     APIListStructuralElementsPaginatedResponse, APIListStructuralElementsVersionedViewPaginatedResponse, \
-    StructuralElementsVersionedView
+    StructuralElementsVersionedView, StructuralElementLabelOut
 from mapping_workbench.backend.fields_registry.services import tasks
 from mapping_workbench.backend.fields_registry.services.api import list_structural_elements_versioned_view, \
     get_structural_elements_versioned_view, \
     delete_structural_elements_versioned_view, get_structural_elements_versioned_view_by_version, \
-    list_structural_elements, get_structural_element, delete_structural_element, get_project_structural_elements
+    list_structural_elements, get_structural_element, delete_structural_element, get_project_structural_elements, \
+    get_structural_element_label_list
 from mapping_workbench.backend.fields_registry.services.data import tree_of_structural_elements
 from mapping_workbench.backend.fields_registry.services.generate_conceptual_mapping_rules import \
     generate_conceptual_mapping_rules
@@ -194,3 +196,19 @@ async def route_tree_structural_elements(
 ):
     elements = await get_project_structural_elements(project)
     return tree_of_structural_elements(elements)
+
+
+@router.get(
+    path="/elements_label",
+    description=f"Returns list of existing elements label",
+    response_model=List[StructuralElementLabelOut],
+    tags=[CM_RULE_REVIEW_PAGE_TAG],
+    status_code=status.HTTP_200_OK
+)
+async def route_get_structural_elements_label(
+        project_id: PydanticObjectId
+) -> List[StructuralElementLabelOut]:
+    try:
+        return await get_structural_element_label_list(project_id=project_id)
+    except (Exception,) as expected_exception:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(expected_exception))

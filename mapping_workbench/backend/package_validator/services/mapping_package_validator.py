@@ -34,14 +34,17 @@ def validate_mapping_package(mapping_package_state: MappingPackageState, tasks_t
     if tasks_to_run is None or TaskToRun.VALIDATE_PACKAGE_XPATH.value in tasks_to_run:
         mwb_logger.log_all_info("Validating Package State ... XPATH")
         compute_xpath_assertions_for_mapping_package(mapping_package_state)
+        mwb_logger.log_all_info("Validating Package State ... XPATH DONE")
 
     if tasks_to_run is None or TaskToRun.VALIDATE_PACKAGE_SHACL.value in tasks_to_run:
         mwb_logger.log_all_info("Validating Package State ... SHACL")
         validate_mapping_package_state_with_shacl(mapping_package_state)
+        mwb_logger.log_all_info("Validating Package State ... SHACL DONE")
 
     if tasks_to_run is None or TaskToRun.VALIDATE_PACKAGE_SPARQL.value in tasks_to_run:
         mwb_logger.log_all_info("Validating Package State ... SPARQL")
         validate_mapping_package_state_with_sparql(mapping_package_state)
+        mwb_logger.log_all_info("Validating Package State ... SPARQL DONE")
 
 
 async def generate_validation_reports_tree(
