@@ -123,6 +123,9 @@ export const paths = {
                 generate_cm_assertions_queries: '/app/conceptual-mapping-rules/tasks/generate-cm-assertions-queries'
             }
         },
+        conceptual_mapping_grouping: {
+            index: '/app/conceptual-mapping-grouping'
+        },
 
         triple_map_fragments: {
             index: '/app/triple-map-fragments',

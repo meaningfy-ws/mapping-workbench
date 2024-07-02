@@ -155,10 +155,10 @@ export const useSections = () => {
                     </SvgIcon>
                 )
             },
-            // {
-            //     title: t(tokens.nav.grouping_cm) + ' (dev)',
-            //     path: paths.underConstruction
-            // },
+            {
+                title: t(tokens.nav.grouping_cm),
+                path: paths.app.conceptual_mapping_grouping.index
+            },
             // {
             //     title: t(tokens.nav.packaging_cm) + ' (dev)',
             //     path: paths.underConstruction
