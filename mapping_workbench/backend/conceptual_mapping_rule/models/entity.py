@@ -5,9 +5,11 @@ from typing import Optional, List
 import pymongo
 from beanie import Link, PydanticObjectId
 from dateutil.tz import tzlocal
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
+from pydantic_core.core_schema import ValidationInfo
 from pymongo import IndexModel
 
+from mapping_workbench.backend import DEFAULT_MODEL_CONFIG
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement, StructuralElementState
@@ -16,7 +18,7 @@ from mapping_workbench.backend.ontology.models.term import TermValidityResponse
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResource, SPARQLTestState
 from mapping_workbench.backend.state_manager.models.state_object import ObjectState, StatefulObjectABC
 from mapping_workbench.backend.triple_map_fragment.models.entity import GenericTripleMapFragment, TripleMapFragmentState
-from mapping_workbench.backend.user.models.user import User
+from mapping_workbench.backend.user.models.user import User, UserOut
 
 
 class ConceptualMappingRuleException(Exception):
@@ -42,6 +44,34 @@ class ConceptualMappingRuleComment(BaseModel):
     created_by: Optional[Link[User]] = None
     updated_at: Optional[datetime] = None
     updated_by: Optional[Link[User]] = None
+
+
+class ConceptualMappingRuleCommentOut(BaseModel):
+    comment: str
+    created_by: Optional[UserOut]
+
+
+class ConceptualMappingRuleCommentIn(BaseModel):
+    comment: str
+
+
+class CMRuleStatus(str, Enum):
+    UNDER_DEVELOPMENT = "Under development"
+    FOR_INTERNAL_REVIEW = "For internal review"
+    FOR_INTERNAL_CONSULTATION = "For internal consultation"
+    FOR_CLIENT_CONSULTATION = "For Client consultation"
+    FOR_INTERNAL_CONSULTATION_AFTER_REVIEW = "For internal consultation (after review)"
+    APPROVED_BY_FIRST_INTERNAL_REVIEWER = "Approved by first internal reviewer"
+    APPROVED_BY_SECOND_INTERNAL_REVIEWER = "Approved by second internal reviewer"
+    FOR_CLIENT_REVIEW_DONE = "For Client review (done)"
+    APPROVED_BY_FIRST_CLIENT_REVIEW = "Approved by first Client reviewer"
+    APPROVED_BY_CLIENT_ACCEPTED = "Approved by Client (Accepted)"
+    CHANGE_REQUESTED_BY_CLIENT = "Change requested by Client"
+    UPDATED_BASED_ON_CLIENT_REVIEW = "Updated based on Client review"
+
+    @classmethod
+    def list(cls):
+        return list(map(lambda c: c.value, cls))
 
 
 class ConceptualMappingRuleIn(BaseProjectResourceEntityInSchema):
@@ -109,6 +139,20 @@ class ConceptualMappingRuleState(ObjectState):
 
 
 class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
+    model_config = DEFAULT_MODEL_CONFIG
+
+    status: Optional[CMRuleStatus] | Optional[str] = CMRuleStatus.UNDER_DEVELOPMENT
+    mapping_notes: Optional[List[ConceptualMappingRuleComment]] = []
+    editorial_notes: Optional[List[ConceptualMappingRuleComment]] = []
+    feedback_notes: Optional[List[ConceptualMappingRuleComment]] = []
+
+    @field_validator('status', 'mapping_notes', 'editorial_notes', 'feedback_notes')
+    @classmethod
+    def check_none(cls, current_value: str, info: ValidationInfo) -> str:
+        if current_value is None:
+            return cls.model_fields[info.field_name].default
+        return current_value
+
     min_sdk_version: Optional[str] = None
     max_sdk_version: Optional[str] = None
     source_structural_element: Optional[Link[StructuralElement]] = None
@@ -117,14 +161,10 @@ class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
     target_class_path_terms_validity: Optional[List[TermValidityResponse]] = None
     target_property_path: Optional[str] = None
     target_property_path_terms_validity: Optional[List[TermValidityResponse]] = None
-    terms_validity: Optional[ConceptualMappingRuleTermsValidity] = None
+    terms_validity: Optional[ConceptualMappingRuleTermsValidity] | Optional[str] = None
     refers_to_mapping_package_ids: Optional[List[PydanticObjectId]] = []
     triple_map_fragment: Optional[Link[GenericTripleMapFragment]] = None
     sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
-    status: Optional[str] = None
-    mapping_notes: Optional[List[ConceptualMappingRuleComment]] = None
-    editorial_notes: Optional[List[ConceptualMappingRuleComment]] = None
-    feedback_notes: Optional[List[ConceptualMappingRuleComment]] = None
     sort_order: Optional[float] = None
 
     async def get_state(self) -> ConceptualMappingRuleState:
