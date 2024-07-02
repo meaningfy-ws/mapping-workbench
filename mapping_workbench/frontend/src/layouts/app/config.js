@@ -166,7 +166,16 @@ export const useSections = () => {
             {
                 title: 'CM RULE LIST',
                 path: paths.app.cm_rules_list.index
-            }
+            },
+            {
+                title: t(tokens.nav.content_cm),
+                path: paths.app.conceptual_mapping_rules_content.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <MapIcon/>
+                    </SvgIcon>
+                )
+            },
             ]
     })
 

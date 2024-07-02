@@ -125,7 +125,10 @@ export const paths = {
         },
 
         cm_rules_list: {
-            index: '/app/cm_rules_list'
+            index: '/app/cm_rules_list' 
+        },
+        conceptual_mapping_rules_content: {
+            index: '/app/conceptual-mapping-rules-content',
         },
 
         triple_map_fragments: {
