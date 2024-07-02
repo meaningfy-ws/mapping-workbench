@@ -328,7 +328,8 @@ async def route_set_cm_rule_status(
         cm_rule_status: CMRuleStatus
 ) -> None:
     try:
-        return await cm_rule_repo.set_status(project_id=project_id, cm_rule_id=cm_rule_id, cm_rule_status=cm_rule_status)
+        return await cm_rule_repo.set_status(project_id=project_id, cm_rule_id=cm_rule_id,
+                                             cm_rule_status=cm_rule_status)
     except (CMRuleNotFoundException,) as expected_exception:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(expected_exception))
 

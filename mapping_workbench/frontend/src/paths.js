@@ -121,14 +121,13 @@ export const paths = {
             view: '/app/conceptual-mapping-rules/[id]/view',
             tasks: {
                 generate_cm_assertions_queries: '/app/conceptual-mapping-rules/tasks/generate-cm-assertions-queries'
+            },
+            develop: {
+                index: '/app/conceptual-mapping-rules/develop'
+            },
+            review: {
+                index: '/app/conceptual-mapping-rules/review'
             }
-        },
-
-        cm_rules_list: {
-            index: '/app/cm_rules_list' 
-        },
-        conceptual_mapping_rules_content: {
-            index: '/app/conceptual-mapping-rules-content',
         },
 
         triple_map_fragments: {
@@ -281,6 +280,7 @@ export const apiPaths = {
     conceptual_mapping_rules: {
         items: '/conceptual_mapping_rules',
         item: '/conceptual_mapping_rules/:id',
+        dev_cm: '/conceptual_mapping_rules/dev/:id',
         check_content_terms_validity: '/ontology/check_content_terms_validity',
         search_terms: '/ontology/search_terms',
         prefixed_terms: '/ontology/prefixed_terms',

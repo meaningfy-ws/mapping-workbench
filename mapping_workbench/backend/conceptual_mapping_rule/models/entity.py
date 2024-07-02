@@ -39,7 +39,8 @@ class ConceptualMappingRuleCommentPriority(Enum):
 class ConceptualMappingRuleComment(BaseModel):
     title: Optional[str] = None
     comment: Optional[str] = None
-    priority: Optional[ConceptualMappingRuleCommentPriority] = ConceptualMappingRuleCommentPriority.NORMAL
+    priority: Optional[ConceptualMappingRuleCommentPriority] | Optional[
+        str] = ConceptualMappingRuleCommentPriority.NORMAL
     created_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(tzlocal()))
     created_by: Optional[Link[User]] = None
     updated_at: Optional[datetime] = None

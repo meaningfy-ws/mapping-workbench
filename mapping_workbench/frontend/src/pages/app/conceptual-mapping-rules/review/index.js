@@ -12,8 +12,8 @@ import {Layout as AppLayout} from 'src/layouts/app';
 import {schemaFilesApi as sectionApi} from 'src/api/schema-files';
 import {useDialog} from 'src/hooks/use-dialog';
 import {usePageView} from 'src/hooks/use-page-view';
-import {FileUploader} from 'src/sections/app/files-form//file-uploader';
-import {ItemSearch} from 'src/sections/app/files-form//item-search';
+import {FileUploader} from 'src/sections/app/files-form/file-uploader';
+import {ItemSearch} from 'src/sections/app/files-form/item-search';
 import {schemaFileResourcesApi as fileResourcesApi} from "src/api/schema-files/file-resources";
 import {ItemList} from "src/sections/app/files-form/item-list";
 import {sessionApi} from "src/api/session";
@@ -28,7 +28,7 @@ import Card from "@mui/material/Card";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import MenuItem from "@mui/material/MenuItem";
-import CMCard from "../../../sections/app/cm-rules-list/cm-card";
+import CMCard from "../../../../sections/app/cm-rules-list/cm-card";
 
 const Page = () => {
     const [view, setView] = useState('grid');

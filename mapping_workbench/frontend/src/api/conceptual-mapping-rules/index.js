@@ -63,7 +63,6 @@ class ConceptualMappingRulesApi extends SectionApi {
         } catch (err) {
         }
     }
-
 }
 
 export const conceptualMappingRulesApi = new ConceptualMappingRulesApi();

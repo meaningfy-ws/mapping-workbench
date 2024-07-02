@@ -10,10 +10,10 @@ import Typography from '@mui/material/Typography';
 import {Scrollbar} from 'src/components/scrollbar';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import TablePagination from "../../components/table-pagination";
-import {useGlobalState} from "../../../hooks/use-global-state";
-import timeTransformer from "../../../utils/time-transformer";
-import TableSorterHeader from "../../components/table-sorter-header";
+import TablePagination from "../../../components/table-pagination";
+import {useGlobalState} from "../../../../hooks/use-global-state";
+import timeTransformer from "../../../../utils/time-transformer";
+import TableSorterHeader from "../../../components/table-sorter-header";
 import Button from "@mui/material/Button";
 
 
@@ -60,13 +60,9 @@ export const ListTable = (props) => {
                 <Table sx={{minWidth: 1200}}>
                     <TableHead>
                         <TableRow>
-                            <TableCell width="25%">
+                            <TableCell width="10%">
                                 <SorterHeader fieldName="field_id"
                                               title="Field ID"/>
-                            </TableCell>
-                            <TableCell>
-                                <SorterHeader fieldName="field_label"
-                                              title="Field Label"/>
                             </TableCell>
                             <TableCell>
                                 <SorterHeader fieldName="absolute_xpath"
@@ -77,11 +73,19 @@ export const ListTable = (props) => {
                                               title="XPath condition"/>
                             </TableCell>
                             <TableCell>
-                                <SorterHeader fieldName="ontology_class_path"
+                                <SorterHeader fieldName="min_sdk_version"
+                                              title="Min SDK"/>
+                            </TableCell>
+                            <TableCell>
+                                <SorterHeader fieldName="max_sdk_version"
+                                              title="Max SDK"/>
+                            </TableCell>
+                            <TableCell>
+                                <SorterHeader fieldName="target_class_path"
                                               title="Ontology Class Path"/>
                             </TableCell>
                             <TableCell>
-                                <SorterHeader fieldName="ontology_property_path"
+                                <SorterHeader fieldName="target_property_path"
                                               title="Ontology Property Path"/>
                             </TableCell>
 
@@ -98,23 +102,32 @@ export const ListTable = (props) => {
                                     <TableRow hover
                                               key={item_id}>
                                         <TableCell
-                                            width="25%"
+                                            width="10%"
                                         >
                                             <Typography variant="subtitle3">
-                                                {item.title}
+                                                {item.source_structural_element?.sdk_element_id}
                                             </Typography>
                                         </TableCell>
-                                        <TableCell>
-                                            {item.description}
-                                        </TableCell>
-                                        <TableCell>
-                                            {item.version}
-                                        </TableCell>
-                                        <TableCell align="left">
-                                            {timeTransformer(item.created_at, timeSetting)}
+                                        <TableCell
+                                            sx={{
+                                                wordBreak: "break-all"
+                                            }}
+                                        >
+                                            {item.source_structural_element?.absolute_xpath}
                                         </TableCell>
                                         <TableCell/>
-                                        <TableCell/>
+                                        <TableCell>
+                                            {item.min_sdk_version}
+                                        </TableCell>
+                                        <TableCell>
+                                            {item.max_sdk_version}
+                                        </TableCell>
+                                        <TableCell>
+                                            {item.target_class_path}
+                                        </TableCell>
+                                        <TableCell>
+                                            {item.target_property_path}
+                                        </TableCell>
                                         <TableCell align="right">
                                             <Button
                                                 id="edit_button"
@@ -125,9 +138,18 @@ export const ListTable = (props) => {
                                             >
                                                 Edit
                                             </Button>
-                                            <ListItemActions
-                                                onDeleteAction={() => projectStore.handleDeleteProject(item_id)}
-                                                itemctx={new ForListItemAction(item_id, sectionApi)}/>
+                                            <Button
+                                                id="delete_button"
+                                                variant="text"
+                                                size="small"
+                                                color="error"
+                                                onClick={() => setConfirmOpen(true)}
+                                                sx={{
+                                                    whiteSpace: "nowrap"
+                                                }}
+                                            >
+                                                Delete
+                                            </Button>
                                         </TableCell>
                                     </TableRow>
                             );

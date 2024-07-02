@@ -48,7 +48,6 @@ async def list_conceptual_mapping_rules(filters: dict = None, page: int = None, 
 async def create_conceptual_mapping_rule(data: ConceptualMappingRuleCreateIn,
                                          user: User) -> ConceptualMappingRuleOut:
     create_data = await rule_validated_data(request_create_data(data, user=user))
-
     conceptual_mapping_rule: ConceptualMappingRule = \
         ConceptualMappingRule(
             **create_data
@@ -58,7 +57,11 @@ async def create_conceptual_mapping_rule(data: ConceptualMappingRuleCreateIn,
     except DuplicateKeyError as e:
         raise DuplicateKeyException(e)
 
-    return ConceptualMappingRuleOut(**conceptual_mapping_rule.model_dump())
+    cm_data = conceptual_mapping_rule.model_dump()
+    cm_data[ConceptualMappingRuleOut.source_structural_element] = (
+        StructuralElement.get(conceptual_mapping_rule.source_structural_element.to_ref().id)
+    )
+    return ConceptualMappingRuleOut(**cm_data)
 
 
 async def update_conceptual_mapping_rule(conceptual_mapping_rule: ConceptualMappingRule,

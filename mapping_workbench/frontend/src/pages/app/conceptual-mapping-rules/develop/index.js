@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
 
@@ -10,16 +10,16 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {conceptualMappingRulesContentApi as sectionApi} from 'src/api/conceptual-mapping-rules-content';
+import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
 import {paths} from 'src/paths';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
-import {ListSearch} from 'src/sections/app/conceptual-mapping-rule-content/list-search';
-import {ListTable} from 'src/sections/app/conceptual-mapping-rule-content/list-table';
-import {useProjects} from "../../../hooks/use-projects";
-import AddEditDrawer from "../../../sections/app/conceptual-mapping-rule-content/add-edit-drawer";
+import {ListSearch} from 'src/sections/app/conceptual-mapping-rule/develop/list-search';
+import {ListTable} from 'src/sections/app/conceptual-mapping-rule/develop/list-table';
+import AddEditDrawer from "../../../../sections/app/conceptual-mapping-rule/develop/add-edit-drawer";
+import {fieldsRegistryApi} from "../../../../api/fields-registry";
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
@@ -29,7 +29,7 @@ const useItemsSearch = (items) => {
             direction: "desc"
         },
         search: '',
-        searchColumns:["title","description"],
+        searchColumns: ["title", "description"],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -39,7 +39,7 @@ const useItemsSearch = (items) => {
     const searchItems = state.search ? items.filter(item => {
         let returnItem = null;
         state.searchColumns.forEach(column => {
-            if(item[column]?.toLowerCase()?.includes(state.search.toLowerCase()))
+            if (item[column]?.toLowerCase()?.includes(state.search.toLowerCase()))
                 returnItem = item
         })
         return returnItem
@@ -47,11 +47,11 @@ const useItemsSearch = (items) => {
 
     const filteredItems = searchItems.filter((item) => {
         let returnItem = item;
-        Object.entries(filters).forEach(filter=> {
+        Object.entries(filters).forEach(filter => {
             const [key, value] = filter
-            if(value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
+            if (value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
                 returnItem = null
-            if(value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase))
+            if (value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase))
                 returnItem = null
         })
         return returnItem
@@ -59,10 +59,10 @@ const useItemsSearch = (items) => {
 
     const sortedItems = () => {
         const sortColumn = state.sort.column
-        if(!sortColumn) {
+        if (!sortColumn) {
             return filteredItems
         } else {
-            return filteredItems.sort((a,b) => {
+            return filteredItems.sort((a, b) => {
                 if (typeof a[sortColumn] === "string")
                     return state.sort.direction === "asc" ?
                         a[sortColumn]?.localeCompare(b[sortColumn]) :
@@ -71,18 +71,18 @@ const useItemsSearch = (items) => {
                     return state.sort.direction === "asc" ?
                         a[sortColumn] - b[sortColumn] :
                         b[sortColumn] - a[sortColumn]
-                })
+            })
         }
     }
 
     const pagedItems = sortedItems().filter((item, i) => {
         const pageSize = state.page * state.rowsPerPage
-        if((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
+        if ((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
             return item
     })
 
     const handleSearchItems = (filters) => {
-        setState(prevState => ({...prevState, search: filters.q }))
+        setState(prevState => ({...prevState, search: filters.q}))
     }
 
     const handleFiltersChange = (filters) => {
@@ -101,14 +101,18 @@ const useItemsSearch = (items) => {
     }
 
     const handleSort = (column, desc) => {
-        setState(prevState=> ({ ...prevState, sort: {column,
-               direction: prevState.sort.column === column
-                   ? prevState.sort.direction === "desc"
-                       ? "asc"
-                       : "desc"
-                   : desc
-                       ? "desc"
-                       : "asc"}}))
+        setState(prevState => ({
+            ...prevState, sort: {
+                column,
+                direction: prevState.sort.column === column
+                    ? prevState.sort.direction === "desc"
+                        ? "asc"
+                        : "desc"
+                    : desc
+                        ? "desc"
+                        : "asc"
+            }
+        }))
 
     }
 
@@ -131,13 +135,50 @@ const useItemsSearch = (items) => {
     };
 };
 
+
+const useItemsStore = () => {
+    const [state, setState] = useState({
+        items: [],
+        itemsCount: 0
+    });
+
+    const handleItemsGet = () => {
+        sectionApi.getItems({rowsPerPage: -1})
+            .then(res => setState({items: res.items, itemsCount: res.count}))
+            .catch(err => console.warn(err))
+    }
+
+    useEffect(() => {
+            handleItemsGet();
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        []);
+
+    return {
+        ...state
+    };
+};
+
 export const Page = () => {
     const [state, setState] = useState({})
-    const itemsStore = useProjects();
+    const itemsStore = useItemsStore();
     const itemsSearch = useItemsSearch(itemsStore.items);
 
+    const [isProjectDataReady, setIsProjectDataReady] = useState(false);
+
+    const [projectSourceStructuralElements, setProjectSourceStructuralElements] = useState([]);
+
+    useEffect(() => {
+        (async () => {
+            setProjectSourceStructuralElements(await fieldsRegistryApi.getStructuralElementsForSelector());
+            setIsProjectDataReady(true);
+        })()
+    }, [])
+
+    if (!isProjectDataReady) return null;
+
     const handleEdit = (item) => {
-        setState(e=>({...e, openDrawer: true, item}))
+        setState(e => ({...e, openDrawer: true, item}))
     }
 
     const handleAdd = () => {
@@ -145,7 +186,7 @@ export const Page = () => {
     }
 
     const handleCloseDrawer = () => {
-        setState(e=>({...e, openDrawer: false}))
+        setState(e => ({...e, openDrawer: false}))
     }
 
     return (
@@ -199,7 +240,7 @@ export const Page = () => {
                                 </SvgIcon>
                             )}
                             variant="contained"
-                            onClick={() => setState(e=>({...e, openDrawer:true,isEdit:false}))}
+                            onClick={() => setState(e => ({...e, openDrawer: true, isEdit: false, item: null}))}
                         >
                             Add
                         </Button>
@@ -222,7 +263,10 @@ export const Page = () => {
                 </Card>
                 <AddEditDrawer open={state.openDrawer}
                                onClose={handleCloseDrawer}
-                               item={state.item}/>
+                               item={state.item}
+                               sectionApi={sectionApi}
+                               structuralElements={projectSourceStructuralElements}
+                />
             </Stack>
         </>
     )
