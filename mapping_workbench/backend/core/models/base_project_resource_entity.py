@@ -20,6 +20,12 @@ class BaseProjectResourceEntity(BaseEntity):
 class BaseProjectResourceEntityInSchema(BaseEntityInSchema):
     project: Optional[Link[Project]] = None
 
+    @field_validator('project')
+    @classmethod
+    def prevent_none_for_project(cls, project):
+        assert project is not None, 'A project resource cannot have project field None'
+        return project
+
 
 class BaseProjectResourceEntityUpdateInSchema(BaseProjectResourceEntityInSchema):
     """
