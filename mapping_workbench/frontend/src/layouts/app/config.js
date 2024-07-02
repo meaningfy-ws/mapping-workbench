@@ -163,6 +163,15 @@ export const useSections = () => {
             //     title: t(tokens.nav.packaging_cm) + ' (dev)',
             //     path: paths.underConstruction
             // }
+                {
+                title: t(tokens.nav.content_cm),
+                path: paths.app.conceptual_mapping_rules_content.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <MapIcon/>
+                    </SvgIcon>
+                )
+            },
             ]
     })
 

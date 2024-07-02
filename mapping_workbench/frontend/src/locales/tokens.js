@@ -91,6 +91,7 @@ export const tokens = {
         review_cm: 'nav.review_cm',
         grouping_cm: 'nav.grouping_cm',
         packaging_cm: 'nav.packaging_cm',
+        content_cm: 'nav.content_cm',
         link_cms_and_triple_maps: 'nav.link_cms_and_triple_maps',
         terms_validator: 'nav.terms_validator',
         tasks: 'nav.tasks',

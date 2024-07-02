@@ -124,6 +124,10 @@ export const paths = {
             }
         },
 
+        conceptual_mapping_rules_content: {
+            index: '/app/conceptual-mapping-rules-content',
+        },
+
         triple_map_fragments: {
             index: '/app/triple-map-fragments',
             create: '/app/triple-map-fragments/create',
