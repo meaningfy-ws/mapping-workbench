@@ -114,6 +114,9 @@ export const paths = {
             }
         },
 
+        detailed_view_cm: {
+            index: '/app/detailed-view-cm'
+        },
         conceptual_mapping_rules: {
             index: '/app/conceptual-mapping-rules',
             create: '/app/conceptual-mapping-rules/create',

@@ -89,6 +89,7 @@ export const tokens = {
         schema_files: 'nav.schema_files',
         develop_cm: 'nav.develop_cm',
         review_cm: 'nav.review_cm',
+        detailed_view_cm: 'nav.detailed_view_cm',
         grouping_cm: 'nav.grouping_cm',
         packaging_cm: 'nav.packaging_cm',
         link_cms_and_triple_maps: 'nav.link_cms_and_triple_maps',
