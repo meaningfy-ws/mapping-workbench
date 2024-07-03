@@ -129,7 +129,7 @@ class CMRuleBeanieRepository(IRepository, IStatefulModelRepository):
                                   mapping_note: ConceptualMappingRuleComment) -> None:
         cm_rule = await self.get_by_id(project_id, cm_rule_id)
 
-        await cm_rule.update({"$push": {ConceptualMappingRule.feedback_notes: mapping_note}})
+        await cm_rule.update({"$push": {ConceptualMappingRule.mapping_notes: mapping_note}})
 
         return None
 
