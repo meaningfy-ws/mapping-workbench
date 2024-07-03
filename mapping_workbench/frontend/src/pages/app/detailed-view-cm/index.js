@@ -131,18 +131,29 @@ const useItemsSearch = (items) => {
 export const Page = () => {
     const [listState,setListState] = useState([])
     const [currentListItem, setCurrentListItem] = useState('')
+    const [itemsStore,setItemsStore] = useState({items:[]})
     useEffect(() => {
-        setListState(sectionApi.getList().items)
+        sectionApi.getList()
+            .then(res => {
+                if(res.items.length) {
+                    setListState(res.items)
+                    setCurrentListItem(res.items[0])
+                }
+            })
     }, []);
 
 
     useEffect(() => {
-        currentListItem && doSome()
+        currentListItem && getItems()
     }, [currentListItem]);
 
-    const doSome = () => {}
+    const getItems = () => {
+        sectionApi.getItems()
+            .then(res => {
+                setItemsStore(res)
+            })
+    }
 
-    const itemsStore = {items:[]}
     const itemsSearch = useItemsSearch(itemsStore.items);
 
     return (
