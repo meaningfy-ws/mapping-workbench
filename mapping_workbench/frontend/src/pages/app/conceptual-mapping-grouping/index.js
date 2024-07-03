@@ -12,7 +12,7 @@ import {Layout as AppLayout} from 'src/layouts/app';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
-import TreeView from "../../../sections/app/tree-view/tree-view";
+import TreeView from "../../../sections/app/tree-view/tree-view-cm";
 
 
 export const Page = () => {

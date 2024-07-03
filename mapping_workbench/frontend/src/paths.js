@@ -123,8 +123,9 @@ export const paths = {
                 generate_cm_assertions_queries: '/app/conceptual-mapping-rules/tasks/generate-cm-assertions-queries'
             }
         },
+
         conceptual_mapping_grouping: {
-            index: '/app/conceptual-mapping-grouping'
+            index: '/app/conceptual-mapping-grouping',
         },
 
         triple_map_fragments: {
@@ -189,6 +190,9 @@ export const paths = {
                 },
             }
         },
+
+
+
         tasks: {
             index: '/app/tasks',
             terms_validator: '/app/tasks/terms_validator',
@@ -284,6 +288,10 @@ export const apiPaths = {
         tasks: {
             generate_cm_assertions_queries: '/conceptual_mapping_rules/tasks/generate_cm_assertions_queries'
         }
+    },
+
+    conceptual_mapping_grouping: {
+        elements_tree: 'app/conceptual_mapping_groups/tree_view'
     },
 
     triple_map_fragments: {

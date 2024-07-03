@@ -20,8 +20,8 @@ class ConceptualMappingGroupingApi extends SectionApi {
     }
 
     constructor() {
-        super("fields_registry");
-        this.isProjectResource = true;
+        super("conceptual_mapping_grouping");
+        // this.isProjectResource = true;
     }
 
     importEFormsFromGithub(request) {
@@ -38,6 +38,17 @@ class ConceptualMappingGroupingApi extends SectionApi {
         if (this.isProjectResource) {
             filters['project'] = sessionApi.getSessionProject();
         }
+        return {
+            root: {
+                "id":1,
+            "cm_group_id": "string",
+            "children": [{
+                    "id":2,
+              "cm_group_id": "string",
+              "children": [{"id":3,"cm_group_id":"string"}]
+            }]
+            }
+            }
         return await appApi.get(this.paths['elements_tree'], filters);
     }
 
