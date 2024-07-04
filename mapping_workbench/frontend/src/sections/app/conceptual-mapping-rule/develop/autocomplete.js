@@ -1,46 +1,122 @@
+import {useState} from "react";
+
 import MuiAutocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
+
 import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
+import Stack from "@mui/material/Stack";
+import Chip from "@mui/material/Chip";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
 
 const Autocomplete = () => {
     const [state, setState] = useState({})
-    return (
-        <MuiAutocomplete
-      id="highlights-demo"
-      sx={{ width: 300 }}
-      options={data.class}
-      // getOptionLabel={(option) => option.title}
-      renderInput={(params) => (
-        <TextField
-            {...params}
-            label="Highlights"
-            margin="normal" />
-      )}
-      renderOption={(props, option, { inputValue }) => {
-        const { key, ...optionProps } = props;
-        const matches = match(option, inputValue, { insideWords: true });
-        const parts = parse(option, matches);
 
-        return (
-          <li key={key}
-              {...optionProps}>
-            <div>
-              {parts.map((part, index) => (
-                <span
-                  key={index}
-                  style={{
-                    fontWeight: part.highlight ? 700 : 400,
-                  }}
-                >
-                  {part.text}
-                </span>
-              ))}
-            </div>
-          </li>
-        );
-         }}
-    />
+    const handleSelect = (value) => {
+        if(!state.class) {
+            setState(e => ({class: value}))
+            return
+        }
+        if(!state.property) {
+            setState(e => ({class: e.class, property: value}))
+            return
+        }
+        if(!state.controled_list)
+            setState(e=>({...e, controled_list: value}))
+    }
+
+
+    console.log(state)
+
+    const currentValue =
+        !state.class
+            ? state.class
+            : !state.property
+                ? state.property
+                : state.controled_list
+
+    const currentLabel =
+        !state.class
+            ? 'class'
+            : !state.property
+                ? 'property'
+                : 'controled_list'
+
+    const currentOptions =
+        !state.class
+            ? data.class
+            : !state.property
+                ? data.property
+                : data.controled_list
+
+
+    const handleChipDelete = (value) => {
+        if(value === 'class')
+            setState({})
+        if(value === 'property')
+            setState(e=>({class:e.class}))
+        if(value === 'controled_list')
+            setState(e=> ({class:e.class, property:e.property}))
+    }
+
+    return (
+        <Stack>
+            <MuiAutocomplete
+                  id="autocomplete"
+                  options={currentOptions}
+                  fullWidth
+                  onChange={(e,value)=> handleSelect(value)}
+                  value={currentValue}
+                  disabled={state.controled_list}
+                  // getOptionLabel={(option) => option.title}
+                  renderInput={(params) => (
+                    <TextField
+                        {...params}
+                        label={currentLabel}
+                        margin="normal" />
+                  )}
+                  renderOption={(props, option, { inputValue }) => {
+                    const { key, ...optionProps } = props;
+                    const matches = match(option, inputValue, { insideWords: true });
+                    const parts = parse(option, matches);
+
+                    return (
+                      <li key={key}
+                          {...optionProps}>
+                        <div>
+                          {parts.map((part, index) => (
+                            <span
+                              key={index}
+                              style={{
+                                fontWeight: part.highlight ? 700 : 400,
+                              }}
+                            >
+                              {part.text}
+                            </span>
+                          ))}
+                        </div>
+                      </li>
+                    );
+                     }}
+                />
+            <Breadcrumbs separator={"/"} >
+                {state.class ? <Chip label={state.class}
+                                       color='success'
+                                       onDelete={() => handleChipDelete('class')}/>
+                                : <Chip label='Class'
+                                        color='warning'/>}
+                {state.property ? <Chip label={state.property}
+                                          color='success'
+                                          onDelete={() => handleChipDelete('property')}/>
+                                  : <Chip label='Property'
+                                          color={currentLabel==='property' ? 'warning' : 'default'}/>}
+                {state.controled_list ? <Chip label={state.controled_list}
+                                                color='success'
+                                                onDelete={() => handleChipDelete('controled_list')}/>
+                                        : <Chip label='Controled List'
+                                                color={currentLabel==='controled_list' ? 'warning' : 'default'}/>}
+            </Breadcrumbs>
+        </Stack>
     )
 }
 
@@ -67,7 +143,7 @@ const data =  {
             "epo:foreseesContractSpecificTerm",
             "epo:hasBroadPlaceOfPerformance"
         ],
-        "controled list": [
+        "controled_list": [
             "at-voc:language",
             "at-voc:main-activity",
             "at-voc:legal-basis",
