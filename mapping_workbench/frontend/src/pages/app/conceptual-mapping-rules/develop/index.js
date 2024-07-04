@@ -170,7 +170,7 @@ export const Page = () => {
 
     useEffect(() => {
         (async () => {
-            // setProjectSourceStructuralElements(await fieldsRegistryApi.getStructuralElementsForSelector());
+            setProjectSourceStructuralElements(await fieldsRegistryApi.getStructuralElementsForSelector());
             setIsProjectDataReady(true);
         })()
     }, [])
