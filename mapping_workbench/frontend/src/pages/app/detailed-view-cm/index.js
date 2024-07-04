@@ -198,12 +198,13 @@ export const Page = () => {
                 <Card>
                     <TextField
                         fullWidth
-                        label="Type"
+                        label="CM Rule"
                         onChange={e =>
                             setCurrentListItem(e.target.value)
                         }
                         select
                         value={currentListItem}
+                        sx={{p:1}}
                     >
                                     {listState.map(item =>
                                         <MenuItem key={item.ontology_fragment_id}
