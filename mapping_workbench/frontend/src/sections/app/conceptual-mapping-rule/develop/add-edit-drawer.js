@@ -13,6 +13,7 @@ import {sessionApi} from "../../../../api/session";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
+import Autocomplete from "./autocomplete";
 
 const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements}, load) => {
 
@@ -103,6 +104,7 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements}, lo
                             <FormTextField formik={formik}
                                            name="target_property_path"
                                            label="Ontology Property Path"/>
+                            <Autocomplete/>
                         </Stack>
                     </CardContent>
                     <Button type='submit'
