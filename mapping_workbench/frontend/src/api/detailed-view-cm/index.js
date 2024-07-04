@@ -1,15 +1,13 @@
 import {SectionApi} from "../section";
-import {appApi} from "../app";
 
-export const SESSION_PROJECT_KEY = 'sessionProject';
 
 class DetailedViewCmApi extends SectionApi {
     get SECTION_TITLE() {
-        return "Projects";
+        return "Detailed Conceptual Mappings View";
     }
 
     get SECTION_ITEM_TITLE() {
-        return "Project";
+        return "Detailed Conceptual Mappings View";
     }
 
     constructor() {
