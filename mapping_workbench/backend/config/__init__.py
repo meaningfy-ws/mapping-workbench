@@ -1,5 +1,3 @@
-import os
-
 import dotenv
 from pydantic_settings import BaseSettings
 
@@ -9,9 +7,6 @@ ENV_PRODUCTION = "prod"
 
 dotenv.load_dotenv(verbose=True, override=True)
 
-# Print all environment variables
-for key, value in os.environ.items():
-    print(f'{key}: {value}')
 
 class AppSettings(BaseSettings):
     @env_property(config_key='MW_APP_NAME')
