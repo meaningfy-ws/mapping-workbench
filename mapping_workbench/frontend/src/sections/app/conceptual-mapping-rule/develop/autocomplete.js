@@ -22,27 +22,32 @@ const Autocomplete = () => {
                         : 'info'
     }
 
-    const currentName = (value) =>
-        value === 'class'
-            ? 'Class'
-            : value === 'property'
-                ? 'Property'
-                : 'Controlled List'
-
     const currentType = () => {
         if(!state.length) {
             return 'class'
         }
         let last = [...state]
             last = last.pop().type
-        if(last === 'class') {
-            return 'property'
+        switch (last) {
+            case 'class':
+                return 'property'
+            case 'property':
+                return 'classOrList'
+            default:
+                return 'controlled_list'
         }
-        if(last === 'property') {
-            return 'classOrList'
-        }
-        if(last === 'controlled_list') {
-            return 'controlled_list'
+    }
+
+    const currentName = (value) => {
+        switch (value) {
+            case 'class':
+                return 'Class'
+            case 'property':
+                return 'Property'
+            case 'classOrList':
+                return 'Class Or List'
+            default:
+                return'Complete'
         }
     }
 
@@ -54,7 +59,8 @@ const Autocomplete = () => {
                 return data.property
             case 'classOrList':
                 return [...data.class.map(e=> ({type:'class',title:e})),...data.controlled_list.map(e=> ({type:'controlled_list',title:e}))]
-            default: return[]
+            default:
+                return []
         }
     }
 
@@ -76,7 +82,7 @@ const Autocomplete = () => {
                       return (
                           <TextField
                                 {...params}
-                                label={currentType()}
+                                label={currentName(currentType())}
                                 margin="normal"/>
                           )}}
             />
