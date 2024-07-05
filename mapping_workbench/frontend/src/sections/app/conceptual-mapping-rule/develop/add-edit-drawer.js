@@ -44,7 +44,9 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements}, lo
             'target_property_path': item?.target_property_path || '',
         },
         validationSchema: Yup.object({
-
+            source_structural_element: Yup
+                .string()
+                .required('Structural Element is required')
         }),
         onSubmit: async (values, helpers) => {
             values['project'] = sessionApi.getSessionProject();

@@ -9,11 +9,9 @@ ENV_PRODUCTION = "prod"
 
 dotenv.load_dotenv(verbose=True, override=True)
 
-# Print all environment variables
-for key, value in os.environ.items():
-    print(f'K :: {key}: {value}')
 
 class AppSettings(BaseSettings):
+    
     @env_property(config_key='MW_APP_NAME')
     def APP_NAME(self, config_value: str) -> str:
         return config_value
