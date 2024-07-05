@@ -29,7 +29,7 @@ from mapping_workbench.backend.security.services.user_manager import current_act
 from mapping_workbench.backend.task_manager.services.task_wrapper import add_task
 from mapping_workbench.backend.user.models.user import User
 
-ROUTE_PREFIX = "/conceptual_mapping_rules"
+CM_RULE_ROUTE_PREFIX = "/conceptual_mapping_rules"
 TAG = "conceptual_mapping_rules"
 CM_RULE_REVIEW_PAGE_TAG = "cm_rule_review_page"
 NAME_FOR_MANY = "conceptual_mapping_rules"
@@ -38,7 +38,7 @@ NAME_FOR_ONE = "conceptual_mapping_rule"
 TASK_GENERATE_CM_ASSERTIONS_QUERIES_NAME = f"{NAME_FOR_ONE}:tasks:generate_cm_assertions_queries"
 
 router = APIRouter(
-    prefix=ROUTE_PREFIX,
+    prefix=CM_RULE_ROUTE_PREFIX,
     tags=[TAG]
 )
 

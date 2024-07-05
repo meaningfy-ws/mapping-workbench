@@ -200,6 +200,9 @@ export const paths = {
         },
         fluree: {
             index: '/app/fluree'
+        },
+        fluree_crypt: {
+            index: '/app/fluree-crypt'
         }
     },
     docs: 'https://material-kit-pro-react-docs.devias.io',

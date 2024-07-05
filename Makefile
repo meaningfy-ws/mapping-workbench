@@ -50,6 +50,8 @@ test: test-unit test-e2e
 test-unit: test-unit-backend test-unit-frontend
 test-e2e: test-e2e-backend test-e2e-frontend
 
+test-backend: test-unit-backend test-e2e-backend
+
 test-unit-backend:
 	@ echo "UNIT Testing BACKEND ... "
 	@ tox -e unit -- backend
