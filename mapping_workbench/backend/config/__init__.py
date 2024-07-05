@@ -137,7 +137,9 @@ class Settings(
     GoogleOAuthSettings,
     FrontendSettings
 ):
-    pass
+    """
+
+    """
 
 
 settings = Settings()
