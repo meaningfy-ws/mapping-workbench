@@ -1,5 +1,3 @@
-import os
-
 import dotenv
 from pydantic_settings import BaseSettings
 
@@ -139,7 +137,9 @@ class Settings(
     GoogleOAuthSettings,
     FrontendSettings
 ):
-    pass
+    """
+
+    """
 
 
 settings = Settings()

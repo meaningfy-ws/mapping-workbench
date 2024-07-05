@@ -82,6 +82,9 @@ dev-dotenv-file:
 	@ echo RML_MAPPER_PATH=${RML_MAPPER_PATH} >> ${ENV_FILE}
 	@ vault kv get -format="json" mapping-workbench-dev/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> ${ENV_FILE}
 
+staging-dotenv-file-vault:
+	@ vault kv get -format="json" mapping-workbench-staging/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> ${ENV_FILE}
+
 staging-dotenv-file:
 	@ echo "Creating STAGING .env file ... "
 	@ echo VAULT_ADDR=${VAULT_ADDR} > ${ENV_FILE}
