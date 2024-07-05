@@ -8,14 +8,14 @@ import Button from "@mui/material/Button";
 import Drawer from "@mui/material/Drawer";
 import {useFormik} from "formik";
 import * as Yup from "yup";
-import {toastError, toastLoad, toastSuccess} from "../../../../components/app-toast";
+import {toastLoad, toastSuccess} from "../../../../components/app-toast";
 import {sessionApi} from "../../../../api/session";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 
-const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements}, load) => {
 
+const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, afterItemSave}, load) => {
     const addItem = async (requestValues) => {
         const toastId = toastLoad('Adding item...')
         await sectionApi.createItem(requestValues);
@@ -46,16 +46,25 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements}, lo
         validationSchema: Yup.object({
             source_structural_element: Yup
                 .string()
-                .required('Structural Element is required')
+                .required('Structural Element is required'),
+            target_class_path: Yup
+                .string()
+                .required('Class Path is required'),
+            target_property_path: Yup
+                .string()
+                .required('Property Path is required')
         }),
-        onSubmit: async (values, helpers) => {
+        onSubmit: async (values, { resetForm, setErrors, setTouched }) => {
             values['project'] = sessionApi.getSessionProject();
             values['source_structural_element'] = values['source_structural_element'] || null;
             if(item) {
-                await updateItem(values)
+                item = await updateItem(values)
             } else {
-                await addItem(values)
+                item = await addItem(values)
             }
+            afterItemSave(item)
+            onClose()
+            resetForm({})
         },
         enableReinitialize: true
     })
@@ -76,7 +85,9 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements}, lo
                             <Typography></Typography>
                             <FormControl sx={{my: 2, width: '100%'}}>
                                 <TextField
+                                    error={!!(formik.touched.source_structural_element && formik.errors.source_structural_element)}
                                     fullWidth
+                                    helperText={formik.touched.source_structural_element && formik.errors.source_structural_element}
                                     label="Structural Element"
                                     onChange={handleSourceStructuralElementSelect}
                                     select
@@ -100,9 +111,15 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements}, lo
                                            name="max_sdk_version"
                                            label="Max SDK"/>
                             <FormTextField formik={formik}
+                                           error={!!(formik.touched.target_class_path && formik.errors.target_class_path)}
+                                           fullWidth
+                                           helperText={formik.touched.target_class_path && formik.errors.target_class_path}
                                            name="target_class_path"
                                            label="Ontology Class Path"/>
                             <FormTextField formik={formik}
+                                           error={!!(formik.touched.target_property_path && formik.errors.target_property_path)}
+                                           fullWidth
+                                           helperText={formik.touched.target_property_path && formik.errors.target_property_path}
                                            name="target_property_path"
                                            label="Ontology Property Path"/>
                         </Stack>

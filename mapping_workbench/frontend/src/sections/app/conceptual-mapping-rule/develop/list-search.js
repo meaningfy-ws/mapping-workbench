@@ -190,7 +190,7 @@ export const ListSearch = (props) => {
                                     >
                                         <>
                                             <b>{chip.label}</b>
-                                            {` :${chip.displayValue ?? chip.value}`}:
+                                            {` :${chip.displayValue ?? chip.value}`}
                                         </>
                                     </Box>
                                 )}

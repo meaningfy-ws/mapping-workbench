@@ -107,6 +107,8 @@ class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema):
     min_sdk_version: Optional[str] = None
     max_sdk_version: Optional[str] = None
     source_structural_element: Optional[Link[StructuralElement]] = None
+    source_structural_element_sdk_element_id: Optional[str] = None
+    source_structural_element_absolute_xpath: Optional[str] = None
     mapping_groups: Optional[List[Link[MappingGroup]]] = None
     target_class_path: Optional[str] = None
     target_class_path_terms_validity: Optional[List[TermValidityResponse]] = None

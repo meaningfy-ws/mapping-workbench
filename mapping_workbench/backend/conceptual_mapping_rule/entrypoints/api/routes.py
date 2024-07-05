@@ -275,7 +275,7 @@ async def route_insert_cm_rule_mapping_note(
         user: User = Depends(current_active_user)
 ) -> None:
     try:
-        mapping_note = ConceptualMappingRuleComment(**mapping_note.dict())
+        mapping_note = ConceptualMappingRuleComment(**mapping_note.model_dump())
         mapping_note.created_by = User.link_from_id(user.id)
         await cm_rule_repo.create_mapping_note(project_id, cm_rule_id, mapping_note)
     except (CMRuleNotFoundException,) as expected_exception:

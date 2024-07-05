@@ -39,6 +39,8 @@ async def list_conceptual_mapping_rules(filters: dict = None, page: int = None, 
     for item in items:
         if item.source_structural_element:
             item.source_structural_element = await item.source_structural_element.fetch()
+            item.source_structural_element_sdk_element_id = item.source_structural_element.sdk_element_id
+            item.source_structural_element_absolute_xpath = item.source_structural_element.absolute_xpath
 
     total_count: int = await ConceptualMappingRule.find(query_filters).count()
     return items, total_count
@@ -92,6 +94,7 @@ async def get_conceptual_mapping_rule_out(id: PydanticObjectId) -> ConceptualMap
 
 
 async def delete_conceptual_mapping_rule(conceptual_mapping_rule: ConceptualMappingRule):
+    print("K :: ", conceptual_mapping_rule.id)
     return await conceptual_mapping_rule.delete()
 
 
