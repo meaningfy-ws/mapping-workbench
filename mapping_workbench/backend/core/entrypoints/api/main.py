@@ -107,7 +107,7 @@ app_router.include_router(user_routes.router)
 
 app.include_router(app_router, prefix=ROOT_API_PATH)
 
-if settings.ENVIRONMENT != "prod":
+if not settings.is_env_production():
     @app.exception_handler(Exception)
     async def all_exception_handler(request: Request, exception: Exception):
         exception_traceback = str(exception) or "No traceback available"
