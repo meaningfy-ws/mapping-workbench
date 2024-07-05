@@ -36,8 +36,8 @@ jobs:
             VAULT_TOKEN=${{ secrets.VAULT_TOKEN }} |
             VAULT_ADDR=${{ secrets.VAULT_ADDR }}
           fail_on_empty: true
-      - name: Fill envfile
-        run: make staging-dotenv-file
+      - name: Populate envfile
+        run: make staging-dotenv-file-vault
       - name: Run unit tests
         run: make test-unit-backend
       - name: SonarCloud Scan
