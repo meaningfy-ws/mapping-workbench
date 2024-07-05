@@ -281,7 +281,7 @@ export const TopNav = (props) => {
                                     />
                                 ))}
 
-                                {projects.sessionProject && sections.projectSetup.map((section, index) => (
+                                {projects.sessionProject && sections.projectSetup && sections.projectSetup.map((section, index) => (
                                     <TopNavSection
                                         items={section.items}
                                         key={index}
@@ -290,7 +290,7 @@ export const TopNav = (props) => {
                                     />
                                 ))}
 
-                                 {projects.sessionProject && sections.fieldsAndNodes.map((section, index) => (
+                                 {projects.sessionProject && sections.fieldsAndNodes && sections.fieldsAndNodes.map((section, index) => (
                                     <TopNavSection
                                         items={section.items}
                                         key={index}
