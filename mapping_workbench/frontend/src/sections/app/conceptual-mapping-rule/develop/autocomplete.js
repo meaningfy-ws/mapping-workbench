@@ -5,26 +5,22 @@ import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import Chip from "@mui/material/Chip";
 
-import parse from 'autosuggest-highlight/parse';
-import match from 'autosuggest-highlight/match';
-
 const Autocomplete = () => {
-    const [state, setState] = useState({})
+    const [state, setState] = useState([])
 
-    const handleSelect = (value) => {
-        !state.class
-            ? setState(e => ({class: value}))
-            : !state.property
-                ? setState(e => ({class: e.class, property: value}))
-                : setState(e=>({...e, controlled_list: value}))
+    const handleSelect = (type, value) => {
+        if (type === 'classOrList')
+            setState(e => ([...e, {type: value.type, value: value.title}]));
+        else setState(e => ([...e, {type, value}]));
     }
 
-    const currentLabel =
-        !state.class
-            ? 'class'
-            : !state.property
-                ? 'property'
-                : 'controlled_list'
+    const chipColor = (type) => {
+        return type === 'class'
+                    ? 'success'
+                    : type === 'property'
+                        ? 'warning'
+                        : 'info'
+    }
 
     const currentName = (value) =>
         value === 'class'
@@ -33,77 +29,64 @@ const Autocomplete = () => {
                 ? 'Property'
                 : 'Controlled List'
 
-    const currentOptions = data[currentLabel]
-
-
-    const handleChipDelete = (value) => {
-        if(value === 'class')
-            setState({})
-        if(value === 'property')
-            setState(e=>({class:e.class}))
-        if(value === 'controlled_list')
-            setState(e=> ({class:e.class, property:e.property}))
+    const currentType = () => {
+        if(!state.length) {
+            return 'class'
+        }
+        let last = [...state]
+            last = last.pop().type
+        if(last === 'class') {
+            return 'property'
+        }
+        if(last === 'property') {
+            return 'classOrList'
+        }
+        if(last === 'controlled_list') {
+            return 'controlled_list'
+        }
     }
 
-    const SuccessChip = ({value}) =>
-        <Chip label={state[value]}
-              color='success'
-              onDelete={() => handleChipDelete(value)}/>
+    const currentOptions = () => {
+        switch(currentType()) {
+            case 'class':
+                return data.class
+            case 'property':
+                return data.property
+            case 'classOrList':
+                return [...data.class.map(e=> ({type:'class',title:e})),...data.controlled_list.map(e=> ({type:'controlled_list',title:e}))]
+            default: return[]
+        }
+    }
 
-    const WarningChip = ({value}) =>
-        <Chip label={currentName(value)}
-              color={currentLabel===value ? 'warning' : 'default'}/>
-
+    const handleChipDelete = (i) => setState(e => e.slice(0,i))
 
     return (
         <Stack>
             <MuiAutocomplete
                   id="autocomplete"
                   fullWidth
-                  options={currentOptions}
-                  onChange={(e,value)=> handleSelect(value)}
-                  disabled={!!state.controlled_list}
+                  options={currentOptions()}
+                  groupBy={option => currentType() === 'classOrList' ? option.type : false}
+                  onChange={(e,value)=> handleSelect(currentType(), value)}
+                  disabled={currentType() === 'controlled_list'}
+                  getOptionLabel={option => currentType() === 'classOrList' ? option.title : option}
                   blurOnSelect
                   value={null}
                   renderInput={(params) => {
                       return (
                           <TextField
                                 {...params}
-                                label={currentName(currentLabel)}
+                                label={currentType()}
                                 margin="normal"/>
                           )}}
-                  renderOption={(props, option, { inputValue }) => {
-                    const { key, ...optionProps } = props;
-                    const matches = match(option, inputValue, { insideWords: true });
-                    const parts = parse(option, matches);
-
-                    return (
-                      <li key={key}
-                          {...optionProps}>
-                        <div>
-                          {parts.map((part, index) => (
-                            <span
-                              key={index}
-                              style={{
-                                fontWeight: part.highlight ? 700 : 400,
-                              }}
-                            >
-                              {part.text}
-                            </span>
-                          ))}
-                        </div>
-                      </li>
-                    );
-                     }}
-                />
+            />
             <Stack direction='column'
                    gap={1}>
-                {state.class ? <SuccessChip value='class'/>
-                             : <WarningChip value='class'/>}
-                {state.property ? <SuccessChip value='property'/>
-                                : <WarningChip value='property'/>}
-                {state.controlled_list ? <SuccessChip value='controlled_list'/>
-                                       : <WarningChip value='controlled_list'/>}
+                {state.map((e, i) => <Chip key = {'chip'+i}
+                                                    label={<><b>{e.type}:</b>{e.value}</>}
+                                                    onDelete={() => handleChipDelete(i)}
+                                                    color={chipColor(e.type)}
+                                                />)}
             </Stack>
         </Stack>
     )

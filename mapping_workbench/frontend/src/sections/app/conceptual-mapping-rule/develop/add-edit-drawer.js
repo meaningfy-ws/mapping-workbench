@@ -67,7 +67,7 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements}, lo
             onClose={onClose}>
             <form onSubmit={formik.handleSubmit}>
 
-                <Card sx={{width: 400}}>
+                <Card sx={{width: 600}}>
                         <CardHeader title={item ? 'Edit Item' : 'Create Item'}/>
                     <CardContent>
                         <Stack direction='column'
