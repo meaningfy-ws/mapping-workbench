@@ -1,8 +1,10 @@
 import pytest
 
+from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
+
 
 @pytest.fixture
-def entity_data(dummy_project):
+def entity_data(dummy_project, dummy_structural_element):
     return {
         "min_sdk_version": "1",
         "max_sdk_version": "2",
@@ -13,7 +15,7 @@ def entity_data(dummy_project):
         "editorial_notes": [],
         "feedback_notes": [],
         "refers_to_mapping_package_ids": [],
-        "source_structural_element": None,
+        "source_structural_element": str(dummy_structural_element.id),
         "triple_map_fragment": None,
         "project": str(dummy_project.id)
     }

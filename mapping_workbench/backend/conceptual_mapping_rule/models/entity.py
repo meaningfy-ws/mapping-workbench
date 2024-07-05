@@ -78,7 +78,7 @@ class CMRuleStatus(str, Enum):
 class ConceptualMappingRuleIn(BaseProjectResourceEntityInSchema):
     min_sdk_version: Optional[str] = None
     max_sdk_version: Optional[str] = None
-    source_structural_element: Optional[Link[StructuralElement]] = None
+    source_structural_element: Link[StructuralElement]
     mapping_groups: Optional[List[Link[MappingGroup]]] = None
     target_class_path: Optional[str] = None
     target_property_path: Optional[str] = None

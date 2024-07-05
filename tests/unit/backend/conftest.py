@@ -6,6 +6,7 @@ from mongomock_motor import AsyncMongoMockClient
 
 from mapping_workbench.backend.core.services.project_initilisers import init_project_models
 from mapping_workbench.backend.database.adapters.gridfs_storage import AsyncGridFSStorage
+from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
 from mapping_workbench.backend.project.models.entity import Project
 
 async_mongodb_database_mock = AsyncMongoMockClient()["test_database"]
@@ -28,3 +29,16 @@ def dummy_project() -> Project:
 @pytest.fixture
 def dummy_project_link(dummy_project) -> Link:
     return Project.link_from_id(dummy_project.id)
+
+
+
+@pytest.fixture
+def dummy_structural_element(dummy_project_link):
+    return StructuralElement(
+            sdk_element_id="ND-Root",
+            absolute_xpath="/*",
+            relative_xpath="/*",
+            project=dummy_project_link,
+            repeatable=False,
+            id=str(PydanticObjectId())
+    )
