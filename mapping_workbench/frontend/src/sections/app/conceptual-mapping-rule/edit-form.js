@@ -174,7 +174,11 @@ export const EditForm = (props) => {
 
         const formik = useFormik({
             initialValues,
-            validationSchema: Yup.object({}),
+            validationSchema: Yup.object({
+                source_structural_element: Yup
+                    .string()
+                    .required('Structural Element is required')
+            }),
             onSubmit: async (values, helpers) => {
                 const toastId = toastLoad(itemctx.isNew ? 'Creating...' : 'Updating...')
                 try {
