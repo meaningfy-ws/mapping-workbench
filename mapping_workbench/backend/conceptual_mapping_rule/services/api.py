@@ -94,7 +94,6 @@ async def get_conceptual_mapping_rule_out(id: PydanticObjectId) -> ConceptualMap
 
 
 async def delete_conceptual_mapping_rule(conceptual_mapping_rule: ConceptualMappingRule):
-    print("K :: ", conceptual_mapping_rule.id)
     return await conceptual_mapping_rule.delete()
 
 
