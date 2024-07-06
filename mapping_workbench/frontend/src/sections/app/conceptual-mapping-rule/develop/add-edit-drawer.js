@@ -11,27 +11,27 @@ import * as Yup from "yup";
 import {toastLoad, toastSuccess} from "../../../../components/app-toast";
 import {sessionApi} from "../../../../api/session";
 import TextField from "@mui/material/TextField";
-import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
+import Autocomplete from "@mui/material/Autocomplete";
+import {useEffect, useState} from "react";
 
 
 const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, afterItemSave}, load) => {
+    if (structuralElements === undefined) {
+        return;
+    }
+
     const addItem = async (requestValues) => {
         const toastId = toastLoad('Adding item...')
         await sectionApi.createItem(requestValues);
-        toastSuccess('Added successfully',toastId)
+        toastSuccess('Added successfully', toastId)
     }
 
     const updateItem = async (requestValues) => {
         const toastId = toastLoad('Updating item...')
         requestValues['id'] = item._id;
         await sectionApi.updateItem(requestValues);
-        toastSuccess('Updated successfully',toastId)
-    }
-
-    const handleSourceStructuralElementSelect = e => {
-        const value = e.target.value;
-        formik.setFieldValue('source_structural_element', value);
+        toastSuccess('Updated successfully', toastId)
     }
 
     const formik = useFormik({
@@ -54,10 +54,10 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
                 .string()
                 .required('Property Path is required')
         }),
-        onSubmit: async (values, { resetForm, setErrors, setTouched }) => {
+        onSubmit: async (values, {resetForm, setErrors, setTouched}) => {
             values['project'] = sessionApi.getSessionProject();
             values['source_structural_element'] = values['source_structural_element'] || null;
-            if(item) {
+            if (item) {
                 item = await updateItem(values)
             } else {
                 item = await addItem(values)
@@ -69,8 +69,12 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
         enableReinitialize: true
     })
 
+    const structuralElement = structuralElements.find(el => el.id === item?.source_structural_element?.id)
+    const handleSourceStructuralElementSelect = ((e, value) => {
+        formik.setFieldValue('source_structural_element', value?.id);
+    })
 
-    return(
+    return (
         <Drawer
             anchor='right'
             open={open}
@@ -78,27 +82,24 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
             <form onSubmit={formik.handleSubmit}>
 
                 <Card sx={{width: 400}}>
-                        <CardHeader title={item ? 'Edit Item' : 'Create Item'}/>
+                    <CardHeader title={item ? 'Edit Item' : 'Create Item'}/>
                     <CardContent>
                         <Stack direction='column'
                                gap={3}>
                             <Typography></Typography>
                             <FormControl sx={{my: 2, width: '100%'}}>
-                                <TextField
-                                    error={!!(formik.touched.source_structural_element && formik.errors.source_structural_element)}
+                                <Autocomplete
                                     fullWidth
-                                    helperText={formik.touched.source_structural_element && formik.errors.source_structural_element}
-                                    label="Structural Element"
+                                    options={structuralElements}
+                                    defaultValue={structuralElement}
                                     onChange={handleSourceStructuralElementSelect}
-                                    select
-                                    value={formik.values.source_structural_element}
-                                >
-                                    <MenuItem value={null}>&nbsp;</MenuItem>
-                                    {structuralElements.map((x) => (
-                                        <MenuItem key={x.id}
-                                                  value={x.id}>{x.sdk_element_id}</MenuItem>
-                                    ))}
-                                </TextField>
+                                    renderInput={(params) =>
+                                        <TextField {...params}
+                                                   label="Structural Element"
+                                                   error={!!(formik.touched.source_structural_element && formik.errors.source_structural_element)}
+                                                   helperText={formik.touched.source_structural_element && formik.errors.source_structural_element}
+                                        />}
+                                />
                             </FormControl>
                             <FormTextField formik={formik}
                                            disabled={true}

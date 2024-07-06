@@ -141,7 +141,7 @@ class AppApi {
     }
 
     async post(endpoint, data = {}, params = null, headers = null) {
-        return this.request(METHOD.POST, endpoint, data, null, headers);
+        return this.request(METHOD.POST, endpoint, data, params, headers);
     }
 
     async create(endpoint, data, headers = null) {

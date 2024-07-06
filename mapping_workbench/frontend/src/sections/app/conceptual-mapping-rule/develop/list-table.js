@@ -8,18 +8,12 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
 import {Scrollbar} from 'src/components/scrollbar';
-import {ListItemActions} from 'src/components/app/list/list-item-actions';
-import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import TablePagination from "../../../components/table-pagination";
 import {useGlobalState} from "../../../../hooks/use-global-state";
-import timeTransformer from "../../../../utils/time-transformer";
 import TableSorterHeader from "../../../components/table-sorter-header";
 import Button from "@mui/material/Button";
 import {useState} from "react";
 import ConfirmDialog from "../../../../components/app/dialog/confirm-dialog";
-import {paths} from "../../../../paths";
-import {conceptualMappingRulesApi as sectionApi} from "../../../../api/conceptual-mapping-rules";
-
 
 
 export const ListTableRow = (props) => {
@@ -31,10 +25,8 @@ export const ListTableRow = (props) => {
 
     const [confirmOpen, setConfirmOpen] = useState(false);
 
-    const item_id = item._id;
     return (
-        <TableRow hover
-                  key={item_id}>
+        <TableRow hover>
             <TableCell
                 width="10%"
             >
@@ -176,6 +168,7 @@ export const ListTable = (props) => {
                     </TableHead>
                     <TableBody>
                         {items.map(item => <ListTableRow
+                            key={item._id}
                             item={item}
                             onEdit={onEdit}
                             onDelete={onDelete}

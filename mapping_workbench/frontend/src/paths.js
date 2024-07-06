@@ -288,6 +288,10 @@ export const apiPaths = {
         search_terms: '/ontology/search_terms',
         prefixed_terms: '/ontology/prefixed_terms',
         clone: '/conceptual_mapping_rules/:id/clone',
+        statuses: '/conceptual_mapping_rules/status/list',
+        mapping_notes: '/conceptual_mapping_rules/:id/mapping_notes',
+        editorial_notes: '/conceptual_mapping_rules/:id/editorial_notes',
+        feedback_notes: '/conceptual_mapping_rules/:id/feedback_notes',
         tasks: {
             generate_cm_assertions_queries: '/conceptual_mapping_rules/tasks/generate_cm_assertions_queries'
         }

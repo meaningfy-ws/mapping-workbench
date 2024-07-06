@@ -24,6 +24,7 @@ from mapping_workbench.backend.conceptual_mapping_rule.services.data import cm_r
     get_list_with_editorial_notes_out_from_cm_rule_by_project, get_list_with_feedback_notes_out_from_cm_rule_by_project, \
     get_list_with_mapping_notes_out_from_cm_rule_by_project
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
+from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.task_manager.services.task_wrapper import add_task
@@ -52,6 +53,7 @@ router = APIRouter(
 async def route_list_conceptual_mapping_rules(
         project: PydanticObjectId = None,
         mapping_packages: Annotated[List[PydanticObjectId | str] | None, Query()] = None,
+        source_structural_elements: Annotated[List[PydanticObjectId | str] | None, Query()] = None,
         page: int = None,
         limit: int = None,
         q: str = None,
@@ -64,11 +66,15 @@ async def route_list_conceptual_mapping_rules(
         filters['project'] = Project.link_from_id(project)
     if mapping_packages is not None:
         filters['refers_to_mapping_package_ids'] = {"$in": mapping_packages}
+    if source_structural_elements is not None:
+        filters['source_structural_element'] = {
+            "$in": [StructuralElement.link_from_id(id) for id in source_structural_elements]
+        }
     if q is not None:
         filters['q'] = q
     if terms_validity:
         filters['terms_validity'] = terms_validity
-
+    print(filters)
     items, total_count = await list_conceptual_mapping_rules(filters, page, limit, sort_field, sort_dir)
     return APIListConceptualMappingRulesPaginatedResponse(
         items=items,
@@ -189,13 +195,13 @@ async def route_get_cm_rule_editorial_notes(
 async def route_insert_cm_rule_editorial_note(
         project_id: PydanticObjectId,
         cm_rule_id: PydanticObjectId,
-        editorial_note: ConceptualMappingRuleCommentIn,
+        note: ConceptualMappingRuleCommentIn,
         user: User = Depends(current_active_user)
 ) -> None:
     try:
-        editorial_note = ConceptualMappingRuleComment(**editorial_note.dict())
-        editorial_note.created_by = User.link_from_id(user.id)
-        await cm_rule_repo.create_editorial_note(project_id, cm_rule_id, editorial_note)
+        note = ConceptualMappingRuleComment(**note.model_dump())
+        note.created_by = User.link_from_id(user.id)
+        await cm_rule_repo.create_editorial_note(project_id, cm_rule_id, note)
     except (CMRuleNotFoundException,) as expected_exception:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(expected_exception))
 
@@ -230,13 +236,13 @@ async def route_get_cm_rule_feedback_notes(
 async def route_insert_cm_rule_feedback_note(
         project_id: PydanticObjectId,
         cm_rule_id: PydanticObjectId,
-        feedback_note: ConceptualMappingRuleCommentIn,
+        note: ConceptualMappingRuleCommentIn,
         user: User = Depends(current_active_user)
 ) -> None:
     try:
-        feedback_note = ConceptualMappingRuleComment(**feedback_note.dict())
-        feedback_note.created_by = User.link_from_id(user.id)
-        await cm_rule_repo.create_feedback_note(project_id, cm_rule_id, feedback_note)
+        note = ConceptualMappingRuleComment(**note.model_dump())
+        note.created_by = User.link_from_id(user.id)
+        await cm_rule_repo.create_feedback_note(project_id, cm_rule_id, note)
     except (CMRuleNotFoundException,) as expected_exception:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(expected_exception))
 
@@ -271,13 +277,13 @@ async def route_get_cm_rule_mapping_notes(
 async def route_insert_cm_rule_mapping_note(
         project_id: PydanticObjectId,
         cm_rule_id: PydanticObjectId,
-        mapping_note: ConceptualMappingRuleCommentIn,
+        note: ConceptualMappingRuleCommentIn,
         user: User = Depends(current_active_user)
 ) -> None:
     try:
-        mapping_note = ConceptualMappingRuleComment(**mapping_note.model_dump())
-        mapping_note.created_by = User.link_from_id(user.id)
-        await cm_rule_repo.create_mapping_note(project_id, cm_rule_id, mapping_note)
+        note = ConceptualMappingRuleComment(**note.model_dump())
+        note.created_by = User.link_from_id(user.id)
+        await cm_rule_repo.create_mapping_note(project_id, cm_rule_id, note)
     except (CMRuleNotFoundException,) as expected_exception:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(expected_exception))
 
