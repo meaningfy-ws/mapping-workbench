@@ -40,7 +40,7 @@ class StandardPackageImporter(PackageImporterABC):
         sort_order: int = 0
         for mono_rule in mono_package.conceptual_rules:
             source_structural_element: StructuralElement = await get_structural_element_by_unique_fields(
-                sdk_element_id=None,
+                sdk_element_id=mono_rule.field_name,
                 name=mono_rule.field_name,
                 bt_id=mono_rule.bt_id,
                 absolute_xpath=mono_rule.absolute_xpath,
@@ -50,6 +50,7 @@ class StandardPackageImporter(PackageImporterABC):
             if not source_structural_element:
                 source_structural_element = await StructuralElement(
                     id=str(PydanticObjectId()),
+                    sdk_element_id=mono_rule.field_name,
                     name=mono_rule.field_name,
                     bt_id=mono_rule.bt_id,
                     absolute_xpath=mono_rule.absolute_xpath,
