@@ -33,7 +33,7 @@ def import_mapping_conceptual_rules(
 
     for conceptual_rule_dict in conceptual_rules_df.to_dict(orient="records"):
         cm_rule: StandardMappingConceptualRule = StandardMappingConceptualRule(**conceptual_rule_dict)
-        if not cm_rule.absolute_xpath:
+        if not cm_rule.absolute_xpath or not cm_rule.field_name:
             continue
         if cm_rule.absolute_xpath and not cm_rule.absolute_xpath.startswith("/"):
             cm_rule.absolute_xpath = f"{metadata.base_xpath}/{cm_rule.absolute_xpath}"
