@@ -53,7 +53,7 @@ router = APIRouter(
 async def route_list_conceptual_mapping_rules(
         project: PydanticObjectId = None,
         mapping_packages: Annotated[List[PydanticObjectId | str] | None, Query()] = None,
-        source_structural_elements: Annotated[List[PydanticObjectId | str] | None, Query()] = None,
+        source_structural_elements: Annotated[List[str] | None, Query()] = None,
         page: int = None,
         limit: int = None,
         q: str = None,
