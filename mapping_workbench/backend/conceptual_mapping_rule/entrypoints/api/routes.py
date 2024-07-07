@@ -74,7 +74,6 @@ async def route_list_conceptual_mapping_rules(
         filters['q'] = q
     if terms_validity:
         filters['terms_validity'] = terms_validity
-    print(filters)
     items, total_count = await list_conceptual_mapping_rules(filters, page, limit, sort_field, sort_dir)
     return APIListConceptualMappingRulesPaginatedResponse(
         items=items,
