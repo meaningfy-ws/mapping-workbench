@@ -14,10 +14,10 @@ import {PropertyList} from "../../../components/property-list";
 import {fieldsRegistryApi} from "../../../api/fields-registry";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
-import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
 import Dialog from "@mui/material/Dialog";
 import {useDialog} from "../../../hooks/use-dialog";
 import CMNotes from "./cm-notes";
+import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 
 const CMCard = (props) => {
     const {cm_rule, structural_element, cm_statuses, ...other} = props;
@@ -26,6 +26,7 @@ const CMCard = (props) => {
     const [state, setState] = useState({})
     const [status, setStatus] = useState(cm_rule.status)
     const [structuralElement, setStructuralElement] = useState(structural_element);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         if (!structuralElement) {
@@ -36,6 +37,8 @@ const CMCard = (props) => {
     }, []);
 
     const handleStatusChange = (e) => {
+        setIsSubmitting(true)
+        const toastId = toastLoad('Updating...')
         const status = e.target.value
         setStatus(status)
         conceptualMappingRulesApi.updateItem({
@@ -44,6 +47,11 @@ const CMCard = (props) => {
             status: status,
             source_structural_element: cm_rule.source_structural_element?.id
         }).then(res => {
+            setIsSubmitting(false)
+            toastSuccess("Status updated", toastId);
+        }).catch(err => {
+            setIsSubmitting(false)
+            toastError(err, toastId);
         })
     }
 
@@ -90,6 +98,7 @@ const CMCard = (props) => {
                                    onChange={handleStatusChange}
                                    label="Status"
                                    value={status}
+                                   disabled={isSubmitting}
                                    name="status">
                             {cm_statuses.map(status =>
                                 <MenuItem
