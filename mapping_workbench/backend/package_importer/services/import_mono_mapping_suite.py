@@ -52,7 +52,7 @@ def import_collection_resources(parent_collection_dir_path: pathlib.Path) -> Lis
 
 def import_mapping_metadata_base(
         conceptual_mappings_file_path: pathlib.Path, list_column_names=None,
-        metadata_df_keys = None
+        metadata_df_keys=None
 ) -> dict:
     if metadata_df_keys is None:
         metadata_df_keys = ["Field", "Value"]
