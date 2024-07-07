@@ -93,6 +93,7 @@ export const en = {
   [tokens.nav.review_cm]: 'Review CM',
   [tokens.nav.grouping_cm]: 'CM Grouping',
   [tokens.nav.packaging_cm]: 'CM Packaging',
+  [tokens.nav.content_cm]: 'CM Content',
   [tokens.nav.link_cms_and_triple_maps]: 'Link CMs and TripleMaps',
   [tokens.nav.value_mapping_resources]: 'Value Mapping Resources',
   [tokens.nav.conceptual_mappings]: 'Conceptual Mappings',

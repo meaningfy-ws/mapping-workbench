@@ -27,3 +27,5 @@ async def test_generate_conceptual_mappings(eforms_sdk_repo_v_1_9_1_dir_path, du
 
     assert conceptual_mapping_rules
     assert len(conceptual_mapping_rules) == 1510
+
+    await ConceptualMappingRule.delete_all()

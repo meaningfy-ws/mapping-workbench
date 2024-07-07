@@ -10,7 +10,7 @@ from mapping_workbench.backend.ontology_suite.models.ontology_file_resource impo
 
 @pytest.mark.asyncio
 async def test_ontology_files_api(ontology_schema_test_client, dummy_project):
-    dummy_id = "66632b18d962477185de6d85"
+    dummy_id = "66632b18d962477185de6d81"
     dummy_file_name = f"dummy1.{ONTOLOGY_FILE_FORMATS[0]}"
 
     ontology_files_path = ONTOLOGY_FILE_ROUTE_PREFIX

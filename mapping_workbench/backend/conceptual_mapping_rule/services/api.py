@@ -11,7 +11,6 @@ from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersS
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException, DuplicateKeyException
 from mapping_workbench.backend.core.services.request import request_update_data, request_create_data, \
     api_entity_is_found, pagination_params, prepare_search_param
-from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
 from mapping_workbench.backend.ontology.services.terms import check_content_terms_validity
 from mapping_workbench.backend.user.models.user import User
 
@@ -40,6 +39,8 @@ async def list_conceptual_mapping_rules(filters: dict = None, page: int = None, 
     for item in items:
         if item.source_structural_element:
             item.source_structural_element = await item.source_structural_element.fetch()
+            item.source_structural_element_sdk_element_id = item.source_structural_element.sdk_element_id
+            item.source_structural_element_absolute_xpath = item.source_structural_element.absolute_xpath
 
     total_count: int = await ConceptualMappingRule.find(query_filters).count()
     return items, total_count
@@ -48,7 +49,7 @@ async def list_conceptual_mapping_rules(filters: dict = None, page: int = None, 
 async def create_conceptual_mapping_rule(data: ConceptualMappingRuleCreateIn,
                                          user: User) -> ConceptualMappingRuleOut:
     create_data = await rule_validated_data(request_create_data(data, user=user))
-
+    create_data[ConceptualMappingRule.source_structural_element] = data.source_structural_element.to_ref().id
     conceptual_mapping_rule: ConceptualMappingRule = \
         ConceptualMappingRule(
             **create_data
