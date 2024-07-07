@@ -11,6 +11,7 @@ import {useFormik} from "formik";
 import * as Yup from "yup";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
+import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 
 const CMRuleNote = (props) => {
     const {note, ...other} = props;
@@ -66,12 +67,19 @@ const CMNotes = (props) => {
                 .required('Comment is required!')
         }),
         onSubmit: (values, helpers) => {
+            const toastId = toastLoad('Adding note...')
             conceptualMappingRulesApi.addNote(cm_rule._id, comment_type, values.comment)
                 .then(res => {
+                    toastSuccess("Note added", toastId);
                     formik.values.comment = "";
                     getNotes()
                     helpers.setStatus({success: true});
                     helpers.setSubmitting(false);
+                })
+                .catch(err => {
+                    helpers.setStatus({success: false});
+                    helpers.setSubmitting(false);
+                    toastError(err, toastId);
                 });
         }
     });
@@ -102,6 +110,7 @@ const CMNotes = (props) => {
                             value={formik.values.comment && formik.values.comment || ''}
                             onBlur={formik.handleBlur}
                             onChange={formik.handleChange}
+                            disabled={formik.isSubmitting}
                         />
                     </Grid>
                     <Stack
