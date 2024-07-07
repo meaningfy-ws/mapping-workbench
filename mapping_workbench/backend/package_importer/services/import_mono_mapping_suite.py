@@ -50,11 +50,16 @@ def import_collection_resources(parent_collection_dir_path: pathlib.Path) -> Lis
     return collection_resources
 
 
-def import_mapping_metadata_base(conceptual_mappings_file_path: pathlib.Path, list_column_names=None) -> dict:
+def import_mapping_metadata_base(
+        conceptual_mappings_file_path: pathlib.Path, list_column_names=None,
+        metadata_df_keys = None
+) -> dict:
+    if metadata_df_keys is None:
+        metadata_df_keys = ["Field", "Value"]
     metadata_df = pd.read_excel(conceptual_mappings_file_path, sheet_name=METADATA_SHEET_NAME)
     metadata_df.replace({np.nan: None}, inplace=True)
     metadata_dict: Dict[Any, Any] = {
-        field: str(value) for field, value in metadata_df[["Field", "Value"]].itertuples(index=False) if field
+        field: str(value) for field, value in metadata_df[metadata_df_keys].itertuples(index=False) if field
     }
 
     if list_column_names:

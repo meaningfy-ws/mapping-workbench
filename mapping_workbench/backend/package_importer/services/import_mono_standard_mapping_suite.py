@@ -16,7 +16,10 @@ LIST_COLUMN_NAMES = ["eForms Subtype"]
 
 
 def import_mapping_metadata(conceptual_mappings_file_path: pathlib.Path) -> StandardMappingMetadata:
-    return StandardMappingMetadata(**import_mapping_metadata_base(conceptual_mappings_file_path, LIST_COLUMN_NAMES))
+    return StandardMappingMetadata(**import_mapping_metadata_base(
+        conceptual_mappings_file_path, LIST_COLUMN_NAMES,
+        metadata_df_keys=["Field", "Value examples"]
+    ))
 
 
 def import_mapping_conceptual_rules(
