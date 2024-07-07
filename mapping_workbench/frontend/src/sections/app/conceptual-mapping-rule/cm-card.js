@@ -147,7 +147,7 @@ const CMCard = (props) => {
                             />
                             <PropertyListItem
                                 label="Ontology Fragment"
-                                value={(cm_rule.target_class_path || "") + " / " + (cm_rule.target_property_path || "")}
+                                value={(cm_rule.target_class_path || "") + "\n" + (cm_rule.target_property_path || "")}
                                 sx={{
                                     whiteSpace: "pre-wrap",
                                     py: 1.5

@@ -60,15 +60,15 @@ class CMRuleStatus(str, Enum):
     UNDER_DEVELOPMENT = "Under development"
     FOR_INTERNAL_REVIEW = "For internal review"
     FOR_INTERNAL_CONSULTATION = "For internal consultation"
-    FOR_CLIENT_CONSULTATION = "For Client consultation"
+    FOR_CLIENT_CONSULTATION = "For OP consultation"
     FOR_INTERNAL_CONSULTATION_AFTER_REVIEW = "For internal consultation (after review)"
     APPROVED_BY_FIRST_INTERNAL_REVIEWER = "Approved by first internal reviewer"
     APPROVED_BY_SECOND_INTERNAL_REVIEWER = "Approved by second internal reviewer"
-    FOR_CLIENT_REVIEW_DONE = "For Client review (done)"
-    APPROVED_BY_FIRST_CLIENT_REVIEW = "Approved by first Client reviewer"
-    APPROVED_BY_CLIENT_ACCEPTED = "Approved by Client (Accepted)"
-    CHANGE_REQUESTED_BY_CLIENT = "Change requested by Client"
-    UPDATED_BASED_ON_CLIENT_REVIEW = "Updated based on Client review"
+    FOR_CLIENT_REVIEW_DONE = "For OP review (done)"
+    APPROVED_BY_FIRST_CLIENT_REVIEW = "Approved by first OP reviewer"
+    APPROVED_BY_CLIENT_ACCEPTED = "Approved by OP (Accepted)"
+    CHANGE_REQUESTED_BY_CLIENT = "Change requested by OP"
+    UPDATED_BASED_ON_CLIENT_REVIEW = "Updated based on OP review"
 
     @classmethod
     def list(cls):
