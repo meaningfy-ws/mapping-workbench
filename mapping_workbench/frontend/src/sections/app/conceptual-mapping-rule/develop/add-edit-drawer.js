@@ -1,26 +1,26 @@
 import Card from "@mui/material/Card";
-import CardHeader from "@mui/material/CardHeader";
-import CardContent from "@mui/material/CardContent";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
-import {FormTextField} from "../../../../components/app/form/text-field";
 import Button from "@mui/material/Button";
 import Drawer from "@mui/material/Drawer";
-import {useFormik} from "formik";
-import * as Yup from "yup";
-import {toastLoad, toastSuccess} from "../../../../components/app-toast";
-import {sessionApi} from "../../../../api/session";
+import Checkbox from "@mui/material/Checkbox";
 import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import CardHeader from "@mui/material/CardHeader";
+import CardContent from "@mui/material/CardContent";
 import FormControl from "@mui/material/FormControl";
-import AutocompleteCM from "./autocomplete";
 import Autocomplete from "@mui/material/Autocomplete";
-import {useEffect, useState} from "react";
+import FormControlLabel from "@mui/material/FormControlLabel";
+
+import * as Yup from "yup";
+import {useFormik} from "formik";
+import AutocompleteCM from "./autocomplete";
+import {sessionApi} from "../../../../api/session";
+import {FormTextField} from "../../../../components/app/form/text-field";
+import {toastLoad, toastSuccess} from "../../../../components/app-toast";
 
 
 const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, afterItemSave}, load) => {
-    if (structuralElements === undefined) {
-        return;
-    }
+
 
     const addItem = async (requestValues) => {
         const toastId = toastLoad('Adding item...')
@@ -43,6 +43,8 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
             'max_sdk_version': item?.max_sdk_version || '',
             'target_class_path': item?.target_class_path || '',
             'target_property_path': item?.target_property_path || '',
+            'autocomplete_cm': [],
+            'autocomplete_cm_checked': false,
         },
         validationSchema: Yup.object({
             source_structural_element: Yup
@@ -58,6 +60,9 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
         onSubmit: async (values, {resetForm, setErrors, setTouched}) => {
             values['project'] = sessionApi.getSessionProject();
             values['source_structural_element'] = values['source_structural_element'] || null;
+            values['target_class_path'] = values['autocomplete_cm_checked'] ? cmPropertiesOut : values['target_class_path']
+            values['target_property_path'] = values['autocomplete_cm_checked'] ? cmNonProperties : values['target_property_path']
+
             if (item) {
                 item = await updateItem(values)
             } else {
@@ -75,6 +80,14 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
         formik.setFieldValue('source_structural_element', value?.id);
     })
 
+    if (structuralElements === undefined) {
+        return;
+    }
+
+    const cmProperties = formik.values.autocomplete_cm.filter(e => e.type === 'property').map(e => e.value).join(' / ')
+    const cmPropertiesOut = cmProperties.length ? `?this ${cmProperties} ?value` : ''
+    const cmNonProperties = formik.values.autocomplete_cm.filter(e => e.type !== 'property').map(e => e.value).join(' / ')
+
     return (
         <Drawer
             anchor='right'
@@ -82,7 +95,7 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
             onClose={onClose}>
             <form onSubmit={formik.handleSubmit}>
 
-                <Card sx={{width: 400}}>
+                <Card sx={{width: 600}}>
                     <CardHeader title={item ? 'Edit Item' : 'Create Item'}/>
                     <CardContent>
                         <Stack direction='column'
@@ -112,19 +125,49 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
                             <FormTextField formik={formik}
                                            name="max_sdk_version"
                                            label="Max SDK"/>
-                            <FormTextField formik={formik}
-                                           error={!!(formik.touched.target_class_path && formik.errors.target_class_path)}
-                                           fullWidth
-                                           helperText={formik.touched.target_class_path && formik.errors.target_class_path}
-                                           name="target_class_path"
-                                           label="Ontology Class Path"/>
-                            <FormTextField formik={formik}
-                                           error={!!(formik.touched.target_property_path && formik.errors.target_property_path)}
-                                           fullWidth
-                                           helperText={formik.touched.target_property_path && formik.errors.target_property_path}
-                                           name="target_property_path"
-                                           label="Ontology Property Path"/>
-                            <AutocompleteCM/>
+
+                            {formik.values.autocomplete_cm_checked ?
+                                <>
+                                    <TextField disabled
+                                               label="Ontology Class Path"
+                                               value={cmPropertiesOut}/>
+                                    <TextField disabled
+                                               label="Ontology Property Path"
+                                               value={cmNonProperties}/>
+                                </>
+                            :
+                                <>
+                                    <FormTextField formik={formik}
+                                                   error={!!(formik.touched.target_class_path && formik.errors.target_class_path)}
+                                                   fullWidth
+                                                   helperText={formik.touched.target_class_path && formik.errors.target_class_path}
+                                                   disabled={formik.values.autocomplete_cm_checked}
+                                                   name="target_class_path"
+                                                   label="Ontology Class Path"/>
+                                    <FormTextField formik={formik}
+                                                   error={!!(formik.touched.target_property_path && formik.errors.target_property_path)}
+                                                   fullWidth
+                                                   helperText={formik.touched.target_property_path && formik.errors.target_property_path}
+                                                   disabled={formik.values.autocomplete_cm_checked}
+                                                   name="target_property_path"
+                                                   label="Ontology Property Path"/>
+                                </>}
+                            <FormControlLabel
+                                sx={{
+                                    width: '100%'
+                                }}
+                                control={
+                                    <Checkbox
+                                        checked={formik.values.autocomplete_cm_checked}
+                                        onChange={() => formik.setFieldValue('autocomplete_cm_checked', event.target.checked)}
+                                    />
+                                }
+                                label="Use Autocompelete"
+                                value=""
+                            />
+                            <AutocompleteCM formik={formik}
+                                            disabled={!formik.values.autocomplete_cm_checked}
+                                            name='autocomplete_cm'/>
                         </Stack>
                     </CardContent>
                     <Button type='submit'

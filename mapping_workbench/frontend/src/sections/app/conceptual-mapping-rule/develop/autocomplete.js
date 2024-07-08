@@ -1,17 +1,16 @@
-import {useState} from "react";
-
 import MuiAutocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import Chip from "@mui/material/Chip";
 
-const Autocomplete = () => {
-    const [state, setState] = useState([])
+const Autocomplete = ({formik, name, disabled}) => {
+
+    const formikValue = formik.values[name]
 
     const handleSelect = (type, value) => {
         if (type === 'classOrList')
-            setState(e => ([...e, {type: value.type, value: value.title}]));
-        else setState(e => ([...e, {type, value}]));
+            formik.setFieldValue(name,[...formikValue, {type: value.type, value: value.title}]);
+        else formik.setFieldValue(name, [...formikValue, {type, value}]);
     }
 
     const chipColor = (type) => {
@@ -23,10 +22,10 @@ const Autocomplete = () => {
     }
 
     const currentType = () => {
-        if(!state.length) {
+        if(!formikValue.length) {
             return 'class'
         }
-        let last = [...state]
+        let last = [...formikValue]
             last = last.pop().type
         switch (last) {
             case 'class':
@@ -64,17 +63,20 @@ const Autocomplete = () => {
         }
     }
 
-    const handleChipDelete = (i) => setState(e => e.slice(0,i))
+
+
+    const handleChipDelete = (i) => formik.setFieldValue(name, formikValue.slice(0,i))
 
     return (
         <Stack>
+
             <MuiAutocomplete
                   id="autocomplete"
                   fullWidth
                   options={currentOptions()}
                   groupBy={option => currentType() === 'classOrList' ? option.type : false}
                   onChange={(e,value)=> handleSelect(currentType(), value)}
-                  disabled={currentType() === 'controlled_list'}
+                  disabled={currentType() === 'controlled_list' || disabled}
                   getOptionLabel={option => currentType() === 'classOrList' ? option.title : option}
                   blurOnSelect
                   value={null}
@@ -88,7 +90,7 @@ const Autocomplete = () => {
             />
             <Stack direction='column'
                    gap={1}>
-                {state.map((e, i) => <Chip key = {'chip'+i}
+                {formikValue.map((e, i) => <Chip key = {'chip'+i}
                                                     label={<><b>{e.type} - </b>{e.value}</>}
                                                     onDelete={() => handleChipDelete(i)}
                                                     color={chipColor(e.type)}
