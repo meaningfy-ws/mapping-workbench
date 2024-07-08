@@ -46,8 +46,8 @@ class FieldsRegistryApi extends SectionApi {
         request.rowsPerPage = -1;
         let structuralElementsStore = await this.getItems(request, 'elements');
         return structuralElementsStore.items.map(
-            structuralElement => ({id: structuralElement._id, sdk_element_id: structuralElement.sdk_element_id})
-        ).sort((a, b) => a.sdk_element_id.localeCompare(b.sdk_element_id));
+            structuralElement => ({id: structuralElement._id, label: structuralElement.sdk_element_id})
+        ).sort((a, b) => a.label.localeCompare(b.label));
     }
 }
 

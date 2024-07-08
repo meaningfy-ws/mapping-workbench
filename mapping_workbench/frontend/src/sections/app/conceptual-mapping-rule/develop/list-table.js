@@ -8,16 +8,86 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
 import {Scrollbar} from 'src/components/scrollbar';
-import {ListItemActions} from 'src/components/app/list/list-item-actions';
-import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import TablePagination from "../../../components/table-pagination";
 import {useGlobalState} from "../../../../hooks/use-global-state";
-import timeTransformer from "../../../../utils/time-transformer";
 import TableSorterHeader from "../../../components/table-sorter-header";
 import Button from "@mui/material/Button";
+import {useState} from "react";
+import ConfirmDialog from "../../../../components/app/dialog/confirm-dialog";
 
 
+export const ListTableRow = (props) => {
+    const {
+        item,
+        onEdit,
+        onDelete
+    } = props;
 
+    const [confirmOpen, setConfirmOpen] = useState(false);
+
+    return (
+        <TableRow hover>
+            <TableCell
+                width="10%"
+            >
+                <Typography variant="subtitle3">
+                    {item.source_structural_element_sdk_element_id}
+                </Typography>
+            </TableCell>
+            <TableCell
+                sx={{
+                    wordBreak: "break-all"
+                }}
+            >
+                {item.source_structural_element_absolute_xpath}
+            </TableCell>
+            <TableCell/>
+            <TableCell>
+                {item.min_sdk_version}
+            </TableCell>
+            <TableCell>
+                {item.max_sdk_version}
+            </TableCell>
+            <TableCell>
+                {item.target_class_path}
+            </TableCell>
+            <TableCell>
+                {item.target_property_path}
+            </TableCell>
+            <TableCell align="right">
+                <Button
+                    id="edit_button"
+                    variant="text"
+                    size="small"
+                    color="primary"
+                    onClick={() => onEdit(item)}
+                >
+                    Edit
+                </Button>
+                <Button
+                    id="delete_button"
+                    variant="text"
+                    size="small"
+                    color="error"
+                    onClick={() => setConfirmOpen(true)}
+                    sx={{
+                        whiteSpace: "nowrap"
+                    }}
+                >
+                    Delete
+                </Button>
+                <ConfirmDialog
+                    title="Delete It?"
+                    open={confirmOpen}
+                    setOpen={setConfirmOpen}
+                    onConfirm={() => onDelete(item)}
+                >
+                    Are you sure you want to delete it?
+                </ConfirmDialog>
+            </TableCell>
+        </TableRow>
+    );
+}
 export const ListTable = (props) => {
     const {
         count = 0,
@@ -29,7 +99,8 @@ export const ListTable = (props) => {
         page = 0,
         rowsPerPage = 0,
         sectionApi,
-        onEdit
+        onEdit,
+        onDelete
     } = props;
 
     const {timeSetting} = useGlobalState()
@@ -44,6 +115,7 @@ export const ListTable = (props) => {
             />
         )
     }
+
     return (
         <TablePagination
             component="div"
@@ -61,11 +133,11 @@ export const ListTable = (props) => {
                     <TableHead>
                         <TableRow>
                             <TableCell width="10%">
-                                <SorterHeader fieldName="field_id"
+                                <SorterHeader fieldName="source_structural_element_sdk_element_id"
                                               title="Field ID"/>
                             </TableCell>
                             <TableCell>
-                                <SorterHeader fieldName="absolute_xpath"
+                                <SorterHeader fieldName="source_structural_element_absolute_xpath"
                                               title="Absolute XPath"/>
                             </TableCell>
                             <TableCell>
@@ -95,65 +167,12 @@ export const ListTable = (props) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {items.map(item => {
-                            const item_id = item._id;
-
-                            return (
-                                    <TableRow hover
-                                              key={item_id}>
-                                        <TableCell
-                                            width="10%"
-                                        >
-                                            <Typography variant="subtitle3">
-                                                {item.source_structural_element?.sdk_element_id}
-                                            </Typography>
-                                        </TableCell>
-                                        <TableCell
-                                            sx={{
-                                                wordBreak: "break-all"
-                                            }}
-                                        >
-                                            {item.source_structural_element?.absolute_xpath}
-                                        </TableCell>
-                                        <TableCell/>
-                                        <TableCell>
-                                            {item.min_sdk_version}
-                                        </TableCell>
-                                        <TableCell>
-                                            {item.max_sdk_version}
-                                        </TableCell>
-                                        <TableCell>
-                                            {item.target_class_path}
-                                        </TableCell>
-                                        <TableCell>
-                                            {item.target_property_path}
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            <Button
-                                                id="edit_button"
-                                                variant="text"
-                                                size="small"
-                                                color="primary"
-                                                onClick={() => onEdit(item)}
-                                            >
-                                                Edit
-                                            </Button>
-                                            <Button
-                                                id="delete_button"
-                                                variant="text"
-                                                size="small"
-                                                color="error"
-                                                onClick={() => setConfirmOpen(true)}
-                                                sx={{
-                                                    whiteSpace: "nowrap"
-                                                }}
-                                            >
-                                                Delete
-                                            </Button>
-                                        </TableCell>
-                                    </TableRow>
-                            );
-                        })}
+                        {items.map(item => <ListTableRow
+                            key={item._id}
+                            item={item}
+                            onEdit={onEdit}
+                            onDelete={onDelete}
+                        />)}
                     </TableBody>
                 </Table>
             </Scrollbar>
@@ -169,5 +188,6 @@ ListTable.propTypes = {
     onRowsPerPageChange: PropTypes.func,
     page: PropTypes.number,
     rowsPerPage: PropTypes.number,
-    onEdit: PropTypes.func
+    onEdit: PropTypes.func,
+    onDelete: PropTypes.func
 };

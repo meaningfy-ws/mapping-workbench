@@ -29,7 +29,15 @@ const useItemsSearch = (items) => {
             direction: "desc"
         },
         search: '',
-        searchColumns: ["title", "description"],
+        searchColumns: [
+            "source_structural_element_sdk_element_id",
+            "source_structural_element_absolute_xpath",
+            "xpath_condition",
+            "min_sdk_version",
+            "max_sdk_version",
+            "target_class_path",
+            "target_property_path"
+        ],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -136,32 +144,24 @@ const useItemsSearch = (items) => {
 };
 
 
-const useItemsStore = () => {
-    const [state, setState] = useState({
+export const Page = () => {
+    const [state, setState] = useState({})
+
+    const [itemsStore, setItemsStore] = useState({
         items: [],
         itemsCount: 0
     });
 
     const handleItemsGet = () => {
         sectionApi.getItems({rowsPerPage: -1})
-            .then(res => setState({items: res.items, itemsCount: res.count}))
+            .then(res => setItemsStore({items: res.items, itemsCount: res.count}))
             .catch(err => console.warn(err))
     }
 
     useEffect(() => {
-            handleItemsGet();
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        []);
+        handleItemsGet();
+    }, []);
 
-    return {
-        ...state
-    };
-};
-
-export const Page = () => {
-    const [state, setState] = useState({})
-    const itemsStore = useItemsStore();
     const itemsSearch = useItemsSearch(itemsStore.items);
 
     const [isProjectDataReady, setIsProjectDataReady] = useState(false);
@@ -182,11 +182,24 @@ export const Page = () => {
     }
 
     const handleAdd = () => {
-
+        setState(e => ({...e, openDrawer: true, item: null}))
     }
 
     const handleCloseDrawer = () => {
         setState(e => ({...e, openDrawer: false}))
+    }
+
+    const afterItemProcess = (item) => {
+        handleItemsGet()
+    }
+
+    const handleDelete = async (item) => {
+        sectionApi.deleteItem(item._id)
+            .finally(() =>
+                {
+                    afterItemProcess(null)
+                }
+            )
     }
 
     return (
@@ -200,7 +213,7 @@ export const Page = () => {
                 >
                     <Stack spacing={1}>
                         <Typography variant="h4">
-                            {sectionApi.SECTION_TITLE}
+                            Develop {sectionApi.SECTION_TITLE}
                         </Typography>
                         <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
                             <Link
@@ -214,7 +227,7 @@ export const Page = () => {
                             <Link
                                 color="text.primary"
                                 component={RouterLink}
-                                href={paths.app[sectionApi.section].index}
+                                href={paths.app[sectionApi.section].develop.index}
                                 variant="subtitle2"
                             >
                                 {sectionApi.SECTION_TITLE}
@@ -240,7 +253,7 @@ export const Page = () => {
                                 </SvgIcon>
                             )}
                             variant="contained"
-                            onClick={() => setState(e => ({...e, openDrawer: true, isEdit: false, item: null}))}
+                            onClick={() => handleAdd()}
                         >
                             Add
                         </Button>
@@ -259,6 +272,7 @@ export const Page = () => {
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
                         onEdit={handleEdit}
+                        onDelete={handleDelete}
                     />
                 </Card>
                 <AddEditDrawer open={state.openDrawer}
@@ -266,6 +280,7 @@ export const Page = () => {
                                item={state.item}
                                sectionApi={sectionApi}
                                structuralElements={projectSourceStructuralElements}
+                               afterItemSave={afterItemProcess}
                 />
             </Stack>
         </>

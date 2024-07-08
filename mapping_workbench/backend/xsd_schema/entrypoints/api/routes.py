@@ -49,9 +49,10 @@ async def route_get_xsd_file_by_id(
 ) -> XSDFileResourceOut:
     try:
         xsd_file = await xsd_file_repository.get_by_id(project_id=project_id, xsd_file_name=xsd_file_name)
-    except (ProjectNotFoundException,
+    except (
+            ProjectNotFoundException,
             XSDFileResourceNotFoundException
-            ) as expected_exceptions:
+    ) as expected_exceptions:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(expected_exceptions))
     return XSDFileResourceOut(**xsd_file.dict())
 
@@ -86,7 +87,7 @@ async def route_create_xsd_file(
         xsd_file: XSDFileResourceIn
 ) -> None:
     try:
-        await xsd_file_repository.create(project_id=project_id, xsd_file=XSDFileResource(**xsd_file.dict()))
+        await xsd_file_repository.create(project_id=project_id, xsd_file=XSDFileResource(**xsd_file.model_dump()))
     except (
             XSDFileResourceExistsException,
             ProjectNotFoundException

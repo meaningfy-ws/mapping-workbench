@@ -45,3 +45,6 @@ async def test_route_insert_cm_rule_mapping_notes(dummy_project: Project,
     result_cm_comment = result_cm_rule.mapping_notes.pop()
 
     assert result_cm_comment.comment == dummy_cm_rule_comment.comment
+
+    await ConceptualMappingRule.delete_all()
+    await Project.delete_all()

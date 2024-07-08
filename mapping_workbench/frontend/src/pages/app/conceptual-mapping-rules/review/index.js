@@ -1,67 +1,124 @@
 import {useEffect, useState} from 'react';
-
-import Upload01Icon from '@untitled-ui/icons-react/build/esm/Upload01';
-import Button from '@mui/material/Button';
 import Grid from '@mui/material/Unstable_Grid2';
 import Stack from '@mui/material/Stack';
-import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
 import {Seo} from 'src/components/seo';
 import {Layout as AppLayout} from 'src/layouts/app';
-import {schemaFilesApi as sectionApi} from 'src/api/schema-files';
-import {useDialog} from 'src/hooks/use-dialog';
+import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
 import {usePageView} from 'src/hooks/use-page-view';
-import {FileUploader} from 'src/sections/app/files-form/file-uploader';
-import {ItemSearch} from 'src/sections/app/files-form/item-search';
-import {schemaFileResourcesApi as fileResourcesApi} from "src/api/schema-files/file-resources";
-import {ItemList} from "src/sections/app/files-form/item-list";
-import {sessionApi} from "src/api/session";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import {Box} from "@mui/system";
-import CircularProgress from "@mui/material/CircularProgress";
-import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
 import TextField from "@mui/material/TextField";
-import Card from "@mui/material/Card";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import MenuItem from "@mui/material/MenuItem";
-import CMCard from "../../../../sections/app/cm-rules-list/cm-card";
+import CMCard from "../../../../sections/app/conceptual-mapping-rule/cm-card";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
+import {BreadcrumbsSeparator} from "../../../../components/breadcrumbs-separator";
+import Link from "@mui/material/Link";
+import {RouterLink} from "../../../../components/router-link";
+import {paths} from "../../../../paths";
+import {fieldsRegistryApi} from "../../../../api/fields-registry";
+import Autocomplete from "@mui/material/Autocomplete";
+import TablePagination from "@mui/material/TablePagination";
+
+
+const useItemsSearch = (items) => {
+    const [state, setState] = useState({
+        filters: {},
+        page: sectionApi.DEFAULT_PAGE,
+        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
+    });
+
+    const {show, ...filters} = state.filters
+
+    const pagedItems = items.filter((item, i) => {
+        const pageSize = state.page * state.rowsPerPage
+        if ((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
+            return item
+    })
+
+    const handlePageChange = (event, page) => {
+        setState(prevState => ({
+            ...prevState,
+            page
+        }));
+    }
+
+    const handleRowsPerPageChange = (event) => {
+        setState(prevState => ({
+            ...prevState,
+            rowsPerPage: parseInt(event.target.value, 10)
+        }));
+    }
+
+    return {
+        handlePageChange,
+        handleRowsPerPageChange,
+        pagedItems,
+        count: items.length,
+        state
+    };
+};
 
 const Page = () => {
-    const [view, setView] = useState('grid');
-    const [state, setState] = useState([])
-
-    const uploadDialog = useDialog();
-    const detailsDialog = useDialog();
-
-
 
     usePageView();
 
-     useEffect(() => {
-        handleItemsGet();
-     // eslint-disable-next-line react-hooks/exhaustive-deps
-     },[]);
+    const [isProjectDataReady, setIsProjectDataReady] = useState(false);
+    const [structuralElements, setStructuralElements] = useState([]);
+    const [selectedStructuralElement, setSelectedStructuralElement] = useState(null);
+    const [structuralElement, setStructuralElement] = useState(null);
+    const [cmStatuses, setCmStatuses] = useState([]);
 
-    const handleItemsGet = () => {
-         sectionApi.getXSDFiles()
-             .then(res => setState(res))
-             .catch(err => console.error(err));
+    const [itemsStore, setItemsStore] = useState({
+        items: [],
+        itemsCount: 0
+    });
+
+    const getCMRules = (structural_element_id) => {
+        const request = {
+            rowsPerPage: -1,
+            filters: {}
+        };
+        if (structural_element_id) {
+            request.filters["source_structural_elements"] = [structural_element_id]
+        }
+
+        sectionApi.getItems(request)
+            .then(res =>
+                setItemsStore({
+                    items: res.items,
+                    itemsCount: res.count
+                }))
+            .catch(err => console.error(err))
     }
 
-    const handleItemGet = (name) => {
-         detailsDialog.handleOpen({load: true, fileName: name})
-         sectionApi.getXSDFile(name)
-            .then(res => detailsDialog.handleOpen({content: res.content, fileName: res.filename}))
-            .catch(err => console.log(err));
-    }
+    useEffect(() => {
+        getCMRules()
+        sectionApi.getCMStatuses().then(res => {
+            setCmStatuses(res)
+        })
+    }, []);
+
+    const itemsSearch = useItemsSearch(itemsStore.items);
+
+    useEffect(() => {
+        (async () => {
+            setStructuralElements(await fieldsRegistryApi.getStructuralElementsForSelector());
+            setIsProjectDataReady(true);
+        })()
+    }, [])
+
+    if (!isProjectDataReady) return null;
+
+    const handleSourceStructuralElementSelect = (async (e, value) => {
+        itemsSearch.state.page = 0
+        setSelectedStructuralElement(value);
+        setStructuralElement(value ? await fieldsRegistryApi.getItem(value.id, 'element') : null);
+        getCMRules(value?.id)
+    })
+
 
     return (
         <>
-            <Seo title="App: Resource Manager"/>
+            <Seo title="App: CM Review"/>
 
             <Grid
                 container
@@ -71,33 +128,34 @@ const Page = () => {
                 }}
             >
                 <Grid xs={12}>
-                    <Stack
-                        direction="row"
-                        justifyContent="space-between"
-                        spacing={4}
-                    >
-                        <div>
-                            <Typography variant="h5">
-                                {sectionApi.SECTION_TITLE}
-                            </Typography>
-                        </div>
-                        <Stack
-                            alignItems="center"
-                            direction="row"
-                            spacing={2}
-                        >
-                            <Button
-                                onClick={uploadDialog.handleOpen}
-                                startIcon={(
-                                    <SvgIcon>
-                                        <Upload01Icon/>
-                                    </SvgIcon>
-                                )}
-                                variant="contained"
+                    <Stack spacing={1}>
+                        <Typography variant="h4">
+                            Review {sectionApi.SECTION_TITLE}
+                        </Typography>
+                        <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
+                            <Link
+                                color="text.primary"
+                                component={RouterLink}
+                                href={paths.index}
+                                variant="subtitle2"
                             >
-                                Upload
-                            </Button>
-                        </Stack>
+                                App
+                            </Link>
+                            <Link
+                                color="text.primary"
+                                component={RouterLink}
+                                href={paths.app[sectionApi.section].review.index}
+                                variant="subtitle2"
+                            >
+                                {sectionApi.SECTION_TITLE}
+                            </Link>
+                            <Typography
+                                color="text.secondary"
+                                variant="subtitle2"
+                            >
+                                List
+                            </Typography>
+                        </Breadcrumbs>
                     </Stack>
                 </Grid>
                 <Grid
@@ -110,50 +168,37 @@ const Page = () => {
                             lg: 4
                         }}
                     >
-                        <Card>
-                            <TextField select
-                                       fullWidth>
+                        <Autocomplete
+                            fullWidth
+                            options={structuralElements}
+                            defaultValue={selectedStructuralElement}
+                            onChange={handleSourceStructuralElementSelect}
+                            renderInput={(params) =>
+                                <TextField {...params}
+                                           label="Structural Element"
+                                />}
+                        />
+                        <TablePagination
+                            component="div"
+                            count={itemsSearch.count}
+                            onPageChange={itemsSearch.handlePageChange}
+                            onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                            page={itemsSearch.state.page}
+                            rowsPerPage={itemsSearch.state.rowsPerPage}
+                            rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+                            showFirstButton
+                            showLastButton
+                        />
 
-                            </TextField>
-                            <CMCard/>
-                            <CMCard/>
-                        </Card>
+                        {itemsSearch.pagedItems.map(cm_rule => <CMCard
+                            key={cm_rule._id}
+                            cm_rule={cm_rule}
+                            structural_element={structuralElement}
+                            cm_statuses={cmStatuses}
+                        />)}
                     </Stack>
                 </Grid>
             </Grid>
-            <Dialog
-              open={detailsDialog.open}
-              onClose={detailsDialog.handleClose}
-              fullWidth
-              maxWidth='xl'
-            >
-                <DialogTitle>
-                    {detailsDialog.data?.fileName}
-                </DialogTitle>
-                <DialogContent>
-                    {
-                        detailsDialog.data?.load ?
-                            <Box sx={{ display: 'flex', justifyContent: 'center', marginY:10 }}>
-                                <CircularProgress />
-                            </Box>:
-                            <SyntaxHighlighter
-                                language="xml"
-                                wrapLines
-                                lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
-                                {detailsDialog.data?.content}
-                            </SyntaxHighlighter>
-                    }
-                </DialogContent>
-            </Dialog>
-
-            <FileUploader
-                onClose={uploadDialog.handleClose}
-                open={uploadDialog.open}
-                onGetItems={handleItemsGet}
-                sectionApi={fileResourcesApi}
-                onlyAcceptedFormats
-                disableSelectFormat
-            />
         </>
     );
 };
