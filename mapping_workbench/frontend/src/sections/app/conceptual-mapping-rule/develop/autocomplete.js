@@ -89,7 +89,7 @@ const Autocomplete = () => {
             <Stack direction='column'
                    gap={1}>
                 {state.map((e, i) => <Chip key = {'chip'+i}
-                                                    label={<><b>{e.type}:</b>{e.value}</>}
+                                                    label={<><b>{e.type} - </b>{e.value}</>}
                                                     onDelete={() => handleChipDelete(i)}
                                                     color={chipColor(e.type)}
                                                 />)}
