@@ -304,7 +304,6 @@ async def test_route_insert_cm_rule_mapping_notes(dummy_project: Project,
 
 @pytest.mark.asyncio
 async def test_route_get_list_cm_rule_statuses(
-    dummy_project: Project,  # FIXME remove after related changing code
     conceptual_mapping_rule_test_client: TestClient,
 ):
     # given
@@ -313,9 +312,6 @@ async def test_route_get_list_cm_rule_statuses(
     # when
     response = conceptual_mapping_rule_test_client.get(
         url=path_to_test,
-        params={
-            "project_id": dummy_project.id,  # FIXME remove after related changing code
-        },
         # headers=auth_header,
     )
 
