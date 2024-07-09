@@ -142,12 +142,26 @@ export const useSections = () => {
     items.conceptualMappings.push({
         subheader: t(tokens.nav.conceptual_mappings),
         items:[
-            // {
-            //     title: t(tokens.nav.develop_cm) + ' (dev)',
-            //     path: paths.underConstruction
-            // },
+            {
+                title: t(tokens.nav.develop_cm),
+                path: paths.app.conceptual_mapping_rules.develop.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <MapIcon/>
+                    </SvgIcon>
+                )
+            },
             {
                 title: t(tokens.nav.review_cm),
+                path: paths.app.conceptual_mapping_rules.review.index,
+                icon: (
+                    <SvgIcon fontSize="small">
+                        <MapIcon/>
+                    </SvgIcon>
+                )
+            },
+            {
+                title: t(tokens.nav.content_cm),
                 path: paths.app.conceptual_mapping_rules.index,
                 icon: (
                     <SvgIcon fontSize="small">
@@ -162,7 +176,7 @@ export const useSections = () => {
             // {
             //     title: t(tokens.nav.packaging_cm) + ' (dev)',
             //     path: paths.underConstruction
-            // }
+            // },
             ]
     })
 
@@ -354,6 +368,10 @@ export const useSections = () => {
                 {
                     title: t(tokens.nav.fluree),
                     path: paths.app.fluree.index
+                },
+                {
+                    title: t(tokens.nav.fluree_crypt),
+                    path: paths.app.fluree_crypt.index
                 }
             ]
         });

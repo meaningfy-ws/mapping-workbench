@@ -174,7 +174,11 @@ export const EditForm = (props) => {
 
         const formik = useFormik({
             initialValues,
-            validationSchema: Yup.object({}),
+            validationSchema: Yup.object({
+                source_structural_element: Yup
+                    .string()
+                    .required('Structural Element is required')
+            }),
             onSubmit: async (values, helpers) => {
                 const toastId = toastLoad(itemctx.isNew ? 'Creating...' : 'Updating...')
                 try {
@@ -459,7 +463,7 @@ export const EditForm = (props) => {
                                         <MenuItem value={null}>&nbsp;</MenuItem>
                                         {projectSourceStructuralElements.map((x) => (
                                             <MenuItem key={x.id}
-                                                      value={x.id}>{x.sdk_element_id}</MenuItem>
+                                                      value={x.id}>{x.label}</MenuItem>
                                         ))}
                                     </TextField>
                                 </FormControl>

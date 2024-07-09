@@ -35,6 +35,10 @@ class User(BeanieBaseUser, Document):
         name = "users"
 
 
+class UserOut(BaseModel):
+    email: str
+
+
 class CurrentUserRead(schemas.BaseUser[PydanticObjectId]):
     settings: Optional[Settings] = None
 

@@ -9,6 +9,7 @@ dotenv.load_dotenv(verbose=True, override=True)
 
 
 class AppSettings(BaseSettings):
+    
     @env_property(config_key='MW_APP_NAME')
     def APP_NAME(self, config_value: str) -> str:
         return config_value
@@ -136,7 +137,9 @@ class Settings(
     GoogleOAuthSettings,
     FrontendSettings
 ):
-    pass
+    """
+
+    """
 
 
 settings = Settings()

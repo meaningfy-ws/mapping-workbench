@@ -23,3 +23,10 @@ class IRepository(ABC):
     @abstractmethod
     def delete(self, *args, **kwargs) -> NotImplemented:
         raise NotImplementedError
+
+
+class IStatefulModelRepository(ABC):
+
+    @abstractmethod
+    def get_last_state_by_id(self, *args, **kwargs) -> NotImplemented:
+        raise NotImplementedError
