@@ -19,7 +19,7 @@ import {FormTextField} from "../../../../components/app/form/text-field";
 import {toastLoad, toastSuccess} from "../../../../components/app-toast";
 
 
-const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, afterItemSave}, load) => {
+const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, afterItemSave, propertyData}, load) => {
 
 
     const addItem = async (requestValues) => {
@@ -130,10 +130,10 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
                                 <>
                                     <TextField disabled
                                                label="Ontology Class Path"
-                                               value={cmPropertiesOut}/>
+                                               value={cmNonProperties}/>
                                     <TextField disabled
                                                label="Ontology Property Path"
-                                               value={cmNonProperties}/>
+                                               value={cmPropertiesOut}/>
                                 </>
                             :
                                 <>
@@ -167,6 +167,7 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
                             />
                             <AutocompleteCM formik={formik}
                                             disabled={!formik.values.autocomplete_cm_checked}
+                                            data={propertyData}
                                             name='autocomplete_cm'/>
                         </Stack>
                     </CardContent>

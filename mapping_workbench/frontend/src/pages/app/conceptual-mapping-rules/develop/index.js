@@ -146,6 +146,7 @@ const useItemsSearch = (items) => {
 
 export const Page = () => {
     const [state, setState] = useState({})
+    const [propertyData, setPropertyData] = useState({})
 
     const [itemsStore, setItemsStore] = useState({
         items: [],
@@ -158,8 +159,14 @@ export const Page = () => {
             .catch(err => console.warn(err))
     }
 
+    const handleGetPropertyData = () => {
+        sectionApi.getPropertyData()
+            .then(setPropertyData)
+    }
+
     useEffect(() => {
         handleItemsGet();
+        handleGetPropertyData()
     }, []);
 
     const itemsSearch = useItemsSearch(itemsStore.items);
@@ -281,6 +288,7 @@ export const Page = () => {
                                sectionApi={sectionApi}
                                structuralElements={projectSourceStructuralElements}
                                afterItemSave={afterItemProcess}
+                               propertyData={propertyData}
                 />
             </Stack>
         </>
