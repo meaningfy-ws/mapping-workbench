@@ -176,10 +176,11 @@ export const Page = () => {
     const [projectSourceStructuralElements, setProjectSourceStructuralElements] = useState([]);
 
     useEffect(() => {
-        (async () => {
-            setProjectSourceStructuralElements(await fieldsRegistryApi.getStructuralElementsForSelector());
-            setIsProjectDataReady(true);
-        })()
+        fieldsRegistryApi.getStructuralElementsForSelector()
+            .then(res => {
+                setProjectSourceStructuralElements(res);
+                setIsProjectDataReady(true);
+            })
     }, [])
 
     if (!isProjectDataReady) return null;
@@ -200,13 +201,9 @@ export const Page = () => {
         handleItemsGet()
     }
 
-    const handleDelete = async (item) => {
+    const handleDelete = (item) => {
         sectionApi.deleteItem(item._id)
-            .finally(() =>
-                {
-                    afterItemProcess(null)
-                }
-            )
+            .finally(() => afterItemProcess(null))
     }
 
     return (

@@ -14,25 +14,39 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import * as Yup from "yup";
 import {useFormik} from "formik";
 import AutocompleteCM from "./autocomplete";
-import {sessionApi} from "../../../../api/session";
-import {FormTextField} from "../../../../components/app/form/text-field";
-import {toastLoad, toastSuccess} from "../../../../components/app-toast";
+import {sessionApi} from "src/api/session";
+import {FormTextField} from "src/components/app/form/text-field";
+import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
+import {useEffect} from "react";
 
 
 const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, afterItemSave, propertyData}, load) => {
 
 
-    const addItem = async (requestValues) => {
+    const addItem = (requestValues, resetForm) => {
         const toastId = toastLoad('Adding item...')
-        await sectionApi.createItem(requestValues);
-        toastSuccess('Added successfully', toastId)
+        sectionApi.createItem(requestValues)
+            .then(res => {
+                toastSuccess('Added successfully', toastId)
+                afterItemSave()
+                onClose()
+                resetForm({})
+            })
+            .catch(err => toastError(err, toastId))
+
     }
 
-    const updateItem = async (requestValues) => {
+    const updateItem = (requestValues, resetForm) => {
         const toastId = toastLoad('Updating item...')
         requestValues['id'] = item._id;
-        await sectionApi.updateItem(requestValues);
-        toastSuccess('Updated successfully', toastId)
+        sectionApi.updateItem(requestValues)
+            .then(res => {
+                toastSuccess('Updated successfully', toastId)
+                afterItemSave()
+                onClose()
+                resetForm({})
+            })
+            .catch(err => toastError(err, toastId))
     }
 
     const formik = useFormik({
@@ -57,23 +71,44 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
                 .string()
                 .required('Property Path is required')
         }),
-        onSubmit: async (values, {resetForm, setErrors, setTouched}) => {
+        onSubmit: async (initialValues, {resetForm, setErrors, setTouched}) => {
+            const {autocomplete_cm, autocomplete_cm_checked, ...values } = initialValues
             values['project'] = sessionApi.getSessionProject();
             values['source_structural_element'] = values['source_structural_element'] || null;
-            values['target_class_path'] = values['autocomplete_cm_checked'] ? cmPropertiesOut : values['target_class_path']
-            values['target_property_path'] = values['autocomplete_cm_checked'] ? cmNonProperties : values['target_property_path']
 
             if (item) {
-                item = await updateItem(values)
+                updateItem(values, resetForm)
             } else {
-                item = await addItem(values)
+                addItem(values, resetForm)
             }
-            afterItemSave(item)
-            onClose()
-            resetForm({})
+
         },
         enableReinitialize: true
     })
+
+
+    useEffect(() => {
+        const autocompleteValue = formik.values.autocomplete_cm
+        if(formik.values.autocomplete_cm_checked) {
+            const cmProperties = autocompleteValue.filter(e => e.type === 'property').map(e => e.value).join(' / ')
+
+            formik.setFieldValue('target_class_path', autocompleteValue.filter(e => e.type !== 'property').map(e => e.value).join(' / '))
+            formik.setFieldValue('target_property_path', cmProperties.length ? `?this ${cmProperties} ?value` : '')
+        }
+    }, [formik.values.autocomplete_cm]);
+
+    const handleAutocompleteChange = (type, value) => {
+        const autocompleteValue = type === 'classOrList'
+            ? [...formik.values.autocomplete_cm, {type: value.type, value: value.title}]
+            : [...formik.values.autocomplete_cm, {type, value}]
+
+        formik.setFieldValue('autocomplete_cm', autocompleteValue)
+
+        const cmProperties = autocompleteValue.filter(e => e.type === 'property').map(e => e.value).join(' / ')
+
+        formik.setFieldValue('target_class_path', autocompleteValue.filter(e => e.type !== 'property').map(e => e.value).join(' / '))
+        formik.setFieldValue('target_property_path', cmProperties.length ? `?this ${cmProperties} ?value` : '')
+    }
 
     const structuralElement = structuralElements.find(el => el.id === item?.source_structural_element?.id)
     const handleSourceStructuralElementSelect = ((e, value) => {
@@ -84,9 +119,7 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
         return;
     }
 
-    const cmProperties = formik.values.autocomplete_cm.filter(e => e.type === 'property').map(e => e.value).join(' / ')
-    const cmPropertiesOut = cmProperties.length ? `?this ${cmProperties} ?value` : ''
-    const cmNonProperties = formik.values.autocomplete_cm.filter(e => e.type !== 'property').map(e => e.value).join(' / ')
+
 
     return (
         <Drawer
@@ -125,33 +158,20 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
                             <FormTextField formik={formik}
                                            name="max_sdk_version"
                                            label="Max SDK"/>
-
-                            {formik.values.autocomplete_cm_checked ?
-                                <>
-                                    <TextField disabled
-                                               label="Ontology Class Path"
-                                               value={cmNonProperties}/>
-                                    <TextField disabled
-                                               label="Ontology Property Path"
-                                               value={cmPropertiesOut}/>
-                                </>
-                            :
-                                <>
-                                    <FormTextField formik={formik}
-                                                   error={!!(formik.touched.target_class_path && formik.errors.target_class_path)}
-                                                   fullWidth
-                                                   helperText={formik.touched.target_class_path && formik.errors.target_class_path}
-                                                   disabled={formik.values.autocomplete_cm_checked}
-                                                   name="target_class_path"
-                                                   label="Ontology Class Path"/>
-                                    <FormTextField formik={formik}
-                                                   error={!!(formik.touched.target_property_path && formik.errors.target_property_path)}
-                                                   fullWidth
-                                                   helperText={formik.touched.target_property_path && formik.errors.target_property_path}
-                                                   disabled={formik.values.autocomplete_cm_checked}
-                                                   name="target_property_path"
-                                                   label="Ontology Property Path"/>
-                                </>}
+                            <FormTextField formik={formik}
+                                           error={!!(formik.touched.target_class_path && formik.errors.target_class_path)}
+                                           fullWidth
+                                           helperText={formik.touched.target_class_path && formik.errors.target_class_path}
+                                           disabled={formik.values.autocomplete_cm_checked}
+                                           name="target_class_path"
+                                           label="Ontology Class Path"/>
+                            <FormTextField formik={formik}
+                                           error={!!(formik.touched.target_property_path && formik.errors.target_property_path)}
+                                           fullWidth
+                                           helperText={formik.touched.target_property_path && formik.errors.target_property_path}
+                                           disabled={formik.values.autocomplete_cm_checked}
+                                           name="target_property_path"
+                                           label="Ontology Property Path"/>
                             <FormControlLabel
                                 sx={{
                                     width: '100%'
@@ -168,6 +188,8 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
                             <AutocompleteCM formik={formik}
                                             disabled={!formik.values.autocomplete_cm_checked}
                                             data={propertyData}
+                                            onSelect={handleAutocompleteChange}
+                                            required={formik.values.autocomplete_cm_checked}
                                             name='autocomplete_cm'/>
                         </Stack>
                     </CardContent>

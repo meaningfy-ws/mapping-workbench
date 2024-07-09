@@ -7,12 +7,6 @@ const Autocomplete = ({formik, name, disabled, data}) => {
 
     const formikValue = formik.values[name]
 
-    const handleSelect = (type, value) => {
-        if (type === 'classOrList')
-            formik.setFieldValue(name,[...formikValue, {type: value.type, value: value.title}]);
-        else formik.setFieldValue(name, [...formikValue, {type, value}]);
-    }
-
     const chipColor = (type) => {
         return type === 'class'
                     ? 'success'
@@ -44,7 +38,7 @@ const Autocomplete = ({formik, name, disabled, data}) => {
             case 'property':
                 return 'Property'
             case 'classOrList':
-                return 'Class Or List'
+                return 'Class or List'
             default:
                 return'Complete'
         }
@@ -63,7 +57,14 @@ const Autocomplete = ({formik, name, disabled, data}) => {
         }
     }
 
+    const handleChange = (type, value) => {
+        const autocompleteValue = type === 'classOrList'
+            ? [...formikValue, {type: value.type, value: value.title}]
+            : [...formikValue, {type, value}]
 
+        formik.setFieldValue(name, autocompleteValue)
+
+    }
 
     const handleChipDelete = (i) => formik.setFieldValue(name, formikValue.slice(0,i))
 
@@ -75,7 +76,7 @@ const Autocomplete = ({formik, name, disabled, data}) => {
                   fullWidth
                   options={currentOptions()}
                   groupBy={option => currentType() === 'classOrList' ? option.type : false}
-                  onChange={(e,value)=> handleSelect(currentType(), value)}
+                  onChange={(e,value)=> handleChange(currentType(), value)}
                   disabled={currentType() === 'controlled_list' || disabled}
                   getOptionLabel={option => currentType() === 'classOrList' ? option.title : option}
                   blurOnSelect
@@ -91,9 +92,9 @@ const Autocomplete = ({formik, name, disabled, data}) => {
             <Stack direction='column'
                    gap={1}>
                 {formikValue.map((e, i) => <Chip key = {'chip'+i}
-                                                    label={<><b>{e.type} - </b>{e.value}</>}
-                                                    onDelete={() => handleChipDelete(i)}
-                                                    color={chipColor(e.type)}
+                                                 label={<><b>{e.type} - </b>{e.value}</>}
+                                                 onDelete={() => handleChipDelete(i)}
+                                                 color={chipColor(e.type)}
                                                 />)}
             </Stack>
         </Stack>
