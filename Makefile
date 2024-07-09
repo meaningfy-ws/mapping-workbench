@@ -144,6 +144,12 @@ stop-mongo:
 reset_mwb_script:
 	@ echo "Resetting the Mapping Workbench"
 	@ python3 reset_mwb.py
+
+dump_mongodb_local:
+	@ echo "Dumping Mapping Workbench MongoDB locally"
+	@ mongodump --uri=$(MW_MONGODB_URL) --out=./.mongodump
+	@ echo "Dumping Mapping Workbench MongoDB locally done"
+
 #-----------------------------------------------------------------------------
 # DEVELOPMENT
 #-----------------------------------------------------------------------------
