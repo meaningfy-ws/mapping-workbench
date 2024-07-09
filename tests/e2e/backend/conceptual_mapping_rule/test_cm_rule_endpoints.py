@@ -203,9 +203,9 @@ async def test_route_insert_cm_rule_feedback_note(
     assert response.status_code == status.HTTP_201_CREATED
     
     result_cm_rule = await ConceptualMappingRule.get(dummy_conceptual_mapping_rule.id)
-    assert len(result_cm_rule.mapping_notes) == 1
+    assert len(result_cm_rule.feedback_notes) == 1
 
-    result_cm_feedback_note = result_cm_rule.mapping_notes.pop()
+    result_cm_feedback_note = result_cm_rule.feedback_notes.pop()
     assert result_cm_feedback_note.comment == dummy_cm_rule_comment.comment
     result_created_by_id = (await result_cm_feedback_note.created_by.fetch()).id
     assert result_created_by_id == dummy_user.id
