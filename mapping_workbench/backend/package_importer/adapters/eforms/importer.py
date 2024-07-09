@@ -68,13 +68,6 @@ class EFormsPackageImporter(PackageImporterABC):
             if not source_structural_element:
                 continue
 
-            # rule: ConceptualMappingRule = await get_conceptual_mapping_rule_by_key(
-            #     element=source_structural_element,
-            #     project_id=self.project.id
-            # )
-            #
-            # if not rule:
-
             # A conceptual mapping rule may have same structural element but different Ontology Fragment
             rule: ConceptualMappingRule = await ConceptualMappingRule.find_one(
                 ConceptualMappingRule.source_structural_element == source_structural_element,

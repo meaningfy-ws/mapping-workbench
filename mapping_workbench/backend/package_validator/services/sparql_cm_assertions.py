@@ -89,6 +89,7 @@ async def generate_and_save_cm_assertions_queries(
         if subject_type:
             prefixes_string += subject_type
 
+        sparql_identifier = ""
         sparql_title = ""
         sparql_description = ""
         sparql_xpath = ""
@@ -100,10 +101,11 @@ async def generate_and_save_cm_assertions_queries(
         if cm_rule.source_structural_element:
             structural_element = await cm_rule.source_structural_element.fetch()
             if structural_element:
-                sparql_title = f"{structural_element.sdk_element_id}-{cm_rule.id}" # TODO: Temporary solution
+                sparql_idx = cm_rule.id
+                sparql_identifier = f"{structural_element.sdk_element_id}-{cm_rule.id}"
+                sparql_title = f"{structural_element.sdk_element_id}"
                 sparql_description = ", ".join(structural_element.descriptions or [])
                 sparql_xpath = structural_element.absolute_xpath
-                sparql_idx = cm_rule.id
                 structural_element_exists = True
 
         if not structural_element_exists:
@@ -136,7 +138,7 @@ async def generate_and_save_cm_assertions_queries(
         sparql_test_file_resource = await SPARQLTestFileResource.find_one(
             SPARQLTestFileResource.project == project_link,
             SPARQLTestFileResource.sparql_test_suite == sparql_test_suite_link,
-            SPARQLTestFileResource.title == sparql_title
+            SPARQLTestFileResource.identifier == sparql_identifier
         )
 
         cm_rule_sdk_element = CMRuleSDKElement(
@@ -150,6 +152,7 @@ async def generate_and_save_cm_assertions_queries(
                 project=project_link,
                 sparql_test_suite=sparql_test_suite_link,
                 format=FileResourceFormat.RQ.value,
+                identifier=sparql_identifier,
                 title=sparql_title,
                 filename=file_name,
                 path=[sparql_test_suite.title, file_name],
