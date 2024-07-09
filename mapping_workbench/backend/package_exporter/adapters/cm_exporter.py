@@ -6,7 +6,6 @@ from typing import List
 import pandas as pd
 from pandas import DataFrame
 
-from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageState
 
 
