@@ -10,16 +10,14 @@ dummy_short_term = "dummy_short_term"
 def test_term_model():
     with pytest.raises(ValidationError):
         Term()
-        Term(
-            short_term=dummy_short_term
-        )
+        Term(short_term=dummy_short_term)
+        Term(term=dummy_term,
+             short_term=dummy_short_term,
+             type=None)
 
     Term(term=dummy_term)
     Term.model_validate({"term": dummy_term})
 
-    Term(term=dummy_term,
-         short_term=dummy_short_term,
-         type=None)
 
 
 def test_term_type():
