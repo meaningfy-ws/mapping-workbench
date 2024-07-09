@@ -8,6 +8,7 @@ from mongomock_motor import AsyncMongoMockClient
 from mapping_workbench.backend.core.services.project_initilisers import init_project_models
 from mapping_workbench.backend.database.adapters.gridfs_storage import AsyncGridFSStorage
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
+from mapping_workbench.backend.ontology.models.term import Term, TermType
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import get_jwt_strategy
 from mapping_workbench.backend.user.models.user import User
@@ -60,3 +61,28 @@ async def get_new_user_token(user: User) -> str:
     await user.save()
     strategy: JWTStrategy = get_jwt_strategy()
     return await strategy.write_token(user)
+
+
+@pytest.fixture
+def dummy_property_term() -> Term:
+    return Term(
+        term="http://data.europa.eu/a4g/ontology#hasReceivedMicroTenders",
+        short_term="epo:hasReceivedMicroTenders",
+        type=TermType.PROPERTY
+    )
+
+@pytest.fixture
+def dummy_class_term() -> Term:
+    return Term(
+        term="http://data.europa.eu/a4g/ontology#ProcurementElement",
+        short_term="epo:ProcurementElement",
+        type=TermType.CLASS
+    )
+
+@pytest.fixture
+def dummy_data_type_term() -> Term:
+    return Term(
+        term="http://www.w3.org/2001/XMLSchema#decimal",
+        short_term="xsd:decimal",
+        type=TermType.DATA_TYPE
+    )

@@ -99,7 +99,7 @@ async def list_known_terms(saved: bool = False) -> List:
     return list(set(classes + properties + data_types))
 
 
-async def create_or_update_terms_by_type(terms: list,
+async def create_or_update_terms_by_type(terms: List[str],
                                          terms_type: TermType,
                                          project_id: PydanticObjectId,
                                          ns_definitions: dict,
