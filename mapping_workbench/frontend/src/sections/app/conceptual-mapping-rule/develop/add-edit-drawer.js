@@ -89,9 +89,10 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
     useEffect(() => {
         const autocompleteValue = formik.values.autocomplete_cm
         if(formik.values.autocomplete_cm_checked) {
-            const cmProperties = autocompleteValue.filter(e => e.type === 'property').map(e => e.value).join(' / ')
+            const cmProperties = autocompleteValue.filter(e => e.type === 'PROPERTY').map(e => e.value).join(' / ')
 
-            formik.setFieldValue('target_class_path', autocompleteValue.filter(e => e.type !== 'property').map(e => e.value).join(' / '))
+            formik.setFieldValue('target_class_path',
+                autocompleteValue.filter(e => ['DATA_TYPE','CLASS'].includes(e.type)).map(e => e.value).join(' / '))
             formik.setFieldValue('target_property_path', cmProperties.length ? `?this ${cmProperties} ?value` : '')
         }
     }, [formik.values.autocomplete_cm]);

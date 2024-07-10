@@ -25,7 +25,7 @@ const Autocomplete = ({formik, name, disabled, data}) => {
             case 'CLASS':
                 return 'PROPERTY'
             case 'PROPERTY':
-                return 'classOrList'
+                return 'classOrDataType'
             default:
                 return 'DATA_TYPE'
         }
@@ -37,8 +37,8 @@ const Autocomplete = ({formik, name, disabled, data}) => {
                 return 'Class'
             case 'PROPERTY':
                 return 'Property'
-            case 'classOrList':
-                return 'Class or List'
+            case 'classOrDataType':
+                return 'Class or Data Type'
             default:
                 return'Complete'
         }
@@ -50,8 +50,8 @@ const Autocomplete = ({formik, name, disabled, data}) => {
                 return data.filter(e => e.type === 'CLASS')
             case 'PROPERTY':
                 return data.filter(e => e.type === 'PROPERTY')
-            case 'classOrList':
-                return data.filter(e => ['PROPERTY','CLASS'].includes(e.type))
+            case 'classOrDataType':
+                return data.filter(e => ['DATA_TYPE','CLASS'].includes(e.type))
             default:
                 return []
         }
@@ -61,15 +61,13 @@ const Autocomplete = ({formik, name, disabled, data}) => {
 
     const handleChipDelete = (i) => formik.setFieldValue(name, formikValue.slice(0,i))
 
-    console.log(currentOptions())
-
     return (
         <Stack>
             <MuiAutocomplete
                   id="autocomplete"
                   fullWidth
                   options={currentOptions()}
-                  groupBy={option => currentType() === 'classOrList' ? option.type : false}
+                  groupBy={option => currentType() === 'classOrDataType' ? option.type : false}
                   onChange={(e,value)=> handleChange(value.type, value.title)}
                   disabled={currentType() === 'DATA_TYPE' || disabled}
                   getOptionLabel={option => option.title}

@@ -11,16 +11,16 @@ import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
 import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
-import { ontologyTermsApi } from 'src/api/ontology-terms'
+import {ontologyTermsApi} from 'src/api/ontology-terms'
 import {paths} from 'src/paths';
-import {Layout as AppLayout} from 'src/layouts/app';
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
+import {Layout as AppLayout} from 'src/layouts/app';
+import {RouterLink} from 'src/components/router-link';
+import {fieldsRegistryApi} from "src/api/fields-registry";
+import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {ListSearch} from 'src/sections/app/conceptual-mapping-rule/develop/list-search';
 import {ListTable} from 'src/sections/app/conceptual-mapping-rule/develop/list-table';
-import AddEditDrawer from "../../../../sections/app/conceptual-mapping-rule/develop/add-edit-drawer";
-import {fieldsRegistryApi} from "../../../../api/fields-registry";
+import AddEditDrawer from "src/sections/app/conceptual-mapping-rule/develop/add-edit-drawer";
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
@@ -102,12 +102,7 @@ const useItemsSearch = (items) => {
         }));
     }
 
-    const handlePageChange = (event, page) => {
-        setState(prevState => ({
-            ...prevState,
-            page
-        }));
-    }
+    const handlePageChange = (event, page) => setState(prevState => ({...prevState, page}));
 
     const handleSort = (column, desc) => {
         setState(prevState => ({
@@ -154,6 +149,12 @@ export const Page = () => {
         itemsCount: 0
     });
 
+
+    useEffect(() => {
+        handleItemsGet();
+        handleGetOntologyFragments();
+    }, []);
+
     const handleItemsGet = () => {
         sectionApi.getItems({rowsPerPage: -1})
             .then(res => setItemsStore({items: res.items, itemsCount: res.count}))
@@ -161,19 +162,13 @@ export const Page = () => {
     }
 
     const handleGetOntologyFragments = () => {
-        ontologyTermsApi.getItems()
+        ontologyTermsApi.getItems({rowsPerPage: -1})
             .then(res => {
                 setOntologyFragments(res.items.filter(e => ['CLASS', 'PROPERTY', 'DATA_TYPE'].includes(e.type))
                     .map(e=>({id:e._id,title:e.short_term,type:e.type})));
             })
     }
 
-    console.log('ontologyFragments',ontologyFragments)
-
-    useEffect(() => {
-        handleItemsGet();
-        handleGetOntologyFragments();
-    }, []);
 
     const itemsSearch = useItemsSearch(itemsStore.items);
 
