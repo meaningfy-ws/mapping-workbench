@@ -31,7 +31,7 @@ class XPATHValidator(TestDataValidator):
         return self.get_unique_xpaths(xpath_expression)
 
     def get_ns_tag(self, node: PyXdmNode) -> Union[str, None]:
-        mwb_logger.log_all_info("NODE TYPE :: " + type(node).__name__)
+        mwb_logger.log_all_info("NODE TYPE :: " + type(node).__name__ + " :: " + node.name)
         if not node or node.name is None:
             return None
         xpath = node.local_name
