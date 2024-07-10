@@ -96,8 +96,8 @@ class XPATHValidator(TestDataValidator):
         mwb_logger.log_all_info(f"Getting Unique XPATHs[{matching_elements and matching_elements.size}] :: DONE")
         if matching_elements and matching_elements.size > 0:
             for element in matching_elements:
-                mwb_logger.log_all_info(f"ELEMENT :: " + str(element))
                 xpath_node: PyXdmNode = element.get_node_value()
+                mwb_logger.log_all_info(f"XPATH Node :: " + str(xpath_node))
                 xpath = self.get_node_xpath(xpath_node)
                 mwb_logger.log_all_info(f"XPATH :: " + xpath)
                 if xpath:
