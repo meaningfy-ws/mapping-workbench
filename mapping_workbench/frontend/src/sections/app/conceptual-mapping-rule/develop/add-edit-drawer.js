@@ -4,7 +4,6 @@ import Button from "@mui/material/Button";
 import Drawer from "@mui/material/Drawer";
 import Checkbox from "@mui/material/Checkbox";
 import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import FormControl from "@mui/material/FormControl";
@@ -133,8 +132,7 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
                     <CardContent>
                         <Stack direction='column'
                                gap={3}>
-                            <Typography></Typography>
-                            <FormControl sx={{my: 2, width: '100%'}}>
+                            <FormControl sx={{ width: '100%'}}>
                                 <Autocomplete
                                     fullWidth
                                     options={structuralElements}
@@ -172,25 +170,25 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
                                            disabled={formik.values.autocomplete_cm_checked}
                                            name="target_property_path"
                                            label="Ontology Property Path"/>
-                            <FormControlLabel
-                                sx={{
-                                    width: '100%'
-                                }}
-                                control={
-                                    <Checkbox
-                                        checked={formik.values.autocomplete_cm_checked}
-                                        onChange={() => formik.setFieldValue('autocomplete_cm_checked', event.target.checked)}
-                                    />
-                                }
-                                label="Use Autocompelete"
-                                value=""
-                            />
-                            <AutocompleteCM formik={formik}
-                                            disabled={!formik.values.autocomplete_cm_checked}
-                                            data={propertyData}
-                                            onSelect={handleAutocompleteChange}
-                                            required={formik.values.autocomplete_cm_checked}
-                                            name='autocomplete_cm'/>
+                            <Stack>
+                                <FormControlLabel
+                                    sx={{width: '100%'}}
+                                    control={
+                                        <Checkbox
+                                            checked={formik.values.autocomplete_cm_checked}
+                                            onChange={() => formik.setFieldValue('autocomplete_cm_checked', event.target.checked)}
+                                        />
+                                    }
+                                    label="Use Autocompelete"
+                                    value=""
+                                />
+                                <AutocompleteCM formik={formik}
+                                                disabled={!formik.values.autocomplete_cm_checked}
+                                                data={propertyData}
+                                                onSelect={handleAutocompleteChange}
+                                                required={formik.values.autocomplete_cm_checked}
+                                                name='autocomplete_cm'/>
+                            </Stack>
                         </Stack>
                     </CardContent>
                     <Button type='submit'

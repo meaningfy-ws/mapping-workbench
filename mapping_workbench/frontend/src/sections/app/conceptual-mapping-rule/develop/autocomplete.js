@@ -70,7 +70,6 @@ const Autocomplete = ({formik, name, disabled, data}) => {
 
     return (
         <Stack>
-
             <MuiAutocomplete
                   id="autocomplete"
                   fullWidth
@@ -85,6 +84,7 @@ const Autocomplete = ({formik, name, disabled, data}) => {
                       return (
                           <TextField
                                 {...params}
+                                sx={{marginTop:0}}
                                 label={currentName(currentType())}
                                 margin="normal"/>
                           )}}
