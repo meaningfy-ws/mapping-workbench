@@ -156,4 +156,5 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
                             validation_message=validation_message
                         )
     except Exception as e:
+        mwb_logger.log_all_error("Validating XPATH :: " + str(e))
         raise e
