@@ -106,6 +106,7 @@ class SPARQLTestFileResourceUpdateIn(SPARQLTestFileResourceIn):
 
 
 class SPARQLTestFileResource(FileResource, StatefulObjectABC):
+    identifier: Optional[str] = None
     format: Optional[SPARQLTestFileResourceFormat] = None
     type: Optional[SPARQLQueryValidationType] = None
     sparql_test_suite: Optional[Link[SPARQLTestSuite]] = None

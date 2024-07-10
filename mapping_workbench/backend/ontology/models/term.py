@@ -1,9 +1,10 @@
 from enum import Enum
-from typing import Optional
+from typing import Optional, Any
 
 import pymongo
 from beanie import Indexed
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
+from pydantic_core.core_schema import ValidationInfo
 from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntity
@@ -15,6 +16,11 @@ from mapping_workbench.backend.state_manager.models.state_object import ObjectSt
 class TermType(Enum):
     CLASS = "CLASS"
     PROPERTY = "PROPERTY"
+    DATA_TYPE = "DATA_TYPE"
+
+    @classmethod
+    def list(cls):
+        return list(map(lambda c: c.value, cls))
 
 
 class TermException(Exception):
@@ -41,6 +47,15 @@ class Term(BaseProjectResourceEntity, StatefulObjectABC):
     term: Indexed(str)
     short_term: Optional[str] = None
     type: Optional[TermType] = None
+
+    @field_validator('type')
+    @classmethod
+    def check_when_type_is_string(cls, v: Any, info: ValidationInfo) -> TermType:
+        if isinstance(v, TermType):
+            return v
+        if not isinstance(v, str) and not v in TermType.list():
+            raise ValueError(f"{v} must be a valid {TermType.__name__}")
+        return TermType(v)
 
     async def get_state(self) -> TermState:
         return TermState(

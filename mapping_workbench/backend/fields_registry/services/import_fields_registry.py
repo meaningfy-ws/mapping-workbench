@@ -120,22 +120,28 @@ async def import_notice_types_versioned_view(notice_type_structure: NoticeTypeSt
 
     structural_elements_versioned_view_id = f"{fields_metadata[VERSION_KEY]}_{notice_type_structure.notice_type_id}"
 
-    structural_elements_versioned_view = StructuralElementsVersionedView(project=project_link,
-                                                                         id=structural_elements_versioned_view_id,
-                                                                         eforms_sdk_version=fields_metadata[
-                                                                             VERSION_KEY],
-                                                                         eforms_subtype=notice_type_structure.notice_type_id)
+    structural_elements_versioned_view = StructuralElementsVersionedView(
+        project=project_link,
+        id=structural_elements_versioned_view_id,
+        eforms_sdk_version=fields_metadata[VERSION_KEY],
+        eforms_subtype=notice_type_structure.notice_type_id
+    )
+
+    structural_elements_versioned_view.ordered_elements = []
 
     for structural_element_id in ordered_structural_elements:
+        if structural_element_id not in fields_metadata[ID_TO_HASH_MAPPING_KEY]:
+            continue
         structural_element_hash_id = fields_metadata[ID_TO_HASH_MAPPING_KEY][structural_element_id]
+
         structural_element = await StructuralElement.get(structural_element_hash_id)
         structural_elements_descriptions = list(
             set(structural_elements_metadata[structural_element_id] + structural_element.descriptions))
         structural_element.descriptions = structural_elements_descriptions
+        await structural_element.save()
 
-    structural_elements_versioned_view.ordered_elements = [
-        await StructuralElement.get(fields_metadata[ID_TO_HASH_MAPPING_KEY][structural_element_id])
-        for structural_element_id in ordered_structural_elements]
+        structural_elements_versioned_view.ordered_elements.append(structural_element)
+
     await structural_elements_versioned_view.save()
 
 
