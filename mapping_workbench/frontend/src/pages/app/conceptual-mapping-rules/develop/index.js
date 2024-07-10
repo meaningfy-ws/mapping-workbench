@@ -11,6 +11,7 @@ import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
 import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
+import { ontologyTermsApi } from 'src/api/ontology-terms'
 import {paths} from 'src/paths';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
@@ -146,7 +147,7 @@ const useItemsSearch = (items) => {
 
 export const Page = () => {
     const [state, setState] = useState({})
-    const [propertyData, setPropertyData] = useState({})
+    const [ontologyFragments,setOntologyFragments] = useState([])
 
     const [itemsStore, setItemsStore] = useState({
         items: [],
@@ -159,14 +160,19 @@ export const Page = () => {
             .catch(err => console.warn(err))
     }
 
-    const handleGetPropertyData = () => {
-        sectionApi.getPropertyData()
-            .then(setPropertyData)
+    const handleGetOntologyFragments = () => {
+        ontologyTermsApi.getItems()
+            .then(res => {
+                setOntologyFragments(res.items.filter(e => ['CLASS', 'PROPERTY', 'DATA_TYPE'].includes(e.type))
+                    .map(e=>({id:e._id,title:e.short_term,type:e.type})));
+            })
     }
+
+    console.log('ontologyFragments',ontologyFragments)
 
     useEffect(() => {
         handleItemsGet();
-        handleGetPropertyData()
+        handleGetOntologyFragments();
     }, []);
 
     const itemsSearch = useItemsSearch(itemsStore.items);
@@ -285,7 +291,7 @@ export const Page = () => {
                                sectionApi={sectionApi}
                                structuralElements={projectSourceStructuralElements}
                                afterItemSave={afterItemProcess}
-                               propertyData={propertyData}
+                               ontologyFragments={ontologyFragments}
                 />
             </Stack>
         </>

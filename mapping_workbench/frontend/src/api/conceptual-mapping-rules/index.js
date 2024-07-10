@@ -77,44 +77,6 @@ class ConceptualMappingRulesApi extends SectionApi {
         return appApi.get(endpoint, params);
     }
 
-    async getPropertyData() {
-        return {
-                "class": [
-                    "epo:Notice",
-                    "epo:CompetitionNotice",
-                    "xsd:boolean",
-                    "epo:ProcurementServiceProvider",
-                    "epo:Procedure",
-                    "rdf:PlainLiteral",
-                    "rdf:langString",
-                    "epo:ExclusionGround",
-                    "xsd:decimal"
-                ],
-                "property": [
-                    "epo:hasNoticeType",
-                    "epo:refersToProcedure",
-                    "epo:hasOfficialLanguage",
-                    "epo:hasPublicationDate",
-                    "epo:hasLegalBasis",
-                    "epo:hasLegalBasisDescription",
-                    "epo:definesSpecificPlaceOfPerformance",
-                    "epo:foreseesContractSpecificTerm",
-                    "epo:hasBroadPlaceOfPerformance"
-                ],
-                "controlled_list": [
-                    "at-voc:language",
-                    "at-voc:main-activity",
-                    "at-voc:legal-basis",
-                    "at-voc:number-threshold",
-                    "at-voc:country",
-                    "at-voc:number-fixed",
-                    "at-voc:nuts",
-                    "at-voc:other-place-service",
-                    "at-voc:criterion"
-                ]
-        }
-    }
-
     async getNotes(cm_rule_id, comment_type) {
         let endpoint = this.paths[comment_type].replace(':id', cm_rule_id);
         let params = {'project_id': sessionApi.getSessionProject()}

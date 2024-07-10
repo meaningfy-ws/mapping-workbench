@@ -19,7 +19,7 @@ import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {useEffect} from "react";
 
 
-const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, afterItemSave, propertyData}, load) => {
+const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, afterItemSave, ontologyFragments}, load) => {
 
 
     const addItem = (requestValues, resetForm) => {
@@ -184,7 +184,7 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
                                 />
                                 <AutocompleteCM formik={formik}
                                                 disabled={!formik.values.autocomplete_cm_checked}
-                                                data={propertyData}
+                                                data={ontologyFragments}
                                                 onSelect={handleAutocompleteChange}
                                                 required={formik.values.autocomplete_cm_checked}
                                                 name='autocomplete_cm'/>
