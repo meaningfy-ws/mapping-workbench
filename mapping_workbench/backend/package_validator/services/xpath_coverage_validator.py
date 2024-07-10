@@ -100,66 +100,61 @@ def update_xpath_assertion_test_data_entry_xpaths(
 
 
 def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingPackageState):
-    try:
-        test_data_suites: List[TestDataSuiteState] = mapping_package_state.test_data_suites
+    test_data_suites: List[TestDataSuiteState] = mapping_package_state.test_data_suites
 
-        conceptual_mapping_rule_states = mapping_package_state.conceptual_mapping_rules
-        for test_data_suite in test_data_suites:
-            test_data_states: List[TestDataState] = test_data_suite.test_data_states
-            for test_data_state in test_data_states:
-                xml_content = test_data_state.xml_manifestation.content
-                mwb_logger.log_all_info("Validating XPATH for TEST_DATA :: " + test_data_state.title)
-                xpath_validator: XPATHValidator = XPATHValidator(xml_content)
+    conceptual_mapping_rule_states = mapping_package_state.conceptual_mapping_rules
+    for test_data_suite in test_data_suites:
+        test_data_states: List[TestDataState] = test_data_suite.test_data_states
+        for test_data_state in test_data_states:
+            xml_content = test_data_state.xml_manifestation.content
+            mwb_logger.log_all_info("Validating XPATH for TEST_DATA :: " + test_data_state.title)
+            xpath_validator: XPATHValidator = XPATHValidator(xml_content)
 
-                for conceptual_mapping_rule_state in conceptual_mapping_rule_states:
-                    structural_element = conceptual_mapping_rule_state.source_structural_element
-                    if structural_element:
-                        cm_xpath = structural_element.absolute_xpath
-                        cm_sdk_id = structural_element.sdk_element_id
-                        cm_sdk_title = structural_element.name
+            for conceptual_mapping_rule_state in conceptual_mapping_rule_states:
+                structural_element = conceptual_mapping_rule_state.source_structural_element
+                if structural_element:
+                    cm_xpath = structural_element.absolute_xpath
+                    cm_sdk_id = structural_element.sdk_element_id
+                    cm_sdk_title = structural_element.name
 
-                        validation_message = None
-                        xpaths: List[XPathAssertionEntry] = []
-                        try:
-                            mwb_logger.log_all_info("Validating XPATH :: " + cm_xpath)
-                            xpaths = xpath_validator.validate(cm_xpath)
-                        except Exception as e:
-                            validation_message = str(e)
-                            mwb_logger.log_all_error("Validating XPATH :: " + validation_message)
+                    validation_message = None
+                    xpaths: List[XPathAssertionEntry] = []
+                    try:
+                        mwb_logger.log_all_info("Validating XPATH :: " + cm_xpath)
+                        xpaths = xpath_validator.validate(cm_xpath)
+                    except Exception as e:
+                        validation_message = str(e)
 
-                        mwb_logger.log_all_info("Validating XPATH :: " + cm_xpath + " :: DONE")
-                        mwb_logger.log_all_info("Updating XPATH Validation for Package State ...")
-                        update_xpath_assertion(
-                            state=mapping_package_state,
-                            element_id=cm_sdk_id,
-                            xpath=cm_xpath,
-                            element_title=cm_sdk_title,
-                            test_data_suite=test_data_suite,
-                            test_data_state=test_data_state,
-                            xpaths=xpaths
-                        )
-                        mwb_logger.log_all_info("Updating XPATH Validation for Test Suite ...")
-                        update_xpath_assertion(
-                            state=test_data_suite,
-                            element_id=cm_sdk_id,
-                            xpath=cm_xpath,
-                            element_title=cm_sdk_title,
-                            test_data_suite=test_data_suite,
-                            test_data_state=test_data_state,
-                            xpaths=xpaths
-                        )
-                        mwb_logger.log_all_info("Updating XPATH Validation for Test Data ...")
-                        update_xpath_assertion(
-                            state=test_data_state,
-                            element_id=cm_sdk_id,
-                            xpath=cm_xpath,
-                            element_title=cm_sdk_title,
-                            test_data_suite=test_data_suite,
-                            test_data_state=test_data_state,
-                            xpaths=xpaths,
-                            validation_message=validation_message
-                        )
-                        mwb_logger.log_all_info("Updating XPATH Validation :: DONE")
-    except Exception as e:
-        mwb_logger.log_all_error("Validating XPATH :: " + str(e))
-        raise e
+                    mwb_logger.log_all_info("Validating XPATH :: " + cm_xpath + " :: DONE")
+                    mwb_logger.log_all_info("Updating XPATH Validation for Package State ...")
+                    update_xpath_assertion(
+                        state=mapping_package_state,
+                        element_id=cm_sdk_id,
+                        xpath=cm_xpath,
+                        element_title=cm_sdk_title,
+                        test_data_suite=test_data_suite,
+                        test_data_state=test_data_state,
+                        xpaths=xpaths
+                    )
+                    mwb_logger.log_all_info("Updating XPATH Validation for Test Suite ...")
+                    update_xpath_assertion(
+                        state=test_data_suite,
+                        element_id=cm_sdk_id,
+                        xpath=cm_xpath,
+                        element_title=cm_sdk_title,
+                        test_data_suite=test_data_suite,
+                        test_data_state=test_data_state,
+                        xpaths=xpaths
+                    )
+                    mwb_logger.log_all_info("Updating XPATH Validation for Test Data ...")
+                    update_xpath_assertion(
+                        state=test_data_state,
+                        element_id=cm_sdk_id,
+                        xpath=cm_xpath,
+                        element_title=cm_sdk_title,
+                        test_data_suite=test_data_suite,
+                        test_data_state=test_data_state,
+                        xpaths=xpaths,
+                        validation_message=validation_message
+                    )
+                    mwb_logger.log_all_info("Updating XPATH Validation :: DONE")
