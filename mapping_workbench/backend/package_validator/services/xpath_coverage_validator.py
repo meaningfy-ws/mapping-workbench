@@ -1,6 +1,5 @@
 from typing import List
 
-from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState
 from mapping_workbench.backend.package_validator.adapters.xpath_validator import XPATHValidator
 from mapping_workbench.backend.package_validator.models.xpath_validation import XPathAssertion, \
@@ -107,7 +106,6 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
         test_data_states: List[TestDataState] = test_data_suite.test_data_states
         for test_data_state in test_data_states:
             xml_content = test_data_state.xml_manifestation.content
-            mwb_logger.log_all_info("Validating XPATH for TEST_DATA :: " + test_data_state.title)
             xpath_validator: XPATHValidator = XPATHValidator(xml_content)
 
             for conceptual_mapping_rule_state in conceptual_mapping_rule_states:
@@ -120,13 +118,10 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
                     validation_message = None
                     xpaths: List[XPathAssertionEntry] = []
                     try:
-                        mwb_logger.log_all_info("Validating XPATH :: " + cm_xpath)
                         xpaths = xpath_validator.validate(cm_xpath)
                     except Exception as e:
                         validation_message = str(e)
 
-                    mwb_logger.log_all_info("Validating XPATH :: " + cm_xpath + " :: DONE")
-                    mwb_logger.log_all_info("Updating XPATH Validation for Package State ...")
                     update_xpath_assertion(
                         state=mapping_package_state,
                         element_id=cm_sdk_id,
@@ -136,7 +131,6 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
                         test_data_state=test_data_state,
                         xpaths=xpaths
                     )
-                    mwb_logger.log_all_info("Updating XPATH Validation for Test Suite ...")
                     update_xpath_assertion(
                         state=test_data_suite,
                         element_id=cm_sdk_id,
@@ -146,7 +140,6 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
                         test_data_state=test_data_state,
                         xpaths=xpaths
                     )
-                    mwb_logger.log_all_info("Updating XPATH Validation for Test Data ...")
                     update_xpath_assertion(
                         state=test_data_state,
                         element_id=cm_sdk_id,
@@ -157,4 +150,3 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
                         xpaths=xpaths,
                         validation_message=validation_message
                     )
-                    mwb_logger.log_all_info("Updating XPATH Validation :: DONE")

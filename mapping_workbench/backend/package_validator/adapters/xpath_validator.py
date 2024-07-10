@@ -6,7 +6,6 @@ from xml.etree import ElementTree
 from pydantic import validate_call
 from saxonche import PySaxonProcessor, PySaxonApiError, PyXPathProcessor, PyXdmNode, PyXdmValue
 
-from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.package_validator.adapters.data_validator import TestDataValidator
 from mapping_workbench.backend.package_validator.models.xpath_validation import XPathAssertionEntry
 
@@ -31,9 +30,6 @@ class XPATHValidator(TestDataValidator):
         return self.get_unique_xpaths(xpath_expression)
 
     def get_ns_tag(self, node: PyXdmNode) -> Union[str, None]:
-        mwb_logger.log_all_info("NODE TYPE :: " + type(node).__name__)
-        mwb_logger.log_all_info("NODE TYPE1 :: " + node.local_name)
-        mwb_logger.log_all_info("NODE TYPE2 :: " + vars(node).__str__())
         if not node or node.name is None:
             return None
         xpath = node.local_name
@@ -53,10 +49,8 @@ class XPATHValidator(TestDataValidator):
             return None
         path_parts = [xpath]
         parent = node.get_parent()
-        mwb_logger.log_all_info("NS XPATH Parent :: " + str(isinstance(parent, PyXdmNode)))
         while isinstance(parent, PyXdmNode):
             xpath = self.get_ns_tag(parent)
-            mwb_logger.log_all_info("Parent XPATH :: " + xpath)
             if xpath is not None:
                 path_parts.insert(0, xpath)
             parent = parent.get_parent()
