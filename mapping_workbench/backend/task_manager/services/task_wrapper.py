@@ -12,17 +12,18 @@ async def init_task():
 
 
 def run_task(task_to_run, *args):
-    try:
-        loop = asyncio.get_running_loop()
-    except RuntimeError: # No running loop
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-
     async def task():
         await init_task()  # This is because of beanie implementation
         await task_to_run(*args)
 
-    loop.run_until_complete(task())
+    # try:
+    #     loop = asyncio.get_running_loop()
+    # except RuntimeError:  # No running loop
+    #     loop = asyncio.new_event_loop()
+    #     asyncio.set_event_loop(loop)
+    # loop.run_until_complete(task())
+
+    asyncio.run(task())
 
 
 def add_task(task_to_run, task_name, task_timeout, created_by, *args) -> TaskMetadata:
