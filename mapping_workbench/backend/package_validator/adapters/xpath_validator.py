@@ -6,6 +6,7 @@ from xml.etree import ElementTree
 from pydantic import validate_call
 from saxonche import PySaxonProcessor, PySaxonApiError, PyXPathProcessor, PyXdmNode, PyXdmValue
 
+from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.package_validator.adapters.data_validator import TestDataValidator
 from mapping_workbench.backend.package_validator.models.xpath_validation import XPathAssertionEntry
 
@@ -83,7 +84,8 @@ class XPATHValidator(TestDataValidator):
     def check_xpath_expression(self, xpath_expression: str) -> Union[PyXdmValue, None]:
         try:
             return self.xp.evaluate(xpath_expression)
-        except PySaxonApiError:
+        except PySaxonApiError as e:
+            mwb_logger.log_all_error("Checking XPATH Expression :: " + str(e))
             return None
 
     def get_unique_xpaths(self, xpath_expression) -> List[XPathAssertionEntry]:
