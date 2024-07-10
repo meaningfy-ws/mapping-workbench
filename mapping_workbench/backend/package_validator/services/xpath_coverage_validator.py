@@ -127,6 +127,8 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
                             validation_message = str(e)
                             mwb_logger.log_all_error("Validating XPATH :: " + validation_message)
 
+                        mwb_logger.log_all_info("Validating XPATH :: " + cm_xpath + " :: DONE")
+                        mwb_logger.log_all_info("Updating XPATH Validation for Package State ...")
                         update_xpath_assertion(
                             state=mapping_package_state,
                             element_id=cm_sdk_id,
@@ -136,6 +138,7 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
                             test_data_state=test_data_state,
                             xpaths=xpaths
                         )
+                        mwb_logger.log_all_info("Updating XPATH Validation for Test Suite ...")
                         update_xpath_assertion(
                             state=test_data_suite,
                             element_id=cm_sdk_id,
@@ -145,6 +148,7 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
                             test_data_state=test_data_state,
                             xpaths=xpaths
                         )
+                        mwb_logger.log_all_info("Updating XPATH Validation for Test Data ...")
                         update_xpath_assertion(
                             state=test_data_state,
                             element_id=cm_sdk_id,
@@ -155,6 +159,7 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
                             xpaths=xpaths,
                             validation_message=validation_message
                         )
+                        mwb_logger.log_all_info("Updating XPATH Validation :: DONE")
     except Exception as e:
         mwb_logger.log_all_error("Validating XPATH :: " + str(e))
         raise e
