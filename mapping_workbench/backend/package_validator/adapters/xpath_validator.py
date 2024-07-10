@@ -93,11 +93,12 @@ class XPATHValidator(TestDataValidator):
         mwb_logger.log_all_info("Getting Unique XPATHs ...")
         xpath_assertions = []
         matching_elements = self.check_xpath_expression(xpath_expression)
-        mwb_logger.log_all_info("Getting Unique XPATHs :: DONE")
+        mwb_logger.log_all_info(f"Getting Unique XPATHs[{matching_elements and matching_elements.size}] :: DONE")
         if matching_elements and matching_elements.size > 0:
             for element in matching_elements:
                 xpath_node: PyXdmNode = element.get_node_value()
                 xpath = self.get_node_xpath(xpath_node)
+                mwb_logger.log_all_info(f"XPATH :: " + xpath)
                 if xpath:
                     xpath_assertions.append(XPathAssertionEntry(
                         xpath=xpath,
