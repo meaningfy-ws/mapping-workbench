@@ -90,19 +90,20 @@ class XPATHValidator(TestDataValidator):
 
     def get_unique_xpaths(self, xpath_expression) -> List[XPathAssertionEntry]:
         """Get unique XPaths that cover elements matching e XPath expression."""
-        mwb_logger.log_all_info("Getting Unique XPATHs ...")
         xpath_assertions = []
-        matching_elements = self.check_xpath_expression(xpath_expression)
-        mwb_logger.log_all_info(f"Getting Unique XPATHs[{matching_elements and matching_elements.size}] :: DONE")
-        if matching_elements and matching_elements.size > 0:
-            for element in matching_elements:
-                xpath_node: PyXdmNode = element.get_node_value()
-                mwb_logger.log_all_info(f"XPATH Node :: " + str(xpath_node))
-                xpath = self.get_node_xpath(xpath_node)
-                mwb_logger.log_all_info(f"XPATH :: " + xpath)
-                if xpath:
-                    xpath_assertions.append(XPathAssertionEntry(
-                        xpath=xpath,
-                        value=self.get_node_text_value(xpath_node)
-                    ))
+
+        try:
+            matching_elements = self.check_xpath_expression(xpath_expression)
+            if matching_elements and matching_elements.size > 0:
+                for element in matching_elements:
+                    xpath_node: PyXdmNode = element.get_node_value()
+                    xpath = self.get_node_xpath(xpath_node)
+                    if xpath:
+                        xpath_assertions.append(XPathAssertionEntry(
+                            xpath=xpath,
+                            value=self.get_node_text_value(xpath_node)
+                        ))
+        except Exception as e:
+            mwb_logger.log_all_error(f"Getting Unique XPATHs :: " + str(e))
+
         return xpath_assertions
