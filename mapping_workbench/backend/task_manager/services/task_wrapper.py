@@ -19,10 +19,12 @@ def run_task(task_to_run, *args):
     loop = asyncio.new_event_loop()
     # asyncio.set_event_loop(loop)
 
-    try:
-        loop.run_until_complete(task())
-    finally:
-        loop.close()
+    # try:
+    #     loop.run_until_complete(task())
+    # finally:
+    #     loop.close()
+
+    loop.run_until_complete(task())
 
 
 def add_task(task_to_run, task_name, task_timeout, created_by, *args) -> TaskMetadata:
