@@ -31,19 +31,21 @@ class XPATHValidator(TestDataValidator):
         return self.get_unique_xpaths(xpath_expression)
 
     def get_ns_tag(self, node: PyXdmNode) -> Union[str, None]:
-        mwb_logger.log_all_info("NODE TYPE :: " + type(node).__name__ + " :: " + node.name)
-        if not node or node.name is None:
-            return None
-        xpath = node.local_name
-        mwb_logger.log_all_info("NS XPATH :: " + xpath)
-        match = re.match(r"Q{(.*)}(.*)", node.name)
-        if match:
-            ns = match.group(1)
-            tag = match.group(2)
-            prefix = self.prefixes[ns]
-            return f"{prefix}:{tag}" if prefix else tag
+        try:
+            if not node or node.name is None:
+                return None
+            xpath = node.local_name
+            match = re.match(r"Q{(.*)}(.*)", node.name)
+            if match:
+                ns = match.group(1)
+                tag = match.group(2)
+                prefix = self.prefixes[ns]
+                return f"{prefix}:{tag}" if prefix else tag
 
-        return xpath
+            return xpath
+        except Exception as e:
+            mwb_logger.log_all_error("NS TAG :: " + type(node).__name__ + " :: " + str(e))
+        return None
 
     def get_node_xpath(self, node: PyXdmNode) -> Union[str, None]:
         """Recursively get XPath for each element in the tree."""
