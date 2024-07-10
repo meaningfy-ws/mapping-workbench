@@ -32,9 +32,11 @@ class XPATHValidator(TestDataValidator):
 
     def get_ns_tag(self, node: PyXdmNode) -> Union[str, None]:
         try:
+            mwb_logger.log_all_error("NODE TYPE :: " + type(node).__name__)
+            mwb_logger.log_all_error("NODE TYPE1 :: " + node.local_name)
+            mwb_logger.log_all_error("NODE TYPE2 :: " + vars(node).__str__())
             if not node or node.name is None:
                 return None
-            mwb_logger.log_all_error("NODE TYPE :: " + type(node).__name__ + " :: " + vars(node).__str__())
             xpath = node.local_name
             match = re.match(r"Q{(.*)}(.*)", node.name)
             if match:
