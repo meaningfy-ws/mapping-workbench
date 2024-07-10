@@ -34,7 +34,7 @@ class XPATHValidator(TestDataValidator):
         try:
             if not node or node.name is None:
                 return None
-            mwb_logger.log_all_error("NODE TYPE :: " + type(node).__name__ + " :: " + str(dir(node)))
+            mwb_logger.log_all_error("NODE TYPE :: " + type(node).__name__ + " :: " + vars(node).__str__())
             xpath = node.local_name
             match = re.match(r"Q{(.*)}(.*)", node.name)
             if match:
