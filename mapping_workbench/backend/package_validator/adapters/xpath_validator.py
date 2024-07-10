@@ -31,7 +31,7 @@ class XPATHValidator(TestDataValidator):
         return self.get_unique_xpaths(xpath_expression)
 
     def get_ns_tag(self, node: PyXdmNode) -> Union[str, None]:
-        if node.name is None:
+        if not node or node.name is None:
             return None
         xpath = node.local_name
         match = re.match(r"Q{(.*)}(.*)", node.name)
@@ -45,12 +45,14 @@ class XPATHValidator(TestDataValidator):
     def get_node_xpath(self, node: PyXdmNode) -> Union[str, None]:
         """Recursively get XPath for each element in the tree."""
         xpath = self.get_ns_tag(node)
+        mwb_logger.log_all_info("NS XPATH :: " + xpath)
         if xpath is None:
             return None
         path_parts = [xpath]
         parent = node.get_parent()
         while isinstance(parent, PyXdmNode):
             xpath = self.get_ns_tag(parent)
+            mwb_logger.log_all_info("Parent XPATH :: " + xpath)
             if xpath is not None:
                 path_parts.insert(0, xpath)
             parent = parent.get_parent()
