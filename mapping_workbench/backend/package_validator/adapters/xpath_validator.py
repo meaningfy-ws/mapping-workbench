@@ -50,6 +50,7 @@ class XPATHValidator(TestDataValidator):
             return None
         path_parts = [xpath]
         parent = node.get_parent()
+        mwb_logger.log_all_info("NS XPATH Parent :: " + str(parent))
         while isinstance(parent, PyXdmNode):
             xpath = self.get_ns_tag(parent)
             mwb_logger.log_all_info("Parent XPATH :: " + xpath)
