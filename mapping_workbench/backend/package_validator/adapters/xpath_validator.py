@@ -30,7 +30,7 @@ class XPATHValidator(TestDataValidator):
         return self.get_unique_xpaths(xpath_expression)
 
     def get_ns_tag(self, node: PyXdmNode) -> Union[str, None]:
-        if node.name is None:
+        if not node or node.name is None:
             return None
         xpath = node.local_name
         match = re.match(r"Q{(.*)}(.*)", node.name)
@@ -39,6 +39,7 @@ class XPATHValidator(TestDataValidator):
             tag = match.group(2)
             prefix = self.prefixes[ns]
             return f"{prefix}:{tag}" if prefix else tag
+
         return xpath
 
     def get_node_xpath(self, node: PyXdmNode) -> Union[str, None]:
@@ -83,15 +84,14 @@ class XPATHValidator(TestDataValidator):
     def check_xpath_expression(self, xpath_expression: str) -> Union[PyXdmValue, None]:
         try:
             return self.xp.evaluate(xpath_expression)
-        except PySaxonApiError:
+        except PySaxonApiError as e:
             return None
 
     def get_unique_xpaths(self, xpath_expression) -> List[XPathAssertionEntry]:
         """Get unique XPaths that cover elements matching e XPath expression."""
-
         xpath_assertions = []
-        matching_elements = self.check_xpath_expression(xpath_expression)
 
+        matching_elements = self.check_xpath_expression(xpath_expression)
         if matching_elements and matching_elements.size > 0:
             for element in matching_elements:
                 xpath_node: PyXdmNode = element.get_node_value()
@@ -101,4 +101,5 @@ class XPATHValidator(TestDataValidator):
                         xpath=xpath,
                         value=self.get_node_text_value(xpath_node)
                     ))
+
         return xpath_assertions

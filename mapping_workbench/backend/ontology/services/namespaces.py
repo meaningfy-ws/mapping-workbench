@@ -53,7 +53,7 @@ async def discover_and_save_prefix_namespace(
             try:
                 namespace.uri = ns_handler.prefix_to_ns_uri(prefix=prefix)
             except ValueError as e:
-                mwb_logger.log_all_error(message="Prefix namespace discovery error", stack_trace=e)
+                mwb_logger.log_all_error(message="Prefix namespace discovery error", stack_trace=str(e))
         try:
             await namespace.save()
         except RevisionIdWasChanged:

@@ -213,7 +213,7 @@ export const ListTable = (props) => {
                                     {isCurrent && (
                                         <TableRow>
                                             <TableCell
-                                                colSpan={8}
+                                                colSpan={9}
                                                 sx={{
                                                     p: 0,
                                                     position: 'relative',
@@ -235,14 +235,15 @@ export const ListTable = (props) => {
                                                         direction="column"
                                                         gap={3}
                                                     >
-                                                        <Typography sx={{paddingLeft: "24px"}}
-                                                                    variant="h6">
-                                                            Exception message
+                                                        {item.exception_message && <>
+                                                        <Typography sx={{pl: 3, pt: 1}} variant="h6" color="error">
+                                                            Message
                                                         </Typography>
                                                         <Divider/>
-                                                        <Typography sx={{paddingLeft: "24px"}}>
+                                                        <Typography sx={{pl: 3}}>
                                                             {item.exception_message}
                                                         </Typography>
+                                                        </>}
                                                     </Grid>
                                                 </CardContent>
                                                 <Divider/>
