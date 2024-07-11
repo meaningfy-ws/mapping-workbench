@@ -8,7 +8,7 @@ from mapping_workbench.backend.task_manager.adapters.task import Task, TaskMetad
 from mapping_workbench.backend.task_manager.entrypoints import AppTaskManager
 
 
-# @contextmanager
+@contextmanager
 def task_event_loop():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
