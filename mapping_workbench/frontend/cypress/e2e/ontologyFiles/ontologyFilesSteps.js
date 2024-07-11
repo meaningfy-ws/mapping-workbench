@@ -24,12 +24,12 @@ Then('I get success select', () => {
 //add ontology
 
 Then('I click on Ontology', () => {
-    cy.intercept('GET', appURLPrefix + 'ontology*').as('get')
-    cy.get('#nav_ontologies').click()
+    cy.intercept('GET', appURLPrefix + 'ontology_files/*').as('get')
+    cy.get('#nav_ontology_files').click()
 })
 
 Then('I get redirected to Ontologies', () => {
-    cy.url().should('include','ontology-file-collections')
+    cy.url().should('include','ontology-files')
     cy.wait('@get').its('response.statusCode').should('eq', 200)
 })
 
