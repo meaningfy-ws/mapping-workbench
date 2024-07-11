@@ -8,21 +8,20 @@ from mapping_workbench.backend.task_manager.adapters.task import Task, TaskMetad
 from mapping_workbench.backend.task_manager.entrypoints import AppTaskManager
 
 
-@contextmanager
-def task_event_loop():
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    try:
-        yield loop
-    finally:
-        loop.close()
-
-
 async def init_task():
     await init_project_models(mongodb_database=DB.get_loop_database())
 
 
 def run_task(task_to_run, *args):
+    @contextmanager
+    def task_event_loop():
+        event_loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(event_loop)
+        try:
+            yield event_loop
+        finally:
+            event_loop.close()
+
     async def task():
         await init_task()  # This is because of beanie implementation
         await task_to_run(*args)
