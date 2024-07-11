@@ -26,23 +26,14 @@ const tabs = [
 
 const Page = () => {
     const router = useRouter();
-    if (!router.isReady) return;
-
-    const {id} = router.query;
-
-    if (!id) {
-        return;
-    }
-
-    const formState = useItem(sectionApi, id);
-    const item = formState.item;
-
-    usePageView();
     const [currentTab, setCurrentTab] = useState('details');
+    const {id} = router.query;
+    const formState = useItem(sectionApi, id);
 
-    const handleTabsChange = useCallback((event, value) => {
-        setCurrentTab(value);
-    }, []);
+    const item = formState.item;
+    usePageView();
+
+    const handleTabsChange = (event, value) => setCurrentTab(value);
 
     if (!item) {
         return;
