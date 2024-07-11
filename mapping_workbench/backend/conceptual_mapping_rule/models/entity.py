@@ -80,6 +80,7 @@ class ConceptualMappingRuleIn(BaseProjectResourceEntityInSchema):
     max_sdk_version: Optional[str] = None
     source_structural_element: Link[StructuralElement]
     mapping_groups: Optional[List[Link[MappingGroup]]] = None
+    xpath_condition: Optional[str] = None
     target_class_path: Optional[str] = None
     target_property_path: Optional[str] = None
     refers_to_mapping_package_ids: Optional[List[PydanticObjectId]] = []
@@ -110,6 +111,7 @@ class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema):
     source_structural_element_sdk_element_id: Optional[str] = None
     source_structural_element_absolute_xpath: Optional[str] = None
     mapping_groups: Optional[List[Link[MappingGroup]]] = None
+    xpath_condition: Optional[str] = None
     target_class_path: Optional[str] = None
     target_class_path_terms_validity: Optional[List[TermValidityResponse]] = None
     target_property_path: Optional[str] = None
@@ -130,6 +132,7 @@ class ConceptualMappingRuleState(ObjectState):
     max_sdk_version: Optional[str] = None
     source_structural_element: Optional[StructuralElementState] = None
     mapping_groups: Optional[List[MappingGroupState]] = None
+    xpath_condition: Optional[str] = None
     target_class_path: Optional[str] = None
     target_property_path: Optional[str] = None
     triple_map_fragment: Optional[TripleMapFragmentState] = None
@@ -160,6 +163,7 @@ class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
     max_sdk_version: Optional[str] = None
     source_structural_element: Optional[Link[StructuralElement]] = None
     mapping_groups: Optional[List[Link[MappingGroup]]] = None
+    xpath_condition: Optional[str] = None
     target_class_path: Optional[str] = None
     target_class_path_terms_validity: Optional[List[TermValidityResponse]] = None
     target_property_path: Optional[str] = None
@@ -194,6 +198,7 @@ class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
             source_structural_element=(
                 await source_structural_element.get_state()
             ) if source_structural_element else None,
+            xpath_condition=self.xpath_condition,
             target_class_path=self.target_class_path,
             target_property_path=self.target_property_path,
             triple_map_fragment=(

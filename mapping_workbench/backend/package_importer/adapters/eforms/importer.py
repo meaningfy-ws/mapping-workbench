@@ -97,6 +97,7 @@ class EFormsPackageImporter(PackageImporterABC):
 
             rule.min_sdk_version = mono_rule.min_sdk_version
             rule.max_sdk_version = mono_rule.max_sdk_version
+            rule.xpath_condition = mono_rule.xpath_condition
             rule.target_class_path = mono_rule.class_path
             rule.target_property_path = mono_rule.property_path
             rule.status = mono_rule.status
