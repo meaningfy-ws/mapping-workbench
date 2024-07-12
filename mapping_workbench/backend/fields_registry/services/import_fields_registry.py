@@ -36,16 +36,16 @@ async def import_eforms_fields(eforms_fields_content: dict, project_link: Link[D
     id_to_hash_mapping = {}
 
     for eforms_node in eforms_sdk_fields.xml_structure:
-
-        new_structural_node = StructuralElement(id=eforms_node.generate_hash_id(),
-                                                sdk_element_id=eforms_node.id,
-                                                absolute_xpath=eforms_node.xpath_absolute,
-                                                relative_xpath=eforms_node.xpath_relative,
-                                                repeatable=eforms_node.repeatable,
-                                                parent_node_id=eforms_node.parent_id,
-                                                project=project_link,
-                                                element_type="node"
-                                                )
+        new_structural_node = StructuralElement(
+            id=eforms_node.generate_hash_id(),
+            sdk_element_id=eforms_node.id,
+            absolute_xpath=eforms_node.xpath_absolute,
+            relative_xpath=eforms_node.xpath_relative,
+            repeatable=eforms_node.repeatable,
+            parent_node_id=eforms_node.parent_id,
+            project=project_link,
+            element_type="node"
+        )
         id_to_hash_mapping[eforms_node.id] = new_structural_node.id
         old_structural_node = await StructuralElement.find_one(
             StructuralElement.id == new_structural_node.id,
@@ -60,18 +60,19 @@ async def import_eforms_fields(eforms_fields_content: dict, project_link: Link[D
             await new_structural_node.save()
 
     for eforms_field in eforms_sdk_fields.fields:
-        new_structural_field = StructuralElement(id=eforms_field.generate_hash_id(),
-                                                 sdk_element_id=eforms_field.id,
-                                                 absolute_xpath=eforms_field.xpath_absolute,
-                                                 relative_xpath=eforms_field.xpath_relative,
-                                                 repeatable=eforms_field.repeatable.value,
-                                                 name=eforms_field.name,
-                                                 bt_id=eforms_field.bt_id,
-                                                 value_type=eforms_field.value_type,
-                                                 legal_type=eforms_field.legal_type,
-                                                 parent_node_id=eforms_field.parent_node_id,
-                                                 project=project_link
-                                                 )
+        new_structural_field = StructuralElement(
+            id=eforms_field.generate_hash_id(),
+            sdk_element_id=eforms_field.id,
+            absolute_xpath=eforms_field.xpath_absolute,
+            relative_xpath=eforms_field.xpath_relative,
+            repeatable=eforms_field.repeatable.value,
+            name=eforms_field.name,
+            bt_id=eforms_field.bt_id,
+            value_type=eforms_field.value_type,
+            legal_type=eforms_field.legal_type,
+            parent_node_id=eforms_field.parent_node_id,
+            project=project_link
+        )
         id_to_hash_mapping[eforms_field.id] = new_structural_field.id
         old_structural_field = await StructuralElement.find_one(
             StructuralElement.id == new_structural_field.id,

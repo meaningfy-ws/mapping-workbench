@@ -35,8 +35,9 @@ class EFormsNode(BaseModel):
     repeatable: bool
 
     def generate_hash_id(self):
-        fields_to_hash = [self.id, self.xpath_absolute, self.xpath_relative, self.repeatable,
-                          self.parent_id]
+        fields_to_hash = [
+            self.sdk_element_id, self.xpath_absolute, self.xpath_relative, self.repeatable, self.parent_id
+        ]
         str_content = "_".join(map(str, fields_to_hash))
         return str(hashlib.sha1(str_content.encode("utf-8")).hexdigest())
 
