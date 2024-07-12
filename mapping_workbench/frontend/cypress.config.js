@@ -27,7 +27,7 @@ module.exports = defineConfig({
         "cypress/e2e/projects.feature",
         "cypress/e2e/ontologyFiles.feature",
         "cypress/e2e/schemaFiles.feature",
-        "cypress/e2e/fieldsRegistry.feature",
+        "cypress/e2e/fieldsList.feature",
         "cypress/e2e/mappingPackages.feature",
         "cypress/e2e/fieldsTree.feature",
         "cypress/e2e/transformTestData.feature",
