@@ -141,7 +141,6 @@ export const ListTableTripleMapFragment = (props) => {
         const tripleMapFragmentId = tripleMapFragment?._id ?? null;
         values['id'] = item._id;
         values['project'] = sessionApi.getSessionProject();
-        values['source_structural_element'] = item.source_structural_element?.id;
         values['triple_map_fragment'] = tripleMapFragmentId;
         await conceptualMappingRulesApi.updateItem(values);
         setRuleTripleMapFragment(tripleMapFragmentId);

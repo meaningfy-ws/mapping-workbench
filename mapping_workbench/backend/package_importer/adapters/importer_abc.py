@@ -1,14 +1,9 @@
+from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Dict, Tuple
-from abc import ABC, abstractmethod
 
-from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule, \
-    ConceptualMappingRuleComment
-from mapping_workbench.backend.conceptual_mapping_rule.services.data import get_conceptual_mapping_rule_by_key
-from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
-from mapping_workbench.backend.fields_registry.services.data import get_structural_element_by_unique_fields
+from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
-from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroup
 from mapping_workbench.backend.package_importer.models.imported_mapping_suite import ImportedMappingSuite
 from mapping_workbench.backend.package_validator.models.test_data_validation import CMRuleSDKElement
 from mapping_workbench.backend.package_validator.services.sparql_cm_assertions import SPARQL_CM_ASSERTIONS_SUITE_TITLE, \
