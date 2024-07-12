@@ -96,7 +96,6 @@ class ConceptualMappingRuleCreateIn(ConceptualMappingRuleIn):
     """
 
     """
-    source_structural_element: Link[StructuralElement]
 
 
 class ConceptualMappingRuleUpdateIn(ConceptualMappingRuleIn):
