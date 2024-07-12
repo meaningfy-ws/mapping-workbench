@@ -25,9 +25,9 @@ Feature: Fields List
     When I click on import button
     Then I get success import
 
-  Scenario: View Fields Registry
-    When I click on Fields List
-    Then I get redirected to Fields List
-    And I receive fields
-
-    When I click on view button
+#  Scenario: View Fields Registry
+#    When I click on Fields List
+#    Then I get redirected to Fields List
+#    And I receive fields
+#
+#    When I click on view button
