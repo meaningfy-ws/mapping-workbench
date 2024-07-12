@@ -28,7 +28,7 @@ async def import_eforms_fields(eforms_fields_content: dict, project_link: Link[D
     """
 
     """
-
+    project_id: str = str(project_link.to_ref().id)
     eforms_sdk_fields = EFormsSDKFields(**eforms_fields_content)
 
     eforms_sdk_version = eforms_sdk_fields.sdk_version
@@ -37,7 +37,7 @@ async def import_eforms_fields(eforms_fields_content: dict, project_link: Link[D
 
     for eforms_node in eforms_sdk_fields.xml_structure:
         new_structural_node = StructuralElement(
-            id=eforms_node.generate_hash_id(),
+            id=eforms_node.generate_hash_id(project_id),
             sdk_element_id=eforms_node.id,
             absolute_xpath=eforms_node.xpath_absolute,
             relative_xpath=eforms_node.xpath_relative,
@@ -61,7 +61,7 @@ async def import_eforms_fields(eforms_fields_content: dict, project_link: Link[D
 
     for eforms_field in eforms_sdk_fields.fields:
         new_structural_field = StructuralElement(
-            id=eforms_field.generate_hash_id(),
+            id=eforms_field.generate_hash_id(project_id),
             sdk_element_id=eforms_field.id,
             absolute_xpath=eforms_field.xpath_absolute,
             relative_xpath=eforms_field.xpath_relative,
