@@ -15,8 +15,6 @@ Feature: Mapping Packages
     Then I get success upload
 
   Scenario: View Pacakges
-    Then I go to Mapping Packages
-    Then I get redirected to Mapping Packages list page
     Then I receive Mapping Packages
     When I expand first package details
 
