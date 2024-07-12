@@ -91,6 +91,9 @@ async def test_import_eforms_mapping_package(dummy_project, dummy_structural_ele
 
     await check_imported_data(dummy_project, eforms_package, 'package_eforms_16_v1.2')
 
+    assert eforms_package.start_date is None
+    assert eforms_package.end_date is None
+
     await dummy_structural_element.delete()
 
     await clear_project_data(dummy_project, PackageType.EFORMS)
@@ -104,6 +107,9 @@ async def test_import_standard_mapping_package(dummy_project, dummy_structural_e
     )
 
     await check_imported_data(dummy_project, standard_package, 'package_F03')
+
+    assert standard_package.start_date == '2014-01-01'
+    assert standard_package.end_date is None
 
     await clear_project_data(dummy_project, PackageType.STANDARD)
     await check_cleared_imported_data(dummy_project)

@@ -59,7 +59,8 @@ def import_mapping_metadata_base(
     metadata_df = pd.read_excel(conceptual_mappings_file_path, sheet_name=METADATA_SHEET_NAME)
     metadata_df.replace({np.nan: None}, inplace=True)
     metadata_dict: Dict[Any, Any] = {
-        field: (str(value) if value else None) for field, value in metadata_df[metadata_df_keys].itertuples(index=False) if field
+        field: (str(value) if value is not None else None) for field, value in
+        metadata_df[metadata_df_keys].itertuples(index=False) if field
     }
 
     if list_column_names:
