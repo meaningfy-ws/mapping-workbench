@@ -35,7 +35,7 @@ class EFormsMappingConceptualRule(BaseModel):
     bt_id: Optional[str] = Field(None, alias="BT ID")
     mapping_group_id: Optional[str] = Field(None, alias="Mapping Group ID")
     absolute_xpath: str = Field(..., alias="Absolute XPath")
-    xpath_condition: str = Field(..., alias="XPath Condition")
+    xpath_condition: Optional[str] = Field(..., alias="XPath Condition")
     class_path: Optional[str] = Field(None, alias="Class Path")
     property_path: Optional[str] = Field(None, alias="Property Path")
     status: Optional[str] = Field(None, alias="Status")

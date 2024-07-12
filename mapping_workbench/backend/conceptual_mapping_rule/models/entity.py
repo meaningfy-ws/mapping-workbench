@@ -96,12 +96,14 @@ class ConceptualMappingRuleCreateIn(ConceptualMappingRuleIn):
     """
 
     """
+    source_structural_element: Link[StructuralElement]
 
 
 class ConceptualMappingRuleUpdateIn(ConceptualMappingRuleIn):
     """
 
     """
+    source_structural_element: Optional[Link[StructuralElement]] = None
 
 
 class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema):

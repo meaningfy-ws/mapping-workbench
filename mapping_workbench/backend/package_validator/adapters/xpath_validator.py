@@ -6,6 +6,7 @@ from xml.etree import ElementTree
 from pydantic import validate_call
 from saxonche import PySaxonProcessor, PySaxonApiError, PyXPathProcessor, PyXdmNode, PyXdmValue
 
+from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.package_validator.adapters.data_validator import TestDataValidator
 from mapping_workbench.backend.package_validator.models.xpath_validation import XPathAssertionEntry
 
@@ -53,8 +54,12 @@ class XPATHValidator(TestDataValidator):
             xpath = self.get_ns_tag(parent)
             if xpath is not None:
                 path_parts.insert(0, xpath)
-            parent = parent.get_parent()
+            print("K :: XPATH :: " + type(parent).__name__ + " :: " + str(path_parts))
 
+            parent = parent.get_parent()
+            print("K :: XPATH2 :: " + type(parent).__name__ + " :: " + str(path_parts))
+
+        print("K :: XPATH3 :: " + str(path_parts))
         return '/'.join(path_parts)
 
     @classmethod
@@ -84,18 +89,19 @@ class XPATHValidator(TestDataValidator):
     def check_xpath_expression(self, xpath_expression: str) -> Union[PyXdmValue, None]:
         try:
             return self.xp.evaluate(xpath_expression)
-        except PySaxonApiError as e:
+        except PySaxonApiError | Exception as e:
+            mwb_logger.log_all_error(str(e), str(e))
             return None
 
     def get_unique_xpaths(self, xpath_expression) -> List[XPathAssertionEntry]:
         """Get unique XPaths that cover elements matching e XPath expression."""
         xpath_assertions = []
-
         matching_elements = self.check_xpath_expression(xpath_expression)
         if matching_elements and matching_elements.size > 0:
             for element in matching_elements:
                 xpath_node: PyXdmNode = element.get_node_value()
                 xpath = self.get_node_xpath(xpath_node)
+
                 if xpath:
                     xpath_assertions.append(XPathAssertionEntry(
                         xpath=xpath,
