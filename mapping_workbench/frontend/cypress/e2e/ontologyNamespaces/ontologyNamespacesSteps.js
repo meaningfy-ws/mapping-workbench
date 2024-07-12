@@ -1,7 +1,7 @@
 import { Given, When, Then} from 'cypress-cucumber-preprocessor/steps'
 
 const {username, password, homeURL, appURLPrefix, projectName} = Cypress.env()
-const namespaceName = 'test_namespace'
+const namespaceName = 'http://test.org/'
 let sessionProject = ''
 
 Given('Session Login', () => {
@@ -23,31 +23,29 @@ Then('I get success select', () => {
 
 //add Ontology Namespace
 
-When('I expand Ontology', () => {
-    cy.get('#nav_ontology').click()
-})
-Then('I click on Namespaces', () => {
+When('I click on Ontology Terms', () => {
     cy.intercept('GET', appURLPrefix + 'ontology/namespaces*').as('get')
-    cy.get('#nav_ontology_namespaces').click()
+    cy.get('#nav_ontology_terms').click()
 })
 
-Then('I get redirected to Ontology Namespaces', () => {
-    cy.url().should('include','ontology-namespaces')
+Then('I get redirected to Ontology Terms', () => {
+    cy.url().should('include','ontology')
     cy.wait('@get').its('response.statusCode').should('eq', 200)
 })
 
-Then('I click on add button', () => {
-    cy.get('#add_button').click()
+Then('I click on add namespace button', () => {
+    cy.get('#add_namespace_button').click()
 })
 
 Then('I get redirected to create page', () => {
-    cy.url().should('include','ontology-namespaces/create') // => true
+    cy.url().should('include','ontology-namespaces-custom/create') // => true
 })
 
 
 Then('I enter name', () => {
-    cy.intercept('POST', appURLPrefix + "ontology/namespaces").as('create')
-    cy.get("input[name=prefix]").clear().type(namespaceName)
+    cy.intercept('POST', appURLPrefix + "ontology/namespaces_custom*").as('create')
+    cy.get("input[name=prefix]").clear().type('prefix')
+    cy.get("input[name=uri]").clear().type(namespaceName)
     cy.get("button[type=submit]").click()
 })
 
@@ -59,7 +57,7 @@ Then('I successfully create Ontology Namespace', () => {
 // update
 
 Then('I search for Ontology Namespaces', () => {
-    cy.get('input[type=text]').clear().type(namespaceName+'{enter}')
+    cy.get('input[type=text]').eq(1).clear().type('prefix'+'{enter}')
 })
 
 Then('I receive Ontology Namespaces', () => {
@@ -75,8 +73,8 @@ Then('I get redirected to edit page', () => {
 })
 
 Then('I enter updated name', () => {
-    cy.intercept('PATCH', appURLPrefix + 'ontology/namespaces/*').as('update')
-    cy.get("input[name=prefix]").clear().type(namespaceName + 1 +'{enter}')
+    cy.intercept('PATCH', appURLPrefix + 'ontology/namespaces_custom/*').as('update')
+    cy.get("input[name=prefix]").clear().type('prefix' + 1 +'{enter}')
 })
 
 Then('I get success update', () => {
@@ -84,11 +82,11 @@ Then('I get success update', () => {
 })
 
 Then('I search for updated Ontology Namespaces', () => {
-    cy.get('input[type=text]').clear().type(namespaceName+1+'{enter}')
+    cy.get('input[type=text]').eq(1).clear().type('prefix'+1+'{enter}')
 })
 
 Then('I click delete button', () => {
-    cy.intercept('DELETE',appURLPrefix + 'ontology/namespaces/*').as('delete')
+    cy.intercept('DELETE',appURLPrefix + 'ontology/namespaces_custom/*').as('delete')
     cy.get('#delete_button').click()
     cy.get('#yes_dialog_button').click()
 })
