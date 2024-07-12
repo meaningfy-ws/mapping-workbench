@@ -45,6 +45,7 @@ Feature: Ontology Terms
 
   Scenario: View Ontology Term
     When I click on Ontology Terms
+
     Then I get redirected to Ontology Terms
 
     Then I search for updated Ontology Terms

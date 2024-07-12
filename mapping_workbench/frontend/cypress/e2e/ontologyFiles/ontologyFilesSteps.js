@@ -1,7 +1,7 @@
 import { Given, When, Then} from 'cypress-cucumber-preprocessor/steps'
 
 const {username, password, homeURL, appURLPrefix, projectName} = Cypress.env()
-const ontology_name = 'test_ontology'
+const ontology_file_name = 'test_ontology_file'
 let sessionProject = ''
 
 Given('Session Login', () => {
@@ -21,73 +21,44 @@ Then('I get success select', () => {
     cy.window().then(win => sessionProject = win.sessionStorage.getItem('sessionProject'))
 })
 
-//add ontology
 
-Then('I click on Ontology', () => {
-    cy.intercept('GET', appURLPrefix + 'ontology_files/*').as('get')
+Then('I click on Ontology Files', () => {
+    cy.intercept('GET', appURLPrefix + 'ontology/ontology_files/*').as('get')
     cy.get('#nav_ontology_files').click()
 })
 
-Then('I get redirected to Ontologies', () => {
+Then('I get redirected to Ontology Files', () => {
     cy.url().should('include','ontology-files')
     cy.wait('@get').its('response.statusCode').should('eq', 200)
 })
 
-Then('I click on add button', () => {
-    cy.get('#add_button').click()
+//upload schema file
+Then('I click on upload button', () => {
+    cy.get('#import_button').click()
 })
 
-Then('I get redirected to create page', () => {
-    cy.url().should('include','ontology-file-collections/create') // => true
+Then('I select file to upload', () => {
+    cy.get('.MuiBox-root > input').selectFile(ontology_file_name+'.ttl', { force: true })
 })
 
-
-Then('I enter name', () => {
-    cy.intercept('POST', appURLPrefix + "ontology_file_collections").as('create')
-    cy.get("input[name=title]").clear().type(ontology_name)
-    cy.get("button[type=submit]").click()
+Then('I click on ok upload button', () => {
+    cy.intercept('POST', appURLPrefix + 'ontology/ontology_files/*').as('upload')
+    cy.get('#upload_button').click()
 })
 
-
-Then('I successfully create ontology', () => {
-    cy.wait('@create').its('response.statusCode').should('eq', 201)
+Then('I get success upload', () => {
+    cy.wait('@upload').its('response.statusCode').should('eq',201)
 })
 
-// update
-
-Then('I search for ontology', () => {
-    cy.get('input[type=text]').clear().type(ontology_name+'{enter}')
-})
-
-Then('I receive ontology', () => {
-    cy.wait('@get').its('response.statusCode').should('eq', 200)
-})
-
-Then('I click edit button', () => {
-    cy.get('#edit_button').click()
-})
-
-Then('I get redirected to edit page', () => {
-    cy.url().should('include','/edit') // => true
-})
-
-Then('I enter updated name', () => {
-    cy.intercept('PATCH', appURLPrefix + 'ontology_file_collections/*').as('update')
-    cy.get("input[name=title]").clear().type(ontology_name + 1 +'{enter}')
-})
-
-Then('I get success update', () => {
-    cy.wait('@update').its('response.statusCode').should('eq', 200)
-})
-
-Then('I search for updated ontology', () => {
-    cy.get('input[type=text]').clear().type(ontology_name+1+'{enter}')
+//DELETE
+Then('I search for Ontology Files', () => {
+    cy.get('input[type=text]').clear().type(ontology_file_name+'{enter}')
 })
 
 Then('I click delete button', () => {
-    cy.intercept('DELETE',appURLPrefix + 'ontology_file_collections/*').as('delete')
-    cy.get('#delete_button').click()
-    cy.get('#yes_dialog_button').click()
+    cy.intercept('DELETE',appURLPrefix + 'ontology/ontology_files/' + ontology_file_name +'.ttl*').as('delete')
+    cy.get('#menu_button').click()
+    cy.get('#delete_menu_item').click()
 })
 
 Then('I get success delete', () => {

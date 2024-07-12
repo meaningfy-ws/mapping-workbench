@@ -1,7 +1,6 @@
-Feature: Transform Test Data
+Feature: Schema Files
 
-  As a valid user want to transform test data
-
+  As a valid user want to interact with Schema Files
 
   Background:
     Given Session Login
@@ -23,7 +22,6 @@ Feature: Transform Test Data
     Then I select file to upload
     Then I click on ok upload button
     Then I get success upload
-
 
   Scenario: Delete Schema Files
     Then I click on Schema Files

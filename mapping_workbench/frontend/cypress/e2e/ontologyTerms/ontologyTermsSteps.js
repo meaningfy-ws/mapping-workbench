@@ -95,16 +95,16 @@ Then('I get success update', () => {
 //VIEW
 
 Then('I click on view button', () => {
+    cy.intercept('GET', appURLPrefix + 'ontology/terms/*').as('get_data')
     cy.get('#view_button').click()
 })
 
 Then('I get redirected to view page', () => {
-    cy.intercept('GET', appURLPrefix + 'ont')
     cy.url().should('include','/view')
 })
 
 Then('I receive Ontology Term data', () => {
-    cy.wait('@get').its('response.statusCode').should('eq', 200)
+    cy.wait('@get_data').its('response.statusCode').should('eq', 200)
 })
 
 //DELETE

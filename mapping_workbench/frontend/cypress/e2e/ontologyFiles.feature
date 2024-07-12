@@ -1,10 +1,12 @@
-Feature: Transform Test Data
+Feature: Ontology Files
 
-  As a valid user want to transform test data
+  As a valid user want to interact with Schema Files
 
-  Scenario: Select Project
+  Background:
     Given Session Login
     Then Go Home
+
+  Scenario: Select Project
     Then I get redirected to projects list page
     Then I search for project
 
@@ -12,38 +14,19 @@ Feature: Transform Test Data
     Then I get success select
     Then I get redirected to projects list page
 
-  Scenario: Add Ontology
-    Given Session Login
-    Then Go Home
-    Then I click on Ontology
-    Then I get redirected to Ontologies
+  Scenario: Upload Ontology Files
+    Then I click on Ontology Files
+    Then I get redirected to Ontology Files
 
-    When I click on add button
-    Then I get redirected to create page
-    Then I enter name
-    Then I successfully create ontology
+    When I click on upload button
+    Then I select file to upload
+    Then I click on ok upload button
+    Then I get success upload
 
-  Scenario: Update Ontology
-    Given Session Login
-    Then Go Home
-    Then I click on Ontology
-    Then I get redirected to Ontologies
+  Scenario: Delete Ontology Files
+    Then I click on Ontology Files
+    Then I get redirected to Ontology Files
 
-    Then I search for ontology
-    Then I receive ontology
-    Then I click edit button
-    Then I get redirected to edit page
-
-    When I enter updated name
-    Then I get success update
-
-  Scenario: Delete Ontology
-    Given Session Login
-    Then Go Home
-    Then I click on Ontology
-    Then I get redirected to Ontologies
-
-    Then I search for updated ontology
-    Then I receive ontology
+    Then I search for Ontology Files
     Then I click delete button
     Then I get success delete
