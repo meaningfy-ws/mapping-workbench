@@ -1,6 +1,5 @@
 from typing import List
 
-from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState
 from mapping_workbench.backend.package_validator.adapters.xpath_validator import XPATHValidator
 from mapping_workbench.backend.package_validator.models.xpath_validation import XPathAssertion, \
@@ -101,7 +100,6 @@ def update_xpath_assertion_test_data_entry_xpaths(
 
 def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingPackageState):
     test_data_suites: List[TestDataSuiteState] = mapping_package_state.test_data_suites
-    count = 0
     conceptual_mapping_rule_states = mapping_package_state.conceptual_mapping_rules
     for test_data_suite in test_data_suites:
         test_data_states: List[TestDataState] = test_data_suite.test_data_states
@@ -120,10 +118,7 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
                     xpaths: List[XPathAssertionEntry] = []
                     try:
                         xpaths = xpath_validator.validate(cm_xpath)
-                        mwb_logger.log_all_info(f"KG :: {len(xpaths)}")
                     except Exception as e:
-                        mwb_logger.log_all_error(f"K :: {count} :: {str(e)}", str(e))
-                        count += 1
                         validation_message = str(e)
 
                     update_xpath_assertion(

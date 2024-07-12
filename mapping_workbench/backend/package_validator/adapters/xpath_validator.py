@@ -4,7 +4,7 @@ from typing import List, Any, Union
 from xml.etree import ElementTree
 
 from pydantic import validate_call
-from saxonche import PySaxonProcessor, PySaxonApiError, PyXPathProcessor, PyXdmNode, PyXdmValue
+from saxonche import PySaxonProcessor, PySaxonApiError, PyXPathProcessor, PyXdmNode, PyXdmValue, XdmNodeKind
 
 from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.package_validator.adapters.data_validator import TestDataValidator
@@ -31,10 +31,11 @@ class XPATHValidator(TestDataValidator):
         return self.get_unique_xpaths(xpath_expression)
 
     def get_ns_tag(self, node: PyXdmNode) -> Union[str, None]:
-        if not node or node.name is None:
+        if node is None or node.name is None:
             return None
         xpath = node.local_name
         match = re.match(r"Q{(.*)}(.*)", node.name)
+
         if match:
             ns = match.group(1)
             tag = match.group(2)
@@ -50,21 +51,22 @@ class XPATHValidator(TestDataValidator):
             return None
         path_parts = [xpath]
         parent = node.get_parent()
-        while isinstance(parent, PyXdmNode):
+        while parent and isinstance(parent, PyXdmNode) and parent.name:
             xpath = self.get_ns_tag(parent)
             if xpath is not None:
                 path_parts.insert(0, xpath)
-            print("K :: XPATH :: " + type(parent).__name__ + " :: " + str(path_parts))
-
             parent = parent.get_parent()
-            print("K :: XPATH2 :: " + type(parent).__name__ + " :: " + str(path_parts))
 
-        print("K :: XPATH3 :: " + str(path_parts))
         return '/'.join(path_parts)
 
     @classmethod
     def get_node_text_value(cls, node: PyXdmNode) -> Union[str, None]:
-        return node.get_string_value() if len(node.children) == 1 else None
+        if (
+                node.node_kind == XdmNodeKind.ATTRIBUTE
+                or len(node.children) == 1
+        ):
+            return node.get_string_value()
+        return None
 
     def extract_namespaces(self, xml_content):
         xml_file = io.StringIO(xml_content)
@@ -100,8 +102,8 @@ class XPATHValidator(TestDataValidator):
         if matching_elements and matching_elements.size > 0:
             for element in matching_elements:
                 xpath_node: PyXdmNode = element.get_node_value()
-                xpath = self.get_node_xpath(xpath_node)
 
+                xpath = self.get_node_xpath(xpath_node)
                 if xpath:
                     xpath_assertions.append(XPathAssertionEntry(
                         xpath=xpath,
