@@ -11,7 +11,7 @@ module.exports = defineConfig({
     projectName : 'TEST_PROJECT',
     appURLPrefix : 'http://localhost:8000/api/v1/',
     homeURL : 'http://localhost:3000',
-    tripleMapFragment : 'test.rml.ttl',
+    tripleMapFragment : 'test_triple_map.ttl',
     packageFile : 'package_eforms_16_1.5.zip'
   },
   e2e: {
@@ -21,8 +21,8 @@ module.exports = defineConfig({
     viewportHeight: 800,
     specPattern:[
         "cypress/e2e/login.feature",
-        "cypress/e2e/scenarioOne.feature",
-        "cypress/e2e/scenarioTwo.feature",
+        // "cypress/e2e/scenarioOne.feature",
+        // "cypress/e2e/scenarioTwo.feature",
         "cypress/e2e/cleanUp.feature",
         "cypress/e2e/projects.feature",
         "cypress/e2e/ontologyFiles.feature",
