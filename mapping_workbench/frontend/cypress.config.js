@@ -1,11 +1,13 @@
 const browserify = require('@cypress/browserify-preprocessor');
 const cucumber = require('cypress-cucumber-preprocessor').default;
 const { defineConfig } = require('cypress')
+require('dotenv').config()
+
 
 module.exports = defineConfig({
   env: {
-    username : 'admin@mw.com',
-    password : 'p4$$',
+    username: process.env.NEXT_APP_USR,
+    password : process.env.NEXT_APP_PWD,
     gitUrl : "https://github.com/OP-TED/eForms-SDK",
     branchVersion : "1.9.1",
     projectName : 'TEST_PROJECT',
@@ -64,3 +66,12 @@ module.exports = defineConfig({
     },
   }
 });
+
+
+// module.exports = (on, config) => {
+//   // copy any needed variables from process.env to config.env
+//   config.env.username = process.env.USER
+//
+//   // do not forget to return the changed config object!
+//   return config
+// }
