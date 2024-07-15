@@ -34,8 +34,7 @@ async def test_route_get_cm_rule_editorial_notes(
     conceptual_mapping_rule_test_client: TestClient,
 ):
     # given
-    user_token = await get_new_user_token(dummy_user)
-    auth_header = {"Authorization": f"Bearer {user_token}"}  # TODO: remove if the endpoint is expected to be accessed without auth
+    await dummy_user.save()
     await dummy_project.save()
     dummy_conceptual_mapping_rule.project = Project.link_from_id(dummy_project.id)
     await dummy_conceptual_mapping_rule.save()
@@ -46,9 +45,7 @@ async def test_route_get_cm_rule_editorial_notes(
         params={
             "project_id": dummy_project.id,
             "cm_rule_id": dummy_conceptual_mapping_rule.id,
-            "user": dummy_user.id,
         },
-        # headers=auth_header,
     )
 
     assert response.status_code == status.HTTP_200_OK
@@ -65,7 +62,6 @@ async def test_route_get_cm_rule_editorial_notes(
             "project_id": dummy_project.id,
             "cm_rule_id": dummy_conceptual_mapping_rule.id,
         },
-        # headers=auth_header,
     )
 
     # then
@@ -127,8 +123,7 @@ async def test_route_get_cm_rule_feedback_notes(
     conceptual_mapping_rule_test_client: TestClient,
 ):
     # given
-    user_token = await get_new_user_token(dummy_user)
-    auth_header = {"Authorization": f"Bearer {user_token}"}
+    await dummy_user.save()
     await dummy_project.save()
     dummy_conceptual_mapping_rule.project = Project.link_from_id(dummy_project.id)
     await dummy_conceptual_mapping_rule.save()
@@ -139,9 +134,7 @@ async def test_route_get_cm_rule_feedback_notes(
         params={
             "project_id": dummy_project.id,
             "cm_rule_id": dummy_conceptual_mapping_rule.id,
-            "user": dummy_user.id,
         },
-        # headers=auth_header,
     )
 
     assert response.status_code == status.HTTP_200_OK
@@ -158,7 +151,6 @@ async def test_route_get_cm_rule_feedback_notes(
             "project_id": dummy_project.id,
             "cm_rule_id": dummy_conceptual_mapping_rule.id,
         },
-        # headers=auth_header,
     )
 
     # then
@@ -220,8 +212,7 @@ async def test_route_get_cm_rule_mapping_notes(
     conceptual_mapping_rule_test_client: TestClient,
 ):
     # given
-    user_token = await get_new_user_token(dummy_user)
-    auth_header = {"Authorization": f"Bearer {user_token}"}
+    await dummy_user.save()
     await dummy_project.save()
     dummy_conceptual_mapping_rule.project = Project.link_from_id(dummy_project.id)
     await dummy_conceptual_mapping_rule.save()
@@ -232,9 +223,7 @@ async def test_route_get_cm_rule_mapping_notes(
         params={
             "project_id": dummy_project.id,
             "cm_rule_id": dummy_conceptual_mapping_rule.id,
-            "user": dummy_user.id,
         },
-        # headers=auth_header,
     )
 
     assert response.status_code == status.HTTP_200_OK
@@ -251,7 +240,6 @@ async def test_route_get_cm_rule_mapping_notes(
             "project_id": dummy_project.id,
             "cm_rule_id": dummy_conceptual_mapping_rule.id,
         },
-        # headers=auth_header,
     )
 
     # then
@@ -312,7 +300,6 @@ async def test_route_get_list_cm_rule_statuses(
     # when
     response = conceptual_mapping_rule_test_client.get(
         url=path_to_test,
-        # headers=auth_header,
     )
 
     # then
@@ -323,14 +310,11 @@ async def test_route_get_list_cm_rule_statuses(
 @pytest.mark.asyncio
 async def test_route_get_cm_rule_status(
     dummy_project: Project,
-    dummy_user: User,
     dummy_conceptual_mapping_rule: ConceptualMappingRule,
     dummy_cm_rule_status: CMRuleStatus,
     conceptual_mapping_rule_test_client: TestClient,
 ):
     # given
-    user_token = await get_new_user_token(dummy_user)
-    auth_header = {"Authorization": f"Bearer {user_token}"}
     await dummy_project.save()
     dummy_conceptual_mapping_rule.project = Project.link_from_id(dummy_project.id)
     await dummy_conceptual_mapping_rule.save()
@@ -342,7 +326,6 @@ async def test_route_get_cm_rule_status(
             "project_id": dummy_project.id,
             "cm_rule_id": dummy_conceptual_mapping_rule.id,
         },
-        # headers=auth_header,
     )
     default_status = CMRuleStatus(response.json())
     assert default_status == CMRuleStatus.UNDER_DEVELOPMENT
@@ -358,7 +341,6 @@ async def test_route_get_cm_rule_status(
             "project_id": dummy_project.id,
             "cm_rule_id": dummy_conceptual_mapping_rule.id,
         },
-        # headers=auth_header,
     )
 
     # then
@@ -371,14 +353,11 @@ async def test_route_get_cm_rule_status(
 @pytest.mark.asyncio
 async def test_route_set_cm_rule_status(
     dummy_project: Project,
-    dummy_user: User,
     dummy_conceptual_mapping_rule: ConceptualMappingRule,
     dummy_cm_rule_status: CMRuleStatus,
     conceptual_mapping_rule_test_client: TestClient,
 ):
     # given
-    user_token = await get_new_user_token(dummy_user)
-    auth_header = {"Authorization": f"Bearer {user_token}"}
     await dummy_project.save()
     dummy_conceptual_mapping_rule.project = Project.link_from_id(dummy_project.id)
     await dummy_conceptual_mapping_rule.save()
@@ -392,7 +371,6 @@ async def test_route_set_cm_rule_status(
             "cm_rule_id": dummy_conceptual_mapping_rule.id,
             "cm_rule_status": dummy_cm_rule_status.value,
         },
-        # headers=auth_header, # FIXME: request succeeds without auth_header
     )
 
     # then
@@ -405,7 +383,6 @@ async def test_route_set_cm_rule_status(
 @pytest.mark.asyncio
 async def test_route_cm_rules_by_structural_element(
     dummy_project: Project,
-    # dummy_user: User,
     dummy_structural_element: StructuralElement,
     dummy_conceptual_mapping_rule: ConceptualMappingRule,
     conceptual_mapping_rule_test_client: TestClient,
@@ -422,7 +399,6 @@ async def test_route_cm_rules_by_structural_element(
             "project_id": dummy_project.id,
             "structural_element_id": dummy_structural_element.id,
         },
-        # headers=auth_header,
     )
     assert response.status_code == status.HTTP_200_OK
 
@@ -436,7 +412,7 @@ async def test_route_cm_rules_by_structural_element(
     dummy_conceptual_mapping_rule.source_structural_element = (
         StructuralElement.link_from_id(dummy_structural_element.id)
     )
-    dummy_conceptual_mapping_rule.save()
+    await dummy_conceptual_mapping_rule.save()
 
     response = conceptual_mapping_rule_test_client.get(
         url=path_to_test,
@@ -444,7 +420,6 @@ async def test_route_cm_rules_by_structural_element(
             "project_id": dummy_project.id,
             "structural_element_id": dummy_structural_element.id,
         },
-        # headers=auth_header,
     )
 
     # then
