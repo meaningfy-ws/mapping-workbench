@@ -137,4 +137,15 @@
     <xsl:variable name="createdDate" select="'2021-06-01'"/>
     <!--    dct:publisher-->
     <xsl:variable name="publisher" select="'http://publications.europa.eu/resource/authority/corporate-body/PUBL'"/>
+                <!-- _______________________________________________________________________   -->
+    <!--                            RESPEC SECTION                               -->
+    <!-- _______________________________________________________________________   -->
+
+    <xsl:variable name="githubURL" select="'https://github.com/meaningfy-ws/eurovoc-pipelines'"/>
+    <xsl:variable name="respecDescription" select="'Common AP is an Application Profile designed to includes common entities that can be used as a foundational framework for all other APs.'"/>
+    <xsl:variable name="feedbackURL" select="fn:concat($githubURL, '/issues')"/>
+    <xsl:variable name="authors" select="('Author One', 'Author Two')"/>
+    <xsl:variable name="editors" select="('Editor One', 'Editor Two')"/>
+
+
 </xsl:stylesheet>
