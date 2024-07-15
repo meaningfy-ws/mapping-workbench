@@ -7,7 +7,7 @@ require('dotenv').config()
 module.exports = defineConfig({
   env: {
     username: process.env.NEXT_APP_USR,
-    password : process.env.NEXT_APP_PWD,
+    password : process.env.NEXT_APP_PWD.split('\\').join(''),
     gitUrl : "https://github.com/OP-TED/eForms-SDK",
     branchVersion : "1.9.1",
     projectName : 'TEST_PROJECT',
