@@ -179,6 +179,7 @@ class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
     async def get_state(self) -> ConceptualMappingRuleState:
         source_structural_element = await self.source_structural_element.fetch() \
             if self.source_structural_element else None
+
         triple_map_fragment = await self.triple_map_fragment.fetch() if self.triple_map_fragment else None
         sparql_assertions_states = []
         if self.sparql_assertions:
@@ -199,13 +200,13 @@ class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
             max_sdk_version=self.max_sdk_version,
             source_structural_element=(
                 await source_structural_element.get_state()
-            ) if source_structural_element else None,
+            ) if (source_structural_element and isinstance(source_structural_element, StructuralElement)) else None,
             xpath_condition=self.xpath_condition,
             target_class_path=self.target_class_path,
             target_property_path=self.target_property_path,
             triple_map_fragment=(
                 await triple_map_fragment.get_state()
-            ) if triple_map_fragment else None,
+            ) if (triple_map_fragment and isinstance(triple_map_fragment, GenericTripleMapFragment)) else None,
             sparql_assertions=sparql_assertions_states,
             status=self.status,
             mapping_notes=self.mapping_notes,

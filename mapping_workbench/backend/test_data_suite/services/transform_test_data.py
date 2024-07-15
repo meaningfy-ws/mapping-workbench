@@ -8,7 +8,7 @@ from mapping_workbench.backend.config import settings
 from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.resource_collection.models.entity import ResourceFile
 from mapping_workbench.backend.resource_collection.services.data import get_resource_files_for_project
-from mapping_workbench.backend.test_data_suite.adapters.rml_mapper import RMLMapperABC, RMLMapper
+from mapping_workbench.backend.test_data_suite.adapters.rml_mapper import RMLMapperABC, RMLMapper, RMLMapperException
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataFileResource
 from mapping_workbench.backend.test_data_suite.services import DATA_SOURCE_PATH_NAME, \
     TRANSFORMATION_PATH_NAME, MAPPINGS_PATH_NAME, RESOURCES_PATH_NAME
@@ -139,6 +139,8 @@ async def transform_test_data_file_resources(
             rml_mapper=rml_mapper,
             save=True
         )
+    if rml_mapper.errors:
+        raise RMLMapperException(message=('\n' + '\n'.join([error.message for error in rml_mapper.errors])))
 
 
 async def transform_test_data_for_project(

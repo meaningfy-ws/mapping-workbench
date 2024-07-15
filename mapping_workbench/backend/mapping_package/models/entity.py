@@ -173,6 +173,7 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
             Eq(ConceptualMappingRule.refers_to_mapping_package_ids, self.id),
             Eq(ConceptualMappingRule.project, self.project.to_ref())
         ).to_list()
+
         conceptual_mapping_rule_states = [
             await conceptual_mapping_rule.get_state() for conceptual_mapping_rule in conceptual_mapping_rules
         ]
