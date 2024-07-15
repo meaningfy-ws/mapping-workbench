@@ -19,7 +19,6 @@ import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {FileCollectionListSearch} from 'src/sections/app/file-manager/file-collection-list-search';
 import {Upload04 as ImportIcon} from '@untitled-ui/icons-react/build/esm';
 import {TestDataCollectionListTable} from "../../../sections/app/file-manager/test-data-collection-list-table";
-import {FileUploader} from "src/sections/app/file-manager/file-uploader";
 import {useDialog} from "src/hooks/use-dialog";
 import {FileCollectionUploader} from "../../../sections/app/file-manager/file-collection-uploader";
 

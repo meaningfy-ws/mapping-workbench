@@ -240,7 +240,7 @@ export const ListTable = (props) => {
                                                             Message
                                                         </Typography>
                                                         <Divider/>
-                                                        <Typography sx={{pl: 3}}>
+                                                        <Typography sx={{pl: 3, whiteSpace: "pre-wrap"}}>
                                                             {item.exception_message}
                                                         </Typography>
                                                         </>}

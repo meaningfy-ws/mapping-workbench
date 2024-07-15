@@ -24,8 +24,10 @@ TURTLE_SERIALIZATION_FORMAT = SerializationFormat.TURTLE
 class RMLMapperException(Exception):
     """Base class for RML Mapper exceptions"""
 
-    def __init__(self, message=None, error_trace=None):
+    def __init__(self, message=None, error_trace=None, metadata: dict = None):
         super().__init__(message)
+        self.metadata = metadata
+        self.message = message
         self.error_trace = error_trace
         if error_trace:
             rml_mapper_error = error_trace.partition("\n")[0]
@@ -82,7 +84,7 @@ class RMLMapper(RMLMapperABC):
         self.rml_mapper_path = rml_mapper_path
         self.serialization_format = serialization_format
 
-    def execute(self, data_path: Path) -> str:
+    def execute(self, data_path: Path, data_title: str = None) -> str:
         """
         """
         # java -jar ./rmlmapper.jar -m rml.ttl -s turtle  -o output.ttl
@@ -98,11 +100,11 @@ class RMLMapper(RMLMapperABC):
         error = error.decode(encoding="utf-8")
         if error:
             rml_mapper_exception = RMLMapperException(
-                message=str(error),
-                error_trace=error
+                message=error,
+                error_trace=error,
+                metadata={"title": data_title}
             )
             self.errors.append(rml_mapper_exception)
-            error_message = str(rml_mapper_exception)
-            mwb_logger.log_all_error(message="RML Mapper error", stack_trace=error_message)
+            mwb_logger.log_all_error(message="RML Mapper error", stack_trace=str(rml_mapper_exception))
 
         return output.decode(encoding="utf-8")
