@@ -5,6 +5,7 @@ import {sessionApi} from "../../api/session";
 import {useAuth} from "../../hooks/use-auth";
 import {projectsApi as sectionApi} from "../../api/projects";
 import {toastLoad, toastSuccess} from "../../components/app-toast";
+import {paths} from "../../paths";
 
 export const ProjectsProvider = ({children}) => {
     const [state, setState] = useState(initialState);
@@ -43,7 +44,7 @@ export const ProjectsProvider = ({children}) => {
                     setState(prevState => ({...prevState, sessionProject: id}))
                     toastSuccess('Project Selected', toastId);
                 })
-                .finally(() => window.location.reload())
+                .finally(() => window.location.replace(paths.app.projects.index))
     }
 
    const handleDeleteProject = (id) => {
