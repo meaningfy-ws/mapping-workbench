@@ -1,6 +1,7 @@
 from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
+from mapping_workbench.backend.conceptual_mapping_group.models.conceptual_mapping_group import ConceptualMappingGroup
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
 from mapping_workbench.backend.config import settings
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElementsVersionedView, \
@@ -59,7 +60,7 @@ async def init_project_models(mongodb_database: AsyncIOMotorDatabase):
             MappingPackage,
             MappingPackageStateGate,
             MappingRuleRegistry,
-            MappingGroup,
+            #MappingGroup,
             ConceptualMappingRule,
             TripleMapRegistry,
             SpecificTripleMapFragment,
@@ -70,6 +71,7 @@ async def init_project_models(mongodb_database: AsyncIOMotorDatabase):
             StructuralElement,
             StructuralElementsVersionedView,
             XSDFileResource,
-            OntologyFileResource
+            OntologyFileResource,
+            ConceptualMappingGroup,
         ],
     )

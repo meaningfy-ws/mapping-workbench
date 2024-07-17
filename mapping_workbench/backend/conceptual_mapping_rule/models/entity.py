@@ -153,6 +153,7 @@ class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
     mapping_notes: Optional[List[ConceptualMappingRuleComment]] = []
     editorial_notes: Optional[List[ConceptualMappingRuleComment]] = []
     feedback_notes: Optional[List[ConceptualMappingRuleComment]] = []
+    mapping_group: Optional[Link[MappingGroup]] = None
 
     @field_validator('status', 'mapping_notes', 'editorial_notes', 'feedback_notes')
     @classmethod
@@ -164,7 +165,6 @@ class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
     min_sdk_version: Optional[str] = None
     max_sdk_version: Optional[str] = None
     source_structural_element: Optional[Link[StructuralElement]] = None
-    mapping_groups: Optional[List[Link[MappingGroup]]] = None
     xpath_condition: Optional[str] = None
     target_class_path: Optional[str] = None
     target_class_path_terms_validity: Optional[List[TermValidityResponse]] = None
