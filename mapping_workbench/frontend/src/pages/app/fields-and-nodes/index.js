@@ -15,6 +15,22 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
 const Page = () => {
 
+    const listOfNodes = ['ContractNotice','UBLExtension']
+    const renderRow = (rows) => {
+        return rows.map((node, i) => {
+            console.log(node)
+            return <span key={node.properties?.key ?? i}
+                         className={node.properties?.className?.join(' ')}
+                         // node.properties?.style
+                onClick={node.properties?.onClick}
+                         style={  {...node.properties?.style, backgroundColor:listOfNodes.includes(node.value) ? 'red' : ''}}>
+                {node.children ? renderRow(node.children) : node.value
+                }
+            </span>
+        });
+    }
+
+
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
@@ -64,8 +80,27 @@ const Page = () => {
                 <Card>
                     <SyntaxHighlighter
                         language="xml"
-                        wrapLines
-                        lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
+                        // wrapLines
+                        showLineNumbers={true}
+                        // renderer={({ rows, stylesheet, useInlineStyles }) => {
+                        //     const rowws = rows.map((node, i) => {
+                        //         console.log(node)
+                        //      return   renderRow(node.children)
+                        //     })
+                        //     console.log(rowws)
+                        //     return {rowws}
+                        //   }}
+                          renderer={({ rows, stylesheet, useInlineStyles }) => {
+                            return renderRow(rows);
+                          }}
+                        // lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
+                        lineProps={(lineNumber) => ({
+                            style: { display: "block", cursor: "pointer" },
+                            onClick() {
+                              alert(`Line Number Clicked: ${lineNumber}`);
+                            }
+                          })}
+                          >
                         {XMLData}
                     </SyntaxHighlighter>
                 </Card>
