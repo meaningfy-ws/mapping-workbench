@@ -289,14 +289,12 @@ async def route_insert_cm_rule_mapping_note(
 
 @router.get(
     path="/status/list",
-    description="Returns a list of conceptual rule statuses",
+    description="Returns a list of available conceptual rule statuses",
     response_model=List[str],
     tags=[CM_RULE_REVIEW_PAGE_TAG],
     status_code=status.HTTP_200_OK
 )
-def route_get_list_cm_rule_statuses(
-        project_id: PydanticObjectId,
-) -> List[str]:
+def route_get_list_cm_rule_statuses() -> List[str]:
     try:
         return CMRuleStatus.list()
     except (Exception,) as expected_exception:
