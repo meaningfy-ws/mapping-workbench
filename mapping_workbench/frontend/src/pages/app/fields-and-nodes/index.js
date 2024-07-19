@@ -16,15 +16,15 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 const Page = () => {
 
     const listOfNodes = ['ContractNotice','UBLExtension']
-    const renderRow = (rows) => {
+    const renderRow = (rows, css, level) => {
         return rows.map((node, i) => {
-            console.log(node)
+            const nodeCss = Object.assign({}, ...node.properties?.className.map(e=>css[e]).filter(e => e) ?? [])
             return <span key={node.properties?.key ?? i}
                          className={node.properties?.className?.join(' ')}
-                         // node.properties?.style
-                onClick={node.properties?.onClick}
-                         style={  {...node.properties?.style, backgroundColor:listOfNodes.includes(node.value) ? 'red' : ''}}>
-                {node.children ? renderRow(node.children) : node.value
+                         onClick={node.properties?.onClick}
+                // onClick={() => level ===1 && console.log(node)}
+                         style={  {...nodeCss, ...node.properties?.style, backgroundColor:listOfNodes.includes(node.value) ? 'yellow' : ''}}>
+                {node.children ? renderRow(node.children, css, level++) : node.value
                 }
             </span>
         });
@@ -82,18 +82,10 @@ const Page = () => {
                         language="xml"
                         // wrapLines
                         showLineNumbers={true}
-                        // renderer={({ rows, stylesheet, useInlineStyles }) => {
-                        //     const rowws = rows.map((node, i) => {
-                        //         console.log(node)
-                        //      return   renderRow(node.children)
-                        //     })
-                        //     console.log(rowws)
-                        //     return {rowws}
-                        //   }}
+
                           renderer={({ rows, stylesheet, useInlineStyles }) => {
-                            return renderRow(rows);
+                            return renderRow(rows, stylesheet, 1);
                           }}
-                        // lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
                         lineProps={(lineNumber) => ({
                             style: { display: "block", cursor: "pointer" },
                             onClick() {
