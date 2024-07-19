@@ -14,10 +14,13 @@ import XMLData from 'cn_81'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import {useState} from "react";
 import Input from "@mui/material/Input";
+import Button from "@mui/material/Button";
 
 const Page = () => {
 
+    const [listOfNodes, setListOfNodes] = useState(['ContractNotice','UBLExtension'])
     const [nodeValue,setNodeValue] = useState('')
+    const [hoveredLine, setHoveredLine] = useState(-1)
 
     const collectNodeText = (node) => {
         if(node?.children && ['token','tag'].every(e =>node.properties?.className.includes(e)) && !['punctuation','attr-name','attr-value'].some(e => node.properties?.className.includes(e)) )
@@ -28,23 +31,16 @@ const Page = () => {
         // return node.value
     }
 
-    const listOfNodes = ['ContractNotice','UBLExtension']
-    const renderRow = (rows, css, firstLevel) => {
+    const renderRow = (rows, css, highlight) => {
         return rows.map((node, i) => {
             const nodeCss = Object.assign({}, ...node.properties?.className.map(e=>css[e]).filter(e => e) ?? [])
+            const isTagNode = ['token','tag'].every(e =>node.properties?.className.includes(e))
+                && !['punctuation','attr-name','attr-value'].some(e => node.properties?.className.includes(e))
+                && node.children?.[0]?.value !== ' '
             return <span key={node.properties?.key ?? i}
                          className={node.properties?.className?.join(' ')}
                          // onClick={node.properties?.onClick}
-                         onClick={() => {
-                             if(firstLevel) {
-                                 const out = collectNodeText(node)?.flat()?.join('')
-                                 const double = [out.slice(0,out.length/2),out.slice(out.length/2,out.length)]
-                                 if(double[0]===double[1])
-                                     setNodeValue(double[0])
-                                 else setNodeValue(out)
-                             }
-                         }}
-                         style={  {...nodeCss, ...node.properties?.style, backgroundColor:listOfNodes.includes(node.value) ? 'yellow' : ''}}>
+                         style={  {...nodeCss, ...node.properties?.style, backgroundColor: isTagNode && highlight ? 'yellow' : ''}}>
                 {node.children ? renderRow(node.children, css, false) : node.value
                 }
             </span>
@@ -104,26 +100,46 @@ const Page = () => {
                         // wrapLines
                         showLineNumbers={true}
 
-                          renderer={({ rows, stylesheet, useInlineStyles }) => {
-                              console.log(rows)
-                            return renderRow(rows, stylesheet, true);
-                          }}
+                        renderer={({ rows, stylesheet, useInlineStyles }) => {
+                             console.log(rows)
+                             return rows.map((node, i) => {
+                                  const nodeCss = Object.assign({}, ...node.properties?.className.map(e=>css[e]).filter(e => e) ?? [])
+                                  const out = collectNodeText(node)?.flat()?.join('')
+                                  const double = [out.slice(0,out.length/2),out.slice(out.length/2,out.length)]
+                                                     // if(double[0]===double[1])
+                                                     //     setNodeValue(double[0])
+                                                     // else setNodeValue(out)
+                                  const nodeV = double[0]===double[1] ? double[0] : out
+                                  const highlight =  listOfNodes.some(e=>nodeV.includes(e))
+                                  return <span key={node.properties?.key ?? i}
+                                     className={node.properties?.className?.join(' ')}
+                                     // onClick={node.properties?.onClick}
+
+                                     onClick={() => {
+                                         setNodeValue(nodeV)
+                                     }}
+                                     style={  {...nodeCss, ...node.properties?.style}}>
+                             {
+                                // node.children ?
+                                renderRow(node.children, stylesheet, highlight)
+                                // : node.value
+                             }
+                        </span>
+                              // renderRow(rows, stylesheet, true);
+                          })}}
                         lineProps={(lineNumber) =>
                             ({
-                            style: { display: "block", cursor: "pointer" },
+                            style: { display: "block", cursor: "pointer" , backgroundColor: lineNumber===hoveredLine ? 'green !important':''},
                             onClick() {
                               alert(`Line Number Clicked: ${lineNumber}`);
                             },
-                            onHover() {
-                                () => console.log(lineNumber)
-                            }
                           })
                         }
                           >
                         {XMLData}
                     </SyntaxHighlighter>
                 </Card>
-                <Input value={nodeValue}/>
+                <Input value={nodeValue}/><Button onClick={() => setListOfNodes(e=>([...e, nodeValue]))}>Save</Button>
             </Stack>
         </>
     );
