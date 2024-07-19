@@ -12,19 +12,40 @@ import {RouterLink} from 'src/components/router-link';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import XMLData from 'cn_81'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import {useState} from "react";
+import Input from "@mui/material/Input";
 
 const Page = () => {
 
+    const [nodeValue,setNodeValue] = useState('')
+
+    const collectNodeText = (node) => {
+        if(node?.children && ['token','tag'].every(e =>node.properties?.className.includes(e)) && !['punctuation','attr-name','attr-value'].some(e => node.properties?.className.includes(e)) )
+            return node?.children.map(e=>e.value).join('').replace(' ','')
+
+        if(node?.children)
+            return node.children.map(e=>collectNodeText(e))
+        // return node.value
+    }
+
     const listOfNodes = ['ContractNotice','UBLExtension']
-    const renderRow = (rows, css, level) => {
+    const renderRow = (rows, css, firstLevel) => {
         return rows.map((node, i) => {
             const nodeCss = Object.assign({}, ...node.properties?.className.map(e=>css[e]).filter(e => e) ?? [])
             return <span key={node.properties?.key ?? i}
                          className={node.properties?.className?.join(' ')}
-                         onClick={node.properties?.onClick}
-                // onClick={() => level ===1 && console.log(node)}
+                         // onClick={node.properties?.onClick}
+                         onClick={() => {
+                             if(firstLevel) {
+                                 const out = collectNodeText(node)?.flat()?.join('')
+                                 const double = [out.slice(0,out.length/2),out.slice(out.length/2,out.length)]
+                                 if(double[0]===double[1])
+                                     setNodeValue(double[0])
+                                 else setNodeValue(out)
+                             }
+                         }}
                          style={  {...nodeCss, ...node.properties?.style, backgroundColor:listOfNodes.includes(node.value) ? 'yellow' : ''}}>
-                {node.children ? renderRow(node.children, css, level++) : node.value
+                {node.children ? renderRow(node.children, css, false) : node.value
                 }
             </span>
         });
@@ -84,18 +105,25 @@ const Page = () => {
                         showLineNumbers={true}
 
                           renderer={({ rows, stylesheet, useInlineStyles }) => {
-                            return renderRow(rows, stylesheet, 1);
+                              console.log(rows)
+                            return renderRow(rows, stylesheet, true);
                           }}
-                        lineProps={(lineNumber) => ({
+                        lineProps={(lineNumber) =>
+                            ({
                             style: { display: "block", cursor: "pointer" },
                             onClick() {
                               alert(`Line Number Clicked: ${lineNumber}`);
+                            },
+                            onHover() {
+                                () => console.log(lineNumber)
                             }
-                          })}
+                          })
+                        }
                           >
                         {XMLData}
                     </SyntaxHighlighter>
                 </Card>
+                <Input value={nodeValue}/>
             </Stack>
         </>
     );
