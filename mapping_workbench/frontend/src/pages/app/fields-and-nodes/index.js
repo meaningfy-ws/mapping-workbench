@@ -18,6 +18,7 @@ import Button from "@mui/material/Button";
 
 const Page = () => {
 
+
     const [listOfNodes, setListOfNodes] = useState(['ContractNotice','UBLExtension'])
     const [nodeValue,setNodeValue] = useState('')
     const [hoveredLine, setHoveredLine] = useState(-1)
@@ -40,10 +41,10 @@ const Page = () => {
             return <span key={node.properties?.key ?? i}
                          className={node.properties?.className?.join(' ')}
                          // onClick={node.properties?.onClick}
-                         style={  {...nodeCss, ...node.properties?.style, backgroundColor: isTagNode && highlight ? 'yellow' : ''}}>
-                {node.children ? renderRow(node.children, css, false) : node.value
-                }
-            </span>
+                         style={  {...nodeCss, ...node.properties?.style, backgroundColor: isTagNode && highlight ? 'yellow' : ''}}
+                    >
+                        {node.children ? renderRow(node.children, css, false) : node.value}
+                    </span>
         });
     }
 
@@ -98,44 +99,36 @@ const Page = () => {
                     <SyntaxHighlighter
                         language="xml"
                         // wrapLines
-                        showLineNumbers={true}
+                        showLineNumbers
 
                         renderer={({ rows, stylesheet, useInlineStyles }) => {
-                             console.log(rows)
+                             console.log(rows,stylesheet,useInlineStyles)
                              return rows.map((node, i) => {
                                   const nodeCss = Object.assign({}, ...node.properties?.className.map(e=>css[e]).filter(e => e) ?? [])
                                   const out = collectNodeText(node)?.flat()?.join('')
                                   const double = [out.slice(0,out.length/2),out.slice(out.length/2,out.length)]
-                                                     // if(double[0]===double[1])
-                                                     //     setNodeValue(double[0])
-                                                     // else setNodeValue(out)
                                   const nodeV = double[0]===double[1] ? double[0] : out
                                   const highlight =  listOfNodes.some(e=>nodeV.includes(e))
                                   return <span key={node.properties?.key ?? i}
-                                     className={node.properties?.className?.join(' ')}
-                                     // onClick={node.properties?.onClick}
-
-                                     onClick={() => {
-                                         setNodeValue(nodeV)
-                                     }}
-                                     style={  {...nodeCss, ...node.properties?.style}}>
-                             {
-                                // node.children ?
-                                renderRow(node.children, stylesheet, highlight)
-                                // : node.value
-                             }
-                        </span>
-                              // renderRow(rows, stylesheet, true);
-                          })}}
-                        lineProps={(lineNumber) =>
-                            ({
-                            style: { display: "block", cursor: "pointer" , backgroundColor: lineNumber===hoveredLine ? 'green !important':''},
+                                     // className={node.properties?.className?.join(' ')}
+                                              onMouseEnter={node.properties.onMouseEnter}
+                                               onClick={() => setNodeValue(nodeV)}
+                                               style={  {...nodeCss, ...node.properties?.style}}
+                                        >
+                                             {renderRow(node.children, stylesheet, highlight)}
+                                        </span>
+                                  })}}
+                        lineProps={(lineNumber) => ({
+                            style: { display: "block", cursor: "pointer" , color: lineNumber===hoveredLine ? 'green !important':''},
+                            onMouseEnter() {
+                                setHoveredLine(lineNumber)
+                                console.log(lineNumber)
+                            },
                             onClick() {
                               alert(`Line Number Clicked: ${lineNumber}`);
                             },
-                          })
-                        }
-                          >
+                          })}
+                    >
                         {XMLData}
                     </SyntaxHighlighter>
                 </Card>
