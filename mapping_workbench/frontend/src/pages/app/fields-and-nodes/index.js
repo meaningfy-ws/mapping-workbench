@@ -12,16 +12,25 @@ import {RouterLink} from 'src/components/router-link';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import XMLData from 'cn_81'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Input from "@mui/material/Input";
 import Button from "@mui/material/Button";
+import { parseString } from 'xml2js';
 
 const Page = () => {
 
+    const [parsedXml, setParsedXml] = useState()
 
     const [listOfNodes, setListOfNodes] = useState(['ContractNotice','UBLExtension'])
     const [nodeValue,setNodeValue] = useState('')
     const [hoveredLine, setHoveredLine] = useState(-1)
+
+
+    useEffect(() => {
+        parse1(XMLData)
+    },[])
+
+    console.log('parsedXml',parsedXml)
 
     const collectNodeText = (node) => {
         if(node?.children && ['token','tag'].every(e =>node.properties?.className.includes(e)) && !['punctuation','attr-name','attr-value'].some(e => node.properties?.className.includes(e)) )
@@ -47,6 +56,47 @@ const Page = () => {
                     </span>
         });
     }
+
+
+      const parse = (xmlString) => parseString(xmlString, { ignoreAttrs: true }, (err, result) => {
+          if (err) {
+            console.error('Error parsing XML:', err);
+          } else {
+            // setXmlContent(xmlString);
+            setParsedXml(result);
+          }
+        });
+
+    const parse1 = (xmlString) => {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlString, "application/xml")
+        setParsedXml(xmlDoc)
+    };
+    const traverseXml = (obj, line) => {
+      // Traverse logic to match line number with XML node
+      // This is a simplified example and may need adjustments based on your XML structure
+      const result = [];
+
+
+      const recursiveFind = (node, path = []) => {
+        for (const key in node) {
+          const value = node[key];
+          const newPath = [...path, key];
+          if (value && typeof value === 'object') {
+            recursiveFind(value, newPath);
+          } else {
+            // This is a simplified check; adjust according to your XML structure
+            if (line === key) {
+              result.push(newPath);
+            }
+          }
+        }
+      };
+
+      recursiveFind(obj);
+      console.log('result',obj,line,result)
+      return result;
+    };
 
 
     return (
@@ -111,8 +161,10 @@ const Page = () => {
                                   const highlight =  listOfNodes.some(e=>nodeV.includes(e))
                                   return <span key={node.properties?.key ?? i}
                                      // className={node.properties?.className?.join(' ')}
-                                              onMouseEnter={node.properties.onMouseEnter}
-                                               onClick={() => setNodeValue(nodeV)}
+                                     //          onMouseEnter={node.properties.onMouseEnter}
+                                     //           onClick={() => setNodeValue(nodeV)}
+                                     //  onClick={() => traverseXml(parsedXml,i)}
+                                      onClick={() => node.properties.onClick()}
                                                style={  {...nodeCss, ...node.properties?.style}}
                                         >
                                              {renderRow(node.children, stylesheet, highlight)}
@@ -125,7 +177,8 @@ const Page = () => {
                                 console.log(lineNumber)
                             },
                             onClick() {
-                              alert(`Line Number Clicked: ${lineNumber}`);
+                                traverseXml(parsedXml,lineNumber)
+                              // alert(`Line Number Clicked: ${lineNumber}`);
                             },
                           })}
                     >

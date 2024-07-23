@@ -45,43 +45,83 @@ const Page = () => {
     const [hoveredLine, setHoveredLine] = useState(-1)
 
 
-    const collectNodeText = (node) => {
-        if(node?.children && ['token','tag'].every(e =>node.properties?.className.includes(e)) && !['punctuation','attr-name','attr-value'].some(e => node.properties?.className.includes(e)) )
-            return node?.children.map(e=>e.value).join('').replace(' ','')
-
-        if(node?.children)
-            return node.children.map(e=>collectNodeText(e))
-        // return node.value
-    }
-
-
     const highlightLines = (editor, start, end) => {
       const from={line: start, ch: 0};
       const to= {line: end, ch: 10};
       editor.markText(from, to, {className: "codemirror-highlighted"});
     }
 
-     const handleLineClick = (cm, lineNumber) => {
-        console.log(cm)
+    const handleLineClick = (cm, lineNumber) => {
         const doc = cm.getDoc();
         const line = doc.getLine(lineNumber);
-        console.log('line',line)
-        const element = doc.markText({line: lineNumber, ch: 0}, {line: lineNumber, ch: line.length});
-        const xmlElement = new DOMParser().parseFromString(line, "text/xml").documentElement;
 
-        // console.log('handleLineClick',cm,lineNumber)
-        // const line = cm.getLine(lineNumber);
-        // alert(`Line ${lineNumber + 1} clicked: ${line}`);
-        if (xmlElement) {
-              const xpath = getXPath(xmlElement);
-              console.log(xpath)
-          }
-        };
+        try {
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(XMLData, "application/xml");
+            console.log('xmlDoc', xmlDoc, lineNumber)
+            const element = getElementByLineNumber(xmlDoc.documentElement, lineNumber + 3);
 
+            console.log('ee', element)
+            let es=element
+            const parentRoot=[]
+            while(es.parentNode) {
+                console.log('es',es.nodeName)
+                parentRoot.push(es.parentNode.nodeName)
+                es=es.parentNode
 
-     const getElementByLineNumber = (element, lineNumber) => {
-        let currentLine = 1;
+            }
+            console.log(parentRoot)
+            //   console.log(getElementByLineNumber1(xmlDoc.documentElement,lineNumber+2))
+            //   console.log('line',line)
+            //   console.log('element',element,element.tagName)
+            //   if (element) {
+            //     const parentNodes = getParentNodes(element);
+            //     if (parentNodes.length > 0) {
+            //       // alert(`Parent nodes: ${[element.tagName,...parentNodes.map(node => node.nodeName)].reverse().join('/')}`);
+            //       console.log([element.tagName,...parentNodes.map(node => node.nodeName)].reverse().join('/'))
+            //     } else {
+            //       alert(`No parent nodes found for line ${lineNumber + 1}`);
+            //     }
+            //   } else {
+            //     alert(`No XML element found at line ${lineNumber + 1}`);
+            //   }
+        } catch (error) {
+            console.error('Error parsing XML:', error);
+            //   alert(`Error parsing XML at line ${lineNumber + 1}`);
+        }
+    };
+
+    const getElementByLineNumber1 = (element, lineNumber, doc) => {
+    let currentLine = 1;
+    const xmlLines = XMLData.split('\n');
+
+    const traverse = (node) => {
+      if (node.nodeType === Node.ELEMENT_NODE || node.nodeType === Node.TEXT_NODE) {
+        // const nodeXml = new XMLSerializer().serializeToString(node).split('\n');
+        currentLine ++;
+        // console.log(nodeXml)
+        console.log(node)
+        if (currentLine >= lineNumber) {
+          return node;
+        }
+      }
+
+      let result = null;
+      for (let i = 0; i < node.childNodes.length; i++) {
+        result = traverse(node.childNodes[i]);
+        if (result) return result;
+      }
+      return null;
+    };
+
+    return traverse(element);
+  };
+
+    const getElementByLineNumber = (element, lineNumber) => {
+        let currentLine = 0;
+        console.log('getElement',element)
         const traverse = (node) => {
+          console.log(currentLine,node)
           if (node.nodeType === Node.ELEMENT_NODE || node.nodeType === Node.TEXT_NODE) {
             if (currentLine === lineNumber) {
               return node;
@@ -90,44 +130,28 @@ const Page = () => {
           }
 
           let result = null;
+          console.log(node.childNodes)
           for (let i = 0; i < node.childNodes.length; i++) {
             result = traverse(node.childNodes[i]);
+            console.log(result)
             if (result) return result;
           }
           return null;
+        };
+
+        return traverse(element);
     };
 
+  const getParentNodes = (node) => {
+    const parents = [];
+    let current = node;
+    while (current.parentNode?.nodeType !== Node.DOCUMENT_NODE) {
+      parents.push(current.parentNode);
+      current = current.parentNode;
+    }
+    return parents;
+  };
 
-     const onMount = (editor) => {
-        editor.on('gutterClick', (cm, lineNumber) => handleLineClick(cm, lineNumber));
-        editor.on('hover')
-     };
-
-
-     // const lines = [];
-     // const xpathsList = [];
-     // XMLData.forEach((row, index) => {
-     //    if (index > 0) { // assuming the first row is headers
-     //      lines.push(row[0]); // assuming your content is in the first column
-     //      xpathsList.push(row[1]); // assuming your XPaths are in the second column
-     //    }
-     // });
-
-
-    const getXPath = (element, path = []) => {
-        console.log(element,path,element.nodeType)
-        if (element.nodeType === Node.DOCUMENT_NODE) {
-          return '/' + path.join('/');
-        }
-
-        const { nodeName, parentNode } = element;
-        console.log('nodeName:',nodeName,'parentNode:',parentNode)
-        const siblings = Array.from(parentNode.childNodes).filter(sibling => sibling.nodeName === nodeName);
-        const index = siblings.indexOf(element) + 1;
-        path.unshift(`${nodeName}[${index}]`);
-
-        return getXPath(parentNode, path);
-      };
 
     return (
         <>

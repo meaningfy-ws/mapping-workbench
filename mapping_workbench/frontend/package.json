@@ -93,6 +93,7 @@
     "stylis": "4.2.0",
     "stylis-plugin-rtl": "2.1.1",
     "uuid": "^9.0.0",
+    "xml2js": "^0.6.2",
     "yup": "1.1.1"
   },
   "devDependencies": {
