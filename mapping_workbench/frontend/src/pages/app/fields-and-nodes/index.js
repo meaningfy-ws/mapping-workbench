@@ -1,16 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { XMLParser } from 'fast-xml-parser';
 
 import {Layout as AppLayout} from 'src/layouts/app';
-import XMLData from 'cn_81'
 import {parseString, Builder} from "xml2js";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 
 
 const Page = () => {
-  const parser = new XMLParser()
-  const [selectedLine, setSelectedLine] = useState(null);
-  const [xmlContent,setXmlContent] = useState('')
+    const [selectedLine, setSelectedLine] = useState(null);
+    const [xmlContent,setXmlContent] = useState('')
+    const [selectedNode, setSelectedNode] = useState('')
+    const [nodesList, setNodesList] = useState([])
 
 
 const handleFileUpload = (event) => {
@@ -34,7 +36,6 @@ const handleFileUpload = (event) => {
 
   const findXPaths = (xmlString) => {
     const lines = xmlString.split('\n');
-    console.log(lines)
     let xpaths = [];
     let xpathStack = [];
 
@@ -64,20 +65,28 @@ const handleFileUpload = (event) => {
     return xpaths;
 }
 
-    const findedXpath = findXPaths(xmlContent)
+  const findedXpath = findXPaths(xmlContent)
 
-
-  useEffect(() => {
-    if (selectedLine !== null) {
-      const xpath = getXPathForLine(xmlContent, selectedLine);
-      console.log('Selected Line:', selectedLine);
-      console.log('XPath:', xpath);
-    }
-  }, [selectedLine]);
 
   const handleLineClick = (lineNumber) => {
-    setSelectedLine(lineNumber);
+    setSelectedNode(findedXpath[lineNumber - 1]);
+    setSelectedLine(lineNumber)
   };
+    const renderRow = (rows, css, highlight) => {
+        return rows.map((node, i) => {
+            const nodeCss = Object.assign({}, ...node.properties?.className.map(e=>css[e]).filter(e => e) ?? [])
+            const isTagNode = ['token','tag'].every(e =>node.properties?.className.includes(e))
+                && !['punctuation','attr-name','attr-value'].some(e => node.properties?.className.includes(e))
+                && node.children?.[0]?.value !== ' '
+            return <span key={node.properties?.key ?? i}
+                         className={node.properties?.className?.join(' ')}
+                         // onClick={node.properties?.onClick}
+                         style={  {...nodeCss, ...node.properties?.style, backgroundColor: isTagNode && highlight ? 'yellow' : ''}}
+                    >
+                        {node.children ? renderRow(node.children, css, false) : node.value}
+                    </span>
+        });
+    }
 
   return (
       <div>
@@ -85,24 +94,53 @@ const handleFileUpload = (event) => {
                  accept=".xml"
                  onChange={handleFileUpload}/>
           {xmlContent && <SyntaxHighlighter
+              // customStyle={customStyles}
               language="xml"
               // style={docco}
               showLineNumbers
               wrapLines
+              renderer={({ rows, stylesheet, useInlineStyles }) => {
+                             return rows.map((node, i) => {
+
+                                  const nodeCss = Object.assign({}, ...node.properties?.className.map(e=>css[e]).filter(e => e) ?? [])
+                                  return <span key={node.properties?.key ?? i}
+                                               onClick={node.properties.onClick}
+                                               style={  {...nodeCss, ...node.properties?.style}}
+                                        >
+                                             {renderRow(node.children, stylesheet, nodesList.includes(findedXpath[i]))}
+                                        </span>
+                                  })}}
               lineProps={(lineNumber) => ({
-                  style: {cursor: 'pointer', backgroundColor: selectedLine === lineNumber ? '#e0e0e0' : 'inherit'},
-                  onClick: () => console.log(findedXpath[lineNumber - 1])
-                  // handleLineClick(lineNumber),
+                  style: {cursor: 'pointer', backgroundColor: selectedLine === lineNumber ? '#e0e0e0' : 'inherit',hljsTag:'black'},
+                  onClick: () => handleLineClick(lineNumber),
               })}
           >
               {xmlContent}
           </SyntaxHighlighter>}
+          {/*{<ul>*/}
+          {/*    {findedXpath.map(e => <li>{e}</li>)}*/}
+          {/*</ul>}*/}
+          <TextField
+              value={selectedNode}
+          />
+          <Button onClick={()=> {
+              if(selectedNode) {
+                  setNodesList(e => ([...e, selectedNode]))
+                  setSelectedNode('')
+              }
+          }}
+                  disabled={!selectedNode}
+          >
+            Save
+          </Button>
           {<ul>
-              {findedXpath.map(e => <li>{e}</li>)}
+              {nodesList.map(e => <li>{e}</li>)}
           </ul>}
       </div>
   );
 };
+
+
 
 Page.getLayout = (page) => (
     <AppLayout>
