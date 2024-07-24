@@ -1,194 +1,136 @@
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Card from '@mui/material/Card';
-import Link from '@mui/material/Link';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-
-import {paths} from 'src/paths';
-import {Seo} from 'src/components/seo';
+import React, { useState, useEffect } from 'react';
 import {Layout as AppLayout} from 'src/layouts/app';
-import {mappingPackagesApi as sectionApi} from 'src/api/mapping-packages';
-import {RouterLink} from 'src/components/router-link';
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import XMLData from 'cn_81'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import {useEffect, useState} from "react";
-import Input from "@mui/material/Input";
-import Button from "@mui/material/Button";
-import { parseString } from 'xml2js';
+// import xmlLang from 'react-syntax-highlighter/dist/esm/languages/hljs/xml';
+// import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { XMLParser } from 'fast-xml-parser';
+import XMLData from 'cn_81'
+
+// Register the XML language for SyntaxHighlighter
+// SyntaxHighlighter.registerLanguage('xml', xmlLang);
 
 const Page = () => {
+  const parser = new XMLParser()
+  const [selectedLine, setSelectedLine] = useState(null);
 
-    const [parsedXml, setParsedXml] = useState()
+  const xmlContent = XMLData
 
-    const [listOfNodes, setListOfNodes] = useState(['ContractNotice','UBLExtension'])
-    const [nodeValue,setNodeValue] = useState('')
-    const [hoveredLine, setHoveredLine] = useState(-1)
+    const parser1 = new DOMParser();
+    const xmlDoc = parser1.parseFromString(xmlContent, "application/xml");
 
+    console.log('xmlDoc',xmlDoc)
 
-    useEffect(() => {
-        parse1(XMLData)
-    },[])
+  const findXPaths = (xmlString) => {
+    const lines = xmlString.split('\n');
+    console.log(lines)
+    let xpaths = [];
+    let xpathStack = [];
 
-    console.log('parsedXml',parsedXml)
-
-    const collectNodeText = (node) => {
-        if(node?.children && ['token','tag'].every(e =>node.properties?.className.includes(e)) && !['punctuation','attr-name','attr-value'].some(e => node.properties?.className.includes(e)) )
-            return node?.children.map(e=>e.value).join('').replace(' ','')
-
-        if(node?.children)
-            return node.children.map(e=>collectNodeText(e))
-        // return node.value
-    }
-
-    const renderRow = (rows, css, highlight) => {
-        return rows.map((node, i) => {
-            const nodeCss = Object.assign({}, ...node.properties?.className.map(e=>css[e]).filter(e => e) ?? [])
-            const isTagNode = ['token','tag'].every(e =>node.properties?.className.includes(e))
-                && !['punctuation','attr-name','attr-value'].some(e => node.properties?.className.includes(e))
-                && node.children?.[0]?.value !== ' '
-            return <span key={node.properties?.key ?? i}
-                         className={node.properties?.className?.join(' ')}
-                         // onClick={node.properties?.onClick}
-                         style={  {...nodeCss, ...node.properties?.style, backgroundColor: isTagNode && highlight ? 'yellow' : ''}}
-                    >
-                        {node.children ? renderRow(node.children, css, false) : node.value}
-                    </span>
-        });
-    }
-
-
-      const parse = (xmlString) => parseString(xmlString, { ignoreAttrs: true }, (err, result) => {
-          if (err) {
-            console.error('Error parsing XML:', err);
-          } else {
-            // setXmlContent(xmlString);
-            setParsedXml(result);
-          }
-        });
-
-    const parse1 = (xmlString) => {
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(xmlString, "application/xml")
-        setParsedXml(xmlDoc)
-    };
-    const traverseXml = (obj, line) => {
-      // Traverse logic to match line number with XML node
-      // This is a simplified example and may need adjustments based on your XML structure
-      const result = [];
-
-
-      const recursiveFind = (node, path = []) => {
-        for (const key in node) {
-          const value = node[key];
-          const newPath = [...path, key];
-          if (value && typeof value === 'object') {
-            recursiveFind(value, newPath);
-          } else {
-            // This is a simplified check; adjust according to your XML structure
-            if (line === key) {
-              result.push(newPath);
+    lines.forEach((line, index) => {
+        line = line.trim();
+        if( line.startsWith('<!') || line.startsWith('<?') || line.endsWith('-->'))
+            xpaths.push('')
+        else if (line.startsWith('<') && !line.startsWith('</')) {
+            // Opening tag
+            const tagName = line.match(/<([^\s>]+)/)[1];
+            xpathStack.push(tagName);
+            xpaths.push(`${xpathStack.join('/')}`);
+            // Self-closing tag
+            if (line.includes('</')) {
+                xpathStack.pop();
             }
-          }
+            // if(line.startsWith('</')){
+            //     xpaths.push(`${xpathStack.join('/')}`);
+            // }
+        } else if (line.startsWith('</')) {
+            // Closing tag
+            xpaths.push(`${xpathStack.join('/')}`);
+            xpathStack.pop();
+        } else {
+            xpaths.push('')
+            // Text node or whitespace, ignore for XPaths
         }
-      };
+    });
 
-      recursiveFind(obj);
-      console.log('result',obj,line,result)
-      return result;
-    };
+    return xpaths;
+}
+
+console.log(xmlContent)
+    const findedXpath = findXPaths(xmlContent)
+  // console.log(findXPaths(xmlContent))
 
 
-    return (
-        <>
-            <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
-            <Stack spacing={4}>
-                <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    spacing={4}
-                >
-                    <Stack spacing={1}>
-                        <Typography variant="h4">
-                            {sectionApi.SECTION_TITLE}
-                        </Typography>
-                        <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.index}
-                                variant="subtitle2"
-                            >
-                                App
-                            </Link>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.app[sectionApi.section].index}
-                                variant="subtitle2"
-                            >
-                                {sectionApi.SECTION_TITLE}
-                            </Link>
-                            <Typography
-                                color="text.secondary"
-                                variant="subtitle2"
-                            >
-                                List
-                            </Typography>
-                        </Breadcrumbs>
-                    </Stack>
-                    <Stack
-                        alignItems="center"
-                        direction="row"
-                        spacing={3}
-                    >
-                    </Stack>
+  const getXPathForLine = (xmlContent, lineNumber) => {
+    const xmlDoc = parser.parse(xmlContent, { ignoreAttributes: false });
+    const lines = xmlContent.split('\\n');
+    let currentNode = xmlDoc;
+    let currentPath = [];
+    let xpaths = []
 
-                </Stack>
-                <Card>
-                    <SyntaxHighlighter
-                        language="xml"
-                        // wrapLines
-                        showLineNumbers
+    for (let i = 0; i < lineNumber; i++) {
+      const line = lines[i].trim();
+      if (line.startsWith('<?') || line.startsWith('<!') || line.endsWith('-->'))
+          xpaths.push('')
+      if (line.startsWith('<') && !line.startsWith('</') && !line.startsWith('<?') && !line.startsWith('<!')) {
+        const tagName = line.split(' ')[0].replace('<', '').replace('>', '');
+        if(line.startsWith('<') && line.includes('>') && line.includes('</'))
+        {
+          console.log(line.substring(0, line.indexOf('>')))
+          const tgn = line.substring(0, line.indexOf('>')).replace('<', '').replace('>', '');
+          currentPath.push(tgn)
+        }
+        else currentPath.push(tagName);
+        // console.log('tagName',tagName)
+        // const tagName = line.substring(line.indexOf('<'),line.indexOf('>'))
+        // currentPath.push(tagName);
+      } else if (line.startsWith('</')) {
+        // currentPath.pop();
+      }
+      xpaths.push(currentPath)
+    }
 
-                        renderer={({ rows, stylesheet, useInlineStyles }) => {
-                             console.log(rows,stylesheet,useInlineStyles)
-                             return rows.map((node, i) => {
-                                  const nodeCss = Object.assign({}, ...node.properties?.className.map(e=>css[e]).filter(e => e) ?? [])
-                                  const out = collectNodeText(node)?.flat()?.join('')
-                                  const double = [out.slice(0,out.length/2),out.slice(out.length/2,out.length)]
-                                  const nodeV = double[0]===double[1] ? double[0] : out
-                                  const highlight =  listOfNodes.some(e=>nodeV.includes(e))
-                                  return <span key={node.properties?.key ?? i}
-                                     // className={node.properties?.className?.join(' ')}
-                                     //          onMouseEnter={node.properties.onMouseEnter}
-                                     //           onClick={() => setNodeValue(nodeV)}
-                                     //  onClick={() => traverseXml(parsedXml,i)}
-                                      onClick={() => node.properties.onClick()}
-                                               style={  {...nodeCss, ...node.properties?.style}}
-                                        >
-                                             {renderRow(node.children, stylesheet, highlight)}
-                                        </span>
-                                  })}}
-                        lineProps={(lineNumber) => ({
-                            style: { display: "block", cursor: "pointer" , color: lineNumber===hoveredLine ? 'green !important':''},
-                            onMouseEnter() {
-                                setHoveredLine(lineNumber)
-                                console.log(lineNumber)
-                            },
-                            onClick() {
-                                traverseXml(parsedXml,lineNumber)
-                              // alert(`Line Number Clicked: ${lineNumber}`);
-                            },
-                          })}
-                    >
-                        {XMLData}
-                    </SyntaxHighlighter>
-                </Card>
-                <Input value={nodeValue}/><Button onClick={() => setListOfNodes(e=>([...e, nodeValue]))}>Save</Button>
-            </Stack>
-        </>
-    );
+    return xpaths
+    // return '/' + currentPath.join('/');
+  };
+
+  useEffect(() => {
+    if (selectedLine !== null) {
+      const xpath = getXPathForLine(xmlContent, selectedLine);
+      console.log('Selected Line:', selectedLine);
+      console.log('XPath:', xpath);
+    }
+  }, [selectedLine]);
+
+  const handleLineClick = (lineNumber) => {
+    setSelectedLine(lineNumber);
+  };
+
+  return (
+    <div>
+      <SyntaxHighlighter
+        language="xml"
+        // style={docco}
+        showLineNumbers
+        wrapLines
+        lineProps={(lineNumber) => ({
+          style: { cursor: 'pointer', backgroundColor: selectedLine === lineNumber ? '#e0e0e0' : 'inherit' },
+          onClick: () => console.log(findedXpath[lineNumber -1])
+              // handleLineClick(lineNumber),
+        })}
+      >
+        {xmlContent}
+      </SyntaxHighlighter>
+      {/*{selectedLine !== null && (*/}
+      {/*  <div>*/}
+      {/*    <p>Selected Line: {selectedLine}</p>*/}
+      {/*    <p>XPath: {getXPathForLine(xmlContent, selectedLine)}</p>*/}
+      {/*  </div>*/}
+      {/*)}*/}
+      {<ul>
+        {findedXpath.map(e=><li>{e}</li>)}
+      </ul>}
+    </div>
+  );
 };
 
 Page.getLayout = (page) => (
