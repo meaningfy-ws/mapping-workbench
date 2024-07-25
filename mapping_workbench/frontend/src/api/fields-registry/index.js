@@ -49,6 +49,13 @@ class FieldsRegistryApi extends SectionApi {
             structuralElement => ({id: structuralElement._id, label: structuralElement.sdk_element_id})
         ).sort((a, b) => a.label.localeCompare(b.label));
     }
+
+    async getXpathsList(request = {}) {
+        request.page = 0;
+        request.rowsPerPage = -1;
+        const result = await this.getItems(request, 'elements');
+        return result.items.map(e => ({id: e._id, xpath: e.absolute_xpath, element_type:e.element_type}))
+    }
 }
 
 export const fieldsRegistryApi = new FieldsRegistryApi();
