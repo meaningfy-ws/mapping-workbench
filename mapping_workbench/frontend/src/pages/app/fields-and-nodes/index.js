@@ -11,6 +11,8 @@ import Typography from "@mui/material/Typography";
 import {Layout as AppLayout} from 'src/layouts/app';
 import {schemaFileResourcesApi as schemaFiles} from 'src/api/schema-files/file-resources'
 import {fieldsRegistryApi as fieldsRegistry} from 'src/api/fields-registry'
+import CircularProgress from "@mui/material/CircularProgress";
+import {AlertTitle, Alert} from "@mui/material";
 
 const Page = () => {
     const [xPaths, setXPaths] = useState([])
@@ -20,9 +22,16 @@ const Page = () => {
     const [nodesList, setNodesList] = useState([])
     const [files,setFiles] = useState([])
     const [selectedFile, setSelectedFile] = useState('')
+    const [loadFile, setLoadFile] = useState({})
 
 
     useEffect(() => {
+
+        // try {
+        //     const schemaFilesRes = await schemaFiles.getItems()
+        //     const fieldsRegistryRed = fieldsRegistry.getXpathsList()
+        //
+        // }
         schemaFiles.getItems({})
             .then(res => setFiles(res))
             .catch(err => console.error(err))
@@ -37,15 +46,22 @@ const Page = () => {
 
 
     useEffect(() => {
+        setLoadFile({load:true})
+        setXmlContent('')
         parseString(selectedFile.content, { explicitArray: false }, (err, result) => {
               if (err) {
                 console.error('Error parsing XML:', err);
+                setLoadFile({error:true})
               } else {
-                const builder = new Builder
+                  setLoadFile({})
+                  console.log(result)
+                const builder = new Builder()
                 setXmlContent(builder.buildObject(result))
               }
             });
     },[selectedFile])
+
+    console.log(xmlContent)
 
 
   const findXPaths = (xmlString) => {
@@ -136,12 +152,19 @@ const Page = () => {
                   </MenuItem>
               ))}
           </TextField>
+          {loadFile.load &&
+            <CircularProgress/>}
+          {loadFile.error &&
+             <Alert severity="error">
+                <AlertTitle>Error</AlertTitle>
+                Error on load file.
+              </Alert>}
           {xmlContent && <SyntaxHighlighter
               // customStyle={customStyles}
               language="xml"
               // style={docco}
               showLineNumbers
-              wrapLines
+              // wrapLines
               renderer={({ rows, stylesheet, useInlineStyles }) => {
                              return rows.map((node, i) => {
 
