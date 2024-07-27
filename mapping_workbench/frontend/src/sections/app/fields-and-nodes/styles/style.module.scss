@@ -1,0 +1,30 @@
+.text-color {
+  color: gray;
+}
+
+.tag {
+  cursor: pointer;
+  color: #990055;
+  &:hover{
+    background-color: yellow;
+  }
+}
+
+.attr {
+  cursor: pointer;
+  &:hover{
+    background-color: yellow;
+  }
+  &-name {
+    color: #669900;
+  }
+
+  &-value{
+    color: #0077aa;
+  }
+}
+
+.string-content {
+  color: black;
+}
+
