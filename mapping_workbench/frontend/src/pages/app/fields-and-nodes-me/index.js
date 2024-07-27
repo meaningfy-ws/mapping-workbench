@@ -17,15 +17,16 @@ import {AlertTitle, Alert} from "@mui/material";
 
 
     const Attribute = ({name, value}) => {
-        return <span><span>{` ${name}=`}</span><span>{`"${value}"`}</span></span>
+        return <span><span style={{color:'green'}}>{` ${name}=`}</span><span style={{color:'blue'}}>{`"${value}"`}</span></span>
     }
 
-    const Tag = ({name, attributes, children}) => {
+    const Tag = ({name, attributes, children, parent}) => {
         console.log(name)
         attributes && console.log('attributes',Object.entries(attributes))
        return <span>
            <span>{'<'}</span>
-           <span>{name}</span>
+           <span style={{color:'red'}}
+                onClick={() => console.log('parent',parent.join('/'))}>{name}</span>
            {attributes && <span name={'attributes'}>{Object.entries(attributes).map(([name,value]) =>
                <Attribute key={name}
                           name={name}
@@ -40,7 +41,7 @@ import {AlertTitle, Alert} from "@mui/material";
     }
 
 
-    const BuildObject = ({nodes, level}) => {
+    const BuildObject = ({nodes, level, parent}) => {
         // console.log(Object.entries(nodes))
 
         const nd = nodes
@@ -74,17 +75,22 @@ import {AlertTitle, Alert} from "@mui/material";
             console.log(Object.entries(e[1]))
             const filtred = Object.entries(e[1]).filter(en => {
                 console.log(en[0])
-                return en[0] !== '$'
+                return !['$','_'].includes(en[0])
             })
             console.log(filtred)
         }
         ))
-        return nd.map(e=> <Tag name={e[0]} attributes={e?.[1]?.['$']}>
-            {typeof e[1] == "object" ?
-                <BuildObject nodes={Object.entries(e[1]).filter(en => en[0]!=='$')} level={level+1}/>
-                : e[0]
+        console.log(parent)
+        return nd.map(e=>
+            {
+        console.log(typeof e[1])
+               return  typeof e[1] == "object" ?
+                <Tag name={e[0]} attributes={e?.[1]?.['$']} parent={parent}>
+                <BuildObject nodes={Object.entries(e[1]).filter(en => en[0]!=='$')} level={level+1} parent={[...parent, e[0]]} />
+                    </Tag>
+                : e[1]
             }
-        </Tag>)
+        )
 
         return <div>
             {`<${'node'}>`}
@@ -130,7 +136,7 @@ const Page = () => {
 
     return (
         <>
-            {!!xmlNodes && <BuildObject nodes={Object.entries(xmlNodes)} level={1}/>}
+            {!!xmlNodes && <BuildObject nodes={Object.entries(xmlNodes)} level={1} parent={[]}/>}
         </>
     )
 }
