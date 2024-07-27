@@ -15,9 +15,11 @@ import CircularProgress from "@mui/material/CircularProgress";
 import {AlertTitle, Alert} from "@mui/material";
 
 
+// import styles from './style.scss'
 
-    const Attribute = ({name, value}) => {
-        return <span><span style={{color:'green'}}>{` ${name}=`}</span><span style={{color:'blue'}}>{`"${value}"`}</span></span>
+
+    const Attribute = ({name, value, parent}) => {
+        return <span onClick={() => console.log([...parent,`[${name}='${value}']`].join('/'))}><span style={{color:'green'}}>{` ${name}=`}</span><span style={{color:'blue'}}>{`"${value}"`}</span></span>
     }
 
     const Tag = ({name, attributes, children, parent}) => {
@@ -26,11 +28,12 @@ import {AlertTitle, Alert} from "@mui/material";
        return <span>
            <span>{'<'}</span>
            <span style={{color:'red'}}
-                onClick={() => console.log('parent',parent.join('/'))}>{name}</span>
+                onClick={() => console.log('parent',[...parent,name].join('/'))}>{name}</span>
            {attributes && <span name={'attributes'}>{Object.entries(attributes).map(([name,value]) =>
                <Attribute key={name}
                           name={name}
-                          value={value}/>)}
+                          value={value}
+                          parent={parent}/>)}
            </span>}
            <span>{'>'}</span>
            {children}
@@ -81,13 +84,19 @@ import {AlertTitle, Alert} from "@mui/material";
         }
         ))
         console.log(parent)
+        // let spaces/ = ''
+        //   const spaces =  [ ...Array(10) ].reduce((acc, crr) => crr + '123','');
+
+        // console.log(spaces)
+
         return nd.map(e=>
             {
         console.log(typeof e[1])
                return  typeof e[1] == "object" ?
-                <Tag name={e[0]} attributes={e?.[1]?.['$']} parent={parent}>
+                <><br/><Tag name={e[0]} attributes={e?.[1]?.['$']} parent={parent}>
                 <BuildObject nodes={Object.entries(e[1]).filter(en => en[0]!=='$')} level={level+1} parent={[...parent, e[0]]} />
                     </Tag>
+                </>
                 : e[1]
             }
         )
