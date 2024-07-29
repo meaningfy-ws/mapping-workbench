@@ -9,10 +9,10 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 if __name__ == "__main__":
 
     result_backup_folder_path = pathlib.Path(__file__).parent.resolve() / ".mongodump"
-
+    admin_db = "admin"
 
     subprocess_result = subprocess.run(
-        [f'mongosh {settings.DATABASE_URL}{settings.DATABASE_NAME} --eval "db.dropDatabase()"'],
+        [f'mongosh {settings.DATABASE_URL}{settings.DATABASE_NAME} --authenticationDatabase={admin_db} --eval "db.dropDatabase()"'],
         capture_output=True, text=True, shell=True)
 
     if subprocess_result.returncode != 0:
@@ -22,7 +22,7 @@ if __name__ == "__main__":
 
 
     subprocess_result = subprocess.run(
-        [f'mongorestore --uri {settings.DATABASE_URL}{settings.DATABASE_NAME} {result_backup_folder_path}/{settings.DATABASE_NAME}'],
+        [f'mongorestore --uri {settings.DATABASE_URL}{settings.DATABASE_NAME} {result_backup_folder_path}/{settings.DATABASE_NAME} --authenticationDatabase={admin_db}'],
         capture_output=True, text=True, shell=True)
 
     if subprocess_result.returncode != 0:
