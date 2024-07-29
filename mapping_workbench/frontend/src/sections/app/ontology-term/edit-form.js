@@ -99,6 +99,7 @@ export const EditForm = (props) => {
                                 helperText={formik.touched.type && formik.errors.type}
                                 onBlur={formik.handleBlur}
                                 label="Type"
+                                name="type"
                                 onChange={e => {
                                     formik.setFieldValue("type", e.target.value);
                                 }}

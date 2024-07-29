@@ -1,10 +1,12 @@
-Feature: Transform Test Data
+Feature: SPARQL Test Suites
 
-  As a valid user want to transform test data
+  As a valid user want to interact with SPARQL Test Suites
 
-  Scenario: Select Project
+  Background:
     Given Session Login
     Then Go Home
+
+  Scenario: Select Project
     Then I get redirected to projects list page
     Then I search for project
 
@@ -12,9 +14,7 @@ Feature: Transform Test Data
     Then I get success select
     Then I get redirected to projects list page
 
-  Scenario: Add SPARQL Suite
-    Given Session Login
-    Then Go Home
+  Scenario: Add SPARQL Test Suite
     Then I click on Sparql Test Suites
     Then I get redirected to Sparql Test Suites
 
@@ -23,9 +23,7 @@ Feature: Transform Test Data
     Then I enter name
     Then I successfully create suite
 
-  Scenario: Update Sparql Test Suite
-    Given Session Login
-    Then Go Home
+  Scenario: Update SPARQL Test Suite
     Then I click on Sparql Test Suites
     Then I get redirected to Sparql Test Suites
 
@@ -37,9 +35,7 @@ Feature: Transform Test Data
     When I enter updated name
     Then I get success update
 
-  Scenario: Delete Sparql Test Suite
-    Given Session Login
-    Then Go Home
+  Scenario: Delete SPARQL Test Suite
     Then I click on Sparql Test Suites
     Then I get redirected to Sparql Test Suites
 

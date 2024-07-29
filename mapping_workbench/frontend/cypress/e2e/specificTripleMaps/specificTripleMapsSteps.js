@@ -2,6 +2,7 @@ import { Given, When, Then} from 'cypress-cucumber-preprocessor/steps'
 
 const {username, password, homeURL, appURLPrefix, projectName} = Cypress.env()
 
+
 let sessionProject = ''
 const specificTripleMapName = 'test_specific_triple_map'
 
@@ -25,13 +26,13 @@ Then('I get success select', () => {
 
 //add resources
 
-When('I expand Triple Maps', () => {
-    cy.get('#nav_triple\\ maps').click()
+When('I expand Triple Maps Fragments', () => {
+    cy.get(':nth-child(4) > #nav_triple_map_fragments').click()
 })
 
 Then('I click on Specific Triple Maps', () => {
     cy.intercept('GET', appURLPrefix + 'specific_triple_map_fragments*').as('get')
-    cy.get('#nav_triple\\ maps_specific\\ triple\\ maps').click()
+    cy.get('#nav_specific_triple_maps').click()
 })
 
 Then('I get redirected to Specific Triple Maps', () => {

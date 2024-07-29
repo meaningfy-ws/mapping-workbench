@@ -1,9 +1,12 @@
-Feature: Entry Packages
+Feature: Tasks
 
-  As a valid use i want to see package
-  Scenario: Import Packages
+  As a valid user i want to interact with tasks page
+
+  Background:
     Given Session Login
     Then Go Home
+
+  Scenario: Import Packages
     Then I go to Mapping Packages
     Then I get redirected to Mapping Packages list page
     When I click on Mapping Packages import
@@ -11,29 +14,13 @@ Feature: Entry Packages
     Then I click on upload button
     Then I get success upload
 
-  Scenario: Process test data
-    Given Session Login
-    Then Go Home
-    Then I click on test data suites
-    Then I get redirected to test data suites
-
-    When I click on transform test data
-    Then I get redirected to transform test data page
-
-    When I click on run button
-    Then I get success transform
-
   Scenario: View Tasks
-    Given Session Login
-    Then Go Home
     Then I go to Tasks page
     Then I get redirected to Tasks page
     Then I receive Tasks
 
 
   Scenario: Refresh Tasks
-    Given Session Login
-    Then Go Home
     Then I go to Tasks page
     Then I get redirected to Tasks page
     Then I receive Tasks
@@ -41,8 +28,6 @@ Feature: Entry Packages
     Then I receive Tasks
 
   Scenario: Delete Task
-    Given Session Login
-    Then Go Home
     Then I go to Tasks page
     Then I get redirected to Tasks page
     Then I receive Tasks
@@ -51,8 +36,6 @@ Feature: Entry Packages
 
 
   Scenario: Delete all Tasks
-    Given Session Login
-    Then Go Home
     Then I go to Tasks page
     Then I get redirected to Tasks page
     Then I receive Tasks

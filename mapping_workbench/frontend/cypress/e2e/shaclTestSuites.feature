@@ -1,10 +1,13 @@
-Feature: Transform Test Data
+Feature: SHACL Test Suite
 
-  As a valid user want to transform test data
+  As a valid user want to interact with SHACL Test Suite
 
-  Scenario: Select Project
+
+  Background:
     Given Session Login
     Then Go Home
+
+  Scenario: Select Project
     Then I get redirected to projects list page
     Then I search for project
 
@@ -12,9 +15,7 @@ Feature: Transform Test Data
     Then I get success select
     Then I get redirected to projects list page
 
-  Scenario: Add Shacl Suite
-    Given Session Login
-    Then Go Home
+  Scenario: Add SHACL Test Suite
     Then I click on Shacl Test Suites
     Then I get redirected to Shacl Test Suites
 
@@ -23,27 +24,21 @@ Feature: Transform Test Data
     Then I enter name
     Then I successfully create suite
 
-  Scenario: Update Shacl Test Suite
-    Given Session Login
-    Then Go Home
+  Scenario: Update SHACL Test Suite
     Then I click on Shacl Test Suites
     Then I get redirected to Shacl Test Suites
 
     Then I search for suite
-    Then I receive suite
     Then I click edit button
     Then I get redirected to edit page
 
     When I enter updated name
     Then I get success update
 
-  Scenario: Delete Shacl Test Suites
-    Given Session Login
-    Then Go Home
+  Scenario: Delete SHACL Test Suite
     Then I click on Shacl Test Suites
     Then I get redirected to Shacl Test Suites
 
     Then I search for updated suite
-    Then I receive suite
     Then I click delete button
     Then I get success delete

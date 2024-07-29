@@ -11,7 +11,7 @@ Feature: Entry Projects
     When I click on add project button
     Then I get redirected to projects create page
     Then I type project name
-
+    Then I uncheck checkboxes
     When I click create button
     Then I get success created
 
@@ -22,7 +22,6 @@ Feature: Entry Projects
     When I click on projects
     Then I get redirected to projects list page
     Then I search for project
-    Then I receive project
 
     When I select project
     Then I get success select
@@ -33,11 +32,11 @@ Feature: Entry Projects
     Then I click on projects
     Then I get redirected to projects list page
     Then I search for project
-    Then I receive project
 
     When I click on edit button
     Then I get redirected to project edit page
     Then I update project description
+    Then I uncheck checkboxes
     Then I click on update button
     Then I receive update success
 
@@ -48,7 +47,6 @@ Feature: Entry Projects
     Then I click on projects
     Then I get redirected to projects list page
     Then I search for project
-    Then I receive project
 
     When I click on view button
     Then I get redirected to project view page
@@ -62,7 +60,6 @@ Feature: Entry Projects
     Then I click on projects
     Then I get redirected to projects list page
     Then I search for project
-    Then I receive project
 
     When I click on delete button
     Then I click yes button

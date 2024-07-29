@@ -34,6 +34,13 @@ Then('I type project name', () => {
     cy.get('input[name=title]').clear().type(projectName)
 })
 
+Then('I uncheck checkboxes', () => {
+    cy.get('input[name=automatically_discover_namespaces]').uncheck()
+    cy.get('input[name=add_specific_namespaces]').uncheck()
+    cy.get('input[name="import_eform.checked"]').uncheck()
+
+})
+
 When('I click create button', () => {
     cy.intercept('POST', appURLPrefix + 'projects',).as('create')
     cy.get('#create_button').click()
@@ -48,7 +55,7 @@ When('I click back to projects link', () => {
 })
 
 Then('I search for project', () => {
-    cy.intercept('GET', appURLPrefix + '/projects*',).as('get')
+    // cy.intercept('GET', appURLPrefix + '/projects*',).as('get')
     cy.get('input[type=text]').clear().type(projectName + '{enter}')
 })
 

@@ -106,7 +106,7 @@ const OntologyNamespacesCustom = () => {
                     spacing={3}
                 >
                     <Button
-                        id="add_button"
+                        id="add_namespace_button"
                         component={RouterLink}
                         href={paths.app[sectionApi.section].create}
                         startIcon={(

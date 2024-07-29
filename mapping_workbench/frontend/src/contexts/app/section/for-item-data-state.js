@@ -1,5 +1,4 @@
 import {useEffect, useState} from "react";
-import {useMounted} from "../../../hooks/use-mounted";
 
 export class ForItemDataState {
     constructor(item, setState) {
@@ -9,23 +8,19 @@ export class ForItemDataState {
 }
 
 export const useItem = (sectionApi, id, path = null) => {
-    const isMounted = useMounted();
     const [item, setItem] = useState(null);
 
-    const handleItemGet = async () => {
-        try {
-            const response = await sectionApi.getItem(id, path);
-            setItem(response);
-        } catch (err) {
-            console.error(err);
-        }
+    const handleItemGet = () => {
+         sectionApi.getItem(id, path)
+             .then(res => setItem(res))
+             .catch(err => console.error(err))
     };
 
     useEffect(() => {
-            id && isMounted() && handleItemGet();
+            id && handleItemGet();
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [id, isMounted()]);
+        []);
 
     return new ForItemDataState(item, setItem);
     // return item

@@ -16,7 +16,7 @@ Given('Session Login', () => {
 })
 
 Given('I go to Mapping Packages', () => {
-    cy.get('#nav_mapping\\ packages').click()
+    cy.get('#nav_mapping_packages_\\(dev\\)').click()
 })
 
 Then('I get redirected to Mapping Packages list page', () => {
@@ -49,17 +49,12 @@ Then("I click select file", () => {
     cy.get('.MuiBox-root > input').selectFile(packageFile, { force: true })
 })
 
-Then('I click on upload button', () => {
-    cy.intercept('POST', appURLPrefix + 'package_importer/import/archive',).as('upload')
-    cy.get('#upload_button').click()
-})
-
 Then('I click on import button', () => {
     cy.get('#import_button').click()
 })
 
 Then('I click on upload button', () => {
-    cy.intercept('POST', appURLPrefix + 'package_importer/import/archive',).as('upload')
+    cy.intercept('POST', appURLPrefix + 'package_importer/tasks/import*',).as('upload')
     cy.get('#upload_button').click()
 })
 
