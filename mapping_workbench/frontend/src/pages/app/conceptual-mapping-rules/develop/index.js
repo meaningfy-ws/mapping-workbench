@@ -11,15 +11,16 @@ import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
 import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
+import {ontologyTermsApi} from 'src/api/ontology-terms'
 import {paths} from 'src/paths';
-import {Layout as AppLayout} from 'src/layouts/app';
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
+import {Layout as AppLayout} from 'src/layouts/app';
+import {RouterLink} from 'src/components/router-link';
+import {fieldsRegistryApi} from "src/api/fields-registry";
+import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {ListSearch} from 'src/sections/app/conceptual-mapping-rule/develop/list-search';
 import {ListTable} from 'src/sections/app/conceptual-mapping-rule/develop/list-table';
-import AddEditDrawer from "../../../../sections/app/conceptual-mapping-rule/develop/add-edit-drawer";
-import {fieldsRegistryApi} from "../../../../api/fields-registry";
+import AddEditDrawer from "src/sections/app/conceptual-mapping-rule/develop/add-edit-drawer";
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
@@ -101,12 +102,7 @@ const useItemsSearch = (items) => {
         }));
     }
 
-    const handlePageChange = (event, page) => {
-        setState(prevState => ({
-            ...prevState,
-            page
-        }));
-    }
+    const handlePageChange = (event, page) => setState(prevState => ({...prevState, page}));
 
     const handleSort = (column, desc) => {
         setState(prevState => ({
@@ -146,11 +142,18 @@ const useItemsSearch = (items) => {
 
 export const Page = () => {
     const [state, setState] = useState({})
+    const [ontologyFragments,setOntologyFragments] = useState([])
 
     const [itemsStore, setItemsStore] = useState({
         items: [],
         itemsCount: 0
     });
+
+
+    useEffect(() => {
+        handleItemsGet();
+        handleGetOntologyFragments();
+    }, []);
 
     const handleItemsGet = () => {
         sectionApi.getItems({rowsPerPage: -1})
@@ -158,9 +161,14 @@ export const Page = () => {
             .catch(err => console.warn(err))
     }
 
-    useEffect(() => {
-        handleItemsGet();
-    }, []);
+    const handleGetOntologyFragments = () => {
+        ontologyTermsApi.getItems({rowsPerPage: -1})
+            .then(res => {
+                setOntologyFragments(res.items.filter(e => ['CLASS', 'PROPERTY', 'DATA_TYPE'].includes(e.type))
+                    .map(e=>({id:e._id,title:e.short_term,type:e.type})));
+            })
+    }
+
 
     const itemsSearch = useItemsSearch(itemsStore.items);
 
@@ -169,10 +177,11 @@ export const Page = () => {
     const [projectSourceStructuralElements, setProjectSourceStructuralElements] = useState([]);
 
     useEffect(() => {
-        (async () => {
-            setProjectSourceStructuralElements(await fieldsRegistryApi.getStructuralElementsForSelector());
-            setIsProjectDataReady(true);
-        })()
+        fieldsRegistryApi.getStructuralElementsForSelector()
+            .then(res => {
+                setProjectSourceStructuralElements(res);
+                setIsProjectDataReady(true);
+            })
     }, [])
 
     if (!isProjectDataReady) return null;
@@ -193,13 +202,9 @@ export const Page = () => {
         handleItemsGet()
     }
 
-    const handleDelete = async (item) => {
+    const handleDelete = (item) => {
         sectionApi.deleteItem(item._id)
-            .finally(() =>
-                {
-                    afterItemProcess(null)
-                }
-            )
+            .finally(() => afterItemProcess(null))
     }
 
     return (
@@ -281,6 +286,7 @@ export const Page = () => {
                                sectionApi={sectionApi}
                                structuralElements={projectSourceStructuralElements}
                                afterItemSave={afterItemProcess}
+                               ontologyFragments={ontologyFragments}
                 />
             </Stack>
         </>
