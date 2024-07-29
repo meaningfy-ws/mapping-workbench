@@ -38,6 +38,7 @@ export const ItemMenu = (props) => {
         Copy Link
       </MenuItem>
       {onEdit && <MenuItem
+          id='edit_menu_item'
           onClick={onEdit}
       >
         <SvgIcon fontSize="small">
@@ -46,8 +47,9 @@ export const ItemMenu = (props) => {
         Edit
       </MenuItem>}
       <MenuItem
-        onClick={onDelete}
-        sx={{ color: 'error.main' }}
+          id='delete_menu_item'
+          onClick={onDelete}
+          sx={{ color: 'error.main' }}
       >
         <SvgIcon fontSize="small">
           <Trash02Icon />

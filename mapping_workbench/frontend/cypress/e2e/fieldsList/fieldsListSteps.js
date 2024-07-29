@@ -26,16 +26,19 @@ Then('Check home title', () => {
     cy.title().should('eq','App: Projects List | Mapping Workbench')
 })
 
-Given('I expand fields registry', () => {
-    cy.get('#nav_fields\\ registry').click()
+Given('I click on Fields List', () => {
+    cy.intercept('GET', appURLPrefix + 'fields_registry/elements*',).
+as('getFields')
+    cy.get('#nav_fields_list').click()
 })
 
-When('I click on fields registry import', () => {
-    cy.get("#nav_fields\\ registry_import").click()
+
+When('I click on import schema button', () => {
+    cy.get('#import_shema_button').click()
 })
 
 Then('I get redirected to field registry import page', () => {
-    cy.url().should('include','fields-registry/elements/import') // => true
+    cy.url().should('include','schema/import')
 })
 
 Then('I type git url', () => {
@@ -56,13 +59,9 @@ Then('I get success import', () => {
     cy.wait('@import',{responseTimeout: 999999}).its('response.statusCode').should('eq', 201)
 })
 
-When('I click on fields registry elements', () => {
-    cy.intercept('GET', appURLPrefix + 'fields_registry/elements*',).as('getFields')
-    cy.get("#nav_fields\\ registry_elements").click()
-})
 
-Then('I get redirected to fields registry elements', () => {
-    cy.url().should('include','fields-registry/elements')
+Then('I get redirected to Fields List', () => {
+    cy.url().should('include','schema')
 })
 
 And('I receive fields', () => {

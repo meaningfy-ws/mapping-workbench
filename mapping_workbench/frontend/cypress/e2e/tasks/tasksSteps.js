@@ -16,7 +16,7 @@ Given('Session Login', () => {
 })
 
 Given('I go to Mapping Packages', () => {
-    cy.get('#nav_mapping\\ packages').click()
+    cy.get('#nav_mapping_packages_\\(dev\\)').click()
 })
 
 Then('I get redirected to Mapping Packages list page', () => {
