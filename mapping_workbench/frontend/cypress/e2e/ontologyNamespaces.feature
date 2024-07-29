@@ -1,10 +1,12 @@
 Feature: Ontology Namespaces
 
-  As a valid user want to transform test data
-
-  Scenario: Select Project
+  As a valid user want to interact with Custom Ontology Namespaces
+  Background:
     Given Session Login
     Then Go Home
+
+
+  Scenario: Select Project
     Then I get redirected to projects list page
     Then I search for project
 
@@ -13,25 +15,17 @@ Feature: Ontology Namespaces
     Then I get redirected to projects list page
 
   Scenario: Add Namespace
-    Given Session Login
-    Then Go Home
+    When I click on Ontology Terms
+    Then I get redirected to Ontology Terms
 
-    When I expand Ontology
-    Then I click on Namespaces
-    Then I get redirected to Ontology Namespaces
-
-    When I click on add button
+    When I click on add namespace button
     Then I get redirected to create page
     Then I enter name
     Then I successfully create Ontology Namespace
 
   Scenario: Update Namespace
-    Given Session Login
-    Then Go Home
-
-    When I expand Ontology
-    Then I click on Namespaces
-    Then I get redirected to Ontology Namespaces
+    When I click on Ontology Terms
+    Then I get redirected to Ontology Terms
 
     Then I search for Ontology Namespaces
     Then I receive Ontology Namespaces
@@ -42,12 +36,8 @@ Feature: Ontology Namespaces
     Then I get success update
 
   Scenario: Delete Ontology
-    Given Session Login
-    Then Go Home
-
-    When I expand Ontology
-    Then I click on Namespaces
-    Then I get redirected to Ontology Namespaces
+    When I click on Ontology Terms
+    Then I get redirected to Ontology Terms
 
     Then I search for updated Ontology Namespaces
     Then I receive Ontology Namespaces

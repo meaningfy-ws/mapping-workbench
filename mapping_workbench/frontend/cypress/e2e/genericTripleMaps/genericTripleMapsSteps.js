@@ -29,7 +29,7 @@ When('I expand Triple Maps', () => {
 
 Then('I click on Generic Triple Maps', () => {
     cy.intercept('GET', appURLPrefix + 'generic_triple_map_fragments*').as('getFragments')
-    cy.get('#nav_triple\\ maps_generic\\ triple\\ maps').click()
+    cy.get('#nav_triple_map_fragments').click()
 })
 
 Then('I get redirected to generic triple maps fragments page', () => {

@@ -2,9 +2,11 @@ Feature: Generic Triple Maps
 
   As a valid user check generic triple maps
 
-  Scenario: Select Project
+  Background:
     Given Session Login
     Then Go Home
+
+  Scenario: Select Project
     Then I click on projects
 
     Then I get redirected to projects list page
@@ -12,12 +14,7 @@ Feature: Generic Triple Maps
     Then I select project
     Then I get success select
 
-
   Scenario: Upload Triple Map Fragment
-    Given Session Login
-    Then Go Home
-
-    When I expand Triple Maps
     Then I click on Generic Triple Maps
     Then I get redirected to generic triple maps fragments page
 
@@ -27,10 +24,6 @@ Feature: Generic Triple Maps
     Then I get success upload
 
   Scenario: Add triple map fragment
-    Given Session Login
-    Then Go Home
-
-    When I expand Triple Maps
     Then I click on Generic Triple Maps
     Then I get redirected to generic triple maps fragments page
     Then I receive generic fragments
@@ -41,10 +34,6 @@ Feature: Generic Triple Maps
     Then Create success
 
   Scenario: Edit triple map fragment
-    Given Session Login
-    Then Go Home
-
-    When I expand Triple Maps
     Then I click on Generic Triple Maps
     Then I get redirected to generic triple maps fragments page
     Then I receive generic fragments
@@ -56,10 +45,6 @@ Feature: Generic Triple Maps
     Then I get success update triple map fragment
 
   Scenario: Delete triple map fragment
-    Given Session Login
-    Then Go Home
-
-    When I expand Triple Maps
     Then I click on Generic Triple Maps
     Then I get redirected to generic triple maps fragments page
     Then I receive generic fragments

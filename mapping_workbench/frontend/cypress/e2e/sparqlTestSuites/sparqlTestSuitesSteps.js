@@ -27,7 +27,7 @@ Then('I get success select', () => {
 
 Then('I click on Sparql Test Suites', () => {
     cy.intercept('GET', appURLPrefix + 'sparql_test_suites*').as('get')
-    cy.get('#nav_sparql\\ test\\ suites').click()
+    cy.get('#nav_sparql_test_suites').click()
 })
 
 Then('I get redirected to Sparql Test Suites', () => {

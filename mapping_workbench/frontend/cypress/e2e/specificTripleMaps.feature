@@ -1,10 +1,12 @@
-Feature: Transform Test Data
+Feature: Specific Triple Maps
 
-  As a valid user want to transform test data
+  As a valid user want to interact with Specific Triple Maps
 
-  Scenario: Select Project
+  Background:
     Given Session Login
     Then Go Home
+
+  Scenario: Select Project
     Then I get redirected to projects list page
     Then I search for project
 
@@ -13,9 +15,7 @@ Feature: Transform Test Data
     Then I get redirected to projects list page
 
   Scenario: Add Specific Triple Maps
-    Given Session Login
-    Then Go Home
-    Then I expand Triple Maps
+    Then I expand Triple Maps Fragments
     Then I click on Specific Triple Maps
     Then I get redirected to Specific Triple Maps
 
@@ -25,9 +25,7 @@ Feature: Transform Test Data
     Then I successfully create Specific Triple Maps
 
   Scenario: Update Resource
-    Given Session Login
-    Then Go Home
-    Then I expand Triple Maps
+    Then I expand Triple Maps Fragments
     Then I click on Specific Triple Maps
     Then I get redirected to Specific Triple Maps
 
@@ -40,9 +38,7 @@ Feature: Transform Test Data
     Then I get success update
 
   Scenario: Delete Resource
-    Given Session Login
-    Then Go Home
-    Then I expand Triple Maps
+    Then I expand Triple Maps Fragments
     Then I click on Specific Triple Maps
     Then I get redirected to Specific Triple Maps
 
