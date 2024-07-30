@@ -52,18 +52,36 @@ import styles from './styles/style.module.scss'
 
 
     const BuildObject = ({nodes, level, parent}) => {
-        return nodes.map(([name,value]) =>
-            typeof value == "object" ?
-                <><Tag name={name}
+        return nodes.map((e) => {
+                const [name, value] = e
+                console.log('name=>', name, 'value=>', value, typeof value)
+                if(['0', '1', '2', '3'].includes(name))
+                    return <BuildObject nodes={Object.entries(value).filter(en => en[0] !== '$')}
+                                        key={'obj'+name}
+                                        level={level}
+                                        parent={[...parent, name]}/>
+                if (typeof value == "string")
+                    if(name !== '_')
+                        return <Tag key={'tag'+name}
+                                    name={name}
+                                    parent={parent}
+                                    level={level}>
+                                <><PreSpaces level={level+1}/><span className={styles['string-content']}>{value}</span><br/></>
+                            </Tag>
+                    else
+                        return <><PreSpaces level={level}/><span className={styles['string-content']}>{value}</span><br/></>
+                // name !== '_' :
+                return <Tag
+                            key={'tag'+name}
+                            name={name}
                             attributes={value?.['$']}
                             parent={parent}
-                level={level}>
-                <BuildObject nodes={Object.entries(value).filter(en => en[0]!=='$')}
-                             level={level+1}
-                             parent={[...parent, name]} />
-                    </Tag>
-                </>
-                : <><PreSpaces level={level}/><span className={styles['string-content']}>{value}</span><br/></>
+                            level={level}>
+                    <BuildObject nodes={Object.entries(value).filter(en => en[0] !== '$')}
+                                 level={level + 1}
+                                 parent={[...parent, name]}/>
+                </Tag>
+            }
         )
     }
 
@@ -84,6 +102,11 @@ const File = ({xmlContent}) => {
                     // setXmlContent(builder.buildObject(result))
                 }
             });
+        // if(xmlContent) {
+        //     const parser = new DOMParser();
+        //     const doc = parser.parseFromString(xmlContent, "application/xml");
+        //     console.log(doc)
+        // }
     }, [xmlContent])
 
 
