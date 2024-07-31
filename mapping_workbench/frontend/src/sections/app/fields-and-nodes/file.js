@@ -1,30 +1,27 @@
 import {useEffect, useState} from "react";
-import {schemaFileResourcesApi as schemaFiles} from "../../../api/schema-files/file-resources";
 import {parseString} from "xml2js";
 import styles from './styles/style.module.scss'
 
+    const MARGIN = 14
+    const ATTRIBUTE_SIGN = '$'
+    const NAME_SIGH = '_'
+
     const Attribute = ({name, value, parent}) => {
         return (
-            <span onClick={() => console.log([...parent,`[${name}='${value}']`].join('/'))}
-                    className={styles.attr}>
+            <span onClick={() => console.log([...parent, `[${name}='${value}']`].join('/'))}
+                  className={styles.attr}>
                 <span className={styles['attr-name']}>{` ${name}=`}</span>
-                <span className={styles['attr-value']}>{`"${value}"`}</span>
+                <span>{'"'}</span>
+                    <span className={styles['attr-value']}>{value}</span>
+                <span>{'"'}</span>
             </span>)
     }
 
-    const PreSpaces = ({level}) => {
-        return (
-            <>
-            {[...Array(level).keys()].map(e=> {
-               return <span style={{color:'transparent'}}>{'___'}</span>
-           })}
-            </>
-        )
-    }
 
-    const Tag = ({name, attributes, children, parent, level}) => {
+const Tag = ({name, attributes, children, parent, level}) => {
        return (
-           <><PreSpaces level={level}/><span className={styles['text-color']}>
+           <span style={{marginLeft: level*MARGIN}}
+                       className={styles['text-color']}>
                <span>{'<'}</span>
                <span name='tag'
                      className={styles.tag}
@@ -39,45 +36,55 @@ import styles from './styles/style.module.scss'
            </span>}
                <span>{'>'}</span><br/>
                {children}
-<               PreSpaces level={level}/>
-           <span>{'</'}</span>
+           <span style={{marginLeft: level*MARGIN}} >{'</'}</span>
            <span name='close-tag'
                  className={styles.tag}
                  onClick={() => console.log('parent', [...parent, name].join('/'))}>
                {name}
            </span>
            <span>{'>'}</span><br/>
-        </span></>)
+        </span>)
     }
 
 
     const BuildObject = ({nodes, level, parent}) => {
         return nodes.map((e) => {
                 const [name, value] = e
-                console.log('name=>', name, 'value=>', value, typeof value)
+                // console.log('name=>', name, 'value=>', value, typeof value)
                 if(['0', '1', '2', '3'].includes(name))
-                    return <BuildObject nodes={Object.entries(value).filter(en => en[0] !== '$')}
+                    return <BuildObject nodes={Object.entries(value).filter(en => en[0] !== ATTRIBUTE_SIGN)}
                                         key={'obj'+name}
                                         level={level}
                                         parent={[...parent, name]}/>
                 if (typeof value == "string")
-                    if(name !== '_')
+                    if(name !== NAME_SIGH)
                         return <Tag key={'tag'+name}
                                     name={name}
                                     parent={parent}
                                     level={level}>
-                                <><PreSpaces level={level+1}/><span className={styles['string-content']}>{value}</span><br/></>
+                                <>
+                                    <span style={{marginLeft: level*MARGIN}}
+                                        className={styles['string-content']}>
+                                        {value}
+                                    </span>
+                                    <br/>
+                                </>
                             </Tag>
                     else
-                        return <><PreSpaces level={level}/><span className={styles['string-content']}>{value}</span><br/></>
-                // name !== '_' :
+                        return <span key={name}>
+                                <span  style={{marginLeft: (level+1)*MARGIN}}
+                                        className={styles['string-content']}>
+                                        {value}
+                                </span>
+                                <br/>
+                            </span>
                 return <Tag
                             key={'tag'+name}
                             name={name}
-                            attributes={value?.['$']}
+                            attributes={value?.[ATTRIBUTE_SIGN]}
                             parent={parent}
                             level={level}>
-                    <BuildObject nodes={Object.entries(value).filter(en => en[0] !== '$')}
+                    <BuildObject nodes={Object.entries(value).filter(en => en[0] !== ATTRIBUTE_SIGN)}
                                  level={level + 1}
                                  parent={[...parent, name]}/>
                 </Tag>
