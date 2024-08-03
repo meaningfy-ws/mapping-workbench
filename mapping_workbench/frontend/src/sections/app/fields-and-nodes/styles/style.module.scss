@@ -5,6 +5,7 @@
 .tag {
   cursor: pointer;
   color: #990055;
+  white-space: nowrap;
   &:hover{
     background-color: #bbb;
   }

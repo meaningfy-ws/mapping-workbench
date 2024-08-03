@@ -6,7 +6,7 @@ import styles from './styles/style.module.scss'
     const ATTRIBUTE_SIGN = '$'
     const NAME_SIGH = '_'
 
-    const Attribute = ({name, value, parent}) => {
+    const Attribute = ({ name, value, parent }) => {
         return (
             <span onClick={() => console.log([...parent, `[${name}='${value}']`].join('/'))}
                   className={styles.attr}>
@@ -18,9 +18,9 @@ import styles from './styles/style.module.scss'
     }
 
 
-const Tag = ({name, attributes, children, parent, level}) => {
+const Tag = ({name, attributes, children, parent, level, isField}) => {
        return (
-           <span style={{marginLeft: level*MARGIN}}
+           <span style={{marginLeft: level * MARGIN}}
                        className={styles['text-color']}>
                <span>{'<'}</span>
                <span name='tag'
@@ -34,15 +34,19 @@ const Tag = ({name, attributes, children, parent, level}) => {
                               value={value}
                               parent={parent}/>)}
            </span>}
-               <span>{'>'}</span><br/>
+               <span>{'>'}</span>
+               {!isField && <br/>}
                {children}
-           <span style={{marginLeft: level*MARGIN}} >{'</'}</span>
+               {!isField && <br/>}
+           <span style={{marginLeft: isField ? 0 : level * MARGIN}} >{'</'}</span>
            <span name='close-tag'
                  className={styles.tag}
                  onClick={() => console.log('parent', [...parent, name].join('/'))}>
                {name}
            </span>
-           <span>{'>'}</span><br/>
+           <span>{'>'}</span>
+               <br/>
+               {/*{!isField && <br/>}*/}
         </span>)
     }
 
@@ -60,29 +64,32 @@ const Tag = ({name, attributes, children, parent, level}) => {
                     if(name !== NAME_SIGH)
                         return <Tag key={'tag'+name}
                                     name={name}
+                                    isField
                                     parent={parent}
                                     level={level}>
                                 <>
-                                    <span style={{marginLeft: level*MARGIN}}
-                                        className={styles['string-content']}>
+                                    {/*<span style={{marginLeft: level*MARGIN}}*/}
+                                    <span className={styles['string-content']}>
                                         {value}
                                     </span>
-                                    <br/>
+                                    {/*<br/>*/}
                                 </>
                             </Tag>
                     else
                         return <span key={name}>
-                                <span  style={{marginLeft: (level+1)*MARGIN}}
+                                <span
+                                    // style={{marginLeft: (level+1)*MARGIN}}
                                         className={styles['string-content']}>
                                         {value}
                                 </span>
-                                <br/>
+                                {/*<br/>*/}
                             </span>
                 return <Tag
-                            key={'tag'+name}
+                            key={'tag' + name}
                             name={name}
                             attributes={value?.[ATTRIBUTE_SIGN]}
                             parent={parent}
+                            isField={Object.entries(value).some(e => e[0] === NAME_SIGH)}
                             level={level}>
                     <BuildObject nodes={Object.entries(value).filter(en => en[0] !== ATTRIBUTE_SIGN)}
                                  level={level + 1}
@@ -109,11 +116,20 @@ const File = ({xmlContent}) => {
                     // setXmlContent(builder.buildObject(result))
                 }
             });
-        // if(xmlContent) {
-        //     const parser = new DOMParser();
-        //     const doc = parser.parseFromString(xmlContent, "application/xml");
-        //     console.log(doc)
-        // }
+        if(xmlContent) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(xmlContent, "application/xml");
+            console.log(doc)
+            // const res = doc.evaluate('/*/cac:AdditionalDocumentReference',doc,null,XPathResult.ANY_TYPE,null)
+            // console.log(res)
+
+            // const evaluator = new XPathEvaluator()
+            // const expresion = evaluator.createExpression('/*/cac:AdditionalDocumentReference')
+            // const res = expresion.evaluate(doc,XPathResult.ORDERED_NODE_SNAPSHOT_TYPE)
+            // document.querySelector("output").textContent = res.snapshotLength;
+            // const ex = doc.evaluate("/cbc\\:WebsiteURI", doc, null, XPathResult.ANY_TYPE)
+            // console.log(ex)
+        }
     }, [xmlContent])
 
 
