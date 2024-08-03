@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import {parseString} from "xml2js";
 import styles from './styles/style.module.scss'
+import Alert from "@mui/material/Alert";
 
     const MARGIN = 14
     const ATTRIBUTE_SIGN = '$'
@@ -102,13 +103,15 @@ const Tag = ({name, attributes, children, parent, level, isField}) => {
 
 const File = ({xmlContent}) => {
     const [xmlNodes, setXmlNodes] = useState(false)
-
+    const [error, setError] = useState(false)
 
     useEffect(() => {
+        setError(false)
         xmlContent &&
             parseString(xmlContent, {explicitArray: false}, (err, result) => {
                 if (err) {
                     console.error('Error parsing XML:', err);
+                    setError(err)
                 } else {
                     console.log(result)
                     setXmlNodes(result)
@@ -136,7 +139,8 @@ const File = ({xmlContent}) => {
 
     return (
         <>
-            {!!xmlNodes && <BuildObject nodes={Object.entries(xmlNodes)}
+            {error && <Alert severity="error">{error.message}</Alert>}
+            {!!xmlNodes && !error && <BuildObject nodes={Object.entries(xmlNodes)}
                                         level={0}
                                         parent={[]}/>}
         </>
