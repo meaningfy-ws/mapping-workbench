@@ -165,13 +165,16 @@ async def route_task_import_eforms_from_github(
         project_id: PydanticObjectId = Form(...),
         user: User = Depends(current_active_user)
 ):
-    return add_task(
-        tasks.task_import_eforms_from_github,
-        f"Importing eForms from {github_repository_url}, branch: {branch_or_tag_name}",
-        None,
-        user.email,
+    tasks.task_import_eforms_from_github(
         github_repository_url, branch_or_tag_name, Project.link_from_id(project_id)
     )
+    # return add_task(
+    #     tasks.task_import_eforms_from_github,
+    #     f"Importing eForms from {github_repository_url}, branch: {branch_or_tag_name}",
+    #     None,
+    #     user.email,
+    #     github_repository_url, branch_or_tag_name, Project.link_from_id(project_id)
+    # )
 
 
 @router.post(

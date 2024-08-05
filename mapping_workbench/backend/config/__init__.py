@@ -9,7 +9,7 @@ dotenv.load_dotenv(verbose=True, override=True)
 
 
 class AppSettings(BaseSettings):
-    
+
     @env_property(config_key='MW_APP_NAME')
     def APP_NAME(self, config_value: str) -> str:
         return config_value
@@ -80,13 +80,29 @@ class RMLMapperSettings(BaseSettings):
 
 
 class TaskManagerSettings(BaseSettings):
-
-    @env_property(config_key='MW_TASK_MANAGER_MAX_WORKERS', default_value="10")
-    def TASK_MANAGER_MAX_WORKERS(self, config_value: str) -> int:
-        return int(config_value)
+    # @env_property(config_key='MW_TASK_MANAGER_MAX_WORKERS', default_value="10")
+    # def TASK_MANAGER_MAX_WORKERS(self, config_value: str) -> int:
+    #     return int(config_value)
+    #
 
     @env_property(config_key='MW_TASK_TIMEOUT', default_value="2000")
     def TASK_TIMEOUT(self, config_value: str) -> int:
+        return int(config_value)
+
+    @env_property(config_key='MW_TASKS_REDIS_SERVER')
+    def TASKS_REDIS_SERVER(self, config_value: str) -> str:
+        return config_value
+
+    @env_property(config_key='MW_TASKS_REDIS_PORT')
+    def TASKS_REDIS_PORT(self, config_value: str) -> str:
+        return config_value
+
+    @env_property(config_key='MW_TASKS_REDIS_DB_NUMBER')
+    def TASKS_REDIS_DB_NUMBER(self, config_value: str) -> int:
+        return int(config_value)
+
+    @env_property(config_key='MW_TASKS_REDIS_DB_BACKEND_NUMBER')
+    def TASKS_REDIS_DB_BACKEND_NUMBER(self, config_value: str) -> int:
         return int(config_value)
 
 
@@ -135,7 +151,7 @@ class Settings(
     TaskManagerSettings,
     EnvironmentSettings,
     GoogleOAuthSettings,
-    FrontendSettings
+    FrontendSettings,
 ):
     """
 

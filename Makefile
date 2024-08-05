@@ -226,3 +226,6 @@ init-rml-mapper:
 setup-env-paths:
 	@ perl -i -ne 'print unless /^RML_MAPPER_PATH/' ${ENV_FILE}
 	@ echo RML_MAPPER_PATH=${RML_MAPPER_PATH} >> ${ENV_FILE}
+
+start-task-manager:
+	@ celery -A mapping_workbench.backend.task_manager.entrypoints worker --loglevel=debug

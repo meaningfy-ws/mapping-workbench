@@ -1,7 +1,7 @@
 import time
 
 from mapping_workbench.backend.task_manager.adapters.task import Task, TaskStatus
-from mapping_workbench.backend.task_manager.adapters.task_manager import TaskManager
+from mapping_workbench.backend.task_manager.adapters.task_manager_threaded import TaskManager
 
 
 def lazy_worker_function(number: int):
