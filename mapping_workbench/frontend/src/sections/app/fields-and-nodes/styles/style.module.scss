@@ -9,6 +9,12 @@
   &:hover{
     background-color: #bbb;
   }
+  &-selected-field {
+    background-color: cornflowerblue;
+  }
+  &-selected-node {
+    background-color: yellow;
+  }
 }
 
 .attr {
