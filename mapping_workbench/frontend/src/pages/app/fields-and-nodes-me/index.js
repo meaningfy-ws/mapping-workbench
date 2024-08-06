@@ -1,6 +1,16 @@
+import {useEffect, useState} from 'react';
+
+import MenuItem from "@mui/material/MenuItem";
+import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
+
+import {Layout as AppLayout} from 'src/layouts/app';
+import File from 'src/sections/app/fields-and-nodes/file'
+import {fieldsRegistryApi as fieldsRegistry} from 'src/api/fields-registry'
+import {schemaFileResourcesApi as schemaFiles} from 'src/api/schema-files/file-resources'
+
 const Page = () => {
     const [files, setFiles] = useState([])
-    const [xmlContent, setXmlContent] = useState()
     const [selectedFile, setSelectedFile] = useState({})
     const [xPaths, setXPaths] = useState([])
 
@@ -8,7 +18,6 @@ const Page = () => {
         schemaFiles.getItems({})
             .then(res => {
                 setFiles(res)
-                setXmlContent(res[1].content)
             })
             .catch(err => console.error(err))
 
@@ -43,22 +52,13 @@ const Page = () => {
                     </MenuItem>
                 ))}
             </TextField>
-            <File xmlContent={selectedFile.content} xPaths={xPaths}/>
+            <File xmlContent={selectedFile.content}
+                  xPaths={xPaths}/>
         </>
 )
 }
 
-import {useEffect, useState} from 'react';
-import {Layout as AppLayout} from 'src/layouts/app';
-import {schemaFileResourcesApi as schemaFiles} from 'src/api/schema-files/file-resources'
 
-import {fieldsRegistryApi as fieldsRegistry} from 'src/api/fields-registry'
-import File from 'src/sections/app/fields-and-nodes/file'
-import MenuItem from "@mui/material/MenuItem";
-import Typography from "@mui/material/Typography";
-
-
-import TextField from "@mui/material/TextField";
 
 Page.getLayout = (page) => (
     <AppLayout>
