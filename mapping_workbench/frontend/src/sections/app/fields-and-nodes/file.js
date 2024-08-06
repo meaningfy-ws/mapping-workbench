@@ -1,5 +1,7 @@
 import {useEffect, useState} from "react";
 import {parseString} from "xml2js";
+import SaxonJS from 'saxon-js'
+
 import styles from './styles/style.module.scss'
 import Alert from "@mui/material/Alert";
 
@@ -19,7 +21,7 @@ import Alert from "@mui/material/Alert";
     }
 
 
-const Tag = ({name, attributes, children, parent, level, isField}) => {
+    const Tag = ({name, attributes, children, parent, level, isField}) => {
        return (
            <span style={{marginLeft: level * MARGIN}}
                        className={styles['text-color']}>
@@ -100,8 +102,39 @@ const Tag = ({name, attributes, children, parent, level, isField}) => {
         )
     }
 
+     const extractNamespaces = (doc) => {
+          const root = doc.documentElement;
+          const attributes = root.attributes;
+          const namespaces = {};
 
-const File = ({xmlContent}) => {
+          for (let i = 0; i < attributes.length; i++) {
+            const attr = attributes[i];
+            if (attr.name.startsWith('xmlns:')) {
+              const prefix = attr.name.split(':')[1];
+              namespaces[prefix] = attr.value;
+            }
+          }
+
+          return namespaces;
+     }
+
+     const getAbsoluteXPath = (node) => {
+      if (node.nodeType !== Node.ELEMENT_NODE) {
+        return '';
+      }
+      const parts = [];
+      while (node && node.nodeType === Node.ELEMENT_NODE) {
+        const nodeName = node.nodeName;
+        parts.unshift(nodeName);
+        node = node.parentNode;
+      }
+      return `/${parts.join('/')}`;
+    }
+
+
+
+
+const File = ({xmlContent, xPaths}) => {
     const [xmlNodes, setXmlNodes] = useState(false)
     const [error, setError] = useState(false)
 
@@ -123,6 +156,25 @@ const File = ({xmlContent}) => {
             const parser = new DOMParser();
             const doc = parser.parseFromString(xmlContent, "application/xml");
             console.log(doc)
+
+            // const expresion = '/*/cac:ProcurementProjectLot/[cbc:ID/@schemeName=\'Lot\']/cac:TenderingTerms/cac:PostAwardProcess'
+
+            const expresion = '/*/ext:UBLExtensions'
+
+            const namespaces = extractNamespaces(doc);
+
+            const nsResolver = (prefix) => {
+              return namespaces[prefix] || null;
+            }
+            console.log('namespaces',namespaces)
+            // const rss = SaxonJS.XPath.evaluate('/*/cac:ProcurementProjectLot[cbc:ID/@schemeName=\'Lot\']/cac:TenderingTerms/cac:PostAwardProcess',doc)
+            // console.log(res)
+            // SaxonJS.getResource({
+            //     file:xmlContent,
+            //     type:'xml'
+            // })
+            //     .then(doc => console.log(SaxonJS.XPath.evaluate('/*/cac:ProcurementProjectLot[cbc:ID/@schemeName=\'Lot\']/cac:TenderingTerms/cac:PostAwardProcess',doc)))
+            //
             // const res = doc.evaluate('/*/cac:AdditionalDocumentReference',doc,null,XPathResult.ANY_TYPE,null)
             // console.log(res)
 
@@ -132,6 +184,52 @@ const File = ({xmlContent}) => {
             // document.querySelector("output").textContent = res.snapshotLength;
             // const ex = doc.evaluate("/cbc\\:WebsiteURI", doc, null, XPathResult.ANY_TYPE)
             // console.log(ex)
+            //
+            // const namespaces = {
+            //     'cbc':"urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2",
+            //     'cac':"urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2",
+            // };
+
+
+            // const nsResolver = (prefix) => {
+            //   return namespaces[prefix] || null;
+            // }
+
+            // const result = doc.evaluate(expresion, doc, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+            // console.log(result)
+
+            let evaluatedNamespaces = []
+
+            xPaths.forEach(xPath => {
+                console.log(xPath.xpath)
+                try {
+                    const evaluated = doc.evaluate(
+                        xPath.xpath,
+                        doc,
+                        nsResolver,
+                        XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+                        null,
+                    );
+
+                    if (evaluated.snapshotLength > 0) {
+                      for (let i = 0; i < evaluated.snapshotLength; i++) {
+                        const node = evaluated.snapshotItem(i);
+                        const absoluteXPath = getAbsoluteXPath(node);
+                        // console.log(`Node found: ${node.textContent}`);
+                        // console.log(`Absolute XPath: ${absoluteXPath}`);
+                         evaluatedNamespaces.push(absoluteXPath)
+                      }
+                    } else {
+                      console.log('No nodes found.');
+                    }
+
+                } catch (err) {
+                    console.log(err)
+                }
+                    console.log(evaluatedNamespaces)
+
+            })
+            // console.log(evaluatedNamespaces)
         }
     }, [xmlContent])
 

@@ -43,7 +43,7 @@ const Page = () => {
                     </MenuItem>
                 ))}
             </TextField>
-            <File xmlContent={selectedFile.content}/>
+            <File xmlContent={selectedFile.content} xPaths={xPaths}/>
         </>
 )
 }
