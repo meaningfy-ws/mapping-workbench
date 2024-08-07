@@ -1,13 +1,14 @@
 from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from mapping_workbench.backend.conceptual_mapping_group.models.conceptual_mapping_group import ConceptualMappingGroup
+from mapping_workbench.backend.conceptual_mapping_group.models.conceptual_mapping_group import \
+    ConceptualMappingGroupBeanie
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
 from mapping_workbench.backend.config import settings
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElementsVersionedView, \
     StructuralElement
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageStateGate
-from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingRuleRegistry, MappingGroup
+from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingRuleRegistry
 from mapping_workbench.backend.ontology.models.namespace import Namespace, NamespaceCustom
 from mapping_workbench.backend.ontology.models.term import Term
 from mapping_workbench.backend.ontology_suite.models.ontology_file_resource import OntologyFileResource
@@ -47,8 +48,8 @@ async def init_project_models(mongodb_database: AsyncIOMotorDatabase):
             User,
             AccessToken,
             Project,
-            #OntologyFileCollection,
-            #OntologyFileResource,
+            # OntologyFileCollection,
+            # OntologyFileResource,
             SPARQLTestSuite,
             SPARQLTestFileResource,
             SHACLTestSuite,
@@ -60,7 +61,7 @@ async def init_project_models(mongodb_database: AsyncIOMotorDatabase):
             MappingPackage,
             MappingPackageStateGate,
             MappingRuleRegistry,
-            #MappingGroup,
+            # MappingGroup,
             ConceptualMappingRule,
             TripleMapRegistry,
             SpecificTripleMapFragment,
@@ -72,6 +73,6 @@ async def init_project_models(mongodb_database: AsyncIOMotorDatabase):
             StructuralElementsVersionedView,
             XSDFileResource,
             OntologyFileResource,
-            ConceptualMappingGroup,
+            ConceptualMappingGroupBeanie,
         ],
     )

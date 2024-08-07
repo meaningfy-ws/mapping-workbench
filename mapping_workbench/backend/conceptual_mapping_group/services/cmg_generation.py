@@ -1,25 +1,51 @@
+from mapping_workbench.backend.conceptual_mapping_group.adapters.cmg_beanie_repository import \
+    CMGBeanieRepositoryException, CMGBeanieRepository
+from mapping_workbench.backend.conceptual_mapping_group.models.conceptual_mapping_group import ConceptualMappingGroup
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
-from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroup, MappingGroupException
-
-TERMS_SEPARATOR = " / "
-MINIM_TERMS_IN_CLASS_PATH = 2
-
-async def generate_cm_group_by_class_path(class_path: str) -> MappingGroup:
-    if class_path is None or class_path is '':
-        raise MappingGroupException("When creating mapping group, class path should not be None or empty")
-
-    terms_from_class_path: list = class_path.split(TERMS_SEPARATOR)
-
-    if len(terms_from_class_path) < MINIM_TERMS_IN_CLASS_PATH:
-        raise MappingGroupException(f"When creating mapping group, number of terms in class path should be more then {MINIM_TERMS_IN_CLASS_PATH}")
+from mapping_workbench.backend.ontology.models.term import Term
+from mapping_workbench.backend.project.models.entity import Project
+from mapping_workbench.backend.project.services.api import get_project_link
 
 
-    pass
+class CMGroupServiceException(Exception):
+    """
+
+    """
 
 
-async def assign_cm_group_to_cm_rule(cm_rule: ConceptualMappingRule) -> ConceptualMappingRule:
+async def create_cm_group_instance_from_cm_rule(cm_rule: ConceptualMappingRule) -> ConceptualMappingGroup:
+    term_name = cm_rule.target_class_path.split(" ")[0] if cm_rule.target_class_path else None
+    project_link = await get_project_link(cm_rule.project.id)
+    term = await Term.find_one(
+        Term.short_term == term_name,
+        Term.project == project_link
+    )
+    if not term:
+        raise CMGroupServiceException("Cannot create CM Group from CM Rule. Term is None.")
 
-    cm_group = await generate_cm_group_by_class_path(class_path=cm_rule.target_class_path)
-    cm_rule.mapping_group = MappingGroup.link_from_id(cm_group.id)
+    return ConceptualMappingGroup(
+        min_sdk_version=cm_rule.min_sdk_version,
+        max_sdk_version=cm_rule.max_sdk_version,
+        instance_type=term,
+        cm_rule=cm_rule
+    )
 
-    return cm_rule
+
+async def create_cm_group_from_cm_rule(cm_rule: ConceptualMappingRule,
+                                       cm_group_repo: CMGBeanieRepository = None) -> None:
+    if not cm_group_repo:
+        cm_group_repo = CMGBeanieRepository()
+
+    cm_group: ConceptualMappingGroup = await create_cm_group_instance_from_cm_rule(cm_rule)
+
+    if isinstance(cm_rule.project, Project):
+        project_id = cm_rule.project.id
+    else:
+        project_id = (await cm_rule.project.fetch()).id
+
+    try:
+        await cm_group_repo.create(project_id=project_id, cm_group=cm_group)
+    except CMGBeanieRepositoryException:
+        pass
+    except Exception as e:
+        raise CMGroupServiceException(str(e))

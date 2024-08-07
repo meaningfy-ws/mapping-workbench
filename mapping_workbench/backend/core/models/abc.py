@@ -5,23 +5,23 @@ from typing import Any, List
 class IRepository(ABC):
 
     @abstractmethod
-    def get_all(self, *args, **kwargs) -> NotImplemented:
+    async def get_all(self, *args, **kwargs) -> NotImplemented:
         raise NotImplementedError
 
     @abstractmethod
-    def get_by_id(self, *args, **kwargs) -> NotImplemented:
+    async def get_by_id(self, *args, **kwargs) -> NotImplemented:
         raise NotImplementedError
 
     @abstractmethod
-    def create(self, *args, **kwargs) -> NotImplemented:
+    async def create(self, *args, **kwargs) -> NotImplemented:
         raise NotImplementedError
 
     @abstractmethod
-    def update(self, *args, **kwargs) -> NotImplemented:
+    async def update(self, *args, **kwargs) -> NotImplemented:
         raise NotImplementedError
 
     @abstractmethod
-    def delete(self, *args, **kwargs) -> NotImplemented:
+    async def delete(self, *args, **kwargs) -> NotImplemented:
         raise NotImplementedError
 
 
