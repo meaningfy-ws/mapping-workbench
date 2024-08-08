@@ -54,7 +54,13 @@ class FieldsRegistryApi extends SectionApi {
         request.page = 0;
         request.rowsPerPage = -1;
         const result = await this.getItems(request, 'elements');
-        return result.items.map(e => ({id: e._id, xpath: e.absolute_xpath, element_type:e.element_type}))
+        return result.items.map(e => ({
+            id: e._id,
+            xpath: e.absolute_xpath,
+            element_type: e.element_type,
+            parent_node_id: e.parent_node_id,
+            relative_xpath: e.relative_xpath,
+        }))
     }
 }
 

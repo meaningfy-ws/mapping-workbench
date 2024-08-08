@@ -3,16 +3,16 @@ import {useEffect} from "react";
 
 const RelativeXPath = ({xmlContent, xpath, absolute_xpath, formik}) => {
 
-    console.log(formik.values)
-    console.log(absolute_xpath, xpath)
-
     useEffect(() => {
-        console.log(!!xmlContent , !!xpath , !!absolute_xpath)
-        if(xmlContent && xpath && absolute_xpath)
-            evaluateXPAthExpression(absolute_xpath,xpath,xmlContent)
-    }, [xmlContent,xpath,absolute_xpath]);
+        if (xmlContent && xpath && absolute_xpath)
+            evaluateXPAthExpression(xpath, getGlobalXPath(absolute_xpath), xmlContent)
+    }, [xmlContent, xpath, absolute_xpath]);
 
-
+    const getGlobalXPath = (xpath) => {
+        const xp = xpath.split('/')
+        xp.shift()
+        return '/*/' + xp.join('/')
+    }
 
 // Function to extract namespaces from the root element
     const extractNamespaces = (doc) => {
@@ -49,13 +49,11 @@ const RelativeXPath = ({xmlContent, xpath, absolute_xpath, formik}) => {
 //     const xpathExpr = '/*/cac:BusinessParty/cac:PostalAddress/cbc:PostalZone';
 //     const contextNodeExpr = '/*/cac:BusinessParty/cac:PostalAddress';
 
-    const evaluateXPAthExpression = (contextNodeExpr,xpathExpr,xmlContent) => {
+    const evaluateXPAthExpression = (contextNodeExpr, xpathExpr, xmlContent) => {
 
         // Parse the XML string into a DOM Document
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(xmlContent, "application/xml");
-
-
 
 
         // Extract namespaces from the XML
@@ -70,44 +68,41 @@ const RelativeXPath = ({xmlContent, xpath, absolute_xpath, formik}) => {
 
             const contextResult = xmlDoc.evaluate(contextNodeExpr, xmlDoc, nsResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
             const contextNode = contextResult.singleNodeValue;
-            console.log('cr',contextResult)
             if (contextNode) {
                 const result = xmlDoc.evaluate(xpathExpr, xmlDoc, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-                console.log('rs',result)
                 if (result.snapshotLength > 0) {
                     for (let i = 0; i < result.snapshotLength; i++) {
                         const node = result.snapshotItem(i);
                         const relativeXPath = getRelativeXPath(node, contextNode);
-                        console.log(`Node found: ${node.textContent}`);
-                        console.log(`Relative XPath: ${relativeXPath}`);
-                        formik.setValue({relative_xpath: relativeXPath})
+                        // console.log(`Node found: ${node.textContent}`);
+                        // console.log(`Relative XPath: ${relativeXPath}`);
+                        formik.setFieldValue('relative_xpath', relativeXPath)
 
                     }
                 } else {
                     formik.setErrors({relative_xpath: 'No nodes found.'})
-                    console.log('No nodes found.');
+                    // console.log('No nodes found.');
                 }
             } else {
                 formik.setErrors({relative_xpath: 'Context node not found.'})
-                console.log('Context node not found.');
+                // console.log('Context node not found.');
             }
-        }
-        catch (err) {
-             formik.setErrors({relative_xpath: 'Unable to process xpath.'})
-            console.error(err)
+        } catch (err) {
+            formik.setErrors({relative_xpath: 'Unable to process xpath.'})
+            // console.error(err)
         }
     }
 
-    console.log(formik)
-
-
     return (
-        <FormTextField
-            label='Relative XPath'
-            name="relative_xpath"
-            formik={formik}
-            required
-        />
+        <>
+            <FormTextField
+                label='Relative XPath'
+                name="relative_xpath"
+                formik={formik}
+                required
+            />
+            {/*{xpath}*/}
+        </>
     )
 
 }

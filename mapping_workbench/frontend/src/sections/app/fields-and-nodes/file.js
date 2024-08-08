@@ -109,7 +109,7 @@ const BuildNodes = ({nodes, level, parent, xpaths, handleClick}) => {
                                    level={level}
                                    xpaths={xpaths}
                                    handleClick={handleClick}
-                                   parent={[...parent, name]}/>
+                                   parent={parent}/>
             if (typeof value == "string")
                 if (name !== NAME_SIGH)
                     return (

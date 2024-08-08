@@ -113,6 +113,8 @@ const Page = () => {
     }))
     console.log(parentNodeSelect)
 
+
+
     return (
         <Card sx={{p: 2}}>
             <Grid container
@@ -180,7 +182,7 @@ const Page = () => {
                                 renderOption={(props, option) =>
                                     <li {...props}
                                         key={option.id}>
-                                        {option.label}
+                                        {option.xpath}
                                     </li>}
                                 renderInput={(params) =>
                                     <TextField {...params}
