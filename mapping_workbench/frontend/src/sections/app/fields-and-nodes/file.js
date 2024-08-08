@@ -11,9 +11,9 @@ const NAME_SIGH = '_'
 
 const cx = classNames.bind(styles);
 
-const Attribute = ({name, value, parent}) => {
+const Attribute = ({name, value, parent, handleClick}) => {
     return (
-        <span onClick={() => console.log([...parent, `[${name}='${value}']`].join('/'))}
+        <span onClick={() => handleClick([...parent, `[${name}='${value}']`].join('/'))}
               className={cx('attr')}>
                 <span className={cx('attr-name')}>{` ${name}=`}</span>
                 <span>{'"'}</span>
@@ -22,7 +22,7 @@ const Attribute = ({name, value, parent}) => {
             </span>)
 }
 
-const Tag = ({name, attributes, children, parent, level, isField, xpaths}) => {
+const Tag = ({name, attributes, children, parent, level, isField, xpaths, handleClick}) => {
     const nodeXPath = [...parent, name].join('/')
     const selectedNode = xpaths?.some(xpath => nodeXPath.endsWith(xpath))
     return (
@@ -34,12 +34,13 @@ const Tag = ({name, attributes, children, parent, level, isField, xpaths}) => {
                          'tag-selected-field': (selectedNode && isField),
                          'tag-selected-node': (selectedNode && !isField)
                      })}
-                     onClick={() => console.log('parent', [...parent, name].join('/'))}>
+                     onClick={() => handleClick([...parent, name].join('/'))}>
                    {name}
                </span>
             {attributes && <span name={'attributes'}>{Object.entries(attributes).map(([name, value]) =>
                 <Attribute key={name}
                            name={name}
+                           handleClick={handleClick}
                            value={value}
                            parent={parent}/>)}
            </span>}
@@ -52,7 +53,7 @@ const Tag = ({name, attributes, children, parent, level, isField, xpaths}) => {
                      'tag-selected-field': (selectedNode && isField),
                      'tag-selected-node': (selectedNode && !isField)
                  })}
-                 onClick={() => console.log('parent', [...parent, name].join('/'))}>
+                 onClick={() => handleClick([...parent, name].join('/'))}>
                {name}
            </span>
            <span>{'>'}</span>
@@ -79,6 +80,8 @@ const executeXPaths = (xmlContent, xPaths) => {
                 null,
             );
 
+            console.log(xPath)
+
             if (evaluated.snapshotLength > 0) {
                 for (let i = 0; i < evaluated.snapshotLength; i++) {
                     const node = evaluated.snapshotItem(i);
@@ -97,15 +100,16 @@ const executeXPaths = (xmlContent, xPaths) => {
 }
 
 
-const BuildObject = ({nodes, level, parent, xpaths}) => {
+const BuildNodes = ({nodes, level, parent, xpaths, handleClick}) => {
     return nodes.map((e) => {
             const [name, value] = e
             if (['0', '1', '2', '3'].includes(name))
-                return <BuildObject nodes={Object.entries(value).filter(en => en[0] !== ATTRIBUTE_SIGN)}
-                                    key={'obj' + name}
-                                    level={level}
-                                    xpaths={xpaths}
-                                    parent={[...parent, name]}/>
+                return <BuildNodes nodes={Object.entries(value).filter(en => en[0] !== ATTRIBUTE_SIGN)}
+                                   key={'obj' + name}
+                                   level={level}
+                                   xpaths={xpaths}
+                                   handleClick={handleClick}
+                                   parent={[...parent, name]}/>
             if (typeof value == "string")
                 if (name !== NAME_SIGH)
                     return (
@@ -114,6 +118,7 @@ const BuildObject = ({nodes, level, parent, xpaths}) => {
                              isField
                              parent={parent}
                              xpaths={xpaths}
+                             handleClick={handleClick}
                              level={level}>
                             <span className={cx('string-content')}>
                                 {value}
@@ -131,12 +136,14 @@ const BuildObject = ({nodes, level, parent, xpaths}) => {
                      attributes={value?.[ATTRIBUTE_SIGN]}
                      parent={parent}
                      xpaths={xpaths}
+                     handleClick={handleClick}
                      isField={Object.entries(value).some(e => e[0] === NAME_SIGH)}
                      level={level}>
-                    <BuildObject nodes={Object.entries(value).filter(en => en[0] !== ATTRIBUTE_SIGN)}
-                                 level={level + 1}
-                                 xpaths={xpaths}
-                                 parent={[...parent, name]}/>
+                    <BuildNodes nodes={Object.entries(value).filter(en => en[0] !== ATTRIBUTE_SIGN)}
+                                level={level + 1}
+                                xpaths={xpaths}
+                                handleClick={handleClick}
+                                parent={[...parent, name]}/>
                 </Tag>)
         }
     )
@@ -170,7 +177,7 @@ const getAbsoluteXPath = (node) => {
     return `/${parts.join('/')}`;
 }
 
-const File = ({xmlContent, xPaths}) => {
+const File = ({xmlContent, xPaths, handleClick}) => {
     const [xmlNodes, setXmlNodes] = useState(false)
     const [error, setError] = useState(false)
     const [xPathsInFile, setXPathsInFile] = useState([])
@@ -195,10 +202,13 @@ const File = ({xmlContent, xPaths}) => {
     return (
         <>
             {error && <Alert severity="error">{error.message}</Alert>}
-            {!!xmlNodes && !error && <BuildObject nodes={Object.entries(xmlNodes)}
-                                                  level={0}
-                                                  xpaths={xPathsInFile}
-                                                  parent={[]}/>}
+            {!!xmlNodes && !error && <div className={cx('container')}>
+                <BuildNodes nodes={Object.entries(xmlNodes)}
+                            level={0}
+                            handleClick={handleClick}
+                            xpaths={xPathsInFile}
+                            parent={[]}/>
+            </div>}
         </>
     )
 }

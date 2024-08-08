@@ -1,3 +1,7 @@
+.container {
+  overflow: auto;
+}
+
 .text-color {
   color: gray;
 }
@@ -13,7 +17,7 @@
     background-color: yellow;
   }
   &-selected-node {
-    background-color: darkseagreen;
+    background-color: lightgreen;
   }
 }
 
