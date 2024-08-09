@@ -4,7 +4,8 @@ import {useEffect} from "react";
 const RelativeXPath = ({xmlContent, xpath, absolute_xpath, formik}) => {
 
     useEffect(() => {
-        if (xmlContent && xpath && absolute_xpath)
+        console.log(`"${xmlContent}"`)
+        if (!!xmlContent && xpath && absolute_xpath)
             evaluateXPAthExpression(xpath, getGlobalXPath(absolute_xpath), xmlContent)
     }, [xmlContent, xpath, absolute_xpath]);
 
@@ -49,12 +50,7 @@ const RelativeXPath = ({xmlContent, xpath, absolute_xpath, formik}) => {
 //     const xpathExpr = '/*/cac:BusinessParty/cac:PostalAddress/cbc:PostalZone';
 //     const contextNodeExpr = '/*/cac:BusinessParty/cac:PostalAddress';
 
-    const evaluateXPAthExpression = (contextNodeExpr, xpathExpr, xmlContent) => {
-
-        // Parse the XML string into a DOM Document
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(xmlContent, "application/xml");
-
+    const evaluateXPAthExpression = (contextNodeExpr, xpathExpr, xmlDoc) => {
 
         // Extract namespaces from the XML
         const namespaces = extractNamespaces(xmlDoc);
@@ -96,6 +92,7 @@ const RelativeXPath = ({xmlContent, xpath, absolute_xpath, formik}) => {
     return (
         <>
             <FormTextField
+                disabled
                 label='Relative XPath'
                 name="relative_xpath"
                 formik={formik}

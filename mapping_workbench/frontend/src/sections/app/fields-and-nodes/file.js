@@ -61,9 +61,9 @@ const Tag = ({name, attributes, children, parent, level, isField, xpaths, handle
         </span>)
 }
 
-const executeXPaths = (xmlContent, xPaths) => {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(xmlContent, "application/xml");
+const executeXPaths = (doc, xPaths) => {
+    // const parser = new DOMParser();
+    // const doc = parser.parseFromString(xmlContent, "application/xml");
     const namespaces = extractNamespaces(doc);
 
     const nsResolver = (prefix) => namespaces[prefix] || null;
@@ -80,7 +80,6 @@ const executeXPaths = (xmlContent, xPaths) => {
                 null,
             );
 
-            console.log(xPath)
 
             if (evaluated.snapshotLength > 0) {
                 for (let i = 0; i < evaluated.snapshotLength; i++) {
@@ -93,7 +92,7 @@ const executeXPaths = (xmlContent, xPaths) => {
             }
 
         } catch (err) {
-            console.log(err)
+            // console.log(err)
         }
     })
     return evaluatedNamespaces
@@ -177,32 +176,20 @@ const getAbsoluteXPath = (node) => {
     return `/${parts.join('/')}`;
 }
 
-const File = ({xmlContent, xPaths, handleClick}) => {
-    const [xmlNodes, setXmlNodes] = useState(false)
-    const [error, setError] = useState(false)
+const File = ({xmlContent, fileContent, fileError, xmlNodes, xPaths, handleClick}) => {
+    // const [xmlNodes, setXmlNodes] = useState(false)
     const [xPathsInFile, setXPathsInFile] = useState([])
 
     useEffect(() => {
-        setError(false)
-        xmlContent &&
-        parseString(xmlContent, {explicitArray: false}, (err, result) => {
-            if (err) {
-                console.error('Error parsing XML:', err);
-                setError(err)
-            } else {
-                setXmlNodes(result)
-            }
-        });
-        if (xmlContent) {
+        if (fileContent && xmlContent && !fileError) {
             setXPathsInFile(executeXPaths(xmlContent, xPaths))
         }
-    }, [xmlContent])
+    }, [xmlContent, fileContent, fileError, xmlNodes])
 
 
     return (
         <>
-            {error && <Alert severity="error">{error.message}</Alert>}
-            {!!xmlNodes && !error && <div className={cx('container')}>
+            {!!xmlNodes && <div className={cx('container')}>
                 <BuildNodes nodes={Object.entries(xmlNodes)}
                             level={0}
                             handleClick={handleClick}

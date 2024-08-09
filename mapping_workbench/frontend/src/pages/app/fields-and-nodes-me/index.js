@@ -21,11 +21,16 @@ import {FormTextField} from "../../../components/app/form/text-field";
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 import {paths} from "../../../paths";
 import RelativeXpathFinder from "../../../sections/app/fields-and-nodes/relative-xpath-finder";
+import Alert from "@mui/material/Alert";
+import {parseString} from "xml2js";
 
 const Page = () => {
     const [files, setFiles] = useState([])
     const [selectedFile, setSelectedFile] = useState({})
+    const [fileError, setFileError] = useState('')
+    const [xmlNodes, setXmlNodes] = useState({})
     const [xPaths, setXPaths] = useState([])
+    const [xmlContent, setXmlContent] = useState('')
 
     useEffect(() => {
         schemaFiles.getItems({})
@@ -36,11 +41,36 @@ const Page = () => {
 
         fieldsRegistry.getXpathsList()
             .then(res => {
-                console.log(res)
                 setXPaths(res)
             })
             .catch(err => console.error(err))
     }, [])
+
+    useEffect(() => {
+        // Parse the XML string into a DOM Document
+        setFileError('')
+        setXmlNodes('')
+        if (selectedFile.content) {
+            try {
+                parseString(selectedFile.content, {explicitArray: false}, (err, result) => {
+                    if (err) {
+                        console.error('Error parsing XML:', err);
+                        setFileError(err)
+                    } else {
+                        setXmlNodes(result)
+                    }
+                });
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(selectedFile.content, "application/xml");
+                setXmlContent(xmlDoc)
+
+            } catch (err) {
+                setXmlContent('')
+                setFileError(err)
+            }
+        }
+
+    }, [selectedFile])
 
     const onChangeXPath = (value) => {
         formik.setFieldValue('xpath', value)
@@ -72,6 +102,7 @@ const Page = () => {
                 .required('XPath is required'),
         }),
         onSubmit: async (values, helpers) => {
+            console.warn('submit')
             const toastId = toastLoad(itemctx.isNew ? "Creating..." : "Updating...")
             try {
                 let response;
@@ -111,94 +142,110 @@ const Page = () => {
         relative_xpath: e.relative_xpath,
         xpath: e.xpath
     }))
-    console.log(parentNodeSelect)
 
-
+    const handleClear = () => {
+        formik.setValues(initialValues)
+    }
 
     return (
-        <Card sx={{p: 2}}>
-            <Grid container
-                  justifyContent='center'>
-                <Grid container>
-                    <Grid item
-                          md={12}
-                          xl={6}>
-                        <Stack gap={2}>
-                            <TextField
-                                fullWidth
-                                label="File"
-                                name="fileSelect"
-                                onChange={event => setSelectedFile(event.target.value)}
-                                value={files[0]}
-                                select
-                            >
-                                {files.map((file) => (
-                                    <MenuItem
-                                        key={file.filename}
-                                        value={file}
-                                    >
-                                        <Typography>
-                                            {file.filename}
-                                        </Typography>
-                                    </MenuItem>
-                                ))}
-                            </TextField>
-                            <File xmlContent={selectedFile.content}
-                                  xPaths={xPaths}
-                                  handleClick={onChangeXPath}/>
-                        </Stack>
-                    </Grid>
-                    <Grid item
-                          md={12}
-                          xl={6}>
-                        <Stack gap={2}>
-                            <FormTextField
-                                formik={formik}
-                                name="id"
-                                label="Id"
-                                required/>
-                            <FormTextField
-                                formik={formik}
-                                name="label"
-                                label="Label"
-                                required/>
-                            <FormTextField
-                                formik={formik}
-                                multiline
-                                name="xpath"
-                                label="xPath"
-                                required/>
-                            <Autocomplete
-                                // disablePortal
-                                id="parent_node"
-                                // formik={formik}
-                                error={!!(formik.touched['parent_node'] && formik.errors['parent_node'])}
-                                helperText={formik.touched['parent_node'] && formik.errors['parent_node']}
-                                onBlur={formik.handleBlur}
-                                // onChange={formik.handleChange}
-                                onChange={(e,value) => formik.setFieldValue('parent_node',value)}
-                                value={formik.values?.['parent_node']?.label}
-                                options={parentNodeSelect}
-                                renderOption={(props, option) =>
-                                    <li {...props}
-                                        key={option.id}>
-                                        {option.xpath}
-                                    </li>}
-                                renderInput={(params) =>
-                                    <TextField {...params}
-                                               label="Parent Node"/>
+        <form onSubmit={formik.handleSubmit}>
+            <Card sx={{p: 2}}>
+                <Grid container
+                      justifyContent='center'>
+                    <Grid container>
+                        <Grid item
+                              md={12}
+                              xl={6}>
+                            <Stack gap={2}>
+                                <TextField
+                                    fullWidth
+                                    label="File"
+                                    name="fileSelect"
+                                    onChange={event => {
+                                        setSelectedFile(event.target.value)
+                                        handleClear()
+                                    }}
+                                    value={files[0]}
+                                    select
+                                >
+                                    {files.map((file) => (
+                                        <MenuItem
+                                            key={file.filename}
+                                            value={file}
+                                        >
+                                            <Typography>
+                                                {file.filename}
+                                            </Typography>
+                                        </MenuItem>
+                                    ))}
+                                </TextField>
+                                {fileError
+                                    ? <Alert severity="error">{fileError.message}</Alert>
+                                    : <File xmlContent={xmlContent}
+                                            xmlNodes={xmlNodes}
+                                            xPaths={xPaths}
+                                            error={fileError}
+                                            fileContent={selectedFile.content}
+                                            handleClick={onChangeXPath}/>
                                 }
-                            />
-                            <RelativeXpathFinder formik={formik}
-                                                 xmlContent={selectedFile.content}
-                                                 absolute_xpath={formik.values.xpath}
-                                                 xpath={formik.values?.parent_node?.xpath}/>
-                        </Stack>
+                            </Stack>
+                        </Grid>
+                        <Grid item
+                              md={12}
+                              xl={6}>
+                            <Stack gap={2}>
+                                <FormTextField
+                                    formik={formik}
+                                    name="id"
+                                    label="Id"
+                                    required/>
+                                <FormTextField
+                                    formik={formik}
+                                    name="label"
+                                    label="Label"
+                                    required/>
+                                <FormTextField
+                                    formik={formik}
+                                    multiline
+                                    name="xpath"
+                                    label="xPath"
+                                    required/>
+                                <Autocomplete
+                                    id="parent_node"
+                                    // key={formik.values.parent_node.label}
+                                    error={!!(formik.touched['parent_node'] && formik.errors['parent_node'])}
+                                    helperText={formik.touched['parent_node'] && formik.errors['parent_node']}
+                                    onBlur={formik.handleBlur}
+                                    onChange={(e, value) => formik.setFieldValue('parent_node', value)}
+                                    value={formik.values?.['parent_node']?.label ?? ''}
+                                    options={parentNodeSelect}
+                                    renderOption={(props, option) =>
+                                        <li {...props}
+                                            key={option.id}>
+                                            {option.xpath}
+                                        </li>}
+                                    renderInput={(params) =>
+                                        <TextField {...params}
+                                                   required
+                                                   label="Parent Node"/>
+                                    }
+                                />
+                                <RelativeXpathFinder formik={formik}
+                                                     error={fileError}
+                                                     xmlContent={xmlContent}
+                                                     absolute_xpath={formik.values.xpath}
+                                                     xpath={formik.values?.parent_node?.xpath}/>
+                            </Stack>
+                        </Grid>
+                    </Grid>
+                    <Grid sx={{justifyContent: 'center'}}>
+                        <Button type='submit'
+                                disabled={fileError}>Save</Button>
+                        <Button onClick={handleClear}>Clear</Button>
                     </Grid>
                 </Grid>
-                <Grid sx={{justifyContent: 'center'}}><Button>Save</Button><Button>Clear</Button></Grid>
-            </Grid>
-        </Card>
+            </Card>
+        </form>
     )
 }
 
