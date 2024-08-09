@@ -1,7 +1,7 @@
-from typing import Optional, Union
+from typing import Optional
 
 from beanie import Link
-from pydantic import field_validator, Field
+from pydantic import field_validator
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntity, BaseEntityInSchema, BaseEntityOutSchema
 from mapping_workbench.backend.project.models.entity import Project

@@ -10,6 +10,9 @@ from pydantic_core.core_schema import ValidationInfo
 from pymongo import IndexModel
 
 from mapping_workbench.backend import DEFAULT_MODEL_CONFIG
+from mapping_workbench.backend.core.models.base_mapping_package_resource_entity import \
+    BaseMappingPackagesResourceEntityInSchema, BaseMappingPackagesResourceEntityOutSchema, \
+    BaseMappingPackagesResourceEntity
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement, StructuralElementState
@@ -75,7 +78,7 @@ class CMRuleStatus(str, Enum):
         return list(map(lambda c: c.value, cls))
 
 
-class ConceptualMappingRuleIn(BaseProjectResourceEntityInSchema):
+class ConceptualMappingRuleIn(BaseProjectResourceEntityInSchema, BaseMappingPackagesResourceEntityInSchema):
     min_sdk_version: Optional[str] = None
     max_sdk_version: Optional[str] = None
     source_structural_element: Link[StructuralElement]
@@ -83,7 +86,6 @@ class ConceptualMappingRuleIn(BaseProjectResourceEntityInSchema):
     xpath_condition: Optional[str] = None
     target_class_path: Optional[str] = None
     target_property_path: Optional[str] = None
-    refers_to_mapping_package_ids: Optional[List[PydanticObjectId]] = []
     triple_map_fragment: Optional[Link[GenericTripleMapFragment]] = None
     sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
     status: Optional[str] = None
@@ -106,7 +108,7 @@ class ConceptualMappingRuleUpdateIn(ConceptualMappingRuleIn):
     source_structural_element: Optional[Link[StructuralElement]] = None
 
 
-class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema):
+class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema, BaseMappingPackagesResourceEntityOutSchema):
     min_sdk_version: Optional[str] = None
     max_sdk_version: Optional[str] = None
     source_structural_element: Optional[Link[StructuralElement]] = None
@@ -119,7 +121,6 @@ class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema):
     target_property_path: Optional[str] = None
     target_property_path_terms_validity: Optional[List[TermValidityResponse]] = None
     terms_validity: Optional[ConceptualMappingRuleTermsValidity] = None
-    refers_to_mapping_package_ids: Optional[List[PydanticObjectId]] = []
     triple_map_fragment: Optional[Link[GenericTripleMapFragment]] = None
     sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
     status: Optional[str] = None
@@ -146,7 +147,7 @@ class ConceptualMappingRuleState(ObjectState):
     sort_order: Optional[float] = None
 
 
-class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
+class ConceptualMappingRule(BaseProjectResourceEntity, BaseMappingPackagesResourceEntity, StatefulObjectABC):
     model_config = DEFAULT_MODEL_CONFIG
 
     status: Optional[CMRuleStatus] | Optional[str] = CMRuleStatus.UNDER_DEVELOPMENT
@@ -171,7 +172,6 @@ class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
     target_property_path: Optional[str] = None
     target_property_path_terms_validity: Optional[List[TermValidityResponse]] = None
     terms_validity: Optional[ConceptualMappingRuleTermsValidity] | Optional[str] = None
-    refers_to_mapping_package_ids: Optional[List[PydanticObjectId]] = []
     triple_map_fragment: Optional[Link[GenericTripleMapFragment]] = None
     sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
     sort_order: Optional[float] = None
