@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Depends
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
+from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
+from starlette.responses import RedirectResponse
 
 from mapping_workbench.backend.conceptual_mapping_rule.entrypoints.api import routes as conceptual_mapping_rule_routes
 from mapping_workbench.backend.config import settings
@@ -36,6 +38,21 @@ from mapping_workbench.backend.triple_map_registry.entrypoints.api import routes
 from mapping_workbench.backend.user.entrypoints.api import routes as user_routes
 from mapping_workbench.backend.xsd_schema.entrypoints.api import routes as xsd_schema_router
 
+
+class HTTPSRedirectMiddleware(BaseHTTPMiddleware):
+    async def dispatch(
+            self, request: Request, call_next: RequestResponseEndpoint
+    ) -> Response:
+        print("K ::", request.headers)
+        if 'x-forwarded-proto' in request.headers:
+            scheme = request.headers['x-forwarded-proto']
+            if scheme == 'http':
+                url = request.url.replace(scheme='https')
+                return RedirectResponse(url, status_code=307)
+        response = await call_next(request)
+        return response
+
+
 ROOT_API_PATH = "/api/v1"
 
 app = FastAPI(
@@ -55,6 +72,8 @@ app.add_middleware(
     allow_methods=['*'],
     allow_headers=['*']
 )
+
+app.add_middleware(HTTPSRedirectMiddleware)
 
 
 @app.on_event("startup")
