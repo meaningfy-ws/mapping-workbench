@@ -99,8 +99,11 @@ async def route_get_mapping_package(mapping_package: MappingPackageOut = Depends
     name=f"{NAME_FOR_MANY}:delete_{NAME_FOR_ONE}",
     response_model=APIEmptyContentWithIdResponse
 )
-async def route_delete_mapping_package(mapping_package: MappingPackage = Depends(get_mapping_package)):
-    await delete_mapping_package(mapping_package)
+async def route_delete_mapping_package(
+        mapping_package: MappingPackage = Depends(get_mapping_package),
+        with_resources: bool = True
+):
+    await delete_mapping_package(mapping_package, with_resources=with_resources)
     return APIEmptyContentWithIdResponse(id=mapping_package.id)
 
 

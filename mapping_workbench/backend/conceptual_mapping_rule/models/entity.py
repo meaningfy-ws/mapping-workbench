@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Optional, List
 
 import pymongo
-from beanie import Link, PydanticObjectId
+from beanie import Link
 from dateutil.tz import tzlocal
 from pydantic import BaseModel, Field, field_validator
 from pydantic_core.core_schema import ValidationInfo
@@ -12,7 +12,7 @@ from pymongo import IndexModel
 from mapping_workbench.backend import DEFAULT_MODEL_CONFIG
 from mapping_workbench.backend.core.models.base_mapping_package_resource_entity import \
     BaseMappingPackagesResourceEntityInSchema, BaseMappingPackagesResourceEntityOutSchema, \
-    BaseMappingPackagesResourceEntity
+    BaseMappingPackagesResourceSchemaTrait
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement, StructuralElementState
@@ -147,7 +147,7 @@ class ConceptualMappingRuleState(ObjectState):
     sort_order: Optional[float] = None
 
 
-class ConceptualMappingRule(BaseProjectResourceEntity, BaseMappingPackagesResourceEntity, StatefulObjectABC):
+class ConceptualMappingRule(BaseProjectResourceEntity, BaseMappingPackagesResourceSchemaTrait, StatefulObjectABC):
     model_config = DEFAULT_MODEL_CONFIG
 
     status: Optional[CMRuleStatus] | Optional[str] = CMRuleStatus.UNDER_DEVELOPMENT

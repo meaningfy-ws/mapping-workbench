@@ -392,6 +392,7 @@ export const ListTableMappingPackages = (props) => {
     const handleMappingPackagesUpdate = async () => {
         const values = {}
         values['id'] = item._id;
+        values['project'] = sessionApi.getSessionProject();
         values['refers_to_mapping_package_ids'] = tempMappingPackages;
         await conceptualMappingRulesApi.updateItem(values);
         setMappingPackages(tempMappingPackages);
@@ -503,6 +504,7 @@ export const ListTableSPARQLAssertions = (props) => {
     const handleSparqlTestFileResourcesUpdate = async () => {
         const values = {}
         values['id'] = item._id;
+        values['project'] = sessionApi.getSessionProject();
         values['sparql_assertions'] = tempSparqlResources;
         await conceptualMappingRulesApi.updateItem(values);
         setSparqlResources(tempSparqlResources);

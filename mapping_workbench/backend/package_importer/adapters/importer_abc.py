@@ -105,23 +105,24 @@ class PackageImporterABC(ABC):
                 continue
 
             resource_content = mono_file_resource.content
-
-            generic_triple_map_fragment = await GenericTripleMapFragment.find_one(
-                GenericTripleMapFragment.project == self.project_link,
-                GenericTripleMapFragment.triple_map_uri == resource_name
+            triple_map_fragment = await SpecificTripleMapFragment.find_one(
+                SpecificTripleMapFragment.project == self.project_link,
+                SpecificTripleMapFragment.mapping_package_id == self.package.id,
+                SpecificTripleMapFragment.triple_map_uri == resource_name
             )
 
-            if not generic_triple_map_fragment:
-                generic_triple_map_fragment = GenericTripleMapFragment(
+            if not triple_map_fragment:
+                triple_map_fragment = SpecificTripleMapFragment(
                     triple_map_uri=resource_name,
                     triple_map_content=resource_content,
                     format=resource_format,
-                    project=self.project
+                    project=self.project,
+                    mapping_package_id=self.package.id
                 )
-                await generic_triple_map_fragment.on_create(self.user).save()
+                await triple_map_fragment.on_create(self.user).save()
             else:
-                generic_triple_map_fragment.triple_map_content = resource_content
-                await generic_triple_map_fragment.on_update(self.user).save()
+                triple_map_fragment.triple_map_content = resource_content
+                await triple_map_fragment.on_update(self.user).save()
 
     @classmethod
     def extract_metadata_from_sparql_query(cls, content) -> dict:

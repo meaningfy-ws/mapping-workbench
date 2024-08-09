@@ -7,9 +7,11 @@ from mapping_workbench.backend.core.models.base_entity import BaseEntity, BaseEn
 from mapping_workbench.backend.project.models.entity import Project
 
 
-class BaseProjectResourceEntity(BaseEntity):
+class BaseProjectAbleResourceEntity(BaseEntity):
     project: Optional[Link[Project]] = None
 
+
+class BaseProjectResourceEntity(BaseProjectAbleResourceEntity):
     @field_validator('project')
     @classmethod
     def prevent_none_for_project(cls, project):

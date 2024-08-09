@@ -6,10 +6,10 @@ from fastapi import UploadFile
 from pydantic import field_validator
 from pydantic_core.core_schema import ValidationInfo
 
-from mapping_workbench.backend.core.models.base_mapping_package_resource_entity import BaseMappingPackageResourceEntity, \
-    BaseMappingPackageResourceEntityInSchema
+from mapping_workbench.backend.core.models.base_mapping_package_resource_entity import \
+    BaseMappingPackageResourceSchemaTrait, BaseMappingPackageResourceEntityInSchema
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
-    BaseProjectResourceEntityInSchema
+    BaseProjectResourceEntityInSchema, BaseProjectAbleResourceEntity
 from mapping_workbench.backend.state_manager.models.state_object import ObjectState
 
 
@@ -51,8 +51,8 @@ class FileResourceIn(
 
 
 class FileResource(
-    BaseProjectResourceEntity,
-    BaseMappingPackageResourceEntity
+    BaseProjectAbleResourceEntity,
+    BaseMappingPackageResourceSchemaTrait
 ):
     title: Optional[str] = None
     description: Optional[str] = None
@@ -64,7 +64,7 @@ class FileResource(
 
 class FileResourceCollection(
     BaseProjectResourceEntity,
-    BaseMappingPackageResourceEntity
+    BaseMappingPackageResourceSchemaTrait
 ):
     title: Optional[str] = None
     description: Optional[str] = None
