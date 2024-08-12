@@ -31,6 +31,7 @@ const Page = () => {
     const [xmlNodes, setXmlNodes] = useState({})
     const [xPaths, setXPaths] = useState([])
     const [xmlContent, setXmlContent] = useState('')
+    const [saving, setSaving] = useState(false)
 
     useEffect(() => {
         schemaFiles.getItems({})
@@ -100,31 +101,38 @@ const Page = () => {
                 .string()
                 .max(255)
                 .required('XPath is required'),
+            relative_xpath: Yup
+                .string()
+                .required('Parent Node is required')
+
         }),
         onSubmit: async (values, helpers) => {
             console.warn('submit')
-            const toastId = toastLoad(itemctx.isNew ? "Creating..." : "Updating...")
+            const toastId = toastLoad("Saving...")
+            setSaving(true)
+            helpers.setSubmitting(true);
             try {
                 let response;
-                if (itemctx.isNew) {
-                    response = await sectionApi.createItem(values);
-                } else {
-                    values['id'] = item._id;
-                    response = await sectionApi.updateItem(values);
-                }
-                helpers.setStatus({success: true});
+                setTimeout(() => {
+                    setSaving(false)
+                                    helpers.setStatus({success: true});
                 helpers.setSubmitting(false);
-                toastSuccess(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "Created" : "Updated"), toastError());
-                if (response) {
-                    if (itemctx.isNew) {
-                        router.push({
-                            pathname: paths.app[sectionApi.section].edit,
-                            query: {id: response._id}
-                        });
-                    } else if (itemctx.isStateable) {
-                        itemctx.setState(response);
-                    }
-                }
+                    toastSuccess("Saved",toastId)
+                }, 2000)
+                // helpers.setStatus({success: true});
+                // helpers.setSubmitting(false);
+                // toastSuccess(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "Created" : "Updated"), toastError());
+
+                // if (response) {
+                //     if (itemctx.isNew) {
+                //         router.push({
+                //             pathname: paths.app[sectionApi.section].edit,
+                //             query: {id: response._id}
+                //         });
+                //     } else if (itemctx.isStateable) {
+                //         itemctx.setState(response);
+                //     }
+                // }
             } catch (err) {
                 console.error(err);
                 toastError(err, toastId);
@@ -136,11 +144,11 @@ const Page = () => {
     });
 
     const parentNodeSelect = xPaths.map(e => ({
-        label: `${e.parent_node_id} : ${e.relative_xpath}`,
         id: e.id,
+        label: `${e.parent_node_id} : ${e.relative_xpath}`,
+        xpath: e.xpath,
         parent_node: e.parent_node_id,
-        relative_xpath: e.relative_xpath,
-        xpath: e.xpath
+        relative_xpath: e.relative_xpath
     }))
 
     const handleClear = () => {
@@ -196,22 +204,26 @@ const Page = () => {
                             <Stack gap={2}>
                                 <FormTextField
                                     formik={formik}
+                                    disabled={saving}
                                     name="id"
                                     label="Id"
                                     required/>
                                 <FormTextField
                                     formik={formik}
+                                    disabled={saving}
                                     name="label"
                                     label="Label"
                                     required/>
                                 <FormTextField
                                     formik={formik}
+                                    disabled={saving}
                                     multiline
                                     name="xpath"
                                     label="xPath"
                                     required/>
                                 <Autocomplete
                                     id="parent_node"
+                                    disabled={saving}
                                     // key={formik.values.parent_node.label}
                                     error={!!(formik.touched['parent_node'] && formik.errors['parent_node'])}
                                     helperText={formik.touched['parent_node'] && formik.errors['parent_node']}
@@ -240,7 +252,7 @@ const Page = () => {
                     </Grid>
                     <Grid sx={{justifyContent: 'center'}}>
                         <Button type='submit'
-                                disabled={fileError}>Save</Button>
+                                disabled={!!fileError || !xmlContent || formik.isSubmitting}>Save</Button>
                         <Button onClick={handleClear}>Clear</Button>
                     </Grid>
                 </Grid>
