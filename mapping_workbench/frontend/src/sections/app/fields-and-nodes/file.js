@@ -1,11 +1,8 @@
 import {useEffect, useState} from "react";
-import {parseString} from "xml2js";
-
-import Alert from "@mui/material/Alert";
 import classNames from "classnames/bind";
 import styles from './styles/style.module.scss'
 
-const MARGIN = 14
+const MARGIN = 4
 const ATTRIBUTE_SIGN = '$'
 const NAME_SIGH = '_'
 
@@ -22,11 +19,16 @@ const Attribute = ({name, value, parent, handleClick}) => {
             </span>)
 }
 
-const Tag = ({name, attributes, children, parent, level, isField, xpaths, handleClick}) => {
+const Tag = ({name, attributes, children, parent, level, isField, relativeXPath, xpaths, handleClick}) => {
     const nodeXPath = [...parent, name].join('/')
     const selectedNode = xpaths?.some(xpath => nodeXPath.endsWith(xpath))
+    const isRelativeXPath = relativeXPath && nodeXPath.includes(relativeXPath)
     return (
-        <span style={{marginLeft: level * MARGIN}}
+        <span style={{
+            marginLeft: level * MARGIN,
+            display: 'block',
+            backgroundColor: isRelativeXPath ? '#ffacac' : 'inherit'
+        }}
               className={cx('text-color')}>
                <span>{'<'}</span>
                <span name='tag'
@@ -61,9 +63,7 @@ const Tag = ({name, attributes, children, parent, level, isField, xpaths, handle
         </span>)
 }
 
-const executeXPaths = (doc, xPaths) => {
-    // const parser = new DOMParser();
-    // const doc = parser.parseFromString(xmlContent, "application/xml");
+const executeXPaths = (doc, xPaths, relativeXpath) => {
     const namespaces = extractNamespaces(doc);
 
     const nsResolver = (prefix) => namespaces[prefix] || null;
@@ -99,7 +99,7 @@ const executeXPaths = (doc, xPaths) => {
 }
 
 
-const BuildNodes = ({nodes, level, parent, xpaths, handleClick}) => {
+const BuildNodes = ({nodes, level, parent, xpaths, relativeXPath, handleClick}) => {
     return nodes.map((e) => {
             const [name, value] = e
             if (['0', '1', '2', '3'].includes(name))
@@ -108,6 +108,7 @@ const BuildNodes = ({nodes, level, parent, xpaths, handleClick}) => {
                                    level={level}
                                    xpaths={xpaths}
                                    handleClick={handleClick}
+                                   relativeXPath={relativeXPath}
                                    parent={parent}/>
             if (typeof value == "string")
                 if (name !== NAME_SIGH)
@@ -118,6 +119,7 @@ const BuildNodes = ({nodes, level, parent, xpaths, handleClick}) => {
                              parent={parent}
                              xpaths={xpaths}
                              handleClick={handleClick}
+                             relativeXPath={relativeXPath}
                              level={level}>
                             <span className={cx('string-content')}>
                                 {value}
@@ -136,11 +138,13 @@ const BuildNodes = ({nodes, level, parent, xpaths, handleClick}) => {
                      parent={parent}
                      xpaths={xpaths}
                      handleClick={handleClick}
+                     relativeXPath={relativeXPath}
                      isField={Object.entries(value).some(e => e[0] === NAME_SIGH)}
                      level={level}>
                     <BuildNodes nodes={Object.entries(value).filter(en => en[0] !== ATTRIBUTE_SIGN)}
                                 level={level + 1}
                                 xpaths={xpaths}
+                                relativeXPath={relativeXPath}
                                 handleClick={handleClick}
                                 parent={[...parent, name]}/>
                 </Tag>)
@@ -176,7 +180,7 @@ const getAbsoluteXPath = (node) => {
     return `/${parts.join('/')}`;
 }
 
-const File = ({xmlContent, fileContent, fileError, xmlNodes, xPaths, handleClick}) => {
+const File = ({xmlContent, fileContent, fileError, relativeXPath, xmlNodes, xPaths, handleClick}) => {
     // const [xmlNodes, setXmlNodes] = useState(false)
     const [xPathsInFile, setXPathsInFile] = useState([])
 
@@ -194,6 +198,7 @@ const File = ({xmlContent, fileContent, fileError, xmlNodes, xPaths, handleClick
                             level={0}
                             handleClick={handleClick}
                             xpaths={xPathsInFile}
+                            relativeXPath={relativeXPath}
                             parent={[]}/>
             </div>}
         </>

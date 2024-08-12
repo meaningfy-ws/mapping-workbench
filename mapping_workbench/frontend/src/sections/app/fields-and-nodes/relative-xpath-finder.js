@@ -4,7 +4,7 @@ import {useEffect} from "react";
 const RelativeXPath = ({xmlContent, xpath, absolute_xpath, formik}) => {
 
     useEffect(() => {
-        console.log(`"${xmlContent}"`)
+        // console.log(`"${xmlContent}"`)
         if (!!xmlContent && xpath && absolute_xpath)
             evaluateXPAthExpression(xpath, getGlobalXPath(absolute_xpath), xmlContent)
     }, [xmlContent, xpath, absolute_xpath]);

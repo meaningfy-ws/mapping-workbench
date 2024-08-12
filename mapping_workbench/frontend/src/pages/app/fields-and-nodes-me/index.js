@@ -2,16 +2,17 @@ import {useEffect, useState} from 'react';
 
 import {useFormik} from "formik";
 import * as Yup from "yup";
+import {parseString} from "xml2js";
 
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
-
 import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Autocomplete from "@mui/material/Autocomplete";
+import Alert from "@mui/material/Alert";
 
 import {Layout as AppLayout} from 'src/layouts/app';
 import File from 'src/sections/app/fields-and-nodes/file'
@@ -19,10 +20,7 @@ import {fieldsRegistryApi as fieldsRegistry} from 'src/api/fields-registry'
 import {schemaFileResourcesApi as schemaFiles} from 'src/api/schema-files/file-resources'
 import {FormTextField} from "../../../components/app/form/text-field";
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
-import {paths} from "../../../paths";
 import RelativeXpathFinder from "../../../sections/app/fields-and-nodes/relative-xpath-finder";
-import Alert from "@mui/material/Alert";
-import {parseString} from "xml2js";
 
 const Page = () => {
     const [files, setFiles] = useState([])
@@ -192,6 +190,7 @@ const Page = () => {
                                     : <File xmlContent={xmlContent}
                                             xmlNodes={xmlNodes}
                                             xPaths={xPaths}
+                                            relativeXPath={formik.values.relative_xpath}
                                             error={fileError}
                                             fileContent={selectedFile.content}
                                             handleClick={onChangeXPath}/>
