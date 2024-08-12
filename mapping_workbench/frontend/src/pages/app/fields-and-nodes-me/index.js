@@ -190,6 +190,7 @@ const Page = () => {
                                     : <File xmlContent={xmlContent}
                                             xmlNodes={xmlNodes}
                                             xPaths={xPaths}
+                                            xPath={formik.values.xpath}
                                             relativeXPath={formik.values.relative_xpath}
                                             error={fileError}
                                             fileContent={selectedFile.content}

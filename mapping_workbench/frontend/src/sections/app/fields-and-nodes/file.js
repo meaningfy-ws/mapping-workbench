@@ -19,15 +19,15 @@ const Attribute = ({name, value, parent, handleClick}) => {
             </span>)
 }
 
-const Tag = ({name, attributes, children, parent, level, isField, relativeXPath, xpaths, handleClick}) => {
+const Tag = ({name, attributes, children, parent, level, isField, relativeXPath, xPath, xpaths, handleClick}) => {
     const nodeXPath = [...parent, name].join('/')
     const selectedNode = xpaths?.some(xpath => nodeXPath.endsWith(xpath))
-    const isRelativeXPath = relativeXPath && nodeXPath.includes(relativeXPath)
+    const selectedXpath = xPath && nodeXPath === xPath
     return (
         <span style={{
             marginLeft: level * MARGIN,
             display: 'block',
-            backgroundColor: isRelativeXPath ? '#ffacac' : 'inherit'
+            backgroundColor: selectedXpath ? '#ffacac' : 'inherit'
         }}
               className={cx('text-color')}>
                <span>{'<'}</span>
@@ -45,20 +45,20 @@ const Tag = ({name, attributes, children, parent, level, isField, relativeXPath,
                            handleClick={handleClick}
                            value={value}
                            parent={parent}/>)}
-           </span>}
+            </span>}
             <span>{'>'}</span>
             {!isField && <br/>}
             {children}
             <span style={{marginLeft: isField ? 0 : level * MARGIN}}>{'</'}</span>
-           <span name='close-tag'
-                 className={cx('tag', {
-                     'tag-selected-field': (selectedNode && isField),
-                     'tag-selected-node': (selectedNode && !isField)
-                 })}
-                 onClick={() => handleClick([...parent, name].join('/'))}>
+            <span name='close-tag'
+                  className={cx('tag', {
+                      'tag-selected-field': (selectedNode && isField),
+                      'tag-selected-node': (selectedNode && !isField)
+                  })}
+                  onClick={() => handleClick([...parent, name].join('/'))}>
                {name}
-           </span>
-           <span>{'>'}</span>
+            </span>
+            <span>{'>'}</span>
                <br/>
         </span>)
 }
@@ -99,13 +99,14 @@ const executeXPaths = (doc, xPaths, relativeXpath) => {
 }
 
 
-const BuildNodes = ({nodes, level, parent, xpaths, relativeXPath, handleClick}) => {
+const BuildNodes = ({nodes, level, parent, xPath, xpaths, relativeXPath, handleClick}) => {
     return nodes.map((e) => {
             const [name, value] = e
             if (['0', '1', '2', '3'].includes(name))
                 return <BuildNodes nodes={Object.entries(value).filter(en => en[0] !== ATTRIBUTE_SIGN)}
                                    key={'obj' + name}
                                    level={level}
+                                   xPath={xPath}
                                    xpaths={xpaths}
                                    handleClick={handleClick}
                                    relativeXPath={relativeXPath}
@@ -117,6 +118,7 @@ const BuildNodes = ({nodes, level, parent, xpaths, relativeXPath, handleClick}) 
                              name={name}
                              isField
                              parent={parent}
+                             xPath={xPath}
                              xpaths={xpaths}
                              handleClick={handleClick}
                              relativeXPath={relativeXPath}
@@ -136,6 +138,7 @@ const BuildNodes = ({nodes, level, parent, xpaths, relativeXPath, handleClick}) 
                      name={name}
                      attributes={value?.[ATTRIBUTE_SIGN]}
                      parent={parent}
+                     xPath={xPath}
                      xpaths={xpaths}
                      handleClick={handleClick}
                      relativeXPath={relativeXPath}
@@ -144,6 +147,7 @@ const BuildNodes = ({nodes, level, parent, xpaths, relativeXPath, handleClick}) 
                     <BuildNodes nodes={Object.entries(value).filter(en => en[0] !== ATTRIBUTE_SIGN)}
                                 level={level + 1}
                                 xpaths={xpaths}
+                                xPath={xPath}
                                 relativeXPath={relativeXPath}
                                 handleClick={handleClick}
                                 parent={[...parent, name]}/>
@@ -180,7 +184,7 @@ const getAbsoluteXPath = (node) => {
     return `/${parts.join('/')}`;
 }
 
-const File = ({xmlContent, fileContent, fileError, relativeXPath, xmlNodes, xPaths, handleClick}) => {
+const File = ({xmlContent, fileContent, fileError, relativeXPath, xmlNodes, xPaths, xPath, handleClick}) => {
     // const [xmlNodes, setXmlNodes] = useState(false)
     const [xPathsInFile, setXPathsInFile] = useState([])
 
@@ -197,6 +201,7 @@ const File = ({xmlContent, fileContent, fileError, relativeXPath, xmlNodes, xPat
                 <BuildNodes nodes={Object.entries(xmlNodes)}
                             level={0}
                             handleClick={handleClick}
+                            xPath={xPath}
                             xpaths={xPathsInFile}
                             relativeXPath={relativeXPath}
                             parent={[]}/>
