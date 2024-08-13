@@ -26,7 +26,8 @@ import {FormCodeReadOnlyArea} from "../../../components/app/form/code-read-only-
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import {TabPanel} from "@mui/lab";
+
+import turtleValidator from "src/utils/turtle-validator";
 
 export const EditForm = (props) => {
     const {itemctx, tree, ...other} = props;
@@ -39,6 +40,8 @@ export const EditForm = (props) => {
     const [selectedTree, setSelectedTree] = useState(tree?.[0]?.test_datas?.[0]?.test_data_id)
     const [testDataContent, setTestDataContent] = useState("")
     const [rdfResultContent, setRdfResultContent] = useState("")
+
+    const [validation, setValidation] = useState({})
 
     const initialValues = {
         triple_map_uri: item.triple_map_uri ?? '',
@@ -63,6 +66,7 @@ export const EditForm = (props) => {
             const toastId = toastLoad("Updating...")
             try {
                 let response;
+                s
                 values['project'] = sessionApi.getSessionProject();
                 if (itemctx.isNew) {
                     response = await sectionApi.createItem(values);
@@ -203,6 +207,8 @@ export const EditForm = (props) => {
                             </Grid>
 
                         </Grid>
+                        {validation.success}
+                        {validation.err}
                     </CardContent>
                 </Card>
             }
@@ -297,6 +303,17 @@ export const EditForm = (props) => {
                     >
                         Update and Transform
                     </Button>}
+                    <Button onClick={() => {
+                        turtleValidator(formik.values.triple_map_content)
+                            .then(res => {
+                                console.warn(res)
+                                setValidation({success: res})
+                            })
+                            .catch(err => {
+                                console.warn(err)
+                                setValidation({err})
+                            })
+                    }}>Validate</Button>
                     <Button
                         color="inherit"
                         component={RouterLink}
