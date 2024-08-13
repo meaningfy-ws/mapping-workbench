@@ -55,7 +55,7 @@ export const EditForm = (props) => {
                 .required('Format is required')
         }),
         onSubmit: async (values, helpers) => {
-                const toastId = toastLoad("Updating...")
+            const toastId = toastLoad("Updating...")
             try {
                 let response;
                 values['project'] = sessionApi.getSessionProject();
@@ -146,14 +146,15 @@ export const EditForm = (props) => {
                     <Grid container
                           spacing={3}>
                         <Grid xs={12}
-                              md={12}>
+                              md={6}>
                             <FormTextField formik={formik}
                                            name="triple_map_uri"
                                            label="URI"
-                                           required={true}/>
+                                           required
+                            />
                         </Grid>
                         <Grid xs={12}
-                              md={12}>
+                              md={6}>
                             <TextField
                                 error={!!(formik.touched.format && formik.errors.format)}
                                 fullWidth
@@ -197,23 +198,23 @@ export const EditForm = (props) => {
                                 >
                                     {tree.map(suite =>
                                         [<MenuItem key={suite.suite_id}
-                                                       value={suite.suite_id}
-                                                     disabled>{suite.suite_title}
+                                                   value={suite.suite_id}
+                                                   disabled>{suite.suite_title}
 
-                                            </MenuItem>,
+                                        </MenuItem>,
                                             suite.test_datas.map(testData =>
-                                                    <MenuItem key={testData.test_data_id}
-                                                              value={testData.test_data_id}
-                                                              style={{paddingLeft: 40}}>
-                                                        {testData.test_data_title}
-                                                    </MenuItem>)])
+                                                <MenuItem key={testData.test_data_id}
+                                                          value={testData.test_data_id}
+                                                          style={{paddingLeft: 40}}>
+                                                    {testData.test_data_title}
+                                                </MenuItem>)])
                                     }
                                 </TextField>
                             </Grid>
                             <Grid xs={12}
                                   md={12}>
                                 <Accordion>
-                                    <AccordionSummary  expandIcon={<ExpandMoreIcon />}>
+                                    <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                                         Test Data Content
                                     </AccordionSummary>
                                     <AccordionDetails>
@@ -229,7 +230,7 @@ export const EditForm = (props) => {
                             <Grid xs={12}
                                   md={12}>
                                 <Accordion disabled={!rdfResultContent}>
-                                    <AccordionSummary  expandIcon={<ExpandMoreIcon />}>
+                                    <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                                         RDF Result
                                     </AccordionSummary>
                                     <AccordionDetails>
@@ -244,7 +245,7 @@ export const EditForm = (props) => {
                                     </AccordionDetails>
                                 </Accordion>
                             </Grid>
-                            </>}
+                        </>}
                     </Grid>
                 </CardContent>
             </Card>
