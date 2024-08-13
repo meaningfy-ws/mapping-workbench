@@ -181,7 +181,6 @@ export const EditForm = (props) => {
                                 disabled={formik.isSubmitting}
                                 formik={formik}
                                 name="triple_map_content"
-                                label="Content"
                                 grammar={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['grammar']}
                                 language={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['language']}
                             />
