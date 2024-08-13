@@ -24,12 +24,17 @@ import {sessionApi} from "../../../api/session";
 import {FormCodeTextArea} from "../../../components/app/form/code-text-area";
 import {FormCodeReadOnlyArea} from "../../../components/app/form/code-read-only-area";
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import {TabPanel} from "@mui/lab";
 
 export const EditForm = (props) => {
     const {itemctx, tree, ...other} = props;
     const router = useRouter();
     const sectionApi = itemctx.api;
     const item = itemctx.data;
+
+    const [currentTab, setCurrentTab] = useState('tabEdit')
 
     const [selectedTree, setSelectedTree] = useState(tree?.[0]?.test_datas?.[0]?.test_data_id)
     const [testDataContent, setTestDataContent] = useState("")
@@ -140,55 +145,74 @@ export const EditForm = (props) => {
     return (
         <form onSubmit={formik.handleSubmit}
               {...other}>
-            <Card>
-                <CardHeader title={(itemctx.isNew ? 'Create' : 'Edit') + ' ' + sectionApi.SECTION_ITEM_TITLE}/>
-                <CardContent sx={{pt: 0}}>
-                    <Grid container
-                          spacing={3}>
-                        <Grid xs={12}
-                              md={6}>
-                            <FormTextField formik={formik}
-                                           name="triple_map_uri"
-                                           label="URI"
-                                           required
-                            />
-                        </Grid>
-                        <Grid xs={12}
-                              md={6}>
-                            <TextField
-                                error={!!(formik.touched.format && formik.errors.format)}
-                                fullWidth
-                                helperText={formik.touched.format && formik.errors.format}
-                                onBlur={formik.handleBlur}
-                                label="Format"
-                                onChange={e => {
-                                    formik.setFieldValue("format", e.target.value);
-                                }}
-                                select
-                                required
-                                value={formik.values.format}
-                            >
-                                {Object.keys(sectionApi.FILE_RESOURCE_FORMATS).map((key) => (
-                                    <MenuItem key={key}
-                                              value={key}>
-                                        {sectionApi.FILE_RESOURCE_FORMATS[key]}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
-                        </Grid>
-                        <Grid xs={12}
-                              md={12}>
-                            <FormCodeTextArea
-                                disabled={formik.isSubmitting}
-                                formik={formik}
-                                name="triple_map_content"
-                                grammar={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['grammar']}
-                                language={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['language']}
-                            />
-                        </Grid>
-                        {!itemctx.isNew && <>
+            {!itemctx.isNew && <Tabs value={currentTab}
+                                     onChange={(e, v) => setCurrentTab(v)}>
+                <Tab label='Edit Triple Map Fragment'
+                     value='tabEdit'></Tab>
+                <Tab label='Test Triple Map Fragment'
+                     value='tabTest'></Tab>
+            </Tabs>}
+
+
+            {currentTab === 'tabEdit' &&
+                <Card sx={{mt: 3}}>
+                    <CardHeader title={(itemctx.isNew ? 'Create' : 'Edit') + ' ' + sectionApi.SECTION_ITEM_TITLE}/>
+                    <CardContent sx={{pt: 0}}>
+                        <Grid container
+                              spacing={3}>
+                            <Grid xs={12}
+                                  md={6}>
+                                <FormTextField formik={formik}
+                                               name="triple_map_uri"
+                                               label="URI"
+                                               required
+                                />
+                            </Grid>
+                            <Grid xs={12}
+                                  md={6}>
+                                <TextField
+                                    error={!!(formik.touched.format && formik.errors.format)}
+                                    fullWidth
+                                    helperText={formik.touched.format && formik.errors.format}
+                                    onBlur={formik.handleBlur}
+                                    label="Format"
+                                    onChange={e => {
+                                        formik.setFieldValue("format", e.target.value);
+                                    }}
+                                    select
+                                    required
+                                    value={formik.values.format}
+                                >
+                                    {Object.keys(sectionApi.FILE_RESOURCE_FORMATS).map((key) => (
+                                        <MenuItem key={key}
+                                                  value={key}>
+                                            {sectionApi.FILE_RESOURCE_FORMATS[key]}
+                                        </MenuItem>
+                                    ))}
+                                </TextField>
+                            </Grid>
                             <Grid xs={12}
                                   md={12}>
+                                <FormCodeTextArea
+                                    disabled={formik.isSubmitting}
+                                    formik={formik}
+                                    name="triple_map_content"
+                                    grammar={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['grammar']}
+                                    language={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['language']}
+                                />
+                            </Grid>
+
+                        </Grid>
+                    </CardContent>
+                </Card>
+            }
+            {currentTab === 'tabTest' &&
+                <Card sx={{mt: 3}}>
+                    <CardHeader title={'Test ' + sectionApi.SECTION_ITEM_TITLE}/>
+                    <CardContent>
+                        <Grid container
+                              spacing={2}>
+                            <Grid xs={12}>
                                 <TextField
                                     fullWidth
                                     label="Select Test Data"
@@ -211,8 +235,7 @@ export const EditForm = (props) => {
                                     }
                                 </TextField>
                             </Grid>
-                            <Grid xs={12}
-                                  md={12}>
+                            <Grid xs={12}>
                                 <Accordion>
                                     <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                                         Test Data Content
@@ -227,8 +250,7 @@ export const EditForm = (props) => {
                                     </AccordionDetails>
                                 </Accordion>
                             </Grid>
-                            <Grid xs={12}
-                                  md={12}>
+                            <Grid xs={12}>
                                 <Accordion disabled={!rdfResultContent}>
                                     <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                                         RDF Result
@@ -245,10 +267,10 @@ export const EditForm = (props) => {
                                     </AccordionDetails>
                                 </Accordion>
                             </Grid>
-                        </>}
-                    </Grid>
-                </CardContent>
-            </Card>
+                        </Grid>
+                    </CardContent>
+                </Card>}
+
 
             <Card sx={{mt: 3}}>
                 <Stack
@@ -286,7 +308,8 @@ export const EditForm = (props) => {
                 </Stack>
             </Card>
         </form>
-    );
+    )
+        ;
 };
 
 EditForm.propTypes = {
