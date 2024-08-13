@@ -34,7 +34,7 @@ import {testDataFileResourcesApi as fileResourcesApi} from "src/api/test-data-su
 import {useDialog} from "../../../hooks/use-dialog";
 import {PropertyListItem} from "../../../components/property-list-item";
 import ConfirmDialog from "../../../components/app/dialog/confirm-dialog";
-
+import {mappingPackagesApi} from "../../../api/mapping-packages";
 
 
 export const ListTableRow = (props) => {
@@ -45,7 +45,8 @@ export const ListTableRow = (props) => {
         handleItemToggle,
         sectionApi,
         router,
-        getItems
+        getItems,
+        projectMappingPackagesMap
     } = props;
 
     const {timeSetting} = useGlobalState()
@@ -131,6 +132,9 @@ export const ListTableRow = (props) => {
                     <Typography variant="subtitle2">
                         {item.title}
                     </Typography>
+                </TableCell>
+                <TableCell>
+                    {item.mapping_package_id && projectMappingPackagesMap[item.mapping_package_id]}
                 </TableCell>
                 <TableCell align="left">
                     {timeTransformer(item.created_at, timeSetting)}
@@ -284,6 +288,20 @@ export const TestDataCollectionListTable = (props) => {
         toast.error('Item cannot be deleted');
     }
 
+    //TODO: This should be exported to a component that will be used (by extending or composing) by listings that need packages names
+    const [projectMappingPackagesMap, setProjectMappingPackagesMap] = useState({});
+
+    useEffect(() => {
+        mappingPackagesApi.getProjectPackages()
+            .then(res => {
+                setProjectMappingPackagesMap(res.reduce((a, b) => {
+                    a[b['id']] = b['title'];
+                    return a
+                }, {}));
+            })
+            .catch(err => console.warn(err));
+    }, [])
+
 
     return (
         <TablePagination
@@ -304,6 +322,9 @@ export const TestDataCollectionListTable = (props) => {
                             <TableCell/>
                             <TableCell width="25%">
                                 Title
+                            </TableCell>
+                            <TableCell>
+                                Package
                             </TableCell>
                             <TableCell align="left">
                                 Created
@@ -327,6 +348,7 @@ export const TestDataCollectionListTable = (props) => {
                                     sectionApi={sectionApi}
                                     router={router}
                                     getItems={getItems}
+                                    projectMappingPackagesMap={projectMappingPackagesMap}
                                 />
                             )
                         })}
