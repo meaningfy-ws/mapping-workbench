@@ -16,7 +16,7 @@ from mapping_workbench.backend.core.models.base_mapping_package_resource_entity 
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement, StructuralElementState
-from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroup, MappingGroupState
+from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroupState, MappingGroup
 from mapping_workbench.backend.ontology.models.term import TermValidityResponse
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResource, SPARQLTestState
 from mapping_workbench.backend.state_manager.models.state_object import ObjectState, StatefulObjectABC
@@ -154,6 +154,7 @@ class ConceptualMappingRule(BaseProjectResourceEntity, BaseMappingPackagesResour
     mapping_notes: Optional[List[ConceptualMappingRuleComment]] = []
     editorial_notes: Optional[List[ConceptualMappingRuleComment]] = []
     feedback_notes: Optional[List[ConceptualMappingRuleComment]] = []
+    mapping_groups: Optional[List[Link[MappingGroup]]] = None
 
     @field_validator('status', 'mapping_notes', 'editorial_notes', 'feedback_notes')
     @classmethod
@@ -165,7 +166,6 @@ class ConceptualMappingRule(BaseProjectResourceEntity, BaseMappingPackagesResour
     min_sdk_version: Optional[str] = None
     max_sdk_version: Optional[str] = None
     source_structural_element: Optional[Link[StructuralElement]] = None
-    mapping_groups: Optional[List[Link[MappingGroup]]] = None
     xpath_condition: Optional[str] = None
     target_class_path: Optional[str] = None
     target_class_path_terms_validity: Optional[List[TermValidityResponse]] = None

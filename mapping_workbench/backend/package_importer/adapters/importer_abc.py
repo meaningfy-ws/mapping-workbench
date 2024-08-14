@@ -4,6 +4,7 @@ from typing import Dict, Tuple
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
+from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroup
 from mapping_workbench.backend.package_importer.models.imported_mapping_suite import ImportedMappingSuite
 from mapping_workbench.backend.package_validator.models.test_data_validation import CMRuleSDKElement
 from mapping_workbench.backend.package_validator.services.sparql_cm_assertions import SPARQL_CM_ASSERTIONS_SUITE_TITLE, \
@@ -334,3 +335,4 @@ class PackageImporterABC(ABC):
         await SPARQLTestSuite.find(SPARQLTestSuite.project == project_link).delete()
         await TestDataFileResource.find(TestDataFileResource.project == project_link).delete()
         await TestDataSuite.find(TestDataSuite.project == project_link).delete()
+        await MappingGroup.find(TestDataSuite.project == project_link).delete()
