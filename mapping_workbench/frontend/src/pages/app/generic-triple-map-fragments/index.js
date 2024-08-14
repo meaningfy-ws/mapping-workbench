@@ -21,19 +21,69 @@ import {ListTable} from "src/sections/app/generic-triple-map-fragment/list-table
 import {useDialog} from "src/hooks/use-dialog";
 import {FileUploader} from "src/sections/app/generic-triple-map-fragment/file-uploader";
 
-const useItemsSearch = () => {
+const useItemsSearch = (items) => {
     const [state, setState] = useState({
-        filters: {
-            name: undefined,
-            category: [],
-            status: [],
-            inStock: undefined
+        filters: {},
+        sort: {
+            column: "",
+            direction: "desc"
         },
-        sortDirection: undefined,
-        sortField: '',
+        search: '',
+        searchColumns: ['triple_map_content', 'triple_map_uri'],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
+
+    const {show, ...filters} = state.filters
+
+    const searchItems = state.search ? items.filter(item => {
+        let returnItem = null;
+        state.searchColumns.forEach(column => {
+            if (item[column]?.toLowerCase()?.includes(state.search.toLowerCase()))
+                returnItem = item
+        })
+        return returnItem
+    }) : items
+
+    const filteredItems = searchItems.filter((item) => {
+        let returnItem = item;
+        Object.entries(filters).forEach(filter => {
+            const [key, value] = filter
+            if (value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
+                returnItem = null
+            if (value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase))
+                returnItem = null
+        })
+        return returnItem
+    })
+
+    const sortedItems = () => {
+        const sortColumn = state.sort.column
+        if (!sortColumn) {
+            return filteredItems
+        } else {
+            return filteredItems.sort((a, b) => {
+                if (typeof a[sortColumn] === "string")
+                    return state.sort.direction === "asc" ?
+                        a[sortColumn]?.localeCompare(b[sortColumn]) :
+                        b[sortColumn]?.localeCompare(a[sortColumn])
+                else
+                    return state.sort.direction === "asc" ?
+                        a[sortColumn] - b[sortColumn] :
+                        b[sortColumn] - a[sortColumn]
+            })
+        }
+    }
+
+    const pagedItems = sortedItems().filter((item, i) => {
+        const pageSize = state.page * state.rowsPerPage
+        if ((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
+            return item
+    })
+
+    const handleSearchItems = (filters) => {
+        setState(prevState => ({...prevState, search: filters.q}))
+    }
 
     const handleFiltersChange = filters => {
         setState(prevState => ({
@@ -58,7 +108,11 @@ const useItemsSearch = () => {
     }
 
     const handleSorterChange = sortField => {
-        setState(prevState => ({...prevState, sortField, sortDirection: state.sortField === sortField && prevState.sortDirection === -1 ? 1 : -1 }))
+        setState(prevState => ({
+            ...prevState,
+            sortField,
+            sortDirection: state.sortField === sortField && prevState.sortDirection === -1 ? 1 : -1
+        }))
     }
 
     return {
@@ -66,19 +120,22 @@ const useItemsSearch = () => {
         handleFiltersChange,
         handlePageChange,
         handleRowsPerPageChange,
+        handleSearchItems,
+        pagedItems,
+        count: filteredItems.length,
         state
     };
 };
 
 
-const useItemsStore = searchState => {
+const useItemsStore = () => {
     const [state, setState] = useState({
         items: [],
         itemsCount: 0
     });
 
     const handleItemsGet = () => {
-        sectionApi.getItems(searchState)
+        sectionApi.getItems({rowsPerPage: -1})
             .then(res =>
                 setState({
                     items: res.items,
@@ -88,10 +145,10 @@ const useItemsStore = searchState => {
     }
 
     useEffect(() => {
-        handleItemsGet();
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [searchState]);
+            handleItemsGet();
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        []);
 
     return {
         ...state
@@ -100,8 +157,8 @@ const useItemsStore = searchState => {
 
 
 const Page = () => {
-    const itemsSearch = useItemsSearch();
-    const itemsStore = useItemsStore(itemsSearch.state);
+    const itemsStore = useItemsStore();
+    const itemsSearch = useItemsSearch(itemsStore.items);
 
     const uploadDialog = useDialog();
 
@@ -178,13 +235,13 @@ const Page = () => {
                     </Stack>
                 </Stack>
                 <Card>
-                    <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
+                    <ListSearch onFiltersChange={itemsSearch.handleSearchItems}/>
                     <ListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                         page={itemsSearch.state.page}
-                        items={itemsStore.items}
-                        count={itemsStore.itemsCount}
+                        items={itemsSearch.pagedItems}
+                        count={itemsSearch.itemsCount}
                         onSort={itemsSearch.handleSorterChange}
                         sort={{direction: itemsSearch.state.sortDirection, column: itemsSearch.state.sortField}}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
