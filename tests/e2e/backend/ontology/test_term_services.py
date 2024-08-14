@@ -3,14 +3,17 @@ import pytest
 from mapping_workbench.backend.ontology.models.term import Term, TermType
 from mapping_workbench.backend.ontology.services.namespaces import get_project_ns_definitions
 from mapping_workbench.backend.ontology.services.terms import discover_and_save_terms, create_or_update_terms_by_type
+from mapping_workbench.backend.ontology_suite.models.ontology_file_resource import OntologyFileResource
 from mapping_workbench.backend.project.models.entity import Project
 
 
 @pytest.mark.asyncio
-async def test_discover_and_save_terms(dummy_project: Project):
+async def test_discover_and_save_terms(dummy_project: Project, epo_core_shapes_file_resource: OntologyFileResource,
+                                       epo_core_file_resource: OntologyFileResource):
     assert len(await Term.find_all().to_list()) == 0
 
-    await discover_and_save_terms(dummy_project.id, None)
+    await discover_and_save_terms(dummy_project.id, None,
+                                  ontology_sources=[epo_core_shapes_file_resource, epo_core_file_resource])
 
     assert len(await Term.find_all().to_list()) > 0
 
