@@ -10,6 +10,7 @@ from pydantic_core.core_schema import ValidationInfo
 from pymongo import IndexModel
 
 from mapping_workbench.backend import DEFAULT_MODEL_CONFIG
+from mapping_workbench.backend.conceptual_mapping_group.models.conceptual_mapping_group import ConceptualMappingGroup
 from mapping_workbench.backend.core.models.base_mapping_package_resource_entity import \
     BaseMappingPackagesResourceEntityInSchema, BaseMappingPackagesResourceEntityOutSchema, \
     BaseMappingPackagesResourceSchemaTrait
@@ -175,6 +176,7 @@ class ConceptualMappingRule(BaseProjectResourceEntity, BaseMappingPackagesResour
     triple_map_fragment: Optional[Link[GenericTripleMapFragment]] = None
     sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
     sort_order: Optional[float] = None
+    mapping_groups: Optional[List[Link[ConceptualMappingGroup]]] = None
 
     async def get_state(self) -> ConceptualMappingRuleState:
         source_structural_element = await self.source_structural_element.fetch() \
