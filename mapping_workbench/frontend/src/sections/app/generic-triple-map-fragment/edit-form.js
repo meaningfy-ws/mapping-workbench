@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import {useFormik} from 'formik';
 import * as Yup from 'yup';
 import CodeMirror from '@uiw/react-codemirror';
-// import { basicSetup } from '@codemirror/basic-setup';
-// import { turtle } from '@codemirror/lang-tt';
+import {turtle} from 'codemirror-lang-turtle';
+import {yaml} from '@codemirror/lang-yaml';
+import {basicSetup} from '@uiw/codemirror-extensions-basic-setup';
 
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -19,17 +20,18 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import {Box} from "@mui/system";
+
 import {RouterLink} from 'src/components/router-link';
 import {paths} from 'src/paths';
 import {useRouter} from 'src/hooks/use-router';
 import {FormTextField} from "../../../components/app/form/text-field";
 import {sessionApi} from "../../../api/session";
-import {FormCodeTextArea} from "../../../components/app/form/code-text-area";
 import {FormCodeReadOnlyArea} from "../../../components/app/form/code-read-only-area";
-import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
 
+import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 import turtleValidator from "src/utils/turtle-validator";
 
 export const EditForm = (props) => {
@@ -52,6 +54,8 @@ export const EditForm = (props) => {
         format: item.format ?? sectionApi.FILE_RESOURCE_DEFAULT_FORMAT ?? '',
     };
 
+
+
     const formik = useFormik({
         initialValues,
         validationSchema: Yup.object({
@@ -69,7 +73,6 @@ export const EditForm = (props) => {
             const toastId = toastLoad("Updating...")
             try {
                 let response;
-                s
                 values['project'] = sessionApi.getSessionProject();
                 if (itemctx.isNew) {
                     response = await sectionApi.createItem(values);
@@ -99,6 +102,8 @@ export const EditForm = (props) => {
             }
         }
     });
+
+    const lng = {TTL:{mode:'text/turtle', extension: turtle}, YAML:{mode:'text/yaml',extension: yaml}}
 
     useEffect(() => {
         selectedTree && handleGetXmlContent(selectedTree)
@@ -149,12 +154,10 @@ export const EditForm = (props) => {
         onUpdateAndTransform(formik.values)
     }
 
-    const handleTurtleValidate =() => {
+    const handleTurtleValidate = () => {
         turtleValidator(formik.values.triple_map_content)
             .then(res => setValidation(res))
-            .catch(err=> console.log(err))
-        // console.log('validation',validation)
-        //                        setValidation(validation)
+            .catch(err => setValidation({error:err}))
     }
 
     return (
@@ -208,27 +211,21 @@ export const EditForm = (props) => {
                             </Grid>
                             <Grid xs={12}>
                                 <CodeMirror
-      value={formik.values.triple_map_content}
-      // extensions={[basicSetup, turtle()]}
-      onChange={(value) => formik.setFieldValue('triple_map_content',value)}
-      options={{
-        mode: 'text/turtle',
-        theme: 'default',
-        lineNumbers: true,
-      }}
-    />
-                                {/*<FormCodeTextArea*/}
-                                {/*    disabled={formik.isSubmitting}*/}
-                                {/*    formik={formik}*/}
-                                {/*    name="triple_map_content"*/}
-                                {/*    grammar={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['grammar']}*/}
-                                {/*    language={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['language']}*/}
-                                {/*/>*/}
+                                    height='400px'
+                                    value={formik.values.triple_map_content}
+                                    extensions={[basicSetup(), lng[formik.values.format].extension()]}
+                                    onChange={(value) => formik.setFieldValue('triple_map_content', value)}
+                                    options={{
+                                        mode: lng[formik.values.format].mode,
+                                        theme: 'default',
+                                        lineNumbers: true,
+                                    }}
+                                />
                             </Grid>
 
                         </Grid>
-                        {validation.success}
-                        {validation.error}
+                        <Box sx={{color: 'green'}}>{validation.success}</Box>
+                        <Box sx={{color: 'red'}}>{validation.error}</Box>
                     </CardContent>
                 </Card>
             }
@@ -323,18 +320,7 @@ export const EditForm = (props) => {
                     >
                         Update and Transform
                     </Button>}
-                    <Button onClick={() => {
-                        handleTurtleValidate()
-                        // turtleValidator(formik.values.triple_map_content)
-                            // .then(res => {
-                            //     console.warn(res)
-                            //     setValidation({success: res})
-                            // })
-                            // .catch(err => {
-                            //     console.warn(err)
-                            //     setValidation({err})
-                            // })
-                    }}>Validate</Button>
+                    {formik.values.format==='TTL' && <Button onClick={handleTurtleValidate}>Validate</Button>}
                     <Button
                         color="inherit"
                         component={RouterLink}
