@@ -2,6 +2,9 @@ import {useEffect, useState} from "react";
 import PropTypes from 'prop-types';
 import {useFormik} from 'formik';
 import * as Yup from 'yup';
+import CodeMirror from '@uiw/react-codemirror';
+// import { basicSetup } from '@codemirror/basic-setup';
+// import { turtle } from '@codemirror/lang-tt';
 
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -203,15 +206,24 @@ export const EditForm = (props) => {
                                     ))}
                                 </TextField>
                             </Grid>
-                            <Grid xs={12}
-                                  md={12}>
-                                <FormCodeTextArea
-                                    disabled={formik.isSubmitting}
-                                    formik={formik}
-                                    name="triple_map_content"
-                                    grammar={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['grammar']}
-                                    language={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['language']}
-                                />
+                            <Grid xs={12}>
+                                <CodeMirror
+      value={formik.values.triple_map_content}
+      // extensions={[basicSetup, turtle()]}
+      onChange={(value) => formik.setFieldValue('triple_map_content',value)}
+      options={{
+        mode: 'text/turtle',
+        theme: 'default',
+        lineNumbers: true,
+      }}
+    />
+                                {/*<FormCodeTextArea*/}
+                                {/*    disabled={formik.isSubmitting}*/}
+                                {/*    formik={formik}*/}
+                                {/*    name="triple_map_content"*/}
+                                {/*    grammar={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['grammar']}*/}
+                                {/*    language={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['language']}*/}
+                                {/*/>*/}
                             </Grid>
 
                         </Grid>

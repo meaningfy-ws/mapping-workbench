@@ -21,6 +21,7 @@
   "dependencies": {
     "@auth0/auth0-spa-js": "2.0.4",
     "@aws-amplify/auth": "5.3.6",
+    "@codemirror/basic-setup": "^0.20.0",
     "@emotion/cache": "11.11.0",
     "@emotion/react": "11.11.0",
     "@emotion/server": "11.11.0",
@@ -42,6 +43,7 @@
     "@mui/x-tree-view": "^7.5.1",
     "@react-pdf/renderer": "3.1.9",
     "@reduxjs/toolkit": "1.9.5",
+    "@uiw/react-codemirror": "^4.23.0",
     "@untitled-ui/icons-react": "0.1.1",
     "apexcharts": "3.40.0",
     "autosuggest-highlight": "^3.3.4",
