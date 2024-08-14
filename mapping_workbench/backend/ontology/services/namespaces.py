@@ -1,20 +1,20 @@
+import importlib.resources as pkg_resources
 import json
 import re
-from typing import Dict, List
+from typing import Dict
 
-import importlib.resources as pkg_resources
 from beanie import PydanticObjectId
 from beanie.exceptions import RevisionIdWasChanged
 
+import mapping_workbench.backend.ontology.resources as ontology_resources
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
 from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.ontology.adapters.namespace_handler import NamespaceInventory
 from mapping_workbench.backend.ontology.models.namespace import Namespace, NamespaceCustom
 from mapping_workbench.backend.project.models.entity import Project
 
-import mapping_workbench.backend.ontology.resources as ontology_resources
-
 DEFAULT_NAMESPACES_RESOURCE = "default_namespaces.json"
+
 
 async def discover_and_save_mapping_rule_prefixes(project_id: PydanticObjectId, rule: ConceptualMappingRule):
     from_content = rule.target_class_path + " " + rule.target_property_path
