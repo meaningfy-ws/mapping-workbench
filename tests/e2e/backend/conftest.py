@@ -86,3 +86,19 @@ def dummy_data_type_term() -> Term:
         short_term="xsd:decimal",
         type=TermType.DATA_TYPE
     )
+
+
+import pytest
+
+from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElementIn
+
+
+@pytest.fixture
+def dummy_structural_element_in() -> StructuralElementIn:
+    return StructuralElementIn(
+    id="dummy_id",
+    label="Dummy element",
+    absolute_xpath="dummy_xpath",
+    relative_xpath="dummy_relative_xpath",
+    parent_node_id="dummy_parent_node_id"
+    )

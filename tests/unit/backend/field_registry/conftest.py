@@ -1,7 +1,10 @@
-import pytest
-import pathlib
 import json
+import pathlib
 
+import pytest
+from beanie import PydanticObjectId
+
+from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
 from tests import TEST_DATA_PATH
 
 
@@ -38,3 +41,14 @@ def eforms_sdk_github_repository_v1_9_1_tag_name() -> str:
 @pytest.fixture
 def eforms_sdk_repo_v_1_9_1_dir_path() -> pathlib.Path:
     return TEST_DATA_PATH / "eforms_sdk_1.9.1_repo"
+
+
+@pytest.fixture
+def dummy_structural_element(dummy_project_link) -> StructuralElement:
+    return StructuralElement(
+        id=str(PydanticObjectId()),
+        project=dummy_project_link,
+        absolute_xpath="/*/dummy/absolute/xpath",
+        relative_xpath="/dummy/relative/xpath",
+        parent_node_id="dummy_parent_node_id"
+    )
