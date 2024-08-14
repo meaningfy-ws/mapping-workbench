@@ -146,6 +146,14 @@ export const EditForm = (props) => {
         onUpdateAndTransform(formik.values)
     }
 
+    const handleTurtleValidate =() => {
+        turtleValidator(formik.values.triple_map_content)
+            .then(res => setValidation(res))
+            .catch(err=> console.log(err))
+        // console.log('validation',validation)
+        //                        setValidation(validation)
+    }
+
     return (
         <form onSubmit={formik.handleSubmit}
               {...other}>
@@ -208,7 +216,7 @@ export const EditForm = (props) => {
 
                         </Grid>
                         {validation.success}
-                        {validation.err}
+                        {validation.error}
                     </CardContent>
                 </Card>
             }
@@ -304,15 +312,16 @@ export const EditForm = (props) => {
                         Update and Transform
                     </Button>}
                     <Button onClick={() => {
-                        turtleValidator(formik.values.triple_map_content)
-                            .then(res => {
-                                console.warn(res)
-                                setValidation({success: res})
-                            })
-                            .catch(err => {
-                                console.warn(err)
-                                setValidation({err})
-                            })
+                        handleTurtleValidate()
+                        // turtleValidator(formik.values.triple_map_content)
+                            // .then(res => {
+                            //     console.warn(res)
+                            //     setValidation({success: res})
+                            // })
+                            // .catch(err => {
+                            //     console.warn(err)
+                            //     setValidation({err})
+                            // })
                     }}>Validate</Button>
                     <Button
                         color="inherit"
