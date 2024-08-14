@@ -53,6 +53,14 @@ class MappingPackagesApi extends SectionApi {
         }
     }
 
+    async createDefault(projectId) {
+        try {
+            let endpoint = this.paths['create_default'];
+            return appApi.post(endpoint, {}, {project_id: projectId});
+        } catch (err) {
+        }
+    }
+
     exportPackage(params) {
         let endpoint = this.paths['export'];
         const headers = {};

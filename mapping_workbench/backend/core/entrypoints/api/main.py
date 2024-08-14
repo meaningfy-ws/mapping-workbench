@@ -28,6 +28,7 @@ from mapping_workbench.backend.sparql_test_suite.entrypoints.api import routes a
 from mapping_workbench.backend.task_manager.entrypoints.api import routes as task_manager_routes
 from mapping_workbench.backend.tasks.entrypoints.api import routes as tasks_routes
 from mapping_workbench.backend.test_data_suite.entrypoints.api import routes as test_data_suite_routes
+from mapping_workbench.backend.conceptual_mapping_group.entrypoints.api import routes as cm_groups_routes
 from mapping_workbench.backend.triple_map_fragment.entrypoints.api import \
     routes_for_generic as generic_triple_map_fragment_routes
 from mapping_workbench.backend.triple_map_fragment.entrypoints.api import \
@@ -94,7 +95,8 @@ secured_routers: list = [
     task_manager_routes.router,
     tasks_routes.router,  # Deprecated
     fields_registry.router,
-    xsd_schema_router.router
+    xsd_schema_router.router,
+    cm_groups_routes.router
 ]
 
 for secured_router in secured_routers:

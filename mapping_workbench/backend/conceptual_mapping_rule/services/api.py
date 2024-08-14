@@ -4,6 +4,7 @@ import pymongo
 from beanie import PydanticObjectId
 from pymongo.errors import DuplicateKeyError
 
+from mapping_workbench.backend.conceptual_mapping_group.services.cmg_generation import create_cm_group_from_cm_rule
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule, \
     ConceptualMappingRuleCreateIn, ConceptualMappingRuleUpdateIn, ConceptualMappingRuleOut, \
     ConceptualMappingRuleTermsValidity
@@ -11,6 +12,7 @@ from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersS
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException, DuplicateKeyException
 from mapping_workbench.backend.core.services.request import request_update_data, request_create_data, \
     api_entity_is_found, pagination_params, prepare_search_param
+from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.ontology.services.terms import check_content_terms_validity
 from mapping_workbench.backend.user.models.user import User
 
@@ -54,8 +56,10 @@ async def create_conceptual_mapping_rule(data: ConceptualMappingRuleCreateIn,
         ConceptualMappingRule(
             **create_data
         )
+
     try:
         conceptual_mapping_rule = await conceptual_mapping_rule.create()
+        await create_cm_group_from_cm_rule(conceptual_mapping_rule)
     except DuplicateKeyError as e:
         raise DuplicateKeyException(e)
 
