@@ -93,7 +93,7 @@ async def route_create_default_mapping_package(
         title=DEFAULT_PACKAGE_NAME,
         description=project.description,
         identifier=DEFAULT_PACKAGE_IDENTIFIER,
-        mapping_version=project.version,
+        mapping_version=project.version or "",
         epo_version=package_epo_version,
         eform_subtypes=[],
         eforms_sdk_versions=package_eforms_sdk_versions,
