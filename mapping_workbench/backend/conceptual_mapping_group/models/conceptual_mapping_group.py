@@ -4,7 +4,7 @@ from typing import List, Optional
 
 import pymongo
 from beanie import Link, PydanticObjectId
-from pydantic import BaseModel, computed_field, Field
+from pydantic import BaseModel, computed_field
 from pymongo import IndexModel
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
