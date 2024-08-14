@@ -14,7 +14,7 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import {PropertyList} from 'src/components/property-list';
 import {PropertyListItem} from 'src/components/property-list-item';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 
 
 import {Scrollbar} from 'src/components/scrollbar';
@@ -25,6 +25,12 @@ import TablePagination from "../../components/table-pagination";
 import timeTransformer from "../../../utils/time-transformer";
 import {useGlobalState} from "../../../hooks/use-global-state";
 import TableSorterHeader from "../../components/table-sorter-header";
+
+import CodeMirror from '@uiw/react-codemirror';
+import {turtle} from 'codemirror-lang-turtle';
+import {yaml} from '@codemirror/lang-yaml';
+import {basicSetup} from '@uiw/codemirror-extensions-basic-setup';
+import {Box} from "@mui/system";
 
 
 export const ListTable = (props) => {
@@ -42,7 +48,10 @@ export const ListTable = (props) => {
         sectionApi
     } = props;
 
-    const syntaxFormat = {YAML:'yaml',TTL:'turtle'}
+    // const syntaxFormat = {YAML: 'yaml', TTL: 'turtle'}
+
+    const lng = {TTL: {mode: 'text/turtle', extension: turtle}, YAML: {mode: 'text/yaml', extension: yaml}}
+
 
     const [currentItem, setCurrentItem] = useState(null);
     const {timeSetting} = useGlobalState()
@@ -163,10 +172,19 @@ export const ListTable = (props) => {
                                                                 md={12}
                                                                 xs={12}
                                                             >
-                                                                <SyntaxHighlighter
-                                                                 language={syntaxFormat[item.format]}>
-                                                                    {item.triple_map_content}
-                                                                </SyntaxHighlighter>
+                                                                <Box>Content:</Box>
+                                                                <CodeMirror
+                                                                    value={item.triple_map_content}
+                                                                    extensions={[basicSetup(), lng[item.format].extension()]}
+                                                                    editable= {false}
+                                                                    options={{
+                                                                        mode: lng[item.format].mode,
+                                                                        theme: 'default',
+                                                                        lineNumbers: true,
+                                                                    }}
+                                                                    onChange={() => {
+                                                                    }}
+                                                                />
                                                             </Grid>
                                                         </Grid>
                                                     </CardContent>
