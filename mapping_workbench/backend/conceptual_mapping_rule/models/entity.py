@@ -10,7 +10,6 @@ from pydantic_core.core_schema import ValidationInfo
 from pymongo import IndexModel
 
 from mapping_workbench.backend import DEFAULT_MODEL_CONFIG
-from mapping_workbench.backend.conceptual_mapping_group.models.conceptual_mapping_group import ConceptualMappingGroup
 from mapping_workbench.backend.core.models.base_mapping_package_resource_entity import \
     BaseMappingPackagesResourceEntityInSchema, BaseMappingPackagesResourceEntityOutSchema, \
     BaseMappingPackagesResourceSchemaTrait
