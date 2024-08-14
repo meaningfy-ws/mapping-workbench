@@ -14,8 +14,10 @@ from mapping_workbench.backend.mapping_package.services.api import (
     delete_mapping_package, get_mapping_package_out, list_mapping_package_states, get_mapping_package_state,
     delete_mapping_package_state
 )
-from mapping_workbench.backend.mapping_package.services.data import get_latest_mapping_package_state_gate
+from mapping_workbench.backend.mapping_package.services.data import get_latest_mapping_package_state_gate, \
+    DEFAULT_PACKAGE_NAME, DEFAULT_PACKAGE_IDENTIFIER
 from mapping_workbench.backend.project.models.entity import Project
+from mapping_workbench.backend.project.services.api import get_project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.user.models.user import User
 
@@ -66,6 +68,37 @@ async def route_create_mapping_package(
         data: MappingPackageCreateIn,
         user: User = Depends(current_active_user)
 ):
+    return await create_mapping_package(data, user=user)
+
+
+@router.post(
+    "/create_default",
+    description=f"Create Default {NAME_FOR_ONE}",
+    name=f"{NAME_FOR_MANY}:create_default_{NAME_FOR_ONE}",
+    response_model=MappingPackageOut,
+    status_code=status.HTTP_201_CREATED
+)
+async def route_create_default_mapping_package(
+        project_id: PydanticObjectId = None,
+        user: User = Depends(current_active_user)
+):
+    project: Project = await get_project(project_id)
+
+    package_epo_version = (project.target_ontology and project.target_ontology.version) or ""
+    package_eforms_sdk_versions = [project.source_schema.version] if (
+                project.source_schema and project.source_schema.version
+    ) else []
+
+    data: MappingPackageCreateIn = MappingPackageCreateIn(
+        title=DEFAULT_PACKAGE_NAME,
+        description=project.description,
+        identifier=DEFAULT_PACKAGE_IDENTIFIER,
+        mapping_version=project.version or "",
+        epo_version=package_epo_version,
+        eform_subtypes=[],
+        eforms_sdk_versions=package_eforms_sdk_versions,
+        project=project
+    )
     return await create_mapping_package(data, user=user)
 
 

@@ -2,7 +2,6 @@ from typing import List
 
 import pymongo
 from beanie import PydanticObjectId
-from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
@@ -12,7 +11,6 @@ from mapping_workbench.backend.core.services.request import request_update_data,
     api_entity_is_found, prepare_search_param, pagination_params
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageCreateIn, \
     MappingPackageUpdateIn, MappingPackageOut, MappingPackageStateGate
-from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.resource_collection.models.entity import ResourceCollection, ResourceFile
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestFileResource, SHACLTestSuite
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResource, SPARQLTestSuite
