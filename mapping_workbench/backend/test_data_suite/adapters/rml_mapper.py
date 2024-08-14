@@ -2,7 +2,9 @@ import abc
 import subprocess
 from enum import Enum
 from pathlib import Path
+from typing import List
 
+from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.test_data_suite.services import TRANSFORMATION_PATH_NAME, MAPPINGS_PATH_NAME
 
 
@@ -22,13 +24,16 @@ TURTLE_SERIALIZATION_FORMAT = SerializationFormat.TURTLE
 class RMLMapperException(Exception):
     """Base class for RML Mapper exceptions"""
 
-    def __init__(self, message=None, error_trace=None):
+    def __init__(self, message=None, error_trace=None, metadata: dict = None):
         super().__init__(message)
+        self.metadata = metadata
+        self.message = message
         self.error_trace = error_trace
-        rml_mapper_error = error_trace.partition("\n")[0]
-        if error_trace.startswith("Exception"):
-            rml_mapper_error = rml_mapper_error.partition(": ")[2]
-        self.message = f'{rml_mapper_error}'
+        if error_trace:
+            rml_mapper_error = error_trace.partition("\n")[0]
+            if error_trace.startswith("Exception"):
+                rml_mapper_error = rml_mapper_error.partition(": ")[2]
+            self.message = f'{rml_mapper_error}'
 
     def __str__(self) -> str:
         return f"Error on running RML Mapper: {self.message}"
@@ -69,6 +74,7 @@ class RMLMapper(RMLMapperABC):
     """
         This class is a concrete implementation of the rml-mapper adapter.
     """
+    errors: List[RMLMapperException] = []
 
     def __init__(self, rml_mapper_path: Path,
                  serialization_format: SerializationFormat = TURTLE_SERIALIZATION_FORMAT
@@ -78,7 +84,7 @@ class RMLMapper(RMLMapperABC):
         self.rml_mapper_path = rml_mapper_path
         self.serialization_format = serialization_format
 
-    def execute(self, data_path: Path) -> str:
+    def execute(self, data_path: Path, data_title: str = None) -> str:
         """
         """
         # java -jar ./rmlmapper.jar -m rml.ttl -s turtle  -o output.ttl
@@ -93,7 +99,12 @@ class RMLMapper(RMLMapperABC):
         output, error = process.communicate()
         error = error.decode(encoding="utf-8")
         if error:
-            raise RMLMapperException(
-                error_trace=error
+            rml_mapper_exception = RMLMapperException(
+                message=error,
+                error_trace=error,
+                metadata={"title": data_title}
             )
+            self.errors.append(rml_mapper_exception)
+            mwb_logger.log_all_error(message="RML Mapper error", stack_trace=str(rml_mapper_exception))
+
         return output.decode(encoding="utf-8")

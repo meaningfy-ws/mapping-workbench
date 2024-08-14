@@ -66,9 +66,11 @@ async def create_conceptual_mapping_rule(data: ConceptualMappingRuleCreateIn,
     return ConceptualMappingRuleOut(**conceptual_mapping_rule.model_dump())
 
 
-async def update_conceptual_mapping_rule(conceptual_mapping_rule: ConceptualMappingRule,
-                                         data: ConceptualMappingRuleUpdateIn,
-                                         user: User) -> ConceptualMappingRuleOut:
+async def update_conceptual_mapping_rule(
+        conceptual_mapping_rule: ConceptualMappingRule,
+        data: ConceptualMappingRuleUpdateIn,
+        user: User
+) -> ConceptualMappingRuleOut:
     update_data = await rule_validated_data(request_update_data(data, user=user))
     rule: ConceptualMappingRule = await conceptual_mapping_rule.set(update_data)
     return ConceptualMappingRuleOut(**rule.model_dump())

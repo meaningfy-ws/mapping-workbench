@@ -3,13 +3,16 @@ from enum import Enum
 from typing import Optional, List
 
 import pymongo
-from beanie import Link, PydanticObjectId
+from beanie import Link
 from dateutil.tz import tzlocal
 from pydantic import BaseModel, Field, field_validator
 from pydantic_core.core_schema import ValidationInfo
 from pymongo import IndexModel
 
 from mapping_workbench.backend import DEFAULT_MODEL_CONFIG
+from mapping_workbench.backend.core.models.base_mapping_package_resource_entity import \
+    BaseMappingPackagesResourceEntityInSchema, BaseMappingPackagesResourceEntityOutSchema, \
+    BaseMappingPackagesResourceSchemaTrait
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement, StructuralElementState
@@ -75,7 +78,7 @@ class CMRuleStatus(str, Enum):
         return list(map(lambda c: c.value, cls))
 
 
-class ConceptualMappingRuleIn(BaseProjectResourceEntityInSchema):
+class ConceptualMappingRuleIn(BaseProjectResourceEntityInSchema, BaseMappingPackagesResourceEntityInSchema):
     min_sdk_version: Optional[str] = None
     max_sdk_version: Optional[str] = None
     source_structural_element: Link[StructuralElement]
@@ -83,7 +86,6 @@ class ConceptualMappingRuleIn(BaseProjectResourceEntityInSchema):
     xpath_condition: Optional[str] = None
     target_class_path: Optional[str] = None
     target_property_path: Optional[str] = None
-    refers_to_mapping_package_ids: Optional[List[PydanticObjectId]] = []
     triple_map_fragment: Optional[Link[GenericTripleMapFragment]] = None
     sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
     status: Optional[str] = None
@@ -106,7 +108,7 @@ class ConceptualMappingRuleUpdateIn(ConceptualMappingRuleIn):
     source_structural_element: Optional[Link[StructuralElement]] = None
 
 
-class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema):
+class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema, BaseMappingPackagesResourceEntityOutSchema):
     min_sdk_version: Optional[str] = None
     max_sdk_version: Optional[str] = None
     source_structural_element: Optional[Link[StructuralElement]] = None
@@ -119,7 +121,6 @@ class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema):
     target_property_path: Optional[str] = None
     target_property_path_terms_validity: Optional[List[TermValidityResponse]] = None
     terms_validity: Optional[ConceptualMappingRuleTermsValidity] = None
-    refers_to_mapping_package_ids: Optional[List[PydanticObjectId]] = []
     triple_map_fragment: Optional[Link[GenericTripleMapFragment]] = None
     sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
     status: Optional[str] = None
@@ -146,7 +147,7 @@ class ConceptualMappingRuleState(ObjectState):
     sort_order: Optional[float] = None
 
 
-class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
+class ConceptualMappingRule(BaseProjectResourceEntity, BaseMappingPackagesResourceSchemaTrait, StatefulObjectABC):
     model_config = DEFAULT_MODEL_CONFIG
 
     status: Optional[CMRuleStatus] | Optional[str] = CMRuleStatus.UNDER_DEVELOPMENT
@@ -171,7 +172,6 @@ class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
     target_property_path: Optional[str] = None
     target_property_path_terms_validity: Optional[List[TermValidityResponse]] = None
     terms_validity: Optional[ConceptualMappingRuleTermsValidity] | Optional[str] = None
-    refers_to_mapping_package_ids: Optional[List[PydanticObjectId]] = []
     triple_map_fragment: Optional[Link[GenericTripleMapFragment]] = None
     sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
     sort_order: Optional[float] = None
@@ -199,13 +199,13 @@ class ConceptualMappingRule(BaseProjectResourceEntity, StatefulObjectABC):
             max_sdk_version=self.max_sdk_version,
             source_structural_element=(
                 await source_structural_element.get_state()
-            ) if source_structural_element else None,
+            ) if (source_structural_element and isinstance(source_structural_element, StructuralElement)) else None,
             xpath_condition=self.xpath_condition,
             target_class_path=self.target_class_path,
             target_property_path=self.target_property_path,
             triple_map_fragment=(
                 await triple_map_fragment.get_state()
-            ) if triple_map_fragment else None,
+            ) if (triple_map_fragment and isinstance(triple_map_fragment, GenericTripleMapFragment)) else None,
             sparql_assertions=sparql_assertions_states,
             status=self.status,
             mapping_notes=self.mapping_notes,

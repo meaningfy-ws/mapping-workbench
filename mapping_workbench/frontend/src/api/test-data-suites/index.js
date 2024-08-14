@@ -13,7 +13,7 @@ class TestDataSuitesApi extends FileCollectionsApi {
     }
 
     get SECTION_LIST_ACTIONS() {
-        return [ACTION.VIEW, ACTION.DELETE]
+        return [ACTION.VIEW, ACTION.EDIT, ACTION.DELETE]
     }
 
     get FILE_RESOURCE_DEFAULT_FORMAT() {
@@ -31,6 +31,8 @@ class TestDataSuitesApi extends FileCollectionsApi {
     constructor() {
         super("test_data_suites");
         this.isProjectResource = true;
+        this.hasMappingPackage = true;
+        this.isMappingPackageRequired = this.hasMappingPackage && false;
     }
 
     async getValuesForSelector(request = {}) {

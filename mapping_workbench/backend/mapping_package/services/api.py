@@ -2,15 +2,23 @@ from typing import List
 
 import pymongo
 from beanie import PydanticObjectId
+from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 
+from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException, DuplicateKeyException
 from mapping_workbench.backend.core.services.request import request_update_data, request_create_data, \
     api_entity_is_found, prepare_search_param, pagination_params
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageCreateIn, \
     MappingPackageUpdateIn, MappingPackageOut, MappingPackageStateGate
+from mapping_workbench.backend.project.models.entity import Project
+from mapping_workbench.backend.resource_collection.models.entity import ResourceCollection, ResourceFile
+from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestFileResource, SHACLTestSuite
+from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResource, SPARQLTestSuite
 from mapping_workbench.backend.state_manager.services.object_state_manager import delete_object_state
+from mapping_workbench.backend.test_data_suite.models.entity import TestDataFileResource, TestDataSuite
+from mapping_workbench.backend.triple_map_fragment.models.entity import SpecificTripleMapFragment
 from mapping_workbench.backend.user.models.user import User
 
 
@@ -70,13 +78,56 @@ async def get_mapping_package_out(id: PydanticObjectId) -> MappingPackageOut:
     return MappingPackageOut(**mapping_package.model_dump(by_alias=False))
 
 
-async def delete_mapping_package(mapping_package: MappingPackage):
+async def delete_mapping_package(mapping_package: MappingPackage, with_resources: bool = True):
     await delete_mapping_package_states(mapping_package)
+    if with_resources:
+        await delete_mapping_package_resources(mapping_package)
     return await mapping_package.delete()
 
 
-# Mapping Package States
+async def delete_mapping_package_resource_by_type(resource_type, project_link, package_id):
+    await resource_type.find(
+        resource_type.mapping_package_id == package_id,
+        resource_type.project == project_link
+    ).delete()
 
+
+async def delete_mapping_package_resources(mapping_package: MappingPackage):
+    project_link = mapping_package.project
+    package_id = mapping_package.id
+
+    resources = [
+        SpecificTripleMapFragment,
+        ResourceFile,
+        ResourceCollection,
+        SHACLTestFileResource,
+        SHACLTestSuite,
+        SPARQLTestFileResource,
+        SPARQLTestSuite
+    ]
+
+    for resource_type in resources:
+        await delete_mapping_package_resource_by_type(resource_type, project_link, package_id)
+
+    test_data_suites = await TestDataSuite.find(
+        TestDataSuite.mapping_package_id == package_id,
+        TestDataSuite.project == project_link
+    ).to_list()
+    if test_data_suites:
+        for test_data_suite in test_data_suites:
+            await TestDataFileResource.find(
+                TestDataFileResource.test_data_suite == TestDataSuite.link_from_id(test_data_suite.id),
+                TestDataFileResource.project == project_link
+            ).delete()
+            await test_data_suite.delete()
+
+    await ConceptualMappingRule.get_motor_collection().update_many(
+        {},
+        {"$pull": {"refers_to_mapping_package_ids": package_id}}
+    )
+
+
+# Mapping Package States
 async def list_mapping_package_states(filters: dict = None, page: int = None, limit: int = None,
                                       sort_field: str = None, sort_dir: int = None) -> \
         (List[MappingPackageStateGate], int):
