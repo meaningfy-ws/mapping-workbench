@@ -47,7 +47,7 @@ app = FastAPI(
     swagger_ui_oauth2_redirect_url=f"{ROOT_API_PATH}/docs/oauth2-redirect"
 )
 
-origins = [f"{settings.HOST}:{settings.PORT}", f"*.mw.{settings.SUBDOMAIN}{settings.DOMAIN}", "*"]
+origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -93,7 +93,7 @@ secured_routers: list = [
     config_routes.router,
     ontology_routes.router,
     task_manager_routes.router,
-    tasks_routes.router, # Depricated
+    tasks_routes.router,  # Deprecated
     fields_registry.router,
     xsd_schema_router.router,
     cm_groups_routes.router
@@ -117,6 +117,8 @@ if not settings.is_env_production():
                                  stack_trace=exception_traceback)
         return JSONResponse(
             status_code=500,
-            content={"detail": [{"msg": f"Exception name: {exception.__class__.__name__} Error: {exception_traceback}"}]},
+            content={
+                "detail": [{"msg": f"Exception name: {exception.__class__.__name__} Error: {exception_traceback}"}]
+            },
             headers={"Access-Control-Allow-Origin": "*"}  # Allow all is a temporary solution
         )
