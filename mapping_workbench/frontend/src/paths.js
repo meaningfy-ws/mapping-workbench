@@ -192,6 +192,9 @@ export const paths = {
                 },
             }
         },
+        fields_and_nodes: {
+          index: '/app/fields-and-nodes'
+        },
         tasks: {
             index: '/app/tasks',
             terms_validator: '/app/tasks/terms_validator',

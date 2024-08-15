@@ -1,211 +1,265 @@
 import {useEffect, useState} from 'react';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
-import {parseString, Builder} from "xml2js";
+import {useFormik} from "formik";
+import * as Yup from "yup";
+import {parseString} from "xml2js";
 
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
+import Grid from "@mui/material/Grid";
+import Card from "@mui/material/Card";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import Autocomplete from "@mui/material/Autocomplete";
+import Alert from "@mui/material/Alert";
 
 import {Layout as AppLayout} from 'src/layouts/app';
-import {schemaFileResourcesApi as schemaFiles} from 'src/api/schema-files/file-resources'
+import File from 'src/sections/app/fields-and-nodes/file'
 import {fieldsRegistryApi as fieldsRegistry} from 'src/api/fields-registry'
-import CircularProgress from "@mui/material/CircularProgress";
-import {AlertTitle, Alert} from "@mui/material";
+import {schemaFileResourcesApi as schemaFiles} from 'src/api/schema-files/file-resources'
+import {FormTextField} from "../../../components/app/form/text-field";
+import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
+import RelativeXpathFinder from "../../../sections/app/fields-and-nodes/relative-xpath-finder";
 
 const Page = () => {
+    const [files, setFiles] = useState([])
+    const [selectedFile, setSelectedFile] = useState({})
+    const [fileError, setFileError] = useState('')
+    const [xmlNodes, setXmlNodes] = useState({})
     const [xPaths, setXPaths] = useState([])
-    const [selectedLine, setSelectedLine] = useState(null);
-    const [xmlContent,setXmlContent] = useState('')
-    const [selectedNode, setSelectedNode] = useState('')
-    const [nodesList, setNodesList] = useState([])
-    const [files,setFiles] = useState([])
-    const [selectedFile, setSelectedFile] = useState('')
-    const [loadFile, setLoadFile] = useState({})
-
+    const [xmlContent, setXmlContent] = useState('')
+    const [saving, setSaving] = useState(false)
 
     useEffect(() => {
-
-        // try {
-        //     const schemaFilesRes = await schemaFiles.getItems()
-        //     const fieldsRegistryRed = fieldsRegistry.getXpathsList()
-        //
-        // }
         schemaFiles.getItems({})
-            .then(res => setFiles(res))
+            .then(res => {
+                setFiles(res)
+            })
             .catch(err => console.error(err))
 
         fieldsRegistry.getXpathsList()
             .then(res => {
-                console.log(res)
                 setXPaths(res)
             })
             .catch(err => console.error(err))
-    },[])
-
+    }, [])
 
     useEffect(() => {
-        setLoadFile({load:true})
-        setXmlContent('')
-        parseString(selectedFile.content, { explicitArray: false }, (err, result) => {
-              if (err) {
-                console.error('Error parsing XML:', err);
-                setLoadFile({error:true})
-              } else {
-                  setLoadFile({})
-                  console.log(result)
-                const builder = new Builder()
-                setXmlContent(builder.buildObject(result))
-              }
-            });
-    },[selectedFile])
+        // Parse the XML string into a DOM Document
+        setFileError('')
+        setXmlNodes('')
+        if (selectedFile.content) {
+            try {
+                parseString(selectedFile.content, {explicitArray: false}, (err, result) => {
+                    if (err) {
+                        console.error('Error parsing XML:', err);
+                        setFileError(err)
+                    } else {
+                        setXmlNodes(result)
+                    }
+                });
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(selectedFile.content, "application/xml");
+                setXmlContent(xmlDoc)
 
-    console.log(xmlContent)
-
-
-  const findXPaths = (xmlString) => {
-    const lines = xmlString.split('\n');
-    let xpaths = [];
-    let xpathStack = [];
-
-    lines.forEach((line, index) => {
-        line = line.trim();
-        if( line.startsWith('<!') || line.startsWith('<?') || line.endsWith('-->'))
-            //tags that are not used
-            xpaths.push('')
-            // xpaths.push({xpath:[]})
-        else if (line.startsWith('<') && !line.startsWith('</')) {
-            // Opening tag
-            const tagName = line.match(/<([^\s>]+)/)[1];
-            xpathStack.push(tagName);
-            xpaths.push(`${xpathStack.join('/')}`);
-            // xpaths.push({xpath:xpathStack.join('/')})
-            // Self-closing tag
-            if (line.includes('</')) {
-                xpathStack.pop();
+            } catch (err) {
+                setXmlContent('')
+                setFileError(err)
             }
-        } else if (line.startsWith('</') || (!line.startsWith('<') && line.includes('</'))) {
-            // Closing tag
-            xpaths.push(`${xpathStack.join('/')}`);
-            // xpaths.push({xpath:xpathStack})
-            xpathStack.pop();
-        } else {
-            // Text node or whitespace, ignore for XPaths
-            xpaths.push('')
-            // xpaths.push({xpath:[]})
+        }
+
+    }, [selectedFile])
+
+    const onChangeXPath = (value) => {
+        formik.setFieldValue('xpath', value)
+    }
+
+    const initialValues = {
+        id: '',
+        label: '',
+        xpath: '',
+        relative_xpath: '',
+        parent_node: ''
+    };
+
+    const formik = useFormik({
+        initialValues,
+        enableReinitialize: true,
+        validationSchema: Yup.object({
+            id: Yup
+                .string()
+                .max(255)
+                .required('Id is required'),
+            label: Yup
+                .string()
+                .max(255)
+                .required('Label is required'),
+            xpath: Yup
+                .string()
+                .max(255)
+                .required('XPath is required'),
+            relative_xpath: Yup
+                .string()
+                .required('Parent Node is required')
+
+        }),
+        onSubmit: async (values, helpers) => {
+            console.warn('submit')
+            const toastId = toastLoad("Saving...")
+            setSaving(true)
+            helpers.setSubmitting(true);
+            try {
+                let response;
+                setTimeout(() => {
+                    setSaving(false)
+                                    helpers.setStatus({success: true});
+                helpers.setSubmitting(false);
+                    toastSuccess("Saved",toastId)
+                }, 2000)
+                // helpers.setStatus({success: true});
+                // helpers.setSubmitting(false);
+                // toastSuccess(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "Created" : "Updated"), toastError());
+
+                // if (response) {
+                //     if (itemctx.isNew) {
+                //         router.push({
+                //             pathname: paths.app[sectionApi.section].edit,
+                //             query: {id: response._id}
+                //         });
+                //     } else if (itemctx.isStateable) {
+                //         itemctx.setState(response);
+                //     }
+                // }
+            } catch (err) {
+                console.error(err);
+                toastError(err, toastId);
+                helpers.setStatus({success: false});
+                helpers.setErrors({submit: err.message});
+                helpers.setSubmitting(false);
+            }
         }
     });
 
-    return xpaths.map(e=>{
-        const res = e.split('/')
-        res.shift()
-        res.join('/')
-        return res
-    });
-}
+    const parentNodeSelect = xPaths.map(e => ({
+        id: e.id,
+        label: `${e.parent_node_id} : ${e.relative_xpath}`,
+        xpath: e.xpath,
+        parent_node: e.parent_node_id,
+        relative_xpath: e.relative_xpath
+    }))
 
-  const findedXpath = findXPaths(xmlContent)
-
-
-  const handleLineClick = (lineNumber) => {
-    setSelectedNode(findedXpath[lineNumber - 1]);
-    setSelectedLine(lineNumber)
-      // const xpathForLine = findedXpath[lineNumber - 1].split('/')
-      // console.log(xpathForLine.shift())
-// console.log(xpathForLine.join('/'))
-  };
-    const renderRow = (rows, css, highlight) => {
-        return rows.map((node, i) => {
-            const nodeCss = Object.assign({}, ...node.properties?.className.map(e=>css[e]).filter(e => e) ?? [])
-            const isTagNode = ['token','tag'].every(e =>node.properties?.className.includes(e))
-                && !['punctuation','attr-name','attr-value'].some(e => node.properties?.className.includes(e))
-                && node.children?.[0]?.value !== ' '
-            return <span key={node.properties?.key ?? i}
-                         className={node.properties?.className?.join(' ')}
-                         // onClick={node.properties?.onClick}
-                         style={  {...nodeCss, ...node.properties?.style, backgroundColor: isTagNode && highlight ? 'yellow' : ''}}
-                    >
-                        {node.children ? renderRow(node.children, css, false) : node.value}
-                    </span>
-        });
+    const handleClear = () => {
+        formik.setValues(initialValues)
     }
 
-  return (
-      <div>
-          <TextField
-            fullWidth
-            label="File"
-            name="fileSelect"
-            onChange={event => setSelectedFile(event.target.value)}
-            value={files[0]}
-            select
-          >
-              {files.map((file) => (
-                  <MenuItem
-                    key={file.filename}
-                    value={file}
-                  >
-                      <Typography>
-                        {file.filename}
-                      </Typography>
-                  </MenuItem>
-              ))}
-          </TextField>
-          {loadFile.load &&
-            <CircularProgress/>}
-          {loadFile.error &&
-             <Alert severity="error">
-                <AlertTitle>Error</AlertTitle>
-                Error on load file.
-              </Alert>}
-          {xmlContent && <SyntaxHighlighter
-              // customStyle={customStyles}
-              language="xml"
-              // style={docco}
-              showLineNumbers
-              // wrapLines
-              renderer={({ rows, stylesheet, useInlineStyles }) => {
-                             return rows.map((node, i) => {
-
-                                  const nodeCss = Object.assign({}, ...node.properties?.className.map(e=>css[e]).filter(e => e) ?? [])
-                                  return <span key={node.properties?.key ?? i}
-                                               onClick={node.properties.onClick}
-                                               style={  {...nodeCss, ...node.properties?.style}}
+    return (
+        <form onSubmit={formik.handleSubmit}>
+            <Card sx={{p: 2}}>
+                <Grid container
+                      justifyContent='center'>
+                    <Grid container>
+                        <Grid item
+                              md={12}
+                              xl={6}>
+                            <Stack gap={2}>
+                                <TextField
+                                    fullWidth
+                                    label="File"
+                                    name="fileSelect"
+                                    onChange={event => {
+                                        setSelectedFile(event.target.value)
+                                        handleClear()
+                                    }}
+                                    value={files[0]}
+                                    select
+                                >
+                                    {files.map((file) => (
+                                        <MenuItem
+                                            key={file.filename}
+                                            value={file}
                                         >
-                                             {renderRow(node.children, stylesheet, xPaths.some(e=>e.xpath.replace('/*/','').endsWith(findedXpath[i])))}
-                                        </span>
-                                  })}}
-              lineProps={(lineNumber) => ({
-                  style: {cursor: 'pointer', backgroundColor: selectedLine === lineNumber ? '#e0e0e0' : 'inherit',hljsTag:'black'},
-                  onClick: () => handleLineClick(lineNumber),
-              })}
-          >
-              {xmlContent}
-          </SyntaxHighlighter>}
-          {<ul>
-              {xPaths.map(e => <li>{e.xpath.replace('/*/','')}</li>)}
-          </ul>}
-          <TextField
-              value={selectedNode}
-          />
-          <Button onClick={()=> {
-              if(selectedNode) {
-                  setNodesList(e => ([...e, selectedNode]))
-                  setSelectedNode('')
-              }
-          }}
-                  disabled={!selectedNode}
-          >
-            Save
-          </Button>
-          {<ul>
-              {/*{findedXpath.map(e => <li style={{color:'blue'}}>{e.join('/')}</li>)}*/}
-          </ul>}
-      </div>
-  );
-};
-
+                                            <Typography>
+                                                {file.filename}
+                                            </Typography>
+                                        </MenuItem>
+                                    ))}
+                                </TextField>
+                                {fileError
+                                    ? <Alert severity="error">{fileError.message}</Alert>
+                                    : <File xmlContent={xmlContent}
+                                            xmlNodes={xmlNodes}
+                                            xPaths={xPaths}
+                                            xPath={formik.values.xpath}
+                                            relativeXPath={formik.values.relative_xpath}
+                                            error={fileError}
+                                            fileContent={selectedFile.content}
+                                            handleClick={onChangeXPath}/>
+                                }
+                            </Stack>
+                        </Grid>
+                        <Grid item
+                              md={12}
+                              xl={6}>
+                            <Stack gap={2}>
+                                <FormTextField
+                                    formik={formik}
+                                    disabled={saving}
+                                    name="id"
+                                    label="Id"
+                                    required/>
+                                <FormTextField
+                                    formik={formik}
+                                    disabled={saving}
+                                    name="label"
+                                    label="Label"
+                                    required/>
+                                <FormTextField
+                                    formik={formik}
+                                    disabled={saving}
+                                    multiline
+                                    name="xpath"
+                                    label="xPath"
+                                    required/>
+                                <Autocomplete
+                                    id="parent_node"
+                                    disabled={saving}
+                                    // key={formik.values.parent_node.label}
+                                    error={!!(formik.touched['parent_node'] && formik.errors['parent_node'])}
+                                    helperText={formik.touched['parent_node'] && formik.errors['parent_node']}
+                                    onBlur={formik.handleBlur}
+                                    onChange={(e, value) => formik.setFieldValue('parent_node', value)}
+                                    value={formik.values?.['parent_node']?.label ?? ''}
+                                    options={parentNodeSelect}
+                                    renderOption={(props, option) =>
+                                        <li {...props}
+                                            key={option.id}>
+                                            {option.xpath}
+                                        </li>}
+                                    renderInput={(params) =>
+                                        <TextField {...params}
+                                                   required
+                                                   label="Parent Node"/>
+                                    }
+                                />
+                                <RelativeXpathFinder formik={formik}
+                                                     error={fileError}
+                                                     xmlContent={xmlContent}
+                                                     absolute_xpath={formik.values.xpath}
+                                                     xpath={formik.values?.parent_node?.xpath}/>
+                            </Stack>
+                        </Grid>
+                    </Grid>
+                    <Grid sx={{justifyContent: 'center'}}>
+                        <Button type='submit'
+                                disabled={!!fileError || !xmlContent || formik.isSubmitting}>Save</Button>
+                        <Button onClick={handleClear}>Clear</Button>
+                    </Grid>
+                </Grid>
+            </Card>
+        </form>
+    )
+}
 
 
 Page.getLayout = (page) => (
