@@ -164,6 +164,10 @@ class PackageImporterABC(ABC):
                 )
                 await sparql_test_suite.on_create(self.user).save()
 
+            sparql_test_suite_link = SHACLTestSuite.link_from_id(sparql_test_suite.id)
+            if sparql_test_suite_link not in self.package.sparql_test_suites:
+                self.package.sparql_test_suites.append(sparql_test_suite_link)
+
             for mono_file_resource in mono_resource_collection.file_resources:
                 resource_path = [mono_resource_collection.name]
                 resource_name = mono_file_resource.name
@@ -271,6 +275,8 @@ class PackageImporterABC(ABC):
             await resource_collection.on_create(self.user).save()
 
         resource_collection_link = ResourceCollection.link_from_id(resource_collection.id)
+        if resource_collection_link not in self.package.resource_collections:
+            self.package.resource_collections.append(resource_collection_link)
 
         for mono_file_resource in mono_package.transformation_resources.file_resources:
             resource_name = mono_file_resource.name
@@ -314,6 +320,8 @@ class PackageImporterABC(ABC):
 
         package.project = self.project
         package.shacl_test_suites = []
+        package.sparql_test_suites = []
+        package.resource_collections = []
 
         await package.on_update(self.user).save() if package.id else await package.on_create(self.user).save()
 

@@ -63,7 +63,7 @@ class FileResource(
 
 
 class FileResourceCollection(
-    BaseProjectResourceEntity,
+    BaseProjectAbleResourceEntity,
     BaseMappingPackageResourceSchemaTrait
 ):
     title: Optional[str] = None
