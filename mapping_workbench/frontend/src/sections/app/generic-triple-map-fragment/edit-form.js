@@ -55,7 +55,6 @@ export const EditForm = (props) => {
     };
 
 
-
     const formik = useFormik({
         initialValues,
         validationSchema: Yup.object({
@@ -103,7 +102,7 @@ export const EditForm = (props) => {
         }
     });
 
-    const lng = {TTL:{mode:'text/turtle', extension: turtle}, YAML:{mode:'text/yaml',extension: yaml}}
+    const lng = {TTL: {mode: 'text/turtle', extension: turtle}, YAML: {mode: 'text/yaml', extension: yaml}}
 
     useEffect(() => {
         selectedTree && handleGetXmlContent(selectedTree)
@@ -144,9 +143,12 @@ export const EditForm = (props) => {
                         toastSuccess('Transformed Successfully', toastId)
                     })
                     .catch(err => catchError(err))
+                    .finally(() => formik.setSubmitting(false))
             })
-            .catch(err => catchError(err))
-            .finally(() => formik.setSubmitting(false))
+            .catch(err => {
+                catchError(err)
+                formik.setSubmitting(false)
+            })
 
     }
 
@@ -157,7 +159,7 @@ export const EditForm = (props) => {
     const handleTurtleValidate = () => {
         turtleValidator(formik.values.triple_map_content)
             .then(res => setValidation(res))
-            .catch(err => setValidation({error:err}))
+            .catch(err => setValidation({error: err}))
     }
 
     return (
@@ -211,7 +213,7 @@ export const EditForm = (props) => {
                             </Grid>
                             <Grid xs={12}>
                                 <CodeMirror
-                                    height='400px'
+                                    height='600px'
                                     value={formik.values.triple_map_content}
                                     extensions={[basicSetup(), lng[formik.values.format].extension()]}
                                     onChange={(value) => formik.setFieldValue('triple_map_content', value)}
@@ -258,7 +260,8 @@ export const EditForm = (props) => {
                                     }
                                 </TextField>
                             </Grid>
-                            <Grid xs={12}>
+                            <Grid md={12}
+                                  lg={6}>
                                 <Accordion>
                                     <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                                         Test Data Content
@@ -273,7 +276,8 @@ export const EditForm = (props) => {
                                     </AccordionDetails>
                                 </Accordion>
                             </Grid>
-                            <Grid xs={12}>
+                            <Grid md={12}
+                                  lg={6}>
                                 <Accordion disabled={!rdfResultContent}>
                                     <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                                         RDF Result
@@ -320,7 +324,8 @@ export const EditForm = (props) => {
                     >
                         Update and Transform
                     </Button>}
-                    {formik.values.format==='TTL' && <Button onClick={handleTurtleValidate}>Validate</Button>}
+                    {formik.values.format === 'TTL' && currentTab === 'tabEdit' &&
+                        <Button onClick={handleTurtleValidate}>Validate</Button>}
                     <Button
                         color="inherit"
                         component={RouterLink}
