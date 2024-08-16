@@ -199,6 +199,7 @@ const Page = () => {
                             spacing={2}
                         >
                             <Button
+                                id='import_button'
                                 onClick={uploadDialog.handleOpen}
                                 startIcon={(
                                     <SvgIcon>

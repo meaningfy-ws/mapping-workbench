@@ -1,8 +1,8 @@
-from typing import Optional, List, Literal, Any, Dict
+from typing import Optional, List, Literal
 
 import pymongo
 from beanie import Link
-from pydantic import Field, model_validator
+from pydantic import Field, BaseModel
 from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.api_response import APIListPaginatedResponse
@@ -11,12 +11,13 @@ from mapping_workbench.backend.core.models.base_project_resource_entity import B
 from mapping_workbench.backend.state_manager.models.state_object import StatefulObjectABC, ObjectState
 
 
-class StructuralElementLabelOut(BaseProjectResourceEntityOutSchema):
+class StructuralElementLabelOut(BaseModel):
     """
         Output model for CM Rule review page
     """
     id: str = Field(..., alias='_id')
     sdk_element_id: str
+
 
 class StructuralElementOut(BaseProjectResourceEntityOutSchema):
     """
@@ -136,3 +137,14 @@ class APIListStructuralElementsPaginatedResponse(APIListPaginatedResponse):
 
 class APIListStructuralElementsVersionedViewPaginatedResponse(APIListPaginatedResponse):
     items: List[StructuralElementsVersionedView]
+
+
+class StructuralElementIn(BaseModel):
+    """
+        General input model for Structural Element
+    """
+    id: str
+    sdk_element_id: str = Field(alias="label")
+    absolute_xpath: str
+    relative_xpath: str
+    parent_node_id: str

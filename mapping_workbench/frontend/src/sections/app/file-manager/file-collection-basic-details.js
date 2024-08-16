@@ -90,7 +90,8 @@ export const FileCollectionBasicDetails = (props) => {
     <Card {...other}>
       <CardActions sx={{ justifyContent: "end" }}>
         <Button
-            variant="contained"            
+            id='edit_button'
+            variant="contained"
             size="large"
             onClick={handleEditAction}
             sx={{ color: "#ffffff",backgroundColor: "#2970FF", boxShadow: "0px 1px 5px rgba(0, 0, 0, 0.08)", borderRadius: "12px", minWidth: "100px" }}
@@ -98,6 +99,7 @@ export const FileCollectionBasicDetails = (props) => {
           Edit
         </Button>
         <Button
+            id='delete_button'
             variant="contained"            
             size="large"
             color="error"

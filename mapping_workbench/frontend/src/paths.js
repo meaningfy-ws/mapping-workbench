@@ -261,6 +261,7 @@ export const apiPaths = {
     mapping_packages: {
         items: '/mapping_packages',
         item: '/mapping_packages/:id',
+        create_default: '/mapping_packages/create_default',
         import: '/package_importer/tasks/import',
         process: '/package_processor/tasks/process',
         export: '/package_exporter/export_latest_package_state',

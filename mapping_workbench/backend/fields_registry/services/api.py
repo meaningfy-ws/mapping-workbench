@@ -6,7 +6,7 @@ from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersS
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
 from mapping_workbench.backend.core.services.request import api_entity_is_found, prepare_search_param, pagination_params
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement, \
-    StructuralElementsVersionedView, StructuralElementOut, StructuralElementLabelOut
+    StructuralElementsVersionedView, StructuralElementOut, StructuralElementLabelOut, StructuralElementIn
 from mapping_workbench.backend.project.models.entity import Project
 
 
@@ -103,3 +103,10 @@ async def get_structural_element_label_list(project_id: PydanticObjectId) -> Lis
         StructuralElement.project.id == project_id,
         projection_model=StructuralElementLabelOut
     ).to_list()
+
+
+async def insert_structural_element(structural_element_in: StructuralElementIn, project_id: PydanticObjectId) -> None:
+    structural_element_in_json = structural_element_in.model_dump()
+    structural_element = StructuralElement.model_validate(structural_element_in_json)
+    structural_element.project = Project.link_from_id(project_id)
+    await structural_element.save()

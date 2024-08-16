@@ -1,15 +1,17 @@
-from typing import Optional, Union
+from typing import Optional
 
 from beanie import Link
-from pydantic import field_validator, Field
+from pydantic import field_validator
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntity, BaseEntityInSchema, BaseEntityOutSchema
 from mapping_workbench.backend.project.models.entity import Project
 
 
-class BaseProjectResourceEntity(BaseEntity):
+class BaseProjectAbleResourceEntity(BaseEntity):
     project: Optional[Link[Project]] = None
 
+
+class BaseProjectResourceEntity(BaseProjectAbleResourceEntity):
     @field_validator('project')
     @classmethod
     def prevent_none_for_project(cls, project):

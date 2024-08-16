@@ -191,5 +191,7 @@ async def import_eforms_fields_from_github_repository(
         github_downloader.download(result_dir_path=temp_dir_path,
                                    download_resources_filter=[FIELDS_PATH_NAME, NOTICE_TYPES_PATH_NAME])
         mwb_logger.log_all_info(f"Importing fields into the registry")
-        await import_eforms_fields_from_folder(eforms_fields_folder_path=temp_dir_path,
-                                               project_link=project_link)
+        await import_eforms_fields_from_folder(
+            eforms_fields_folder_path=temp_dir_path,
+            project_link=project_link
+        )

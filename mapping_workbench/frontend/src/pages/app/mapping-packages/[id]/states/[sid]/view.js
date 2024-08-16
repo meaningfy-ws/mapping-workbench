@@ -58,21 +58,15 @@ const Page = () => {
     }, [sid]);
 
     const handleItemsGet = async (sid) => {
-        try {
-            const response = await sectionApi.getState(sid);
-            setItem(response);
-        } catch (err) {
-            console.error(err);
-        }
+        sectionApi.getState(sid)
+            .then(res => setItem(res))
+            .catch(err => console.error(err))
     }
 
-    const handleValidationReportTreeGet = async (sid) => {
-        try {
-            const result = await sectionApi.getValidationReportTree(sid)
-            setValidationReportTree(result);
-        } catch (err) {
-            console.error(err);
-        }
+    const handleValidationReportTreeGet = (sid) => {
+        sectionApi.getValidationReportTree(sid)
+            .then(res => setValidationReportTree(res))
+            .catch(err => console.error(err))
     }
 
     const handleTabsChange = (event, value) => setCurrentTab(value)
@@ -179,6 +173,7 @@ const Page = () => {
                                 key={tab.value}
                                 label={tab.label}
                                 value={tab.value}
+                                disabled={!validationReportTree.test_data_suites?.length}
                             />
                         ))}
                     </Tabs>

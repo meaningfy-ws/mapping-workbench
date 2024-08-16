@@ -45,7 +45,7 @@ async def check_imported_data(project, package, package_identifier):
     resource_models = [
         ResourceCollection,
         ResourceFile,
-        GenericTripleMapFragment,
+        SpecificTripleMapFragment,
         TestDataSuite,
         TestDataFileResource,
         SPARQLTestSuite,

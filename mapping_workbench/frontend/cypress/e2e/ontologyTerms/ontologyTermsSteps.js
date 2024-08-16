@@ -16,9 +16,21 @@ Given('Session Login', () => {
     if(sessionProject) cy.window().then(win => win.sessionStorage.setItem('sessionProject',sessionProject))
 })
 
+
 Then('I get success select', () => {
     cy.wait('@select').its('response.statusCode').should('eq',200)
     cy.window().then(win => sessionProject = win.sessionStorage.getItem('sessionProject'))
+})
+
+//DISCOVER
+Then('I get redirected to Ontology Terms', () => {
+    cy.url().should('include','ontology')
+    cy.wait('@get').its('response.statusCode').should('eq', 200)
+})
+
+Then('I click on Ontology Terms', () => {
+    cy.intercept('GET', appURLPrefix + 'ontology/terms*').as('get')
+    cy.get('#nav_ontology_terms').click()
 })
 
 When('I click on discover button', () => {
@@ -26,27 +38,13 @@ When('I click on discover button', () => {
     cy.get('#discover_button').click()
 })
 
-Then('I successfully discover Ontology Terms', () => {
+Then('I successfully add task for discover Ontology Terms', () => {
     cy.wait('@discover').its('response.statusCode').should('eq',201)
 })
+//ADD
 
-//add Ontology Namespace
-
-When('I expand Ontology', () => {
-    cy.get('#nav_ontology').click()
-})
-Then('I click on Terms', () => {
-    cy.intercept('GET', appURLPrefix + 'ontology/terms*').as('get')
-    cy.get('#nav_ontology_terms').click()
-})
-
-Then('I get redirected to Ontology Terms', () => {
-    cy.url().should('include','ontology-terms')
-    cy.wait('@get').its('response.statusCode').should('eq', 200)
-})
-
-Then('I click on add button', () => {
-    cy.get('#add_button').click()
+Then('I click on add term button', () => {
+    cy.get('#add_term_button').click()
 })
 
 Then('I get redirected to create page', () => {
@@ -54,9 +52,11 @@ Then('I get redirected to create page', () => {
 })
 
 
-Then('I enter name', () => {
+Then('I enter name of Ontology Term', () => {
     cy.intercept('POST', appURLPrefix + "ontology/terms").as('create')
     cy.get("input[name=term]").clear().type(termName)
+    cy.get("input[name=type]").parent().click()
+    .get('ul.MuiList-root').click()
     cy.get("button[type=submit]").click()
 })
 
@@ -65,14 +65,14 @@ Then('I successfully create Ontology Terms', () => {
     cy.wait('@create').its('response.statusCode').should('eq', 201)
 })
 
-// update
+// UPDATE
 
 Then('I search for Ontology Terms', () => {
-    cy.get('input[type=text]').clear().type(termName+'{enter}')
+    cy.get('input[type=text]').first().clear().type(termName+'{enter}')
 })
 
 Then('I receive Ontology Terms', () => {
-    cy.wait('@get').its('response.statusCode').should('eq', 200)
+    cy.wait('@get').its('response.statusCode').should('eq', 200).wait(500)
 })
 
 Then('I click edit button', () => {
@@ -92,8 +92,24 @@ Then('I get success update', () => {
     cy.wait('@update').its('response.statusCode').should('eq', 200)
 })
 
+//VIEW
+
+Then('I click on view button', () => {
+    cy.intercept('GET', appURLPrefix + 'ontology/terms/*').as('get_data')
+    cy.get('#view_button').click()
+})
+
+Then('I get redirected to view page', () => {
+    cy.url().should('include','/view')
+})
+
+Then('I receive Ontology Term data', () => {
+    cy.wait('@get_data').its('response.statusCode').should('eq', 200)
+})
+
+//DELETE
 Then('I search for updated Ontology Terms', () => {
-    cy.get('input[type=text]').clear().type(termName+1+'{enter}')
+    cy.get('input[type=text]').first().clear().type(termName+1+'{enter}')
 })
 
 Then('I click delete button', () => {

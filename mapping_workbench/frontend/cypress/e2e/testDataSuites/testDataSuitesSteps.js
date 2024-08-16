@@ -24,7 +24,7 @@ Then('I get success select', () => {
 
 Then('I click on test data suites', () => {
     cy.intercept('GET', appURLPrefix + 'test_data_suites*').as('get')
-    cy.get('#nav_test\\ data\\ suites').click()
+    cy.get('#nav_test_data').click()
 })
 
 Then('I get redirected to test data suites', () => {
@@ -63,8 +63,6 @@ Then('I get redirected to create test data page', () => {
 Then('I enter test data name', () => {
     cy.intercept('POST', appURLPrefix + "test_data_suites").as('create')
     cy.get("input[name=title]").clear().type(test_suite_name)
-    cy.get("input[name=mapping_package_id]").parent().click()
-        .get('ul.MuiList-root').click()
     cy.get("button[type=submit]").click()
 })
 
@@ -80,6 +78,11 @@ Then('I search for suite', () => {
 
 Then('I receive suite', () => {
     cy.wait('@get').its('response.statusCode').should('eq', 200)
+})
+
+
+Then('I click view button', () => {
+    cy.get('#view_button').click()
 })
 
 Then('I click edit button', () => {

@@ -1,6 +1,5 @@
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule, \
     ConceptualMappingRuleComment
-from mapping_workbench.backend.conceptual_mapping_rule.services.data import get_conceptual_mapping_rule_by_key
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
 from mapping_workbench.backend.fields_registry.services.data import get_structural_element_by_unique_fields
 from mapping_workbench.backend.logger.services import mwb_logger

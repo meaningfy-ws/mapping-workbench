@@ -126,7 +126,6 @@ class TestDataSuite(
     StatefulObjectABC
 ):
     file_resources: Optional[List[Link[TestDataFileResource]]] = []
-    mapping_package_id: Optional[PydanticObjectId] = None
 
     async def get_test_data_states(self) -> List[TestDataState]:
         test_data_file_resources = await TestDataFileResource.find(

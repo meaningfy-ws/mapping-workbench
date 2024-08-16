@@ -23,7 +23,7 @@ from mapping_workbench.backend.ontology.services.api_for_namespaces import (
 )
 from mapping_workbench.backend.ontology.services.api_for_terms import list_terms, create_term, update_term, \
     get_term_out, get_term, delete_term
-from mapping_workbench.backend.ontology.services.terms import list_known_terms, is_known_term, \
+from mapping_workbench.backend.ontology.services.terms import is_known_term, \
     check_content_terms_validity, search_terms, get_prefixed_terms
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
@@ -282,13 +282,13 @@ async def route_delete_term(term: Term = Depends(get_term)):
     return APIEmptyContentWithIdResponse(id=term.id)
 
 
-@router.get(
-    "/known_terms",
-    description=f"List {NAME_FOR_ONE} known terms",
-    name=f"{NAME_FOR_MANY}:list_{NAME_FOR_ONE}_known_terms"
-)
-async def route_list_known_terms(saved: bool = True):
-    return await list_known_terms(saved)
+# @router.get(
+#     "/known_terms",
+#     description=f"List {NAME_FOR_ONE} known terms",
+#     name=f"{NAME_FOR_MANY}:list_{NAME_FOR_ONE}_known_terms"
+# )
+# async def route_list_known_terms(saved: bool = True):
+#     return await list_known_terms(saved)
 
 
 @router.post(
@@ -351,6 +351,7 @@ async def route_prefixed_terms(
 ):
     prefixed_terms = await get_prefixed_terms(project)
     return prefixed_terms
+
 
 @router.post(
     "/tasks/terms_validator",

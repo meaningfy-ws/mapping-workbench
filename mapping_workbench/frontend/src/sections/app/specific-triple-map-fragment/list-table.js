@@ -137,7 +137,7 @@ export const ListTable = (props) => {
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            {item.mapping_package && projectMappingPackagesMap[item.mapping_package.id]}
+                                            {item.mapping_package_id && projectMappingPackagesMap[item.mapping_package_id]}
                                         </TableCell>
                                         <TableCell align="left">
                                             {timeTransformer(item.created_at, timeSetting)}
