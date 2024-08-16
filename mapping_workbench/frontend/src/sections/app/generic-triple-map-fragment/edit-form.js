@@ -213,7 +213,7 @@ export const EditForm = (props) => {
                             </Grid>
                             <Grid xs={12}>
                                 <CodeMirror
-                                    height='600px'
+                                    style={{resize: 'vertical', overflow: 'auto', height: 600}}
                                     value={formik.values.triple_map_content}
                                     extensions={[basicSetup(), lng[formik.values.format].extension()]}
                                     onChange={(value) => formik.setFieldValue('triple_map_content', value)}
@@ -266,7 +266,7 @@ export const EditForm = (props) => {
                                     <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                                         Test Data Content
                                     </AccordionSummary>
-                                    <AccordionDetails>
+                                    <AccordionDetails >
                                         <FormCodeReadOnlyArea
                                             disabled
                                             name="test_data_content"
@@ -282,7 +282,7 @@ export const EditForm = (props) => {
                                     <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                                         RDF Result
                                     </AccordionSummary>
-                                    <AccordionDetails>
+                                    <AccordionDetails sx={{resize:'vertical'}}>
                                         <FormCodeReadOnlyArea
                                             disabled
                                             name="triple_map_content"
