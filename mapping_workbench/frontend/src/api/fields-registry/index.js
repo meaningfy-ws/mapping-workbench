@@ -56,11 +56,17 @@ class FieldsRegistryApi extends SectionApi {
         const result = await this.getItems(request, 'elements');
         return result.items.map(e => ({
             id: e._id,
-            xpath: e.absolute_xpath,
+            absolute_xpath: e.absolute_xpath,
             element_type: e.element_type,
             parent_node_id: e.parent_node_id,
             relative_xpath: e.relative_xpath,
         }))
+    }
+
+
+    async addElement(data) {
+        let endpoint = this.paths.elements;
+        return appApi.post(endpoint, data, {'project_id': sessionApi.getSessionProject()});
     }
 }
 
