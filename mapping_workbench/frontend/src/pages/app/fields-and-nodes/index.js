@@ -17,7 +17,7 @@ import Alert from "@mui/material/Alert";
 import {Layout as AppLayout} from 'src/layouts/app';
 import File from 'src/sections/app/fields-and-nodes/file'
 import {fieldsRegistryApi as fieldsRegistry} from 'src/api/fields-registry'
-import {schemaFileResourcesApi as schemaFiles} from 'src/api/schema-files/file-resources'
+import {testDataSuitesApi} from "../../../api/test-data-suites";
 import {FormTextField} from "../../../components/app/form/text-field";
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 import RelativeXpathFinder from "../../../sections/app/fields-and-nodes/relative-xpath-finder";
@@ -32,11 +32,14 @@ const Page = () => {
     const [saving, setSaving] = useState(false)
 
     useEffect(() => {
-        schemaFiles.getItems({})
-            .then(res => {
-                setFiles(res)
+        testDataSuitesApi.getItems({})
+            .then(res=> {
+                res.items.forEach(e =>
+                testDataSuitesApi.getFileResources(e._id)
+                    .then(resource => setFiles(files => ([...files,...resource.items]))))
+                    .catch(err => console.error(err))
             })
-            .catch(err => console.error(err))
+            .catch(err => console.error((err)))
 
         fieldsRegistry.getXpathsList()
             .then(res => {

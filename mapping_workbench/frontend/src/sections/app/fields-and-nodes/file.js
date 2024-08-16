@@ -102,7 +102,7 @@ const executeXPaths = (doc, xPaths, relativeXpath) => {
 const BuildNodes = ({nodes, level, parent, xPath, xpaths, relativeXPath, handleClick}) => {
     return nodes.map((e) => {
             const [name, value] = e
-            if (['0', '1', '2', '3'].includes(name))
+            if(!isNaN(name))
                 return <BuildNodes nodes={Object.entries(value).filter(en => en[0] !== ATTRIBUTE_SIGN)}
                                    key={'obj' + name}
                                    level={level}
