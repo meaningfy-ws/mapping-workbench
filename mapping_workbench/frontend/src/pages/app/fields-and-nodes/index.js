@@ -193,7 +193,8 @@ const Page = () => {
                 <Card sx={{p: 2}}>
                     <Grid container
                           justifyContent='center'>
-                        <Grid container>
+                        <Grid container
+                              spacing={2}>
                             <Grid item
                                   md={12}
                                   xl={6}>
@@ -282,9 +283,9 @@ const Page = () => {
                                                          xmlContent={xmlContent}
                                                          absolute_xpath={formik.values.absolute_xpath}
                                                          xpath={formik.values?.parent_node?.absolute_xpath}/>
-                                      <XpathEvaluator xmlDoc={xmlContent}
-                                                xpath={formik.values?.parent_node?.absolute_xpath}
-                                                absolute_xpath={formik.values.absolute_xpath}/>
+                                    <XpathEvaluator xmlDoc={xmlContent}
+                                                    xpath={formik.values?.parent_node?.absolute_xpath}
+                                                    absolute_xpath={formik.values.absolute_xpath}/>
                                 </Stack>
                             </Grid>
                         </Grid>
@@ -293,9 +294,7 @@ const Page = () => {
                                     disabled={!!fileError || !xmlContent || formik.isSubmitting}>Save</Button>
                             <Button onClick={handleClear}
                                     disabled={formik.isSubmitting}>Clear</Button>
-                            {/*<Button onClick={() => evaluate(xmlContent, formik.values.absolute_xpath)}>Evaluate</Button>*/}
                         </Grid>
-
                     </Grid>
 
                 </Card>

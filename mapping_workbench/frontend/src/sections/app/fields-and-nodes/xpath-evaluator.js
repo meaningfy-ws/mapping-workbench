@@ -73,20 +73,19 @@ const XpathEvaluator = ({xmlDoc, absolute_xpath}) => {
 
     return (
         <>
-            {nodes.map((e, i) => {
-                return <Card key={'node' + i}>
+            {nodes.map((e, i) => (
+                <Card key={'node' + i}>
                     <CodeMirror
                         value={serializer.serializeToString(e)}
                         editable={false}
                         extensions={[basicSetup(), xml()]}
                         options={{
-                            mode: 'text/xml',
+                            mode: 'application/xml',
                             theme: 'default',
                             lineNumbers: false,
                         }}
                     />
-                </Card>
-            })}
+                </Card>))}
         </>
     )
 
