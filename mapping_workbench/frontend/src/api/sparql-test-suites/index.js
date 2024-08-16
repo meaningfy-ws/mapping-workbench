@@ -25,7 +25,7 @@ class SPARQLTestSuitesApi extends FileCollectionsApi {
 
     async getValuesForSelector(request = {}) {
         let valuesStore = await this.getItems();
-        return valuesStore.items.map(
+        return valuesStore.items.filter(value => value.title !== 'cm_assertions').map(
             value => ({id: value._id, title: value.title})
         ).sort((a, b) => a.title.localeCompare(b.title));
     }
