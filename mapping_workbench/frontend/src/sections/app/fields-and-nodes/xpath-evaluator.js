@@ -4,15 +4,16 @@ import {basicSetup} from '@uiw/codemirror-extensions-basic-setup';
 import {xml} from '@codemirror/lang-xml'
 import Card from "@mui/material/Card";
 
-const XpathEvaluator = ({xmlDoc, xpath, absolute_xpath}) => {
+const XpathEvaluator = ({xmlDoc, absolute_xpath}) => {
 
     const [nodes, setNodes] = useState([])
 
+    console.log(absolute_xpath)
 
     useEffect(() => {
-        if (!!xmlDoc && xpath && absolute_xpath)
-            evaluateXPAthExpression(xpath, getGlobalXPath(absolute_xpath), xmlDoc)
-    }, [xmlDoc, xpath, absolute_xpath]);
+        if (!!xmlDoc && absolute_xpath)
+            evaluateXPAthExpression(getGlobalXPath(absolute_xpath), xmlDoc)
+    }, [xmlDoc, absolute_xpath]);
 
     const getGlobalXPath = (xpath) => {
         const xp = xpath.split('/')
@@ -37,7 +38,8 @@ const XpathEvaluator = ({xmlDoc, xpath, absolute_xpath}) => {
     }
 
 
-    const evaluateXPAthExpression = (contextNodeExpr, xpathExpr, xmlDoc) => {
+    const evaluateXPAthExpression = (xpathExpr, xmlDoc) => {
+        setNodes([])
         // Extract namespaces from the XML
         const namespaces = extractNamespaces(xmlDoc);
 
@@ -47,25 +49,19 @@ const XpathEvaluator = ({xmlDoc, xpath, absolute_xpath}) => {
         try {
             // console.log(xmlDoc.evaluate(xpathExpr,xmlDoc,nsResolver,XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null))
             const allNodes = []
-            const contextResult = xmlDoc.evaluate(contextNodeExpr, xmlDoc, nsResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
-            const contextNode = contextResult.singleNodeValue;
-            console.log('contextNode', contextNode)
-            if (contextNode) {
-                const result = xmlDoc.evaluate(xpathExpr, xmlDoc, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-                if (result.snapshotLength > 0) {
-                    for (let i = 0; i < result.snapshotLength; i++) {
-                        const node = result.snapshotItem(i);
-                        allNodes.push(node)
-                        // setNodes(nds => ([...nds, node]))
-                    }
-                } else {
-                    // formik.setErrors({relative_xpath: 'No nodes found.'})
-                    console.log('No nodes found.');
+
+            const result = xmlDoc.evaluate(xpathExpr, xmlDoc, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+            if (result.snapshotLength > 0) {
+                for (let i = 0; i < result.snapshotLength; i++) {
+                    const node = result.snapshotItem(i);
+                    allNodes.push(node)
+                    // setNodes(nds => ([...nds, node]))
                 }
             } else {
-                // formik.setErrors({relative_xpath: 'Context node not found.'})
-                console.log('Context node not found.');
+                // formik.setErrors({relative_xpath: 'No nodes found.'})
+                console.log('No nodes found.');
             }
+
             setNodes(allNodes)
         } catch (err) {
             // formik.setErrors({relative_xpath: 'Unable to process xpath.'})
