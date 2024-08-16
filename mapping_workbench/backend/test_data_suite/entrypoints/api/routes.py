@@ -103,6 +103,7 @@ async def route_get_test_data_file_resources_struct_tree(
 async def route_list_test_data_suites(
         project: PydanticObjectId = None,
         ids: Annotated[List[PydanticObjectId | str] | None, Query()] = None,
+        mapping_package_id: Annotated[PydanticObjectId | str | None, Query()] = None,
         page: int = None,
         limit: int = None,
         q: str = None
@@ -112,6 +113,8 @@ async def route_list_test_data_suites(
         filters['project'] = Project.link_from_id(project)
     if ids is not None:
         filters['_id'] = {"$in": ids}
+    if mapping_package_id is not None:
+        filters['mapping_package_id'] = mapping_package_id
     if q is not None:
         filters['q'] = q
 

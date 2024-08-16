@@ -26,6 +26,10 @@ export const FileResourceCollectionsCard = (props) => {
     const collectionTitle = t(tokens.nav[collectionApi.section]);
     const collectionPath = paths.app[collectionApi.section].index;
 
+    const requestBase = {
+        page: 0,
+        rowsPerPage: -1
+    }
     return (
         <Card>
             <CardContent>
@@ -40,6 +44,7 @@ export const FileResourceCollectionsCard = (props) => {
                     <img
                         src="/assets/icons/icon-folder.svg"
                         width={48}
+                        alt=""
                     />
                     <div>
                         <Link
@@ -54,7 +59,7 @@ export const FileResourceCollectionsCard = (props) => {
                     </div>
                 </Stack>
                 <Box sx={{mt: 2}}>
-                    <FileResourceCollectionsList collectionApi={collectionApi} filters={filters}/>
+                    <FileResourceCollectionsList collectionApi={collectionApi} filters={filters} request={requestBase}/>
                 </Box>
             </CardContent>
         </Card>

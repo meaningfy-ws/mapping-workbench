@@ -1,7 +1,7 @@
-from typing import List
+from typing import List, Annotated
 
 from beanie import PydanticObjectId
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, status, Depends, Query
 from starlette.requests import Request
 
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
@@ -48,6 +48,7 @@ router = APIRouter(
 )
 async def route_list_resource_collections(
         project: PydanticObjectId = None,
+        ids: Annotated[List[PydanticObjectId | str] | None, Query()] = None,
         page: int = None,
         limit: int = None,
         q: str = None
@@ -55,6 +56,8 @@ async def route_list_resource_collections(
     filters: dict = {}
     if project:
         filters['project'] = Project.link_from_id(project)
+    if ids is not None:
+        filters['_id'] = {"$in": ids}
     if q is not None:
         filters['q'] = q
 
