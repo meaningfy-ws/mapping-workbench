@@ -3,6 +3,7 @@ import {useEffect} from "react";
 
 const RelativeXPath = ({xmlContent, xpath, absolute_xpath, formik}) => {
 
+
     useEffect(() => {
         // console.log(`"${xmlContent}"`)
         if (!!xmlContent && xpath && absolute_xpath)
@@ -34,7 +35,7 @@ const RelativeXPath = ({xmlContent, xpath, absolute_xpath, formik}) => {
 
 
 // Function to get the relative XPath of a node from a given context node
-    function getRelativeXPath(node, contextNode) {
+    const getRelativeXPath = (node, contextNode) => {
         const parts = [];
         while (node && node !== contextNode) {
             if (node.nodeType === Node.ELEMENT_NODE) {
@@ -61,14 +62,17 @@ const RelativeXPath = ({xmlContent, xpath, absolute_xpath, formik}) => {
         }
 
         try {
+            // console.log(xmlDoc.evaluate(xpathExpr,xmlDoc,nsResolver,XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null))
 
             const contextResult = xmlDoc.evaluate(contextNodeExpr, xmlDoc, nsResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
             const contextNode = contextResult.singleNodeValue;
             if (contextNode) {
                 const result = xmlDoc.evaluate(xpathExpr, xmlDoc, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+                console.log(result)
                 if (result.snapshotLength > 0) {
                     for (let i = 0; i < result.snapshotLength; i++) {
                         const node = result.snapshotItem(i);
+                        // console.log(node)
                         const relativeXPath = getRelativeXPath(node, contextNode);
                         // console.log(`Node found: ${node.textContent}`);
                         // console.log(`Relative XPath: ${relativeXPath}`);

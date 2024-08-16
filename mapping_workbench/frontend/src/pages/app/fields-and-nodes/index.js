@@ -27,6 +27,7 @@ import {BreadcrumbsSeparator} from "../../../components/breadcrumbs-separator";
 import Link from "@mui/material/Link";
 import {RouterLink} from "../../../components/router-link";
 import {paths} from "../../../paths";
+import XpathEvaluator from "../../../sections/app/fields-and-nodes/xpath-evaluator";
 
 const Page = () => {
     const [files, setFiles] = useState([])
@@ -144,6 +145,18 @@ const Page = () => {
 
     const handleClear = () => {
         formik.setValues(initialValues)
+    }
+
+    const evaluate = (file, xpath) => {
+        const result = file.evaluate(
+            xpath,    // The XPath expression
+            file,           // The context node (here, the entire document)
+            null,               // Namespace resolver (null for HTML documents)
+            XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, // Return type
+            null                // Result object (null to create a new one)
+        );
+
+        console.log(result)
     }
 
     return (
@@ -269,15 +282,22 @@ const Page = () => {
                                                          xmlContent={xmlContent}
                                                          absolute_xpath={formik.values.absolute_xpath}
                                                          xpath={formik.values?.parent_node?.absolute_xpath}/>
+                                      <XpathEvaluator xmlDoc={xmlContent}
+                                                xpath={formik.values?.parent_node?.absolute_xpath}
+                                                absolute_xpath={formik.values.absolute_xpath}/>
                                 </Stack>
                             </Grid>
                         </Grid>
                         <Grid sx={{justifyContent: 'center'}}>
                             <Button type='submit'
                                     disabled={!!fileError || !xmlContent || formik.isSubmitting}>Save</Button>
-                            <Button onClick={handleClear} disabled={formik.isSubmitting}>Clear</Button>
+                            <Button onClick={handleClear}
+                                    disabled={formik.isSubmitting}>Clear</Button>
+                            {/*<Button onClick={() => evaluate(xmlContent, formik.values.absolute_xpath)}>Evaluate</Button>*/}
                         </Grid>
+
                     </Grid>
+
                 </Card>
             </form>
         </>
