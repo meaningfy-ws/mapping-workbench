@@ -22,6 +22,7 @@ import TablePagination from "../../components/table-pagination";
 import timeTransformer from "../../../utils/time-transformer";
 import {useGlobalState} from "../../../hooks/use-global-state";
 import TableSorterHeader from "../../components/table-sorter-header";
+import moment from "moment";
 
 export const ListTable = (props) => {
     const {
@@ -115,6 +116,9 @@ export const ListTable = (props) => {
                                               title='Finished At'/>
                             </TableCell>
                             <TableCell>
+                                Task Duration
+                            </TableCell>
+                            <TableCell>
                                 <SorterHeader fieldName="task_status"
                                               title='Status'/>
                             </TableCell>
@@ -175,6 +179,9 @@ export const ListTable = (props) => {
                                         <TableCell>
                                             {timeTransformer(item.finished_at, timeSetting)}
                                         </TableCell>
+                                        <TableCell>
+                                            {item.finished_at ? moment.utc(moment(item.finished_at).diff(moment(item.started_at))).format("HH:mm:ss") : '-'}
+                                        </TableCell>
                                         <TableCell align="left">
                                             <SeverityPill color={mapStatusColor(item.task_status)}>
                                                 {item.task_status}
@@ -206,7 +213,7 @@ export const ListTable = (props) => {
                                     {isCurrent && (
                                         <TableRow>
                                             <TableCell
-                                                colSpan={8}
+                                                colSpan={9}
                                                 sx={{
                                                     p: 0,
                                                     position: 'relative',
@@ -228,14 +235,15 @@ export const ListTable = (props) => {
                                                         direction="column"
                                                         gap={3}
                                                     >
-                                                        <Typography sx={{paddingLeft: "24px"}}
-                                                                    variant="h6">
-                                                            Exception message
+                                                        {item.exception_message && <>
+                                                        <Typography sx={{pl: 3, pt: 1}} variant="h6" color="error">
+                                                            Message
                                                         </Typography>
                                                         <Divider/>
-                                                        <Typography sx={{paddingLeft: "24px"}}>
+                                                        <Typography sx={{pl: 3}}>
                                                             {item.exception_message}
                                                         </Typography>
+                                                        </>}
                                                     </Grid>
                                                 </CardContent>
                                                 <Divider/>

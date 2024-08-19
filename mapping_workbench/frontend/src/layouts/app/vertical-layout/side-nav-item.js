@@ -75,7 +75,7 @@ export const SideNavItem = (props) => {
     return (
       <li>
         <ButtonBase
-          id={`nav_${title.toLowerCase()}`}
+          id={['nav', ...title.toLowerCase().split(' ')].join('_')}
           disabled={disabled}
           onClick={handleToggle}
           sx={{
@@ -173,7 +173,7 @@ export const SideNavItem = (props) => {
   return (
     <li>
       <ButtonBase
-        id={`nav_${parentId ? parentId+"_" : ""}${title.toLowerCase()}`}
+        id={['nav',...title.toLowerCase().split(' ')].join('_')}
         disabled={disabled}
         sx={{
           alignItems: 'center',

@@ -4,8 +4,9 @@ from typing import List, Any, Union
 from xml.etree import ElementTree
 
 from pydantic import validate_call
-from saxonche import PySaxonProcessor, PySaxonApiError, PyXPathProcessor, PyXdmNode, PyXdmValue
+from saxonche import PySaxonProcessor, PySaxonApiError, PyXPathProcessor, PyXdmNode, PyXdmValue, XdmNodeKind
 
+from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.package_validator.adapters.data_validator import TestDataValidator
 from mapping_workbench.backend.package_validator.models.xpath_validation import XPathAssertionEntry
 
@@ -30,15 +31,17 @@ class XPATHValidator(TestDataValidator):
         return self.get_unique_xpaths(xpath_expression)
 
     def get_ns_tag(self, node: PyXdmNode) -> Union[str, None]:
-        if node.name is None:
+        if node is None or node.name is None:
             return None
         xpath = node.local_name
         match = re.match(r"Q{(.*)}(.*)", node.name)
+
         if match:
             ns = match.group(1)
             tag = match.group(2)
             prefix = self.prefixes[ns]
             return f"{prefix}:{tag}" if prefix else tag
+
         return xpath
 
     def get_node_xpath(self, node: PyXdmNode) -> Union[str, None]:
@@ -48,7 +51,7 @@ class XPATHValidator(TestDataValidator):
             return None
         path_parts = [xpath]
         parent = node.get_parent()
-        while isinstance(parent, PyXdmNode):
+        while parent and isinstance(parent, PyXdmNode) and parent.name:
             xpath = self.get_ns_tag(parent)
             if xpath is not None:
                 path_parts.insert(0, xpath)
@@ -58,7 +61,12 @@ class XPATHValidator(TestDataValidator):
 
     @classmethod
     def get_node_text_value(cls, node: PyXdmNode) -> Union[str, None]:
-        return node.get_string_value() if len(node.children) == 1 else None
+        if (
+                node.node_kind == XdmNodeKind.ATTRIBUTE
+                or len(node.children) == 1
+        ):
+            return node.get_string_value()
+        return None
 
     def extract_namespaces(self, xml_content):
         xml_file = io.StringIO(xml_content)
@@ -83,22 +91,23 @@ class XPATHValidator(TestDataValidator):
     def check_xpath_expression(self, xpath_expression: str) -> Union[PyXdmValue, None]:
         try:
             return self.xp.evaluate(xpath_expression)
-        except PySaxonApiError:
+        except PySaxonApiError | Exception as e:
+            mwb_logger.log_all_error(str(e), str(e))
             return None
 
     def get_unique_xpaths(self, xpath_expression) -> List[XPathAssertionEntry]:
         """Get unique XPaths that cover elements matching e XPath expression."""
-
         xpath_assertions = []
         matching_elements = self.check_xpath_expression(xpath_expression)
-
         if matching_elements and matching_elements.size > 0:
             for element in matching_elements:
                 xpath_node: PyXdmNode = element.get_node_value()
+
                 xpath = self.get_node_xpath(xpath_node)
                 if xpath:
                     xpath_assertions.append(XPathAssertionEntry(
                         xpath=xpath,
                         value=self.get_node_text_value(xpath_node)
                     ))
+
         return xpath_assertions

@@ -60,10 +60,12 @@ class TaskManager:
         :param task: task to be added
         :return: None
         """
-        future: ProcessFuture = self.workers_pool.schedule(task.task_function,
-                                                           args=list(task.task_args),
-                                                           kwargs=task.task_kwargs,
-                                                           timeout=task.task_metadata.task_timeout)
+        future: ProcessFuture = self.workers_pool.schedule(
+            task.task_function,
+            args=list(task.task_args),
+            kwargs=task.task_kwargs,
+            timeout=task.task_metadata.task_timeout
+        )
         task.set_future(future)
         future.task = task
         future.add_done_callback(on_task_done_callback)

@@ -1,14 +1,15 @@
 from enum import Enum
-from typing import Optional, List, Any
+from typing import Optional, List
 
 from beanie import Link
 from fastapi import UploadFile
 from pydantic import field_validator
 from pydantic_core.core_schema import ValidationInfo
 
-from mapping_workbench.backend.core.models.base_entity import BaseEntity
+from mapping_workbench.backend.core.models.base_mapping_package_resource_entity import \
+    BaseMappingPackageResourceSchemaTrait, BaseMappingPackageResourceEntityInSchema
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
-    BaseProjectResourceEntityInSchema
+    BaseProjectResourceEntityInSchema, BaseProjectAbleResourceEntity
 from mapping_workbench.backend.state_manager.models.state_object import ObjectState
 
 
@@ -22,7 +23,10 @@ class FileResourceFormat(Enum):
     CSV = "CSV"
 
 
-class FileResourceIn(BaseProjectResourceEntityInSchema):
+class FileResourceIn(
+    BaseProjectResourceEntityInSchema,
+    BaseMappingPackageResourceEntityInSchema
+):
     title: Optional[str] = None
     description: Optional[str] = None
     file: Optional[UploadFile] = None
@@ -46,7 +50,10 @@ class FileResourceIn(BaseProjectResourceEntityInSchema):
         return v
 
 
-class FileResource(BaseProjectResourceEntity):
+class FileResource(
+    BaseProjectAbleResourceEntity,
+    BaseMappingPackageResourceSchemaTrait
+):
     title: Optional[str] = None
     description: Optional[str] = None
     filename: Optional[str] = None
@@ -55,7 +62,10 @@ class FileResource(BaseProjectResourceEntity):
     content: Optional[str] = None
 
 
-class FileResourceCollection(BaseProjectResourceEntity):
+class FileResourceCollection(
+    BaseProjectAbleResourceEntity,
+    BaseMappingPackageResourceSchemaTrait
+):
     title: Optional[str] = None
     description: Optional[str] = None
     path: Optional[List[str]] = None

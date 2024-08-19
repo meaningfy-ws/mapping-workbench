@@ -50,6 +50,8 @@ test: test-unit test-e2e
 test-unit: test-unit-backend test-unit-frontend
 test-e2e: test-e2e-backend test-e2e-frontend
 
+test-backend: test-unit-backend test-e2e-backend
+
 test-unit-backend:
 	@ echo "UNIT Testing BACKEND ... "
 	@ tox -e unit -- backend
@@ -142,6 +144,12 @@ stop-mongo:
 reset_mwb_script:
 	@ echo "Resetting the Mapping Workbench"
 	@ python3 reset_mwb.py
+
+dump_mongodb_local:
+	@ echo "Dumping Mapping Workbench MongoDB locally"
+	@ mongodump --uri=$(MW_MONGODB_URL) --out=./.mongodump
+	@ echo "Dumping Mapping Workbench MongoDB locally done"
+
 #-----------------------------------------------------------------------------
 # DEVELOPMENT
 #-----------------------------------------------------------------------------

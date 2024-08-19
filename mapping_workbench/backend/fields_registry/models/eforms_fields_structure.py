@@ -19,8 +19,8 @@ class EFormsField(BaseModel):
     legal_type: Optional[str] = Field(default=None, alias='legalType')
     repeatable: EFormsFieldsRepeatableAttribute
 
-    def generate_hash_id(self) -> str:
-        fields_to_hash = [self.id, self.xpath_absolute, self.xpath_relative, self.repeatable.value,
+    def generate_hash_id(self, project_id: str = None) -> str:
+        fields_to_hash = [project_id, self.id, self.xpath_absolute, self.xpath_relative, self.repeatable.value,
                           self.parent_node_id, self.name, self.bt_id, self.value_type,
                           self.legal_type]
         str_content = "_".join(map(str, fields_to_hash))
@@ -34,9 +34,10 @@ class EFormsNode(BaseModel):
     xpath_relative: str = Field(..., alias='xpathRelative')
     repeatable: bool
 
-    def generate_hash_id(self):
-        fields_to_hash = [self.id, self.xpath_absolute, self.xpath_relative, self.repeatable,
-                          self.parent_id]
+    def generate_hash_id(self, project_id: str = None):
+        fields_to_hash = [
+            project_id, self.id, self.xpath_absolute, self.xpath_relative, self.repeatable, self.parent_id
+        ]
         str_content = "_".join(map(str, fields_to_hash))
         return str(hashlib.sha1(str_content.encode("utf-8")).hexdigest())
 

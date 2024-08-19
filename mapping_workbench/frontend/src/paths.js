@@ -124,6 +124,12 @@ export const paths = {
             view: '/app/conceptual-mapping-rules/[id]/view',
             tasks: {
                 generate_cm_assertions_queries: '/app/conceptual-mapping-rules/tasks/generate-cm-assertions-queries'
+            },
+            develop: {
+                index: '/app/conceptual-mapping-rules/develop'
+            },
+            review: {
+                index: '/app/conceptual-mapping-rules/review'
             }
         },
 
@@ -197,6 +203,9 @@ export const paths = {
         },
         fluree: {
             index: '/app/fluree'
+        },
+        fluree_crypt: {
+            index: '/app/fluree-crypt'
         }
     },
     docs: 'https://material-kit-pro-react-docs.devias.io',
@@ -252,6 +261,7 @@ export const apiPaths = {
     mapping_packages: {
         items: '/mapping_packages',
         item: '/mapping_packages/:id',
+        create_default: '/mapping_packages/create_default',
         import: '/package_importer/tasks/import',
         process: '/package_processor/tasks/process',
         export: '/package_exporter/export_latest_package_state',
@@ -277,10 +287,15 @@ export const apiPaths = {
     conceptual_mapping_rules: {
         items: '/conceptual_mapping_rules',
         item: '/conceptual_mapping_rules/:id',
+        dev_cm: '/conceptual_mapping_rules/dev/:id',
         check_content_terms_validity: '/ontology/check_content_terms_validity',
         search_terms: '/ontology/search_terms',
         prefixed_terms: '/ontology/prefixed_terms',
         clone: '/conceptual_mapping_rules/:id/clone',
+        statuses: '/conceptual_mapping_rules/status/list',
+        mapping_notes: '/conceptual_mapping_rules/:id/mapping_notes',
+        editorial_notes: '/conceptual_mapping_rules/:id/editorial_notes',
+        feedback_notes: '/conceptual_mapping_rules/:id/feedback_notes',
         tasks: {
             generate_cm_assertions_queries: '/conceptual_mapping_rules/tasks/generate_cm_assertions_queries'
         }

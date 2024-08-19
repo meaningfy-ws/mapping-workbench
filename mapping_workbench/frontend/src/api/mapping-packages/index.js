@@ -1,6 +1,13 @@
 import {SectionApi} from "../section";
 import {appApi} from "../app";
 
+export const PACKAGE_TYPE = {
+    EFORMS: 'eForms',
+    STANDARD: 'Standard'
+};
+
+export const DEFAULT_PACKAGE_TYPE = "EFORMS";
+
 class MappingPackagesApi extends SectionApi {
     get SECTION_TITLE() {
         return "Mapping Packages";
@@ -42,6 +49,14 @@ class MappingPackagesApi extends SectionApi {
             let endpoint = this.paths['process'];
             const headers = {"Content-Type": "multipart/form-data"};
             return appApi.post(endpoint, request, null, headers);
+        } catch (err) {
+        }
+    }
+
+    async createDefault(projectId) {
+        try {
+            let endpoint = this.paths['create_default'];
+            return appApi.post(endpoint, {}, {project_id: projectId});
         } catch (err) {
         }
     }

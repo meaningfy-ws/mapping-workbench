@@ -6,7 +6,6 @@ from typing import List
 import pandas as pd
 from pandas import DataFrame
 
-from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageState
 
 
@@ -110,7 +109,7 @@ class EFormsCMExporter(CMExporter):
                 cm_rule.source_structural_element.bt_id,
                 ', '.join(mapping_groups_ids),
                 cm_rule.source_structural_element.absolute_xpath,
-                "",  # TODO: Update Structural element or cm rule with XPath Condition
+                cm_rule.xpath_condition,
                 cm_rule.target_class_path,
                 cm_rule.target_property_path,
                 cm_rule.status,

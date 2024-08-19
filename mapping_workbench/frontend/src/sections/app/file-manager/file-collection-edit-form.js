@@ -83,6 +83,9 @@ export const FileCollectionEditForm = (props) => {
             try {
                 let response;
                 values['project'] = sessionApi.getSessionProject();
+                if (sectionApi.hasMappingPackage) {
+                    values['mapping_package_id'] = values['mapping_package_id'] || null;
+                }
                 if (itemctx.isNew) {
                     response = await sectionApi.createItem(values);
                 } else {
@@ -133,7 +136,7 @@ export const FileCollectionEditForm = (props) => {
                         </Grid>
                         {sectionApi.hasMappingPackage && (
                             <Grid xs={12} md={12}>
-                                <MappingPackageFormSelect formik={formik}/>
+                                <MappingPackageFormSelect formik={formik} isRequired={sectionApi.isMappingPackageRequired ?? false}/>
                             </Grid>
                         )}
                         {sectionApi.hasFileCollectionType && (

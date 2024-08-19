@@ -13,6 +13,7 @@ from mapping_workbench.backend.conceptual_mapping_rule.models.entity import Conc
 from mapping_workbench.backend.core.models.base_entity import BaseTitledEntityListFiltersSchema, BaseEntity
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
+from mapping_workbench.backend.mapping_package import PackageType
 from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroupState, MappingGroup
 from mapping_workbench.backend.ontology.models.namespace import NamespaceState, Namespace
 from mapping_workbench.backend.ontology.models.term import TermState, Term
@@ -45,6 +46,8 @@ class MappingPackageIn(BaseProjectResourceEntityInSchema):
     end_date: Optional[datetime] = None
     eforms_sdk_versions: List[str] = None
     shacl_test_suites: Optional[List[Optional[Link[SHACLTestSuite]]]] = None
+    sparql_test_suites: Optional[List[Optional[Link[SPARQLTestSuite]]]] = None
+    resource_collections: Optional[List[Optional[Link[ResourceCollection]]]] = None
 
 
 class MappingPackageCreateIn(MappingPackageIn):
@@ -70,6 +73,8 @@ class MappingPackageOut(BaseProjectResourceEntityOutSchema):
     # end_date: Optional[datetime] = None
     eforms_sdk_versions: List[str] = None
     shacl_test_suites: Optional[List[Link[SHACLTestSuite]]] = None
+    sparql_test_suites: Optional[List[Optional[Link[SPARQLTestSuite]]]] = None
+    resource_collections: Optional[List[Optional[Link[ResourceCollection]]]] = None
 
 
 class MappingPackageListFilters(BaseTitledEntityListFiltersSchema):
@@ -163,8 +168,11 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
     eform_subtypes: Optional[List[str]] = []
     start_date: Optional[str] = None
     end_date: Optional[str] = None
+    package_type: Optional[PackageType] = PackageType.EFORMS
     eforms_sdk_versions: Optional[List[str]] = []
     shacl_test_suites: Optional[List[Link[SHACLTestSuite]]] = None
+    sparql_test_suites: Optional[List[Link[SPARQLTestSuite]]] = None
+    resource_collections: Optional[List[Link[ResourceCollection]]] = None
 
     async def get_conceptual_mapping_rules_states(self) -> List[ConceptualMappingRuleState]:
         conceptual_mapping_rules = await ConceptualMappingRule.find(
@@ -209,7 +217,9 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
             conceptual_mapping_rules_states: List[ConceptualMappingRuleState] = None
     ) -> List[SPARQLTestSuiteState]:
         sparql_test_suites_states = []
+        sparql_test_suites_ids = [sparql_test_suite.to_ref().id for sparql_test_suite in self.sparql_test_suites]
         sparql_test_suites = await SPARQLTestSuite.find(
+            In(SPARQLTestSuite.id, sparql_test_suites_ids),
             NE(SPARQLTestSuite.type, SPARQLQueryValidationType.CM_ASSERTION),
             Eq(SPARQLTestSuite.project, self.project.to_ref())
         ).to_list()
@@ -255,12 +265,22 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
         ]
         return generic_triple_map_fragments_states + specific_triple_map_fragments_states
 
-    async def get_resources_states(self) -> List[ResourceCollectionState]:
+    async def get_resources_states(self) -> List[ResourceFileState]:
         resources_states = []
-        default_resource_collection: ResourceCollection = \
-            await get_default_resource_collection(self.project.to_ref().id)
-        if default_resource_collection:
-            resources_states = await default_resource_collection.get_resource_files_states()
+
+        # default_resource_collection: ResourceCollection = \
+        #     await get_default_resource_collection(self.project.to_ref().id)
+        # if default_resource_collection:
+        #     resources_states = await default_resource_collection.get_resource_files_states()
+
+        resource_collections_ids = [resource_collection.to_ref().id for resource_collection in self.resource_collections]
+        resource_collections = await ResourceCollection.find(
+            In(ResourceCollection.id, resource_collections_ids),
+            Eq(ResourceCollection.project, self.project.to_ref())
+        ).to_list()
+        if resource_collections:
+            for resource_collection in resource_collections:
+                resources_states.extend(await resource_collection.get_resource_files_states())
 
         return resources_states
 
@@ -302,6 +322,7 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
             eform_subtypes=self.eform_subtypes,
             start_date=self.start_date,
             end_date=self.end_date,
+            package_type=self.package_type,
             eforms_sdk_versions=self.eforms_sdk_versions,
             test_data_suites=test_data_suites,
             shacl_test_suites=shacl_test_suites,

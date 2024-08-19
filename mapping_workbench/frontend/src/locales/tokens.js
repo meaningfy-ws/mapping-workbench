@@ -92,6 +92,7 @@ export const tokens = {
         detailed_view_cm: 'nav.detailed_view_cm',
         grouping_cm: 'nav.grouping_cm',
         packaging_cm: 'nav.packaging_cm',
+        content_cm: 'nav.content_cm',
         link_cms_and_triple_maps: 'nav.link_cms_and_triple_maps',
         terms_validator: 'nav.terms_validator',
         tasks: 'nav.tasks',
@@ -103,6 +104,7 @@ export const tokens = {
         validation_reports: 'nav.validation_reports',
         export_mapping_package: 'nav.export_mapping_package',
         fluree: 'nav.fluree',
+        fluree_crypt: 'nav.fluree_crypt',
 
         generate_cm_assertions_queries: 'nav.generate_cm_assertions_queries',
         assertions_queries: 'nav.assertions_queries',

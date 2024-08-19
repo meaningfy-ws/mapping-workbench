@@ -72,7 +72,7 @@ export const MobileNavItem = (props) => {
     return (
       <li>
         <ButtonBase
-          id={`nav_${title.toLocaleLowerCase()}`}
+          id={['nav',...title.toLocaleLowerCase().split(' ')].join('_')}
           disabled={disabled}
           onClick={handleToggle}
           sx={{
@@ -170,7 +170,7 @@ export const MobileNavItem = (props) => {
   return (
     <li>
       <ButtonBase
-        id={title.toLowerCase()}
+        id={['nav',...title.toLocaleLowerCase().split(' ')].join('_')}
         disabled={disabled}
         sx={{
           alignItems: 'center',

@@ -27,7 +27,7 @@ const useItemsSearch = (items) => {
     const [state, setState] = useState({
         filters: {},
         sort: {
-            column: '',
+            column: 'created_at',
             direction: 'desc'
         },
         search: '',

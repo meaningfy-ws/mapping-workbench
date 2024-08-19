@@ -97,7 +97,7 @@ const Page = () => {
                                 Discover Terms
                             </Button>
                             <Button
-                                id="add_button"
+                                id="add_term_button"
                                 component={RouterLink}
                                 href={paths.app[sectionApi.section].create}
                                 startIcon={(
@@ -120,13 +120,13 @@ const Page = () => {
                      spacing={4}
                >
                     <Grid item
-                          lg={12}
+                          xs={12}
                           xl={6}
                     >
                         <OntologyNamespacesCustom/>
                     </Grid>
                     <Grid item
-                          lg={12}
+                          xs={12}
                           xl={6}>
                         <OntologyNamespaces/>
                     </Grid>

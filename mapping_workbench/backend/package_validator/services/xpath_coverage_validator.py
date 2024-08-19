@@ -100,7 +100,6 @@ def update_xpath_assertion_test_data_entry_xpaths(
 
 def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingPackageState):
     test_data_suites: List[TestDataSuiteState] = mapping_package_state.test_data_suites
-
     conceptual_mapping_rule_states = mapping_package_state.conceptual_mapping_rules
     for test_data_suite in test_data_suites:
         test_data_states: List[TestDataState] = test_data_suite.test_data_states

@@ -13,7 +13,7 @@ import ConfirmDialog from "../dialog/confirm-dialog";
 export const ListItemActions = (props) => {
     const router = useRouter();
 
-    const {itemctx, pathnames, onDeleteAction} = props;
+    const {itemctx, pathnames, onDeleteAction, confirmDialogContent} = props;
     const popover = usePopover();
 
     const handleViewAction = () => {
@@ -93,7 +93,8 @@ export const ListItemActions = (props) => {
                     setOpen={setConfirmOpen}
                     onConfirm={onDeleteAction ?? handleDeleteAction}
                 >
-                    Are you sure you want to delete it?
+                    <>"Are you sure you want to delete it?"</>
+                    <>{confirmDialogContent}</>
                 </ConfirmDialog>
             </>}
 

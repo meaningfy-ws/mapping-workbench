@@ -57,7 +57,7 @@ import {COMMENT_PRIORITY, conceptualMappingRulesApi} from "../../../api/conceptu
 import {ListSelectorSelect as ResourceListSelector} from "../../../components/app/list-selector/select";
 import {sparqlTestFileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
 import {toastSuccess} from "../../../components/app-toast";
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import TablePagination from "../../components/table-pagination";
 import TableSorterHeader from "../../components/table-sorter-header";
 import {sessionApi} from "../../../api/session";
@@ -392,6 +392,7 @@ export const ListTableMappingPackages = (props) => {
     const handleMappingPackagesUpdate = async () => {
         const values = {}
         values['id'] = item._id;
+        values['project'] = sessionApi.getSessionProject();
         values['refers_to_mapping_package_ids'] = tempMappingPackages;
         await conceptualMappingRulesApi.updateItem(values);
         setMappingPackages(tempMappingPackages);
@@ -503,6 +504,7 @@ export const ListTableSPARQLAssertions = (props) => {
     const handleSparqlTestFileResourcesUpdate = async () => {
         const values = {}
         values['id'] = item._id;
+        values['project'] = sessionApi.getSessionProject();
         values['sparql_assertions'] = tempSparqlResources;
         await conceptualMappingRulesApi.updateItem(values);
         setSparqlResources(tempSparqlResources);
@@ -674,11 +676,11 @@ export const ListTableRow = (props) => {
     }
 
 
-    const targetPropertyPathValidityInfo= generateValidityInfo(
-            item.target_property_path_terms_validity,
-            "target_property_path",
-            item.target_property_path
-        );
+    const targetPropertyPathValidityInfo = generateValidityInfo(
+        item.target_property_path_terms_validity,
+        "target_property_path",
+        item.target_property_path
+    );
 
     const targetClassPathValidityInfo = generateValidityInfo(
         item.target_class_path_terms_validity,
@@ -801,11 +803,11 @@ export const ListTableRow = (props) => {
             </TableCell>
             <TableCell align="center">
                 {!!notesCount &&
-                 <Button variant="text"
+                    <Button variant="text"
                             size="small"
                             color="warning"
                             onClick={() => handleNotesDialogOpen(item)}
-                 >{notesCount}</Button>}
+                    >{notesCount}</Button>}
             </TableCell>
 
             <TableCell align="right">
@@ -837,7 +839,7 @@ export const ListTableRow = (props) => {
                             <PropertyList>
                                 {item.source_structural_element && (
                                     <>
-                                        <Typography variant='h5' >
+                                        <Typography variant='h5'>
                                             Source
                                         </Typography>
                                         {item.source_structural_element.sdk_element_id && <PropertyListItem
@@ -855,11 +857,11 @@ export const ListTableRow = (props) => {
                                             label="Absolute XPath"
                                         >
                                             <SyntaxHighlighter
-                                                    language="xquery"
-                                                    wrapLines
-                                                    lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
-                                                    {item.source_structural_element.absolute_xpath}
-                                                </SyntaxHighlighter>
+                                                language="xquery"
+                                                wrapLines
+                                                lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
+                                                {item.source_structural_element.absolute_xpath}
+                                            </SyntaxHighlighter>
                                         </PropertyListItem>}
                                     </>
                                 )}
@@ -870,24 +872,24 @@ export const ListTableRow = (props) => {
                               md={12}>
                             {!!(item.target_class_path_terms_validity?.length || item.target_property_path_terms_validity?.length) &&
                                 <PropertyList>
-                                     <Typography variant='h5'>
+                                    <Typography variant='h5'>
                                         Target
-                                     </Typography>
-                                     {!!item.target_class_path_terms_validity?.length &&
+                                    </Typography>
+                                    {!!item.target_class_path_terms_validity?.length &&
                                         <PropertyListItem label='Ontology Fragment Class path'>
                                             <SyntaxHighlighter
                                                 language="sparql"
                                                 wrapLines
-                                                lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
+                                                lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
                                                 {item.target_class_path}
                                             </SyntaxHighlighter>
                                         </PropertyListItem>}
-                                     {!!item.target_property_path_terms_validity?.length &&
+                                    {!!item.target_property_path_terms_validity?.length &&
                                         <PropertyListItem label='Ontology Fragment Property path'>
                                             <SyntaxHighlighter
                                                 language="sparql"
                                                 wrapLines
-                                                lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
+                                                lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
                                                 {item.target_property_path}
                                             </SyntaxHighlighter>
                                         </PropertyListItem>}
@@ -936,12 +938,12 @@ export const ListTable = (props) => {
         })()
     }, [genericTripleMapFragmentsApi])
 
-   const SorterHeader = (props) => {
+    const SorterHeader = (props) => {
         const direction = props.fieldName === sort.column && sort.direction === 1 ? 'asc' : 'desc';
-        return(
+        return (
             <TableSorterHeader sort={{direction, column: sort.column}}
-                           onSort={onSort}
-                           {...props}
+                               onSort={onSort}
+                               {...props}
             />
         )
     }
@@ -993,10 +995,10 @@ export const ListTable = (props) => {
                                 SPARQL assertions
                             </TableCell>
                             <TableCell align="center"
-                                   title="Notes"
-                                   sx={{
-                                       whiteSpace: "nowrap"
-                                   }}
+                                       title="Notes"
+                                       sx={{
+                                           whiteSpace: "nowrap"
+                                       }}
                             >
                                 Notes
                             </TableCell>
@@ -1044,31 +1046,38 @@ export const ListTable = (props) => {
                                 <CardHeader title="Notes"
                                             sx={{mb: 2}}/>
                                 <Divider/>
-                                <CardContent sx={{pt: 1}}>
+                                <CardContent sx={{pt: 1}}><Box style={{overflow: 'auto', maxHeight: '40vh'}}>
                                     {notesDialog.data?.mapping_notes && <>
                                         <Typography>Mapping Notes:</Typography>
                                         {notesDialog.data.mapping_notes.map((mapping_note, i) => <RuleComment
-                                            key={'mapping_note' + i}
-                                            comment={mapping_note}
+                                                key={'mapping_note' + i}
+                                                comment={mapping_note}
                                             />
                                         )}
                                     </>}
+                                    <Divider sx={{
+                                        my: 2
+                                    }} />
                                     {notesDialog.data?.editorial_notes && <>
                                         <Typography>Editorial Notes:</Typography>
                                         {notesDialog.data.editorial_notes.map((editorial_note, i) => <RuleComment
-                                            key={'editorial_notes' + i}
-                                            comment={editorial_note}
+                                                key={'editorial_notes' + i}
+                                                comment={editorial_note}
                                             />
                                         )}
                                     </>}
+                                    <Divider sx={{
+                                        my: 2
+                                    }} />
                                     {notesDialog.data?.feedback_notes && <>
                                         <Typography>Feedback Notes:</Typography>
                                         {notesDialog.data.feedback_notes.map((feedback_note, i) => <RuleComment
-                                            key={'feedback_notes' + i}
-                                            comment={feedback_note}
+                                                key={'feedback_notes' + i}
+                                                comment={feedback_note}
                                             />
                                         )}
                                     </>}
+                                </Box>
                                 </CardContent>
                             </Card>
                         </Dialog>
