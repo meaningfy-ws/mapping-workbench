@@ -17,6 +17,7 @@ import WindowIcon from '@mui/icons-material/Window';
 import BubbleChartIcon from '@mui/icons-material/BubbleChart';
 import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
 import NewspaperIcon from '@mui/icons-material/Newspaper';
+import TocIcon from '@mui/icons-material/Toc';
 
 import HomeSmileIcon from 'src/icons/ui/duocolor/home-smile';
 import LayoutAlt02 from 'src/icons/ui/duocolor/layout-alt-02';
@@ -133,6 +134,15 @@ export const useSections = () => {
                 icon: (
                     <SvgIcon fontSize="small">
                         <MenuOpenIcon/>
+                    </SvgIcon>
+                )
+            },
+            {
+                title: t(tokens.nav.fields_and_nodes),
+                path: paths.app.fields_and_nodes.index,
+                icon: (
+                    <SvgIcon>
+                        <TocIcon/>
                     </SvgIcon>
                 )
             }]

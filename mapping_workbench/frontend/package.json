@@ -21,6 +21,7 @@
   "dependencies": {
     "@auth0/auth0-spa-js": "2.0.4",
     "@aws-amplify/auth": "5.3.6",
+    "@codemirror/lang-xml": "^6.1.0",
     "@codemirror/lang-yaml": "^6.1.1",
     "@emotion/cache": "11.11.0",
     "@emotion/react": "11.11.0",
@@ -50,10 +51,12 @@
     "autosuggest-highlight": "^3.3.4",
     "aws-amplify": "5.2.1",
     "axios": "^1.4.0",
+    "classnames": "^2.5.1",
     "codemirror-lang-turtle": "^0.0.2",
     "date-fns": "2.30.0",
     "dotenv": "^16.3.1",
     "draft-js": "0.11.7",
+    "fast-xml-parser": "^4.4.0",
     "file-saver": "^2.0.5",
     "firebase": "9.22.0",
     "formik": "2.2.9",
@@ -98,6 +101,7 @@
     "stylis": "4.2.0",
     "stylis-plugin-rtl": "2.1.1",
     "uuid": "^9.0.0",
+    "xml2js": "^0.6.2",
     "yup": "1.1.1"
   },
   "devDependencies": {
