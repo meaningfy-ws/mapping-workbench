@@ -19,6 +19,8 @@ import {sessionApi} from "../../../api/session";
 import {shaclTestSuitesApi} from "../../../api/shacl-test-suites";
 import {ListSelectorSelect as ResourceListSelector} from "src/components/app/list-selector/select";
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
+import {sparqlTestSuitesApi} from "../../../api/sparql-test-suites";
+import {resourceCollectionsApi} from "../../../api/resource-collections";
 
 
 export const EditForm = (props) => {
@@ -38,7 +40,9 @@ export const EditForm = (props) => {
         end_date: item.end_date || '',
         eforms_sdk_versions: item.eforms_sdk_versions || '',
         //test_data_suites: (item.test_data_suites || []).map(x => x.id),
-        shacl_test_suites: (item.shacl_test_suites || []).map(x => x.id)
+        shacl_test_suites: (item.shacl_test_suites || []).map(x => x.id),
+        sparql_test_suites: (item.sparql_test_suites || []).map(x => x.id),
+        resource_collections: (item.resource_collections || []).map(x => x.id)
     };
 
     const formik = useFormik({
@@ -186,6 +190,34 @@ export const EditForm = (props) => {
                             <ResourceListSelector
                                 valuesApi={shaclTestSuitesApi}
                                 listValues={formik.values.shacl_test_suites}/>
+                        </Grid>
+                    </Grid>
+                </CardContent>
+            </Card>
+            <Card sx={{mt: 3}}>
+                <CardHeader title={sparqlTestSuitesApi.SECTION_TITLE}/>
+                <CardContent sx={{pt: 0}}>
+                    <Grid container
+                          spacing={3}>
+                        <Grid xs={12}
+                              md={12}>
+                            <ResourceListSelector
+                                valuesApi={sparqlTestSuitesApi}
+                                listValues={formik.values.sparql_test_suites}/>
+                        </Grid>
+                    </Grid>
+                </CardContent>
+            </Card>
+            <Card sx={{mt: 3}}>
+                <CardHeader title={resourceCollectionsApi.SECTION_TITLE}/>
+                <CardContent sx={{pt: 0}}>
+                    <Grid container
+                          spacing={3}>
+                        <Grid xs={12}
+                              md={12}>
+                            <ResourceListSelector
+                                valuesApi={resourceCollectionsApi}
+                                listValues={formik.values.resource_collections}/>
                         </Grid>
                     </Grid>
                 </CardContent>

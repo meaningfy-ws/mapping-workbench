@@ -14,5 +14,7 @@ def entity_data(dummy_project):
         "end_date": None,
         "eforms_sdk_versions": [""],
         "shacl_test_suites": [],
+        "sparql_test_suites": [],
+        "resource_collections": [],
         "project": str(dummy_project.id)
     }

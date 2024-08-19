@@ -1,5 +1,4 @@
 import {useTranslation} from 'react-i18next';
-import {sessionApi} from "../../api/session";
 
 import SvgIcon from '@mui/material/SvgIcon';
 import FlareIcon from '@mui/icons-material/Flare';
@@ -195,7 +194,12 @@ export const useSections = () => {
         items: [
             {
                 title: t(tokens.nav.triple_map_fragments),
-                path: paths.app.generic_triple_map_fragments.index
+                path: paths.app.generic_triple_map_fragments.index,
+                icon: (
+                    <SvgIcon fontSize='small'>
+                        <HiveIcon/>
+                    </SvgIcon>
+                )
             },
             // {
             //     title: t(tokens.nav.link_cms_and_triple_maps) + ' (dev)',
@@ -203,7 +207,12 @@ export const useSections = () => {
             // },
             {
                 title: t(tokens.nav.value_mapping_resources),
-                path: paths.app.resource_collections.index
+                path: paths.app.resource_collections.index,
+                icon: (
+                    <SvgIcon fontSize='small'>
+                        <HubIcon/>
+                    </SvgIcon>
+                )
             }
         ]
     })

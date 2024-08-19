@@ -79,7 +79,7 @@ async def get_mapping_package_out(id: PydanticObjectId) -> MappingPackageOut:
 async def delete_mapping_package(mapping_package: MappingPackage, with_resources: bool = True):
     await delete_mapping_package_states(mapping_package)
     if with_resources:
-        await delete_mapping_package_resources(mapping_package)
+        await remove_mapping_package_resources(mapping_package)
     return await mapping_package.delete()
 
 
@@ -90,21 +90,15 @@ async def delete_mapping_package_resource_by_type(resource_type, project_link, p
     ).delete()
 
 
-async def delete_mapping_package_resources(mapping_package: MappingPackage):
+async def remove_mapping_package_resources(mapping_package: MappingPackage):
     project_link = mapping_package.project
     package_id = mapping_package.id
 
-    resources = [
-        SpecificTripleMapFragment,
-        ResourceFile,
-        ResourceCollection,
-        SHACLTestFileResource,
-        SHACLTestSuite,
-        SPARQLTestFileResource,
-        SPARQLTestSuite
+    resources_to_delete = [
+        SpecificTripleMapFragment
     ]
 
-    for resource_type in resources:
+    for resource_type in resources_to_delete:
         await delete_mapping_package_resource_by_type(resource_type, project_link, package_id)
 
     test_data_suites = await TestDataSuite.find(
