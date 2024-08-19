@@ -9,22 +9,28 @@ import SvgIcon from '@mui/material/SvgIcon';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableSortLabel from '@mui/material/TableSortLabel';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import {PropertyList} from 'src/components/property-list';
 import {PropertyListItem} from 'src/components/property-list-item';
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
+
 
 import {Scrollbar} from 'src/components/scrollbar';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import Tooltip from "@mui/material/Tooltip";
 import TablePagination from "../../components/table-pagination";
 import timeTransformer from "../../../utils/time-transformer";
 import {useGlobalState} from "../../../hooks/use-global-state";
 import TableSorterHeader from "../../components/table-sorter-header";
+
+import CodeMirror from '@uiw/react-codemirror';
+import {turtle} from 'codemirror-lang-turtle';
+import {yaml} from '@codemirror/lang-yaml';
+import {basicSetup} from '@uiw/codemirror-extensions-basic-setup';
+import {Box} from "@mui/system";
 
 
 export const ListTable = (props) => {
@@ -36,10 +42,15 @@ export const ListTable = (props) => {
         onRowsPerPageChange,
         page = 0,
         sort,
-        onSort = () => {},
+        onSort = () => {
+        },
         rowsPerPage = 0,
         sectionApi
     } = props;
+
+    // const syntaxFormat = {YAML: 'yaml', TTL: 'turtle'}
+
+    const lng = {TTL: {mode: 'text/turtle', extension: turtle}, YAML: {mode: 'text/yaml', extension: yaml}}
 
 
     const [currentItem, setCurrentItem] = useState(null);
@@ -49,10 +60,10 @@ export const ListTable = (props) => {
 
     const SorterHeader = (props) => {
         const direction = props.fieldName === sort.column && sort.direction === 1 ? 'asc' : 'desc';
-        return(
+        return (
             <TableSorterHeader sort={{direction, column: sort.column}}
-                           onSort={onSort}
-                           {...props}
+                               onSort={onSort}
+                               {...props}
             />
         )
     }
@@ -115,11 +126,12 @@ export const ListTable = (props) => {
                                                 }}
                                                 width="25%"
                                             >
-                                                <IconButton onClick={() => handleItemToggle(item_id)}>
-                                                    <SvgIcon>
-                                                        {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
-                                                    </SvgIcon>
-                                                </IconButton>
+                                                {item.triple_map_content &&
+                                                    <IconButton onClick={() => handleItemToggle(item_id)}>
+                                                        <SvgIcon>
+                                                            {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
+                                                        </SvgIcon>
+                                                    </IconButton>}
                                             </TableCell>
 
                                             <TableCell width="25%">
@@ -128,7 +140,7 @@ export const ListTable = (props) => {
                                                 </Typography>
                                             </TableCell>
                                             <TableCell align="left">
-                                            {timeTransformer(item.created_at, timeSetting)}
+                                                {timeTransformer(item.created_at, timeSetting)}
                                             </TableCell>
                                             <TableCell align="right">
                                                 <ListItemActions
@@ -160,17 +172,19 @@ export const ListTable = (props) => {
                                                                 md={12}
                                                                 xs={12}
                                                             >
-                                                                <PropertyList>
-                                                                    <PropertyListItem
-                                                                        label="Content"
-                                                                        value={item.triple_map_content}
-                                                                        sx={{
-                                                                            whiteSpace: "pre-wrap",
-                                                                            px: 3,
-                                                                            py: 1.5
-                                                                        }}
-                                                                    />
-                                                                </PropertyList>
+                                                                <Box>Content:</Box>
+                                                                <CodeMirror
+                                                                    value={item.triple_map_content}
+                                                                    extensions={[basicSetup(), lng[item.format].extension()]}
+                                                                    editable= {false}
+                                                                    options={{
+                                                                        mode: lng[item.format].mode,
+                                                                        theme: 'default',
+                                                                        lineNumbers: true,
+                                                                    }}
+                                                                    onChange={() => {
+                                                                    }}
+                                                                />
                                                             </Grid>
                                                         </Grid>
                                                     </CardContent>
