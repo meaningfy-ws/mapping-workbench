@@ -1,4 +1,5 @@
 import {TripleMapFragmentsApi} from "./index";
+import {ACTION} from "../section";
 
 class GenericTripleMapFragmentsApi extends TripleMapFragmentsApi {
     get SECTION_TITLE() {
@@ -7,6 +8,10 @@ class GenericTripleMapFragmentsApi extends TripleMapFragmentsApi {
 
     get SECTION_ITEM_TITLE() {
         return "Generic Triple Map Fragment";
+    }
+
+    get SECTION_LIST_ACTIONS() {
+        return [ACTION.EDIT, ACTION.DELETE]
     }
 
     constructor() {
