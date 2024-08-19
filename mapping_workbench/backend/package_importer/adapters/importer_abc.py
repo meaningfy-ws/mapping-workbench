@@ -4,6 +4,7 @@ from typing import Dict, Tuple
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
+from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroup
 from mapping_workbench.backend.package_importer.models.imported_mapping_suite import ImportedMappingSuite
 from mapping_workbench.backend.package_validator.models.test_data_validation import CMRuleSDKElement
 from mapping_workbench.backend.package_validator.services.sparql_cm_assertions import SPARQL_CM_ASSERTIONS_SUITE_TITLE, \
@@ -105,23 +106,24 @@ class PackageImporterABC(ABC):
                 continue
 
             resource_content = mono_file_resource.content
-
-            generic_triple_map_fragment = await GenericTripleMapFragment.find_one(
-                GenericTripleMapFragment.project == self.project_link,
-                GenericTripleMapFragment.triple_map_uri == resource_name
+            triple_map_fragment = await SpecificTripleMapFragment.find_one(
+                SpecificTripleMapFragment.project == self.project_link,
+                SpecificTripleMapFragment.mapping_package_id == self.package.id,
+                SpecificTripleMapFragment.triple_map_uri == resource_name
             )
 
-            if not generic_triple_map_fragment:
-                generic_triple_map_fragment = GenericTripleMapFragment(
+            if not triple_map_fragment:
+                triple_map_fragment = SpecificTripleMapFragment(
                     triple_map_uri=resource_name,
                     triple_map_content=resource_content,
                     format=resource_format,
-                    project=self.project
+                    project=self.project,
+                    mapping_package_id=self.package.id
                 )
-                await generic_triple_map_fragment.on_create(self.user).save()
+                await triple_map_fragment.on_create(self.user).save()
             else:
-                generic_triple_map_fragment.triple_map_content = resource_content
-                await generic_triple_map_fragment.on_update(self.user).save()
+                triple_map_fragment.triple_map_content = resource_content
+                await triple_map_fragment.on_update(self.user).save()
 
     @classmethod
     def extract_metadata_from_sparql_query(cls, content) -> dict:
@@ -161,6 +163,10 @@ class PackageImporterABC(ABC):
                     type=sparql_test_type
                 )
                 await sparql_test_suite.on_create(self.user).save()
+
+            sparql_test_suite_link = SHACLTestSuite.link_from_id(sparql_test_suite.id)
+            if sparql_test_suite_link not in self.package.sparql_test_suites:
+                self.package.sparql_test_suites.append(sparql_test_suite_link)
 
             for mono_file_resource in mono_resource_collection.file_resources:
                 resource_path = [mono_resource_collection.name]
@@ -269,6 +275,8 @@ class PackageImporterABC(ABC):
             await resource_collection.on_create(self.user).save()
 
         resource_collection_link = ResourceCollection.link_from_id(resource_collection.id)
+        if resource_collection_link not in self.package.resource_collections:
+            self.package.resource_collections.append(resource_collection_link)
 
         for mono_file_resource in mono_package.transformation_resources.file_resources:
             resource_name = mono_file_resource.name
@@ -312,6 +320,8 @@ class PackageImporterABC(ABC):
 
         package.project = self.project
         package.shacl_test_suites = []
+        package.sparql_test_suites = []
+        package.resource_collections = []
 
         await package.on_update(self.user).save() if package.id else await package.on_create(self.user).save()
 
@@ -333,3 +343,4 @@ class PackageImporterABC(ABC):
         await SPARQLTestSuite.find(SPARQLTestSuite.project == project_link).delete()
         await TestDataFileResource.find(TestDataFileResource.project == project_link).delete()
         await TestDataSuite.find(TestDataSuite.project == project_link).delete()
+        await MappingGroup.find(TestDataSuite.project == project_link).delete()

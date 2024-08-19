@@ -156,5 +156,5 @@ class CMRuleBeanieRepository(IRepository, IStatefulModelRepository):
         return await ConceptualMappingRule.find_many(
             ConceptualMappingRule.project.id == project_id,
             ConceptualMappingRule.source_structural_element.sdk_element_id == structural_element_id,
-            fetch_links=True
+            #fetch_links=True
         ).to_list()

@@ -2,12 +2,11 @@ from enum import Enum
 from typing import Optional
 
 import pymongo
-from beanie import PydanticObjectId
 from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_mapping_package_resource_entity import \
     BaseMappingPackageResourceEntityOutSchema, BaseMappingPackageResourceEntityInSchema, \
-    BaseMappingPackageResourceEntityUpdateInSchema
+    BaseMappingPackageResourceEntityUpdateInSchema, BaseMappingPackageResourceSchemaTrait
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema, BaseProjectResourceEntityUpdateInSchema
 from mapping_workbench.backend.state_manager.models.state_object import ObjectState, StatefulObjectABC
@@ -103,9 +102,7 @@ class TripleMapFragment(BaseProjectResourceEntity, StatefulObjectABC):
         raise TripleMapFragmentException("Setting the state of a Triple Map Fragment is not supported.")
 
 
-class SpecificTripleMapFragment(TripleMapFragment):
-    mapping_package_id: Optional[PydanticObjectId] = None
-
+class SpecificTripleMapFragment(TripleMapFragment, BaseMappingPackageResourceSchemaTrait):
     class Settings(TripleMapFragment.Settings):
         name = "specific_triple_map_fragments"
 

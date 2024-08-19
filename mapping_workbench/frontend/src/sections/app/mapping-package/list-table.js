@@ -30,7 +30,7 @@ import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import {sessionApi} from "../../../api/session";
-import { saveAs } from 'file-saver';
+import {saveAs} from 'file-saver';
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 import TablePagination from "../../components/table-pagination";
 import TableSorterHeader from "../../components/table-sorter-header";
@@ -39,7 +39,7 @@ import {useGlobalState} from "../../../hooks/use-global-state";
 import SorterHeader from "../../components/table-sorter-header";
 import {useRouter} from "next/router";
 import {paths} from "../../../paths";
-
+import Checkbox from "@mui/material/Checkbox";
 
 
 const PackageRow = (props) => {
@@ -105,9 +105,9 @@ const PackageRow = (props) => {
         const toastId = toastLoad(`Exporting "${item.identifier}" ... This may take a while. Please, be patient.`)
         sectionApi.exportPackage(data)
             .then(response => {
-                    saveAs(new Blob([response], {type: "application/x-zip-compressed"}), `${item.identifier}.zip`);
-                    toastSuccess(`"${item.identifier}" successfully exported.`, toastId)
-                })
+                saveAs(new Blob([response], {type: "application/x-zip-compressed"}), `${item.identifier}.zip`);
+                toastSuccess(`"${item.identifier}" successfully exported.`, toastId)
+            })
             .catch(err => toastError(err, toastId))
             .finally(() => setIsExporting(false))
     }
@@ -174,7 +174,7 @@ const PackageRow = (props) => {
                                 }
                                 label="Use latest Package State"
                             />
-                            <Divider sx={{my:2}}/>
+                            <Divider sx={{my: 2}}/>
                             <b>Processing a Mapping Package includes:</b>
                             <ul style={{listStyleType: "none", padding: 0}}>
                                 <li>
@@ -292,12 +292,12 @@ export const ListTable = (props) => {
         setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
     }
 
-   const SorterHeader = (props) => {
+    const SorterHeader = (props) => {
         const direction = props.fieldName === sort.column && sort.direction === 1 ? 'asc' : 'desc';
-        return(
+        return (
             <TableSorterHeader sort={{direction, column: sort.column}}
-                           onSort={onSort}
-                           {...props}
+                               onSort={onSort}
+                               {...props}
             />
         )
     }
@@ -402,7 +402,8 @@ export const ListTable = (props) => {
                                                         View Last State
                                                     </Button>
                                                     <ListItemActions
-                                                        itemctx={new ForListItemAction(item_id, sectionApi)}/>
+                                                        itemctx={new ForListItemAction(item_id, sectionApi)}
+                                                    />
                                                 </Stack>
                                             </TableCell>
                                         </TableRow>

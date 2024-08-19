@@ -28,6 +28,7 @@ from mapping_workbench.backend.sparql_test_suite.entrypoints.api import routes a
 from mapping_workbench.backend.task_manager.entrypoints.api import routes as task_manager_routes
 from mapping_workbench.backend.tasks.entrypoints.api import routes as tasks_routes
 from mapping_workbench.backend.test_data_suite.entrypoints.api import routes as test_data_suite_routes
+from mapping_workbench.backend.conceptual_mapping_group.entrypoints.api import routes as cm_groups_routes
 from mapping_workbench.backend.triple_map_fragment.entrypoints.api import \
     routes_for_generic as generic_triple_map_fragment_routes
 from mapping_workbench.backend.triple_map_fragment.entrypoints.api import \
@@ -46,7 +47,7 @@ app = FastAPI(
     swagger_ui_oauth2_redirect_url=f"{ROOT_API_PATH}/docs/oauth2-redirect"
 )
 
-origins = [f"{settings.HOST}:{settings.PORT}", f"*.mw.{settings.SUBDOMAIN}{settings.DOMAIN}", "*"]
+origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -92,9 +93,10 @@ secured_routers: list = [
     config_routes.router,
     ontology_routes.router,
     task_manager_routes.router,
-    tasks_routes.router, # Depricated
+    tasks_routes.router,  # Deprecated
     fields_registry.router,
-    xsd_schema_router.router
+    xsd_schema_router.router,
+    cm_groups_routes.router
 ]
 
 for secured_router in secured_routers:
@@ -115,6 +117,8 @@ if not settings.is_env_production():
                                  stack_trace=exception_traceback)
         return JSONResponse(
             status_code=500,
-            content={"detail": [{"msg": f"Exception name: {exception.__class__.__name__} Error: {exception_traceback}"}]},
+            content={
+                "detail": [{"msg": f"Exception name: {exception.__class__.__name__} Error: {exception_traceback}"}]
+            },
             headers={"Access-Control-Allow-Origin": "*"}  # Allow all is a temporary solution
         )

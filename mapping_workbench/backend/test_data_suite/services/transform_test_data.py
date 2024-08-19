@@ -8,7 +8,7 @@ from mapping_workbench.backend.config import settings
 from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.resource_collection.models.entity import ResourceFile
 from mapping_workbench.backend.resource_collection.services.data import get_resource_files_for_project
-from mapping_workbench.backend.test_data_suite.adapters.rml_mapper import RMLMapperABC, RMLMapper
+from mapping_workbench.backend.test_data_suite.adapters.rml_mapper import RMLMapperABC, RMLMapper, RMLMapperException
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataFileResource
 from mapping_workbench.backend.test_data_suite.services import DATA_SOURCE_PATH_NAME, \
     TRANSFORMATION_PATH_NAME, MAPPINGS_PATH_NAME, RESOURCES_PATH_NAME
@@ -24,7 +24,8 @@ async def transform_test_data_file_resource_content(
         content: str,
         mappings: List[TripleMapFragment],
         resources: List[ResourceFile] = None,
-        rml_mapper: RMLMapperABC = None
+        rml_mapper: RMLMapperABC = None,
+        test_data_title: str = None
 ) -> str:
     if not mappings:
         return ''
@@ -56,7 +57,7 @@ async def transform_test_data_file_resource_content(
                 with resource_path.open("w", encoding="utf-8") as file:
                     file.write(resource.content)
 
-        return rml_mapper.execute(data_path=data_path)
+        return rml_mapper.execute(data_path=data_path, data_title=test_data_title)
 
 
 async def get_mappings_to_transform_test_data(
@@ -101,7 +102,8 @@ async def transform_test_data_file_resource(
         content=test_data_file_resource.content,
         mappings=mappings,
         resources=resources,
-        rml_mapper=rml_mapper
+        rml_mapper=rml_mapper,
+        test_data_title=test_data_file_resource.title
     )
 
     if save:
@@ -130,7 +132,9 @@ async def transform_test_data_file_resources(
     rml_mapper: RMLMapper = RMLMapper(rml_mapper_path=Path(settings.RML_MAPPER_PATH))
 
     for test_data_file_resource in test_data_file_resources:
-        mwb_logger.log_all_info(f"Transform Test Data :: {test_data_file_resource.filename}")
+        mwb_logger.log_all_info(
+            f"Transform Test Data :: {test_data_file_resource.filename or test_data_file_resource.title}"
+        )
         await transform_test_data_file_resource(
             test_data_file_resource=test_data_file_resource,
             user=user,
@@ -139,6 +143,10 @@ async def transform_test_data_file_resources(
             rml_mapper=rml_mapper,
             save=True
         )
+    if rml_mapper.errors:
+        raise RMLMapperException(message=('\n' + '\n'.join([
+            error.message + (" :: " + str(error.metadata) if error.metadata else "") for error in rml_mapper.errors
+        ])))
 
 
 async def transform_test_data_for_project(

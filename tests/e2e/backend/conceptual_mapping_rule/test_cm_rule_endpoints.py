@@ -1,8 +1,7 @@
-import json
 from typing import Sequence
 
-from httpx import Response
 import pytest
+from httpx import Response
 from starlette import status
 from starlette.testclient import TestClient
 
@@ -27,11 +26,11 @@ def _as_cm_rule_comment_objs(response: Response) -> Sequence[ConceptualMappingRu
 
 @pytest.mark.asyncio
 async def test_route_get_cm_rule_editorial_notes(
-    dummy_project: Project,
-    dummy_user: User,
-    dummy_conceptual_mapping_rule: ConceptualMappingRule,
-    dummy_cm_rule_comment: ConceptualMappingRuleComment,
-    conceptual_mapping_rule_test_client: TestClient,
+        dummy_project: Project,
+        dummy_user: User,
+        dummy_conceptual_mapping_rule: ConceptualMappingRule,
+        dummy_cm_rule_comment: ConceptualMappingRuleComment,
+        conceptual_mapping_rule_test_client: TestClient,
 ):
     # given
     await dummy_user.save()
@@ -66,7 +65,7 @@ async def test_route_get_cm_rule_editorial_notes(
 
     # then
     assert response.status_code == status.HTTP_200_OK
-    
+
     editorial_notes = _as_cm_rule_comment_objs(response)
     assert len(editorial_notes) == 1
     result_editorial_note = editorial_notes.pop()
@@ -76,11 +75,11 @@ async def test_route_get_cm_rule_editorial_notes(
 
 @pytest.mark.asyncio
 async def test_route_insert_cm_rule_editorial_note(
-    dummy_project: Project,
-    dummy_user: User,
-    dummy_conceptual_mapping_rule: ConceptualMappingRule,
-    dummy_cm_rule_comment: ConceptualMappingRuleComment,
-    conceptual_mapping_rule_test_client: TestClient,
+        dummy_project: Project,
+        dummy_user: User,
+        dummy_conceptual_mapping_rule: ConceptualMappingRule,
+        dummy_cm_rule_comment: ConceptualMappingRuleComment,
+        conceptual_mapping_rule_test_client: TestClient,
 ):
     # given
     user_token = await get_new_user_token(dummy_user)
@@ -89,7 +88,7 @@ async def test_route_insert_cm_rule_editorial_note(
     dummy_conceptual_mapping_rule.project = Project.link_from_id(dummy_project.id)
     await dummy_conceptual_mapping_rule.save()
     path_to_test = f"{CM_RULE_ROUTE_PREFIX}/{dummy_conceptual_mapping_rule.id}/editorial_notes"
-    
+
     # when
     response = conceptual_mapping_rule_test_client.post(
         url=path_to_test,
@@ -104,7 +103,7 @@ async def test_route_insert_cm_rule_editorial_note(
 
     # then
     assert response.status_code == status.HTTP_201_CREATED
-    
+
     result_cm_rule = await ConceptualMappingRule.get(dummy_conceptual_mapping_rule.id)
     assert len(result_cm_rule.editorial_notes) == 1
 
@@ -116,11 +115,11 @@ async def test_route_insert_cm_rule_editorial_note(
 
 @pytest.mark.asyncio
 async def test_route_get_cm_rule_feedback_notes(
-    dummy_project: Project,
-    dummy_user: User,
-    dummy_conceptual_mapping_rule: ConceptualMappingRule,
-    dummy_cm_rule_comment: ConceptualMappingRuleComment,
-    conceptual_mapping_rule_test_client: TestClient,
+        dummy_project: Project,
+        dummy_user: User,
+        dummy_conceptual_mapping_rule: ConceptualMappingRule,
+        dummy_cm_rule_comment: ConceptualMappingRuleComment,
+        conceptual_mapping_rule_test_client: TestClient,
 ):
     # given
     await dummy_user.save()
@@ -155,7 +154,7 @@ async def test_route_get_cm_rule_feedback_notes(
 
     # then
     assert response.status_code == status.HTTP_200_OK
-    
+
     result_feedback_notes = _as_cm_rule_comment_objs(response)
     assert len(result_feedback_notes) == 1
     result_feedback_note = result_feedback_notes.pop()
@@ -165,11 +164,11 @@ async def test_route_get_cm_rule_feedback_notes(
 
 @pytest.mark.asyncio
 async def test_route_insert_cm_rule_feedback_note(
-    dummy_project: Project,
-    dummy_user: User,
-    dummy_conceptual_mapping_rule: ConceptualMappingRule,
-    dummy_cm_rule_comment: ConceptualMappingRuleComment,
-    conceptual_mapping_rule_test_client: TestClient,
+        dummy_project: Project,
+        dummy_user: User,
+        dummy_conceptual_mapping_rule: ConceptualMappingRule,
+        dummy_cm_rule_comment: ConceptualMappingRuleComment,
+        conceptual_mapping_rule_test_client: TestClient,
 ):
     # given
     user_token = await get_new_user_token(dummy_user)
@@ -193,7 +192,7 @@ async def test_route_insert_cm_rule_feedback_note(
 
     # then
     assert response.status_code == status.HTTP_201_CREATED
-    
+
     result_cm_rule = await ConceptualMappingRule.get(dummy_conceptual_mapping_rule.id)
     assert len(result_cm_rule.feedback_notes) == 1
 
@@ -205,11 +204,11 @@ async def test_route_insert_cm_rule_feedback_note(
 
 @pytest.mark.asyncio
 async def test_route_get_cm_rule_mapping_notes(
-    dummy_project: Project,
-    dummy_user: User,
-    dummy_conceptual_mapping_rule: ConceptualMappingRule,
-    dummy_cm_rule_comment: ConceptualMappingRuleComment,
-    conceptual_mapping_rule_test_client: TestClient,
+        dummy_project: Project,
+        dummy_user: User,
+        dummy_conceptual_mapping_rule: ConceptualMappingRule,
+        dummy_cm_rule_comment: ConceptualMappingRuleComment,
+        conceptual_mapping_rule_test_client: TestClient,
 ):
     # given
     await dummy_user.save()
@@ -261,7 +260,7 @@ async def test_route_insert_cm_rule_mapping_notes(dummy_project: Project,
     user_token = await get_new_user_token(dummy_user)
     auth_header = {'Authorization': f'Bearer {user_token}'}
     await dummy_project.save()
-    dummy_conceptual_mapping_rule.project=Project.link_from_id(dummy_project.id)
+    dummy_conceptual_mapping_rule.project = Project.link_from_id(dummy_project.id)
     await dummy_conceptual_mapping_rule.save()
 
     assert len(dummy_conceptual_mapping_rule.mapping_notes) == 0
@@ -292,7 +291,7 @@ async def test_route_insert_cm_rule_mapping_notes(dummy_project: Project,
 
 @pytest.mark.asyncio
 async def test_route_get_list_cm_rule_statuses(
-    conceptual_mapping_rule_test_client: TestClient,
+        conceptual_mapping_rule_test_client: TestClient,
 ):
     # given
     path_to_test = f"{CM_RULE_ROUTE_PREFIX}/status/list"
@@ -309,16 +308,16 @@ async def test_route_get_list_cm_rule_statuses(
 
 @pytest.mark.asyncio
 async def test_route_get_cm_rule_status(
-    dummy_project: Project,
-    dummy_conceptual_mapping_rule: ConceptualMappingRule,
-    dummy_cm_rule_status: CMRuleStatus,
-    conceptual_mapping_rule_test_client: TestClient,
+        dummy_project: Project,
+        dummy_conceptual_mapping_rule: ConceptualMappingRule,
+        dummy_cm_rule_status: CMRuleStatus,
+        conceptual_mapping_rule_test_client: TestClient,
 ):
     # given
     await dummy_project.save()
     dummy_conceptual_mapping_rule.project = Project.link_from_id(dummy_project.id)
     await dummy_conceptual_mapping_rule.save()
-    
+
     path_to_test = f"{CM_RULE_ROUTE_PREFIX}/{dummy_conceptual_mapping_rule.id}/status"
     response = conceptual_mapping_rule_test_client.get(
         url=path_to_test,
@@ -345,17 +344,17 @@ async def test_route_get_cm_rule_status(
 
     # then
     assert response.status_code == status.HTTP_200_OK
-    
+
     cm_rule_status = CMRuleStatus(response.json())
     assert cm_rule_status == dummy_cm_rule_status
 
 
 @pytest.mark.asyncio
 async def test_route_set_cm_rule_status(
-    dummy_project: Project,
-    dummy_conceptual_mapping_rule: ConceptualMappingRule,
-    dummy_cm_rule_status: CMRuleStatus,
-    conceptual_mapping_rule_test_client: TestClient,
+        dummy_project: Project,
+        dummy_conceptual_mapping_rule: ConceptualMappingRule,
+        dummy_cm_rule_status: CMRuleStatus,
+        conceptual_mapping_rule_test_client: TestClient,
 ):
     # given
     await dummy_project.save()
@@ -375,17 +374,17 @@ async def test_route_set_cm_rule_status(
 
     # then
     assert response.status_code == status.HTTP_200_OK
-    
+
     result_cm_rule = await ConceptualMappingRule.get(dummy_conceptual_mapping_rule.id)
     assert result_cm_rule.status == dummy_cm_rule_status
 
 
 @pytest.mark.asyncio
 async def test_route_cm_rules_by_structural_element(
-    dummy_project: Project,
-    dummy_structural_element: StructuralElement,
-    dummy_conceptual_mapping_rule: ConceptualMappingRule,
-    conceptual_mapping_rule_test_client: TestClient,
+        dummy_project: Project,
+        dummy_structural_element: StructuralElement,
+        dummy_conceptual_mapping_rule: ConceptualMappingRule,
+        conceptual_mapping_rule_test_client: TestClient,
 ):
     # given
     await dummy_project.save()

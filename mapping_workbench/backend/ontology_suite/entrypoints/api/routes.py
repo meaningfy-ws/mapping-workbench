@@ -20,7 +20,7 @@ ontology_files_router = APIRouter(
 
 
 @ontology_files_router.get(
-    path="/",
+    path="",
     description=f"Get all ontology files as a list",
     response_model=List[OntologyFileResourceOut],
     status_code=status.HTTP_200_OK
@@ -76,7 +76,7 @@ async def route_delete_ontology_file_by_id(
 
 
 @ontology_files_router.post(
-    path="/",
+    path="",
     description=f"Create ontology file",
     response_model=None,
     status_code=status.HTTP_201_CREATED

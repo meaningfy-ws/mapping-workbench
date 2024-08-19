@@ -45,7 +45,7 @@ async def check_imported_data(project, package, package_identifier):
     resource_models = [
         ResourceCollection,
         ResourceFile,
-        GenericTripleMapFragment,
+        SpecificTripleMapFragment,
         TestDataSuite,
         TestDataFileResource,
         SPARQLTestSuite,
@@ -91,6 +91,10 @@ async def test_import_eforms_mapping_package(dummy_project, dummy_structural_ele
 
     await check_imported_data(dummy_project, eforms_package, 'package_eforms_16_v1.2')
 
+    assert eforms_package.sparql_test_suites
+    assert eforms_package.shacl_test_suites
+    assert eforms_package.resource_collections
+
     assert eforms_package.start_date is None
     assert eforms_package.end_date is None
 
@@ -107,6 +111,10 @@ async def test_import_standard_mapping_package(dummy_project, dummy_structural_e
     )
 
     await check_imported_data(dummy_project, standard_package, 'package_F03')
+
+    assert standard_package.sparql_test_suites
+    assert standard_package.shacl_test_suites
+    assert standard_package.resource_collections
 
     assert standard_package.start_date == '2014-01-01'
     assert standard_package.end_date is None

@@ -25,6 +25,8 @@ import {fieldsRegistryApi} from "src/api/fields-registry";
 import {ontologyNamespacesApi} from "src/api/ontology-namespaces";
 import {ontologyTermsApi} from "src/api/ontology-terms";
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
+import {Box} from "@mui/system";
+import {mappingPackagesApi} from "../../../api/mapping-packages";
 
 export const EditForm = (props) => {
     const {itemctx, ...other} = props;
@@ -48,8 +50,9 @@ export const EditForm = (props) => {
         title: item.title ?? '',
         description: item.description ?? '',
         version: item.version ?? '',
-        automatically_discover_namespaces: item.automatically_discover_namespaces ?? true,
-        add_specific_namespaces: item.add_specific_namespaces ?? true,
+        with_default_mapping_package: true,
+        automatically_discover_namespaces: false,
+        //add_specific_namespaces: false,
         source_schema: {
             title: item.source_schema?.title ?? '',
             description: item.source_schema?.description ?? '',
@@ -63,22 +66,21 @@ export const EditForm = (props) => {
             uri: item.target_ontology?.uri ?? ''
         },
         import_eform: {
-            checked: item.import_eform?.checked ?? true,
-            github_repository_url: item.import_eform?.github_repository_url ?? '',
-            branch_or_tag_name: item.import_eform?.branch_or_tag_name ?? '',
+            checked: false,
+            github_repository_url: '',
+            branch_or_tag_name: '',
         }
     }
 
 
-
-    const handleDiscover = () => {
+    const handleDiscoverNamespaces = () => {
         const toastId = toastLoad('Discovering terms ...')
         ontologyTermsApi.discoverTerms()
             .then(res => toastSuccess(`${res.task_name} successfully started.`, toastId))
             .catch(err => toastError(`Discovering terms failed: ${err.message}.`, toastId))
     };
 
-    const handleImportFieldRegestry = (values, projectId) => {
+    const handleImportFieldRegistry = (values, projectId) => {
         const toastId = toastLoad(`Importing eForm Fields ... `)
         fieldsRegistryApi.importEFormsFromGithub({
             ...values,
@@ -89,19 +91,19 @@ export const EditForm = (props) => {
             .catch(err => toastError(`eForm Fields import failed: ${err.message}.`, toastId))
     }
 
-    const handleCreateNamespaces = () => {
-        const namespaces = [
-            { prefix: 'epo',uri: 'http://data.europa.eu/a4g/ontology#',is_syncable: false },
-            { prefix: 'epo-not',uri: 'http://data.europa.eu/a4g/ontology#',is_syncable: false },
-            { prefix: 'cpov',uri: 'http://data.europa.eu/a4g/ontology#',is_syncable: false },
-            { prefix: 'dct',uri: 'http://data.europa.eu/a4g/ontology#',is_syncable: false }
-        ]
-
-        const toastId = toastLoad(`Creating Namespaces`)
-        ontologyNamespacesApi.createNamespaces(namespaces)
-            .then(res => toastSuccess(`Namespaces Created.`, toastId))
-            .catch(err => toastError(err.message, toastId))
-    }
+    // const handleCreateNamespaces = () => {
+    //     const namespaces = [
+    //         {prefix: 'epo', uri: 'http://data.europa.eu/a4g/ontology#', is_syncable: false},
+    //         {prefix: 'epo-not', uri: 'http://data.europa.eu/a4g/ontology#', is_syncable: false},
+    //         {prefix: 'cpov', uri: 'http://data.europa.eu/a4g/ontology#', is_syncable: false},
+    //         {prefix: 'dct', uri: 'http://data.europa.eu/a4g/ontology#', is_syncable: false}
+    //     ]
+    //
+    //     const toastId = toastLoad(`Creating Namespaces`)
+    //     ontologyNamespacesApi.createNamespaces(namespaces)
+    //         .then(res => toastSuccess(`Namespaces Created.`, toastId))
+    //         .catch(err => toastError(err.message, toastId))
+    // }
 
     const formik = useFormik({
         initialValues,
@@ -116,11 +118,21 @@ export const EditForm = (props) => {
 
         onSubmit: async (values, helpers) => {
             const toastId = toastLoad(itemctx.isNew ? "Creating..." : "Updating...")
-            const {automatically_discover_namespaces, add_specific_namespaces, import_eform, ...projectValues} = values
+            const {
+                with_default_mapping_package,
+                automatically_discover_namespaces,
+                //add_specific_namespaces,
+                import_eform,
+                ...projectValues
+            } = values
             try {
                 let response;
                 if (itemctx.isNew) {
                     response = await sectionApi.createItem(projectValues);
+                    if (formik.values.with_default_mapping_package) {
+                        await mappingPackagesApi.createDefault(response._id);
+                        toastSuccess(`Default Package created`, toastId);
+                    }
                 } else {
                     projectValues['id'] = item._id;
                     response = await sectionApi.updateItem(projectValues);
@@ -130,16 +142,19 @@ export const EditForm = (props) => {
                 toastSuccess(`${sectionApi.SECTION_ITEM_TITLE} ${itemctx.isNew ? "Created" : "Updated"}`, toastId);
                 if (response) {
                     projectsStore.getProjects()
-                    if(formik.values.source_schema.type === 'JSON') {
-                        if(formik.values.import_eform.checked)
-                            handleImportFieldRegestry(import_eform, response._id)
-                        if(formik.values.automatically_discover_namespaces) {
-                            handleDiscover()
-                        if(formik.values.add_specific_namespaces)
-                            handleCreateNamespaces()
-                        }
-                    }
                     if (itemctx.isNew) {
+                        if (formik.values.source_schema.type === 'JSON') {
+                            if (formik.values.import_eform.checked) {
+                                handleImportFieldRegistry(import_eform, response._id)
+                            }
+                            if (formik.values.automatically_discover_namespaces) {
+                                handleDiscoverNamespaces()
+                                // if (formik.values.add_specific_namespaces) {
+                                //     handleCreateNamespaces()
+                                // }
+                            }
+                        }
+
                         projectsStore.handleSessionProjectChange(response._id)
                         router.push({
                             pathname: paths.app[sectionApi.section].index,
@@ -337,53 +352,79 @@ export const EditForm = (props) => {
                     </Card>
                 </Grid>
             </Grid>
-            {formik.values.source_schema.type === 'JSON' && <Card sx={{mt: 3}}>
-                <CardContent sx={{pt: 0}}>
-                    <Grid container
-                          spacing={3}>
-                        <FormGroup sx={{mt:3,ml:2}}>
+            {itemctx.isNew &&
+                <Card sx={{mt: 3}}>
+                    <CardContent sx={{pt: 0}}>
+                        <Grid container
+                              spacing={3}>
+                            <FormGroup sx={{mt: 3, ml: 2}}>
                                 <FormControlLabel
-                                    control={<Checkbox checked={formik.values.automatically_discover_namespaces}
+                                    control={<Checkbox checked={formik.values.with_default_mapping_package}
                                                        onChange={formik.handleChange}
-                                                       name="automatically_discover_namespaces"/>
+                                                       name="with_default_mapping_package"/>
                                     }
-                                    label={<Typography variant='h6'>Automatically discover namespaces</Typography>}
+                                    label={<Typography variant='h6'>Create DEFAULT Package</Typography>}
 
                                 />
-                                <FormControlLabel
-                                    control={<Checkbox checked={formik.values.add_specific_namespaces}
-                                                       onChange={formik.handleChange}
-                                                       name="add_specific_namespaces"/>
-                                    }
-                                    label={<Typography variant='h6'>Add eForms-specific (ePO) namespaces</Typography>}
-                                />
-                                <FormControlLabel
-                                    control={<Checkbox checked={formik.values.import_eform.checked}
-                                                       onChange={formik.handleChange}
-                                                       name="import_eform.checked"/>
-                                    }
-                                    label={<Typography variant='h6'>Import eForms SDK from GitHub</Typography>}
-                                />
-                        </FormGroup>
-                        <Grid xs={12}
-                              md={12}>
-                            <FormTextField formik={formik}
-                                           name="import_eform.github_repository_url"
-                                           label="GitHub Repository URL"
-                                           disabled={!formik.values.import_eform.checked}
-                                           required/>
+                            </FormGroup>
                         </Grid>
-                        <Grid xs={12}
-                              md={12}>
-                            <FormTextField formik={formik}
-                                           name="import_eform.branch_or_tag_name"
-                                           label="Branch or Tag name"
-                                           disabled={!formik.values.import_eform.checked}
-                                           required/>
-                        </Grid>
-                    </Grid>
-                </CardContent>
-            </Card>}
+                        {formik.values.source_schema.type === 'JSON' &&
+                            <Box sx={{mt: 3}}>
+                                <hr/>
+                                <Grid container
+                                      spacing={3}>
+                                    <FormGroup sx={{mt: 2, ml: 2}}>
+                                        <FormControlLabel
+                                            control={<Checkbox checked={formik.values.automatically_discover_namespaces}
+                                                               onChange={formik.handleChange}
+                                                               name="automatically_discover_namespaces"/>
+                                            }
+                                            label={<Typography variant='h6'>Automatically discover
+                                                namespaces</Typography>}
+
+                                        />
+                                        {/*<FormControlLabel*/}
+                                        {/*    control={<Checkbox checked={formik.values.add_specific_namespaces}*/}
+                                        {/*                       onChange={formik.handleChange}*/}
+                                        {/*                       name="add_specific_namespaces"/>*/}
+                                        {/*    }*/}
+                                        {/*    label={<Typography variant='h6'>Add eForms-specific (ePO)*/}
+                                        {/*        namespaces</Typography>}*/}
+                                        {/*/>*/}
+                                        <FormControlLabel
+                                            control={<Checkbox checked={formik.values.import_eform.checked}
+                                                               onChange={formik.handleChange}
+                                                               name="import_eform.checked"/>
+                                            }
+                                            label={<Typography variant='h6'>Import eForms SDK from GitHub</Typography>}
+                                        />
+                                    </FormGroup>
+                                    {formik.values.import_eform.checked &&
+                                        <>
+                                            <Grid xs={12}
+                                                  md={12}>
+                                                <FormTextField formik={formik}
+                                                               name="import_eform.github_repository_url"
+                                                               label="GitHub Repository URL"
+                                                               disabled={!formik.values.import_eform.checked}
+                                                               required/>
+                                            </Grid>
+                                            <Grid xs={12}
+                                                  md={12}>
+                                                <FormTextField formik={formik}
+                                                               name="import_eform.branch_or_tag_name"
+                                                               label="Branch or Tag name"
+                                                               disabled={!formik.values.import_eform.checked}
+                                                               required/>
+                                            </Grid>
+                                        </>
+                                    }
+                                </Grid>
+                            </Box>
+                        }
+                    </CardContent>
+                </Card>
+            }
 
             <Card sx={{mt: 3}}>
                 <Stack
@@ -415,7 +456,8 @@ export const EditForm = (props) => {
                 </Stack>
             </Card>
         </form>
-    );
+    )
+        ;
 };
 
 EditForm.propTypes = {
