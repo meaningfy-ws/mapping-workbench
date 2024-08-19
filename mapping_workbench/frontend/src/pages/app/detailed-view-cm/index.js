@@ -148,11 +148,14 @@ export const Page = () => {
     }, [currentListItem]);
 
     const getItems = () => {
-        sectionApi.getItems()
+        sectionApi.getItems({})
             .then(res => {
+                console.log(res)
                 setItemsStore(res)
             })
     }
+
+    console.log()
 
     const itemsSearch = useItemsSearch(itemsStore.items);
 

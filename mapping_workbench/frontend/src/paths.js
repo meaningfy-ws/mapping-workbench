@@ -245,6 +245,9 @@ export const apiPaths = {
         file_resources: '/shacl_test_suites/:id/file_resources',
         file_resource: '/shacl_test_suites/file_resources/:id',
     },
+    detailed_view_cm: {
+        items: '/conceptual_mapping_group'
+    },
     ontology_file_collections: {
         items: '/ontology_file_collections',
         item: '/ontology_file_collections/:id',

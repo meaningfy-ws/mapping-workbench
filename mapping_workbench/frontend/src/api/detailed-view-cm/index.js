@@ -1,4 +1,6 @@
 import {SectionApi} from "../section";
+import {appApi} from "../app";
+import {sessionApi} from "../session";
 
 
 class DetailedViewCmApi extends SectionApi {
@@ -30,28 +32,18 @@ class DetailedViewCmApi extends SectionApi {
         }
     }
 
-    async getItems() {
-        // GET /api/v1/conceptual_mapping_rules/ontology_framgent/list
-        return await {
-            items: [
-                {
-                    "_id": "5eb7cf5a86d9755df3a6c593",
-                    "min_sdk_version": "string",
-                    "max_sdk_version": "string",
-                    "source_structural_element": {
-                        "id": "string",
-                        "collection": "string"
-                    },
-                    "target_class_path": "string",
-                    "target_property_path": "string",
-                    "triple_map_fragment": {
-                        "_id": "string",
-                        "sdk_element_id": "string",
-                        "absolute_xpath": "string"
-                    }
-                }
-            ]
-        }
+    async getItems(request) {
+        const {
+            filters = {},
+            page = this.DEFAULT_PAGE,
+            rowsPerPage = this.DEFAULT_ROWS_PER_PAGE
+        } = request;
+        filters['project_id'] = sessionApi.getSessionProject();
+        filters['page'] = page;
+        filters['limit'] = rowsPerPage >= 0 ? rowsPerPage : null;
+
+        const endpoint = this.paths['items'];
+        return await appApi.get(endpoint, filters);
     }
 }
 

@@ -49,26 +49,20 @@ export const ListTable = (props) => {
                 <Table sx={{minWidth: 1200}}>
                     <TableHead>
                         <TableRow>
+                            <TableCell>
+                                <SorterHeader fieldName="instance_type"/>
+                            </TableCell>
+                            <TableCell>
+                                <SorterHeader fieldName="iterator_xpath"/>
+                            </TableCell>
+                            <TableCell>
+                                <SorterHeader fieldName="group_name"/>
+                            </TableCell>
                             <TableCell width="25%">
                                 <SorterHeader fieldName="min_sdk_version"/>
                             </TableCell>
                             <TableCell>
                                 <SorterHeader fieldName="max_sdk_version"/>
-                            </TableCell>
-                            <TableCell>
-                                <SorterHeader fieldName="source_structural_element"/>
-                            </TableCell>
-                            <TableCell>
-                                <SorterHeader fieldName="target_class_path"/>
-                            </TableCell>
-                            <TableCell>
-                                <SorterHeader fieldName="target_property_path"/>
-                            </TableCell>
-                            <TableCell>
-                                <SorterHeader fieldName="sdk_element_id"/>
-                            </TableCell>
-                            <TableCell>
-                                <SorterHeader fieldName="absolute_xpath"/>
                             </TableCell>
                         </TableRow>
                     </TableHead>
@@ -79,28 +73,21 @@ export const ListTable = (props) => {
                             return (
                                     <TableRow hover
                                               key={item_id}>
-                                        <TableCell width="25%">
+                                        <TableCell>
+                                            {item.group_name}
+                                        </TableCell>
+                                        <TableCell>
+                                            {item.iterator_xpath}
+                                        </TableCell>
+                                        <TableCell>
+                                            {item.instance_type}
+                                        </TableCell>
+                                        <TableCell>
                                             {item.min_sdk_version}
                                         </TableCell>
                                         <TableCell>
                                             {item.max_sdk_version}
                                         </TableCell>
-                                        <TableCell>
-                                            {item.source_structural_element?.collection}
-                                        </TableCell>
-                                        <TableCell>
-                                            {item.target_class_path}
-                                        </TableCell>
-                                        <TableCell>
-                                            {item.target_property_path}
-                                        </TableCell>
-                                        <TableCell>
-                                            {item.triple_map_fragment?.sdk_element_id}
-                                        </TableCell>
-                                        <TableCell>
-                                            {item.triple_map_fragment?.absolute_xpath}
-                                        </TableCell>
-
                                     </TableRow>
                             );
                         })}
