@@ -52,6 +52,16 @@ class SchemaFileResourcesApi extends FileResourcesApi {
         }
     }
 
+
+    async getItems() {
+        try {
+            const project = sessionApi.getSessionProject()
+            const endpoint = this.paths.items;
+            return await appApi.get(endpoint,{project_id:project});
+        } catch (err) {
+        }
+    }
+
     constructor() {
         super("schema_files");
         this.isProjectResource = true;
