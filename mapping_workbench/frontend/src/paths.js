@@ -114,6 +114,9 @@ export const paths = {
             }
         },
 
+        detailed_view_cm: {
+            index: '/app/detailed-view-cm'
+        },
         conceptual_mapping_rules: {
             index: '/app/conceptual-mapping-rules',
             create: '/app/conceptual-mapping-rules/create',
@@ -244,6 +247,9 @@ export const apiPaths = {
         item: '/shacl_test_suites/:id',
         file_resources: '/shacl_test_suites/:id/file_resources',
         file_resource: '/shacl_test_suites/file_resources/:id',
+    },
+    detailed_view_cm: {
+        items: '/conceptual_mapping_group'
     },
     ontology_file_collections: {
         items: '/ontology_file_collections',

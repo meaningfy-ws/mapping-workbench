@@ -104,5 +104,6 @@ export const en = {
   [tokens.nav.validation_reports]: 'Validation Reports',
   [tokens.nav.export_mapping_package]: 'Export Mapping Package',
   [tokens.nav.fluree]: 'Fluree',
-  [tokens.nav.fluree_crypt]: 'Fluree Crypt'
+  [tokens.nav.fluree_crypt]: 'Fluree Crypt',
+  [tokens.nav.detailed_view_cm]: 'Detailed View CM'
 };

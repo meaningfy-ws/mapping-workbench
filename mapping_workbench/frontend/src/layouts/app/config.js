@@ -178,6 +178,10 @@ export const useSections = () => {
                     </SvgIcon>
                 )
             },
+            {
+                title: t(tokens.nav.detailed_view_cm),
+                path: paths.app.detailed_view_cm.index
+            }
             // {
             //     title: t(tokens.nav.grouping_cm) + ' (dev)',
             //     path: paths.underConstruction
