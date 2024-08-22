@@ -27,6 +27,7 @@ install-prod-frontend:
 #	@ npm install && npm install -g serve && npm run build && rm -fr node_modules
 
 test-e2e:
+	@ export NVM_DIR="$HOME/.nvm" && \. "$NVM_DIR/nvm.sh"
 	@ npm install
 	#@ Xvfb :99 -screen 0 1280x1024x24 &
 	#@ export DISPLAY=:99
