@@ -79,6 +79,7 @@ export const tokens = {
         specific_triple_map_fragments: 'nav.specific_triple_map_fragments',
         fields_registry: 'nav.fields_registry',
         fields_list: 'nav.fields_list',
+        fields_and_nodes: 'nav.fields_and_nodes',
         elements: 'nav.elements',
 
         admin: 'nav.admin',
@@ -89,6 +90,7 @@ export const tokens = {
         schema_files: 'nav.schema_files',
         develop_cm: 'nav.develop_cm',
         review_cm: 'nav.review_cm',
+        detailed_view_cm: 'nav.detailed_view_cm',
         grouping_cm: 'nav.grouping_cm',
         packaging_cm: 'nav.packaging_cm',
         content_cm: 'nav.content_cm',

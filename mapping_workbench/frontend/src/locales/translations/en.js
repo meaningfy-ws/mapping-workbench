@@ -82,6 +82,7 @@ export const en = {
   [tokens.nav.generic_triple_map_fragments]: 'Generic Triple Maps',
   [tokens.nav.fields_registry]: 'Fields Registry',
   [tokens.nav.fields_list]: 'Fields List',
+  [tokens.nav.fields_and_nodes]: 'Fields And Nodes',
   [tokens.nav.elements]: 'Elements',
   [tokens.nav.terms_validator]: 'Terms Validator',
   [tokens.nav.tasks]: 'Tasks',
@@ -103,5 +104,6 @@ export const en = {
   [tokens.nav.validation_reports]: 'Validation Reports',
   [tokens.nav.export_mapping_package]: 'Export Mapping Package',
   [tokens.nav.fluree]: 'Fluree',
-  [tokens.nav.fluree_crypt]: 'Fluree Crypt'
+  [tokens.nav.fluree_crypt]: 'Fluree Crypt',
+  [tokens.nav.detailed_view_cm]: 'Detailed View CM'
 };

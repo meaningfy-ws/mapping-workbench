@@ -1,25 +1,22 @@
 import {useEffect, useState} from 'react';
-import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
+
+
 import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
-import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import Upload01Icon from "@untitled-ui/icons-react/build/esm/Upload01";
+import {detailedViewCmApi as sectionApi} from 'src/api/detailed-view-cm';
 import {paths} from 'src/paths';
-import {Seo} from 'src/components/seo';
-import {RouterLink} from 'src/components/router-link';
 import {Layout as AppLayout} from 'src/layouts/app';
-import {usePageView} from 'src/hooks/use-page-view';
-import {genericTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/generic';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {ListSearch} from "src/sections/app/generic-triple-map-fragment/list-search";
-import {ListTable} from "src/sections/app/generic-triple-map-fragment/list-table";
-import {useDialog} from "src/hooks/use-dialog";
-import {FileUploader} from "src/sections/app/generic-triple-map-fragment/file-uploader";
+import {RouterLink} from 'src/components/router-link';
+import {Seo} from 'src/components/seo';
+import {ListSearch} from 'src/sections/app/detailed-view-cm/list-search';
+import {ListTable} from 'src/sections/app/detailed-view-cm/list-table';
+import MenuItem from "@mui/material/MenuItem";
+import TextField from "@mui/material/TextField";
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
@@ -29,7 +26,7 @@ const useItemsSearch = (items) => {
             direction: "desc"
         },
         search: '',
-        searchColumns: ['triple_map_content', 'triple_map_uri'],
+        searchColumns:["title","description"],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -39,7 +36,7 @@ const useItemsSearch = (items) => {
     const searchItems = state.search ? items.filter(item => {
         let returnItem = null;
         state.searchColumns.forEach(column => {
-            if (item[column]?.toLowerCase()?.includes(state.search.toLowerCase()))
+            if(item[column]?.toLowerCase()?.includes(state.search.toLowerCase()))
                 returnItem = item
         })
         return returnItem
@@ -47,11 +44,11 @@ const useItemsSearch = (items) => {
 
     const filteredItems = searchItems.filter((item) => {
         let returnItem = item;
-        Object.entries(filters).forEach(filter => {
+        Object.entries(filters).forEach(filter=> {
             const [key, value] = filter
-            if (value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
+            if(value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
                 returnItem = null
-            if (value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase))
+            if(value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase))
                 returnItem = null
         })
         return returnItem
@@ -59,10 +56,10 @@ const useItemsSearch = (items) => {
 
     const sortedItems = () => {
         const sortColumn = state.sort.column
-        if (!sortColumn) {
+        if(!sortColumn) {
             return filteredItems
         } else {
-            return filteredItems.sort((a, b) => {
+            return filteredItems.sort((a,b) => {
                 if (typeof a[sortColumn] === "string")
                     return state.sort.direction === "asc" ?
                         a[sortColumn]?.localeCompare(b[sortColumn]) :
@@ -71,21 +68,21 @@ const useItemsSearch = (items) => {
                     return state.sort.direction === "asc" ?
                         a[sortColumn] - b[sortColumn] :
                         b[sortColumn] - a[sortColumn]
-            })
+                })
         }
     }
 
     const pagedItems = sortedItems().filter((item, i) => {
         const pageSize = state.page * state.rowsPerPage
-        if ((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
+        if((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
             return item
     })
 
     const handleSearchItems = (filters) => {
-        setState(prevState => ({...prevState, search: filters.q}))
+        setState(prevState => ({...prevState, search: filters.q }))
     }
 
-    const handleFiltersChange = filters => {
+    const handleFiltersChange = (filters) => {
         setState(prevState => ({
             ...prevState,
             filters,
@@ -100,26 +97,30 @@ const useItemsSearch = (items) => {
         }));
     }
 
-    const handleRowsPerPageChange = event => {
+    const handleSort = (column, desc) => {
+        setState(prevState=> ({ ...prevState, sort: {column,
+               direction: prevState.sort.column === column
+                   ? prevState.sort.direction === "desc"
+                       ? "asc"
+                       : "desc"
+                   : desc
+                       ? "desc"
+                       : "asc"}}))
+
+    }
+
+    const handleRowsPerPageChange = (event) => {
         setState(prevState => ({
             ...prevState,
             rowsPerPage: parseInt(event.target.value, 10)
         }));
     }
 
-    const handleSorterChange = sortField => {
-        setState(prevState => ({
-            ...prevState,
-            sortField,
-            sortDirection: state.sortField === sortField && prevState.sortDirection === -1 ? 1 : -1
-        }))
-    }
-
     return {
-        handleSorterChange,
         handleFiltersChange,
         handlePageChange,
         handleRowsPerPageChange,
+        handleSort,
         handleSearchItems,
         pagedItems,
         count: filteredItems.length,
@@ -127,42 +128,36 @@ const useItemsSearch = (items) => {
     };
 };
 
+export const Page = () => {
+    const [listState,setListState] = useState([])
+    const [currentListItem, setCurrentListItem] = useState('')
+    const [itemsStore,setItemsStore] = useState({items:[]})
+    useEffect(() => {
+        sectionApi.getList()
+            .then(res => {
+                if(res.items.length) {
+                    setListState(res.items)
+                    setCurrentListItem(res.items[0])
+                }
+            })
+    }, []);
 
-const useItemsStore = () => {
-    const [state, setState] = useState({
-        items: [],
-        itemsCount: 0
-    });
-
-    const handleItemsGet = () => {
-        sectionApi.getItems({rowsPerPage: -1})
-            .then(res =>
-                setState({
-                    items: res.items,
-                    itemsCount: res.count
-                }))
-            .catch(err => console.warn(err))
-    }
 
     useEffect(() => {
-            handleItemsGet();
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        []);
+        currentListItem && getItems()
+    }, [currentListItem]);
 
-    return {
-        ...state
-    };
-};
+    const getItems = () => {
+        sectionApi.getItems({})
+            .then(res => {
+                console.log(res)
+                setItemsStore(res)
+            })
+    }
 
+    console.log()
 
-const Page = () => {
-    const itemsStore = useItemsStore();
     const itemsSearch = useItemsSearch(itemsStore.items);
-
-    const uploadDialog = useDialog();
-
-    usePageView();
 
     return (
         <>
@@ -202,60 +197,41 @@ const Page = () => {
                             </Typography>
                         </Breadcrumbs>
                     </Stack>
-                    <Stack
-                        alignItems="center"
-                        direction="row"
-                        spacing={3}
-                    >
-                        <Button
-                            onClick={uploadDialog.handleOpen}
-                            startIcon={(
-                                <SvgIcon>
-                                    <Upload01Icon/>
-                                </SvgIcon>
-                            )}
-                            id="upload_fragment_button"
-                            variant="contained"
-                        >
-                            Upload
-                        </Button>
-                        <Button
-                            component={RouterLink}
-                            href={paths.app[sectionApi.section].create}
-                            startIcon={(
-                                <SvgIcon>
-                                    <PlusIcon/>
-                                </SvgIcon>
-                            )}
-                            id="add_button"
-                            variant="contained"
-                        >
-                            Add
-                        </Button>
-                    </Stack>
                 </Stack>
                 <Card>
+                    <TextField
+                        fullWidth
+                        label="CM Rule"
+                        onChange={e =>
+                            setCurrentListItem(e.target.value)
+                        }
+                        select
+                        value={currentListItem}
+                        sx={{p:1}}
+                    >
+                                    {listState.map(item =>
+                                        <MenuItem key={item.ontology_fragment_id}
+                                                  value={item}>
+                                            {item.ontology_fragment_name}
+                                        </MenuItem>
+                                    )}
+                                </TextField>
                     <ListSearch onFiltersChange={itemsSearch.handleSearchItems}/>
                     <ListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                        onSort={itemsSearch.handleSort}
+                        sort={itemsSearch.state.sort}
                         page={itemsSearch.state.page}
                         items={itemsSearch.pagedItems}
-                        count={itemsSearch.itemsCount}
-                        onSort={itemsSearch.handleSorterChange}
-                        sort={{direction: itemsSearch.state.sortDirection, column: itemsSearch.state.sortField}}
+                        count={itemsSearch.count}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
                     />
                 </Card>
-                <FileUploader
-                    onClose={uploadDialog.handleClose}
-                    open={uploadDialog.open}
-                    sectionApi={sectionApi}
-                />
             </Stack>
         </>
-    );
+    )
 };
 
 Page.getLayout = (page) => (

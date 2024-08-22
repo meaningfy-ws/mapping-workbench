@@ -1,5 +1,4 @@
 import {useTranslation} from 'react-i18next';
-import {sessionApi} from "../../api/session";
 
 import SvgIcon from '@mui/material/SvgIcon';
 import FlareIcon from '@mui/icons-material/Flare';
@@ -18,6 +17,7 @@ import WindowIcon from '@mui/icons-material/Window';
 import BubbleChartIcon from '@mui/icons-material/BubbleChart';
 import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
 import NewspaperIcon from '@mui/icons-material/Newspaper';
+import TocIcon from '@mui/icons-material/Toc';
 
 import HomeSmileIcon from 'src/icons/ui/duocolor/home-smile';
 import LayoutAlt02 from 'src/icons/ui/duocolor/layout-alt-02';
@@ -55,7 +55,7 @@ export const useSections = () => {
 
     items.overview.push(
         {
-            items:[{
+            items: [{
                 title: t(tokens.nav.overview),
                 path: paths.app.index,
                 icon: (
@@ -64,8 +64,8 @@ export const useSections = () => {
                     </SvgIcon>
                 )
             }
-        ]
-    });
+            ]
+        });
 
     items.project.push({
         subheader: t(tokens.nav.project_setup),
@@ -136,12 +136,21 @@ export const useSections = () => {
                         <MenuOpenIcon/>
                     </SvgIcon>
                 )
+            },
+            {
+                title: t(tokens.nav.fields_and_nodes),
+                path: paths.app.fields_and_nodes.index,
+                icon: (
+                    <SvgIcon>
+                        <TocIcon/>
+                    </SvgIcon>
+                )
             }]
     })
 
     items.conceptualMappings.push({
         subheader: t(tokens.nav.conceptual_mappings),
-        items:[
+        items: [
             {
                 title: t(tokens.nav.develop_cm),
                 path: paths.app.conceptual_mapping_rules.develop.index,
@@ -169,6 +178,10 @@ export const useSections = () => {
                     </SvgIcon>
                 )
             },
+            {
+                title: t(tokens.nav.detailed_view_cm),
+                path: paths.app.detailed_view_cm.index
+            }
             // {
             //     title: t(tokens.nav.grouping_cm) + ' (dev)',
             //     path: paths.underConstruction
@@ -177,15 +190,20 @@ export const useSections = () => {
             //     title: t(tokens.nav.packaging_cm) + ' (dev)',
             //     path: paths.underConstruction
             // },
-            ]
+        ]
     })
 
     items.technicalMappings.push({
         subheader: t(tokens.nav.technical_mappings),
-        items:[
+        items: [
             {
                 title: t(tokens.nav.triple_map_fragments),
-                path: paths.app.generic_triple_map_fragments.index
+                path: paths.app.generic_triple_map_fragments.index,
+                icon: (
+                    <SvgIcon fontSize='small'>
+                        <HiveIcon/>
+                    </SvgIcon>
+                )
             },
             // {
             //     title: t(tokens.nav.link_cms_and_triple_maps) + ' (dev)',
@@ -193,14 +211,19 @@ export const useSections = () => {
             // },
             {
                 title: t(tokens.nav.value_mapping_resources),
-                path: paths.app.resource_collections.index
+                path: paths.app.resource_collections.index,
+                icon: (
+                    <SvgIcon fontSize='small'>
+                        <HubIcon/>
+                    </SvgIcon>
+                )
             }
         ]
     })
 
     items.qualityControl.push({
         subheader: t(tokens.nav.quality_control),
-        items:[
+        items: [
             // {
             //     title: t(tokens.nav.validation_execution) + ' (dev)',
             //     path: paths.underConstruction
@@ -241,7 +264,7 @@ export const useSections = () => {
 
     items.dissemination.push({
         subheader: t(tokens.nav.dissemination),
-        items:[
+        items: [
             {
                 title: t(tokens.nav.export_mapping_package),
                 path: paths.app.mapping_packages.index
@@ -251,7 +274,7 @@ export const useSections = () => {
 
     items.resources.push({
         subheader: t(tokens.nav.resources),
-        items:[
+        items: [
             {
                 title: t(tokens.nav.ontology),
                 icon: (
@@ -295,7 +318,7 @@ export const useSections = () => {
                         <HiveIcon/>
                     </SvgIcon>
                 ),
-                items:[
+                items: [
                     {
                         title: t(tokens.nav.generic_triple_map_fragments),
                         path: paths.app.generic_triple_map_fragments.index
@@ -324,9 +347,9 @@ export const useSections = () => {
                         path: paths.app.fields_registry.elements.import
                     }
                 ]
-                },
+            },
 
-            ]
+        ]
     });
 
     items.admin.push(
