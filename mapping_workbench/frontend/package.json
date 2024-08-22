@@ -11,7 +11,7 @@
     "export": "next export",
     "lint": "next lint",
     "lint-fix": "next lint --fix",
-    "test": "cypress run",
+    "test-e2e": "cypress run",
     "cy:open": "cypress open",
     "cy:tests": "cypress run"
   },

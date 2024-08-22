@@ -21,6 +21,7 @@ import {Upload04 as ImportIcon} from '@untitled-ui/icons-react/build/esm';
 import {TestDataCollectionListTable} from "../../../sections/app/file-manager/test-data-collection-list-table";
 import {useDialog} from "src/hooks/use-dialog";
 import {FileCollectionUploader} from "../../../sections/app/file-manager/file-collection-uploader";
+import {Assignment as AssignmentIcon} from "@mui/icons-material";
 
 
 const useItemsSearch = () => {
@@ -95,6 +96,7 @@ const useItemsStore = (searchState) => {
 const Page = () => {
 
     const uploadDialog = useDialog()
+    const mappingPackagesDialog = useDialog()
     const itemsSearch = useItemsSearch();
     const itemsStore = useItemsStore(itemsSearch.state);
 
@@ -169,6 +171,19 @@ const Page = () => {
                         >
                             Import Test Data Suites
                         </Button>
+                        <Button
+                            type='link'
+                            onClick={mappingPackagesDialog.handleOpen}
+                            startIcon={(
+                                <SvgIcon>
+                                    <AssignmentIcon/>
+                                </SvgIcon>
+                            )}
+                            variant="contained"
+                            id="assign-mapping-packages_button"
+                        >
+                            Import Test Data Suites
+                        </Button>
                     </Stack>
                 </Stack>
                 <Card>
@@ -189,6 +204,7 @@ const Page = () => {
                     open={uploadDialog.open}
                     sectionApi={sectionApi}
                 />
+
             </Stack>
         </>
     );

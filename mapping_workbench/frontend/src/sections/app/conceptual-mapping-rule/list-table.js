@@ -160,7 +160,7 @@ export const ListTableTripleMapFragment = (props) => {
 
     const handleTripleMapFragmentSelect = async (e) => {
         setUpdateContent(false);
-        await setTripleMapFragment(await genericTripleMapFragmentsApi.getItem(e.target.value));
+        e.target.value && await setTripleMapFragment(await genericTripleMapFragmentsApi.getItem(e.target.value));
     }
 
     const ruleTripleMapFragments = projectTripleMapFragments.filter(x => ruleTripleMapFragment === x.id);
@@ -936,7 +936,7 @@ export const ListTable = (props) => {
             setProjectSPARQLResources(await sparqlTestFileResourcesApi.getMappingRuleSPARQLAssertions());
             setIsProjectDataReady(true);
         })()
-    }, [genericTripleMapFragmentsApi])
+    }, [])
 
     const SorterHeader = (props) => {
         const direction = props.fieldName === sort.column && sort.direction === 1 ? 'asc' : 'desc';

@@ -35,6 +35,9 @@ import {useDialog} from "../../../hooks/use-dialog";
 import {PropertyListItem} from "../../../components/property-list-item";
 import ConfirmDialog from "../../../components/app/dialog/confirm-dialog";
 import {mappingPackagesApi} from "../../../api/mapping-packages";
+import Checkbox from "@mui/material/Checkbox";
+import {testDataSuitesApi as sectionApi} from "../../../api/test-data-suites";
+import {MappingPackagesSelector} from "./mapping-packages-selector";
 
 
 export const ListTableRow = (props) => {
@@ -43,6 +46,8 @@ export const ListTableRow = (props) => {
         item_id,
         isCurrent,
         handleItemToggle,
+        handleItemSelect,
+        isItemSelected,
         sectionApi,
         router,
         getItems,
@@ -93,13 +98,13 @@ export const ListTableRow = (props) => {
                 onlyAcceptedFormats
             />
             <ConfirmDialog
-                    title="Delete It?"
-                    open={!!confirmOpen}
-                    setOpen={setConfirmOpen}
-                    onConfirm={() => handleDeleteResourceAction(confirmOpen)}
-                >
-                    Are you sure you want to delete it?
-                </ConfirmDialog>
+                title="Delete It?"
+                open={!!confirmOpen}
+                setOpen={setConfirmOpen}
+                onConfirm={() => handleDeleteResourceAction(confirmOpen)}
+            >
+                Are you sure you want to delete it?
+            </ConfirmDialog>
             <TableRow
                 hover
                 key={item_id}
@@ -118,10 +123,15 @@ export const ListTableRow = (props) => {
                                 width: 3,
                                 height: 'calc(100% + 1px)'
                             }
-                        })
+                        }),
+                        whiteSpace: "nowrap"
                     }}
-                    width="25%"
                 >
+                    <Checkbox
+                        color="primary"
+                        checked={isItemSelected(item_id)}
+                        onClick={(event) => handleItemSelect(event, item_id)}
+                    />
                     <IconButton onClick={() => handleItemToggle(item_id)}>
                         <SvgIcon>
                             {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
@@ -144,10 +154,10 @@ export const ListTableRow = (props) => {
                            alignItems='center'
                            direction='row'>
                         <Button type='link'
-                                onClick={() => uploadDialog.handleOpen({id:item_id})}>Import test data</Button>
+                                onClick={() => uploadDialog.handleOpen({id: item_id})}>Import test data</Button>
                         <ListItemActions
                             itemctx={new ForListItemAction(item_id, sectionApi)}
-                        onDeleteAction={handleDeleteAction}/>
+                            onDeleteAction={handleDeleteAction}/>
                     </Stack>
                 </TableCell>
             </TableRow>
@@ -270,6 +280,22 @@ export const TestDataCollectionListTable = (props) => {
     const router = useRouter();
 
     const [currentItem, setCurrentItem] = useState(null);
+    const [selectedItems, setSelectedItems] = useState([]);
+
+    const isItemSelected = (itemId) => {
+        return selectedItems.indexOf(itemId) !== -1;
+    }
+
+    const handleItemSelect = (e, itemId) => {
+        let items = new Set(selectedItems);
+        const isChecked = e.target.checked;
+        if (isChecked) {
+            items.add(itemId);
+        } else {
+            items.delete(itemId);
+        }
+        setSelectedItems([...items]);
+    }
 
     const handleItemToggle = itemId => {
         setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId)
@@ -302,62 +328,77 @@ export const TestDataCollectionListTable = (props) => {
             .catch(err => console.warn(err));
     }, [])
 
+    const [projectMappingPackages, setProjectMappingPackages] = useState([]);
 
-    return (
-        <TablePagination
-            component="div"
-            count={count}
-            onPageChange={onPageChange}
-            onRowsPerPageChange={onRowsPerPageChange}
-            page={page}
-            rowsPerPage={rowsPerPage}
-            rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-            showFirstButton
-            showLastButton
-        >
-            <Scrollbar>
-                <Table sx={{minWidth: 1200}}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell/>
-                            <TableCell width="25%">
-                                Title
-                            </TableCell>
-                            <TableCell>
-                                Package
-                            </TableCell>
-                            <TableCell align="left">
-                                Created
-                            </TableCell>
-                            <TableCell align="right">
-                                Actions
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {items.map((item) => {
-                            const item_id = item._id;
-                            const isCurrent = item_id === currentItem;
-                            return (
-                                <ListTableRow
-                                    key={item_id}
-                                    item={item}
-                                    item_id={item_id}
-                                    isCurrent={isCurrent}
-                                    handleItemToggle={handleItemToggle}
-                                    sectionApi={sectionApi}
-                                    router={router}
-                                    getItems={getItems}
-                                    projectMappingPackagesMap={projectMappingPackagesMap}
-                                />
-                            )
-                        })}
-                    </TableBody>
-                </Table>
-            </Scrollbar>
+    useEffect(() => {
+        (async () => {
+            setProjectMappingPackages(await mappingPackagesApi.getProjectPackages());
+        })()
+    }, [])
 
-
-        </TablePagination>
+    return (<>
+            <TablePagination
+                component="div"
+                count={count}
+                onPageChange={onPageChange}
+                onRowsPerPageChange={onRowsPerPageChange}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+                showFirstButton
+                showLastButton
+            >
+                <Scrollbar>
+                    <Table sx={{minWidth: 1200}}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell/>
+                                <TableCell width="25%">
+                                    Title
+                                </TableCell>
+                                <TableCell>
+                                    Package
+                                </TableCell>
+                                <TableCell align="left">
+                                    Created
+                                </TableCell>
+                                <TableCell align="right">
+                                    Actions
+                                </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {items.map((item) => {
+                                const item_id = item._id;
+                                const isCurrent = item_id === currentItem;
+                                return (
+                                    <ListTableRow
+                                        key={item_id}
+                                        item={item}
+                                        item_id={item_id}
+                                        isCurrent={isCurrent}
+                                        handleItemToggle={handleItemToggle}
+                                        handleItemSelect={handleItemSelect}
+                                        isItemSelected={isItemSelected}
+                                        sectionApi={sectionApi}
+                                        router={router}
+                                        getItems={getItems}
+                                        projectMappingPackagesMap={projectMappingPackagesMap}
+                                    />
+                                )
+                            })}
+                        </TableBody>
+                    </Table>
+                </Scrollbar>
+            </TablePagination>
+            <MappingPackagesSelector
+                onClose={mappingPackagesDialog.handleClose}
+                open={mappingPackagesDialog.open}
+                sectionApi={sectionApi}
+                idsToAssignTo={selectedItems}
+                initProjectMappingPackages={projectMappingPackages}
+            />
+        </>
     );
 };
 

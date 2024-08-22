@@ -101,8 +101,6 @@ export const FileUploader = (props) => {
 
     const acceptedFormat = onlyAcceptedFormats && sectionApi.FILE_UPLOAD_FORMATS?.[format] ? {[sectionApi.FILE_UPLOAD_FORMATS[format]]: []} : {'*/*': []}
 
-    console.log(acceptedFormat)
-
     return (
         <Dialog
             fullWidth
