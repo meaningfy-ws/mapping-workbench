@@ -133,7 +133,7 @@ const Page = () => {
 
     const parentNodeSelect = xPaths.map(e => ({
         id: e.id,
-        label: `${e.parent_node_id} : ${e.relative_xpath}`,
+        label: e.relative_xpath,
         absolute_xpath: e.absolute_xpath,
         parent_node: e.parent_node_id,
         relative_xpath: e.relative_xpath
