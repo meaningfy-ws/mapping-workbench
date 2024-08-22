@@ -1,9 +1,9 @@
 name: Tests on push
 
 on:
-  workflow_dispatch:
-#  push:
-#    branches: [ feature/* , hotfix/*, release/* ]
+#  workflow_dispatch:
+  push:
+    branches: [ feature/* , hotfix/*, release/* ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
