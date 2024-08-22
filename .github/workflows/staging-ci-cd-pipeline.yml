@@ -38,6 +38,7 @@ jobs:
     name: Running tests
     needs: deploy_and_build
     runs-on: ubuntu-latest
+    environment: staging
 
     steps:
 #      - name: Install ssh keys
