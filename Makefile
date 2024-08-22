@@ -67,7 +67,7 @@ test-e2e-backend:
 
 test-e2e-frontend:
 	@ echo "E2E Testing FRONTEND ... "
-	@ cd ${FRONTEND_HOME} && npm run test-e2e
+	@ cd ${FRONTEND_HOME} && make test-e2e
 
 #-----------------------------------------------------------------------------
 # ENV FILE
