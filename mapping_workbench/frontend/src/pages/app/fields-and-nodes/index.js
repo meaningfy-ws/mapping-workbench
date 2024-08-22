@@ -111,10 +111,6 @@ const Page = () => {
                 .string()
                 .max(255)
                 .required('XPath is required'),
-            relative_xpath: Yup
-                .string()
-                .required('Parent Node is required')
-
         }),
         onSubmit: (values, helpers) => {
             const toastId = toastLoad("Creating Element...")
@@ -274,7 +270,6 @@ const Page = () => {
                                             </li>}
                                         renderInput={(params) =>
                                             <TextField {...params}
-                                                       required
                                                        label="Parent Node"/>
                                         }
                                     />
