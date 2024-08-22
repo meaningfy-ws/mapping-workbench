@@ -6,18 +6,18 @@ require('dotenv').config()
 
 module.exports = defineConfig({
   env: {
-    username: process.env.NEXT_APP_USR,
-    password : process.env.NEXT_APP_PWD.split('\\').join(''),
+    username: process.env.MW_ADMIN_USERNAME,
+    password : process.env.MW_ADMIN_PASSWORD,
     gitUrl : "https://github.com/OP-TED/eForms-SDK",
     branchVersion : "1.9.1",
     projectName : 'TEST_PROJECT',
-    appURLPrefix : 'http://localhost:8000/api/v1/',
-    homeURL : 'http://localhost:3000',
+    appURLPrefix : process.env.MW_BACKEND_SERVER_HOST + '/api/v1/',
+    homeURL : process.env.MW_FRONTEND_ADDRESS,
     tripleMapFragment : 'test_triple_map.ttl',
     packageFile : 'package_eforms_16_1.5.zip'
   },
   e2e: {
-    baseUrl: "http://localhost:3000",
+    baseUrl: process.env.MW_FRONTEND_ADDRESS,
     chromeWebSecurity: false,
     viewportWidth: 1280,
     viewportHeight: 800,

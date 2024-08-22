@@ -391,13 +391,13 @@ export const TestDataCollectionListTable = (props) => {
                     </Table>
                 </Scrollbar>
             </TablePagination>
-            <MappingPackagesSelector
-                onClose={mappingPackagesDialog.handleClose}
-                open={mappingPackagesDialog.open}
-                sectionApi={sectionApi}
-                idsToAssignTo={selectedItems}
-                initProjectMappingPackages={projectMappingPackages}
-            />
+            {/*<MappingPackagesSelector*/}
+            {/*    onClose={mappingPackagesDialog.handleClose}*/}
+            {/*    open={mappingPackagesDialog.open}*/}
+            {/*    sectionApi={sectionApi}*/}
+            {/*    idsToAssignTo={selectedItems}*/}
+            {/*    initProjectMappingPackages={projectMappingPackages}*/}
+            {/*/>*/}
         </>
     );
 };

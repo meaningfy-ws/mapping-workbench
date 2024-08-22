@@ -48,7 +48,7 @@ jobs:
 
       - name: Run e2e tests
         run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.STAGING_WORK_DIR }} && npm install cypress && make test-e2e && exit"
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.STAGING_WORK_DIR }} && cp .env mapping_workbench/frontend/.env && npm install cypress && make test-e2e && exit"
 
       - name: cleanup
         run: rm -rf ~/.ssh
