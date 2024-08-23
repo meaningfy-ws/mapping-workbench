@@ -18,6 +18,7 @@ import {Layout as AppLayout} from 'src/layouts/app';
 import File from 'src/sections/app/fields-and-nodes/file'
 import {fieldsRegistryApi as fieldsRegistry} from 'src/api/fields-registry'
 import {testDataSuitesApi as sectionApi, testDataSuitesApi} from "../../../api/test-data-suites";
+import {genericTripleMapFragmentsApi as tripleMapFragments} from "../../../api/triple-map-fragments/generic";
 import {FormTextField} from "../../../components/app/form/text-field";
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 import RelativeXpathFinder from "../../../sections/app/fields-and-nodes/relative-xpath-finder";
@@ -31,7 +32,7 @@ import XpathEvaluator from "../../../sections/app/fields-and-nodes/xpath-evaluat
 
 const Page = () => {
     const [files, setFiles] = useState([])
-    const [selectedFile, setSelectedFile] = useState({})
+    const [selectedFile, setSelectedFile] = useState([])
     const [fileError, setFileError] = useState('')
     const [xmlNodes, setXmlNodes] = useState({})
     const [xPaths, setXPaths] = useState([])
@@ -40,14 +41,19 @@ const Page = () => {
     const SECTION_TITLE = 'Fields And Nodes'
 
     useEffect(() => {
-        testDataSuitesApi.getItems({})
-            .then(res => {
-                res.items.forEach(e =>
-                    testDataSuitesApi.getFileResources(e._id)
-                        .then(resource => setFiles(files => ([...files, ...resource.items]))))
-                    .catch(err => console.error(err))
-            })
+        const project = window.sessionStorage.getItem('sessionProject')
+        tripleMapFragments.getTripleMapFragmentTree({project})
+            .then(res => setFiles(res.test_data_suites))
             .catch(err => console.error((err)))
+
+        // testDataSuitesApi.getItems({})
+        //     .then(res => {
+        //         res.items.forEach(e =>
+        //             testDataSuitesApi.getFileResources(e._id)
+        //                 .then(resource => setFiles(files => ([...files, ...resource.items]))))
+        //             .catch(err => console.error(err))
+        //     })
+        //     .catch(err => console.error((err)))
 
         fieldsRegistry.getXpathsList()
             .then(res => {
@@ -60,249 +66,282 @@ const Page = () => {
         // Parse the XML string into a DOM Document
         setFileError('')
         setXmlNodes('')
-        if (selectedFile.content) {
-            try {
-                parseString(selectedFile.content, {explicitArray: false}, (err, result) => {
-                    if (err) {
-                        console.error('Error parsing XML:', err);
-                        setFileError(err)
-                    } else {
-                        setXmlNodes(result)
-                    }
-                });
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(selectedFile.content, "application/xml");
-                setXmlContent(xmlDoc)
-
-            } catch (err) {
-                setXmlContent('')
-                setFileError(err)
-            }
-        }
-
-    }, [selectedFile])
-
-    const onChangeXPath = (value) => {
-        formik.setFieldValue('absolute_xpath', value)
-    }
-
-
-    const initialValues = {
-        id: '',
-        label: '',
-        absolute_xpath: '',
-        relative_xpath: '',
-        parent_node: ''
-    };
-
-    const formik = useFormik({
-        initialValues,
-        enableReinitialize: true,
-        validationSchema: Yup.object({
-            id: Yup
-                .string()
-                .max(255)
-                .required('Id is required'),
-            label: Yup
-                .string()
-                .max(255)
-                .required('Label is required'),
-            absolute_xpath: Yup
-                .string()
-                .max(255)
-                .required('XPath is required'),
-        }),
-        onSubmit: (values, helpers) => {
-            const toastId = toastLoad("Creating Element...")
-            helpers.setSubmitting(true);
-
-            const {id, label, parent_node, absolute_xpath, relative_xpath} = values
-            fieldsRegistry.addElement({id, label, parent_node_id: parent_node.id, absolute_xpath, relative_xpath})
+        if (selectedFile) {
+            tripleMapFragments.getTripleMapXmlContent(selectedFile)
                 .then(res => {
-                    toastSuccess("Element Created", toastId);
-                    helpers.setStatus({success: true});
-                })
-                .catch(err => {
-                    toastError(err, toastId)
-                    helpers.setStatus({success: false});
+
+                    try {
+                        parseString(res.content, {explicitArray: false}, (err, result) => {
+                            if (err) {
+                                console.error('Error parsing XML:', err);
+                                setFileError(err)
+                            } else {
+                                setXmlNodes(result)
+                            }
+                        });
+                        const parser = new DOMParser();
+                        const xmlDoc = parser.parseFromString(res.content, "application/xml");
+                        setXmlContent(xmlDoc)
+
+                    } catch (err) {
+                        setXmlContent('')
+                        setFileError(err)
+                    }
                 })
 
-                .finally(() => helpers.setSubmitting(false))
         }
-    });
+    },
+        [selectedFile]
+    )
 
-    const parentNodeSelect = xPaths.map(e => ({
-        id: e.id,
-        label: e.relative_xpath,
-        absolute_xpath: e.absolute_xpath,
-        parent_node: e.parent_node_id,
-        relative_xpath: e.relative_xpath
-    }))
 
-    const handleClear = () => {
-        formik.setValues(initialValues)
-    }
+        const onChangeXPath = (value) => {
+            formik.setFieldValue('absolute_xpath', value)
+        }
 
-    const evaluate = (file, xpath) => {
-        const result = file.evaluate(
-            xpath,    // The XPath expression
-            file,           // The context node (here, the entire document)
-            null,               // Namespace resolver (null for HTML documents)
-            XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, // Return type
-            null                // Result object (null to create a new one)
-        );
 
-        console.log(result)
-    }
+        const initialValues = {
+            id: '',
+            label: '',
+            absolute_xpath: '',
+            relative_xpath: '',
+            parent_node: ''
+        };
 
-    return (
-        <>
-            <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
-            <Stack
-                direction="row"
-                justifyContent="space-between"
-                spacing={4}
-            >
-                <Stack spacing={1}>
-                    <Typography variant="h4">
-                        {SECTION_TITLE}
-                    </Typography>
-                    <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
-                        <Link
-                            color="text.primary"
-                            component={RouterLink}
-                            href={paths.index}
-                            variant="subtitle2"
-                        >
-                            App
-                        </Link>
-                        <Typography
-                            color="text.secondary"
-                            variant="subtitle2"
-                        >
+        const formik = useFormik({
+            initialValues,
+            enableReinitialize: true,
+            validationSchema: Yup.object({
+                id: Yup
+                    .string()
+                    .max(255)
+                    .required('Id is required'),
+                label: Yup
+                    .string()
+                    .max(255)
+                    .required('Label is required'),
+                absolute_xpath: Yup
+                    .string()
+                    .max(255)
+                    .required('XPath is required'),
+            }),
+            onSubmit: (values, helpers) => {
+                const toastId = toastLoad("Creating Element...")
+                helpers.setSubmitting(true);
+
+                const {id, label, parent_node, absolute_xpath, relative_xpath} = values
+                fieldsRegistry.addElement({id, label, parent_node_id: parent_node.id, absolute_xpath, relative_xpath})
+                    .then(res => {
+                        toastSuccess("Element Created", toastId);
+                        helpers.setStatus({success: true});
+                    })
+                    .catch(err => {
+                        toastError(err, toastId)
+                        helpers.setStatus({success: false});
+                    })
+
+                    .finally(() => helpers.setSubmitting(false))
+            }
+        });
+
+        const parentNodeSelect = xPaths.map(e => ({
+            id: e.id,
+            label: e.relative_xpath,
+            absolute_xpath: e.absolute_xpath,
+            parent_node: e.parent_node_id,
+            relative_xpath: e.relative_xpath
+        }))
+
+        const handleClear = () => {
+            formik.setValues(initialValues)
+        }
+
+        const evaluate = (file, xpath) => {
+            const result = file.evaluate(
+                xpath,    // The XPath expression
+                file,           // The context node (here, the entire document)
+                null,               // Namespace resolver (null for HTML documents)
+                XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, // Return type
+                null                // Result object (null to create a new one)
+            );
+
+            console.log(result)
+        }
+
+        return (
+            <>
+                <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
+                <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    spacing={4}
+                >
+                    <Stack spacing={1}>
+                        <Typography variant="h4">
                             {SECTION_TITLE}
                         </Typography>
-                    </Breadcrumbs>
+                        <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
+                            <Link
+                                color="text.primary"
+                                component={RouterLink}
+                                href={paths.index}
+                                variant="subtitle2"
+                            >
+                                App
+                            </Link>
+                            <Typography
+                                color="text.secondary"
+                                variant="subtitle2"
+                            >
+                                {SECTION_TITLE}
+                            </Typography>
+                        </Breadcrumbs>
+                    </Stack>
                 </Stack>
-            </Stack>
-            <form onSubmit={formik.handleSubmit}>
-                <Card sx={{p: 2}}>
-                    <Grid container
-                          justifyContent='center'>
+                {console.log('files', files)}
+
+                <form onSubmit={formik.handleSubmit}>
+                    <Card sx={{p: 2}}>
                         <Grid container
-                              spacing={2}>
-                            <Grid item
-                                  md={12}
-                                  xl={6}>
-                                <Stack gap={2}>
-                                    <TextField
-                                        fullWidth
-                                        label="File"
-                                        name="fileSelect"
-                                        onChange={event => {
-                                            setSelectedFile(event.target.value)
-                                            handleClear()
-                                        }}
-                                        value={files[0]}
-                                        select
-                                    >
-                                        {files.map((file) => (
-                                            <MenuItem
-                                                key={file.filename}
-                                                value={file}
-                                            >
-                                                <Typography>
-                                                    {file.filename}
-                                                </Typography>
-                                            </MenuItem>
-                                        ))}
-                                    </TextField>
-                                    {fileError
-                                        ? <Alert severity="error">{fileError.message}</Alert>
-                                        : <File xmlContent={xmlContent}
-                                                xmlNodes={xmlNodes}
-                                                xPaths={xPaths}
-                                                xPath={formik.values.absolute_xpath}
-                                                relativeXPath={formik.values.relative_xpath}
-                                                error={fileError}
-                                                fileContent={selectedFile.content}
-                                                handleClick={onChangeXPath}/>
-                                    }
-                                </Stack>
-                            </Grid>
-                            <Grid item
-                                  md={12}
-                                  xl={6}>
-                                <Stack gap={2}>
-                                    <FormTextField
-                                        formik={formik}
-                                        disabled={formik.isSubmitting}
-                                        name="id"
-                                        label="Id"
-                                        required/>
-                                    <FormTextField
-                                        formik={formik}
-                                        disabled={formik.isSubmitting}
-                                        name="label"
-                                        label="Label"
-                                        required/>
-                                    <FormTextField
-                                        formik={formik}
-                                        disabled={formik.isSubmitting}
-                                        multiline
-                                        name="absolute_xpath"
-                                        label="Absolute xPath"
-                                        required/>
-                                    <Autocomplete
-                                        id="parent_node"
-                                        disabled={formik.isSubmitting}
-                                        // key={formik.values.parent_node.label}
-                                        error={!!(formik.touched['parent_node'] && formik.errors['parent_node'])}
-                                        helperText={formik.touched['parent_node'] && formik.errors['parent_node']}
-                                        onBlur={formik.handleBlur}
-                                        onChange={(e, value) => formik.setFieldValue('parent_node', value)}
-                                        value={formik.values?.['parent_node']?.label ?? ''}
-                                        options={parentNodeSelect}
-                                        renderOption={(props, option) =>
-                                            <li {...props}
-                                                key={option.id}>
-                                                {option.absolute_xpath}
-                                            </li>}
-                                        renderInput={(params) =>
-                                            <TextField {...params}
-                                                       label="Parent Node"/>
+                              justifyContent='center'>
+                            <Grid container
+                                  spacing={2}>
+                                <Grid item
+                                      md={12}
+                                      xl={6}>
+                                    <Stack gap={2}>
+                                        <TextField
+                                            fullWidth
+                                            label="Select File"
+                                            onChange={e => {
+                                                console.log(e.target.value)
+                                                setSelectedFile(e.target.value)
+                                            }}
+                                            select
+                                            value={selectedFile}
+                                        >
+                                            {files.map(suite =>
+                                                [<MenuItem key={suite.suite_id}
+                                                           value={suite.suite_id}
+                                                           disabled>{suite.suite_title}
+
+                                                </MenuItem>,
+                                                    suite.test_datas.map(testData =>
+                                                        <MenuItem key={testData.test_data_id}
+                                                                  value={testData.test_data_id}
+                                                                  style={{paddingLeft: 40}}>
+                                                            {testData.test_data_title}
+                                                        </MenuItem>)])
+                                            }
+                                        </TextField>
+                                        {/*<TextField*/}
+                                        {/*    fullWidth*/}
+                                        {/*    label="File"*/}
+                                        {/*    name="fileSelect"*/}
+                                        {/*    onChange={event => {*/}
+                                        {/*        setSelectedFile(event.target.value)*/}
+                                        {/*        handleClear()*/}
+                                        {/*    }}*/}
+                                        {/*    value={files[0]}*/}
+                                        {/*    select*/}
+                                        {/*>*/}
+                                        {/*    {files.map((file) => (*/}
+                                        {/*        <MenuItem*/}
+                                        {/*            key={file.filename}*/}
+                                        {/*            value={file}*/}
+                                        {/*        >*/}
+                                        {/*            <Typography>*/}
+                                        {/*                {file.filename}*/}
+                                        {/*            </Typography>*/}
+                                        {/*        </MenuItem>*/}
+                                        {/*    ))}*/}
+                                        {/*</TextField>*/}
+                                        {fileError
+                                            ? <Alert severity="error">{fileError.message}</Alert>
+                                            : <File xmlContent={xmlContent}
+                                                    xmlNodes={xmlNodes}
+                                                    xPaths={xPaths}
+                                                    xPath={formik.values.absolute_xpath}
+                                                    relativeXPath={formik.values.relative_xpath}
+                                                    error={fileError}
+                                                    fileContent={selectedFile.content}
+                                                    handleClick={onChangeXPath}/>
                                         }
-                                    />
-                                    <RelativeXpathFinder formik={formik}
-                                                         error={fileError}
-                                                         xmlContent={xmlContent}
-                                                         absolute_xpath={formik.values.absolute_xpath}
-                                                         xpath={formik.values?.parent_node?.absolute_xpath}/>
-                                    <XpathEvaluator xmlDoc={xmlContent}
-                                                    xpath={formik.values?.parent_node?.absolute_xpath}
-                                                    absolute_xpath={formik.values.absolute_xpath}/>
-                                </Stack>
+                                    </Stack>
+                                </Grid>
+                                <Grid item
+                                      md={12}
+                                      xl={6}>
+                                    <Stack gap={2}>
+                                        <FormTextField
+                                            formik={formik}
+                                            disabled={formik.isSubmitting}
+                                            name="id"
+                                            label="Id"
+                                            required/>
+                                        <FormTextField
+                                            formik={formik}
+                                            disabled={formik.isSubmitting}
+                                            name="label"
+                                            label="Label"
+                                            required/>
+                                        <FormTextField
+                                            formik={formik}
+                                            disabled={formik.isSubmitting}
+                                            multiline
+                                            name="absolute_xpath"
+                                            label="Absolute xPath"
+                                            required/>
+                                        <Autocomplete
+                                            id="parent_node"
+                                            disabled={formik.isSubmitting}
+                                            // key={formik.values.parent_node.label}
+                                            error={!!(formik.touched['parent_node'] && formik.errors['parent_node'])}
+                                            helperText={formik.touched['parent_node'] && formik.errors['parent_node']}
+                                            onBlur={formik.handleBlur}
+                                            onChange={(e, value) => formik.setFieldValue('parent_node', value)}
+                                            value={formik.values?.['parent_node']?.label ?? ''}
+                                            options={parentNodeSelect}
+                                            renderOption={(props, option) =>
+                                                <li {...props}
+                                                    key={option.id}>
+                                                    {option.absolute_xpath}
+                                                </li>}
+                                            renderInput={(params) =>
+                                                <TextField {...params}
+                                                           label="Parent Node"/>
+                                            }
+                                        />
+                                        <RelativeXpathFinder formik={formik}
+                                                             error={fileError}
+                                                             xmlContent={xmlContent}
+                                                             absolute_xpath={formik.values.absolute_xpath}
+                                                             xpath={formik.values?.parent_node?.absolute_xpath}/>
+                                        <XpathEvaluator xmlDoc={xmlContent}
+                                                        xpath={formik.values?.parent_node?.absolute_xpath}
+                                                        absolute_xpath={formik.values.absolute_xpath}/>
+                                    </Stack>
+                                </Grid>
+                            </Grid>
+                            <Grid sx={{justifyContent: 'center'}}>
+                                <Button type='submit'
+                                        disabled={!!fileError || !xmlContent || formik.isSubmitting}>Save</Button>
+                                <Button onClick={handleClear}
+                                        disabled={formik.isSubmitting}>Clear</Button>
                             </Grid>
                         </Grid>
-                        <Grid sx={{justifyContent: 'center'}}>
-                            <Button type='submit'
-                                    disabled={!!fileError || !xmlContent || formik.isSubmitting}>Save</Button>
-                            <Button onClick={handleClear}
-                                    disabled={formik.isSubmitting}>Clear</Button>
-                        </Grid>
-                    </Grid>
 
-                </Card>
-            </form>
-        </>
-    )
-}
+                    </Card>
+                </form>
+            </>
+        )
+    }
 
 
-Page.getLayout = (page) => (
-    <AppLayout>
-        {page}
-    </AppLayout>
-);
+    Page.getLayout = (page) => (
+        <AppLayout>
+            {page}
+        </AppLayout>
+    );
 
-export default Page;
+    export default Page;
