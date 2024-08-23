@@ -32,11 +32,14 @@ import XpathEvaluator from "../../../sections/app/fields-and-nodes/xpath-evaluat
 
 const Page = () => {
     const [files, setFiles] = useState([])
-    const [selectedFile, setSelectedFile] = useState([])
+    const [selectedFile, setSelectedFile] = useState()
     const [fileError, setFileError] = useState('')
     const [xmlNodes, setXmlNodes] = useState({})
     const [xPaths, setXPaths] = useState([])
     const [xmlContent, setXmlContent] = useState('')
+    const [fileContent, setFileContent] = useState()
+
+    console.log('xPaths',xPaths)
 
     const SECTION_TITLE = 'Fields And Nodes'
 
@@ -69,7 +72,7 @@ const Page = () => {
         if (selectedFile) {
             tripleMapFragments.getTripleMapXmlContent(selectedFile)
                 .then(res => {
-
+                    setFileContent(res.content)
                     try {
                         parseString(res.content, {explicitArray: false}, (err, result) => {
                             if (err) {
@@ -108,6 +111,7 @@ const Page = () => {
             parent_node: ''
         };
 
+
         const formik = useFormik({
             initialValues,
             enableReinitialize: true,
@@ -143,6 +147,7 @@ const Page = () => {
                     .finally(() => helpers.setSubmitting(false))
             }
         });
+
 
         const parentNodeSelect = xPaths.map(e => ({
             id: e.id,
@@ -198,7 +203,6 @@ const Page = () => {
                         </Breadcrumbs>
                     </Stack>
                 </Stack>
-                {console.log('files', files)}
 
                 <form onSubmit={formik.handleSubmit}>
                     <Card sx={{p: 2}}>
@@ -264,7 +268,7 @@ const Page = () => {
                                                     xPath={formik.values.absolute_xpath}
                                                     relativeXPath={formik.values.relative_xpath}
                                                     error={fileError}
-                                                    fileContent={selectedFile.content}
+                                                    fileContent={fileContent}
                                                     handleClick={onChangeXPath}/>
                                         }
                                     </Stack>
