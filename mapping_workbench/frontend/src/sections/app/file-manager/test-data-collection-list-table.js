@@ -36,8 +36,7 @@ import {PropertyListItem} from "../../../components/property-list-item";
 import ConfirmDialog from "../../../components/app/dialog/confirm-dialog";
 import {mappingPackagesApi} from "../../../api/mapping-packages";
 import Checkbox from "@mui/material/Checkbox";
-import {testDataSuitesApi as sectionApi} from "../../../api/test-data-suites";
-import {MappingPackagesSelector} from "./mapping-packages-selector";
+import {MappingPackagesBulkAssigner} from "/src/sections/app/mapping-package/components/mapping-packages-bulk-assigner";
 
 
 export const ListTableRow = (props) => {
@@ -274,13 +273,14 @@ export const TestDataCollectionListTable = (props) => {
         page = 0,
         rowsPerPage = 0,
         sectionApi,
-        getItems
+        getItems = () => {}
     } = props;
 
     const router = useRouter();
 
     const [currentItem, setCurrentItem] = useState(null);
     const [selectedItems, setSelectedItems] = useState([]);
+    const [toMappingPackages, setToMappingPackages] = useState([]);
 
     const isItemSelected = (itemId) => {
         return selectedItems.indexOf(itemId) !== -1;
@@ -301,33 +301,7 @@ export const TestDataCollectionListTable = (props) => {
         setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId)
     }
 
-    const handleItemClose = () => {
-        setCurrentItem(null);
-    }
-
-    const handleItemUpdate = () => {
-        setCurrentItem(null);
-        toast.success('Item updated');
-    }
-
-    const handleItemDelete = () => {
-        toast.error('Item cannot be deleted');
-    }
-
     //TODO: This should be exported to a component that will be used (by extending or composing) by listings that need packages names
-    const [projectMappingPackagesMap, setProjectMappingPackagesMap] = useState({});
-
-    useEffect(() => {
-        mappingPackagesApi.getProjectPackages()
-            .then(res => {
-                setProjectMappingPackagesMap(res.reduce((a, b) => {
-                    a[b['id']] = b['title'];
-                    return a
-                }, {}));
-            })
-            .catch(err => console.warn(err));
-    }, [])
-
     const [projectMappingPackages, setProjectMappingPackages] = useState([]);
 
     useEffect(() => {
@@ -336,7 +310,32 @@ export const TestDataCollectionListTable = (props) => {
         })()
     }, [])
 
+    const [projectMappingPackagesMap, setProjectMappingPackagesMap] = useState({});
+
+    useEffect(() => {
+        (() => {
+            setProjectMappingPackagesMap(projectMappingPackages.reduce((a, b) => {
+                a[b['id']] = b['title'];
+                return a
+            }, {}));
+        })()
+    }, [projectMappingPackages])
+
+    const onMappingPackagesAssign = () => {
+        getItems()
+    }
     return (<>
+            <Box sx={{p: 1}}>
+                <MappingPackagesBulkAssigner
+                    sectionApi={sectionApi}
+                    idsToAssignTo={selectedItems}
+                    initProjectMappingPackages={projectMappingPackages}
+                    toMappingPackages={toMappingPackages}
+                    disabled={selectedItems.length === 0}
+                    onMappingPackagesAssign={onMappingPackagesAssign}
+                />
+            </Box>
+            <Divider/>
             <TablePagination
                 component="div"
                 count={count}
@@ -352,7 +351,8 @@ export const TestDataCollectionListTable = (props) => {
                     <Table sx={{minWidth: 1200}}>
                         <TableHead>
                             <TableRow>
-                                <TableCell/>
+                                <TableCell>
+                                </TableCell>
                                 <TableCell width="25%">
                                     Title
                                 </TableCell>
@@ -391,13 +391,6 @@ export const TestDataCollectionListTable = (props) => {
                     </Table>
                 </Scrollbar>
             </TablePagination>
-            {/*<MappingPackagesSelector*/}
-            {/*    onClose={mappingPackagesDialog.handleClose}*/}
-            {/*    open={mappingPackagesDialog.open}*/}
-            {/*    sectionApi={sectionApi}*/}
-            {/*    idsToAssignTo={selectedItems}*/}
-            {/*    initProjectMappingPackages={projectMappingPackages}*/}
-            {/*/>*/}
         </>
     );
 };

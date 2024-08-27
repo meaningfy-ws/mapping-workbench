@@ -28,6 +28,10 @@ class TestDataSuitesApi extends FileCollectionsApi {
         return {'ZIP': 'application/zip'}
     }
 
+    get MAPPING_PACKAGE_LINK_FIELD() {
+        return "test_data_suites"
+    }
+
     constructor() {
         super("test_data_suites");
         this.isProjectResource = true;
@@ -36,7 +40,9 @@ class TestDataSuitesApi extends FileCollectionsApi {
     }
 
     async getValuesForSelector(request = {}) {
-        let valuesStore = await this.getItems();
+        request.page = 0;
+        request.rowsPerPage = -1;
+        let valuesStore = await this.getItems(request);
         return valuesStore.items.map(
             value => ({id: value._id, title: value.title})
         ).sort((a, b) => a.title.localeCompare(b.title));

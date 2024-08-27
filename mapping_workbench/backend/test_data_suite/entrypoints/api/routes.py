@@ -4,10 +4,11 @@ from beanie import PydanticObjectId
 from fastapi import APIRouter, status, Depends, Query, HTTPException, Form, UploadFile
 from starlette.requests import Request
 
-from mapping_workbench.backend.core.models.api_request import APIRequestWithProject
+from mapping_workbench.backend.core.models.api_request import APIRequestWithProject, AssignMappingPackagesRequest
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse, APIEmptyContentResponse
 from mapping_workbench.backend.file_resource.services.file_resource_form_data import \
     file_resource_data_from_form_request
+from mapping_workbench.backend.logger.adapters.sys_logger import logger
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.task_manager.services.task_wrapper import add_task
@@ -28,6 +29,7 @@ from mapping_workbench.backend.test_data_suite.services.api import (
     get_test_data_file_resource,
     delete_test_data_file_resource, update_test_data_file_resource
 )
+from mapping_workbench.backend.test_data_suite.services.link import assign_test_data_suites_to_mapping_packages
 from mapping_workbench.backend.test_data_suite.services.import_test_data_suite import \
     import_test_data_suites_from_archive
 from mapping_workbench.backend.test_data_suite.services.transform_test_data import transform_test_data_file_resource
@@ -92,6 +94,23 @@ async def route_get_test_data_file_resources_struct_tree(
             result["test_data_suites"].append(suite_dict)
 
     return result
+
+
+@router.post(
+    "/assign_mapping_packages",
+    description=f"Assign {NAME_FOR_MANY} to Mapping Packages",
+    name=f"{NAME_FOR_MANY}:assign_mapping_packages",
+)
+async def route_assign_test_data_suites_to_mapping_packages(
+        request: AssignMappingPackagesRequest
+):
+    try:
+        await assign_test_data_suites_to_mapping_packages(request)
+    except Exception as e:
+        logger.exception(e)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Server error")
+
+    return APIEmptyContentResponse()
 
 
 @router.get(

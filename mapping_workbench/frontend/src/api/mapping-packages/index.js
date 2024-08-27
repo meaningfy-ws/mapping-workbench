@@ -1,9 +1,11 @@
 import {SectionApi} from "../section";
 import {appApi} from "../app";
+import {shaclTestSuitesApi} from "../shacl-test-suites";
+import {sparqlTestSuitesApi} from "../sparql-test-suites";
+import {resourceCollectionsApi} from "../resource-collections";
 
 export const PACKAGE_TYPE = {
-    EFORMS: 'eForms',
-    STANDARD: 'Standard'
+    EFORMS: 'eForms', STANDARD: 'Standard'
 };
 
 export const DEFAULT_PACKAGE_TYPE = "EFORMS";
@@ -22,17 +24,21 @@ class MappingPackagesApi extends SectionApi {
         this.isProjectResource = true;
     }
 
-    async getProjectPackages(request = {}) {
+    async getProjectPackages(full = false, request = {}) {
         request.page = 0;
         request.rowsPerPage = -1;
         let mappingPackagesStore = await this.getItems(request);
-        return mappingPackagesStore.items && mappingPackagesStore.items.map(
-            mappingPackage => ({
-                id: mappingPackage._id,
-                title: mappingPackage.title,
-                identifier: mappingPackage.identifier
-            })
-        ).sort((a, b) => a.title.localeCompare(b.title)) || [];
+        return mappingPackagesStore.items && mappingPackagesStore.items.map(mappingPackage => {
+            let data = {
+                id: mappingPackage._id, title: mappingPackage.title, identifier: mappingPackage.identifier
+            }
+            if (full) {
+                data[shaclTestSuitesApi.MAPPING_PACKAGE_LINK_FIELD] = mappingPackage[shaclTestSuitesApi.MAPPING_PACKAGE_LINK_FIELD];
+                data[sparqlTestSuitesApi.MAPPING_PACKAGE_LINK_FIELD] = mappingPackage[sparqlTestSuitesApi.MAPPING_PACKAGE_LINK_FIELD];
+                data[resourceCollectionsApi.MAPPING_PACKAGE_LINK_FIELD] = mappingPackage[resourceCollectionsApi.MAPPING_PACKAGE_LINK_FIELD];
+            }
+            return data;
+        }).sort((a, b) => a.title.localeCompare(b.title)) || [];
     }
 
     importPackage(request) {
@@ -65,7 +71,7 @@ class MappingPackagesApi extends SectionApi {
         let endpoint = this.paths['export'];
         const headers = {};
         params['t'] = Date.now();
-         return appApi.get(endpoint, params, headers, {
+        return appApi.get(endpoint, params, headers, {
             responseType: 'blob'
         });
 

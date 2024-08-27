@@ -1,12 +1,14 @@
 from typing import List, Annotated
 
 from beanie import PydanticObjectId
-from fastapi import APIRouter, status, Depends, Query
+from fastapi import APIRouter, status, Depends, Query, HTTPException
 from starlette.requests import Request
 
-from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
+from mapping_workbench.backend.core.models.api_request import AssignMappingPackagesRequest
+from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse, APIEmptyContentResponse
 from mapping_workbench.backend.file_resource.services.file_resource_form_data import \
     file_resource_data_from_form_request
+from mapping_workbench.backend.logger.adapters.sys_logger import logger
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestFileResource
@@ -25,6 +27,7 @@ from mapping_workbench.backend.shacl_test_suite.services.api import (
     get_shacl_test_file_resource,
     delete_shacl_test_file_resource
 )
+from mapping_workbench.backend.shacl_test_suite.services.link import assign_shacl_test_suites_to_mapping_packages
 from mapping_workbench.backend.user.models.user import User
 
 ROUTE_PREFIX = "/shacl_test_suites"
@@ -39,6 +42,21 @@ router = APIRouter(
     tags=[TAG]
 )
 
+@router.post(
+    "/assign_mapping_packages",
+    description=f"Assign {NAME_FOR_MANY} to Mapping Packages",
+    name=f"{NAME_FOR_MANY}:assign_mapping_packages",
+)
+async def route_assign_shacl_test_suites_to_mapping_packages(
+        request: AssignMappingPackagesRequest
+):
+    try:
+        await assign_shacl_test_suites_to_mapping_packages(request)
+    except Exception as e:
+        logger.exception(e)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Server error")
+
+    return APIEmptyContentResponse()
 
 @router.get(
     "",
