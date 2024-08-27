@@ -1,4 +1,4 @@
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 
 from beanie import PydanticObjectId
 from pydantic import BaseModel
@@ -20,3 +20,9 @@ class APIRequestWithProject(BaseModel):
 class APIRequestWithProjectAndContent(BaseModel):
     project: Optional[PydanticObjectId] = None
     content: Optional[str] = None
+
+
+class AssignMappingPackagesRequest(BaseModel):
+    project: PydanticObjectId
+    resources_ids: List[PydanticObjectId]
+    mapping_packages_ids: List[PydanticObjectId] = []

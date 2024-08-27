@@ -9,10 +9,12 @@ from mapping_workbench.backend.core.services.project_initilisers import init_pro
 from mapping_workbench.backend.database.adapters.gridfs_storage import AsyncGridFSStorage
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElementIn
+from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.ontology.models.term import Term, TermType
 from mapping_workbench.backend.ontology_suite.models.ontology_file_resource import OntologyFileResource
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import get_jwt_strategy
+from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite
 from mapping_workbench.backend.user.models.user import User
 from tests import TEST_DATA_EPO_ONTOLOGY
 
@@ -31,6 +33,27 @@ def dummy_project_object() -> Project:
 @pytest.fixture
 def dummy_project() -> Project:
     return dummy_project_object()
+
+
+@pytest.fixture
+def dummy_mapping_package(dummy_project) -> MappingPackage:
+    return MappingPackage(
+        id=PydanticObjectId(),
+        title="dummy_mapping_package_title",
+        description="dummy_mapping_package_description",
+        project=dummy_project
+    )
+
+
+@pytest.fixture
+def dummy_test_data_suite(dummy_project) -> TestDataSuite:
+    return TestDataSuite(
+        id=PydanticObjectId(),
+        title="dummy_test_data_suite_name",
+        description="dummy_test_data_suite_description",
+        project=dummy_project
+    )
+
 
 
 @pytest.fixture

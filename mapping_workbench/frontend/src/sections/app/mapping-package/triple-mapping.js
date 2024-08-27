@@ -20,8 +20,11 @@ const TripleMapping = (props) => {
     }, [id])
 
      const getTripleMapFragments = () => {
-         specificTripleMapFragmentsApi.getValuesForSelector({filters: {mapping_package: id}})
-             .then(res => setTripleMapFragments(res.map(x => x.id)))
+         specificTripleMapFragmentsApi.getValuesForSelector({filters: {mapping_package_id: id}})
+             .then(res => {
+                 const triple_map_ids = res.map(x => x.id);
+                 setTripleMapFragments(triple_map_ids)
+             })
     }
 
     const handleTripleMapFragmentsUpdate = async () => {

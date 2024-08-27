@@ -1,4 +1,4 @@
-import {Fragment, useCallback, useEffect, useState} from 'react';
+import {Fragment, useEffect, useState} from 'react';
 import {toast} from 'react-hot-toast';
 import PropTypes from 'prop-types';
 
@@ -12,10 +12,8 @@ import SvgIcon from '@mui/material/SvgIcon';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableSortLabel from '@mui/material/TableSortLabel';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Tooltip from "@mui/material/Tooltip";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import {Box} from "@mui/system";
@@ -32,7 +30,11 @@ import {PropertyList} from "../../../components/property-list";
 import TablePagination from "../../components/table-pagination";
 import timeTransformer from "../../../utils/time-transformer";
 import {useGlobalState} from "../../../hooks/use-global-state";
-
+import {MappingPackagesBulkAssigner} from "../mapping-package/components/mapping-packages-bulk-assigner";
+import {mappingPackagesApi} from "../../../api/mapping-packages";
+import Checkbox from "@mui/material/Checkbox";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
 
 
 export const ListTableRow = (props) => {
@@ -41,8 +43,13 @@ export const ListTableRow = (props) => {
         item_id,
         isCurrent,
         handleItemToggle,
+        handleItemSelect,
+        isItemSelected,
         sectionApi,
-        router
+        router,
+        projectMappingPackagesMap,
+        projectMappingPackages,
+        selectable
     } = props;
 
     const {timeSetting} = useGlobalState()
@@ -80,10 +87,16 @@ export const ListTableRow = (props) => {
                                 width: 3,
                                 height: 'calc(100% + 1px)'
                             }
-                        })
+                        }),
+                        whiteSpace: "nowrap"
                     }}
-                    width="25%"
                 >
+                    <Checkbox
+                        color="primary"
+                        disabled={selectable && !selectable(item)}
+                        checked={isItemSelected(item_id)}
+                        onClick={(event) => handleItemSelect(event, item_id)}
+                    />
                     <IconButton onClick={() => handleItemToggle(item_id)}>
                         <SvgIcon>
                             {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
@@ -94,6 +107,29 @@ export const ListTableRow = (props) => {
                     <Typography variant="subtitle2">
                         {item.title}
                     </Typography>
+                </TableCell>
+                <TableCell>
+                    <List sx={{p: 0, m: 0}}>
+                    {
+
+                        sectionApi.MAPPING_PACKAGE_LINK_FIELD
+                        && projectMappingPackages
+                            .filter(
+                                projectMappingPackage => projectMappingPackage[sectionApi.MAPPING_PACKAGE_LINK_FIELD]
+                                    && projectMappingPackage[sectionApi.MAPPING_PACKAGE_LINK_FIELD]
+                                        .some(resource_ref => item_id === resource_ref.id)
+                            )
+                            .map((mapping_package) => {
+                                return (
+                                    <ListItem
+                                        key={"mapping_package_" + mapping_package.id}
+                                        sx={{p: 0, m: 0}}
+                                    >
+                                        {mapping_package['title']}
+                                    </ListItem>
+                                );
+                            })}
+                    </List>
                 </TableCell>
                 <TableCell align="left">
                     {timeTransformer(item.created_at, timeSetting)}
@@ -203,17 +239,37 @@ export const FileCollectionListTable = (props) => {
     const {
         count = 0,
         items = [],
+        itemsForced = 0,
         onPageChange = () => {
         },
         onRowsPerPageChange,
         page = 0,
         rowsPerPage = 0,
-        sectionApi
+        sectionApi,
+        getItems = () => {
+        },
+        selectable = null
     } = props;
 
     const router = useRouter();
-
     const [currentItem, setCurrentItem] = useState(null);
+    const [selectedItems, setSelectedItems] = useState([]);
+    const [toMappingPackages, setToMappingPackages] = useState([]);
+
+    const isItemSelected = (itemId) => {
+        return selectedItems.indexOf(itemId) !== -1;
+    }
+
+    const handleItemSelect = (e, itemId) => {
+        let items = new Set(selectedItems);
+        const isChecked = e.target.checked;
+        if (isChecked) {
+            items.add(itemId);
+        } else {
+            items.delete(itemId);
+        }
+        setSelectedItems([...items]);
+    }
 
     const handleItemToggle = itemId => {
         setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId)
@@ -232,55 +288,99 @@ export const FileCollectionListTable = (props) => {
         toast.error('Item cannot be deleted');
     }
 
-    return (
-        <TablePagination
-            component="div"
-            count={count}
-            onPageChange={onPageChange}
-            onRowsPerPageChange={onRowsPerPageChange}
-            page={page}
-            rowsPerPage={rowsPerPage}
-            rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-            showFirstButton
-            showLastButton
-        >
-            <Scrollbar>
-                <Table sx={{minWidth: 1200}}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell/>
-                            <TableCell width="25%">
-                                Title
-                            </TableCell>
-                            <TableCell align="left">
-                                Created
-                            </TableCell>
-                            <TableCell align="right">
-                                Actions
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {items.map((item) => {
-                            const item_id = item._id;
-                            const isCurrent = item_id === currentItem;
+    //TODO: This should be exported to a component that will be used (by extending or composing) by listings that need packages names
+    const [projectMappingPackages, setProjectMappingPackages] = useState([]);
 
-                            return (
-                                <ListTableRow
-                                    key={item_id}
-                                    item={item}
-                                    item_id={item_id}
-                                    isCurrent={isCurrent}
-                                    handleItemToggle={handleItemToggle}
-                                    sectionApi={sectionApi}
-                                    router={router}
-                                />
-                            )
-                        })}
-                    </TableBody>
-                </Table>
-            </Scrollbar>
-        </TablePagination>
+    useEffect(() => {
+        (async () => {
+            setProjectMappingPackages(await mappingPackagesApi.getProjectPackages(true));
+        })()
+    }, [itemsForced])
+
+    const [projectMappingPackagesMap, setProjectMappingPackagesMap] = useState({});
+
+    useEffect(() => {
+        (() => {
+            setProjectMappingPackagesMap(projectMappingPackages.reduce((a, b) => {
+                a[b['id']] = b['title'];
+                return a
+            }, {}));
+        })()
+    }, [projectMappingPackages])
+
+    const onMappingPackagesAssign = () => {
+        getItems(Date.now());
+    }
+
+    return (<>
+            <Box sx={{p: 1}}>
+                <MappingPackagesBulkAssigner
+                    sectionApi={sectionApi}
+                    idsToAssignTo={selectedItems}
+                    initProjectMappingPackages={projectMappingPackages}
+                    toMappingPackages={toMappingPackages}
+                    disabled={selectedItems.length === 0}
+                    onMappingPackagesAssign={onMappingPackagesAssign}
+                />
+            </Box>
+            <Divider/>
+            <TablePagination
+                component="div"
+                count={count}
+                onPageChange={onPageChange}
+                onRowsPerPageChange={onRowsPerPageChange}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+                showFirstButton
+                showLastButton
+            >
+                <Scrollbar>
+                    <Table sx={{minWidth: 1200}}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell/>
+                                <TableCell width="25%">
+                                    Title
+                                </TableCell>
+                                <TableCell align="left">
+                                    Packages
+                                </TableCell>
+                                <TableCell align="left">
+                                    Created
+                                </TableCell>
+                                <TableCell align="right">
+                                    Actions
+                                </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {items.map((item) => {
+                                const item_id = item._id;
+                                const isCurrent = item_id === currentItem;
+
+                                return (
+                                    <ListTableRow
+                                        key={item_id}
+                                        item={item}
+                                        item_id={item_id}
+                                        isCurrent={isCurrent}
+                                        handleItemToggle={handleItemToggle}
+                                        handleItemSelect={handleItemSelect}
+                                        isItemSelected={isItemSelected}
+                                        sectionApi={sectionApi}
+                                        router={router}
+                                        projectMappingPackagesMap={projectMappingPackagesMap}
+                                        projectMappingPackages={projectMappingPackages}
+                                        selectable={selectable}
+                                    />
+                                )
+                            })}
+                        </TableBody>
+                    </Table>
+                </Scrollbar>
+            </TablePagination>
+        </>
     );
 };
 

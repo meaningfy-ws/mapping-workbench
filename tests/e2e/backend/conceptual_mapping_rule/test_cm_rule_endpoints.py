@@ -392,17 +392,18 @@ async def test_route_cm_rules_by_structural_element(
     await dummy_conceptual_mapping_rule.save()
 
     path_to_test = f"{CM_RULE_ROUTE_PREFIX}/structural_element/list"
+
     response = conceptual_mapping_rule_test_client.get(
         url=path_to_test,
         params={
-            "project_id": dummy_project.id,
+            "project_id": str(dummy_project.id),
             "structural_element_id": dummy_structural_element.id,
         },
     )
     assert response.status_code == status.HTTP_200_OK
 
     cm_rules = [
-        ConceptualMappingRule.model_validate(cmr) for cmr in response.json()
+        cmr for cmr in response.json()
     ]
     assert not cm_rules
 
@@ -416,16 +417,15 @@ async def test_route_cm_rules_by_structural_element(
     response = conceptual_mapping_rule_test_client.get(
         url=path_to_test,
         params={
-            "project_id": dummy_project.id,
+            "project_id": str(dummy_project.id),
             "structural_element_id": dummy_structural_element.id,
         },
     )
-
     # then
     assert response.status_code == status.HTTP_200_OK
 
     cm_rules = [
-        ConceptualMappingRule.model_validate(cmr) for cmr in response.json()
+        cmr for cmr in response.json()
     ]
     assert len(cm_rules) == 1
-    assert cm_rules.pop().source_structural_element == dummy_structural_element.sdk_element_id
+    assert cm_rules.pop()['source_structural_element']['id'] == dummy_structural_element.id

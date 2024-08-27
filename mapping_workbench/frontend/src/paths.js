@@ -229,6 +229,7 @@ export const apiPaths = {
         item: '/test_data_suites/:id',
         file_resources: '/test_data_suites/:id/file_resources',
         file_resource: '/test_data_suites/file_resources/:id',
+        assign_mapping_packages: '/test_data_suites/assign_mapping_packages',
         tasks: {
             transform_test_data: '/test_data_suites/tasks/transform_test_data',
             import: '/test_data_suites/tasks/import',
@@ -240,13 +241,15 @@ export const apiPaths = {
         item: '/sparql_test_suites/:id',
         file_resources: '/sparql_test_suites/:id/file_resources',
         file_resource: '/sparql_test_suites/file_resources/:id',
-        project_file_resources: '/sparql_test_suites/project/file_resources'
+        project_file_resources: '/sparql_test_suites/project/file_resources',
+        assign_mapping_packages: '/sparql_test_suites/assign_mapping_packages'
     },
     shacl_test_suites: {
         items: '/shacl_test_suites',
         item: '/shacl_test_suites/:id',
         file_resources: '/shacl_test_suites/:id/file_resources',
         file_resource: '/shacl_test_suites/file_resources/:id',
+        assign_mapping_packages: '/shacl_test_suites/assign_mapping_packages'
     },
     detailed_view_cm: {
         items: '/conceptual_mapping_group'
@@ -262,6 +265,7 @@ export const apiPaths = {
         item: '/resource_collections/:id',
         file_resources: '/resource_collections/:id/file_resources',
         file_resource: '/resource_collections/file_resources/:id',
+        assign_mapping_packages: '/resource_collections/assign_mapping_packages'
     },
 
     mapping_packages: {

@@ -27,6 +27,9 @@ import {shaclTestSuitesApi} from "src/api/shacl-test-suites";
 import StatesView from "src/sections/app/mapping-package/state/states_view";
 import MappingPackageRulesView from "src/sections/app/mapping-package/mapping-package-rules-view";
 import TripleMapping from "src/sections/app/mapping-package/triple-mapping";
+import {sparqlTestSuitesApi} from "../../../../api/sparql-test-suites";
+import {resourceCollectionsApi} from "../../../../api/resource-collections";
+import {testDataSuitesApi} from "../../../../api/test-data-suites";
 
 const tabs = [
     {label: 'Details', value: 'details'},
@@ -217,10 +220,33 @@ const Page = () => {
                         <Grid md={12}
                               xs={12}>
                             <FileResourceCollectionsCard
+                                collectionApi={testDataSuitesApi}
+                                filters={{
+                                    mapping_package_id: item.id
+                                }}
+                            />
+                            <Divider sx={{m: 3}}/>
+                            <FileResourceCollectionsCard
                                 collectionApi={shaclTestSuitesApi}
                                 filters={{
                                     ids: ((item.shacl_test_suites || []).length > 0
                                         && item.shacl_test_suites.map(x => x.id)) || ''
+                                }}
+                            />
+                            <Divider sx={{m: 3}}/>
+                            <FileResourceCollectionsCard
+                                collectionApi={sparqlTestSuitesApi}
+                                filters={{
+                                    ids: ((item.sparql_test_suites || []).length > 0
+                                        && item.sparql_test_suites.map(x => x.id)) || ''
+                                }}
+                            />
+                            <Divider sx={{m: 3}}/>
+                            <FileResourceCollectionsCard
+                                collectionApi={resourceCollectionsApi}
+                                filters={{
+                                    ids: ((item.resource_collections || []).length > 0
+                                        && item.resource_collections.map(x => x.id)) || ''
                                 }}
                             />
                         </Grid>

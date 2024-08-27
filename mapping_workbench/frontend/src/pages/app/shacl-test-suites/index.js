@@ -63,15 +63,17 @@ const useItemsSearch = () => {
 const useItemsStore = searchState => {
     const [state, setState] = useState({
         items: [],
-        itemsCount: 0
+        itemsCount: 0,
+        force: 0
     });
 
-    const handleItemsGet = () => {
+    const handleItemsGet = (force = 0) => {
         sectionApi.getItems(searchState)
             .then(res =>
                 setState({
                     items: res.items,
-                    itemsCount: res.count
+                    itemsCount: res.count,
+                    force: force
                 }))
             .catch(err => console.warn(err))
     }
@@ -83,6 +85,7 @@ const useItemsStore = searchState => {
         [searchState.state]);
 
     return {
+        handleItemsGet,
         ...state
     };
 };
@@ -158,9 +161,11 @@ const Page = () => {
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                         page={itemsSearch.state.page}
                         items={itemsStore.items}
+                        itemsForced={itemsStore.force}
                         count={itemsStore.itemsCount}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
+                        getItems={itemsStore.handleItemsGet}
                     />
                 </Card>
             </Stack>

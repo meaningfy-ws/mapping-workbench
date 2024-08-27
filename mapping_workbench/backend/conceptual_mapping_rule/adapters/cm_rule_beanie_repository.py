@@ -6,6 +6,8 @@ from beanie.exceptions import DocumentNotFound
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule, \
     ConceptualMappingRuleState, ConceptualMappingRuleComment, CMRuleStatus
 from mapping_workbench.backend.core.models.abc import IRepository, IStatefulModelRepository
+from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
+from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.project.services.api import get_project_link
 
 
@@ -150,11 +152,13 @@ class CMRuleBeanieRepository(IRepository, IStatefulModelRepository):
 
         return None
 
-    async def get_cm_rules_by_structural_element(self,
-                                                 project_id: PydanticObjectId,
-                                                 structural_element_id: str) -> List[ConceptualMappingRule]:
+    async def get_cm_rules_by_structural_element(
+            self,
+            project_id: PydanticObjectId,
+            structural_element_id: str
+    ) -> List[ConceptualMappingRule]:
         return await ConceptualMappingRule.find_many(
-            ConceptualMappingRule.project.id == project_id,
-            ConceptualMappingRule.source_structural_element.sdk_element_id == structural_element_id,
-            #fetch_links=True
+            ConceptualMappingRule.project == Project.link_from_id(project_id),
+            ConceptualMappingRule.source_structural_element == StructuralElement.link_from_id(structural_element_id),
+            # fetch_links=True
         ).to_list()
