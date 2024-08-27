@@ -105,11 +105,13 @@ export const EditForm = (props) => {
     const lng = {TTL: {mode: 'text/turtle', extension: turtle}, YAML: {mode: 'text/yaml', extension: yaml}}
 
     useEffect(() => {
+        console.log('effect selectdTree',selectedTree)
         selectedTree && handleGetXmlContent(selectedTree)
     }, [selectedTree]);
 
 
     const handleGetXmlContent = (id) => {
+        console.log('handleGetXmlContent',id)
         sectionApi.getTripleMapXmlContent(id)
             .then(res => {
                 setTestDataContent(res.content);
@@ -241,7 +243,10 @@ export const EditForm = (props) => {
                                 <TextField
                                     fullWidth
                                     label="Select Test Data"
-                                    onChange={e => setSelectedTree(e.target.value)}
+                                    onChange={e => {
+                                        console.log(e.target.value)
+                                        setSelectedTree(e.target.value)
+                                    }}
                                     select
                                     value={selectedTree}
                                 >
