@@ -76,6 +76,7 @@ const XpathEvaluator = ({xmlDoc, absolute_xpath}) => {
             {nodes.map((e, i) => (
                 <Card key={'node' + i}>
                     <CodeMirror
+                        style={{resize: 'vertical', overflow: 'auto', height: 200}}
                         value={serializer.serializeToString(e)}
                         editable={false}
                         extensions={[basicSetup(), xml()]}
