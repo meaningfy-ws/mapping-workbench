@@ -9,8 +9,6 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { AccountButton } from '../account-button';
 import { LanguageSwitch } from '../language-switch';
-import { NotificationsButton } from '../notifications-button';
-import { SearchButton } from '../search-button';
 import TimeSwitch from "../time-switch/time-switch";
 
 const TOP_NAV_HEIGHT = 64;
@@ -59,7 +57,6 @@ export const TopNav = (props) => {
                             </SvgIcon>
                         </IconButton>
                     )}
-                    <SearchButton />
                 </Stack>
                 <Stack
                     alignItems="center"
@@ -68,7 +65,6 @@ export const TopNav = (props) => {
                 >
                     <TimeSwitch/>
                     <LanguageSwitch />
-                    <NotificationsButton />
                     <AccountButton />
                 </Stack>
             </Stack>

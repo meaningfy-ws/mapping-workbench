@@ -17,6 +17,7 @@ import {useRouter} from 'src/hooks/use-router';
 import {paths} from 'src/paths';
 import {Issuer} from 'src/utils/auth';
 import {toastError, toastLoad} from "../../../components/app-toast";
+import {sessionApi} from "../../../api/session";
 
 export const AccountPopover = (props) => {
     const {anchorEl, onClose, open, ...other} = props;
@@ -45,6 +46,8 @@ export const AccountPopover = (props) => {
         }
     }
 
+    const project = sessionApi.getSessionProject()
+
     return (
         <Popover
             anchorEl={anchorEl}
@@ -68,6 +71,7 @@ export const AccountPopover = (props) => {
             <Divider/>
             <Box sx={{p: 1}}>
                 <ListItemButton
+                    disabled
                     component={RouterLink}
                     href={paths.app.account}
                     onClick={onClose}
@@ -90,9 +94,9 @@ export const AccountPopover = (props) => {
                         )}
                     />
                 </ListItemButton>
-                <ListItemButton
+                {project && <ListItemButton
                     component={RouterLink}
-                    href={paths.app.account}
+                    href={paths.app.projects.edit.replace('[id]', project)}
                     onClick={onClose}
                     sx={{
                         borderRadius: 1,
@@ -108,11 +112,11 @@ export const AccountPopover = (props) => {
                     <ListItemText
                         primary={(
                             <Typography variant="body1">
-                                Settings
+                                Project Setup
                             </Typography>
                         )}
                     />
-                </ListItemButton>
+                </ListItemButton>}
             </Box>
             <Divider sx={{my: '0 !important'}}/>
             <Box
