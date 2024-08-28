@@ -103,6 +103,9 @@ prod-dotenv-file:
 	@ echo RML_MAPPER_PATH=${RML_MAPPER_PATH} >> ${ENV_FILE}
 	@ vault kv get -format="json" mapping-workbench-prod/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> ${ENV_FILE}
 
+dotenv-file-frontend:
+	@ echo "Creating .env file for FRONTEND ... "
+	@ cp .env ${FRONTEND_INFRA_FOLDER}/
 
 #-----------------------------------------------------------------------------
 # STAGING & PRODUCTION
