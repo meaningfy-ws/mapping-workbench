@@ -31,7 +31,7 @@ const Page = () => {
         sectionApi.discoverTerms()
             .then(res => {
                 toastSuccess(`${res.task_name} successfully started.`, toastId)
-                router.reload()
+                // router.reload()
             })
             .catch(err => toastError(`Discovering terms failed: ${err.message}.`, toastId))
     };
