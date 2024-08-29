@@ -20,7 +20,7 @@ RML_MAPPER_PATH = ${PROJECT_PATH}/.rmlmapper/rmlmapper.jar
 
 install: install-backend install-frontend
 
-install-dev: install-dev-backend install-frontend-dev
+install-dev: install-dev-backend install-dev-frontend
 
 install-backend: init-rml-mapper setup-env-paths
 	@ echo "Installing BACKEND requirements :: START"
@@ -33,7 +33,7 @@ install-dev-backend:
 	@ pip install --upgrade pip
 	@ pip install --no-cache-dir -r requirements.dev.txt
 
-install-frontend-dev:
+install-dev-frontend:
 	@ cd ${FRONTEND_HOME} && make install-${ENVIRONMENT}-frontend
 
 install-all-backend: install-backend install-dev-backend

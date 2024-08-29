@@ -5,7 +5,6 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import {useTheme} from '@mui/material/styles';
 
 import {Logo} from 'src/components/logo';
@@ -17,12 +16,10 @@ import {paths} from 'src/paths';
 
 import {AccountButton} from '../account-button';
 import {LanguageSwitch} from '../language-switch';
-import {NotificationsButton} from '../notifications-button';
 import {TopNavSection} from './top-nav-section';
 import {ProjectSwitch} from "../project-switch";
 import {useProjects} from "../../../hooks/use-projects";
 import TimeSwitch from "../time-switch/time-switch";
-import {SideNavSection} from "../vertical-layout/side-nav-section";
 
 const useCssVars = (color) => {
     const theme = useTheme();
@@ -223,7 +220,6 @@ export const TopNav = (props) => {
                     >
                         <TimeSwitch/>
                         <LanguageSwitch/>
-                        <NotificationsButton/>
                         <AccountButton/>
                     </Stack>
                 </Stack>
