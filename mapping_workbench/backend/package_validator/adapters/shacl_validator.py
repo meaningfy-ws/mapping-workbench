@@ -7,6 +7,7 @@ from pyshacl import validate
 
 from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.ontology.services.terms import get_prefixed_ns_term
+from mapping_workbench.backend.ontology_suite.models.ontology_file_resource import OntologyFileResource
 from mapping_workbench.backend.package_validator.adapters.data_validator import TestDataValidator
 from mapping_workbench.backend.package_validator.models.shacl_validation import SHACLQueryTestDataResult, \
     SHACLQueryTestDataEntry, SHACLQueryResult, SHACLQueryResultBinding, \
@@ -32,13 +33,21 @@ class SHACLValidator(TestDataValidator):
     def __init__(self, test_data: TestDataState,
                  test_data_suite: TestDataSuiteState = None,
                  ns_definitions: dict = None,
-                 shacl_shape_result_query: str = None, **data: Any
+                 shacl_shape_result_query: str = None,
+                 ontology_files: List[OntologyFileResource] = None,
+                 **data: Any
                  ):
         super().__init__(**data)
         self.rdf_graph = rdflib.Graph().parse(
             data=test_data.rdf_manifestation.content,
             format=rdflib.util.guess_format(test_data.rdf_manifestation.filename)
         )
+
+        if ontology_files:
+            for ontology_file in ontology_files:
+                self.rdf_graph.parse(data=ontology_file.content,
+                                     format=rdflib.util.guess_format(ontology_file.filename))
+
         self.test_data = test_data
         self.test_data_suite = test_data_suite
         self.ns_definitions = ns_definitions
@@ -65,7 +74,9 @@ class SHACLValidator(TestDataValidator):
                 meta_shacl=False,
                 js=False,
                 debug=False,
-                inference="rdfs" if len(shacl_files) > 0 else None
+
+                #FIXME: For the moment without inference param until we figure out how to use it correctly
+                #inference="rdfs" if len(shacl_files) > 0 else None
             )
 
             shacl_validation_result.conforms = conforms or False

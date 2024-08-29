@@ -7,7 +7,9 @@ from mongomock_motor import AsyncMongoMockClient
 from mapping_workbench.backend.core.services.project_initilisers import init_project_models
 from mapping_workbench.backend.database.adapters.gridfs_storage import AsyncGridFSStorage
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
+from mapping_workbench.backend.ontology_suite.models.ontology_file_resource import OntologyFileResource
 from mapping_workbench.backend.project.models.entity import Project
+from tests import TEST_DATA_EPO_ONTOLOGY
 
 async_mongodb_database_mock = AsyncMongoMockClient()["test_database"]
 AsyncGridFSStorage.set_mongo_database(async_mongodb_database_mock)
@@ -42,3 +44,17 @@ def dummy_structural_element(dummy_project_link):
             repeatable=False,
             id=str(PydanticObjectId())
     )
+
+
+def get_ontology_file_resource_by_name(ontology_file_name: str) -> OntologyFileResource:
+    file_path = TEST_DATA_EPO_ONTOLOGY / ontology_file_name
+
+    return OntologyFileResource(
+        filename = file_path.name,
+        content = file_path.read_text()
+    )
+
+
+@pytest.fixture
+def dummy_ontology_file_resource():
+    return get_ontology_file_resource_by_name("epo_core.ttl")

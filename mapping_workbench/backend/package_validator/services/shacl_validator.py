@@ -1,14 +1,18 @@
 from typing import List
 
+from beanie import PydanticObjectId
+
 from mapping_workbench.backend.logger.services import mwb_logger
-from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState
+from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState, MappingPackage
 from mapping_workbench.backend.mapping_package.services.data import get_mapping_package_state_ns_definitions
 from mapping_workbench.backend.ontology.services.terms import get_prefixed_ns_term
+from mapping_workbench.backend.ontology_suite.models.ontology_file_resource import OntologyFileResource
 from mapping_workbench.backend.package_validator.adapters.shacl_validator import SHACLValidator
 from mapping_workbench.backend.package_validator.models.shacl_validation import SHACLQueryResult, \
     SHACLValidationSummary, SHACLQueryRefinedResultType, SHACLTestDataValidationResult, SHACLSuiteQueryTestDataResult, \
     SHACLValidationSuiteEntry, SHACLValidationSummaryRow, ValidationSHACLQuery
 from mapping_workbench.backend.package_validator.services.validation import add_summary_result_test_data
+from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuiteState
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataException, \
     TestDataState, TestDataSuiteState
@@ -84,15 +88,21 @@ def aggregate_shacl_tests_summary(
     return summary_results
 
 
-def validate_tests_data_with_shacl_test_suites(
+async def validate_tests_data_with_shacl_test_suites(
         tests_data: List[TestDataState],
         shacl_test_suites: List[SHACLTestSuiteState],
         ns_definitions: dict,
-        test_data_suite: TestDataSuiteState = None
+        test_data_suite: TestDataSuiteState = None,
+        project_id: PydanticObjectId = None
 ) -> List[TestDataState]:
     """
 
     """
+    ontology_files: List[OntologyFileResource] = None
+    if project_id:
+        ontology_files = await OntologyFileResource.find_many(
+            OntologyFileResource.project == Project.link_from_id(project_id)
+        ).to_list()
 
     for idx, test_data in enumerate(tests_data):
         try:
@@ -107,7 +117,8 @@ def validate_tests_data_with_shacl_test_suites(
                 shacl_runner = SHACLValidator(
                     test_data=test_data,
                     test_data_suite=test_data_suite,
-                    ns_definitions=ns_definitions
+                    ns_definitions=ns_definitions,
+                    ontology_files=ontology_files
                 )
                 shacl_suite = SHACLValidationSuiteEntry(
                     shacl_suite_oid=shacl_test_suite.oid,
@@ -150,11 +161,14 @@ def union_shacl_suites_results(
     return shacl_query_results
 
 
-def validate_mapping_package_state_with_shacl(mapping_package_state: MappingPackageState):
+async def validate_mapping_package_state_with_shacl(mapping_package_state: MappingPackageState):
     ns_definitions = get_mapping_package_state_ns_definitions(mapping_package_state)
 
     state_results = []
     shacl_suites = []
+
+    mapping_package: MappingPackage = await MappingPackage.get(mapping_package_state.mapping_package_oid)
+    project_id = mapping_package.project.to_ref().id if mapping_package.project else None
 
     for shacl_test_suite in mapping_package_state.shacl_test_suites:
         shacl_suites.append(SHACLValidationSuiteEntry(
@@ -164,11 +178,12 @@ def validate_mapping_package_state_with_shacl(mapping_package_state: MappingPack
 
     for idx, test_data_suite in enumerate(mapping_package_state.test_data_suites):
         mapping_package_state.test_data_suites[idx].test_data_states = \
-            validate_tests_data_with_shacl_test_suites(
+            await validate_tests_data_with_shacl_test_suites(
                 tests_data=test_data_suite.test_data_states,
                 shacl_test_suites=mapping_package_state.shacl_test_suites,
                 test_data_suite=test_data_suite,
-                ns_definitions=ns_definitions
+                ns_definitions=ns_definitions,
+                project_id=project_id
             )
 
         test_data_suite_results = []

@@ -25,7 +25,7 @@ asyncio.run(init_project_models(mongodb_database=async_mongodb_database_mock))
 
 def dummy_project_object() -> Project:
     return Project(
-        id="667b2849b959c27957bc3ace",
+        id=PydanticObjectId("667b2849b959c27957bc3ace"),
         title="MOCK_E2E_PROJECT"
     )
 
