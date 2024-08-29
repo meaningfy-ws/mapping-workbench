@@ -61,7 +61,7 @@ async def test_mapping_package_pipeline_scenario(eforms_sdk_repo_v_1_9_1_dir_pat
     assert len(mapping_package_state.conceptual_mapping_rules) == 540
     assert len(mapping_package_state.triple_map_fragments) == 1
 
-    validate_mapping_package(mapping_package_state=mapping_package_state)
+    await validate_mapping_package(mapping_package_state=mapping_package_state)
     exported_mapping_package = await export_package_state(mapping_package_state=mapping_package_state, project=project)
     assert exported_mapping_package
     print("Exported mapping package")
