@@ -57,7 +57,7 @@ export const useSections = () => {
         {
             items: [{
                 title: t(tokens.nav.overview),
-                path: paths.app.index,
+                path: paths.index,
                 icon: (
                     <SvgIcon fontSize="small">
                         <HomeSmileIcon/>
