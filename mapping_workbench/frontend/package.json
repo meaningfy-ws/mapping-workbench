@@ -1,5 +1,5 @@
 {
-  "name": "@meaningfy/mapping-workebench-frontend",
+  "name": "@meaningfy/mapping-workbench-frontend",
   "version": "0.0.1",
   "author": "Meaningfy",
   "private": true,
@@ -39,9 +39,9 @@
     "@mui/icons-material": "5.11.16",
     "@mui/lab": "^5.0.0-alpha.129",
     "@mui/material": "^5.13.0",
-    "@mui/system": "5.12.3",
+    "@mui/system": "5.15.20",
     "@mui/x-date-pickers": "6.4.0",
-    "@mui/x-tree-view": "^7.5.1",
+    "@mui/x-tree-view": "^7.15.0",
     "@react-pdf/renderer": "3.1.9",
     "@reduxjs/toolkit": "1.9.5",
     "@uiw/codemirror-extensions-basic-setup": "^4.23.0",
