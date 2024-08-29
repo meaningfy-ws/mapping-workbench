@@ -1,3 +1,4 @@
+import json
 from typing import Sequence
 
 import pytest
@@ -11,8 +12,9 @@ from mapping_workbench.backend.conceptual_mapping_rule.models.entity import (
     ConceptualMappingRule,
     ConceptualMappingRuleComment,
     ConceptualMappingRuleCommentOut,
-    StructuralElement,
+    StructuralElement, ConceptualMappingRuleOut,
 )
+from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.user.models.user import User
 from tests.e2e.backend.conftest import get_new_user_token
@@ -429,3 +431,39 @@ async def test_route_cm_rules_by_structural_element(
     ]
     assert len(cm_rules) == 1
     assert cm_rules.pop()['source_structural_element']['id'] == dummy_structural_element.id
+
+
+@pytest.mark.asyncio
+async def test_assign_mapping_package_to_conceptual_mapping_route(
+        dummy_project: Project,
+        dummy_mapping_package: MappingPackage,
+        dummy_conceptual_mapping_rule: ConceptualMappingRule,
+        conceptual_mapping_rule_test_client: TestClient,
+):
+    # Arrange
+    await dummy_project.save()
+    dummy_conceptual_mapping_rule.project = Project.link_from_id(dummy_project.id)
+    await dummy_conceptual_mapping_rule.save()
+
+    path_to_test = f"{CM_RULE_ROUTE_PREFIX}/{dummy_conceptual_mapping_rule.id}/assign_mapping_package"
+
+    # Act
+    conceptual_mapping_rule_test_client.post(
+        url=path_to_test,
+        json=[str(dummy_mapping_package.id),str(dummy_mapping_package.id)],
+    )
+
+    response = conceptual_mapping_rule_test_client.post(
+        url=path_to_test,
+        json=[str(dummy_mapping_package.id)],
+    )
+
+    # Assert
+    assert response.status_code == status.HTTP_201_CREATED
+
+    cm_out = ConceptualMappingRuleOut(**response.json())
+    assert len(cm_out.refers_to_mapping_package_ids) > len(dummy_conceptual_mapping_rule.refers_to_mapping_package_ids)
+    assert len(cm_out.refers_to_mapping_package_ids) == 1
+
+    await dummy_project.delete()
+    await dummy_conceptual_mapping_rule.delete()

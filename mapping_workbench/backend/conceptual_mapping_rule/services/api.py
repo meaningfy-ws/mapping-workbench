@@ -1,7 +1,7 @@
 from typing import List, Dict
 
 import pymongo
-from beanie import PydanticObjectId
+from beanie import PydanticObjectId, Link
 from pymongo.errors import DuplicateKeyError
 
 from mapping_workbench.backend.conceptual_mapping_group.services.cmg_generation import create_cm_group_from_cm_rule
@@ -12,6 +12,7 @@ from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersS
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException, DuplicateKeyException
 from mapping_workbench.backend.core.services.request import request_update_data, request_create_data, \
     api_entity_is_found, pagination_params, prepare_search_param
+from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.ontology.services.terms import check_content_terms_validity
 from mapping_workbench.backend.user.models.user import User
 
@@ -150,3 +151,17 @@ async def validate_and_save_rules_terms(query_filters: Dict = None):
             rule=item
         )
         await item.save()
+
+
+async def assign_mapping_package_to_cm_rule(cm_rule: ConceptualMappingRule,
+                                            mp_ids: List[PydanticObjectId]) -> ConceptualMappingRuleOut:
+
+
+    if not cm_rule.refers_to_mapping_package_ids:
+        cm_rule.refers_to_mapping_package_ids = list(set(mp_ids))
+    else:
+        cm_rule.refers_to_mapping_package_ids = list(set(cm_rule.refers_to_mapping_package_ids + mp_ids))
+
+    await cm_rule.replace()
+
+    return ConceptualMappingRuleOut(**(await ConceptualMappingRule.get(cm_rule.id)).dict())
