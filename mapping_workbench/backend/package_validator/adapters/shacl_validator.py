@@ -45,7 +45,7 @@ class SHACLValidator(TestDataValidator):
 
         if ontology_files:
             for ontology_file in ontology_files:
-                self.rdf_graph.parse(data=ontology_file,
+                self.rdf_graph.parse(data=ontology_file.content,
                                      format=rdflib.util.guess_format(ontology_file.filename))
 
         self.test_data = test_data
@@ -74,7 +74,9 @@ class SHACLValidator(TestDataValidator):
                 meta_shacl=False,
                 js=False,
                 debug=False,
-                inference="rdfs" if len(shacl_files) > 0 else None
+
+                #FIXME: For the moment without inference param until we figure out how to use it correctly
+                #inference="rdfs" if len(shacl_files) > 0 else None
             )
 
             shacl_validation_result.conforms = conforms or False
