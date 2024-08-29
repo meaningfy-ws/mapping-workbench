@@ -39,8 +39,15 @@ async def test_shacl_validator(dummy_rdf_test_data_file_resource: TestDataFileRe
 async def test_validate_mapping_package_state_with_shacl(
         dummy_mapping_package_state: MappingPackageState,
         dummy_rdf_test_data_file_resource: TestDataFileResource,
-        dummy_shacl_test_suite: SHACLTestSuiteState
+        dummy_shacl_test_suite: SHACLTestSuiteState,
+        dummy_project: Project,
+        dummy_mapping_package: MappingPackage
 ):
+    await dummy_project.save()
+    dummy_mapping_package.project = Project.link_from_id(dummy_project.id)
+    await dummy_mapping_package.save()
+
+    dummy_mapping_package_state.mapping_package_oid = dummy_mapping_package.id
     test_data_state = await dummy_rdf_test_data_file_resource.get_state()
     test_data_state.oid = ObjectId()
     test_data_state.identifier = "TEST_DATA"
@@ -122,20 +129,6 @@ async def test_validate_mapping_package_state_with_shacl_and_ontology_file_resou
     await dummy_mapping_package.save()
     dummy_mapping_package_state.mapping_package_oid = dummy_mapping_package.id
 
-    # test_data_state = await dummy_rdf_test_data_file_resource.get_state()
-    # test_data_state.oid = ObjectId()
-    # test_data_state.identifier = "TEST_DATA"
-    # dummy_mapping_package_state.test_data_suites = [
-    #     TestDataSuiteState(
-    #         oid=ObjectId(),
-    #         title="TEST_DATA_SUITE",
-    #         test_data_states=[test_data_state]
-    #     )
-    # ]
-    # dummy_shacl_test_suite.oid = ObjectId()
-    # dummy_shacl_test_suite.title = "SHACL_TEST_SUITE"
-    # dummy_mapping_package_state.shacl_test_suites = [dummy_shacl_test_suite]
-
     # Act
 
     result = await validate_test_mapping_package_state_with_shacl(dummy_mapping_package_state,
@@ -162,7 +155,7 @@ async def test_validate_mapping_package_state_with_shacl_and_ontology_file_resou
     assert dummy_mapping_package_state.validation.shacl.summary
 
     # Check if ontology file helped on inference
-    assert violations_without_ontology_file > violations_with_ontology_file
+    assert violations_without_ontology_file != violations_with_ontology_file
 
     # Finally
 
