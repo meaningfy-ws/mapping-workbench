@@ -9,13 +9,14 @@ import Container from "@mui/material/Container";
 import {useSettings} from "../../../hooks/use-settings";
 import {Box} from "@mui/system";
 
+const BREAK_POINT = 2000;
 const SIDE_NAV_WIDTH = 280;
 
 const VerticalLayoutRoot = styled('div')(({theme}) => ({
     display: 'flex',
     flex: '1 1 auto',
     maxWidth: '100%',
-    [theme.breakpoints.up('lg')]: {
+    [theme.breakpoints.up(BREAK_POINT)]: {
         paddingLeft: SIDE_NAV_WIDTH
     }
 }));
@@ -29,14 +30,14 @@ const VerticalLayoutContainer = styled('div')({
 
 export const VerticalLayout = (props) => {
     const {children, sections, navColor} = props;
-    const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
+    const breakPointUp = useMediaQuery((theme) => theme.breakpoints.up(BREAK_POINT));
     const mobileNav = useMobileNav();
     const settings = useSettings();
 
     return (
         <>
             <TopNav onMobileNavOpen={mobileNav.handleOpen}/>
-            {lgUp ?
+            {breakPointUp ?
                 <SideNav
                     color={navColor}
                     sections={sections}
@@ -58,7 +59,7 @@ export const VerticalLayout = (props) => {
                             py: 4
                         }}
                     >
-                        <Container maxWidth={settings.stretch ? false : 'xl'}>
+                        <Container maxWidth={settings.stretch ? false : BREAK_POINT}>
                             {children}
                         </Container>
                     </Box>
