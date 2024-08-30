@@ -3,13 +3,30 @@ import {useTheme} from '@mui/material/styles';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
+
+import schemaImage from '../../../public/mwb-schema.png'
 import {RouterLink} from "../../components/router-link";
 import {paths} from "../../paths";
 import Image from "next/image";
-import schemaImage from '../../../public/mwb-schema.png'
 
 export const HomeApp = () => {
     const theme = useTheme();
+
+    const linksTypes = [
+        {href: paths.app.projects.index, label: 'creating a project'},
+        {href: paths.app.ontology_files.index, label: 'Add'},
+        {href: paths.app.ontology_files.index, label: 'Upload'},
+        {href: paths.app.ontology_terms.index, label: 'Use'},
+        {href: paths.app.fields_and_nodes.index, label: 'Specify'},
+        {href: paths.app.conceptual_mapping_rules.develop.index, label: 'Create'},
+        {href: paths.app.generic_triple_map_fragments.index, label: 'Develop'},
+        {href: paths.app.mapping_packages.index, label: 'creating a mapping'},
+        {href: 'xxx', label: 'Review'},
+        {href: paths.app.mapping_packages.index, label: 'Export'},
+    ]
+
+    const links = linksTypes.map(link => <Link component={RouterLink}
+                                               href={link.href}>{link.label}</Link>)
 
     return (
         <>
@@ -54,9 +71,7 @@ export const HomeApp = () => {
                         <Typography variant='h6'>
                             Step 1: Setup Project 🛠️
                         </Typography>
-                        <Typography sx={{my: 1}}>Start with <Link component={RouterLink}
-                                                                  href={paths.app.projects.index}>
-                            creating a project</Link>. This will bound your mapping
+                        <Typography sx={{my: 1}}>Start with {links[0]}. This will bound your mapping
                             scope.
                         </Typography>
                     </li>
@@ -64,9 +79,7 @@ export const HomeApp = () => {
                         <Typography variant='h6'>
                             Step 2: Import a Test data (ex: XML) 📁
                         </Typography>
-                        <Typography sx={{my: 1}}><Link component={RouterLink}
-                                                       href={paths.app.ontology_files.index}>
-                            Add</Link> some documents in XML format that will help you to define
+                        <Typography sx={{my: 1}}>{links[1]} some documents in XML format that will help you to define
                             the
                             structural elements used for mapping.
                         </Typography>
@@ -75,9 +88,7 @@ export const HomeApp = () => {
                         <Typography variant='h6'>
                             Step 3: Add an Ontology File 🌐
                         </Typography>
-                        <Typography sx={{my: 1}}><Link component={RouterLink}
-                                                       href={paths.app.ontology_files.index}>
-                            Upload</Link> your ontology file(s) to define the ontology
+                        <Typography sx={{my: 1}}>{links[2]} your ontology file(s) to define the ontology
                             terms for
                             your conceptual mapping.
                         </Typography>
@@ -86,9 +97,8 @@ export const HomeApp = () => {
                         <Typography variant='h6'>
                             Step 4: Discover Terms 🔤
                         </Typography>
-                        <Typography sx={{my: 1}}><Link component={RouterLink}
-                                                       href={paths.app.ontology_terms.index}>
-                            Use</Link> our mechanism that detects the relevant terms from your ontology
+                        <Typography sx={{my: 1}}>{links[3]} our mechanism that detects the relevant terms from your
+                            ontology
                             file. Use
                             this step to register these terms to the MWB for further using on conceptual
                             mapping.
@@ -98,9 +108,7 @@ export const HomeApp = () => {
                         <Typography variant='h6'>
                             Step 5: Define Fields & Nodes 🏷️
                         </Typography>
-                        <Typography sx={{my: 1}}><Link component={RouterLink}
-                                                       href={paths.app.fields_and_nodes.index}>
-                            Specify</Link> the fields and nodes in your data structure. This
+                        <Typography sx={{my: 1}}>{links[4]} the fields and nodes in your data structure. This
                             involves
                             detailing the data points and hierarchical relationships that will be used in your mapping
                             process.
@@ -111,7 +119,7 @@ export const HomeApp = () => {
                             Step 6: Define Conceptual Mapping Rule 🔗
                         </Typography>
                         <Typography sx={{my: 1}}>
-                            [Create](link to conceptual mapping rules page) rules that outline how data should be mapped
+                            {links[5]} rules that outline how data should be mapped
                             conceptually between the test data and the ontology. These rules will guide the
                             transformation of
                             data according to the defined relationships and structures.
@@ -122,9 +130,7 @@ export const HomeApp = () => {
                             Step 7: Define Technical Mapping 🔧
                         </Typography>
 
-                        <Typography sx={{my: 1}}><Link component={RouterLink}
-                                                       href={paths.app.generic_triple_map_fragments.index}>
-                            Develop</Link> the technical mapping fragments that represents
+                        <Typography sx={{my: 1}}>{links[6]} the technical mapping fragments that represents
                             RML
                             rules which implements what is designed and specified by the Conceptual Mapping Rules.
                         </Typography>
@@ -134,10 +140,8 @@ export const HomeApp = () => {
                             Step 8: Process a Mapping Package 📦
                         </Typography>
 
-                        <Typography sx={{my: 1}}> Manage your project resources and the transformation process by <Link
-                            component={RouterLink}
-                            href={paths.app.mapping_packages.index}>
-                            creating a mapping</Link> and run validation.
+                        <Typography sx={{my: 1}}> Manage your project resources and the transformation process
+                            by {links[7]} and run validation.
                         </Typography>
                     </li>
                     <li>
@@ -145,7 +149,7 @@ export const HomeApp = () => {
                             Step 9: Validate results 🔍
                         </Typography>
 
-                        <Typography sx={{my: 1}}> [Review](link to validation results page) the results of your mapping
+                        <Typography sx={{my: 1}}>{links[8]} the results of your mapping
                             process to ensure
                             accuracy and
                             consistency of the mapping.
@@ -155,9 +159,7 @@ export const HomeApp = () => {
                         <Typography variant='h6'>
                             Step 10: Export Mapping Package 📤
                         </Typography>
-                        <Typography sx={{my: 1}}><Link component={RouterLink}
-                                                       href={paths.app.mapping_packages.index}>
-                            Export</Link> your finalized mapping package for use in your
+                        <Typography sx={{my: 1}}>{links[9]} your finalized mapping package for use in your
                             production
                             environment or for sharing with other stakeholders.
                         </Typography>
