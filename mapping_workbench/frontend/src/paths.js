@@ -97,16 +97,16 @@ export const paths = {
                 view: '/app/ontology-file-collections/[id]/resource-manager/[fid]/view',
             }
         },
-        resource_collections: {
-            index: '/app/resource-collections',
-            create: '/app/resource-collections/create',
-            edit: '/app/resource-collections/[id]/edit',
-            view: '/app/resource-collections/[id]/view',
+        value_mapping_resources: {
+            index: '/app/value-mapping-resources',
+            create: '/app/value-mapping-resources/create',
+            edit: '/app/value-mapping-resources/[id]/edit',
+            view: '/app/value-mapping-resources/[id]/view',
             resource_manager: {
-                index: '/app/resource-collections/[id]/resource-manager',
-                create: '/app/resource-collections/[id]/resource-manager/create',
-                edit: '/app/resource-collections/[id]/resource-manager/[fid]/edit',
-                view: '/app/resource-collections/[id]/resource-manager/[fid]/view',
+                index: '/app/value-mapping-resources/[id]/resource-manager',
+                create: '/app/value-mapping-resources/[id]/resource-manager/create',
+                edit: '/app/value-mapping-resources/[id]/resource-manager/[fid]/edit',
+                view: '/app/value-mapping-resources/[id]/resource-manager/[fid]/view',
             }
         },
         mapping_packages: {
@@ -273,7 +273,7 @@ export const apiPaths = {
         file_resources: '/ontology_file_collections/:id/file_resources',
         file_resource: '/ontology_file_collections/file_resources/:id',
     },
-    resource_collections: {
+    value_mapping_resources: {
         items: '/resource_collections',
         item: '/resource_collections/:id',
         file_resources: '/resource_collections/:id/file_resources',

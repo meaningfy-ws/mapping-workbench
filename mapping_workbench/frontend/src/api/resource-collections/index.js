@@ -2,15 +2,15 @@ import {FileCollectionsApi} from "../file-collections";
 
 class ResourceCollectionsApi extends FileCollectionsApi {
     get SECTION_TITLE() {
-        return "Resource Collections";
+        return "Value Mapping Resources";
     }
 
     get SECTION_ITEM_TITLE() {
-        return "Resource Collection";
+        return "Value Mapping Resources";
     }
 
     constructor() {
-        super("resource_collections");
+        super("value_mapping_resources");
         this.isProjectResource = true;
     }
 

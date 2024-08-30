@@ -191,7 +191,7 @@ export const useSections = () => {
                     items: [
                         {
                             title: t(tokens.nav.value_mapping_resources),
-                            path: paths.app.resource_collections.index,
+                            path: paths.app.value_mapping_resources.index,
                             icon: (
                                 <SvgIcon fontSize='small'>
                                     <HubIcon/>
