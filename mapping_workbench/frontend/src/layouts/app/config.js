@@ -37,7 +37,7 @@ export const useSections = () => {
             {
                 items: [{
                     title: t(tokens.nav.overview),
-                    path: paths.app.index,
+                    path: paths.index,
                     icon: (
                         <SvgIcon fontSize="small">
                             <HomeSmileIcon/>
@@ -85,13 +85,13 @@ export const useSections = () => {
                     title: t(tokens.nav.mapping_entities),
                     icon: (
                         <SvgIcon fontSize="small">
-                            <                    ApiIcon/>
+                            <ApiIcon/>
                         </SvgIcon>
                     ),
                     items: [
                         {
-                            title: t(tokens.nav.ontology),
-                            path: paths.app.ontology.index,
+                            title: t(tokens.nav.ontology_terms),
+                            path: paths.app.ontology_terms.index,
                             icon: (
                                 <SvgIcon fontSize="small">
                                     <SchemaIcon/>
@@ -109,7 +109,7 @@ export const useSections = () => {
                         },
                         {
                             title: t(tokens.nav.fields_tree),
-                            path: paths.app.fields_registry.elements.tree_view.index,
+                            path: paths.app.fields_tree.index,
                             icon: (
                                 <SvgIcon fontSize="small">
                                     <TopicIcon/>

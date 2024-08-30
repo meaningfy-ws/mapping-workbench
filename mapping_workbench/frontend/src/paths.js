@@ -198,6 +198,9 @@ export const paths = {
         fields_and_nodes: {
           index: '/app/fields-and-nodes'
         },
+        fields_tree: {
+            index:'/app/fields-tree'
+        },
         tasks: {
             index: '/app/tasks',
             terms_validator: '/app/tasks/terms_validator',
