@@ -212,14 +212,6 @@ export const SideNav = (props) => {
                             px: 2
                         }}
                     >
-                        {sections.projects.map((section, index) => (
-                            <SideNavSection
-                                items={section.items}
-                                key={index}
-                                pathname={pathname}
-                                subheader={section.subheader}
-                            />
-                        ))}
                         <Stack
                             component="nav"
                             spacing={0.5}
@@ -237,7 +229,7 @@ export const SideNav = (props) => {
                                 subheader={section.subheader}
                             />
                         ))}
-                        {projects.sessionProject && sections.project.map((section, index) => (
+                        {projects.sessionProject && sections.projectSetup.map((section, index) => (
                             <SideNavSection
                                 items={section.items}
                                 key={index}
@@ -245,7 +237,7 @@ export const SideNav = (props) => {
                                 subheader={section.subheader}
                             />
                         ))}
-                        {projects.sessionProject && sections.fieldsRegistry.map((section, index) => (
+                        {projects.sessionProject && sections.mappingEntities.map((section, index) => (
                             <SideNavSection
                                 items={section.items}
                                 key={index}
@@ -277,7 +269,7 @@ export const SideNav = (props) => {
                                 subheader={section.subheader}
                             />
                         ))}
-                        {projects.sessionProject && sections.dissemination.map((section, index) => (
+                         {projects.sessionProject && sections.mappingPackages.map((section, index) => (
                             <SideNavSection
                                 items={section.items}
                                 key={index}
@@ -285,15 +277,7 @@ export const SideNav = (props) => {
                                 subheader={section.subheader}
                             />
                         ))}
-                        {projects.sessionProject && sections.resources.map((section, index) => (
-                            <SideNavSection
-                                items={section.items}
-                                key={index}
-                                pathname={pathname}
-                                subheader={section.subheader}
-                            />
-                        ))}
-                        {sections.admin.map((section, index) => (
+                         {projects.sessionProject && sections.activities.map((section, index) => (
                             <SideNavSection
                                 items={section.items}
                                 key={index}

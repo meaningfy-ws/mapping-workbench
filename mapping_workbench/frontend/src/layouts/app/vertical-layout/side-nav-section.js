@@ -24,6 +24,7 @@ const reduceChildRoutes = ({ acc, depth, item, parentId, pathname }) => {
   //console.log("depth: ", depth);
   //console.log("item: ", item);
 
+  console.log(item)
 
   if (item.items) {
     acc.push(

@@ -252,14 +252,6 @@ export const TopNav = (props) => {
                                     py: 1.5
                                 }}
                             >
-                                {sections.projects.map((section, index) => (
-                                    <TopNavSection
-                                        items={section.items}
-                                        key={index}
-                                        pathname={pathname}
-                                        subheader={section.subheader}
-                                    />
-                                ))}
                                 <Stack
                                     component="ul"
                                     direction="row"
@@ -281,7 +273,7 @@ export const TopNav = (props) => {
                                     />
                                 ))}
 
-                                {projects.sessionProject && sections.projectSetup && sections.projectSetup.map((section, index) => (
+                                {projects.sessionProject && sections.projectSetup.map((section, index) => (
                                     <TopNavSection
                                         items={section.items}
                                         key={index}
@@ -290,7 +282,7 @@ export const TopNav = (props) => {
                                     />
                                 ))}
 
-                                 {projects.sessionProject && sections.fieldsAndNodes && sections.fieldsAndNodes.map((section, index) => (
+                                {projects.sessionProject && sections.mappingEntities.map((section, index) => (
                                     <TopNavSection
                                         items={section.items}
                                         key={index}
@@ -322,7 +314,7 @@ export const TopNav = (props) => {
                                         subheader={section.subheader}
                                     />
                                 ))}
-                                {projects.sessionProject && sections.dissemination.map((section, index) => (
+                                {projects.sessionProject && sections.mappingPackages.map((section, index) => (
                                     <TopNavSection
                                         items={section.items}
                                         key={index}
@@ -331,15 +323,7 @@ export const TopNav = (props) => {
                                     />
                                 ))}
 
-                                {projects.sessionProject && sections.resources.map((section, index) => (
-                                    <TopNavSection
-                                        items={section.items}
-                                        key={index}
-                                        pathname={pathname}
-                                        subheader={section.subheader}
-                                    />
-                                ))}
-                                {sections.admin.map((section, index) => (
+                                {projects.sessionProject && sections.activities.map((section, index) => (
                                     <TopNavSection
                                         items={section.items}
                                         key={index}

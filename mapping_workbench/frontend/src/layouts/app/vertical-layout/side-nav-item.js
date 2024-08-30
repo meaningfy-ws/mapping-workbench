@@ -34,8 +34,9 @@ export const SideNavItem = (props) => {
   //console.log("SideNavItem icon:", icon);
 
   let startIcon;
+  console.log(depth,title)
 
-  if (depth === 0) {
+  if (depth < 2) {
     startIcon = icon;
   } else {
     startIcon = (
