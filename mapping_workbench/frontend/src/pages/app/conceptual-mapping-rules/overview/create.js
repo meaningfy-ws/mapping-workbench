@@ -26,7 +26,7 @@ const Page = () => {
                         <Link
                             color="text.primary"
                             component={RouterLink}
-                            href={paths.app[sectionApi.section].index}
+                            href={paths.app[sectionApi.section].overview.index}
                             sx={{
                                 alignItems: 'center',
                                 display: 'inline-flex'

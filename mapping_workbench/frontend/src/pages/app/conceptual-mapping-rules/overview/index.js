@@ -13,14 +13,14 @@ import Typography from '@mui/material/Typography';
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
-import {RouterLink} from 'src/components/router-link';
+import {tokens} from "/src/locales/tokens";
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
-import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
+import {RouterLink} from 'src/components/router-link';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {tokens} from "/src/locales/tokens";
-import {ListSearch} from "../../../sections/app/conceptual-mapping-rule/list-search";
-import {ListTable} from "../../../sections/app/conceptual-mapping-rule/list-table";
+import {ListSearch} from "src/sections/app/conceptual-mapping-rule/list-search";
+import {ListTable} from "src/sections/app/conceptual-mapping-rule/list-table";
+import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -129,7 +129,7 @@ const Page = () => {
                 >
                     <Stack spacing={1}>
                         <Typography variant="h4">
-                            {sectionApi.SECTION_TITLE}
+                            Overview {sectionApi.SECTION_TITLE}
                         </Typography>
                         <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
                             <Link
@@ -140,19 +140,11 @@ const Page = () => {
                             >
                                 App
                             </Link>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.app[sectionApi.section].index}
-                                variant="subtitle2"
-                            >
-                                {sectionApi.SECTION_TITLE}
-                            </Link>
                             <Typography
                                 color="text.secondary"
                                 variant="subtitle2"
                             >
-                                List
+                                Overview {sectionApi.SECTION_TITLE}
                             </Typography>
                         </Breadcrumbs>
                     </Stack>
@@ -163,7 +155,7 @@ const Page = () => {
                     >
                         <Button
                             component={RouterLink}
-                            href={paths.app[sectionApi.section].create}
+                            href={paths.app[sectionApi.section].overview.create}
                             id="add-mapping-rules-button"
                             startIcon={(
                                 <SvgIcon>

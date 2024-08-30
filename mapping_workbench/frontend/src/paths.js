@@ -126,7 +126,6 @@ export const paths = {
         },
         conceptual_mapping_rules: {
             index: '/app/conceptual-mapping-rules',
-            create: '/app/conceptual-mapping-rules/create',
             edit: '/app/conceptual-mapping-rules/[id]/edit',
             view: '/app/conceptual-mapping-rules/[id]/view',
             tasks: {
@@ -137,6 +136,13 @@ export const paths = {
             },
             review: {
                 index: '/app/conceptual-mapping-rules/review'
+            },
+            overview: {
+                index: '/app/conceptual-mapping-rules/overview',
+                create: '/app/conceptual-mapping-rules/overview/create',
+            },
+            groups: {
+                index: '/app/conceptual-mapping-rules/groups'
             }
         },
 

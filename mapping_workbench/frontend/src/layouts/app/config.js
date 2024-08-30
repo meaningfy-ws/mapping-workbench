@@ -7,7 +7,6 @@ import BiotechIcon from '@mui/icons-material/Biotech';
 import HubIcon from '@mui/icons-material/Hub';
 import ContentCutIcon from '@mui/icons-material/ContentCut';
 import HiveIcon from '@mui/icons-material/Hive';
-import MapIcon from '@mui/icons-material/Map';
 import SchemaIcon from '@mui/icons-material/Schema';
 import TaskIcon from '@mui/icons-material/TaskAlt';
 import TopicIcon from '@mui/icons-material/Topic';
@@ -160,7 +159,7 @@ export const useSections = () => {
                             },
                             {
                                 title: t(tokens.nav.content_cm),
-                                path: paths.app.conceptual_mapping_rules.index,
+                                path: paths.app.conceptual_mapping_rules.overview.index,
                                 icon: (
                                     <SvgIcon fontSize="small">
                                         <ReviewsIcon/>
@@ -169,7 +168,7 @@ export const useSections = () => {
                             },
                             {
                                 title: t(tokens.nav.detailed_view_cm),
-                                path: paths.app.detailed_view_cm.index,
+                                path: paths.app.conceptual_mapping_rules.groups.index,
                                 icon: (
                                     <SvgIcon fontSize="small">
                                         <SpeakerNotesIcon/>
