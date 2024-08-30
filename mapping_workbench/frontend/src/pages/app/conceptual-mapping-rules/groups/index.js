@@ -153,10 +153,7 @@ export const Page = () => {
 
     const getItems = () => {
         sectionApi.getItems({})
-            .then(res => {
-                console.log(res)
-                setItemsStore(res)
-            })
+            .then(res => setItemsStore(res))
     }
 
     const itemsSearch = useItemsSearch(itemsStore.items);

@@ -1,29 +1,23 @@
-import {useCallback, useState} from 'react';
 import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Container from '@mui/material/Container';
-import Divider from '@mui/material/Divider';
-import Grid from '@mui/material/Unstable_Grid2';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
-import {specificTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/specific';
+import {tripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments';
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
-import {useRouter} from "src/hooks/use-router";
+import {ForItemEditForm} from "src/contexts/app/section/for-item-form";
 import {useItem} from "src/contexts/app/section/for-item-data-state";
+import {useRouter} from "src/hooks/use-router";
+import {EditForm} from "../../../../sections/app/triple-map-fragment/edit-form";
 
-const tabs = [
-    {label: 'Details', value: 'details'}
-];
 
 const Page = () => {
     const router = useRouter();
@@ -39,11 +33,6 @@ const Page = () => {
     const item = formState.item;
 
     usePageView();
-    const [currentTab, setCurrentTab] = useState('details');
-
-    const handleTabsChange = useCallback((event, value) => {
-        setCurrentTab(value);
-    }, []);
 
     if (!item) {
         return;
@@ -51,7 +40,7 @@ const Page = () => {
 
     return (
         <>
-            <Seo title={`App: ${sectionApi.SECTION_ITEM_TITLE} View`}/>
+            <Seo title={`App: ${sectionApi.SECTION_ITEM_TITLE} Edit`}/>
             <Stack spacing={4}>
                 <Stack spacing={4}>
                     <div>
@@ -89,7 +78,7 @@ const Page = () => {
                         >
                             <Stack spacing={1}>
                                 <Typography variant="h4">
-                                    {item.title}
+                                    {item.triple_map_uri}
                                 </Typography>
                                 <Stack
                                     alignItems="center"
@@ -104,45 +93,11 @@ const Page = () => {
                             </Stack>
                         </Stack>
                     </Stack>
-                    <div>
-                        <Tabs
-                            indicatorColor="primary"
-                            onChange={handleTabsChange}
-                            scrollButtons="auto"
-                            sx={{mt: 3}}
-                            textColor="primary"
-                            value={currentTab}
-                            variant="scrollable"
-                        >
-                            {tabs.map((tab) => (
-                                <Tab
-                                    key={tab.value}
-                                    label={tab.label}
-                                    value={tab.value}
-                                />
-                            ))}
-                        </Tabs>
-                        <Divider/>
-                    </div>
                 </Stack>
-                {currentTab === 'details' && (
-                    <div>
-                        <Grid
-                            container
-                            spacing={4}
-                        >
-                            <Grid
-                                xs={12}
-                                lg={12}
-                            >
-
-                            </Grid>
-                        </Grid>
-                    </div>
-                )}
+                <EditForm itemctx={new ForItemEditForm(item, sectionApi, formState.setState)}/>
             </Stack>
         </>
-    )
+    );
 };
 
 Page.getLayout = (page) => (

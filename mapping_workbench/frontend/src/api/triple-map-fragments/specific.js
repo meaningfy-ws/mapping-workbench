@@ -3,11 +3,11 @@ import {appApi} from "../app";
 
 class SpecificTripleMapFragmentsApi extends TripleMapFragmentsApi {
     get SECTION_TITLE() {
-        return "Specific Triple Map Fragments";
+        return "Triple Map Fragments";
     }
 
     get SECTION_ITEM_TITLE() {
-        return "Specific Triple Map Fragment";
+        return "Triple Map Fragment";
     }
 
     constructor() {

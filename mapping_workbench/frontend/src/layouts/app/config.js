@@ -200,7 +200,7 @@ export const useSections = () => {
                         },
                         {
                             title: t(tokens.nav.triple_map_fragments),
-                            path: paths.app.generic_triple_map_fragments.index,
+                            path: paths.app.triple_map_fragments.index,
                             icon: (
                                 <SvgIcon fontSize='small'>
                                     <HiveIcon/>
