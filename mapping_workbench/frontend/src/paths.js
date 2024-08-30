@@ -161,10 +161,10 @@ export const paths = {
         },
 
         specific_triple_map_fragments: {
-            index: '/app/specific-triple-map-fragments',
-            create: '/app/specific-triple-map-fragments/create',
-            edit: '/app/specific-triple-map-fragments/[id]/edit',
-            view: '/app/specific-triple-map-fragments/[id]/view'
+            index: '/app/triple-map-fragments',
+            create: '/app/triple-map-fragments/create',
+            edit: '/app/triple-map-fragments/[id]/edit',
+            view: '/app/triple-map-fragments/[id]/view'
         },
 
         users: {

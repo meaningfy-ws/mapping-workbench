@@ -143,7 +143,7 @@ const Page = () => {
                         <Button
                             id="add_button"
                             component={RouterLink}
-                            href={paths.app[sectionApi.section].create}
+                            href={paths.app.triple_map_fragments.create}
                             startIcon={(
                                 <SvgIcon>
                                     <PlusIcon/>
