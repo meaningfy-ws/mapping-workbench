@@ -1,4 +1,4 @@
-import {SectionApi} from "../section";
+import {ACTION, SectionApi} from "../section";
 import {appApi} from "../app";
 import {shaclTestSuitesApi} from "../shacl-test-suites";
 import {sparqlTestSuitesApi} from "../sparql-test-suites";
@@ -17,6 +17,10 @@ class MappingPackagesApi extends SectionApi {
 
     get SECTION_ITEM_TITLE() {
         return "Mapping Package";
+    }
+
+    get SECTION_LIST_ACTIONS() {
+        return [ACTION.VIEW, ACTION.EDIT];
     }
 
     constructor() {
@@ -84,6 +88,11 @@ class MappingPackagesApi extends SectionApi {
         } catch (err) {
 
         }
+    }
+
+    async deleteMappingPackageWithCleanup(id, cleanup_project = false) {
+        let endpoint = this.paths['item'].replace(':id', id);
+        return await appApi.delete(endpoint, {cleanup_project: cleanup_project});
     }
 }
 

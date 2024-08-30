@@ -5,9 +5,10 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Alert from "@mui/material/Alert";
 import Divider from "@mui/material/Divider";
+import {Box} from "@mui/system";
 
 const ConfirmDialog = (props) => {
-    const {title, children, open, setOpen, onConfirm} = props;
+    const {title, children, open, setOpen, onConfirm, footer} = props;
     return (
         <Dialog
             open={open}
@@ -16,7 +17,10 @@ const ConfirmDialog = (props) => {
         >
             <DialogTitle id="confirm-dialog">{title}</DialogTitle>
             <Divider/>
-            <DialogContent><Alert severity="warning">{children}</Alert></DialogContent>
+            <DialogContent>
+                <Alert severity="warning">{children}</Alert>
+                {footer}
+            </DialogContent>
             <Divider/>
             <DialogActions>
                 <Button

@@ -222,7 +222,8 @@ export const paths = {
 export const apiPaths = {
     projects: {
         items: '/projects',
-        item: '/projects/:id'
+        item: '/projects/:id',
+        cleanup: '/projects/:id/cleanup'
     },
     test_data_suites: {
         items: '/test_data_suites',
