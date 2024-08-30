@@ -14,6 +14,16 @@ import TopicIcon from '@mui/icons-material/Topic';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import NewspaperIcon from '@mui/icons-material/Newspaper';
 import TocIcon from '@mui/icons-material/Toc';
+import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications';
+import ApiIcon from '@mui/icons-material/Api';
+import LightbulbCircleIcon from '@mui/icons-material/LightbulbCircle';
+import DvrIcon from '@mui/icons-material/Dvr';
+import VerifiedIcon from '@mui/icons-material/Verified';
+import ArchiveIcon from '@mui/icons-material/Archive';
+import AnnouncementIcon from '@mui/icons-material/Announcement';
+import RateReviewIcon from '@mui/icons-material/RateReview';
+import ReviewsIcon from '@mui/icons-material/Reviews';
+import SpeakerNotesIcon from '@mui/icons-material/SpeakerNotes';
 
 import HomeSmileIcon from 'src/icons/ui/duocolor/home-smile';
 import {tokens} from 'src/locales/tokens';
@@ -41,6 +51,11 @@ export const useSections = () => {
                 items: [
                     {
                         title: t(tokens.nav.project_setup),
+                        icon: (
+                            <SvgIcon fontSize="small">
+                                <SettingsApplicationsIcon/>
+                            </SvgIcon>
+                        ),
                         items: [
                             {
                                 title: t(tokens.nav.ontology_files),
@@ -68,6 +83,11 @@ export const useSections = () => {
             items: [
                 {
                     title: t(tokens.nav.mapping_entities),
+                    icon: (
+                        <SvgIcon fontSize="small">
+                            <                    ApiIcon/>
+                        </SvgIcon>
+                    ),
                     items: [
                         {
                             title: t(tokens.nav.ontology),
@@ -114,13 +134,18 @@ export const useSections = () => {
                 items: [
                     {
                         title: t(tokens.nav.conceptual_mappings),
+                        icon: (
+                            <SvgIcon fontSize="small">
+                                <LightbulbCircleIcon/>
+                            </SvgIcon>
+                        ),
                         items: [
                             {
                                 title: t(tokens.nav.develop_cm),
                                 path: paths.app.conceptual_mapping_rules.develop.index,
                                 icon: (
                                     <SvgIcon fontSize="small">
-                                        <MapIcon/>
+                                        <AnnouncementIcon/>
                                     </SvgIcon>
                                 )
                             },
@@ -129,7 +154,7 @@ export const useSections = () => {
                                 path: paths.app.conceptual_mapping_rules.review.index,
                                 icon: (
                                     <SvgIcon fontSize="small">
-                                        <MapIcon/>
+                                        <RateReviewIcon/>
                                     </SvgIcon>
                                 )
                             },
@@ -138,13 +163,18 @@ export const useSections = () => {
                                 path: paths.app.conceptual_mapping_rules.index,
                                 icon: (
                                     <SvgIcon fontSize="small">
-                                        <MapIcon/>
+                                        <ReviewsIcon/>
                                     </SvgIcon>
                                 )
                             },
                             {
                                 title: t(tokens.nav.detailed_view_cm),
-                                path: paths.app.detailed_view_cm.index
+                                path: paths.app.detailed_view_cm.index,
+                                icon: (
+                                    <SvgIcon fontSize="small">
+                                        <SpeakerNotesIcon/>
+                                    </SvgIcon>
+                                )
                             }
                         ]
                     }]
@@ -154,6 +184,11 @@ export const useSections = () => {
             items: [
                 {
                     title: t(tokens.nav.technical_mappings),
+                    icon: (
+                        <SvgIcon fontSize="small">
+                            <DvrIcon/>
+                        </SvgIcon>
+                    ),
                     items: [
                         {
                             title: t(tokens.nav.value_mapping_resources),
@@ -180,6 +215,11 @@ export const useSections = () => {
             items: [
                 {
                     title: t(tokens.nav.quality_control),
+                    icon: (
+                        <SvgIcon fontSize='small'>
+                            <VerifiedIcon/>
+                        </SvgIcon>
+                    ),
                     items: [
                         {
                             title: t(tokens.nav.sparql_test_suites),
@@ -206,6 +246,11 @@ export const useSections = () => {
         mappingPackages: [{
             items: [
                 {
+                    icon: (
+                        <SvgIcon fontSize="small">
+                            <ArchiveIcon/>
+                        </SvgIcon>
+                    ),
                     title: t(tokens.nav.mapping_packages),
                     path: paths.app.mapping_packages.index
                 },
