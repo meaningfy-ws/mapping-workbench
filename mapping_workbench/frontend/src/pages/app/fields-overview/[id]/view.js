@@ -13,7 +13,7 @@ import Typography from '@mui/material/Typography';
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
 import {Layout as AppLayout} from 'src/layouts/app';
-import {schemaApi as sectionApi} from 'src/api/schema';
+import {fieldsOverviewApi as sectionApi} from 'src/api/fields-overview';
 import {BasicDetails} from 'src/sections/app/fields-registry/basic-details';
 import {RouterLink} from 'src/components/router-link';
 import {usePageView} from 'src/hooks/use-page-view';

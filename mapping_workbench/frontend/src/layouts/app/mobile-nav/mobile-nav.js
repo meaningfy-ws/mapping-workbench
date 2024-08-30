@@ -114,8 +114,6 @@ export const MobileNav = (props) => {
 
     const {overview, ...menus} = sections
 
-    console.log(overview, menus)
-
     return (
         <Drawer
             anchor="left"

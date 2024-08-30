@@ -65,15 +65,22 @@ export const paths = {
             create: '/app/ontology/create',
             edit: '/app/ontology/[id]/edit',
         },
-        schema: {
-            index: '/app/schema',
-            import: '/app/schema/import',
-            elements: {
-                view: (id) => `/app/schema/${id}/view`,
-            }
-        },
+        // schema: {
+        //     index: '/app/schema',
+        //     import: '/app/schema/import',
+        //     elements: {
+        //         view: (id) => `/app/schema/${id}/view`,
+        //     }
+        // },
         schema_files: {
             index: '/app/schema-files'
+        },
+        fields_overview: {
+            index: '/app/fields-overview',
+            import: '/app/fields-overview/import',
+            elements: {
+                view: (id) => `/app/fields-overview/${id}/view`,
+            }
         },
         ontology_files: {
             index: '/app/ontology-files'
@@ -361,7 +368,7 @@ export const apiPaths = {
         element: '/fields_registry/elements/:id',
     },
 
-    schema: {
+    fields_overview: {
         items: '/fields_registry',
         item: '/fields_registry/:id',
         import_eforms_from_github: '/fields_registry/tasks/import_eforms_from_github',

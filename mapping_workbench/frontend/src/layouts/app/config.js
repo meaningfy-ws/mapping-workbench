@@ -118,7 +118,7 @@ export const useSections = () => {
                         },
                         {
                             title: t(tokens.nav.fields_overview),
-                            path: paths.app.schema.index,
+                            path: paths.app.fields_overview.index,
                             icon: (
                                 <SvgIcon fontSize="small">
                                     <MenuOpenIcon/>

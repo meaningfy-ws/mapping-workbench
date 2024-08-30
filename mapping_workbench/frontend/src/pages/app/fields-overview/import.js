@@ -15,7 +15,7 @@ import {sessionApi} from "src/api/session";
 import {Layout as AppLayout} from 'src/layouts/app';
 import {usePageView} from 'src/hooks/use-page-view';
 import {FormTextField} from "src/components/app/form/text-field";
-import {schemaApi as sectionApi} from 'src/api/schema';
+import {fieldsOverviewApi as sectionApi} from 'src/api/fields-overview';
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import Link from "@mui/material/Link";
 import {RouterLink} from "../../../components/router-link";
