@@ -1,5 +1,6 @@
 import {useMemo} from 'react';
 import PropTypes from 'prop-types';
+
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import Stack from '@mui/material/Stack';
@@ -14,7 +15,6 @@ import {paths} from 'src/paths';
 import {MobileNavSection} from './mobile-nav-section';
 import {ProjectSwitch} from "../project-switch";
 import {useProjects} from "../../../hooks/use-projects";
-import {SideNavSection} from "../vertical-layout/side-nav-section";
 
 const MOBILE_NAV_WIDTH = 280;
 
@@ -112,6 +112,10 @@ export const MobileNav = (props) => {
     const cssVars = useCssVars(color);
     const projects = useProjects()
 
+    const {overview, ...menus} = sections
+
+    console.log(overview, menus)
+
     return (
         <Drawer
             anchor="left"
@@ -181,7 +185,7 @@ export const MobileNav = (props) => {
                             }}>
                             <ProjectSwitch/>
                         </Stack>
-                        {sections.overview.map((section, index) => (
+                        {overview.map((section, index) => (
                             <MobileNavSection
                                 items={section.items}
                                 key={index}
@@ -189,62 +193,14 @@ export const MobileNav = (props) => {
                                 subheader={section.subheader}
                             />
                         ))}
-                        {projects.sessionProject && sections.projectSetup.map((section, index) => (
+                        {projects.sessionProject && Object.values(menus).map(menu => menu.map((section, index) => (
                             <MobileNavSection
                                 items={section.items}
                                 key={index}
                                 pathname={pathname}
                                 subheader={section.subheader}
                             />
-                        ))}
-                        {projects.sessionProject && sections.mappingEntities.map((section, index) => (
-                            <MobileNavSection
-                                items={section.items}
-                                key={index}
-                                pathname={pathname}
-                                subheader={section.subheader}
-                            />
-                        ))}
-                        {projects.sessionProject && sections.conceptualMappings.map((section, index) => (
-                            <SideNavSection
-                                items={section.items}
-                                key={index}
-                                pathname={pathname}
-                                subheader={section.subheader}
-                            />
-                        ))}
-                        {projects.sessionProject && sections.technicalMappings.map((section, index) => (
-                            <SideNavSection
-                                items={section.items}
-                                key={index}
-                                pathname={pathname}
-                                subheader={section.subheader}
-                            />
-                        ))}
-                        {projects.sessionProject && sections.qualityControl.map((section, index) => (
-                            <SideNavSection
-                                items={section.items}
-                                key={index}
-                                pathname={pathname}
-                                subheader={section.subheader}
-                            />
-                        ))}
-                            {projects.sessionProject && sections.mappingPackages.map((section, index) => (
-                            <SideNavSection
-                                items={section.items}
-                                key={index}
-                                pathname={pathname}
-                                subheader={section.subheader}
-                            />
-                        ))}
-                            {projects.sessionProject && sections.activities.map((section, index) => (
-                            <SideNavSection
-                                items={section.items}
-                                key={index}
-                                pathname={pathname}
-                                subheader={section.subheader}
-                            />
-                        ))}
+                        )))}
 
                     </Stack>
                 </Stack>

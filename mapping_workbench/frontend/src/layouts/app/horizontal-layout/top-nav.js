@@ -1,11 +1,11 @@
 import {useMemo} from 'react';
 import PropTypes from 'prop-types';
+
 import Menu01Icon from '@untitled-ui/icons-react/build/esm/Menu01';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import {useTheme} from '@mui/material/styles';
 
 import {Logo} from 'src/components/logo';
@@ -22,7 +22,7 @@ import {TopNavSection} from './top-nav-section';
 import {ProjectSwitch} from "../project-switch";
 import {useProjects} from "../../../hooks/use-projects";
 import TimeSwitch from "../time-switch/time-switch";
-import {SideNavSection} from "../vertical-layout/side-nav-section";
+import {MobileNavSection} from "../mobile-nav/mobile-nav-section";
 
 const useCssVars = (color) => {
     const theme = useTheme();
@@ -160,6 +160,8 @@ export const TopNav = (props) => {
         const cssVars = useCssVars(color);
         const projects = useProjects()
 
+        const {overview, ...menus} = sections
+
         return (
             <Box
                 component="header"
@@ -264,7 +266,7 @@ export const TopNav = (props) => {
                                 >
                                     <ProjectSwitch/>
                                 </Stack>
-                                {sections.overview.map((section, index) => (
+                                {overview.map((section, index) => (
                                     <TopNavSection
                                         items={section.items}
                                         key={index}
@@ -273,64 +275,14 @@ export const TopNav = (props) => {
                                     />
                                 ))}
 
-                                {projects.sessionProject && sections.projectSetup.map((section, index) => (
-                                    <TopNavSection
+                                {projects.sessionProject && Object.values(menus).map(menu => menu.map((section, index) => (
+                                    <MobileNavSection
                                         items={section.items}
                                         key={index}
                                         pathname={pathname}
                                         subheader={section.subheader}
                                     />
-                                ))}
-
-                                {projects.sessionProject && sections.mappingEntities.map((section, index) => (
-                                    <TopNavSection
-                                        items={section.items}
-                                        key={index}
-                                        pathname={pathname}
-                                        subheader={section.subheader}
-                                    />
-                                ))}
-                                {projects.sessionProject && sections.conceptualMappings.map((section, index) => (
-                                    <TopNavSection
-                                        items={section.items}
-                                        key={index}
-                                        pathname={pathname}
-                                        subheader={section.subheader}
-                                    />
-                                ))}
-                                {projects.sessionProject && sections.technicalMappings.map((section, index) => (
-                                    <TopNavSection
-                                        items={section.items}
-                                        key={index}
-                                        pathname={pathname}
-                                        subheader={section.subheader}
-                                    />
-                                ))}
-                                {projects.sessionProject && sections.qualityControl.map((section, index) => (
-                                    <TopNavSection
-                                        items={section.items}
-                                        key={index}
-                                        pathname={pathname}
-                                        subheader={section.subheader}
-                                    />
-                                ))}
-                                {projects.sessionProject && sections.mappingPackages.map((section, index) => (
-                                    <TopNavSection
-                                        items={section.items}
-                                        key={index}
-                                        pathname={pathname}
-                                        subheader={section.subheader}
-                                    />
-                                ))}
-
-                                {projects.sessionProject && sections.activities.map((section, index) => (
-                                    <TopNavSection
-                                        items={section.items}
-                                        key={index}
-                                        pathname={pathname}
-                                        subheader={section.subheader}
-                                    />
-                                ))}
+                                )))}
                             </Stack>
                         </Scrollbar>
                     </Box>
