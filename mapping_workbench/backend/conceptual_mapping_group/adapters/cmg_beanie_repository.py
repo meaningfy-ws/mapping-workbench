@@ -53,8 +53,9 @@ class CMGBeanieRepository(IRepository):
         cm_group = await ConceptualMappingGroupBeanie.find_one(
             ConceptualMappingGroupBeanie.project == project_link,
             # ConceptualMappingGroupBeanie.instance_type == cm_group.instance_type,
-            # ConceptualMappingGroupBeanie.group_name == cm_group.group_name,
-            ConceptualMappingGroupBeanie.cm_rule == cm_group.cm_rule)
+            ConceptualMappingGroupBeanie.group_name == cm_group.group_name,
+            # ConceptualMappingGroupBeanie.cm_rule == cm_group.cm_rule
+        )
 
         return cm_group
 
@@ -62,7 +63,7 @@ class CMGBeanieRepository(IRepository):
                      project_id: PydanticObjectId,
                      cm_group: ConceptualMappingGroup) -> None:
         if await self.get(project_id, cm_group):
-            raise CMGBeanieRepositoryException(f"CM Group already exist")
+            raise CMGBeanieRepositoryException(f"CM Group already exist. This means that CM Rule also could exist.")
 
         project_link = await get_project_link(project_id)
         cmg_beanie = ConceptualMappingGroupBeanie(

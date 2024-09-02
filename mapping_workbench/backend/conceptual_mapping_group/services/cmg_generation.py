@@ -45,7 +45,7 @@ async def create_cm_group_from_cm_rule(cm_rule: ConceptualMappingRule,
 
     try:
         await cm_group_repo.create(project_id=project_id, cm_group=cm_group)
-    except CMGBeanieRepositoryException:
-        pass
+    except CMGBeanieRepositoryException as e:
+        raise CMGroupServiceException(str(e))
     except Exception as e:
         raise CMGroupServiceException(str(e))

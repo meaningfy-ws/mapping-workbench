@@ -3,6 +3,9 @@ from typing import List, Annotated
 from beanie import PydanticObjectId
 from fastapi import APIRouter, Depends, status, Query, HTTPException
 
+from mapping_workbench.backend.conceptual_mapping_group.adapters.cmg_beanie_repository import \
+    CMGBeanieRepositoryException
+from mapping_workbench.backend.conceptual_mapping_group.services.cmg_generation import CMGroupServiceException
 from mapping_workbench.backend.conceptual_mapping_rule.adapters.cm_rule_beanie_repository import CMRuleNotFoundException
 from mapping_workbench.backend.conceptual_mapping_rule.models.api_request import \
     APIRequestForGenerateCMAssertionsQueries
@@ -93,8 +96,10 @@ async def route_create_conceptual_mapping_rule(
         data: ConceptualMappingRuleCreateIn,
         user: User = Depends(current_active_user)
 ):
-    return await create_conceptual_mapping_rule(data, user=user)
-
+    try:
+        return await create_conceptual_mapping_rule(data, user=user)
+    except (CMGBeanieRepositoryException, CMGroupServiceException,) as expected_exception:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(expected_exception))
 
 @router.patch(
     "/{id}",
