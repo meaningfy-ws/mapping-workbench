@@ -7,7 +7,7 @@ const projectDescription = 'some description'
 Given('Session Login', () => {
     // Caching session when logging in via page visit
     cy.session([username,password], () => {
-        cy.visit('localhost:3000')
+        cy.visit(homeURL)
         cy.get('[name=username]').clear().type(username)
         cy.get('[name=password]').clear().type(password)
         cy.get('button[type="submit"]').click()
@@ -42,7 +42,7 @@ Then('I uncheck checkboxes', () => {
 })
 
 When('I click create button', () => {
-    cy.intercept('POST', appURLPrefix + 'projects',).as('create')
+    cy.intercept('POST', appURLPrefix + 'projects').as('create')
     cy.get('#create_button').click()
 })
 
