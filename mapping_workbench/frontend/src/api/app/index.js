@@ -156,8 +156,8 @@ class AppApi {
         return this.patch(endpoint, data, headers);
     }
 
-    async delete(endpoint) {
-        return this.request(METHOD.DELETE, endpoint);
+    async delete(endpoint, data = null) {
+        return this.request(METHOD.DELETE, endpoint, data);
     }
 
     async verifyAuthToken() {

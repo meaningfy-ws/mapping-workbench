@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, status
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageOut, MappingPackageCreateIn, \
     MappingPackageUpdateIn, MappingPackage, MappingPackageStateGate
+from mapping_workbench.backend.mapping_package.models.entity_api_request import APIDeleteMappingPackageRequest
 from mapping_workbench.backend.mapping_package.models.entity_api_response import \
     APIListMappingPackagesPaginatedResponse, APIListMappingPackageStatesPaginatedResponse
 from mapping_workbench.backend.mapping_package.services.api import (
@@ -18,6 +19,7 @@ from mapping_workbench.backend.mapping_package.services.data import get_latest_m
     DEFAULT_PACKAGE_NAME, DEFAULT_PACKAGE_IDENTIFIER
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.project.services.api import get_project
+from mapping_workbench.backend.project.services.tasks import add_task_remove_project_orphan_shareable_resources
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.user.models.user import User
 
@@ -86,7 +88,7 @@ async def route_create_default_mapping_package(
 
     package_epo_version = (project.target_ontology and project.target_ontology.version) or ""
     package_eforms_sdk_versions = [project.source_schema.version] if (
-                project.source_schema and project.source_schema.version
+            project.source_schema and project.source_schema.version
     ) else []
 
     data: MappingPackageCreateIn = MappingPackageCreateIn(
@@ -134,9 +136,13 @@ async def route_get_mapping_package(mapping_package: MappingPackageOut = Depends
 )
 async def route_delete_mapping_package(
         mapping_package: MappingPackage = Depends(get_mapping_package),
-        with_resources: bool = True
+        data: APIDeleteMappingPackageRequest = None,
+        user: User = Depends(current_active_user)
 ):
-    await delete_mapping_package(mapping_package, with_resources=with_resources)
+    await delete_mapping_package(mapping_package=mapping_package)
+    if data and data.cleanup_project:
+        add_task_remove_project_orphan_shareable_resources(mapping_package.project.to_ref().id, user.email)
+
     return APIEmptyContentWithIdResponse(id=mapping_package.id)
 
 
