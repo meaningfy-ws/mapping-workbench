@@ -1,17 +1,18 @@
 from typing import List, Dict
 
 import pymongo
-from beanie import PydanticObjectId
+from beanie import PydanticObjectId, Link
+from pymongo.errors import DuplicateKeyError
 
-from mapping_workbench.backend.conceptual_mapping_group.services.cmg_generation import create_cm_group_from_cm_rule, \
-    delete_cm_group_by_cm_rule, CMGroupServiceException
+from mapping_workbench.backend.conceptual_mapping_group.services.cmg_generation import create_cm_group_from_cm_rule
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule, \
     ConceptualMappingRuleCreateIn, ConceptualMappingRuleUpdateIn, ConceptualMappingRuleOut, \
     ConceptualMappingRuleTermsValidity
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
-from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
+from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException, DuplicateKeyException
 from mapping_workbench.backend.core.services.request import request_update_data, request_create_data, \
     api_entity_is_found, pagination_params, prepare_search_param
+from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.ontology.services.terms import check_content_terms_validity
 from mapping_workbench.backend.user.models.user import User
 
@@ -59,10 +60,8 @@ async def create_conceptual_mapping_rule(data: ConceptualMappingRuleCreateIn,
     try:
         conceptual_mapping_rule = await conceptual_mapping_rule.create()
         await create_cm_group_from_cm_rule(conceptual_mapping_rule)
-    except CMGroupServiceException as e:
-        # Rollback
-        await conceptual_mapping_rule.delete()
-        raise CMGroupServiceException(e)
+    except DuplicateKeyError as e:
+        raise DuplicateKeyException(e)
 
     return ConceptualMappingRuleOut(**conceptual_mapping_rule.model_dump())
 
@@ -101,7 +100,6 @@ async def get_conceptual_mapping_rule_out(id: PydanticObjectId) -> ConceptualMap
 
 
 async def delete_conceptual_mapping_rule(conceptual_mapping_rule: ConceptualMappingRule):
-    await delete_cm_group_by_cm_rule(cm_rule=conceptual_mapping_rule)
     return await conceptual_mapping_rule.delete()
 
 
@@ -157,6 +155,8 @@ async def validate_and_save_rules_terms(query_filters: Dict = None):
 
 async def assign_mapping_package_to_cm_rule(cm_rule: ConceptualMappingRule,
                                             mp_ids: List[PydanticObjectId]) -> ConceptualMappingRuleOut:
+
+
     if not cm_rule.refers_to_mapping_package_ids:
         cm_rule.refers_to_mapping_package_ids = list(set(mp_ids))
     else:
