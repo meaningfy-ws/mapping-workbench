@@ -25,7 +25,7 @@ export class MappingPackageStatesApi extends SectionApi {
         return Promise.resolve(data);
     }
 
-    async deleteState(sid) {
+    async deleteItem(sid) {
         const endpoint = this.paths['state'].replace(':id', sid);
         const data = await appApi.delete(endpoint);
         return Promise.resolve(data);

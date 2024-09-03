@@ -25,3 +25,7 @@ install-prod-frontend:
 	@ echo "Installing PROD FRONTEND"
 	@ npm install
 #	@ npm install && npm install -g serve && npm run build && rm -fr node_modules
+
+test-e2e:
+	@ npm install
+	@ npm run test-e2e

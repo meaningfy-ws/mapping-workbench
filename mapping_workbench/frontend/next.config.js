@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
+require('dotenv').config();
+
 const path = require('path')
 
 const config = {
@@ -11,8 +13,8 @@ const config = {
     return config;
   },
   env: {
-    API_ADDRESS: process.env.API_ADDRESS,
-    API_BASE_URL: process.env.API_BASE_URL
+    MW_BACKEND_ADDRESS: process.env.MW_BACKEND_ADDRESS,
+    MW_BACKEND_BASE_URL: process.env.MW_BACKEND_BASE_URL
   },
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')],

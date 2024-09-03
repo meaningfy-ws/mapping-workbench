@@ -69,7 +69,7 @@ class EFormsPackageImporter(PackageImporterABC):
 
             # A conceptual mapping rule may have same structural element but different Ontology Fragment
             rule: ConceptualMappingRule = await ConceptualMappingRule.find_one(
-                ConceptualMappingRule.source_structural_element == source_structural_element,
+                ConceptualMappingRule.source_structural_element == StructuralElement.link_from_id(source_structural_element.id),
                 ConceptualMappingRule.project == Project.link_from_id(self.project.id),
                 ConceptualMappingRule.target_class_path == mono_rule.class_path,
                 ConceptualMappingRule.target_property_path == mono_rule.property_path

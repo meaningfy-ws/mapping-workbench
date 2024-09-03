@@ -13,6 +13,7 @@ from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResource, SPARQLTestSuite, \
     SPARQLQueryValidationType
 from mapping_workbench.backend.sparql_test_suite.services.api import get_sparql_test_suite_by_project_and_title
+from mapping_workbench.backend.sparql_test_suite.services.data import SPARQL_CM_ASSERTIONS_SUITE_TITLE
 from mapping_workbench.backend.user.models.user import User
 
 DEFAULT_RQ_NAME = 'cm_assertion_'
@@ -21,9 +22,6 @@ SPARQL_PREFIX_PATTERN = re.compile('(?:\\s+|^)([\\w\\-]+)?:')
 SPARQL_PREFIX_LINE = 'PREFIX {prefix}: <{value}>'
 
 SPARQL_XPATH_SEPARATOR = " ;; "
-
-SPARQL_CM_ASSERTIONS_SUITE_TITLE = "cm_assertions"
-SPARQL_INTEGRATION_TESTS_SUITE_TITLE = "integration_tests"
 
 
 def get_sparql_prefixes(sparql_q: str) -> list:

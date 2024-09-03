@@ -64,25 +64,26 @@ const useItemsSearch = () => {
 const useItemsStore = (searchState) => {
     const [state, setState] = useState({
         items: [],
-        itemsCount: 0
+        itemsCount: 0,
+        force: 0
     });
 
-    const handleItemsGet = () => {
+    const handleItemsGet = (force = 0) => {
         sectionApi.getItems(searchState)
             .then(res => setState({
                 items: res.items,
-                itemsCount: res.count
+                itemsCount: res.count,
+                force: force
             }))
             .catch(err => console.warn(err))
     }
 
     useEffect(() => {
-            handleItemsGet();
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState]);
+        handleItemsGet();
+    }, [searchState]);
 
     return {
+        handleItemsGet,
         ...state
     };
 };
@@ -92,6 +93,10 @@ const Page = () => {
     const itemsStore = useItemsStore(itemsSearch.state);
 
     usePageView();
+
+    const selectable = (item) => {
+        return item.title !== sectionApi.CM_ASSERTIONS_SUITE_TITLE
+    }
 
     return (
         <>
@@ -115,19 +120,11 @@ const Page = () => {
                             >
                                 App
                             </Link>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.app[sectionApi.section].index}
-                                variant="subtitle2"
-                            >
-                                {sectionApi.SECTION_TITLE}
-                            </Link>
                             <Typography
                                 color="text.secondary"
                                 variant="subtitle2"
                             >
-                                List
+                                {sectionApi.SECTION_TITLE}
                             </Typography>
                         </Breadcrumbs>
                     </Stack>
@@ -158,9 +155,12 @@ const Page = () => {
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                         page={itemsSearch.state.page}
                         items={itemsStore.items}
+                        itemsForced={itemsStore.force}
                         count={itemsStore.itemsCount}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
+                        getItems={itemsStore.handleItemsGet}
+                        selectable={selectable}
                     />
                 </Card>
             </Stack>

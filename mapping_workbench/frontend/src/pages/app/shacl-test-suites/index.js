@@ -63,15 +63,17 @@ const useItemsSearch = () => {
 const useItemsStore = searchState => {
     const [state, setState] = useState({
         items: [],
-        itemsCount: 0
+        itemsCount: 0,
+        force: 0
     });
 
-    const handleItemsGet = () => {
+    const handleItemsGet = (force = 0) => {
         sectionApi.getItems(searchState)
             .then(res =>
                 setState({
                     items: res.items,
-                    itemsCount: res.count
+                    itemsCount: res.count,
+                    force: force
                 }))
             .catch(err => console.warn(err))
     }
@@ -83,6 +85,7 @@ const useItemsStore = searchState => {
         [searchState.state]);
 
     return {
+        handleItemsGet,
         ...state
     };
 };
@@ -115,19 +118,11 @@ const Page = () => {
                             >
                                 App
                             </Link>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.app[sectionApi.section].index}
-                                variant="subtitle2"
-                            >
-                                {sectionApi.SECTION_TITLE}
-                            </Link>
                             <Typography
                                 color="text.secondary"
                                 variant="subtitle2"
                             >
-                                List
+                                {sectionApi.SECTION_TITLE}
                             </Typography>
                         </Breadcrumbs>
                     </Stack>
@@ -158,9 +153,11 @@ const Page = () => {
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                         page={itemsSearch.state.page}
                         items={itemsStore.items}
+                        itemsForced={itemsStore.force}
                         count={itemsStore.itemsCount}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
+                        getItems={itemsStore.handleItemsGet}
                     />
                 </Card>
             </Stack>

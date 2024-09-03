@@ -142,7 +142,7 @@ const useItemsSearch = (items) => {
 
 export const Page = () => {
     const [state, setState] = useState({})
-    const [ontologyFragments,setOntologyFragments] = useState([])
+    const [ontologyFragments, setOntologyFragments] = useState([])
 
     const [itemsStore, setItemsStore] = useState({
         items: [],
@@ -165,7 +165,7 @@ export const Page = () => {
         ontologyTermsApi.getItems({rowsPerPage: -1})
             .then(res => {
                 setOntologyFragments(res.items.filter(e => ['CLASS', 'PROPERTY', 'DATA_TYPE'].includes(e.type))
-                    .map(e=>({id:e._id,title:e.short_term,type:e.type})));
+                    .map(e => ({id: e._id, title: e.short_term, type: e.type})));
             })
     }
 
@@ -209,7 +209,7 @@ export const Page = () => {
 
     return (
         <>
-            <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
+            <Seo title={`App: ${sectionApi.SECTION_TITLE}`}/>
             <Stack spacing={4}>
                 <Stack
                     direction="row"
@@ -229,19 +229,11 @@ export const Page = () => {
                             >
                                 App
                             </Link>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.app[sectionApi.section].develop.index}
-                                variant="subtitle2"
-                            >
-                                {sectionApi.SECTION_TITLE}
-                            </Link>
                             <Typography
                                 color="text.secondary"
                                 variant="subtitle2"
                             >
-                                List
+                                Develop {sectionApi.SECTION_TITLE}
                             </Typography>
                         </Breadcrumbs>
                     </Stack>

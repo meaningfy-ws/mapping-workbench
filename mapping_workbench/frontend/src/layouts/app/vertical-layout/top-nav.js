@@ -9,16 +9,15 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { AccountButton } from '../account-button';
 import { LanguageSwitch } from '../language-switch';
-import { NotificationsButton } from '../notifications-button';
-import { SearchButton } from '../search-button';
 import TimeSwitch from "../time-switch/time-switch";
 
+const BREAK_POINT = 2000;
 const TOP_NAV_HEIGHT = 64;
 const SIDE_NAV_WIDTH = 280;
 
 export const TopNav = (props) => {
     const { onMobileNavOpen, ...other } = props;
-    const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
+    const breakPointUp = useMediaQuery((theme) => theme.breakpoints.up(BREAK_POINT));
 
     return (
         <Box
@@ -27,12 +26,12 @@ export const TopNav = (props) => {
                 backdropFilter: 'blur(6px)',
                 backgroundColor: (theme) => alpha(theme.palette.background.default, 0.8),
                 position: 'sticky',
-                left: {
-                    lg: `${SIDE_NAV_WIDTH}px`
-                },
+                left:
+                    breakPointUp ? `${SIDE_NAV_WIDTH}px` : 0
+                ,
                 top: 0,
                 width: {
-                    lg: `calc(100% - ${SIDE_NAV_WIDTH}px)`
+                    xl: `calc(100% - ${SIDE_NAV_WIDTH}px)`
                 },
                 zIndex: (theme) => theme.zIndex.appBar
             }}
@@ -52,14 +51,13 @@ export const TopNav = (props) => {
                     direction="row"
                     spacing={2}
                 >
-                    {!lgUp && (
+                    {!breakPointUp && (
                         <IconButton onClick={onMobileNavOpen}>
                             <SvgIcon>
                                 <Menu01Icon />
                             </SvgIcon>
                         </IconButton>
                     )}
-                    <SearchButton />
                 </Stack>
                 <Stack
                     alignItems="center"
@@ -68,7 +66,6 @@ export const TopNav = (props) => {
                 >
                     <TimeSwitch/>
                     <LanguageSwitch />
-                    <NotificationsButton />
                     <AccountButton />
                 </Stack>
             </Stack>

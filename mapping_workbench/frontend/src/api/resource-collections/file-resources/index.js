@@ -34,7 +34,7 @@ class ResourceFilesApi extends FileResourcesApi {
     }
 
     constructor() {
-        super("resource_collections");
+        super("value_mapping_resources");
         this.isProjectResource = true;
     }
 }

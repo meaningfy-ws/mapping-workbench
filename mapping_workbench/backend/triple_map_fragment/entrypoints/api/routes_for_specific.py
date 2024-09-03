@@ -42,7 +42,7 @@ router = APIRouter(
 )
 async def route_list_specific_triple_map_fragments(
         project: PydanticObjectId = None,
-        mapping_package: PydanticObjectId = None,
+        mapping_package_id: PydanticObjectId = None,
         page: int = None,
         limit: int = None,
         q: str = None
@@ -50,8 +50,8 @@ async def route_list_specific_triple_map_fragments(
     filters: dict = {}
     if project:
         filters['project'] = Project.link_from_id(project)
-    if mapping_package is not None:
-        filters['mapping_package'] = MappingPackage.link_from_id(mapping_package)
+    if mapping_package_id is not None:
+        filters['mapping_package_id'] = mapping_package_id
     if q is not None:
         filters['q'] = q
 
@@ -90,16 +90,16 @@ async def route_update_specific_mapping_package(
 ):
     update_request: APIRequestForUpdateMany
 
-    mapping_package_ref = MappingPackage.link_from_id(request.mapping_package)
+    mapping_package_id = request.mapping_package_id
     update_request = APIRequestForUpdateMany(
-        for_query={"mapping_package": mapping_package_ref},
-        set_values={"mapping_package": None}
+        for_query={"mapping_package_id": mapping_package_id},
+        set_values={"mapping_package_id": None}
     )
     await update_specific_triple_map_fragments(update_request, user)
 
     update_request = APIRequestForUpdateMany(
         for_query={"_id": {'$in': request.triple_map_fragments}},
-        set_values={"mapping_package": mapping_package_ref}
+        set_values={"mapping_package_id": mapping_package_id}
     )
     await update_specific_triple_map_fragments(update_request, user)
 

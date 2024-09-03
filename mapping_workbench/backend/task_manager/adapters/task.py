@@ -1,3 +1,5 @@
+import re
+import unicodedata
 from datetime import datetime
 from enum import Enum
 from typing import Callable, Optional, List
@@ -109,7 +111,7 @@ class Task:
         self.task_args = args
         self.task_kwargs = kwargs
         created_at = datetime.now(tzlocal())
-        task_id = f"{task_name}_{created_at}"
+        task_id = self.generate_task_id_from_task_name(task_name, created_at)
         self.task_metadata = TaskMetadata(task_id=task_id,
                                           task_name=task_name,
                                           task_timeout=task_timeout,
@@ -117,6 +119,25 @@ class Task:
                                           created_at=created_at,
                                           created_by=created_by)
         self.future: Optional[ProcessFuture] = None
+
+    @classmethod
+    def generate_task_id_from_task_name(cls, task_name, created_at):
+        # Normalize unicode characters to their closest ASCII equivalent
+        task_id = unicodedata.normalize('NFKD', task_name).encode('ascii', 'ignore').decode('utf-8')
+
+        # Convert to lowercase
+        task_id = task_id.lower()
+
+        # Remove all non-alphanumeric characters (except for spaces)
+        task_id = re.sub(r'[^a-z0-9\s-]', '', task_id)
+
+        # Replace spaces and consecutive hyphens with a single hyphen
+        task_id = re.sub(r'[\s_-]+', '-', task_id)
+
+        # Remove leading and trailing hyphens
+        task_id = task_id.strip('-')
+
+        return f"{task_id}_{created_at}"
 
     def set_future(self, future: ProcessFuture):
         """

@@ -58,7 +58,7 @@ async def _test_package_exporter(eforms_sdk_repo_v_1_9_1_dir_path):
     assert len(mapping_package_state.sparql_test_suites) == 2
     assert len(mapping_package_state.conceptual_mapping_rules) == 540
     assert len(mapping_package_state.triple_map_fragments) == 1
-    validate_mapping_package(mapping_package_state=mapping_package_state)
+    await validate_mapping_package(mapping_package_state=mapping_package_state)
     exported_mapping_package = await export_package_state(mapping_package_state=mapping_package_state, project=project)
     assert exported_mapping_package
 

@@ -38,7 +38,6 @@ Feature: Generic Triple Maps
     Then I get redirected to generic triple maps fragments page
     Then I receive generic fragments
     Then I search for triple map
-    Then I receive generic fragments
     Then I edit triple map fragment
     Then I get redirected to edit page
     Then I enter triple fragment name
@@ -49,7 +48,6 @@ Feature: Generic Triple Maps
     Then I get redirected to generic triple maps fragments page
     Then I receive generic fragments
     Then I search for triple map
-    Then I receive generic fragments
     Then I click on delete button
     Then I get Success delete
     Then I search for triple map

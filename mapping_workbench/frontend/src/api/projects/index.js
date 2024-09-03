@@ -22,6 +22,11 @@ class ProjectsApi extends SectionApi {
             project => ({id: project._id, title: project.title})
         ).sort((a, b) => a.title.localeCompare(b.title));
     }
+
+    async cleanupProject(project_id, request = {}) {
+        let endpoint = this.paths['cleanup'].replace(':id', project_id);
+        return await appApi.post(endpoint);
+    }
 }
 
 export const projectsApi = new ProjectsApi();

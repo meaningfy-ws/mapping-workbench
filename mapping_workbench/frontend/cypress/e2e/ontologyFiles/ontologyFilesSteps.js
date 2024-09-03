@@ -23,7 +23,7 @@ Then('I get success select', () => {
 
 
 Then('I click on Ontology Files', () => {
-    cy.intercept('GET', appURLPrefix + 'ontology/ontology_files/*').as('get')
+    cy.intercept('GET', appURLPrefix + 'ontology/ontology_files*').as('get')
     cy.get('#nav_ontology_files').click()
 })
 
@@ -42,7 +42,7 @@ Then('I select file to upload', () => {
 })
 
 Then('I click on ok upload button', () => {
-    cy.intercept('POST', appURLPrefix + 'ontology/ontology_files/*').as('upload')
+    cy.intercept('POST', appURLPrefix + 'ontology/ontology_files*').as('upload')
     cy.get('#upload_button').click()
 })
 

@@ -6,11 +6,11 @@ import Typography from '@mui/material/Typography';
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
-import {Layout as AppLayout} from 'src/layouts/app';
-import {ontologyTermsApi as sectionApi} from 'src/api/ontology-terms';
 import {RouterLink} from 'src/components/router-link';
+import {ontologyNamespacesApi as sectionApi} from 'src/api/ontology-namespaces';
 import {usePageView} from 'src/hooks/use-page-view';
-import {EditForm} from 'src/sections/app/ontology-term/edit-form';
+import {Layout as AppLayout} from 'src/layouts/app';
+import {EditForm} from 'src/sections/app/ontology-namespace/edit-form';
 import {ForItemCreateForm} from "src/contexts/app/section/for-item-form";
 
 

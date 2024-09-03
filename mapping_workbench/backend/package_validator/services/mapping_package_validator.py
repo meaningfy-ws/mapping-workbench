@@ -23,7 +23,7 @@ class TaskToRun(Enum):
     VALIDATE_PACKAGE_SHACL = "validate_package_shacl"
 
 
-def validate_mapping_package(mapping_package_state: MappingPackageState, tasks_to_run: List[str] = None):
+async def validate_mapping_package(mapping_package_state: MappingPackageState, tasks_to_run: List[str] = None):
     """
     Validate the given mapping package state.
 
@@ -38,7 +38,7 @@ def validate_mapping_package(mapping_package_state: MappingPackageState, tasks_t
 
     if tasks_to_run is None or TaskToRun.VALIDATE_PACKAGE_SHACL.value in tasks_to_run:
         mwb_logger.log_all_info("Validating Package State ... SHACL")
-        validate_mapping_package_state_with_shacl(mapping_package_state)
+        await validate_mapping_package_state_with_shacl(mapping_package_state)
         mwb_logger.log_all_info("Validating Package State ... SHACL DONE")
 
     if tasks_to_run is None or TaskToRun.VALIDATE_PACKAGE_SPARQL.value in tasks_to_run:

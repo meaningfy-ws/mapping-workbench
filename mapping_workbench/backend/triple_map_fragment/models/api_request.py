@@ -5,5 +5,5 @@ from pydantic import BaseModel
 
 
 class SpecificTripleMapFragmentRequestForMappingPackageUpdate(BaseModel):
-    mapping_package: PydanticObjectId
+    mapping_package_id: PydanticObjectId
     triple_map_fragments: Optional[List[PydanticObjectId]]

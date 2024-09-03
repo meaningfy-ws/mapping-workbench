@@ -3,6 +3,9 @@ from typing import List, Annotated
 from beanie import PydanticObjectId
 from fastapi import APIRouter, Depends, status, Query, HTTPException
 
+from mapping_workbench.backend.conceptual_mapping_group.adapters.cmg_beanie_repository import \
+    CMGBeanieRepositoryException
+from mapping_workbench.backend.conceptual_mapping_group.services.cmg_generation import CMGroupServiceException
 from mapping_workbench.backend.conceptual_mapping_rule.adapters.cm_rule_beanie_repository import CMRuleNotFoundException
 from mapping_workbench.backend.conceptual_mapping_rule.models.api_request import \
     APIRequestForGenerateCMAssertionsQueries
@@ -18,7 +21,8 @@ from mapping_workbench.backend.conceptual_mapping_rule.services.api import (
     create_conceptual_mapping_rule,
     update_conceptual_mapping_rule,
     get_conceptual_mapping_rule,
-    delete_conceptual_mapping_rule, get_conceptual_mapping_rule_out, clone_conceptual_mapping_rule
+    delete_conceptual_mapping_rule, get_conceptual_mapping_rule_out, clone_conceptual_mapping_rule,
+    assign_mapping_package_to_cm_rule
 )
 from mapping_workbench.backend.conceptual_mapping_rule.services.data import cm_rule_repo, \
     get_list_with_editorial_notes_out_from_cm_rule_by_project, get_list_with_feedback_notes_out_from_cm_rule_by_project, \
@@ -92,8 +96,10 @@ async def route_create_conceptual_mapping_rule(
         data: ConceptualMappingRuleCreateIn,
         user: User = Depends(current_active_user)
 ):
-    return await create_conceptual_mapping_rule(data, user=user)
-
+    try:
+        return await create_conceptual_mapping_rule(data, user=user)
+    except (CMGBeanieRepositoryException, CMGroupServiceException,) as expected_exception:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(expected_exception))
 
 @router.patch(
     "/{id}",
@@ -350,5 +356,22 @@ async def route_cm_rules_by_structural_element(
 ) -> List[ConceptualMappingRule]:
     try:
         return await cm_rule_repo.get_cm_rules_by_structural_element(project_id, structural_element_id)
+    except (Exception,) as expected_exception:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(expected_exception))
+
+
+@router.post(
+    path="/{id}/assign_mapping_package",
+    description=f"Assigns a Mapping Package to CM Rule",
+    response_model=ConceptualMappingRuleOut,
+    tags=[],
+    status_code=status.HTTP_201_CREATED
+)
+async def route_assign_cm_rules_to_mapping_package(
+        mp_ids: List[PydanticObjectId],
+        cm_rule: ConceptualMappingRule = Depends(get_conceptual_mapping_rule),
+) -> ConceptualMappingRuleOut:
+    try:
+        return await assign_mapping_package_to_cm_rule(cm_rule, mp_ids)
     except (Exception,) as expected_exception:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(expected_exception))

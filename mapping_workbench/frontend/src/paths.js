@@ -65,15 +65,22 @@ export const paths = {
             create: '/app/ontology/create',
             edit: '/app/ontology/[id]/edit',
         },
-        schema: {
-            index: '/app/schema',
-            import: '/app/schema/import',
-            elements: {
-                view: (id) => `/app/schema/${id}/view`,
-            }
-        },
+        // schema: {
+        //     index: '/app/schema',
+        //     import: '/app/schema/import',
+        //     elements: {
+        //         view: (id) => `/app/schema/${id}/view`,
+        //     }
+        // },
         schema_files: {
             index: '/app/schema-files'
+        },
+        fields_overview: {
+            index: '/app/fields-overview',
+            import: '/app/fields-overview/import',
+            elements: {
+                view: (id) => `/app/fields-overview/${id}/view`,
+            }
         },
         ontology_files: {
             index: '/app/ontology-files'
@@ -90,16 +97,16 @@ export const paths = {
                 view: '/app/ontology-file-collections/[id]/resource-manager/[fid]/view',
             }
         },
-        resource_collections: {
-            index: '/app/resource-collections',
-            create: '/app/resource-collections/create',
-            edit: '/app/resource-collections/[id]/edit',
-            view: '/app/resource-collections/[id]/view',
+        value_mapping_resources: {
+            index: '/app/value-mapping-resources',
+            create: '/app/value-mapping-resources/create',
+            edit: '/app/value-mapping-resources/[id]/edit',
+            view: '/app/value-mapping-resources/[id]/view',
             resource_manager: {
-                index: '/app/resource-collections/[id]/resource-manager',
-                create: '/app/resource-collections/[id]/resource-manager/create',
-                edit: '/app/resource-collections/[id]/resource-manager/[fid]/edit',
-                view: '/app/resource-collections/[id]/resource-manager/[fid]/view',
+                index: '/app/value-mapping-resources/[id]/resource-manager',
+                create: '/app/value-mapping-resources/[id]/resource-manager/create',
+                edit: '/app/value-mapping-resources/[id]/resource-manager/[fid]/edit',
+                view: '/app/value-mapping-resources/[id]/resource-manager/[fid]/view',
             }
         },
         mapping_packages: {
@@ -119,7 +126,6 @@ export const paths = {
         },
         conceptual_mapping_rules: {
             index: '/app/conceptual-mapping-rules',
-            create: '/app/conceptual-mapping-rules/create',
             edit: '/app/conceptual-mapping-rules/[id]/edit',
             view: '/app/conceptual-mapping-rules/[id]/view',
             tasks: {
@@ -130,6 +136,13 @@ export const paths = {
             },
             review: {
                 index: '/app/conceptual-mapping-rules/review'
+            },
+            overview: {
+                index: '/app/conceptual-mapping-rules/overview',
+                create: '/app/conceptual-mapping-rules/overview/create',
+            },
+            groups: {
+                index: '/app/conceptual-mapping-rules/groups'
             }
         },
 
@@ -148,10 +161,10 @@ export const paths = {
         },
 
         specific_triple_map_fragments: {
-            index: '/app/specific-triple-map-fragments',
-            create: '/app/specific-triple-map-fragments/create',
-            edit: '/app/specific-triple-map-fragments/[id]/edit',
-            view: '/app/specific-triple-map-fragments/[id]/view'
+            index: '/app/triple-map-fragments',
+            create: '/app/triple-map-fragments/create',
+            edit: '/app/triple-map-fragments/[id]/edit',
+            view: '/app/triple-map-fragments/[id]/view'
         },
 
         users: {
@@ -198,6 +211,9 @@ export const paths = {
         fields_and_nodes: {
           index: '/app/fields-and-nodes'
         },
+        fields_tree: {
+            index:'/app/fields-tree'
+        },
         tasks: {
             index: '/app/tasks',
             terms_validator: '/app/tasks/terms_validator',
@@ -222,13 +238,15 @@ export const paths = {
 export const apiPaths = {
     projects: {
         items: '/projects',
-        item: '/projects/:id'
+        item: '/projects/:id',
+        cleanup: '/projects/:id/cleanup'
     },
     test_data_suites: {
         items: '/test_data_suites',
         item: '/test_data_suites/:id',
         file_resources: '/test_data_suites/:id/file_resources',
         file_resource: '/test_data_suites/file_resources/:id',
+        assign_mapping_packages: '/test_data_suites/assign_mapping_packages',
         tasks: {
             transform_test_data: '/test_data_suites/tasks/transform_test_data',
             import: '/test_data_suites/tasks/import',
@@ -240,13 +258,15 @@ export const apiPaths = {
         item: '/sparql_test_suites/:id',
         file_resources: '/sparql_test_suites/:id/file_resources',
         file_resource: '/sparql_test_suites/file_resources/:id',
-        project_file_resources: '/sparql_test_suites/project/file_resources'
+        project_file_resources: '/sparql_test_suites/project/file_resources',
+        assign_mapping_packages: '/sparql_test_suites/assign_mapping_packages'
     },
     shacl_test_suites: {
         items: '/shacl_test_suites',
         item: '/shacl_test_suites/:id',
         file_resources: '/shacl_test_suites/:id/file_resources',
         file_resource: '/shacl_test_suites/file_resources/:id',
+        assign_mapping_packages: '/shacl_test_suites/assign_mapping_packages'
     },
     detailed_view_cm: {
         items: '/conceptual_mapping_group'
@@ -257,11 +277,12 @@ export const apiPaths = {
         file_resources: '/ontology_file_collections/:id/file_resources',
         file_resource: '/ontology_file_collections/file_resources/:id',
     },
-    resource_collections: {
+    value_mapping_resources: {
         items: '/resource_collections',
         item: '/resource_collections/:id',
         file_resources: '/resource_collections/:id/file_resources',
         file_resource: '/resource_collections/file_resources/:id',
+        assign_mapping_packages: '/resource_collections/assign_mapping_packages'
     },
 
     mapping_packages: {
@@ -358,7 +379,7 @@ export const apiPaths = {
         element: '/fields_registry/elements/:id',
     },
 
-    schema: {
+    fields_overview: {
         items: '/fields_registry',
         item: '/fields_registry/:id',
         import_eforms_from_github: '/fields_registry/tasks/import_eforms_from_github',

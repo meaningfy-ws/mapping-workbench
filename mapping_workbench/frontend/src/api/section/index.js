@@ -50,6 +50,7 @@ export class SectionApi {
         if (!path) {
             path = 'items';
         }
+
         const {
             filters = {},
             page = this.DEFAULT_PAGE,

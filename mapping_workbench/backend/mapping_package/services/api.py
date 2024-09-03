@@ -76,10 +76,14 @@ async def get_mapping_package_out(id: PydanticObjectId) -> MappingPackageOut:
     return MappingPackageOut(**mapping_package.model_dump(by_alias=False))
 
 
-async def delete_mapping_package(mapping_package: MappingPackage, with_resources: bool = True):
+async def delete_mapping_package(
+        mapping_package: MappingPackage,
+        with_resources: bool = True
+):
     await delete_mapping_package_states(mapping_package)
     if with_resources:
         await remove_mapping_package_resources(mapping_package)
+
     return await mapping_package.delete()
 
 
@@ -115,7 +119,7 @@ async def remove_mapping_package_resources(mapping_package: MappingPackage):
 
     await ConceptualMappingRule.get_motor_collection().update_many(
         {},
-        {"$pull": {"refers_to_mapping_package_ids": package_id}}
+        {"$pull": {"refers_to_mapping_package_ids": str(package_id)}}
     )
 
 

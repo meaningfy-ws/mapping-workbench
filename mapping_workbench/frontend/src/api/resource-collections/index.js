@@ -2,20 +2,26 @@ import {FileCollectionsApi} from "../file-collections";
 
 class ResourceCollectionsApi extends FileCollectionsApi {
     get SECTION_TITLE() {
-        return "Resource Collections";
+        return "Value Mapping Resources";
     }
 
     get SECTION_ITEM_TITLE() {
-        return "Resource Collection";
+        return "Value Mapping Resources";
+    }
+
+    get MAPPING_PACKAGE_LINK_FIELD() {
+        return "resource_collections"
     }
 
     constructor() {
-        super("resource_collections");
+        super("value_mapping_resources");
         this.isProjectResource = true;
     }
 
     async getValuesForSelector(request = {}) {
-        let valuesStore = await this.getItems();
+        request.page = 0;
+        request.rowsPerPage = -1;
+        let valuesStore = await this.getItems(request);
         return valuesStore.items.map(
             value => ({id: value._id, title: value.title})
         ).sort((a, b) => a.title.localeCompare(b.title));

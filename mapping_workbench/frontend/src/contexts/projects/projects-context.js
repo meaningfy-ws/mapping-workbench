@@ -9,6 +9,7 @@ export const initialState = {
 export const ProjectsContext = createContext({
   ...initialState,
   handleSessionProjectChange: () => {},
+  handleProjectCleanup: () => {},
   handleDeleteProject: () => {},
   getProjects: () => {}
 });

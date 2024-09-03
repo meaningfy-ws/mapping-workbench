@@ -226,7 +226,7 @@ export const Page = () => {
                                 color="text.secondary"
                                 variant="subtitle2"
                             >
-                                List
+                                {sectionApi.TASKS_TITLE}
                             </Typography>
                         </Breadcrumbs>
                     </Stack>

@@ -5,12 +5,12 @@ import Switch from "@mui/material/Switch";
 
 export const MappingPackageCheckboxListItem = (props) => {
     const {
-        mappingPackage, mappingPackages,
+        mappingPackage,
+        mappingPackages,
         updateMappingPackages,
         ...other
     } = props;
     const isChecked = mappingPackages?.includes(mappingPackage.id);
-
     const [checked, setChecked] = useState(isChecked);
 
     const handleMappingPackageChange = useCallback((event) => {
