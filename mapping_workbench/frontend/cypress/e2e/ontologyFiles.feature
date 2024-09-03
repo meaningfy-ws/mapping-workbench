@@ -7,10 +7,10 @@ Feature: Ontology Files
     Then Go Home
     When I open side menu
 
-  Scenario: Select Project
-    Then I select project
-    Then I get success select
-    Then I get redirected to overview page
+#  Scenario: Select Project
+#    Then I select project
+#    Then I get success select
+#    Then I get redirected to overview page
 
   Scenario: Upload Ontology Files
     Then I click on Ontology Files

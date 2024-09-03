@@ -30,7 +30,7 @@ Then('I search for project', () => {
 })
 
 When('I select project', () => {
-    cy.intercept('POST', appURLPrefix + 'users/set_project_for_current_user_session',).as('select')
+    cy.intercept('POST', appURLPrefix + 'users/set_project_for_current_user_session').as('select')
     cy.get('#project_switch').click().get('ul > li > p').contains('TEST_PROJECT').click()
 })
 

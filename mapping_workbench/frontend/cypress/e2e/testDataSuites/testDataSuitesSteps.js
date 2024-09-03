@@ -12,7 +12,7 @@ Given('Session Login', () => {
         cy.get('[name=username]').clear().type(username)
         cy.get('[name=password]').clear().type(password)
         cy.get('button[type="submit"]').click()
-        cy.title().should('eq','App: Projects List | Mapping Workbench')
+        cy.title().should('eq','Mapping Workbench')
     })
     if(sessionProject) cy.window().then(win => win.sessionStorage.setItem('sessionProject',sessionProject))
 })
@@ -24,7 +24,8 @@ Then('I get success select', () => {
 
 Then('I click on test data suites', () => {
     cy.intercept('GET', appURLPrefix + 'test_data_suites*').as('get')
-    cy.get('#nav_test_data').click()
+    cy.get('#nav_project_setup').click()
+    cy.get('#nav_test_data_suites').click()
 })
 
 Then('I get redirected to test data suites', () => {
