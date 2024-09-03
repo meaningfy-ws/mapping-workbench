@@ -21,9 +21,11 @@ jobs:
       shell: bash
       run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
       id: extract_branch
-    - name: pull source code
-      run: |
-        git checkout ${{ steps.extract_branch.outputs.branch }} && git pull
+    - name: Checkout source code
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ steps.extract_branch.outputs.branch }}
+        fetch-depth: 0
     - name: Install ssh keys
       run: |
         install -m 600 -D /dev/null ~/.ssh/id_rsa
