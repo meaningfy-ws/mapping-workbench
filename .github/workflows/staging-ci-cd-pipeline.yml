@@ -17,10 +17,14 @@ jobs:
     environment: staging
 
     steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
     - name: Extract branch name
       shell: bash
       run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
       id: extract_branch
+    - name: Display branch name
+      run: echo "Branch name is ${{ steps.extract_branch.outputs.branch }}"
     - name: Install ssh keys
       run: |
         install -m 600 -D /dev/null ~/.ssh/id_rsa
@@ -29,7 +33,7 @@ jobs:
 
     - name: connect, pull and build
       run: |
-        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "source ~/.bashrc && cd ${{ secrets.STAGING_WORK_DIR }} && git pull && git checkout ${{ steps.extract_branch.outputs.branch }} && git pull && make staging-dotenv-file && make build-frontend && make build-backend && exit"
+        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "source ~/.bashrc && cd ${{ secrets.STAGING_WORK_DIR }} && git checkout develop && git pull && git checkout ${{ steps.extract_branch.outputs.branch }} && git pull && make staging-dotenv-file && make build-frontend && make build-backend && exit"
 
     - name: cleanup
       run: rm -rf ~/.ssh
@@ -71,7 +75,7 @@ jobs:
       - name: Reverse to develop branch on failure
         if: failure()
         run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'cd ${{ secrets.STAGING_WORK_DIR }} && git pull && git checkout develop && git pull && make staging-dotenv-file && make install-frontend && make install-backend && make test-e2e-backend && exit'
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'cd ${{ secrets.STAGING_WORK_DIR }} && git checkout develop && git pull && make staging-dotenv-file && make install-frontend && make install-backend && make test-e2e-backend && exit'
 
       - name: cleanup
         run: rm -rf ~/.ssh
