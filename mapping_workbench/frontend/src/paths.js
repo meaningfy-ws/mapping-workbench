@@ -65,13 +65,13 @@ export const paths = {
             create: '/app/ontology/create',
             edit: '/app/ontology/[id]/edit',
         },
-        schema: {
-            index: '/app/schema',
-            import: '/app/schema/import',
-            elements: {
-                view: (id) => `/app/schema/${id}/view`,
-            }
-        },
+        // schema: {
+        //     index: '/app/schema',
+        //     import: '/app/schema/import',
+        //     elements: {
+        //         view: (id) => `/app/schema/${id}/view`,
+        //     }
+        // },
         schema_files: {
             index: '/app/schema-files'
         },
