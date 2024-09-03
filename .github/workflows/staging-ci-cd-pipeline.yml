@@ -29,7 +29,7 @@ jobs:
 
     - name: connect, pull and build
       run: |
-        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.STAGING_WORK_DIR }} && git pull && git checkout ${{ steps.extract_branch.outputs.branch }} && git pull && make staging-dotenv-file && make build-frontend && make build-backend && exit"
+        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "source ~/.bashrc && cd ${{ secrets.STAGING_WORK_DIR }} && git pull && git checkout ${{ steps.extract_branch.outputs.branch }} && git pull && make staging-dotenv-file && make build-frontend && make build-backend && exit"
 
     - name: cleanup
       run: rm -rf ~/.ssh
