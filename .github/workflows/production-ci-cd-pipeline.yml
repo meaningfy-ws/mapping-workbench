@@ -2,8 +2,8 @@ name: prod CI/CD pipeline
 
 on:
   pull_request:
-    branches: [ main ]
-  workflow_dispatch:
+    branches: [ main, release/* ]
+#  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -16,10 +16,6 @@ jobs:
     environment: staging
 
     steps:
-    - name: Extract branch name
-      shell: bash
-      run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
-      id: extract_branch
     - name: Install ssh keys
       run: |
         install -m 600 -D /dev/null ~/.ssh/id_rsa
@@ -28,7 +24,7 @@ jobs:
 
     - name: connect, pull and build
       run: |
-        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "source ~/.bashrc && cd ${{ secrets.PROD_WORK_DIR }} && git pull && git checkout main && git pull && make prod-dotenv-file && make build-frontend && make build-backend && exit"
+        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "source ~/.bashrc && cd ${{ secrets.PROD_WORK_DIR }} && git checkout main && git pull && make prod-dotenv-file && make build-frontend && make build-backend && exit"
 
     - name: cleanup
       run: rm -rf ~/.ssh
