@@ -55,12 +55,9 @@ jobs:
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'source ~/.bashrc && cd ${{ secrets.STAGING_WORK_DIR }} && make dotenv-file-frontend && make install-frontend && make test-e2e-frontend && exit'
 
-      - name: Copy Backend E2E Coverage file
+      - name: Copy Backend E2E Coverage data
         run: |
-          scp ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.STAGING_WORK_DIR }}/coverage.xml .
-
-      - name: cleanup
-        run: rm -rf ~/.ssh
+          scp -r ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.STAGING_WORK_DIR }}/.coverage ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.STAGING_WORK_DIR }}/coverage.xml .
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
@@ -70,3 +67,11 @@ jobs:
           env_vars: OS,PYTHON
           name: codecov-umbrella
           fail_ci_if_error: true
+
+      - name: Reverse to develop branch on failure
+        if: failure()
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'cd ${{ secrets.STAGING_WORK_DIR }} && git pull && git checkout develop && git pull && make staging-dotenv-file && make install-frontend && make install-backend && make test-e2e-backend && exit'
+
+      - name: cleanup
+        run: rm -rf ~/.ssh
