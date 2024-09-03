@@ -209,7 +209,7 @@ export const useSections = () => {
             // },
             {
                 title: t(tokens.nav.value_mapping_resources),
-                path: paths.app.resource_collections.index,
+                path: paths.app.value_mapping_resources.index,
                 icon: (
                     <SvgIcon fontSize='small'>
                         <HubIcon/>
@@ -300,8 +300,8 @@ export const useSections = () => {
                 ]
             },
             {
-                title: t(tokens.nav.resource_collections),
-                path: paths.app.resource_collections.index,
+                title: t(tokens.nav.value_mapping_resources),
+                path: paths.app.value_mapping_resources.index,
                 icon: (
                     <SvgIcon fontSize="small">
                         <HubIcon/>
