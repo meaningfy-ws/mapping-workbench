@@ -50,12 +50,12 @@ export const HomeApp = () => {
             </Typography>
             <Typography>Check our paper: {<Button variant="outlined"
                                                   type="link"
+                                                  target="_blank"
                                                   color="error"
-                                                  href="https://example-files.online-convert.com/document/pdf/example.pdf"
+                                                  href={'/sem24_paper_182.pdf'}
                                                   startIcon={<PictureAsPdfIcon/>}>
                 sem24_paper_182.pdf
             </Button>}</Typography>
-
             <Typography>The tutorial below will help you to get introduced into MWB by crossing a small mapping workflow
                 (Figure 1).</Typography>
             <br/>
