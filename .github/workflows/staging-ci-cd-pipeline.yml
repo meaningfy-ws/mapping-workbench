@@ -53,7 +53,7 @@ jobs:
 
       - name: Run Frontend E2E tests
         run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'export NVM_DIR="$HOME/.nvm" && \. "$NVM_DIR/nvm.sh" && cd ${{ secrets.STAGING_WORK_DIR }} && make dotenv-file-frontend && make test-e2e-frontend && exit'
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'source ~/.bashrc && cd ${{ secrets.STAGING_WORK_DIR }} && make dotenv-file-frontend && make test-e2e-frontend && exit'
 
       - name: cleanup
         run: rm -rf ~/.ssh
