@@ -28,7 +28,7 @@ const Page = () => {
                         <Link
                             color="text.primary"
                             component={RouterLink}
-                            href={paths.app[sectionApi.section].index}
+                            href={paths.index}
                             sx={{
                                 alignItems: 'center',
                                 display: 'inline-flex'
@@ -40,7 +40,7 @@ const Page = () => {
                                 <ArrowLeftIcon/>
                             </SvgIcon>
                             <Typography variant="subtitle2">
-                                {sectionApi.SECTION_TITLE}
+                                Overview
                             </Typography>
                         </Link>
                     </div>

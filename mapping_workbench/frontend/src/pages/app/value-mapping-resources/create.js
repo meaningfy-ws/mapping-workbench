@@ -4,14 +4,16 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
+import {resourceCollectionsApi as sectionApi} from 'src/api/resource-collections';
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
-import {EditForm} from 'src/sections/app/conceptual-mapping-rule/edit-form';
+import {FileCollectionEditForm} from 'src/sections/app/file-manager/file-collection-edit-form';
 import {ForItemCreateForm} from "src/contexts/app/section/for-item-form";
+
+
 const Page = () => {
     let item = {};
 
@@ -42,7 +44,7 @@ const Page = () => {
                         </Link>
                     </div>
                 </Stack>
-                <EditForm itemctx={new ForItemCreateForm(item, sectionApi)}/>
+                <FileCollectionEditForm itemctx={new ForItemCreateForm(item, sectionApi)}/>
             </Stack>
         </>
     );

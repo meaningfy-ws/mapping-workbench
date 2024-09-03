@@ -4,11 +4,11 @@ import {apiPaths} from "../../paths";
 
 class TasksApi extends SectionApi{
     get TASKS_TITLE() {
-        return "Tasks";
+        return "Activities";
     }
 
     get TASK_TITLE() {
-        return "Task";
+        return "Activity";
     }
 
     constructor() {

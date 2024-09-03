@@ -1,6 +1,3 @@
-from typing import List
-
-from beanie import PydanticObjectId
 from fastapi import APIRouter, Depends, status
 
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
@@ -14,6 +11,7 @@ from mapping_workbench.backend.project.services.api import (
     get_project_out,
     delete_project
 )
+from mapping_workbench.backend.project.services.tasks import add_task_remove_project_orphan_shareable_resources
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.user.models.user import User
 
@@ -97,3 +95,16 @@ async def route_get_project(project: ProjectOut = Depends(get_project_out)):
 async def route_delete_project(project: Project = Depends(get_project)):
     await delete_project(project)
     return APIEmptyContentWithIdResponse(id=project.id)
+
+
+@router.post(
+    "/{id}/cleanup",
+    description=f"Cleanup {NAME_FOR_ONE}",
+    name=f"{NAME_FOR_MANY}:cleanup_{NAME_FOR_ONE}",
+    status_code=status.HTTP_201_CREATED
+)
+async def route_cleanup_project(
+        project: Project = Depends(get_project),
+        user: User = Depends(current_active_user)
+):
+    return add_task_remove_project_orphan_shareable_resources(project.id, user.email)

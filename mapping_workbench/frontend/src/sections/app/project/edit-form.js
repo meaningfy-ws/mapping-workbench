@@ -156,9 +156,9 @@ export const EditForm = (props) => {
                         }
 
                         projectsStore.handleSessionProjectChange(response._id)
-                        router.push({
-                            pathname: paths.app[sectionApi.section].index,
-                        });
+                        // router.push({
+                        //     pathname: paths.app[sectionApi.section].index,
+                        // });
                     } else if (itemctx.isStateable) {
                         itemctx.setState(response);
                     }

@@ -1,42 +1,39 @@
 import {useEffect, useState} from 'react';
-import {useTranslation} from "react-i18next";
 
-import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
-import RefreshIcon from '@untitled-ui/icons-react/build/esm/Repeat02';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
-import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
+import {Layout as AppLayout} from 'src/layouts/app';
+import {fieldsOverviewApi as sectionApi} from 'src/api/fields-overview';
+import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {RouterLink} from 'src/components/router-link';
 import {usePageView} from 'src/hooks/use-page-view';
-import {Layout as AppLayout} from 'src/layouts/app';
-import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {tokens} from "/src/locales/tokens";
-import {ListSearch} from "../../../sections/app/conceptual-mapping-rule/list-search";
-import {ListTable} from "../../../sections/app/conceptual-mapping-rule/list-table";
+import {ListSearch} from "src/sections/app/fields-registry/list-search";
+import {ListTable} from "src/sections/app/fields-registry/list-table";
+import {useMounted} from "src/hooks/use-mounted";
+import Button from "@mui/material/Button";
+import SvgIcon from "@mui/material/SvgIcon";
+import {Upload04 as ImportIcon} from '@untitled-ui/icons-react/build/esm';
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
         filters: {
-            q: undefined,
-            terms_validity: undefined
+            name: undefined,
+            category: [],
+            status: [],
+            inStock: undefined
         },
-        sortField: '',
-        sortDirection: undefined,
         page: sectionApi.DEFAULT_PAGE,
-        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE,
-        detailedView: true
+        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
 
     const handleFiltersChange = filters => {
-        setState(prevState => ({
+        setState((prevState) => ({
             ...prevState,
             filters,
             page: 0
@@ -57,38 +54,29 @@ const useItemsSearch = () => {
         }));
     }
 
-    const handleDetailedViewChange = (event, detailedView) => {
-        setState(prevState => ({
-            ...prevState,
-            detailedView
-        }));
-    }
-
-    const handleSorterChange = sortField => {
-        setState(prevState => ({...prevState, sortField, sortDirection: state.sortField === sortField && prevState.sortDirection === -1 ? 1 : -1 }))
-    }
-
     return {
-        handleSorterChange,
         handleFiltersChange,
         handlePageChange,
         handleRowsPerPageChange,
-        handleDetailedViewChange,
         state
     };
 };
 
 
 const useItemsStore = (searchState) => {
+    const isMounted = useMounted();
     const [state, setState] = useState({
         items: [],
         itemsCount: 0
     });
 
     const handleItemsGet = () => {
-        sectionApi.getItems(searchState)
-            .then(res => setState({items: res.items, itemsCount: res.count}))
-            .catch(err => console.warn(err))
+        sectionApi.getItems(searchState,null,'/fields_registry/elements')
+            .then(res => setState({
+                items: res.items,
+                itemsCount: res.count
+            }))
+            .catch(err => console.error(err))
     }
 
     useEffect(() => {
@@ -104,19 +92,11 @@ const useItemsStore = (searchState) => {
 
 
 const Page = () => {
-    const {t} = useTranslation();
-
     const itemsSearch = useItemsSearch();
     const itemsStore = useItemsStore(itemsSearch.state);
 
+
     usePageView();
-
-    const [sortDir, setSortDir] = useState('desc');
-    const [sortField, setSortField] = useState('1');
-
-    const handleSort = () => {
-        setSortDir(prevState => prevState === 'asc' ? 'desc' : 'asc');
-    }
 
     return (
         <>
@@ -140,19 +120,11 @@ const Page = () => {
                             >
                                 App
                             </Link>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.app[sectionApi.section].index}
-                                variant="subtitle2"
-                            >
-                                {sectionApi.SECTION_TITLE}
-                            </Link>
                             <Typography
                                 color="text.secondary"
                                 variant="subtitle2"
                             >
-                                List
+                                {sectionApi.SECTION_TITLE}
                             </Typography>
                         </Breadcrumbs>
                     </Stack>
@@ -162,38 +134,23 @@ const Page = () => {
                         spacing={3}
                     >
                         <Button
+                            id="import_shema_button"
                             component={RouterLink}
-                            href={paths.app[sectionApi.section].create}
-                            id="add-mapping-rules-button"
+                            href={paths.app[sectionApi.section].import}
                             startIcon={(
                                 <SvgIcon>
-                                    <PlusIcon/>
+                                    <ImportIcon/>
                                 </SvgIcon>
                             )}
                             variant="contained"
                         >
-                            Add
-                        </Button>
-                        <Button
-                            id="generate_button"
-                            component={RouterLink}
-                            href={paths.app[sectionApi.section].tasks.generate_cm_assertions_queries}
-                            startIcon={(
-                                <SvgIcon>
-                                    <RefreshIcon/>
-                                </SvgIcon>
-                            )}
-                            variant="contained"
-                        >
-                            {t(tokens.nav.generate_cm_assertions_queries)}
+                            Import schema from github
                         </Button>
                     </Stack>
+
                 </Stack>
                 <Card>
-                    <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}
-                                onDetailedViewChange={itemsSearch.handleDetailedViewChange}
-                                detailedView={itemsSearch.state.detailedView}
-                    />
+                    <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
                     <ListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
@@ -202,9 +159,6 @@ const Page = () => {
                         count={itemsStore.itemsCount}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
-                        onSort={itemsSearch.handleSorterChange}
-                        sort={{direction: itemsSearch.state.sortDirection, column: itemsSearch.state.sortField}}
-                        detailedView={itemsSearch.state.detailedView}
                     />
                 </Card>
             </Stack>

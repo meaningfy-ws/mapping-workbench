@@ -81,6 +81,8 @@ export const TableErrorFetching = () => {
                 </Stack>
 }
 
+
+
 export const TableLoadWrapper = ({children, data, dataState, lines}) => {
     if (dataState.load) return <TableSkeleton lines={lines}/>
     if (dataState.error) return <TableErrorFetching/>

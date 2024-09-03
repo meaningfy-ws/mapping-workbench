@@ -19,12 +19,6 @@ const reduceChildRoutes = ({ acc, depth, item, parentId, pathname }) => {
   const partialMatch = checkPath ? pathname.includes(item.path) : false;
   const exactMatch = checkPath ? pathname === item.path : false;
 
-
-  //console.log("acc: ", acc);
-  //console.log("depth: ", depth);
-  //console.log("item: ", item);
-
-
   if (item.items) {
     acc.push(
       <SideNavItem

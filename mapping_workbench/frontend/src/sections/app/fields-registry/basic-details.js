@@ -79,4 +79,3 @@ export const BasicDetails = (props) => {
         ;
 };
 
-BasicDetails.propTypes = {};

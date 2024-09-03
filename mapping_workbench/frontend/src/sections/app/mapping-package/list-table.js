@@ -1,3 +1,4 @@
+import * as React from 'react';
 import {Fragment, useState} from 'react';
 import PropTypes from 'prop-types';
 
@@ -36,10 +37,10 @@ import TablePagination from "../../components/table-pagination";
 import TableSorterHeader from "../../components/table-sorter-header";
 import timeTransformer from "../../../utils/time-transformer";
 import {useGlobalState} from "../../../hooks/use-global-state";
-import SorterHeader from "../../components/table-sorter-header";
 import {useRouter} from "next/router";
 import {paths} from "../../../paths";
 import Checkbox from "@mui/material/Checkbox";
+import ConfirmDialog from "../../../components/app/dialog/confirm-dialog";
 
 
 const PackageRow = (props) => {
@@ -270,6 +271,141 @@ const PackageRow = (props) => {
     )
 }
 
+const MappingPackageRowFragment = (props) => {
+    const {
+        item_id, item, isCurrent, handleItemToggle, handleGoLastState, handleDeleteAction, timeSetting, sectionApi
+    } = props;
+
+    const [confirmOpen, setConfirmOpen] = useState(false);
+    const [cleanupProject, setCleanupProject] = useState(false);
+
+    return (
+        <>
+            <Fragment key={item_id}>
+                <TableRow
+                    hover
+                    key={item_id}
+                    id={item_id}
+                >
+                    <TableCell
+                        padding="checkbox"
+                        sx={{
+                            ...(isCurrent && {
+                                position: 'relative',
+                                '&:after': {
+                                    position: 'absolute',
+                                    content: '" "',
+                                    top: 0,
+                                    left: 0,
+                                    backgroundColor: 'primary.main',
+                                    width: 3,
+                                    height: 'calc(100% + 1px)'
+                                }
+                            })
+                        }}
+                        width="25%"
+                    >
+                        <IconButton onClick={() => handleItemToggle(item_id)}
+                                    id="expand_button">
+                            <SvgIcon>
+                                {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
+                            </SvgIcon>
+                        </IconButton>
+                    </TableCell>
+
+                    <TableCell width="25%">
+                        <Typography variant="subtitle2">
+                            {item.title}
+                        </Typography>
+                    </TableCell>
+                    <TableCell>
+                        {item.identifier}
+                    </TableCell>
+                    <TableCell align="left">
+                        {timeTransformer(item.created_at, timeSetting)}
+                    </TableCell>
+                    <TableCell align="center">
+                        <Stack direction='row'
+                               justifyContent='center'
+                               alignItems='center'>
+                            <Button type='link'
+                                    size="small"
+                                    onClick={() => handleGoLastState(item_id)}>
+                                View Last State
+                            </Button>
+                            <ListItemActions
+                                itemctx={new ForListItemAction(item_id, sectionApi)}
+                            />
+                            <Button
+                                id="delete_button"
+                                variant="text"
+                                size="small"
+                                color="error"
+                                onClick={() => setConfirmOpen(true)}
+                                sx={{
+                                    whiteSpace: "nowrap"
+                                }}
+                            >
+                                Delete
+                            </Button>
+                        </Stack>
+                    </TableCell>
+                </TableRow>
+                {isCurrent && (
+                    <TableRow>
+                        <TableCell
+                            colSpan={7}
+                            sx={{
+                                p: 0,
+                                position: 'relative',
+                                '&:after': {
+                                    position: 'absolute',
+                                    content: '" "',
+                                    top: 0,
+                                    left: 0,
+                                    backgroundColor: 'primary.main',
+                                    width: 3,
+                                    height: 'calc(100% + 1px)'
+                                }
+                            }}
+                        >
+                            <PackageRow
+                                item={item}
+                                sectionApi={sectionApi}
+                            />
+                        </TableCell>
+                    </TableRow>
+                )}
+            </Fragment>
+            <ConfirmDialog
+                title="Delete It?"
+                open={confirmOpen}
+                setOpen={setConfirmOpen}
+                onConfirm={() => handleDeleteAction(item_id, cleanupProject)}
+                footer={<Box sx={{
+                    textAlign: 'center',
+                    width: '100%'
+                }}>
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={cleanupProject}
+                                onChange={(e) => {
+                                    setCleanupProject(e.target.checked)
+                                }}
+                            />
+                        }
+                        label="Cleanup Project Resources"
+                        value="cleanup_project"
+                    />
+                </Box>}
+            >
+                <>Are you sure you want to delete it?</>
+            </ConfirmDialog>
+        </>
+    )
+}
+
 export const ListTable = (props) => {
     const {
         count = 0,
@@ -310,6 +446,17 @@ export const ListTable = (props) => {
             .catch(err => console.error(err))
     }
 
+    const handleDeleteAction = async (id, cleanup_project = false) => {
+        sectionApi.deleteMappingPackageWithCleanup(id, cleanup_project)
+            .finally(() => {
+                    router.push({
+                        pathname: paths.app[sectionApi.section].index
+                    });
+                    router.reload()
+                }
+            )
+    }
+
     return (
         <div>
             <TablePagination
@@ -346,93 +493,19 @@ export const ListTable = (props) => {
                             {items.map((item) => {
                                 const item_id = item._id;
                                 const isCurrent = item_id === currentItem;
-                                const statusColor = item.status === 'published' ? 'success' : 'info';
 
                                 return (
-                                    <Fragment key={item_id}>
-                                        <TableRow
-                                            hover
-                                            key={item_id}
-                                            id={item_id}
-                                        >
-                                            <TableCell
-                                                padding="checkbox"
-                                                sx={{
-                                                    ...(isCurrent && {
-                                                        position: 'relative',
-                                                        '&:after': {
-                                                            position: 'absolute',
-                                                            content: '" "',
-                                                            top: 0,
-                                                            left: 0,
-                                                            backgroundColor: 'primary.main',
-                                                            width: 3,
-                                                            height: 'calc(100% + 1px)'
-                                                        }
-                                                    })
-                                                }}
-                                                width="25%"
-                                            >
-                                                <IconButton onClick={() => handleItemToggle(item_id)}
-                                                            id="expand_button">
-                                                    <SvgIcon>
-                                                        {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
-                                                    </SvgIcon>
-                                                </IconButton>
-                                            </TableCell>
-
-                                            <TableCell width="25%">
-                                                <Typography variant="subtitle2">
-                                                    {item.title}
-                                                </Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                {item.identifier}
-                                            </TableCell>
-                                            <TableCell align="left">
-                                                {timeTransformer(item.created_at, timeSetting)}
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <Stack direction='row'
-                                                       justifyContent='center'
-                                                       alignItems='center'>
-                                                    <Button type='link'
-                                                            size="small"
-                                                            onClick={() => handleGoLastState(item_id)}>
-                                                        View Last State
-                                                    </Button>
-                                                    <ListItemActions
-                                                        itemctx={new ForListItemAction(item_id, sectionApi)}
-                                                    />
-                                                </Stack>
-                                            </TableCell>
-                                        </TableRow>
-                                        {isCurrent && (
-                                            <TableRow>
-                                                <TableCell
-                                                    colSpan={7}
-                                                    sx={{
-                                                        p: 0,
-                                                        position: 'relative',
-                                                        '&:after': {
-                                                            position: 'absolute',
-                                                            content: '" "',
-                                                            top: 0,
-                                                            left: 0,
-                                                            backgroundColor: 'primary.main',
-                                                            width: 3,
-                                                            height: 'calc(100% + 1px)'
-                                                        }
-                                                    }}
-                                                >
-                                                    <PackageRow
-                                                        item={item}
-                                                        sectionApi={sectionApi}
-                                                    />
-                                                </TableCell>
-                                            </TableRow>
-                                        )}
-                                    </Fragment>
+                                    <MappingPackageRowFragment
+                                        key={item_id}
+                                        item_id={item_id}
+                                        item={item}
+                                        isCurrent={isCurrent}
+                                        handleItemToggle={handleItemToggle}
+                                        handleGoLastState={handleGoLastState}
+                                        handleDeleteAction={handleDeleteAction}
+                                        timeSetting={timeSetting}
+                                        sectionApi={sectionApi}
+                                    />
                                 );
                             })}
                         </TableBody>
