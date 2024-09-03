@@ -49,3 +49,15 @@ async def create_cm_group_from_cm_rule(cm_rule: ConceptualMappingRule,
         raise CMGroupServiceException(str(e))
     except Exception as e:
         raise CMGroupServiceException(str(e))
+
+
+async def delete_cm_group_by_cm_rule(cm_rule: ConceptualMappingRule,
+                                       cm_group_repo: CMGBeanieRepository = None) -> None:
+
+    if not cm_group_repo:
+        cm_group_repo = CMGBeanieRepository()
+
+    try:
+        await cm_group_repo.delete_by_conceptual_mapping_rule(cm_rule=cm_rule)
+    except Exception as e:
+        raise CMGroupServiceException(str(e))

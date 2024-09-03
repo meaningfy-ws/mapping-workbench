@@ -34,7 +34,9 @@ class CMGBeanieRepository(IRepository):
             related_node=cm_group.cm_rule.source_structural_element.id,
             iterator_xpath=cm_group.cm_rule.source_structural_element.absolute_xpath,
             instance_type=cm_group.instance_type.short_term
-        ) for cm_group in cm_groups]
+
+            # Current using isinstance because of problem with fetch_all_links in beanie
+        ) for cm_group in cm_groups if isinstance(cm_group.cm_rule, ConceptualMappingRule)]
 
     async def get_by_id(self, project_id: PydanticObjectId,
                         cm_group_id: PydanticObjectId) -> ConceptualMappingGroupBeanie | None:
@@ -91,6 +93,24 @@ class CMGBeanieRepository(IRepository):
                      cm_group: ConceptualMappingGroup) -> None:
         cm_group_beanie = await self.get(project_id=project_id,
                                          cm_group=cm_group)
+
+        if cm_group_beanie:
+            await cm_group_beanie.delete()
+
+    async def get_by_conceptual_mapping_rule(self,
+                                             cm_rule: ConceptualMappingRule) -> ConceptualMappingGroupBeanie | None:
+        project_link = await get_project_link((await cm_rule.project.fetch()).id)
+
+        cm_group = await ConceptualMappingGroupBeanie.find_one(
+            ConceptualMappingGroupBeanie.project == project_link,
+            ConceptualMappingGroupBeanie.cm_rule.id == cm_rule.id
+        )
+
+        return cm_group
+
+    async def delete_by_conceptual_mapping_rule(self, cm_rule: ConceptualMappingRule) -> None:
+
+        cm_group_beanie = await self.get_by_conceptual_mapping_rule(cm_rule)
 
         if cm_group_beanie:
             await cm_group_beanie.delete()
