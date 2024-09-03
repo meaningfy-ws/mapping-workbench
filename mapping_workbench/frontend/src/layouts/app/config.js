@@ -12,9 +12,7 @@ import SchemaIcon from '@mui/icons-material/Schema';
 import TaskIcon from '@mui/icons-material/TaskAlt';
 import TopicIcon from '@mui/icons-material/Topic';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
-import SettingsInputCompositeIcon from '@mui/icons-material/SettingsInputComposite';
 import WindowIcon from '@mui/icons-material/Window';
-import BubbleChartIcon from '@mui/icons-material/BubbleChart';
 import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
 import NewspaperIcon from '@mui/icons-material/Newspaper';
 import TocIcon from '@mui/icons-material/Toc';
@@ -57,7 +55,7 @@ export const useSections = () => {
         {
             items: [{
                 title: t(tokens.nav.overview),
-                path: paths.app.index,
+                path: paths.index,
                 icon: (
                     <SvgIcon fontSize="small">
                         <HomeSmileIcon/>
