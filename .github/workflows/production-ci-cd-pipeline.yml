@@ -3,7 +3,7 @@ name: prod CI/CD pipeline
 on:
   pull_request:
     branches: [ main, release/* ]
-  workflow_dispatch:
+#  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
