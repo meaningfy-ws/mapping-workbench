@@ -52,14 +52,12 @@ export const MappingPackageCheckboxList = (props) => {
 
     const handleAllMappingPackagesChange = useCallback((event) => {
         let _checked = event.target.checked;
-
         mappingPackages.length = 0;
         if (_checked) {
             for (let _value of projectMappingPackages.map(x => x.id)) {
                 mappingPackages.push(_value);
             }
         }
-
         setAllCheckedCallback(mappingPackages);
     }, [projectMappingPackages, mappingPackages]);
 

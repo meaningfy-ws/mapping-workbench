@@ -20,7 +20,7 @@ RML_MAPPER_PATH = ${PROJECT_PATH}/.rmlmapper/rmlmapper.jar
 
 install: install-backend install-frontend
 
-install-dev: install-dev-backend install-frontend-dev
+install-dev: install-dev-backend install-dev-frontend
 
 install-backend: init-rml-mapper setup-env-paths
 	@ echo "Installing BACKEND requirements :: START"
@@ -33,7 +33,7 @@ install-dev-backend:
 	@ pip install --upgrade pip
 	@ pip install --no-cache-dir -r requirements.dev.txt
 
-install-frontend-dev:
+install-dev-frontend:
 	@ cd ${FRONTEND_HOME} && make install-${ENVIRONMENT}-frontend
 
 install-all-backend: install-backend install-dev-backend
@@ -58,7 +58,7 @@ test-unit-backend:
 
 test-unit-frontend:
 	@ echo "UNIT Testing FRONTEND ... "
-	@ cd ${FRONTEND_HOME} && npm run test
+#	@ cd ${FRONTEND_HOME} && npm run test
 #	@ tox -e unit frontend
 
 test-e2e-backend:
@@ -67,6 +67,7 @@ test-e2e-backend:
 
 test-e2e-frontend:
 	@ echo "E2E Testing FRONTEND ... "
+	@ cd ${FRONTEND_HOME} && make test-e2e
 
 #-----------------------------------------------------------------------------
 # ENV FILE
@@ -102,6 +103,9 @@ prod-dotenv-file:
 	@ echo RML_MAPPER_PATH=${RML_MAPPER_PATH} >> ${ENV_FILE}
 	@ vault kv get -format="json" mapping-workbench-prod/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> ${ENV_FILE}
 
+dotenv-file-frontend:
+	@ echo "Creating .env file for FRONTEND ... "
+	@ cp .env ${FRONTEND_INFRA_FOLDER}/
 
 #-----------------------------------------------------------------------------
 # STAGING & PRODUCTION

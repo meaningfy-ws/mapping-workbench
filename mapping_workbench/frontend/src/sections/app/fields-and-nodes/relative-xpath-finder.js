@@ -94,16 +94,12 @@ const RelativeXPath = ({xmlContent, xpath, absolute_xpath, formik}) => {
     }
 
     return (
-        <>
-            <FormTextField
-                disabled
-                label='Relative XPath'
-                name="relative_xpath"
-                formik={formik}
-                required
-            />
-            {/*{xpath}*/}
-        </>
+        <FormTextField
+            disabled
+            label='Relative XPath'
+            name="relative_xpath"
+            formik={formik}
+        />
     )
 
 }

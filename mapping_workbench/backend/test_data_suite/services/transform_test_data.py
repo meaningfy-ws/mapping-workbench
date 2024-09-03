@@ -144,7 +144,7 @@ async def transform_test_data_file_resources(
             save=True
         )
     if rml_mapper.errors:
-        raise RMLMapperException(message=('\n' + '\n'.join([
+        raise RMLMapperException(message=('\n\n' + '\n'.join([
             error.message + (" :: " + str(error.metadata) if error.metadata else "") for error in rml_mapper.errors
         ])))
 

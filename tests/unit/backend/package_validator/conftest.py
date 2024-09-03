@@ -11,11 +11,10 @@ from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestFileResourceFormat, SHACLTestSuiteState, \
     SHACLTestState
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResourceFormat, SPARQLTestState
-from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
+from mapping_workbench.backend.test_data_suite.models.entity import TestDataFileResource, \
     TestDataFileResourceFormat
 from mapping_workbench.backend.user.models.user import User
 from tests import TEST_DATA_SPARQL_TEST_SUITE_PATH, TEST_DATA_SHACL_TEST_SUITE_PATH
-from tests import TEST_DATA_VALIDATION_PATH
 
 
 @pytest.fixture
@@ -63,7 +62,8 @@ def dummy_package_importer(dummy_mapping_package: MappingPackage) -> PackageImpo
 
 
 @pytest.fixture
-def dummy_sparql_test_suite(sparql_test_resources_file_path: pathlib.Path, dummy_package_importer: PackageImporter) -> SPARQLTestState:
+def dummy_sparql_test_suite(sparql_test_resources_file_path: pathlib.Path,
+                            dummy_package_importer: PackageImporter) -> SPARQLTestState:
     metadata = dummy_package_importer.extract_metadata_from_sparql_query(
         sparql_test_resources_file_path.read_text(encoding="utf-8")
     )
@@ -104,28 +104,6 @@ def dummy_conceptual_mapping_rule() -> ConceptualMappingRule:
             relative_xpath="CONTRACTING_BODY/ADDRESS_CONTRACTING_BODY",
             repeatable=True,
         )
-    )
-
-
-@pytest.fixture
-def dummy_notice_xml_path() -> pathlib.Path:
-    return TEST_DATA_VALIDATION_PATH / "dummy_notice.xml"
-
-
-@pytest.fixture
-def dummy_notice_xml_content(dummy_notice_xml_path) -> str:
-    return dummy_notice_xml_path.read_text()
-
-
-@pytest.fixture
-def dummy_xml_test_data_suite(dummy_notice_xml_content) -> TestDataSuite:
-    return TestDataSuite(
-        name="dummy_test_data_suite_name",
-        description="dummy_test_data_suite_description",
-        file_resources=[TestDataFileResource(
-            format=TestDataFileResourceFormat.XML,
-            content=dummy_notice_xml_content,
-        )],
     )
 
 

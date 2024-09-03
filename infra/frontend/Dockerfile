@@ -8,8 +8,8 @@ ARG HOST
 ARG PORT
 ARG NODE_ENV
 ARG NODE_PATH
-ARG API_ADDRESS
-ARG API_BASE_URL
+ARG MW_BACKEND_ADDRESS
+ARG MW_BACKEND_BASE_URL
 
 RUN apk add make
 
@@ -32,8 +32,8 @@ COPY next.config.js ./
 RUN echo "NODE_ENV=${NODE_ENV}" > ${ENV_FILE} \
     && echo "PORT=${PORT}" >> ${ENV_FILE} \
     && echo "NODE_PATH=${NODE_PATH}" >> ${ENV_FILE} \
-    && echo "API_ADDRESS=${API_ADDRESS}" >> ${ENV_FILE} \
-    && echo "API_BASE_URL=${API_BASE_URL}" >> ${ENV_FILE}
+    && echo "MW_BACKEND_ADDRESS=${MW_BACKEND_ADDRESS}" >> ${ENV_FILE} \
+    && echo "MW_BACKEND_BASE_URL=${MW_BACKEND_BASE_URL}" >> ${ENV_FILE}
 
 RUN make install-${ENVIRONMENT}-frontend
 

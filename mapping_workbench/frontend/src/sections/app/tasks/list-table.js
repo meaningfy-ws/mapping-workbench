@@ -23,6 +23,7 @@ import timeTransformer from "../../../utils/time-transformer";
 import {useGlobalState} from "../../../hooks/use-global-state";
 import TableSorterHeader from "../../components/table-sorter-header";
 import moment from "moment";
+import nl2br from "../../../utils/nl2br";
 
 export const ListTable = (props) => {
     const {
@@ -241,7 +242,7 @@ export const ListTable = (props) => {
                                                         </Typography>
                                                         <Divider/>
                                                         <Typography sx={{pl: 3}}>
-                                                            {item.exception_message}
+                                                            {nl2br(item.exception_message)}
                                                         </Typography>
                                                         </>}
                                                     </Grid>

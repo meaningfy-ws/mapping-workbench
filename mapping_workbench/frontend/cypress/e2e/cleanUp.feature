@@ -5,5 +5,8 @@ Feature: Entry Packages
     Given Session Login
     Then Go Home
     Then Check home title
-    Then I receive projects
-    And I delete test project
+    Then I search for project
+
+    When I click on delete button
+    Then I click yes button
+    Then I get success delete

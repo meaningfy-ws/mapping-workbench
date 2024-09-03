@@ -4,13 +4,13 @@ import {initialState, ProjectsContext} from './projects-context';
 import {sessionApi} from "../../api/session";
 import {useAuth} from "../../hooks/use-auth";
 import {projectsApi as sectionApi} from "../../api/projects";
-import {toastLoad, toastSuccess} from "../../components/app-toast";
+import {toastError, toastLoad, toastSuccess} from "../../components/app-toast";
 import {paths} from "../../paths";
 import {useRouter} from "next/router";
 
 export const ProjectsProvider = ({children}) => {
     const [state, setState] = useState(initialState);
-    const { isAuthenticated } = useAuth();
+    const {isAuthenticated} = useAuth();
     const router = useRouter()
 
     useEffect(() => {
@@ -40,16 +40,28 @@ export const ProjectsProvider = ({children}) => {
     }
 
     const handleSessionProjectChange = (id) => {
-            const toastId = toastLoad('Selecting project...');
-            sessionApi.setSessionProject(id)
-                .then(res => {
-                    setState(prevState => ({...prevState, sessionProject: id}))
-                    toastSuccess('Project Selected', toastId);
-                })
-                .finally(() => window.location.replace(paths.index))
+        const toastId = toastLoad('Selecting project...');
+        sessionApi.setSessionProject(id)
+            .then(res => {
+                setState(prevState => ({...prevState, sessionProject: id}))
+                toastSuccess('Project Selected', toastId);
+            })
+            .finally(() => window.location.replace(paths.index))
     }
 
-   const handleDeleteProject = (id) => {
+    const handleProjectCleanup = (id) => {
+        if (id) {
+            const toastId = toastLoad('Cleaning Up project...');
+            sectionApi.cleanupProject(id)
+                .then(res => {
+                    toastSuccess(`${res.task_name} successfully started.`, toastId)
+                    // router.reload()
+                })
+                .catch(err => toastError(`Cleaning Up project failed: ${err.message}.`, toastId))
+        }
+    }
+
+    const handleDeleteProject = (id) => {
         const toastId = toastLoad('Deleting project...');
         sectionApi.deleteItem(id)
             .then(res => {
@@ -65,6 +77,7 @@ export const ProjectsProvider = ({children}) => {
             value={{
                 ...state,
                 handleSessionProjectChange,
+                handleProjectCleanup,
                 handleDeleteProject,
                 getProjects
             }}

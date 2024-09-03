@@ -1,5 +1,4 @@
 import asyncio
-from contextlib import contextmanager
 
 from mapping_workbench.backend.config import settings
 from mapping_workbench.backend.core.services.project_initilisers import init_project_models
@@ -12,22 +11,32 @@ async def init_task():
     await init_project_models(mongodb_database=DB.get_loop_database())
 
 
-def run_task(task_to_run, *args):
-    @contextmanager
+def loop_task(task_to_run, *args):
     def task_event_loop():
-        event_loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(event_loop)
         try:
-            yield event_loop
-        finally:
-            event_loop.close()
+            # Try to get the event loop, but ensure it's not closed
+            event_loop = asyncio.get_event_loop()
+            if event_loop.is_closed():
+                raise RuntimeError()
+        except RuntimeError:
+            # If there was no event loop, or it was closed, create a new one
+            event_loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(event_loop)
+
+        return event_loop
+
 
     async def task():
         await init_task()  # This is because of beanie implementation
         await task_to_run(*args)
 
-    with task_event_loop() as loop:
-        loop.run_until_complete(task())
+    # asyncio.run(task())
+    loop = task_event_loop()
+    loop.run_until_complete(task())
+
+
+def run_task(task_to_run, *args):
+    loop_task(task_to_run, *args)
 
 
 def add_task(task_to_run, task_name, task_timeout, created_by, *args) -> TaskMetadata:

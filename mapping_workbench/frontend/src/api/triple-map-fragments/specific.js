@@ -14,10 +14,10 @@ class SpecificTripleMapFragmentsApi extends TripleMapFragmentsApi {
         super("specific_triple_map_fragments");
     }
 
-    async update_specific_mapping_package(mapping_package, triple_map_fragments) {
+    async update_specific_mapping_package(mapping_package_id, triple_map_fragments) {
         let endpoint = this.paths['items'] + '/update_specific_mapping_package';
         let request = {
-            mapping_package: mapping_package,
+            mapping_package_id: mapping_package_id,
             triple_map_fragments: triple_map_fragments
         }
         return await appApi.update(endpoint, request);

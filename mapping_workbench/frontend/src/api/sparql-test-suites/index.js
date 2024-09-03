@@ -17,6 +17,14 @@ class SPARQLTestSuitesApi extends FileCollectionsApi {
         };
     }
 
+    get MAPPING_PACKAGE_LINK_FIELD() {
+        return "sparql_test_suites"
+    }
+
+    get CM_ASSERTIONS_SUITE_TITLE() {
+        return 'cm_assertions';
+    }
+
     constructor() {
         super("sparql_test_suites");
         this.isProjectResource = true;
@@ -24,8 +32,10 @@ class SPARQLTestSuitesApi extends FileCollectionsApi {
     }
 
     async getValuesForSelector(request = {}) {
-        let valuesStore = await this.getItems();
-        return valuesStore.items.filter(value => value.title !== 'cm_assertions').map(
+        request.page = 0;
+        request.rowsPerPage = -1;
+        let valuesStore = await this.getItems(request);
+        return valuesStore.items.filter(value => value.title !== this.CM_ASSERTIONS_SUITE_TITLE).map(
             value => ({id: value._id, title: value.title})
         ).sort((a, b) => a.title.localeCompare(b.title));
     }

@@ -127,7 +127,7 @@ export const FileCollectionListSearch = (props) => {
             <Divider/>
             {chips?.length
                 ?
-                    <Stack
+                    <><Stack
                         alignItems="center"
                         direction="row"
                         flexWrap="wrap"
@@ -162,18 +162,17 @@ export const FileCollectionListSearch = (props) => {
                             />
                         ))}
                     </Stack>
-
-                :
-                    <Box sx={{p: 2.5}}>
-                        <Typography
-                            color="text.secondary"
-                            variant="subtitle2"
-                        >
-                            No filters applied
-                        </Typography>
-                    </Box>
+                <Divider/></>
+                : <></>
+                    // <Box sx={{p: 2.5}}>
+                    //     <Typography
+                    //         color="text.secondary"
+                    //         variant="subtitle2"
+                    //     >
+                    //         No filters applied
+                    //     </Typography>
+                    // </Box>
                 }
-            <Divider/>
         </div>
     );
 };

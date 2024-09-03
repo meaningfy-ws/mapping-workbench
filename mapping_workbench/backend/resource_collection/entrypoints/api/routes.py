@@ -1,12 +1,14 @@
-from typing import List
+from typing import List, Annotated
 
 from beanie import PydanticObjectId
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, status, Depends, Query, HTTPException
 from starlette.requests import Request
 
-from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
+from mapping_workbench.backend.core.models.api_request import AssignMappingPackagesRequest
+from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse, APIEmptyContentResponse
 from mapping_workbench.backend.file_resource.services.file_resource_form_data import \
     file_resource_data_from_form_request
+from mapping_workbench.backend.logger.adapters.sys_logger import logger
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.resource_collection.models.entity import ResourceCollection, ResourceFile, \
     ResourceFileCreateIn, ResourceFileUpdateIn
@@ -24,6 +26,7 @@ from mapping_workbench.backend.resource_collection.services.api import (
     get_resource_file,
     delete_resource_file
 )
+from mapping_workbench.backend.resource_collection.services.link import assign_resource_collections_to_mapping_packages
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.user.models.user import User
 
@@ -40,6 +43,23 @@ router = APIRouter(
 )
 
 
+@router.post(
+    "/assign_mapping_packages",
+    description=f"Assign {NAME_FOR_MANY} to Mapping Packages",
+    name=f"{NAME_FOR_MANY}:assign_mapping_packages",
+)
+async def route_assign_resource_collections_to_mapping_packages(
+        request: AssignMappingPackagesRequest
+):
+    try:
+        await assign_resource_collections_to_mapping_packages(request)
+    except Exception as e:
+        logger.exception(e)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Server error")
+
+    return APIEmptyContentResponse()
+
+
 @router.get(
     "",
     description=f"List {NAME_FOR_MANY}",
@@ -48,6 +68,7 @@ router = APIRouter(
 )
 async def route_list_resource_collections(
         project: PydanticObjectId = None,
+        ids: Annotated[List[PydanticObjectId | str] | None, Query()] = None,
         page: int = None,
         limit: int = None,
         q: str = None
@@ -55,6 +76,8 @@ async def route_list_resource_collections(
     filters: dict = {}
     if project:
         filters['project'] = Project.link_from_id(project)
+    if ids is not None:
+        filters['_id'] = {"$in": ids}
     if q is not None:
         filters['q'] = q
 

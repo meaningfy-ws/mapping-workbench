@@ -9,18 +9,17 @@ import {useRouter} from "../../../hooks/use-router";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 
-const useItemsStore = (collectionApi, filters) => {
+const useItemsStore = (collectionApi, filters, request={}) => {
     const isMounted = useMounted();
     const [state, setState] = useState({
         collections: [],
         collectionsCount: 0
     });
 
+    request.filters = filters
     const handleItemsGet = useCallback(async () => {
         try {
-            const collectionResponse = await collectionApi.getItems({
-                filters: filters
-            });
+            const collectionResponse = await collectionApi.getItems(request);
 
             if (isMounted()) {
                 setState({
@@ -48,8 +47,8 @@ const useItemsStore = (collectionApi, filters) => {
 
 export const FileResourceCollectionsList = (props) => {
     const router = useRouter();
-    const {collectionApi, filters = {}, ...other} = props;
-    const itemsStore = useItemsStore(collectionApi, filters);
+    const {collectionApi, filters = {}, request = {}, ...other} = props;
+    const itemsStore = useItemsStore(collectionApi, filters, request);
 
     return (
         <Stack divider={<Divider/>}>

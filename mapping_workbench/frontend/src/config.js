@@ -1,7 +1,7 @@
 export const enableDevTools = process.env.NEXT_PUBLIC_ENABLE_REDUX_DEV_TOOLS === 'true';
 export const api = {
-    address: process.env.API_ADDRESS,
-    baseUrl: process.env.API_BASE_URL
+    address: process.env.MW_BACKEND_ADDRESS,
+    baseUrl: process.env.MW_BACKEND_BASE_URL
 }
 
 export const auth0Config = {
