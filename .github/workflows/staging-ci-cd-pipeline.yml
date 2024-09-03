@@ -1,9 +1,9 @@
 name: staging CI/CD pipeline
 
 on:
-#  pull_request:
-#    branches: [ feature/* , hotfix/*, release/* ]
-  workflow_dispatch:
+  pull_request:
+    branches: [ develop ]
+#  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -29,7 +29,7 @@ jobs:
 
     - name: connect, pull and build
       run: |
-        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.STAGING_WORK_DIR }} && git checkout ${{ steps.extract_branch.outputs.branch }} && git pull && make build-frontend && make build-backend && exit"
+        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "source ~/.bashrc && cd ${{ secrets.STAGING_WORK_DIR }} && git pull && git checkout ${{ steps.extract_branch.outputs.branch }} && git pull && make staging-dotenv-file && make build-frontend && make build-backend && exit"
 
     - name: cleanup
       run: rm -rf ~/.ssh
@@ -49,26 +49,29 @@ jobs:
 
       - name: Run Backend E2E tests
         run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'cd ${{ secrets.STAGING_WORK_DIR }} && python3 -m venv venv && source venv/bin/activate && make test-e2e-backend && exit'
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'cd ${{ secrets.STAGING_WORK_DIR }} && python3 -m venv venv && source venv/bin/activate && make install-backend && make test-e2e-backend && exit'
 
       - name: Run Frontend E2E tests
         run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'export NVM_DIR="$HOME/.nvm" && \. "$NVM_DIR/nvm.sh" && cd ${{ secrets.STAGING_WORK_DIR }} && make dotenv-file-frontend && make test-e2e-frontend && exit'
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'source ~/.bashrc && cd ${{ secrets.STAGING_WORK_DIR }} && make dotenv-file-frontend && make install-frontend && make test-e2e-frontend && exit'
 
-      - name: cleanup
-        run: rm -rf ~/.ssh
-
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Copy Backend E2E Coverage data
+        run: |
+          scp -r ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.STAGING_WORK_DIR }}/.coverage ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.STAGING_WORK_DIR }}/coverage.xml .
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: coverage.xml
+          file: ./coverage.xml
           env_vars: OS,PYTHON
           name: codecov-umbrella
           fail_ci_if_error: true
+
+      - name: Reverse to develop branch on failure
+        if: failure()
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'cd ${{ secrets.STAGING_WORK_DIR }} && git pull && git checkout develop && git pull && make staging-dotenv-file && make install-frontend && make install-backend && make test-e2e-backend && exit'
+
+      - name: cleanup
+        run: rm -rf ~/.ssh
