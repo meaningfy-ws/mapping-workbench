@@ -17,10 +17,14 @@ jobs:
     environment: staging
 
     steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
     - name: Extract branch name
       shell: bash
       run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
       id: extract_branch
+    - name: Display branch name
+      run: echo "Branch name is ${{ steps.extract_branch.outputs.branch }}"
     - name: Install ssh keys
       run: |
         install -m 600 -D /dev/null ~/.ssh/id_rsa
