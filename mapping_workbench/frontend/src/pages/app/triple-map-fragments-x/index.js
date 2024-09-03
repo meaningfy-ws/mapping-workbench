@@ -1,24 +1,25 @@
-import {useEffect, useState} from 'react';
-
+import {useCallback, useEffect, useState} from 'react';
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
+import Box from '@mui/material/Box';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
+import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {paths} from 'src/paths';
-import {Seo} from 'src/components/seo';
-import {Layout as AppLayout} from 'src/layouts/app';
-import {usePageView} from 'src/hooks/use-page-view';
-import {RouterLink} from 'src/components/router-link';
+import {tripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {resourceCollectionsApi as sectionApi} from 'src/api/resource-collections';
-import {FileCollectionListSearch} from 'src/sections/app/file-manager/file-collection-list-search';
-import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
-
+import {RouterLink} from 'src/components/router-link';
+import {Seo} from 'src/components/seo';
+import {usePageView} from 'src/hooks/use-page-view';
+import {Layout as AppLayout} from 'src/layouts/app';
+import {paths} from 'src/paths';
+import {ListSearch} from "../../../sections/app/triple-map-fragment/list-search";
+import {ListTable} from "../../../sections/app/triple-map-fragment/list-table";
+import {useMounted} from "../../../hooks/use-mounted";
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -28,31 +29,30 @@ const useItemsSearch = () => {
             status: [],
             inStock: undefined
         },
-        page: sectionApi.DEFAULT_PAGE,
-        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
+        page: 0,
+        rowsPerPage: 5
     });
 
-    const handleFiltersChange = filters => {
-        setState(prevState => ({
+    const handleFiltersChange = useCallback((filters) => {
+        setState((prevState) => ({
             ...prevState,
-            filters,
-            page: 0
+            filters
         }));
-    }
+    }, []);
 
-    const handlePageChange = (event, page) => {
-        setState(prevState => ({
+    const handlePageChange = useCallback((event, page) => {
+        setState((prevState) => ({
             ...prevState,
             page
         }));
-    }
+    }, []);
 
-    const handleRowsPerPageChange = event => {
-        setState(prevState => ({
+    const handleRowsPerPageChange = useCallback((event) => {
+        setState((prevState) => ({
             ...prevState,
             rowsPerPage: parseInt(event.target.value, 10)
         }));
-    }
+    }, []);
 
     return {
         handleFiltersChange,
@@ -62,33 +62,35 @@ const useItemsSearch = () => {
     };
 };
 
+
 const useItemsStore = (searchState) => {
+    const isMounted = useMounted();
     const [state, setState] = useState({
         items: [],
-        itemsCount: 0,
-        force: 0
+        itemsCount: 0
     });
 
-    const handleItemsGet = (force = 0) => {
-        sectionApi.getItems(searchState)
-            .then(res =>
-                 setState({
-                    items: res.items,
-                    itemsCount: res.count,
-                     force: force
-                }))
-            .catch(err => console.warn(err))
-    }
-
+    const handleItemsGet = useCallback(async () => {
+        try {
+            const response = await sectionApi.getItems(searchState);
+            if (isMounted()) {
+                setState({
+                    items: response.items,
+                    itemsCount: response.count
+                });
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }, [searchState, isMounted]);
 
     useEffect(() => {
-            handleItemsGet()
+            handleItemsGet();
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState.state]);
+        [searchState]);
 
     return {
-        handleItemsGet,
         ...state
     };
 };
@@ -144,7 +146,6 @@ const Page = () => {
                         spacing={3}
                     >
                         <Button
-                            id="add_button"
                             component={RouterLink}
                             href={paths.app[sectionApi.section].create}
                             startIcon={(
@@ -159,17 +160,15 @@ const Page = () => {
                     </Stack>
                 </Stack>
                 <Card>
-                    <FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
-                    <FileCollectionListTable
+                    <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
+                    <ListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                         page={itemsSearch.state.page}
                         items={itemsStore.items}
-                        itemsForced={itemsStore.force}
                         count={itemsStore.itemsCount}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
-                        getItems={itemsStore.handleItemsGet}
                     />
                 </Card>
             </Stack>

@@ -1,22 +1,22 @@
 import {useEffect, useState} from 'react';
-import Grid from '@mui/material/Unstable_Grid2';
+import Link from "@mui/material/Link";
 import Stack from '@mui/material/Stack';
+import Grid from '@mui/material/Unstable_Grid2';
+import TextField from "@mui/material/TextField";
 import Typography from '@mui/material/Typography';
+import Breadcrumbs from "@mui/material/Breadcrumbs";
+import Autocomplete from "@mui/material/Autocomplete";
+import TablePagination from "@mui/material/TablePagination";
 
 import {Seo} from 'src/components/seo';
 import {Layout as AppLayout} from 'src/layouts/app';
-import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
 import {usePageView} from 'src/hooks/use-page-view';
-import TextField from "@mui/material/TextField";
-import CMCard from "../../../../sections/app/conceptual-mapping-rule/cm-card";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
-import {BreadcrumbsSeparator} from "../../../../components/breadcrumbs-separator";
-import Link from "@mui/material/Link";
 import {RouterLink} from "../../../../components/router-link";
-import {paths} from "../../../../paths";
 import {fieldsRegistryApi} from "../../../../api/fields-registry";
-import Autocomplete from "@mui/material/Autocomplete";
-import TablePagination from "@mui/material/TablePagination";
+import CMCard from "../../../../sections/app/conceptual-mapping-rule/cm-card";
+import {BreadcrumbsSeparator} from "../../../../components/breadcrumbs-separator";
+import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
+import {paths} from "../../../../paths";
 
 
 const useItemsSearch = (items) => {
@@ -118,8 +118,7 @@ const Page = () => {
 
     return (
         <>
-            <Seo title="App: CM Review"/>
-
+            <Seo title={`App: ${sectionApi.SECTION_TITLE}`}/>
             <Grid
                 container
                 spacing={{
