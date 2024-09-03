@@ -91,6 +91,6 @@ async def route_create_xsd_file(
     except (
             XSDFileResourceExistsException,
             ProjectNotFoundException
-    ) as expected_exceptions:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(expected_exceptions))
+    ) as expected_exception:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(expected_exception))
     return None

@@ -1,16 +1,18 @@
 import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {specificTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/specific';
+import {tripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments';
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
-import {EditForm} from 'src/sections/app/specific-triple-map-fragment/edit-form';
+import {EditForm} from 'src/sections/app/triple-map-fragment/edit-form';
 import {ForItemCreateForm} from "src/contexts/app/section/for-item-form";
 
 

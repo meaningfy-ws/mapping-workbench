@@ -44,7 +44,7 @@ class ConceptualMappingGroup(BaseModel):
         property_path = property_path.strip()
         property_path_list = property_path.split(" / ")
 
-        ontology_path = [element for pair in zip_longest(class_path_list, property_path_list) for element in pair if
+        ontology_path = [element.split(":")[-1] for pair in zip_longest(class_path_list, property_path_list) for element in pair if
                          element is not None]
         return "MG-" + "-".join(ontology_path)
 
@@ -60,13 +60,15 @@ class ConceptualMappingGroupBeanie(BaseProjectResourceEntity):
     group_name: str
 
     class Settings(BaseProjectResourceEntity.Settings):
-        name = "mapping_groups"
+        name = "conceptual_mapping_groups"
 
         indexes = [
             IndexModel(
                 [
+                    ("project.$id", pymongo.ASCENDING),
                     ("group_name", pymongo.TEXT),
                 ],
+                unique=True,
                 name="mapping_groups_index"
             )
         ]
