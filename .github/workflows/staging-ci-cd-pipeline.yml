@@ -2,7 +2,7 @@ name: staging CI/CD pipeline
 
 on:
   pull_request:
-    branches: [ develop, feature/* , hotfix/* ]
+    branches: [ develop ]
 #  workflow_dispatch:
 
 concurrency:
