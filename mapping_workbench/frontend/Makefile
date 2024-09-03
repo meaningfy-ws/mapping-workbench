@@ -27,5 +27,4 @@ install-prod-frontend:
 #	@ npm install && npm install -g serve && npm run build && rm -fr node_modules
 
 test-e2e:
-	@ npm install
 	@ npm run test-e2e

@@ -30,6 +30,7 @@ jobs:
           make install-dev
       - name: Run unit tests
         run: make test-unit
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
