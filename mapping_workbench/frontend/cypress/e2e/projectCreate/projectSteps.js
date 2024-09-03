@@ -9,12 +9,17 @@ Given('Session Login', () => {
         cy.get('[name=username]').clear().type(username)
         cy.get('[name=password]').clear().type(password)
         cy.get('button[type="submit"]').click()
-        cy.title().should('eq','App: Projects List | Mapping Workbench')
+        cy.title().should('eq','Mapping Workbench')
     })
 })
 
 Then('I get redirected to projects list page', () => {
     cy.title().should('eq','App: Projects List | Mapping Workbench')
+})
+
+Then('I select create project from project switch', () => {
+    cy.get('#project_switch').click()
+    cy.get('#create_project_button').click()
 })
 
 When('I click on add project button', () => {

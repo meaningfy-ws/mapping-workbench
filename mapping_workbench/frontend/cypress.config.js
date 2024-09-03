@@ -19,8 +19,8 @@ module.exports = defineConfig({
   e2e: {
     baseUrl: process.env.MW_FRONTEND_ADDRESS,
     chromeWebSecurity: false,
-    viewportWidth: 2000,
-    viewportHeight: 1000,
+    viewportWidth: 1280,
+    viewportHeight: 800,
     specPattern:[
         "cypress/e2e/login.feature",
         // "cypress/e2e/scenarioOne.feature",

@@ -52,7 +52,9 @@ export const TopNav = (props) => {
                     spacing={2}
                 >
                     {!breakPointUp && (
-                        <IconButton onClick={onMobileNavOpen}>
+                        <IconButton
+                            id='open_sidebar'
+                            onClick={onMobileNavOpen}>
                             <SvgIcon>
                                 <Menu01Icon />
                             </SvgIcon>

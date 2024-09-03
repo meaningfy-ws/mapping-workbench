@@ -1,18 +1,16 @@
 Feature: Ontology Files
 
-  As a valid user want to interact with Schema Files
+  As a valid user want to interact with Ontology Files
 
   Background:
     Given Session Login
     Then Go Home
+    When I open side menu
 
   Scenario: Select Project
-    Then I get redirected to projects list page
-    Then I search for project
-
-    When I select project
+    Then I select project
     Then I get success select
-    Then I get redirected to projects list page
+    Then I get redirected to overview page
 
   Scenario: Upload Ontology Files
     Then I click on Ontology Files
