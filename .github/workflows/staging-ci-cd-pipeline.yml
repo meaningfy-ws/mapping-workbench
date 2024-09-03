@@ -57,7 +57,6 @@ jobs:
 
       - name: Copy Backend E2E Coverage file
         run: |
-          scp mnfy-srv:~/work/mapping-workbench/staging/mapping-workbench/coverage.xml .
           scp ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.STAGING_WORK_DIR }}/coverage.xml .
 
       - name: cleanup
