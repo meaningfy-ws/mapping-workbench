@@ -32,7 +32,7 @@ export const MobileNavItem = (props) => {
 
   let startIcon;
 
-  if (depth === 0) {
+  if (depth < 2) {
     startIcon = icon;
   } else {
     startIcon = (

@@ -6,10 +6,12 @@ import {useAuth} from "../../hooks/use-auth";
 import {projectsApi as sectionApi} from "../../api/projects";
 import {toastError, toastLoad, toastSuccess} from "../../components/app-toast";
 import {paths} from "../../paths";
+import {useRouter} from "next/router";
 
 export const ProjectsProvider = ({children}) => {
     const [state, setState] = useState(initialState);
-    const {isAuthenticated} = useAuth();
+    const { isAuthenticated } = useAuth();
+    const router = useRouter()
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -38,13 +40,13 @@ export const ProjectsProvider = ({children}) => {
     }
 
     const handleSessionProjectChange = (id) => {
-        const toastId = toastLoad('Selecting project...');
-        sessionApi.setSessionProject(id)
-            .then(res => {
-                setState(prevState => ({...prevState, sessionProject: id}))
-                toastSuccess('Project Selected', toastId);
-            })
-            .finally(() => window.location.replace(paths.app.projects.index))
+            const toastId = toastLoad('Selecting project...');
+            sessionApi.setSessionProject(id)
+                .then(res => {
+                    setState(prevState => ({...prevState, sessionProject: id}))
+                    toastSuccess('Project Selected', toastId);
+                })
+                .finally(() => window.location.replace(paths.index))
     }
 
     const handleProjectCleanup = (id) => {

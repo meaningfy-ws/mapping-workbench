@@ -1,103 +1,31 @@
-import {useEffect, useState} from 'react';
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
-import SearchIcon from '@untitled-ui/icons-react/build/esm/SearchRefraction';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
+import SearchIcon from "@untitled-ui/icons-react/build/esm/SearchRefraction";
+
 import Link from '@mui/material/Link';
+import Grid from "@mui/material/Grid";
 import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
 
+import {paths} from 'src/paths';
+import {Seo} from 'src/components/seo';
+import {useRouter} from "src/hooks/use-router";
+import {Layout as AppLayout} from 'src/layouts/app';
+import {RouterLink} from 'src/components/router-link';
+import {usePageView} from 'src/hooks/use-page-view';
+import OntologyTerms from "src/sections/app/ontology/ontology-terms";
 import {ontologyTermsApi as sectionApi} from 'src/api/ontology-terms';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {RouterLink} from 'src/components/router-link';
-import {Seo} from 'src/components/seo';
-import {usePageView} from 'src/hooks/use-page-view';
-import {Layout as AppLayout} from 'src/layouts/app';
-import {paths} from 'src/paths';
-import {ListSearch} from "../../../sections/app/ontology-term/list-search";
-import {ListTable} from "../../../sections/app/ontology-term/list-table";
-import {useRouter} from "../../../hooks/use-router";
-import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
+import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
+import OntologyNamespaces from "src/sections/app/ontology/ontology-namespaces";
+import OntologyNamespacesCustom from "src/sections/app/ontology/ontology-namespaces-custom";
 
-const useItemsSearch = () => {
-    const [state, setState] = useState({
-        filters: {
-            name: undefined,
-            category: [],
-            status: [],
-            inStock: undefined
-        },
-        sortField: '',
-        sortDirection: undefined,
-        page: sectionApi.DEFAULT_PAGE,
-        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
-    });
-
-    const handleFiltersChange = filters => {
-        setState(prevState => ({
-            ...prevState,
-            filters,
-            page: 0
-        }));
-    }
-
-    const handlePageChange = (event, page) => {
-        setState(prevState => ({
-            ...prevState,
-            page
-        }));
-    }
-
-    const handleRowsPerPageChange = event => {
-        setState((prevState) => ({
-            ...prevState,
-            rowsPerPage: parseInt(event.target.value, 10)
-        }));
-    }
-
-    return {
-        handleFiltersChange,
-        handlePageChange,
-        handleRowsPerPageChange,
-        state
-    };
-};
-
-const useItemsStore = (searchState) => {
-    const [state, setState] = useState({
-        items: [],
-        itemsCount: 0
-    });
-
-    const handleItemsGet = () => {
-        sectionApi.getItems(searchState)
-            .then(res => setState({
-                    items: res.items,
-                    itemsCount: res.count
-                }))
-            .catch(err => console.warn(err))
-    }
-
-    useEffect(() => {
-            handleItemsGet();
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState]);
-
-    return {
-        ...state
-    };
-};
 
 const Page = () => {
-    const router = useRouter();
-    const itemsSearch = useItemsSearch();
-    const itemsStore = useItemsStore(itemsSearch.state);
 
-    usePageView();
-
+    const router = useRouter()
     const handleDiscover = () => {
         const toastId = toastLoad('Discovering terms ...')
         sectionApi.discoverTerms()
@@ -108,89 +36,102 @@ const Page = () => {
             .catch(err => toastError(`Discovering terms failed: ${err.message}.`, toastId))
     };
 
+    usePageView();
+
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
-            <Stack spacing={4}>
-                <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    spacing={4}
-                >
-                    <Stack spacing={1}>
-                        <Typography variant="h4">
-                            {sectionApi.SECTION_TITLE}
-                        </Typography>
-                        <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.index}
-                                variant="subtitle2"
-                            >
-                                App
-                            </Link>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.app[sectionApi.section].index}
-                                variant="subtitle2"
-                            >
-                                {sectionApi.SECTION_TITLE}
-                            </Link>
-                            <Typography
-                                color="text.secondary"
-                                variant="subtitle2"
-                            >
-                                List
-                            </Typography>
-                        </Breadcrumbs>
-                    </Stack>
+            <Grid container
+                  direction='column'
+                  spacing={4}>
+                <Grid item>
                     <Stack
-                        alignItems="center"
                         direction="row"
-                        spacing={3}
+                        justifyContent="space-between"
+                        spacing={4}
                     >
-                        <Button
-                            id="discover_button"
-                            onClick={handleDiscover}
-                            startIcon={(
-                                <SvgIcon>
-                                    <SearchIcon/>
-                                </SvgIcon>
-                            )}
-                            variant="contained"
+                        <Stack spacing={1}>
+                            <Typography variant="h4">
+                                {sectionApi.SECTION_TITLE}
+                            </Typography>
+                            <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
+                                <Link
+                                    color="text.primary"
+                                    component={RouterLink}
+                                    href={paths.index}
+                                    variant="subtitle2"
+                                >
+                                    App
+                                </Link>
+                                <Link
+                                    color="text.primary"
+                                    component={RouterLink}
+                                    href={paths.app[sectionApi.section].index}
+                                    variant="subtitle2"
+                                >
+                                    {sectionApi.SECTION_TITLE}
+                                </Link>
+                                <Typography
+                                    color="text.secondary"
+                                    variant="subtitle2"
+                                >
+                                    List
+                                </Typography>
+                            </Breadcrumbs>
+                        </Stack>
+                        <Stack
+                            alignItems="center"
+                            direction="row"
+                            spacing={3}
                         >
-                            Discover
-                        </Button>
-                        <Button
-                            id="add_button"
-                            component={RouterLink}
-                            href={paths.app[sectionApi.section].create}
-                            startIcon={(
-                                <SvgIcon>
-                                    <PlusIcon/>
-                                </SvgIcon>
-                            )}
-                            variant="contained"
-                        >
-                            Add
-                        </Button>
+                            <Button
+                                id="discover_button"
+                                onClick={handleDiscover}
+                                startIcon={(
+                                    <SvgIcon>
+                                        <SearchIcon/>
+                                    </SvgIcon>
+                                )}
+                                variant="contained"
+                            >
+                                Discover Terms
+                            </Button>
+                            <Button
+                                id="add_term_button"
+                                component={RouterLink}
+                                href={paths.app[sectionApi.section].create}
+                                startIcon={(
+                                    <SvgIcon>
+                                        <PlusIcon/>
+                                    </SvgIcon>
+                                )}
+                                variant="contained"
+                            >
+                                Add Term
+                            </Button>
+                        </Stack>
                     </Stack>
-                </Stack>
-                <Card>
-                    <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
-                    <ListTable
-                        onPageChange={itemsSearch.handlePageChange}
-                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        page={itemsSearch.state.page}
-                        items={itemsStore.items}
-                        count={itemsStore.itemsCount}
-                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                        sectionApi={sectionApi}
-                    />
-                </Card>
-            </Stack>
+                </Grid>
+                <Grid item>
+                    <OntologyTerms/>
+                </Grid>
+               <Grid container
+                     item
+                     spacing={4}
+               >
+                    <Grid item
+                          xs={12}
+                          xl={6}
+                    >
+                        <OntologyNamespacesCustom/>
+                    </Grid>
+                    <Grid item
+                          xs={12}
+                          xl={6}>
+                        <OntologyNamespaces/>
+                    </Grid>
+                </Grid>
+            </Grid>
         </>
     )
 };

@@ -1,6 +1,8 @@
-import {useEffect, useState} from 'react';
-
+import {useCallback, useState} from 'react';
 import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
+import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
+import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Unstable_Grid2';
 import Link from '@mui/material/Link';
@@ -10,38 +12,38 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
-import {paths} from 'src/paths';
-import {Seo} from 'src/components/seo';
-import {Layout as AppLayout} from 'src/layouts/app';
-import {schemaApi as sectionApi} from 'src/api/schema';
-import {BasicDetails} from 'src/sections/app/fields-registry/basic-details';
+import {tripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments';
 import {RouterLink} from 'src/components/router-link';
+import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
+import {Layout as AppLayout} from 'src/layouts/app';
+import {paths} from 'src/paths';
 import {useRouter} from "src/hooks/use-router";
+import {useItem} from "src/contexts/app/section/for-item-data-state";
 
 const tabs = [
     {label: 'Details', value: 'details'}
 ];
 
 const Page = () => {
-    const [currentTab, setCurrentTab] = useState('details');
-    const [item, setItem] = useState()
-
     const router = useRouter();
+    if (!router.isReady) return;
 
     const {id} = router.query;
 
-    useEffect(() => {
-        id && sectionApi.getItem(id, 'element')
-            .then(res => setItem(res))
-            .catch(err => console.error(err))
-    },[id]);
+    if (!id) {
+        return;
+    }
+
+    const formState = useItem(sectionApi, id);
+    const item = formState.item;
 
     usePageView();
+    const [currentTab, setCurrentTab] = useState('details');
 
-    const handleTabsChange = (event, value) => {
+    const handleTabsChange = useCallback((event, value) => {
         setCurrentTab(value);
-    }
+    }, []);
 
     if (!item) {
         return;
@@ -86,12 +88,19 @@ const Page = () => {
                             spacing={2}
                         >
                             <Stack spacing={1}>
-                                {item.name && <Typography variant="h4">
-                                    {item.name}
-                                </Typography>}
-                                <Typography variant={item.name ? "h5" : "h4"}>
-                                    {item.sdk_element_id}
+                                <Typography variant="h4">
+                                    {item.title}
                                 </Typography>
+                                <Stack
+                                    alignItems="center"
+                                    direction="row"
+                                    spacing={1}
+                                >
+                                    <Chip
+                                        label={item._id}
+                                        size="small"
+                                    />
+                                </Stack>
                             </Stack>
                         </Stack>
                     </Stack>
@@ -126,9 +135,7 @@ const Page = () => {
                                 xs={12}
                                 lg={12}
                             >
-                                <BasicDetails
-                                    item={item}
-                                />
+
                             </Grid>
                         </Grid>
                     </div>

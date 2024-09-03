@@ -1,5 +1,8 @@
 import {useEffect, useState} from 'react';
+import {useTranslation} from "react-i18next";
+
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
+import RefreshIcon from '@untitled-ui/icons-react/build/esm/Repeat02';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -10,24 +13,26 @@ import Typography from '@mui/material/Typography';
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
-import {Layout as AppLayout} from 'src/layouts/app';
+import {tokens} from "/src/locales/tokens";
 import {usePageView} from 'src/hooks/use-page-view';
+import {Layout as AppLayout} from 'src/layouts/app';
 import {RouterLink} from 'src/components/router-link';
-import {shaclTestSuitesApi as sectionApi} from 'src/api/shacl-test-suites';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {FileCollectionListSearch} from 'src/sections/app/file-manager/file-collection-list-search';
-import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
+import {ListSearch} from "src/sections/app/conceptual-mapping-rule/list-search";
+import {ListTable} from "src/sections/app/conceptual-mapping-rule/list-table";
+import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
         filters: {
-            name: undefined,
-            category: [],
-            status: [],
-            inStock: undefined
+            q: undefined,
+            terms_validity: undefined
         },
+        sortField: '',
+        sortDirection: undefined,
         page: sectionApi.DEFAULT_PAGE,
-        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
+        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE,
+        detailedView: true
     });
 
     const handleFiltersChange = filters => {
@@ -52,29 +57,37 @@ const useItemsSearch = () => {
         }));
     }
 
+    const handleDetailedViewChange = (event, detailedView) => {
+        setState(prevState => ({
+            ...prevState,
+            detailedView
+        }));
+    }
+
+    const handleSorterChange = sortField => {
+        setState(prevState => ({...prevState, sortField, sortDirection: state.sortField === sortField && prevState.sortDirection === -1 ? 1 : -1 }))
+    }
+
     return {
+        handleSorterChange,
         handleFiltersChange,
         handlePageChange,
         handleRowsPerPageChange,
+        handleDetailedViewChange,
         state
     };
 };
 
-const useItemsStore = searchState => {
+
+const useItemsStore = (searchState) => {
     const [state, setState] = useState({
         items: [],
-        itemsCount: 0,
-        force: 0
+        itemsCount: 0
     });
 
-    const handleItemsGet = (force = 0) => {
+    const handleItemsGet = () => {
         sectionApi.getItems(searchState)
-            .then(res =>
-                setState({
-                    items: res.items,
-                    itemsCount: res.count,
-                    force: force
-                }))
+            .then(res => setState({items: res.items, itemsCount: res.count}))
             .catch(err => console.warn(err))
     }
 
@@ -82,19 +95,28 @@ const useItemsStore = searchState => {
             handleItemsGet();
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState.state]);
+        [searchState]);
 
     return {
-        handleItemsGet,
         ...state
     };
 };
 
+
 const Page = () => {
+    const {t} = useTranslation();
+
     const itemsSearch = useItemsSearch();
     const itemsStore = useItemsStore(itemsSearch.state);
 
     usePageView();
+
+    const [sortDir, setSortDir] = useState('desc');
+    const [sortField, setSortField] = useState('1');
+
+    const handleSort = () => {
+        setSortDir(prevState => prevState === 'asc' ? 'desc' : 'asc');
+    }
 
     return (
         <>
@@ -107,7 +129,7 @@ const Page = () => {
                 >
                     <Stack spacing={1}>
                         <Typography variant="h4">
-                            {sectionApi.SECTION_TITLE}
+                            Overview {sectionApi.SECTION_TITLE}
                         </Typography>
                         <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
                             <Link
@@ -122,7 +144,7 @@ const Page = () => {
                                 color="text.secondary"
                                 variant="subtitle2"
                             >
-                                {sectionApi.SECTION_TITLE}
+                                Overview {sectionApi.SECTION_TITLE}
                             </Typography>
                         </Breadcrumbs>
                     </Stack>
@@ -132,9 +154,9 @@ const Page = () => {
                         spacing={3}
                     >
                         <Button
-                            id="add_button"
                             component={RouterLink}
-                            href={paths.app[sectionApi.section].create}
+                            href={paths.app[sectionApi.section].overview.create}
+                            id="add-mapping-rules-button"
                             startIcon={(
                                 <SvgIcon>
                                     <PlusIcon/>
@@ -144,20 +166,37 @@ const Page = () => {
                         >
                             Add
                         </Button>
+                        <Button
+                            id="generate_button"
+                            component={RouterLink}
+                            href={paths.app[sectionApi.section].tasks.generate_cm_assertions_queries}
+                            startIcon={(
+                                <SvgIcon>
+                                    <RefreshIcon/>
+                                </SvgIcon>
+                            )}
+                            variant="contained"
+                        >
+                            {t(tokens.nav.generate_cm_assertions_queries)}
+                        </Button>
                     </Stack>
                 </Stack>
                 <Card>
-                    <FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
-                    <FileCollectionListTable
+                    <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}
+                                onDetailedViewChange={itemsSearch.handleDetailedViewChange}
+                                detailedView={itemsSearch.state.detailedView}
+                    />
+                    <ListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                         page={itemsSearch.state.page}
                         items={itemsStore.items}
-                        itemsForced={itemsStore.force}
                         count={itemsStore.itemsCount}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
-                        getItems={itemsStore.handleItemsGet}
+                        onSort={itemsSearch.handleSorterChange}
+                        sort={{direction: itemsSearch.state.sortDirection, column: itemsSearch.state.sortField}}
+                        detailedView={itemsSearch.state.detailedView}
                     />
                 </Card>
             </Stack>

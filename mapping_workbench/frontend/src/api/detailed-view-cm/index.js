@@ -5,11 +5,11 @@ import {sessionApi} from "../session";
 
 class DetailedViewCmApi extends SectionApi {
     get SECTION_TITLE() {
-        return "Detailed Conceptual Mappings View";
+        return "Conceptual Mappings Rules";
     }
 
     get SECTION_ITEM_TITLE() {
-        return "Detailed Conceptual Mappings View";
+        return "Conceptual Mappings Rules";
     }
 
     constructor() {

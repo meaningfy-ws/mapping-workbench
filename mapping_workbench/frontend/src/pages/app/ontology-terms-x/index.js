@@ -1,24 +1,25 @@
 import {useEffect, useState} from 'react';
-
+import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
+import SearchIcon from '@untitled-ui/icons-react/build/esm/SearchRefraction';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
+import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
+import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {paths} from 'src/paths';
-import {Seo} from 'src/components/seo';
-import {Layout as AppLayout} from 'src/layouts/app';
-import {schemaApi as sectionApi} from 'src/api/schema';
+import {ontologyTermsApi as sectionApi} from 'src/api/ontology-terms';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {RouterLink} from 'src/components/router-link';
+import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
-import {ListSearch} from "src/sections/app/fields-registry/list-search";
-import {ListTable} from "src/sections/app/fields-registry/list-table";
-import {useMounted} from "src/hooks/use-mounted";
-import Button from "@mui/material/Button";
-import SvgIcon from "@mui/material/SvgIcon";
-import {Upload04 as ImportIcon} from '@untitled-ui/icons-react/build/esm';
+import {Layout as AppLayout} from 'src/layouts/app';
+import {paths} from 'src/paths';
+import {ListSearch} from "../../../sections/app/ontology-term/list-search";
+import {ListTable} from "../../../sections/app/ontology-term/list-table";
+import {useRouter} from "../../../hooks/use-router";
+import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -28,12 +29,14 @@ const useItemsSearch = () => {
             status: [],
             inStock: undefined
         },
+        sortField: '',
+        sortDirection: undefined,
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
 
     const handleFiltersChange = filters => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             filters,
             page: 0
@@ -48,7 +51,7 @@ const useItemsSearch = () => {
     }
 
     const handleRowsPerPageChange = event => {
-        setState(prevState => ({
+        setState((prevState) => ({
             ...prevState,
             rowsPerPage: parseInt(event.target.value, 10)
         }));
@@ -62,21 +65,19 @@ const useItemsSearch = () => {
     };
 };
 
-
 const useItemsStore = (searchState) => {
-    const isMounted = useMounted();
     const [state, setState] = useState({
         items: [],
         itemsCount: 0
     });
 
     const handleItemsGet = () => {
-        sectionApi.getItems(searchState,null,'/fields_registry/elements')
+        sectionApi.getItems(searchState)
             .then(res => setState({
-                items: res.items,
-                itemsCount: res.count
-            }))
-            .catch(err => console.error(err))
+                    items: res.items,
+                    itemsCount: res.count
+                }))
+            .catch(err => console.warn(err))
     }
 
     useEffect(() => {
@@ -90,13 +91,22 @@ const useItemsStore = (searchState) => {
     };
 };
 
-
 const Page = () => {
+    const router = useRouter();
     const itemsSearch = useItemsSearch();
     const itemsStore = useItemsStore(itemsSearch.state);
 
-
     usePageView();
+
+    const handleDiscover = () => {
+        const toastId = toastLoad('Discovering terms ...')
+        sectionApi.discoverTerms()
+            .then(res => {
+                toastSuccess(`${res.task_name} successfully started.`, toastId)
+                router.reload()
+            })
+            .catch(err => toastError(`Discovering terms failed: ${err.message}.`, toastId))
+    };
 
     return (
         <>
@@ -120,11 +130,19 @@ const Page = () => {
                             >
                                 App
                             </Link>
+                            <Link
+                                color="text.primary"
+                                component={RouterLink}
+                                href={paths.app[sectionApi.section].index}
+                                variant="subtitle2"
+                            >
+                                {sectionApi.SECTION_TITLE}
+                            </Link>
                             <Typography
                                 color="text.secondary"
                                 variant="subtitle2"
                             >
-                                Schema
+                                List
                             </Typography>
                         </Breadcrumbs>
                     </Stack>
@@ -134,20 +152,31 @@ const Page = () => {
                         spacing={3}
                     >
                         <Button
-                            id="import_shema_button"
-                            component={RouterLink}
-                            href={paths.app[sectionApi.section].import}
+                            id="discover_button"
+                            onClick={handleDiscover}
                             startIcon={(
                                 <SvgIcon>
-                                    <ImportIcon/>
+                                    <SearchIcon/>
                                 </SvgIcon>
                             )}
                             variant="contained"
                         >
-                            Import schema from github
+                            Discover
+                        </Button>
+                        <Button
+                            id="add_button"
+                            component={RouterLink}
+                            href={paths.app[sectionApi.section].create}
+                            startIcon={(
+                                <SvgIcon>
+                                    <PlusIcon/>
+                                </SvgIcon>
+                            )}
+                            variant="contained"
+                        >
+                            Add
                         </Button>
                     </Stack>
-
                 </Stack>
                 <Card>
                     <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
@@ -163,7 +192,7 @@ const Page = () => {
                 </Card>
             </Stack>
         </>
-    );
+    )
 };
 
 Page.getLayout = (page) => (

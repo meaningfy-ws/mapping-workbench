@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react';
+
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
@@ -8,15 +9,16 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {specificTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/specific';
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {RouterLink} from 'src/components/router-link';
-import {Seo} from 'src/components/seo';
-import {usePageView} from 'src/hooks/use-page-view';
-import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
-import {ListSearch} from "../../../sections/app/specific-triple-map-fragment/list-search";
-import {ListTable} from "../../../sections/app/specific-triple-map-fragment/list-table";
+import {Seo} from 'src/components/seo';
+import {Layout as AppLayout} from 'src/layouts/app';
+import {usePageView} from 'src/hooks/use-page-view';
+import {RouterLink} from 'src/components/router-link';
+import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
+import {resourceCollectionsApi as sectionApi} from 'src/api/resource-collections';
+import {FileCollectionListSearch} from 'src/sections/app/file-manager/file-collection-list-search';
+import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
+
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -26,14 +28,12 @@ const useItemsSearch = () => {
             status: [],
             inStock: undefined
         },
-        sortDirection: undefined,
-        sortField: '',
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
 
     const handleFiltersChange = filters => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             filters,
             page: 0
@@ -41,25 +41,20 @@ const useItemsSearch = () => {
     }
 
     const handlePageChange = (event, page) => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             page
         }));
     }
 
     const handleRowsPerPageChange = event => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             rowsPerPage: parseInt(event.target.value, 10)
         }));
     }
 
-    const handleSorterChange = sortField => {
-        setState(prevState => ({...prevState, sortField, sortDirection: state.sortField === sortField && prevState.sortDirection === -1 ? 1 : -1 }))
-    }
-
     return {
-        handleSorterChange,
         handleFiltersChange,
         handlePageChange,
         handleRowsPerPageChange,
@@ -67,29 +62,33 @@ const useItemsSearch = () => {
     };
 };
 
-
-const useItemsStore = searchState => {
+const useItemsStore = (searchState) => {
     const [state, setState] = useState({
         items: [],
-        itemsCount: 0
+        itemsCount: 0,
+        force: 0
     });
 
-    const handleItemsGet = () => {
+    const handleItemsGet = (force = 0) => {
         sectionApi.getItems(searchState)
-            .then(res => setState({
+            .then(res =>
+                setState({
                     items: res.items,
-                    itemsCount: res.count
+                    itemsCount: res.count,
+                     force: force
                 }))
             .catch(err => console.warn(err))
     }
 
+
     useEffect(() => {
-            handleItemsGet();
+            handleItemsGet()
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState]);
+        [searchState.state]);
 
     return {
+        handleItemsGet,
         ...state
     };
 };
@@ -123,19 +122,11 @@ const Page = () => {
                             >
                                 App
                             </Link>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.app[sectionApi.section].index}
-                                variant="subtitle2"
-                            >
-                                {sectionApi.SECTION_TITLE}
-                            </Link>
                             <Typography
                                 color="text.secondary"
                                 variant="subtitle2"
                             >
-                                List
+                                {sectionApi.SECTION_TITLE}
                             </Typography>
                         </Breadcrumbs>
                     </Stack>
@@ -160,17 +151,17 @@ const Page = () => {
                     </Stack>
                 </Stack>
                 <Card>
-                    <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
-                    <ListTable
+                    <FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
+                    <FileCollectionListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                         page={itemsSearch.state.page}
                         items={itemsStore.items}
+                        itemsForced={itemsStore.force}
                         count={itemsStore.itemsCount}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
-                        onSort={itemsSearch.handleSorterChange}
-                        sort={{direction: itemsSearch.state.sortDirection, column: itemsSearch.state.sortField}}
                         sectionApi={sectionApi}
+                        getItems={itemsStore.handleItemsGet}
                     />
                 </Card>
             </Stack>

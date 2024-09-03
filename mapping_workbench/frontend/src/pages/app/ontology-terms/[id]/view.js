@@ -1,6 +1,8 @@
 import {useCallback, useState} from 'react';
 import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
+import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
+import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Unstable_Grid2';
 import Link from '@mui/material/Link';
@@ -10,13 +12,13 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
-import {ontologyTermsApi as sectionApi} from 'src/api/ontology-terms';
+import {ontologyNamespacesApi as sectionApi} from 'src/api/ontology-namespaces';
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
-import {BasicDetails} from 'src/sections/app/ontology-term/basic-details';
+import {BasicDetails} from 'src/sections/app/ontology-namespace/basic-details';
 import {useRouter} from "src/hooks/use-router";
 import {useItem} from "src/contexts/app/section/for-item-data-state";
 
@@ -26,14 +28,23 @@ const tabs = [
 
 const Page = () => {
     const router = useRouter();
-    const [currentTab, setCurrentTab] = useState('details');
+    if (!router.isReady) return;
+
     const {id} = router.query;
+
+    if (!id) {
+        return;
+    }
+
     const formState = useItem(sectionApi, id);
-
     const item = formState.item;
-    usePageView();
 
-    const handleTabsChange = (event, value) => setCurrentTab(value);
+    usePageView();
+    const [currentTab, setCurrentTab] = useState('details');
+
+    const handleTabsChange = useCallback((event, value) => {
+        setCurrentTab(value);
+    }, []);
 
     if (!item) {
         return;
@@ -79,7 +90,7 @@ const Page = () => {
                         >
                             <Stack spacing={1}>
                                 <Typography variant="h4">
-                                    {item.term}
+                                    {item.prefix}
                                 </Typography>
                                 <Stack
                                     alignItems="center"
@@ -127,9 +138,9 @@ const Page = () => {
                             >
                                 <BasicDetails
                                     id={item._id}
-                                    term={item.term}
-                                    short_term={item.short_term}
-                                    type={item.type}
+                                    prefix={item.prefix}
+                                    uri={item.uri}
+                                    is_syncable={item.is_syncable}
                                 />
                             </Grid>
                         </Grid>

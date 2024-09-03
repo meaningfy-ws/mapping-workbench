@@ -1,13 +1,13 @@
 import {ACTION, SectionApi} from "../section";
 import {appApi} from "../app";
 
-class SchemaApi  extends SectionApi {
+class FieldsOverview  extends SectionApi {
     get SECTION_TITLE() {
-        return "Schema";
+        return "Fields Overview";
     }
 
     get SECTION_ITEM_TITLE() {
-        return "Schema";
+        return "Fields Overview";
     }
 
     get SECTION_LIST_ACTIONS() {
@@ -15,7 +15,7 @@ class SchemaApi  extends SectionApi {
     }
 
     constructor() {
-        super("schema");
+        super("fields_overview");
         this.isProjectResource = true;
     }
 
@@ -38,4 +38,4 @@ class SchemaApi  extends SectionApi {
     }
 }
 
-export const schemaApi = new SchemaApi();
+export const fieldsOverviewApi = new FieldsOverview();
