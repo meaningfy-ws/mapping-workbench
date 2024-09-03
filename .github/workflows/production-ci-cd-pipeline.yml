@@ -2,7 +2,7 @@ name: prod CI/CD pipeline
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [ develop, release/* ]
   workflow_dispatch:
 
 concurrency:
