@@ -23,7 +23,7 @@ jobs:
       id: extract_branch
     - name: pull source code
       run: |
-        git checkout ${{ steps.extract_branch.outputs.branch }} && git pull"
+        git checkout ${{ steps.extract_branch.outputs.branch }} && git pull
     - name: Install ssh keys
       run: |
         install -m 600 -D /dev/null ~/.ssh/id_rsa
