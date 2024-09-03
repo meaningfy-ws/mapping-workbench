@@ -39,7 +39,7 @@ module.exports = defineConfig({
         // "cypress/e2e/ontologyTerms.feature",
         // "cypress/e2e/specificTripleMaps.feature",
         // "cypress/e2e/tasks.feature",
-        "cypress/e2e/cleanUp.feature",
+        //"cypress/e2e/cleanUp.feature",
 
         // "cypress/e2e/scenarioOne.feature",
         // "cypress/e2e/scenarioTwo.feature",
