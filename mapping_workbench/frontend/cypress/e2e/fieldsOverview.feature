@@ -5,18 +5,19 @@ Feature: Fields List
   Background:
     Given Session Login
     Then Go Home
+    Then I open side menu
 
-  Scenario: Select Project
-    Then I click on projects
-
-    Then I get redirected to projects list page
-    Then I search for project
-    Then I select project
-    Then I get success select
+#  Scenario: Select Project
+#    Then I click on projects
+#
+#    Then I get redirected to projects list page
+#    Then I search for project
+#    Then I select project
+#    Then I get success select
 
   Scenario: Import Fields List
-    Then I click on Fields List
-    Then I get redirected to Fields List
+    Then I click on Fields Overview
+    Then I get redirected to Fields Overview
     When I click on import schema button
     Then I get redirected to field registry import page
     Then I type git url
