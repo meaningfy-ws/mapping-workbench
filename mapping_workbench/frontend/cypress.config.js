@@ -34,6 +34,7 @@ module.exports = defineConfig({
         "cypress/e2e/testDataSuites.feature",
         //Mapping Entities
         "cypress/e2e/ontologyTerms.feature",
+        "cypress/e2e/fieldsTree.feature",
         "cypress/e2e/fieldsOverview.feature",
         //Technical Mappings
         "cypress/e2e/valueMappingResources.feature",
@@ -51,7 +52,6 @@ module.exports = defineConfig({
         // "cypress/e2e/removeTripleMap.feature",
         // "cypress/e2e/transformTestData.feature",
         // "cypress/e2e/conceptualMapping.feature",
-        // "cypress/e2e/fieldsTree.feature",
         // "cypress/e2e/termValidator.feature",
         // "cypress/e2e/sparqlQueries.feature",
         // "cypress/e2e/genericTripleMaps.feature",
