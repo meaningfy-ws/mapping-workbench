@@ -10,7 +10,7 @@ import {useRouter} from "next/router";
 
 export const ProjectsProvider = ({children}) => {
     const [state, setState] = useState(initialState);
-    const { isAuthenticated } = useAuth();
+    const {isAuthenticated} = useAuth();
     const router = useRouter()
 
     useEffect(() => {
@@ -40,13 +40,13 @@ export const ProjectsProvider = ({children}) => {
     }
 
     const handleSessionProjectChange = (id) => {
-            const toastId = toastLoad('Selecting project...');
-            sessionApi.setSessionProject(id)
-                .then(res => {
-                    setState(prevState => ({...prevState, sessionProject: id}))
-                    toastSuccess('Project Selected', toastId);
-                })
-                .finally(() => window.location.replace(paths.index))
+        const toastId = toastLoad('Selecting project...');
+        sessionApi.setSessionProject(id)
+            .then(res => {
+                setState(prevState => ({...prevState, sessionProject: id}))
+                toastSuccess('Project Selected', toastId);
+            })
+            .finally(() => window.location.replace(paths.index))
     }
 
     const handleProjectCleanup = (id) => {
@@ -68,7 +68,9 @@ export const ProjectsProvider = ({children}) => {
                 sessionApi.removeLocalSessionProject()
                 getProjects()
                 toastSuccess('Project Deleted', toastId)
+                window.location.replace(paths.index)
             })
+            .catch(err => toastError(err, toastId))
     }
 
 

@@ -34,6 +34,7 @@ module.exports = defineConfig({
         "cypress/e2e/testDataSuites.feature",
         //Mapping Entities
         "cypress/e2e/ontologyTerms.feature",
+        "cypress/e2e/fieldsAndNodes.feature",
         "cypress/e2e/fieldsTree.feature",
         "cypress/e2e/fieldsOverview.feature",
         //Technical Mappings
