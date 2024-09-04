@@ -28,24 +28,27 @@ module.exports = defineConfig({
         // "cypress/e2e/cleanUp.feature",
         // "cypress/e2e/projects.feature",
         "cypress/e2e/projectCreate.feature",
+        //Project Setup
         "cypress/e2e/ontologyFiles.feature",
         "cypress/e2e/testDataSuites.feature",
+        //Mapping Entities
         "cypress/e2e/ontologyTerms.feature",
         "cypress/e2e/fieldsOverview.feature",
+        //Technical Mappings
         "cypress/e2e/valueMappingResources.feature",
-
         "cypress/e2e/tripleMapFragments.feature",
+        //Quality Control
+        "cypress/e2e/sparqlTestSuites.feature",
+        "cypress/e2e/shaclTestSuites.feature",
 
         "cypress/e2e/ontologyNamespaces.feature",
         "cypress/e2e/schemaFiles.feature",
         "cypress/e2e/mappingPackages.feature",
         "cypress/e2e/fieldsTree.feature",
-        "cypress/e2e/genericTripleMaps.feature",
-        "cypress/e2e/sparqlTestSuites.feature",
         // "cypress/e2e/removeTripleMap.feature",
         // "cypress/e2e/transformTestData.feature",
         // "cypress/e2e/conceptualMapping.feature",
-        "cypress/e2e/shaclTestSuites.feature",
+        "cypress/e2e/genericTripleMaps.feature",
         // "cypress/e2e/termValidator.feature",
         // "cypress/e2e/sparqlQueries.feature",
         "cypress/e2e/tasks.feature",
