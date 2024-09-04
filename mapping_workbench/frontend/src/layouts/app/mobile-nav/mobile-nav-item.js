@@ -64,8 +64,7 @@ export const MobileNavItem = (props) => {
     );
   }
 
-  const offset = depth === 0 ? 0 : (depth - 1) * 16;
-
+  const offset = (depth + 1) * 16
   // Branch
 
   if (children) {
@@ -80,7 +79,7 @@ export const MobileNavItem = (props) => {
             borderRadius: 1,
             display: 'flex',
             justifyContent: 'flex-start',
-            pl: `${16 + offset}px`,
+            pl: `${offset}px`,
             pr: '16px',
             py: '6px',
             textAlign: 'left',
