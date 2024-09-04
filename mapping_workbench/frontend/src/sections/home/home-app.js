@@ -14,13 +14,13 @@ export const HomeApp = () => {
     const theme = useTheme();
 
     const linksTypes = [
-        {href: paths.app.projects.index, label: 'creating a project'},
+        {href: paths.app.projects.create, label: 'creating a project'},
         {href: paths.app.ontology_files.index, label: 'Add'},
         {href: paths.app.ontology_files.index, label: 'Upload'},
         {href: paths.app.ontology_terms.index, label: 'Use'},
         {href: paths.app.fields_and_nodes.index, label: 'Specify'},
         {href: paths.app.conceptual_mapping_rules.develop.index, label: 'Create'},
-        {href: paths.app.generic_triple_map_fragments.index, label: 'Develop'},
+        {href: paths.app.triple_map_fragments.index, label: 'Develop'},
         {href: paths.app.mapping_packages.index, label: 'creating a mapping'},
         {href: 'xxx', label: 'Review'},
         {href: paths.app.mapping_packages.index, label: 'Export'},

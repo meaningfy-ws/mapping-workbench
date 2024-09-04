@@ -1,43 +1,34 @@
-import {useEffect, useState} from "react";
-import {genericTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/generic';
-
 import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
+import Chip from '@mui/material/Chip';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {paths} from 'src/paths';
+import {specificTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/specific';
+import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
-import {RouterLink} from 'src/components/router-link';
 import {Layout as AppLayout} from 'src/layouts/app';
+import {paths} from 'src/paths';
 import {ForItemEditForm} from "src/contexts/app/section/for-item-form";
 import {useItem} from "src/contexts/app/section/for-item-data-state";
 import {useRouter} from "src/hooks/use-router";
-import {EditForm} from "../../../../sections/app/generic-triple-map-fragment/edit-form";
+import {EditForm} from "../../../../sections/app/specific-triple-map-fragment/edit-form";
 
 
 const Page = () => {
-    const [tripleMapFragmentTree,setTripleMapFragmentTree] = useState([])
-
     const router = useRouter();
+    if (!router.isReady) return;
+
     const {id} = router.query;
 
-
-    useEffect(() => {
-        handleGetTripleMapFragmentTree()
-    }, []);
-
-
-    const handleGetTripleMapFragmentTree = () => {
-        const project = window.sessionStorage.getItem('sessionProject')
-        sectionApi.getTripleMapFragmentTree({project})
-            .then(res=> setTripleMapFragmentTree(res.test_data_suites))
+    if (!id) {
+        return;
     }
 
     const formState = useItem(sectionApi, id);
-    const { item } = formState;
+    const item = formState.item;
 
     usePageView();
 
@@ -87,22 +78,21 @@ const Page = () => {
                                 <Typography variant="h4">
                                     {item.triple_map_uri}
                                 </Typography>
-                                {/*<Stack*/}
-                                {/*    alignItems="center"*/}
-                                {/*    direction="row"*/}
-                                {/*    spacing={1}*/}
-                                {/*>*/}
-                                {/*    <Chip*/}
-                                {/*        label={item._id}*/}
-                                {/*        size="small"*/}
-                                {/*    />*/}
-                                {/*</Stack>*/}
+                                <Stack
+                                    alignItems="center"
+                                    direction="row"
+                                    spacing={1}
+                                >
+                                    <Chip
+                                        label={item._id}
+                                        size="small"
+                                    />
+                                </Stack>
                             </Stack>
                         </Stack>
                     </Stack>
                 </Stack>
-                <EditForm itemctx={new ForItemEditForm(item, sectionApi, formState.setState)}
-                          tree={tripleMapFragmentTree}/>
+                <EditForm itemctx={new ForItemEditForm(item, sectionApi, formState.setState)}/>
             </Stack>
         </>
     );

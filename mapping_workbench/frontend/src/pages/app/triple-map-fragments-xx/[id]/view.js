@@ -12,7 +12,7 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
-import {genericTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/generic';
+import {specificTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/specific';
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
@@ -142,7 +142,7 @@ const Page = () => {
                 )}
             </Stack>
         </>
-    );
+    )
 };
 
 Page.getLayout = (page) => (
