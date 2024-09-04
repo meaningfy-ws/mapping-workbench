@@ -71,10 +71,10 @@ jobs:
           name: codecov-umbrella
           fail_ci_if_error: true
 
-      - name: Reverse to develop branch
+      - name: Revert to develop branch
         #if: failure()
         run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'cd ${{ secrets.STAGING_WORK_DIR }} && git checkout develop && git pull && exit'
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "source ~/.bashrc && cd ${{ secrets.STAGING_WORK_DIR }} && git checkout develop && git pull && make staging-dotenv-file && make build-frontend && make build-backend && exit"
 
       - name: cleanup
         run: rm -rf ~/.ssh
