@@ -5,14 +5,15 @@ Feature: Ontology Terms
   Background:
     Given Session Login
     Then Go Home
+    Then I open side menu
 
-  Scenario: Select Project
-    Then I get redirected to projects list page
-    Then I search for project
-
-    When I select project
-    Then I get success select
-    Then I get redirected to projects list page
+#  Scenario: Select Project
+#    Then I get redirected to projects list page
+#    Then I search for project
+#
+#    When I select project
+#    Then I get success select
+#    Then I get redirected to projects list page
 
   Scenario: Discover Terms
     When I click on Ontology Terms

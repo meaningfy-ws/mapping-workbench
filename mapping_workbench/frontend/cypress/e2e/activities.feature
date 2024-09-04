@@ -1,10 +1,11 @@
-Feature: Tasks
+Feature: Activities
 
-  As a valid user i want to interact with tasks page
+  As a valid user i want to interact with Activities page
 
   Background:
     Given Session Login
     Then Go Home
+    Then I open side menu
 
   Scenario: Import Packages
     Then I go to Mapping Packages
@@ -14,29 +15,29 @@ Feature: Tasks
     Then I click on upload button
     Then I get success upload
 
-  Scenario: View Tasks
-    Then I go to Tasks page
+  Scenario: View Activities
+    Then I go to Activities page
     Then I get redirected to Tasks page
     Then I receive Tasks
 
 
-  Scenario: Refresh Tasks
-    Then I go to Tasks page
+  Scenario: Refresh Activities
+    Then I go to Activities page
     Then I get redirected to Tasks page
     Then I receive Tasks
     Then I click on refresh button
     Then I receive Tasks
 
-  Scenario: Delete Task
-    Then I go to Tasks page
+  Scenario: Delete Activity
+    Then I go to Activities page
     Then I get redirected to Tasks page
     Then I receive Tasks
     When I delete Task
     Then I get success delete
 
 
-  Scenario: Delete all Tasks
-    Then I go to Tasks page
+  Scenario: Delete all Activities
+    Then I go to Activities page
     Then I get redirected to Tasks page
     Then I receive Tasks
     When I delete all Tasks

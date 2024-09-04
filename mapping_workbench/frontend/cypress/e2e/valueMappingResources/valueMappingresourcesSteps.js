@@ -12,7 +12,7 @@ Given('Session Login', () => {
         cy.get('[name=username]').clear().type(username)
         cy.get('[name=password]').clear().type(password)
         cy.get('button[type="submit"]').click()
-        cy.title().should('eq','App: Projects List | Mapping Workbench')
+        cy.title().should('eq','Mapping Workbench')
     })
     if(sessionProject) cy.window().then(win => win.sessionStorage.setItem('sessionProject',sessionProject))
 })
@@ -28,11 +28,12 @@ Then('I get success select', () => {
 
 Then('I click on Resources', () => {
     cy.intercept('GET', appURLPrefix + 'resource_collections*').as('get')
-    cy.get('#nav_resources').click()
+    cy.get('#nav_technical_mappings').click()
+    cy.get('#nav_value_mapping_resources').click()
 })
 
 Then('I get redirected to Resources', () => {
-    cy.url().should('include','resource-collections')
+    cy.url().should('include','value-mapping-resources')
     cy.wait('@get').its('response.statusCode').should('eq', 200)
 })
 
@@ -41,7 +42,7 @@ Then('I click on add button', () => {
 })
 
 Then('I get redirected to create page', () => {
-    cy.url().should('include','resource-collections/create') // => true
+    cy.url().should('include','value-mapping-resources/create') // => true
 })
 
 

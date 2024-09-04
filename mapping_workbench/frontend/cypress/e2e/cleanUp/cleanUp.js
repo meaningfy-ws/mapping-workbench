@@ -1,6 +1,6 @@
 import {Given, Then, When} from 'cypress-cucumber-preprocessor/steps'
 
-const {username, password, homeURL, projectName, appURLPrefix} = Cypress.env()
+const {username, password, homeURL, projectName, appURLPrefix , homePageLabel} = Cypress.env()
 
 Given('Session Login', () => {
     // Caching session when logging in via page visit
@@ -9,14 +9,21 @@ Given('Session Login', () => {
         cy.get('[name=username]').clear().type(username)
         cy.get('[name=password]').clear().type(password)
         cy.get('button[type="submit"]').click()
-        cy.title().should('eq','App: Projects List | Mapping Workbench')
+        cy.title().should('eq', homePageLabel)
     })
 })
 
 Then('Check home title', () => {
-    cy.title().should('eq','App: Projects List | Mapping Workbench')
+    cy.title().should('eq',homePageLabel)
 })
 
+Then('I click on account button', () => {
+    cy.get('#account_button').click()
+})
+
+Then('I select project setup', () => {
+    cy.get('#project_setup_button').click()
+})
 
 Then('I search for project', () => {
     // cy.intercept('GET', appURLPrefix + '/projects*',).as('get')

@@ -16,17 +16,22 @@ Given('Session Login', () => {
 })
 
 
-When('I click on Fields Tree', () => {
-    cy.intercept('GET', appURLPrefix + 'fields_registry/elements_tree*',).as('get')
+When('I click on Fields And Nodes', () => {
+    cy.intercept('GET', appURLPrefix + 'test_data_suites/file_resources_struct_tree*',).as('getTree')
+    cy.intercept('GET', appURLPrefix + 'fields_registry/elements*',).as('getElements')
     cy.get('#nav_mapping_entities').click()
-    cy.get("#nav_fields_tree").click()
+    cy.get("#nav_fields_and_nodes").click()
 })
 
 
-Then('I get redirected to Fields Tree', () => {
-    cy.url().should('include','fields-tree')
+Then('I get redirected to Fields And Nodes', () => {
+    cy.url().should('include','fields-and-nodes')
 })
 
-And('I receive Fields Tree', () => {
-    cy.wait('@get')
+And('I receive Struct Tree', () => {
+    cy.wait('@getTree')
+})
+
+And('I receive Elements', () => {
+    cy.wait('@getElements')
 })

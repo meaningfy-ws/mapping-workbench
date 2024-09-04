@@ -5,14 +5,15 @@ Feature: SPARQL Test Suites
   Background:
     Given Session Login
     Then Go Home
+    Then I open side menu
 
-  Scenario: Select Project
-    Then I get redirected to projects list page
-    Then I search for project
-
-    When I select project
-    Then I get success select
-    Then I get redirected to projects list page
+#  Scenario: Select Project
+#    Then I get redirected to projects list page
+#    Then I search for project
+#
+#    When I select project
+#    Then I get success select
+#    Then I get redirected to projects list page
 
   Scenario: Add SPARQL Test Suite
     Then I click on Sparql Test Suites

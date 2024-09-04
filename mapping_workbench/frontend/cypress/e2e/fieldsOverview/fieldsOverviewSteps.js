@@ -10,7 +10,7 @@ Given('Session Login', () => {
         cy.get('[name=username]').clear().type(username)
         cy.get('[name=password]').clear().type(password)
         cy.get('button[type="submit"]').click()
-        cy.title().should('eq','App: Projects List | Mapping Workbench')
+        cy.title().should('eq','Mapping Workbench')
     })
     if(sessionProject) cy.window().then(win => win.sessionStorage.setItem('sessionProject',sessionProject))
 })
@@ -23,13 +23,13 @@ Then('I get success select', () => {
 })
 
 Then('Check home title', () => {
-    cy.title().should('eq','App: Projects List | Mapping Workbench')
+    cy.title().should('eq','Mapping Workbench')
 })
 
-Given('I click on Fields List', () => {
-    cy.intercept('GET', appURLPrefix + 'fields_registry/elements*',).
-as('getFields')
-    cy.get('#nav_fields_list').click()
+Given('I click on Fields Overview', () => {
+    cy.intercept('GET', appURLPrefix + 'fields_registry/elements*',).as('getFields')
+    cy.get('#nav_mapping_entities').click()
+    cy.get('#nav_fields_overview').click()
 })
 
 
@@ -38,7 +38,7 @@ When('I click on import schema button', () => {
 })
 
 Then('I get redirected to field registry import page', () => {
-    cy.url().should('include','schema/import')
+    cy.url().should('include','fields-overview/import')
 })
 
 Then('I type git url', () => {
@@ -60,8 +60,8 @@ Then('I get success import', () => {
 })
 
 
-Then('I get redirected to Fields List', () => {
-    cy.url().should('include','schema')
+Then('I get redirected to Fields Overview', () => {
+    cy.url().should('include','fields-overview')
 })
 
 And('I receive fields', () => {

@@ -99,7 +99,7 @@ const Page = () => {
                             <Button
                                 id="add_term_button"
                                 component={RouterLink}
-                                href={paths.app[sectionApi.section].create}
+                                href={paths.app.ontology.create}
                                 startIcon={(
                                     <SvgIcon>
                                         <PlusIcon/>

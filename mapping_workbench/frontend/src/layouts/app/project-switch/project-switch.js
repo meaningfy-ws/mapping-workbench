@@ -22,6 +22,7 @@ export const ProjectSwitch = () => {
 
     return (
         <TextField
+            id='project_switch'
             fullWidth
             label="Project"
             name="sessionProject"
@@ -29,7 +30,8 @@ export const ProjectSwitch = () => {
             value={projectsStore.sessionProject}
             select
         >
-            <MenuItem key={'project_create'}>
+            <MenuItem key={'project_create'}
+                id='create_project_button'>
                 <Typography color={'green'}>
                     Create Project (+)
                 </Typography>

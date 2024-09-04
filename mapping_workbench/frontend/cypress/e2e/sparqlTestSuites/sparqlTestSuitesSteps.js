@@ -13,7 +13,7 @@ Given('Session Login', () => {
         cy.get('[name=username]').clear().type(username)
         cy.get('[name=password]').clear().type(password)
         cy.get('button[type="submit"]').click()
-        cy.title().should('eq','App: Projects List | Mapping Workbench')
+        cy.title().should('eq','Mapping Workbench')
     })
     if(sessionProject) cy.window().then(win => win.sessionStorage.setItem('sessionProject',sessionProject))
 })
@@ -27,6 +27,7 @@ Then('I get success select', () => {
 
 Then('I click on Sparql Test Suites', () => {
     cy.intercept('GET', appURLPrefix + 'sparql_test_suites*').as('get')
+    cy.get('#nav_quality_control').click()
     cy.get('#nav_sparql_test_suites').click()
 })
 

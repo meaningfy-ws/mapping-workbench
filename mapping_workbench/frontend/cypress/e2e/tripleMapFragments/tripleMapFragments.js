@@ -13,7 +13,7 @@ Given('Session Login', () => {
         cy.get('[name=username]').clear().type(username)
         cy.get('[name=password]').clear().type(password)
         cy.get('button[type="submit"]').click()
-        cy.title().should('eq','App: Projects List | Mapping Workbench')
+        cy.title().should('eq','Mapping Workbench')
     })
     if(sessionProject) cy.window().then(win => win.sessionStorage.setItem('sessionProject',sessionProject))
 })
@@ -30,13 +30,14 @@ When('I expand Triple Maps Fragments', () => {
     cy.get(':nth-child(4) > #nav_triple_map_fragments').click()
 })
 
-Then('I click on Specific Triple Maps', () => {
+Then('I click on Triple Map Fragments', () => {
     cy.intercept('GET', appURLPrefix + 'specific_triple_map_fragments*').as('get')
-    cy.get('#nav_specific_triple_maps').click()
+    cy.get('#nav_technical_mappings').click()
+    cy.get('#nav_triple_map_fragments').click()
 })
 
 Then('I get redirected to Specific Triple Maps', () => {
-    cy.url().should('include','specific-triple-map-fragments')
+    cy.url().should('include','triple-map-fragments')
     cy.wait('@get').its('response.statusCode').should('eq', 200)
 })
 
@@ -45,7 +46,7 @@ Then('I click on add button', () => {
 })
 
 Then('I get redirected to create page', () => {
-    cy.url().should('include','specific-triple-map-fragments/create') // => true
+    cy.url().should('include','triple-map-fragments/create') // => true
 })
 
 
