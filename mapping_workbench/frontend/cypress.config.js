@@ -40,10 +40,11 @@ module.exports = defineConfig({
         //Quality Control
         "cypress/e2e/sparqlTestSuites.feature",
         "cypress/e2e/shaclTestSuites.feature",
+        //Mapping Packages
+        "cypress/e2e/mappingPackages.feature",
 
         "cypress/e2e/ontologyNamespaces.feature",
         "cypress/e2e/schemaFiles.feature",
-        "cypress/e2e/mappingPackages.feature",
         "cypress/e2e/fieldsTree.feature",
         // "cypress/e2e/removeTripleMap.feature",
         // "cypress/e2e/transformTestData.feature",

@@ -5,6 +5,7 @@ Feature: Mapping Packages
   Background:
     Given Session Login
     Then Go Home
+    Then I open side menu
     Then I go to Mapping Packages
     Then I get redirected to Mapping Packages list page
 
