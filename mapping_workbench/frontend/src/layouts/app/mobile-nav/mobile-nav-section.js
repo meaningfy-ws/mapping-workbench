@@ -17,6 +17,8 @@ const reduceChildRoutes = ({ acc, depth, item, pathname }) => {
   const partialMatch = checkPath ? pathname.includes(item.path) : false;
   const exactMatch = checkPath ? pathname === item.path : false;
 
+  console.log(item.items, depth, item.title)
+
   if (item.items) {
     acc.push(
       <MobileNavItem
@@ -50,7 +52,7 @@ const reduceChildRoutes = ({ acc, depth, item, pathname }) => {
     acc.push(
       <MobileNavItem
         active={exactMatch}
-        depth={depth}
+        depth={depth - 1}
         disabled={item.disabled}
         external={item.external}
         icon={item.icon}
