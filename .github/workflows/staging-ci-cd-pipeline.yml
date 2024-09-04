@@ -51,10 +51,13 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
 
-      - name: Run PR Tests
+      - name: Run PR e2e Tests
         run: |
-          ssh -o ServerAliveInterval=60 -o ServerAliveCountMax=3 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'source ~/.bashrc && cd ${{ secrets.STAGING_WORK_DIR }} && python3 -m venv venv && source venv/bin/activate && make dotenv-file-frontend && make install && make test && exit'
+          ssh -o ServerAliveInterval=60 -o ServerAliveCountMax=3 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'source ~/.bashrc && cd ${{ secrets.STAGING_WORK_DIR }} && python3 -m venv venv && source venv/bin/activate && make dotenv-file-frontend && make install && make test-e2e && exit'
 
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Copy Coverage File to Github Workspace
         run: |
           scp -r ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.STAGING_WORK_DIR }}/.coverage ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.STAGING_WORK_DIR }}/coverage.xml .
@@ -71,7 +74,7 @@ jobs:
       - name: Reverse to develop branch
         #if: failure()
         run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'cd ${{ secrets.STAGING_WORK_DIR }} && git checkout develop && git pull && make staging-dotenv-file && make install-frontend && make install-backend && make test-e2e-backend && exit'
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'cd ${{ secrets.STAGING_WORK_DIR }} && git checkout develop && git pull && exit'
 
       - name: cleanup
         run: rm -rf ~/.ssh
