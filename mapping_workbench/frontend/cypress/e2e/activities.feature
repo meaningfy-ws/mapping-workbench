@@ -1,6 +1,6 @@
-Feature: Tasks
+Feature: Activities
 
-  As a valid user i want to interact with tasks page
+  As a valid user i want to interact with Activities page
 
   Background:
     Given Session Login
@@ -15,20 +15,20 @@ Feature: Tasks
     Then I click on upload button
     Then I get success upload
 
-  Scenario: View Tasks
+  Scenario: View Activities
     Then I go to Activities page
     Then I get redirected to Tasks page
     Then I receive Tasks
 
 
-  Scenario: Refresh Tasks
+  Scenario: Refresh Activities
     Then I go to Activities page
     Then I get redirected to Tasks page
     Then I receive Tasks
     Then I click on refresh button
     Then I receive Tasks
 
-  Scenario: Delete Task
+  Scenario: Delete Activity
     Then I go to Activities page
     Then I get redirected to Tasks page
     Then I receive Tasks
@@ -36,7 +36,7 @@ Feature: Tasks
     Then I get success delete
 
 
-  Scenario: Delete all Tasks
+  Scenario: Delete all Activities
     Then I go to Activities page
     Then I get redirected to Tasks page
     Then I receive Tasks
