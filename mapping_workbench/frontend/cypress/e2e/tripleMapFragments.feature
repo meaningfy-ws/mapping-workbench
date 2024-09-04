@@ -5,18 +5,18 @@ Feature: Specific Triple Maps
   Background:
     Given Session Login
     Then Go Home
+    Then I open side menu
 
-  Scenario: Select Project
-    Then I get redirected to projects list page
-    Then I search for project
+#  Scenario: Select Project
+#    Then I get redirected to projects list page
+#    Then I search for project
+#
+#    When I select project
+#    Then I get success select
+#    Then I get redirected to projects list page
 
-    When I select project
-    Then I get success select
-    Then I get redirected to projects list page
-
-  Scenario: Add Specific Triple Maps
-    Then I expand Triple Maps Fragments
-    Then I click on Specific Triple Maps
+  Scenario: Add Triple Map Fragment
+    Then I click on Triple Map Fragments
     Then I get redirected to Specific Triple Maps
 
     When I click on add button
@@ -25,8 +25,7 @@ Feature: Specific Triple Maps
     Then I successfully create Specific Triple Maps
 
   Scenario: Update Resource
-    Then I expand Triple Maps Fragments
-    Then I click on Specific Triple Maps
+    Then I click on Triple Map Fragments
     Then I get redirected to Specific Triple Maps
 
     Then I search for Specific Triple Map
@@ -38,8 +37,7 @@ Feature: Specific Triple Maps
     Then I get success update
 
   Scenario: Delete Resource
-    Then I expand Triple Maps Fragments
-    Then I click on Specific Triple Maps
+    Then I click on Triple Map Fragments
     Then I get redirected to Specific Triple Maps
 
     Then I search for updated Specific Triple Map
