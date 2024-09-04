@@ -51,15 +51,11 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
 
-      - name: Run Backend E2E tests
+      - name: Run PR Tests
         run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'cd ${{ secrets.STAGING_WORK_DIR }} && python3 -m venv venv && source venv/bin/activate && make install-backend && make test-e2e-backend && exit'
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'source ~/.bashrc && cd ${{ secrets.STAGING_WORK_DIR }} && python3 -m venv venv && source venv/bin/activate && make dotenv-file-frontend && make install-backend && make install-frontend && make test-backend && make test-frontend && exit'
 
-      - name: Run Frontend E2E tests
-        run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'source ~/.bashrc && cd ${{ secrets.STAGING_WORK_DIR }} && make dotenv-file-frontend && make install-frontend && make test-e2e-frontend && exit'
-
-      - name: Copy Backend E2E Coverage data
+      - name: Copy Coverage File to Github Workspace
         run: |
           scp -r ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.STAGING_WORK_DIR }}/.coverage ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.STAGING_WORK_DIR }}/coverage.xml .
 
@@ -72,8 +68,8 @@ jobs:
           name: codecov-umbrella
           fail_ci_if_error: true
 
-      - name: Reverse to develop branch on failure
-        if: failure()
+      - name: Reverse to develop branch
+        #if: failure()
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'cd ${{ secrets.STAGING_WORK_DIR }} && git checkout develop && git pull && make staging-dotenv-file && make install-frontend && make install-backend && make test-e2e-backend && exit'
 

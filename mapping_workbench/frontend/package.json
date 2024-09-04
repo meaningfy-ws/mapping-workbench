@@ -11,7 +11,8 @@
     "export": "next export",
     "lint": "next lint",
     "lint-fix": "next lint --fix",
-    "test-e2e": "cypress run --headless",
+    "test:e2e:pr": "cypress run --headless",
+    "test:e2e:deploy": "cypress run --headless",
     "cy:open": "cypress open",
     "cy:tests": "cypress run"
   },

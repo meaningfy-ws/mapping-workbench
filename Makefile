@@ -51,6 +51,7 @@ test-unit: test-unit-backend test-unit-frontend
 test-e2e: test-e2e-backend test-e2e-frontend
 test-on-deploy: test-on-deploy-backend test-on-deploy-frontend
 
+test-frontend: test-unit-frontend test-e2e-frontend
 test-backend: test-unit-backend test-e2e-backend
 
 test-unit-backend:
