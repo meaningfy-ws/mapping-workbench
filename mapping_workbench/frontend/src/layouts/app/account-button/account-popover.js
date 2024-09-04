@@ -95,6 +95,7 @@ export const AccountPopover = (props) => {
                     />
                 </ListItemButton>
                 {project && <ListItemButton
+                    id='project_setup_button'
                     component={RouterLink}
                     href={paths.app.projects.edit.replace('[id]', project)}
                     onClick={onClose}
