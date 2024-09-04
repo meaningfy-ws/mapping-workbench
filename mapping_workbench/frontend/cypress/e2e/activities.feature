@@ -5,6 +5,7 @@ Feature: Tasks
   Background:
     Given Session Login
     Then Go Home
+    Then I open side menu
 
   Scenario: Import Packages
     Then I go to Mapping Packages
@@ -15,20 +16,20 @@ Feature: Tasks
     Then I get success upload
 
   Scenario: View Tasks
-    Then I go to Tasks page
+    Then I go to Activities page
     Then I get redirected to Tasks page
     Then I receive Tasks
 
 
   Scenario: Refresh Tasks
-    Then I go to Tasks page
+    Then I go to Activities page
     Then I get redirected to Tasks page
     Then I receive Tasks
     Then I click on refresh button
     Then I receive Tasks
 
   Scenario: Delete Task
-    Then I go to Tasks page
+    Then I go to Activities page
     Then I get redirected to Tasks page
     Then I receive Tasks
     When I delete Task
@@ -36,7 +37,7 @@ Feature: Tasks
 
 
   Scenario: Delete all Tasks
-    Then I go to Tasks page
+    Then I go to Activities page
     Then I get redirected to Tasks page
     Then I receive Tasks
     When I delete all Tasks

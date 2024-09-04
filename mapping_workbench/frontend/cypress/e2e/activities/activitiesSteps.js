@@ -1,8 +1,6 @@
 import { Given, When, Then} from 'cypress-cucumber-preprocessor/steps'
 
-const {username, password, homeURL, appURLPrefix, packageFile} = Cypress.env()
-const testPacakgeName = 'test_package'
-
+const {username, password, homeURL, appURLPrefix, packageFile, homePageLabel} = Cypress.env()
 
 Given('Session Login', () => {
     // Caching session when logging in via page visit
@@ -11,12 +9,12 @@ Given('Session Login', () => {
         cy.get('[name=username]').clear().type(username)
         cy.get('[name=password]').clear().type(password)
         cy.get('button[type="submit"]').click()
-        cy.title().should('eq','App: Projects List | Mapping Workbench')
+        cy.title().should('eq',homePageLabel)
     })
 })
 
 Given('I go to Mapping Packages', () => {
-    cy.get('#nav_mapping_packages_\\(dev\\)').click()
+    cy.get('#nav_mapping_packages').click()
 })
 
 Then('I get redirected to Mapping Packages list page', () => {
@@ -91,15 +89,15 @@ Then('I get success transform', () => {
     cy.wait('@run_test_data',{responseTimeout: 999999}).its('response.statusCode').should('eq', 201)
 })
 
-When('I go to Tasks page', () => {
-    cy.get('#nav_tasks').click()
+When('I go to Activities page', () => {
+    cy.get('#nav_activities').click()
 })
 
 
 
 Then('I get redirected to Tasks page', () => {
     cy.intercept('GET', appURLPrefix + 'task_manager*',).as('getTasks')
-    cy.title().should('eq','App: Tasks List | Mapping Workbench')
+    cy.title().should('eq','App: Activities List | Mapping Workbench')
 })
 
 

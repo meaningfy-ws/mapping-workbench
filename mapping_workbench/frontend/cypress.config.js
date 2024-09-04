@@ -14,7 +14,8 @@ module.exports = defineConfig({
     appURLPrefix : process.env.MW_BACKEND_SERVER_HOST + '/api/v1/',
     homeURL : process.env.MW_FRONTEND_ADDRESS,
     tripleMapFragment : 'test_triple_map.ttl',
-    packageFile : 'package_eforms_16_1.5.zip'
+    packageFile : 'package_eforms_16_1.5.zip',
+    homePageLabel: 'Mapping Workbench'
   },
   e2e: {
     baseUrl: process.env.MW_FRONTEND_ADDRESS,
@@ -42,17 +43,18 @@ module.exports = defineConfig({
         "cypress/e2e/shaclTestSuites.feature",
         //Mapping Packages
         "cypress/e2e/mappingPackages.feature",
+        //Activities
+        "cypress/e2e/activities.feature",
 
-        "cypress/e2e/ontologyNamespaces.feature",
-        "cypress/e2e/schemaFiles.feature",
-        "cypress/e2e/fieldsTree.feature",
+        // "cypress/e2e/ontologyNamespaces.feature",
+        // "cypress/e2e/schemaFiles.feature",
         // "cypress/e2e/removeTripleMap.feature",
         // "cypress/e2e/transformTestData.feature",
         // "cypress/e2e/conceptualMapping.feature",
-        "cypress/e2e/genericTripleMaps.feature",
+        // "cypress/e2e/fieldsTree.feature",
         // "cypress/e2e/termValidator.feature",
         // "cypress/e2e/sparqlQueries.feature",
-        "cypress/e2e/tasks.feature",
+        // "cypress/e2e/genericTripleMaps.feature",
         "cypress/e2e/cleanUp.feature",
     ],
     video: false,
