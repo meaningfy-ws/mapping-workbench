@@ -1,64 +1,26 @@
 name: prod CI/CD pipeline
 
 on:
+#  pull_request:
+#    branches: [ main, release/* ]
   workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to run the workflow on'
+        required: true
+        default: 'main'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
-#  run_tests:
-#    name: Running tests
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - uses: actions/checkout@v2
-#        with:
-#          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-#      - name: Set up Python ${{ matrix.python-version }}
-#        uses: actions/setup-python@v2
-#        with:
-#          python-version: '3.10'
-#      - name: Install dependencies
-#        run: |
-#          python -m pip install --upgrade setuptools pip wheel
-#          make install-dev-backend
-##          make install
-##          make install-dev
-#      - name: Make envfile
-#        uses: SpicyPizza/create-envfile@v1
-#        with:
-#          envkey_VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
-#          envkey_VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
-#      - name: Run unit tests
-#        run: make test
-#      - name: SonarCloud Scan
-#        uses: SonarSource/sonarcloud-github-action@master
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-#
-#      - name: Upload coverage to Codecov
-#        uses: codecov/codecov-action@v1
-#        with:
-#          token: ${{ secrets.CODECOV_TOKEN }}
-#          file: coverage.xml
-#          env_vars: OS,PYTHON
-#          name: codecov-umbrella
-#          fail_ci_if_error: true
-
   deploy_and_build:
-#    needs: run_tests
     name: Build and deploy
     runs-on: ubuntu-latest
     environment: staging
 
     steps:
-    - name: Extract branch name
-      shell: bash
-      run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
-      id: extract_branch
     - name: Install ssh keys
       run: |
         install -m 600 -D /dev/null ~/.ssh/id_rsa
@@ -67,7 +29,7 @@ jobs:
 
     - name: connect, pull and build
       run: |
-        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.PROD_WORK_DIR }} && git checkout main && git pull && make build-frontend && make build-backend && exit"
+        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "source ~/.bashrc && cd ${{ secrets.PROD_WORK_DIR }} && git checkout main && git pull && make prod-dotenv-file && make build-frontend && make build-backend && exit"
 
     - name: cleanup
       run: rm -rf ~/.ssh

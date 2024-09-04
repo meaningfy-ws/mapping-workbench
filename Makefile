@@ -49,6 +49,7 @@ install-frontend:
 test: test-unit test-e2e
 test-unit: test-unit-backend test-unit-frontend
 test-e2e: test-e2e-backend test-e2e-frontend
+test-on-deploy: test-on-deploy-backend test-on-deploy-frontend
 
 test-backend: test-unit-backend test-e2e-backend
 
@@ -68,6 +69,12 @@ test-e2e-backend:
 test-e2e-frontend:
 	@ echo "E2E Testing FRONTEND ... "
 	@ cd ${FRONTEND_HOME} && make test-e2e
+
+test-on-deploy-backend:
+	@ echo "Testing BACKEND on Deploy ... "
+
+test-on-deploy-frontend:
+	@ echo "Testing FRONTEND on Deploy ... "
 
 #-----------------------------------------------------------------------------
 # ENV FILE
@@ -99,7 +106,7 @@ prod-dotenv-file:
 	@ echo VAULT_TOKEN=${VAULT_TOKEN} >> ${ENV_FILE}
 	@ echo BACKEND_INFRA_FOLDER=${BACKEND_INFRA_FOLDER} >> ${ENV_FILE}
 	@ echo FRONTEND_INFRA_FOLDER=${FRONTEND_INFRA_FOLDER} >> ${ENV_FILE}
-	@ echo NODE_ENV=production >> ${ENV_FILE}
+	@ echo NODE_ENV=development >> ${ENV_FILE}
 	@ echo RML_MAPPER_PATH=${RML_MAPPER_PATH} >> ${ENV_FILE}
 	@ vault kv get -format="json" mapping-workbench-prod/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> ${ENV_FILE}
 

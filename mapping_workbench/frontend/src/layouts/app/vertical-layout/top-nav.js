@@ -31,7 +31,8 @@ export const TopNav = (props) => {
                 ,
                 top: 0,
                 width: {
-                    xl: `calc(100% - ${SIDE_NAV_WIDTH}px)`
+                    //xl: `calc(100% - ${SIDE_NAV_WIDTH}px)`
+                    xl: '100%'
                 },
                 zIndex: (theme) => theme.zIndex.appBar
             }}

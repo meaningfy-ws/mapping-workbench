@@ -3,7 +3,7 @@ name: Tests on push
 on:
 #  workflow_dispatch:
   push:
-    branches: [ feature/* , hotfix/*, release/* ]
+    branches: [ feature/* , hotfix/* ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -30,17 +30,18 @@ jobs:
           make install-dev
       - name: Run unit tests
         run: make test-unit
-#      - name: SonarCloud Scan
-#        uses: SonarSource/sonarcloud-github-action@master
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-#
-#      - name: Upload coverage to Codecov
-#        uses: codecov/codecov-action@v1
-#        with:
-#          token: ${{ secrets.CODECOV_TOKEN }}
-#          file: coverage.xml
-#          env_vars: OS,PYTHON
-#          name: codecov-umbrella
-#          fail_ci_if_error: true
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: coverage.xml
+          env_vars: OS,PYTHON
+          name: codecov-umbrella
+          fail_ci_if_error: true
