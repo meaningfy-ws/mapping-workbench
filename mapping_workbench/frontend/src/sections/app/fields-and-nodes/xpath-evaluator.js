@@ -1,14 +1,13 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import CodeMirror from '@uiw/react-codemirror';
 import {basicSetup} from '@uiw/codemirror-extensions-basic-setup';
 import {xml} from '@codemirror/lang-xml'
 import Card from "@mui/material/Card";
+import Typography from "@mui/material/Typography";
 
 const XpathEvaluator = ({xmlDoc, absolute_xpath}) => {
 
     const [nodes, setNodes] = useState([])
-
-    console.log(absolute_xpath)
 
     useEffect(() => {
         if (!!xmlDoc && absolute_xpath)
@@ -26,8 +25,7 @@ const XpathEvaluator = ({xmlDoc, absolute_xpath}) => {
         const attributes = root.attributes;
         const namespaces = {};
 
-        for (let i = 0; i < attributes.length; i++) {
-            const attr = attributes[i];
+        for(let attr of attributes) {
             if (attr.name.startsWith('xmlns:')) {
                 const prefix = attr.name.split(':')[1];
                 namespaces[prefix] = attr.value;
@@ -72,19 +70,55 @@ const XpathEvaluator = ({xmlDoc, absolute_xpath}) => {
     const serializer = new XMLSerializer()
 
     return (
+        !!nodes.length &&
         <>
+            <Typography>{`Nodes found: ${nodes.length}`}</Typography>
             {nodes.map((e, i) => (
                 <Card key={'node' + i}>
                     <CodeMirror
                         style={{resize: 'vertical', overflow: 'auto', height: 200}}
                         value={serializer.serializeToString(e)}
                         editable={false}
-                        extensions={[basicSetup(), xml()]}
+                        extensions={[xml()]}
+                            foldGutter={true}
+
                         options={{
                             mode: 'application/xml',
                             theme: 'default',
                             lineNumbers: false,
+                            foldGutter: true,
+                            foldOptions: {
+                                widget: (from, to) => {
+                                    var count = undefined;
+
+                                    // Get open / close token
+                                    var startToken = '{', endToken = '}';
+                                    var prevLine = window.editor_json.getLine(from.line);
+                                    if (prevLine.lastIndexOf('[') > prevLine.lastIndexOf('{')) {
+                                        startToken = '[', endToken = ']';
+                                    }
+
+                                    // Get json content
+                                    var internal = window.editor_json.getRange(from, to);
+                                    var toParse = startToken + internal + endToken;
+
+                                    // Get key count
+                                    try {
+                                        var parsed = JSON.parse(toParse);
+                                        count = Object.keys(parsed).length;
+                                    } catch (e) {
+                                    }
+
+                                    return count ? `\u21A4${count}\u21A6` : '\u2194';
+                                }
+                            }
+                            // foldCode: true,
+                            // gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
                         }}
+
+                        // onCreateEditor={handleEditorDidMount}
+
+
                     />
                 </Card>))}
         </>
