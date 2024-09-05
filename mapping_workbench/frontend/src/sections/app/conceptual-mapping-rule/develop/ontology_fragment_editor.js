@@ -3,7 +3,7 @@ import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import Chip from "@mui/material/Chip";
 
-const Autocomplete = ({formik, name, disabled, data}) => {
+const OntologyFragmentEditor = ({formik, name, disabled, data, required}) => {
 
     const formikValue = formik.values[name]
 
@@ -77,6 +77,7 @@ const Autocomplete = ({formik, name, disabled, data}) => {
                       return (
                           <TextField
                                 {...params}
+                                required={required}
                                 sx={{marginTop:0}}
                                 label={currentName(currentType())}
                                 margin="normal"/>
@@ -94,4 +95,4 @@ const Autocomplete = ({formik, name, disabled, data}) => {
     )
 }
 
-export default Autocomplete
+export default OntologyFragmentEditor
