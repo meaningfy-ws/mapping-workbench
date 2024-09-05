@@ -13,6 +13,8 @@ import ConfirmDialog from "../dialog/confirm-dialog";
 export const ListItemActions = (props) => {
     const router = useRouter();
 
+    console.log(props)
+
     const {itemctx, pathnames, onDeleteAction, confirmDialogContent, confirmDialogFooter} = props;
     const popover = usePopover();
 
@@ -47,6 +49,8 @@ export const ListItemActions = (props) => {
     }
 
     const [confirmOpen, setConfirmOpen] = useState(false);
+
+    console.log(itemctx.api)
 
     return (
         <Box>
