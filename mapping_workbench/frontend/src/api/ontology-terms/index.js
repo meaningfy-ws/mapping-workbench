@@ -18,6 +18,10 @@ class OntologyTermsApi extends SectionApi {
         };
     }
 
+    get SECTION_LIST_ACTIONS() {
+        return [ACTION.DELETE]
+    }
+
     constructor() {
         super("ontology_terms");
         this.isProjectResource = true;
