@@ -10,5 +10,7 @@
   "dct": "http://purl.org/dc/terms/",
   "epd": "http://data.europa.eu/a4g/resource/",
   "locn": "http://www.w3.org/ns/locn#",
-  "person": "http://www.w3.org/ns/person#"
+  "person": "http://www.w3.org/ns/person#",
+  "epo-not": "http://data.europa.eu/a4g/ontology#",
+  "cv": "http://data.europa.eu/m8g/"
 }
