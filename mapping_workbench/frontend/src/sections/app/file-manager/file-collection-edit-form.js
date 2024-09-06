@@ -133,7 +133,11 @@ export const FileCollectionEditForm = (props) => {
                         </Grid>
                         {sectionApi.hasMappingPackage && (
                             <Grid xs={12} md={12}>
-                                <MappingPackageFormSelect formik={formik} isRequired={sectionApi.isMappingPackageRequired ?? false}/>
+                                <MappingPackageFormSelect
+                                    formik={formik}
+                                    isRequired={sectionApi.isMappingPackageRequired ?? false}
+                                    withDefaultPackage={itemctx.isNew}
+                                />
                             </Grid>
                         )}
                         {sectionApi.hasFileCollectionType && (
