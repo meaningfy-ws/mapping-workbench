@@ -18,7 +18,7 @@ jobs:
   deploy_and_build:
     name: Build and deploy
     runs-on: ubuntu-latest
-    environment: staging
+    environment: prod
 
     steps:
     - name: Install ssh keys
