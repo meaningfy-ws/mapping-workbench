@@ -1,4 +1,4 @@
-import {SectionApi} from "../section";
+import {ACTION, SectionApi} from "../section";
 import {appApi} from "../app";
 import {sessionApi} from "../session";
 
@@ -18,10 +18,19 @@ class OntologyTermsApi extends SectionApi {
         };
     }
 
+    get SECTION_LIST_ACTIONS() {
+        return [ACTION.DELETE]
+    }
+
     constructor() {
         super("ontology_terms");
         this.isProjectResource = true;
     }
+
+    get SECTION_LIST_ACTIONS() {
+        return [ACTION.DELETE]
+    }
+
 
     discoverTerms(request) {
         try {

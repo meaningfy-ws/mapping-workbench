@@ -154,10 +154,10 @@ export const paths = {
         },
 
         generic_triple_map_fragments: {
-            index: '/app/generic-triple-map-fragments',
-            create: '/app/generic-triple-map-fragments/create',
-            edit: '/app/generic-triple-map-fragments/[id]/edit',
-            view: '/app/generic-triple-map-fragments/[id]/view'
+            index: '/app/triple-map-fragments',
+            create: '/app/triple-map-fragments/create',
+            edit: '/app/triple-map-fragments/[id]/edit',
+            view: '/app/triple-map-fragments/[id]/view'
         },
 
         specific_triple_map_fragments: {

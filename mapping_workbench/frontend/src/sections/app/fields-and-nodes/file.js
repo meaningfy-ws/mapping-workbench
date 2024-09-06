@@ -10,7 +10,7 @@ const cx = classNames.bind(styles);
 
 const Attribute = ({name, value, parent, handleClick}) => {
     return (
-        <span onClick={() => handleClick([...parent, `[${name}='${value}']`].join('/'))}
+        <span onClick={() => handleClick([...parent, `[${name}='${value}']`])}
               className={cx('attr')}>
                 <span className={cx('attr-name')}>{` ${name}=`}</span>
                 <span>{'"'}</span>
@@ -20,8 +20,13 @@ const Attribute = ({name, value, parent, handleClick}) => {
 }
 
 const Tag = ({name, attributes, children, parent, level, isField, relativeXPath, xPath, xPaths, handleClick}) => {
-    const nodeXPath = '/' + [...parent, name].join('/')
+
+    const shiftedParent = [...parent]
+    if(shiftedParent.length)
+        shiftedParent.shift()
+    const nodeXPath = ['/*',...shiftedParent, name].join('/')
     const selectedNode = xPaths?.some(xpath => nodeXPath.endsWith(xpath))
+
     const selectedXpath = xPath && nodeXPath === xPath
     return (
         <span style={{
@@ -36,7 +41,7 @@ const Tag = ({name, attributes, children, parent, level, isField, relativeXPath,
                          'tag-selected-field': (selectedNode && isField),
                          'tag-selected-node': (selectedNode && !isField)
                      })}
-                     onClick={() => handleClick([...parent, name].join('/'))}>
+                     onClick={() => handleClick([...parent, name])}>
                    {name}
                </span>
             {attributes && <span name={'attributes'}>{Object.entries(attributes).map(([name, value]) =>
@@ -55,7 +60,7 @@ const Tag = ({name, attributes, children, parent, level, isField, relativeXPath,
                       'tag-selected-field': (selectedNode && isField),
                       'tag-selected-node': (selectedNode && !isField)
                   })}
-                  onClick={() => handleClick([...parent, name].join('/'))}>
+                  onClick={() => handleClick([...parent, name])}>
                {name}
             </span>
             <span>{'>'}</span>
@@ -95,14 +100,18 @@ const executeXPaths = (doc, xPaths) => {
             // console.log(err)
         }
     })
-    return evaluatedNamespaces.filter(e=> !!e)
+    return  evaluatedNamespaces.filter(e => !!e).map(e=>{
+        const shifted = e.split('/')
+        shifted.shift()
+        return shifted.join('/')
+    })
 }
 
 
 const BuildNodes = ({nodes, level, parent, xPath, xPaths, relativeXPath, handleClick}) => {
     return nodes.map((e) => {
             const [name, value] = e
-            if(!isNaN(name))
+            if (!isNaN(name))
                 return <BuildNodes nodes={Object.entries(value).filter(en => en[0] !== ATTRIBUTE_SIGN)}
                                    key={'obj' + name}
                                    level={level}
@@ -181,7 +190,7 @@ const getAbsoluteXPath = (node) => {
         parts.unshift(nodeName);
         node = node.parentNode;
     }
-    return `/${parts.join('/')}`;
+    return `${parts.join('/')}`;
 }
 
 const File = ({xmlContent, fileContent, fileError, relativeXPath, xmlNodes, xPaths, xPath, handleClick}) => {

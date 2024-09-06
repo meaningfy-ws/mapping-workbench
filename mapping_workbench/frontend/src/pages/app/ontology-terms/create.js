@@ -28,7 +28,7 @@ const Page = () => {
                         <Link
                             color="text.primary"
                             component={RouterLink}
-                            href={paths.app[sectionApi.section].index}
+                            href={paths.app.ontology_terms.index}
                             sx={{
                                 alignItems: 'center',
                                 display: 'inline-flex'

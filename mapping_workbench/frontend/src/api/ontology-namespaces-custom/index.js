@@ -1,4 +1,4 @@
-import {SectionApi} from "../section";
+import {ACTION, SectionApi} from "../section";
 
 class OntologyNamespacesCustomApi extends SectionApi {
     get SECTION_TITLE() {
@@ -7,6 +7,10 @@ class OntologyNamespacesCustomApi extends SectionApi {
 
     get SECTION_ITEM_TITLE() {
         return "Custom Namespace";
+    }
+
+    get SECTION_LIST_ACTIONS() {
+        return [ACTION.DELETE]
     }
 
     constructor() {

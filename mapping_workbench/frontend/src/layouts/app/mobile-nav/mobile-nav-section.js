@@ -50,7 +50,7 @@ const reduceChildRoutes = ({ acc, depth, item, pathname }) => {
     acc.push(
       <MobileNavItem
         active={exactMatch}
-        depth={depth}
+        depth={depth - 1}
         disabled={item.disabled}
         external={item.external}
         icon={item.icon}

@@ -1,7 +1,6 @@
 import {useEffect, useState} from 'react';
 
-import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
-
+import AddIcon from '@mui/icons-material/Add';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -246,11 +245,11 @@ export const Page = () => {
                             id="add_button"
                             startIcon={(
                                 <SvgIcon>
-                                    <PlusIcon/>
+                                    <AddIcon/>
                                 </SvgIcon>
                             )}
                             variant="contained"
-                            onClick={() => handleAdd()}
+                            onClick={handleAdd}
                         >
                             Add
                         </Button>

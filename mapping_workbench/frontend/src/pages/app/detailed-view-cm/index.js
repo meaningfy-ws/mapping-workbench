@@ -155,7 +155,6 @@ export const Page = () => {
             })
     }
 
-    console.log()
 
     const itemsSearch = useItemsSearch(itemsStore.items);
 

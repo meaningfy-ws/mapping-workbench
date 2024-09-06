@@ -55,7 +55,7 @@ const reduceChildRoutes = ({ acc, depth, item, parentId, pathname }) => {
     acc.push(
       <SideNavItem
         active={exactMatch}
-        depth={depth}
+        depth={depth - 1}
         disabled={item.disabled}
         external={item.external}
         icon={item.icon}

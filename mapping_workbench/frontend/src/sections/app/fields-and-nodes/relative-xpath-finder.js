@@ -1,20 +1,13 @@
-import {FormTextField} from "../../../components/app/form/text-field";
 import {useEffect} from "react";
+import {FormTextField} from "../../../components/app/form/text-field";
 
 const RelativeXPath = ({xmlContent, xpath, absolute_xpath, formik}) => {
 
-
     useEffect(() => {
-        // console.log(`"${xmlContent}"`)
         if (!!xmlContent && xpath && absolute_xpath)
-            evaluateXPAthExpression(xpath, getGlobalXPath(absolute_xpath), xmlContent)
+            evaluateXPAthExpression(xpath, absolute_xpath, xmlContent)
     }, [xmlContent, xpath, absolute_xpath]);
 
-    const getGlobalXPath = (xpath) => {
-        const xp = xpath.split('/')
-        xp.shift()
-        return '/*/' + xp.join('/')
-    }
 
 // Function to extract namespaces from the root element
     const extractNamespaces = (doc) => {
@@ -44,6 +37,7 @@ const RelativeXPath = ({xmlContent, xpath, absolute_xpath, formik}) => {
             }
             node = node.parentNode;
         }
+        parts.shift()
         return parts.join('/');
     }
 
@@ -68,7 +62,6 @@ const RelativeXPath = ({xmlContent, xpath, absolute_xpath, formik}) => {
             const contextNode = contextResult.singleNodeValue;
             if (contextNode) {
                 const result = xmlDoc.evaluate(xpathExpr, xmlDoc, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-                console.log(result)
                 if (result.snapshotLength > 0) {
                     for (let i = 0; i < result.snapshotLength; i++) {
                         const node = result.snapshotItem(i);

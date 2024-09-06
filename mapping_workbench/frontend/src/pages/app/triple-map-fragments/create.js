@@ -4,13 +4,13 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {specificTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/specific';
+import {genericTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/generic';
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
-import {EditForm} from 'src/sections/app/specific-triple-map-fragment/edit-form';
+import {EditForm} from 'src/sections/app/generic-triple-map-fragment/edit-form';
 import {ForItemCreateForm} from "src/contexts/app/section/for-item-form";
 
 
