@@ -65,7 +65,7 @@ class SHACLValidator(TestDataValidator):
         try:
             for shacl_shape_file in shacl_files:
                 shacl_shape_graph.parse(
-                    format=rdflib.util.guess_format(shacl_shape_file.filename),
+                    format=rdflib.util.guess_format(shacl_shape_file.filename or shacl_shape_file.title),
                     data=shacl_shape_file.content
                 )
             conforms, result_graph, results_text = validate(
@@ -78,7 +78,6 @@ class SHACLValidator(TestDataValidator):
                 #FIXME: For the moment without inference param until we figure out how to use it correctly
                 #inference="rdfs" if len(shacl_files) > 0 else None
             )
-
             shacl_validation_result.conforms = conforms or False
             result_test_data = SHACLQueryTestDataEntry(
                 test_data_suite_oid=(self.test_data_suite.oid if self.test_data_suite else None),
@@ -91,7 +90,6 @@ class SHACLValidator(TestDataValidator):
             results_dict: dict = json.loads(
                 result_graph.query(self.shacl_shape_result_query).serialize(format='json').decode("UTF-8")
             )
-
             if results_dict and results_dict["results"] and results_dict["results"]["bindings"]:
                 results: List[SHACLQueryResult] = []
                 binding: SHACLGraphResultBinding
