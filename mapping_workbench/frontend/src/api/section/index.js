@@ -11,7 +11,7 @@ export const ACTION = {
 };
 
 const DEFAULT_PAGE = 0;
-const DEFAULT_ROWS_PER_PAGE = 25;
+const DEFAULT_ROWS_PER_PAGE = -1; //25;
 const DEFAULT_ROWS_PER_PAGE_SELECTION = [5, 10, 25, 50, { value: -1, label: 'All' }];
 
 export class SectionApi {
