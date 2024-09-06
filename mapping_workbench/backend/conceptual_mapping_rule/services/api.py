@@ -73,6 +73,10 @@ async def update_conceptual_mapping_rule(
         user: User
 ) -> ConceptualMappingRuleOut:
     update_data = await rule_validated_data(request_update_data(data, user=user))
+    if ConceptualMappingRule.refers_to_mapping_package_ids in update_data:
+        update_data[ConceptualMappingRule.refers_to_mapping_package_ids] = [
+            PydanticObjectId(package_id) for package_id in update_data[ConceptualMappingRule.refers_to_mapping_package_ids]
+        ]
     rule: ConceptualMappingRule = await conceptual_mapping_rule.set(update_data)
     return ConceptualMappingRuleOut(**rule.model_dump())
 
