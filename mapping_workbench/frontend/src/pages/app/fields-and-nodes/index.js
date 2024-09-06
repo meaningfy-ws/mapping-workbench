@@ -85,7 +85,12 @@ const Page = () => {
         [selectedFile]
     )
 
-    const onChangeXPath = (value) => formik.setFieldValue('absolute_xpath', value)
+    const onChangeXPath = (value) => {
+        value.shift()
+        formik.setFieldValue('parent_node','')
+        formik.setFieldValue('relative_xpath','')
+        formik.setFieldValue('absolute_xpath', ['/*',...value].join('/'))
+    }
 
     const handleClear = () => formik.setValues(initialValues)
 
@@ -140,7 +145,7 @@ const Page = () => {
         absolute_xpath: e.absolute_xpath,
         parent_node: e.parent_node_id,
         relative_xpath: e.relative_xpath
-    }))
+    })).filter(e=> formik.values.absolute_xpath.includes(e.label))
 
     return (
         <>
@@ -187,10 +192,7 @@ const Page = () => {
                                         <TextField
                                             fullWidth
                                             label="Select File"
-                                            onChange={e => {
-                                                console.log(e.target.value)
-                                                setSelectedFile(e.target.value)
-                                            }}
+                                            onChange={e => setSelectedFile(e.target.value)}
                                             select
                                             value={selectedFile}
                                         >
@@ -246,7 +248,7 @@ const Page = () => {
                                             required/>
                                         <Autocomplete
                                             id="parent_node"
-                                            disabled={formik.isSubmitting}
+                                            disabled={formik.isSubmitting || !formik.values.absolute_xpath}
                                             error={!!(formik.touched['parent_node'] && formik.errors['parent_node'])}
                                             helperText={formik.touched['parent_node'] && formik.errors['parent_node']}
                                             onBlur={formik.handleBlur}

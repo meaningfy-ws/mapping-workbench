@@ -11,18 +11,13 @@ import {TableNoData} from "../shacl_validation_report/utils";
 
 const XpathEvaluator = ({xmlDoc, absolute_xpath}) => {
 
+    console.log(absolute_xpath)
     const [nodes, setNodes] = useState([])
 
     useEffect(() => {
         if (!!xmlDoc && absolute_xpath)
-            evaluateXPAthExpression(getGlobalXPath(absolute_xpath), xmlDoc)
+            evaluateXPAthExpression(absolute_xpath, xmlDoc)
     }, [xmlDoc, absolute_xpath]);
-
-    const getGlobalXPath = (xpath) => {
-        const xp = xpath.split('/')
-        xp.shift()
-        return '/*/' + xp.join('/')
-    }
 
     const extractNamespaces = (doc) => {
         const root = doc.documentElement;
