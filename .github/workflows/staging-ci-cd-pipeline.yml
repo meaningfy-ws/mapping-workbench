@@ -7,7 +7,7 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-server-action
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   deploy_and_build:
