@@ -6,8 +6,8 @@ on:
 #  workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-server-action
+  cancel-in-progress: false
 
 jobs:
   deploy_and_build:

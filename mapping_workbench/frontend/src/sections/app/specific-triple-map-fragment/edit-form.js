@@ -90,7 +90,11 @@ export const EditForm = (props) => {
                           spacing={3}>
                         <Grid xs={12}
                               md={12}>
-                            <MappingPackageFormSelect formik={formik}/>
+                            <MappingPackageFormSelect
+                                formik={formik}
+                                isRequired={sectionApi.isMappingPackageRequired ?? false}
+                                withDefaultPackage={itemctx.isNew}
+                            />
                         </Grid>
                         <Grid xs={12}
                               md={12}>
