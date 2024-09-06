@@ -1,0 +1,80 @@
+name: E2E tests
+
+on:
+  pull_request:
+    branches: [ develop, main ]
+#  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-server-action
+  cancel-in-progress: false
+
+jobs:
+  deploy_and_build:
+#    needs: run_tests
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    environment: staging
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Extract branch name
+      shell: bash
+      run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+      id: extract_branch
+    - name: Display branch name
+      run: echo "Branch name is ${{ steps.extract_branch.outputs.branch }}"
+    - name: Install ssh keys
+      run: |
+        install -m 600 -D /dev/null ~/.ssh/id_rsa
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+
+    - name: connect, pull and build
+      run: |
+        ssh -o ServerAliveInterval=60 -o ServerAliveCountMax=3 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "source ~/.bashrc && cd ${{ secrets.STAGING_WORK_DIR }} && git checkout develop && git pull && git checkout ${{ steps.extract_branch.outputs.branch }} && git pull && make staging-dotenv-file && make build-frontend && make build-backend && exit"
+
+    - name: cleanup
+      run: rm -rf ~/.ssh
+
+  run_tests:
+    name: Running tests
+    needs: deploy_and_build
+    runs-on: ubuntu-latest
+    environment: staging
+
+    steps:
+      - name: Install ssh keys
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+
+      - name: Run PR e2e Tests
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'source ~/.bashrc && cd ${{ secrets.STAGING_WORK_DIR }} && python3 -m venv venv && source venv/bin/activate && make dotenv-file-frontend && make install && make test-e2e && exit'
+
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Copy Coverage File to Github Workspace
+        run: |
+          scp -r ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.STAGING_WORK_DIR }}/.coverage ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.STAGING_WORK_DIR }}/coverage.xml .
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml
+          env_vars: OS,PYTHON
+          name: codecov-umbrella
+          fail_ci_if_error: true
+
+      - name: Revert to develop branch
+        #if: failure()
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "source ~/.bashrc && cd ${{ secrets.STAGING_WORK_DIR }} && git checkout develop && git pull && make staging-dotenv-file && make build-frontend && make build-backend && exit"
+
+      - name: cleanup
+        run: rm -rf ~/.ssh
