@@ -2,6 +2,7 @@ from typing import List
 
 import pymongo
 from beanie import PydanticObjectId
+from beanie.odm.operators.update.array import Pull
 from pymongo.errors import DuplicateKeyError
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
@@ -11,9 +12,6 @@ from mapping_workbench.backend.core.services.request import request_update_data,
     api_entity_is_found, prepare_search_param, pagination_params
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageCreateIn, \
     MappingPackageUpdateIn, MappingPackageOut, MappingPackageStateGate
-from mapping_workbench.backend.resource_collection.models.entity import ResourceCollection, ResourceFile
-from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestFileResource, SHACLTestSuite
-from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResource, SPARQLTestSuite
 from mapping_workbench.backend.state_manager.services.object_state_manager import delete_object_state
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataFileResource, TestDataSuite
 from mapping_workbench.backend.triple_map_fragment.models.entity import SpecificTripleMapFragment
@@ -117,9 +115,10 @@ async def remove_mapping_package_resources(mapping_package: MappingPackage):
             ).delete()
             await test_data_suite.delete()
 
-    await ConceptualMappingRule.get_motor_collection().update_many(
-        {},
-        {"$pull": {"refers_to_mapping_package_ids": str(package_id)}}
+    await ConceptualMappingRule.find(
+        ConceptualMappingRule.project == project_link
+    ).update_many(
+        Pull({ConceptualMappingRule.refers_to_mapping_package_ids: package_id})
     )
 
 
