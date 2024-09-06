@@ -21,11 +21,13 @@ const Attribute = ({name, value, parent, handleClick}) => {
 
 const Tag = ({name, attributes, children, parent, level, isField, relativeXPath, xPath, xPaths, handleClick}) => {
 
-    const nodeXPath = '/' + [...parent, name].join('/')
+    const shiftedParent = [...parent]
+    if(shiftedParent.length)
+        shiftedParent.shift()
+    const nodeXPath = ['/*',...shiftedParent, name].join('/')
     const selectedNode = xPaths?.some(xpath => nodeXPath.endsWith(xpath))
 
     const selectedXpath = xPath && nodeXPath === xPath
-    console.log(xPath,nodeXPath,selectedNode)
     return (
         <span style={{
             marginLeft: level * MARGIN,
@@ -98,15 +100,11 @@ const executeXPaths = (doc, xPaths) => {
             // console.log(err)
         }
     })
-    console.log(evaluatedNamespaces)
-    const res = evaluatedNamespaces.filter(e => !!e).map(e=>{
-
+    return  evaluatedNamespaces.filter(e => !!e).map(e=>{
         const shifted = e.split('/')
         shifted.shift()
         return shifted.join('/')
     })
-    console.log(res)
-    return res
 }
 
 

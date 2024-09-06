@@ -10,8 +10,6 @@ import Accordion from "@mui/material/Accordion";
 import {TableNoData} from "../shacl_validation_report/utils";
 
 const XpathEvaluator = ({xmlDoc, absolute_xpath}) => {
-
-    console.log(absolute_xpath)
     const [nodes, setNodes] = useState([])
 
     useEffect(() => {
