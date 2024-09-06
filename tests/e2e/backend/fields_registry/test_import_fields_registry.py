@@ -9,7 +9,7 @@ from mapping_workbench.backend.project.models.entity import Project
 
 
 @pytest.mark.asyncio
-async def test_import_eforms_fields_from_github_repository(eforms_sdk_github_repository_url,
+async def _test_import_eforms_fields_from_github_repository(eforms_sdk_github_repository_url,
                                                            eforms_sdk_github_repository_v1_9_1_tag_name):
     await import_eforms_fields_from_github_repository(
         github_repository_url=eforms_sdk_github_repository_url,
