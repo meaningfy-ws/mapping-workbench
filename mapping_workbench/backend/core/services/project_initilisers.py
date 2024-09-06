@@ -48,8 +48,7 @@ async def init_project_models(mongodb_database: AsyncIOMotorDatabase):
             User,
             AccessToken,
             Project,
-            # OntologyFileCollection,
-            # OntologyFileResource,
+            OntologyFileResource,
             SPARQLTestSuite,
             SPARQLTestFileResource,
             SHACLTestSuite,
@@ -72,7 +71,6 @@ async def init_project_models(mongodb_database: AsyncIOMotorDatabase):
             StructuralElement,
             StructuralElementsVersionedView,
             XSDFileResource,
-            OntologyFileResource,
             ConceptualMappingGroupBeanie,
         ],
     )

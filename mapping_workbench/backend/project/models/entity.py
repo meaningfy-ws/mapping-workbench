@@ -1,8 +1,8 @@
 from enum import Enum
-from typing import Optional, List
+from typing import Optional
 
 import pymongo
-from beanie import Indexed, Link
+from beanie import Indexed
 from pydantic import BaseModel, ConfigDict
 from pymongo import IndexModel
 
@@ -10,18 +10,9 @@ from mapping_workbench.backend.core.models.base_entity import BaseEntity, BaseEn
     BaseTitledEntityListFiltersSchema
 
 
-# from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
-# from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingRuleRegistry
-# from mapping_workbench.backend.ontology_file_collection.models.entity import OntologyFileCollection
-# from mapping_workbench.backend.resource_collection.models.entity import ResourceCollection
-# from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite
-# from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuite
-# from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite
-# from mapping_workbench.backend.triple_map_registry.models.entity import TripleMapRegistry
-
-
 class ProjectNotFoundException(Exception):
     pass
+
 
 class SourceSchemaType(Enum):
     JSON = "JSON"
@@ -79,15 +70,6 @@ class Project(BaseEntity):
     version: Optional[str] = None
     source_schema: Optional[SourceSchema] = None
     target_ontology: Optional[TargetOntology] = None
-
-    # mapping_packages: Optional[List[Link[MappingPackage]]]
-    # test_data_suites: Optional[List[Link[TestDataSuite]]]
-    # sparql_test_suites: Optional[List[Link[SPARQLTestSuite]]]
-    # shacl_test_suites: Optional[List[Link[SHACLTestSuite]]]
-    # mapping_resources: Optional[List[Link[ResourceCollection]]]
-    # ontology_file_collections: Optional[List[Link[OntologyFileCollection]]]
-    # mapping_rule_registries: Optional[List[Link[MappingRuleRegistry]]]
-    # triple_map_registries: Optional[List[Link[TripleMapRegistry]]]
 
     class Settings(BaseEntity.Settings):
         name = "projects"

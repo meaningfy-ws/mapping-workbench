@@ -1,12 +1,11 @@
 import PropTypes from 'prop-types';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
-import { ForListItemAction } from 'src/contexts/app/section/for-list-item-action';
-import { testDataSuitesApi } from 'src/api/test-data-suites';
-import { sparqlTestSuitesApi } from 'src/api/sparql-test-suites';
-import { shaclTestSuitesApi } from 'src/api/shacl-test-suites';
-import { ontologyFileCollectionsApi } from 'src/api/ontology-file-collections';
-import { resourceCollectionsApi } from 'src/api/resource-collections';
+import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
+import {testDataSuitesApi} from 'src/api/test-data-suites';
+import {sparqlTestSuitesApi} from 'src/api/sparql-test-suites';
+import {shaclTestSuitesApi} from 'src/api/shacl-test-suites';
+import {resourceCollectionsApi} from 'src/api/resource-collections';
 
 import {PropertyList} from 'src/components/property-list';
 import {PropertyListItem} from 'src/components/property-list-item';
@@ -46,13 +45,7 @@ export const FileCollectionBasicDetails = (props) => {
               editCustomPathName = paths.app.shacl_test_suites.edit;
               deleteCutomPathName = paths.app.shacl_test_suites.index;
               itemctx = new ForListItemAction(id, shaclTestSuitesApi);
-                    
-            break;
-            case 'ontology_file_collections':
-              editCustomPathName = paths.app.ontology_file_collections.edit;
-              deleteCutomPathName = paths.app.ontology_file_collections.index;
-              itemctx = new ForListItemAction(id, ontologyFileCollectionsApi);
-                    
+
             break;
             case 'resource_collections':
               editCustomPathName = paths.app.resource_collections.edit;

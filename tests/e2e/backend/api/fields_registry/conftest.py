@@ -9,3 +9,12 @@ def fields_registry_test_client() -> TestClient:
     app = FastAPI()
     app.include_router(fields_registry_schema_router.router)
     return TestClient(app, raise_server_exceptions=True)
+
+
+@pytest.fixture
+def element_data(dummy_project):
+    return {
+        "name": "test-entity-name",
+        "bt_id": "test-entity-content",
+        "project": str(dummy_project.id)
+    }
