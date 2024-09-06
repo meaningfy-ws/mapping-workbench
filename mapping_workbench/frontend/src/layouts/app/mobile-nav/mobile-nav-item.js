@@ -66,8 +66,6 @@ export const MobileNavItem = (props) => {
 
   const offset = (depth + 1) * 16
 
-
-    console.log(offset,depth,title)
   // Branch
 
   if (children) {

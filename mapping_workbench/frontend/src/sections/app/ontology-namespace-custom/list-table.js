@@ -26,8 +26,6 @@ export const ListTable = (props) => {
         sectionApi
     } = props;
 
-    console.log(sectionApi)
-
     const handleDeleteAction = (id) => {
         const toastId= toastLoad("Deleting")
         const itemctx= new ForListItemAction(id, sectionApi)

@@ -105,13 +105,11 @@ export const EditForm = (props) => {
     const lng = {TTL: {mode: 'text/turtle', extension: turtle}, YAML: {mode: 'text/yaml', extension: yaml}}
 
     useEffect(() => {
-        console.log('effect selectdTree',selectedTree)
         selectedTree && handleGetXmlContent(selectedTree)
     }, [selectedTree]);
 
 
     const handleGetXmlContent = (id) => {
-        console.log('handleGetXmlContent',id)
         sectionApi.getTripleMapXmlContent(id)
             .then(res => {
                 setTestDataContent(res.content);
