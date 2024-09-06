@@ -12,5 +12,7 @@
   "locn": "http://www.w3.org/ns/locn#",
   "person": "http://www.w3.org/ns/person#",
   "epo-not": "http://data.europa.eu/a4g/ontology#",
-  "cv": "http://data.europa.eu/m8g/"
+  "cv": "http://data.europa.eu/m8g/",
+  "cpov": "http://data.europa.eu/m8g/",
+  "cccev": "http://data.europa.eu/m8g/"
 }
