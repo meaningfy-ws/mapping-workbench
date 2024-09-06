@@ -65,7 +65,6 @@ export const tokens = {
         fields_tree: 'nav.fields_tree',
         fields_overview: 'nav.fields_overview',
         nodes: 'nav.nodes',
-        ontology_file_collections: 'nav.ontology_file_collections',
         resource_collections: 'nav.resource_collections',
         ontology: 'nav.ontology',
         ontology_terms: 'nav.ontology_terms',

@@ -1,7 +1,6 @@
 import pytest
 
-from mapping_workbench.backend.conceptual_mapping_group.adapters.cmg_beanie_repository import CMGBeanieRepository
-from mapping_workbench.backend.conceptual_mapping_group.models.conceptual_mapping_group import ConceptualMappingGroup, \
+from mapping_workbench.backend.conceptual_mapping_group.models.conceptual_mapping_group import \
     ConceptualMappingGroupBeanie
 from mapping_workbench.backend.conceptual_mapping_rule.entrypoints.api.routes import CM_RULE_ROUTE_PREFIX
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule

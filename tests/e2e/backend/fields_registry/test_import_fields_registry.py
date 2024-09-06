@@ -1,13 +1,21 @@
 import pytest
+from beanie import PydanticObjectId
 
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElementsVersionedView, \
     StructuralElement
-from mapping_workbench.backend.fields_registry.services.import_fields_registry import import_eforms_fields_from_folder
+from mapping_workbench.backend.fields_registry.services.import_fields_registry import \
+    import_eforms_fields_from_github_repository
+from mapping_workbench.backend.project.models.entity import Project
 
 
 @pytest.mark.asyncio
-async def test_import_eforms_fields_from_folder(eforms_sdk_repo_v_1_9_1_dir_path, dummy_project_link):
-    await import_eforms_fields_from_folder(eforms_fields_folder_path=eforms_sdk_repo_v_1_9_1_dir_path, project_link=dummy_project_link)
+async def test_import_eforms_fields_from_github_repository(eforms_sdk_github_repository_url,
+                                                           eforms_sdk_github_repository_v1_9_1_tag_name):
+    await import_eforms_fields_from_github_repository(
+        github_repository_url=eforms_sdk_github_repository_url,
+        branch_or_tag_name=eforms_sdk_github_repository_v1_9_1_tag_name,
+        project_link=Project.link_from_id(PydanticObjectId())
+    )
 
     imported_fields = await StructuralElement.find(StructuralElement.element_type == "field").to_list()
     assert imported_fields
