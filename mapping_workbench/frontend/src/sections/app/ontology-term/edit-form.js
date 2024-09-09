@@ -17,7 +17,6 @@ import {RouterLink} from 'src/components/router-link';
 import {FormTextField} from "../../../components/app/form/text-field";
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 import {sessionApi} from "../../../api/session";
-import {ontologyTermsApi as sectionApi} from "../../../api/ontology-terms";
 
 
 export const EditForm = (props) => {
@@ -31,17 +30,6 @@ export const EditForm = (props) => {
         type: item.type ?? '',
     };
 
-    const handleDiscover = () => {
-        const toastId = toastLoad('Discovering terms ...')
-        sectionApi.discoverTerms()
-            .then(res => {
-                toastSuccess(`${res.task_name} successfully started.`, toastId)
-                router.push({
-                            pathname: paths.app.ontology_terms.index,
-                        });
-            })
-            .catch(err => toastError(`Discovering terms failed: ${err.message}.`, toastId))
-    };
 
     const formik = useFormik({
         initialValues: initialValues,
@@ -68,15 +56,7 @@ export const EditForm = (props) => {
                 helpers.setSubmitting(false);
                 toastSuccess(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "created" : "updated"), toastId);
                 if (response) {
-                    handleDiscover()
 
-                    // if (itemctx.isNew) {
-                    //     router.push({
-                    //         pathname: paths.app.ontology_terms.index,
-                    //     });
-                    // } else if (itemctx.isStateable) {
-                    //     itemctx.setState(response);
-                    // }
                 }
             } catch (err) {
                 console.error(err);
