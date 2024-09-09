@@ -33,8 +33,6 @@ const useItemsSearch = (items) => {
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
 
-    console.log('search',state.search)
-
     const {show, ...filters} = state.filters
 
     const searchItems = state.search ? items.filter(item => {
@@ -226,6 +224,7 @@ const Page = () => {
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                         sort={itemsSearch.state.sort}
+                        onSort={itemsSearch.handleSort}
                         page={itemsSearch.state.page}
                         items={itemsSearch.pagedItems}
                         count={itemsStore.itemsCount}
