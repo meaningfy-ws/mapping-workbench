@@ -67,7 +67,7 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
             'target_class_path': item?.target_class_path || '',
             'target_property_path': item?.target_property_path || '',
             'autocomplete_cm': [],
-            'autocomplete_cm_checked': true,
+            'autocomplete_cm_checked': !item,
         },
         validationSchema: Yup.object({
             source_structural_element: Yup
@@ -173,7 +173,6 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
                                                 disabled={!formik.values.autocomplete_cm_checked}
                                                 data={ontologyFragments}
                                                 onSelect={handleAutocompleteChange}
-                                                required={formik.values.autocomplete_cm_checked}
                                                 name='autocomplete_cm'/>
                             </Stack>
                             <FormTextField formik={formik}
