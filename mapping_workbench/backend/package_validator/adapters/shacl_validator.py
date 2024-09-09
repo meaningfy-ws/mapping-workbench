@@ -112,7 +112,7 @@ class SHACLValidator(TestDataValidator):
                             short_result_severity=None,
                             source_constraint_component=binding.sourceConstraintComponent.value,
                             short_source_constraint_component=None,
-                            message=binding.message.value
+                            message=binding.message.value if binding.message else None
                         ),
                         test_data=result_test_data
                     )
