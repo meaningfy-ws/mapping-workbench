@@ -14,6 +14,7 @@ export const AccountButton = () => {
     return (
         <>
             <Box
+                id="account_button"
                 component={ButtonBase}
                 onClick={popover.handleOpen}
                 ref={popover.anchorRef}

@@ -212,7 +212,7 @@ export const EditForm = (props) => {
                     if (response) {
                         if (itemctx.isNew) {
                             router.push({
-                                pathname: paths.app[sectionApi.section].index,
+                                pathname: paths.app[sectionApi.section].overview.index,
                             });
                         } else if (itemctx.isStateable) {
                             itemctx.setState(response);
@@ -888,7 +888,7 @@ export const EditForm = (props) => {
                             color="inherit"
                             component={RouterLink}
                             disabled={formik.isSubmitting}
-                            href={paths.app.conceptual_mapping_rules.index}
+                            href={paths.app.conceptual_mapping_rules.overview.index}
                         >
                             Cancel
                         </Button>

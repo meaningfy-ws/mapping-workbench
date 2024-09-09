@@ -1,5 +1,6 @@
-import {Fragment, useCallback, useState} from 'react';
+import {Fragment, useState} from 'react';
 import PropTypes from 'prop-types';
+
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
 import CardContent from '@mui/material/CardContent';
@@ -9,7 +10,6 @@ import SvgIcon from '@mui/material/SvgIcon';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableSortLabel from '@mui/material/TableSortLabel';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
@@ -18,8 +18,8 @@ import {Scrollbar} from 'src/components/scrollbar';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import Tooltip from "@mui/material/Tooltip";
 import TablePagination from "../../components/table-pagination";
+import TableSorterHeader from "../../components/table-sorter-header";
 
 
 export const ListTable = (props) => {
@@ -27,6 +27,9 @@ export const ListTable = (props) => {
         count = 0,
         items = [],
         onPageChange = () => {
+        },
+        sort,
+        onSort = () => {
         },
         onRowsPerPageChange,
         page = 0,
@@ -39,6 +42,18 @@ export const ListTable = (props) => {
 
     const handleItemToggle = itemId => {
         setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
+    }
+
+    const SorterHeader = (props) => {
+        const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
+        return (
+            <TableCell>
+                <TableSorterHeader sort={{direction, column: sort.column}}
+                                   onSort={onSort}
+                                   {...props}
+                />
+            </TableCell>
+        )
     }
 
     return (
@@ -59,12 +74,10 @@ export const ListTable = (props) => {
                         <TableHead>
                             <TableRow>
                                 <TableCell/>
-                                <TableCell width="25%">
-                                    Term
-                                </TableCell>
-                                <TableCell>
-                                    Type
-                                </TableCell>
+                                <SorterHeader fieldName='short_term'
+                                              title='Term'/>
+                                <SorterHeader fieldName='type'
+                                              title='Type'/>
                                 <TableCell align="right">
                                     Actions
                                 </TableCell>
@@ -74,7 +87,6 @@ export const ListTable = (props) => {
                             {items.map((item) => {
                                 const item_id = item._id;
                                 const isCurrent = item_id === currentItem;
-                                const statusColor = item.status === 'published' ? 'success' : 'info';
 
                                 return (
                                     <Fragment key={item_id}>

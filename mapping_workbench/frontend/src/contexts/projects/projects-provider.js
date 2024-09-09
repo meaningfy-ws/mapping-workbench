@@ -68,7 +68,9 @@ export const ProjectsProvider = ({children}) => {
                 sessionApi.removeLocalSessionProject()
                 getProjects()
                 toastSuccess('Project Deleted', toastId)
+                window.location.replace(paths.index)
             })
+            .catch(err => toastError(err, toastId))
     }
 
 

@@ -11,7 +11,7 @@ Given('Session Login', () => {
         cy.get('[name=username]').clear().type(username)
         cy.get('[name=password]').clear().type(password)
         cy.get('button[type="submit"]').click()
-        cy.title().should('eq','App: Projects List | Mapping Workbench')
+        cy.title().should('eq','Mapping Workbench')
     })
     if(sessionProject) cy.window().then(win => win.sessionStorage.setItem('sessionProject',sessionProject))
 })
@@ -30,6 +30,7 @@ Then('I get redirected to Ontology Terms', () => {
 
 Then('I click on Ontology Terms', () => {
     cy.intercept('GET', appURLPrefix + 'ontology/terms*').as('get')
+    cy.get('#nav_mapping_entities').click()
     cy.get('#nav_ontology_terms').click()
 })
 

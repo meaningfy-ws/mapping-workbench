@@ -1,9 +1,5 @@
 import pytest
 
-# from mapping_workbench.backend.ontology_file_collection.entrypoints.api.routes import \
-#     ROUTE_PREFIX as ONTOLOGY_FILE_COLLECTION_ROUTE_PREFIX
-# from mapping_workbench.backend.ontology_file_collection.models.entity import OntologyFileCollection, \
-#     OntologyFileResource
 from mapping_workbench.backend.resource_collection.entrypoints.api.routes import \
     ROUTE_PREFIX as RESOURCE_COLLECTION_ROUTE_PREFIX
 from mapping_workbench.backend.resource_collection.models.entity import ResourceCollection, ResourceFile
@@ -19,7 +15,6 @@ from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuit
 from tests.e2e.backend.api import entity_crud_routes_tests, ApiActions
 
 FILE_RESOURCES = {
-    # ONTOLOGY_FILE_COLLECTION_ROUTE_PREFIX: [OntologyFileCollection, OntologyFileResource],
     RESOURCE_COLLECTION_ROUTE_PREFIX: [ResourceCollection, ResourceFile],
     SHACL_TEST_SUITE_ROUTE_PREFIX: [SHACLTestSuite, SHACLTestFileResource],
     SPARQL_TEST_SUITE_ROUTE_PREFIX: [SPARQLTestSuite, SPARQLTestFileResource],

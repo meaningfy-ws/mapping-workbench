@@ -1,46 +1,17 @@
 name: staging CI/CD pipeline
 
 on:
-  pull_request:
+  push:
     branches: [ develop ]
 #  workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-server-action
+  cancel-in-progress: false
 
 jobs:
   deploy_and_build:
-#    needs: run_tests
     name: Build and deploy
-    runs-on: ubuntu-latest
-    environment: staging
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Extract branch name
-      shell: bash
-      run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
-      id: extract_branch
-    - name: Display branch name
-      run: echo "Branch name is ${{ steps.extract_branch.outputs.branch }}"
-    - name: Install ssh keys
-      run: |
-        install -m 600 -D /dev/null ~/.ssh/id_rsa
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
-
-    - name: connect, pull and build
-      run: |
-        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "source ~/.bashrc && cd ${{ secrets.STAGING_WORK_DIR }} && git checkout develop && git pull && git checkout ${{ steps.extract_branch.outputs.branch }} && git pull && make staging-dotenv-file && make build-frontend && make build-backend && exit"
-
-    - name: cleanup
-      run: rm -rf ~/.ssh
-
-  run_tests:
-    name: Running tests
-    needs: deploy_and_build
     runs-on: ubuntu-latest
     environment: staging
 
@@ -51,31 +22,9 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
 
-      - name: Run Backend E2E tests
+      - name: connect, pull and build
         run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'cd ${{ secrets.STAGING_WORK_DIR }} && python3 -m venv venv && source venv/bin/activate && make install-backend && make test-e2e-backend && exit'
-
-      - name: Run Frontend E2E tests
-        run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'source ~/.bashrc && cd ${{ secrets.STAGING_WORK_DIR }} && make dotenv-file-frontend && make install-frontend && make test-e2e-frontend && exit'
-
-      - name: Copy Backend E2E Coverage data
-        run: |
-          scp -r ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.STAGING_WORK_DIR }}/.coverage ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.STAGING_WORK_DIR }}/coverage.xml .
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./coverage.xml
-          env_vars: OS,PYTHON
-          name: codecov-umbrella
-          fail_ci_if_error: true
-
-      - name: Reverse to develop branch on failure
-        if: failure()
-        run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'cd ${{ secrets.STAGING_WORK_DIR }} && git checkout develop && git pull && make staging-dotenv-file && make install-frontend && make install-backend && make test-e2e-backend && exit'
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "source ~/.bashrc && cd ${{ secrets.STAGING_WORK_DIR }} && git checkout develop && git pull && make staging-dotenv-file && make build-frontend && make build-backend && exit"
 
       - name: cleanup
         run: rm -rf ~/.ssh

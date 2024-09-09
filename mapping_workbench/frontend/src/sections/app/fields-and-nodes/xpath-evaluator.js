@@ -1,33 +1,28 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import CodeMirror from '@uiw/react-codemirror';
 import {basicSetup} from '@uiw/codemirror-extensions-basic-setup';
 import {xml} from '@codemirror/lang-xml'
 import Card from "@mui/material/Card";
+import Typography from "@mui/material/Typography";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import Accordion from "@mui/material/Accordion";
+import {TableNoData} from "../shacl_validation_report/utils";
 
 const XpathEvaluator = ({xmlDoc, absolute_xpath}) => {
-
     const [nodes, setNodes] = useState([])
-
-    console.log(absolute_xpath)
 
     useEffect(() => {
         if (!!xmlDoc && absolute_xpath)
-            evaluateXPAthExpression(getGlobalXPath(absolute_xpath), xmlDoc)
+            evaluateXPAthExpression(absolute_xpath, xmlDoc)
     }, [xmlDoc, absolute_xpath]);
-
-    const getGlobalXPath = (xpath) => {
-        const xp = xpath.split('/')
-        xp.shift()
-        return '/*/' + xp.join('/')
-    }
 
     const extractNamespaces = (doc) => {
         const root = doc.documentElement;
         const attributes = root.attributes;
         const namespaces = {};
 
-        for (let i = 0; i < attributes.length; i++) {
-            const attr = attributes[i];
+        for (let attr of attributes) {
             if (attr.name.startsWith('xmlns:')) {
                 const prefix = attr.name.split(':')[1];
                 namespaces[prefix] = attr.value;
@@ -73,20 +68,31 @@ const XpathEvaluator = ({xmlDoc, absolute_xpath}) => {
 
     return (
         <>
-            {nodes.map((e, i) => (
-                <Card key={'node' + i}>
-                    <CodeMirror
-                        style={{resize: 'vertical', overflow: 'auto', height: 200}}
-                        value={serializer.serializeToString(e)}
-                        editable={false}
-                        extensions={[basicSetup(), xml()]}
-                        options={{
-                            mode: 'application/xml',
-                            theme: 'default',
-                            lineNumbers: false,
-                        }}
-                    />
-                </Card>))}
+            <Accordion disabled={!nodes.length}>
+                <AccordionSummary>
+                    <Typography>{`Nodes found: ${nodes.length}`}</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    {nodes.map((e, i) => (
+                        <Card key={'node' + i}>
+                            <CodeMirror
+                                style={{resize: 'vertical', overflow: 'auto', height: 200}}
+                                value={serializer.serializeToString(e)}
+                                editable={false}
+                                extensions={[xml()]}
+                                foldGutter={true}
+
+                                options={{
+                                    mode: 'application/xml',
+                                    theme: 'default',
+                                    lineNumbers: false,
+                                    foldGutter: true,
+                                }}
+                            />
+                        </Card>))}
+                    {!nodes.length && <TableNoData/>}
+                </AccordionDetails>
+            </Accordion>
         </>
     )
 

@@ -4,31 +4,32 @@ import {useFormik} from "formik";
 import * as Yup from "yup";
 import {parseString} from "xml2js";
 
-import MenuItem from "@mui/material/MenuItem";
-import Typography from "@mui/material/Typography";
-import TextField from "@mui/material/TextField";
-import Grid from "@mui/material/Grid";
-import Card from "@mui/material/Card";
-import Button from "@mui/material/Button";
-import Stack from "@mui/material/Stack";
-import Autocomplete from "@mui/material/Autocomplete";
-import Alert from "@mui/material/Alert";
-
-import {Layout as AppLayout} from 'src/layouts/app';
-import File from 'src/sections/app/fields-and-nodes/file'
-import {fieldsRegistryApi as fieldsRegistry} from 'src/api/fields-registry'
-import {testDataSuitesApi as sectionApi, testDataSuitesApi} from "../../../api/test-data-suites";
-import {genericTripleMapFragmentsApi as tripleMapFragments} from "../../../api/triple-map-fragments/generic";
-import {FormTextField} from "../../../components/app/form/text-field";
-import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
-import RelativeXpathFinder from "../../../sections/app/fields-and-nodes/relative-xpath-finder";
-import {Seo} from "../../../components/seo";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
-import {BreadcrumbsSeparator} from "../../../components/breadcrumbs-separator";
 import Link from "@mui/material/Link";
-import {RouterLink} from "../../../components/router-link";
-import {paths} from "../../../paths";
-import XpathEvaluator from "../../../sections/app/fields-and-nodes/xpath-evaluator";
+import Card from "@mui/material/Card";
+import Grid from "@mui/material/Grid";
+import Alert from "@mui/material/Alert";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
+import MenuItem from "@mui/material/MenuItem";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
+import Autocomplete from "@mui/material/Autocomplete";
+
+import {paths} from "src/paths";
+import {Seo} from "src/components/seo";
+import {Layout as AppLayout} from 'src/layouts/app';
+import {RouterLink} from "src/components/router-link";
+import File from 'src/sections/app/fields-and-nodes/file'
+import {FormTextField} from "src/components/app/form/text-field";
+import {testDataSuitesApi as sectionApi} from "src/api/test-data-suites";
+import {BreadcrumbsSeparator} from "src/components/breadcrumbs-separator";
+import {fieldsRegistryApi as fieldsRegistry} from 'src/api/fields-registry'
+import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
+import XpathEvaluator from "src/sections/app/fields-and-nodes/xpath-evaluator";
+import RelativeXpathFinder from "src/sections/app/fields-and-nodes/relative-xpath-finder";
+import {genericTripleMapFragmentsApi as tripleMapFragments} from "src/api/triple-map-fragments/generic";
+import {sessionApi} from "../../../api/session";
 
 const Page = () => {
     const [files, setFiles] = useState([])
@@ -39,143 +40,117 @@ const Page = () => {
     const [xmlContent, setXmlContent] = useState('')
     const [fileContent, setFileContent] = useState()
 
-    console.log('xPaths',xPaths)
-
     const SECTION_TITLE = 'Fields And Nodes'
 
     useEffect(() => {
-        const project = window.sessionStorage.getItem('sessionProject')
+        const project = sessionApi.getSessionProject()
         tripleMapFragments.getTripleMapFragmentTree({project})
             .then(res => setFiles(res.test_data_suites))
-            .catch(err => console.error((err)))
-
-        // testDataSuitesApi.getItems({})
-        //     .then(res => {
-        //         res.items.forEach(e =>
-        //             testDataSuitesApi.getFileResources(e._id)
-        //                 .then(resource => setFiles(files => ([...files, ...resource.items]))))
-        //             .catch(err => console.error(err))
-        //     })
-        //     .catch(err => console.error((err)))
+            .catch(err => console.error(err))
 
         fieldsRegistry.getXpathsList()
-            .then(res => {
-                setXPaths(res)
-            })
+            .then(res => setXPaths(res))
             .catch(err => console.error(err))
     }, [])
 
     useEffect(() => {
-        // Parse the XML string into a DOM Document
-        setFileError('')
-        setXmlNodes('')
-        if (selectedFile) {
-            tripleMapFragments.getTripleMapXmlContent(selectedFile)
-                .then(res => {
-                    setFileContent(res.content)
-                    try {
-                        parseString(res.content, {explicitArray: false}, (err, result) => {
-                            if (err) {
-                                console.error('Error parsing XML:', err);
-                                setFileError(err)
-                            } else {
-                                setXmlNodes(result)
-                            }
-                        });
-                        const parser = new DOMParser();
-                        const xmlDoc = parser.parseFromString(res.content, "application/xml");
-                        setXmlContent(xmlDoc)
+            // Parse the XML string into a DOM Document
+            setFileError('')
+            setXmlNodes('')
+            if (selectedFile) {
+                tripleMapFragments.getTripleMapXmlContent(selectedFile)
+                    .then(res => {
+                        setFileContent(res.content)
+                        try {
+                            parseString(res.content, {explicitArray: false}, (err, result) => {
+                                if (err) {
+                                    console.error('Error parsing XML:', err);
+                                    setFileError(err)
+                                } else {
+                                    setXmlNodes(result)
+                                }
+                            });
+                            const parser = new DOMParser();
+                            const xmlDoc = parser.parseFromString(res.content, "application/xml");
+                            setXmlContent(xmlDoc)
 
-                    } catch (err) {
-                        setXmlContent('')
-                        setFileError(err)
-                    }
-                })
+                        } catch (err) {
+                            setXmlContent('')
+                            setFileError(err)
+                        }
+                    })
 
-        }
-    },
+            }
+        },
         [selectedFile]
     )
 
+    const onChangeXPath = (value) => {
+        value.shift()
+        formik.setFieldValue('parent_node','')
+        formik.setFieldValue('relative_xpath','')
+        formik.setFieldValue('absolute_xpath', ['/*',...value].join('/'))
+    }
 
-        const onChangeXPath = (value) => {
-            formik.setFieldValue('absolute_xpath', value)
+    const handleClear = () => formik.setValues(initialValues)
+
+    const initialValues = {
+        id: '',
+        label: '',
+        absolute_xpath: '',
+        relative_xpath: '',
+        parent_node: ''
+    };
+
+
+    const formik = useFormik({
+        initialValues,
+        enableReinitialize: true,
+        validationSchema: Yup.object({
+            id: Yup
+                .string()
+                .max(255)
+                .required('Id is required'),
+            label: Yup
+                .string()
+                .max(255)
+                .required('Label is required'),
+            absolute_xpath: Yup
+                .string()
+                .max(255)
+                .required('XPath is required'),
+        }),
+        onSubmit: (values, helpers) => {
+            const toastId = toastLoad("Creating Element...")
+            helpers.setSubmitting(true);
+
+            const {id, label, parent_node, absolute_xpath, relative_xpath} = values
+            fieldsRegistry.addElement({id, label, parent_node_id: parent_node.id, absolute_xpath, relative_xpath})
+                .then(res => {
+                    toastSuccess("Element Created", toastId);
+                    helpers.setStatus({success: true});
+                })
+                .catch(err => {
+                    toastError(err, toastId)
+                    helpers.setStatus({success: false});
+                })
+
+                .finally(() => helpers.setSubmitting(false))
         }
+    });
 
+    const parentNodeSelect = xPaths.map(e => ({
+        id: e.id,
+        label: e.relative_xpath,
+        absolute_xpath: e.absolute_xpath,
+        parent_node: e.parent_node_id,
+        relative_xpath: e.relative_xpath
+    })).filter(e=> formik.values.absolute_xpath.includes(e.label))
 
-        const initialValues = {
-            id: '',
-            label: '',
-            absolute_xpath: '',
-            relative_xpath: '',
-            parent_node: ''
-        };
-
-
-        const formik = useFormik({
-            initialValues,
-            enableReinitialize: true,
-            validationSchema: Yup.object({
-                id: Yup
-                    .string()
-                    .max(255)
-                    .required('Id is required'),
-                label: Yup
-                    .string()
-                    .max(255)
-                    .required('Label is required'),
-                absolute_xpath: Yup
-                    .string()
-                    .max(255)
-                    .required('XPath is required'),
-            }),
-            onSubmit: (values, helpers) => {
-                const toastId = toastLoad("Creating Element...")
-                helpers.setSubmitting(true);
-
-                const {id, label, parent_node, absolute_xpath, relative_xpath} = values
-                fieldsRegistry.addElement({id, label, parent_node_id: parent_node.id, absolute_xpath, relative_xpath})
-                    .then(res => {
-                        toastSuccess("Element Created", toastId);
-                        helpers.setStatus({success: true});
-                    })
-                    .catch(err => {
-                        toastError(err, toastId)
-                        helpers.setStatus({success: false});
-                    })
-
-                    .finally(() => helpers.setSubmitting(false))
-            }
-        });
-
-
-        const parentNodeSelect = xPaths.map(e => ({
-            id: e.id,
-            label: e.relative_xpath,
-            absolute_xpath: e.absolute_xpath,
-            parent_node: e.parent_node_id,
-            relative_xpath: e.relative_xpath
-        }))
-
-        const handleClear = () => {
-            formik.setValues(initialValues)
-        }
-
-        const evaluate = (file, xpath) => {
-            const result = file.evaluate(
-                xpath,    // The XPath expression
-                file,           // The context node (here, the entire document)
-                null,               // Namespace resolver (null for HTML documents)
-                XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, // Return type
-                null                // Result object (null to create a new one)
-            );
-
-            console.log(result)
-        }
-
-        return (
-            <>
-                <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
+    return (
+        <>
+            <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
+            <Stack spacing={4}>
                 <Stack
                     direction="row"
                     justifyContent="space-between"
@@ -217,10 +192,7 @@ const Page = () => {
                                         <TextField
                                             fullWidth
                                             label="Select File"
-                                            onChange={e => {
-                                                console.log(e.target.value)
-                                                setSelectedFile(e.target.value)
-                                            }}
+                                            onChange={e => setSelectedFile(e.target.value)}
                                             select
                                             value={selectedFile}
                                         >
@@ -238,28 +210,6 @@ const Page = () => {
                                                         </MenuItem>)])
                                             }
                                         </TextField>
-                                        {/*<TextField*/}
-                                        {/*    fullWidth*/}
-                                        {/*    label="File"*/}
-                                        {/*    name="fileSelect"*/}
-                                        {/*    onChange={event => {*/}
-                                        {/*        setSelectedFile(event.target.value)*/}
-                                        {/*        handleClear()*/}
-                                        {/*    }}*/}
-                                        {/*    value={files[0]}*/}
-                                        {/*    select*/}
-                                        {/*>*/}
-                                        {/*    {files.map((file) => (*/}
-                                        {/*        <MenuItem*/}
-                                        {/*            key={file.filename}*/}
-                                        {/*            value={file}*/}
-                                        {/*        >*/}
-                                        {/*            <Typography>*/}
-                                        {/*                {file.filename}*/}
-                                        {/*            </Typography>*/}
-                                        {/*        </MenuItem>*/}
-                                        {/*    ))}*/}
-                                        {/*</TextField>*/}
                                         {fileError
                                             ? <Alert severity="error">{fileError.message}</Alert>
                                             : <File xmlContent={xmlContent}
@@ -298,8 +248,7 @@ const Page = () => {
                                             required/>
                                         <Autocomplete
                                             id="parent_node"
-                                            disabled={formik.isSubmitting}
-                                            // key={formik.values.parent_node.label}
+                                            disabled={formik.isSubmitting || !formik.values.absolute_xpath}
                                             error={!!(formik.touched['parent_node'] && formik.errors['parent_node'])}
                                             helperText={formik.touched['parent_node'] && formik.errors['parent_node']}
                                             onBlur={formik.handleBlur}
@@ -337,15 +286,16 @@ const Page = () => {
 
                     </Card>
                 </form>
-            </>
-        )
-    }
+            </Stack>
+        </>
+    )
+}
 
 
-    Page.getLayout = (page) => (
-        <AppLayout>
-            {page}
-        </AppLayout>
-    );
+Page.getLayout = (page) => (
+    <AppLayout>
+        {page}
+    </AppLayout>
+);
 
-    export default Page;
+export default Page;

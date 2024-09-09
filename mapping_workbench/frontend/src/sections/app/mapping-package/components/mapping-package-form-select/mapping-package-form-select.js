@@ -3,7 +3,6 @@ import {mappingPackagesApi} from "src/api/mapping-packages";
 import {useMounted} from "src/hooks/use-mounted";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
-import {useRouter} from "src/hooks/use-router";
 
 const useMappingPackagesStore = () => {
     const isMounted = useMounted();
@@ -34,13 +33,21 @@ const useMappingPackagesStore = () => {
 };
 
 export const MappingPackageFormSelect = (props) => {
-    const {formik, isRequired, ...other} = props;
+    const {formik, isRequired, withDefaultPackage = false, ...other} = props;
     const mappingPackagesStore = useMappingPackagesStore();
 
     const handleMappingPackageChange = async (event) => {
         const value = event.target.value;
         formik.setFieldValue('mapping_package_id', value);
     }
+    useEffect(() => {
+        if (withDefaultPackage) {
+            const defaultPackage = mappingPackagesStore.items.find(pkg => pkg.identifier === 'default');
+            if (defaultPackage) {
+                formik.setFieldValue('mapping_package_id', defaultPackage.id)
+            }
+        }
+    }, [mappingPackagesStore.items]);
 
     return (
         <>

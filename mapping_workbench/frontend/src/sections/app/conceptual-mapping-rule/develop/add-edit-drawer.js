@@ -1,3 +1,5 @@
+import {useEffect} from "react";
+
 import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
@@ -12,14 +14,13 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 
 import * as Yup from "yup";
 import {useFormik} from "formik";
-import AutocompleteCM from "./autocomplete";
+import AutocompleteCM from "./ontology_fragment_editor";
 import {sessionApi} from "src/api/session";
 import {FormTextField} from "src/components/app/form/text-field";
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
-import {useEffect} from "react";
 
 
-const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, afterItemSave, ontologyFragments}, load) => {
+const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, afterItemSave, ontologyFragments}) => {
 
 
     const addItem = (requestValues, resetForm) => {
@@ -57,7 +58,7 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
             'target_class_path': item?.target_class_path || '',
             'target_property_path': item?.target_property_path || '',
             'autocomplete_cm': [],
-            'autocomplete_cm_checked': false,
+            'autocomplete_cm_checked': true,
         },
         validationSchema: Yup.object({
             source_structural_element: Yup
@@ -71,7 +72,7 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
                 .required('Property Path is required')
         }),
         onSubmit: async (initialValues, {resetForm, setErrors, setTouched}) => {
-            const {autocomplete_cm, autocomplete_cm_checked, ...values } = initialValues
+            const {autocomplete_cm, autocomplete_cm_checked, ...values} = initialValues
             values['project'] = sessionApi.getSessionProject();
             values['source_structural_element'] = values['source_structural_element'] || null;
 
@@ -88,11 +89,11 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
 
     useEffect(() => {
         const autocompleteValue = formik.values.autocomplete_cm
-        if(formik.values.autocomplete_cm_checked) {
+        if (formik.values.autocomplete_cm_checked) {
             const cmProperties = autocompleteValue.filter(e => e.type === 'PROPERTY').map(e => e.value).join(' / ')
 
             formik.setFieldValue('target_class_path',
-                autocompleteValue.filter(e => ['DATA_TYPE','CLASS'].includes(e.type)).map(e => e.value).join(' / '))
+                autocompleteValue.filter(e => ['DATA_TYPE', 'CLASS'].includes(e.type)).map(e => e.value).join(' / '))
             formik.setFieldValue('target_property_path', cmProperties.length ? `?this ${cmProperties} ?value` : '')
         }
     }, [formik.values.autocomplete_cm]);
@@ -120,7 +121,6 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
     }
 
 
-
     return (
         <Drawer
             anchor='right'
@@ -133,7 +133,7 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
                     <CardContent>
                         <Stack direction='column'
                                gap={3}>
-                            <FormControl sx={{ width: '100%'}}>
+                            <FormControl sx={{width: '100%'}}>
                                 <Autocomplete
                                     fullWidth
                                     options={structuralElements}
@@ -141,22 +141,32 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
                                     onChange={handleSourceStructuralElementSelect}
                                     renderInput={(params) =>
                                         <TextField {...params}
+                                                   required
                                                    label="Structural Element"
                                                    error={!!(formik.touched.source_structural_element && formik.errors.source_structural_element)}
                                                    helperText={formik.touched.source_structural_element && formik.errors.source_structural_element}
                                         />}
                                 />
                             </FormControl>
-                            <FormTextField formik={formik}
-                                           disabled={true}
-                                           name="xpath_condition"
-                                           label="XPath Condition"/>
-                            <FormTextField formik={formik}
-                                           name="min_sdk_version"
-                                           label="Min SDK"/>
-                            <FormTextField formik={formik}
-                                           name="max_sdk_version"
-                                           label="Max SDK"/>
+                            <Stack>
+                                <FormControlLabel
+                                    sx={{width: '100%'}}
+                                    control={
+                                        <Checkbox
+                                            checked={formik.values.autocomplete_cm_checked}
+                                            onChange={() => formik.setFieldValue('autocomplete_cm_checked', event.target.checked)}
+                                        />
+                                    }
+                                    label="Use Ontology Fragment Editor"
+                                    value=""
+                                />
+                                <AutocompleteCM formik={formik}
+                                                disabled={!formik.values.autocomplete_cm_checked}
+                                                data={ontologyFragments}
+                                                onSelect={handleAutocompleteChange}
+                                                required={formik.values.autocomplete_cm_checked}
+                                                name='autocomplete_cm'/>
+                            </Stack>
                             <FormTextField formik={formik}
                                            error={!!(formik.touched.target_class_path && formik.errors.target_class_path)}
                                            fullWidth
@@ -171,25 +181,16 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
                                            disabled={formik.values.autocomplete_cm_checked}
                                            name="target_property_path"
                                            label="Ontology Property Path"/>
-                            <Stack>
-                                <FormControlLabel
-                                    sx={{width: '100%'}}
-                                    control={
-                                        <Checkbox
-                                            checked={formik.values.autocomplete_cm_checked}
-                                            onChange={() => formik.setFieldValue('autocomplete_cm_checked', event.target.checked)}
-                                        />
-                                    }
-                                    label="Use Autocompelete"
-                                    value=""
-                                />
-                                <AutocompleteCM formik={formik}
-                                                disabled={!formik.values.autocomplete_cm_checked}
-                                                data={ontologyFragments}
-                                                onSelect={handleAutocompleteChange}
-                                                required={formik.values.autocomplete_cm_checked}
-                                                name='autocomplete_cm'/>
-                            </Stack>
+                            <FormTextField formik={formik}
+                                           disabled
+                                           name="xpath_condition"
+                                           label="XPath Condition"/>
+                            <FormTextField formik={formik}
+                                           name="min_sdk_version"
+                                           label="Min XSD Version"/>
+                            <FormTextField formik={formik}
+                                           name="max_sdk_version"
+                                           label="Max XSD Version"/>
                         </Stack>
                     </CardContent>
                     <Button type='submit'

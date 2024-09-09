@@ -71,7 +71,6 @@ export const en = {
   [tokens.nav.fields_tree]: 'Fields Tree',
   [tokens.nav.fields_overview]: 'Fields Overview',
   [tokens.nav.nodes]: 'Nodes',
-  [tokens.nav.ontology_file_collections]: 'Ontologies',
   [tokens.nav.ontology]: 'Ontology',
   [tokens.nav.ontology_terms]: 'Ontology Terms',
   [tokens.nav.namespaces]: 'Namespaces',

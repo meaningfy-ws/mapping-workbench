@@ -17,6 +17,7 @@ import {paths} from 'src/paths';
 
 import {AccountButton} from '../account-button';
 import {LanguageSwitch} from '../language-switch';
+import {NotificationsButton} from '../notifications-button';
 import {TopNavSection} from './top-nav-section';
 import {ProjectSwitch} from "../project-switch";
 import {useProjects} from "../../../hooks/use-projects";
@@ -224,6 +225,7 @@ export const TopNav = (props) => {
                     >
                         <TimeSwitch/>
                         <LanguageSwitch/>
+                        <NotificationsButton/>
                         <AccountButton/>
                     </Stack>
                 </Stack>

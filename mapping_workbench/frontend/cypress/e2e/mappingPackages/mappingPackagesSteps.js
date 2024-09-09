@@ -11,12 +11,12 @@ Given('Session Login', () => {
         cy.get('[name=username]').clear().type(username)
         cy.get('[name=password]').clear().type(password)
         cy.get('button[type="submit"]').click()
-        cy.title().should('eq','App: Projects List | Mapping Workbench')
+        cy.title().should('eq','Mapping Workbench')
     })
 })
 
 Given('I go to Mapping Packages', () => {
-    cy.get('#nav_mapping_packages_\\(dev\\)').click()
+    cy.get('#nav_mapping_packages').click()
 })
 
 Then('I get redirected to Mapping Packages list page', () => {

@@ -85,18 +85,6 @@ export const paths = {
         ontology_files: {
             index: '/app/ontology-files'
         },
-        ontology_file_collections: {
-            index: '/app/ontology-file-collections',
-            create: '/app/ontology-file-collections/create',
-            edit: '/app/ontology-file-collections/[id]/edit',
-            view: '/app/ontology-file-collections/[id]/view',
-            resource_manager: {
-                index: '/app/ontology-file-collections/[id]/resource-manager',
-                create: '/app/ontology-file-collections/[id]/resource-manager/create',
-                edit: '/app/ontology-file-collections/[id]/resource-manager/[fid]/edit',
-                view: '/app/ontology-file-collections/[id]/resource-manager/[fid]/view',
-            }
-        },
         value_mapping_resources: {
             index: '/app/value-mapping-resources',
             create: '/app/value-mapping-resources/create',
@@ -154,10 +142,10 @@ export const paths = {
         },
 
         generic_triple_map_fragments: {
-            index: '/app/generic-triple-map-fragments',
-            create: '/app/generic-triple-map-fragments/create',
-            edit: '/app/generic-triple-map-fragments/[id]/edit',
-            view: '/app/generic-triple-map-fragments/[id]/view'
+            index: '/app/triple-map-fragments',
+            create: '/app/triple-map-fragments/create',
+            edit: '/app/triple-map-fragments/[id]/edit',
+            view: '/app/triple-map-fragments/[id]/view'
         },
 
         specific_triple_map_fragments: {
@@ -270,12 +258,6 @@ export const apiPaths = {
     },
     detailed_view_cm: {
         items: '/conceptual_mapping_group'
-    },
-    ontology_file_collections: {
-        items: '/ontology_file_collections',
-        item: '/ontology_file_collections/:id',
-        file_resources: '/ontology_file_collections/:id/file_resources',
-        file_resource: '/ontology_file_collections/file_resources/:id',
     },
     value_mapping_resources: {
         items: '/resource_collections',

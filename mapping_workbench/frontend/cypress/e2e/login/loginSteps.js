@@ -1,4 +1,4 @@
-import {Given, When, Then} from 'cypress-cucumber-preprocessor/steps'
+import { Given, When, Then} from 'cypress-cucumber-preprocessor/steps'
 
 const {username, password, homeURL} = Cypress.env()
 

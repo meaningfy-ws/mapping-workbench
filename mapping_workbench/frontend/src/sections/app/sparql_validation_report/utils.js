@@ -10,6 +10,8 @@ import Tooltip from "@mui/material/Tooltip";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import Skeleton from "@mui/material/Skeleton";
 import Alert from "@mui/material/Alert";
+import FormControl from "@mui/material/FormControl";
+import FormLabel from "@mui/material/FormLabel";
 
 export const resultColor = (result) => {
     switch (result.toLowerCase()) {
@@ -21,16 +23,17 @@ export const resultColor = (result) => {
         case "unverifiable":
         case "valid":
             return "success"
-        default: return "info"
+        default:
+            return "info"
     }
 }
 
 export const ResultChip = ({label, color, clickable}) => {
-    return(
+    return (
         <Chip label={label}
               clickable={clickable}
               color={resultColor(color ?? label)}
-              />
+        />
     )
 }
 
@@ -56,9 +59,9 @@ export const ResultFilter = ({currentState, onStateChange}) => {
             />)
     }
 
-    return(
+    return (
         <Box sx={{p: 2.5, display: 'flex'}}
-                 direction="row">
+             direction="row">
             <Stack
                 component={RadioGroup}
                 name="terms_validity"
@@ -93,54 +96,54 @@ export const ResultFilter = ({currentState, onStateChange}) => {
 
 export const SorterHeader = ({fieldName, title, sort, onSort}) => {
     return <Tooltip enterDelay={300}
-                   title="Sort"
-           >
-               <TableSortLabel
-                    active={sort.column === fieldName}
-                    direction={sort.direction}
-                    onClick={() => onSort(fieldName)}>
-                    {title ?? fieldName}
-                </TableSortLabel>
-           </Tooltip>
+                    title="Sort"
+    >
+        <TableSortLabel
+            active={sort.column === fieldName}
+            direction={sort.direction}
+            onClick={() => onSort(fieldName)}>
+            {title ?? fieldName}
+        </TableSortLabel>
+    </Tooltip>
 }
 
 export const sortItems = (items, sort) => {
-        const sortColumn = sort.column
-        if(!sortColumn) {
-            return items
-        } else {
-            return items.sort((a,b) => {
-                if (typeof a[sortColumn] === "string")
-                    return sort.direction === "asc" ?
-                        a[sortColumn]?.localeCompare(b[sortColumn]) :
-                        b[sortColumn]?.localeCompare(a[sortColumn])
-                else
-                    return sort.direction === "asc" ?
-                        a[sortColumn] - b[sortColumn] :
-                        b[sortColumn] - a[sortColumn]
-                })
-        }
+    const sortColumn = sort.column
+    if (!sortColumn) {
+        return items
+    } else {
+        return items.sort((a, b) => {
+            if (typeof a[sortColumn] === "string")
+                return sort.direction === "asc" ?
+                    a[sortColumn]?.localeCompare(b[sortColumn]) :
+                    b[sortColumn]?.localeCompare(a[sortColumn])
+            else
+                return sort.direction === "asc" ?
+                    a[sortColumn] - b[sortColumn] :
+                    b[sortColumn] - a[sortColumn]
+        })
     }
+}
 
 
 export const TableSkeleton = ({lines = 5}) => {
     return new Array(lines).fill("").map((e, i) =>
-                <Skeleton key={'line' + i}
-                          height={50}/>)
+        <Skeleton key={'line' + i}
+                  height={50}/>)
 }
 
 export const TableNoData = () => {
     return <Stack justifyContent="center"
-                       direction="row">
-                    <Alert severity="info">No Data !</Alert>
-                </Stack>
+                  direction="row">
+        <Alert severity="info">No Data !</Alert>
+    </Stack>
 }
 
 export const TableErrorFetching = () => {
     return <Stack justifyContent="center"
-                       direction="row">
-                    <Alert severity="error">Error on fetching data !</Alert>
-                </Stack>
+                  direction="row">
+        <Alert severity="error">Error on fetching data !</Alert>
+    </Stack>
 }
 
 export const TableLoadWrapper = ({children, data, dataState, lines}) => {

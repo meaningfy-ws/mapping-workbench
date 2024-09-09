@@ -28,7 +28,7 @@ const Page = () => {
                         <Link
                             color="text.primary"
                             component={RouterLink}
-                            href={paths.app[sectionApi.section].index}
+                            href={paths.app.ontology_terms.index}
                             sx={{
                                 alignItems: 'center',
                                 display: 'inline-flex'
@@ -39,7 +39,7 @@ const Page = () => {
                                 <ArrowLeftIcon/>
                             </SvgIcon>
                             <Typography variant="subtitle2">
-                                {sectionApi.SECTION_TITLE}
+                                {'Ontology Terms'}
                             </Typography>
                         </Link>
                     </div>

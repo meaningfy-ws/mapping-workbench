@@ -146,5 +146,5 @@ class StructuralElementIn(BaseModel):
     id: str
     sdk_element_id: str = Field(alias="label")
     absolute_xpath: str
-    relative_xpath: str
-    parent_node_id: str
+    relative_xpath: Optional[str] = None
+    parent_node_id: Optional[str] = None

@@ -22,18 +22,19 @@ import {RouterLink} from 'src/components/router-link';
 import {FormTextField} from "src/components/app/form/text-field";
 import {FormTextArea} from "src/components/app/form/text-area";
 import {fieldsRegistryApi} from "src/api/fields-registry";
-import {ontologyNamespacesApi} from "src/api/ontology-namespaces";
 import {ontologyTermsApi} from "src/api/ontology-terms";
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {Box} from "@mui/system";
 import {mappingPackagesApi} from "../../../api/mapping-packages";
+import ConfirmDialog from "../../../components/app/dialog/confirm-dialog";
+import {useState} from "react";
 
 export const EditForm = (props) => {
     const {itemctx, ...other} = props;
-    const router = useRouter();
     const sectionApi = itemctx.api;
     const item = itemctx.data;
     const projectsStore = useProjects()
+    const [confirmOpen, setConfirmOpen] = useState(false);
 
     const sourceSchemaTypes = [
         {
@@ -89,6 +90,10 @@ export const EditForm = (props) => {
         })
             .then(res => toastSuccess(`${res.task_name} successfully started.`, toastId))
             .catch(err => toastError(`eForm Fields import failed: ${err.message}.`, toastId))
+    }
+
+    const handleDeleteProject = () => {
+        projectsStore.handleDeleteProject(item._id)
     }
 
     // const handleCreateNamespaces = () => {
@@ -444,6 +449,13 @@ export const EditForm = (props) => {
                     >
                         {itemctx.isNew ? 'Create' : 'Update'}
                     </Button>
+                    {!itemctx.isNew && <Button
+                        id="delete_button"
+                        color='error'
+                        onClick={() => setConfirmOpen(true)}
+                        disabled={formik.isSubmitting}>
+                        Delete
+                    </Button>}
                     <Button
                         id="cancel_button"
                         color="inherit"
@@ -455,6 +467,14 @@ export const EditForm = (props) => {
                     </Button>
                 </Stack>
             </Card>
+            <ConfirmDialog
+                title="Delete It?"
+                open={confirmOpen}
+                setOpen={setConfirmOpen}
+                onConfirm={handleDeleteProject}
+            >
+                Are you sure you want to delete this project?
+            </ConfirmDialog>
         </form>
     )
         ;

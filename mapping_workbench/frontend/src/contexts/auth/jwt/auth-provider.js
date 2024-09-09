@@ -111,10 +111,13 @@ export const AuthProvider = (props) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
         []);
 
-    const signIn = useCallback(async (username, password, remember_me) => {
+    const signIn = async (username, password, remember_me) => {
+        console.log('signin')
         const loadingToastId = toast.loading("Logging in...");
         try {
             const user = await authApi.signInWithSessionInit({username, password, remember_me});
+            console.log('user',user)
+
             dispatch({
                 type: ActionType.SIGN_IN,
                 payload: {
@@ -127,7 +130,7 @@ export const AuthProvider = (props) => {
         } finally {
             toast.dismiss(loadingToastId);
         }
-    }, [dispatch]);
+    };
 
     const verifyAuth = useCallback(async () => {
         const user = await authApi.verifyAuth();

@@ -58,9 +58,6 @@ export const FileCollectionEditForm = (props) => {
         case 'shacl_test_suites':
             customPathName = paths.app.shacl_test_suites.index;
             break;
-        case 'ontology_file_collections':
-            customPathName = paths.app.ontology_file_collections.index;
-            break;
         case 'resource_collections':
             customPathName = paths.app.resource_collections.index;
             break;
@@ -136,7 +133,11 @@ export const FileCollectionEditForm = (props) => {
                         </Grid>
                         {sectionApi.hasMappingPackage && (
                             <Grid xs={12} md={12}>
-                                <MappingPackageFormSelect formik={formik} isRequired={sectionApi.isMappingPackageRequired ?? false}/>
+                                <MappingPackageFormSelect
+                                    formik={formik}
+                                    isRequired={sectionApi.isMappingPackageRequired ?? false}
+                                    withDefaultPackage={itemctx.isNew}
+                                />
                             </Grid>
                         )}
                         {sectionApi.hasFileCollectionType && (

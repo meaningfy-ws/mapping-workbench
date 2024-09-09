@@ -1,4 +1,4 @@
-import {Fragment, useCallback, useState} from 'react';
+import {Fragment, useState} from 'react';
 import PropTypes from 'prop-types';
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
@@ -9,13 +9,11 @@ import SvgIcon from '@mui/material/SvgIcon';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableSortLabel from '@mui/material/TableSortLabel';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import Tooltip from "@mui/material/Tooltip";
 import Grid from "@mui/material/Grid";
 
 import {paths} from "src/paths";
@@ -24,8 +22,9 @@ import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {PropertyList} from "../../../components/property-list";
 import {PropertyListItem} from "../../../components/property-list-item";
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import TablePagination from "../../components/table-pagination";
+import TableSorterHeader from "../../components/table-sorter-header";
 
 
 export const ListTable = (props) => {
@@ -33,6 +32,9 @@ export const ListTable = (props) => {
         count = 0,
         items = [],
         onPageChange = () => {
+        },
+        sort,
+        onSort = () => {
         },
         onRowsPerPageChange,
         page = 0,
@@ -43,29 +45,20 @@ export const ListTable = (props) => {
 
     const [currentItem, setCurrentItem] = useState(null);
 
-    const handleItemToggle = useCallback((itemId) => {
-        setCurrentItem((prevItemId) => {
-            if (prevItemId === itemId) {
-                return null;
-            }
+    const handleItemToggle = itemId =>
+        setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId)
 
-            return itemId;
-        });
-    }, []);
-
-    // const handleItemClose = useCallback(() => {
-    //     setCurrentItem(null);
-    // }, []);
-
-    // const handleItemUpdate = useCallback(() => {
-    //     setCurrentItem(null);
-    //     toast.success('Item updated');
-    // }, []);
-
-    // const handleItemDelete = useCallback(() => {
-
-    //     toast.error('Item cannot be deleted');
-    // }, []);
+    const SorterHeader = (props) => {
+        const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
+        return (
+            <TableCell>
+                <TableSorterHeader sort={{direction, column: sort.column}}
+                                   onSort={onSort}
+                                   {...props}
+                />
+            </TableCell>
+        )
+    }
 
     return (
         <div>
@@ -85,18 +78,15 @@ export const ListTable = (props) => {
                         <TableHead>
                             <TableRow>
                                 <TableCell/>
-                                <TableCell>
-                                    Element
-                                </TableCell>
-                                <TableCell>
-                                    Parent
-                                </TableCell>
+                                <SorterHeader fieldName='sdk_element_id'
+                                              title='Element'/>
+                                <SorterHeader fieldName='parent_node_id'
+                                              title='Parent'/>
                                 <TableCell>
                                     Versions
                                 </TableCell>
-                                <TableCell>
-                                    Type
-                                </TableCell>
+                                <SorterHeader fieldName='element_type'
+                                              title='Type'/>
                                 <TableCell align="right">
                                     Actions
                                 </TableCell>
@@ -209,7 +199,12 @@ export const ListTable = (props) => {
                                                                             <SyntaxHighlighter
                                                                                 language="xquery"
                                                                                 wrapLines={true}
-                                                                                lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
+                                                                                lineProps={{
+                                                                                    style: {
+                                                                                        wordBreak: 'break-all',
+                                                                                        whiteSpace: 'pre-wrap'
+                                                                                    }
+                                                                                }}>
                                                                                 {item.absolute_xpath}
                                                                             </SyntaxHighlighter>
                                                                         }
@@ -225,7 +220,12 @@ export const ListTable = (props) => {
                                                                             <SyntaxHighlighter
                                                                                 language="xquery"
                                                                                 wrapLines={true}
-                                                                                lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
+                                                                                lineProps={{
+                                                                                    style: {
+                                                                                        wordBreak: 'break-all',
+                                                                                        whiteSpace: 'pre-wrap'
+                                                                                    }
+                                                                                }}>
                                                                                 {item.relative_xpath}
                                                                             </SyntaxHighlighter>
                                                                         }

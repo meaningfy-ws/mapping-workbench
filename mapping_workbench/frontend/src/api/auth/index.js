@@ -44,14 +44,16 @@ class AuthApi {
 
     async initMyProfile() {
         const user = await this.me();
-        if (user.settings.session && user.settings.session.project) {
+        console.log('initMyProfile',user)
+        if (user.settings.session?.project) {
             sessionApi.setLocalSessionProject(user.settings.session.project);
         }
-        if (user.settings.app && user.settings.app.settings) {
+        if (user.settings.app?.settings) {
             sessionApi.setLocalAppSettings(user.settings.app.settings);
         } else if (sessionApi.getLocalAppSettings()) {
             await sessionApi.setAppSettings(JSON.parse(sessionApi.getLocalAppSettings()), !!user);
         }
+        return user
     }
 
     async signOut() {

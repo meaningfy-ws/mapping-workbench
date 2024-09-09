@@ -3,11 +3,11 @@ import {ACTION} from "../section";
 
 class GenericTripleMapFragmentsApi extends TripleMapFragmentsApi {
     get SECTION_TITLE() {
-        return "Generic Triple Map Fragments";
+        return "Triple Map Fragments";
     }
 
     get SECTION_ITEM_TITLE() {
-        return "Generic Triple Map Fragment";
+        return "Triple Map Fragment";
     }
 
     get SECTION_LIST_ACTIONS() {

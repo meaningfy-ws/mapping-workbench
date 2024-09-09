@@ -54,7 +54,7 @@ export class SectionApi {
         const {
             filters = {},
             page = this.DEFAULT_PAGE,
-            rowsPerPage = this.DEFAULT_ROWS_PER_PAGE,
+            rowsPerPage = -1,
             sortField,
             sortDirection
         } = request;
