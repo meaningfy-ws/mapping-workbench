@@ -123,7 +123,7 @@ const useItemsStore = (searchState) => {
     });
 
     const handleItemsGet = () => {
-        sectionApi.getItems({rowsPerPage: -1})
+        sectionApi.getItems()
             .then(res =>
                 setState({
                     items: res.items,
