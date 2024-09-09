@@ -19,21 +19,25 @@ import {ListSearch} from "src/sections/app/fields-registry/list-search";
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 
 import {Upload04 as ImportIcon} from '@untitled-ui/icons-react/build/esm';
+import {Filter} from "../../../sections/components/filter";
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
-        filters: {},
+        filters: "",
         sort: {
             column: "",
             direction: "desc"
         },
         search: '',
-        searchColumns: ["sdk_element_id", "relative_xpath","absolute_xpath"],
+        searchColumns: ["sdk_element_id", "relative_xpath", "absolute_xpath"],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
 
-    const {show, ...filters} = state.filters
+    const filterValues = [{label: 'All', value: ''},
+        {label: 'Node', value: 'node'},
+        {label: 'Field', value: 'field'}]
+
 
     const searchItems = state.search ? items.filter(item => {
         let returnItem = null;
@@ -44,17 +48,7 @@ const useItemsSearch = (items) => {
         return returnItem
     }) : items
 
-    const filteredItems = searchItems.filter((item) => {
-        let returnItem = item;
-        Object.entries(filters).forEach(filter => {
-            const [key, value] = filter
-            if (value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
-                returnItem = null
-            if (value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase))
-                returnItem = null
-        })
-        return returnItem
-    })
+    const filteredItems = searchItems.filter((item) => state.filters === "" || state.filters === item.element_type ? item : null)
 
     const sortedItems = () => {
         const sortColumn = state.sort.column
@@ -127,6 +121,7 @@ const useItemsSearch = (items) => {
         handleRowsPerPageChange,
         handleSort,
         handleSearchItems,
+        filterValues,
         pagedItems,
         count: filteredItems.length,
         state
@@ -220,6 +215,9 @@ const Page = () => {
                 </Stack>
                 <Card>
                     <ListSearch onFiltersChange={itemsSearch.handleSearchItems}/>
+                    <Filter values={itemsSearch.filterValues}
+                            value={itemsSearch.state.filters}
+                            onValueChange={itemsSearch.handleFiltersChange}/>
                     <ListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
