@@ -12,14 +12,14 @@ import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
+import {Filter} from "src/sections/components/filter";
 import {RouterLink} from 'src/components/router-link';
 import {ListTable} from "src/sections/app/fields-registry/list-table";
 import {fieldsOverviewApi as sectionApi} from 'src/api/fields-overview';
 import {ListSearch} from "src/sections/app/fields-registry/list-search";
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 
+import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {Upload04 as ImportIcon} from '@untitled-ui/icons-react/build/esm';
-import {Filter} from "../../../sections/components/filter";
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
