@@ -13,6 +13,7 @@ import DialogContent from "@mui/material/DialogContent";
 import {Seo} from 'src/components/seo';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {ontologyFilesApi as sectionApi} from 'src/api/ontology-files';
+import {ontologyTermsApi} from "../../../api/ontology-terms";
 import {useDialog} from 'src/hooks/use-dialog';
 import {usePageView} from 'src/hooks/use-page-view';
 import {FileUploader} from 'src/sections/app/files-form//file-uploader';
@@ -24,24 +25,25 @@ import {sessionApi} from "src/api/session";
 import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
 import CircularProgress from "@mui/material/CircularProgress";
 import {Box} from "@mui/system";
+import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
         filters: {},
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE,
-         sort: {
+        sort: {
             column: "filename",
             direction: "desc"
         },
         search: '',
-        searchColumns:["filename"],
+        searchColumns: ["filename"],
     });
 
     const searchItems = state.search ? items.filter(item => {
         let returnItem = null;
         state.searchColumns.forEach(column => {
-            if(item[column]?.toLowerCase()?.includes(state.search.toLowerCase()))
+            if (item[column]?.toLowerCase()?.includes(state.search.toLowerCase()))
                 returnItem = item
         })
         return returnItem
@@ -50,22 +52,22 @@ const useItemsSearch = (items) => {
 
     const filteredItems = searchItems.filter((item) => {
         let returnItem = item;
-        Object.entries(state.filters).forEach(filter=> {
+        Object.entries(state.filters).forEach(filter => {
             const [key, value] = filter
-            if(value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
+            if (value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
                 returnItem = null
-            if(value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase))
+            if (value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase))
                 returnItem = null
         })
         return returnItem
     })
 
-     const sortedItems = () => {
+    const sortedItems = () => {
         const sortColumn = state.sort.column
-        if(!sortColumn) {
+        if (!sortColumn) {
             return searchItems
         } else {
-            return searchItems.sort((a,b) => {
+            return searchItems.sort((a, b) => {
                 if (typeof a[sortColumn] === "string")
                     return state.sort.direction === "asc" ?
                         a[sortColumn]?.localeCompare(b[sortColumn]) :
@@ -74,13 +76,13 @@ const useItemsSearch = (items) => {
                     return state.sort.direction === "asc" ?
                         a[sortColumn] - b[sortColumn] :
                         b[sortColumn] - a[sortColumn]
-                })
+            })
         }
     }
 
     const pagedItems = sortedItems().filter((item, i) => {
         const pageSize = state.page * state.rowsPerPage
-        if((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
+        if ((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
             return item
     })
 
@@ -111,14 +113,18 @@ const useItemsSearch = (items) => {
     }
 
     const handleSort = (column, desc) => {
-       setState(prevState=> ({ ...prevState, sort: {column,
-           direction: prevState.sort.column === column
-               ? prevState.sort.direction === "desc"
-                   ? "asc"
-                   : "desc"
-               : desc
-                   ? "desc"
-                   : "asc"}}))
+        setState(prevState => ({
+            ...prevState, sort: {
+                column,
+                direction: prevState.sort.column === column
+                    ? prevState.sort.direction === "desc"
+                        ? "asc"
+                        : "desc"
+                    : desc
+                        ? "desc"
+                        : "asc"
+            }
+        }))
     }
 
     const handleRowsPerPageChange = event => {
@@ -150,25 +156,36 @@ const Page = () => {
 
     usePageView();
 
-     useEffect(() => {
+    useEffect(() => {
         handleItemsGet();
-     // eslint-disable-next-line react-hooks/exhaustive-deps
-     },[]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-
+    const handleDiscover = () => {
+        const toastId = toastLoad('Discovering terms ...')
+        ontologyTermsApi.discoverTerms()
+            .then(res => {
+                toastSuccess(`${res.task_name} successfully started.`, toastId)
+            })
+            .catch(err => toastError(`Discovering terms failed: ${err.message}.`, toastId))
+    };
 
     const handleItemsGet = () => {
-         sectionApi.getOntologyFiles()
-             .then(res => setState(res))
-             .catch(err => console.error(err));
-        }
+        sectionApi.getOntologyFiles()
+            .then(res => setState(res))
+            .catch(err => console.error(err));
+    }
 
+    const afterFileUpload = () => {
+        handleItemsGet()
+        handleDiscover()
+    }
 
     const handleItemGet = (name) => {
-     detailsDialog.handleOpen({load: true, fileName: name})
-     sectionApi.getOntologyFile(name)
-         .then(res => detailsDialog.handleOpen({content: res.content, fileName: res.filename}))
-         .catch(err => console.log(err));
+        detailsDialog.handleOpen({load: true, fileName: name})
+        sectionApi.getOntologyFile(name)
+            .then(res => detailsDialog.handleOpen({content: res.content, fileName: res.filename}))
+            .catch(err => console.log(err));
     }
 
     return (
@@ -250,10 +267,10 @@ const Page = () => {
             </Grid>
 
             <Dialog
-              open={detailsDialog.open}
-              onClose={detailsDialog.handleClose}
-              fullWidth
-              maxWidth='xl'
+                open={detailsDialog.open}
+                onClose={detailsDialog.handleClose}
+                fullWidth
+                maxWidth='xl'
             >
                 <DialogTitle>
                     {detailsDialog.data?.fileName}
@@ -261,13 +278,13 @@ const Page = () => {
                 <DialogContent>
                     {
                         detailsDialog.data?.load ?
-                            <Box sx={{ display: 'flex', justifyContent: 'center', marginY:10 }}>
-                                <CircularProgress />
-                            </Box>:
+                            <Box sx={{display: 'flex', justifyContent: 'center', marginY: 10}}>
+                                <CircularProgress/>
+                            </Box> :
                             <SyntaxHighlighter
                                 language="turtle"
                                 wrapLines
-                                lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
+                                lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
                                 {detailsDialog.data?.content}
                             </SyntaxHighlighter>
                     }
@@ -276,7 +293,7 @@ const Page = () => {
             <FileUploader
                 onClose={uploadDialog.handleClose}
                 open={uploadDialog.open}
-                onGetItems={handleItemsGet}
+                onGetItems={afterFileUpload}
                 sectionApi={fileResourcesApi}
                 onlyAcceptedFormats
                 disableSelectFormat
