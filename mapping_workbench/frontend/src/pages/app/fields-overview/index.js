@@ -5,35 +5,89 @@ import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import Button from "@mui/material/Button";
+import SvgIcon from "@mui/material/SvgIcon";
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
-import {Layout as AppLayout} from 'src/layouts/app';
-import {fieldsOverviewApi as sectionApi} from 'src/api/fields-overview';
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {RouterLink} from 'src/components/router-link';
 import {usePageView} from 'src/hooks/use-page-view';
-import {ListSearch} from "src/sections/app/fields-registry/list-search";
+import {Layout as AppLayout} from 'src/layouts/app';
+import {RouterLink} from 'src/components/router-link';
 import {ListTable} from "src/sections/app/fields-registry/list-table";
-import {useMounted} from "src/hooks/use-mounted";
-import Button from "@mui/material/Button";
-import SvgIcon from "@mui/material/SvgIcon";
+import {fieldsOverviewApi as sectionApi} from 'src/api/fields-overview';
+import {ListSearch} from "src/sections/app/fields-registry/list-search";
+import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
+
 import {Upload04 as ImportIcon} from '@untitled-ui/icons-react/build/esm';
 
-const useItemsSearch = () => {
+const useItemsSearch = (items) => {
     const [state, setState] = useState({
-        filters: {
-            name: undefined,
-            category: [],
-            status: [],
-            inStock: undefined
+        filters: {},
+        sort: {
+            column: "",
+            direction: "desc"
         },
+        search: '',
+        searchColumns: ["sdk_element_id", "relative_xpath","absolute_xpath"],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
 
+    console.log('search',state.search)
+
+    const {show, ...filters} = state.filters
+
+    const searchItems = state.search ? items.filter(item => {
+        let returnItem = null;
+        state.searchColumns.forEach(column => {
+            if (item[column]?.toLowerCase()?.includes(state.search.toLowerCase()))
+                returnItem = item
+        })
+        return returnItem
+    }) : items
+
+    const filteredItems = searchItems.filter((item) => {
+        let returnItem = item;
+        Object.entries(filters).forEach(filter => {
+            const [key, value] = filter
+            if (value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
+                returnItem = null
+            if (value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase))
+                returnItem = null
+        })
+        return returnItem
+    })
+
+    const sortedItems = () => {
+        const sortColumn = state.sort.column
+        if (!sortColumn) {
+            return filteredItems
+        } else {
+            return filteredItems.sort((a, b) => {
+                if (typeof a[sortColumn] === "string")
+                    return state.sort.direction === "asc" ?
+                        a[sortColumn]?.localeCompare(b[sortColumn]) :
+                        b[sortColumn]?.localeCompare(a[sortColumn])
+                else
+                    return state.sort.direction === "asc" ?
+                        a[sortColumn] - b[sortColumn] :
+                        b[sortColumn] - a[sortColumn]
+            })
+        }
+    }
+
+    const pagedItems = sortedItems().filter((item, i) => {
+        const pageSize = state.page * state.rowsPerPage
+        if ((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
+            return item
+    })
+
+    const handleSearchItems = (filters) => {
+        setState(prevState => ({...prevState, search: filters.q}))
+    }
+
     const handleFiltersChange = filters => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             filters,
             page: 0
@@ -47,6 +101,21 @@ const useItemsSearch = () => {
         }));
     }
 
+    const handleSort = (column, desc) => {
+        setState(prevState => ({
+            ...prevState, sort: {
+                column,
+                direction: prevState.sort.column === column
+                    ? prevState.sort.direction === "desc"
+                        ? "asc"
+                        : "desc"
+                    : desc
+                        ? "desc"
+                        : "asc"
+            }
+        }))
+    }
+
     const handleRowsPerPageChange = event => {
         setState(prevState => ({
             ...prevState,
@@ -58,20 +127,23 @@ const useItemsSearch = () => {
         handleFiltersChange,
         handlePageChange,
         handleRowsPerPageChange,
+        handleSort,
+        handleSearchItems,
+        pagedItems,
+        count: filteredItems.length,
         state
     };
 };
 
 
-const useItemsStore = (searchState) => {
-    const isMounted = useMounted();
+const useItemsStore = () => {
     const [state, setState] = useState({
         items: [],
         itemsCount: 0
     });
 
     const handleItemsGet = () => {
-        sectionApi.getItems(searchState,null,'/fields_registry/elements')
+        sectionApi.getItems({rowsPerPage: -1}, null, '/fields_registry/elements')
             .then(res => setState({
                 items: res.items,
                 itemsCount: res.count
@@ -83,7 +155,7 @@ const useItemsStore = (searchState) => {
             handleItemsGet();
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState]);
+        []);
 
     return {
         ...state
@@ -92,9 +164,8 @@ const useItemsStore = (searchState) => {
 
 
 const Page = () => {
-    const itemsSearch = useItemsSearch();
-    const itemsStore = useItemsStore(itemsSearch.state);
-
+    const itemsStore = useItemsStore();
+    const itemsSearch = useItemsSearch(itemsStore.items);
 
     usePageView();
 
@@ -150,12 +221,13 @@ const Page = () => {
 
                 </Stack>
                 <Card>
-                    <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
+                    <ListSearch onFiltersChange={itemsSearch.handleSearchItems}/>
                     <ListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                        sort={itemsSearch.state.sort}
                         page={itemsSearch.state.page}
-                        items={itemsStore.items}
+                        items={itemsSearch.pagedItems}
                         count={itemsStore.itemsCount}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
