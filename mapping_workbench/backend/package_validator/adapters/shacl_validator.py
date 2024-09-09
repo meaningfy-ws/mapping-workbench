@@ -83,7 +83,7 @@ class SHACLValidator(TestDataValidator):
                 test_data_suite_oid=(self.test_data_suite.oid if self.test_data_suite else None),
                 test_data_suite_id=(self.test_data_suite.title if self.test_data_suite else None),
                 test_data_oid=self.test_data.oid,
-                test_data_id=self.test_data.identifier
+                test_data_id=self.test_data.identifier or self.test_data.title
             )
             shacl_validation_result.test_data = result_test_data
 

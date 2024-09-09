@@ -215,7 +215,9 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
             conceptual_mapping_rules_states: List[ConceptualMappingRuleState] = None
     ) -> List[SPARQLTestSuiteState]:
         sparql_test_suites_states = []
-        sparql_test_suites_ids = [sparql_test_suite.to_ref().id for sparql_test_suite in self.sparql_test_suites]
+        sparql_test_suites_ids = []
+        if self.sparql_test_suites:
+            sparql_test_suites_ids = [sparql_test_suite.to_ref().id for sparql_test_suite in self.sparql_test_suites]
         sparql_test_suites = await SPARQLTestSuite.find(
             In(SPARQLTestSuite.id, sparql_test_suites_ids),
             NE(SPARQLTestSuite.type, SPARQLQueryValidationType.CM_ASSERTION),
@@ -271,14 +273,16 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
         # if default_resource_collection:
         #     resources_states = await default_resource_collection.get_resource_files_states()
 
-        resource_collections_ids = [resource_collection.to_ref().id for resource_collection in self.resource_collections]
-        resource_collections = await ResourceCollection.find(
-            In(ResourceCollection.id, resource_collections_ids),
-            Eq(ResourceCollection.project, self.project.to_ref())
-        ).to_list()
-        if resource_collections:
-            for resource_collection in resource_collections:
-                resources_states.extend(await resource_collection.get_resource_files_states())
+        if self.resource_collections:
+            resource_collections_ids = [resource_collection.to_ref().id for resource_collection in
+                                        self.resource_collections]
+            resource_collections = await ResourceCollection.find(
+                In(ResourceCollection.id, resource_collections_ids),
+                Eq(ResourceCollection.project, self.project.to_ref())
+            ).to_list()
+            if resource_collections:
+                for resource_collection in resource_collections:
+                    resources_states.extend(await resource_collection.get_resource_files_states())
 
         return resources_states
 

@@ -22,7 +22,7 @@ const CoverageFiles = ({files, fileIcon, onClick}) => {
                               disablePadding>
                         <ListItemButton onClick={() => onClick(file)}>
                             <ListItemIcon>{fileIcon ? <FileIcon/> : <FolderIcon/>}</ListItemIcon>
-                            <ListItemText primary={file.identifier} />
+                            <ListItemText primary={file.identifier ?? file.title} />
                         </ListItemButton>
                     </ListItem>)}
             </List>
