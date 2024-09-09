@@ -31,6 +31,9 @@ class OntologyTermsApi extends SectionApi {
         return [ACTION.DELETE]
     }
 
+    get DEFAULT_ROWS_PER_PAGE() {
+        return 10
+    }
 
     discoverTerms(request) {
         try {
