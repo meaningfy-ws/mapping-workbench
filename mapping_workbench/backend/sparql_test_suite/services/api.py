@@ -6,6 +6,7 @@ from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersS
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
 from mapping_workbench.backend.core.services.request import request_update_data, api_entity_is_found, \
     request_create_data, prepare_search_param, pagination_params
+from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuite, SPARQLTestFileResource, \
     SPARQLTestFileResourceUpdateIn, SPARQLTestFileResourceCreateIn
@@ -32,7 +33,19 @@ async def list_sparql_test_suites(filters: dict = None, page: int = None, limit:
 
 async def create_sparql_test_suite(sparql_test_suite: SPARQLTestSuite, user: User) -> SPARQLTestSuite:
     sparql_test_suite.on_create(user=user)
-    return await sparql_test_suite.create()
+    pkg_ids = sparql_test_suite.refers_to_mapping_package_ids or []
+    sparql_test_suite.refers_to_mapping_package_ids = None
+    suite = await sparql_test_suite.create()
+
+    for pkg_id in pkg_ids:
+        mapping_package = await MappingPackage.get(pkg_id)
+        if mapping_package:
+            if not mapping_package.sparql_test_suites:
+                mapping_package.sparql_test_suites = []
+            mapping_package.sparql_test_suites.append(SPARQLTestSuite.link_from_id(suite.id))
+            await mapping_package.save()
+
+    return suite
 
 
 async def update_sparql_test_suite(

@@ -20,6 +20,11 @@ import {FormTextField} from "../../../components/app/form/text-field";
 import {FormTextArea} from "../../../components/app/form/text-area";
 import {MappingPackageFormSelect} from "../mapping-package/components/mapping-package-form-select";
 import {toastError, toastSuccess} from "../../../components/app-toast";
+import {ListSelectorSelect as ResourceListSelector} from "../../../components/app/list-selector/select";
+import {sparqlTestFileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
+import {MappingPackageCheckboxList} from "../mapping-package/components/mapping-package-checkbox-list";
+import Divider from "@mui/material/Divider";
+import Typography from "@mui/material/Typography";
 
 
 export const FileCollectionEditForm = (props) => {
@@ -46,6 +51,10 @@ export const FileCollectionEditForm = (props) => {
 
     if (sectionApi.hasMappingPackage) {
         initialValues['mapping_package_id'] = item.mapping_package_id ?? '';
+    }
+
+    if (sectionApi.refersToMappingPackages && itemctx.isNew) {
+        initialValues['refers_to_mapping_package_ids'] = item.refers_to_mapping_package_ids ?? [];
     }
 
     switch (sectionApi.section) {
@@ -82,6 +91,9 @@ export const FileCollectionEditForm = (props) => {
                 values['project'] = sessionApi.getSessionProject();
                 if (sectionApi.hasMappingPackage) {
                     values['mapping_package_id'] = values['mapping_package_id'] || null;
+                }
+                if (sectionApi.refersToMappingPackages && itemctx.isNew) {
+                    values['refers_to_mapping_package_ids'] = values['refers_to_mapping_package_ids'] || null;
                 }
                 if (itemctx.isNew) {
                     response = await sectionApi.createItem(values);
@@ -171,6 +183,24 @@ export const FileCollectionEditForm = (props) => {
                                 <FormTextArea formik={formik} name="description" label="Description"/>
                             </Grid>
                         </Grid>
+                        {sectionApi.refersToMappingPackages && itemctx.isNew && (
+                            <Grid xs={12} md={12}>
+                                <Divider sx={{mb: 3}}/>
+                                <Typography variant="subtitle2">
+                                    Mapping Packages
+                                </Typography>
+                                <Grid container
+                                      spacing={3}>
+                                    <Grid xs={12}
+                                          md={12}>
+                                        <MappingPackageCheckboxList
+                                            mappingPackages={formik.values.refers_to_mapping_package_ids}
+                                            withDefaultPackage={itemctx.isNew}
+                                        />
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        )}
                     </Grid>
                 </CardContent>
             </Card>
