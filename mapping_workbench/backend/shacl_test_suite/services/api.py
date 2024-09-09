@@ -6,6 +6,7 @@ from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersS
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
 from mapping_workbench.backend.core.services.request import request_update_data, api_entity_is_found, \
     request_create_data, prepare_search_param, pagination_params
+from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestFileResource
 from mapping_workbench.backend.shacl_test_suite.models.entity_api_response import SHACLTestFileResourceCreateIn, \
     SHACLTestFileResourceUpdateIn
@@ -32,7 +33,19 @@ async def list_shacl_test_suites(filters: dict = None, page: int = None, limit: 
 
 async def create_shacl_test_suite(shacl_test_suite: SHACLTestSuite, user: User) -> SHACLTestSuite:
     shacl_test_suite.on_create(user=user)
-    return await shacl_test_suite.create()
+    pkg_ids = shacl_test_suite.refers_to_mapping_package_ids or []
+    shacl_test_suite.refers_to_mapping_package_ids = None
+    suite = await shacl_test_suite.create()
+
+    for pkg_id in pkg_ids:
+        mapping_package = await MappingPackage.get(pkg_id)
+        if mapping_package:
+            if not mapping_package.shacl_test_suites:
+                mapping_package.shacl_test_suites = []
+            mapping_package.shacl_test_suites.append(SHACLTestSuite.link_from_id(suite.id))
+            await mapping_package.save()
+
+    return suite
 
 
 async def update_shacl_test_suite(

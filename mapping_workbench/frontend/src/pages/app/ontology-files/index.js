@@ -85,7 +85,7 @@ const useItemsSearch = (items) => {
     })
 
     const handleSearchItems = (filters) => {
-        setState(prevState => ({...prevState, search: filters }))
+        setState(prevState => ({...prevState, search: filters, page: 0 }))
     }
 
 

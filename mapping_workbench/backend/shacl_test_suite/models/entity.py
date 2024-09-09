@@ -5,6 +5,8 @@ import pymongo
 from beanie import Link, PydanticObjectId
 from pymongo import IndexModel
 
+from mapping_workbench.backend.core.models.base_mapping_package_resource_entity import \
+    BaseMappingPackagesResourceSchemaTrait
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
 from mapping_workbench.backend.file_resource.models.file_resource import FileResource, FileResourceCollection
 from mapping_workbench.backend.state_manager.models.state_object import ObjectState, StatefulObjectABC
@@ -34,7 +36,7 @@ class SHACLTestSuiteState(ObjectState):
     shacl_test_states: Optional[List[SHACLTestState]] = []
 
 
-class SHACLTestSuite(FileResourceCollection, StatefulObjectABC):
+class SHACLTestSuite(FileResourceCollection, BaseMappingPackagesResourceSchemaTrait, StatefulObjectABC):
     file_resources: Optional[List[Link["SHACLTestFileResource"]]] = []
 
     async def get_shacl_test_states(self) -> List[SHACLTestState]:

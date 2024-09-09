@@ -16,6 +16,7 @@ class SHACLTestSuitesApi extends FileCollectionsApi {
     constructor() {
         super("shacl_test_suites");
         this.isProjectResource = true;
+        this.refersToMappingPackages = true;
     }
 
     async getValuesForSelector(request = {}) {
