@@ -504,7 +504,10 @@ export const EditForm = (props) => {
                               spacing={3}>
                             <Grid xs={12}
                                   md={12}>
-                                <MappingPackageCheckboxList mappingPackages={formik.values.refers_to_mapping_package_ids}/>
+                                <MappingPackageCheckboxList
+                                    mappingPackages={formik.values.refers_to_mapping_package_ids}
+                                    withDefaultPackage={itemctx.isNew}
+                                />
                             </Grid>
                         </Grid>
                     </CardContent>

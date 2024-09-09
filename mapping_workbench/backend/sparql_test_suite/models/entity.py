@@ -6,6 +6,8 @@ from beanie import Link, PydanticObjectId
 from pydantic import ConfigDict
 from pymongo import IndexModel
 
+from mapping_workbench.backend.core.models.base_mapping_package_resource_entity import \
+    BaseMappingPackagesResourceSchemaTrait
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
 from mapping_workbench.backend.file_resource.models.file_resource import FileResource, FileResourceCollection, \
     FileResourceIn
@@ -52,7 +54,7 @@ class SPARQLTestSuiteState(ObjectState):
     sparql_test_states: Optional[List[SPARQLTestState]] = []
 
 
-class SPARQLTestSuite(FileResourceCollection, StatefulObjectABC):
+class SPARQLTestSuite(FileResourceCollection, BaseMappingPackagesResourceSchemaTrait, StatefulObjectABC):
     type: Optional[SPARQLQueryValidationType] = None
     file_resources: Optional[List[Link["SPARQLTestFileResource"]]] = []
 

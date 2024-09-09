@@ -13,7 +13,6 @@ const useMappingPackagesStore = (initProjectMappingPackages = []) => {
     const [state, setState] = useState({
         items: initProjectMappingPackages || []
     });
-
     const handleMappingPackagesGet = useCallback(async () => {
         try {
             let mappingPackages = initProjectMappingPackages;
@@ -40,7 +39,12 @@ const useMappingPackagesStore = (initProjectMappingPackages = []) => {
 };
 
 export const MappingPackageCheckboxList = (props) => {
-    const {mappingPackages = [], initProjectMappingPackages = null, ...other} = props;
+    const {
+        mappingPackages = [],
+        initProjectMappingPackages = null,
+        withDefaultPackage = false,
+        ...other
+    } = props;
 
     const [allChecked, setAllChecked] = useState(false);
     const [projectMappingPackages, setProjectMappingPackages] = useState([]);
@@ -49,6 +53,15 @@ export const MappingPackageCheckboxList = (props) => {
     useEffect(() => {
         setProjectMappingPackages(mappingPackagesStore.items);
     }, [mappingPackagesStore]);
+
+    useEffect(() => {
+        if (withDefaultPackage) {
+            const defaultPackage = mappingPackagesStore.items.find(pkg => pkg.identifier === 'default');
+            if (defaultPackage) {
+                mappingPackages.push(defaultPackage.id)
+            }
+        }
+    }, [mappingPackagesStore.items, withDefaultPackage])
 
     const handleAllMappingPackagesChange = useCallback((event) => {
         let _checked = event.target.checked;

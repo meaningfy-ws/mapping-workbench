@@ -1,4 +1,4 @@
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 
 import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
@@ -18,10 +18,19 @@ import AutocompleteCM from "./ontology_fragment_editor";
 import {sessionApi} from "src/api/session";
 import {FormTextField} from "src/components/app/form/text-field";
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
+import Grid from "@mui/material/Unstable_Grid2";
+import {MappingPackageCheckboxList} from "../../mapping-package/components/mapping-package-checkbox-list";
+import Typography from "@mui/material/Typography";
+import Divider from "@mui/material/Divider";
 
 
 const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, afterItemSave, ontologyFragments}) => {
 
+    const [mappingPackages, setMappingPackages] = useState([]);
+
+    useEffect(() => {
+        setMappingPackages(item?.refers_to_mapping_package_ids || [])
+    }, [item])
 
     const addItem = (requestValues, resetForm) => {
         const toastId = toastLoad('Adding item...')
@@ -58,7 +67,7 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
             'target_class_path': item?.target_class_path || '',
             'target_property_path': item?.target_property_path || '',
             'autocomplete_cm': [],
-            'autocomplete_cm_checked': true,
+            'autocomplete_cm_checked': !item,
         },
         validationSchema: Yup.object({
             source_structural_element: Yup
@@ -75,6 +84,7 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
             const {autocomplete_cm, autocomplete_cm_checked, ...values} = initialValues
             values['project'] = sessionApi.getSessionProject();
             values['source_structural_element'] = values['source_structural_element'] || null;
+            values['refers_to_mapping_package_ids'] = mappingPackages || null;
 
             if (item) {
                 updateItem(values, resetForm)
@@ -120,7 +130,6 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
         return;
     }
 
-
     return (
         <Drawer
             anchor='right'
@@ -154,7 +163,7 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
                                     control={
                                         <Checkbox
                                             checked={formik.values.autocomplete_cm_checked}
-                                            onChange={() => formik.setFieldValue('autocomplete_cm_checked', event.target.checked)}
+                                            onChange={(event) => formik.setFieldValue('autocomplete_cm_checked', event.target.checked)}
                                         />
                                     }
                                     label="Use Ontology Fragment Editor"
@@ -164,7 +173,6 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
                                                 disabled={!formik.values.autocomplete_cm_checked}
                                                 data={ontologyFragments}
                                                 onSelect={handleAutocompleteChange}
-                                                required={formik.values.autocomplete_cm_checked}
                                                 name='autocomplete_cm'/>
                             </Stack>
                             <FormTextField formik={formik}
@@ -192,7 +200,23 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
                                            name="max_sdk_version"
                                            label="Max XSD Version"/>
                         </Stack>
+                        <Divider sx={{my: 3}}/>
+                        <Typography variant="subtitle2">
+                            Mapping Packages
+                        </Typography>
+                        <Grid container
+                              spacing={3}>
+                            <Grid xs={12}
+                                  md={12}>
+                                <MappingPackageCheckboxList
+                                    mappingPackages={mappingPackages}
+                                    withDefaultPackage={!item}
+                                />
+                            </Grid>
+                        </Grid>
+                        <Divider/>
                     </CardContent>
+
                     <Button type='submit'
                             sx={{width: '100%'}}
                             disabled={false}>Save</Button>

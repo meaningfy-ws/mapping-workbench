@@ -29,6 +29,7 @@ class SPARQLTestSuitesApi extends FileCollectionsApi {
         super("sparql_test_suites");
         this.isProjectResource = true;
         this.hasFileCollectionType = true;
+        this.refersToMappingPackages = true;
     }
 
     async getValuesForSelector(request = {}) {

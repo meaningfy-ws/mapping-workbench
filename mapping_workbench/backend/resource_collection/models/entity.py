@@ -5,6 +5,8 @@ import pymongo
 from beanie import Link
 from pymongo import IndexModel
 
+from mapping_workbench.backend.core.models.base_mapping_package_resource_entity import \
+    BaseMappingPackagesResourceSchemaTrait
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
 from mapping_workbench.backend.file_resource.models.file_resource import FileResource, FileResourceCollection, \
     FileResourceIn
@@ -31,7 +33,7 @@ class ResourceCollectionState(ObjectState):
     file_resources: Optional[List[ResourceFileState]] = []
 
 
-class ResourceCollection(FileResourceCollection, StatefulObjectABC):
+class ResourceCollection(FileResourceCollection, BaseMappingPackagesResourceSchemaTrait, StatefulObjectABC):
     file_resources: Optional[List[Link["ResourceFile"]]] = []
 
     async def get_resource_files_states(self) -> List[ResourceFileState]:

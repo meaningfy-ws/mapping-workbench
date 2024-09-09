@@ -16,6 +16,7 @@ class ResourceCollectionsApi extends FileCollectionsApi {
     constructor() {
         super("value_mapping_resources");
         this.isProjectResource = true;
+        this.refersToMappingPackages = true;
     }
 
     async getValuesForSelector(request = {}) {

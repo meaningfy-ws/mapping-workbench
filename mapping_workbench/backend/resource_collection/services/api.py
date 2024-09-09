@@ -6,6 +6,7 @@ from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersS
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
 from mapping_workbench.backend.core.services.request import request_update_data, api_entity_is_found, \
     request_create_data, prepare_search_param, pagination_params
+from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.resource_collection.models.entity import ResourceCollection, ResourceFile, \
     ResourceFileUpdateIn, ResourceFileCreateIn
 from mapping_workbench.backend.user.models.user import User
@@ -32,7 +33,19 @@ async def list_resource_collections(filters: dict = None, page: int = None, limi
 
 async def create_resource_collection(resource_collection: ResourceCollection, user: User) -> ResourceCollection:
     resource_collection.on_create(user=user)
-    return await resource_collection.create()
+    pkg_ids = resource_collection.refers_to_mapping_package_ids or []
+    resource_collection.refers_to_mapping_package_ids = None
+    suite = await resource_collection.create()
+
+    for pkg_id in pkg_ids:
+        mapping_package = await MappingPackage.get(pkg_id)
+        if mapping_package:
+            if not mapping_package.resource_collections:
+                mapping_package.resource_collections = []
+            mapping_package.resource_collections.append(ResourceCollection.link_from_id(suite.id))
+            await mapping_package.save()
+
+    return suite
 
 
 async def update_resource_collection(
