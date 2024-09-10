@@ -78,7 +78,6 @@ export const SideNavItem = (props) => {
                     disabled={disabled}
                     onClick={handleToggle}
                     someProp={'prop'}
-                    style={{backgroundColor:'red'}}
                     sx={{
                         alignItems: 'center',
                         borderRadius: 1,

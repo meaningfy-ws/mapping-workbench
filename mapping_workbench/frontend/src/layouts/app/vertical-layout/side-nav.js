@@ -234,7 +234,7 @@ export const SideNav = (props) => {
                             />
                         ))}
                         {projects.sessionProject && Object.values(menus).map(menu => menu.map((section, index) => (
-                            <MobileNavSection
+                            <SideNavSection
                                 items={section.items}
                                 key={index}
                                 pathname={pathname}

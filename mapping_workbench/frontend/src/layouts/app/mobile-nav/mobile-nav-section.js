@@ -16,6 +16,7 @@ const reduceChildRoutes = ({ acc, depth, item, pathname }) => {
   const checkPath = !!(item.path && pathname);
   const partialMatch = checkPath ? pathname.includes(item.path) : false;
   const exactMatch = checkPath ? pathname === item.path : false;
+  const childrenPath = item.items?.some(e => e.path === pathname)
 
   if (item.items) {
     acc.push(
@@ -26,7 +27,7 @@ const reduceChildRoutes = ({ acc, depth, item, pathname }) => {
         icon={item.icon}
         key={item.title}
         label={item.label}
-        open={partialMatch}
+        open={partialMatch || childrenPath}
         title={item.title}
       >
         <Stack
