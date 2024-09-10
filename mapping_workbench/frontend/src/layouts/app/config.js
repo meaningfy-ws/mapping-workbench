@@ -133,7 +133,6 @@ export const useSections = () => {
                 items: [
                     {
                         title: t(tokens.nav.conceptual_mappings),
-                        path: paths.app.conceptual_mapping_rules.index,
                         icon: (
                             <SvgIcon fontSize="small">
                                 <LightbulbCircleIcon/>
