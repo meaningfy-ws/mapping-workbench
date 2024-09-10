@@ -1,12 +1,15 @@
 import {useEffect, useState} from "react";
 import classNames from "classnames/bind";
 import styles from './styles/style.module.scss'
+import {useTheme} from "@mui/material/styles";
 
 const MARGIN = 4
 const ATTRIBUTE_SIGN = '$'
 const NAME_SIGH = '_'
 
 const cx = classNames.bind(styles);
+
+
 
 const Attribute = ({name, value, parent, handleClick}) => {
     return (
@@ -108,7 +111,7 @@ const executeXPaths = (doc, xPaths) => {
 }
 
 
-const BuildNodes = ({nodes, level, parent, xPath, xPaths, relativeXPath, handleClick}) => {
+const BuildNodes = ({nodes, level, parent, xPath, xPaths, relativeXPath, handleClick, theme}) => {
     return nodes.map((e) => {
             const [name, value] = e
             if (!isNaN(name))
@@ -132,17 +135,17 @@ const BuildNodes = ({nodes, level, parent, xPath, xPaths, relativeXPath, handleC
                              handleClick={handleClick}
                              relativeXPath={relativeXPath}
                              level={level}>
-                            <span className={cx('string-content')}>
+                            <span style={{color:theme?.palette?.text?.primary}}>
                                 {value}
                             </span>
                         </Tag>)
                 else
                     return <span key={name}>
-                                <span className={cx('string-content')}>
+                                <span style={{color: theme?.palette?.text?.primary}}>
                                     {value}
                                 </span>
                             </span>
-            return (
+        return (
                 <Tag key={'tag' + name}
                      name={name}
                      attributes={value?.[ATTRIBUTE_SIGN]}
@@ -194,6 +197,8 @@ const getAbsoluteXPath = (node) => {
 }
 
 const File = ({xmlContent, fileContent, fileError, relativeXPath, xmlNodes, xPaths, xPath, handleClick}) => {
+    const theme = useTheme();
+console.log(theme)
     const [xPathsInFile, setXPathsInFile] = useState([])
     useEffect(() => {
         if (fileContent && xmlContent && !fileError) {
@@ -207,6 +212,7 @@ const File = ({xmlContent, fileContent, fileError, relativeXPath, xmlNodes, xPat
             {!!xmlNodes && <div className={cx('container')}>
                 <BuildNodes nodes={Object.entries(xmlNodes)}
                             level={0}
+                            theme={theme}
                             handleClick={handleClick}
                             xPath={xPath}
                             xPaths={xPathsInFile}
