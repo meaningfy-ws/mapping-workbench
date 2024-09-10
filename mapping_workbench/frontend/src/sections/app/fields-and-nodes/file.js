@@ -103,11 +103,12 @@ const executeXPaths = (doc, xPaths) => {
             // console.log(err)
         }
     })
-    return  evaluatedNamespaces.filter(e => !!e).map(e=>{
+    console.log(evaluatedNamespaces.filter(e => !e || e.length < 5))
+    return  evaluatedNamespaces.map(e=>{
         const shifted = e.split('/')
         shifted.shift()
         return shifted.join('/')
-    })
+    }).filter(e => !["","/*"].includes(e))
 }
 
 
