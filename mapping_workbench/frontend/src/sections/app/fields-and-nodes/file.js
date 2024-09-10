@@ -103,7 +103,6 @@ const executeXPaths = (doc, xPaths) => {
             // console.log(err)
         }
     })
-    console.log(evaluatedNamespaces.filter(e => !e || e.length < 5))
     return  evaluatedNamespaces.map(e=>{
         const shifted = e.split('/')
         shifted.shift()
@@ -199,7 +198,7 @@ const getAbsoluteXPath = (node) => {
 
 const File = ({xmlContent, fileContent, fileError, relativeXPath, xmlNodes, xPaths, xPath, handleClick}) => {
     const theme = useTheme();
-console.log(theme)
+
     const [xPathsInFile, setXPathsInFile] = useState([])
     useEffect(() => {
         if (fileContent && xmlContent && !fileError) {
