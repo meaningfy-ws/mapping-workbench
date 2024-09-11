@@ -54,7 +54,7 @@ export const HomeApp = () => {
                         Mapping Workbench
                     </Typography>
                 </Typography>
-                <Typography variant="h5"
+                <Typography variant="h6"
                             sx={{mb: 3}}>
                     Welcome to Mapping Workbench 🙌! This is a collaborative platform designed to map XML schemas to OWL
                     ontologies, enhancing the efficiency and accuracy of large semantic mapping projects. In this
@@ -67,8 +67,8 @@ export const HomeApp = () => {
                              href={'/sem24_paper_182.pdf'}
                              startIcon={<PictureAsPdfIcon/>}>
                         sem24_paper_182.pdf
-                    </Button>} visit our website Mapping Workbench . <Link
-                    href={'https://meaningfy.ws/mapping-workbench/'}>Mapping Workbench</Link>
+                    </Button>} visit our website <Link
+                    href={'https://meaningfy.ws/mapping-workbench/'}>Mapping Workbench</Link>.
                 </Typography>
                 <Typography>A simplified view of the mapping lifecycle is depicted in Figure 1. Next, we provide you
                     with a wizard meant to guide through a series of concrete steps from A to Z of a successful mapping
