@@ -63,6 +63,7 @@ export const HomeApp = () => {
                     {<Button variant="outlined"
                              type="link"
                              target="_blank"
+                             size='small'
                              color="error"
                              href={'/sem24_paper_182.pdf'}
                              startIcon={<PictureAsPdfIcon/>}>
