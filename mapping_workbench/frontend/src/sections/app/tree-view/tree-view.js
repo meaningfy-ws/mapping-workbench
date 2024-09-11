@@ -55,7 +55,7 @@ const TreeView = (props) => {
         </Stack>
     }
 
-    if (!state.item?.length)
+    if (!state.items?.length)
         return <TableNoData/>
 
     return (
