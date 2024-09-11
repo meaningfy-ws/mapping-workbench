@@ -1,22 +1,21 @@
 import {useEffect, useState} from 'react';
 
-
-import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-
-import {detailedViewCmApi as sectionApi} from 'src/api/detailed-view-cm';
-import {paths} from 'src/paths';
-import {Layout as AppLayout} from 'src/layouts/app';
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {RouterLink} from 'src/components/router-link';
-import {Seo} from 'src/components/seo';
-import {ListSearch} from 'src/sections/app/detailed-view-cm/list-search';
-import {ListTable} from 'src/sections/app/detailed-view-cm/list-table';
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
+import Typography from '@mui/material/Typography';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
+
+import {paths} from 'src/paths';
+import {Seo} from 'src/components/seo';
+import {Layout as AppLayout} from 'src/layouts/app';
+import {RouterLink} from 'src/components/router-link';
+import {ListTable} from 'src/sections/app/detailed-view-cm/list-table';
+import {ListSearch} from 'src/sections/app/detailed-view-cm/list-search';
+import {detailedViewCmApi as sectionApi} from 'src/api/detailed-view-cm';
+import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
@@ -190,23 +189,23 @@ export const Page = () => {
                     </Stack>
                 </Stack>
                 <Card>
-                    <TextField
-                        fullWidth
-                        label="CM Rule"
-                        onChange={e =>
-                            setCurrentListItem(e.target.value)
-                        }
-                        select
-                        value={currentListItem}
-                        sx={{p: 1}}
-                    >
-                        {listState.map(item =>
-                            <MenuItem key={item.ontology_fragment_id}
-                                      value={item}>
-                                {item.ontology_fragment_name}
-                            </MenuItem>
-                        )}
-                    </TextField>
+                    {/*<TextField*/}
+                    {/*    fullWidth*/}
+                    {/*    label="CM Rule"*/}
+                    {/*    onChange={e =>*/}
+                    {/*        setCurrentListItem(e.target.value)*/}
+                    {/*    }*/}
+                    {/*    select*/}
+                    {/*    value={currentListItem}*/}
+                    {/*    sx={{p: 1}}*/}
+                    {/*>*/}
+                    {/*    {listState.map(item =>*/}
+                    {/*        <MenuItem key={item.ontology_fragment_id}*/}
+                    {/*                  value={item}>*/}
+                    {/*            {item.ontology_fragment_name}*/}
+                    {/*        </MenuItem>*/}
+                    {/*    )}*/}
+                    {/*</TextField>*/}
                     <ListSearch onFiltersChange={itemsSearch.handleSearchItems}/>
                     <ListTable
                         onPageChange={itemsSearch.handlePageChange}
