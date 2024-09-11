@@ -9,7 +9,7 @@ import Container from "@mui/material/Container";
 import {useSettings} from "../../../hooks/use-settings";
 import {Box} from "@mui/system";
 
-const BREAK_POINT = 2000;
+const BREAK_POINT = 1500;
 const SIDE_NAV_WIDTH = 280;
 
 const VerticalLayoutRoot = styled('div')(({theme}) => ({
