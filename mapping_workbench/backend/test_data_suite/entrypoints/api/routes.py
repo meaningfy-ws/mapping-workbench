@@ -29,11 +29,12 @@ from mapping_workbench.backend.test_data_suite.services.api import (
     get_test_data_file_resource,
     delete_test_data_file_resource, update_test_data_file_resource
 )
-from mapping_workbench.backend.test_data_suite.services.link import assign_test_data_suites_to_mapping_packages
 from mapping_workbench.backend.test_data_suite.services.import_test_data_suite import \
     import_test_data_suites_from_archive
+from mapping_workbench.backend.test_data_suite.services.link import assign_test_data_suites_to_mapping_packages
 from mapping_workbench.backend.test_data_suite.services.transform_test_data import transform_test_data_file_resource
 from mapping_workbench.backend.triple_map_fragment.services.api_for_generic import get_generic_triple_map_fragment
+from mapping_workbench.backend.triple_map_fragment.services.api_for_specific import get_specific_triple_map_fragment
 from mapping_workbench.backend.user.models.user import User
 
 ROUTE_PREFIX = "/test_data_suites"
@@ -351,6 +352,30 @@ async def route_transform_test_data_file_resource_with_triple_map(
         test_data_file_resource = await transform_test_data_file_resource(
             test_data_file_resource=test_data_file_resource,
             mappings=[await get_generic_triple_map_fragment(generic_triple_map_id)],
+            user=user
+        )
+    except RMLMapperException as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Server error")
+
+    return {"rdf_manifestation": test_data_file_resource.rdf_manifestation}
+
+
+@router.post(
+    "/file_resources/{id}/transform/specific_triple_map/{specific_triple_map_id}",
+    description=f"Transform Test Data using Triple Map",
+    name=f"{FILE_RESOURCE_NAME_FOR_ONE}:transform"
+)
+async def route_transform_test_data_file_resource_with_triple_map(
+        specific_triple_map_id: PydanticObjectId,
+        test_data_file_resource: TestDataFileResource = Depends(get_test_data_file_resource),
+        user: User = Depends(current_active_user)
+) -> dict:
+    try:
+        test_data_file_resource = await transform_test_data_file_resource(
+            test_data_file_resource=test_data_file_resource,
+            mappings=[await get_specific_triple_map_fragment(specific_triple_map_id)],
             user=user
         )
     except RMLMapperException as e:

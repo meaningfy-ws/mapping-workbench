@@ -4,7 +4,7 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {genericTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/generic';
+import {specificTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/specific';
 import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';

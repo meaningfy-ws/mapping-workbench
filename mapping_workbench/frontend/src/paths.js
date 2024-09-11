@@ -312,20 +312,23 @@ export const apiPaths = {
 
     triple_map_fragments: {
         items: '/triple_map_fragments',
-        item: '/triple_map_fragments/:id',
+        item: '/triple_map_fragments/:id'
     },
 
     generic_triple_map_fragments: {
         items: '/generic_triple_map_fragments',
         item: '/generic_triple_map_fragments/:id',
-        tree:'/test_data_suites/file_resources_struct_tree',
+        tree: '/test_data_suites/file_resources_struct_tree',
         content: (id) => `/test_data_suites/file_resources/${id}/content`,
         transform_result_content: (id, triple_map_id) => `/test_data_suites/file_resources/${id}/transform/generic_triple_map/${triple_map_id}`
     },
 
     specific_triple_map_fragments: {
         items: '/specific_triple_map_fragments',
-        item: '/specific_triple_map_fragments/:id'
+        item: '/specific_triple_map_fragments/:id',
+        tree: '/test_data_suites/file_resources_struct_tree',
+        content: (id) => `/test_data_suites/file_resources/${id}/content`,
+        transform_result_content: (id, triple_map_id) => `/test_data_suites/file_resources/${id}/transform/specific_triple_map/${triple_map_id}`
     },
 
     ontology_namespaces_custom: {

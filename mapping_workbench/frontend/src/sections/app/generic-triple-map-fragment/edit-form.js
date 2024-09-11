@@ -27,6 +27,7 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import Tab from "@mui/material/Tab";
 import {paths} from 'src/paths';
 import {sessionApi} from "src/api/session";
+import {MappingPackageFormSelect} from "../mapping-package/components/mapping-package-form-select";
 import {useRouter} from 'src/hooks/use-router';
 import {RouterLink} from 'src/components/router-link';
 import turtleValidator from "src/utils/turtle-validator";
@@ -52,6 +53,7 @@ export const EditForm = (props) => {
     const initialValues = {
         triple_map_uri: item.triple_map_uri ?? '',
         triple_map_content: item.triple_map_content ?? '',
+        mapping_package_id: item.mapping_package_id ?? '',
         format: item.format ?? sectionApi.FILE_RESOURCE_DEFAULT_FORMAT ?? '',
     };
 
@@ -212,6 +214,14 @@ export const EditForm = (props) => {
                                     ))}
                                 </TextField>
                             </Grid>
+                            <Grid xs={12}
+                                  md={12}>
+                                <MappingPackageFormSelect
+                                    formik={formik}
+                                    isRequired={sectionApi.isMappingPackageRequired ?? false}
+                                    withDefaultPackage={itemctx.isNew}
+                                />
+                            </Grid>
                             <Grid xs={12}>
                                 <CodeMirror
                                     theme={theme.palette.mode === 'dark' ? githubDark : githubLight}
@@ -333,7 +343,7 @@ export const EditForm = (props) => {
                         color="inherit"
                         component={RouterLink}
                         disabled={formik.isSubmitting}
-                        href={paths.app.generic_triple_map_fragments.index}
+                        href={paths.app.specific_triple_map_fragments.index}
                     >
                         Cancel
                     </Button>
