@@ -24,7 +24,7 @@ const TreeView = (props) => {
         sectionApi.getItemsTree()
             .then(res => setState(e => ({...e, items: res, loading: false})))
             .catch(err => {
-                setState(e => ({...e, error: false}))
+                setState(e => ({...e, error: true}))
                 console.error(err)
             })
     }
@@ -44,14 +44,16 @@ const TreeView = (props) => {
     const CollapseIcon = () => <Stack direction='row'><ExpandMoreIcon/><AlbumIcon/></Stack>
     const ExpandIcon = () => <Stack direction='row'><ChevronRightIcon/><AlbumIcon/></Stack>
 
-    if (state.loading)
-        return <Stack justifyContent="center"
-                      direction="row">
-            <CircularProgress/>
-        </Stack>
 
     if (state.error)
         return <TableErrorFetching/>
+
+    if (state.loading) {
+        return <Stack justifyContent="center"
+        direction="row">
+            <CircularProgress/>
+        </Stack>
+    }
 
     if (!state.item?.length)
         return <TableNoData/>

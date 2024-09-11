@@ -5,34 +5,34 @@ import * as Yup from 'yup';
 import CodeMirror from '@uiw/react-codemirror';
 import {turtle} from 'codemirror-lang-turtle';
 import {yaml} from '@codemirror/lang-yaml';
-import {basicSetup} from '@uiw/codemirror-extensions-basic-setup';
+import {githubLight, githubDark} from '@uiw/codemirror-themes-all';
 
-import Button from '@mui/material/Button';
+import {Box} from "@mui/system";
 import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
-import Grid from '@mui/material/Unstable_Grid2';
+import Tabs from "@mui/material/Tabs";
 import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
 import MenuItem from "@mui/material/MenuItem";
+import {useTheme} from "@mui/material/styles";
+import Grid from '@mui/material/Unstable_Grid2';
 import TextField from "@mui/material/TextField";
 import Accordion from "@mui/material/Accordion";
+import CardHeader from '@mui/material/CardHeader';
+import CardContent from '@mui/material/CardContent';
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-import Tabs from "@mui/material/Tabs";
+
 import Tab from "@mui/material/Tab";
-import {Box} from "@mui/system";
-
-import {RouterLink} from 'src/components/router-link';
 import {paths} from 'src/paths';
+import {sessionApi} from "src/api/session";
 import {useRouter} from 'src/hooks/use-router';
-import {FormTextField} from "../../../components/app/form/text-field";
-import {sessionApi} from "../../../api/session";
-import {FormCodeReadOnlyArea} from "../../../components/app/form/code-read-only-area";
-
-import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
+import {RouterLink} from 'src/components/router-link';
 import turtleValidator from "src/utils/turtle-validator";
+import {FormTextField} from "src/components/app/form/text-field";
+import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
+import {FormCodeReadOnlyArea} from "src/components/app/form/code-read-only-area";
 
 export const EditForm = (props) => {
     const {itemctx, tree, ...other} = props;
@@ -40,6 +40,7 @@ export const EditForm = (props) => {
     const sectionApi = itemctx.api;
     const item = itemctx.data;
 
+    const theme = useTheme()
     const [currentTab, setCurrentTab] = useState('tabEdit')
 
     const [selectedTree, setSelectedTree] = useState(tree?.[0]?.test_datas?.[0]?.test_data_id)
@@ -213,15 +214,14 @@ export const EditForm = (props) => {
                             </Grid>
                             <Grid xs={12}>
                                 <CodeMirror
+                                    theme={theme.palette.mode === 'dark' ? githubDark : githubLight}
                                     style={{resize: 'vertical', overflow: 'auto', height: 600}}
                                     value={formik.values.triple_map_content}
-                                    extensions={[basicSetup(), lng[formik.values.format].extension()]}
+                                    extensions={[lng[formik.values.format].extension()]}
                                     onChange={(value) => formik.setFieldValue('triple_map_content', value)}
-                                    options={{
-                                        mode: lng[formik.values.format].mode,
-                                        theme: 'default',
-                                        lineNumbers: true,
-                                    }}
+                                    // options={{
+                                    //     mode: lng[formik.values.format].mode,
+                                    // }}
                                 />
                             </Grid>
 

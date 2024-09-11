@@ -146,11 +146,11 @@ export const ListTable = (props) => {
                             </TableCell>
                             <TableCell>
                                 <SorterHeader fieldName="min_sdk_version"
-                                              title="Min SDK"/>
+                                              title="Min XSD"/>
                             </TableCell>
                             <TableCell>
                                 <SorterHeader fieldName="max_sdk_version"
-                                              title="Max SDK"/>
+                                              title="Max XSD"/>
                             </TableCell>
                             <TableCell>
                                 <SorterHeader fieldName="target_class_path"

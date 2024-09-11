@@ -16,6 +16,7 @@ import {ForItemEditForm} from "src/contexts/app/section/for-item-form";
 import {useItem} from "src/contexts/app/section/for-item-data-state";
 import {useRouter} from "src/hooks/use-router";
 import {EditForm} from "../../../../sections/app/generic-triple-map-fragment/edit-form";
+import {sessionApi} from "../../../../api/session";
 
 
 const Page = () => {
@@ -31,7 +32,7 @@ const Page = () => {
 
 
     const handleGetTripleMapFragmentTree = () => {
-        const project = window.sessionStorage.getItem('sessionProject')
+        const project = sessionApi.getSessionProject()
         sectionApi.getTripleMapFragmentTree({project})
             .then(res=> setTripleMapFragmentTree(res.test_data_suites))
     }
