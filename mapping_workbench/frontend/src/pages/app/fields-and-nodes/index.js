@@ -3,6 +3,8 @@ import {useEffect, useState} from 'react';
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import {parseString} from "xml2js";
+import parse from 'autosuggest-highlight/parse';
+import match from 'autosuggest-highlight/match';
 
 import Link from "@mui/material/Link";
 import Card from "@mui/material/Card";
@@ -30,10 +32,11 @@ import XpathEvaluator from "src/sections/app/fields-and-nodes/xpath-evaluator";
 import RelativeXpathFinder from "src/sections/app/fields-and-nodes/relative-xpath-finder";
 import {genericTripleMapFragmentsApi as tripleMapFragments} from "src/api/triple-map-fragments/generic";
 import {sessionApi} from "../../../api/session";
+import {executeXPaths} from "../../../sections/app/fields-and-nodes/utils";
 
 const Page = () => {
     const [files, setFiles] = useState([])
-    const [selectedFile, setSelectedFile] = useState()
+    const [selectedFile, setSelectedFile] = useState('')
     const [fileError, setFileError] = useState('')
     const [xmlNodes, setXmlNodes] = useState({})
     const [xPaths, setXPaths] = useState([])
@@ -87,9 +90,9 @@ const Page = () => {
 
     const onChangeXPath = (value) => {
         value.shift()
-        formik.setFieldValue('parent_node','')
-        formik.setFieldValue('relative_xpath','')
-        formik.setFieldValue('absolute_xpath', ['/*',...value].join('/'))
+        formik.setFieldValue('parent_node', '')
+        formik.setFieldValue('relative_xpath', '')
+        formik.setFieldValue('absolute_xpath', ['/*', ...value].join('/'))
     }
 
     const handleClear = () => formik.setValues(initialValues)
@@ -101,7 +104,6 @@ const Page = () => {
         relative_xpath: '',
         parent_node: ''
     };
-
 
     const formik = useFormik({
         initialValues,
@@ -139,13 +141,9 @@ const Page = () => {
         }
     });
 
-    const parentNodeSelect = xPaths.map(e => ({
-        id: e.id,
-        label: e.relative_xpath,
-        absolute_xpath: e.absolute_xpath,
-        parent_node: e.parent_node_id,
-        relative_xpath: e.relative_xpath
-    })).filter(e=> formik.values.absolute_xpath.includes(e.label))
+    const parentNodeSelect = xmlContent && xPaths ? executeXPaths(xmlContent, xPaths)
+        .filter(e => !["", "/*"].includes(e.resolved_xpath) && formik.values.absolute_xpath.includes(e.resolved_xpath))
+        .map(e => ({...e, label: e.absolute_xpath})) : [];
 
     return (
         <>
@@ -249,17 +247,34 @@ const Page = () => {
                                         <Autocomplete
                                             id="parent_node"
                                             disabled={formik.isSubmitting || !formik.values.absolute_xpath}
-                                            error={!!(formik.touched['parent_node'] && formik.errors['parent_node'])}
-                                            helperText={formik.touched['parent_node'] && formik.errors['parent_node']}
+                                            error={formik.touched['parent_node'] && formik.errors['parent_node']}
+                                            isOptionEqualToValue={(option, value) => option.absolute_xpath === value}
+                                            // getOptionLabel={option => option.absolute_xpath ?? ''}
                                             onBlur={formik.handleBlur}
+                                            defaultValue={''}
                                             onChange={(e, value) => formik.setFieldValue('parent_node', value)}
-                                            value={formik.values?.['parent_node']?.label ?? ''}
+                                            value={formik.values?.parent_node?.absolute_xpath ?? ''}
                                             options={parentNodeSelect}
-                                            renderOption={(props, option) =>
-                                                <li {...props}
-                                                    key={option.id}>
-                                                    {option.absolute_xpath}
-                                                </li>}
+                                            renderOption={(props, option, {inputValue}) => {
+                                                const {key, ...optionProps} = props;
+                                                const matches = match(option.absolute_xpath, inputValue, {insideWords: true});
+                                                const parts = parse(option.absolute_xpath, matches);
+                                                return (
+                                                    <li key={key}
+                                                        {...optionProps}>
+                                                        <div>
+                                                            {parts.map((part, index) => (
+                                                                <span key={index}
+                                                                      style={{
+                                                                          fontWeight: part.highlight ? 700 : 400,
+                                                                      }}
+                                                                >
+                                                                        {part.text}
+                                                                    </span>
+                                                            ))}
+                                                        </div>
+                                                    </li>)
+                                            }}
                                             renderInput={(params) =>
                                                 <TextField {...params}
                                                            label="Parent Node"/>

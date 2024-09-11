@@ -1,6 +1,8 @@
 import {useEffect, useState} from "react";
 import classNames from "classnames/bind";
 import styles from './styles/style.module.scss'
+import {useTheme} from "@mui/material/styles";
+import {executeXPaths} from "./utils";
 
 const MARGIN = 4
 const ATTRIBUTE_SIGN = '$'
@@ -22,9 +24,9 @@ const Attribute = ({name, value, parent, handleClick}) => {
 const Tag = ({name, attributes, children, parent, level, isField, relativeXPath, xPath, xPaths, handleClick}) => {
 
     const shiftedParent = [...parent]
-    if(shiftedParent.length)
+    if (shiftedParent.length)
         shiftedParent.shift()
-    const nodeXPath = ['/*',...shiftedParent, name].join('/')
+    const nodeXPath = ['/*', ...shiftedParent, name].join('/')
     const selectedNode = xPaths?.some(xpath => nodeXPath.endsWith(xpath))
 
     const selectedXpath = xPath && nodeXPath === xPath
@@ -68,47 +70,8 @@ const Tag = ({name, attributes, children, parent, level, isField, relativeXPath,
         </span>)
 }
 
-const executeXPaths = (doc, xPaths) => {
-    const namespaces = extractNamespaces(doc);
 
-    const nsResolver = (prefix) => namespaces[prefix] || null;
-
-    const evaluatedNamespaces = []
-
-    xPaths.forEach(xPath => {
-        try {
-            const evaluated = doc.evaluate(
-                xPath.absolute_xpath,
-                doc,
-                nsResolver,
-                XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-                null,
-            );
-
-
-            if (evaluated.snapshotLength > 0) {
-                for (let i = 0; i < evaluated.snapshotLength; i++) {
-                    const node = evaluated.snapshotItem(i);
-                    const absoluteXPath = getAbsoluteXPath(node);
-                    evaluatedNamespaces.push(absoluteXPath)
-                }
-            } else {
-                // console.log('No nodes found.');
-            }
-
-        } catch (err) {
-            // console.log(err)
-        }
-    })
-    return  evaluatedNamespaces.filter(e => !!e).map(e=>{
-        const shifted = e.split('/')
-        shifted.shift()
-        return shifted.join('/')
-    })
-}
-
-
-const BuildNodes = ({nodes, level, parent, xPath, xPaths, relativeXPath, handleClick}) => {
+const BuildNodes = ({nodes, level = 0, parent = [], xPath, xPaths, relativeXPath, handleClick, theme}) => {
     return nodes.map((e) => {
             const [name, value] = e
             if (!isNaN(name))
@@ -132,13 +95,13 @@ const BuildNodes = ({nodes, level, parent, xPath, xPaths, relativeXPath, handleC
                              handleClick={handleClick}
                              relativeXPath={relativeXPath}
                              level={level}>
-                            <span className={cx('string-content')}>
+                            <span style={{color: theme?.palette?.text?.primary}}>
                                 {value}
                             </span>
                         </Tag>)
                 else
                     return <span key={name}>
-                                <span className={cx('string-content')}>
+                                <span style={{color: theme?.palette?.text?.primary}}>
                                     {value}
                                 </span>
                             </span>
@@ -165,53 +128,27 @@ const BuildNodes = ({nodes, level, parent, xPath, xPaths, relativeXPath, handleC
     )
 }
 
-const extractNamespaces = (doc) => {
-    const root = doc.documentElement;
-    const attributes = root.attributes;
-    const namespaces = {};
-
-    for (let attr of attributes) {
-        if (attr.name.startsWith('xmlns:')) {
-            const prefix = attr.name.split(':')[1];
-            namespaces[prefix] = attr.value;
-        }
-    }
-
-    return namespaces;
-}
-
-const getAbsoluteXPath = (node) => {
-    if (node.nodeType !== Node.ELEMENT_NODE) {
-        return '';
-    }
-    const parts = [];
-    while (node?.nodeType === Node.ELEMENT_NODE) {
-        const nodeName = node.nodeName;
-        parts.unshift(nodeName);
-        node = node.parentNode;
-    }
-    return `${parts.join('/')}`;
-}
 
 const File = ({xmlContent, fileContent, fileError, relativeXPath, xmlNodes, xPaths, xPath, handleClick}) => {
+    const theme = useTheme();
     const [xPathsInFile, setXPathsInFile] = useState([])
+
     useEffect(() => {
         if (fileContent && xmlContent && !fileError) {
-            setXPathsInFile(executeXPaths(xmlContent, xPaths))
+            setXPathsInFile(executeXPaths(xmlContent, xPaths).map(e => e.resolved_xpath).filter(e => !['/*', ''].includes(e)))
         }
-    }, [xmlContent, fileContent, fileError, xmlNodes])
-
+    }, [xmlContent, fileContent, fileError])
 
     return (
         <>
             {!!xmlNodes && <div className={cx('container')}>
                 <BuildNodes nodes={Object.entries(xmlNodes)}
-                            level={0}
+                            theme={theme}
                             handleClick={handleClick}
                             xPath={xPath}
                             xPaths={xPathsInFile}
                             relativeXPath={relativeXPath}
-                            parent={[]}/>
+                />
             </div>}
         </>
     )
