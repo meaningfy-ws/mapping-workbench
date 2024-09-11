@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import Link from "@mui/material/Link";
 import Stack from '@mui/material/Stack';
+import Card from "@mui/material/Card";
 import Grid from '@mui/material/Unstable_Grid2';
 import TextField from "@mui/material/TextField";
 import Typography from '@mui/material/Typography';
@@ -8,15 +9,15 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Autocomplete from "@mui/material/Autocomplete";
 import TablePagination from "@mui/material/TablePagination";
 
+import {paths} from "src/paths";
 import {Seo} from 'src/components/seo';
-import {Layout as AppLayout} from 'src/layouts/app';
 import {usePageView} from 'src/hooks/use-page-view';
-import {RouterLink} from "../../../../components/router-link";
-import {fieldsRegistryApi} from "../../../../api/fields-registry";
-import CMCard from "../../../../sections/app/conceptual-mapping-rule/cm-card";
-import {BreadcrumbsSeparator} from "../../../../components/breadcrumbs-separator";
+import {Layout as AppLayout} from 'src/layouts/app';
+import {RouterLink} from "src/components/router-link";
+import {fieldsRegistryApi} from "src/api/fields-registry";
+import CMCard from "src/sections/app/conceptual-mapping-rule/cm-card";
+import {BreadcrumbsSeparator} from "src/components/breadcrumbs-separator";
 import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
-import {paths} from "../../../../paths";
 
 
 const useItemsSearch = (items) => {
@@ -63,14 +64,36 @@ const Page = () => {
 
     const [isProjectDataReady, setIsProjectDataReady] = useState(false);
     const [structuralElements, setStructuralElements] = useState([]);
-    const [selectedStructuralElement, setSelectedStructuralElement] = useState(null);
-    const [structuralElement, setStructuralElement] = useState(null);
+    const [selectedStructuralElement, setSelectedStructuralElement] = useState('');
+    const [structuralElement, setStructuralElement] = useState('');
     const [cmStatuses, setCmStatuses] = useState([]);
 
     const [itemsStore, setItemsStore] = useState({
         items: [],
         itemsCount: 0
     });
+
+    useEffect(() => {
+        getCMRules()
+        sectionApi.getCMStatuses()
+            .then(res => setCmStatuses(res))
+
+        fieldsRegistryApi.getStructuralElementsForSelector()
+            .then(res => {
+                setStructuralElements(res)
+                setIsProjectDataReady(true);
+            })
+    }, []);
+
+    const getItems = (request) => {
+        sectionApi.getItems(request)
+            .then(res =>
+                setItemsStore({
+                    items: res.items,
+                    itemsCount: res.count
+                }))
+            .catch(err => console.error(err))
+    }
 
     const getCMRules = (structural_element_id) => {
         const request = {
@@ -81,40 +104,25 @@ const Page = () => {
             request.filters["source_structural_elements"] = [structural_element_id]
         }
 
-        sectionApi.getItems(request)
-            .then(res =>
-                setItemsStore({
-                    items: res.items,
-                    itemsCount: res.count
-                }))
-            .catch(err => console.error(err))
+        getItems(request)
     }
 
-    useEffect(() => {
-        getCMRules()
-        sectionApi.getCMStatuses().then(res => {
-            setCmStatuses(res)
-        })
-    }, []);
 
     const itemsSearch = useItemsSearch(itemsStore.items);
 
-    useEffect(() => {
-        (async () => {
-            setStructuralElements(await fieldsRegistryApi.getStructuralElementsForSelector());
-            setIsProjectDataReady(true);
-        })()
-    }, [])
-
     if (!isProjectDataReady) return null;
 
-    const handleSourceStructuralElementSelect = (async (e, value) => {
-        itemsSearch.state.page = 0
+    const handleSourceStructuralElementSelect = (e, value) => {
+        itemsSearch.handlePageChange('', 0)
         setSelectedStructuralElement(value);
-        setStructuralElement(value ? await fieldsRegistryApi.getItem(value.id, 'element') : null);
-        getCMRules(value?.id)
-    })
 
+        if (value) {
+            fieldsRegistryApi.getItem(value.id, 'element')
+                .then(res => setStructuralElement(res))
+                .catch(err => console.error(err))
+        } else setStructuralElement('')
+        getCMRules(value?.id)
+    }
 
     return (
         <>
@@ -140,19 +148,11 @@ const Page = () => {
                             >
                                 App
                             </Link>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.app[sectionApi.section].review.index}
-                                variant="subtitle2"
-                            >
-                                {sectionApi.SECTION_TITLE}
-                            </Link>
                             <Typography
                                 color="text.secondary"
                                 variant="subtitle2"
                             >
-                                List
+                                {sectionApi.SECTION_TITLE}
                             </Typography>
                         </Breadcrumbs>
                     </Stack>
@@ -167,34 +167,37 @@ const Page = () => {
                             lg: 4
                         }}
                     >
-                        <Autocomplete
-                            fullWidth
-                            options={structuralElements}
-                            defaultValue={selectedStructuralElement}
-                            onChange={handleSourceStructuralElementSelect}
-                            renderInput={(params) =>
-                                <TextField {...params}
-                                           label="Structural Element"
-                                />}
-                        />
-                        <TablePagination
-                            component="div"
-                            count={itemsSearch.count}
-                            onPageChange={itemsSearch.handlePageChange}
-                            onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                            page={itemsSearch.state.page}
-                            rowsPerPage={itemsSearch.state.rowsPerPage}
-                            rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-                            showFirstButton
-                            showLastButton
-                        />
+                        <Card>
+                            <Autocomplete
+                                sx={{p: 2}}
+                                fullWidth
+                                options={structuralElements}
+                                value={selectedStructuralElement}
+                                onChange={handleSourceStructuralElementSelect}
+                                renderInput={(params) =>
+                                    <TextField {...params}
+                                               label="Structural Element"
+                                    />}
+                            />
+                            <TablePagination
+                                component="div"
+                                count={itemsSearch.count}
+                                onPageChange={itemsSearch.handlePageChange}
+                                onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                                page={itemsSearch.state.page}
+                                rowsPerPage={itemsSearch.state.rowsPerPage}
+                                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+                                showFirstButton
+                                showLastButton
+                            />
 
-                        {itemsSearch.pagedItems.map(cm_rule => <CMCard
-                            key={cm_rule._id}
-                            cm_rule={cm_rule}
-                            structural_element={structuralElement}
-                            cm_statuses={cmStatuses}
-                        />)}
+                            {itemsSearch.pagedItems.map(cm_rule => <CMCard
+                                key={cm_rule._id}
+                                cm_rule={cm_rule}
+                                structural_element={structuralElement}
+                                cm_statuses={cmStatuses}
+                            />)}
+                        </Card>
                     </Stack>
                 </Grid>
             </Grid>

@@ -1,16 +1,22 @@
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import CodeMirror from '@uiw/react-codemirror';
-import {basicSetup} from '@uiw/codemirror-extensions-basic-setup';
+import {githubLight, githubDark} from '@uiw/codemirror-themes-all';
 import {xml} from '@codemirror/lang-xml'
+
 import Card from "@mui/material/Card";
+import Stack from "@mui/material/Stack";
+import {useTheme} from "@mui/material/styles";
+import Accordion from "@mui/material/Accordion";
 import Typography from "@mui/material/Typography";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
-import Accordion from "@mui/material/Accordion";
+
 import {TableNoData} from "../shacl_validation_report/utils";
 
 const XpathEvaluator = ({xmlDoc, absolute_xpath}) => {
     const [nodes, setNodes] = useState([])
+    const theme = useTheme()
 
     useEffect(() => {
         if (!!xmlDoc && absolute_xpath)
@@ -34,6 +40,7 @@ const XpathEvaluator = ({xmlDoc, absolute_xpath}) => {
 
 
     const evaluateXPAthExpression = (xpathExpr, xmlDoc) => {
+
         setNodes([])
         // Extract namespaces from the XML
         const namespaces = extractNamespaces(xmlDoc);
@@ -69,28 +76,27 @@ const XpathEvaluator = ({xmlDoc, absolute_xpath}) => {
     return (
         <>
             <Accordion disabled={!nodes.length}>
-                <AccordionSummary>
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon/>}>
                     <Typography>{`Nodes found: ${nodes.length}`}</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    {nodes.map((e, i) => (
-                        <Card key={'node' + i}>
-                            <CodeMirror
-                                style={{resize: 'vertical', overflow: 'auto', height: 200}}
-                                value={serializer.serializeToString(e)}
-                                editable={false}
-                                extensions={[xml()]}
-                                foldGutter={true}
-
-                                options={{
-                                    mode: 'application/xml',
-                                    theme: 'default',
-                                    lineNumbers: false,
-                                    foldGutter: true,
-                                }}
-                            />
-                        </Card>))}
-                    {!nodes.length && <TableNoData/>}
+                    <Stack sx={{gap: 4}}>
+                        {nodes.map((e, i) => (
+                            <Card key={'node' + i}>
+                                <CodeMirror
+                                    theme={theme.palette.mode === 'dark' ? githubDark : githubLight}
+                                    style={{resize: 'vertical', overflow: 'auto'}}
+                                    value={serializer.serializeToString(e)}
+                                    editable={false}
+                                    extensions={[xml()]}
+                                    options={{
+                                        mode: 'application/xml',
+                                    }}
+                                />
+                            </Card>))}
+                        {!nodes.length && <TableNoData/>}
+                    </Stack>
                 </AccordionDetails>
             </Accordion>
         </>

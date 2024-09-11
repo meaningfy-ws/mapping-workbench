@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
@@ -23,7 +23,11 @@ export const SideNavItem = (props) => {
         title,
         parentId
     } = props;
-    const [open, setOpen] = useState(!!openProp);
+    const [open, setOpen] = useState(false);
+
+    useEffect(() => {
+        setOpen(!!openProp);
+    }, [openProp]);
 
     const handleToggle = () => setOpen(prevOpen => !prevOpen);
 
@@ -78,7 +82,6 @@ export const SideNavItem = (props) => {
                     disabled={disabled}
                     onClick={handleToggle}
                     someProp={'prop'}
-                    style={{backgroundColor:'red'}}
                     sx={{
                         alignItems: 'center',
                         borderRadius: 1,
@@ -97,7 +100,7 @@ export const SideNavItem = (props) => {
                         '&:hover': {
                             backgroundColor: 'var(--nav-item-hover-bg)'
                         },
-                        marginLeft:"10px"
+                        //marginLeft:"10px"
                     }}
                 >
                     {startIcon && (

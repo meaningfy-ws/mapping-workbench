@@ -24,18 +24,19 @@ const TreeView = (props) => {
         sectionApi.getItemsTree()
             .then(res => setState(e => ({...e, items: res, loading: false})))
             .catch(err => {
-                setState(e => ({...e, error: false}))
+                setState(e => ({...e, error: true}))
                 console.error(err)
             })
     }
 
-    const treeMenu = (item) => {
+    const treeMenu = (item, idx) => {
+        const itemId = `${idx}_${item.id}`
         return (
-            <TreeItem key={item.id}
-                      itemId={item.id}
+            <TreeItem key={itemId}
+                      itemId={itemId}
                       label={item.label}
                       onClick={(e) => console.log(e)}>
-                {item.children?.map(e => treeMenu(e))}
+                {item.children?.map(child => treeMenu(child, ++idx))}
             </TreeItem>
         )
     }
@@ -44,16 +45,18 @@ const TreeView = (props) => {
     const CollapseIcon = () => <Stack direction='row'><ExpandMoreIcon/><AlbumIcon/></Stack>
     const ExpandIcon = () => <Stack direction='row'><ChevronRightIcon/><AlbumIcon/></Stack>
 
-    if (state.loading)
-        return <Stack justifyContent="center"
-                      direction="row">
-            <CircularProgress/>
-        </Stack>
 
     if (state.error)
         return <TableErrorFetching/>
 
-    if (!state.item?.length)
+    if (state.loading) {
+        return <Stack justifyContent="center"
+        direction="row">
+            <CircularProgress/>
+        </Stack>
+    }
+
+    if (!state.items?.length)
         return <TableNoData/>
 
     return (
@@ -66,7 +69,7 @@ const TreeView = (props) => {
                             overflowX: 'hidden', minHeight: 270, flexGrow: 1,
                             [`& .${treeItemClasses.iconContainer}`]: {minWidth: 40, color: 'gray'}
                         }}>
-            {state.items?.map(treeMenu)}
+            {state.items?.map(item => treeMenu(item, 0))}
         </SimpleTreeView>
     )
 }

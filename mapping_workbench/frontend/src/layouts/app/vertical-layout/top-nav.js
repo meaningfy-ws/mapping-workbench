@@ -11,7 +11,7 @@ import { AccountButton } from '../account-button';
 import { LanguageSwitch } from '../language-switch';
 import TimeSwitch from "../time-switch/time-switch";
 
-const BREAK_POINT = 2000;
+const BREAK_POINT = 1500;
 const TOP_NAV_HEIGHT = 64;
 const SIDE_NAV_WIDTH = 280;
 

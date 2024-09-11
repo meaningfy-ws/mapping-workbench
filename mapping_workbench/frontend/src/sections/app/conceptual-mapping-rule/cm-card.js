@@ -23,7 +23,6 @@ const CMCard = (props) => {
     const {cm_rule, structural_element, cm_statuses, ...other} = props;
 
     const notesDialog = useDialog()
-    const [state, setState] = useState({})
     const [status, setStatus] = useState(cm_rule.status)
     const [structuralElement, setStructuralElement] = useState(structural_element);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -91,9 +90,11 @@ const CMCard = (props) => {
                 <Stack direction={{xs: 'column', xl: 'row-reverse'}}
                        justifyContent={{xs: 'space-between'}}
                        alignItems="flex-start"
+                       display='block'
                        margin={3}>
                     <Stack direction={{xs: 'row', xl: 'column'}}
-                           justifyContent='center'>
+                           justifyContent='center'
+                    >
                         <TextField select
                                    onChange={handleStatusChange}
                                    label="Status"

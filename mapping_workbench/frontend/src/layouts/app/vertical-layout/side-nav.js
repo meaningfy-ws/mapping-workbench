@@ -15,7 +15,6 @@ import {SideNavSection} from './side-nav-section';
 import {ProjectSwitch} from "../project-switch";
 import {AppTitle} from "../../../components/app-title";
 import {useProjects} from "../../../hooks/use-projects";
-import {MobileNavSection} from "../mobile-nav/mobile-nav-section";
 
 const SIDE_NAV_WIDTH = 280;
 
@@ -234,7 +233,7 @@ export const SideNav = (props) => {
                             />
                         ))}
                         {projects.sessionProject && Object.values(menus).map(menu => menu.map((section, index) => (
-                            <MobileNavSection
+                            <SideNavSection
                                 items={section.items}
                                 key={index}
                                 pathname={pathname}
