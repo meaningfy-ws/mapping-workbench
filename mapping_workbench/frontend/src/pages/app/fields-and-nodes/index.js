@@ -30,6 +30,7 @@ import XpathEvaluator from "src/sections/app/fields-and-nodes/xpath-evaluator";
 import RelativeXpathFinder from "src/sections/app/fields-and-nodes/relative-xpath-finder";
 import {genericTripleMapFragmentsApi as tripleMapFragments} from "src/api/triple-map-fragments/generic";
 import {sessionApi} from "../../../api/session";
+import {executeXPaths} from "../../../sections/app/fields-and-nodes/utils";
 
 const Page = () => {
     const [files, setFiles] = useState([])
@@ -87,9 +88,9 @@ const Page = () => {
 
     const onChangeXPath = (value) => {
         value.shift()
-        formik.setFieldValue('parent_node','')
-        formik.setFieldValue('relative_xpath','')
-        formik.setFieldValue('absolute_xpath', ['/*',...value].join('/'))
+        formik.setFieldValue('parent_node', '')
+        formik.setFieldValue('relative_xpath', '')
+        formik.setFieldValue('absolute_xpath', ['/*', ...value].join('/'))
     }
 
     const handleClear = () => formik.setValues(initialValues)
@@ -101,7 +102,6 @@ const Page = () => {
         relative_xpath: '',
         parent_node: ''
     };
-
 
     const formik = useFormik({
         initialValues,
@@ -139,13 +139,8 @@ const Page = () => {
         }
     });
 
-    const parentNodeSelect = xPaths.map(e => ({
-        id: e.id,
-        label: e.absolute_xpath,
-        absolute_xpath: e.absolute_xpath,
-        parent_node: e.parent_node_id,
-        relative_xpath: e.relative_xpath
-    })).filter(e=> formik.values.absolute_xpath.includes(e.label))
+    const parentNodeSelect = xmlContent && xPaths ? executeXPaths(xmlContent, xPaths)
+        .filter(e => !["", "/*"].includes(e.resolved_xpath) && formik.values.absolute_xpath.includes(e.resolved_xpath)) : [];
 
     return (
         <>
@@ -253,7 +248,7 @@ const Page = () => {
                                             helperText={formik.touched['parent_node'] && formik.errors['parent_node']}
                                             onBlur={formik.handleBlur}
                                             onChange={(e, value) => formik.setFieldValue('parent_node', value)}
-                                            value={formik.values?.['parent_node']?.label ?? ''}
+                                            value={formik.values?.['parent_node']?.absolute_xpath ?? ''}
                                             options={parentNodeSelect}
                                             renderOption={(props, option) =>
                                                 <li {...props}
