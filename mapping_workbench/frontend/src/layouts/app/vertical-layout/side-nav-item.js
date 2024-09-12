@@ -96,7 +96,6 @@ export const SideNavItem = (props) => {
                         '&:hover': {
                             backgroundColor: 'var(--nav-item-hover-bg)'
                         },
-                        marginLeft:"10px"
                     }}
                 >
                     {startIcon && (
