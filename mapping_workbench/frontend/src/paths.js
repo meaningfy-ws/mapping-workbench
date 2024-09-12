@@ -105,7 +105,7 @@ export const paths = {
             import: '/app/mapping-packages/import',
             states: {
                 index: '/app/mapping-packages/[pid]/states',
-                view: (pid,id) => `/app/mapping-packages/${pid}/states/${id}/view`,
+                view: (pid, id) => `/app/mapping-packages/${pid}/states/${id}/view`,
             }
         },
 
@@ -197,10 +197,22 @@ export const paths = {
             }
         },
         fields_and_nodes: {
-          index: '/app/fields-and-nodes'
+            tree_view: {
+                index: '/app/fields-and-nodes/tree-view'
+            },
+            develop: {
+                index: '/app/fields-and-nodes/develop'
+            },
+            overview: {
+                index: '/app/fields-and-nodes/overview',
+                import: '/app/fields-and-nodes/overview/import',
+                elements: {
+                    view: (id) => `/app/fields-overview/${id}/view`,
+                }
+            }
         },
         fields_tree: {
-            index:'/app/fields-tree'
+            index: '/app/fields-tree'
         },
         tasks: {
             index: '/app/tasks',
@@ -318,7 +330,7 @@ export const apiPaths = {
     generic_triple_map_fragments: {
         items: '/generic_triple_map_fragments',
         item: '/generic_triple_map_fragments/:id',
-        tree:'/test_data_suites/file_resources_struct_tree',
+        tree: '/test_data_suites/file_resources_struct_tree',
         content: (id) => `/test_data_suites/file_resources/${id}/content`,
         transform_result_content: (id, triple_map_id) => `/test_data_suites/file_resources/${id}/transform/generic_triple_map/${triple_map_id}`
     },
@@ -385,7 +397,7 @@ export const apiPaths = {
         items: '/task_manager',
         task_cancel: (task_id) => `/task_manager/cancel/${task_id}`,
         task_delete: (task_id) => `/task_manager/delete/${task_id}`,
-        task_delete_all:'/task_manager/delete_all',
+        task_delete_all: '/task_manager/delete_all',
         terms_validator: '/tasks/terms_validator',
         generate_cm_assertions_queries: '/tasks/generate_cm_assertions_queries',
         transform_test_data: '/tasks/transform_test_data'

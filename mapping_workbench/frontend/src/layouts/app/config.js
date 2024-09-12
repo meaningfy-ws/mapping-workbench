@@ -99,7 +99,7 @@ export const useSections = () => {
                     items: [
                         {
                             title: t(tokens.nav.fields_develop),
-                            path: paths.app.fields_and_nodes.index,
+                            path: paths.app.fields_and_nodes.develop.index,
                             icon: (
                                 <SvgIcon>
                                     <TocIcon/>
@@ -108,7 +108,7 @@ export const useSections = () => {
                         },
                         {
                             title: t(tokens.nav.fields_overview),
-                            path: paths.app.fields_overview.index,
+                            path: paths.app.fields_and_nodes.overview.index,
                             icon: (
                                 <SvgIcon fontSize="small">
                                     <MenuOpenIcon/>
@@ -117,7 +117,7 @@ export const useSections = () => {
                         },
                         {
                             title: t(tokens.nav.tree_view),
-                            path: paths.app.fields_tree.index,
+                            path: paths.app.fields_and_nodes.tree_view.index,
                             icon: (
                                 <SvgIcon fontSize="small">
                                     <TopicIcon/>
