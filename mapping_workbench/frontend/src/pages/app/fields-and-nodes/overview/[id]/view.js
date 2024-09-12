@@ -32,7 +32,7 @@ const Page = () => {
     const {id} = router.query;
 
     useEffect(() => {
-        id && sectionApi.getItem(id)
+        id && sectionApi.getItem(id, 'element')
             .then(res => setItem(res))
             .catch(err => console.error(err))
     },[id]);
@@ -56,7 +56,7 @@ const Page = () => {
                         <Link
                             color="text.primary"
                             component={RouterLink}
-                            href={paths.app[sectionApi.section].index}
+                            href={paths.app.fields_and_nodes.overview.index}
                             sx={{
                                 alignItems: 'center',
                                 display: 'inline-flex'

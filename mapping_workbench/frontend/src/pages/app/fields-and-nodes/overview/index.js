@@ -136,7 +136,7 @@ const useItemsStore = () => {
     });
 
     const handleItemsGet = () => {
-        sectionApi.getItems()
+        sectionApi.getItems({}, null, '/fields_registry/elements')
             .then(res => setState({
                 items: res.items,
                 itemsCount: res.count
@@ -200,7 +200,7 @@ const Page = () => {
                         <Button
                             id="import_shema_button"
                             component={RouterLink}
-                            href={paths.app[sectionApi.section].import}
+                            href={paths.app.fields_and_nodes.overview.import}
                             startIcon={(
                                 <SvgIcon>
                                     <ImportIcon/>

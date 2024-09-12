@@ -32,10 +32,11 @@ def tree_of_structural_elements(items: List[StructuralElementOut]):
         item = ids[item.sdk_element_id]
         prepare_tree_structural_element(item)
         if item['parent_node_id'] is not None:
-            parent = ids[item['parent_node_id']]
-            if not ('children' in parent and parent['children']):
-                parent['children'] = []
-            parent['children'].append(item)
+            if item['parent_node_id'] in ids:
+                parent = ids[item['parent_node_id']]
+                if not ('children' in parent and parent['children']):
+                    parent['children'] = []
+                parent['children'].append(item)
         else:
             tree.append(item)
     return tree

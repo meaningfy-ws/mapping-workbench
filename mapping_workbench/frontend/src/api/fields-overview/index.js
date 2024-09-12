@@ -7,11 +7,11 @@ class FieldsOverview  extends SectionApi {
     }
 
     get SECTION_ITEM_TITLE() {
-        return "Fields Overview";
+        return "Field Overview";
     }
 
     get SECTION_LIST_ACTIONS() {
-        return [ACTION.VIEW];
+        return [ACTION.VIEW, ACTION.DELETE];
     }
 
     constructor() {

@@ -13,6 +13,7 @@ from mapping_workbench.backend.conceptual_mapping_rule.models.entity import Conc
 from mapping_workbench.backend.core.models.base_entity import BaseTitledEntityListFiltersSchema, BaseEntity
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
+from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package import PackageType
 from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroupState, MappingGroup
 from mapping_workbench.backend.ontology.models.namespace import NamespaceState, Namespace
@@ -199,7 +200,9 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
 
     async def get_shacl_test_suites_states(self) -> List[SHACLTestSuiteState]:
         shacl_test_suites_states = []
-        shacl_test_suites_ids = [shacl_test_suite.to_ref().id for shacl_test_suite in self.shacl_test_suites]
+        shacl_test_suites_ids = []
+        if self.shacl_test_suites:
+            shacl_test_suites_ids = [shacl_test_suite.to_ref().id for shacl_test_suite in self.shacl_test_suites]
         shacl_test_suites = await SHACLTestSuite.find(
             In(SHACLTestSuite.id, shacl_test_suites_ids),
             Eq(SHACLTestSuite.project, self.project.to_ref())

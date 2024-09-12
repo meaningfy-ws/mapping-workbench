@@ -162,7 +162,7 @@ export const ListTable = (props) => {
                                                 <ListItemActions
                                                     itemctx={new ForListItemAction(item_id, sectionApi)}
                                                     pathnames={{
-                                                        view: () => paths.app[sectionApi.section].elements.view(item_id)
+                                                        view: () => paths.app.fields_and_nodes.overview.elements.view(item_id)
                                                     }}
                                                 />
                                             </TableCell>

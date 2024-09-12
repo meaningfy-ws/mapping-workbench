@@ -1,7 +1,9 @@
 from typing import List
 
 from beanie import PydanticObjectId
+from beanie.odm.operators.update.general import Set
 
+from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
 from mapping_workbench.backend.core.services.request import api_entity_is_found, prepare_search_param, pagination_params
@@ -95,12 +97,17 @@ async def get_structural_element(structural_element_id: str) -> StructuralElemen
 
 
 async def delete_structural_element(structural_element: StructuralElement):
-    return await StructuralElement.delete()
+    await ConceptualMappingRule.find(
+        ConceptualMappingRule.source_structural_element == StructuralElement.link_from_id(structural_element.id)
+    ).update_many(
+        Set({ConceptualMappingRule.source_structural_element: None})
+    )
+    return await structural_element.delete()
 
 
 async def get_structural_element_label_list(project_id: PydanticObjectId) -> List[StructuralElementLabelOut]:
     return await StructuralElement.find_many(
-        StructuralElement.project.id == project_id,
+        StructuralElement.project == Project.link_from_id(project_id),
         projection_model=StructuralElementLabelOut
     ).to_list()
 

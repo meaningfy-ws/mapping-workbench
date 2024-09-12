@@ -76,7 +76,7 @@ const StateDetails = ({item}) => {
                                     <Grid md={12}
                                           xs={12}>
                                         <PropertyListItem
-                                            label="eForms SDK version"
+                                            label="eForms XSD version"
                                             value={item.eforms_sdk_versions?.join(', ')}
                                         />
                                     </Grid>

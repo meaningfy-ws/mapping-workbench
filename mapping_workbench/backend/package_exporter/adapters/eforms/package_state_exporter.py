@@ -145,28 +145,32 @@ class PackageStateExporter:
 
     async def add_transformation_resources(self):
         for resource in self.package_state.resources:
-            self.write_to_file(self.package_transformation_resources_path / resource.filename, resource.content)
+            self.write_to_file(self.package_transformation_resources_path / (resource.filename or resource.title),
+                               resource.content)
 
     async def add_test_data(self):
         for test_data_suite in self.package_state.test_data_suites:
             test_data_suite_path = self.package_test_data_path / test_data_suite.title
             test_data_suite_path.mkdir(parents=True, exist_ok=True)
             for test_data in test_data_suite.test_data_states:
-                self.write_to_file(test_data_suite_path / test_data.filename, test_data.xml_manifestation.content)
+                self.write_to_file(test_data_suite_path / (test_data.filename or test_data.title),
+                                   test_data.xml_manifestation.content)
 
     async def add_validation_shacl(self):
         for shacl_test_suite in self.package_state.shacl_test_suites:
             shacl_test_suite_path = self.package_validation_shacl_path / shacl_test_suite.title
             shacl_test_suite_path.mkdir(parents=True, exist_ok=True)
             for shacl_test in shacl_test_suite.shacl_test_states:
-                self.write_to_file(shacl_test_suite_path / shacl_test.filename, shacl_test.content)
+                self.write_to_file(shacl_test_suite_path / (shacl_test.filename or shacl_test.title),
+                                   shacl_test.content)
 
     async def add_validation_sparql(self):
         for sparql_test_suite in self.package_state.sparql_test_suites:
             sparql_test_suite_path = self.package_validation_sparql_path / sparql_test_suite.title
             sparql_test_suite_path.mkdir(parents=True, exist_ok=True)
             for sparql_test in sparql_test_suite.sparql_test_states:
-                self.write_to_file(sparql_test_suite_path / sparql_test.filename, sparql_test.content)
+                self.write_to_file(sparql_test_suite_path / (sparql_test.filename or sparql_test.title),
+                                   sparql_test.content)
 
     def add_xpath_report(self, path: Path, data: TestDataValidation, filename: str):
         if data.validation.xpath:
@@ -276,14 +280,15 @@ class PackageStateExporter:
             )
 
             for test_data in test_data_suite.test_data_states:
-                test_data_output_path = test_data_suite_output_path / test_data.identifier
+                test_data_output_path = test_data_suite_output_path / (
+                            test_data.identifier or test_data.title.split(".")[0])
                 test_data_output_path.mkdir(parents=True, exist_ok=True)
-
                 if test_data.rdf_manifestation and test_data.rdf_manifestation.content:
                     self.write_to_file(test_data_output_path / test_data.rdf_manifestation.filename,
                                        test_data.rdf_manifestation.content)
 
-                test_data_reports_output_path = test_data_suite_output_path / test_data.identifier / "test_suite_report"
+                test_data_reports_output_path = test_data_suite_output_path / (
+                            test_data.identifier or test_data.title.split(".")[0]) / "test_suite_report"
                 test_data_reports_output_path.mkdir(parents=True, exist_ok=True)
 
                 self.add_xpath_report(test_data_reports_output_path, test_data, "xpath_coverage_report")

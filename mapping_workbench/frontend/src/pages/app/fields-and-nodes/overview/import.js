@@ -1,22 +1,28 @@
 import {useState} from "react";
 import {useFormik} from "formik";
-import * as Yup from "yup";
 import {useRouter} from "next/router";
+import * as Yup from "yup";
 
-import Stack from '@mui/material/Stack';
-import CardHeader from "@mui/material/CardHeader";
-import CardContent from "@mui/material/CardContent";
-import Grid from "@mui/material/Unstable_Grid2";
-import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
+import Link from "@mui/material/Link";
+import Stack from '@mui/material/Stack';
+import Button from "@mui/material/Button";
+import SvgIcon from "@mui/material/SvgIcon";
+import Grid from "@mui/material/Unstable_Grid2";
+import CardHeader from "@mui/material/CardHeader";
+import Typography from "@mui/material/Typography";
+import CardContent from "@mui/material/CardContent";
 
-import {usePageView} from 'src/hooks/use-page-view';
-import {FormTextField} from "src/components/app/form/text-field";
+import ArrowLeftIcon from "@untitled-ui/icons-react/build/esm/ArrowLeft";
+
+import {paths} from "src/paths";
+import {sessionApi} from "src/api/session";
 import {Layout as AppLayout} from 'src/layouts/app';
-import {fieldsRegistryApi as sectionApi} from 'src/api/fields-registry';
-import {sessionApi} from "../../../../api/session";
-import {paths} from "../../../../paths";
-import {toastError, toastLoad, toastSuccess} from "../../../../components/app-toast";
+import {usePageView} from 'src/hooks/use-page-view';
+import {RouterLink} from "src/components/router-link";
+import {FormTextField} from "src/components/app/form/text-field";
+import {fieldsOverviewApi as sectionApi} from 'src/api/fields-overview';
+import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 
 
 const Page = () => {
@@ -49,10 +55,11 @@ const Page = () => {
                     helpers.setStatus({success: true});
                     toastSuccess(`${res.task_name} successfully started.`, toastId)
                     router.push({
-                        pathname: paths.app[sectionApi.section].elements.index
+                        pathname: paths.app.fields_and_nodes.overview.index
                     })
                 })
                 .catch(err => {
+                    console.log(err)
                     helpers.setStatus({success: false});
                     helpers.setErrors({submit: err.message});
                     toastError(`eForm Fields import failed: ${err.message}.`, toastId);
@@ -62,9 +69,29 @@ const Page = () => {
     });
 
     return (
+         <Stack spacing={4}>
+                    <div>
+                        <Link
+                            color="text.primary"
+                            component={RouterLink}
+                            href={paths.app.fields_and_nodes.overview.index}
+                            sx={{
+                                alignItems: 'center',
+                                display: 'inline-flex'
+                            }}
+                            underline="hover"
+                        >
+                            <SvgIcon sx={{mr: 1}}>
+                                <ArrowLeftIcon/>
+                            </SvgIcon>
+                            <Typography variant="subtitle2">
+                                {sectionApi.SECTION_TITLE}
+                            </Typography>
+                        </Link>
+                    </div>
         <form onSubmit={formik.handleSubmit}>
             <Card>
-                <CardHeader title="Import eForms XSD from GitHub"/>
+                <CardHeader title="Import eForms SDK from GitHub"/>
                 <CardContent sx={{pt: 0}}>
                     <Grid container
                           spacing={3}>
@@ -106,6 +133,7 @@ const Page = () => {
                 </Stack>
             </Card>
         </form>
+         </Stack>
     );
 };
 
