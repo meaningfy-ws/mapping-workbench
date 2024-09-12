@@ -18,13 +18,13 @@ Given('Session Login', () => {
 
 When('I click on Fields Tree', () => {
     cy.intercept('GET', appURLPrefix + 'fields_registry/elements_tree*',).as('get')
-    cy.get('#nav_mapping_entities').click()
-    cy.get("#nav_fields_tree").click()
+    cy.get('#nav_fields_\\&_nodes').click()
+    cy.get("#nav_tree_view").click()
 })
 
 
 Then('I get redirected to Fields Tree', () => {
-    cy.url().should('include','fields-tree')
+    cy.url().should('include','fields-and-nodes/tree-view')
 })
 
 And('I receive Fields Tree', () => {
