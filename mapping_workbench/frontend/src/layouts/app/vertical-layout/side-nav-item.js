@@ -23,7 +23,11 @@ export const SideNavItem = (props) => {
         title,
         parentId
     } = props;
-    const [open, setOpen] = useState(!!openProp);
+    const [open, setOpen] = useState(false);
+
+    useEffect(() => {
+        setOpen(!!openProp);
+    }, [openProp]);
 
     const handleToggle = () => setOpen(prevOpen => !prevOpen);
 

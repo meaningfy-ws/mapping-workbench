@@ -29,13 +29,14 @@ const TreeView = (props) => {
             })
     }
 
-    const treeMenu = (item) => {
+    const treeMenu = (item, idx) => {
+        const itemId = `${idx}_${item.id}`
         return (
-            <TreeItem key={item.id}
-                      itemId={item.id}
+            <TreeItem key={itemId}
+                      itemId={itemId}
                       label={item.label}
                       onClick={(e) => console.log(e)}>
-                {item.children?.map(e => treeMenu(e))}
+                {item.children?.map(child => treeMenu(child, ++idx))}
             </TreeItem>
         )
     }
@@ -55,7 +56,7 @@ const TreeView = (props) => {
         </Stack>
     }
 
-    if (!state.item?.length)
+    if (!state.items?.length)
         return <TableNoData/>
 
     return (
@@ -68,7 +69,7 @@ const TreeView = (props) => {
                             overflowX: 'hidden', minHeight: 270, flexGrow: 1,
                             [`& .${treeItemClasses.iconContainer}`]: {minWidth: 40, color: 'gray'}
                         }}>
-            {state.items?.map(treeMenu)}
+            {state.items?.map(item => treeMenu(item, 0))}
         </SimpleTreeView>
     )
 }

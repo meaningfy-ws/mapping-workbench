@@ -15,7 +15,6 @@ import {SideNavSection} from './side-nav-section';
 import {ProjectSwitch} from "../project-switch";
 import {AppTitle} from "../../../components/app-title";
 import {useProjects} from "../../../hooks/use-projects";
-import {MobileNavSection} from "../mobile-nav/mobile-nav-section";
 
 const SIDE_NAV_WIDTH = 280;
 
