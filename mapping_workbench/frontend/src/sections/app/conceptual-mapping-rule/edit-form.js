@@ -329,13 +329,13 @@ export const EditForm = (props) => {
                                   md={12}>
                                 <FormTextField formik={formik}
                                                name="min_sdk_version"
-                                               label="Min SDK Version"/>
+                                               label="Min XSD Version"/>
                             </Grid>
                             <Grid xs={12}
                                   md={12}>
                                 <FormTextField formik={formik}
                                                name="max_sdk_version"
-                                               label="Max SDK Version"/>
+                                               label="Max XSD Version"/>
                             </Grid>
                             {/*<Grid xs={12}*/}
                             {/*      md={12}>*/}

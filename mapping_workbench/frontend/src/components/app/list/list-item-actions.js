@@ -9,6 +9,7 @@ import {paths} from 'src/paths';
 import {usePopover} from 'src/hooks/use-popover';
 import {ACTION} from "../../../api/section";
 import ConfirmDialog from "../dialog/confirm-dialog";
+import {toastError} from "../../app-toast";
 
 export const ListItemActions = (props) => {
     const router = useRouter();
@@ -34,16 +35,16 @@ export const ListItemActions = (props) => {
 
     }
 
-    const handleDeleteAction = async () => {
+    const handleDeleteAction = () => {
         itemctx.api.deleteItem(itemctx.id)
-            .finally(() =>
+            .then(() =>
                 {
                     router.push({
                         pathname: paths.app[itemctx.api.section].index
                     });
                     router.reload()
-                }
-        )
+                })
+            .catch(err => toastError(err))
     }
 
     const [confirmOpen, setConfirmOpen] = useState(false);

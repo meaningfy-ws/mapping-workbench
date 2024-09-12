@@ -22,7 +22,7 @@ export const HomeApp = () => {
         {href: paths.app.fields_overview.index, label: 'Overview'},
         {href: paths.app.fields_tree.index, label: 'Tree View'},
         {href: paths.app.conceptual_mapping_rules.develop.index, label: 'Create'},
-        {href: paths.app.conceptual_mapping_rules.overview.index, lable: 'Overview'},
+        {href: paths.app.conceptual_mapping_rules.overview.index, label: 'Overview'},
         {href: paths.app.conceptual_mapping_rules.review.index, label: 'Review'},
         {href: paths.app.triple_map_fragments.index, label: 'Implement'},
         {href: paths.app.value_mapping_resources.index, label: 'Add'},
@@ -54,18 +54,22 @@ export const HomeApp = () => {
                         Mapping Workbench
                     </Typography>
                 </Typography>
-                <Typography variant="h6"
-                            sx={{mb: 3}}>
+                <Typography variant="h6">
                     Welcome to Mapping Workbench 🙌! This is a collaborative platform designed to map XML schemas to OWL
                     ontologies, enhancing the efficiency and accuracy of large semantic mapping projects. In this
                     integrated environment, you will find centralised all necessary resources for an agile execution of
-                    activities throughout the mapping development lifecycle. To find out more check this short paper
+                    activities throughout the mapping development lifecycle.
+                </Typography>
+                <Typography variant="h6"
+                            sx={{mb: 3}}>
+                    To find out more check this short paper
                     {<Button variant="outlined"
                              type="link"
                              target="_blank"
                              size='small'
                              color="error"
                              href={'/sem24_paper_182.pdf'}
+                             sx={{py: 0, mx: '5px'}}
                              startIcon={<PictureAsPdfIcon/>}>
                         sem24_paper_182.pdf
                     </Button>} visit our website <Link
@@ -74,16 +78,13 @@ export const HomeApp = () => {
                 <Typography>A simplified view of the mapping lifecycle is depicted in Figure 1. Next, we provide you
                     with a wizard meant to guide through a series of concrete steps from A to Z of a successful mapping
                     project. Each step will lead you to the specific page in the MWB.</Typography>
-                <Typography>The tutorial below will help you to get introduced into MWB by crossing a small mapping
-                    workflow
-                    (Figure 1).</Typography>
-                <br/>
                 <Image src={schemaImage}
                        width={800}
                        alt={'schema image'}/>
-                <br/>
-                <Typography variant='span'>
-                    Figure 1. MWB Mapping workflow.
+                <Typography>
+                    <Typography sx={{textAlign: 'center'}}>
+                        Figure 1. MWB Mapping workflow.
+                    </Typography>
                     <Typography variant='h6'
                                 sx={{mt: 2}}>
                         Setup Project 🔧
@@ -176,8 +177,8 @@ export const HomeApp = () => {
                             <Typography>
                                 Step 8: Revise the Conceptual Mappings, if needed 🤔
                             </Typography>
-                            <Typography sx={{my: 1}}> Look at the CM {links[8]} or the CM
-                                {links[9]} to gain perspective.
+                            <Typography sx={{my: 1}}> Look at the CM {links[8]} or the CM {links[9]} to gain
+                                perspective.
                             </Typography>
                         </li>
                     </ul>
@@ -223,7 +224,9 @@ export const HomeApp = () => {
                             </Typography>
                             <Typography sx={{my: 1}}>{links[12]} Unit Tests with SPARQL ASK assertions from the CM
                                 rules.
-                                {links[13]}(link to SHACL suites) and custom {links[14]} as necessary.
+                            </Typography>
+                            <Typography sx={{my: 1}}>
+                                {links[13]} and custom {links[14]} as necessary.
                             </Typography>
                         </li>
                         <li>
@@ -239,10 +242,9 @@ export const HomeApp = () => {
                             <Typography>
                                 Step 13: Transform and Validate a Mapping Package 📦
                             </Typography>
-                            <Typography sx={{my: 1}}> Once the resources and mapping rules are in place,
-                                {links[16]} a Mapping Package. It will transform
-                                the selected sample data and run the validation on the result, generating SPARQL and
-                                SHACL reports.
+                            <Typography sx={{my: 1}}> Once the resources and mapping rules are in place, {links[16]} a
+                                Mapping Package. It will transform the selected sample data and run the validation on
+                                the result, generating SPARQL and SHACL reports.
                             </Typography>
                         </li>
                         <li>

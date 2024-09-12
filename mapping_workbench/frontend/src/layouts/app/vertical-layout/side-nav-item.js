@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import PropTypes from 'prop-types';
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
@@ -100,7 +100,6 @@ export const SideNavItem = (props) => {
                         '&:hover': {
                             backgroundColor: 'var(--nav-item-hover-bg)'
                         },
-                        //marginLeft:"10px"
                     }}
                 >
                     {startIcon && (
