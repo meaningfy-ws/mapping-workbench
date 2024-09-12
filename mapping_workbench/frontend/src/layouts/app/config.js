@@ -66,6 +66,15 @@ export const useSections = () => {
                                 )
                             },
                             {
+                                title: t(tokens.nav.ontology_terms),
+                                path: paths.app.ontology_terms.index,
+                                icon: (
+                                    <SvgIcon fontSize="small">
+                                        <SchemaIcon/>
+                                    </SvgIcon>
+                                )
+                            },
+                            {
                                 title: t(tokens.nav.test_data_suites),
                                 path: paths.app.test_data_suites.index,
                                 icon: (
@@ -78,10 +87,10 @@ export const useSections = () => {
                     }]
             }
         ],
-        mappingEntities: [{
+        fieldsAndNodes: [{
             items: [
                 {
-                    title: t(tokens.nav.mapping_entities),
+                    title: t(tokens.nav.fields_and_nodes),
                     icon: (
                         <SvgIcon fontSize="small">
                             <ApiIcon/>
@@ -89,29 +98,11 @@ export const useSections = () => {
                     ),
                     items: [
                         {
-                            title: t(tokens.nav.ontology_terms),
-                            path: paths.app.ontology_terms.index,
-                            icon: (
-                                <SvgIcon fontSize="small">
-                                    <SchemaIcon/>
-                                </SvgIcon>
-                            )
-                        },
-                        {
-                            title: t(tokens.nav.fields_and_nodes),
+                            title: t(tokens.nav.fields_develop),
                             path: paths.app.fields_and_nodes.index,
                             icon: (
                                 <SvgIcon>
                                     <TocIcon/>
-                                </SvgIcon>
-                            )
-                        },
-                        {
-                            title: t(tokens.nav.fields_tree),
-                            path: paths.app.fields_tree.index,
-                            icon: (
-                                <SvgIcon fontSize="small">
-                                    <TopicIcon/>
                                 </SvgIcon>
                             )
                         },
@@ -124,6 +115,16 @@ export const useSections = () => {
                                 </SvgIcon>
                             )
                         },
+                        {
+                            title: t(tokens.nav.tree_view),
+                            path: paths.app.fields_tree.index,
+                            icon: (
+                                <SvgIcon fontSize="small">
+                                    <TopicIcon/>
+                                </SvgIcon>
+                            )
+                        },
+
 
                     ]
                 }]
