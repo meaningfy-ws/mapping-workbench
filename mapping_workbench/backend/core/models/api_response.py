@@ -11,6 +11,9 @@ class APIEmptyContentResponse(BaseModel):
 class APIEmptyContentWithIdResponse(BaseModel):
     id: PydanticObjectId
 
+class APIEmptyContentWithStrIdResponse(BaseModel):
+    id: str
+
 
 class APIListPaginatedResponse(BaseModel):
     items: List

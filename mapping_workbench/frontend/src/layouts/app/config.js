@@ -83,6 +83,15 @@ export const useSections = () => {
                                     </SvgIcon>
                                 )
                             },
+                            {
+                                title: t(tokens.nav.ontology_terms),
+                                path: paths.app.ontology_terms.index,
+                                icon: (
+                                    <SvgIcon fontSize="small">
+                                        <SchemaIcon/>
+                                    </SvgIcon>
+                                )
+                            },
                         ],
                     }]
             }

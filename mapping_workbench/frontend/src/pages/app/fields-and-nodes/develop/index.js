@@ -42,7 +42,6 @@ const Page = () => {
     const [xPaths, setXPaths] = useState([])
     const [xmlContent, setXmlContent] = useState('')
     const [fileContent, setFileContent] = useState()
-
     const SECTION_TITLE = 'Fields Develop'
 
     useEffect(() => {

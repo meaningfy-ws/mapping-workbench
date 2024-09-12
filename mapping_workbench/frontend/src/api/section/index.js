@@ -77,8 +77,9 @@ export class SectionApi {
         return await appApi.get(endpoint);
     }
 
-    async deleteItem(id) {
-        let endpoint = this.paths['item'].replace(':id', id);
+    async deleteItem(id, path = null) {
+        path = path || "item";
+        let endpoint = this.paths[path].replace(':id', id);
         return await appApi.delete(endpoint);
     }
 

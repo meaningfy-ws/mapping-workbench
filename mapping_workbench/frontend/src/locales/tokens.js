@@ -62,7 +62,6 @@ export const tokens = {
         test_data_suites: 'nav.test_data_suites',
         sparql_test_suites: 'nav.sparql_test_suites',
         shacl_test_suites: 'nav.shacl_test_suites',
-
         nodes: 'nav.nodes',
         resource_collections: 'nav.resource_collections',
         ontology: 'nav.ontology',
