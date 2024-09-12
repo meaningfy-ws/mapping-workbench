@@ -7,7 +7,7 @@ class FieldsOverview  extends SectionApi {
     }
 
     get SECTION_ITEM_TITLE() {
-        return "Overview Fields";
+        return "Overview Field";
     }
 
     get SECTION_LIST_ACTIONS() {
