@@ -98,7 +98,9 @@ class EFormsCMExporter(CMExporter):
             "Editorial Notes (private)",
             "Feedback Notes (private)"
         ])
-        cm_rules = sorted(mapping_package_state.conceptual_mapping_rules, key=lambda x: x.sort_order)
+        cm_rules = sorted(
+            mapping_package_state.conceptual_mapping_rules, key=lambda x: (x.sort_order is not None, x.sort_order)
+        )
         for idx, cm_rule in enumerate(cm_rules):
             mapping_groups_ids = map(lambda x: x.name, cm_rule.mapping_groups)
             rules_table.loc[idx] = [
