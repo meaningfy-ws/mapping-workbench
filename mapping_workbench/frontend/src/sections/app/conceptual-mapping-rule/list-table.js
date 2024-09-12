@@ -974,10 +974,10 @@ export const ListTable = (props) => {
                                 Conceptual Field/Group
                             </TableCell>
                             <TableCell>
-                                Min SDK
+                                Min XSD
                             </TableCell>
                             <TableCell>
-                                Max SDK
+                                Max XSD
                             </TableCell>
                             <TableCell width="18%">
                                 Ontology Fragment Class path
