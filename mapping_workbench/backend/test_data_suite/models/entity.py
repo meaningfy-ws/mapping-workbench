@@ -77,7 +77,7 @@ class TestDataFileResource(FileResource, StatefulObjectABC):
             content=self.content
         )
         rdf_manifestation = FileResourceState(
-            filename=f"{self.identifier or self.filename}.ttl",
+            filename=f"{self.identifier or self.filename or self.title.split('.')[0]}.ttl",
             format=FileResourceFormat.RDF,
             content=self.rdf_manifestation
         )

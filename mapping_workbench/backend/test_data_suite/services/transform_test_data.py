@@ -103,7 +103,7 @@ async def transform_test_data_file_resource(
         mappings=mappings,
         resources=resources,
         rml_mapper=rml_mapper,
-        test_data_title=test_data_file_resource.title
+        test_data_title=test_data_file_resource.title or test_data_file_resource.filename
     )
 
     if save:
