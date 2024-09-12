@@ -62,8 +62,7 @@ export const tokens = {
         test_data_suites: 'nav.test_data_suites',
         sparql_test_suites: 'nav.sparql_test_suites',
         shacl_test_suites: 'nav.shacl_test_suites',
-        fields_tree: 'nav.fields_tree',
-        fields_overview: 'nav.fields_overview',
+
         nodes: 'nav.nodes',
         resource_collections: 'nav.resource_collections',
         ontology: 'nav.ontology',
@@ -81,6 +80,9 @@ export const tokens = {
         fields_registry: 'nav.fields_registry',
         fields_list: 'nav.fields_list',
         fields_and_nodes: 'nav.fields_and_nodes',
+        tree_view: 'nav.tree_view',
+        fields_overview: 'nav.fields_overview',
+        fields_develop: 'nav.fields_develop',
         elements: 'nav.elements',
         activities: 'nav.activities',
 

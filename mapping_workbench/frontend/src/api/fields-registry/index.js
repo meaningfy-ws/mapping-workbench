@@ -8,7 +8,7 @@ class FieldsRegistryApi extends SectionApi {
     }
 
     get SECTION_TREE_TITLE() {
-        return "Fields Tree"
+        return "Tree View"
     }
 
     get SECTION_ITEM_TITLE() {
