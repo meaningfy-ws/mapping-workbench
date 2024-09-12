@@ -12,9 +12,6 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import {PropertyList} from 'src/components/property-list';
-import {PropertyListItem} from 'src/components/property-list-item';
-import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 
 
 import {Scrollbar} from 'src/components/scrollbar';
@@ -59,8 +56,8 @@ export const ListTable = (props) => {
     const handleItemToggle = itemId => setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
 
     const SorterHeader = (props) => {
-        const direction = props.fieldName === sort.column && sort.direction === 1 ? 'asc' : 'desc';
-        return (
+        const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
+        return(
             <TableSorterHeader sort={{direction, column: sort.column}}
                                onSort={onSort}
                                {...props}
@@ -87,10 +84,10 @@ export const ListTable = (props) => {
                             <TableRow>
                                 <TableCell/>
                                 <TableCell width="25%">
-                                    URI
+                                    <SorterHeader fieldName="triple_map_uri" title="URI"/>
                                 </TableCell>
                                 <TableCell align="left">
-                                    Created
+                                    <SorterHeader fieldName="created_at" title="Created"/>
                                 </TableCell>
                                 <TableCell align="right">
                                     Actions

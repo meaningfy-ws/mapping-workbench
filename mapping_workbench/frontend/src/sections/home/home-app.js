@@ -100,7 +100,7 @@ export const HomeApp = () => {
                                 Step 2: Organise test data (i.e. XML files) 📁
                             </Typography>
                             <Typography sx={{my: 1}}>{links[1]} some sample documents in XML format, and organise them
-                                as Test Data Suits. They will help you to define the Fields & Nodes used for mapping and
+                                as Test Data Suites. They will help you to define the Fields & Nodes used for mapping and
                                 perform mapping validation.
                             </Typography>
                         </li>

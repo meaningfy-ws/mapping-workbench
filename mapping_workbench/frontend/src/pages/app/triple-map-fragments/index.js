@@ -14,7 +14,7 @@ import {Seo} from 'src/components/seo';
 import {RouterLink} from 'src/components/router-link';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {usePageView} from 'src/hooks/use-page-view';
-import {genericTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/generic';
+import {specificTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/specific';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {ListSearch} from "src/sections/app/generic-triple-map-fragment/list-search";
 import {ListTable} from "src/sections/app/generic-triple-map-fragment/list-table";
@@ -29,7 +29,7 @@ const useItemsSearch = (items) => {
             direction: "desc"
         },
         search: '',
-        searchColumns: ['triple_map_content', 'triple_map_uri'],
+        searchColumns: ['triple_map_uri', 'created_at'],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -107,11 +107,18 @@ const useItemsSearch = (items) => {
         }));
     }
 
-    const handleSorterChange = sortField => {
+    const handleSorterChange = (column, desc) => {
         setState(prevState => ({
-            ...prevState,
-            sortField,
-            sortDirection: state.sortField === sortField && prevState.sortDirection === -1 ? 1 : -1
+            ...prevState, sort: {
+                column,
+                direction: prevState.sort.column === column
+                    ? prevState.sort.direction === "desc"
+                        ? "asc"
+                        : "desc"
+                    : desc
+                        ? "desc"
+                        : "asc"
+            }
         }))
     }
 
@@ -145,10 +152,8 @@ const useItemsStore = () => {
     }
 
     useEffect(() => {
-            handleItemsGet();
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        []);
+        handleItemsGet();
+    }, []);
 
     return {
         ...state
@@ -233,9 +238,9 @@ const Page = () => {
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                         page={itemsSearch.state.page}
                         items={itemsSearch.pagedItems}
-                        count={itemsSearch.itemsCount}
+                        count={itemsSearch.count}
                         onSort={itemsSearch.handleSorterChange}
-                        sort={{direction: itemsSearch.state.sortDirection, column: itemsSearch.state.sortField}}
+                        sort={itemsSearch.state.sort}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
                     />

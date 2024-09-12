@@ -226,7 +226,7 @@ export const useSections = () => {
                             path: paths.app.sparql_test_suites.index,
                             icon: (
                                 <SvgIcon fontSize="small">
-                                    <FlareIcon/>d
+                                    <FlareIcon/>
                                 </SvgIcon>
                             )
                         },
