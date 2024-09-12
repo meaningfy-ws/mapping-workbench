@@ -170,11 +170,12 @@ async def validate_mapping_package_state_with_shacl(mapping_package_state: Mappi
     mapping_package: MappingPackage = await MappingPackage.get(mapping_package_state.mapping_package_oid)
     project_id = mapping_package.project.to_ref().id if mapping_package.project else None
 
-    for shacl_test_suite in mapping_package_state.shacl_test_suites:
-        shacl_suites.append(SHACLValidationSuiteEntry(
-            shacl_suite_oid=shacl_test_suite.oid,
-            shacl_suite_id=shacl_test_suite.title
-        ))
+    if mapping_package_state.shacl_test_suites:
+        for shacl_test_suite in mapping_package_state.shacl_test_suites:
+            shacl_suites.append(SHACLValidationSuiteEntry(
+                shacl_suite_oid=shacl_test_suite.oid,
+                shacl_suite_id=shacl_test_suite.title
+            ))
 
     for idx, test_data_suite in enumerate(mapping_package_state.test_data_suites):
         mapping_package_state.test_data_suites[idx].test_data_states = \
