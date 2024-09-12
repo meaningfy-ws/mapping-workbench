@@ -3,11 +3,11 @@ import {appApi} from "../app";
 
 class FieldsOverview  extends SectionApi {
     get SECTION_TITLE() {
-        return "Overview Fields";
+        return "Fields Overview";
     }
 
     get SECTION_ITEM_TITLE() {
-        return "Overview Field";
+        return "Field Overview";
     }
 
     get SECTION_LIST_ACTIONS() {
