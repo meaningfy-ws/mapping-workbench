@@ -66,6 +66,15 @@ export const useSections = () => {
                                 )
                             },
                             {
+                                title: t(tokens.nav.ontology_terms),
+                                path: paths.app.ontology_terms.index,
+                                icon: (
+                                    <SvgIcon fontSize="small">
+                                        <SchemaIcon/>
+                                    </SvgIcon>
+                                )
+                            },
+                            {
                                 title: t(tokens.nav.test_data_suites),
                                 path: paths.app.test_data_suites.index,
                                 icon: (
@@ -87,7 +96,7 @@ export const useSections = () => {
                     }]
             }
         ],
-        mappingEntities: [{
+        fieldsAndNodes: [{
             items: [
                 {
                     title: t(tokens.nav.fields_and_nodes),
@@ -98,8 +107,8 @@ export const useSections = () => {
                     ),
                     items: [
                         {
-                            title: t(tokens.nav.fields_develop_short),
-                            path: paths.app.fields_and_nodes.index,
+                            title: t(tokens.nav.fields_develop),
+                            path: paths.app.fields_and_nodes.develop.index,
                             icon: (
                                 <SvgIcon>
                                     <TocIcon/>
@@ -107,23 +116,24 @@ export const useSections = () => {
                             )
                         },
                         {
-                            title: t(tokens.nav.fields_tree),
-                            path: paths.app.fields_tree.index,
-                            icon: (
-                                <SvgIcon fontSize="small">
-                                    <TopicIcon/>
-                                </SvgIcon>
-                            )
-                        },
-                        {
-                            title: t(tokens.nav.fields_overview_short),
-                            path: paths.app.fields_overview.index,
+                            title: t(tokens.nav.fields_overview),
+                            path: paths.app.fields_and_nodes.overview.index,
                             icon: (
                                 <SvgIcon fontSize="small">
                                     <MenuOpenIcon/>
                                 </SvgIcon>
                             )
                         },
+                        {
+                            title: t(tokens.nav.tree_view),
+                            path: paths.app.fields_and_nodes.tree_view.index,
+                            icon: (
+                                <SvgIcon fontSize="small">
+                                    <TopicIcon/>
+                                </SvgIcon>
+                            )
+                        },
+
 
                     ]
                 }]

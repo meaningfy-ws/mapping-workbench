@@ -31,8 +31,8 @@ import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import XpathEvaluator from "src/sections/app/fields-and-nodes/xpath-evaluator";
 import RelativeXpathFinder from "src/sections/app/fields-and-nodes/relative-xpath-finder";
 import {genericTripleMapFragmentsApi as tripleMapFragments} from "src/api/triple-map-fragments/generic";
-import {sessionApi} from "../../../api/session";
-import {executeXPaths} from "../../../sections/app/fields-and-nodes/utils";
+import {sessionApi} from "src/api/session";
+import {executeXPaths} from "src/sections/app/fields-and-nodes/utils";
 
 const Page = () => {
     const [files, setFiles] = useState([])
@@ -42,8 +42,7 @@ const Page = () => {
     const [xPaths, setXPaths] = useState([])
     const [xmlContent, setXmlContent] = useState('')
     const [fileContent, setFileContent] = useState()
-
-    const SECTION_TITLE = 'Develop Fields & Nodes'
+    const SECTION_TITLE = 'Fields Develop'
 
     useEffect(() => {
         const project = sessionApi.getSessionProject()
@@ -147,7 +146,7 @@ const Page = () => {
 
     return (
         <>
-            <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
+            <Seo title={`App: ${SECTION_TITLE} List`}/>
             <Stack spacing={4}>
                 <Stack
                     direction="row"
