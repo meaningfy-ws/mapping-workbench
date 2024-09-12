@@ -136,7 +136,7 @@ const useItemsStore = () => {
     });
 
     const handleItemsGet = () => {
-        sectionApi.getItems({}, null, '/fields_registry/elements')
+        sectionApi.getItems()
             .then(res => setState({
                 items: res.items,
                 itemsCount: res.count

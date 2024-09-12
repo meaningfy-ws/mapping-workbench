@@ -28,10 +28,12 @@ const CMCard = (props) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
-        if (!structuralElement) {
+        if (!structuralElement && cm_rule.source_structural_element) {
             fieldsRegistryApi.getItem(cm_rule.source_structural_element?.id, 'element').then(res => {
                 setStructuralElement(res)
-            })
+            }).catch(error => {
+                console.log("Field not found!", error);
+            });
         }
     }, []);
 

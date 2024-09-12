@@ -74,6 +74,15 @@ export const useSections = () => {
                                     </SvgIcon>
                                 )
                             },
+                            {
+                                title: t(tokens.nav.ontology_terms),
+                                path: paths.app.ontology_terms.index,
+                                icon: (
+                                    <SvgIcon fontSize="small">
+                                        <SchemaIcon/>
+                                    </SvgIcon>
+                                )
+                            },
                         ],
                     }]
             }
@@ -81,7 +90,7 @@ export const useSections = () => {
         mappingEntities: [{
             items: [
                 {
-                    title: t(tokens.nav.mapping_entities),
+                    title: t(tokens.nav.fields_and_nodes),
                     icon: (
                         <SvgIcon fontSize="small">
                             <ApiIcon/>
@@ -89,16 +98,7 @@ export const useSections = () => {
                     ),
                     items: [
                         {
-                            title: t(tokens.nav.ontology_terms),
-                            path: paths.app.ontology_terms.index,
-                            icon: (
-                                <SvgIcon fontSize="small">
-                                    <SchemaIcon/>
-                                </SvgIcon>
-                            )
-                        },
-                        {
-                            title: t(tokens.nav.fields_and_nodes),
+                            title: t(tokens.nav.fields_develop_short),
                             path: paths.app.fields_and_nodes.index,
                             icon: (
                                 <SvgIcon>
@@ -116,7 +116,7 @@ export const useSections = () => {
                             )
                         },
                         {
-                            title: t(tokens.nav.fields_overview),
+                            title: t(tokens.nav.fields_overview_short),
                             path: paths.app.fields_overview.index,
                             icon: (
                                 <SvgIcon fontSize="small">

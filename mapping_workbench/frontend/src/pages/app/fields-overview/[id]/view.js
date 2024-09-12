@@ -32,7 +32,7 @@ const Page = () => {
     const {id} = router.query;
 
     useEffect(() => {
-        id && sectionApi.getItem(id, 'element')
+        id && sectionApi.getItem(id)
             .then(res => setItem(res))
             .catch(err => console.error(err))
     },[id]);

@@ -365,8 +365,8 @@ export const apiPaths = {
     },
 
     fields_overview: {
-        items: '/fields_registry',
-        item: '/fields_registry/:id',
+        items: '/fields_registry/elements',
+        item: '/fields_registry/elements/:id',
         import_eforms_from_github: '/fields_registry/tasks/import_eforms_from_github',
         element: '/fields_registry/elements/:id',
     },

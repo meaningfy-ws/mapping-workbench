@@ -4,7 +4,8 @@ from beanie import PydanticObjectId
 from fastapi import APIRouter, Depends, status, Form, HTTPException
 
 from mapping_workbench.backend.conceptual_mapping_rule.entrypoints.api.routes import CM_RULE_REVIEW_PAGE_TAG
-from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
+from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse, \
+    APIEmptyContentWithStrIdResponse
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement, \
     APIListStructuralElementsPaginatedResponse, APIListStructuralElementsVersionedViewPaginatedResponse, \
     StructuralElementsVersionedView, StructuralElementLabelOut, StructuralElementIn
@@ -72,16 +73,16 @@ async def route_get_structural_element(structural_element: StructuralElement = D
 
 
 @router.delete(
-    "/elements/{id}",
+    "/elements/{structural_element_id}",
     description=f"Delete structural element by id",
     name=f"elements:delete",
-    response_model=APIEmptyContentWithIdResponse
+    response_model=APIEmptyContentWithStrIdResponse
 )
 async def route_delete_structural_field(
-        structural_field: StructuralElement = Depends(get_structural_element)
+        structural_element: StructuralElement = Depends(get_structural_element)
 ):
-    await delete_structural_element(structural_field)
-    return APIEmptyContentWithIdResponse(_id=structural_field.id)
+    await delete_structural_element(structural_element)
+    return APIEmptyContentWithStrIdResponse(id=structural_element.id)
 
 
 @router.get(

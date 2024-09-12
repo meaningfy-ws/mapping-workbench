@@ -107,7 +107,6 @@ const Page = () => {
         getItems(request)
     }
 
-
     const itemsSearch = useItemsSearch(itemsStore.items);
 
     if (!isProjectDataReady) return null;

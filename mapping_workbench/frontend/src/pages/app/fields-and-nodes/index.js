@@ -43,7 +43,7 @@ const Page = () => {
     const [xmlContent, setXmlContent] = useState('')
     const [fileContent, setFileContent] = useState()
 
-    const SECTION_TITLE = 'Fields And Nodes'
+    const SECTION_TITLE = 'Develop Fields & Nodes'
 
     useEffect(() => {
         const project = sessionApi.getSessionProject()

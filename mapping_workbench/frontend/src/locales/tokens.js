@@ -64,6 +64,8 @@ export const tokens = {
         shacl_test_suites: 'nav.shacl_test_suites',
         fields_tree: 'nav.fields_tree',
         fields_overview: 'nav.fields_overview',
+        fields_overview_short: 'nav.fields_overview_short',
+        fields_develop_short: 'nav.fields_develop_short',
         nodes: 'nav.nodes',
         resource_collections: 'nav.resource_collections',
         ontology: 'nav.ontology',
