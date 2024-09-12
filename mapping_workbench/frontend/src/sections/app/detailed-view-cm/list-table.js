@@ -10,13 +10,14 @@ import TablePagination from "../../components/table-pagination";
 import TableSorterHeader from "../../components/table-sorter-header";
 
 
-
 export const ListTable = (props) => {
     const {
         count = 0,
         items = [],
-        onPageChange = () => {},
-        onSort = () => {},
+        onPageChange = () => {
+        },
+        onSort = () => {
+        },
         sort,
         onRowsPerPageChange,
         page = 0,
@@ -26,10 +27,10 @@ export const ListTable = (props) => {
 
     const SorterHeader = (props) => {
         const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
-        return(
+        return (
             <TableSorterHeader sort={{direction, column: sort.column}}
-                           onSort={onSort}
-                           {...props}
+                               onSort={onSort}
+                               {...props}
             />
         )
     }
@@ -59,10 +60,12 @@ export const ListTable = (props) => {
                                 <SorterHeader fieldName="group_name"/>
                             </TableCell>
                             <TableCell width="25%">
-                                <SorterHeader fieldName="min_sdk_version"/>
+                                <SorterHeader title="min_xsd_version"
+                                              fieldName="min_sdk_version"/>
                             </TableCell>
                             <TableCell>
-                                <SorterHeader fieldName="max_sdk_version"/>
+                                <SorterHeader title="max_xsd_version"
+                                              fieldName="max_sdk_version"/>
                             </TableCell>
                         </TableRow>
                     </TableHead>
@@ -71,24 +74,24 @@ export const ListTable = (props) => {
                             const item_id = item._id;
 
                             return (
-                                    <TableRow hover
-                                              key={item_id}>
-                                        <TableCell>
-                                            {item.group_name}
-                                        </TableCell>
-                                        <TableCell>
-                                            {item.iterator_xpath}
-                                        </TableCell>
-                                        <TableCell>
-                                            {item.instance_type}
-                                        </TableCell>
-                                        <TableCell>
-                                            {item.min_sdk_version}
-                                        </TableCell>
-                                        <TableCell>
-                                            {item.max_sdk_version}
-                                        </TableCell>
-                                    </TableRow>
+                                <TableRow hover
+                                          key={item_id}>
+                                    <TableCell>
+                                        {item.group_name}
+                                    </TableCell>
+                                    <TableCell>
+                                        {item.iterator_xpath}
+                                    </TableCell>
+                                    <TableCell>
+                                        {item.instance_type}
+                                    </TableCell>
+                                    <TableCell>
+                                        {item.min_sdk_version}
+                                    </TableCell>
+                                    <TableCell>
+                                        {item.max_sdk_version}
+                                    </TableCell>
+                                </TableRow>
                             );
                         })}
                     </TableBody>

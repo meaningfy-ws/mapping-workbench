@@ -90,12 +90,16 @@ const CMCard = (props) => {
                 <Stack direction={{xs: 'column', xl: 'row-reverse'}}
                        justifyContent={{xs: 'space-between'}}
                        alignItems="flex-start"
-                       display='block'
+
+                    // display='block'
                        margin={3}>
                     <Stack direction={{xs: 'row', xl: 'column'}}
-                           justifyContent='center'
+                           width={{xs: '100%', xl: 'auto'}}
+                           justifyContent='space-between'
+                        // alignItems='center'
                     >
                         <TextField select
+                                   sx={{minWidth: 200}}
                                    onChange={handleStatusChange}
                                    label="Status"
                                    value={status}
@@ -115,12 +119,13 @@ const CMCard = (props) => {
                                 </MenuItem>
                             )}
                         </TextField>
-                        <hr width="100%"/>
-                        <Button onClick={openEditorialNotesDialog}>Editorial Notes</Button>
-                        <Button onClick={openFeedbackNotesDialog}>Feedback Notes</Button>
-                        <Button onClick={openMappingNotesDialog}>Mappings Notes</Button>
+                        <Stack direction={{xs: 'row', xl: 'column'}}>
+                            <Button onClick={openEditorialNotesDialog}>Editorial Notes</Button>
+                            <Button onClick={openFeedbackNotesDialog}>Feedback Notes</Button>
+                            <Button onClick={openMappingNotesDialog}>Mappings Notes</Button>
+                        </Stack>
                     </Stack>
-                    <Box>
+                    <Box width={{xs: '100%', xl: '80%'}}>
                         <PropertyList>
                             <PropertyListItem
                                 label="Min/Max version"
