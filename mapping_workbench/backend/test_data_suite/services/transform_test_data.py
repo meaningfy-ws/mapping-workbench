@@ -87,15 +87,17 @@ async def transform_test_data_file_resource(
     """
     """
 
+    project_id = test_data_file_resource.project.to_ref().id
+
     if mappings is None:
         mappings = await get_mappings_to_transform_test_data(
-            project_id=test_data_file_resource.project.to_ref().id,
+            project_id=project_id,
             package_id=package_id
         )
 
     if resources is None:
         resources = await get_resource_files_for_project(
-            project_id=test_data_file_resource.project.to_ref().id
+            project_id=project_id
         )
 
     test_data_file_resource.rdf_manifestation = await transform_test_data_file_resource_content(

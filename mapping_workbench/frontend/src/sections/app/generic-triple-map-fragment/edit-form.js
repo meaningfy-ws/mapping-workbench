@@ -1,11 +1,12 @@
-import {useEffect, useState} from "react";
+import * as React from "react";
+import {useCallback, useEffect, useState} from "react";
 import PropTypes from 'prop-types';
 import {useFormik} from 'formik';
 import * as Yup from 'yup';
 import CodeMirror from '@uiw/react-codemirror';
 import {turtle} from 'codemirror-lang-turtle';
 import {yaml} from '@codemirror/lang-yaml';
-import {githubLight, githubDark} from '@uiw/codemirror-themes-all';
+import {githubDark, githubLight} from '@uiw/codemirror-themes-all';
 
 import {Box} from "@mui/system";
 import Card from '@mui/material/Card';
@@ -34,6 +35,10 @@ import turtleValidator from "src/utils/turtle-validator";
 import {FormTextField} from "src/components/app/form/text-field";
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {FormCodeReadOnlyArea} from "src/components/app/form/code-read-only-area";
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Alert from "@mui/material/Alert";
+import {AlertTitle} from "@mui/material";
 
 export const EditForm = (props) => {
     const {itemctx, tree, ...other} = props;
@@ -47,6 +52,7 @@ export const EditForm = (props) => {
     const [selectedTree, setSelectedTree] = useState(tree?.[0]?.test_datas?.[0]?.test_data_id)
     const [testDataContent, setTestDataContent] = useState("")
     const [rdfResultContent, setRdfResultContent] = useState("")
+    const [useThisTripleMap, setUseThisTripleMap] = useState(false)
 
     const [validation, setValidation] = useState({})
 
@@ -140,7 +146,7 @@ export const EditForm = (props) => {
         sectionApi.updateItem(values)
             .then(res => {
                 toastLoad("Transforming Content", toastId);
-                sectionApi.getTripleMapRdfResultContent(item._id, selectedTree)
+                sectionApi.getTripleMapRdfResultContent(item._id, selectedTree, useThisTripleMap)
                     .then(res => {
                         setRdfResultContent(res.rdf_manifestation)
                         toastSuccess('Transformed Successfully', toastId)
@@ -164,6 +170,10 @@ export const EditForm = (props) => {
             .then(res => setValidation(res))
             .catch(err => setValidation({error: err}))
     }
+
+    const handleTransformUsingThisTripleMap = useCallback((event) => {
+        setUseThisTripleMap(event.target.checked);
+    }, []);
 
     return (
         <form onSubmit={formik.handleSubmit}
@@ -244,15 +254,29 @@ export const EditForm = (props) => {
             {currentTab === 'tabTest' &&
                 <Card sx={{mt: 3}}>
                     <CardHeader title={'Test ' + sectionApi.SECTION_ITEM_TITLE}/>
-                    <CardContent>
+                    <CardContent sx={{pt: 0}}>
                         <Grid container
                               spacing={2}>
+                            <Grid xs={12}>
+                                <FormControlLabel
+                                    sx={{
+                                        width: '100%'
+                                    }}
+                                    control={
+                                        <Checkbox
+                                            checked={useThisTripleMap}
+                                            onChange={handleTransformUsingThisTripleMap}
+                                        />
+                                    }
+                                    label="Use only this Triple Map Fragment"
+                                    value=""
+                                />
+                            </Grid>
                             <Grid xs={12}>
                                 <TextField
                                     fullWidth
                                     label="Select Test Data"
                                     onChange={e => {
-                                        console.log(e.target.value)
                                         setSelectedTree(e.target.value)
                                     }}
                                     select
@@ -279,7 +303,7 @@ export const EditForm = (props) => {
                                     <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                                         Test Data Content
                                     </AccordionSummary>
-                                    <AccordionDetails >
+                                    <AccordionDetails>
                                         <FormCodeReadOnlyArea
                                             disabled
                                             name="test_data_content"
@@ -291,21 +315,29 @@ export const EditForm = (props) => {
                             </Grid>
                             <Grid md={12}
                                   lg={6}>
-                                <Accordion disabled={!rdfResultContent}>
-                                    <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
-                                        RDF Result
-                                    </AccordionSummary>
-                                    <AccordionDetails sx={{resize:'vertical'}}>
-                                        <FormCodeReadOnlyArea
-                                            disabled
-                                            name="triple_map_content"
-                                            label="RDF Result"
-                                            defaultContent={rdfResultContent}
-                                            grammar={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['grammar']}
-                                            language={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['language']}
-                                        />
-                                    </AccordionDetails>
-                                </Accordion>
+                                <Grid>
+                                    <Accordion disabled={!rdfResultContent} expanded={!!rdfResultContent}>
+                                        <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
+                                            RDF Result
+                                        </AccordionSummary>
+                                        <AccordionDetails sx={{resize: 'vertical'}}>
+                                            <FormCodeReadOnlyArea
+                                                disabled
+                                                name="triple_map_content"
+                                                label="RDF Result"
+                                                defaultContent={rdfResultContent}
+                                                grammar={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['grammar']}
+                                                language={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['language']}
+                                            />
+                                        </AccordionDetails>
+                                    </Accordion>
+                                </Grid>
+                                {!rdfResultContent && <>
+                                    <Alert severity="warning" sx={{mt: 2}}>
+                                        <AlertTitle></AlertTitle>
+                                        Our service could not generate the RDF by using the provided resources.
+                                    </Alert>
+                                </>}
                             </Grid>
                         </Grid>
                     </CardContent>
