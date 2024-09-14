@@ -61,9 +61,13 @@ export class TripleMapFragmentsApi extends SectionApi {
         return Promise.resolve(data)
     }
 
-    async getTripleMapRdfResultContent(triple_map_id, test_data_id) {
+    async getTripleMapRdfResultContent(triple_map_id, test_data_id, use_this_triple_map = false) {
         const endpoint = this.paths['transform_result_content']
-        const data = await appApi.post(endpoint(test_data_id, triple_map_id));
+        let params = {}
+        if (use_this_triple_map) {
+            params.use_this_triple_map = 1;
+        }
+        const data = await appApi.post(endpoint(test_data_id, triple_map_id), {}, params);
         return Promise.resolve(data)
     }
 

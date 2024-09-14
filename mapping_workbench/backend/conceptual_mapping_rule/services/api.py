@@ -65,7 +65,8 @@ async def create_conceptual_mapping_rule(data: ConceptualMappingRuleCreateIn,
 
     try:
         conceptual_mapping_rule = await conceptual_mapping_rule.create()
-        await create_cm_group_from_cm_rule(conceptual_mapping_rule)
+        #FIXME: We dont create cm group for the moment because we dont use them now + bug
+        #await create_cm_group_from_cm_rule(conceptual_mapping_rule)
     except CMGroupServiceException as e:
         # Rollback
         await conceptual_mapping_rule.delete()

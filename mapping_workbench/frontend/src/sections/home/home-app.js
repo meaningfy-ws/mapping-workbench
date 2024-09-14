@@ -54,7 +54,7 @@ export const HomeApp = () => {
                         Mapping Workbench
                     </Typography>
                 </Typography>
-                <Typography variant="h6">
+                <Typography variant="h6" lineHeight='24px'>
                     Welcome to Mapping Workbench 🙌! This is a collaborative platform designed to map XML schemas to OWL
                     ontologies, enhancing the efficiency and accuracy of large semantic mapping projects. In this
                     integrated environment, you will find centralised all necessary resources for an agile execution of
@@ -62,18 +62,24 @@ export const HomeApp = () => {
                 </Typography>
                 <Typography variant="h6"
                             sx={{mb: 3}}>
-                    To find out more check this short paper
-                    {<Button variant="outlined"
-                             type="link"
-                             target="_blank"
-                             size='small'
-                             color="error"
-                             href={'/sem24_paper_182.pdf'}
-                             sx={{py: 0, mx: '5px'}}
-                             startIcon={<PictureAsPdfIcon/>}>
-                        sem24_paper_182.pdf
-                    </Button>} visit our website <Link
-                    href={'https://meaningfy.ws/mapping-workbench/'}>Mapping Workbench</Link>.
+                    <ul>
+                        <li>
+                            To find out more check this short paper
+                            {<Button variant="outlined"
+                                     type="link"
+                                     target="_blank"
+                                     size='small'
+                                     color="error"
+                                     href={'/sem24_paper_182.pdf'}
+                                     sx={{py: 0, mx: '5px'}}
+                                     startIcon={<PictureAsPdfIcon/>}>
+                                sem24_paper_182.pdf
+                            </Button>}
+                        </li>
+                        <li>Visit our website
+                            <Link href={'https://meaningfy.ws/mapping-workbench/'}> Mapping Workbench</Link>
+                        </li>
+                    </ul>
                 </Typography>
                 <Typography>A simplified view of the mapping lifecycle is depicted in Figure 1. Next, we provide you
                     with a wizard meant to guide through a series of concrete steps from A to Z of a successful mapping
@@ -101,7 +107,8 @@ export const HomeApp = () => {
                                 Step 2: Organise test data (i.e. XML files) 📁
                             </Typography>
                             <Typography sx={{my: 1}}>{links[1]} some sample documents in XML format, and organise them
-                                as Test Data Suites. They will help you to define the Fields & Nodes used for mapping and
+                                as Test Data Suites. They will help you to define the Fields & Nodes used for mapping
+                                and
                                 perform mapping validation.
                             </Typography>
                         </li>

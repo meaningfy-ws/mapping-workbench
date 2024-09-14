@@ -29,6 +29,7 @@ from mapping_workbench.backend.test_data_suite.services.api import (
     get_test_data_file_resource,
     delete_test_data_file_resource, update_test_data_file_resource
 )
+from mapping_workbench.backend.test_data_suite.services.data import get_mapping_package_id_for_test_data_file_resource
 from mapping_workbench.backend.test_data_suite.services.import_test_data_suite import \
     import_test_data_suites_from_archive
 from mapping_workbench.backend.test_data_suite.services.link import assign_test_data_suites_to_mapping_packages
@@ -370,12 +371,17 @@ async def route_transform_test_data_file_resource_with_triple_map(
 async def route_transform_test_data_file_resource_with_triple_map(
         specific_triple_map_id: PydanticObjectId,
         test_data_file_resource: TestDataFileResource = Depends(get_test_data_file_resource),
+        use_this_triple_map: bool = False,
         user: User = Depends(current_active_user)
 ) -> dict:
+    mappings = [await get_specific_triple_map_fragment(specific_triple_map_id)] if use_this_triple_map else None
+
     try:
+        package_id = await get_mapping_package_id_for_test_data_file_resource(test_data_file_resource)
         test_data_file_resource = await transform_test_data_file_resource(
             test_data_file_resource=test_data_file_resource,
-            mappings=[await get_specific_triple_map_fragment(specific_triple_map_id)],
+            package_id=package_id,
+            mappings=mappings,
             user=user
         )
     except RMLMapperException as e:
