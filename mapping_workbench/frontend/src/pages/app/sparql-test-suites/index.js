@@ -18,6 +18,7 @@ import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {sparqlTestSuitesApi as sectionApi} from 'src/api/sparql-test-suites';
 import {FileCollectionListSearch} from 'src/sections/app/file-manager/file-collection-list-search';
 import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
+import {sparqlTestFileResourcesApi as fileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -161,6 +162,7 @@ const Page = () => {
                         sectionApi={sectionApi}
                         getItems={itemsStore.handleItemsGet}
                         selectable={selectable}
+                        fileResourceApi={fileResourcesApi}
                     />
                 </Card>
             </Stack>
