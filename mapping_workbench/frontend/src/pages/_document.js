@@ -137,15 +137,10 @@ CustomDocument.getInitialProps = async (ctx) => {
                 bottom: 100px !important;
             }`}
         </style>
-    // const helpStyleProps =
-    //
-
-    console.log('initialProps',initialProps,'emotionStyleTags',emotionStyleTags)
 
     return {
         ...initialProps,
         ...resss,
-        // ...helpStyleProps,
         emotionStyleTags
     };
 };
