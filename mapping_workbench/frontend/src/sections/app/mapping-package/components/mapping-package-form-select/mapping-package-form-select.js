@@ -54,6 +54,7 @@ export const MappingPackageFormSelect = (props) => {
             <TextField
                 error={!!(formik.touched.mapping_package_id && formik.errors.mapping_package_id)}
                 fullWidth
+                helperText={formik.touched.mapping_package_id && formik.errors.mapping_package_id}
                 label="Mapping Package"
                 name="mapping_package_id"
                 onBlur={formik.handleBlur}

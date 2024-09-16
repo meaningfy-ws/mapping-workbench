@@ -8,6 +8,7 @@ import Typography from "@mui/material/Typography";
 import Collapse from "@mui/material/Collapse";
 import Button from "@mui/material/Button";
 import CancelIcon from '@mui/icons-material/Cancel';
+import WarningIcon from '@mui/icons-material/Warning';
 
 const defaultDuration = 60000
 
@@ -73,4 +74,14 @@ export const toastError = (err, id) => (
 
 export const toastSuccess = (content, id) => (
     toast.success(toastClose(content, id), {id, duration: defaultDuration})
+)
+
+export const toastWarning = (content, id) => (
+    toast.success(toastClose(content, id), {id: id,
+        icon: <WarningIcon/>,
+        duration: defaultDuration,
+        style: {
+            color: '#FFA500'
+        }
+    })
 )
