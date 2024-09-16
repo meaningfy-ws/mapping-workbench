@@ -126,7 +126,7 @@ cleanup-unused-infra:
 	@ docker volume prune -f
 	@ docker network prune -f
 
-build-backend: #stop-backend cleanup-unused-infra
+build-backend:
 	@ echo "Building the BACKEND"
 	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/backend/docker-compose.yml --env-file ${ENV_FILE} build --progress plain --no-cache --force-rm
 	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/backend/docker-compose.yml --env-file ${ENV_FILE} up -d --force-recreate
@@ -139,7 +139,7 @@ stop-backend:
 	@ echo "Stopping the BACKEND"
 	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/backend/docker-compose.yml --env-file ${ENV_FILE} down
 
-build-frontend: #stop-frontend cleanup-unused-infra
+build-frontend:
 	@ echo "Building the FRONTEND"
 	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/frontend/docker-compose.yml --env-file ${ENV_FILE} build --progress plain --no-cache --force-rm
 	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/frontend/docker-compose.yml --env-file ${ENV_FILE} up -d --force-recreate
