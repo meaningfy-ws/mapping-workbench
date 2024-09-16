@@ -134,6 +134,7 @@ export const EditForm = (props) => {
     const onUpdateAndTransform = (values, helpers) => {
 
         values['project'] = sessionApi.getSessionProject();
+        if (!values['mapping_package_id']) values['mapping_package_id'] = null;
         values['id'] = item._id;
         formik.setSubmitting(true)
         const toastId = toastLoad("Updating Content")
