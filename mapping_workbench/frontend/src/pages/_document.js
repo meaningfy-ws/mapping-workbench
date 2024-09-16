@@ -85,11 +85,20 @@ const CustomDocument = ({emotionStyleTags}) => {
             <Main/>
             <NextScript/>
             <Script data-jsd-embedded
-                    // style={{bottom:'65px',right:'65px'}}
+                style={{bottom:'65px',right:'65px'}}
                     strategy='beforeInteractive'
                     data-key="c21b4e36-189d-4126-8c8c-cff757a02d65"
                     data-base-url="https://jsd-widget.atlassian.com"
                     src="https://jsd-widget.atlassian.com/assets/embed.js"/>
+            <style jsx>{`
+                #jsd-widget {
+                    bottom: 66px !important;
+                    right: 75px !important;
+                    z-index: 1050 !important;
+                }`}
+            </style>
+
+
             </body>
         </Html>
     );
@@ -121,8 +130,22 @@ CustomDocument.getInitialProps = async (ctx) => {
         />
     ));
 
+
+    const resss =
+        <style jsx>{`
+            #jsd-widget {
+                bottom: 100px !important;
+            }`}
+        </style>
+    // const helpStyleProps =
+    //
+
+    console.log('initialProps',initialProps,'emotionStyleTags',emotionStyleTags)
+
     return {
         ...initialProps,
+        ...resss,
+        // ...helpStyleProps,
         emotionStyleTags
     };
 };
