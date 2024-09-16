@@ -31,6 +31,7 @@ import {createEmotionCache} from 'src/utils/create-emotion-cache';
 // import {SessionProvider} from "next-auth/react";
 import 'src/locales/i18n';
 import {GlobalStateConsumer, GlobalStateProvider} from "../contexts/globalState";
+import Script from "next/script";
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -85,18 +86,23 @@ const CustomApp = (props) => {
                             return (
                               <ThemeProvider theme={theme}>
                                 <Head>
+
                                   <meta
-                                    name="color-scheme"
-                                    content={settings.paletteMode}
+                                      name="color-scheme"
+                                      content={settings.paletteMode}
                                   />
                                   <meta
-                                    name="theme-color"
-                                    content={theme.palette.neutral[900]}
+                                      name="theme-color"
+                                      content={theme.palette.neutral[900]}
                                   />
                                 </Head>
+                                <script data-jsd-embedded
+                                        data-key="c21b4e36-189d-4126-8c8c-cff757a02d65"
+                                          data-base-url="https://jsd-widget.atlassian.com"
+                                          src="https://jsd-widget.atlassian.com/assets/embed.js"></script>
                                 <RTL direction={settings.direction}>
-                                  <CssBaseline />
-                                    {showSplashScreen
+                                  <CssBaseline/>
+                                  {showSplashScreen
                                       ? <SplashScreen />
                                       : (
                                         <>
