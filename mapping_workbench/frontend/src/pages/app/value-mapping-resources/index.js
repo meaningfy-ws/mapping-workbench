@@ -18,6 +18,7 @@ import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {resourceCollectionsApi as sectionApi} from 'src/api/resource-collections';
 import {FileCollectionListSearch} from 'src/sections/app/file-manager/file-collection-list-search';
 import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
+import {resourceFilesApi} from 'src/api/resource-collections/file-resources';
 
 
 const useItemsSearch = () => {
@@ -161,6 +162,7 @@ const Page = () => {
                         count={itemsStore.itemsCount}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
+                        fileResourceApi={resourceFilesApi}
                         getItems={itemsStore.handleItemsGet}
                     />
                 </Card>
