@@ -8,37 +8,36 @@ import 'simplebar-react/dist/simplebar.min.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import Head from 'next/head';
 import {Provider as ReduxProvider} from 'react-redux';
+
 import {CacheProvider} from '@emotion/react';
 import CssBaseline from '@mui/material/CssBaseline';
 import {ThemeProvider} from '@mui/material/styles';
 import {AdapterDateFns} from '@mui/x-date-pickers/AdapterDateFns';
 import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
 
-import {RTL} from 'src/components/rtl';
-import {SplashScreen} from 'src/components/splash-screen';
-import {SettingsButton} from 'src/components/settings/settings-button';
-import {SettingsDrawer} from 'src/components/settings/settings-drawer';
-import {Toaster} from 'src/components/toaster';
-import {AuthConsumer, AuthProvider} from 'src/contexts/auth/jwt';
-import {SettingsConsumer, SettingsProvider} from 'src/contexts/settings';
-import {ProjectsConsumer, ProjectsProvider} from "../contexts/projects";
-import {useNprogress} from 'src/hooks/use-nprogress';
 import {store} from 'src/store';
 import {createTheme} from 'src/theme';
+import {RTL} from 'src/components/rtl';
+import {Toaster} from 'src/components/toaster';
+import {useNprogress} from 'src/hooks/use-nprogress';
+import {SplashScreen} from 'src/components/splash-screen';
+import {AuthConsumer, AuthProvider} from 'src/contexts/auth/jwt';
 import {createEmotionCache} from 'src/utils/create-emotion-cache';
+import {SettingsButton} from 'src/components/settings/settings-button';
+import {SettingsDrawer} from 'src/components/settings/settings-drawer';
+import {SettingsConsumer, SettingsProvider} from 'src/contexts/settings';
+import {ProjectsConsumer, ProjectsProvider} from 'src/contexts/projects';
 
 // Remove if locales are not used
 // import {SessionProvider} from "next-auth/react";
 import 'src/locales/i18n';
 import {GlobalStateConsumer, GlobalStateProvider} from "../contexts/globalState";
-import Script from "next/script";
-
 const clientSideEmotionCache = createEmotionCache();
 
 const CustomApp = (props) => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps, session } = props;
-  useNprogress();
   const getLayout = Component.getLayout ?? ((page) => page);
+  useNprogress();
 
   return (
 
@@ -58,12 +57,9 @@ const CustomApp = (props) => {
           <AuthProvider>
             <AuthConsumer>
               {(auth) => (
-          // <SessionProvider session={session}>
-
                   <GlobalStateProvider>
                     <GlobalStateConsumer>
                       {() => (
-
                       <SettingsProvider>
                         <SettingsConsumer>
                           {(settings) => {
@@ -96,45 +92,41 @@ const CustomApp = (props) => {
                                       content={theme.palette.neutral[900]}
                                   />
                                 </Head>
-                                <script data-jsd-embedded
-                                        data-key="c21b4e36-189d-4126-8c8c-cff757a02d65"
-                                          data-base-url="https://jsd-widget.atlassian.com"
-                                          src="https://jsd-widget.atlassian.com/assets/embed.js"></script>
+
                                 <RTL direction={settings.direction}>
                                   <CssBaseline/>
                                   {showSplashScreen
                                       ? <SplashScreen />
-                                      : (
-                                        <>
-                                          <ProjectsProvider>
-                                            <ProjectsConsumer>
-                                              {(projects) => (
-                                                getLayout(
-                                                    <Component projects={projects}
-                                                               {...pageProps} />
-                                                ))}
-                                              </ProjectsConsumer>
-                                          </ProjectsProvider>
-                                          <SettingsButton onClick={settings.handleDrawerOpen} />
-                                          <SettingsDrawer
-                                            canReset={settings.isCustom}
-                                            onClose={settings.handleDrawerClose}
-                                            onReset={settings.handleReset}
-                                            onUpdate={settings.handleUpdate}
-                                            open={settings.openDrawer}
-                                            values={{
-                                              colorPreset: settings.colorPreset,
-                                              contrast: settings.contrast,
-                                              direction: settings.direction,
-                                              paletteMode: settings.paletteMode,
-                                              responsiveFontSizes: settings.responsiveFontSizes,
-                                              stretch: settings.stretch,
-                                              layout: settings.layout,
-                                              navColor: settings.navColor
-                                            }}
-                                          />
-                                        </>
-                                      )}
+                                      : <>
+                                        <ProjectsProvider>
+                                          <ProjectsConsumer>
+                                            {(projects) => (
+                                              getLayout(
+                                                  <Component projects={projects}
+                                                             {...pageProps} />
+                                              ))}
+                                            </ProjectsConsumer>
+                                        </ProjectsProvider>
+                                        <SettingsButton onClick={settings.handleDrawerOpen} />
+                                        <SettingsDrawer
+                                          canReset={settings.isCustom}
+                                          onClose={settings.handleDrawerClose}
+                                          onReset={settings.handleReset}
+                                          onUpdate={settings.handleUpdate}
+                                          open={settings.openDrawer}
+                                          values={{
+                                            colorPreset: settings.colorPreset,
+                                            contrast: settings.contrast,
+                                            direction: settings.direction,
+                                            paletteMode: settings.paletteMode,
+                                            responsiveFontSizes: settings.responsiveFontSizes,
+                                            stretch: settings.stretch,
+                                            layout: settings.layout,
+                                            navColor: settings.navColor
+                                          }}
+                                        />
+                                      </>
+                                    }
                                   <Toaster />
                                 </RTL>
                               </ThemeProvider>
@@ -145,8 +137,6 @@ const CustomApp = (props) => {
                           )}
                     </GlobalStateConsumer>
                   </GlobalStateProvider>
-          // </SessionProvider>
-
               )}
 
             </AuthConsumer>
