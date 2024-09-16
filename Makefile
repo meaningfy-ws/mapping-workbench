@@ -119,6 +119,13 @@ dotenv-file-frontend:
 # STAGING & PRODUCTION
 #-----------------------------------------------------------------------------
 
+cleanup-unused-infra:
+	@ echo "Pruning unused containers, images, volumes, and networks"
+	@ docker container prune -f
+	@ docker image prune -a -f
+	@ docker volume prune -f
+	@ docker network prune -f
+
 build-backend:
 	@ echo "Building the BACKEND"
 	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/backend/docker-compose.yml --env-file ${ENV_FILE} build --progress plain --no-cache --force-rm
