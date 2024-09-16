@@ -119,16 +119,14 @@ dotenv-file-frontend:
 # STAGING & PRODUCTION
 #-----------------------------------------------------------------------------
 
-build-backend:
-	@ echo "Stopping any existing BACKEND containers"
-	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/backend/docker-compose.yml --env-file ${ENV_FILE} down
-
+cleanup-unused-infra:
 	@ echo "Pruning unused containers, images, volumes, and networks"
 	@ docker container prune -f
 	@ docker image prune -a -f
 	@ docker volume prune -f
 	@ docker network prune -f
 
+build-backend: stop-backend cleanup-unused-infra
 	@ echo "Building the BACKEND"
 	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/backend/docker-compose.yml --env-file ${ENV_FILE} build --progress plain --no-cache --force-rm
 	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/backend/docker-compose.yml --env-file ${ENV_FILE} up -d --force-recreate
@@ -141,16 +139,7 @@ stop-backend:
 	@ echo "Stopping the BACKEND"
 	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/backend/docker-compose.yml --env-file ${ENV_FILE} down
 
-build-frontend:
-	@ echo "Stopping any existing FRONTEND containers"
-	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/frontend/docker-compose.yml --env-file ${ENV_FILE} down
-
-	@ echo "Pruning unused containers, images, volumes, and networks"
-	@ docker container prune -f
-	@ docker image prune -a -f
-	@ docker volume prune -f
-	@ docker network prune -f
-
+build-frontend: stop-frontend cleanup-unused-infra
 	@ echo "Building the FRONTEND"
 	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/frontend/docker-compose.yml --env-file ${ENV_FILE} build --progress plain --no-cache --force-rm
 	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/frontend/docker-compose.yml --env-file ${ENV_FILE} up -d --force-recreate
