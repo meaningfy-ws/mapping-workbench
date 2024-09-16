@@ -129,8 +129,7 @@ cleanup-unused-infra:
 build-backend: #stop-backend cleanup-unused-infra
 	@ echo "Building the BACKEND"
 	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/backend/docker-compose.yml --env-file ${ENV_FILE} build --progress plain --no-cache --force-rm
-#	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/backend/docker-compose.yml --env-file ${ENV_FILE} up -d --force-recreate
-	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/backend/docker-compose.yml --env-file ${ENV_FILE} up -d
+	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/backend/docker-compose.yml --env-file ${ENV_FILE} up -d --force-recreate
 
 start-backend:
 	@ echo "Starting the BACKEND"
@@ -143,8 +142,7 @@ stop-backend:
 build-frontend: #stop-frontend cleanup-unused-infra
 	@ echo "Building the FRONTEND"
 	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/frontend/docker-compose.yml --env-file ${ENV_FILE} build --progress plain --no-cache --force-rm
-#	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/frontend/docker-compose.yml --env-file ${ENV_FILE} up -d --force-recreate
-	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/frontend/docker-compose.yml --env-file ${ENV_FILE} up -d
+	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/frontend/docker-compose.yml --env-file ${ENV_FILE} up -d --force-recreate
 
 start-frontend:
 	@ echo "Starting the FRONTEND"
@@ -178,8 +176,7 @@ dump_mongodb_local:
 build-backend-dev:
 	@ echo "Building the BACKEND"
 	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/backend/docker-compose.dev.yml --env-file ${ENV_FILE} build --progress plain --no-cache --force-rm
-#	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/backend/docker-compose.dev.yml --env-file ${ENV_FILE} up -d --force-recreate
-	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/backend/docker-compose.dev.yml --env-file ${ENV_FILE} up -d
+	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/backend/docker-compose.dev.yml --env-file ${ENV_FILE} up -d --force-recreate
 
 start-backend-dev:
 	@ echo "Starting the BACKEND"
@@ -192,8 +189,7 @@ stop-backend-dev:
 build-frontend-dev:
 	@ echo "Building the FRONTEND"
 	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/frontend/docker-compose.dev.yml --env-file ${ENV_FILE} build --progress plain --no-cache --force-rm
-#	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/frontend/docker-compose.dev.yml --env-file ${ENV_FILE} up -d --force-recreate
-	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/frontend/docker-compose.dev.yml --env-file ${ENV_FILE} up -d
+	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/frontend/docker-compose.dev.yml --env-file ${ENV_FILE} up -d --force-recreate
 
 start-frontend-dev:
 	@ echo "Starting the FRONTEND"
