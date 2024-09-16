@@ -4,19 +4,22 @@ import PropTypes from 'prop-types';
 
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
-import CardContent from '@mui/material/CardContent';
-import Divider from '@mui/material/Divider';
+import Box from "@mui/system/Box";
 import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
-import SvgIcon from '@mui/material/SvgIcon';
+import List from "@mui/material/List";
 import Table from '@mui/material/Table';
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
+import Divider from '@mui/material/Divider';
+import SvgIcon from '@mui/material/SvgIcon';
+import ListItem from "@mui/material/ListItem";
+import Checkbox from "@mui/material/Checkbox";
+import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
-import {Box} from "@mui/system";
+import IconButton from '@mui/material/IconButton';
+import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 
 import {Scrollbar} from 'src/components/scrollbar';
@@ -25,16 +28,15 @@ import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {ListFileCollectionActions} from "src/components/app/list/list-file-collection-actions";
 import {PropertyListItem} from 'src/components/property-list-item';
 
-import {paths} from "../../../paths";
-import {PropertyList} from "../../../components/property-list";
-import TablePagination from "../../components/table-pagination";
-import timeTransformer from "../../../utils/time-transformer";
-import {useGlobalState} from "../../../hooks/use-global-state";
-import {MappingPackagesBulkAssigner} from "../mapping-package/components/mapping-packages-bulk-assigner";
-import {mappingPackagesApi} from "../../../api/mapping-packages";
-import Checkbox from "@mui/material/Checkbox";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
+import {paths} from "src/paths";
+import {useDialog} from "src/hooks/use-dialog";
+import timeTransformer from "src/utils/time-transformer";
+import {useGlobalState} from "src/hooks/use-global-state";
+import {PropertyList} from "src/components/property-list";
+import {mappingPackagesApi} from "src/api/mapping-packages";
+import TablePagination from "src/sections/components/table-pagination";
+import {FileUploader} from "src/sections/app/file-manager/file-uploader";
+import {MappingPackagesBulkAssigner} from "src/sections/app/mapping-package/components/mapping-packages-bulk-assigner";
 
 
 export const ListTableRow = (props) => {
@@ -47,6 +49,7 @@ export const ListTableRow = (props) => {
         isItemSelected,
         sectionApi,
         router,
+        openUploadModal,
         projectMappingPackagesMap,
         projectMappingPackages,
         selectable
@@ -110,33 +113,41 @@ export const ListTableRow = (props) => {
                 </TableCell>
                 <TableCell>
                     <List sx={{p: 0, m: 0}}>
-                    {
+                        {
 
-                        sectionApi.MAPPING_PACKAGE_LINK_FIELD
-                        && projectMappingPackages
-                            .filter(
-                                projectMappingPackage => projectMappingPackage[sectionApi.MAPPING_PACKAGE_LINK_FIELD]
-                                    && projectMappingPackage[sectionApi.MAPPING_PACKAGE_LINK_FIELD]
-                                        .some(resource_ref => item_id === resource_ref.id)
-                            )
-                            .map((mapping_package) => {
-                                return (
-                                    <ListItem
-                                        key={"mapping_package_" + mapping_package.id}
-                                        sx={{p: 0, m: 0}}
-                                    >
-                                        {mapping_package['title']}
-                                    </ListItem>
-                                );
-                            })}
+                            sectionApi.MAPPING_PACKAGE_LINK_FIELD
+                            && projectMappingPackages
+                                .filter(
+                                    projectMappingPackage => projectMappingPackage[sectionApi.MAPPING_PACKAGE_LINK_FIELD]
+                                        && projectMappingPackage[sectionApi.MAPPING_PACKAGE_LINK_FIELD]
+                                            .some(resource_ref => item_id === resource_ref.id)
+                                )
+                                .map((mapping_package) => {
+                                    return (
+                                        <ListItem
+                                            key={"mapping_package_" + mapping_package.id}
+                                            sx={{p: 0, m: 0}}
+                                        >
+                                            {mapping_package['title']}
+                                        </ListItem>
+                                    );
+                                })}
                     </List>
                 </TableCell>
                 <TableCell align="left">
                     {timeTransformer(item.created_at, timeSetting)}
                 </TableCell>
                 <TableCell align="right">
-                    <ListFileCollectionActions
-                        itemctx={new ForListItemAction(item_id, sectionApi)}/>
+                    <Stack direction='row'
+                           justifyContent='end'>
+                        <Button size="small"
+                                onClick={() => openUploadModal?.(item._id)}
+                        >
+                            Upload
+                        </Button>
+                        <ListFileCollectionActions
+                            itemctx={new ForListItemAction(item_id, sectionApi)}/>
+                    </Stack>
                 </TableCell>
             </TableRow>
             {isCurrent && (
@@ -248,13 +259,15 @@ export const FileCollectionListTable = (props) => {
         sectionApi,
         getItems = () => {
         },
-        selectable = null
+        selectable = null,
+        fileResourceApi,
     } = props;
 
     const router = useRouter();
     const [currentItem, setCurrentItem] = useState(null);
     const [selectedItems, setSelectedItems] = useState([]);
     const [toMappingPackages, setToMappingPackages] = useState([]);
+    const uploadDialog = useDialog();
 
     const isItemSelected = (itemId) => {
         return selectedItems.indexOf(itemId) !== -1;
@@ -292,9 +305,9 @@ export const FileCollectionListTable = (props) => {
     const [projectMappingPackages, setProjectMappingPackages] = useState([]);
 
     useEffect(() => {
-        (async () => {
-            setProjectMappingPackages(await mappingPackagesApi.getProjectPackages(true));
-        })()
+        mappingPackagesApi.getProjectPackages(true)
+            .then(res => setProjectMappingPackages(res))
+            .catch(err => console.error(err))
     }, [itemsForced])
 
     const [projectMappingPackagesMap, setProjectMappingPackagesMap] = useState({});
@@ -310,6 +323,10 @@ export const FileCollectionListTable = (props) => {
 
     const onMappingPackagesAssign = () => {
         getItems(Date.now());
+    }
+
+    const openUploadModal = (id) => {
+        uploadDialog.handleOpen({id})
     }
 
     return (<>
@@ -365,6 +382,7 @@ export const FileCollectionListTable = (props) => {
                                         item={item}
                                         item_id={item_id}
                                         isCurrent={isCurrent}
+                                        openUploadModal={openUploadModal}
                                         handleItemToggle={handleItemToggle}
                                         handleItemSelect={handleItemSelect}
                                         isItemSelected={isItemSelected}
@@ -380,6 +398,13 @@ export const FileCollectionListTable = (props) => {
                     </Table>
                 </Scrollbar>
             </TablePagination>
+            <FileUploader
+                onClose={uploadDialog.handleClose}
+                open={uploadDialog.open}
+                collectionId={uploadDialog.data?.id}
+                sectionApi={fileResourceApi}
+                onGetItems={getItems}
+            />
         </>
     );
 };
