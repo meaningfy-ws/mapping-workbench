@@ -305,9 +305,9 @@ export const FileCollectionListTable = (props) => {
     const [projectMappingPackages, setProjectMappingPackages] = useState([]);
 
     useEffect(() => {
-        (async () => {
-            setProjectMappingPackages(await mappingPackagesApi.getProjectPackages(true));
-        })()
+        mappingPackagesApi.getProjectPackages(true)
+            .then(res => setProjectMappingPackages(res))
+            .catch(err => console.error(err))
     }, [itemsForced])
 
     const [projectMappingPackagesMap, setProjectMappingPackagesMap] = useState({});
