@@ -137,9 +137,10 @@ const Page = () => {
                                 lg={12}
                             >
                                 <FileCollectionBasicDetails
-                                    id={item.id}
+                                    id={item._id}
                                     title={item.title}
                                     description={item.description}
+                                    sectionApi={sectionApi}
                                 />
                             </Grid>
                         </Grid>

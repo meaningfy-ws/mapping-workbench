@@ -139,7 +139,7 @@ const Page = () => {
                                     id={item._id}
                                     title={item.title}
                                     description={item.description}
-                                    sectionApi={sectionApi.section}
+                                    sectionApi={sectionApi}
                                 />
                             </Grid>
                         </Grid>
