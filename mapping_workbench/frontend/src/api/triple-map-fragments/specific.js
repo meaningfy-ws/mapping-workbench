@@ -12,6 +12,8 @@ class SpecificTripleMapFragmentsApi extends TripleMapFragmentsApi {
 
     constructor() {
         super("specific_triple_map_fragments");
+        this.hasMappingPackage = true;
+        this.isMappingPackageRequired = this.hasMappingPackage && true;
     }
 
     async update_specific_mapping_package(mapping_package_id, triple_map_fragments) {

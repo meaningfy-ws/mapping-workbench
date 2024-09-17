@@ -33,7 +33,7 @@ import {useRouter} from 'src/hooks/use-router';
 import {RouterLink} from 'src/components/router-link';
 import turtleValidator from "src/utils/turtle-validator";
 import {FormTextField} from "src/components/app/form/text-field";
-import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
+import {toastError, toastLoad, toastSuccess, toastWarning} from "src/components/app-toast";
 import {FormCodeReadOnlyArea} from "src/components/app/form/code-read-only-area";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -52,6 +52,7 @@ export const EditForm = (props) => {
     const [selectedTree, setSelectedTree] = useState(tree?.[0]?.test_datas?.[0]?.test_data_id)
     const [testDataContent, setTestDataContent] = useState("")
     const [rdfResultContent, setRdfResultContent] = useState("")
+    const [hasRdfResult, setHasRdfResult] = useState(false)
     const [useThisTripleMap, setUseThisTripleMap] = useState(false)
 
     const [validation, setValidation] = useState({})
@@ -75,12 +76,17 @@ export const EditForm = (props) => {
             format: Yup
                 .string()
                 .max(255)
-                .required('Format is required')
+                .required('Format is required'),
+            mapping_package_id:
+                Yup
+                .string()
+                .required('Mapping Package is required'),
         }),
         onSubmit: async (values, helpers) => {
             const toastId = toastLoad("Updating...")
             try {
                 let response;
+                if (!values['mapping_package_id']) values['mapping_package_id'] = null;
                 values['project'] = sessionApi.getSessionProject();
                 if (itemctx.isNew) {
                     response = await sectionApi.createItem(values);
@@ -128,6 +134,7 @@ export const EditForm = (props) => {
     const onUpdateAndTransform = (values, helpers) => {
 
         values['project'] = sessionApi.getSessionProject();
+        if (!values['mapping_package_id']) values['mapping_package_id'] = null;
         values['id'] = item._id;
         formik.setSubmitting(true)
         const toastId = toastLoad("Updating Content")
@@ -149,7 +156,12 @@ export const EditForm = (props) => {
                 sectionApi.getTripleMapRdfResultContent(item._id, selectedTree, useThisTripleMap)
                     .then(res => {
                         setRdfResultContent(res.rdf_manifestation)
-                        toastSuccess('Transformed Successfully', toastId)
+                        setHasRdfResult(true);
+                        if (res.rdf_manifestation) {
+                            toastSuccess('Transformed Successfully', toastId)
+                        } else {
+                            toastWarning('Empty Result!', toastId)
+                        }
                     })
                     .catch(err => catchError(err))
                     .finally(() => formik.setSubmitting(false))
@@ -332,7 +344,7 @@ export const EditForm = (props) => {
                                         </AccordionDetails>
                                     </Accordion>
                                 </Grid>
-                                {!rdfResultContent && <>
+                                {hasRdfResult && !rdfResultContent && <>
                                     <Alert severity="warning" sx={{mt: 2}}>
                                         <AlertTitle></AlertTitle>
                                         Our service could not generate the RDF by using the provided resources.

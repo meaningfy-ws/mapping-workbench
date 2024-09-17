@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react';
+
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
@@ -17,6 +18,7 @@ import {shaclTestSuitesApi as sectionApi} from 'src/api/shacl-test-suites';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {FileCollectionListSearch} from 'src/sections/app/file-manager/file-collection-list-search';
 import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
+import {shaclTestFileResourcesApi as fileResourceApi} from 'src/api/shacl-test-suites/file-resources'
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -157,6 +159,7 @@ const Page = () => {
                         count={itemsStore.itemsCount}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
+                        fileResourceApi={fileResourceApi}
                         getItems={itemsStore.handleItemsGet}
                     />
                 </Card>
