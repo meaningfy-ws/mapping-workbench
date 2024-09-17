@@ -20,6 +20,8 @@ import {ListSearch} from "src/sections/app/generic-triple-map-fragment/list-sear
 import {ListTable} from "src/sections/app/generic-triple-map-fragment/list-table";
 import {useDialog} from "src/hooks/use-dialog";
 import {FileUploader} from "src/sections/app/generic-triple-map-fragment/file-uploader";
+import {useFormik} from "formik";
+import * as Yup from "yup";
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
@@ -169,6 +171,17 @@ const Page = () => {
 
     usePageView();
 
+    const uploadFormik = useFormik({
+        initialValues: {
+            mapping_package_id: ''
+        },
+        validationSchema: Yup.object({
+            mapping_package_id: Yup
+                    .string()
+                    .required('Mapping Package is required'),
+        })
+    });
+
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
@@ -249,6 +262,7 @@ const Page = () => {
                     onClose={uploadDialog.handleClose}
                     open={uploadDialog.open}
                     sectionApi={sectionApi}
+                    formik={uploadFormik}
                 />
             </Stack>
         </>

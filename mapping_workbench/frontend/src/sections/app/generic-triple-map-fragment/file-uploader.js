@@ -1,3 +1,4 @@
+import * as React from 'react';
 import {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 
@@ -16,12 +17,13 @@ import {sessionApi} from "../../../api/session";
 import {FileDropzone} from 'src/components/file-dropzone';
 import {useRouter} from 'src/hooks/use-router';
 import {Box} from "@mui/system";
+import {MappingPackageFormSelect} from "../mapping-package/components/mapping-package-form-select";
 
 
 export const FileUploader = (props) => {
     const router = useRouter();
 
-    const {onClose, open = false, collectionId, sectionApi} = props;
+    const {onClose, open = false, formik, sectionApi} = props;
 
     const defaultFormatValue = sectionApi.FILE_RESOURCE_DEFAULT_FORMAT;
 
@@ -37,10 +39,10 @@ export const FileUploader = (props) => {
     }, [open]);
 
     const getFileContent = (file) => new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = (event) => resolve(event.target.result);
-          reader.onerror = reject;
-          reader.readAsText(file);
+        const reader = new FileReader();
+        reader.onload = (event) => resolve(event.target.result);
+        reader.onerror = reject;
+        reader.readAsText(file);
     });
 
 
@@ -55,6 +57,10 @@ export const FileUploader = (props) => {
                         format: format,
                         triple_map_content: res,
                         project: sessionApi.getSessionProject()
+                    }
+
+                    if (sectionApi.hasMappingPackage && formik) {
+                        request.mapping_package_id = formik.values.mapping_package_id;
                     }
 
                     sectionApi.createItem(request)
@@ -84,20 +90,20 @@ export const FileUploader = (props) => {
     const handleRemoveAll = () => setFiles([]);
 
     const LinearProgressWithLabel = (props) => {
-       return (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Box sx={{ width: '100%', mr: 1 }}>
-                <LinearProgress variant="determinate"
-                                {...props} />
+        return (
+            <Box sx={{display: 'flex', alignItems: 'center'}}>
+                <Box sx={{width: '100%', mr: 1}}>
+                    <LinearProgress variant="determinate"
+                                    {...props} />
+                </Box>
+                <Box sx={{minWidth: 35}}>
+                    <Typography variant="body2"
+                                color="text.secondary">{`${Math.round(
+                        props.value,
+                    )}%`}</Typography>
+                </Box>
             </Box>
-                <Box sx={{ minWidth: 35 }}>
-                <Typography variant="body2"
-                            color="text.secondary">{`${Math.round(
-                  props.value,
-                )}%`}</Typography>
-            </Box>
-        </Box>
-       );
+        );
     }
 
     return (
@@ -164,6 +170,14 @@ export const FileUploader = (props) => {
                         ))}
                     </TextField>
                 )}
+                {sectionApi.hasMappingPackage && <>
+                    <MappingPackageFormSelect
+                        formik={formik}
+                        isRequired={sectionApi.isMappingPackageRequired ?? false}
+                        withDefaultPackage={true}
+                    />
+                    <Box sx={{mb: 3}}/>
+                </>}
                 <FileDropzone
                     accept={{'*/*': []}}
                     caption="Max file size is 3 MB"

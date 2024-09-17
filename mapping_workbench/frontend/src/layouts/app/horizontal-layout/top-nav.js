@@ -90,7 +90,7 @@ const useCssVars = (color) => {
                     };
                 } else {
                     return {
-                        '--nav-bg': theme.palette.neutral[50],
+                        '--nav-bg': theme.palette.neutral[100],
                         '--nav-color': theme.palette.text.primary,
                         '--nav-divider-color': theme.palette.neutral[200],
                         '--nav-border-color': theme.palette.divider,
