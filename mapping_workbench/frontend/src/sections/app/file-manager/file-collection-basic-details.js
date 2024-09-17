@@ -18,15 +18,13 @@ import {useRouter} from "../../../hooks/use-router";
 export const FileCollectionBasicDetails = (props) => {
   const { id, name, title, description, sectionApi, version, ...other } = props;
   const router = useRouter();
-  const section = props.sectionApi;
+  const section = sectionApi.section;
   let editCustomPathName = "";
   let deleteCutomPathName = "";
 
   //const itemctx = new ForListItemAction(id, testDataSuitesApi);
   let itemctx = {};
 
-  //console.log("section: ", section);
-  //console.log("ID: ", id);
   
   switch(section) {
             case 'test_data_suites':
