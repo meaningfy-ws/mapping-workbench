@@ -84,21 +84,12 @@ const CustomDocument = ({emotionStyleTags}) => {
             <body>
             <Main/>
             <NextScript/>
-            <Script data-jsd-embedded
-                style={{bottom:'65px',right:'65px'}}
+            <Script
+                data-jsd-embedded
                     strategy='beforeInteractive'
                     data-key="c21b4e36-189d-4126-8c8c-cff757a02d65"
                     data-base-url="https://jsd-widget.atlassian.com"
                     src="https://jsd-widget.atlassian.com/assets/embed.js"/>
-            <style jsx>{`
-                #jsd-widget {
-                    bottom: 66px !important;
-                    right: 75px !important;
-                    z-index: 1050 !important;
-                }`}
-            </style>
-
-
             </body>
         </Html>
     );
@@ -119,6 +110,7 @@ CustomDocument.getInitialProps = async (ctx) => {
         }
     });
 
+
     const initialProps = await Document.getInitialProps(ctx);
     const emotionStyles = extractCriticalToChunks(initialProps.html);
     const emotionStyleTags = emotionStyles.styles.map((style) => (
@@ -131,18 +123,11 @@ CustomDocument.getInitialProps = async (ctx) => {
     ));
 
 
-    const resss =
-        <style jsx>{`
-            #jsd-widget {
-                bottom: 100px !important;
-            }`}
-        </style>
-
     return {
         ...initialProps,
-        ...resss,
         emotionStyleTags
     };
 };
+
 
 export default CustomDocument;
