@@ -71,43 +71,6 @@ const useItemsSearch = () => {
     };
 };
 
-const useItemsStore = (id, searchState) => {
-    const isMounted = useMounted();
-    const [state, setState] = useState({
-        collection: {},
-        items: [],
-        itemsCount: 0
-    });
-
-    const handleItemsGet = useCallback(async () => {
-        try {
-            const response = await sectionApi.getFileResources(id, searchState);
-            const collection = await sectionApi.getItem(id);
-
-            if (isMounted()) {
-                setState({
-                    collection: collection,
-                    items: response.items,
-                    itemsCount: response.count
-                });
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    }, [searchState, isMounted]);
-
-    useEffect(() => {
-            handleItemsGet();
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState]);
-
-    return {
-        ...state
-    };
-};
-
-
 const useCurrentItem = (items, itemId) => {
     return useMemo(() => {
         if (!itemId) {
@@ -145,7 +108,7 @@ const Page = () => {
 
     const handleItemsGet = async () => {
         try {
-            const response = await sectionApi.getFileResources(id, itemsSearch);
+            const response = await sectionApi.getFileResources(id, itemsSearch.state);
             const collection = await sectionApi.getItem(id);
 
             setState({

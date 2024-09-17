@@ -167,15 +167,15 @@ export const useSections = () => {
                                     </SvgIcon>
                                 )
                             },
-                            {
-                                title: t(tokens.nav.detailed_view_cm),
-                                path: paths.app.conceptual_mapping_rules.groups.index,
-                                icon: (
-                                    <SvgIcon fontSize="small">
-                                        <SpeakerNotesIcon/>
-                                    </SvgIcon>
-                                )
-                            }
+                            // {
+                            //     title: t(tokens.nav.detailed_view_cm),
+                            //     path: paths.app.conceptual_mapping_rules.groups.index,
+                            //     icon: (
+                            //         <SvgIcon fontSize="small">
+                            //             <SpeakerNotesIcon/>
+                            //         </SvgIcon>
+                            //     )
+                            // }
                         ]
                     }]
             }

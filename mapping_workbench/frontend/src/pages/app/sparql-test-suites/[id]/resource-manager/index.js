@@ -52,6 +52,8 @@ const useItemsSearch = () => {
             ...prevState,
             page
         }));
+
+
     }
 
     const handleRowsPerPageChange = event => {
@@ -107,7 +109,7 @@ const Page = () => {
 
     const handleItemsGet = async () => {
         try {
-            const response = await sectionApi.getFileResources(id, itemsSearch);
+            const response = await sectionApi.getFileResources(id, itemsSearch.state);
             const collection = await sectionApi.getItem(id);
 
             setState({

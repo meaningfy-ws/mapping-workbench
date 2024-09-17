@@ -84,12 +84,12 @@ const CustomDocument = ({emotionStyleTags}) => {
             <body>
             <Main/>
             <NextScript/>
-            <Script
-                data-jsd-embedded
+            <Script data-jsd-embedded
                     strategy='beforeInteractive'
                     data-key="c21b4e36-189d-4126-8c8c-cff757a02d65"
                     data-base-url="https://jsd-widget.atlassian.com"
-                    src="https://jsd-widget.atlassian.com/assets/embed.js"/>
+                    src="https://jsd-widget.atlassian.com/assets/embed.js"
+            />
             </body>
         </Html>
     );
