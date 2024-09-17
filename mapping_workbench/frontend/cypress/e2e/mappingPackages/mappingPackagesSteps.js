@@ -69,7 +69,7 @@ Then('I enter name and id', () => {
 
 Then('I click on submit button', () => {
     cy.intercept('POST', appURLPrefix + 'mapping_packages',).as('create')
-    cy.get('button[type=submit]').click()
+    cy.get('button[type=submit]').click("right")
 })
 
 Then('I get success create', () => {
