@@ -1,16 +1,16 @@
+import {useEffect} from "react";
 import PropTypes from 'prop-types';
+
 import Settings03Icon from '@untitled-ui/icons-react/build/esm/Settings03';
 import Box from '@mui/material/Box';
-import ButtonBase from '@mui/material/ButtonBase';
 import SvgIcon from '@mui/material/SvgIcon';
 import Tooltip from '@mui/material/Tooltip';
 import {useTheme} from "@mui/material/styles";
-import {useEffect} from "react";
+import ButtonBase from '@mui/material/ButtonBase';
 
 export const SettingsButton = (props) => {
     const theme = useTheme()
     useEffect(() => {
-        console.log(theme)
         const widget = document.querySelector('#jsd-widget')
         widget.contentDocument.body.style = `background-color:transparent;`
         widget.style = 'left: 32px; bottom:65px; position:fixed; border:none; z-index:1210; background-color:transparent'
