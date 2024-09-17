@@ -106,7 +106,7 @@ const Page = () => {
 
     const handleItemsGet = async () => {
         try {
-            const response = await sectionApi.getFileResources(id, state);
+            const response = await sectionApi.getFileResources(id, itemsSearch.state);
             const collection = await sectionApi.getItem(id);
 
                 setState({

@@ -57,8 +57,9 @@ export const ItemSearch = (props) => {
         direction="row"
         gap={2}
         sx={{ p: 2 }}
+        justifyContent="flex-end"
       >
-        <Box
+        {false && <Box
           component="form"
           onSubmit={handleQueryChange}
           sx={{ flexGrow: 1 }}
@@ -77,7 +78,7 @@ export const ItemSearch = (props) => {
               </InputAdornment>
             )}
           />
-        </Box>
+        </Box>}
         <ToggleButtonGroup
           exclusive
           onChange={handleViewChange}
@@ -109,7 +110,7 @@ export const ItemSearch = (props) => {
             </SvgIcon>
           </ToggleButton>
         </ToggleButtonGroup>
-        <TextField
+        {false && <TextField
           label="Sort By"
           name="sort"
           onChange={handleSortChange}
@@ -125,7 +126,7 @@ export const ItemSearch = (props) => {
               {option.label}
             </option>
           ))}
-        </TextField>
+        </TextField>}
       </Stack>
     </Card>
   );
