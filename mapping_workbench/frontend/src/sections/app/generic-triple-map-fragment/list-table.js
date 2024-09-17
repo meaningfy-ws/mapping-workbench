@@ -1,4 +1,4 @@
-import {Fragment, useState} from 'react';
+import {Fragment, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
@@ -28,6 +28,7 @@ import {turtle} from 'codemirror-lang-turtle';
 import {yaml} from '@codemirror/lang-yaml';
 import {basicSetup} from '@uiw/codemirror-extensions-basic-setup';
 import {Box} from "@mui/system";
+import {mappingPackagesApi} from "../../../api/mapping-packages";
 
 
 export const ListTable = (props) => {
@@ -65,6 +66,25 @@ export const ListTable = (props) => {
         )
     }
 
+    const [projectMappingPackages, setProjectMappingPackages] = useState([]);
+
+    useEffect(() => {
+        mappingPackagesApi.getProjectPackages()
+            .then(res => setProjectMappingPackages(res))
+            .catch(err => console.warn(err))
+    }, [])
+
+    const [projectMappingPackagesMap, setProjectMappingPackagesMap] = useState({});
+
+    useEffect(() => {
+        (() => {
+            setProjectMappingPackagesMap(projectMappingPackages.reduce((a, b) => {
+                a[b['id']] = b['title'];
+                return a
+            }, {}));
+        })()
+    }, [projectMappingPackages])
+
     return (
         <div>
             <TablePagination
@@ -85,6 +105,9 @@ export const ListTable = (props) => {
                                 <TableCell/>
                                 <TableCell width="25%">
                                     <SorterHeader fieldName="triple_map_uri" title="URI"/>
+                                </TableCell>
+                                <TableCell>
+                                    Package
                                 </TableCell>
                                 <TableCell align="left">
                                     <SorterHeader fieldName="created_at" title="Created"/>
@@ -135,6 +158,9 @@ export const ListTable = (props) => {
                                                 <Typography variant="subtitle2">
                                                     {item.triple_map_uri}
                                                 </Typography>
+                                            </TableCell>
+                                            <TableCell>
+                                                {item.mapping_package_id && projectMappingPackagesMap[item.mapping_package_id]}
                                             </TableCell>
                                             <TableCell align="left">
                                                 {timeTransformer(item.created_at, timeSetting)}
