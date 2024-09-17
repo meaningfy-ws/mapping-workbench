@@ -36,7 +36,7 @@ export const ItemListRow = (props) => {
     return (
         <>
             <TableRow
-                key={item.id}
+                key={item._id}
                 sx={{
                     backgroundColor: 'transparent',
                     borderRadius: 1.5,

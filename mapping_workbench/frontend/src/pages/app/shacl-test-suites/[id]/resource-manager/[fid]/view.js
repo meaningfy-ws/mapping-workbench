@@ -1,8 +1,6 @@
 import {useCallback, useState} from 'react';
 import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
-import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Unstable_Grid2';
 import Link from '@mui/material/Link';
@@ -137,9 +135,10 @@ const Page = () => {
                                 lg={12}
                             >
                                 <FileCollectionBasicDetails
-                                    id={item.id}
+                                    id={item._id}
                                     title={item.title}
                                     description={item.description}
+                                    sectionApi={sectionApi}
                                 />
                             </Grid>
                         </Grid>

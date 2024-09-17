@@ -222,7 +222,7 @@ const Page = () => {
                             <FileResourceCollectionsCard
                                 collectionApi={testDataSuitesApi}
                                 filters={{
-                                    mapping_package_id: item.id
+                                    mapping_package_id: item._id
                                 }}
                             />
                             <Divider sx={{m: 3}}/>

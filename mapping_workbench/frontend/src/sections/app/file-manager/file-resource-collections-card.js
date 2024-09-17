@@ -22,7 +22,6 @@ import {tokens} from "../../../locales/tokens";
 export const FileResourceCollectionsCard = (props) => {
     const {collectionApi, filters = {}, ...other} = props;
     const {t} = useTranslation();
-
     const collectionTitle = t(tokens.nav[collectionApi.section]);
     const collectionPath = paths.app[collectionApi.section].index;
 
