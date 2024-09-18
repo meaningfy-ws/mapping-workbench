@@ -63,7 +63,7 @@ const Page = () => {
                                 <ArrowLeftIcon/>
                             </SvgIcon>
                             <Typography variant="subtitle2">
-                                {sectionApi.SECTION_TITLE}
+                                Ontology Terms
                             </Typography>
                         </Link>
                     </div>
