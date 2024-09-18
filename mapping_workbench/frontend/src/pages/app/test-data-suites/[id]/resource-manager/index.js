@@ -133,7 +133,7 @@ const Page = () => {
                 >
                     <Stack spacing={1}>
                         <Typography variant="h4">
-                            Resource Manager
+                            {`Resource Manager: ${state.collection.title}`}
                         </Typography>
 
                         <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
