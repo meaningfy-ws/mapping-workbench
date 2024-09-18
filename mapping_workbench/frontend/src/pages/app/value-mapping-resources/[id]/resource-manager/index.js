@@ -190,6 +190,7 @@ const Page = () => {
                         </Button>
                     </Stack>
                 </Stack>
+
                 <Stack spacing={{xs: 3, lg: 4}}>
                     <ItemSearch
                         onFiltersChange={itemsSearch.handleFiltersChange}
