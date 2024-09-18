@@ -1,26 +1,25 @@
-import {useCallback, useState} from 'react';
+import {useState} from 'react';
+
 import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
-import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
-import Container from '@mui/material/Container';
-import Divider from '@mui/material/Divider';
-import Grid from '@mui/material/Unstable_Grid2';
-import Link from '@mui/material/Link';
-import Stack from '@mui/material/Stack';
-import SvgIcon from '@mui/material/SvgIcon';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
+import Link from '@mui/material/Link';
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
+import Divider from '@mui/material/Divider';
+import SvgIcon from '@mui/material/SvgIcon';
+import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 
-import {ontologyNamespacesApi as sectionApi} from 'src/api/ontology-namespaces';
-import {RouterLink} from 'src/components/router-link';
-import {Seo} from 'src/components/seo';
-import {usePageView} from 'src/hooks/use-page-view';
-import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
-import {BasicDetails} from 'src/sections/app/ontology-namespace/basic-details';
+import {Seo} from 'src/components/seo';
 import {useRouter} from "src/hooks/use-router";
+import {Layout as AppLayout} from 'src/layouts/app';
+import {usePageView} from 'src/hooks/use-page-view';
+import {RouterLink} from 'src/components/router-link';
 import {useItem} from "src/contexts/app/section/for-item-data-state";
+import {ontologyNamespacesApi as sectionApi} from 'src/api/ontology-namespaces';
+import {BasicDetails} from 'src/sections/app/ontology-namespace/basic-details';
 
 const tabs = [
     {label: 'Details', value: 'details'}
@@ -28,23 +27,17 @@ const tabs = [
 
 const Page = () => {
     const router = useRouter();
-    if (!router.isReady) return;
+    const [currentTab, setCurrentTab] = useState('details');
 
+    usePageView();
     const {id} = router.query;
-
-    if (!id) {
-        return;
-    }
 
     const formState = useItem(sectionApi, id);
     const item = formState.item;
 
-    usePageView();
-    const [currentTab, setCurrentTab] = useState('details');
-
-    const handleTabsChange = useCallback((event, value) => {
+    const handleTabsChange = (event, value) => {
         setCurrentTab(value);
-    }, []);
+    }
 
     if (!item) {
         return;
@@ -59,7 +52,7 @@ const Page = () => {
                         <Link
                             color="text.primary"
                             component={RouterLink}
-                            href={paths.app[sectionApi.section].index}
+                            href={paths.app.ontology_terms.index}
                             sx={{
                                 alignItems: 'center',
                                 display: 'inline-flex'
@@ -115,7 +108,7 @@ const Page = () => {
                             value={currentTab}
                             variant="scrollable"
                         >
-                            {tabs.map((tab) => (
+                            {tabs.map(tab => (
                                 <Tab
                                     key={tab.value}
                                     label={tab.label}
