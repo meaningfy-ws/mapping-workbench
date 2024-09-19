@@ -4,44 +4,45 @@ import parse from 'html-react-parser';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
 
-import Button from '@mui/material/Button';
+import Box from "@mui/system/Box";
 import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
-import Grid from '@mui/material/Unstable_Grid2';
+import Radio from "@mui/material/Radio";
 import Stack from '@mui/material/Stack';
 import Alert from "@mui/material/Alert";
-import Divider from "@mui/material/Divider";
-import TextField from "@mui/material/TextField";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Box from "@mui/system/Box";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Radio from "@mui/material/Radio";
-import Typography from "@mui/material/Typography";
 import Switch from "@mui/material/Switch";
+import Button from '@mui/material/Button';
+import Divider from "@mui/material/Divider";
+import MenuItem from "@mui/material/MenuItem";
+import TextField from "@mui/material/TextField";
+import Grid from '@mui/material/Unstable_Grid2';
+import CardHeader from '@mui/material/CardHeader';
+import Typography from "@mui/material/Typography";
+import RadioGroup from "@mui/material/RadioGroup";
+import CardContent from '@mui/material/CardContent';
+import FormControl from "@mui/material/FormControl";
 import Autocomplete from "@mui/material/Autocomplete";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import {paths} from 'src/paths';
+import {sessionApi} from "src/api/session";
 import {useRouter} from 'src/hooks/use-router';
 import {RouterLink} from 'src/components/router-link';
-import {FormTextField} from "../../../components/app/form/text-field";
-import {sessionApi} from "../../../api/session";
-import {MappingPackageCheckboxList} from "../mapping-package/components/mapping-package-checkbox-list";
-import {fieldsRegistryApi} from "../../../api/fields-registry";
-import {genericTripleMapFragmentsApi} from "../../../api/triple-map-fragments/generic";
-import {sparqlTestFileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
-import {ListSelectorSelect as ResourceListSelector} from "../../../components/app/list-selector/select";
-import {COMMENT_PRIORITY} from "../../../api/conceptual-mapping-rules";
-import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
+import {fieldsRegistryApi} from "src/api/fields-registry";
+import {FormTextField} from "src/components/app/form/text-field";
+import {COMMENT_PRIORITY} from "src/api/conceptual-mapping-rules";
+import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
+import {genericTripleMapFragmentsApi} from "src/api/triple-map-fragments/generic";
+import {sparqlTestFileResourcesApi} from "src/api/sparql-test-suites/file-resources";
+import {ListSelectorSelect as ResourceListSelector} from "src/components/app/list-selector/select";
 
+import {MappingPackageCheckboxList} from "src/sections/app/mapping-package/components/mapping-package-checkbox-list";
 import {TermValidityInfo} from "./term-validity";
 
-const RuleComment = (props) => {
-    const {formik, fieldName, idx, handleDelete, ...other} = props;
+const RuleComment = ({formik, fieldName, idx, handleDelete, ...other}) => {
 
     const comment = formik.values[fieldName][idx];
+
     let severity;
     switch (comment.priority) {
         case COMMENT_PRIORITY.HIGH:
@@ -109,16 +110,57 @@ export const EditForm = (props) => {
         const [targetClassPathValidityInfo, setTargetClassPathValidityInfo] = useState("");
         const [targetClassPathTermsValidityInfo, setTargetClassPathTermsValidityInfo] = useState([]);
 
+        const [isProjectDataReady, setIsProjectDataReady] = useState(0);
+
+        const [prefixedTerms, setPrefixedTerms] = useState([]);
+        const [projectSourceStructuralElements, setProjectSourceStructuralElements] = useState([]);
+        const [projectTripleMapFragments, setProjectTripleMapFragments] = useState([]);
+        const [projectSPARQLResources, setProjectSPARQLResources] = useState([]);
+
+        useEffect(() => {
+            checkTermsValidity('target_property_path', formik.values.target_property_path, false)
+            checkTermsValidity('target_class_path', formik.values.target_class_path, false)
+
+            sectionApi.getPrefixedTerms()
+                .then(res => setPrefixedTerms(res))
+                .catch(err => console.error(err))
+
+            fieldsRegistryApi.getStructuralElementsForSelector()
+                .then(res => {
+                    setProjectSourceStructuralElements(res)
+                    setIsProjectDataReady(e => e++)
+                })
+                .catch(err => console.error(err))
+
+            genericTripleMapFragmentsApi.getValuesForSelector()
+                .then(res => {
+                    setProjectTripleMapFragments(res)
+                    setIsProjectDataReady(e => e++)
+
+                })
+                .catch(err => console.error(err))
+
+            sparqlTestFileResourcesApi.getMappingRuleSPARQLAssertions()
+                .then(res => {
+                    setProjectSPARQLResources(res)
+                    setIsProjectDataReady(e => e++)
+                })
+                .catch(err => console.error(err))
+        }, [])
+
+
         const checkTermsValidity = (elName, value, hasNotification = true) => {
             const checkTermsValidityOnSuccess = (termsValidity) => {
                 let validityInfo = value;
-                for (let termValidity of termsValidity) {
-                    let color = termValidity.is_valid ? 'green' : 'red'
-                    validityInfo = validityInfo.replace(
-                        new RegExp(`\\b${termValidity.term}\\b`, 'g'),
-                        `<b style="color: ${color}">${termValidity.term}</b>`
-                    )
-                }
+                termsValidity.forEach(termValidity => {
+                        const color = termValidity.is_valid ? 'green' : 'red'
+                        validityInfo = validityInfo.replace(
+                            new RegExp(`\\b${termValidity.term}\\b`, 'g'),
+                            `<b style="color: ${color}">${termValidity.term}</b>`
+                        )
+                    }
+                )
+
                 switch (elName) {
                     case 'target_property_path':
                         setTargetPropertyPathValidityInfo(validityInfo)
@@ -129,6 +171,7 @@ export const EditForm = (props) => {
                         setTargetClassPathTermsValidityInfo(termsValidity)
                         break;
                 }
+
             }
             const checkTermsValidityPromise = sectionApi.checkTermsValidity(value);
             if (hasNotification) {
@@ -145,13 +188,12 @@ export const EditForm = (props) => {
             }
         }
 
-        const initComment = () => {
-            return {
-                title: '',
-                comment: '',
-                priority: COMMENT_PRIORITY.NORMAL
-            }
+        const initComment = {
+            title: '',
+            comment: '',
+            priority: COMMENT_PRIORITY.NORMAL
         }
+
 
         const initialValues = {
             source_structural_element: item.source_structural_element?.id ?? '',
@@ -167,9 +209,9 @@ export const EditForm = (props) => {
             mapping_notes: item.mapping_notes ?? [],
             editorial_notes: item.editorial_notes ?? [],
             feedback_notes: item.feedback_notes ?? [],
-            mapping_note: initComment(),
-            editorial_note: initComment(),
-            feedback_note: initComment()
+            mapping_note: initComment,
+            editorial_note: initComment,
+            feedback_note: initComment
         };
 
         const formik = useFormik({
@@ -216,13 +258,12 @@ export const EditForm = (props) => {
                             });
                         } else if (itemctx.isStateable) {
                             itemctx.setState(response);
-                            formik.values.mapping_note = initComment();
-                            formik.values.editorial_note = initComment();
-                            formik.values.feedback_note = initComment();
+                            formik.values.mapping_note = initComment;
+                            formik.values.editorial_note = initComment;
+                            formik.values.feedback_note = initComment;
                         }
                     }
                 } catch (err) {
-                    console.error(err);
                     toastError(err, toastId);
                     helpers.setStatus({success: false});
                     helpers.setErrors({submit: err.message});
@@ -241,16 +282,9 @@ export const EditForm = (props) => {
             formik.setFieldValue('triple_map_fragment', value);
         }
 
-        const sparqlResourcesForSelector = function (filters = {}) {
-            return sparqlTestFileResourcesApi.getMappingRuleSPARQLAssertions(filters);
-        }
+        const sparqlResourcesForSelector = (filters = {}) => sparqlTestFileResourcesApi.getMappingRuleSPARQLAssertions(filters);
 
-        useEffect(() => {
-            checkTermsValidity('target_property_path', formik.values.target_property_path, false)
-            checkTermsValidity('target_class_path', formik.values.target_class_path, false)
-        }, [])
-
-        const handleCloneAction = async () => {
+        const handleCloneAction = () => {
             const toastId = toastLoad('Cloning rule ... ')
             sectionApi.cloneItem(item._id)
                 .then(res => {
@@ -272,23 +306,14 @@ export const EditForm = (props) => {
         const hasTargetPropertyPathValidityErrors = targetPropertyPathTermsValidityInfo.some(x => !x.is_valid);
         const hasTargetClassPathValidityErrors = targetClassPathTermsValidityInfo.some(x => !x.is_valid);
 
-        const [prefixedTerms, setPrefixedTerms] = useState([]);
-        useEffect(() => {
-            (async () => {
-                setPrefixedTerms(await sectionApi.getPrefixedTerms());
-            })()
-        }, [sectionApi])
 
         const filterTerms = (options, {inputValue}) => {
             const lastTerm = inputValue.split(' ').pop();
-            let terms = [];
-            if (lastTerm && lastTerm.length >= 3) {
+            if (lastTerm?.length >= 3) {
                 const regex = new RegExp(`${lastTerm}`, 'i');
-                terms = options.filter(function (term) {
-                    return regex.test(term);
-                });
+                return options.filter(term => regex.test(term));
             }
-            return terms;
+            return [];
         }
 
         const onTermsInputChange = (event, term, formik, fieldName) => {
@@ -300,22 +325,8 @@ export const EditForm = (props) => {
             }
         }
 
-        const [isProjectDataReady, setIsProjectDataReady] = useState(false);
 
-        const [projectSourceStructuralElements, setProjectSourceStructuralElements] = useState([]);
-        const [projectTripleMapFragments, setProjectTripleMapFragments] = useState([]);
-        const [projectSPARQLResources, setProjectSPARQLResources] = useState([]);
-
-        useEffect(() => {
-            (async () => {
-                setProjectSourceStructuralElements(await fieldsRegistryApi.getStructuralElementsForSelector());
-                setProjectTripleMapFragments(await genericTripleMapFragmentsApi.getValuesForSelector());
-                setProjectSPARQLResources(await sparqlTestFileResourcesApi.getMappingRuleSPARQLAssertions());
-                setIsProjectDataReady(true);
-            })()
-        }, [])
-
-        if (!isProjectDataReady) return null;
+        if (isProjectDataReady >= 3) return <CircularProgress/>;
 
         return (
             <form onSubmit={formik.handleSubmit}
@@ -337,12 +348,6 @@ export const EditForm = (props) => {
                                                name="max_sdk_version"
                                                label="Max XSD Version"/>
                             </Grid>
-                            {/*<Grid xs={12}*/}
-                            {/*      md={12}>*/}
-                            {/*    <FormTextField formik={formik}*/}
-                            {/*                   name="mapping_group_id"*/}
-                            {/*                   label="Mapping Group ID"/>*/}
-                            {/*</Grid>*/}
                             <Grid xs={12}
                                   md={12}>
                                 <FormTextField formik={formik}
@@ -461,10 +466,10 @@ export const EditForm = (props) => {
                                         value={formik.values.source_structural_element}
                                     >
                                         <MenuItem value={null}>&nbsp;</MenuItem>
-                                        {projectSourceStructuralElements.map((x) => (
-                                            <MenuItem key={x.id}
-                                                      value={x.id}>{x.label}</MenuItem>
-                                        ))}
+                                        {projectSourceStructuralElements?.map(e =>
+                                            <MenuItem key={e.id}
+                                                      value={e.id}>{e.label}</MenuItem>
+                                        )}
                                     </TextField>
                                 </FormControl>
                             </Grid>
@@ -487,10 +492,10 @@ export const EditForm = (props) => {
                                         value={formik.values.triple_map_fragment}
                                     >
                                         <MenuItem value={null}>&nbsp;</MenuItem>
-                                        {projectTripleMapFragments.map((x) => (
-                                            <MenuItem key={x.id}
-                                                      value={x.id}>{x.uri}</MenuItem>
-                                        ))}
+                                        {projectTripleMapFragments?.map(e =>
+                                            <MenuItem key={e.id}
+                                                      value={e.id}>{e.uri}</MenuItem>
+                                        )}
                                     </TextField>
                                 </FormControl>
                             </Grid>
@@ -547,11 +552,11 @@ export const EditForm = (props) => {
                     <CardContent sx={{pt: 0}}>
                         {showMappingNotes && <>
                             {formik.values.mapping_notes.map(
-                                (mapping_note, idx) => <RuleComment
-                                    key={idx}
+                                (mapping_note, id) => <RuleComment
+                                    key={id}
                                     formik={formik}
                                     fieldName="mapping_notes"
-                                    idx={idx}
+                                    idx={id}
                                     handleDelete={handleDeleteComment}
                                 />
                             )}
@@ -647,7 +652,7 @@ export const EditForm = (props) => {
                                 control={
                                     <Switch
                                         checked={showEditorialNotes}
-                                        onChange={(e) => setShowEditorialNotes(e.target.checked)}
+                                        onChange={e => setShowEditorialNotes(e.target.checked)}
                                     />
                                 }
                                 label={`Editorial Notes (${formik.values.editorial_notes.length})`}
@@ -757,7 +762,7 @@ export const EditForm = (props) => {
                                 control={
                                     <Switch
                                         checked={showFeedbackNotes}
-                                        onChange={(e) => setShowFeedbackNotes(e.target.checked)}
+                                        onChange={e => setShowFeedbackNotes(e.target.checked)}
                                     />
                                 }
                                 label={`Feedback Notes (${formik.values.feedback_notes.length})`}
@@ -767,9 +772,9 @@ export const EditForm = (props) => {
                     <CardContent sx={{pt: 0}}>
                         {showFeedbackNotes && <>
                             {formik.values.feedback_notes.map(
-                                (feedback_note, idx) => <RuleComment
-                                    key={idx}
-                                    idx={idx}
+                                (feedback_note, id) => <RuleComment
+                                    key={id}
+                                    idx={id}
                                     formik={formik}
                                     fieldName="feedback_notes"
                                     handleDelete={handleDeleteComment}
@@ -785,7 +790,7 @@ export const EditForm = (props) => {
                                 defaultValue={COMMENT_PRIORITY.NORMAL}
                                 name="feedback_note[priority]"
                                 spacing={3}
-                                onChange={(e) => {
+                                onChange={e => {
                                     formik.setFieldValue('feedback_note[priority]', e.target.value);
                                 }}
                             >
@@ -898,8 +903,7 @@ export const EditForm = (props) => {
                     </Stack>
                 </Card>
             </form>
-        )
-            ;
+        );
     }
 ;
 

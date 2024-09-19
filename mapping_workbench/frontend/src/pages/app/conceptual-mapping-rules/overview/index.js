@@ -111,13 +111,6 @@ const Page = () => {
 
     usePageView();
 
-    const [sortDir, setSortDir] = useState('desc');
-    const [sortField, setSortField] = useState('1');
-
-    const handleSort = () => {
-        setSortDir(prevState => prevState === 'asc' ? 'desc' : 'asc');
-    }
-
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
