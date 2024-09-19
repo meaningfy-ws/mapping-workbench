@@ -1,35 +1,33 @@
 import {Fragment, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
-import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
-import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
-import CardContent from '@mui/material/CardContent';
-import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
-import SvgIcon from '@mui/material/SvgIcon';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Typography from '@mui/material/Typography';
-
-
-import {Scrollbar} from 'src/components/scrollbar';
-import {ListItemActions} from 'src/components/app/list/list-item-actions';
-
-import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import TablePagination from "../../components/table-pagination";
-import timeTransformer from "../../../utils/time-transformer";
-import {useGlobalState} from "../../../hooks/use-global-state";
-import TableSorterHeader from "../../components/table-sorter-header";
-
 import CodeMirror from '@uiw/react-codemirror';
+import {basicSetup} from '@uiw/codemirror-extensions-basic-setup';
 import {turtle} from 'codemirror-lang-turtle';
 import {yaml} from '@codemirror/lang-yaml';
-import {basicSetup} from '@uiw/codemirror-extensions-basic-setup';
-import {Box} from "@mui/system";
-import {mappingPackagesApi} from "../../../api/mapping-packages";
 
+import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
+import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight'
+
+import {Box} from "@mui/system";
+import Grid from '@mui/material/Grid';
+import Table from '@mui/material/Table';
+import SvgIcon from '@mui/material/SvgIcon';
+import TableRow from '@mui/material/TableRow';
+import TableHead from '@mui/material/TableHead';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import CardContent from '@mui/material/CardContent';
+
+import {Scrollbar} from 'src/components/scrollbar';
+import timeTransformer from "src/utils/time-transformer";
+import {useGlobalState} from "src/hooks/use-global-state";
+import {mappingPackagesApi} from "src/api/mapping-packages";
+import TablePagination from "src/sections/components/table-pagination";
+import {ListItemActions} from 'src/components/app/list/list-item-actions';
+import TableSorterHeader from "src/sections/components/table-sorter-header";
+import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 
 export const ListTable = (props) => {
     const {
@@ -46,10 +44,7 @@ export const ListTable = (props) => {
         sectionApi
     } = props;
 
-    // const syntaxFormat = {YAML: 'yaml', TTL: 'turtle'}
-
     const lng = {TTL: {mode: 'text/turtle', extension: turtle}, YAML: {mode: 'text/yaml', extension: yaml}}
-
 
     const [currentItem, setCurrentItem] = useState(null);
     const {timeSetting} = useGlobalState()
@@ -71,18 +66,16 @@ export const ListTable = (props) => {
     useEffect(() => {
         mappingPackagesApi.getProjectPackages()
             .then(res => setProjectMappingPackages(res))
-            .catch(err => console.warn(err))
+            .catch(err => console.error(err))
     }, [])
 
     const [projectMappingPackagesMap, setProjectMappingPackagesMap] = useState({});
 
     useEffect(() => {
-        (() => {
             setProjectMappingPackagesMap(projectMappingPackages.reduce((a, b) => {
                 a[b['id']] = b['title'];
                 return a
             }, {}));
-        })()
     }, [projectMappingPackages])
 
     return (
@@ -104,13 +97,15 @@ export const ListTable = (props) => {
                             <TableRow>
                                 <TableCell/>
                                 <TableCell width="25%">
-                                    <SorterHeader fieldName="triple_map_uri" title="URI"/>
+                                    <SorterHeader fieldName="triple_map_uri"
+                                                  title="URI"/>
                                 </TableCell>
                                 <TableCell>
                                     Package
                                 </TableCell>
                                 <TableCell align="left">
-                                    <SorterHeader fieldName="created_at" title="Created"/>
+                                    <SorterHeader fieldName="created_at"
+                                                  title="Created"/>
                                 </TableCell>
                                 <TableCell align="right">
                                     Actions
@@ -118,7 +113,7 @@ export const ListTable = (props) => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {items.map((item) => {
+                            {items.map(item => {
                                 const item_id = item._id;
                                 const isCurrent = item_id === currentItem;
 

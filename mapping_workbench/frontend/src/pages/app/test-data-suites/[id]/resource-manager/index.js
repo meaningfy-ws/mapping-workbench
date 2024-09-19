@@ -1,26 +1,29 @@
 import {useEffect, useMemo, useState} from 'react';
 
-import Upload01Icon from '@untitled-ui/icons-react/build/esm/Upload01';
 import Plus from '@untitled-ui/icons-react/build/esm/Plus';
-import Button from '@mui/material/Button';
-import Grid from '@mui/material/Unstable_Grid2';
+import Upload01Icon from '@untitled-ui/icons-react/build/esm/Upload01';
+
+import Link from "@mui/material/Link";
 import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
+import Breadcrumbs from "@mui/material/Breadcrumbs";
 
-import {testDataSuitesApi as sectionApi} from 'src/api/test-data-suites';
-import {testDataFileResourcesApi as fileResourcesApi} from 'src/api/test-data-suites/file-resources';
+import {paths} from "src/paths";
 import {Seo} from 'src/components/seo';
 import {useDialog} from 'src/hooks/use-dialog';
-import {usePageView} from 'src/hooks/use-page-view';
-import {Layout as AppLayout} from 'src/layouts/app';
-import {FileUploader} from 'src/sections/app/file-manager/file-uploader';
-import {ItemDrawer} from 'src/sections/app/file-manager/item-drawer';
-import {ItemList} from 'src/sections/app/file-manager/item-list';
-import {ItemSearch} from 'src/sections/app/file-manager/item-search';
 import {useRouter} from "src/hooks/use-router";
-import {paths} from "../../../../../paths";
-import Link from "next/link";
+import {Layout as AppLayout} from 'src/layouts/app';
+import {usePageView} from 'src/hooks/use-page-view';
+import {RouterLink} from "src/components/router-link";
+import {ItemList} from 'src/sections/app/file-manager/item-list';
+import {ItemDrawer} from 'src/sections/app/file-manager/item-drawer';
+import {ItemSearch} from 'src/sections/app/file-manager/item-search';
+import {testDataSuitesApi as sectionApi} from 'src/api/test-data-suites';
+import {FileUploader} from 'src/sections/app/file-manager/file-uploader';
+import {BreadcrumbsSeparator} from "src/components/breadcrumbs-separator";
+import {testDataFileResourcesApi as fileResourcesApi} from 'src/api/test-data-suites/file-resources';
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -101,19 +104,19 @@ const Page = () => {
 
     useEffect(() => {
         id && handleItemsGet();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[itemsSearch.state, id]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [itemsSearch.state, id]);
 
     const handleItemsGet = async () => {
         try {
             const response = await sectionApi.getFileResources(id, itemsSearch.state);
             const collection = await sectionApi.getItem(id);
 
-                setState({
-                    collection: collection,
-                    items: response.items,
-                    itemsCount: response.count
-                });
+            setState({
+                collection: collection,
+                items: response.items,
+                itemsCount: response.count
+            });
         } catch (err) {
             console.error(err);
         }
@@ -122,93 +125,96 @@ const Page = () => {
     return (
         <>
             <Seo title="App: Resource Manager"/>
+            <Stack spacing={4}>
+                <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    spacing={4}
+                >
+                    <Stack spacing={1}>
+                        <Typography variant="h4">
+                            {`Resource Manager: ${state.collection.title}`}
+                        </Typography>
 
-            <Grid
-                container
-                spacing={{
-                    xs: 3,
-                    lg: 4
-                }}
-            >
-                <Grid xs={12}>
-                    <Stack
-                        direction="row"
-                        justifyContent="space-between"
-                        spacing={4}
-                    >
-                        <div>
-                            <Typography variant="h4">
-                                {state.collection.title}
-                            </Typography>
-                            <Typography variant="h5">
+                        <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
+                            <Link
+                                color="text.primary"
+                                component={RouterLink}
+                                href={paths.index}
+                                variant="subtitle2"
+                            >
+                                App
+                            </Link>
+                            <Link
+                                color="text.primary"
+                                component={RouterLink}
+                                href={paths.app.test_data_suites.index}
+                                variant="subtitle2"
+                            >
+                                {sectionApi.SECTION_TITLE}
+                            </Link>
+                            <Typography
+                                color="text.secondary"
+                                variant="subtitle2"
+                            >
                                 Resource Manager
                             </Typography>
-                        </div>
-                        <Stack
-                            alignItems="center"
-                            direction="row"
-                            spacing={2}
-                        >
-                            <Button
-                                onClick={uploadDialog.handleOpen}
-                                startIcon={(
-                                    <SvgIcon>
-                                        <Upload01Icon/>
-                                    </SvgIcon>
-                                )}
-                                variant="contained"
-                            >
-                                Upload
-                            </Button>
-                            <Button
-                                component={Link}
-                                href={paths.app[sectionApi.section].resource_manager.create.replace('[id]', id)}
-                                startIcon={(
-                                    <SvgIcon>
-                                        <Plus/>
-                                    </SvgIcon>
-                                )}
-                                variant="contained"
-                            >
-                                Add
-                            </Button>
-                        </Stack>
+                        </Breadcrumbs>
                     </Stack>
-                </Grid>
-                <Grid
-                    xs={12}
-                    md={12}
-                >
                     <Stack
-                        spacing={{
-                            xs: 3,
-                            lg: 4
-                        }}
+                        alignItems="center"
+                        direction="row"
+                        spacing={3}
                     >
-                        <ItemSearch
-                            onFiltersChange={itemsSearch.handleFiltersChange}
-                            onSortChange={itemsSearch.handleSortChange}
-                            onViewChange={setView}
-                            sortBy={itemsSearch.state.sortBy}
-                            sortDir={itemsSearch.state.sortDir}
-                            view={view}
-                        />
-                        <ItemList
-                            count={state.itemsCount}
-                            items={state.items}
-                            collection={state.collection}
-                            onPageChange={itemsSearch.handlePageChange}
-                            onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                            page={itemsSearch.state.page}
-                            rowsPerPage={itemsSearch.state.rowsPerPage}
-                            view={view}
-                            sectionApi={sectionApi}
-                            fileResourcesApi={fileResourcesApi}
-                            onGetItems={handleItemsGet}
-                        />
+                        <Button
+                            onClick={uploadDialog.handleOpen}
+                            startIcon={(
+                                <SvgIcon>
+                                    <Upload01Icon/>
+                                </SvgIcon>
+                            )}
+                            variant="contained"
+                        >
+                            Upload
+                        </Button>
+                        <Button
+                            component={Link}
+                            href={paths.app[sectionApi.section].resource_manager.create.replace('[id]', id)}
+                            startIcon={(
+                                <SvgIcon>
+                                    <Plus/>
+                                </SvgIcon>
+                            )}
+                            variant="contained"
+                        >
+                            Add
+                        </Button>
                     </Stack>
-                </Grid>
-            </Grid>
+                </Stack>
+                <Stack spacing={{xs: 3, lg: 4}}>
+                    <ItemSearch
+                        onFiltersChange={itemsSearch.handleFiltersChange}
+                        onSortChange={itemsSearch.handleSortChange}
+                        onViewChange={setView}
+                        sortBy={itemsSearch.state.sortBy}
+                        sortDir={itemsSearch.state.sortDir}
+                        view={view}
+                    />
+                    <ItemList
+                        count={state.itemsCount}
+                        items={state.items}
+                        collection={state.collection}
+                        onPageChange={itemsSearch.handlePageChange}
+                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                        page={itemsSearch.state.page}
+                        rowsPerPage={itemsSearch.state.rowsPerPage}
+                        view={view}
+                        sectionApi={sectionApi}
+                        fileResourcesApi={fileResourcesApi}
+                        onGetItems={handleItemsGet}
+                    />
+                </Stack>
+            </Stack>
 
             <ItemDrawer
                 item={currentItem}

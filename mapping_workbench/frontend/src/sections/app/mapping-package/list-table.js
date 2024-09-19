@@ -1,52 +1,48 @@
-import * as React from 'react';
 import {Fragment, useState} from 'react';
+import {useRouter} from "next/router";
 import PropTypes from 'prop-types';
+import {saveAs} from 'file-saver';
+import {useFormik} from "formik";
+import * as Yup from "yup";
 
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
-import CardContent from '@mui/material/CardContent';
-import Divider from '@mui/material/Divider';
+import Box from "@mui/system/Box";
 import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
-import SvgIcon from '@mui/material/SvgIcon';
+import Card from "@mui/material/Card";
 import Table from '@mui/material/Table';
+import Stack from "@mui/material/Stack";
+import Switch from "@mui/material/Switch";
+import Button from "@mui/material/Button";
+import Divider from '@mui/material/Divider';
+import SvgIcon from '@mui/material/SvgIcon';
+import Checkbox from "@mui/material/Checkbox";
+import TableRow from '@mui/material/TableRow';
+import TableHead from '@mui/material/TableHead';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
-import Card from "@mui/material/Card";
-import Switch from "@mui/material/Switch";
+import IconButton from '@mui/material/IconButton';
+import CardContent from '@mui/material/CardContent';
 import FormControlLabel from "@mui/material/FormControlLabel";
-import Box from "@mui/system/Box";
 
+import {paths} from "src/paths";
+import {sessionApi} from "src/api/session";
+import {Scrollbar} from 'src/components/scrollbar';
+import timeTransformer from "src/utils/time-transformer";
+import {useGlobalState} from "src/hooks/use-global-state";
 import {PropertyList} from 'src/components/property-list';
 import {PropertyListItem} from 'src/components/property-list-item';
-import {Scrollbar} from 'src/components/scrollbar';
+import ConfirmDialog from "src/components/app/dialog/confirm-dialog";
+import TablePagination from "src/sections/components/table-pagination";
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
-
+import TableSorterHeader from "src/sections/components/table-sorter-header";
+import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import {useFormik} from "formik";
-import * as Yup from "yup";
-import {sessionApi} from "../../../api/session";
-import {saveAs} from 'file-saver';
-import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
-import TablePagination from "../../components/table-pagination";
-import TableSorterHeader from "../../components/table-sorter-header";
-import timeTransformer from "../../../utils/time-transformer";
-import {useGlobalState} from "../../../hooks/use-global-state";
-import {useRouter} from "next/router";
-import {paths} from "../../../paths";
-import Checkbox from "@mui/material/Checkbox";
-import ConfirmDialog from "../../../components/app/dialog/confirm-dialog";
 
 
 const PackageRow = (props) => {
-    const {
-        item, sectionApi
-    } = props;
+    const {item, sectionApi} = props;
 
     const [isProcessing, setIsProcessing] = useState(false);
     const [isExporting, setIsExporting] = useState(false);
@@ -443,15 +439,13 @@ export const ListTable = (props) => {
             .then(res => {
                 router.push(paths.app[sectionApi.section].states.view(id, res._id))
             })
-            .catch(err => console.error(err))
+            .catch(err => toastError(err))
     }
 
-    const handleDeleteAction = async (id, cleanup_project = false) => {
+    const handleDeleteAction = (id, cleanup_project = false) => {
         sectionApi.deleteMappingPackageWithCleanup(id, cleanup_project)
             .finally(() => {
-                    router.push({
-                        pathname: paths.app[sectionApi.section].index
-                    });
+                    router.push({pathname: paths.app[sectionApi.section].index});
                     router.reload()
                 }
             )

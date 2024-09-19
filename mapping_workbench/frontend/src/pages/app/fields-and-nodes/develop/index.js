@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 
-import {useFormik} from "formik";
 import * as Yup from "yup";
+import {useFormik} from "formik";
 import {parseString} from "xml2js";
 import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
@@ -24,7 +24,6 @@ import {Layout as AppLayout} from 'src/layouts/app';
 import {RouterLink} from "src/components/router-link";
 import File from 'src/sections/app/fields-and-nodes/file'
 import {FormTextField} from "src/components/app/form/text-field";
-import {testDataSuitesApi as sectionApi} from "src/api/test-data-suites";
 import {BreadcrumbsSeparator} from "src/components/breadcrumbs-separator";
 import {fieldsRegistryApi as fieldsRegistry} from 'src/api/fields-registry'
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
@@ -290,12 +289,13 @@ const Page = () => {
                                     </Stack>
                                 </Grid>
                             </Grid>
-                            <Grid sx={{justifyContent: 'center'}}>
+                            <Stack direction='row'
+                                   sx={{mt:2}}>
                                 <Button type='submit'
                                         disabled={!!fileError || !xmlContent || formik.isSubmitting}>Save</Button>
                                 <Button onClick={handleClear}
                                         disabled={formik.isSubmitting}>Clear</Button>
-                            </Grid>
+                            </Stack>
                         </Grid>
 
                     </Card>

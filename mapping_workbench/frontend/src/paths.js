@@ -207,7 +207,7 @@ export const paths = {
                 index: '/app/fields-and-nodes/overview',
                 import: '/app/fields-and-nodes/overview/import',
                 elements: {
-                    view: (id) => `/app/fields-overview/${id}/view`,
+                    view: (id) => `/app/fields-and-nodes/overview/${id}/view`,
                 }
             }
         },
