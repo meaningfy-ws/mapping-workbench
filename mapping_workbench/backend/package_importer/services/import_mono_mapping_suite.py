@@ -93,7 +93,7 @@ def import_mapping_suite_base_from_file_system(
     transformation_resources_dir_path = transformation_dir_path / TRANSFORMATION_RESOURCES_DIR_NAME
     transformation_mappings_dir_path = transformation_dir_path / TRANSFORMATION_MAPPINGS_DIR_NAME
     conceptual_mappings_file_path = transformation_dir_path / CONCEPTUAL_MAPPINGS_FILE_NAME
-    shacl_result_query_file_path = shacl_validation_dir_path / SHACL_RESULT_QUERY_FILE_NAME
+    #shacl_result_query_file_path = shacl_validation_dir_path / SHACL_RESULT_QUERY_FILE_NAME
 
     try:
         assert transformation_dir_path.exists(), "Transformation folder not found!"
@@ -104,7 +104,7 @@ def import_mapping_suite_base_from_file_system(
         assert transformation_mappings_dir_path.exists(), "Transformation Mappings folder not found!"
         assert shacl_validation_dir_path.exists(), "SHACL validation folder not found!"
         assert sparql_validation_dir_path.exists(), "SPARQL validation folder not found!"
-        assert shacl_result_query_file_path.exists(), "SHACL result query file not found!"
+        #assert shacl_result_query_file_path.exists(), "SHACL result query file not found!"
     except AssertionError as error:
         raise InvalidResourceException(str(error))
 
@@ -113,7 +113,7 @@ def import_mapping_suite_base_from_file_system(
     mapping_test_data_resources = import_collection_resources(test_data_dir_path)
     mapping_shacl_validation_resources = import_collection_resources(shacl_validation_dir_path)
     mapping_sparql_validation_resources = import_collection_resources(sparql_validation_dir_path)
-    mapping_shacl_result_query = shacl_result_query_file_path.read_text(encoding="utf-8")
+    #mapping_shacl_result_query = shacl_result_query_file_path.read_text(encoding="utf-8")
 
     mapping_suite = ImportedMappingSuite(
         transformation_resources=mapping_transformation_resources,
@@ -121,7 +121,7 @@ def import_mapping_suite_base_from_file_system(
         test_data_resources=mapping_test_data_resources,
         shacl_validation_resources=mapping_shacl_validation_resources,
         sparql_validation_resources=mapping_sparql_validation_resources,
-        shacl_result_query=mapping_shacl_result_query
+        #shacl_result_query=mapping_shacl_result_query
     )
 
     return mapping_suite
