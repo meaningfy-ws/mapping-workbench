@@ -1,6 +1,6 @@
 import {Given, Then, When} from "cypress-cucumber-preprocessor/steps";
 
-const {username, password, homeURL, appURLPrefix, projectName} = Cypress.env()
+const {username, password, homeURL, appURLPrefix, projectName, homePageLabel} = Cypress.env()
 
 const projectDescription = 'some description'
 
@@ -11,13 +11,13 @@ Given('Session Login', () => {
         cy.get('[name=username]').clear().type(username)
         cy.get('[name=password]').clear().type(password)
         cy.get('button[type="submit"]').click()
-        cy.title().should('eq','App: Projects List | Mapping Workbench')
+        cy.title().should('eq',homePageLabel)
     })
 })
 
 
 Then('I get redirected to projects list page', () => {
-    cy.title().should('eq','App: Projects List | Mapping Workbench')
+    cy.title().should('eq',homePageLabel)
 })
 
 When('I click on add project button', () => {
@@ -87,7 +87,7 @@ Then('I update project description', () => {
 
 Then('I click on update button', () => {
     cy.intercept('PATCH', appURLPrefix + 'projects/*',).as('updateProject')
-    cy.get('#create_button').click()
+    cy.get('#create_button').click("right")
 })
 
 Then('I receive update success', () => {

@@ -1,6 +1,6 @@
 import { Given, When, Then} from 'cypress-cucumber-preprocessor/steps'
 
-const {username, password, homeURL, appURLPrefix, projectName} = Cypress.env()
+const {username, password, homeURL, appURLPrefix, projectName, homePageLabel} = Cypress.env()
 
 const test_suite_name = 'test_suite'
 let sessionProject = ''
@@ -12,7 +12,7 @@ Given('Session Login', () => {
         cy.get('[name=username]').clear().type(username)
         cy.get('[name=password]').clear().type(password)
         cy.get('button[type="submit"]').click()
-        cy.title().should('eq','Mapping Workbench')
+        cy.title().should('eq', homePageLabel)
     })
     if(sessionProject) cy.window().then(win => win.sessionStorage.setItem('sessionProject',sessionProject))
 })
