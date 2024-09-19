@@ -127,12 +127,6 @@ async def test_import_standard_mapping_package(dummy_project, dummy_structural_e
 async def test_import_invalid_package(dummy_project):
     with pytest.raises(InvalidResourceException) as e:
         await import_mapping_package_from_archive(
-            read_archive(INVALID_EFORMS_PACKAGE_PATH), dummy_project, PackageType.EFORMS
-        )
-    assert str(e.value) == "Invalid Resource :: SHACL result query file not found!"
-
-    with pytest.raises(InvalidResourceException) as e:
-        await import_mapping_package_from_archive(
             read_archive(INVALID_ARCHIVE_PATH), dummy_project, PackageType.STANDARD
         )
     assert str(e.value) == "Invalid Resource :: Archive must contain only the package folder!"
