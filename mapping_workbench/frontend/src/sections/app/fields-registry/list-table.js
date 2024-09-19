@@ -1,30 +1,31 @@
 import {Fragment, useState} from 'react';
 import PropTypes from 'prop-types';
+
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
-import CardContent from '@mui/material/CardContent';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import SvgIcon from '@mui/material/SvgIcon';
+import List from "@mui/material/List";
+import Grid from "@mui/material/Grid";
 import Table from '@mui/material/Table';
+import Divider from '@mui/material/Divider';
+import SvgIcon from '@mui/material/SvgIcon';
+import TableRow from '@mui/material/TableRow';
+import ListItem from "@mui/material/ListItem";
+import TableHead from '@mui/material/TableHead';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import Grid from "@mui/material/Grid";
+import CardContent from '@mui/material/CardContent';
 
 import {paths} from "src/paths";
 import {Scrollbar} from 'src/components/scrollbar';
-import {ListItemActions} from 'src/components/app/list/list-item-actions';
-import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import {PropertyList} from "../../../components/property-list";
-import {PropertyListItem} from "../../../components/property-list-item";
+import {PropertyList} from "src/components/property-list";
+import {PropertyListItem} from "src/components/property-list-item";
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
-import TablePagination from "../../components/table-pagination";
-import TableSorterHeader from "../../components/table-sorter-header";
+import TablePagination from "src/sections/components/table-pagination";
+import {ListItemActions} from 'src/components/app/list/list-item-actions';
+import TableSorterHeader from "src/sections/components/table-sorter-header";
+import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 
 
 export const ListTable = (props) => {

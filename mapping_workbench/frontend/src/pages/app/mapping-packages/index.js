@@ -2,24 +2,24 @@ import {useEffect, useState} from 'react';
 
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
 import {Upload04 as ImportIcon} from '@untitled-ui/icons-react/build/esm';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
+import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
+import {useDialog} from "src/hooks/use-dialog";
 import {Layout as AppLayout} from 'src/layouts/app';
-import {mappingPackagesApi as sectionApi} from 'src/api/mapping-packages';
 import {RouterLink} from 'src/components/router-link';
+import {ListTable} from "src/sections/app/mapping-package/list-table";
+import {ListSearch} from "src/sections/app/mapping-package/list-search";
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
+import {mappingPackagesApi as sectionApi} from 'src/api/mapping-packages';
 import {PackageImporter} from 'src/sections/app/mapping-package/package-importer';
-import {ListSearch} from "../../../sections/app/mapping-package/list-search";
-import {ListTable} from "../../../sections/app/mapping-package/list-table";
-import {useDialog} from "../../../hooks/use-dialog";
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
@@ -36,7 +36,7 @@ const useItemsSearch = () => {
     });
 
     const handleFiltersChange = filters => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             filters,
             page: 0
@@ -44,7 +44,11 @@ const useItemsSearch = () => {
     };
 
     const handleSorterChange = sortField => {
-        setState(prevState => ({...prevState, sortField, sortDirection: state.sortField === sortField && prevState.sortDirection === -1 ? 1 : -1 }))
+        setState(prevState => ({
+            ...prevState,
+            sortField,
+            sortDirection: state.sortField === sortField && prevState.sortDirection === -1 ? 1 : -1
+        }))
     }
 
     const handlePageChange = (event, page) => {
@@ -80,10 +84,10 @@ const useItemsStore = searchState => {
     const handleItemsGet = () => {
         sectionApi.getItems(searchState)
             .then(res => setState({
-                    items: res.items,
-                    itemsCount: res.count
-                }))
-            .catch(err => console.warn(err))
+                items: res.items,
+                itemsCount: res.count
+            }))
+            .catch(err => console.error(err))
     }
 
     useEffect(() => {
@@ -126,19 +130,11 @@ const Page = () => {
                             >
                                 App
                             </Link>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.app[sectionApi.section].index}
-                                variant="subtitle2"
-                            >
-                                {sectionApi.SECTION_TITLE}
-                            </Link>
                             <Typography
                                 color="text.secondary"
                                 variant="subtitle2"
                             >
-                                List
+                                {sectionApi.SECTION_TITLE}
                             </Typography>
                         </Breadcrumbs>
                     </Stack>

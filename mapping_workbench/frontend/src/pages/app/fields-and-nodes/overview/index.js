@@ -1,25 +1,24 @@
 import {useEffect, useState} from 'react';
 
-import Breadcrumbs from '@mui/material/Breadcrumbs';
+import {Upload04 as ImportIcon} from '@untitled-ui/icons-react/build/esm';
 import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 import Button from "@mui/material/Button";
 import SvgIcon from "@mui/material/SvgIcon";
+import Typography from '@mui/material/Typography';
 
+import Breadcrumbs from '@mui/material/Breadcrumbs';
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
-import {Filter} from "src/sections/components/filter";
 import {RouterLink} from 'src/components/router-link';
-import {ListTable} from "src/sections/app/fields-registry/list-table";
+import {Filter} from 'src/sections/components/filter';
+import {ListTable} from 'src/sections/app/fields-registry/list-table';
 import {fieldsOverviewApi as sectionApi} from 'src/api/fields-overview';
-import {ListSearch} from "src/sections/app/fields-registry/list-search";
-
+import {ListSearch} from 'src/sections/app/fields-registry/list-search';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {Upload04 as ImportIcon} from '@untitled-ui/icons-react/build/esm';
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({

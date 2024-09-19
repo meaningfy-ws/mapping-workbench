@@ -12,12 +12,12 @@ import Typography from '@mui/material/Typography';
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
+import {useRouter} from "src/hooks/use-router";
 import {Layout as AppLayout} from 'src/layouts/app';
+import {usePageView} from 'src/hooks/use-page-view';
+import {RouterLink} from 'src/components/router-link';
 import {fieldsOverviewApi as sectionApi} from 'src/api/fields-overview';
 import {BasicDetails} from 'src/sections/app/fields-registry/basic-details';
-import {RouterLink} from 'src/components/router-link';
-import {usePageView} from 'src/hooks/use-page-view';
-import {useRouter} from "src/hooks/use-router";
 
 const tabs = [
     {label: 'Details', value: 'details'}

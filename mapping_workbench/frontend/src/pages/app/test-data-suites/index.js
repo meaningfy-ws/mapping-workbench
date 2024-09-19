@@ -1,26 +1,26 @@
 import {useEffect, useState} from 'react';
 
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
+import {useDialog} from "src/hooks/use-dialog";
 import {Layout as AppLayout} from 'src/layouts/app';
 import {usePageView} from 'src/hooks/use-page-view';
 import {RouterLink} from 'src/components/router-link';
 import {testDataSuitesApi as sectionApi} from 'src/api/test-data-suites';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {FileCollectionListSearch} from 'src/sections/app/file-manager/file-collection-list-search';
 import {Upload04 as ImportIcon} from '@untitled-ui/icons-react/build/esm';
-import {TestDataCollectionListTable} from "../../../sections/app/file-manager/test-data-collection-list-table";
-import {useDialog} from "src/hooks/use-dialog";
+import {FileCollectionListSearch} from 'src/sections/app/file-manager/file-collection-list-search';
 import {FileCollectionUploader} from "../../../sections/app/file-manager/file-collection-uploader";
+import {TestDataCollectionListTable} from "../../../sections/app/file-manager/test-data-collection-list-table";
 
 
 const useItemsSearch = () => {
@@ -113,6 +113,7 @@ const Page = () => {
                         <Typography variant="h4">
                             {sectionApi.SECTION_TITLE}
                         </Typography>
+
                         <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
                             <Link
                                 color="text.primary"
@@ -122,19 +123,11 @@ const Page = () => {
                             >
                                 App
                             </Link>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.app[sectionApi.section].index}
-                                variant="subtitle2"
-                            >
-                                {sectionApi.SECTION_TITLE}
-                            </Link>
                             <Typography
                                 color="text.secondary"
                                 variant="subtitle2"
                             >
-                                List
+                                {sectionApi.SECTION_TITLE}
                             </Typography>
                         </Breadcrumbs>
                     </Stack>
