@@ -37,6 +37,10 @@ module.exports = defineConfig({
         "cypress/e2e/fieldsDevelop.feature",
         "cypress/e2e/fieldsTree.feature",
         "cypress/e2e/fieldsOverview.feature",
+        //ConceptualMappings
+        "cypress/e2e/conceptualMappingsDevelop.feature",
+        "cypress/e2e/conceptualMappingsReview.feature",
+        "cypress/e2e/conceptualMappingsOverview.feature",
         //Technical Mappings
         "cypress/e2e/valueMappingResources.feature",
         "cypress/e2e/tripleMapFragments.feature",
