@@ -1,6 +1,6 @@
 import {Given, Then, When} from "cypress-cucumber-preprocessor/steps";
 
-const {username, password, homeURL, appURLPrefix, projectName} = Cypress.env()
+const {username, password, homeURL, appURLPrefix, projectName, homePageLabel} = Cypress.env()
 
 Given('Session Login', () => {
     // Caching session when logging in via page visit
@@ -9,7 +9,7 @@ Given('Session Login', () => {
         cy.get('[name=username]').clear().type(username)
         cy.get('[name=password]').clear().type(password)
         cy.get('button[type="submit"]').click()
-        cy.title().should('eq','Mapping Workbench')
+        cy.title().should('eq', homePageLabel)
     })
 })
 
@@ -19,7 +19,7 @@ Then('I get redirected to projects list page', () => {
 
 Then('I select create project from project switch', () => {
     cy.get('#project_switch').click()
-    cy.get('#create_project_button').click()
+    cy.get('#create_project_button').click('right')
 })
 
 When('I click on add project button', () => {
@@ -40,12 +40,11 @@ Then('I uncheck checkboxes', () => {
     cy.get('input[name=automatically_discover_namespaces]').uncheck()
     cy.get('input[name=add_specific_namespaces]').uncheck()
     cy.get('input[name="import_eform.checked"]').uncheck()
-
 })
 
 When('I click create button', () => {
     cy.intercept('POST', appURLPrefix + 'projects').as('create')
-    cy.get('#create_button').click()
+    cy.get('#create_button').click('right')
 })
 
 Then('I get success created', () => {
