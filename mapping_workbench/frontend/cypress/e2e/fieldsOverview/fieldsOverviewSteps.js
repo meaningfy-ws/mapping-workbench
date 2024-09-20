@@ -28,8 +28,8 @@ Then('Check home title', () => {
 
 Given('I click on Fields Overview', () => {
     cy.intercept('GET', appURLPrefix + 'fields_registry/elements*',).as('getFields')
-    cy.get('#nav_mapping_entities').click()
-    cy.get('#nav_fields_overview').click()
+    cy.get('#nav_fields_\\&_nodes').click()
+    cy.get(':nth-child(2) > #nav_overview').click()
 })
 
 
@@ -38,7 +38,7 @@ When('I click on import schema button', () => {
 })
 
 Then('I get redirected to field registry import page', () => {
-    cy.url().should('include','fields-overview/import')
+    cy.url().should('include','fields-and-nodes/overview/import')
 })
 
 Then('I type git url', () => {
@@ -61,7 +61,7 @@ Then('I get success import', () => {
 
 
 Then('I get redirected to Fields Overview', () => {
-    cy.url().should('include','fields-overview')
+    cy.url().should('include','fields-and-nodes/overview')
 })
 
 And('I receive fields', () => {
