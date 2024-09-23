@@ -1,52 +1,45 @@
+import {useCallback, useEffect, useState} from "react";
+import {useFormik} from "formik";
+
 import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
 import Chip from '@mui/material/Chip';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
-import SvgIcon from '@mui/material/SvgIcon';
+import Paper from "@mui/material/Paper";
+import Checkbox from "@mui/material/Checkbox";
+import Grid from "@mui/material/Unstable_Grid2";
 import Typography from '@mui/material/Typography';
+import FormControlLabel from "@mui/material/FormControlLabel";
+import SvgIcon from '@mui/material/SvgIcon';
 
-import {testDataFileResourcesApi as sectionApi} from 'src/api/test-data-suites/file-resources';
-import {RouterLink} from 'src/components/router-link';
+import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
+import {useRouter} from "src/hooks/use-router";
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
-import {paths} from 'src/paths';
-import {FileResourceEditForm} from 'src/sections/app/file-manager/file-resource-edit-form';
+import {RouterLink} from 'src/components/router-link';
+import {FormTextField} from "src/components/app/form/text-field";
 import {ForItemEditForm} from "src/contexts/app/section/for-item-form";
+import {FormCodeTextArea} from "src/components/app/form/code-text-area";
 import {ForItemDataState} from "src/contexts/app/section/for-item-data-state";
-import {useRouter} from "src/hooks/use-router";
-import {useMounted} from "../../../../../../hooks/use-mounted";
-import * as React from "react";
-import {useCallback, useEffect, useState} from "react";
-import {FormCodeTextArea} from "../../../../../../components/app/form/code-text-area";
-import Grid from "@mui/material/Unstable_Grid2";
-import {useFormik} from "formik";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Paper from "@mui/material/Paper";
-import {FormTextField} from "../../../../../../components/app/form/text-field";
+import {FileResourceEditForm} from 'src/sections/app/file-manager/file-resource-edit-form';
+import {testDataFileResourcesApi as sectionApi} from 'src/api/test-data-suites/file-resources';
 
 
 const useItem = (sectionApi, id) => {
-    const isMounted = useMounted();
     const [item, setItem] = useState(null);
 
-    const handleItemGet = useCallback(async () => {
-        try {
-            const response = await sectionApi.getFileResource(id);
-            if (isMounted()) {
-                setItem(response);
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    }, [isMounted]);
+    const handleItemGet = () => {
+        sectionApi.getFileResource(id)
+            .then(res => setItem(res))
+            .catch(err => console.error(err))
+    }
 
     useEffect(() => {
-            handleItemGet();
+            id && handleItemGet();
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        []);
+        [id]);
 
     return new ForItemDataState(item, setItem);
 };
@@ -64,8 +57,12 @@ const ExtraForm = (props) => {
 
     return (
         <>
-            <Grid xs={12} md={12}>
-                <FormTextField formik={formik} name="identifier" label="Identifier" required={true}/>
+            <Grid xs={12}
+                  md={12}>
+                <FormTextField formik={formik}
+                               name="identifier"
+                               label="Identifier"
+                               required/>
             </Grid>
             <Paper
                 sx={{
@@ -105,13 +102,7 @@ const ExtraForm = (props) => {
 
 const Page = () => {
     const router = useRouter();
-    if (!router.isReady) return;
-
     const {id, fid} = router.query;
-
-    if (!id || !fid) {
-        return;
-    }
 
     const formState = useItem(sectionApi, fid);
     const item = formState.item;

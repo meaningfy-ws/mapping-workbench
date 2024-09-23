@@ -53,7 +53,7 @@ export const ListTable = (props) => {
 
     const SorterHeader = (props) => {
         const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
-        return(
+        return (
             <TableSorterHeader sort={{direction, column: sort.column}}
                                onSort={onSort}
                                {...props}
@@ -72,10 +72,10 @@ export const ListTable = (props) => {
     const [projectMappingPackagesMap, setProjectMappingPackagesMap] = useState({});
 
     useEffect(() => {
-            setProjectMappingPackagesMap(projectMappingPackages.reduce((a, b) => {
-                a[b['id']] = b['title'];
-                return a
-            }, {}));
+        setProjectMappingPackagesMap(projectMappingPackages.reduce((a, b) => {
+            a[b['id']] = b['title'];
+            return a
+        }, {}));
     }, [projectMappingPackages])
 
     return (
@@ -193,14 +193,12 @@ export const ListTable = (props) => {
                                                                 <Box>Content:</Box>
                                                                 <CodeMirror
                                                                     value={item.triple_map_content}
-                                                                    extensions={[basicSetup(), lng[item.format].extension()]}
-                                                                    editable= {false}
-                                                                    options={{
-                                                                        mode: lng[item.format].mode,
-                                                                        theme: 'default',
-                                                                        lineNumbers: true,
-                                                                    }}
-                                                                    onChange={() => {
+                                                                    extensions={[lng[item.format].extension()]}
+                                                                    editable={false}
+                                                                    style={{
+                                                                        resize: 'vertical',
+                                                                        overflow: 'auto',
+                                                                        height: 600
                                                                     }}
                                                                 />
                                                             </Grid>

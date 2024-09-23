@@ -1,4 +1,7 @@
 import {useEffect, useState} from 'react';
+import CodeMirror from '@uiw/react-codemirror';
+import {turtle} from 'codemirror-lang-turtle';
+import {githubDark, githubLight} from '@uiw/codemirror-themes-all';
 
 import Upload01Icon from '@untitled-ui/icons-react/build/esm/Upload01';
 import Button from '@mui/material/Button';
@@ -26,6 +29,8 @@ import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
 import CircularProgress from "@mui/material/CircularProgress";
 import {Box} from "@mui/system";
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
+import {xml} from "@codemirror/lang-xml";
+import {useTheme} from "@mui/material/styles";
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
@@ -87,7 +92,7 @@ const useItemsSearch = (items) => {
     })
 
     const handleSearchItems = (filters) => {
-        setState(prevState => ({...prevState, search: filters, page: 0 }))
+        setState(prevState => ({...prevState, search: filters, page: 0}))
     }
 
 
@@ -153,6 +158,8 @@ const Page = () => {
     const uploadDialog = useDialog();
     const detailsDialog = useDialog();
     const itemsSearch = useItemsSearch(state);
+
+    const theme = useTheme();
 
     usePageView();
 
@@ -281,13 +288,13 @@ const Page = () => {
                             <Box sx={{display: 'flex', justifyContent: 'center', marginY: 10}}>
                                 <CircularProgress/>
                             </Box> :
-                            <SyntaxHighlighter
-                                language="turtle"
-                                wrapLines
-                                lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
-                                {detailsDialog.data?.content}
-                            </SyntaxHighlighter>
-                    }
+                            <CodeMirror
+                                theme={theme.palette.mode === 'dark' ? githubDark : githubLight}
+                                style={{resize: 'vertical', overflow: 'auto'}}
+                                value={detailsDialog.data?.content}
+                                editable={false}
+                                extensions={[turtle()]}
+                            />}
                 </DialogContent>
             </Dialog>
             <FileUploader
