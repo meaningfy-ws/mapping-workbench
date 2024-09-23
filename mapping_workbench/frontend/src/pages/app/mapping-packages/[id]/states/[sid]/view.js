@@ -22,16 +22,16 @@ import {mappingPackageStatesApi as sectionApi} from 'src/api/mapping-packages/st
 import {mappingPackagesApi as previousSectionApi} from 'src/api/mapping-packages';
 import {useRouter} from "src/hooks/use-router";
 import {RouterLink} from 'src/components/router-link';
-import exportPackage from "../../../../../../utils/export-mapping-package";
+import exportPackage from "src/utils/export-mapping-package";
 
 const StateDetails =
-    dynamic(() => import("../../../../../../sections/app/mapping-package/state/state-details"));
+    dynamic(() => import("src/sections/app/mapping-package/state/state-details"));
 const ShaclValidationReport =
-    dynamic(() => import("../../../../../../sections/app/shacl_validation_report/shacl_validation_report_view"));
+    dynamic(() => import("src/sections/app/shacl-validation-report/shacl_validation_report_view"));
 const SparqlValidationReport =
-    dynamic(() => import("../../../../../../sections/app/sparql_validation_report/sparql_validation_report_view"));
+    dynamic(() => import("src/sections/app/sparql-validation-report/sparql_validation_report_view"));
 const XpathValidationReportView =
-    dynamic(() => import("../../../../../../sections/app/xpath_validation_report/xpath_validation_report_view"));
+    dynamic(() => import("src/sections/app/xpath-validation-report/xpath_validation_report_view"));
 
 const tabs = [
     {label: 'Details', value: 'details'},

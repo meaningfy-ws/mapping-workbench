@@ -20,8 +20,8 @@ import {Seo} from 'src/components/seo';
 import {ListSearch} from 'src/sections/app/tasks/list-search';
 import {ListTable} from 'src/sections/app/tasks/list-table';
 
-import {TableLoadWrapper} from "../../../sections/app/shacl_validation_report/utils";
-import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
+import {TableLoadWrapper} from "src/sections/app/shacl-validation-report/utils";
+import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({

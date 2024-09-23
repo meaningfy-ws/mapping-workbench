@@ -1,10 +1,10 @@
 import {useState} from "react";
 
+import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import Link from "@mui/material/Link";
-import Typography from "@mui/material/Typography";
 
 import CoverageFiles from "./coverage_files";
 import SparqlPackageStateReport from "./sparql_validation_report_package_state";
