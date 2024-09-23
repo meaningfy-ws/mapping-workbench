@@ -6,18 +6,21 @@ const projectDescription = 'some description'
 
 Given('Session Login', () => {
     // Caching session when logging in via page visit
-    cy.session([username,password], () => {
+    cy.session([username, password], () => {
         cy.visit(homeURL)
         cy.get('[name=username]').clear().type(username)
         cy.get('[name=password]').clear().type(password)
         cy.get('button[type="submit"]').click()
-        cy.title().should('eq',homePageLabel)
+        cy.title().should('eq', homePageLabel)
     })
 })
 
+Then('Visit Projects', () => {
+    cy.visit(homeURL + '/app/projects')
+})
 
 Then('I get redirected to projects list page', () => {
-    cy.title().should('eq',homePageLabel)
+    cy.title().should('eq', 'App: Projects List | Mapping Workbench')
 })
 
 When('I click on add project button', () => {
@@ -26,7 +29,7 @@ When('I click on add project button', () => {
 
 
 Then('I get redirected to projects create page', () => {
-    cy.title().should('eq','App: Project Create | Mapping Workbench')
+    cy.title().should('eq', 'App: Project Create | Mapping Workbench')
 })
 
 
@@ -43,11 +46,11 @@ Then('I uncheck checkboxes', () => {
 
 When('I click create button', () => {
     cy.intercept('POST', appURLPrefix + 'projects').as('create')
-    cy.get('#create_button').click()
+    cy.get('#create_button').click('right')
 })
 
 Then('I get success created', () => {
-    cy.wait('@create').its('response.statusCode').should('eq',201)
+    cy.wait('@create').its('response.statusCode').should('eq', 201)
 })
 
 When('I click back to projects link', () => {
@@ -60,7 +63,7 @@ Then('I search for project', () => {
 })
 
 Then('I receive project', () => {
-    cy.wait('@get').its('response.statusCode').should('eq',200)
+    cy.wait('@get').its('response.statusCode').should('eq', 200)
 })
 
 When('I select project', () => {
@@ -69,7 +72,7 @@ When('I select project', () => {
 })
 
 Then('I get success select', () => {
-    cy.wait('@select').its('response.statusCode').should('eq',200)
+    cy.wait('@select').its('response.statusCode').should('eq', 200)
 })
 
 //edit project
@@ -78,7 +81,7 @@ When('I click on edit button', () => {
 })
 
 Then('I get redirected to project edit page', () => {
-    cy.url().should('include','/edit')
+    cy.url().should('include', '/edit')
 })
 
 Then('I update project description', () => {
@@ -87,11 +90,11 @@ Then('I update project description', () => {
 
 Then('I click on update button', () => {
     cy.intercept('PATCH', appURLPrefix + 'projects/*',).as('updateProject')
-    cy.get('#create_button').click("right")
+    cy.get('#create_button').click('right')
 })
 
 Then('I receive update success', () => {
-    cy.wait('@updateProject').its('response.statusCode').should('eq',200)
+    cy.wait('@updateProject').its('response.statusCode').should('eq', 200)
 })
 
 //edit project
@@ -100,11 +103,11 @@ When('I click on view button', () => {
 })
 
 Then('I get redirected to project view page', () => {
-    cy.url().should('include','/view')
+    cy.url().should('include', '/view')
 })
 
 Then('I read description', () => {
-    cy.get('h6:contains("Description")').first().next().should('have.text', projectDescription+'\n')
+    cy.get('h6:contains("Description")').first().next().should('have.text', projectDescription + '\n')
 })
 
 //delete project
@@ -118,5 +121,5 @@ Then('I click yes button', () => {
 })
 
 Then('I get success delete', () => {
-    cy.wait('@delete').its('response.statusCode').should('eq',200)
+    cy.wait('@delete').its('response.statusCode').should('eq', 200)
 })

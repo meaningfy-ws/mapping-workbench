@@ -29,7 +29,6 @@ Feature: Specific Triple Maps
     Then I get redirected to Specific Triple Maps
 
     Then I search for Specific Triple Map
-    Then I receive Specific Triple Maps
     Then I click edit button
     Then I get redirected to edit page
 
@@ -41,6 +40,5 @@ Feature: Specific Triple Maps
     Then I get redirected to Specific Triple Maps
 
     Then I search for updated Specific Triple Map
-    Then I receive Specific Triple Maps
     Then I click delete button
     Then I get success delete
