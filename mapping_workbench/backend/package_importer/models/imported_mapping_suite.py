@@ -95,7 +95,7 @@ class ImportedMappingSuite(BaseModel):
     test_data_resources: List[ImportedCollectionResource] = []
     shacl_validation_resources: List[ImportedCollectionResource] = []
     sparql_validation_resources: List[ImportedCollectionResource] = []
-    shacl_result_query: str
+    shacl_result_query: Optional[str] = None
 
 
 class ImportedEFormsMappingSuite(ImportedMappingSuite):
