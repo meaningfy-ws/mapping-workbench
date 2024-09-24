@@ -112,7 +112,7 @@ const useItemsSearch = (items) => {
     };
 };
 
-const XpathValidationReportSuite = ({  sid, suiteId, files, mappingSuiteIdentifier }) => {
+const XpathValidationReportSuite = ({  sid, suiteId, files, mappingSuiteIdentifier, handleSelectFile }) => {
     const [validationReport, setValidationReport] = useState([])
     const [dataState, setDataState] = useState({load: true, error: false})
 
@@ -168,6 +168,7 @@ const XpathValidationReportSuite = ({  sid, suiteId, files, mappingSuiteIdentifi
                             rowsPerPage={itemsSearch.state.rowsPerPage}
                             onSort={itemsSearch.handleSort}
                             sort={itemsSearch.state.sort}
+                            handleSelectFile={handleSelectFile}
                             sectionApi={sectionApi}
                     />
             </TableLoadWrapper>

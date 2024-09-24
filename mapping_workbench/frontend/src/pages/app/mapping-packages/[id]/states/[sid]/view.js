@@ -23,15 +23,19 @@ import {mappingPackagesApi as previousSectionApi} from 'src/api/mapping-packages
 import {useRouter} from "src/hooks/use-router";
 import {RouterLink} from 'src/components/router-link';
 import exportPackage from "../../../../../../utils/export-mapping-package";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const StateDetails =
     dynamic(() => import("../../../../../../sections/app/mapping-package/state/state-details"));
-const ShaclValidationReport =
-    dynamic(() => import("../../../../../../sections/app/shacl_validation_report/shacl_validation_report_view"));
-const SparqlValidationReport =
-    dynamic(() => import("../../../../../../sections/app/sparql_validation_report/sparql_validation_report_view"));
 const XpathValidationReportView =
-    dynamic(() => import("../../../../../../sections/app/xpath_validation_report/xpath_validation_report_view"));
+    dynamic(() => import("../../../../../../sections/app/xpath_validation_report/xpath_validation_report_view"),
+        {loading: () => <Stack alignItems='center'><CircularProgress/></Stack>});
+const SparqlValidationReport =
+    dynamic(() => import("../../../../../../sections/app/sparql_validation_report/sparql_validation_report_view"),
+        {loading: () => <Stack alignItems='center'><CircularProgress/></Stack>});
+const ShaclValidationReport =
+    dynamic(() => import("../../../../../../sections/app/shacl_validation_report/shacl_validation_report_view"),
+        {loading: () => <Stack alignItems='center'><CircularProgress/></Stack>});
 
 const tabs = [
     {label: 'Details', value: 'details'},
@@ -43,7 +47,7 @@ const tabs = [
 const Page = () => {
     const router = useRouter();
 
-    const {id,sid} = router.query;
+    const {id, sid} = router.query;
 
     const [item, setItem] = useState({})
     const [currentTab, setCurrentTab] = useState('details');
@@ -147,7 +151,7 @@ const Page = () => {
                             </Stack>
                         </Stack>
                         <Button
-                            onClick={()=>handleExport(item)}
+                            onClick={() => handleExport(item)}
                             disabled={isExporting}
                             startIcon={(
                                 <SvgIcon>
