@@ -1,40 +1,41 @@
 import {useEffect, useState} from 'react';
 import dynamic from "next/dynamic";
 
-import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
-import {Upload04 as ExportIcon} from "@untitled-ui/icons-react/build/esm";
-import Chip from '@mui/material/Chip';
-import Divider from '@mui/material/Divider';
-import Link from '@mui/material/Link';
-import Stack from '@mui/material/Stack';
-import SvgIcon from '@mui/material/SvgIcon';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import DownloadingIcon from '@mui/icons-material/Downloading';
 import Tab from '@mui/material/Tab';
+import Chip from '@mui/material/Chip';
 import Tabs from '@mui/material/Tabs';
-import Typography from '@mui/material/Typography';
+import Link from '@mui/material/Link';
 import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
+import Stack from '@mui/material/Stack';
 import Button from "@mui/material/Button";
+import Divider from '@mui/material/Divider';
+import SvgIcon from '@mui/material/SvgIcon';
+import Typography from '@mui/material/Typography';
+import CardContent from "@mui/material/CardContent";
+import CircularProgress from "@mui/material/CircularProgress";
+
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
-import {Layout as AppLayout} from 'src/layouts/app';
-import {mappingPackageStatesApi as sectionApi} from 'src/api/mapping-packages/states';
-import {mappingPackagesApi as previousSectionApi} from 'src/api/mapping-packages';
 import {useRouter} from "src/hooks/use-router";
+import {Layout as AppLayout} from 'src/layouts/app';
 import {RouterLink} from 'src/components/router-link';
-import exportPackage from "../../../../../../utils/export-mapping-package";
-import CircularProgress from "@mui/material/CircularProgress";
+import exportPackage from "src/utils/export-mapping-package";
+import {mappingPackagesApi as previousSectionApi} from 'src/api/mapping-packages';
+import {mappingPackageStatesApi as sectionApi} from 'src/api/mapping-packages/states';
 
 const StateDetails =
-    dynamic(() => import("../../../../../../sections/app/mapping-package/state/state-details"));
+    dynamic(() => import("src/sections/app/mapping-package/state/state-details"));
 const XpathValidationReportView =
-    dynamic(() => import("../../../../../../sections/app/xpath_validation_report/xpath_validation_report_view"),
+    dynamic(() => import("src/sections/app/xpath_validation_report/xpath_validation_report_view"),
         {loading: () => <Stack alignItems='center'><CircularProgress/></Stack>});
 const SparqlValidationReport =
-    dynamic(() => import("../../../../../../sections/app/sparql_validation_report/sparql_validation_report_view"),
+    dynamic(() => import("src/sections/app/sparql_validation_report/sparql_validation_report_view"),
         {loading: () => <Stack alignItems='center'><CircularProgress/></Stack>});
 const ShaclValidationReport =
-    dynamic(() => import("../../../../../../sections/app/shacl_validation_report/shacl_validation_report_view"),
+    dynamic(() => import("src/sections/app/shacl_validation_report/shacl_validation_report_view"),
         {loading: () => <Stack alignItems='center'><CircularProgress/></Stack>});
 
 const tabs = [
@@ -98,7 +99,7 @@ const Page = () => {
                             underline="hover"
                         >
                             <SvgIcon sx={{mr: 1}}>
-                                <ArrowLeftIcon/>
+                                <ArrowBackIcon/>
                             </SvgIcon>
                             <Typography variant="subtitle2">
                                 {previousSectionApi.SECTION_TITLE}
@@ -155,7 +156,7 @@ const Page = () => {
                             disabled={isExporting}
                             startIcon={(
                                 <SvgIcon>
-                                    <ExportIcon/>
+                                    <DownloadingIcon/>
                                 </SvgIcon>
                             )}
                             variant="contained"
@@ -186,11 +187,11 @@ const Page = () => {
                 {currentTab === 'details' && (
                     <StateDetails item={item}/>
                 )}
-                {currentTab === 'shacl' && (
+                {currentTab === 'xpath' && (
                     <Card>
                         <CardContent>
-                            <ShaclValidationReport sid={sid}
-                                                   reportTree={validationReportTree}/>
+                            <XpathValidationReportView sid={sid}
+                                                       reportTree={validationReportTree}/>
                         </CardContent>
                     </Card>
                 )}
@@ -202,11 +203,11 @@ const Page = () => {
                         </CardContent>
                     </Card>
                 )}
-                {currentTab === 'xpath' && (
+                {currentTab === 'shacl' && (
                     <Card>
                         <CardContent>
-                            <XpathValidationReportView sid={sid}
-                                                       reportTree={validationReportTree}/>
+                            <ShaclValidationReport sid={sid}
+                                                   reportTree={validationReportTree}/>
                         </CardContent>
                     </Card>
                 )}
