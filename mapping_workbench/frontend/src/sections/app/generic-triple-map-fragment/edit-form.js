@@ -39,6 +39,7 @@ import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Alert from "@mui/material/Alert";
 import {AlertTitle} from "@mui/material";
+import CodeMirrorDefault from "../../../components/app/form/codeMirrorDefault";
 
 export const EditForm = (props) => {
     const {itemctx, tree, ...other} = props;
@@ -245,11 +246,11 @@ export const EditForm = (props) => {
                                 />
                             </Grid>
                             <Grid xs={12}>
-                                <CodeMirror
-                                    theme={theme.palette.mode === 'dark' ? githubDark : githubLight}
+                                <CodeMirrorDefault
+                                    // theme={theme.palette.mode === 'dark' ? githubDark : githubLight}
                                     style={{resize: 'vertical', overflow: 'auto', height: 600}}
                                     value={formik.values.triple_map_content}
-                                    extensions={[lng[formik.values.format].extension()]}
+                                    // extensions={[lng[formik.values.format].extension()]}
                                     onChange={(value) => formik.setFieldValue('triple_map_content', value)}
                                     // options={{
                                     //     mode: lng[formik.values.format].mode,

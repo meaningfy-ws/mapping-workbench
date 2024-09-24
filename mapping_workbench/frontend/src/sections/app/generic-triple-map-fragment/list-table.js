@@ -28,6 +28,8 @@ import TablePagination from "src/sections/components/table-pagination";
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
+import {githubDark, githubLight} from "@uiw/codemirror-themes-all";
+import {useTheme} from "@mui/material/styles";
 
 export const ListTable = (props) => {
     const {
@@ -47,6 +49,7 @@ export const ListTable = (props) => {
     const lng = {TTL: {mode: 'text/turtle', extension: turtle}, YAML: {mode: 'text/yaml', extension: yaml}}
 
     const [currentItem, setCurrentItem] = useState(null);
+    const theme = useTheme();
     const {timeSetting} = useGlobalState()
 
     const handleItemToggle = itemId => setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
@@ -192,6 +195,7 @@ export const ListTable = (props) => {
                                                             >
                                                                 <Box>Content:</Box>
                                                                 <CodeMirror
+                                                                    theme={theme.palette.mode === 'dark' ? githubDark : githubLight}
                                                                     value={item.triple_map_content}
                                                                     extensions={[lng[item.format].extension()]}
                                                                     editable={false}
