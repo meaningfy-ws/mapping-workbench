@@ -10,12 +10,10 @@ import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packag
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
-        filters: {
-        },
-        sort: {
-        },
+        filters: {},
+        sort: {},
         search: [],
-        searchColumns:["sdk_element_id", "test_data_xpath"],
+        searchColumns: ["sdk_element_id", "test_data_xpath"],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -26,7 +24,7 @@ const useItemsSearch = (items) => {
         let returnItem = null;
         state.searchColumns.forEach(column => {
             state.search.forEach(search => {
-                if(item[column]?.toLowerCase()?.includes(search.toLowerCase()))
+                if (item[column]?.toLowerCase()?.includes(search.toLowerCase()))
                     returnItem = item
             })
         })
@@ -36,11 +34,11 @@ const useItemsSearch = (items) => {
     const filteredItems = searchItems.filter((item) => {
         let returnItem = item;
 
-        Object.entries(filters).forEach(e=> {
+        Object.entries(filters).forEach(e => {
             const [key, value] = e
-            if(value !== undefined && typeof item[key] === "boolean" && item[key]?.toString() != value)
+            if (value !== undefined && typeof item[key] === "boolean" && item[key]?.toString() != value)
                 returnItem = null
-            if(value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase))
+            if (value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase))
                 returnItem = null
         })
         return returnItem
@@ -48,10 +46,10 @@ const useItemsSearch = (items) => {
 
     const sortedItems = () => {
         const sortColumn = state.sort.column
-        if(!sortColumn) {
+        if (!sortColumn) {
             return filteredItems
         } else {
-            return filteredItems.sort((a,b) => {
+            return filteredItems.sort((a, b) => {
                 if (typeof a[sortColumn] === "string")
                     return state.sort.direction === "asc" ?
                         a[sortColumn]?.localeCompare(b[sortColumn]) :
@@ -60,18 +58,18 @@ const useItemsSearch = (items) => {
                     return state.sort.direction === "asc" ?
                         a[sortColumn] - b[sortColumn] :
                         b[sortColumn] - a[sortColumn]
-                })
+            })
         }
     }
 
     const pagedItems = sortedItems().filter((item, i) => {
         const pageSize = state.page * state.rowsPerPage
-        if((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
+        if ((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
             return item
     })
 
     const handleSearchItems = (filters) => {
-        setState(prevState => ({...prevState, search: filters }))
+        setState(prevState => ({...prevState, search: filters}))
     }
 
     const handleFiltersChange = (filters) => {
@@ -90,8 +88,12 @@ const useItemsSearch = (items) => {
     }
 
     const handleSort = (column) => {
-        setState(prevState=> ({ ...prevState, sort: {column,
-                direction: prevState.sort.column === column && prevState.sort.direction === "asc" ? "desc" : "asc"}}))
+        setState(prevState => ({
+            ...prevState, sort: {
+                column,
+                direction: prevState.sort.column === column && prevState.sort.direction === "asc" ? "desc" : "asc"
+            }
+        }))
     }
     const handleRowsPerPageChange = (event) => {
         setState(prevState => ({
@@ -112,24 +114,25 @@ const useItemsSearch = (items) => {
     };
 };
 
-const XpathValidationReportTest= ({  sid, suiteId, testId, mappingSuiteIdentifier }) => {
+const XpathValidationReportTest = ({sid, suiteId, testId, mappingSuiteIdentifier}) => {
     const [validationReport, setValidationReport] = useState([])
     const [dataState, setDataState] = useState({load: true, error: false})
 
-    useEffect(()=>{
+    useEffect(() => {
         handleValidationReportsTestGet(sid, suiteId, testId)
-    },[testId])
+    }, [testId])
 
     const handleValidationReportsTestGet = async (sid, suiteId, testId) => {
-        try {
-            setDataState({load: true, error: false})
-            const result = await sectionApi.getXpathReportsTest(sid, suiteId, testId)
-            setValidationReport(result.results)
-            setDataState(e=> ({...e, load: false}))
-        } catch (err) {
-            console.error(err);
-            setDataState({load: false, error: true})
-        }
+        setDataState({load: true, error: false})
+        sectionApi.getXpathReportsTest(sid, suiteId, testId)
+            .then(res => {
+                setValidationReport(res.results)
+                setDataState(e => ({...e, load: false}))
+            })
+            .catch(err => {
+                console.error(err);
+                setDataState({load: false, error: true})
+            })
     }
 
     const itemsSearch = useItemsSearch(validationReport);
@@ -144,28 +147,28 @@ const XpathValidationReportTest= ({  sid, suiteId, testId, mappingSuiteIdentifie
                               data={validationReport}
                               lines={3}>
                 <CoverageReport validationReport={validationReport}
-                    mappingSuiteIdentifier={mappingSuiteIdentifier}/>
+                                mappingSuiteIdentifier={mappingSuiteIdentifier}/>
             </TableLoadWrapper>
-                <Typography m={2}
-                            variant="h4">
-                    Assertions
-                </Typography>
+            <Typography m={2}
+                        variant="h4">
+                Assertions
+            </Typography>
             <TableLoadWrapper dataState={dataState}
                               data={validationReport}>
                 <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
                 <ListTable
-                        items={itemsSearch.pagedItems}
-                        count={itemsSearch.count}
-                        onPageChange={itemsSearch.handlePageChange}
-                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        page={itemsSearch.state.page}
-                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                        onSort={itemsSearch.handleSort}
-                        sort={itemsSearch.state.sort}
-                        sectionApi={sectionApi}
+                    items={itemsSearch.pagedItems}
+                    count={itemsSearch.count}
+                    onPageChange={itemsSearch.handlePageChange}
+                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                    page={itemsSearch.state.page}
+                    rowsPerPage={itemsSearch.state.rowsPerPage}
+                    onSort={itemsSearch.handleSort}
+                    sort={itemsSearch.state.sort}
+                    sectionApi={sectionApi}
                 />
             </TableLoadWrapper>
         </>
     )
 }
-export default  XpathValidationReportTest
+export default XpathValidationReportTest
