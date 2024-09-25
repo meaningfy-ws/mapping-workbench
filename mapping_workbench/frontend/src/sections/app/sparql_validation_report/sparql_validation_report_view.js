@@ -1,11 +1,11 @@
 import {useState} from "react";
 
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
-import Stack from "@mui/material/Stack";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
+import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
 
 import CoverageFiles from "./coverage_files";
 import SparqlFileReport from "./sparql_validation_report_file";
@@ -45,7 +45,7 @@ const SparqlValidationReportView = ({sid, reportTree}) => {
     return (
         <>
             <Stack spacing={1}>
-                <Breadcrumbs separator={<KeyboardArrowRightIcon/>}>
+                <Breadcrumbs separator={<ChevronRightIcon/>}>
                     <Link component="button"
                           color={currentTab !== PACKAGE_STATE ? "inherit" : "primary"}
                           onClick={() => setCurrentTab(PACKAGE_STATE)}

@@ -1,15 +1,16 @@
 import {useState} from "react";
 
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+
 import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
 import CoverageFiles from "./coverage_files";
+import XpathValidationReportTest from "./xpath_validation_report_file";
 import XpathValidationReport from "./xpath_validation_report_package_state";
 import XpathValidationReportSuite from "./xpath_validation_report_test_dataset";
-import XpathValidationReportTest from "./xpath_validation_report_file";
 
 const PACKAGE_STATE = "package_state"
 const PACKAGE_STATE_LABEL = "Package State XPath Coverage"
@@ -43,7 +44,7 @@ const XpathValidationReportView = ({sid, reportTree}) => {
     return (
         <>
             <Stack spacing={1}>
-                <Breadcrumbs separator={<KeyboardArrowRightIcon/>}>
+                <Breadcrumbs separator={<ChevronRightIcon/>}>
                     <Link component="button"
                           color={currentTab !== PACKAGE_STATE ? "inherit" : "primary"}
                           onClick={() => setCurrentTab(PACKAGE_STATE)}

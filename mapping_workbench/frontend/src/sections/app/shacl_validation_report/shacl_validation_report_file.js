@@ -1,12 +1,12 @@
 import {useEffect, useState} from "react";
-import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
 
 import Typography from "@mui/material/Typography";
 
-import ItemSearchInput from "../file-manager/item-search-input";
-import {ListTableFile} from "./list-table-file";
-import {ResultTable} from "./result-table";
 import {TableLoadWrapper} from "./utils";
+import {ResultTable} from "./result-table";
+import {ListTableFile} from "./list-table-file";
+import ItemSearchInput from "../file-manager/item-search-input";
+import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
 
 const useItemsSearch = (items) => {
@@ -19,7 +19,7 @@ const useItemsSearch = (items) => {
             direction: "desc"
         },
         search: [],
-        searchColumns:["short_focus_node","message","short_result_path","short_result_severity","short_source_constraint_component"],
+        searchColumns: ["short_focus_node", "message", "short_result_path", "short_result_severity", "short_source_constraint_component"],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -30,7 +30,7 @@ const useItemsSearch = (items) => {
         let returnItem = null;
         state.searchColumns.forEach(column => {
             state.search.forEach(search => {
-                if(item[column]?.toLowerCase()?.includes(search.toLowerCase()))
+                if (item[column]?.toLowerCase()?.includes(search.toLowerCase()))
                     returnItem = item
             })
         })
@@ -39,11 +39,11 @@ const useItemsSearch = (items) => {
 
     const filteredItems = searchItems.filter((item) => {
         let returnItem = item;
-        Object.entries(filters).forEach(filter=> {
+        Object.entries(filters).forEach(filter => {
             const [key, value] = filter
-            if(value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
+            if (value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
                 returnItem = null
-            if(value !== "" && value !== undefined && typeof item[key] === "string" && item[key] !== value.toLowerCase())
+            if (value !== "" && value !== undefined && typeof item[key] === "string" && item[key] !== value.toLowerCase())
                 returnItem = null
         })
         return returnItem
@@ -51,10 +51,10 @@ const useItemsSearch = (items) => {
 
     const sortedItems = () => {
         const sortColumn = state.sort.column
-        if(!sortColumn) {
+        if (!sortColumn) {
             return filteredItems
         } else {
-            return filteredItems.sort((a,b) => {
+            return filteredItems.sort((a, b) => {
                 if (typeof a[sortColumn] === "string")
                     return state.sort.direction === "asc" ?
                         a[sortColumn]?.localeCompare(b[sortColumn]) :
@@ -63,44 +63,38 @@ const useItemsSearch = (items) => {
                     return state.sort.direction === "asc" ?
                         a[sortColumn] - b[sortColumn] :
                         b[sortColumn] - a[sortColumn]
-                })
+            })
         }
     }
 
     const pagedItems = sortedItems().filter((item, i) => {
         const pageSize = state.page * state.rowsPerPage
-        if((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
+        if ((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
             return item
     })
 
     const handleSearchItems = (filters) => {
-        setState(prevState=> ({...prevState, search: filters }))
+        setState(prevState => ({...prevState, search: filters}))
     }
 
     const handleFiltersChange = (filters) => {
-        setState(prevState=> ({
-            ...prevState,
-            filters,
-            page: 0
-        }));
+        setState(prevState => ({...prevState, filters, page: 0}));
     }
 
     const handlePageChange = (event, page) => {
-        setState(prevState => ({
-            ...prevState,
-            page
-        }));
+        setState(prevState => ({...prevState, page}));
     }
 
     const handleSort = (column) => {
-        setState(prevState=> ({ ...prevState, sort: {column,
-                direction: prevState.sort.column === column && prevState.sort.direction === "asc" ? "desc" : "asc"}}))
+        setState(prevState => ({
+            ...prevState, sort: {
+                column,
+                direction: prevState.sort.column === column && prevState.sort.direction === "asc" ? "desc" : "asc"
+            }
+        }))
     }
     const handleRowsPerPageChange = (event) => {
-        setState(prevState => ({
-            ...prevState,
-            rowsPerPage: parseInt(event.target.value, 10)
-        }));
+        setState(prevState => ({...prevState, rowsPerPage: parseInt(event.target.value, 10)}));
     }
 
     return {
@@ -115,14 +109,14 @@ const useItemsSearch = (items) => {
     };
 };
 
-const ShaclFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier }) => {
+const ShaclFileReport = ({sid, suiteId, testId, files, mappingSuiteIdentifier}) => {
     const [validationReport, setValidationReport] = useState([])
     const [validationResult, setValidationResult] = useState([])
-    const [dataState, setDataState] = useState({load:true, error:false})
+    const [dataState, setDataState] = useState({load: true, error: false})
 
-    useEffect(()=>{
+    useEffect(() => {
         handleValidationReportsGet(sid, suiteId, testId)
-    },[])
+    }, [])
 
     const handleValidationReportsGet = async (sid, suiteId, testId) => {
         try {
@@ -130,7 +124,7 @@ const ShaclFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier }
             const result = await sectionApi.getSparqlReportsFile(sid, suiteId, testId)
             setValidationReport(mapShaclFileResults(result.results?.[0]?.results?.[0]?.results) ?? [])
             setValidationResult(mapShaclFileStates(result.results?.[0]) ?? []);
-            setDataState(e=>({...e, load: false}))
+            setDataState(e => ({...e, load: false}))
         } catch (err) {
             console.error(err);
             setDataState({load: false, error: true})
@@ -143,13 +137,13 @@ const ShaclFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier }
         }))
     }
 
-    const mapShaclFileResults = (result) => result?.map(e=> ({...e.binding}))
+    const mapShaclFileResults = (result) => result?.map(e => ({...e.binding}))
 
     const itemsSearch = useItemsSearch(validationReport);
 
     return (
         <>
-             <Typography m={2}
+            <Typography m={2}
                         variant="h4">
                 Results
             </Typography>
@@ -157,7 +151,7 @@ const ShaclFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier }
                               data={validationResult}
                               lines={2}>
                 <ResultTable items={validationResult}
-                         sectionApi={sectionApi}/>
+                             sectionApi={sectionApi}/>
             </TableLoadWrapper>
             <Typography m={2}
                         variant="h4">
@@ -165,20 +159,20 @@ const ShaclFileReport = ({ sid, suiteId, testId, files, mappingSuiteIdentifier }
             </Typography>
             <TableLoadWrapper dataState={dataState}
                               data={validationReport}>
-                    <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
-                    <ListTableFile
-                            items={itemsSearch.pagedItems}
-                            count={itemsSearch.count}
-                            onPageChange={itemsSearch.handlePageChange}
-                            onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                            page={itemsSearch.state.page}
-                            rowsPerPage={itemsSearch.state.rowsPerPage}
-                            onSort={itemsSearch.handleSort}
-                            sort={itemsSearch.state.sort}
-                            sectionApi={sectionApi}
-                    />
+                <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
+                <ListTableFile
+                    items={itemsSearch.pagedItems}
+                    count={itemsSearch.count}
+                    onPageChange={itemsSearch.handlePageChange}
+                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                    page={itemsSearch.state.page}
+                    rowsPerPage={itemsSearch.state.rowsPerPage}
+                    onSort={itemsSearch.handleSort}
+                    sort={itemsSearch.state.sort}
+                    sectionApi={sectionApi}
+                />
             </TableLoadWrapper>
         </>
     )
 }
-export default  ShaclFileReport
+export default ShaclFileReport

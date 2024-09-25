@@ -1,25 +1,25 @@
 import {useState} from "react";
 import PropTypes from 'prop-types';
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 
 import Table from '@mui/material/Table';
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
+import Dialog from '@mui/material/Dialog';
+import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Button from "@mui/material/Button";
-import Dialog from '@mui/material/Dialog';
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import Stack from "@mui/material/Stack";
 
 import {Scrollbar} from 'src/components/scrollbar';
 import {ResultChip, SorterHeader as UtilsSorterHeader} from "./utils";
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import TablePagination from "../../components/table-pagination";
+import TablePagination from "src/sections/components/table-pagination";
 
 export const ListTable = (props) => {
-    const [descriptionDialog, setDescriptionDialog] = useState({open:false, title:"", text:""})
+    const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", text: ""})
 
     const {
         count = 0,
@@ -30,17 +30,18 @@ export const ListTable = (props) => {
         rowsPerPage = 0,
         sort,
         onSort,
-        sectionApi
+        sectionApi,
+        handleSelectFile
     } = props;
 
     const mapNotices = (notices) => {
-        return(
-            <ul style={{listStyleType: "circle"}}>
-                {notices.map((notice,i) =>
-                    <li key={'notice' + i}>
-                        {`${notice.test_data_suite_id} / ${notice.test_data_id}`}
-                    </li>)}
-            </ul>
+        return (
+            notices.map((notice, i) =>
+                <Button key={'notice' + i}
+                        onClick={() => handleSelectFile(notice.test_data_oid, notice.test_data_suite_oid)}
+                        type='link'>
+                    {`${notice.test_data_suite_id} / ${notice.test_data_id}`}
+                </Button>)
         )
     }
 
@@ -50,25 +51,25 @@ export const ListTable = (props) => {
     }
 
     const handleClose = () => {
-        setDescriptionDialog(e=>({...e, open: false}));
+        setDescriptionDialog(e => ({...e, open: false}));
     };
 
     const SorterHeader = (props) => <UtilsSorterHeader sort={sort}
                                                        onSort={onSort}
                                                        {...props}
-                                                        />
+    />
 
     const ResultCell = ({title, result, onClick}) => {
         return <Stack direction="column"
-        alignItems="center"
-        justifyContent="start"
-        height={100}>
-                    {result.count}
-                    {!!result.count && <Button variant="outlined"
-                    onClick={()=> onClick({title, notices: result.test_datas})}>
-                        Details
-                    </Button>}
-                </Stack>
+                      alignItems="center"
+                      justifyContent="start"
+                      height={100}>
+            {result.count}
+            {!!result.count && <Button variant="outlined"
+                                       onClick={() => onClick({title, notices: result.test_datas})}>
+                Details
+            </Button>}
+        </Stack>
     }
 
     return (
@@ -89,87 +90,92 @@ export const ListTable = (props) => {
                         <TableHead>
                             <TableRow>
                                 <TableCell>
-                                     <SorterHeader fieldName="test_suite"
-                                                   title="Test Suite"/>
+                                    <SorterHeader fieldName="test_suite"
+                                                  title="Test Suite"/>
                                 </TableCell>
                                 <TableCell width="25%">
                                     <SorterHeader fieldName="conforms"
                                                   title="Conforms"/>
                                 </TableCell>
 
-                            <TableCell>
-                                 <SorterHeader fieldName="short_result_path"
-                                               title="Result Path"/>
-                            </TableCell>
-                            <TableCell align="center">
-                                <SorterHeader fieldName="infoCount"
-                                              title={<ResultChip label="Info"
-                                                                 clickable/>}
-                                              desc/>
-                            </TableCell>
-                            <TableCell align="center">
-                                <SorterHeader fieldName="validCount"
-                                              title={<ResultChip label="Valid"
-                                                                 clickable/>}
-                                              desc/>
-                            </TableCell>
-                            <TableCell align="center">
-                                <SorterHeader fieldName="warningCount"
-                                              title={<ResultChip label="Warning"
-                                                                 clickable/>}
-                                              desc/>
-                            </TableCell>
-                            <TableCell align="center">
-                                 <SorterHeader fieldName="violationCount"
-                                               title={<ResultChip label="Violation"
-                                                                  clickable/>}
-                                               desc/>
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {items?.map((item, key) => {
-                            return (
-                                <TableRow key={key}>
-                                    <TableCell>
-                                        {item.shacl_suite}
-                                    </TableCell>
-                                    <TableCell>
+                                <TableCell>
+                                    <SorterHeader fieldName="short_result_path"
+                                                  title="Result Path"/>
+                                </TableCell>
+                                <TableCell align="center">
+                                    <SorterHeader fieldName="infoCount"
+                                                  title={<ResultChip label="Info"
+                                                                     clickable/>}
+                                                  desc/>
+                                </TableCell>
+                                <TableCell align="center">
+                                    <SorterHeader fieldName="validCount"
+                                                  title={<ResultChip label="Valid"
+                                                                     clickable/>}
+                                                  desc/>
+                                </TableCell>
+                                <TableCell align="center">
+                                    <SorterHeader fieldName="warningCount"
+                                                  title={<ResultChip label="Warning"
+                                                                     clickable/>}
+                                                  desc/>
+                                </TableCell>
+                                <TableCell align="center">
+                                    <SorterHeader fieldName="violationCount"
+                                                  title={<ResultChip label="Violation"
+                                                                     clickable/>}
+                                                  desc/>
+                                </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {items?.map((item, key) => {
+                                return (
+                                    <TableRow key={key}>
+                                        <TableCell>
+                                            {item.shacl_suite}
+                                        </TableCell>
+                                        <TableCell>
                                             {0}
-                                    </TableCell>
-                                    <TableCell>
-                                        <SyntaxHighlighter
-                                            language="turtle"
-                                            wrapLines={true}
-                                            lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
-                                            {item.short_result_path}
-                                        </SyntaxHighlighter>
-                                    </TableCell>
-                                    <TableCell>
-                                        <ResultCell
-                                            title={item.title}
-                                            result={item.result.info}
-                                            onClick={handleOpenDetails}/>
-                                    </TableCell>
-                                    <TableCell>
-                                        <ResultCell
-                                            title={item.title}
-                                            result={item.result.valid}
-                                            onClick={handleOpenDetails}/>
-                                    </TableCell>
-                                    <TableCell>
-                                        <ResultCell
-                                            title={item.title}
-                                            result={item.result.warning}
-                                            onClick={handleOpenDetails}/>
-                                    </TableCell>
-                                    <TableCell>
-                                        <ResultCell
-                                            title={item.title}
-                                            result={item.result.violation}
-                                            onClick={handleOpenDetails}/>
-                                    </TableCell>
-                                </TableRow>
+                                        </TableCell>
+                                        <TableCell>
+                                            <SyntaxHighlighter
+                                                language="turtle"
+                                                wrapLines
+                                                lineProps={{
+                                                    style: {
+                                                        overflowWrap: 'break-word',
+                                                        whiteSpace: 'pre-wrap'
+                                                    }
+                                                }}>
+                                                {item.short_result_path}
+                                            </SyntaxHighlighter>
+                                        </TableCell>
+                                        <TableCell>
+                                            <ResultCell
+                                                title={item.shacl_suite}
+                                                result={item.result.info}
+                                                onClick={handleOpenDetails}/>
+                                        </TableCell>
+                                        <TableCell>
+                                            <ResultCell
+                                                title={item.shacl_suite}
+                                                result={item.result.valid}
+                                                onClick={handleOpenDetails}/>
+                                        </TableCell>
+                                        <TableCell>
+                                            <ResultCell
+                                                title={item.shacl_suite}
+                                                result={item.result.warning}
+                                                onClick={handleOpenDetails}/>
+                                        </TableCell>
+                                        <TableCell>
+                                            <ResultCell
+                                                title={item.shacl_suite}
+                                                result={item.result.violation}
+                                                onClick={handleOpenDetails}/>
+                                        </TableCell>
+                                    </TableRow>
 
                                 );
                             })}
@@ -184,13 +190,13 @@ export const ListTable = (props) => {
                 aria-describedby="alert-dialog-description"
             >
                 <DialogTitle id="alert-dialog-title">
-                  {descriptionDialog.title}
+                    {descriptionDialog.title}
                 </DialogTitle>
                 <DialogContent>
-                  {descriptionDialog.description}
+                    {descriptionDialog.description}
                 </DialogContent>
                 <DialogActions>
-                  <Button onClick={handleClose}>Close</Button>
+                    <Button onClick={handleClose}>Close</Button>
                 </DialogActions>
             </Dialog>
         </>
