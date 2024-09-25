@@ -8,7 +8,7 @@ import Stack from "@mui/material/Stack";
 import AlbumIcon from '@mui/icons-material/Album';
 import AdjustIcon from '@mui/icons-material/Adjust';
 import CircularProgress from "@mui/material/CircularProgress";
-import {TableErrorFetching, TableNoData} from "../shacl_validation_report/utils";
+import {TableErrorFetching, TableNoData} from "../shacl-validation-report/utils";
 
 const TreeView = (props) => {
     const {sectionApi} = props;

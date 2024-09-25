@@ -55,7 +55,7 @@ Then('I enter name', () => {
     cy.get("input[name=mapping_package_id]").parent().click()
     .get('ul.MuiList-root').click()
     cy.get("input[name=triple_map_uri]").clear().type(specificTripleMapName)
-    cy.get("button[type=submit]").click()
+    cy.get("button[type=submit]").click('right')
 })
 
 

@@ -5,13 +5,12 @@ Feature: Entry Projects
   Scenario: Create Project
     Given Session Login
     Then Go Home
-    Then I click on projects
+    Then Visit Projects
     Then I get redirected to projects list page
 
     When I click on add project button
     Then I get redirected to projects create page
     Then I type project name
-#    Then I uncheck checkboxes
     When I click create button
     Then I get success created
 
@@ -19,7 +18,7 @@ Feature: Entry Projects
     Given Session Login
     Then Go Home
 
-    When I click on projects
+    Then Visit Projects
     Then I get redirected to projects list page
     Then I search for project
 
@@ -29,7 +28,8 @@ Feature: Entry Projects
   Scenario: Edit Project
     Given Session Login
     Then Go Home
-    Then I click on projects
+
+    Then Visit Projects
     Then I get redirected to projects list page
     Then I search for project
 
@@ -44,7 +44,7 @@ Feature: Entry Projects
     Given Session Login
     Then Go Home
 
-    Then I click on projects
+    Then Visit Projects
     Then I get redirected to projects list page
     Then I search for project
 
@@ -57,7 +57,7 @@ Feature: Entry Projects
     Given Session Login
     Then Go Home
 
-    Then I click on projects
+    Then Visit Projects
     Then I get redirected to projects list page
     Then I search for project
 
