@@ -1,13 +1,12 @@
 import PropTypes from 'prop-types';
+
 import Table from '@mui/material/Table';
+import Switch from "@mui/material/Switch";
+import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableSortLabel from '@mui/material/TableSortLabel';
 import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import Tooltip from "@mui/material/Tooltip";
-import Switch from "@mui/material/Switch";
 
 import {Scrollbar} from 'src/components/scrollbar';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';

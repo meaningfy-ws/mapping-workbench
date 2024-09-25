@@ -1,17 +1,15 @@
+import {Box} from "@mui/system";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
-import {Box} from "@mui/system";
 import Paper from "@mui/material/Paper";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import Tooltip from "@mui/material/Tooltip";
-import TableSortLabel from "@mui/material/TableSortLabel";
-import Skeleton from "@mui/material/Skeleton";
 import Alert from "@mui/material/Alert";
-import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
+import Tooltip from "@mui/material/Tooltip";
+import Skeleton from "@mui/material/Skeleton";
+import Typography from "@mui/material/Typography";
+import RadioGroup from "@mui/material/RadioGroup";
+import TableSortLabel from "@mui/material/TableSortLabel";
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 export const resultColor = (result) => {
     switch (result.toLowerCase()) {

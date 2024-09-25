@@ -5,9 +5,9 @@ import PropTypes from 'prop-types';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+
 import {SorterHeader as UtilsSorterHeader} from "./utils";
 import {Scrollbar} from 'src/components/scrollbar';
 import TablePagination from '../../components/table-pagination';

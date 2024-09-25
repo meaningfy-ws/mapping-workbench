@@ -24,13 +24,13 @@ Then('I get success select', () => {
 
 //DISCOVER
 Then('I get redirected to Ontology Terms', () => {
-    cy.url().should('include','ontology')
+    cy.url().should('include','ontology-terms')
     cy.wait('@get').its('response.statusCode').should('eq', 200)
 })
 
 Then('I click on Ontology Terms', () => {
     cy.intercept('GET', appURLPrefix + 'ontology/terms*').as('get')
-    cy.get('#nav_mapping_entities').click()
+    cy.get('#nav_project_setup').click()
     cy.get('#nav_ontology_terms').click()
 })
 

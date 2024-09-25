@@ -12,7 +12,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 
-import {TableNoData} from "../shacl_validation_report/utils";
+import {TableNoData} from "../shacl-validation-report/utils";
 
 const XpathEvaluator = ({xmlDoc, absolute_xpath}) => {
     const [nodes, setNodes] = useState([])
