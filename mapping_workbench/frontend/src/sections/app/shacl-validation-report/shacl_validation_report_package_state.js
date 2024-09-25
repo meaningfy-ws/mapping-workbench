@@ -1,13 +1,12 @@
 import {useEffect, useState} from "react";
-import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
 
 import Typography from "@mui/material/Typography";
 
-import ItemSearchInput from "../file-manager/item-search-input";
 import {ListTable} from "./list-table";
-import ResultSummaryTable from "./result-summary-table";
 import {TableLoadWrapper} from "./utils";
-
+import ResultSummaryTable from "./result-summary-table";
+import ItemSearchInput from "../file-manager/item-search-input";
+import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
@@ -19,7 +18,7 @@ const useItemsSearch = (items) => {
             direction: "desc"
         },
         search: [],
-        searchColumns:["test_suite","short_result_path"],
+        searchColumns: ["test_suite", "short_result_path"],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -30,7 +29,7 @@ const useItemsSearch = (items) => {
         let returnItem = null;
         state.searchColumns.forEach(column => {
             state.search.forEach(search => {
-                if(item[column]?.toLowerCase()?.includes(search.toLowerCase()))
+                if (item[column]?.toLowerCase()?.includes(search.toLowerCase()))
                     returnItem = item
             })
         })
@@ -39,11 +38,11 @@ const useItemsSearch = (items) => {
 
     const filteredItems = searchItems.filter((item) => {
         let returnItem = item;
-        Object.entries(filters).forEach(filter=> {
+        Object.entries(filters).forEach(filter => {
             const [key, value] = filter
-            if(value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
+            if (value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
                 returnItem = null
-            if(value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase))
+            if (value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase))
                 returnItem = null
         })
         return returnItem
@@ -51,10 +50,10 @@ const useItemsSearch = (items) => {
 
     const sortedItems = () => {
         const sortColumn = state.sort.column
-        if(!sortColumn) {
+        if (!sortColumn) {
             return filteredItems
         } else {
-            return filteredItems.sort((a,b) => {
+            return filteredItems.sort((a, b) => {
                 if (typeof a[sortColumn] === "string")
                     return state.sort.direction === "asc" ?
                         a[sortColumn]?.localeCompare(b[sortColumn]) :
@@ -63,18 +62,18 @@ const useItemsSearch = (items) => {
                     return state.sort.direction === "asc" ?
                         a[sortColumn] - b[sortColumn] :
                         b[sortColumn] - a[sortColumn]
-                })
+            })
         }
     }
 
     const pagedItems = sortedItems().filter((item, i) => {
         const pageSize = state.page * state.rowsPerPage
-        if((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
+        if ((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
             return item
     })
 
     const handleSearchItems = (filters) => {
-        setState(prevState => ({...prevState, search: filters }))
+        setState(prevState => ({...prevState, search: filters}))
     }
 
     const handleFiltersChange = (filters) => {
@@ -93,8 +92,12 @@ const useItemsSearch = (items) => {
     }
 
     const handleSort = (column, desc) => {
-        setState(prevState=> ({ ...prevState, sort: {column,
-               direction: prevState.sort.column === column ? prevState.sort.direction === "asc" ? "desc" : "asc" : desc ? "desc" : "asc" }}))
+        setState(prevState => ({
+            ...prevState, sort: {
+                column,
+                direction: prevState.sort.column === column ? prevState.sort.direction === "asc" ? "desc" : "asc" : desc ? "desc" : "asc"
+            }
+        }))
 
     }
 
@@ -117,25 +120,26 @@ const useItemsSearch = (items) => {
     };
 };
 
-const ShaclPackageStateReport = ({ sid }) => {
+const ShaclPackageStateReport = ({sid, handleSelectFile}) => {
     const [validationReport, setValidationReport] = useState([])
-    const [dataState, setDataState] = useState({load:true, error:false})
+    const [dataState, setDataState] = useState({load: true, error: false})
 
 
-    useEffect(()=>{
+    useEffect(() => {
         handleValidationReportsGet(sid)
-    },[])
+    }, [])
 
-    const handleValidationReportsGet = async (sid) => {
-        try {
-            setDataState({load: true, error: false})
-            const result = await sectionApi.getShaclReports(sid)
-            setValidationReport(mapShaclResults(result.summary))
-            setDataState(e=>({...e, load: false}))
-        } catch (err) {
-            console.error(err);
-            setDataState({load: false, error: true})
-        }
+    const handleValidationReportsGet = (sid) => {
+        setDataState({load: true, error: false})
+        sectionApi.getShaclReports(sid)
+            .then(res => {
+                setValidationReport(mapShaclResults(res.summary))
+                setDataState(e => ({...e, load: false}))
+            })
+            .catch(err => {
+                console.error(err);
+                setDataState({load: false, error: true})
+            })
     }
 
     const mapShaclResults = (result) => {
@@ -172,18 +176,19 @@ const ShaclPackageStateReport = ({ sid }) => {
                               data={validationReport}>
                 <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
                 <ListTable
-                        items={itemsSearch.pagedItems}
-                        count={itemsSearch.count}
-                        onPageChange={itemsSearch.handlePageChange}
-                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        page={itemsSearch.state.page}
-                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                        onSort={itemsSearch.handleSort}
-                        sort={itemsSearch.state.sort}
-                        sectionApi={sectionApi}
+                    items={itemsSearch.pagedItems}
+                    count={itemsSearch.count}
+                    onPageChange={itemsSearch.handlePageChange}
+                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                    page={itemsSearch.state.page}
+                    rowsPerPage={itemsSearch.state.rowsPerPage}
+                    onSort={itemsSearch.handleSort}
+                    sort={itemsSearch.state.sort}
+                    sectionApi={sectionApi}
+                    handleSelectFile={handleSelectFile}
                 />
             </TableLoadWrapper>
         </>
     )
 }
-export default  ShaclPackageStateReport
+export default ShaclPackageStateReport

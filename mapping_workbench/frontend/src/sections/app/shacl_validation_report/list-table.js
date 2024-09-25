@@ -10,18 +10,16 @@ import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
-import Typography from '@mui/material/Typography';
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 
-import {ResultChip} from "./utils";
 import {Scrollbar} from 'src/components/scrollbar';
+import {ResultChip, SorterHeader as UtilsSorterHeader} from "./utils";
 import TablePagination from "src/sections/components/table-pagination";
-import TableSorterHeader from "src/sections/components/table-sorter-header";
 
 export const ListTable = (props) => {
-    const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", description: ""})
+    const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", text: ""})
 
     const {
         count = 0,
@@ -64,15 +62,10 @@ export const ListTable = (props) => {
         setDescriptionDialog(e => ({...e, open: false}));
     };
 
-    const SorterHeader = (props) => {
-        const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
-        return (
-            <TableSorterHeader sort={{direction, column: sort.column}}
-                               onSort={onSort}
-                               {...props}
-            />
-        )
-    }
+    const SorterHeader = (props) => <UtilsSorterHeader sort={sort}
+                                                       onSort={onSort}
+                                                       {...props}
+    />
 
     const ResultCell = ({title, result, onClick}) => {
         return <Stack direction="column"
@@ -104,27 +97,28 @@ export const ListTable = (props) => {
                     <Table sx={{minWidth: 1200}}>
                         <TableHead>
                             <TableRow>
-                                <TableCell width="25%">
-                                    <SorterHeader fieldName="title"
-                                                  title="Field"/>
-                                </TableCell>
                                 <TableCell>
                                     <SorterHeader fieldName="test_suite"
                                                   title="Test Suite"/>
                                 </TableCell>
+                                <TableCell width="25%">
+                                    <SorterHeader fieldName="conforms"
+                                                  title="Conforms"/>
+                                </TableCell>
+
                                 <TableCell>
-                                    <SorterHeader fieldName="query"
-                                                  title="Query"/>
+                                    <SorterHeader fieldName="short_result_path"
+                                                  title="Result Path"/>
                                 </TableCell>
                                 <TableCell align="center">
-                                    <SorterHeader fieldName="validCount"
-                                                  title={<ResultChip label="Valid"
+                                    <SorterHeader fieldName="infoCount"
+                                                  title={<ResultChip label="Info"
                                                                      clickable/>}
                                                   desc/>
                                 </TableCell>
                                 <TableCell align="center">
-                                    <SorterHeader fieldName="unverifiableCount"
-                                                  title={<ResultChip label="Unverifiable"
+                                    <SorterHeader fieldName="validCount"
+                                                  title={<ResultChip label="Valid"
                                                                      clickable/>}
                                                   desc/>
                                 </TableCell>
@@ -135,84 +129,58 @@ export const ListTable = (props) => {
                                                   desc/>
                                 </TableCell>
                                 <TableCell align="center">
-                                    <SorterHeader fieldName="invalidCount"
-                                                  title={<ResultChip label="Invalid"
-                                                                     clickable/>}
-                                                  desc/>
-                                </TableCell>
-                                <TableCell align="center">
-                                    <SorterHeader fieldName="errorCount"
-                                                  title={<ResultChip label="Error"
-                                                                     clickable/>}
-                                                  desc/>
-                                </TableCell>
-                                <TableCell align="center">
-                                    <SorterHeader fieldName="unknownCount"
-                                                  title={<ResultChip label="Unknown"
+                                    <SorterHeader fieldName="violationCount"
+                                                  title={<ResultChip label="Violation"
                                                                      clickable/>}
                                                   desc/>
                                 </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {items?.map((item, i) => {
+                            {items?.map((item, key) => {
                                 return (
-                                    <TableRow key={'row' + i}>
-                                        <TableCell width="25%">
-                                            <Typography variant="subtitle3">
-                                                {item.title}
-                                            </Typography>
+                                    <TableRow key={key}>
+                                        <TableCell>
+                                            {item.shacl_suite}
                                         </TableCell>
                                         <TableCell>
-                                            {item.test_suite}
+                                            {0}
                                         </TableCell>
                                         <TableCell>
                                             <SyntaxHighlighter
-                                                language="sparql"
-                                                wrapLines={true}
+                                                language="turtle"
+                                                wrapLines
                                                 lineProps={{
                                                     style: {
                                                         overflowWrap: 'break-word',
                                                         whiteSpace: 'pre-wrap'
                                                     }
                                                 }}>
-                                                {item.query}
+                                                {item.short_result_path}
                                             </SyntaxHighlighter>
                                         </TableCell>
                                         <TableCell>
                                             <ResultCell
-                                                title={item.title}
+                                                title={item.shacl_suite}
+                                                result={item.result.info}
+                                                onClick={handleOpenDetails}/>
+                                        </TableCell>
+                                        <TableCell>
+                                            <ResultCell
+                                                title={item.shacl_suite}
                                                 result={item.result.valid}
                                                 onClick={handleOpenDetails}/>
                                         </TableCell>
                                         <TableCell>
                                             <ResultCell
-                                                title={item.title}
-                                                result={item.result.unverifiable}
-                                                onClick={handleOpenDetails}/>
-                                        </TableCell>
-                                        <TableCell>
-                                            <ResultCell
-                                                title={item.title}
+                                                title={item.shacl_suite}
                                                 result={item.result.warning}
                                                 onClick={handleOpenDetails}/>
                                         </TableCell>
                                         <TableCell>
                                             <ResultCell
-                                                title={item.title}
-                                                result={item.result.invalid}
-                                                onClick={handleOpenDetails}/>
-                                        </TableCell>
-                                        <TableCell>
-                                            <ResultCell
-                                                title={item.title}
-                                                result={item.result.error}
-                                                onClick={handleOpenDetails}/>
-                                        </TableCell>
-                                        <TableCell>
-                                            <ResultCell
-                                                title={item.title}
-                                                result={item.result.unknown}
+                                                title={item.shacl_suite}
+                                                result={item.result.violation}
                                                 onClick={handleOpenDetails}/>
                                         </TableCell>
                                     </TableRow>

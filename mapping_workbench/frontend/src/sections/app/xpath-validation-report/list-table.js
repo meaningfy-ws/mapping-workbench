@@ -1,33 +1,24 @@
 import {useState} from "react";
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 
-import Accordion from "@mui/material/Accordion";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Typography from '@mui/material/Typography';
-import Tooltip from "@mui/material/Tooltip";
-import Button from "@mui/material/Button";
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContentText from "@mui/material/DialogContentText";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import PropTypes from 'prop-types';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 
+import Table from '@mui/material/Table';
+import Button from "@mui/material/Button";
+import Popover from "@mui/material/Popover";
+import TableRow from '@mui/material/TableRow';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import Typography from '@mui/material/Typography';
+
 import {Scrollbar} from 'src/components/scrollbar';
-import PropTypes from 'prop-types';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import TablePagination from "../../components/table-pagination";
+import TablePagination from "src/sections/components/table-pagination";
+import TableSorterHeader from "src/sections/components/table-sorter-header";
 
 export const ListTable = (props) => {
-    const [descriptionDialog, setDescriptionDialog] = useState({open:false, title:"", text:""})
 
     const {
         count = 0,
@@ -37,26 +28,25 @@ export const ListTable = (props) => {
         page = 0,
         rowsPerPage = 0,
         sectionApi,
+        handleSelectFile,
         onSort,
         sort
     } = props;
 
-    const handleClose = () => {
-        setDescriptionDialog(e=>({...e, open: false}));
-    };
+    const [popover, setPopover] = useState({})
 
+    const setPopoverOpen = (item, anchor) => {
+        setPopover({data: item, anchor})
+    }
 
-    const SorterHeader = ({fieldName, title}) => {
-       return <Tooltip enterDelay={300}
-                       title="Sort"
-               >
-                   <TableSortLabel
-                        active={sort.column === fieldName}
-                        direction={sort.direction}
-                        onClick={() => onSort(fieldName)}>
-                        {title ?? fieldName}
-                    </TableSortLabel>
-               </Tooltip>
+    const SorterHeader = (props) => {
+        const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
+        return (
+            <TableSorterHeader sort={{direction, column: sort.column}}
+                               onSort={onSort}
+                               {...props}
+            />
+        )
     }
 
     return (
@@ -85,18 +75,17 @@ export const ListTable = (props) => {
                                                   title="XPath"/>
                                 </TableCell>
                                 <TableCell width="10%">
-                                     <SorterHeader fieldName="notice_count"
-                                                   title="Notices"/>
+                                    <SorterHeader fieldName="notice_count"
+                                                  title="Notices"/>
                                 </TableCell>
                                 <TableCell width="10%">
                                     <SorterHeader fieldName="is_covered"
-                                                   title="Found"/>
+                                                  title="Found"/>
                                 </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {items?.map((item, key) => {
-                                const notices = item.test_data_xpaths.map(e=> `"${e.test_data_id}":${e.xpaths.length}`)
                                 return (
                                     <TableRow key={key}>
                                         <TableCell width="25%">
@@ -108,27 +97,27 @@ export const ListTable = (props) => {
                                             {
                                                 <SyntaxHighlighter
                                                     language="xquery"
-                                                    wrapLines={true}
-                                                    lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
+                                                    wrapLines
+                                                    lineProps={{
+                                                        style: {
+                                                            wordBreak: 'break-all',
+                                                            whiteSpace: 'pre-wrap'
+                                                        }
+                                                    }}>
                                                     {item.sdk_element_xpath}
                                                 </SyntaxHighlighter>
                                             }
                                         </TableCell>
-                                         <TableCell>
-                                             <Accordion
-                                                disabled={!item.notice_count}>
-                                                 <AccordionSummary
-
-                                                    expandIcon={<ExpandMoreIcon />}>
-                                                    {item.notice_count}
-                                                 </AccordionSummary>
-                                                 <AccordionDetails>
-                                                     {notices.join(',\n')}
-                                                 </AccordionDetails>
-                                             </Accordion>
+                                        <TableCell>
+                                            <Button variant='outlined'
+                                                    disabled={!item.notice_count}
+                                                    onClick={(e) => setPopoverOpen(item, e.currentTarget)}>
+                                                {item.notice_count}
+                                            </Button>
                                         </TableCell>
                                         <TableCell align="center">
-                                            {item.is_covered ? <CheckIcon color="success"/> : <CloseIcon color="error"/>}
+                                            {item.is_covered ? <CheckIcon color="success"/> :
+                                                <CloseIcon color="error"/>}
                                         </TableCell>
                                     </TableRow>
 
@@ -138,24 +127,27 @@ export const ListTable = (props) => {
                     </Table>
                 </Scrollbar>
             </TablePagination>
-            <Dialog
-                open={descriptionDialog.open}
-                onClose={handleClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
+            <Popover
+                id={'popover'}
+                open={!!popover.anchor}
+                anchorEl={popover.anchor}
+                onClose={() => setPopover({})}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                }}
             >
-                <DialogTitle id="alert-dialog-title">
-                  {descriptionDialog.title}
-                </DialogTitle>
-                <DialogContent>
-                  <DialogContentText id="alert-dialog-description">
-                      {descriptionDialog.description}
-                  </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleClose}>Close</Button>
-                </DialogActions>
-            </Dialog>
+                {popover.data?.test_data_xpaths?.map((e, i) =>
+                    <Button type='link'
+                            key={'id' + i}
+                            onClick={() => handleSelectFile(e.test_data_oid, e.test_data_suite_oid)}>
+                        {e.test_data_id}
+                    </Button>)}
+            </Popover>
         </>
     );
 };

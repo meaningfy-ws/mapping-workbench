@@ -1,10 +1,11 @@
+import FileIcon from '@mui/icons-material/Description';
+import FolderIcon from '@mui/icons-material/FolderOpen';
+
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Typography from "@mui/material/Typography";
-import ListItemText from "@mui/material/ListItemText";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import FileIcon from '@mui/icons-material/Description';
-import FolderIcon from '@mui/icons-material/FolderOpen';
+import ListItemText from "@mui/material/ListItemText";
 import ListItemButton from "@mui/material/ListItemButton";
 
 const CoverageFiles = ({files, fileIcon, onClick}) => {
