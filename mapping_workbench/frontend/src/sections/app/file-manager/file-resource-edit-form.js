@@ -20,14 +20,17 @@ import {FormTextArea} from "src/components/app/form/text-area";
 import {FormTextField} from "src/components/app/form/text-field";
 import {FormCodeTextArea} from "src/components/app/form/code-text-area";
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
+import CodeMirrorDefault from "../../../components/app/form/codeMirrorDefault";
 
 export const FileResourceEditForm = (props) => {
     const router = useRouter();
 
-    const {itemctx, collection_id,
+    const {
+        itemctx, collection_id,
         extra_form = null,
         extra_form_fields = {},
-        ...other} = props;
+        ...other
+    } = props;
     const sectionApi = itemctx.api;
     const item = itemctx.data;
 
@@ -198,13 +201,12 @@ export const FileResourceEditForm = (props) => {
                         </Grid>
                         <Grid xs={12}
                               md={12}>
-                            <FormCodeTextArea
-                                formik={formik}
-                                name="content"
-                                label="Content"
-                                grammar={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['grammar']}
-                                language={sectionApi.FILE_RESOURCE_CODE[formik.values.format]['language']}
-                            />
+                            <CodeMirrorDefault
+                                value={formik.values.content}
+                                label='Content'
+                                lang={formik.values.format}
+                                style={{resize: 'vertical', overflow: 'auto', height: 600}}
+                                onChange={value => formik.setFieldValue('content', value)}/>
                         </Grid>
                         <Grid xs={12}
                               md={12}>

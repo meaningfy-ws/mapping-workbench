@@ -88,16 +88,6 @@ const Page = () => {
                                 <Typography variant="h4">
                                     {item.triple_map_uri}
                                 </Typography>
-                                {/*<Stack*/}
-                                {/*    alignItems="center"*/}
-                                {/*    direction="row"*/}
-                                {/*    spacing={1}*/}
-                                {/*>*/}
-                                {/*    <Chip*/}
-                                {/*        label={item._id}*/}
-                                {/*        size="small"*/}
-                                {/*    />*/}
-                                {/*</Stack>*/}
                             </Stack>
                         </Stack>
                     </Stack>
