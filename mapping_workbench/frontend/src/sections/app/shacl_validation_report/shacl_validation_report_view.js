@@ -35,11 +35,15 @@ const ShaclValidationReportView = ({sid, reportTree}) => {
         setCurrentTab(FILE_COVERAGE)
     }
 
-    const handleSetTestAndPackage = (testData, testDataSuite) => {
+    const handleSetTestAndPackage = (testDataSuite, testData) => {
         const packageState = reportTree.test_data_suites.find(tds => tds.oid === testDataSuite)
-        setSelectedTestDataset(packageState?.test_data_states.find(ps => ps.oid === testData));
-        setSelectedPackageState(packageState);
-        setCurrentTab(FILE_COVERAGE)
+        if (testData) {
+            setSelectedTestDataset(packageState?.test_data_states.find(ps => ps.oid === testData));
+            setCurrentTab(FILE_COVERAGE)
+        } else {
+            setSelectedPackageState(packageState);
+            setCurrentTab(TEST_DATASET)
+        }
     }
 
     return (

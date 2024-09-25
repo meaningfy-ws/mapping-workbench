@@ -39,11 +39,19 @@ export const ListTable = (props) => {
     const mapNotices = (notices) => {
         return (
             notices.map((notice, i) =>
-                <Button key={'notice' + i}
-                        onClick={() => handleSelectFile(notice.test_data_oid, notice.test_data_suite_oid)}
-                        type='link'>
-                    {`${notice.test_data_suite_id} / ${notice.test_data_id}`}
-                </Button>)
+                <>
+                    <Button key={'notice' + i}
+                            onClick={() => handleSelectFile(notice.test_data_suite_oid)}
+                            type='link'>
+                        {notice.test_data_suite_id}
+                    </Button>
+                    {' / '}
+                    <Button key={'notice' + i}
+                            onClick={() => handleSelectFile(notice.test_data_suite_oid, notice.test_data_oid)}
+                            type='link'>
+                        {notice.test_data_id}
+                    </Button>
+                </>)
         )
     }
 

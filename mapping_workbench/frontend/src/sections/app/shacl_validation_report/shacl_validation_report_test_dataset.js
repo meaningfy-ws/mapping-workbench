@@ -116,7 +116,7 @@ const ShaclTestDatasetReport = ({sid, suiteId, handleSelectFile}) => {
         handleValidationReportsGet(sid, suiteId)
     }, [])
 
-    const handleValidationReportsGet = async (sid, suiteId) => {
+    const handleValidationReportsGet = (sid, suiteId) => {
         setDataState({load: true, error: false})
         sectionApi.getShaclReportsSuite(sid, suiteId)
             .then(res => {
