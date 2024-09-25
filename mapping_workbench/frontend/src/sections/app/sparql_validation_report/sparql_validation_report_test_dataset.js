@@ -1,21 +1,18 @@
 import {useEffect, useState} from "react";
-import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
-
 import Typography from "@mui/material/Typography";
 
-import {TableLoadWrapper} from "./utils";
 import {ListTable} from "./list-table";
+import {TableLoadWrapper} from "./utils";
 import ResultSummaryTable from "./result-summary-table";
 import ItemSearchInput from "../file-manager/item-search-input";
+import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
-        filters: {
-        },
-        sort: {
-        },
+        filters: {},
+        sort: {},
         search: [],
-        searchColumns:["sdk_element_id","sdk_element_xpath"],
+        searchColumns: ["sdk_element_id", "sdk_element_xpath"],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -26,7 +23,7 @@ const useItemsSearch = (items) => {
         let returnItem = null;
         state.searchColumns.forEach(column => {
             state.search.forEach(search => {
-                if(item[column]?.toLowerCase()?.includes(search.toLowerCase()))
+                if (item[column]?.toLowerCase()?.includes(search.toLowerCase()))
                     returnItem = item
             })
         })
@@ -35,11 +32,11 @@ const useItemsSearch = (items) => {
 
     const filteredItems = searchItems.filter((item) => {
         let returnItem = item;
-        Object.entries(filters).forEach(filter=> {
+        Object.entries(filters).forEach(filter => {
             const [key, value] = filter
-            if(value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
+            if (value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
                 returnItem = null
-            if(value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase))
+            if (value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase))
                 returnItem = null
         })
         return returnItem
@@ -47,10 +44,10 @@ const useItemsSearch = (items) => {
 
     const sortedItems = () => {
         const sortColumn = state.sort.column
-        if(!sortColumn) {
+        if (!sortColumn) {
             return filteredItems
         } else {
-            return filteredItems.sort((a,b) => {
+            return filteredItems.sort((a, b) => {
                 if (typeof a[sortColumn] === "string")
                     return state.sort.direction === "asc" ?
                         a[sortColumn]?.localeCompare(b[sortColumn]) :
@@ -59,18 +56,18 @@ const useItemsSearch = (items) => {
                     return state.sort.direction === "asc" ?
                         a[sortColumn] - b[sortColumn] :
                         b[sortColumn] - a[sortColumn]
-                })
+            })
         }
     }
 
     const pagedItems = sortedItems().filter((item, i) => {
         const pageSize = state.page * state.rowsPerPage
-        if((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
+        if ((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
             return item
     })
 
     const handleSearchItems = (filters) => {
-        setState(prevState => ({...prevState, search: filters }))
+        setState(prevState => ({...prevState, search: filters}))
     }
 
     const handleFiltersChange = (filters) => {
@@ -89,8 +86,12 @@ const useItemsSearch = (items) => {
     }
 
     const handleSort = (column, desc) => {
-        setState(prevState=> ({ ...prevState, sort: {column,
-                direction: prevState.sort.column === column ? prevState.sort.direction === "asc" ? "desc" : "asc" : desc ? "desc" : "asc" }}))
+        setState(prevState => ({
+            ...prevState, sort: {
+                column,
+                direction: prevState.sort.column === column ? prevState.sort.direction === "asc" ? "desc" : "asc" : desc ? "desc" : "asc"
+            }
+        }))
     }
 
     const handleRowsPerPageChange = (event) => {
@@ -112,30 +113,31 @@ const useItemsSearch = (items) => {
     };
 };
 
-const SparqlTestDatasetReport = ({ sid, suiteId }) => {
+const SparqlTestDatasetReport = ({sid, suiteId, handleSelectFile}) => {
     const [validationReport, setValidationReport] = useState([])
-    const [dataState, setDataState] = useState({load:true, error:false})
+    const [dataState, setDataState] = useState({load: true, error: false})
 
 
-    useEffect(()=>{
+    useEffect(() => {
         handleValidationReportsGet(sid, suiteId)
-    },[])
+    }, [])
 
     const handleValidationReportsGet = async (sid, suiteId) => {
-        try {
-            setDataState({load:true, error:false})
-            const result = await sectionApi.getSparqlReportsSuite(sid, suiteId)
-            setValidationReport(mapSparqlResults(result.summary))
-            setDataState(e=>({...e, load:false}))
-        } catch (err) {
-            console.error(err);
-            setDataState({load:false, error:true})
-        }
+        setDataState({load: true, error: false})
+        sectionApi.getSparqlReportsSuite(sid, suiteId)
+            .then(res => {
+                setValidationReport(mapSparqlResults(res.summary))
+                setDataState(e => ({...e, load: false}))
+            })
+            .catch(err => {
+                console.error(err);
+                setDataState({load: false, error: true})
+            })
     }
 
-    const mapSparqlResults = (result) => result.map(e=> {
+    const mapSparqlResults = (result) => result.map(e => {
         const queryAsArray = e.query.content.split("\n")
-        const values = queryAsArray.slice(0,3)
+        const values = queryAsArray.slice(0, 3)
         const resultArray = {}
         values.forEach(e => {
                 const res = e.split(": ")
@@ -146,7 +148,7 @@ const SparqlTestDatasetReport = ({ sid, suiteId }) => {
         resultArray["test_suite"] = e.query.filename
         resultArray["result"] = e.result
         Object.entries(e.result).forEach(entrie => {
-            const [key,value] = entrie
+            const [key, value] = entrie
             resultArray[`${key}Count`] = value.count
         })
         return resultArray;
@@ -157,7 +159,7 @@ const SparqlTestDatasetReport = ({ sid, suiteId }) => {
     return (
         <>
             <Typography m={2}
-                            variant="h4">
+                        variant="h4">
                 Results Summary
             </Typography>
             <TableLoadWrapper dataState={dataState}
@@ -172,18 +174,19 @@ const SparqlTestDatasetReport = ({ sid, suiteId }) => {
             <TableLoadWrapper dataState={dataState}
                               lines={6}
                               data={validationReport}>
-                    <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
-                    <ListTable
-                            items={itemsSearch.pagedItems}
-                            count={itemsSearch.count}
-                            onPageChange={itemsSearch.handlePageChange}
-                            onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                            page={itemsSearch.state.page}
-                            rowsPerPage={itemsSearch.state.rowsPerPage}
-                            onSort={itemsSearch.handleSort}
-                            sort={itemsSearch.state.sort}
-                            sectionApi={sectionApi}
-                    />
+                <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
+                <ListTable
+                    items={itemsSearch.pagedItems}
+                    count={itemsSearch.count}
+                    onPageChange={itemsSearch.handlePageChange}
+                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                    page={itemsSearch.state.page}
+                    rowsPerPage={itemsSearch.state.rowsPerPage}
+                    onSort={itemsSearch.handleSort}
+                    sort={itemsSearch.state.sort}
+                    sectionApi={sectionApi}
+                    handleSelectFile={handleSelectFile}
+                />
             </TableLoadWrapper>
         </>)
 }

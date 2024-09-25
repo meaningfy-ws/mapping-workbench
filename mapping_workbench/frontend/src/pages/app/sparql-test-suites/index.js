@@ -1,13 +1,13 @@
 import {useEffect, useState} from 'react';
 
-import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Button from '@mui/material/Button';
+import AddIcon from '@mui/icons-material/Add';
 import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
@@ -16,8 +16,8 @@ import {RouterLink} from 'src/components/router-link';
 import {usePageView} from 'src/hooks/use-page-view';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {sparqlTestSuitesApi as sectionApi} from 'src/api/sparql-test-suites';
-import {FileCollectionListSearch} from 'src/sections/app/file-manager/file-collection-list-search';
 import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
+import {FileCollectionListSearch} from 'src/sections/app/file-manager/file-collection-list-search';
 import {sparqlTestFileResourcesApi as fileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
 
 const useItemsSearch = () => {
@@ -140,7 +140,7 @@ const Page = () => {
                             href={paths.app[sectionApi.section].create}
                             startIcon={(
                                 <SvgIcon>
-                                    <PlusIcon/>
+                                    <AddIcon/>
                                 </SvgIcon>
                             )}
                             variant="contained"

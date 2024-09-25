@@ -1,28 +1,27 @@
 import {useState} from "react";
 import PropTypes from 'prop-types';
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 
 import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Typography from '@mui/material/Typography';
-import Tooltip from "@mui/material/Tooltip";
+import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Dialog from '@mui/material/Dialog';
+import TableRow from '@mui/material/TableRow';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import Typography from '@mui/material/Typography';
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import Stack from "@mui/material/Stack";
 
-import {Scrollbar} from 'src/components/scrollbar';
 import {ResultChip} from "./utils";
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import TablePagination from "../../components/table-pagination";
+import {Scrollbar} from 'src/components/scrollbar';
+import TablePagination from "src/sections/components/table-pagination";
+import TableSorterHeader from "src/sections/components/table-sorter-header";
 
 export const ListTable = (props) => {
-    const [descriptionDialog, setDescriptionDialog] = useState({open:false, title:"", description:""})
+    const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", description: ""})
 
     const {
         count = 0,
@@ -33,17 +32,18 @@ export const ListTable = (props) => {
         rowsPerPage = 0,
         sort,
         onSort,
-        sectionApi
+        sectionApi,
+        handleSelectFile
     } = props;
 
     const mapNotices = (notices) => {
-        return(
-            <ul style={{listStyleType: "circle"}}>
-                {notices.map((notice,i) =>
-                    <li key={'notice' + i}>
-                        {`${notice.test_data_suite_id} / ${notice.test_data_id}`}
-                    </li>)}
-            </ul>
+        return (
+            notices.map((notice, i) =>
+                <Button key={'notice' + i}
+                        onClick={() => handleSelectFile(notice.test_data_oid, notice.test_data_suite_oid)}
+                        type='link'>
+                    {`${notice.test_data_suite_id} / ${notice.test_data_id}`}
+                </Button>)
         )
     }
 
@@ -53,33 +53,30 @@ export const ListTable = (props) => {
     }
 
     const handleClose = () => {
-        setDescriptionDialog(e=>({...e, open: false}));
+        setDescriptionDialog(e => ({...e, open: false}));
     };
 
-    const SorterHeader = ({fieldName, title, desc}) => {
-        return <Tooltip enterDelay={300}
-                       title="Sort"
-               >
-                   <TableSortLabel
-                        active={sort.column === fieldName}
-                        direction={sort.direction}
-                        onClick={() => onSort(fieldName, desc)}>
-                        {title ?? fieldName}
-                    </TableSortLabel>
-               </Tooltip>
+    const SorterHeader = (props) => {
+        const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
+        return (
+            <TableSorterHeader sort={{direction, column: sort.column}}
+                               onSort={onSort}
+                               {...props}
+            />
+        )
     }
 
     const ResultCell = ({title, result, onClick}) => {
         return <Stack direction="column"
-        alignItems="center"
-        justifyContent="start"
-        height={100}>
-                    {result.count}
-                    {!!result.count && <Button variant="outlined"
-                    onClick={()=> onClick({title, notices: result.test_datas})}>
-                        Details
-                    </Button>}
-                </Stack>
+                      alignItems="center"
+                      justifyContent="start"
+                      height={100}>
+            {result.count}
+            {!!result.count && <Button variant="outlined"
+                                       onClick={() => onClick({title, notices: result.test_datas})}>
+                Details
+            </Button>}
+        </Stack>
     }
 
     return (
@@ -104,12 +101,12 @@ export const ListTable = (props) => {
                                                   title="Field"/>
                                 </TableCell>
                                 <TableCell>
-                                     <SorterHeader fieldName="test_suite"
-                                                   title="Test Suite"/>
+                                    <SorterHeader fieldName="test_suite"
+                                                  title="Test Suite"/>
                                 </TableCell>
                                 <TableCell>
-                                     <SorterHeader fieldName="query"
-                                                   title="Query"/>
+                                    <SorterHeader fieldName="query"
+                                                  title="Query"/>
                                 </TableCell>
                                 <TableCell align="center">
                                     <SorterHeader fieldName="validCount"
@@ -124,28 +121,28 @@ export const ListTable = (props) => {
                                                   desc/>
                                 </TableCell>
                                 <TableCell align="center">
-                                     <SorterHeader fieldName="warningCount"
-                                                   title={<ResultChip label="Warning"
-                                                                      clickable/>}
-                                                   desc/>
+                                    <SorterHeader fieldName="warningCount"
+                                                  title={<ResultChip label="Warning"
+                                                                     clickable/>}
+                                                  desc/>
                                 </TableCell>
-                                 <TableCell align="center">
-                                     <SorterHeader fieldName="invalidCount"
-                                                   title={<ResultChip label="Invalid"
-                                                                    clickable/>}
-                                                   desc/>
+                                <TableCell align="center">
+                                    <SorterHeader fieldName="invalidCount"
+                                                  title={<ResultChip label="Invalid"
+                                                                     clickable/>}
+                                                  desc/>
                                 </TableCell>
-                                 <TableCell align="center">
-                                     <SorterHeader fieldName="errorCount"
-                                                   title={<ResultChip label="Error"
-                                                                      clickable/>}
-                                                   desc/>
+                                <TableCell align="center">
+                                    <SorterHeader fieldName="errorCount"
+                                                  title={<ResultChip label="Error"
+                                                                     clickable/>}
+                                                  desc/>
                                 </TableCell>
-                                 <TableCell align="center">
-                                     <SorterHeader fieldName="unknownCount"
-                                                   title={<ResultChip label="Unknown"
-                                                                      clickable/>}
-                                                   desc/>
+                                <TableCell align="center">
+                                    <SorterHeader fieldName="unknownCount"
+                                                  title={<ResultChip label="Unknown"
+                                                                     clickable/>}
+                                                  desc/>
                                 </TableCell>
                             </TableRow>
                         </TableHead>
@@ -165,7 +162,12 @@ export const ListTable = (props) => {
                                             <SyntaxHighlighter
                                                 language="sparql"
                                                 wrapLines={true}
-                                                lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
+                                                lineProps={{
+                                                    style: {
+                                                        overflowWrap: 'break-word',
+                                                        whiteSpace: 'pre-wrap'
+                                                    }
+                                                }}>
                                                 {item.query}
                                             </SyntaxHighlighter>
                                         </TableCell>
