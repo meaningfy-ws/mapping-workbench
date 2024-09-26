@@ -5,7 +5,7 @@ import {ListTableFile} from "./list-table-file";
 import {QueryResultTable} from "./query-result-table";
 import {ResultFilter, TableLoadWrapper} from "./utils";
 import ItemSearchInput from "../file-manager/item-search-input";
-import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
+import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
 
 const useItemsSearch = (items) => {
@@ -123,7 +123,7 @@ const SparqlFileReport = ({sid, suiteId, testId, files, mappingSuiteIdentifier})
         handleValidationReportsGet(sid, suiteId, testId)
     }, [])
 
-    const handleValidationReportsGet = async (sid, suiteId, testId) => {
+    const handleValidationReportsGet = (sid, suiteId, testId) => {
         setDataState({load: true, error: false})
         sectionApi.getSparqlReportsTest(sid, suiteId, testId)
             .then(res => {

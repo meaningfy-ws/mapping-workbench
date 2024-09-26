@@ -123,7 +123,7 @@ const XpathValidationReportSuite = ({sid, suiteId, files, mappingSuiteIdentifier
         handleValidationReportsSuiteGet(sid, suiteId)
     }, [suiteId])
 
-    const handleValidationReportsSuiteGet = async (sid, suiteId) => {
+    const handleValidationReportsSuiteGet = (sid, suiteId) => {
         setDataState({load: true, error: false})
         sectionApi.getXpathReportsSuite(sid, suiteId)
             .then(res => {

@@ -118,17 +118,18 @@ const ShaclFileReport = ({sid, suiteId, testId, files, mappingSuiteIdentifier}) 
         handleValidationReportsGet(sid, suiteId, testId)
     }, [])
 
-    const handleValidationReportsGet = async (sid, suiteId, testId) => {
-        try {
-            setDataState({load: true, error: false})
-            const result = await sectionApi.getSparqlReportsFile(sid, suiteId, testId)
-            setValidationReport(mapShaclFileResults(result.results?.[0]?.results?.[0]?.results) ?? [])
-            setValidationResult(mapShaclFileStates(result.results?.[0]) ?? []);
-            setDataState(e => ({...e, load: false}))
-        } catch (err) {
-            console.error(err);
-            setDataState({load: false, error: true})
-        }
+    const handleValidationReportsGet = (sid, suiteId, testId) => {
+        setDataState({load: true, error: false})
+        sectionApi.getSparqlReportsFile(sid, suiteId, testId)
+            .then(res => {
+                setValidationReport(mapShaclFileResults(res.results?.[0]?.results?.[0]?.results) ?? [])
+                setValidationResult(mapShaclFileStates(res.results?.[0]) ?? []);
+                setDataState(e => ({...e, load: false}))
+            })
+            .catch(err => {
+                console.error(err);
+                setDataState({load: false, error: true})
+            })
     }
 
     const mapShaclFileStates = (states) => {

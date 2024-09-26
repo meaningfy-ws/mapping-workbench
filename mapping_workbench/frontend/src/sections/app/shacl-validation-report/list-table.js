@@ -1,17 +1,18 @@
 import {useState} from "react";
 import PropTypes from 'prop-types';
 
+import {Box} from "@mui/system";
+import Stack from "@mui/material/Stack";
 import Table from '@mui/material/Table';
+import Button from "@mui/material/Button";
+import Dialog from '@mui/material/Dialog';
+import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Button from "@mui/material/Button";
-import Dialog from '@mui/material/Dialog';
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import Stack from "@mui/material/Stack";
 
 import {Scrollbar} from 'src/components/scrollbar';
 import {ResultChip, SorterHeader as UtilsSorterHeader} from "./utils";
@@ -30,17 +31,26 @@ export const ListTable = (props) => {
         rowsPerPage = 0,
         sort,
         onSort,
-        sectionApi
+        sectionApi,
+        handleSelectFile
     } = props;
 
     const mapNotices = (notices) => {
         return (
-            <ul style={{listStyleType: "circle"}}>
-                {notices.map((notice, i) =>
-                    <li key={'notice' + i}>
-                        {`${notice.test_data_suite_id} / ${notice.test_data_id}`}
-                    </li>)}
-            </ul>
+            notices.map((notice, i) =>
+                <Box key={'notice' + i}>
+                    <Button type='link'
+                            onClick={() => handleSelectFile(notice.test_data_suite_oid)}
+                    >
+                        {notice.test_data_suite_id}
+                    </Button>
+                    {' / '}
+                    <Button type='link'
+                            onClick={() => handleSelectFile(notice.test_data_suite_oid, notice.test_data_oid)}
+                    >
+                        {notice.test_data_id}
+                    </Button>
+                </Box>)
         )
     }
 
@@ -89,7 +99,7 @@ export const ListTable = (props) => {
                         <TableHead>
                             <TableRow>
                                 <TableCell>
-                                    <SorterHeader fieldName="test_suite"
+                                    <SorterHeader fieldName="shacl_suite"
                                                   title="Test Suite"/>
                                 </TableCell>
                                 <TableCell width="25%">
@@ -140,7 +150,7 @@ export const ListTable = (props) => {
                                         <TableCell>
                                             <SyntaxHighlighter
                                                 language="turtle"
-                                                wrapLines={true}
+                                                wrapLines
                                                 lineProps={{
                                                     style: {
                                                         overflowWrap: 'break-word',
@@ -152,25 +162,25 @@ export const ListTable = (props) => {
                                         </TableCell>
                                         <TableCell>
                                             <ResultCell
-                                                title={item.title}
+                                                title={item.shacl_suite}
                                                 result={item.result.info}
                                                 onClick={handleOpenDetails}/>
                                         </TableCell>
                                         <TableCell>
                                             <ResultCell
-                                                title={item.title}
+                                                title={item.shacl_suite}
                                                 result={item.result.valid}
                                                 onClick={handleOpenDetails}/>
                                         </TableCell>
                                         <TableCell>
                                             <ResultCell
-                                                title={item.title}
+                                                title={item.shacl_suite}
                                                 result={item.result.warning}
                                                 onClick={handleOpenDetails}/>
                                         </TableCell>
                                         <TableCell>
                                             <ResultCell
-                                                title={item.title}
+                                                title={item.shacl_suite}
                                                 result={item.result.violation}
                                                 onClick={handleOpenDetails}/>
                                         </TableCell>
