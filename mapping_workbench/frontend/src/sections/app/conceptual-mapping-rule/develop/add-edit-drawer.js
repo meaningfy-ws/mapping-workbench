@@ -61,7 +61,7 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
     const formik = useFormik({
         initialValues: {
             source_structural_element: item?.source_structural_element?.id ?? '',
-            //'xpath_condition': item?.xpath_condition || '',
+            'xpath_condition': item?.xpath_condition || '',
             'min_sdk_version': item?.min_sdk_version || '',
             'max_sdk_version': item?.max_sdk_version || '',
             'target_class_path': item?.target_class_path || '',
@@ -190,7 +190,6 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
                                            name="target_property_path"
                                            label="Ontology Property Path"/>
                             <FormTextField formik={formik}
-                                           disabled
                                            name="xpath_condition"
                                            label="XPath Condition"/>
                             <FormTextField formik={formik}

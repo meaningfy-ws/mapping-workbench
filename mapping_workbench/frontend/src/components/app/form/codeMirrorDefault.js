@@ -5,7 +5,7 @@ import {xml} from '@codemirror/lang-xml'
 import {json} from '@codemirror/lang-json'
 // import rdf from '@rdfjs-elements/rdf-editor'
 import {turtle} from 'codemirror-lang-turtle';
-import { sparql } from 'codemirror-lang-sparql';
+import {sparql} from 'codemirror-lang-sparql';
 
 
 import {useTheme} from "@mui/material/styles";

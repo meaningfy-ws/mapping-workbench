@@ -18,6 +18,8 @@ import Dialog from "@mui/material/Dialog";
 import {useDialog} from "../../../hooks/use-dialog";
 import CMNotes from "./cm-notes";
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
+import Divider from "@mui/material/Divider";
+import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
 
 const CMCard = (props) => {
     const {cm_rule, structural_element, cm_statuses, ...other} = props;
@@ -146,13 +148,26 @@ const CMCard = (props) => {
                                 }}
                             />
                             <PropertyListItem
-                                label="XPath expression"
+                                label="XPath Expression"
                                 value={structuralElement?.absolute_xpath}
                                 sx={{
                                     whiteSpace: "pre-wrap",
                                     py: 1.5
                                 }}
                             />
+                            {cm_rule.xpath_condition && <PropertyListItem
+                                label="XPath Condition"
+                                value={<SyntaxHighlighter
+                                    language="xquery"
+                                    wrapLines
+                                    lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
+                                    {cm_rule.xpath_condition}
+                                </SyntaxHighlighter>}
+                                sx={{
+                                    whiteSpace: "pre-wrap",
+                                    py: 1.5
+                                }}
+                            />}
                             <PropertyListItem
                                 label="Ontology Fragment"
                                 value={(cm_rule.target_class_path || "") + "\n" + (cm_rule.target_property_path || "")}
@@ -162,15 +177,16 @@ const CMCard = (props) => {
                                 }}
                             />
                         </PropertyList>
-                        <hr width="100%"/>
-                        <Box>
-                            {cm_rule.sparql_assertions && cm_rule.sparql_assertions.map(cm_query => <CMQuery
+                        {cm_rule.sparql_assertions && <Box>
+                            <hr width="100%"/>
+                            {cm_rule.sparql_assertions.map(cm_query => <CMQuery
                                 key={cm_query.id}
                                 cm_query_id={cm_query.id}
                             />)}
-                        </Box>
+                        </Box>}
                     </Box>
                 </Stack>
+                <Divider/>
             </Card>
             <Dialog
                 open={notesDialog.open}
