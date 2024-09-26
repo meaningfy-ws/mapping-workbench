@@ -27,15 +27,16 @@ import {mappingPackagesApi as previousSectionApi} from 'src/api/mapping-packages
 import {mappingPackageStatesApi as sectionApi} from 'src/api/mapping-packages/states';
 
 const StateDetails =
-    dynamic(() => import("src/sections/app/mapping-package/state/state-details"));
+    dynamic(() => import("src/sections/app/mapping-package/state/state-details"),
+        {loading: () => <Stack alignItems='center'><CircularProgress/></Stack>});
 const XpathValidationReportView =
-    dynamic(() => import("src/sections/app/xpath_validation_report/xpath_validation_report_view"),
+    dynamic(() => import("src/sections/app/xpath-validation-report/xpath_validation_report_view"),
         {loading: () => <Stack alignItems='center'><CircularProgress/></Stack>});
 const SparqlValidationReport =
-    dynamic(() => import("src/sections/app/sparql_validation_report/sparql_validation_report_view"),
+    dynamic(() => import("src/sections/app/sparql-validation-report/sparql_validation_report_view"),
         {loading: () => <Stack alignItems='center'><CircularProgress/></Stack>});
 const ShaclValidationReport =
-    dynamic(() => import("src/sections/app/shacl_validation_report/shacl_validation_report_view"),
+    dynamic(() => import("src/sections/app/shacl-validation-report/shacl_validation_report_view"),
         {loading: () => <Stack alignItems='center'><CircularProgress/></Stack>});
 
 const tabs = [
@@ -62,7 +63,7 @@ const Page = () => {
         }
     }, [sid]);
 
-    const handleItemsGet = async (sid) => {
+    const handleItemsGet = (sid) => {
         sectionApi.getState(sid)
             .then(res => setItem(res))
             .catch(err => console.error(err))

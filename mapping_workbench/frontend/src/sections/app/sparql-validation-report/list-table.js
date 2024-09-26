@@ -2,6 +2,7 @@ import {useState} from "react";
 import PropTypes from 'prop-types';
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 
+import {Box} from "@mui/system";
 import Table from '@mui/material/Table';
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
@@ -39,19 +40,19 @@ export const ListTable = (props) => {
     const mapNotices = (notices) => {
         return (
             notices.map((notice, i) =>
-                <>
-                    <Button key={'notice' + i}
+                <Box key={'notice' + i}>
+                    <Button type='link'
                             onClick={() => handleSelectFile(notice.test_data_suite_oid)}
-                            type='link'>
+                    >
                         {notice.test_data_suite_id}
                     </Button>
                     {' / '}
-                    <Button key={'notice' + i}
+                    <Button type='link'
                             onClick={() => handleSelectFile(notice.test_data_suite_oid, notice.test_data_oid)}
-                            type='link'>
+                    >
                         {notice.test_data_id}
                     </Button>
-                </>)
+                </Box>)
         )
     }
 
@@ -169,7 +170,7 @@ export const ListTable = (props) => {
                                         <TableCell>
                                             <SyntaxHighlighter
                                                 language="sparql"
-                                                wrapLines={true}
+                                                wrapLines
                                                 lineProps={{
                                                     style: {
                                                         overflowWrap: 'break-word',
