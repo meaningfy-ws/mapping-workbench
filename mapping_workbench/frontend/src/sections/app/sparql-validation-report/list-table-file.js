@@ -1,4 +1,3 @@
-import {useState} from "react";
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import PropTypes from 'prop-types';
 
@@ -17,7 +16,6 @@ import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 
 export const ListTableFile = (props) => {
-    const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", text: ""})
 
     const {
         count = 0,
@@ -63,7 +61,8 @@ export const ListTableFile = (props) => {
                                                   title="Field"/>
                                 </TableCell>
                                 <TableCell>
-                                    Description
+                                    <SorterHeader fieldName="description"
+                                                  title="Description"/>
                                 </TableCell>
                                 <TableCell>
                                     <SorterHeader fieldName="query"
@@ -94,11 +93,6 @@ export const ListTableFile = (props) => {
                                                     {item.description}
                                                 </Typography>
                                             </Box>
-                                            {/*<Typography>{item.description}</Typography>*/}
-                                            {/*<Button variant="outlined"*/}
-                                            {/*        onClick={() => handleOpenDescription(item)}>*/}
-                                            {/*    Description*/}
-                                            {/*</Button>*/}
                                         </TableCell>
                                         <TableCell>
                                             <SyntaxHighlighter
