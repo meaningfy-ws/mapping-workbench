@@ -60,7 +60,7 @@ module.exports = defineConfig({
         // "cypress/e2e/termValidator.feature",
         // "cypress/e2e/sparqlQueries.feature",
         // "cypress/e2e/genericTripleMaps.feature",
-        // "cypress/e2e/cleanUp.feature",
+        "cypress/e2e/cleanUp.feature",
     ],
     video: false,
     // reporter: 'junit',

@@ -1,18 +1,22 @@
 import {useState} from "react";
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
-
 import PropTypes from 'prop-types';
+
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 
+import {Box} from "@mui/system";
 import Table from '@mui/material/Table';
+import Dialog from "@mui/material/Dialog";
 import Button from "@mui/material/Button";
-import Popover from "@mui/material/Popover";
 import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import Typography from '@mui/material/Typography';
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
 
 import {Scrollbar} from 'src/components/scrollbar';
 import TablePagination from "src/sections/components/table-pagination";
@@ -33,10 +37,27 @@ export const ListTable = (props) => {
         sort
     } = props;
 
-    const [popover, setPopover] = useState({})
+    const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", description: ""})
 
-    const setPopoverOpen = (item, anchor) => {
-        setPopover({data: item, anchor})
+    const handleClose = () => setDescriptionDialog(e => ({...e, open: false}));
+
+    const handleOpenDetails = (title, notices) => {
+        const description = notices.map((notice, i) =>
+                <Box key={'notice' + i}>
+                    <Button type='link'
+                            onClick={() => handleSelectFile(notice.test_data_suite_oid)}
+                    >
+                        {notice.test_data_suite_id}
+                    </Button>
+                    {' / '}
+                    <Button type='link'
+                            onClick={() => handleSelectFile(notice.test_data_suite_oid, notice.test_data_oid)}
+                    >
+                        {notice.test_data_id}
+                    </Button>
+                </Box>)
+
+        setDescriptionDialog({open: true, title, description});
     }
 
     const SorterHeader = (props) => {
@@ -111,7 +132,7 @@ export const ListTable = (props) => {
                                         <TableCell>
                                             <Button variant='outlined'
                                                     disabled={!item.notice_count}
-                                                    onClick={(e) => setPopoverOpen(item, e.currentTarget)}>
+                                                    onClick={() => handleOpenDetails(item.sdk_element_id, item.test_data_xpaths)}>
                                                 {item.notice_count}
                                             </Button>
                                         </TableCell>
@@ -127,27 +148,22 @@ export const ListTable = (props) => {
                     </Table>
                 </Scrollbar>
             </TablePagination>
-            <Popover
-                id={'popover'}
-                open={!!popover.anchor}
-                anchorEl={popover.anchor}
-                onClose={() => setPopover({})}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'center',
-                }}
+            <Dialog
+                open={descriptionDialog.open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
             >
-                {popover.data?.test_data_xpaths?.map((e, i) =>
-                    <Button type='link'
-                            key={'id' + i}
-                            onClick={() => handleSelectFile(e.test_data_oid, e.test_data_suite_oid)}>
-                        {e.test_data_id}
-                    </Button>)}
-            </Popover>
+                <DialogTitle id="alert-dialog-title">
+                    {descriptionDialog.title}
+                </DialogTitle>
+                <DialogContent>
+                    {descriptionDialog.description}
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}>Close</Button>
+                </DialogActions>
+            </Dialog>
         </>
     );
 };

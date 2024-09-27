@@ -37,9 +37,8 @@ export const ListTable = (props) => {
         handleSelectFile
     } = props;
 
-    const mapNotices = (notices) => {
-        return (
-            notices.map((notice, i) =>
+    const handleOpenDetails = ({title, notices}) => {
+        const description =  notices.map((notice, i) =>
                 <Box key={'notice' + i}>
                     <Button type='link'
                             onClick={() => handleSelectFile(notice.test_data_suite_oid)}
@@ -53,11 +52,6 @@ export const ListTable = (props) => {
                         {notice.test_data_id}
                     </Button>
                 </Box>)
-        )
-    }
-
-    const handleOpenDetails = ({title, notices}) => {
-        const description = mapNotices(notices)
         setDescriptionDialog({open: true, title, description});
     }
 
@@ -80,11 +74,12 @@ export const ListTable = (props) => {
                       alignItems="center"
                       justifyContent="start"
                       height={100}>
-            {result.count}
-            {!!result.count && <Button variant="outlined"
-                                       onClick={() => onClick({title, notices: result.test_datas})}>
-                Details
-            </Button>}
+            {result.count
+                ? <Button variant="outlined"
+                          onClick={() => onClick({title, notices: result.test_datas})}>
+                    {result.count}
+                </Button>
+                : <Box sx={{mt:'10px'}}>{result.count}</Box>}
         </Stack>
     }
 
@@ -110,8 +105,8 @@ export const ListTable = (props) => {
                                                   title="Field"/>
                                 </TableCell>
                                 <TableCell>
-                                    <SorterHeader fieldName="test_suite"
-                                                  title="Test Suite"/>
+                                    <SorterHeader fieldName="xpath_condition"
+                                                  title="XPath Condition"/>
                                 </TableCell>
                                 <TableCell>
                                     <SorterHeader fieldName="query"
@@ -165,7 +160,7 @@ export const ListTable = (props) => {
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            {item.test_suite}
+                                            {item.xpath_condition}
                                         </TableCell>
                                         <TableCell>
                                             <SyntaxHighlighter

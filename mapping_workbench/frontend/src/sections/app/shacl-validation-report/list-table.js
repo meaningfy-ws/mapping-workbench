@@ -14,10 +14,11 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 
+import {ResultChip} from "./utils";
 import {Scrollbar} from 'src/components/scrollbar';
-import {ResultChip, SorterHeader as UtilsSorterHeader} from "./utils";
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
-import TablePagination from "../../components/table-pagination";
+import TablePagination from "src/sections/components/table-pagination";
+import TableSorterHeader from "src/sections/components/table-sorter-header";
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", text: ""})
@@ -35,35 +36,28 @@ export const ListTable = (props) => {
         handleSelectFile
     } = props;
 
-    const mapNotices = (notices) => {
-        return (
-            notices.map((notice, i) =>
-                <Box key={'notice' + i}>
-                    <Button type='link'
-                            onClick={() => handleSelectFile(notice.test_data_suite_oid)}
-                    >
-                        {notice.test_data_suite_id}
-                    </Button>
-                    {' / '}
-                    <Button type='link'
-                            onClick={() => handleSelectFile(notice.test_data_suite_oid, notice.test_data_oid)}
-                    >
-                        {notice.test_data_id}
-                    </Button>
-                </Box>)
-        )
-    }
-
     const handleOpenDetails = ({title, notices}) => {
-        const description = mapNotices(notices)
+        const description = notices.map((notice, i) =>
+            <Box key={'notice' + i}>
+                <Button type='link'
+                        onClick={() => handleSelectFile(notice.test_data_suite_oid)}
+                >
+                    {notice.test_data_suite_id}
+                </Button>
+                {' / '}
+                <Button type='link'
+                        onClick={() => handleSelectFile(notice.test_data_suite_oid, notice.test_data_oid)}
+                >
+                    {notice.test_data_id}
+                </Button>
+            </Box>)
+
         setDescriptionDialog({open: true, title, description});
     }
 
-    const handleClose = () => {
-        setDescriptionDialog(e => ({...e, open: false}));
-    };
+    const handleClose = () => setDescriptionDialog(e => ({...e, open: false}));
 
-    const SorterHeader = (props) => <UtilsSorterHeader sort={sort}
+    const SorterHeader = (props) => <TableSorterHeader sort={sort}
                                                        onSort={onSort}
                                                        {...props}
     />
@@ -73,11 +67,12 @@ export const ListTable = (props) => {
                       alignItems="center"
                       justifyContent="start"
                       height={100}>
-            {result.count}
-            {!!result.count && <Button variant="outlined"
-                                       onClick={() => onClick({title, notices: result.test_datas})}>
-                Details
-            </Button>}
+            {result.count
+                ? <Button variant="outlined"
+                          onClick={() => onClick({title, notices: result.test_datas})}>
+                    {result.count}
+                </Button>
+                : <Box sx={{mt: '10px'}}>{result.count}</Box>}
         </Stack>
     }
 
