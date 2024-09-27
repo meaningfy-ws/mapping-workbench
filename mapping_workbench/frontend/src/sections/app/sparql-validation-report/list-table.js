@@ -80,11 +80,12 @@ export const ListTable = (props) => {
                       alignItems="center"
                       justifyContent="start"
                       height={100}>
-            {result.count}
-            {!!result.count && <Button variant="outlined"
-                                       onClick={() => onClick({title, notices: result.test_datas})}>
-                Details
-            </Button>}
+            {result.count
+                ? <Button variant="outlined"
+                          onClick={() => onClick({title, notices: result.test_datas})}>
+                    {result.count}
+                </Button>
+                : <Box sx={{mt:'10px'}}>{result.count}</Box>}
         </Stack>
     }
 
@@ -110,8 +111,8 @@ export const ListTable = (props) => {
                                                   title="Field"/>
                                 </TableCell>
                                 <TableCell>
-                                    <SorterHeader fieldName="test_suite"
-                                                  title="Test Suite"/>
+                                    <SorterHeader fieldName="xpath_condition"
+                                                  title="XPath Condition"/>
                                 </TableCell>
                                 <TableCell>
                                     <SorterHeader fieldName="query"
@@ -165,7 +166,7 @@ export const ListTable = (props) => {
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            {item.test_suite}
+                                            {item.xpath_condition}
                                         </TableCell>
                                         <TableCell>
                                             <SyntaxHighlighter

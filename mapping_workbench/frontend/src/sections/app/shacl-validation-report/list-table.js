@@ -59,9 +59,7 @@ export const ListTable = (props) => {
         setDescriptionDialog({open: true, title, description});
     }
 
-    const handleClose = () => {
-        setDescriptionDialog(e => ({...e, open: false}));
-    };
+    const handleClose = () => setDescriptionDialog(e => ({...e, open: false}));
 
     const SorterHeader = (props) => <UtilsSorterHeader sort={sort}
                                                        onSort={onSort}
@@ -73,11 +71,12 @@ export const ListTable = (props) => {
                       alignItems="center"
                       justifyContent="start"
                       height={100}>
-            {result.count}
-            {!!result.count && <Button variant="outlined"
-                                       onClick={() => onClick({title, notices: result.test_datas})}>
-                Details
-            </Button>}
+            {result.count
+                ? <Button variant="outlined"
+                          onClick={() => onClick({title, notices: result.test_datas})}>
+                    {result.count}
+                </Button>
+                : <Box sx={{mt: '10px'}}>{result.count}</Box>}
         </Stack>
     }
 
