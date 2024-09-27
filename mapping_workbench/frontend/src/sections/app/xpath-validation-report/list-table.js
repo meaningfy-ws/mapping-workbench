@@ -17,6 +17,11 @@ import Typography from '@mui/material/Typography';
 import {Scrollbar} from 'src/components/scrollbar';
 import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import {Box} from "@mui/system";
 
 export const ListTable = (props) => {
 
@@ -33,10 +38,41 @@ export const ListTable = (props) => {
         sort
     } = props;
 
+    const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", description: ""})
+
     const [popover, setPopover] = useState({})
 
     const setPopoverOpen = (item, anchor) => {
         setPopover({data: item, anchor})
+    }
+
+    const handleClose = () => {
+        setDescriptionDialog(e => ({...e, open: false}));
+    };
+
+    const mapNotices = (notices) => {
+        return (
+            notices.map((notice, i) =>
+                <Box key={'notice' + i}>
+                    <Button type='link'
+                            onClick={() => handleSelectFile(notice.test_data_suite_oid)}
+                    >
+                        {notice.test_data_suite_id}
+                    </Button>
+                    {' / '}
+                    <Button type='link'
+                            onClick={() => handleSelectFile(notice.test_data_suite_oid, notice.test_data_oid)}
+                    >
+                        {notice.test_data_id}
+                    </Button>
+                </Box>)
+        )
+    }
+
+
+    const handleOpenDetails = (title, notices) => {
+        const description = mapNotices(notices)
+        setDescriptionDialog({open: true, title, description});
     }
 
     const SorterHeader = (props) => {
@@ -111,7 +147,9 @@ export const ListTable = (props) => {
                                         <TableCell>
                                             <Button variant='outlined'
                                                     disabled={!item.notice_count}
-                                                    onClick={(e) => setPopoverOpen(item, e.currentTarget)}>
+                                                    // onClick={(e) => setPopoverOpen(item, e.currentTarget)}>
+
+                                                    onClick={() => handleOpenDetails(item.sdk_element_id, item.test_data_xpaths)}>
                                                 {item.notice_count}
                                             </Button>
                                         </TableCell>
@@ -148,6 +186,22 @@ export const ListTable = (props) => {
                         {e.test_data_id}
                     </Button>)}
             </Popover>
+            <Dialog
+                open={descriptionDialog.open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    {descriptionDialog.title}
+                </DialogTitle>
+                <DialogContent>
+                    {descriptionDialog.description}
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}>Close</Button>
+                </DialogActions>
+            </Dialog>
         </>
     );
 };
