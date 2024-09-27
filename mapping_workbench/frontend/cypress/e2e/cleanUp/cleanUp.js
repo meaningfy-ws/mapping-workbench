@@ -1,10 +1,10 @@
 import {Given, Then, When} from 'cypress-cucumber-preprocessor/steps'
 
-const {username, password, homeURL, projectName, appURLPrefix , homePageLabel} = Cypress.env()
+const {username, password, homeURL, projectName, appURLPrefix, homePageLabel} = Cypress.env()
 
 Given('Session Login', () => {
     // Caching session when logging in via page visit
-    cy.session([username,password], () => {
+    cy.session([username, password], () => {
         cy.visit(homeURL)
         cy.get('[name=username]').clear().type(username)
         cy.get('[name=password]').clear().type(password)
@@ -14,22 +14,20 @@ Given('Session Login', () => {
 })
 
 Then('Check home title', () => {
-    cy.title().should('eq',homePageLabel)
+    cy.title().should('eq', homePageLabel)
 })
 
-Then('I click on account button', () => {
-    cy.get('#account_button').click()
+Then('Visit Projects', () => {
+    cy.visit(homeURL + '/app/projects')
 })
 
-Then('I select project setup', () => {
-    cy.get('#project_setup_button').click()
+Then('I get redirected to projects list page', () => {
+    cy.title().should('eq', 'App: Projects List | Mapping Workbench')
 })
 
-Then('I search for project', () => {
-    // cy.intercept('GET', appURLPrefix + '/projects*',).as('get')
+Then('I type project name', () => {
     cy.get('input[type=text]').clear().type(projectName + '{enter}')
 })
-
 
 When('I click on delete button', () => {
     cy.get('#delete_button').click()
@@ -41,6 +39,6 @@ Then('I click yes button', () => {
 })
 
 Then('I get success delete', () => {
-    cy.wait('@delete').its('response.statusCode').should('eq',200)
+    cy.wait('@delete').its('response.statusCode').should('eq', 200)
 })
 
