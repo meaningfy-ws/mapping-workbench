@@ -37,9 +37,8 @@ export const ListTable = (props) => {
         handleSelectFile
     } = props;
 
-    const mapNotices = (notices) => {
-        return (
-            notices.map((notice, i) =>
+    const handleOpenDetails = ({title, notices}) => {
+        const description =  notices.map((notice, i) =>
                 <Box key={'notice' + i}>
                     <Button type='link'
                             onClick={() => handleSelectFile(notice.test_data_suite_oid)}
@@ -53,11 +52,6 @@ export const ListTable = (props) => {
                         {notice.test_data_id}
                     </Button>
                 </Box>)
-        )
-    }
-
-    const handleOpenDetails = ({title, notices}) => {
-        const description = mapNotices(notices)
         setDescriptionDialog({open: true, title, description});
     }
 
