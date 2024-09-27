@@ -81,7 +81,7 @@ export const ListTable = (props) => {
                                     <SorterHeader fieldName="sdk_element_xpath"
                                                   title="XPath"/>
                                 </TableCell>
-                                <TableCell>
+                                <TableCell align="left">
                                     <SorterHeader fieldName="xpath_condition"
                                                   title="XPath Condition"/>
                                 </TableCell>
@@ -116,28 +116,38 @@ export const ListTable = (props) => {
                                                 </SyntaxHighlighter>
                                             }
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell align="right">
                                             {
-                                                item.xpath_condition && <Stack
-                                                    direction="row"
-                                                    justifyContent="center"
-                                                    alignItems="center"
-                                                    spacing={2}
-                                                >
-                                                    <SyntaxHighlighter
-                                                        language="xquery"
-                                                        wrapLines={true}
-                                                        lineProps={{
-                                                            style: {
-                                                                wordBreak: 'break-all',
-                                                                whiteSpace: 'pre-wrap'
-                                                            }
-                                                        }}>
-                                                        {item.xpath_condition}
-                                                    </SyntaxHighlighter>
-                                                    {item.meets_xpath_condition ? <CheckIcon color="success"/> :
-                                                        <CloseIcon color="error"/>}
-                                                </Stack>
+                                                item.xpath_conditions?.map((xpath_condition, key) => {
+                                                    return (
+                                                        <Stack
+                                                            direction="column"
+                                                            spacing={1}
+                                                        >
+                                                            <Stack
+                                                                direction="row"
+                                                                justifyContent="right"
+                                                                alignItems="center"
+                                                                spacing={2}
+                                                            >
+                                                                <SyntaxHighlighter
+                                                                    language="xquery"
+                                                                    wrapLines={true}
+                                                                    lineProps={{
+                                                                        style: {
+                                                                            wordBreak: 'break-all',
+                                                                            whiteSpace: 'pre-wrap'
+                                                                        }
+                                                                    }}>
+                                                                    {xpath_condition.xpath_condition || '-'}
+                                                                </SyntaxHighlighter>
+                                                                {xpath_condition.meets_xpath_condition ?
+                                                                    <CheckIcon color="success"/> :
+                                                                    <CloseIcon color="error"/>}
+                                                            </Stack>
+                                                        </Stack>
+                                                    );
+                                                })
                                             }
                                         </TableCell>
                                         <TableCell align="right">

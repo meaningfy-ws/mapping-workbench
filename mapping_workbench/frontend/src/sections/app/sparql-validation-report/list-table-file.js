@@ -14,6 +14,9 @@ import {resultColor} from "./utils";
 import {Scrollbar} from 'src/components/scrollbar';
 import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
+import Stack from "@mui/material/Stack";
+import CheckIcon from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
 
 export const ListTableFile = (props) => {
 
@@ -38,6 +41,7 @@ export const ListTableFile = (props) => {
             />
         )
     }
+    console.log(items);
 
     return (
         <>
@@ -56,9 +60,13 @@ export const ListTableFile = (props) => {
                     <Table sx={{minWidth: 1200}}>
                         <TableHead>
                             <TableRow>
-                                <TableCell width="25%">
+                                <TableCell width="15%">
                                     <SorterHeader fieldName="title"
                                                   title="Field"/>
+                                </TableCell>
+                                <TableCell align="left" width="35%">
+                                    <SorterHeader fieldName="xpath_condition"
+                                                  title="XPath Condition"/>
                                 </TableCell>
                                 <TableCell>
                                     <SorterHeader fieldName="description"
@@ -81,10 +89,38 @@ export const ListTableFile = (props) => {
                             {items?.map((item, key) => {
                                 return (
                                     <TableRow key={key}>
-                                        <TableCell width="25%">
+                                        <TableCell width="15%">
                                             <Typography variant="subtitle3">
                                                 {item.title}
                                             </Typography>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Stack
+                                                direction="column"
+                                                spacing={1}
+                                            >
+                                                <Stack
+                                                    direction="row"
+                                                    justifyContent="right"
+                                                    alignItems="center"
+                                                    spacing={2}
+                                                >
+                                                    <SyntaxHighlighter
+                                                        language="xquery"
+                                                        wrapLines={true}
+                                                        lineProps={{
+                                                            style: {
+                                                                wordBreak: 'break-all',
+                                                                whiteSpace: 'pre-wrap'
+                                                            }
+                                                        }}>
+                                                        {item?.xpath_condition?.xpath_condition || '-'}
+                                                    </SyntaxHighlighter>
+                                                    {item?.xpath_condition?.meets_xpath_condition ?
+                                                        <CheckIcon color="success"/> :
+                                                        <CloseIcon color="error"/>}
+                                                </Stack>
+                                            </Stack>
                                         </TableCell>
                                         <TableCell>
 

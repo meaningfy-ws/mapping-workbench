@@ -21,6 +21,7 @@ import DialogActions from "@mui/material/DialogActions";
 import {Scrollbar} from 'src/components/scrollbar';
 import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
+import Stack from "@mui/material/Stack";
 
 export const ListTable = (props) => {
 
@@ -95,11 +96,15 @@ export const ListTable = (props) => {
                                     <SorterHeader fieldName="sdk_element_xpath"
                                                   title="XPath"/>
                                 </TableCell>
+                                <TableCell align="left">
+                                    <SorterHeader fieldName="xpath_condition"
+                                                  title="XPath Condition"/>
+                                </TableCell>
                                 <TableCell width="10%">
                                     <SorterHeader fieldName="notice_count"
                                                   title="Notices"/>
                                 </TableCell>
-                                <TableCell width="10%">
+                                <TableCell width="10%" align="right">
                                     <SorterHeader fieldName="is_covered"
                                                   title="Found"/>
                                 </TableCell>
@@ -130,13 +135,47 @@ export const ListTable = (props) => {
                                             }
                                         </TableCell>
                                         <TableCell>
+                                            {
+                                                item.xpath_conditions?.map((xpath_condition, key) => {
+                                                    return (
+                                                        <Stack
+                                                            direction="column"
+                                                            spacing={1}
+                                                        >
+                                                            <Stack
+                                                                direction="row"
+                                                                justifyContent="right"
+                                                                alignItems="center"
+                                                                spacing={2}
+                                                            >
+                                                                <SyntaxHighlighter
+                                                                    language="xquery"
+                                                                    wrapLines={true}
+                                                                    lineProps={{
+                                                                        style: {
+                                                                            wordBreak: 'break-all',
+                                                                            whiteSpace: 'pre-wrap'
+                                                                        }
+                                                                    }}>
+                                                                    {xpath_condition.xpath_condition || '-'}
+                                                                </SyntaxHighlighter>
+                                                                {xpath_condition.meets_xpath_condition ?
+                                                                    <CheckIcon color="success"/> :
+                                                                    <CloseIcon color="error"/>}
+                                                            </Stack>
+                                                        </Stack>
+                                                    );
+                                                })
+                                            }
+                                        </TableCell>
+                                        <TableCell>
                                             <Button variant='outlined'
                                                     disabled={!item.notice_count}
                                                     onClick={() => handleOpenDetails(item.sdk_element_id, item.test_data_xpaths)}>
                                                 {item.notice_count}
                                             </Button>
                                         </TableCell>
-                                        <TableCell align="center">
+                                        <TableCell align="right">
                                             {item.is_covered ? <CheckIcon color="success"/> :
                                                 <CloseIcon color="error"/>}
                                         </TableCell>

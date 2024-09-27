@@ -4,7 +4,7 @@ from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState
 from mapping_workbench.backend.package_validator.adapters.xpath_validator import XPATHValidator
 from mapping_workbench.backend.package_validator.models.xpath_validation import XPathAssertion, \
-    XPATHTestDataValidationResult, XPathAssertionTestDataEntry, XPathAssertionEntry
+    XPATHTestDataValidationResult, XPathAssertionTestDataEntry, XPathAssertionEntry, XPathAssertionCondition
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuiteState, TestDataValidation, \
     TestDataState
 
@@ -18,8 +18,7 @@ def update_xpath_assertion(
         test_data_state: TestDataState,
         xpaths: List[XPathAssertionEntry],
         validation_message=None,
-        xpath_condition=None,
-        meets_xpath_condition=True
+        xpath_condition: XPathAssertionCondition = None
 ):
     if not state.validation.xpath:
         state.validation.xpath = XPATHTestDataValidationResult()
@@ -39,8 +38,7 @@ def update_xpath_assertion(
                 sdk_element_xpath=xpath,
                 sdk_element_title=element_title,
                 is_covered=False,
-                xpath_condition=xpath_condition,
-                meets_xpath_condition=meets_xpath_condition,
+                xpath_conditions=[],
                 test_data_xpaths=[],
                 message=validation_message,
             )
@@ -52,7 +50,7 @@ def update_xpath_assertion(
         test_data_suite,
         test_data_state,
         xpaths,
-        meets_xpath_condition
+        xpath_condition
     )
 
 
@@ -61,7 +59,7 @@ def update_xpath_assertion_test_data_entry(
         test_data_suite: TestDataSuiteState,
         test_data_state: TestDataState,
         xpaths: List[XPathAssertionEntry],
-        meets_xpath_condition=True
+        xpath_condition: XPathAssertionCondition = None,
 ):
     if not test_data_xpath_assertion.test_data_xpaths:
         test_data_xpath_assertion.test_data_xpaths = []
@@ -87,8 +85,20 @@ def update_xpath_assertion_test_data_entry(
 
         update_xpath_assertion_test_data_entry_xpaths(test_data_xpath_assertion.test_data_xpaths[idx], xpaths)
 
+    if xpath_condition:
+        idx = next(
+            (
+                idx for idx, entry in enumerate(test_data_xpath_assertion.xpath_conditions)
+                if entry.xpath_condition == xpath_condition.xpath_condition
+            ), -1
+        )
+        if idx < 0:
+            test_data_xpath_assertion.xpath_conditions.append(xpath_condition)
+        else:
+            test_data_xpath_assertion.xpath_conditions[idx].meets_xpath_condition &= xpath_condition.meets_xpath_condition
+
     test_data_xpath_assertion.is_covered = (len(test_data_xpath_assertion.test_data_xpaths) > 0)
-    test_data_xpath_assertion.meets_xpath_condition &= meets_xpath_condition
+
 
 
 def update_xpath_assertion_test_data_entry_xpaths(
@@ -134,9 +144,12 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
                 meets_xpath_condition: bool = True
                 cm_xpath_condition = conceptual_mapping_rule_state.xpath_condition
                 if cm_xpath_condition:
-                    mwb_logger.log_all_info(cm_xpath_condition)
                     meets_xpath_condition = xpath_validator.check_xpath_condition(cm_xpath_condition)
-                    mwb_logger.log_all_info(str(meets_xpath_condition))
+
+                xpath_condition = XPathAssertionCondition(
+                    xpath_condition=cm_xpath_condition or '',
+                    meets_xpath_condition=meets_xpath_condition
+                )
 
                 update_xpath_assertion(
                     state=mapping_package_state,
@@ -145,7 +158,8 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
                     element_title=cm_sdk_title,
                     test_data_suite=test_data_suite,
                     test_data_state=test_data_state,
-                    xpaths=xpaths
+                    xpaths=xpaths,
+                    xpath_condition=xpath_condition
                 )
                 update_xpath_assertion(
                     state=test_data_suite,
@@ -154,7 +168,8 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
                     element_title=cm_sdk_title,
                     test_data_suite=test_data_suite,
                     test_data_state=test_data_state,
-                    xpaths=xpaths
+                    xpaths=xpaths,
+                    xpath_condition=xpath_condition
                 )
                 update_xpath_assertion(
                     state=test_data_state,
@@ -164,7 +179,6 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
                     test_data_suite=test_data_suite,
                     test_data_state=test_data_state,
                     xpaths=xpaths,
-                    xpath_condition=cm_xpath_condition,
-                    meets_xpath_condition=meets_xpath_condition,
+                    xpath_condition=xpath_condition,
                     validation_message=validation_message
                 )
