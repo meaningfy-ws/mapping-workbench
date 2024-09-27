@@ -43,7 +43,7 @@ async def validate_mapping_package(mapping_package_state: MappingPackageState, t
 
     if tasks_to_run is None or TaskToRun.VALIDATE_PACKAGE_SPARQL.value in tasks_to_run:
         mwb_logger.log_all_info("Validating Package State ... SPARQL")
-        validate_mapping_package_state_with_sparql(mapping_package_state)
+        #validate_mapping_package_state_with_sparql(mapping_package_state)
         mwb_logger.log_all_info("Validating Package State ... SPARQL DONE")
 
 

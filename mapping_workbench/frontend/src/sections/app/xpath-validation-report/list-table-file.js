@@ -19,11 +19,12 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import {Scrollbar} from 'src/components/scrollbar';
 import PropTypes from 'prop-types';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import TablePagination from "../../components/table-pagination";
+import Stack from "@mui/material/Stack";
 
 export const ListTable = (props) => {
-    const [descriptionDialog, setDescriptionDialog] = useState({open:false, title:"", text:""})
+    const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", text: ""})
 
     const {
         count = 0,
@@ -38,21 +39,21 @@ export const ListTable = (props) => {
     } = props;
 
     const handleClose = () => {
-        setDescriptionDialog(e=>({...e, open: false}));
+        setDescriptionDialog(e => ({...e, open: false}));
     };
 
 
     const SorterHeader = ({fieldName, title}) => {
-       return <Tooltip enterDelay={300}
-                       title="Sort"
-               >
-                   <TableSortLabel
-                        active={sort.column === fieldName}
-                        direction={sort.direction}
-                        onClick={() => onSort(fieldName)}>
-                        {title ?? fieldName}
-                    </TableSortLabel>
-               </Tooltip>
+        return <Tooltip enterDelay={300}
+                        title="Sort"
+        >
+            <TableSortLabel
+                active={sort.column === fieldName}
+                direction={sort.direction}
+                onClick={() => onSort(fieldName)}>
+                {title ?? fieldName}
+            </TableSortLabel>
+        </Tooltip>
     }
 
     return (
@@ -80,15 +81,19 @@ export const ListTable = (props) => {
                                     <SorterHeader fieldName="sdk_element_xpath"
                                                   title="XPath"/>
                                 </TableCell>
-                                <TableCell width="10%">
+                                <TableCell>
+                                    <SorterHeader fieldName="xpath_condition"
+                                                  title="XPath Condition"/>
+                                </TableCell>
+                                <TableCell width="10%" align="right">
                                     <SorterHeader fieldName="is_covered"
-                                                   title="Found"/>
+                                                  title="Found"/>
                                 </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {items?.map((item, key) => {
-                                const notices = item.test_data_xpaths.map(e=> `"${e.test_data_id}":${e.xpaths.length}`)
+                                const notices = item.test_data_xpaths.map(e => `"${e.test_data_id}":${e.xpaths.length}`)
                                 return (
                                     <TableRow key={key}>
                                         <TableCell width="25%">
@@ -101,13 +106,43 @@ export const ListTable = (props) => {
                                                 <SyntaxHighlighter
                                                     language="xquery"
                                                     wrapLines={true}
-                                                    lineProps={{ style: { wordBreak: 'break-all', whiteSpace: 'pre-wrap' } }}>
+                                                    lineProps={{
+                                                        style: {
+                                                            wordBreak: 'break-all',
+                                                            whiteSpace: 'pre-wrap'
+                                                        }
+                                                    }}>
                                                     {item.sdk_element_xpath}
                                                 </SyntaxHighlighter>
                                             }
                                         </TableCell>
-                                        <TableCell align="center">
-                                            {item.is_covered ? <CheckIcon color="success"/> : <CloseIcon color="error"/>}
+                                        <TableCell>
+                                            {
+                                                item.xpath_condition && <Stack
+                                                    direction="row"
+                                                    justifyContent="center"
+                                                    alignItems="center"
+                                                    spacing={2}
+                                                >
+                                                    <SyntaxHighlighter
+                                                        language="xquery"
+                                                        wrapLines={true}
+                                                        lineProps={{
+                                                            style: {
+                                                                wordBreak: 'break-all',
+                                                                whiteSpace: 'pre-wrap'
+                                                            }
+                                                        }}>
+                                                        {item.xpath_condition}
+                                                    </SyntaxHighlighter>
+                                                    {item.meets_xpath_condition ? <CheckIcon color="success"/> :
+                                                        <CloseIcon color="error"/>}
+                                                </Stack>
+                                            }
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            {item.is_covered ? <CheckIcon color="success"/> :
+                                                <CloseIcon color="error"/>}
                                         </TableCell>
                                     </TableRow>
 
@@ -124,15 +159,15 @@ export const ListTable = (props) => {
                 aria-describedby="alert-dialog-description"
             >
                 <DialogTitle id="alert-dialog-title">
-                  {descriptionDialog.title}
+                    {descriptionDialog.title}
                 </DialogTitle>
                 <DialogContent>
-                  <DialogContentText id="alert-dialog-description">
-                      {descriptionDialog.description}
-                  </DialogContentText>
+                    <DialogContentText id="alert-dialog-description">
+                        {descriptionDialog.description}
+                    </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                  <Button onClick={handleClose}>Close</Button>
+                    <Button onClick={handleClose}>Close</Button>
                 </DialogActions>
             </Dialog>
         </>
