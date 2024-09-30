@@ -58,14 +58,19 @@ class EFormsPackageImporter(PackageImporterABC):
         for mono_rule in mono_package.conceptual_rules:
             source_structural_element: StructuralElement = await get_structural_element_by_unique_fields(
                 sdk_element_id=mono_rule.eforms_sdk_id,
-                name=mono_rule.field_name,
                 bt_id=mono_rule.bt_id,
                 absolute_xpath=mono_rule.absolute_xpath,
-                project_id=self.project.id
+                project_id=self.project.id,
+                #name=mono_rule.field_name
             )
 
             if not source_structural_element:
                 continue
+
+            if source_structural_element.name != mono_rule.field_name:
+                m = f"Field[{source_structural_element.sdk_element_id}] has Imported Name ({mono_rule.field_name}) <> Current Name ({source_structural_element.name})"
+                mwb_logger.log_all_warning(m)
+                self.warnings.append(m)
 
             # A conceptual mapping rule may have same structural element but different Ontology Fragment
             rule: ConceptualMappingRule = await ConceptualMappingRule.find_one(

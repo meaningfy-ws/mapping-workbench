@@ -1,4 +1,6 @@
 import ssl
+
+from mapping_workbench.backend.mapping_package import PackageType
 from mapping_workbench.backend.ontology.models.namespace import Namespace
 
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -42,7 +44,7 @@ async def _test_package_exporter(eforms_sdk_repo_v_1_9_1_dir_path):
     print("Imported eForms fields")
     project = Project(id=ObjectId(), title="Test project")
     await project.save()
-    mapping_package = await import_mapping_package(PACKAGE_EFORMS_16_DIR_PATH, project)
+    mapping_package = (await import_mapping_package(PACKAGE_EFORMS_16_DIR_PATH, project, PackageType.EFORMS)).mapping_package
     print("Mapping package id: ", mapping_package.id)
     assert mapping_package.id
     await generate_and_save_cm_assertions_queries(project_id=project.id)

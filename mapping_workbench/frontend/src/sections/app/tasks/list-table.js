@@ -24,13 +24,17 @@ import {useGlobalState} from "../../../hooks/use-global-state";
 import TableSorterHeader from "../../components/table-sorter-header";
 import moment from "moment";
 import nl2br from "../../../utils/nl2br";
+import ListItem from "@mui/material/ListItem";
+import List from "@mui/material/List";
 
 export const ListTable = (props) => {
     const {
         count = 0,
         items = [],
-        onPageChange = () => {},
-        onSort = () => {},
+        onPageChange = () => {
+        },
+        onSort = () => {
+        },
         sort,
         onRowsPerPageChange,
         page = 0,
@@ -72,10 +76,10 @@ export const ListTable = (props) => {
 
     const SorterHeader = (props) => {
         const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
-        return(
+        return (
             <TableSorterHeader sort={{direction, column: sort.column}}
-                           onSort={onSort}
-                           {...props}
+                               onSort={onSort}
+                               {...props}
             />
         )
     }
@@ -130,6 +134,7 @@ export const ListTable = (props) => {
                     </TableHead>
                     <TableBody>
                         {items.map((item) => {
+                            console.log(item);
                             const item_id = item.task_id;
                             const isCurrent = item_id === currentItem;
 
@@ -237,13 +242,25 @@ export const ListTable = (props) => {
                                                         gap={3}
                                                     >
                                                         {item.exception_message && <>
-                                                        <Typography sx={{pl: 3, pt: 1}} variant="h6" color="error">
-                                                            Message
-                                                        </Typography>
-                                                        <Divider/>
-                                                        <Typography sx={{pl: 3}}>
-                                                            {nl2br(item.exception_message)}
-                                                        </Typography>
+                                                            <Typography sx={{pl: 3, pt: 1}} variant="h6" color="error">
+                                                                Message
+                                                            </Typography>
+                                                            <Divider/>
+                                                            <Typography sx={{pl: 3}}>
+                                                                {nl2br(item.exception_message)}
+                                                            </Typography>
+                                                        </>}
+                                                        {item.warnings && item.warnings.length > 0 && <>
+                                                            <Typography sx={{pl: 3, pt: 1}} variant="h6"
+                                                                        color="orange">
+                                                                Warning
+                                                            </Typography>
+                                                            <Divider/>
+                                                            <List sx={{pl: 3}}>
+                                                                {item.warnings.map((warning) =>
+                                                                        <ListItem>{warning}</ListItem>
+                                                                )}
+                                                            </List>
                                                         </>}
                                                     </Grid>
                                                 </CardContent>
