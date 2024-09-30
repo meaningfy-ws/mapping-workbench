@@ -75,28 +75,48 @@ class SPARQLValidator(TestDataValidator):
             xpath_validation_results = xpath_validation.results
             sparql_query_xpath = sparql_query_result.query.cm_rule.sdk_element_xpath.strip() \
                 if sparql_query_result.query.cm_rule else None
+            sparql_xpath_condition = sparql_query_result.query.cm_rule.xpath_condition.xpath_condition.strip() \
+                if sparql_query_result.query.cm_rule else None
             validation_xpaths = set()
+            validation_xpath_conditions = set()
             for xpath_assertion in xpath_validation_results:
                 if xpath_assertion.is_covered:
                     validation_xpaths.add(xpath_assertion.sdk_element_xpath.strip())
+                if xpath_assertion.xpath_conditions:
+                    validation_xpath_conditions |= set([
+                        (xpath_condition.xpath_condition or '').strip()
+                        for xpath_condition in xpath_assertion.xpath_conditions
+                        if xpath_condition.meets_xpath_condition
+                    ])
             sparql_query_result.fields_covered = (not sparql_query_xpath or (
                     sparql_query_xpath in validation_xpaths
             ))
+            sparql_query_result.meets_xpath_condition = (not sparql_xpath_condition or (
+                    sparql_xpath_condition in validation_xpath_conditions
+            ))
 
             # Refined result
-            result = self.refined_result(ask_answer, sparql_query_result, result)
+            result = self.refined_result(ask_answer, sparql_query_result)
 
         sparql_query_result.result = result
 
     @classmethod
-    def refined_result(cls, ask_answer, sparql_query_result, result: SPARQLQueryRefinedResultType) \
+    def refined_result(cls, ask_answer, sparql_query_result: SPARQLQueryResult) \
             -> SPARQLQueryRefinedResultType:
-        if ask_answer and sparql_query_result.fields_covered:
-            result = SPARQLQueryRefinedResultType.VALID.value
-        elif not ask_answer and not sparql_query_result.fields_covered:
-            result = SPARQLQueryRefinedResultType.UNVERIFIABLE.value
-        elif ask_answer and not sparql_query_result.fields_covered:
-            result = SPARQLQueryRefinedResultType.WARNING.value
-        elif not ask_answer and sparql_query_result.fields_covered:
-            result = SPARQLQueryRefinedResultType.INVALID.value
-        return result
+
+        if sparql_query_result.fields_covered:
+            if ask_answer:
+                if sparql_query_result.meets_xpath_condition:
+                    return SPARQLQueryRefinedResultType.VALID.value
+                else:
+                    return SPARQLQueryRefinedResultType.WARNING.value
+            else:
+                if sparql_query_result.meets_xpath_condition:
+                    return SPARQLQueryRefinedResultType.INVALID.value
+                else:
+                    return SPARQLQueryRefinedResultType.VALID.value
+        else:
+            if ask_answer:
+                return SPARQLQueryRefinedResultType.WARNING.value
+            else:
+                return SPARQLQueryRefinedResultType.UNVERIFIABLE.value

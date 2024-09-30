@@ -17,9 +17,15 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 
 import {ResultChip} from "./utils";
+import {codeStyle} from "src/utils/code-style";
 import {Scrollbar} from 'src/components/scrollbar';
 import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
+import CheckIcon from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
+import {useDialog} from "../../../hooks/use-dialog";
+import Divider from "@mui/material/Divider";
+import Slack from "next-auth/providers/slack";
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", description: ""})
@@ -37,27 +43,21 @@ export const ListTable = (props) => {
         handleSelectFile
     } = props;
 
-    const mapNotices = (notices) => {
-        return (
-            notices.map((notice, i) =>
-                <Box key={'notice' + i}>
-                    <Button type='link'
-                            onClick={() => handleSelectFile(notice.test_data_suite_oid)}
-                    >
-                        {notice.test_data_suite_id}
-                    </Button>
-                    {' / '}
-                    <Button type='link'
-                            onClick={() => handleSelectFile(notice.test_data_suite_oid, notice.test_data_oid)}
-                    >
-                        {notice.test_data_id}
-                    </Button>
-                </Box>)
-        )
-    }
-
     const handleOpenDetails = ({title, notices}) => {
-        const description = mapNotices(notices)
+        const description = notices.map((notice, i) =>
+            <Box key={'notice' + i}>
+                <Button type='link'
+                        onClick={() => handleSelectFile(notice.test_data_suite_oid)}
+                >
+                    {notice.test_data_suite_id}
+                </Button>
+                {' / '}
+                <Button type='link'
+                        onClick={() => handleSelectFile(notice.test_data_suite_oid, notice.test_data_oid)}
+                >
+                    {notice.test_data_id}
+                </Button>
+            </Box>)
         setDescriptionDialog({open: true, title, description});
     }
 
@@ -80,12 +80,19 @@ export const ListTable = (props) => {
                       alignItems="center"
                       justifyContent="start"
                       height={100}>
-            {result.count}
-            {!!result.count && <Button variant="outlined"
-                                       onClick={() => onClick({title, notices: result.test_datas})}>
-                Details
-            </Button>}
+            {result.count
+                ? <Button variant="outlined"
+                          onClick={() => onClick({title, notices: result.test_datas})}>
+                    {result.count}
+                </Button>
+                : <Box sx={{mt: '10px'}}>{result.count}</Box>}
         </Stack>
+    }
+
+    const xpathConditionDialog = useDialog()
+
+    const openXPathConditionDialog = (data) => {
+        xpathConditionDialog.handleOpen(data)
     }
 
     return (
@@ -109,9 +116,9 @@ export const ListTable = (props) => {
                                     <SorterHeader fieldName="title"
                                                   title="Field"/>
                                 </TableCell>
-                                <TableCell>
-                                    <SorterHeader fieldName="test_suite"
-                                                  title="Test Suite"/>
+                                <TableCell width="15%">
+                                    <SorterHeader fieldName="xpath_condition"
+                                                  title="XPath Condition"/>
                                 </TableCell>
                                 <TableCell>
                                     <SorterHeader fieldName="query"
@@ -165,12 +172,31 @@ export const ListTable = (props) => {
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            {item.test_suite}
+                                            {item?.xpath_condition?.xpath_condition &&
+                                                <Stack
+                                                    direction="column"
+                                                    spacing={1}
+                                                >
+                                                    <Stack
+                                                        direction="row"
+                                                        justifyContent="right"
+                                                        alignItems="center"
+                                                        spacing={2}
+                                                    >
+                                                        <Button variant="text" type='link'
+                                                                onClick={() => openXPathConditionDialog(item)}
+                                                        >XQuery</Button>
+                                                        {item?.xpath_condition?.meets_xpath_condition ?
+                                                            <CheckIcon color="success"/> :
+                                                            <CloseIcon color="error"/>}
+                                                    </Stack>
+                                                </Stack>}
                                         </TableCell>
                                         <TableCell>
                                             <SyntaxHighlighter
                                                 language="sparql"
                                                 wrapLines
+                                                style={codeStyle}
                                                 lineProps={{
                                                     style: {
                                                         overflowWrap: 'break-word',
@@ -239,6 +265,32 @@ export const ListTable = (props) => {
                 <DialogActions>
                     <Button onClick={handleClose}>Close</Button>
                 </DialogActions>
+            </Dialog>
+            <Dialog
+                open={xpathConditionDialog.open}
+                onClose={xpathConditionDialog.handleClose}
+                fullWidth
+                maxWidth='md'
+            >
+                <DialogTitle>
+                    XPath Condition for "{xpathConditionDialog.data?.title}"
+                </DialogTitle>
+                <DialogContent>
+                    <SyntaxHighlighter
+                        language="xquery"
+                        wrapLines
+                        style={codeStyle}
+                        lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
+                        {xpathConditionDialog.data?.xpath_condition?.xpath_condition}
+                    </SyntaxHighlighter>
+                    <Divider sx={{my: 1}}/>
+                    <Stack direction="row">
+                        {xpathConditionDialog.data?.xpath_condition?.meets_xpath_condition ?
+                            <><CheckIcon color="success"/> - At least one Test Data meets this XPath Condition</> :
+                            <><CloseIcon color="error"/> -  No Test Data meets this XPath Condition</>}
+                    </Stack>
+
+                </DialogContent>
             </Dialog>
         </>
     );

@@ -15,9 +15,14 @@ class XPathAssertionTestDataEntry(ValidationTestDataEntry):
     xpaths: Optional[List[XPathAssertionEntry]] = None
 
 
+class XPathAssertionCondition(BaseModel):
+    xpath_condition: Optional[str] = None
+    meets_xpath_condition: Optional[bool] = True
+
 class XPathAssertion(CMRuleSDKElement):
     test_data_xpaths: Optional[List[XPathAssertionTestDataEntry]] = None
     is_covered: Optional[bool] = False
+    xpath_conditions: Optional[List[XPathAssertionCondition]] = None
     message: Optional[str] = None
 
     class Settings:

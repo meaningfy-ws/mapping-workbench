@@ -79,6 +79,7 @@ class StandardPackageImporter(PackageImporterABC):
                 if self.package.id not in rule.refers_to_mapping_package_ids:
                     rule.refers_to_mapping_package_ids.append(self.package.id)
 
+            rule.xpath_condition = mono_rule.xpath_condition
             rule.target_class_path = mono_rule.class_path
             rule.target_property_path = mono_rule.property_path
             rule.sort_order = sort_order

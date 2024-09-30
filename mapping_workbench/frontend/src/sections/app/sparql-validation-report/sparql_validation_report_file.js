@@ -149,6 +149,8 @@ const SparqlFileReport = ({sid, suiteId, testId, files, mappingSuiteIdentifier})
         resultArray["query_result"] = e.query_result
         resultArray["fields_covered"] = e.fields_covered
         resultArray["result"] = e.result
+        resultArray["meets_xpath_condition"] = e.meets_xpath_condition
+        resultArray["xpath_condition"] = e.query?.cm_rule?.xpath_condition
         return resultArray;
     })
 

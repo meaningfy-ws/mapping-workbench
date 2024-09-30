@@ -6,11 +6,11 @@ from mapping_workbench.backend.conceptual_mapping_rule.models.entity import Conc
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageState
 from mapping_workbench.backend.package_importer.adapters.eforms.importer import PackageImporter
-from mapping_workbench.backend.package_validator.models.test_data_validation import CMRuleSDKElement
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestFileResourceFormat, SHACLTestSuiteState, \
     SHACLTestState
-from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResourceFormat, SPARQLTestState
+from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResourceFormat, SPARQLTestState, \
+    SPARQLCMRule
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataFileResource, \
     TestDataFileResourceFormat
 from mapping_workbench.backend.user.models.user import User
@@ -67,7 +67,7 @@ def dummy_sparql_test_suite(sparql_test_resources_file_path: pathlib.Path,
     metadata = dummy_package_importer.extract_metadata_from_sparql_query(
         sparql_test_resources_file_path.read_text(encoding="utf-8")
     )
-    cm_rule_sdk_element = CMRuleSDKElement(
+    cm_rule_sdk_element = SPARQLCMRule(
         eforms_sdk_element_id=None,
         eforms_sdk_element_title=metadata['title']
     )

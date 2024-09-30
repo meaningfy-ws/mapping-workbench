@@ -1,5 +1,4 @@
-
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import PropTypes from 'prop-types';
 
 import Table from '@mui/material/Table';
@@ -8,9 +7,10 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
-import {SorterHeader as UtilsSorterHeader} from "./utils";
+import {codeStyle} from "src/utils/code-style";
 import {Scrollbar} from 'src/components/scrollbar';
-import TablePagination from '../../components/table-pagination';
+import TablePagination from 'src/sections/components/table-pagination';
+import TableSorterHeader from "src/sections/components/table-sorter-header";
 
 export const ListTableFile = (props) => {
 
@@ -26,10 +26,10 @@ export const ListTableFile = (props) => {
         sectionApi
     } = props;
 
-    const SorterHeader = (props) => <UtilsSorterHeader sort={sort}
+    const SorterHeader = (props) => <TableSorterHeader sort={sort}
                                                        onSort={onSort}
                                                        {...props}
-                                                        />
+    />
 
     return (
         <TablePagination
@@ -54,14 +54,14 @@ export const ListTableFile = (props) => {
                                               title="Message"/>
                             </TableCell>
                             <TableCell>
-                                 <SorterHeader fieldName="short_result_path"
-                                               title="Result Path"/>
+                                <SorterHeader fieldName="short_result_path"
+                                              title="Result Path"/>
                             </TableCell>
                             <TableCell>
                                 <SorterHeader fieldName="short_result_severity"
                                               title="Result Severity"/>
                             </TableCell>
-                             <TableCell>
+                            <TableCell>
                                 <SorterHeader fieldName="short_source_constraint_component"
                                               title="Source Constraint Component"/>
                             </TableCell>
@@ -74,40 +74,45 @@ export const ListTableFile = (props) => {
                                     <TableCell width="25%">
                                         <SyntaxHighlighter
                                             language="turtle"
-                                            wrapLines={true}
-                                            lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
+                                            wrapLines
+                                            style={codeStyle}
+                                            lineProps={{style: {overflowWrap: 'break-word', whiteSpace: 'pre-wrap'}}}>
                                             {item.short_focus_node}
                                         </SyntaxHighlighter>
                                     </TableCell>
                                     <TableCell>
                                         <SyntaxHighlighter
                                             language="turtle"
-                                            wrapLines={true}
-                                            lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
+                                            wrapLines
+                                            style={codeStyle}
+                                            lineProps={{style: {overflowWrap: 'break-word', whiteSpace: 'pre-wrap'}}}>
                                             {item.message}
                                         </SyntaxHighlighter>
                                     </TableCell>
                                     <TableCell>
                                         <SyntaxHighlighter
                                             language="sparql"
-                                            wrapLines={true}
-                                            lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
+                                            wrapLines
+                                            style={codeStyle}
+                                            lineProps={{style: {overflowWrap: 'break-word', whiteSpace: 'pre-wrap'}}}>
                                             {item.short_result_path}
                                         </SyntaxHighlighter>
                                     </TableCell>
                                     <TableCell>
                                         <SyntaxHighlighter
                                             language="turtle"
-                                            wrapLines={true}
-                                            lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
+                                            wrapLines
+                                            style={codeStyle}
+                                            lineProps={{style: {overflowWrap: 'break-word', whiteSpace: 'pre-wrap'}}}>
                                             {item.short_result_severity}
                                         </SyntaxHighlighter>
                                     </TableCell>
                                     <TableCell>
                                         <SyntaxHighlighter
                                             language="turtle"
-                                            wrapLines={true}
-                                            lineProps={{ style: { overflowWrap: 'break-word', whiteSpace: 'pre-wrap' } }}>
+                                            wrapLines
+                                            style={codeStyle}
+                                            lineProps={{style: {overflowWrap: 'break-word', whiteSpace: 'pre-wrap'}}}>
                                             {item.short_source_constraint_component}
                                         </SyntaxHighlighter>
                                     </TableCell>
