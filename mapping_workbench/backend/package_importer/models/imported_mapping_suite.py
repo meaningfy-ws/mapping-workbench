@@ -111,6 +111,6 @@ class ImportedStandardMappingSuite(ImportedMappingSuite):
     conceptual_rules: List[StandardMappingConceptualRule] = []
 
 
-class APIImportedMappingSuiteResponse(BaseModel):
+class ImportedMappingSuiteResponse(BaseModel):
     mapping_package: MappingPackage
     warnings: List[str] = []
