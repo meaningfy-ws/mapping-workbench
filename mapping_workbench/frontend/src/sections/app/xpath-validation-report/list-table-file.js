@@ -1,27 +1,26 @@
 import {useState} from "react";
+import PropTypes from 'prop-types';
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 
+import Stack from "@mui/material/Stack";
 import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Typography from '@mui/material/Typography';
-import Tooltip from "@mui/material/Tooltip";
 import Button from "@mui/material/Button";
 import Dialog from '@mui/material/Dialog';
+import TableRow from '@mui/material/TableRow';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import CloseIcon from '@mui/icons-material/Close';
+import CheckIcon from '@mui/icons-material/Check';
+import Typography from '@mui/material/Typography';
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContentText from "@mui/material/DialogContentText";
-import CheckIcon from '@mui/icons-material/Check';
-import CloseIcon from '@mui/icons-material/Close';
 
 import {Scrollbar} from 'src/components/scrollbar';
-import PropTypes from 'prop-types';
-import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
-import TablePagination from "../../components/table-pagination";
-import Stack from "@mui/material/Stack";
+import TablePagination from "src/sections/components/table-pagination";
+import TableSorterHeader from "src/sections/components/table-sorter-header";
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", text: ""})
@@ -38,23 +37,12 @@ export const ListTable = (props) => {
         sort
     } = props;
 
-    const handleClose = () => {
-        setDescriptionDialog(e => ({...e, open: false}));
-    };
+    const handleClose = () => setDescriptionDialog(e => ({...e, open: false}));
 
-
-    const SorterHeader = ({fieldName, title}) => {
-        return <Tooltip enterDelay={300}
-                        title="Sort"
-        >
-            <TableSortLabel
-                active={sort.column === fieldName}
-                direction={sort.direction}
-                onClick={() => onSort(fieldName)}>
-                {title ?? fieldName}
-            </TableSortLabel>
-        </Tooltip>
-    }
+    const SorterHeader = (props) => <TableSorterHeader sort={sort}
+                                                       onSort={onSort}
+                                                       {...props}
+    />
 
     return (
         <>
@@ -93,7 +81,6 @@ export const ListTable = (props) => {
                         </TableHead>
                         <TableBody>
                             {items?.map((item, key) => {
-                                const notices = item.test_data_xpaths.map(e => `"${e.test_data_id}":${e.xpaths.length}`)
                                 return (
                                     <TableRow key={key}>
                                         <TableCell width="25%">
@@ -117,42 +104,42 @@ export const ListTable = (props) => {
                                             }
                                         </TableCell>
                                         <TableCell align="right">
-                                            {
-                                                item.xpath_conditions?.map((xpath_condition, key) => {
-                                                    return (
+                                            {item.xpath_conditions?.map((xpath_condition, key) => {
+                                                return (
+                                                    <Stack
+                                                        key={'condition' + key}
+                                                        direction="column"
+                                                        spacing={1}
+                                                    >
                                                         <Stack
-                                                            direction="column"
-                                                            spacing={1}
+                                                            direction="row"
+                                                            justifyContent="right"
+                                                            alignItems="center"
+                                                            spacing={2}
                                                         >
-                                                            <Stack
-                                                                direction="row"
-                                                                justifyContent="right"
-                                                                alignItems="center"
-                                                                spacing={2}
-                                                            >
-                                                                <SyntaxHighlighter
-                                                                    language="xquery"
-                                                                    wrapLines={true}
-                                                                    lineProps={{
-                                                                        style: {
-                                                                            wordBreak: 'break-all',
-                                                                            whiteSpace: 'pre-wrap'
-                                                                        }
-                                                                    }}>
-                                                                    {xpath_condition.xpath_condition || '-'}
-                                                                </SyntaxHighlighter>
-                                                                {xpath_condition.meets_xpath_condition ?
-                                                                    <CheckIcon color="success"/> :
-                                                                    <CloseIcon color="error"/>}
-                                                            </Stack>
+                                                            <SyntaxHighlighter
+                                                                language="xquery"
+                                                                wrapLines
+                                                                lineProps={{
+                                                                    style: {
+                                                                        wordBreak: 'break-all',
+                                                                        whiteSpace: 'pre-wrap'
+                                                                    }
+                                                                }}>
+                                                                {xpath_condition.xpath_condition || '-'}
+                                                            </SyntaxHighlighter>
+                                                            {xpath_condition.meets_xpath_condition ?
+                                                                <CheckIcon color="success"/> :
+                                                                <CloseIcon color="error"/>}
                                                         </Stack>
-                                                    );
-                                                })
-                                            }
+                                                    </Stack>
+                                                );
+                                            })}
                                         </TableCell>
                                         <TableCell align="right">
-                                            {item.is_covered ? <CheckIcon color="success"/> :
-                                                <CloseIcon color="error"/>}
+                                            {item.is_covered
+                                                ? <CheckIcon color="success"/>
+                                                : <CloseIcon color="error"/>}
                                         </TableCell>
                                     </TableRow>
 

@@ -63,17 +63,19 @@ export const ListTable = (props) => {
     />
 
     const ResultCell = ({title, result, onClick}) => {
-        return <Stack direction="column"
-                      alignItems="center"
-                      justifyContent="start"
-                      height={100}>
-            {result.count
-                ? <Button variant="outlined"
-                          onClick={() => onClick({title, notices: result.test_datas})}>
-                    {result.count}
-                </Button>
-                : <Box sx={{mt: '10px'}}>{result.count}</Box>}
-        </Stack>
+        return (
+            <Stack direction="column"
+                   alignItems="center"
+                   justifyContent="start"
+                   height={100}>
+                {result.count
+                    ? <Button variant="outlined"
+                              onClick={() => onClick({title, notices: result.test_datas})}>
+                        {result.count}
+                    </Button>
+                    : <Box sx={{mt: '10px'}}>{result.count}</Box>}
+            </Stack>
+        )
     }
 
     return (
