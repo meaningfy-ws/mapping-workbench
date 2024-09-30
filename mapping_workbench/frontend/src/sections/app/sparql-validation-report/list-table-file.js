@@ -17,6 +17,7 @@ import TableSorterHeader from "src/sections/components/table-sorter-header";
 import Stack from "@mui/material/Stack";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
+import Divider from "@mui/material/Divider";
 
 export const ListTableFile = (props) => {
 
@@ -64,13 +65,9 @@ export const ListTableFile = (props) => {
                                     <SorterHeader fieldName="title"
                                                   title="Field"/>
                                 </TableCell>
-                                <TableCell align="left" width="35%">
-                                    <SorterHeader fieldName="xpath_condition"
-                                                  title="XPath Condition"/>
-                                </TableCell>
-                                <TableCell>
+                                <TableCell align="left">
                                     <SorterHeader fieldName="description"
-                                                  title="Description"/>
+                                                  title=""/>
                                 </TableCell>
                                 <TableCell>
                                     <SorterHeader fieldName="query"
@@ -95,67 +92,68 @@ export const ListTableFile = (props) => {
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            <Stack
-                                                direction="column"
-                                                spacing={1}
-                                            >
-                                                <Stack
-                                                    direction="row"
-                                                    justifyContent="right"
-                                                    alignItems="center"
-                                                    spacing={2}
+                                            {item?.xpath_condition?.xpath_condition &&
+                                                <><Stack
+                                                    direction="column"
+                                                    spacing={1}
                                                 >
-                                                    <SyntaxHighlighter
-                                                        language="xquery"
-                                                        wrapLines={true}
-                                                        lineProps={{
-                                                            style: {
-                                                                wordBreak: 'break-all',
-                                                                whiteSpace: 'pre-wrap'
-                                                            }
-                                                        }}>
-                                                        {item?.xpath_condition?.xpath_condition || '-'}
-                                                    </SyntaxHighlighter>
-                                                    {item?.xpath_condition?.meets_xpath_condition ?
-                                                        <CheckIcon color="success"/> :
-                                                        <CloseIcon color="error"/>}
+                                                    <Stack
+                                                        direction="row"
+                                                        justifyContent="left"
+                                                        alignItems="center"
+                                                        spacing={2}
+                                                    >
+                                                        <SyntaxHighlighter
+                                                            language="xquery"
+                                                            wrapLines={true}
+                                                            lineProps={{
+                                                                style: {
+                                                                    wordBreak: 'break-all',
+                                                                    whiteSpace: 'pre-wrap'
+                                                                }
+                                                            }}>
+                                                            {item?.xpath_condition?.xpath_condition}
+                                                        </SyntaxHighlighter>
+                                                        {item?.meets_xpath_condition ?
+                                                            <CheckIcon color="success"/> :
+                                                            <CloseIcon color="error"/>}
+                                                    </Stack>
                                                 </Stack>
-                                            </Stack>
-                                        </TableCell>
-                                        <TableCell>
+                                                <Divider sx={{my: 1}}/></>
+                                        }
+                                        <Box sx={{overflowX: 'auto', width: '400px'}}>
+                                            <Typography variant="subtitle3">
+                                                {item.description}
+                                            </Typography>
+                                        </Box>
+                                    </TableCell>
+                                <TableCell>
+                                    <SyntaxHighlighter
+                                        language="sparql"
+                                        wrapLines
+                                        lineProps={{
+                                            style: {
+                                                overflowWrap: 'break-word',
+                                                whiteSpace: 'pre-wrap'
+                                            }
+                                        }}>
+                                        {item.query}
+                                    </SyntaxHighlighter>
+                                </TableCell>
+                                <TableCell align="left">
+                                    <Chip label={item.result}
+                                          color={resultColor(item.result)}/>
+                                </TableCell>
+                                <TableCell align="left">
+                                    <Box>
+                                        <Typography>{`Query result: ${item.query_result}`}</Typography>
+                                        <Typography>{`Fields covered: ${item.fields_covered}`}</Typography>
+                                    </Box>
+                                </TableCell>
+                            </TableRow>
 
-                                            <Box sx={{overflowX: 'auto', width: '400px'}}>
-                                                <Typography variant="subtitle3">
-                                                    {item.description}
-                                                </Typography>
-                                            </Box>
-                                        </TableCell>
-                                        <TableCell>
-                                            <SyntaxHighlighter
-                                                language="sparql"
-                                                wrapLines
-                                                lineProps={{
-                                                    style: {
-                                                        overflowWrap: 'break-word',
-                                                        whiteSpace: 'pre-wrap'
-                                                    }
-                                                }}>
-                                                {item.query}
-                                            </SyntaxHighlighter>
-                                        </TableCell>
-                                        <TableCell align="left">
-                                            <Chip label={item.result}
-                                                  color={resultColor(item.result)}/>
-                                        </TableCell>
-                                        <TableCell align="left">
-                                            <Box>
-                                                <Typography>{`Query result: ${item.query_result}`}</Typography>
-                                                <Typography>{`Fields covered: ${item.fields_covered}`}</Typography>
-                                            </Box>
-                                        </TableCell>
-                                    </TableRow>
-
-                                );
+                            )
+                                ;
                             })}
                         </TableBody>
                     </Table>

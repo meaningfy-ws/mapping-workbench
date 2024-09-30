@@ -152,6 +152,8 @@ const SparqlTestDatasetReport = ({sid, suiteId, handleSelectFile}) => {
             const [key, value] = entrie
             resultArray[`${key}Count`] = value.count
         })
+        resultArray["meets_xpath_condition"] = e.meets_xpath_condition
+        resultArray["xpath_condition"] = e.query?.cm_rule?.xpath_condition
         return resultArray;
     })
 

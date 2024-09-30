@@ -20,6 +20,8 @@ import {ResultChip} from "./utils";
 import {Scrollbar} from 'src/components/scrollbar';
 import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
+import CheckIcon from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", description: ""})
@@ -160,7 +162,32 @@ export const ListTable = (props) => {
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            {item.xpath_condition}
+                                            <Stack
+                                                direction="column"
+                                                spacing={1}
+                                            >
+                                                <Stack
+                                                    direction="row"
+                                                    justifyContent="right"
+                                                    alignItems="center"
+                                                    spacing={2}
+                                                >
+                                                    <SyntaxHighlighter
+                                                        language="xquery"
+                                                        wrapLines={true}
+                                                        lineProps={{
+                                                            style: {
+                                                                wordBreak: 'break-all',
+                                                                whiteSpace: 'pre-wrap'
+                                                            }
+                                                        }}>
+                                                        {item?.xpath_condition?.xpath_condition || '-'}
+                                                    </SyntaxHighlighter>
+                                                    {item?.meets_xpath_condition ?
+                                                        <CheckIcon color="success"/> :
+                                                        <CloseIcon color="error"/>}
+                                                </Stack>
+                                            </Stack>
                                         </TableCell>
                                         <TableCell>
                                             <SyntaxHighlighter

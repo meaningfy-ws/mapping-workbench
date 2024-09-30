@@ -26,11 +26,12 @@ def validate_tests_data_with_sparql_tests(
 
             sparql_runner = SPARQLValidator(test_data=test_data, test_data_suite=test_data_suite)
             tests_data[idx].validation.sparql = sparql_runner.validate(sparql_queries=sparql_tests)
-            tests_data[idx].validation.sparql.summary = aggregate_sparql_tests_summary(
-                tests_data[idx].validation.sparql.results,
-                [SPARQLTestState(oid=None)],
-                False
-            )
+            if tests_data[idx].validation.sparql and tests_data[idx].validation.sparql.results:
+                tests_data[idx].validation.sparql.summary = aggregate_sparql_tests_summary(
+                    tests_data[idx].validation.sparql.results,
+                    [SPARQLTestState(oid=None)],
+                    False
+                )
         except Exception as e:
             mwb_logger.log_all_error(message="ERROR :: SPARQL Validation :: Stack trace: ", stack_trace=str(e))
             pass
@@ -53,9 +54,11 @@ def aggregate_sparql_tests_summary(
                 )
             )
             idx = len(summary) - 1
+
         for result in results:
             if result.query.oid != summary[idx].query.oid:
                 continue
+
             if result.result == SPARQLQueryRefinedResultType.VALID.value:
                 if add_summary_result_test_data(summary[idx].result.valid.test_datas,
                                                 result.test_data) or not use_grouping:
@@ -81,6 +84,7 @@ def aggregate_sparql_tests_summary(
                                                 result.test_data) or not use_grouping:
                     summary[idx].result.unknown.count += 1
 
+            summary[idx].query.cm_rule.xpath_condition.meets_xpath_condition |= result.meets_xpath_condition
     return summary
 
 
@@ -105,7 +109,7 @@ def validate_mapping_package_state_with_sparql(mapping_package_state: MappingPac
 
         test_data_suite_results = []
         for test_data_state in mapping_package_state.test_data_suites[idx].test_data_states:
-            test_data_state_results = test_data_state.validation.sparql.results or []
+            test_data_state_results = (test_data_state.validation.sparql and test_data_state.validation.sparql.results) or []
             test_data_suite_results.extend(test_data_state_results)
             state_results.extend(test_data_state_results)
 
