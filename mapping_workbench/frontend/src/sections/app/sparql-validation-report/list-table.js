@@ -40,20 +40,20 @@ export const ListTable = (props) => {
     } = props;
 
     const handleOpenDetails = ({title, notices}) => {
-        const description =  notices.map((notice, i) =>
-                <Box key={'notice' + i}>
-                    <Button type='link'
-                            onClick={() => handleSelectFile(notice.test_data_suite_oid)}
-                    >
-                        {notice.test_data_suite_id}
-                    </Button>
-                    {' / '}
-                    <Button type='link'
-                            onClick={() => handleSelectFile(notice.test_data_suite_oid, notice.test_data_oid)}
-                    >
-                        {notice.test_data_id}
-                    </Button>
-                </Box>)
+        const description = notices.map((notice, i) =>
+            <Box key={'notice' + i}>
+                <Button type='link'
+                        onClick={() => handleSelectFile(notice.test_data_suite_oid)}
+                >
+                    {notice.test_data_suite_id}
+                </Button>
+                {' / '}
+                <Button type='link'
+                        onClick={() => handleSelectFile(notice.test_data_suite_oid, notice.test_data_oid)}
+                >
+                    {notice.test_data_id}
+                </Button>
+            </Box>)
         setDescriptionDialog({open: true, title, description});
     }
 
@@ -81,7 +81,7 @@ export const ListTable = (props) => {
                           onClick={() => onClick({title, notices: result.test_datas})}>
                     {result.count}
                 </Button>
-                : <Box sx={{mt:'10px'}}>{result.count}</Box>}
+                : <Box sx={{mt: '10px'}}>{result.count}</Box>}
         </Stack>
     }
 

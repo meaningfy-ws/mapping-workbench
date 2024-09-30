@@ -1,23 +1,25 @@
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
-import PropTypes from 'prop-types';
 
 import {Box} from "@mui/system";
 import Chip from "@mui/material/Chip";
 import Table from '@mui/material/Table';
+import Stack from "@mui/material/Stack";
 import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
+import CheckIcon from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
 import Typography from '@mui/material/Typography';
 
 import {resultColor} from "./utils";
 import {Scrollbar} from 'src/components/scrollbar';
 import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
-import Stack from "@mui/material/Stack";
-import CheckIcon from "@mui/icons-material/Check";
-import CloseIcon from "@mui/icons-material/Close";
+
 import Divider from "@mui/material/Divider";
+import PropTypes from "prop-types";
+
 
 export const ListTableFile = (props) => {
 
@@ -42,7 +44,6 @@ export const ListTableFile = (props) => {
             />
         )
     }
-    console.log(items);
 
     return (
         <>
@@ -66,6 +67,10 @@ export const ListTableFile = (props) => {
                                                   title="Field"/>
                                 </TableCell>
                                 <TableCell align="left">
+                                    <SorterHeader fieldName="xpath_condition"
+                                                  title="XPath Condition"/>
+                                </TableCell>
+                                <TableCell>
                                     <SorterHeader fieldName="description"
                                                   title=""/>
                                 </TableCell>
@@ -152,22 +157,28 @@ export const ListTableFile = (props) => {
                                 </TableCell>
                             </TableRow>
 
-                            )
-                                ;
+                                )
+                                    ;
                             })}
                         </TableBody>
                     </Table>
                 </Scrollbar>
             </TablePagination>
         </>
-    );
+    )
+        ;
 };
 
 ListTableFile.propTypes = {
     count: PropTypes.number,
-    items: PropTypes.array,
-    onPageChange: PropTypes.func,
-    onRowsPerPageChange: PropTypes.func,
-    page: PropTypes.number,
-    rowsPerPage: PropTypes.number
+    items:
+    PropTypes.array,
+    onPageChange:
+    PropTypes.func,
+    onRowsPerPageChange:
+    PropTypes.func,
+    page:
+    PropTypes.number,
+    rowsPerPage:
+    PropTypes.number
 };

@@ -1,4 +1,3 @@
-
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import PropTypes from 'prop-types';
 
@@ -8,9 +7,9 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
-import {SorterHeader as UtilsSorterHeader} from "./utils";
 import {Scrollbar} from 'src/components/scrollbar';
-import TablePagination from '../../components/table-pagination';
+import TablePagination from 'src/sections/components/table-pagination';
+import TableSorterHeader from "src/sections/components/table-sorter-header";
 
 export const ListTableFile = (props) => {
 
@@ -26,7 +25,7 @@ export const ListTableFile = (props) => {
         sectionApi
     } = props;
 
-    const SorterHeader = (props) => <UtilsSorterHeader sort={sort}
+    const SorterHeader = (props) => <TableSorterHeader sort={sort}
                                                        onSort={onSort}
                                                        {...props}
                                                         />
