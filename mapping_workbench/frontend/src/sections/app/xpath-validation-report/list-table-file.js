@@ -18,6 +18,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContentText from "@mui/material/DialogContentText";
 
+import {codeStyle} from "src/utils/code-style";
 import {Scrollbar} from 'src/components/scrollbar';
 import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
@@ -73,7 +74,8 @@ export const ListTable = (props) => {
                                     <SorterHeader fieldName="xpath_condition"
                                                   title="XPath Condition"/>
                                 </TableCell>
-                                <TableCell width="10%" align="right">
+                                <TableCell width="10%"
+                                           align="right">
                                     <SorterHeader fieldName="is_covered"
                                                   title="Found"/>
                                 </TableCell>
@@ -89,19 +91,13 @@ export const ListTable = (props) => {
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            {
-                                                <SyntaxHighlighter
-                                                    language="xquery"
-                                                    wrapLines={true}
-                                                    lineProps={{
-                                                        style: {
-                                                            wordBreak: 'break-all',
-                                                            whiteSpace: 'pre-wrap'
-                                                        }
-                                                    }}>
-                                                    {item.sdk_element_xpath}
-                                                </SyntaxHighlighter>
-                                            }
+                                            <SyntaxHighlighter
+                                                language="xquery"
+                                                wrapLines
+                                                style={codeStyle}
+                                                lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
+                                                {item.sdk_element_xpath}
+                                            </SyntaxHighlighter>
                                         </TableCell>
                                         <TableCell align="right">
                                             {item.xpath_conditions?.map((xpath_condition, key) => {

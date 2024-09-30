@@ -95,7 +95,7 @@ def update_xpath_assertion_test_data_entry(
         if idx < 0:
             test_data_xpath_assertion.xpath_conditions.append(xpath_condition)
         else:
-            test_data_xpath_assertion.xpath_conditions[idx].meets_xpath_condition |= xpath_condition.meets_xpath_condition
+            test_data_xpath_assertion.xpath_conditions[idx].meets_xpath_condition &= xpath_condition.meets_xpath_condition
 
     test_data_xpath_assertion.is_covered = (len(test_data_xpath_assertion.test_data_xpaths) > 0)
 

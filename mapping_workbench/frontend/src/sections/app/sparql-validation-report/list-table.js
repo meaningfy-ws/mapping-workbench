@@ -17,6 +17,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 
 import {ResultChip} from "./utils";
+import {codeStyle} from "src/utils/code-style";
 import {Scrollbar} from 'src/components/scrollbar';
 import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
@@ -193,6 +194,7 @@ export const ListTable = (props) => {
                                             <SyntaxHighlighter
                                                 language="sparql"
                                                 wrapLines
+                                                style={codeStyle}
                                                 lineProps={{
                                                     style: {
                                                         overflowWrap: 'break-word',

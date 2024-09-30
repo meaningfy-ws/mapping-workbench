@@ -6,6 +6,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 
 import {Box} from "@mui/system";
+import Stack from "@mui/material/Stack";
 import Table from '@mui/material/Table';
 import Dialog from "@mui/material/Dialog";
 import Button from "@mui/material/Button";
@@ -18,10 +19,10 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 
+import {codeStyle} from "src/utils/code-style";
 import {Scrollbar} from 'src/components/scrollbar';
 import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
-import Stack from "@mui/material/Stack";
 
 export const ListTable = (props) => {
 
@@ -44,19 +45,19 @@ export const ListTable = (props) => {
 
     const handleOpenDetails = (title, notices) => {
         const description = notices.map((notice, i) =>
-                <Box key={'notice' + i}>
-                    <Button type='link'
-                            onClick={() => handleSelectFile(notice.test_data_suite_oid)}
-                    >
-                        {notice.test_data_suite_id}
-                    </Button>
-                    {' / '}
-                    <Button type='link'
-                            onClick={() => handleSelectFile(notice.test_data_suite_oid, notice.test_data_oid)}
-                    >
-                        {notice.test_data_id}
-                    </Button>
-                </Box>)
+            <Box key={'notice' + i}>
+                <Button type='link'
+                        onClick={() => handleSelectFile(notice.test_data_suite_oid)}
+                >
+                    {notice.test_data_suite_id}
+                </Button>
+                {' / '}
+                <Button type='link'
+                        onClick={() => handleSelectFile(notice.test_data_suite_oid, notice.test_data_oid)}
+                >
+                    {notice.test_data_id}
+                </Button>
+            </Box>)
 
         setDescriptionDialog({open: true, title, description});
     }
@@ -104,7 +105,8 @@ export const ListTable = (props) => {
                                     <SorterHeader fieldName="notice_count"
                                                   title="Notices"/>
                                 </TableCell>
-                                <TableCell width="10%" align="right">
+                                <TableCell width="10%"
+                                           align="right">
                                     <SorterHeader fieldName="is_covered"
                                                   title="Found"/>
                                 </TableCell>
@@ -120,25 +122,20 @@ export const ListTable = (props) => {
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            {
-                                                <SyntaxHighlighter
-                                                    language="xquery"
-                                                    wrapLines
-                                                    lineProps={{
-                                                        style: {
-                                                            wordBreak: 'break-all',
-                                                            whiteSpace: 'pre-wrap'
-                                                        }
-                                                    }}>
-                                                    {item.sdk_element_xpath}
-                                                </SyntaxHighlighter>
-                                            }
+                                            <SyntaxHighlighter
+                                                language="xquery"
+                                                wrapLines
+                                                style={codeStyle}
+                                                lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
+                                                {item.sdk_element_xpath}
+                                            </SyntaxHighlighter>
                                         </TableCell>
                                         <TableCell>
                                             {
                                                 item.xpath_conditions?.map((xpath_condition, key) => {
                                                     return (
                                                         <Stack
+                                                            key={'condition' + key}
                                                             direction="column"
                                                             spacing={1}
                                                         >
@@ -150,7 +147,8 @@ export const ListTable = (props) => {
                                                             >
                                                                 <SyntaxHighlighter
                                                                     language="xquery"
-                                                                    wrapLines={true}
+                                                                    wrapLines
+                                                                    style={codeStyle}
                                                                     lineProps={{
                                                                         style: {
                                                                             wordBreak: 'break-all',

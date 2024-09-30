@@ -13,6 +13,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import Typography from '@mui/material/Typography';
 
 import {resultColor} from "./utils";
+import {codeStyle} from "src/utils/code-style";
 import {Scrollbar} from 'src/components/scrollbar';
 import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
@@ -110,52 +111,54 @@ export const ListTableFile = (props) => {
                                                     >
                                                         <SyntaxHighlighter
                                                             language="xquery"
-                                                            wrapLines={true}
+                                                            wrapLines
+                                                            style={codeStyle}
                                                             lineProps={{
                                                                 style: {
                                                                     wordBreak: 'break-all',
                                                                     whiteSpace: 'pre-wrap'
                                                                 }
                                                             }}>
-                                                            {item?.xpath_condition?.xpath_condition}
+                                                            {item?.xpath_condition?.xpath_condition || '-'}
                                                         </SyntaxHighlighter>
                                                         {item?.meets_xpath_condition ?
                                                             <CheckIcon color="success"/> :
                                                             <CloseIcon color="error"/>}
                                                     </Stack>
                                                 </Stack>
-                                                <Divider sx={{my: 1}}/></>
-                                        }
-                                        <Box sx={{overflowX: 'auto', width: '400px'}}>
-                                            <Typography variant="subtitle3">
-                                                {item.description}
-                                            </Typography>
-                                        </Box>
-                                    </TableCell>
-                                <TableCell>
-                                    <SyntaxHighlighter
-                                        language="sparql"
-                                        wrapLines
-                                        lineProps={{
-                                            style: {
-                                                overflowWrap: 'break-word',
-                                                whiteSpace: 'pre-wrap'
+                                                    <Divider sx={{my: 1}}/></>
                                             }
-                                        }}>
-                                        {item.query}
-                                    </SyntaxHighlighter>
-                                </TableCell>
-                                <TableCell align="left">
-                                    <Chip label={item.result}
-                                          color={resultColor(item.result)}/>
-                                </TableCell>
-                                <TableCell align="left">
-                                    <Box>
-                                        <Typography>{`Query result: ${item.query_result}`}</Typography>
-                                        <Typography>{`Fields covered: ${item.fields_covered}`}</Typography>
-                                    </Box>
-                                </TableCell>
-                            </TableRow>
+                                            <Box sx={{overflowX: 'auto', width: '400px'}}>
+                                                <Typography variant="subtitle3">
+                                                    {item.description}
+                                                </Typography>
+                                            </Box>
+                                        </TableCell>
+                                        <TableCell>
+                                            <SyntaxHighlighter
+                                                language="sparql"
+                                                wrapLines
+                                                style={codeStyle}
+                                                lineProps={{
+                                                    style: {
+                                                        overflowWrap: 'break-word',
+                                                        whiteSpace: 'pre-wrap'
+                                                    }
+                                                }}>
+                                                {item.query}
+                                            </SyntaxHighlighter>
+                                        </TableCell>
+                                        <TableCell align="left">
+                                            <Chip label={item.result}
+                                                  color={resultColor(item.result)}/>
+                                        </TableCell>
+                                        <TableCell align="left">
+                                            <Box>
+                                                <Typography>{`Query result: ${item.query_result}`}</Typography>
+                                                <Typography>{`Fields covered: ${item.fields_covered}`}</Typography>
+                                            </Box>
+                                        </TableCell>
+                                    </TableRow>
 
                                 )
                                     ;
