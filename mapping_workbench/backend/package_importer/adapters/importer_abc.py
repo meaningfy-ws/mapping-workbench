@@ -6,7 +6,6 @@ from mapping_workbench.backend.conceptual_mapping_rule.models.entity import Conc
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroup
 from mapping_workbench.backend.package_importer.models.imported_mapping_suite import ImportedMappingSuite
-from mapping_workbench.backend.package_validator.models.test_data_validation import CMRuleSDKElement
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.resource_collection.models.entity import ResourceFile, ResourceCollection, \
     ResourceFileFormat
@@ -15,7 +14,7 @@ from mapping_workbench.backend.resource_collection.services.data import get_defa
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestFileResourceFormat, SHACLTestSuite, \
     SHACLTestFileResource
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResourceFormat, SPARQLTestSuite, \
-    SPARQLTestFileResource, SPARQLQueryValidationType
+    SPARQLTestFileResource, SPARQLQueryValidationType, SPARQLCMRule
 from mapping_workbench.backend.sparql_test_suite.services.data import SPARQL_CM_ASSERTIONS_SUITE_TITLE, \
     SPARQL_INTEGRATION_TESTS_SUITE_TITLE
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
@@ -186,7 +185,7 @@ class PackageImporterABC(ABC):
                 )
 
                 metadata = self.extract_metadata_from_sparql_query(resource_content)
-                cm_rule_sdk_element = CMRuleSDKElement(
+                cm_rule_sdk_element = SPARQLCMRule(
                     sdk_element_id=None,
                     sdk_element_title=metadata['title'] if 'title' in metadata else None,
                     sdk_element_xpath=metadata['xpath'] if 'xpath' in metadata else None
