@@ -45,3 +45,11 @@ class LoggerFactory:
         )
         for logger in self.loggers.values():
             logger.log(log_record)
+
+    def log_all_warning(self, message: str):
+        log_record = LogRecord(
+            log_severity=LogSeverity.WARNING,
+            message=message
+        )
+        for logger in self.loggers.values():
+            logger.log(log_record)

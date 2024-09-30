@@ -17,5 +17,7 @@ class LoggerSys(LoggerABC):
     def log(self, log_record: LogRecord):
         if log_record.log_severity == LogSeverity.ERROR:
             logger.error(str(log_record))
+        elif log_record.log_severity == LogSeverity.WARNING:
+            logger.warning(str(log_record))
         else:
             logger.info(str(log_record))

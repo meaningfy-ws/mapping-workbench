@@ -1,6 +1,8 @@
 from typing import List, Optional
 from pydantic import BaseModel, Field, ConfigDict
 
+from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
+
 
 class MappingMetadata(BaseModel):
     identifier: str = Field(None, alias="Identifier")
@@ -108,3 +110,7 @@ class ImportedStandardMappingSuite(ImportedMappingSuite):
     metadata: StandardMappingMetadata
     conceptual_rules: List[StandardMappingConceptualRule] = []
 
+
+class APIImportedMappingSuiteResponse(BaseModel):
+    mapping_package: MappingPackage
+    warnings: List[str] = []

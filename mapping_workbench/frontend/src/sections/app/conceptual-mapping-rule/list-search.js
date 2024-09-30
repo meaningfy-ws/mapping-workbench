@@ -8,8 +8,6 @@ import Input from '@mui/material/Input';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
-
-import {MultiSelect} from 'src/components/multi-select';
 import Switch from "@mui/material/Switch";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -17,25 +15,14 @@ import Radio from "@mui/material/Radio";
 import Paper from "@mui/material/Paper";
 
 
-const statusOptions = [
-    {
-        label: 'Published',
-        value: 'published'
-    },
-    {
-        label: 'Draft',
-        value: 'draft'
-    }
-];
-
 export const ListSearch = (props) => {
-    const {onFiltersChange, onDetailedViewChange, detailedView, placeholder="Search", showChips, ...other} = props;
+    const {onFiltersChange, onDetailedViewChange, detailedView, placeholder = "Search", ...other} = props;
     const queryRef = useRef(null);
     const firstUpdate = useRef(true)
     const [chips, setChips] = useState([]);
 
     useEffect(() => {
-        if(firstUpdate.current)
+        if (firstUpdate.current)
             firstUpdate.current = false
         else
             handleChipsUpdate();
@@ -95,15 +82,13 @@ export const ListSearch = (props) => {
                     return prevChips.map((chip) => chip.field === 'q' ? {...chip, value} : chip);
                 else
                     return prevChips.filter((chip) => chip.field !== 'q');
-            }
-            else
-                if (value) {
-                    const chip = {
-                        label: 'Q',
-                        field: 'q',
-                        value
-                    };
-                    return [...prevChips, chip];
+            } else if (value) {
+                const chip = {
+                    label: 'Q',
+                    field: 'q',
+                    value
+                };
+                return [...prevChips, chip];
             }
             return prevChips;
         });
@@ -150,51 +135,6 @@ export const ListSearch = (props) => {
         });
     }
 
-    const handleStatusChange = values => {
-        setChips((prevChips) => {
-            const valuesFound = [];
-
-            // First cleanup the previous chips
-            const newChips = prevChips.filter((chip) => {
-                if (chip.field !== 'status') {
-                    return true;
-                }
-
-                const found = values.includes(chip.value);
-
-                if (found) {
-                    valuesFound.push(chip.value);
-                }
-
-                return found;
-            });
-
-            // Nothing changed
-            if (values.length === valuesFound.length) {
-                return newChips;
-            }
-
-            values.forEach((value) => {
-                if (!valuesFound.includes(value)) {
-                    const option = statusOptions.find((option) => option.value === value);
-
-                    newChips.push({
-                        label: 'Status',
-                        field: 'status',
-                        value,
-                        displayValue: option.label
-                    });
-                }
-            });
-
-            return newChips;
-        });
-    }
-
-
-    // We memoize this part to prevent re-render issues
-    const statusValues = chips?.filter(chip => chip.field === 'status').map(chip => chip.value)
-
     const termsValidityValue = useMemo(() => (chips
         .find((chip) => chip.field === 'terms_validity') || {'value': ''}).value, [chips]);
 
@@ -223,57 +163,57 @@ export const ListSearch = (props) => {
             <Divider/>
             {chips?.length
                 ?
-                    <Stack
-                        alignItems="center"
-                        direction="row"
-                        flexWrap="wrap"
-                        gap={1}
-                        sx={{p: 2}}
-                    >
-                        {chips.map((chip, index) => (
-                            <Chip
-                                key={index}
-                                label={(
-                                    <Box
-                                        sx={{
-                                            alignItems: 'center',
-                                            display: 'flex',
-                                            '& span': {
-                                                fontWeight: 600
-                                            }
-                                        }}
-                                    >
-                                         <>
-                                            <b>{chip.label}</b>
-                                            {` :${chip.displayValue ?? chip.value}`}:
-                                        </>
-                                    </Box>
-                                )}
-                                onDelete={() => handleChipDelete(chip)}
-                                variant="outlined"
-                            />
-                        ))}
-                    </Stack>
+                <Stack
+                    alignItems="center"
+                    direction="row"
+                    flexWrap="wrap"
+                    gap={1}
+                    sx={{p: 2}}
+                >
+                    {chips.map((chip, index) => (
+                        <Chip
+                            key={index}
+                            label={(
+                                <Box
+                                    sx={{
+                                        alignItems: 'center',
+                                        display: 'flex',
+                                        '& span': {
+                                            fontWeight: 600
+                                        }
+                                    }}
+                                >
+                                    <>
+                                        <b>{chip.label}</b>
+                                        {` :${chip.displayValue ?? chip.value}`}:
+                                    </>
+                                </Box>
+                            )}
+                            onDelete={() => handleChipDelete(chip)}
+                            variant="outlined"
+                        />
+                    ))}
+                </Stack>
                 :
-                    <Box sx={{p: 2.5}}>
-                        <Typography
-                            color="text.secondary"
-                            variant="subtitle2"
-                        >
-                            No filters applied
-                        </Typography>
-                    </Box>
-                }
+                <Box sx={{p: 2.5}}>
+                    <Typography
+                        color="text.secondary"
+                        variant="subtitle2"
+                    >
+                        No filters applied
+                    </Typography>
+                </Box>
+            }
 
             <Box sx={{p: 2.5, display: 'flex'}}
                  direction="row">
                 <FormControlLabel control={
-                                        <Switch
-                                            checked={detailedView}
-                                            value={detailedView}
-                                            onChange={(e) => onDetailedViewChange(e, e.target.checked)}
-                                        />
-                                    }
+                    <Switch
+                        checked={detailedView}
+                        value={detailedView}
+                        onChange={(e) => onDetailedViewChange(e, e.target.checked)}
+                    />
+                }
                                   label="Detailed view"/>
                 <Stack
                     component={RadioGroup}
@@ -344,20 +284,6 @@ export const ListSearch = (props) => {
             </Box>
 
             <Divider/>
-            {showChips > 0 && <Stack
-                alignItems="center"
-                direction="row"
-                flexWrap="wrap"
-                spacing={1}
-                sx={{p: 1}}
-            >
-                <MultiSelect
-                    label="Status"
-                    onChange={handleStatusChange}
-                    options={statusOptions}
-                    value={statusValues}
-                />
-            </Stack>}
         </div>
     );
 };

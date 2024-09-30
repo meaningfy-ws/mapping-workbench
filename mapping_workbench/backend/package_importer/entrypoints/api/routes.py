@@ -2,7 +2,7 @@ from beanie import PydanticObjectId
 from fastapi import APIRouter, status, Form, UploadFile, Depends
 
 from mapping_workbench.backend.mapping_package import PackageType
-from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
+from mapping_workbench.backend.package_importer.models.imported_mapping_suite import APIImportedMappingSuiteResponse
 from mapping_workbench.backend.package_importer.services import tasks
 from mapping_workbench.backend.package_importer.services.import_mapping_suite import \
     import_mapping_package_from_archive, clear_project_data
@@ -36,7 +36,8 @@ async def route_clear_project_data(
     "/import/archive",
     description=f"Import {NAME_FOR_ONE} Archive",
     name=f"{NAME_FOR_ONE}:import_archive",
-    status_code=status.HTTP_201_CREATED
+    status_code=status.HTTP_201_CREATED,
+    response_model=APIImportedMappingSuiteResponse
 )
 async def route_import_package_archive(
         project: PydanticObjectId = Form(...),
@@ -46,11 +47,11 @@ async def route_import_package_archive(
 ):
     if not package_type:
         package_type = PackageType.EFORMS
-    mapping_package: MappingPackage = await import_mapping_package_from_archive(
+    imported_mapping_package: APIImportedMappingSuiteResponse = await import_mapping_package_from_archive(
         file.file.read(), await get_project(project), package_type, user
     )
 
-    return mapping_package.model_dump()
+    return imported_mapping_package
 
 
 @router.post(

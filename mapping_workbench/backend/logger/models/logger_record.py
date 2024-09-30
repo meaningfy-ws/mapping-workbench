@@ -11,6 +11,7 @@ from mapping_workbench.backend import STRICT_MODEL_CONFIG
 
 class LogSeverity(Enum):
     INFO = "INFO"
+    WARNING = "WARNING"
     ERROR = "ERROR"
 
 

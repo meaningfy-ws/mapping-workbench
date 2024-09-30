@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Dict, Tuple
+from typing import Dict, Tuple, List
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
@@ -26,12 +26,14 @@ from mapping_workbench.backend.user.models.user import User
 
 class PackageImporterABC(ABC):
     package: MappingPackage
+    warnings: List[str] = []
 
     def __init__(self, project: Project, user: User):
         self.project = project
         self.project_link = Project.link_from_id(self.project.id)
         self.user = user
         self.package = None
+
 
     @abstractmethod
     async def import_from_mono_mapping_suite(self, mono_package: ImportedMappingSuite):
