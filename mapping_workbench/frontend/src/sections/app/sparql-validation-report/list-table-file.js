@@ -14,6 +14,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import Typography from '@mui/material/Typography';
 
 import {resultColor} from "./utils";
+import {codeStyle} from "src/utils/code-style";
 import {Scrollbar} from 'src/components/scrollbar';
 import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
@@ -109,6 +110,7 @@ export const ListTableFile = (props) => {
                                                     <SyntaxHighlighter
                                                         language="xquery"
                                                         wrapLines
+                                                        style={codeStyle}
                                                         lineProps={{
                                                             style: {
                                                                 wordBreak: 'break-all',
