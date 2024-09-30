@@ -141,8 +141,8 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
                 except Exception as e:
                     validation_message = str(e)
 
-                meets_xpath_condition: bool = True
                 cm_xpath_condition = conceptual_mapping_rule_state.xpath_condition
+                meets_xpath_condition: bool = True
                 if cm_xpath_condition:
                     meets_xpath_condition = xpath_validator.check_xpath_condition(cm_xpath_condition)
 

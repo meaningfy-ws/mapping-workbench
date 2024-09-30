@@ -19,6 +19,7 @@ import DialogContent from "@mui/material/DialogContent";
 import Dialog from "@mui/material/Dialog";
 import {useDialog} from "../../../../hooks/use-dialog";
 import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
+import {codeStyle} from "../../../../utils/code-style";
 
 
 export const ListTableRow = (props) => {
@@ -51,7 +52,13 @@ export const ListTableRow = (props) => {
                         wordBreak: "break-all"
                     }}
                 >
-                    {item.source_structural_element_absolute_xpath}
+                    <SyntaxHighlighter
+                        language="xquery"
+                        wrapLines
+                        style={codeStyle}
+                        lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
+                        {item.source_structural_element_absolute_xpath}
+                    </SyntaxHighlighter>
                 </TableCell>
                 <TableCell>
                     {item.xpath_condition &&
@@ -114,6 +121,7 @@ export const ListTableRow = (props) => {
                     <SyntaxHighlighter
                         language="xquery"
                         wrapLines
+                        style={codeStyle}
                         lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
                         {item.xpath_condition}
                     </SyntaxHighlighter>

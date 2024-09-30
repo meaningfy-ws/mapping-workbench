@@ -122,7 +122,8 @@ async def generate_and_save_cm_assertions_queries(
         subject_type_display = ('\n\t' + subject_type) if subject_type else ''
         file_name = f"{rq_name}{sparql_idx}.rq"
         file_content = f"#title: {sparql_title}\n" \
-                       f"#description: “{sparql_description}” " \
+                       f"#description: " \
+                       f"{f'“{sparql_description}” ' if sparql_description else ''}" \
                        f"The corresponding XML element is " \
                        f"{sparql_xpath}. " \
                        f"The expected ontology instances are epo: {cm_rule.target_class_path} .\n" \
@@ -145,7 +146,7 @@ async def generate_and_save_cm_assertions_queries(
             sdk_element_xpath=structural_element.absolute_xpath,
             xpath_condition=XPathAssertionCondition(
                 xpath_condition=(cm_rule.xpath_condition or ''),
-                meets_xpath_condition=None
+                meets_xpath_condition=(False if cm_rule.xpath_condition else True)
             )
         )
 

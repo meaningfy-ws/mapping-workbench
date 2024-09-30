@@ -20,6 +20,7 @@ import CMNotes from "./cm-notes";
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 import Divider from "@mui/material/Divider";
 import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
+import {codeStyle} from "../../../utils/code-style";
 
 const CMCard = (props) => {
     const {cm_rule, structural_element, cm_statuses, ...other} = props;
@@ -149,7 +150,13 @@ const CMCard = (props) => {
                             />
                             <PropertyListItem
                                 label="XPath Expression"
-                                value={structuralElement?.absolute_xpath}
+                                value={<SyntaxHighlighter
+                                    language="xquery"
+                                    wrapLines
+                                    style={codeStyle}
+                                    lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
+                                    {structuralElement?.absolute_xpath}
+                                </SyntaxHighlighter>}
                                 sx={{
                                     whiteSpace: "pre-wrap",
                                     py: 1.5
@@ -160,6 +167,7 @@ const CMCard = (props) => {
                                 value={<SyntaxHighlighter
                                     language="xquery"
                                     wrapLines
+                                    style={codeStyle}
                                     lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
                                     {cm_rule.xpath_condition}
                                 </SyntaxHighlighter>}

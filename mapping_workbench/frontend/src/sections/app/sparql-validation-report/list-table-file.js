@@ -155,6 +155,7 @@ export const ListTableFile = (props) => {
                                         <TableCell align="left">
                                             <Box>
                                                 <Typography>{`Query result: ${item.query_result}`}</Typography>
+                                                <Divider sx={{my:1}}/>
                                                 <Typography>{`Fields covered: ${item.fields_covered}`}</Typography>
                                             </Box>
                                         </TableCell>

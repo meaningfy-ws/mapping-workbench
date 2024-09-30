@@ -116,6 +116,7 @@ export const ListTable = (props) => {
                                                             <SyntaxHighlighter
                                                                 language="xquery"
                                                                 wrapLines
+                                                                style={codeStyle}
                                                                 lineProps={{
                                                                     style: {
                                                                         wordBreak: 'break-all',

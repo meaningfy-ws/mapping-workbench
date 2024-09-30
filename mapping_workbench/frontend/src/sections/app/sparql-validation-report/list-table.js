@@ -23,6 +23,9 @@ import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
+import {useDialog} from "../../../hooks/use-dialog";
+import Divider from "@mui/material/Divider";
+import Slack from "next-auth/providers/slack";
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", description: ""})
@@ -86,6 +89,12 @@ export const ListTable = (props) => {
         </Stack>
     }
 
+    const xpathConditionDialog = useDialog()
+
+    const openXPathConditionDialog = (data) => {
+        xpathConditionDialog.handleOpen(data)
+    }
+
     return (
         <>
             <TablePagination
@@ -107,7 +116,7 @@ export const ListTable = (props) => {
                                     <SorterHeader fieldName="title"
                                                   title="Field"/>
                                 </TableCell>
-                                <TableCell>
+                                <TableCell width="15%">
                                     <SorterHeader fieldName="xpath_condition"
                                                   title="XPath Condition"/>
                                 </TableCell>
@@ -163,32 +172,25 @@ export const ListTable = (props) => {
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            <Stack
-                                                direction="column"
-                                                spacing={1}
-                                            >
+                                            {item?.xpath_condition?.xpath_condition &&
                                                 <Stack
-                                                    direction="row"
-                                                    justifyContent="right"
-                                                    alignItems="center"
-                                                    spacing={2}
+                                                    direction="column"
+                                                    spacing={1}
                                                 >
-                                                    <SyntaxHighlighter
-                                                        language="xquery"
-                                                        wrapLines={true}
-                                                        lineProps={{
-                                                            style: {
-                                                                wordBreak: 'break-all',
-                                                                whiteSpace: 'pre-wrap'
-                                                            }
-                                                        }}>
-                                                        {item?.xpath_condition?.xpath_condition || '-'}
-                                                    </SyntaxHighlighter>
-                                                    {item?.meets_xpath_condition ?
-                                                        <CheckIcon color="success"/> :
-                                                        <CloseIcon color="error"/>}
-                                                </Stack>
-                                            </Stack>
+                                                    <Stack
+                                                        direction="row"
+                                                        justifyContent="right"
+                                                        alignItems="center"
+                                                        spacing={2}
+                                                    >
+                                                        <Button variant="text" type='link'
+                                                                onClick={() => openXPathConditionDialog(item)}
+                                                        >XQuery</Button>
+                                                        {item?.xpath_condition?.meets_xpath_condition ?
+                                                            <CheckIcon color="success"/> :
+                                                            <CloseIcon color="error"/>}
+                                                    </Stack>
+                                                </Stack>}
                                         </TableCell>
                                         <TableCell>
                                             <SyntaxHighlighter
@@ -263,6 +265,32 @@ export const ListTable = (props) => {
                 <DialogActions>
                     <Button onClick={handleClose}>Close</Button>
                 </DialogActions>
+            </Dialog>
+            <Dialog
+                open={xpathConditionDialog.open}
+                onClose={xpathConditionDialog.handleClose}
+                fullWidth
+                maxWidth='md'
+            >
+                <DialogTitle>
+                    XPath Condition for "{xpathConditionDialog.data?.title}"
+                </DialogTitle>
+                <DialogContent>
+                    <SyntaxHighlighter
+                        language="xquery"
+                        wrapLines
+                        style={codeStyle}
+                        lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
+                        {xpathConditionDialog.data?.xpath_condition?.xpath_condition}
+                    </SyntaxHighlighter>
+                    <Divider sx={{my: 1}}/>
+                    <Stack direction="row">
+                        {xpathConditionDialog.data?.xpath_condition?.meets_xpath_condition ?
+                            <><CheckIcon color="success"/> - At least one Test Data meets this XPath Condition</> :
+                            <><CloseIcon color="error"/> -  No Test Data meets this XPath Condition</>}
+                    </Stack>
+
+                </DialogContent>
             </Dialog>
         </>
     );
