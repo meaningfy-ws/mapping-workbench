@@ -1,18 +1,11 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
-import Download01Icon from '@untitled-ui/icons-react/build/esm/Download01';
-import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
-import Upload01Icon from '@untitled-ui/icons-react/build/esm/Upload01';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+
 import Card from '@mui/material/Card';
-import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
-import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {customersApi} from 'src/api/customers';
 import {Seo} from 'src/components/seo';
-import {useMounted} from 'src/hooks/use-mounted';
+import {customersApi} from 'src/api/customers';
 import {usePageView} from 'src/hooks/use-page-view';
 import {useSelection} from 'src/hooks/use-selection';
 import {Layout as AppLayout} from 'src/layouts/app';
@@ -21,12 +14,6 @@ import {CustomerListTable} from 'src/sections/app/authorization/authorization-ta
 
 const useCustomersSearch = () => {
     const [state, setState] = useState({
-        filters: {
-            query: undefined,
-            hasAcceptedMarketing: undefined,
-            isProspect: undefined,
-            isReturning: undefined,
-        },
         page: 0,
         rowsPerPage: 5,
         sortBy: 'updatedAt',
@@ -34,14 +21,14 @@ const useCustomersSearch = () => {
     });
 
     const handleFiltersChange = useCallback((filters) => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             filters,
         }));
     }, []);
 
     const handleSortChange = useCallback((sort) => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             sortBy: sort.sortBy,
             sortDir: sort.sortDir,
@@ -49,14 +36,14 @@ const useCustomersSearch = () => {
     }, []);
 
     const handlePageChange = useCallback((event, page) => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             page,
         }));
     }, []);
 
     const handleRowsPerPageChange = useCallback((event) => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             rowsPerPage: parseInt(event.target.value, 10)
         }));
@@ -72,26 +59,16 @@ const useCustomersSearch = () => {
 };
 
 const useCustomersStore = (searchState) => {
-    const isMounted = useMounted();
     const [state, setState] = useState({
         customers: [],
         customersCount: 0,
     });
 
-    const handleCustomersGet = useCallback(async () => {
-        try {
-            const response = await customersApi.getCustomers(searchState);
-
-            if (isMounted()) {
-                setState({
-                    customers: response.data,
-                    customersCount: response.count,
-                });
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    }, [searchState, isMounted]);
+    const handleCustomersGet = () => {
+        customersApi.getCustomers(searchState)
+            .then(res => setState({customers: res.data, customersCount: res.count}))
+            .catch(err => console.error(err))
+    }
 
     useEffect(
         () => {
@@ -107,9 +84,7 @@ const useCustomersStore = (searchState) => {
 };
 
 const useCustomersIds = (customers = []) => {
-    return useMemo(() => {
-        return customers.map((customer) => customer.id);
-    }, [customers]);
+    return useMemo(() =>  customers.map((customer) => customer.id), [customers]);
 };
 
 const Page = () => {

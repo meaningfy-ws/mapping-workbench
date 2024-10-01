@@ -1,154 +1,139 @@
-import numeral from 'numeral';
+import {useState} from "react";
 import PropTypes from 'prop-types';
-import ArrowRightIcon from '@untitled-ui/icons-react/build/esm/ArrowRight';
-import Edit02Icon from '@untitled-ui/icons-react/build/esm/Edit02';
-import Avatar from '@mui/material/Avatar';
+
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
-import IconButton from '@mui/material/IconButton';
-import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
-import SvgIcon from '@mui/material/SvgIcon';
 import Table from '@mui/material/Table';
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import Checkbox from '@mui/material/Checkbox';
+import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
+import TablePagination from '@mui/material/TablePagination';
 
-import { RouterLink } from 'src/components/router-link';
-import { Scrollbar } from 'src/components/scrollbar';
-import { paths } from 'src/paths';
-import { getInitials } from 'src/utils/get-initials';
+import {Scrollbar} from 'src/components/scrollbar';
+
+
+const customerTypes = [{label: 'SuperUser', value: 'is_superuser'}, {label: 'User', value: 'user'}]
+
+const ListTableRow = ({customer}) => {
+    const [isAuthorized, setIsAuthorized] = useState(!!customer.is_authorized);
+    const [customerType, setCustomerType] = useState(customer.type ?? 'user');
+
+
+    return (
+        <TableRow
+            hover
+            key={customer.id}
+        >
+            <TableCell>
+                <Stack
+                    alignItems="center"
+                    direction="row"
+                    spacing={1}
+                >
+                    <div>
+                        <Typography>
+                            {customer.name}
+                        </Typography>
+                        <Typography
+                            color="text.secondary"
+                            variant="body2"
+                        >
+                            {customer.email}
+                        </Typography>
+                    </div>
+                </Stack>
+            </TableCell>
+            <TableCell padding="checkbox">
+                <Checkbox
+                    onChange={event => setIsAuthorized(event.target.checked)}
+                    checked={isAuthorized}
+                />
+            </TableCell>
+            <TableCell align='right'>
+                <Select
+                    sx={{width:'100px'}}
+                    variant='standard'
+                    labelId="demo-select-small-label"
+                    id="demo-select-small"
+                    value={customerType}
+                    label="Age"
+                    onChange={(e) => {
+                        console.log(e)
+                        setCustomerType(e.target.value)
+                    }}
+                >
+                    {customerTypes.map(({value, label}) =>
+                        <MenuItem key={label}
+                                  value={value}>
+                            {label}
+                        </MenuItem>)}
+                </Select>
+            </TableCell>
+        </TableRow>
+    )
+        ;
+}
+
 
 export const CustomerListTable = (props) => {
-  const {
-    count = 0,
-    items = [],
-    onDeselectAll,
-    onDeselectOne,
-    onPageChange = () => {},
-    onRowsPerPageChange,
-    onSelectAll,
-    onSelectOne,
-    page = 0,
-    rowsPerPage = 0,
-    selected = [],
-  } = props;
+    const {
+        count = 0,
+        items = [],
+        onPageChange = () => {
+        },
+        onRowsPerPageChange,
+        page = 0,
+        rowsPerPage = 0,
+    } = props;
 
-  const selectedSome = selected.length > 0 && selected.length < items.length;
-  const selectedAll = items.length > 0 && selected.length === items.length;
-  const enableBulkActions = selected.length > 0;
 
-  return (
-    <Box sx={{ position: 'relative' }}>
-      <Scrollbar>
-        <Table sx={{ minWidth: 700 }}>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Orders</TableCell>
-              <TableCell>Spent</TableCell>
-              <TableCell align="right">Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {items.map((customer) => {
-              const isSelected = selected.includes(customer.id);
-              const location = `${customer.city}, ${customer.state}, ${customer.country}`;
-              const totalSpent = numeral(customer.totalSpent).format(`${customer.currency}0,0.00`);
-
-              return (
-                <TableRow
-                  hover
-                  key={customer.id}
-                >
-                  <TableCell>
-                    <Stack
-                      alignItems="center"
-                      direction="row"
-                      spacing={1}
-                    >
-                      <Avatar
-                        src={customer.avatar}
-                        sx={{
-                          height: 42,
-                          width: 42,
-                        }}
-                      >
-                        {getInitials(customer.name)}
-                      </Avatar>
-                      <div>
-                        <Link
-                          color="inherit"
-                          component={RouterLink}
-                          href={paths.app.customers.details}
-                          variant="subtitle2"
-                        >
-                          {customer.name}
-                        </Link>
-                        <Typography
-                          color="text.secondary"
-                          variant="body2"
-                        >
-                          {customer.email}
-                        </Typography>
-                      </div>
-                    </Stack>
-                  </TableCell>
-                  <TableCell>{customer.totalOrders}</TableCell>
-                  <TableCell>
-                    <Typography variant="subtitle2">{totalSpent}</Typography>
-                  </TableCell>
-                  <TableCell align="right">
-                    <IconButton
-                      component={RouterLink}
-                      href={paths.app.customers.edit}
-                    >
-                      <SvgIcon>
-                        <Edit02Icon />
-                      </SvgIcon>
-                    </IconButton>
-                    <IconButton
-                      component={RouterLink}
-                      href={paths.app.customers.details}
-                    >
-                      <SvgIcon>
-                        <ArrowRightIcon />
-                      </SvgIcon>
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </Scrollbar>
-      <TablePagination
-        component="div"
-        count={count}
-        onPageChange={onPageChange}
-        onRowsPerPageChange={onRowsPerPageChange}
-        page={page}
-        rowsPerPage={rowsPerPage}
-        rowsPerPageOptions={[5, 10, 25]}
-      />
-    </Box>
-  );
+    return (
+        <Box sx={{position: 'relative'}}>
+            <Scrollbar>
+                <Table sx={{minWidth: 700}}>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Name</TableCell>
+                            <TableCell>Is Authorized</TableCell>
+                            <TableCell align="right">Type</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {items.map((customer, i) => {
+                            return (<ListTableRow customer={customer}
+                                                  key={'row' + i}/>)
+                        })}
+                    </TableBody>
+                </Table>
+            </Scrollbar>
+            <TablePagination
+                component="div"
+                count={count}
+                onPageChange={onPageChange}
+                onRowsPerPageChange={onRowsPerPageChange}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                rowsPerPageOptions={[5, 10, 25]}
+            />
+        </Box>
+    );
 };
 
 CustomerListTable.propTypes = {
-  count: PropTypes.number,
-  items: PropTypes.array,
-  onDeselectAll: PropTypes.func,
-  onDeselectOne: PropTypes.func,
-  onPageChange: PropTypes.func,
-  onRowsPerPageChange: PropTypes.func,
-  onSelectAll: PropTypes.func,
-  onSelectOne: PropTypes.func,
-  page: PropTypes.number,
-  rowsPerPage: PropTypes.number,
-  selected: PropTypes.array,
+    count: PropTypes.number,
+    items: PropTypes.array,
+    onDeselectAll: PropTypes.func,
+    onDeselectOne: PropTypes.func,
+    onPageChange: PropTypes.func,
+    onRowsPerPageChange: PropTypes.func,
+    onSelectAll: PropTypes.func,
+    onSelectOne: PropTypes.func,
+    page: PropTypes.number,
+    rowsPerPage: PropTypes.number,
+    selected: PropTypes.array,
 };
