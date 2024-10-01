@@ -12,28 +12,75 @@ import {Layout as AppLayout} from 'src/layouts/app';
 import {CustomerListSearch} from 'src/sections/app/authorization/authorization-search';
 import {CustomerListTable} from 'src/sections/app/authorization/authorization-table';
 
-const useCustomersSearch = () => {
+const useCustomersSearch = (items) => {
     const [state, setState] = useState({
         page: 0,
         rowsPerPage: 5,
-        sortBy: 'updatedAt',
-        sortDir: 'desc',
+        sort: {
+            direction: '',
+            column: ''
+        },
+        filters: {},
+        search: '',
+        searchColumns: ["name", "email"],
     });
 
-    const handleFiltersChange = useCallback((filters) => {
+    const {show, ...filters} = state.filters
+
+    const searchItems = state.search ? items.filter(item => {
+        let returnItem = null;
+        state.searchColumns.forEach(column => {
+            if (item[column]?.toLowerCase()?.includes(state.search.toLowerCase()))
+                returnItem = item
+        })
+        return returnItem
+    }) : items
+
+    console.log(searchItems)
+
+    const filteredItems = searchItems.filter((item) => {
+        let returnItem = item;
+        Object.entries(filters).forEach(filter => {
+            const [key, value] = filter
+            if (value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
+                returnItem = null
+            if (value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase))
+                returnItem = null
+        })
+        return returnItem
+    })
+
+    const sortedItems = () => {
+        const sortColumn = state.sort.column
+        if (!sortColumn) {
+            return filteredItems
+        } else {
+            return filteredItems.sort((a, b) => {
+                if (typeof a[sortColumn] === "string")
+                    return state.sort.direction === "asc" ?
+                        a[sortColumn]?.localeCompare(b[sortColumn]) :
+                        b[sortColumn]?.localeCompare(a[sortColumn])
+                else
+                    return state.sort.direction === "asc" ?
+                        a[sortColumn] - b[sortColumn] :
+                        b[sortColumn] - a[sortColumn]
+            })
+        }
+    }
+
+    const pagedItems = sortedItems().filter((item, i) => {
+        const pageSize = state.page * state.rowsPerPage
+        if ((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
+            return item
+    })
+
+    const handleSearchChange = useCallback(search => {
         setState(prevState => ({
             ...prevState,
-            filters,
+            search,
         }));
     }, []);
 
-    const handleSortChange = useCallback((sort) => {
-        setState(prevState => ({
-            ...prevState,
-            sortBy: sort.sortBy,
-            sortDir: sort.sortDir,
-        }));
-    }, []);
 
     const handlePageChange = useCallback((event, page) => {
         setState(prevState => ({
@@ -49,11 +96,28 @@ const useCustomersSearch = () => {
         }));
     }, []);
 
+    const handleSort = useCallback((column, desc) => {
+        setState(prevState => ({
+            ...prevState, sort: {
+                column,
+                direction: prevState.sort.column === column
+                    ? prevState.sort.direction === "desc"
+                        ? "asc"
+                        : "desc"
+                    : desc
+                        ? "desc"
+                        : "asc"
+            }
+        }))
+    }, [])
+
+
     return {
-        handleFiltersChange,
-        handleSortChange,
+        handleSearchChange,
         handlePageChange,
         handleRowsPerPageChange,
+        handleSort,
+        pagedItems,
         state,
     };
 };
@@ -65,7 +129,7 @@ const useCustomersStore = (searchState) => {
     });
 
     const handleCustomersGet = () => {
-        customersApi.getCustomers(searchState)
+        customersApi.getCustomers()
             .then(res => setState({customers: res.data, customersCount: res.count}))
             .catch(err => console.error(err))
     }
@@ -75,7 +139,7 @@ const useCustomersStore = (searchState) => {
             handleCustomersGet();
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState]
+        []
     );
 
     return {
@@ -84,12 +148,12 @@ const useCustomersStore = (searchState) => {
 };
 
 const useCustomersIds = (customers = []) => {
-    return useMemo(() =>  customers.map((customer) => customer.id), [customers]);
+    return useMemo(() => customers.map((customer) => customer.id), [customers]);
 };
 
 const Page = () => {
-    const customersSearch = useCustomersSearch();
-    const customersStore = useCustomersStore(customersSearch.state);
+    const customersStore = useCustomersStore();
+    const customersSearch = useCustomersSearch(customersStore.customers);
     const customersIds = useCustomersIds(customersStore.customers);
     const customersSelection = useSelection(customersIds);
 
@@ -111,14 +175,11 @@ const Page = () => {
                 </Stack>
                 <Card>
                     <CustomerListSearch
-                        onFiltersChange={customersSearch.handleFiltersChange}
-                        onSortChange={customersSearch.handleSortChange}
-                        sortBy={customersSearch.state.sortBy}
-                        sortDir={customersSearch.state.sortDir}
+                        onSearchChange={customersSearch.handleSearchChange}
                     />
                     <CustomerListTable
                         count={customersStore.customersCount}
-                        items={customersStore.customers}
+                        items={customersSearch.pagedItems}
                         onDeselectAll={customersSelection.handleDeselectAll}
                         onDeselectOne={customersSelection.handleDeselectOne}
                         onPageChange={customersSearch.handlePageChange}
@@ -128,6 +189,8 @@ const Page = () => {
                         page={customersSearch.state.page}
                         rowsPerPage={customersSearch.state.rowsPerPage}
                         selected={customersSelection.selected}
+                        sort={customersSearch.state.sort}
+                        onSort={customersSearch.handleSort}
                     />
                 </Card>
             </Stack>

@@ -1,23 +1,26 @@
 import { useCallback, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
+
 import SearchMdIcon from '@untitled-ui/icons-react/build/esm/SearchMd';
+
 import Box from '@mui/material/Box';
-import InputAdornment from '@mui/material/InputAdornment';
-import OutlinedInput from '@mui/material/OutlinedInput';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
+import InputAdornment from '@mui/material/InputAdornment';
+import OutlinedInput from '@mui/material/OutlinedInput';
 
 import { useUpdateEffect } from 'src/hooks/use-update-effect';
 
 
 export const CustomerListSearch = (props) => {
-  const { onFiltersChange, onSortChange, sortBy, sortDir } = props;
+  const { onSearchChange } = props;
   const queryRef = useRef(null);
   const [filters, setFilters] = useState({});
 
   const handleFiltersUpdate = useCallback(() => {
-    onFiltersChange?.(filters);
-  }, [filters, onFiltersChange]);
+    console.log(onSearchChange,filters)
+    onSearchChange?.(filters.query);
+  }, [filters, onSearchChange]);
 
   useUpdateEffect(() => {
     handleFiltersUpdate();
@@ -30,18 +33,6 @@ export const CustomerListSearch = (props) => {
       query: queryRef.current?.value,
     }));
   }, []);
-
-  const handleSortChange = useCallback(
-    (event) => {
-      const [sortBy, sortDir] = event.target.value.split('|');
-
-      onSortChange?.({
-        sortBy,
-        sortDir,
-      });
-    },
-    [onSortChange]
-  );
 
   return (
     <>

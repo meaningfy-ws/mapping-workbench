@@ -15,13 +15,14 @@ import Typography from '@mui/material/Typography';
 import TablePagination from '@mui/material/TablePagination';
 
 import {Scrollbar} from 'src/components/scrollbar';
+import TableSorterHeader from "src/sections/components/table-sorter-header";
 
 
 const customerTypes = [{label: 'SuperUser', value: 'is_superuser'}, {label: 'User', value: 'user'}]
 
 const ListTableRow = ({customer}) => {
-    const [isAuthorized, setIsAuthorized] = useState(!!customer.is_authorized);
-    const [customerType, setCustomerType] = useState(customer.type ?? 'user');
+    const [isAuthorized, setIsAuthorized] = useState(!!customer.is_verified);
+    const [customerType, setCustomerType] = useState(customer.is_superuser ?? 'user');
 
 
     return (
@@ -56,14 +57,13 @@ const ListTableRow = ({customer}) => {
             </TableCell>
             <TableCell align='right'>
                 <Select
-                    sx={{width:'100px'}}
+                    sx={{width: '100px'}}
                     variant='standard'
                     labelId="demo-select-small-label"
                     id="demo-select-small"
                     value={customerType}
                     label="Age"
                     onChange={(e) => {
-                        console.log(e)
                         setCustomerType(e.target.value)
                     }}
                 >
@@ -89,8 +89,19 @@ export const CustomerListTable = (props) => {
         onRowsPerPageChange,
         page = 0,
         rowsPerPage = 0,
+        sort,
+        onSort
     } = props;
 
+   const SorterHeader = (props) => {
+        const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
+        return (
+            <TableSorterHeader sort={{direction, column: sort.column}}
+                               onSort={onSort}
+                               {...props}
+            />
+        )
+    }
 
     return (
         <Box sx={{position: 'relative'}}>
@@ -98,7 +109,11 @@ export const CustomerListTable = (props) => {
                 <Table sx={{minWidth: 700}}>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Name</TableCell>
+
+                            <TableCell>
+                                <SorterHeader title='Name'
+                                              fieldName='email'/>
+                            </TableCell>
                             <TableCell>Is Authorized</TableCell>
                             <TableCell align="right">Type</TableCell>
                         </TableRow>
