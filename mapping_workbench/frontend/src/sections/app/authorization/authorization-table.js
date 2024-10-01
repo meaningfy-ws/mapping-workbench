@@ -1,4 +1,3 @@
-import {useState} from "react";
 import PropTypes from 'prop-types';
 
 import Box from '@mui/material/Box';
@@ -20,66 +19,6 @@ import TablePagination from "../../components/table-pagination";
 
 const customerTypes = [{label: 'SuperUser', value: 'is_superuser'}, {label: 'User', value: 'user'}]
 
-const ListTableRow = ({customer}) => {
-    const [isAuthorized, setIsAuthorized] = useState(!!customer.is_verified);
-    const [customerType, setCustomerType] = useState(customer.is_superuser ?? 'user');
-
-
-    return (
-        <TableRow
-            hover
-            key={customer.id}
-        >
-            <TableCell>
-                <Stack
-                    alignItems="center"
-                    direction="row"
-                    spacing={1}
-                >
-                    <div>
-                        <Typography>
-                            {customer.name}
-                        </Typography>
-                        <Typography
-                            color="text.secondary"
-                            variant="body2"
-                        >
-                            {customer.email}
-                        </Typography>
-                    </div>
-                </Stack>
-            </TableCell>
-            <TableCell padding="checkbox">
-                <Checkbox
-                    onChange={event => setIsAuthorized(event.target.checked)}
-                    checked={isAuthorized}
-                />
-            </TableCell>
-            <TableCell align='right'>
-                <Select
-                    sx={{width: '100px'}}
-                    variant='standard'
-                    labelId="demo-select-small-label"
-                    id="demo-select-small"
-                    value={customerType}
-                    label="Age"
-                    onChange={(e) => {
-                        setCustomerType(e.target.value)
-                    }}
-                >
-                    {customerTypes.map(({value, label}) =>
-                        <MenuItem key={label}
-                                  value={value}>
-                            {label}
-                        </MenuItem>)}
-                </Select>
-            </TableCell>
-        </TableRow>
-    )
-        ;
-}
-
-
 export const CustomerListTable = (props) => {
     const {
         count = 0,
@@ -90,7 +29,11 @@ export const CustomerListTable = (props) => {
         page = 0,
         rowsPerPage = 0,
         sort,
-        onSort
+        onSort,
+        onAuthorizationChange = () => {
+        },
+        onTypeChange = () => {
+        }
     } = props;
 
     const SorterHeader = (props) => {
@@ -128,10 +71,53 @@ export const CustomerListTable = (props) => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {items.map((customer, i) => {
-                                return (<ListTableRow customer={customer}
-                                                      key={'row' + i}/>)
-                            })}
+                            {items.map(customer => <TableRow key={customer.id}
+                                                             hover>
+                                <TableCell>
+                                    <Stack
+                                        alignItems="center"
+                                        direction="row"
+                                        spacing={1}
+                                    >
+                                        <div>
+                                            <Typography>
+                                                {customer.name}
+                                            </Typography>
+                                            <Typography
+                                                color="text.secondary"
+                                                variant="body2"
+                                            >
+                                                {customer.email}
+                                            </Typography>
+                                        </div>
+                                    </Stack>
+                                </TableCell>
+                                <TableCell padding="checkbox">
+                                    <Checkbox
+                                        onChange={event => onAuthorizationChange(customer.id, event.target.checked)}
+                                        checked={customer.isAuthorized ?? false}
+                                    />
+                                </TableCell>
+                                <TableCell align='right'>
+                                    <Select
+                                        sx={{width: '100px'}}
+                                        variant='standard'
+                                        labelId="demo-select-small-label"
+                                        id="demo-select-small"
+                                        value={customer.type ?? 'user'}
+                                        label="Age"
+                                        onChange={(e) => {
+                                            onTypeChange(customer.id, e.target.value)
+                                        }}
+                                    >
+                                        {customerTypes.map(({value, label}) =>
+                                            <MenuItem key={label}
+                                                      value={value}>
+                                                {label}
+                                            </MenuItem>)}
+                                    </Select>
+                                </TableCell>
+                            </TableRow>)}
                         </TableBody>
                     </Table>
                 </Scrollbar>
@@ -143,13 +129,8 @@ export const CustomerListTable = (props) => {
 CustomerListTable.propTypes = {
     count: PropTypes.number,
     items: PropTypes.array,
-    onDeselectAll: PropTypes.func,
-    onDeselectOne: PropTypes.func,
     onPageChange: PropTypes.func,
     onRowsPerPageChange: PropTypes.func,
-    onSelectAll: PropTypes.func,
-    onSelectOne: PropTypes.func,
     page: PropTypes.number,
     rowsPerPage: PropTypes.number,
-    selected: PropTypes.array,
 };

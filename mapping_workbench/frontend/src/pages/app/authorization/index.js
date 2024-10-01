@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -7,7 +7,6 @@ import Typography from '@mui/material/Typography';
 import {Seo} from 'src/components/seo';
 import {customersApi} from 'src/api/customers';
 import {usePageView} from 'src/hooks/use-page-view';
-import {useSelection} from 'src/hooks/use-selection';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {CustomerListSearch} from 'src/sections/app/authorization/authorization-search';
 import {CustomerListTable} from 'src/sections/app/authorization/authorization-table';
@@ -121,16 +120,23 @@ const useCustomersSearch = (items) => {
     };
 };
 
-const useCustomersStore = (searchState) => {
-    const [state, setState] = useState({
-        customers: [],
-        customersCount: 0,
-    });
+const useCustomersStore = () => {
+    const [state, setState] = useState([]);
+
+    console.log(state)
 
     const handleCustomersGet = () => {
         customersApi.getCustomers()
-            .then(res => setState({customers: res.data, customersCount: res.count}))
+            .then(res => setState( res.data))
             .catch(err => console.error(err))
+    }
+
+    const handleCustomerAuthorizationChange = (id, isAuthorized) => {
+        setState(e => e.map(el => el.id === id ? {...el, isAuthorized} : el))
+    }
+
+    const handleCustomerTypeChange = (id, type) => {
+        setState(e => e.map(el => el.id === id ? {...el, type} : el))
     }
 
     useEffect(
@@ -142,19 +148,16 @@ const useCustomersStore = (searchState) => {
     );
 
     return {
-        ...state,
+        handleCustomerAuthorizationChange,
+        handleCustomerTypeChange,
+        state,
     };
 };
 
-const useCustomersIds = (customers = []) => {
-    return useMemo(() => customers.map((customer) => customer.id), [customers]);
-};
 
 const Page = () => {
     const customersStore = useCustomersStore();
-    const customersSearch = useCustomersSearch(customersStore.customers);
-    const customersIds = useCustomersIds(customersStore.customers);
-    const customersSelection = useSelection(customersIds);
+    const customersSearch = useCustomersSearch(customersStore.state);
 
     usePageView();
 
@@ -177,17 +180,14 @@ const Page = () => {
                         onSearchChange={customersSearch.handleSearchChange}
                     />
                     <CustomerListTable
-                        count={customersStore.customersCount}
+                        count={customersStore.state.length}
                         items={customersSearch.pagedItems}
-                        onDeselectAll={customersSelection.handleDeselectAll}
-                        onDeselectOne={customersSelection.handleDeselectOne}
                         onPageChange={customersSearch.handlePageChange}
                         onRowsPerPageChange={customersSearch.handleRowsPerPageChange}
-                        onSelectAll={customersSelection.handleSelectAll}
-                        onSelectOne={customersSelection.handleSelectOne}
                         page={customersSearch.state.page}
                         rowsPerPage={customersSearch.state.rowsPerPage}
-                        selected={customersSelection.selected}
+                        onAuthorizationChange={customersStore.handleCustomerAuthorizationChange}
+                        onTypeChange={customersStore.handleCustomerTypeChange}
                         sort={customersSearch.state.sort}
                         onSort={customersSearch.handleSort}
                     />
