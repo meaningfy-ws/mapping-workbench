@@ -36,7 +36,6 @@ const useCustomersSearch = (items) => {
         return returnItem
     }) : items
 
-    console.log(searchItems)
 
     const filteredItems = searchItems.filter((item) => {
         let returnItem = item;

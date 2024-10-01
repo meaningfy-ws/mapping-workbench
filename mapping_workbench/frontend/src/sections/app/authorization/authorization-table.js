@@ -12,10 +12,10 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import Typography from '@mui/material/Typography';
-import TablePagination from '@mui/material/TablePagination';
 
 import {Scrollbar} from 'src/components/scrollbar';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
+import TablePagination from "../../components/table-pagination";
 
 
 const customerTypes = [{label: 'SuperUser', value: 'is_superuser'}, {label: 'User', value: 'user'}]
@@ -93,7 +93,7 @@ export const CustomerListTable = (props) => {
         onSort
     } = props;
 
-   const SorterHeader = (props) => {
+    const SorterHeader = (props) => {
         const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
         return (
             <TableSorterHeader sort={{direction, column: sort.column}}
@@ -105,36 +105,37 @@ export const CustomerListTable = (props) => {
 
     return (
         <Box sx={{position: 'relative'}}>
-            <Scrollbar>
-                <Table sx={{minWidth: 700}}>
-                    <TableHead>
-                        <TableRow>
+            <TablePagination component="div"
+                             count={count}
+                             onPageChange={onPageChange}
+                             onRowsPerPageChange={onRowsPerPageChange}
+                             page={page}
+                             rowsPerPage={rowsPerPage}
+                             rowsPerPageOptions={[5, 10, 25, 50, {value: -1, label: 'All'}]}
+                             showFirstButton
+                             showLastButton>
+                <Scrollbar>
+                    <Table sx={{minWidth: 700}}>
+                        <TableHead>
+                            <TableRow>
 
-                            <TableCell>
-                                <SorterHeader title='Name'
-                                              fieldName='email'/>
-                            </TableCell>
-                            <TableCell>Is Authorized</TableCell>
-                            <TableCell align="right">Type</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {items.map((customer, i) => {
-                            return (<ListTableRow customer={customer}
-                                                  key={'row' + i}/>)
-                        })}
-                    </TableBody>
-                </Table>
-            </Scrollbar>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={[5, 10, 25]}
-            />
+                                <TableCell>
+                                    <SorterHeader title='Name'
+                                                  fieldName='email'/>
+                                </TableCell>
+                                <TableCell>Is Authorized</TableCell>
+                                <TableCell align="right">Type</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {items.map((customer, i) => {
+                                return (<ListTableRow customer={customer}
+                                                      key={'row' + i}/>)
+                            })}
+                        </TableBody>
+                    </Table>
+                </Scrollbar>
+            </TablePagination>
         </Box>
     );
 };
