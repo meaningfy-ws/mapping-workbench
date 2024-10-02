@@ -25,7 +25,10 @@ export const FormCodeTextArea = (props) => {
     const {
         formik, name, label,
         required = false,
+        language_grammar = null,
         grammar = null, language = null,
+        height = eval(variables['codeTextareaHeight']),
+        innerHeight = null,
         disabled,
         ...other
     } = props;
@@ -43,7 +46,7 @@ export const FormCodeTextArea = (props) => {
         formik.values[name] = content;
     }, [formik]);
 
-    const codeGrammar = grammar ? languages[grammar] : DEFAULT_GRAMMAR;
+    const codeGrammar = language_grammar || (grammar ? languages[grammar] : DEFAULT_GRAMMAR);
     const codeLanguage = language || DEFAULT_LANGUAGE;
 
     return (
@@ -60,7 +63,7 @@ export const FormCodeTextArea = (props) => {
                 </FormLabel>
                 <Box
                     sx={{
-                        height: eval(variables['codeTextareaHeight']),
+                        height: height,
                         overflow: 'auto',
                         borderRadius: 1,
                         borderColor: 'divider',
@@ -80,7 +83,8 @@ export const FormCodeTextArea = (props) => {
                                 outline: 'none',
                                 border: 0,
                                 boxShadow: 'none',
-                                opacity: disabled ? .7 : 1
+                                opacity: disabled ? .7 : 1,
+                                height: innerHeight
                             }}
                             textareaClassName={styles['code-textarea']}
                             preClassName={styles['code-textarea-pre']}

@@ -1,9 +1,10 @@
-import Grid from "@mui/material/Unstable_Grid2";
 import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import {PropertyList} from "../../../../components/property-list";
-import {PropertyListItem} from "../../../../components/property-list-item";
 import Divider from "@mui/material/Divider";
+import Grid from "@mui/material/Unstable_Grid2";
+import CardContent from "@mui/material/CardContent";
+
+import {PropertyList} from "src/components/property-list";
+import {PropertyListItem} from "src/components/property-list-item";
 
 const StateDetails = ({item}) => {
     return(

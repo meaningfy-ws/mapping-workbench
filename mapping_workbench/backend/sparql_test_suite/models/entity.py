@@ -12,6 +12,7 @@ from mapping_workbench.backend.core.models.base_project_resource_entity import B
 from mapping_workbench.backend.file_resource.models.file_resource import FileResource, FileResourceCollection, \
     FileResourceIn
 from mapping_workbench.backend.package_validator.models.test_data_validation import CMRuleSDKElement
+from mapping_workbench.backend.package_validator.models.xpath_validation import XPathAssertionCondition
 from mapping_workbench.backend.state_manager.models.state_object import ObjectState, StatefulObjectABC
 
 
@@ -35,6 +36,9 @@ class SPARQLTestFileResourceFormat(str, Enum):
         return str(self.value)
 
 
+class SPARQLCMRule(CMRuleSDKElement):
+    xpath_condition: Optional[XPathAssertionCondition] = None
+
 class SPARQLTestState(ObjectState):
     oid: Optional[PydanticObjectId] = None
     format: Optional[SPARQLTestFileResourceFormat] = None
@@ -42,7 +46,7 @@ class SPARQLTestState(ObjectState):
     title: Optional[str] = None
     filename: Optional[str] = None
     content: Optional[str] = None
-    cm_rule: Optional[CMRuleSDKElement] = None
+    cm_rule: Optional[SPARQLCMRule] = None
 
     model_config = ConfigDict(use_enum_values=True)
 
@@ -112,7 +116,7 @@ class SPARQLTestFileResource(FileResource, StatefulObjectABC):
     format: Optional[SPARQLTestFileResourceFormat] = None
     type: Optional[SPARQLQueryValidationType] = None
     sparql_test_suite: Optional[Link[SPARQLTestSuite]] = None
-    cm_rule: Optional[CMRuleSDKElement] = None
+    cm_rule: Optional[SPARQLCMRule] = None
 
     async def get_state(self) -> SPARQLTestState:
         return SPARQLTestState(

@@ -8,10 +8,10 @@ from mapping_workbench.backend.conceptual_mapping_rule.services.data import get_
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
 from mapping_workbench.backend.file_resource.models.file_resource import FileResourceFormat
 from mapping_workbench.backend.ontology.services.namespaces import get_prefixes_definitions
-from mapping_workbench.backend.package_validator.models.test_data_validation import CMRuleSDKElement
+from mapping_workbench.backend.package_validator.models.xpath_validation import XPathAssertionCondition
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResource, SPARQLTestSuite, \
-    SPARQLQueryValidationType
+    SPARQLQueryValidationType, SPARQLCMRule
 from mapping_workbench.backend.sparql_test_suite.services.api import get_sparql_test_suite_by_project_and_title
 from mapping_workbench.backend.sparql_test_suite.services.data import SPARQL_CM_ASSERTIONS_SUITE_TITLE
 from mapping_workbench.backend.user.models.user import User
@@ -122,7 +122,8 @@ async def generate_and_save_cm_assertions_queries(
         subject_type_display = ('\n\t' + subject_type) if subject_type else ''
         file_name = f"{rq_name}{sparql_idx}.rq"
         file_content = f"#title: {sparql_title}\n" \
-                       f"#description: “{sparql_description}” " \
+                       f"#description: " \
+                       f"{f'“{sparql_description}” ' if sparql_description else ''}" \
                        f"The corresponding XML element is " \
                        f"{sparql_xpath}. " \
                        f"The expected ontology instances are epo: {cm_rule.target_class_path} .\n" \
@@ -139,10 +140,14 @@ async def generate_and_save_cm_assertions_queries(
             SPARQLTestFileResource.identifier == sparql_identifier
         )
 
-        cm_rule_sdk_element = CMRuleSDKElement(
+        cm_rule_sdk_element = SPARQLCMRule(
             sdk_element_id=structural_element.sdk_element_id,
             sdk_element_title=structural_element.name,
-            sdk_element_xpath=structural_element.absolute_xpath
+            sdk_element_xpath=structural_element.absolute_xpath,
+            xpath_condition=XPathAssertionCondition(
+                xpath_condition=(cm_rule.xpath_condition or ''),
+                meets_xpath_condition=(False if cm_rule.xpath_condition else True)
+            )
         )
 
         if not sparql_test_file_resource:

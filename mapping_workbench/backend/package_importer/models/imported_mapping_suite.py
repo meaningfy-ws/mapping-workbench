@@ -1,6 +1,8 @@
 from typing import List, Optional
 from pydantic import BaseModel, Field, ConfigDict
 
+from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
+
 
 class MappingMetadata(BaseModel):
     identifier: str = Field(None, alias="Identifier")
@@ -35,7 +37,7 @@ class EFormsMappingConceptualRule(BaseModel):
     bt_id: Optional[str] = Field(None, alias="BT ID")
     mapping_group_id: Optional[str] = Field(None, alias="Mapping Group ID")
     absolute_xpath: str = Field(..., alias="Absolute XPath")
-    xpath_condition: Optional[str] = Field(..., alias="XPath Condition")
+    xpath_condition: Optional[str] = Field(None, alias="XPath Condition")
     class_path: Optional[str] = Field(None, alias="Class Path")
     property_path: Optional[str] = Field(None, alias="Property Path")
     status: Optional[str] = Field(None, alias="Status")
@@ -55,7 +57,7 @@ class StandardMappingConceptualRule(BaseModel):
     bt_name: Optional[str] = Field(None, alias="eForm BT Name (Provisional/Indicative) (O)")
     absolute_xpath: Optional[str] = Field(..., alias="Field XPath (M)")
     relative_xpath: Optional[str] = Field(..., alias="Field XPath (M)")
-    xpath_condition: Optional[str] = Field(..., alias="Field XPath condition (M)")
+    xpath_condition: Optional[str] = Field(None, alias="Field XPath condition (M)")
     class_path: Optional[str] = Field(None, alias="Class path (M)")
     property_path: Optional[str] = Field(None, alias="Property path (M)")
     reference_to_integration_tests: Optional[str] = Field(None, alias="Reference to Integration Tests (O)")
@@ -108,3 +110,7 @@ class ImportedStandardMappingSuite(ImportedMappingSuite):
     metadata: StandardMappingMetadata
     conceptual_rules: List[StandardMappingConceptualRule] = []
 
+
+class ImportedMappingSuiteResponse(BaseModel):
+    mapping_package: MappingPackage
+    warnings: List[str] = []

@@ -28,6 +28,8 @@ import TablePagination from "src/sections/components/table-pagination";
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
+import {githubDark, githubLight} from "@uiw/codemirror-themes-all";
+import {useTheme} from "@mui/material/styles";
 
 export const ListTable = (props) => {
     const {
@@ -47,13 +49,14 @@ export const ListTable = (props) => {
     const lng = {TTL: {mode: 'text/turtle', extension: turtle}, YAML: {mode: 'text/yaml', extension: yaml}}
 
     const [currentItem, setCurrentItem] = useState(null);
+    const theme = useTheme();
     const {timeSetting} = useGlobalState()
 
     const handleItemToggle = itemId => setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
 
     const SorterHeader = (props) => {
         const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
-        return(
+        return (
             <TableSorterHeader sort={{direction, column: sort.column}}
                                onSort={onSort}
                                {...props}
@@ -72,10 +75,10 @@ export const ListTable = (props) => {
     const [projectMappingPackagesMap, setProjectMappingPackagesMap] = useState({});
 
     useEffect(() => {
-            setProjectMappingPackagesMap(projectMappingPackages.reduce((a, b) => {
-                a[b['id']] = b['title'];
-                return a
-            }, {}));
+        setProjectMappingPackagesMap(projectMappingPackages.reduce((a, b) => {
+            a[b['id']] = b['title'];
+            return a
+        }, {}));
     }, [projectMappingPackages])
 
     return (
@@ -192,15 +195,14 @@ export const ListTable = (props) => {
                                                             >
                                                                 <Box>Content:</Box>
                                                                 <CodeMirror
+                                                                    theme={theme.palette.mode === 'dark' ? githubDark : githubLight}
                                                                     value={item.triple_map_content}
-                                                                    extensions={[basicSetup(), lng[item.format].extension()]}
-                                                                    editable= {false}
-                                                                    options={{
-                                                                        mode: lng[item.format].mode,
-                                                                        theme: 'default',
-                                                                        lineNumbers: true,
-                                                                    }}
-                                                                    onChange={() => {
+                                                                    extensions={[lng[item.format].extension()]}
+                                                                    editable={false}
+                                                                    style={{
+                                                                        resize: 'vertical',
+                                                                        overflow: 'auto',
+                                                                        height: 600
                                                                     }}
                                                                 />
                                                             </Grid>

@@ -38,6 +38,9 @@ import {ListSelectorSelect as ResourceListSelector} from "src/components/app/lis
 
 import {MappingPackageCheckboxList} from "src/sections/app/mapping-package/components/mapping-package-checkbox-list";
 import {TermValidityInfo} from "./term-validity";
+import {FormCodeTextArea} from "../../../components/app/form/code-text-area";
+import 'prismjs/components/prism-xquery';
+
 
 const RuleComment = ({formik, fieldName, idx, handleDelete, ...other}) => {
 
@@ -197,6 +200,7 @@ export const EditForm = (props) => {
 
         const initialValues = {
             source_structural_element: item.source_structural_element?.id ?? '',
+            xpath_condition: item.xpath_condition ?? '',
             min_sdk_version: item.min_sdk_version ?? '',
             max_sdk_version: item.max_sdk_version ?? '',
             // mapping_group_id: item.mapping_group_id ?? '',
@@ -327,7 +331,6 @@ export const EditForm = (props) => {
 
 
         if (isProjectDataReady >= 3) return <CircularProgress/>;
-
         return (
             <form onSubmit={formik.handleSubmit}
                   {...other}>
@@ -473,6 +476,18 @@ export const EditForm = (props) => {
                                     </TextField>
                                 </FormControl>
                             </Grid>
+                            <Grid xs={12}
+                                  md={12}>
+                                <FormCodeTextArea
+                                    formik={formik}
+                                    name="xpath_condition"
+                                    label="XPath Condition"
+                                    language_grammar={Prism.languages.xquery}
+                                    language="xquery"
+                                    height={150}
+                                />
+                            </Grid>
+
                         </Grid>
                     </CardContent>
                 </Card>
@@ -903,7 +918,8 @@ export const EditForm = (props) => {
                     </Stack>
                 </Card>
             </form>
-        );
+        )
+            ;
     }
 ;
 
