@@ -226,6 +226,9 @@ async def route_list_terms(
     if q is not None:
         filters['q'] = q
 
+
+    print('hereeee')
+
     items, total_count = await list_terms(filters, page, limit)
     return APIListTermsPaginatedResponse(
         items=items,

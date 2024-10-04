@@ -46,11 +46,15 @@ async def route_list_mapping_packages(
         limit: int = None,
         q: str = None
 ):
+    print('here111')
     filters: dict = {}
     if project:
         filters['project'] = Project.link_from_id(project)
     if q is not None:
         filters['q'] = q
+
+
+    await get_project(project)
 
     items, total_count = await list_mapping_packages(filters, page, limit)
     return APIListMappingPackagesPaginatedResponse(

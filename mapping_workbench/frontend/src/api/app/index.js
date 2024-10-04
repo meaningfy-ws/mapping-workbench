@@ -132,6 +132,8 @@ class AppApi {
                 console.log(method, "REQUEST", error.response?.status);
                 $this.processError(error);
                 console.log(error, "error");
+                if (error.response?.status === 424)
+                    window.location.replace('424')
                 throw error
             });
     }
