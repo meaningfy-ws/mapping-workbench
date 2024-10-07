@@ -78,8 +78,12 @@ class AuthApi {
     }
 
     async sendGoogleResponse(params_string) {
-        const endpoint = paths.auth.google.callback + params_string;
-        return await appApi.get(endpoint);
+        try {
+            const endpoint = paths.auth.google.callback + params_string;
+            return await appApi.get(endpoint);
+        } catch (err) {
+            window.location.replace("401");
+        }
     }
 }
 
