@@ -57,3 +57,18 @@ class ResourceConflictException(HTTPException):
             detail=(detail or "Resource exists!"),
             headers=headers
         )
+
+
+
+class FailedDependency(HTTPException):
+    def __init__(
+            self,
+            status_code: int = None,
+            detail: Any = None,
+            headers: Optional[Dict[str, Any]] = None,
+    ) -> None:
+        super().__init__(
+            status_code=(status_code or status.HTTP_424_FAILED_DEPENDENCY),
+            detail=(detail or "Failed Dependency"),
+            headers=headers
+        )

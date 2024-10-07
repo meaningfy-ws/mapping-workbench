@@ -5,7 +5,7 @@ from bson import DBRef
 from pymongo.errors import DuplicateKeyError
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
-from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException, DuplicateKeyException
+from mapping_workbench.backend.core.services.exceptions import DuplicateKeyException, FailedDependency
 from mapping_workbench.backend.core.services.request import request_update_data, request_create_data, \
     api_entity_is_found, prepare_search_param, pagination_params
 from mapping_workbench.backend.project.models.entity import Project, ProjectCreateIn, ProjectUpdateIn, ProjectOut, \
@@ -58,7 +58,7 @@ async def update_project(
 async def get_project(id: PydanticObjectId) -> Project:
     project: Project = await Project.get(id)
     if not api_entity_is_found(project):
-        raise ResourceNotFoundException()
+        raise FailedDependency()
     return project
 
 

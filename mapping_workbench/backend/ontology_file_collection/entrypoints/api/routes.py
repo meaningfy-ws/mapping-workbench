@@ -22,6 +22,7 @@ from mapping_workbench.backend.ontology_file_collection.services.api import (
     delete_ontology_file_resource
 )
 from mapping_workbench.backend.project.models.entity import Project
+from mapping_workbench.backend.project.services.api import get_project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.user.models.user import User
 
@@ -55,6 +56,8 @@ async def route_list_ontology_file_collections(
         filters['project'] = Project.link_from_id(project)
     if q is not None:
         filters['q'] = q
+
+    await get_project(project)
 
     items, total_count = await list_ontology_file_collections(filters, page, limit)
     return APIListOntologyFileCollectionsPaginatedResponse(
