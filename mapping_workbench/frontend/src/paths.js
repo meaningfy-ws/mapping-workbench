@@ -225,6 +225,9 @@ export const paths = {
         },
         fluree_crypt: {
             index: '/app/fluree-crypt'
+        },
+        authorization: {
+            index: '/app/authorization'
         }
     },
     docs: 'https://material-kit-pro-react-docs.devias.io',

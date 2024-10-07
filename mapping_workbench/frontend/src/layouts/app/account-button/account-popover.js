@@ -10,6 +10,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Popover from '@mui/material/Popover';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 
 import {RouterLink} from 'src/components/router-link';
 import {useAuth} from 'src/hooks/use-auth';
@@ -47,6 +48,8 @@ export const AccountPopover = (props) => {
     }
 
     const project = sessionApi.getSessionProject()
+
+    console.log(auth)
 
     return (
         <Popover
@@ -114,6 +117,30 @@ export const AccountPopover = (props) => {
                         primary={(
                             <Typography variant="body1">
                                 Project Setup
+                            </Typography>
+                        )}
+                    />
+                </ListItemButton>}
+                {auth.user?.roles?.includes('admin') && <ListItemButton
+                    id='authorization_button'
+                    component={RouterLink}
+                    href={paths.app.authorization}
+                    onClick={onClose}
+                    sx={{
+                        borderRadius: 1,
+                        px: 1,
+                        py: 0.5
+                    }}
+                >
+                    <ListItemIcon>
+                        <SvgIcon fontSize="small">
+                            <ManageAccountsIcon/>
+                        </SvgIcon>
+                    </ListItemIcon>
+                    <ListItemText
+                        primary={(
+                            <Typography variant="body1">
+                                Authorization
                             </Typography>
                         )}
                     />
