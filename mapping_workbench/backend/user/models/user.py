@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import List, Optional, Dict
 
 from beanie import Document
@@ -25,6 +26,11 @@ class Settings(BaseModel):
     session: Optional[UserSession] = UserSession()
 
 
+class Role(Enum):
+    ADMIN = "admin"
+    USER = "user"
+
+
 class User(BeanieBaseUser, Document):
     email: Optional[str] = None
     hashed_password: Optional[str] = None
@@ -32,14 +38,29 @@ class User(BeanieBaseUser, Document):
     oauth_accounts: List[OAuthAccount] = Field(default_factory=list)
     settings: Optional[Settings] = Settings()
 
-    # FIXME: Auto verified while we dont have a email confirmation mechanism
-    is_verified: bool = True
+    # FIXME: Auto verified while we dont have a email confirmation mechanism (can be verified by admin)
+    is_verified: bool = False
+    # Must be activated by admin
+    is_active: bool = False
+
+    roles: List[Role] = [Role.USER]
 
     class Settings(BeanieBaseUser.Settings):
         name = "users"
 
 
 class UserOut(BaseModel):
+    id: PydanticObjectId = Field(alias="_id")
+    email: Optional[str] = None
+    name: Optional[str] = None
+    settings: Optional[Settings] = None
+    is_verified: Optional[bool] = None
+    is_active: Optional[bool] = None
+    is_superuser: Optional[bool] = False
+    roles: Optional[List[Role]] = []
+
+
+class UserRef(BaseModel):
     email: str
 
 
