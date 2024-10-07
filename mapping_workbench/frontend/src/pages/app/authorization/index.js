@@ -140,12 +140,12 @@ const useCustomersStore = () => {
         if (is_verified) {
             sectionApi.authorize([id])
                 .then(res =>
-                    setState(e => e.map(el => el._id === id ? {...el, is_verified} : el)))
+                    setState(e => e.map(el => el._id === id ? {...el, is_verified, is_active:is_verified} : el)))
                 .catch(err => console.error(err))
         } else {
             sectionApi.unauthorize([id])
                 .then(res =>
-                    setState(e => e.map(el => el._id === id ? {...el, is_verified} : el)))
+                    setState(e => e.map(el => el._id === id ? {...el, is_verified,is_active:is_verified} : el)))
                 .catch(err => console.error(err))
         }
     }

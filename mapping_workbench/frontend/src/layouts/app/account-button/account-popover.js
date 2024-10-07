@@ -49,8 +49,6 @@ export const AccountPopover = (props) => {
 
     const project = sessionApi.getSessionProject()
 
-    console.log(auth)
-
     return (
         <Popover
             anchorEl={anchorEl}
