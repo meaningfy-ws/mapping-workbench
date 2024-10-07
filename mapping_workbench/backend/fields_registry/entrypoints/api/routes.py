@@ -19,6 +19,7 @@ from mapping_workbench.backend.fields_registry.services.data import tree_of_stru
 from mapping_workbench.backend.fields_registry.services.generate_conceptual_mapping_rules import \
     generate_conceptual_mapping_rules
 from mapping_workbench.backend.project.models.entity import Project
+from mapping_workbench.backend.project.services.api import get_project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.task_manager.services.task_wrapper import add_task
 from mapping_workbench.backend.user.models.user import User
@@ -54,6 +55,8 @@ async def route_list_structural_elements(
         filters['project'] = Project.link_from_id(project)
     if q is not None:
         filters['q'] = q
+
+    await get_project(project)
 
     items, total_count = await list_structural_elements(filters, page, limit)
     return APIListStructuralElementsPaginatedResponse(

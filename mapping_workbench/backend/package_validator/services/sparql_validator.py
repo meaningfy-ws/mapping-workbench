@@ -84,7 +84,8 @@ def aggregate_sparql_tests_summary(
                                                 result.test_data) or not use_grouping:
                     summary[idx].result.unknown.count += 1
 
-            summary[idx].query.cm_rule.xpath_condition.meets_xpath_condition |= result.meets_xpath_condition
+            if result and summary[idx].query.cm_rule and summary[idx].query.cm_rule.xpath_condition:
+                summary[idx].query.cm_rule.xpath_condition.meets_xpath_condition |= result.meets_xpath_condition
     return summary
 
 
