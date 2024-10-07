@@ -4,8 +4,8 @@ import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import {usersApi as sectionApi} from "../../../api/authorization";
 import {Seo} from 'src/components/seo';
-import {customersApi} from 'src/api/customers';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {CustomerListSearch} from 'src/sections/app/authorization/authorization-search';
@@ -123,20 +123,21 @@ const useCustomersSearch = (items) => {
 const useCustomersStore = () => {
     const [state, setState] = useState([]);
 
-    console.log(state)
-
     const handleCustomersGet = () => {
-        customersApi.getCustomers()
-            .then(res => setState( res.data))
+        sectionApi.getItems()
+            .then(res => setState(res))
             .catch(err => console.error(err))
     }
 
-    const handleCustomerAuthorizationChange = (id, isAuthorized) => {
-        setState(e => e.map(el => el.id === id ? {...el, isAuthorized} : el))
+    const handleCustomerVerificationChange = (id, is_verified) => {
+        const {name, email, is_superuser, is_active, password} = state.find(e => e._id === id)
+        sectionApi.updateItem({id, name, email, is_superuser, is_active, is_verified, password})
+            .then(res =>
+        setState(e => e.map(el => el._id === id ? {...el, is_verified} : el)))
     }
 
-    const handleCustomerTypeChange = (id, type) => {
-        setState(e => e.map(el => el.id === id ? {...el, type} : el))
+    const handleCustomerTypeChange = (id, is_superuser) => {
+        setState(e => e.map(el => el._id === id ? {...el, is_superuser} : el))
     }
 
     useEffect(
@@ -148,7 +149,7 @@ const useCustomersStore = () => {
     );
 
     return {
-        handleCustomerAuthorizationChange,
+        handleCustomerVerificationChange,
         handleCustomerTypeChange,
         state,
     };
@@ -172,7 +173,7 @@ const Page = () => {
                     spacing={4}
                 >
                     <Stack spacing={1}>
-                        <Typography variant="h4">Authorization</Typography>
+                        <Typography variant="h4">{sectionApi.SECTION_TITLE}</Typography>
                     </Stack>
                 </Stack>
                 <Card>
@@ -186,7 +187,7 @@ const Page = () => {
                         onRowsPerPageChange={customersSearch.handleRowsPerPageChange}
                         page={customersSearch.state.page}
                         rowsPerPage={customersSearch.state.rowsPerPage}
-                        onAuthorizationChange={customersStore.handleCustomerAuthorizationChange}
+                        onVerificationChange={customersStore.handleCustomerVerificationChange}
                         onTypeChange={customersStore.handleCustomerTypeChange}
                         sort={customersSearch.state.sort}
                         onSort={customersSearch.handleSort}

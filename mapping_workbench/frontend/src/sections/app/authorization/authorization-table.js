@@ -30,7 +30,7 @@ export const CustomerListTable = (props) => {
         rowsPerPage = 0,
         sort,
         onSort,
-        onAuthorizationChange = () => {
+        onVerificationChange = () => {
         },
         onTypeChange = () => {
         }
@@ -66,12 +66,12 @@ export const CustomerListTable = (props) => {
                                     <SorterHeader title='Name'
                                                   fieldName='email'/>
                                 </TableCell>
-                                <TableCell>Is Authorized</TableCell>
-                                <TableCell align="right">Type</TableCell>
+                                <TableCell>Is_Authorized</TableCell>
+                                <TableCell align="right">Is_SuperUser</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {items.map(customer => <TableRow key={customer.id}
+                            {items.map(customer => <TableRow key={customer._id}
                                                              hover>
                                 <TableCell>
                                     <Stack
@@ -94,29 +94,35 @@ export const CustomerListTable = (props) => {
                                 </TableCell>
                                 <TableCell padding="checkbox">
                                     <Checkbox
-                                        onChange={event => onAuthorizationChange(customer.id, event.target.checked)}
-                                        checked={customer.isAuthorized ?? false}
+                                        onChange={event => onVerificationChange(customer._id, event.target.checked)}
+                                        checked={!!customer.is_verified}
                                     />
                                 </TableCell>
-                                <TableCell align='right'>
-                                    <Select
-                                        sx={{width: '100px'}}
-                                        variant='standard'
-                                        labelId="demo-select-small-label"
-                                        id="demo-select-small"
-                                        value={customer.type ?? 'user'}
-                                        label="Age"
-                                        onChange={(e) => {
-                                            onTypeChange(customer.id, e.target.value)
-                                        }}
-                                    >
-                                        {customerTypes.map(({value, label}) =>
-                                            <MenuItem key={label}
-                                                      value={value}>
-                                                {label}
-                                            </MenuItem>)}
-                                    </Select>
+                                <TableCell padding="checkbox">
+                                    <Checkbox
+                                        onChange={event => onTypeChange(customer._id, event.target.checked)}
+                                        checked={!!customer.is_superuser}
+                                    />
                                 </TableCell>
+                                {/*<TableCell align='right'>*/}
+                                {/*    <Select*/}
+                                {/*        sx={{width: '100px'}}*/}
+                                {/*        variant='standard'*/}
+                                {/*        labelId="demo-select-small-label"*/}
+                                {/*        id="demo-select-small"*/}
+                                {/*        value={customer.type ?? 'user'}*/}
+                                {/*        label="Age"*/}
+                                {/*        onChange={(e) => {*/}
+                                {/*            onTypeChange(customer._id, e.target.value)*/}
+                                {/*        }}*/}
+                                {/*    >*/}
+                                {/*        {customerTypes.map(({value, label}) =>*/}
+                                {/*            <MenuItem key={label}*/}
+                                {/*                      value={value}>*/}
+                                {/*                {label}*/}
+                                {/*            </MenuItem>)}*/}
+                                {/*    </Select>*/}
+                                {/*</TableCell>*/}
                             </TableRow>)}
                         </TableBody>
                     </Table>

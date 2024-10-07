@@ -68,6 +68,8 @@ export class SectionApi {
         if(sortDirection)
             filters['sort_direction'] = sortDirection;
 
+        console.log(this.paths)
+
         return await appApi.get(endpoint || this.paths[path], filters);
     }
 

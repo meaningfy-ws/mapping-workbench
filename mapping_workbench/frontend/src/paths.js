@@ -396,6 +396,11 @@ export const apiPaths = {
         deleteFile: (name, id) => `/ontology/ontology_files/${name}?project_id=${id}`
     },
 
+    users: {
+        items: '/users',
+        item:  '/users/:id'
+    },
+
     tasks: {
         items: '/task_manager',
         task_cancel: (task_id) => `/task_manager/cancel/${task_id}`,
