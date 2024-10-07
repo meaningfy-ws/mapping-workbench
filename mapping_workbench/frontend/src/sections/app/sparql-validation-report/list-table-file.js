@@ -4,6 +4,7 @@ import {Box} from "@mui/system";
 import Chip from "@mui/material/Chip";
 import Table from '@mui/material/Table';
 import Stack from "@mui/material/Stack";
+import Divider from "@mui/material/Divider";
 import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -13,13 +14,12 @@ import CloseIcon from "@mui/icons-material/Close";
 import Typography from '@mui/material/Typography';
 
 import {resultColor} from "./utils";
-import {codeStyle} from "src/utils/code-style";
 import {Scrollbar} from 'src/components/scrollbar';
 import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 
-import Divider from "@mui/material/Divider";
 import PropTypes from "prop-types";
+import {useHighlighterTheme} from "../../../hooks/use-highlighter-theme";
 
 
 export const ListTableFile = (props) => {
@@ -35,6 +35,8 @@ export const ListTableFile = (props) => {
         onSort,
         sectionApi
     } = props;
+
+    const syntaxHightligterTheme = useHighlighterTheme()
 
     const SorterHeader = (props) => {
         const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
@@ -112,7 +114,7 @@ export const ListTableFile = (props) => {
                                                         <SyntaxHighlighter
                                                             language="xquery"
                                                             wrapLines
-                                                            style={codeStyle}
+                                                            style={syntaxHightligterTheme}
                                                             lineProps={{
                                                                 style: {
                                                                     wordBreak: 'break-all',
@@ -138,7 +140,7 @@ export const ListTableFile = (props) => {
                                             <SyntaxHighlighter
                                                 language="sparql"
                                                 wrapLines
-                                                style={codeStyle}
+                                                style={syntaxHightligterTheme}
                                                 lineProps={{
                                                     style: {
                                                         overflowWrap: 'break-word',
