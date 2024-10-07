@@ -124,7 +124,7 @@ export const AccountPopover = (props) => {
                 {auth.user?.roles?.includes('admin') && <ListItemButton
                     id='authorization_button'
                     component={RouterLink}
-                    href={paths.app.authorization}
+                    href={paths.app.authorization.index}
                     onClick={onClose}
                     sx={{
                         borderRadius: 1,
