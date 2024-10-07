@@ -66,6 +66,7 @@ class UserRef(BaseModel):
 
 class CurrentUserRead(schemas.BaseUser[PydanticObjectId]):
     settings: Optional[Settings] = None
+    roles: Optional[List[Role]] = []
 
 
 class UserRead(schemas.BaseUser[PydanticObjectId]):
