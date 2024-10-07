@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 from mapping_workbench.backend.core.models.api_request import APIRequestWithId, APIRequestWithIds
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
 from mapping_workbench.backend.security.services.user_manager import fastapi_users, current_active_user, \
-    current_active_admin_user
+    current_active_admin_user, current_user
 from mapping_workbench.backend.user.models.query_filters import QueryFilters
 from mapping_workbench.backend.user.models.request import APIUsersUpdateRolesRequest
 from mapping_workbench.backend.user.models.user import UserRead, UserUpdate, User, CurrentUserRead, Role
@@ -174,6 +174,18 @@ async def route_set_app_settings_for_current_user(
 )
 async def route_current_user(
         user: User = Depends(current_active_user)
+):
+    return user
+
+
+@sub_router.get(
+    "/check/verified",
+    description=f"Check if user is verified",
+    name=f"users:check:verified",
+    response_model=CurrentUserRead
+)
+async def route_check_verified(
+        user: User = Depends(current_user)
 ):
     return user
 

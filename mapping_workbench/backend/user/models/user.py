@@ -40,8 +40,7 @@ class User(BeanieBaseUser, Document):
 
     # FIXME: Auto verified while we dont have a email confirmation mechanism (can be verified by admin)
     is_verified: bool = False
-    # Must be activated by admin
-    is_active: bool = False
+    is_active: bool = True
 
     roles: List[Role] = [Role.USER]
 

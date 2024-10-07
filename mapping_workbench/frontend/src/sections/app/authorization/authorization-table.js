@@ -98,7 +98,7 @@ export const CustomerListTable = (props) => {
                                 <TableCell padding="checkbox">
                                     <Checkbox
                                         onChange={event => onAuthorizeChange(user._id, event.target.checked)}
-                                        checked={!!user.is_verified && !!user.is_active}
+                                        checked={securityApi.isUserAuthorized(user)}
                                         disabled={securityApi.isAuthUser(auth.user, user._id)}
                                     />
                                 </TableCell>
