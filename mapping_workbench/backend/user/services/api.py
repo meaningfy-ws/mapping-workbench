@@ -4,7 +4,7 @@ from beanie import PydanticObjectId
 from beanie.odm.operators.find.comparison import In
 
 from mapping_workbench.backend.user.models.query_filters import QueryFilters
-from mapping_workbench.backend.user.models.user import User, UserApp, UserOut
+from mapping_workbench.backend.user.models.user import User, UserApp, UserOut, Role
 
 
 async def list_users(query: QueryFilters = None) -> list[UserOut]:
@@ -22,6 +22,10 @@ async def set_app_settings_for_current_user(data: Dict, user: User):
     user_app.settings = data
     user.settings.app = user_app
     await user.save()
+
+
+async def update_users_roles(user_ids: List[PydanticObjectId], roles: List[Role], user: User):
+    await User.find(In(User.id, user_ids)).update_many({"$set": {User.roles: roles}})
 
 
 async def activate_users(user_ids: List[PydanticObjectId], user: User):

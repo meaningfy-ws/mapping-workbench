@@ -9,10 +9,11 @@ from mapping_workbench.backend.core.models.api_response import APIEmptyContentWi
 from mapping_workbench.backend.security.services.user_manager import fastapi_users, current_active_user, \
     current_active_admin_user
 from mapping_workbench.backend.user.models.query_filters import QueryFilters
+from mapping_workbench.backend.user.models.request import APIUsersUpdateRolesRequest
 from mapping_workbench.backend.user.models.user import UserRead, UserUpdate, User, CurrentUserRead, Role
 from mapping_workbench.backend.user.services.api import list_users as list_users_for_api, \
     set_project_for_current_user_session, set_app_settings_for_current_user, activate_users, verify_users, \
-    unverify_users, deactivate_users
+    unverify_users, deactivate_users, update_users_roles
 
 ROUTE_PREFIX = "/users"
 TAGS = ["users"]
@@ -44,6 +45,47 @@ async def list_users(
 async def list_users_roles_values(
 ) -> List[Role]:
     return [role for role in Role]
+
+
+@sub_router.post(
+    "/update_roles",
+    description=f"Update users' roles",
+    name=f"users:update_roles",
+    status_code=status.HTTP_200_OK
+)
+async def route_update_roles(
+        req: APIUsersUpdateRolesRequest,
+        user: User = Depends(current_active_admin_user)
+):
+    await update_users_roles(user_ids=req.ids, roles=req.roles, user=user)
+
+
+@sub_router.post(
+    "/authorize",
+    description=f"Authorize users",
+    name=f"users:authorize",
+    status_code=status.HTTP_200_OK
+)
+async def route_authorize_users(
+        req: APIRequestWithIds,
+        user: User = Depends(current_active_admin_user)
+):
+    await activate_users(user_ids=req.ids, user=user)
+    await verify_users(user_ids=req.ids, user=user)
+
+
+@sub_router.post(
+    "/unauthorize",
+    description=f"Unauthorize users",
+    name=f"users:unauthorize",
+    status_code=status.HTTP_200_OK
+)
+async def route_unauthorize_users(
+        req: APIRequestWithIds,
+        user: User = Depends(current_active_admin_user)
+):
+    await deactivate_users(user_ids=req.ids, user=user)
+    await unverify_users(user_ids=req.ids, user=user)
 
 
 @sub_router.post(

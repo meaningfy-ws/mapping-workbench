@@ -61,7 +61,7 @@ current_active_user = fastapi_users.current_user(active=True, verified=True)
 async def get_current_active_admin_user(
         user: User = Depends(current_active_user)
 ) -> User:
-    if not user.roles or Role.ADMIN not in user.roles:
+    if not user.is_superuser and (not user.roles or Role.ADMIN not in user.roles):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="The user cannot perform this action",
