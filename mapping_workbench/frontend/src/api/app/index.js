@@ -4,6 +4,7 @@ import {STORAGE_KEY as ACCESS_TOKEN_STORAGE_KEY} from 'src/contexts/auth/jwt/aut
 import {sessionStorageTokenInterceptor} from './security';
 import {HTTPException} from "./exceptions";
 import {apiPaths, paths} from "../../paths";
+import {SESSION_PROJECT_KEY} from "../projects";
 
 
 // const LOGIN_ENDPOINT = "/auth/jwt/login";
@@ -11,6 +12,7 @@ const LOGIN_ENDPOINT = "/auth/jwt/login";
 const LOGOUT_ENDPOINT = "/auth/jwt/logout";
 const REGISTER_ENDPOINT = "/auth/register";
 const VERIFY_TOKEN_ENDPOINT = "/auth/verify";
+const MISSING_PARAMETER = "/424"
 
 const METHOD = {
     GET: 'get',
@@ -50,6 +52,10 @@ class AppApi {
         return this.sessionStorage().removeItem(ACCESS_TOKEN_STORAGE_KEY);
     }
 
+    removeProject() {
+        return this.sessionStorage().removeItem(SESSION_PROJECT_KEY);
+    }
+
     addAuth(headers = null) {
         headers = headers || {};
         headers['Authorization'] = `Bearer ${this.getAccessToken()}`;
@@ -66,6 +72,10 @@ class AppApi {
         if (error.response?.status === 401) {
             this.removeAccessToken();
             window.location.replace(LOGIN_ENDPOINT);
+        }
+        if (error.response?.status === 424) {
+            this.removeProject()
+            window.location.replace(MISSING_PARAMETER)
         }
     }
 
@@ -132,8 +142,6 @@ class AppApi {
                 console.log(method, "REQUEST", error.response?.status);
                 $this.processError(error);
                 console.log(error, "error");
-                if (error.response?.status === 424)
-                    window.location.replace('424')
                 throw error
             });
     }

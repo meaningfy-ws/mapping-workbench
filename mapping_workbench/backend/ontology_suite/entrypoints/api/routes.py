@@ -8,6 +8,7 @@ from mapping_workbench.backend.ontology_suite.adapters.ontology_file_beanie_repo
 from mapping_workbench.backend.ontology_suite.models.ontology_file_resource import OntologyFileResourceOut, \
     OntologyFileResourceIn, OntologyFileResource
 from mapping_workbench.backend.project.models.entity import ProjectNotFoundException
+from mapping_workbench.backend.project.services.api import get_project
 
 ONTOLOGY_FILE_ROUTE_PREFIX = "/ontology_files"
 
@@ -29,6 +30,7 @@ async def route_get_list_of_ontology_files(
         project_id: PydanticObjectId,
 ) -> List[OntologyFileResourceOut]:
     try:
+        await get_project(project_id)
         ontology_files = await ontology_file_repository.get_all(project_id)
     except ProjectNotFoundException as project_not_found_exception:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(project_not_found_exception))

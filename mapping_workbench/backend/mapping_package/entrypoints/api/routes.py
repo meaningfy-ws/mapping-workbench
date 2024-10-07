@@ -53,7 +53,6 @@ async def route_list_mapping_packages(
     if q is not None:
         filters['q'] = q
 
-
     await get_project(project)
 
     items, total_count = await list_mapping_packages(filters, page, limit)

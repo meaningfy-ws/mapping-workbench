@@ -26,6 +26,7 @@ from mapping_workbench.backend.ontology.services.api_for_terms import list_terms
 from mapping_workbench.backend.ontology.services.terms import is_known_term, \
     check_content_terms_validity, search_terms, get_prefixed_terms
 from mapping_workbench.backend.project.models.entity import Project
+from mapping_workbench.backend.project.services.api import get_project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.task_manager.services.task_wrapper import add_task
 from mapping_workbench.backend.user.models.user import User
@@ -60,6 +61,8 @@ async def route_list_namespaces(
         filters['project'] = Project.link_from_id(project)
     if q is not None:
         filters['q'] = q
+
+    await get_project(project)
 
     items, total_count = await list_namespaces(filters, page, limit)
     return APIListNamespacesPaginatedResponse(
@@ -225,9 +228,6 @@ async def route_list_terms(
         filters['project'] = Project.link_from_id(project)
     if q is not None:
         filters['q'] = q
-
-
-    print('hereeee')
 
     items, total_count = await list_terms(filters, page, limit)
     return APIListTermsPaginatedResponse(
