@@ -41,14 +41,14 @@ const Page = () => {
             align="center"
             variant={mdUp ? 'h1' : 'h4'}
           >
-            424: Some parameters of request are wrong
+            424: Project that you have selected seem to be missing
           </Typography>
           <Typography
             align="center"
             color="text.secondary"
             sx={{ mt: 0.5 }}
           >
-            You either tried some shady route or you came here by mistake. Whichever it is, try using the navigation.
+            You seem to be use project that have already been deleted, please select another one.
           </Typography>
           <Box
             sx={{
