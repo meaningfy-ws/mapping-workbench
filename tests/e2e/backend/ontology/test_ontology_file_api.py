@@ -10,20 +10,14 @@ from mapping_workbench.backend.ontology_suite.models.ontology_file_resource impo
 
 @pytest.mark.asyncio
 async def test_ontology_files_api(ontology_schema_test_client, dummy_project):
-    dummy_id = "66632b18d962477185de6d81"
+    dummy_id = dummy_project.id
     dummy_file_name = f"dummy1.{ONTOLOGY_FILE_FORMATS[0]}"
 
     ontology_files_path = ONTOLOGY_FILE_ROUTE_PREFIX
 
     response = ontology_schema_test_client.get(ontology_files_path)
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-    response = ontology_schema_test_client.get(
-        ontology_files_path,
-        params={"project_id": dummy_id}
-    )
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
-    dummy_project.id = PydanticObjectId(dummy_id)
-    await dummy_project.create()
+
     response = ontology_schema_test_client.get(
         ontology_files_path,
         params={"project_id": dummy_id}

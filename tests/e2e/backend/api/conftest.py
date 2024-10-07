@@ -26,8 +26,6 @@ async def setup_db():
     )
     await user.create()
 
-    await dummy_project_object().create()
-
 
 asyncio.run(setup_db())
 
@@ -35,7 +33,7 @@ asyncio.run(setup_db())
 @pytest.fixture
 async def api_user() -> User:
     return await User.find_one(
-        User.email == "admin@mw.com"
+        User.email == api_user_email()
     )
 
 
