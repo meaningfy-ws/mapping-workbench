@@ -10,6 +10,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Popover from '@mui/material/Popover';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 
 import {RouterLink} from 'src/components/router-link';
 import {useAuth} from 'src/hooks/use-auth';
@@ -18,6 +19,7 @@ import {paths} from 'src/paths';
 import {Issuer} from 'src/utils/auth';
 import {toastError, toastLoad} from "../../../components/app-toast";
 import {sessionApi} from "../../../api/session";
+import {securityApi} from "../../../api/security";
 
 export const AccountPopover = (props) => {
     const {anchorEl, onClose, open, ...other} = props;
@@ -47,7 +49,6 @@ export const AccountPopover = (props) => {
     }
 
     const project = sessionApi.getSessionProject()
-
     return (
         <Popover
             anchorEl={anchorEl}
@@ -65,7 +66,7 @@ export const AccountPopover = (props) => {
                     color="text.secondary"
                     variant="body2"
                 >
-                    {auth.user && auth.user.email}
+                    {auth.user?.email}
                 </Typography>
             </Box>
             <Divider/>
@@ -114,6 +115,30 @@ export const AccountPopover = (props) => {
                         primary={(
                             <Typography variant="body1">
                                 Project Setup
+                            </Typography>
+                        )}
+                    />
+                </ListItemButton>}
+                {securityApi.isUserAdmin(auth.user) && <ListItemButton
+                    id='authorization_button'
+                    component={RouterLink}
+                    href={paths.app.authorization.index}
+                    onClick={onClose}
+                    sx={{
+                        borderRadius: 1,
+                        px: 1,
+                        py: 0.5
+                    }}
+                >
+                    <ListItemIcon>
+                        <SvgIcon fontSize="small">
+                            <ManageAccountsIcon/>
+                        </SvgIcon>
+                    </ListItemIcon>
+                    <ListItemText
+                        primary={(
+                            <Typography variant="body1">
+                                Authorization
                             </Typography>
                         )}
                     />

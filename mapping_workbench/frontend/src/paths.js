@@ -225,6 +225,9 @@ export const paths = {
         },
         fluree_crypt: {
             index: '/app/fluree-crypt'
+        },
+        authorization: {
+            index: '/app/authorization'
         }
     },
     docs: 'https://material-kit-pro-react-docs.devias.io',
@@ -394,6 +397,16 @@ export const apiPaths = {
         item: (name, id) => `/ontology/ontology_files/${name}?project_id=${id}`,
         addFile: (id) => `/ontology/ontology_files?project_id=${id}`,
         deleteFile: (name, id) => `/ontology/ontology_files/${name}?project_id=${id}`
+    },
+
+    users: {
+        items: '/users',
+        item: '/users/:id',
+        roles: '/users/roles/values',
+        authorize: '/users/authorize',
+        unauthorize: '/users/unauthorize',
+        update_roles: '/users/update_roles'
+
     },
 
     tasks: {

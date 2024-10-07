@@ -125,7 +125,7 @@ const useItemsSearch = (items) => {
         handleSort,
         handleSearchItems,
         pagedItems,
-        count: filteredItems.length,
+        count: pagedItems.length,
         state
     };
 };

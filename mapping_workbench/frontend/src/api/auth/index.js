@@ -1,6 +1,7 @@
 import {appApi} from "../app";
 import {sessionApi} from "../session";
 import {paths} from "../../paths";
+import {securityApi} from "../security";
 
 const STORAGE_KEY = 'users';
 
@@ -44,7 +45,6 @@ class AuthApi {
 
     async initMyProfile() {
         const user = await this.me();
-        console.log('initMyProfile',user)
         if (user.settings.session?.project) {
             sessionApi.setLocalSessionProject(user.settings.session.project);
         }
