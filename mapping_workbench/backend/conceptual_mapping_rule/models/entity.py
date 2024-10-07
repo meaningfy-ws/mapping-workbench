@@ -21,7 +21,7 @@ from mapping_workbench.backend.ontology.models.term import TermValidityResponse
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResource, SPARQLTestState
 from mapping_workbench.backend.state_manager.models.state_object import ObjectState, StatefulObjectABC
 from mapping_workbench.backend.triple_map_fragment.models.entity import GenericTripleMapFragment, TripleMapFragmentState
-from mapping_workbench.backend.user.models.user import User, UserOut
+from mapping_workbench.backend.user.models.user import User, UserRef
 
 
 class ConceptualMappingRuleException(Exception):
@@ -52,7 +52,7 @@ class ConceptualMappingRuleComment(BaseModel):
 
 class ConceptualMappingRuleCommentOut(BaseModel):
     comment: str
-    created_by: Optional[UserOut]
+    created_by: Optional[UserRef]
 
 
 class ConceptualMappingRuleCommentIn(BaseModel):
