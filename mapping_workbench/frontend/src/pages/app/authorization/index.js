@@ -10,6 +10,9 @@ import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {CustomerListSearch} from 'src/sections/app/authorization/authorization-search';
 import {CustomerListTable} from 'src/sections/app/authorization/authorization-table';
+import {securityApi} from "../../../api/security";
+import {redirect} from "next/navigation";
+import {useRouter} from "next/router";
 
 const useCustomersSearch = (items) => {
     const [state, setState] = useState({
@@ -140,12 +143,12 @@ const useCustomersStore = () => {
         if (is_verified) {
             sectionApi.authorize([id])
                 .then(res =>
-                    setState(e => e.map(el => el._id === id ? {...el, is_verified, is_active:is_verified} : el)))
+                    setState(e => e.map(el => el._id === id ? {...el, is_verified, is_active: is_verified} : el)))
                 .catch(err => console.error(err))
         } else {
             sectionApi.unauthorize([id])
                 .then(res =>
-                    setState(e => e.map(el => el._id === id ? {...el, is_verified,is_active:is_verified} : el)))
+                    setState(e => e.map(el => el._id === id ? {...el, is_verified, is_active: is_verified} : el)))
                 .catch(err => console.error(err))
         }
     }
@@ -153,7 +156,7 @@ const useCustomersStore = () => {
     const handleCustomerTypeChange = (id, role) => {
         sectionApi.update_roles([id], [role])
             .then(res =>
-                setState(e => e.map(el => el._id === id ? {...el, roles:[role]} : el)))
+                setState(e => e.map(el => el._id === id ? {...el, roles: [role]} : el)))
             .catch(err => console.error(err))
     }
 
@@ -176,6 +179,13 @@ const useCustomersStore = () => {
 
 
 const Page = () => {
+    if (!securityApi.isUserAdmin()) {
+        const router = useRouter();
+        useEffect(async () => {
+            await router.replace('404');
+        }, []);
+        return;
+    }
     const customersStore = useCustomersStore();
     const customersSearch = useCustomersSearch(customersStore.state);
 

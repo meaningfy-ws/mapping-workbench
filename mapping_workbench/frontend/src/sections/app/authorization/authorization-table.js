@@ -15,7 +15,8 @@ import Typography from '@mui/material/Typography';
 import {Scrollbar} from 'src/components/scrollbar';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import TablePagination from "../../components/table-pagination";
-
+import {useAuth} from "../../../hooks/use-auth";
+import {securityApi} from "../../../api/security";
 
 
 export const CustomerListTable = (props) => {
@@ -35,6 +36,8 @@ export const CustomerListTable = (props) => {
         },
         roles
     } = props;
+
+    const auth = useAuth();
 
     const SorterHeader = (props) => {
         const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
@@ -71,7 +74,7 @@ export const CustomerListTable = (props) => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {items.map(customer => <TableRow key={customer._id}
+                            {items.map(user => <TableRow key={user._id}
                                                              hover>
                                 <TableCell>
                                     <Stack
@@ -81,21 +84,22 @@ export const CustomerListTable = (props) => {
                                     >
                                         <div>
                                             <Typography>
-                                                {customer.name}
+                                                {user.name}
                                             </Typography>
                                             <Typography
                                                 color="text.secondary"
                                                 variant="body2"
                                             >
-                                                {customer.email}
+                                                {user.email}
                                             </Typography>
                                         </div>
                                     </Stack>
                                 </TableCell>
                                 <TableCell padding="checkbox">
                                     <Checkbox
-                                        onChange={event => onAuthorizeChange(customer._id, event.target.checked)}
-                                        checked={!!customer.is_verified && !!customer.is_active}
+                                        onChange={event => onAuthorizeChange(user._id, event.target.checked)}
+                                        checked={!!user.is_verified && !!user.is_active}
+                                        disabled={securityApi.isAuthUser(auth.user, user._id)}
                                     />
                                 </TableCell>
                                 <TableCell align='right'>
@@ -104,11 +108,12 @@ export const CustomerListTable = (props) => {
                                         variant='standard'
                                         labelId="demo-select-small-label"
                                         id="demo-select-small"
-                                        value={customer.roles[0] ?? 'user'}
+                                        value={user.roles[0] ?? 'user'}
                                         label="Age"
                                         onChange={(e) => {
-                                            onTypeChange(customer._id, e.target.value)
+                                            onTypeChange(user._id, e.target.value)
                                         }}
+                                        disabled={securityApi.isAuthUser(auth.user, user._id)}
                                     >
                                         {roles.map((role) =>
                                             <MenuItem key={role}

@@ -116,7 +116,6 @@ export const AuthProvider = (props) => {
         const loadingToastId = toast.loading("Logging in...");
         try {
             const user = await authApi.signInWithSessionInit({username, password, remember_me});
-            console.log('user',user)
 
             dispatch({
                 type: ActionType.SIGN_IN,
