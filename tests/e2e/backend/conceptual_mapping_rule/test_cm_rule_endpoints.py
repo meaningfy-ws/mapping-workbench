@@ -441,7 +441,6 @@ async def test_assign_mapping_package_to_conceptual_mapping_route(
         conceptual_mapping_rule_test_client: TestClient,
 ):
     # Arrange
-    await dummy_project.save()
     dummy_conceptual_mapping_rule.project = Project.link_from_id(dummy_project.id)
     await dummy_conceptual_mapping_rule.save()
 
@@ -465,5 +464,4 @@ async def test_assign_mapping_package_to_conceptual_mapping_route(
     assert len(cm_out.refers_to_mapping_package_ids) > len(dummy_conceptual_mapping_rule.refers_to_mapping_package_ids)
     assert len(cm_out.refers_to_mapping_package_ids) == 1
 
-    await dummy_project.delete()
     await dummy_conceptual_mapping_rule.delete()
