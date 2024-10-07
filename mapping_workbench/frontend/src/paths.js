@@ -398,7 +398,12 @@ export const apiPaths = {
 
     users: {
         items: '/users',
-        item:  '/users/:id'
+        item: '/users/:id',
+        roles: '/users/roles/values',
+        authorize: '/users/authorize',
+        unauthorize: '/users/unauthorize',
+        update_roles: '/users/update_roles'
+
     },
 
     tasks: {

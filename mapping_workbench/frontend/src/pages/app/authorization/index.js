@@ -122,6 +122,7 @@ const useCustomersSearch = (items) => {
 
 const useCustomersStore = () => {
     const [state, setState] = useState([]);
+    const [roles, setRoles] = useState([])
 
     const handleCustomersGet = () => {
         sectionApi.getItems()
@@ -129,29 +130,47 @@ const useCustomersStore = () => {
             .catch(err => console.error(err))
     }
 
-    const handleCustomerVerificationChange = (id, is_verified) => {
-        const {name, email, is_superuser, is_active, password} = state.find(e => e._id === id)
-        sectionApi.updateItem({id, name, email, is_superuser, is_active, is_verified, password})
-            .then(res =>
-        setState(e => e.map(el => el._id === id ? {...el, is_verified} : el)))
+    const handleRolesGet = () => {
+        sectionApi.getRoles()
+            .then(res => setRoles(res))
+            .catch(err => console.error(err))
     }
 
-    const handleCustomerTypeChange = (id, is_superuser) => {
-        setState(e => e.map(el => el._id === id ? {...el, is_superuser} : el))
+    const handleCustomerAuthorizeChange = (id, is_verified) => {
+        if (is_verified) {
+            sectionApi.authorize([id])
+                .then(res =>
+                    setState(e => e.map(el => el._id === id ? {...el, is_verified} : el)))
+                .catch(err => console.error(err))
+        } else {
+            sectionApi.unauthorize([id])
+                .then(res =>
+                    setState(e => e.map(el => el._id === id ? {...el, is_verified} : el)))
+                .catch(err => console.error(err))
+        }
+    }
+
+    const handleCustomerTypeChange = (id, role) => {
+        sectionApi.update_roles([id], [role])
+            .then(res =>
+                setState(e => e.map(el => el._id === id ? {...el, roles:[role]} : el)))
+            .catch(err => console.error(err))
     }
 
     useEffect(
         () => {
             handleCustomersGet();
+            handleRolesGet()
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
         []
     );
 
     return {
-        handleCustomerVerificationChange,
+        handleCustomerAuthorizeChange,
         handleCustomerTypeChange,
         state,
+        roles
     };
 };
 
@@ -187,10 +206,11 @@ const Page = () => {
                         onRowsPerPageChange={customersSearch.handleRowsPerPageChange}
                         page={customersSearch.state.page}
                         rowsPerPage={customersSearch.state.rowsPerPage}
-                        onVerificationChange={customersStore.handleCustomerVerificationChange}
+                        onAuthorizeChange={customersStore.handleCustomerAuthorizeChange}
                         onTypeChange={customersStore.handleCustomerTypeChange}
                         sort={customersSearch.state.sort}
                         onSort={customersSearch.handleSort}
+                        roles={customersStore.roles}
                     />
                 </Card>
             </Stack>

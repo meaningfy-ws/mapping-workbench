@@ -17,7 +17,6 @@ import TableSorterHeader from "src/sections/components/table-sorter-header";
 import TablePagination from "../../components/table-pagination";
 
 
-const customerTypes = [{label: 'SuperUser', value: 'is_superuser'}, {label: 'User', value: 'user'}]
 
 export const CustomerListTable = (props) => {
     const {
@@ -30,10 +29,11 @@ export const CustomerListTable = (props) => {
         rowsPerPage = 0,
         sort,
         onSort,
-        onVerificationChange = () => {
+        onAuthorizeChange = () => {
         },
         onTypeChange = () => {
-        }
+        },
+        roles
     } = props;
 
     const SorterHeader = (props) => {
@@ -67,7 +67,7 @@ export const CustomerListTable = (props) => {
                                                   fieldName='email'/>
                                 </TableCell>
                                 <TableCell>Is_Authorized</TableCell>
-                                <TableCell align="right">Is_SuperUser</TableCell>
+                                <TableCell align="right">Type</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -94,35 +94,29 @@ export const CustomerListTable = (props) => {
                                 </TableCell>
                                 <TableCell padding="checkbox">
                                     <Checkbox
-                                        onChange={event => onVerificationChange(customer._id, event.target.checked)}
-                                        checked={!!customer.is_verified}
+                                        onChange={event => onAuthorizeChange(customer._id, event.target.checked)}
+                                        checked={!!customer.is_verified && !!customer.is_active}
                                     />
                                 </TableCell>
-                                <TableCell padding="checkbox">
-                                    <Checkbox
-                                        onChange={event => onTypeChange(customer._id, event.target.checked)}
-                                        checked={!!customer.is_superuser}
-                                    />
+                                <TableCell align='right'>
+                                    <Select
+                                        sx={{width: '100px'}}
+                                        variant='standard'
+                                        labelId="demo-select-small-label"
+                                        id="demo-select-small"
+                                        value={customer.roles[0] ?? 'user'}
+                                        label="Age"
+                                        onChange={(e) => {
+                                            onTypeChange(customer._id, e.target.value)
+                                        }}
+                                    >
+                                        {roles.map((role) =>
+                                            <MenuItem key={role}
+                                                      value={role}>
+                                                {role}
+                                            </MenuItem>)}
+                                    </Select>
                                 </TableCell>
-                                {/*<TableCell align='right'>*/}
-                                {/*    <Select*/}
-                                {/*        sx={{width: '100px'}}*/}
-                                {/*        variant='standard'*/}
-                                {/*        labelId="demo-select-small-label"*/}
-                                {/*        id="demo-select-small"*/}
-                                {/*        value={customer.type ?? 'user'}*/}
-                                {/*        label="Age"*/}
-                                {/*        onChange={(e) => {*/}
-                                {/*            onTypeChange(customer._id, e.target.value)*/}
-                                {/*        }}*/}
-                                {/*    >*/}
-                                {/*        {customerTypes.map(({value, label}) =>*/}
-                                {/*            <MenuItem key={label}*/}
-                                {/*                      value={value}>*/}
-                                {/*                {label}*/}
-                                {/*            </MenuItem>)}*/}
-                                {/*    </Select>*/}
-                                {/*</TableCell>*/}
                             </TableRow>)}
                         </TableBody>
                     </Table>
