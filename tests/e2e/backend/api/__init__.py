@@ -24,7 +24,8 @@ async def entity_crud_routes_tests(
         entity_retrieve_filters=None,
         entity_update_fields=None,
         route_prefixes=None,
-        is_form_request=False
+        is_form_request=False,
+        list_params=None
 ):
     if route_prefixes is None:
         route_prefixes = {
@@ -34,8 +35,15 @@ async def entity_crud_routes_tests(
             ApiActions.UPDATE: route_prefix,
             ApiActions.DELETE: route_prefix
         }
+    if list_params is None:
+        list_params = {}
+
     # LIST
-    response = client.get(api_endpoint(route_prefixes[ApiActions.LIST]), headers=req_headers)
+    response = client.get(
+        api_endpoint(route_prefixes[ApiActions.LIST]),
+        headers=req_headers,
+        params=list_params
+    )
     assert response.status_code == 200
     assert "items" in response.json()
 

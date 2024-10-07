@@ -7,7 +7,7 @@ from tests.e2e.backend.api import entity_crud_routes_tests
 
 
 @pytest.mark.asyncio
-async def test_ontology_namespace_crud_routes(req_headers, namespace_entity_data):
+async def test_ontology_namespace_crud_routes(req_headers, namespace_entity_data, dummy_project):
     await entity_crud_routes_tests(
         req_headers,
         f"{ROUTE_PREFIX}/namespaces",
@@ -17,7 +17,8 @@ async def test_ontology_namespace_crud_routes(req_headers, namespace_entity_data
             Namespace.prefix: "test-entity-prefix",
             Namespace.uri: "http://entity-uri.test/"
         },
-        entity_update_fields={Namespace.uri: "http://new-entity-uri.test/"}
+        entity_update_fields={Namespace.uri: "http://new-entity-uri.test/"},
+        list_params={"project": dummy_project.id}
     )
 
 
