@@ -11,8 +11,8 @@ import {Layout as AppLayout} from 'src/layouts/app';
 import {CustomerListSearch} from 'src/sections/app/authorization/authorization-search';
 import {CustomerListTable} from 'src/sections/app/authorization/authorization-table';
 import {securityApi} from "../../../api/security";
-import {redirect} from "next/navigation";
 import {useRouter} from "next/router";
+import {useAuth} from "../../../hooks/use-auth";
 
 const useCustomersSearch = (items) => {
     const [state, setState] = useState({
@@ -179,7 +179,8 @@ const useCustomersStore = () => {
 
 
 const Page = () => {
-    if (!securityApi.isUserAdmin()) {
+    const auth = useAuth();
+    if (!securityApi.isUserAdmin(auth?.user)) {
         const router = useRouter();
         useEffect(async () => {
             await router.replace('404');

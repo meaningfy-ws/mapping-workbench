@@ -3,12 +3,28 @@ class SecurityApi {
         return user?.roles?.includes(role);
     }
 
+    isUserSuper(user) {
+        return !!user?.is_superuser;
+    }
+
     isUserAdmin(user) {
-        return user?.is_superuser || this.hasUserRole(user, 'admin');
+        return this.isUserSuper(user) || this.hasUserRole(user, 'admin');
     }
 
     isAuthUser(user, id) {
         return user?.id === id;
+    }
+
+    isUserActive(user) {
+        return !!user?.is_active;
+    }
+
+    isUserVerified(user) {
+        return !!user?.is_verified;
+    }
+
+    isUserAuthorized(user) {
+        return this.isUserSuper(user) || (this.isUserActive(user) && this.isUserVerified(user));
     }
 }
 

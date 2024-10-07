@@ -1,4 +1,4 @@
-import {AxiosError, AxiosResponse, InternalAxiosRequestConfig} from "axios";
+import {AxiosError} from "axios";
 
 export class HTTPException extends AxiosError {
     constructor(error) {

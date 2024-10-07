@@ -78,6 +78,7 @@ def dummy_user() -> User:
     user = User(
         email="dummy_user@dummy.com",
         hashed_password="$argon2id$v=19$m=65536,t=3,p=4$p1v85raeqFSKiOqZlGjbXw$Mi92Dqq2ibfewVjx8bdBg9MgDqhIzt2EzXr5BlDMo5Y",
+        is_active=True,
         is_verified=True
     )
     return user

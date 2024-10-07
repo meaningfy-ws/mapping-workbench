@@ -4,6 +4,7 @@ import {STORAGE_KEY as ACCESS_TOKEN_STORAGE_KEY} from 'src/contexts/auth/jwt/aut
 import {sessionStorageTokenInterceptor} from './security';
 import {HTTPException} from "./exceptions";
 import {apiPaths, paths} from "../../paths";
+import {securityApi} from "../security";
 
 
 // const LOGIN_ENDPOINT = "/auth/jwt/login";
@@ -192,8 +193,13 @@ class AppApi {
         }
         return axios
             .post(this.url(LOGIN_ENDPOINT), data, config)
-            .then(function (response) {
-                return $this.authenticate(response.data);
+            .then(async function (response) {
+                $this.authenticate(response.data);
+                const user = await $this.get(apiPaths.session.user_check_verified)
+
+                if (!securityApi.isUserVerified(user)) {
+                    window.location.replace(paths.accountNotVerified);
+                }
             })
             .catch(function (error) {
                 console.log(error, "error");

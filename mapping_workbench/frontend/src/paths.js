@@ -232,6 +232,7 @@ export const paths = {
     },
     docs: 'https://material-kit-pro-react-docs.devias.io',
     notAuthorized: '/401',
+    accountNotVerified: '/auth/unverified',
     notFound: '/404',
     serverError: '/500',
     underConstruction: '/under-construction'
@@ -367,7 +368,8 @@ export const apiPaths = {
     session: {
         session_project: '/users/set_project_for_current_user_session',
         app_settings: '/users/set_app_settings_for_current_user',
-        me: '/users/me'
+        me: '/users/me',
+        user_check_verified: '/users/check/verified'
     },
 
     fields_registry: {

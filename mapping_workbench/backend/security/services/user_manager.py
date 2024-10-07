@@ -57,6 +57,7 @@ auth_backend = AuthenticationBackend(
 fastapi_users = FastAPIUsers[User, PydanticObjectId](get_user_manager, [auth_backend])
 
 current_active_user = fastapi_users.current_user(active=True, verified=True)
+current_user = fastapi_users.current_user(active=True)
 
 async def get_current_active_admin_user(
         user: User = Depends(current_active_user)
