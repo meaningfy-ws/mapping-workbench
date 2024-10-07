@@ -14,6 +14,12 @@ import TableSorterHeader from "../../../components/table-sorter-header";
 import Button from "@mui/material/Button";
 import {useState} from "react";
 import ConfirmDialog from "../../../../components/app/dialog/confirm-dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import Dialog from "@mui/material/Dialog";
+import {useDialog} from "../../../../hooks/use-dialog";
+import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
+import {codeStyle} from "../../../../utils/code-style";
 
 
 export const ListTableRow = (props) => {
@@ -23,77 +29,115 @@ export const ListTableRow = (props) => {
         onDelete
     } = props;
 
+    const xpathConditionDialog = useDialog()
+
     const [confirmOpen, setConfirmOpen] = useState(false);
 
+    const openXPathConditionDialog = () => {
+        xpathConditionDialog.handleOpen({})
+    }
+
     return (
-        <TableRow hover>
-            <TableCell
-                width="10%"
-            >
-                <Typography variant="subtitle3">
-                    {item.source_structural_element_sdk_element_id}
-                </Typography>
-            </TableCell>
-            <TableCell
-                sx={{
-                    wordBreak: "break-all"
-                }}
-            >
-                {item.source_structural_element_absolute_xpath}
-            </TableCell>
-            <TableCell/>
-            <TableCell>
-                {item.min_sdk_version}
-            </TableCell>
-            <TableCell>
-                {item.max_sdk_version}
-            </TableCell>
-            <TableCell>
-                {item.target_class_path}
-            </TableCell>
-            <TableCell>
-                {item.target_property_path}
-            </TableCell>
-            <TableCell align="right">
-                <Button
-                    id="edit_button"
-                    variant="text"
-                    size="small"
-                    color="primary"
-                    onClick={() => onEdit(item)}
+        <>
+            <TableRow hover>
+                <TableCell
+                    width="10%"
                 >
-                    Edit
-                </Button>
-                <Button
-                    id="delete_button"
-                    variant="text"
-                    size="small"
-                    color="error"
-                    onClick={() => setConfirmOpen(true)}
+                    <Typography variant="subtitle3">
+                        {item.source_structural_element_sdk_element_id}
+                    </Typography>
+                </TableCell>
+                <TableCell
                     sx={{
-                        whiteSpace: "nowrap"
+                        wordBreak: "break-all"
                     }}
                 >
-                    Delete
-                </Button>
-                <ConfirmDialog
-                    title="Delete It?"
-                    open={confirmOpen}
-                    setOpen={setConfirmOpen}
-                    onConfirm={() => onDelete(item)}
-                >
-                    Are you sure you want to delete it?
-                </ConfirmDialog>
-            </TableCell>
-        </TableRow>
+                    <SyntaxHighlighter
+                        language="xquery"
+                        wrapLines
+                        style={codeStyle}
+                        lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
+                        {item.source_structural_element_absolute_xpath}
+                    </SyntaxHighlighter>
+                </TableCell>
+                <TableCell>
+                    {item.xpath_condition &&
+                        <Button variant="text" type='link' onClick={openXPathConditionDialog}>XQuery</Button>}
+                </TableCell>
+                <TableCell>
+                    {item.min_sdk_version}
+                </TableCell>
+                <TableCell>
+                    {item.max_sdk_version}
+                </TableCell>
+                <TableCell>
+                    {item.target_class_path}
+                </TableCell>
+                <TableCell>
+                    {item.target_property_path}
+                </TableCell>
+                <TableCell align="right">
+                    <Button
+                        id="edit_button"
+                        variant="text"
+                        size="small"
+                        color="primary"
+                        onClick={() => onEdit(item)}
+                    >
+                        Edit
+                    </Button>
+                    <Button
+                        id="delete_button"
+                        variant="text"
+                        size="small"
+                        color="error"
+                        onClick={() => setConfirmOpen(true)}
+                        sx={{
+                            whiteSpace: "nowrap"
+                        }}
+                    >
+                        Delete
+                    </Button>
+                    <ConfirmDialog
+                        title="Delete It?"
+                        open={confirmOpen}
+                        setOpen={setConfirmOpen}
+                        onConfirm={() => onDelete(item)}
+                    >
+                        Are you sure you want to delete it?
+                    </ConfirmDialog>
+                </TableCell>
+            </TableRow>
+            <Dialog
+                open={xpathConditionDialog.open}
+                onClose={xpathConditionDialog.handleClose}
+                fullWidth
+                maxWidth='md'
+            >
+                <DialogTitle>
+                    XPath Condition
+                </DialogTitle>
+                <DialogContent>
+                    <SyntaxHighlighter
+                        language="xquery"
+                        wrapLines
+                        style={codeStyle}
+                        lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
+                        {item.xpath_condition}
+                    </SyntaxHighlighter>
+                </DialogContent>
+            </Dialog>
+        </>
     );
 }
 export const ListTable = (props) => {
     const {
         count = 0,
         items = [],
-        onPageChange = () => {},
-        onSort = () => {},
+        onPageChange = () => {
+        },
+        onSort = () => {
+        },
         sort,
         onRowsPerPageChange,
         page = 0,
@@ -108,10 +152,10 @@ export const ListTable = (props) => {
 
     const SorterHeader = (props) => {
         const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
-        return(
+        return (
             <TableSorterHeader sort={{direction, column: sort.column}}
-                           onSort={onSort}
-                           {...props}
+                               onSort={onSort}
+                               {...props}
             />
         )
     }

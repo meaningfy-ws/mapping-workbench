@@ -81,7 +81,6 @@ export const SideNavItem = (props) => {
                     id={['nav', ...title.toLowerCase().split(' ')].join('_')}
                     disabled={disabled}
                     onClick={handleToggle}
-                    someProp={'prop'}
                     sx={{
                         alignItems: 'center',
                         borderRadius: 1,

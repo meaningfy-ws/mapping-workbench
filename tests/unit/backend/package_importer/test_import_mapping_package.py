@@ -85,9 +85,9 @@ async def check_cleared_imported_data(project):
 async def test_import_eforms_mapping_package(dummy_project, dummy_structural_element):
     await dummy_structural_element.create()
 
-    eforms_package = await import_mapping_package_from_archive(
+    eforms_package = (await import_mapping_package_from_archive(
         read_archive(EFORMS_PACKAGE_PATH), dummy_project, PackageType.EFORMS
-    )
+    )).mapping_package
 
     await check_imported_data(dummy_project, eforms_package, 'package_eforms_16_v1.2')
 
@@ -106,9 +106,9 @@ async def test_import_eforms_mapping_package(dummy_project, dummy_structural_ele
 
 @pytest.mark.asyncio
 async def test_import_standard_mapping_package(dummy_project, dummy_structural_element):
-    standard_package = await import_mapping_package_from_archive(
+    standard_package = (await import_mapping_package_from_archive(
         read_archive(STANDARD_PACKAGE_PATH), dummy_project, PackageType.STANDARD
-    )
+    )).mapping_package
 
     await check_imported_data(dummy_project, standard_package, 'package_F03')
 

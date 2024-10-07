@@ -164,7 +164,7 @@ export const ListSearch = (props) => {
                     disableUnderline
                     fullWidth
                     inputProps={{ref: queryRef}}
-                    placeholder="Search by project title"
+                    placeholder="Search"
                     sx={{flexGrow: 1}}
                 />
             </Stack>

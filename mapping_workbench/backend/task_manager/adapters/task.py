@@ -9,6 +9,7 @@ from pebble import ProcessFuture
 from pydantic import BaseModel
 
 from mapping_workbench.backend.config import settings
+from mapping_workbench.backend.tasks.models.task_response import TaskResponse
 
 
 class TaskStatus(str, Enum):
@@ -30,6 +31,7 @@ class TaskResult:
     started_at: datetime = None
     finished_at: datetime = None
     exception_message: str = None
+    warnings: List[str] = []
     task_status: TaskStatus = TaskStatus.FINISHED
 
 
@@ -45,6 +47,7 @@ class TaskMetadata(BaseModel):
     started_at: datetime = None
     finished_at: datetime = None
     exception_message: str = None
+    warnings: List[str] = []
     created_by: Optional[str] = None
 
 
@@ -68,7 +71,10 @@ class TaskExecutor(Callable):
         task_result = TaskResult()
         task_result.started_at = datetime.now(tzlocal())
         try:
-            self.task_function(*args, **kwargs)
+            response = self.task_function(*args, **kwargs)
+            if isinstance(response, TaskResponse):
+                if hasattr(response.data, 'warnings'):
+                    task_result.warnings = response.data.warnings
             task_result.task_status = TaskStatus.FINISHED
         except Exception as e:
             task_result.exception_message = str(e)
@@ -200,6 +206,11 @@ class Task:
         :return: None
         """
         self.task_metadata.exception_message = exception_message
+
+    def update_warnings(self, warnings: List[str]):
+        """
+        """
+        self.task_metadata.warnings = warnings
 
     def get_task_status(self) -> TaskStatus:
         """

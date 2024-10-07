@@ -3,10 +3,8 @@ import {useCallback, useEffect, useState} from "react";
 import PropTypes from 'prop-types';
 import {useFormik} from 'formik';
 import * as Yup from 'yup';
-import CodeMirror from '@uiw/react-codemirror';
 import {turtle} from 'codemirror-lang-turtle';
 import {yaml} from '@codemirror/lang-yaml';
-import {githubDark, githubLight} from '@uiw/codemirror-themes-all';
 
 import {Box} from "@mui/system";
 import Card from '@mui/material/Card';
@@ -250,6 +248,7 @@ export const EditForm = (props) => {
                                     // theme={theme.palette.mode === 'dark' ? githubDark : githubLight}
                                     style={{resize: 'vertical', overflow: 'auto', height: 600}}
                                     value={formik.values.triple_map_content}
+                                    lang={formik.values.format}
                                     // extensions={[lng[formik.values.format].extension()]}
                                     onChange={(value) => formik.setFieldValue('triple_map_content', value)}
                                     // options={{

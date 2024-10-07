@@ -4,7 +4,8 @@ from typing import List, Any, Union
 from xml.etree import ElementTree
 
 from pydantic import validate_call
-from saxonche import PySaxonProcessor, PySaxonApiError, PyXPathProcessor, PyXdmNode, PyXdmValue, XdmNodeKind
+from saxonche import PySaxonProcessor, PySaxonApiError, PyXPathProcessor, PyXdmNode, PyXdmValue, XdmNodeKind, \
+    PyXQueryProcessor
 
 from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.package_validator.adapters.data_validator import TestDataValidator
@@ -15,7 +16,9 @@ class XPATHValidator(TestDataValidator):
     """
     """
 
-    xp: Any = None
+    xp: Any = None # saxon_processor
+    xpp: Any = None # xpath_processor
+    xqp: Any = None # xquery_processor
     namespaces: Any = None
     prefixes: Any = None
     DEFAULT_XML_NS_PREFIX: str = ''
@@ -25,10 +28,23 @@ class XPATHValidator(TestDataValidator):
         super().__init__(**data)
         self.namespaces = self.extract_namespaces(xml_content)
         self.prefixes = {v: k for k, v in self.namespaces.items()}
-        self.xp = self.init_xp_processor(xml_content)
+        self.xp = PySaxonProcessor(license=False)
+        self.init_xp_processors(xml_content)
 
     def validate(self, xpath_expression) -> List[XPathAssertionEntry]:
         return self.get_unique_xpaths(xpath_expression)
+
+    def check_xpath_condition(self, xquery_expression) -> bool:
+        if not xquery_expression:
+            return True
+
+        try:
+            self.xqp.set_query_content(xquery_expression)
+            result: PyXdmValue = self.xqp.run_query_to_value()
+            return str(result) == 'true'
+        except PySaxonApiError as e:
+            mwb_logger.log_all_error(str(e), str(e))
+            return False
 
     def get_ns_tag(self, node: PyXdmNode) -> Union[str, None]:
         if node is None or node.name is None:
@@ -78,19 +94,22 @@ class XPATHValidator(TestDataValidator):
             namespaces[ns] = url
         return namespaces
 
-    def init_xp_processor(self, xml_content: str) -> PyXPathProcessor:
-        proc = PySaxonProcessor(license=False)
-        xp = proc.new_xpath_processor()
-        for prefix, ns_uri in self.namespaces.items():
-            xp.declare_namespace(prefix, ns_uri)
-        document = proc.parse_xml(xml_text=xml_content)
-        xp.set_context(xdm_item=document)
+    def init_xp_processors(self, xml_content: str):
 
-        return xp
+        self.xpp: PyXPathProcessor = self.xp.new_xpath_processor()
+        self.xqp: PyXQueryProcessor = self.xp.new_xquery_processor()
+
+        for prefix, ns_uri in self.namespaces.items():
+            self.xpp.declare_namespace(prefix, ns_uri)
+            self.xqp.declare_namespace(prefix, ns_uri)
+
+        document = self.xp.parse_xml(xml_text=xml_content)
+        self.xpp.set_context(xdm_item=document)
+        self.xqp.set_context(xdm_item=document)
 
     def check_xpath_expression(self, xpath_expression: str) -> Union[PyXdmValue, None]:
         try:
-            return self.xp.evaluate(xpath_expression)
+            return self.xpp.evaluate(xpath_expression)
         except PySaxonApiError | Exception as e:
             mwb_logger.log_all_error(str(e), str(e))
             return None

@@ -20,6 +20,7 @@ def on_task_done_callback(future):
         task.update_task_status(task_result.task_status)
         task.update_started_at(task_result.started_at)
         task.update_finished_at(task_result.finished_at)
+        task.update_warnings(task_result.warnings)
         task.update_exception_message(task_result.exception_message)
     except CancelledError:
         task.update_task_status(TaskStatus.CANCELED)

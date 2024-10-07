@@ -5,6 +5,7 @@ from mapping_workbench.backend.conceptual_mapping_rule.models.entity import Conc
 from mapping_workbench.backend.conceptual_mapping_rule.services.data import get_conceptual_mapping_rule_by_key
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
 from mapping_workbench.backend.fields_registry.services.data import get_structural_element_by_unique_fields
+from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.package_importer.adapters.importer_abc import PackageImporterABC
 from mapping_workbench.backend.package_importer.models.imported_mapping_suite import ImportedMappingSuite
@@ -41,10 +42,10 @@ class StandardPackageImporter(PackageImporterABC):
         for mono_rule in mono_package.conceptual_rules:
             source_structural_element: StructuralElement = await get_structural_element_by_unique_fields(
                 sdk_element_id=mono_rule.field_name,
-                name=mono_rule.field_name,
                 bt_id=mono_rule.bt_id,
                 absolute_xpath=mono_rule.absolute_xpath,
-                project_id=self.project.id
+                project_id=self.project.id,
+                #name=mono_rule.field_name
             )
 
             if not source_structural_element:
@@ -79,6 +80,7 @@ class StandardPackageImporter(PackageImporterABC):
                 if self.package.id not in rule.refers_to_mapping_package_ids:
                     rule.refers_to_mapping_package_ids.append(self.package.id)
 
+            rule.xpath_condition = mono_rule.xpath_condition
             rule.target_class_path = mono_rule.class_path
             rule.target_property_path = mono_rule.property_path
             rule.sort_order = sort_order
