@@ -7,7 +7,7 @@ from mapping_workbench.backend.conceptual_mapping_rule.models.entity import Conc
     ConceptualMappingRuleCommentOut
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
 from mapping_workbench.backend.project.models.entity import Project
-from mapping_workbench.backend.user.models.user import UserOut
+from mapping_workbench.backend.user.models.user import UserRef
 
 cm_rule_repo = CMRuleBeanieRepository()
 
@@ -41,7 +41,7 @@ async def get_list_with_editorial_notes_out_from_cm_rule_by_project(
         editorial_notes_out.append(ConceptualMappingRuleCommentOut(
             comment=editorial_note.comment,
             # User that created it must always exist
-            created_by=UserOut(**(await editorial_note.created_by.fetch()).dict())
+            created_by=UserRef(**(await editorial_note.created_by.fetch()).dict())
         ))
 
     return editorial_notes_out
@@ -58,7 +58,7 @@ async def get_list_with_feedback_notes_out_from_cm_rule_by_project(
         feedback_notes_out.append(ConceptualMappingRuleCommentOut(
             comment=feedback_note.comment,
             # User that created it must always exist
-            created_by=UserOut(**(await feedback_note.created_by.fetch()).dict())
+            created_by=UserRef(**(await feedback_note.created_by.fetch()).dict())
         ))
 
     return feedback_notes_out
@@ -75,7 +75,7 @@ async def get_list_with_mapping_notes_out_from_cm_rule_by_project(
         mapping_notes_out.append(ConceptualMappingRuleCommentOut(
             comment=mapping_note.comment,
             # User that created it must always exist
-            created_by=UserOut(**(await mapping_note.created_by.fetch()).dict())
+            created_by=UserRef(**(await mapping_note.created_by.fetch()).dict())
         ))
 
     return mapping_notes_out

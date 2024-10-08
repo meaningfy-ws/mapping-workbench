@@ -4,13 +4,14 @@ import {STORAGE_KEY as ACCESS_TOKEN_STORAGE_KEY} from 'src/contexts/auth/jwt/aut
 import {sessionStorageTokenInterceptor} from './security';
 import {HTTPException} from "./exceptions";
 import {apiPaths, paths} from "../../paths";
+import {securityApi} from "../security";
+import {SESSION_PROJECT_KEY} from "../projects";
 
-
-// const LOGIN_ENDPOINT = "/auth/jwt/login";
 const LOGIN_ENDPOINT = "/auth/jwt/login";
 const LOGOUT_ENDPOINT = "/auth/jwt/logout";
 const REGISTER_ENDPOINT = "/auth/register";
 const VERIFY_TOKEN_ENDPOINT = "/auth/verify";
+const MISSING_PARAMETER = "/424"
 
 const METHOD = {
     GET: 'get',
@@ -50,6 +51,10 @@ class AppApi {
         return this.sessionStorage().removeItem(ACCESS_TOKEN_STORAGE_KEY);
     }
 
+    removeProject() {
+        return this.sessionStorage().removeItem(SESSION_PROJECT_KEY);
+    }
+
     addAuth(headers = null) {
         headers = headers || {};
         headers['Authorization'] = `Bearer ${this.getAccessToken()}`;
@@ -67,6 +72,10 @@ class AppApi {
             this.removeAccessToken();
             window.location.replace(LOGIN_ENDPOINT);
         }
+        if (error.response?.status === 424) {
+            this.removeProject()
+            window.location.replace(MISSING_PARAMETER)
+        }
     }
 
     getApiClient(config) {
@@ -79,10 +88,16 @@ class AppApi {
     }
 
     async me() {
-        return (await axios
-            .get(this.url(apiPaths.session.me), {
-                headers: this.addAuth()
-            })).data;
+        try {
+            const res = await axios
+                .get(this.url(apiPaths.session.me), {
+                    headers: this.addAuth()
+                });
+            return res?.data;
+        } catch (err) {
+            await this.signOut();
+            return null;
+        }
     }
 
 
@@ -192,8 +207,14 @@ class AppApi {
         }
         return axios
             .post(this.url(LOGIN_ENDPOINT), data, config)
-            .then(function (response) {
-                return $this.authenticate(response.data);
+            .then(async function (response) {
+                $this.authenticate(response.data);
+                const user = await $this.get(apiPaths.session.user_check_verified)
+
+                if (!securityApi.isUserVerified(user)) {
+                    await $this.signOut();
+                    window.location.replace(paths.accountNotVerified);
+                }
             })
             .catch(function (error) {
                 console.log(error, "error");

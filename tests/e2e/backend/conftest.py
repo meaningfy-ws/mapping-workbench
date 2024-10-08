@@ -35,6 +35,13 @@ def dummy_project() -> Project:
     return dummy_project_object()
 
 
+async def setup_db():
+    await dummy_project_object().create()
+
+
+asyncio.run(setup_db())
+
+
 @pytest.fixture
 def dummy_mapping_package(dummy_project) -> MappingPackage:
     return MappingPackage(
@@ -53,7 +60,6 @@ def dummy_test_data_suite(dummy_project) -> TestDataSuite:
         description="dummy_test_data_suite_description",
         project=dummy_project
     )
-
 
 
 @pytest.fixture
@@ -78,6 +84,7 @@ def dummy_user() -> User:
     user = User(
         email="dummy_user@dummy.com",
         hashed_password="$argon2id$v=19$m=65536,t=3,p=4$p1v85raeqFSKiOqZlGjbXw$Mi92Dqq2ibfewVjx8bdBg9MgDqhIzt2EzXr5BlDMo5Y",
+        is_active=True,
         is_verified=True
     )
     return user

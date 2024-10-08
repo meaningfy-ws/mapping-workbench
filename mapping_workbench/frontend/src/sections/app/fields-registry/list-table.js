@@ -26,6 +26,7 @@ import TablePagination from "src/sections/components/table-pagination";
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
+import {useHighlighterTheme} from "../../../hooks/use-highlighter-theme";
 
 
 export const ListTable = (props) => {
@@ -43,7 +44,7 @@ export const ListTable = (props) => {
         sectionApi
     } = props;
 
-
+    const syntaxHighlighterTheme = useHighlighterTheme()
     const [currentItem, setCurrentItem] = useState(null);
 
     const handleItemToggle = itemId =>
@@ -199,7 +200,8 @@ export const ListTable = (props) => {
                                                                         value={
                                                                             <SyntaxHighlighter
                                                                                 language="xquery"
-                                                                                wrapLines={true}
+                                                                                wrapLines
+                                                                                style={syntaxHighlighterTheme}
                                                                                 lineProps={{
                                                                                     style: {
                                                                                         wordBreak: 'break-all',
@@ -220,7 +222,8 @@ export const ListTable = (props) => {
                                                                         value={
                                                                             <SyntaxHighlighter
                                                                                 language="xquery"
-                                                                                wrapLines={true}
+                                                                                wrapLines
+                                                                                style={syntaxHighlighterTheme}
                                                                                 lineProps={{
                                                                                     style: {
                                                                                         wordBreak: 'break-all',

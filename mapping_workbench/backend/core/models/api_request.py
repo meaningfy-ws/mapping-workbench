@@ -8,6 +8,10 @@ class APIRequestWithId(BaseModel):
     id: PydanticObjectId
 
 
+class APIRequestWithIds(BaseModel):
+    ids: List[PydanticObjectId]
+
+
 class APIRequestForUpdateMany(BaseModel):
     for_query: Optional[Dict]
     set_values: Optional[Dict]

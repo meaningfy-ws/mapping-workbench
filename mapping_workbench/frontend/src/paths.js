@@ -225,10 +225,14 @@ export const paths = {
         },
         fluree_crypt: {
             index: '/app/fluree-crypt'
+        },
+        authorization: {
+            index: '/app/authorization'
         }
     },
     docs: 'https://material-kit-pro-react-docs.devias.io',
     notAuthorized: '/401',
+    accountNotVerified: '/auth/unverified',
     notFound: '/404',
     serverError: '/500',
     underConstruction: '/under-construction'
@@ -364,7 +368,8 @@ export const apiPaths = {
     session: {
         session_project: '/users/set_project_for_current_user_session',
         app_settings: '/users/set_app_settings_for_current_user',
-        me: '/users/me'
+        me: '/users/me',
+        user_check_verified: '/users/check/verified'
     },
 
     fields_registry: {
@@ -394,6 +399,16 @@ export const apiPaths = {
         item: (name, id) => `/ontology/ontology_files/${name}?project_id=${id}`,
         addFile: (id) => `/ontology/ontology_files?project_id=${id}`,
         deleteFile: (name, id) => `/ontology/ontology_files/${name}?project_id=${id}`
+    },
+
+    users: {
+        items: '/users',
+        item: '/users/:id',
+        roles: '/users/roles/values',
+        authorize: '/users/authorize',
+        unauthorize: '/users/unauthorize',
+        update_roles: '/users/update_roles'
+
     },
 
     tasks: {

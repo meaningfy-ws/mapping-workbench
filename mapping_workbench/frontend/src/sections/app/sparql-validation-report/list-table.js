@@ -2,11 +2,15 @@ import {useState} from "react";
 import PropTypes from 'prop-types';
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 
+import CheckIcon from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
+
 import {Box} from "@mui/system";
 import Table from '@mui/material/Table';
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Dialog from '@mui/material/Dialog';
+import Divider from "@mui/material/Divider";
 import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -17,18 +21,15 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 
 import {ResultChip} from "./utils";
-import {codeStyle} from "src/utils/code-style";
+import {useDialog} from "src/hooks/use-dialog";
 import {Scrollbar} from 'src/components/scrollbar';
+import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
-import CheckIcon from "@mui/icons-material/Check";
-import CloseIcon from "@mui/icons-material/Close";
-import {useDialog} from "../../../hooks/use-dialog";
-import Divider from "@mui/material/Divider";
-import Slack from "next-auth/providers/slack";
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", description: ""})
+    const syntaxHighlighterTheme = useHighlighterTheme()
 
     const {
         count = 0,
@@ -196,7 +197,7 @@ export const ListTable = (props) => {
                                             <SyntaxHighlighter
                                                 language="sparql"
                                                 wrapLines
-                                                style={codeStyle}
+                                                style={syntaxHighlighterTheme}
                                                 lineProps={{
                                                     style: {
                                                         overflowWrap: 'break-word',
@@ -273,13 +274,13 @@ export const ListTable = (props) => {
                 maxWidth='md'
             >
                 <DialogTitle>
-                    XPath Condition for "{xpathConditionDialog.data?.title}"
+                    {`XPath Condition for "${xpathConditionDialog.data?.title}"`}
                 </DialogTitle>
                 <DialogContent>
                     <SyntaxHighlighter
                         language="xquery"
                         wrapLines
-                        style={codeStyle}
+                        style={syntaxHighlighterTheme}
                         lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
                         {xpathConditionDialog.data?.xpath_condition?.xpath_condition}
                     </SyntaxHighlighter>
