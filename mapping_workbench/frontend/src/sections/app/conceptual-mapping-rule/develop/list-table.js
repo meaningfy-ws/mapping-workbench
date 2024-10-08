@@ -1,26 +1,25 @@
+import {useState} from "react";
+import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
+
 import PropTypes from 'prop-types';
 
 import Table from '@mui/material/Table';
+import Dialog from "@mui/material/Dialog";
+import Button from "@mui/material/Button";
+import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-
-import {Scrollbar} from 'src/components/scrollbar';
-import TablePagination from "../../../components/table-pagination";
-import {useGlobalState} from "../../../../hooks/use-global-state";
-import TableSorterHeader from "../../../components/table-sorter-header";
-import Button from "@mui/material/Button";
-import {useState} from "react";
-import ConfirmDialog from "../../../../components/app/dialog/confirm-dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
-import Dialog from "@mui/material/Dialog";
-import {useDialog} from "../../../../hooks/use-dialog";
-import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
-import {codeStyle} from "../../../../utils/code-style";
 
+import {useDialog} from "src/hooks/use-dialog";
+import {Scrollbar} from 'src/components/scrollbar';
+import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
+import ConfirmDialog from "src/components/app/dialog/confirm-dialog";
+import TablePagination from "src/sections/components/table-pagination";
+import TableSorterHeader from "src/sections/components/table-sorter-header";
 
 export const ListTableRow = (props) => {
     const {
@@ -30,6 +29,7 @@ export const ListTableRow = (props) => {
     } = props;
 
     const xpathConditionDialog = useDialog()
+    const syntaxHighlighterTheme = useHighlighterTheme()
 
     const [confirmOpen, setConfirmOpen] = useState(false);
 
@@ -55,14 +55,16 @@ export const ListTableRow = (props) => {
                     <SyntaxHighlighter
                         language="xquery"
                         wrapLines
-                        style={codeStyle}
+                        style={syntaxHighlighterTheme}
                         lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
                         {item.source_structural_element_absolute_xpath}
                     </SyntaxHighlighter>
                 </TableCell>
                 <TableCell>
                     {item.xpath_condition &&
-                        <Button variant="text" type='link' onClick={openXPathConditionDialog}>XQuery</Button>}
+                        <Button variant="text"
+                                type='link'
+                                onClick={openXPathConditionDialog}>XQuery</Button>}
                 </TableCell>
                 <TableCell>
                     {item.min_sdk_version}
@@ -121,7 +123,7 @@ export const ListTableRow = (props) => {
                     <SyntaxHighlighter
                         language="xquery"
                         wrapLines
-                        style={codeStyle}
+                        style={syntaxHighlighterTheme}
                         lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
                         {item.xpath_condition}
                     </SyntaxHighlighter>
@@ -146,9 +148,6 @@ export const ListTable = (props) => {
         onEdit,
         onDelete
     } = props;
-
-    const {timeSetting} = useGlobalState()
-
 
     const SorterHeader = (props) => {
         const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
