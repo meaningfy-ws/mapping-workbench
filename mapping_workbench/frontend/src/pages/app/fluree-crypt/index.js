@@ -18,7 +18,7 @@ import {useFormik} from "formik";
 import {FormTextField} from "../../../components/app/form/text-field";
 import * as Yup from "yup";
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
-import {TableLoadWrapper} from "../../../sections/app/shacl_validation_report/utils";
+import {TableLoadWrapper} from "../../../sections/app/shacl-validation-report/utils";
 import CardContent from "@mui/material/CardContent";
 import {generateKeyPair, getSinFromPublicKey, signQuery, signTransaction} from "@fluree/crypto-utils";
 

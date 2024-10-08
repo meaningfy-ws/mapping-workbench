@@ -325,6 +325,7 @@ const MappingPackageRowFragment = (props) => {
                                justifyContent='center'
                                alignItems='center'>
                             <Button type='link'
+                                    id='view_last_state_button'
                                     size="small"
                                     onClick={() => handleGoLastState(item_id)}>
                                 View Last State
