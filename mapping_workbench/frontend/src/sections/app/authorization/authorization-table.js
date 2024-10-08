@@ -99,7 +99,7 @@ export const CustomerListTable = (props) => {
                                     <Checkbox
                                         onChange={event => onAuthorizeChange(user._id, event.target.checked)}
                                         checked={securityApi.isUserAuthorized(user)}
-                                        disabled={securityApi.isAuthUser(auth.user, user._id)}
+                                        disabled={securityApi.isAuthUser(auth.user, user._id) || securityApi.isUserSuper(user)}
                                     />
                                 </TableCell>
                                 <TableCell align='right'>
@@ -113,7 +113,7 @@ export const CustomerListTable = (props) => {
                                         onChange={(e) => {
                                             onTypeChange(user._id, e.target.value)
                                         }}
-                                        disabled={securityApi.isAuthUser(auth.user, user._id)}
+                                        disabled={securityApi.isAuthUser(auth.user, user._id) || securityApi.isUserSuper(user)}
                                     >
                                         {roles.map((role) =>
                                             <MenuItem key={role}
