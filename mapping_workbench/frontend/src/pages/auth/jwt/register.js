@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { useFormik } from 'formik';
+import {useFormik} from 'formik';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -12,209 +12,212 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-import { RouterLink } from 'src/components/router-link';
-import { Seo } from 'src/components/seo';
-import { GuestGuard } from 'src/guards/guest-guard';
-import { IssuerGuard } from 'src/guards/issuer-guard';
-import { useAuth } from 'src/hooks/use-auth';
-import { useMounted } from 'src/hooks/use-mounted';
-import { usePageView } from 'src/hooks/use-page-view';
-import { useRouter } from 'src/hooks/use-router';
-import { useSearchParams } from 'src/hooks/use-search-params';
-import { Layout as AuthLayout } from 'src/layouts/auth/classic-layout';
-import { paths } from 'src/paths';
-import { AuthIssuer } from 'src/sections/auth/auth-issuer';
-import { Issuer } from 'src/utils/auth';
+import {RouterLink} from 'src/components/router-link';
+import {Seo} from 'src/components/seo';
+import {GuestGuard} from 'src/guards/guest-guard';
+import {IssuerGuard} from 'src/guards/issuer-guard';
+import {useAuth} from 'src/hooks/use-auth';
+import {useMounted} from 'src/hooks/use-mounted';
+import {usePageView} from 'src/hooks/use-page-view';
+import {useRouter} from 'src/hooks/use-router';
+import {useSearchParams} from 'src/hooks/use-search-params';
+import {Layout as AuthLayout} from 'src/layouts/auth/classic-layout';
+import {paths} from 'src/paths';
+import {AuthIssuer} from 'src/sections/auth/auth-issuer';
+import {Issuer} from 'src/utils/auth';
+import toast from "react-hot-toast";
 
 const initialValues = {
-  username: '',
-  name: '',
-  password: '',
-  policy: false,
-  submit: null
+    username: '',
+    name: '',
+    password: '',
+    policy: false,
+    submit: null
 };
 
 const validationSchema = Yup.object({
-  username: Yup
-    .string()
-    .email('Must be a valid email')
-    .max(255)
-    .required('Email is required'),
-  name: Yup
-    .string()
-    .max(255)
-    .required('Username is required'),
-  password: Yup
-    .string()
-    .min(7)
-    .max(255)
-    .required('Password is required'),
-  policy: Yup
-    .boolean()
-    .oneOf([true], 'This field must be checked')
+    username: Yup
+        .string()
+        .email('Must be a valid email')
+        .max(255)
+        .required('Email is required'),
+    name: Yup
+        .string()
+        .max(255)
+        .required('Username is required'),
+    password: Yup
+        .string()
+        .min(7)
+        .max(255)
+        .required('Password is required'),
+    policy: Yup
+        .boolean()
+        .oneOf([true], 'This field must be checked')
 });
 
 const Page = () => {
-  const isMounted = useMounted();
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const returnTo = searchParams.get('returnTo');
-  const { issuer, signUp } = useAuth();
-  const formik = useFormik({
-    initialValues,
-    validationSchema,
-    onSubmit: async (values, helpers) => {
-      try {
-        await signUp(values.username, values.name, values.password);
+    const isMounted = useMounted();
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const returnTo = searchParams.get('returnTo');
+    const {issuer, signUp} = useAuth();
+    const formik = useFormik({
+        initialValues,
+        validationSchema,
+        onSubmit: async (values, helpers) => {
+            try {
+                await signUp(values.username, values.name, values.password);
 
-        if (isMounted()) {
-          router.push(returnTo || paths.app.index);
+                toast.success('Your account is created and is being verified')
+
+                if (isMounted()) {
+                    router.push(returnTo || paths.app.index);
+                }
+            } catch (err) {
+                console.error(err);
+
+                if (isMounted()) {
+                    helpers.setStatus({success: false});
+                    helpers.setErrors({submit: err.message});
+                    helpers.setSubmitting(false);
+                }
+            }
         }
-      } catch (err) {
-        console.error(err);
+    });
 
-        if (isMounted()) {
-          helpers.setStatus({ success: false });
-          helpers.setErrors({ submit: err.message });
-          helpers.setSubmitting(false);
-        }
-      }
-    }
-  });
+    usePageView();
 
-  usePageView();
-
-  return (
-    <>
-      <Seo title="Register" />
-      <div>
-        <Card elevation={16}>
-          <CardHeader
-            subheader={(
-              <Typography
-                color="text.secondary"
-                variant="body2"
-              >
-                Already have an account?
-                &nbsp;
-                <Link
-                  component={RouterLink}
-                  href={paths.auth.jwt.login}
-                  underline="hover"
-                  variant="subtitle2"
-                >
-                  Log in
-                </Link>
-              </Typography>
-            )}
-            sx={{ pb: 0 }}
-            title="Register"
-          />
-          <CardContent>
-            <form
-              noValidate
-              onSubmit={formik.handleSubmit}
-            >
-              <Stack spacing={3}>
-                <TextField
-                  error={!!(formik.touched.name && formik.errors.name)}
-                  fullWidth
-                  helperText={formik.touched.name && formik.errors.name}
-                  label="Username"
-                  name="name"
-                  onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
-                  value={formik.values.name}
-                />
-                <TextField
-                  error={!!(formik.touched.username && formik.errors.username)}
-                  fullWidth
-                  helperText={formik.touched.username && formik.errors.username}
-                  label="Email"
-                  name="username"
-                  onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
-                  type="email"
-                  value={formik.values.username}
-                />
-                <TextField
-                  error={!!(formik.touched.password && formik.errors.password)}
-                  fullWidth
-                  helperText={formik.touched.password && formik.errors.password}
-                  label="Password"
-                  name="password"
-                  onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
-                  type="password"
-                  value={formik.values.password}
-                />
-              </Stack>
-              <Box
-                sx={{
-                  alignItems: 'center',
-                  display: 'flex',
-                  ml: -1,
-                  mt: 1
-                }}
-              >
-                <Checkbox
-                  checked={formik.values.policy}
-                  name="policy"
-                  onChange={formik.handleChange}
-                />
-                <Typography
-                  color="text.secondary"
-                  variant="body2"
-                >
-                  I have read the
-                  {' '}
-                  <Link
-                    component="a"
-                    href="#"
-                  >
-                    Terms and Conditions
-                  </Link>
-                </Typography>
-              </Box>
-              {!!(formik.touched.policy && formik.errors.policy) && (
-                <FormHelperText error>
-                  {formik.errors.policy}
-                </FormHelperText>
-              )}
-              {formik.errors.submit && (
-                <FormHelperText
-                  error
-                  sx={{ mt: 3 }}
-                >
-                  {formik.errors.submit}
-                </FormHelperText>
-              )}
-              <Button
-                disabled={formik.isSubmitting}
-                fullWidth
-                size="large"
-                sx={{ mt: 2 }}
-                type="submit"
-                variant="contained"
-              >
-                Register
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    </>
-  );
+    return (
+        <>
+            <Seo title="Register"/>
+            <div>
+                <Card elevation={16}>
+                    <CardHeader
+                        subheader={(
+                            <Typography
+                                color="text.secondary"
+                                variant="body2"
+                            >
+                                Already have an account?
+                                &nbsp;
+                                <Link
+                                    component={RouterLink}
+                                    href={paths.auth.jwt.login}
+                                    underline="hover"
+                                    variant="subtitle2"
+                                >
+                                    Log in
+                                </Link>
+                            </Typography>
+                        )}
+                        sx={{pb: 0}}
+                        title="Register"
+                    />
+                    <CardContent>
+                        <form
+                            noValidate
+                            onSubmit={formik.handleSubmit}
+                        >
+                            <Stack spacing={3}>
+                                <TextField
+                                    error={!!(formik.touched.name && formik.errors.name)}
+                                    fullWidth
+                                    helperText={formik.touched.name && formik.errors.name}
+                                    label="Username"
+                                    name="name"
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
+                                    value={formik.values.name}
+                                />
+                                <TextField
+                                    error={!!(formik.touched.username && formik.errors.username)}
+                                    fullWidth
+                                    helperText={formik.touched.username && formik.errors.username}
+                                    label="Email"
+                                    name="username"
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
+                                    type="email"
+                                    value={formik.values.username}
+                                />
+                                <TextField
+                                    error={!!(formik.touched.password && formik.errors.password)}
+                                    fullWidth
+                                    helperText={formik.touched.password && formik.errors.password}
+                                    label="Password"
+                                    name="password"
+                                    onBlur={formik.handleBlur}
+                                    onChange={formik.handleChange}
+                                    type="password"
+                                    value={formik.values.password}
+                                />
+                            </Stack>
+                            <Box
+                                sx={{
+                                    alignItems: 'center',
+                                    display: 'flex',
+                                    ml: -1,
+                                    mt: 1
+                                }}
+                            >
+                                <Checkbox
+                                    checked={formik.values.policy}
+                                    name="policy"
+                                    onChange={formik.handleChange}
+                                />
+                                <Typography
+                                    color="text.secondary"
+                                    variant="body2"
+                                >
+                                    I have read the
+                                    {' '}
+                                    <Link
+                                        component="a"
+                                        href="#"
+                                    >
+                                        Terms and Conditions
+                                    </Link>
+                                </Typography>
+                            </Box>
+                            {!!(formik.touched.policy && formik.errors.policy) && (
+                                <FormHelperText error>
+                                    {formik.errors.policy}
+                                </FormHelperText>
+                            )}
+                            {formik.errors.submit && (
+                                <FormHelperText
+                                    error
+                                    sx={{mt: 3}}
+                                >
+                                    {formik.errors.submit}
+                                </FormHelperText>
+                            )}
+                            <Button
+                                disabled={formik.isSubmitting}
+                                fullWidth
+                                size="large"
+                                sx={{mt: 2}}
+                                type="submit"
+                                variant="contained"
+                            >
+                                Register
+                            </Button>
+                        </form>
+                    </CardContent>
+                </Card>
+            </div>
+        </>
+    );
 };
 
 Page.getLayout = (page) => (
-  <IssuerGuard issuer={Issuer.JWT}>
-    <GuestGuard>
-      <AuthLayout>
-        {page}
-      </AuthLayout>
-    </GuestGuard>
-  </IssuerGuard>
+    <IssuerGuard issuer={Issuer.JWT}>
+        <GuestGuard>
+            <AuthLayout>
+                {page}
+            </AuthLayout>
+        </GuestGuard>
+    </IssuerGuard>
 );
 
 export default Page;
