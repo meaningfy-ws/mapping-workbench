@@ -7,8 +7,8 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
-import {codeStyle} from "src/utils/code-style";
 import {Scrollbar} from 'src/components/scrollbar';
+import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import TablePagination from 'src/sections/components/table-pagination';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 
@@ -25,6 +25,8 @@ export const ListTableFile = (props) => {
         onSort,
         sectionApi
     } = props;
+
+    const syntaxHighlighterTheme = useHighlighterTheme()
 
     const SorterHeader = (props) => <TableSorterHeader sort={sort}
                                                        onSort={onSort}
@@ -75,7 +77,7 @@ export const ListTableFile = (props) => {
                                         <SyntaxHighlighter
                                             language="turtle"
                                             wrapLines
-                                            style={codeStyle}
+                                            style={syntaxHighlighterTheme}
                                             lineProps={{style: {overflowWrap: 'break-word', whiteSpace: 'pre-wrap'}}}>
                                             {item.short_focus_node}
                                         </SyntaxHighlighter>
@@ -84,7 +86,7 @@ export const ListTableFile = (props) => {
                                         <SyntaxHighlighter
                                             language="turtle"
                                             wrapLines
-                                            style={codeStyle}
+                                            style={syntaxHighlighterTheme}
                                             lineProps={{style: {overflowWrap: 'break-word', whiteSpace: 'pre-wrap'}}}>
                                             {item.message}
                                         </SyntaxHighlighter>
@@ -93,7 +95,7 @@ export const ListTableFile = (props) => {
                                         <SyntaxHighlighter
                                             language="sparql"
                                             wrapLines
-                                            style={codeStyle}
+                                            style={syntaxHighlighterTheme}
                                             lineProps={{style: {overflowWrap: 'break-word', whiteSpace: 'pre-wrap'}}}>
                                             {item.short_result_path}
                                         </SyntaxHighlighter>
@@ -102,7 +104,7 @@ export const ListTableFile = (props) => {
                                         <SyntaxHighlighter
                                             language="turtle"
                                             wrapLines
-                                            style={codeStyle}
+                                            style={syntaxHighlighterTheme}
                                             lineProps={{style: {overflowWrap: 'break-word', whiteSpace: 'pre-wrap'}}}>
                                             {item.short_result_severity}
                                         </SyntaxHighlighter>
@@ -111,7 +113,7 @@ export const ListTableFile = (props) => {
                                         <SyntaxHighlighter
                                             language="turtle"
                                             wrapLines
-                                            style={codeStyle}
+                                            style={syntaxHighlighterTheme}
                                             lineProps={{style: {overflowWrap: 'break-word', whiteSpace: 'pre-wrap'}}}>
                                             {item.short_source_constraint_component}
                                         </SyntaxHighlighter>

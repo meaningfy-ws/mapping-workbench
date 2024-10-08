@@ -1,26 +1,27 @@
 import {useEffect, useState} from "react";
 
-import Stack from "@mui/material/Stack";
-import TextField from "@mui/material/TextField";
-import MenuItem from "@mui/material/MenuItem";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import Box from "@mui/system/Box";
 import Card from "@mui/material/Card";
-import CMQuery from "./cm-query";
-import {COMMENT_TYPE, conceptualMappingRulesApi} from "../../../api/conceptual-mapping-rules";
-import {PropertyListItem} from "../../../components/property-list-item";
-import {PropertyList} from "../../../components/property-list";
-import {fieldsRegistryApi} from "../../../api/fields-registry";
+import Stack from "@mui/material/Stack";
+import Dialog from "@mui/material/Dialog";
+import Button from "@mui/material/Button";
+import Divider from "@mui/material/Divider";
+import MenuItem from "@mui/material/MenuItem";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
-import Dialog from "@mui/material/Dialog";
-import {useDialog} from "../../../hooks/use-dialog";
+
+import CMQuery from "./cm-query";
 import CMNotes from "./cm-notes";
-import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
-import Divider from "@mui/material/Divider";
+import {useDialog} from "src/hooks/use-dialog";
+import {PropertyList} from "src/components/property-list";
+import {fieldsRegistryApi} from "src/api/fields-registry";
+import {PropertyListItem} from "src/components/property-list-item";
 import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
-import {codeStyle} from "../../../utils/code-style";
+import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
+import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
+import {COMMENT_TYPE, conceptualMappingRulesApi} from "src/api/conceptual-mapping-rules";
 
 const CMCard = (props) => {
     const {cm_rule, structural_element, cm_statuses, ...other} = props;
@@ -29,6 +30,9 @@ const CMCard = (props) => {
     const [status, setStatus] = useState(cm_rule.status)
     const [structuralElement, setStructuralElement] = useState(structural_element);
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const syntaxHighlighterTheme = useHighlighterTheme()
+
 
     useEffect(() => {
         if (!structuralElement && cm_rule.source_structural_element) {
@@ -153,7 +157,7 @@ const CMCard = (props) => {
                                 value={<SyntaxHighlighter
                                     language="xquery"
                                     wrapLines
-                                    style={codeStyle}
+                                    style={syntaxHighlighterTheme}
                                     lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
                                     {structuralElement?.absolute_xpath}
                                 </SyntaxHighlighter>}
@@ -167,7 +171,7 @@ const CMCard = (props) => {
                                 value={<SyntaxHighlighter
                                     language="xquery"
                                     wrapLines
-                                    style={codeStyle}
+                                    style={syntaxHighlighterTheme}
                                     lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
                                     {cm_rule.xpath_condition}
                                 </SyntaxHighlighter>}
