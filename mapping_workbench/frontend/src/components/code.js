@@ -1,11 +1,10 @@
 import PropTypes from 'prop-types';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-
-import { codeStyle } from 'src/utils/code-style';
+import {useHighlighterTheme} from "../hooks/use-highlighter-theme";
 
 export const Code = (props) => {
   const { children, className, inline, ...other } = props;
-
+  const syntaxHighlighterTheme = useHighlighterTheme()
   const language = /language-(\w+)/.exec(className || '');
 
   return !inline && language
@@ -13,7 +12,7 @@ export const Code = (props) => {
       <SyntaxHighlighter
         language={language[1]}
         PreTag="div"
-        style={codeStyle}
+        style={syntaxHighlighterTheme}
         {...other}>
         {String(children).replace(/\n$/, '')}
       </SyntaxHighlighter>
