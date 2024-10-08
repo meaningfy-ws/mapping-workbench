@@ -88,10 +88,16 @@ class AppApi {
     }
 
     async me() {
-        return (await axios
-            .get(this.url(apiPaths.session.me), {
-                headers: this.addAuth()
-            })).data;
+        try {
+            const res = await axios
+                .get(this.url(apiPaths.session.me), {
+                    headers: this.addAuth()
+                });
+            return res?.data;
+        } catch (err) {
+            await this.signOut();
+            return null;
+        }
     }
 
 
@@ -206,6 +212,7 @@ class AppApi {
                 const user = await $this.get(apiPaths.session.user_check_verified)
 
                 if (!securityApi.isUserVerified(user)) {
+                    await $this.signOut();
                     window.location.replace(paths.accountNotVerified);
                 }
             })

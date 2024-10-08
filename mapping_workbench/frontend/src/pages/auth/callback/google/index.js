@@ -8,8 +8,12 @@ const GoogleCallbackPage = () => {
     useEffect(() => {
         const authenticate = async () => {
             const res = await authApi.sendGoogleResponse(window.location.search);
-            appApi.authenticate(res);
-            await authApi.initMyProfile();
+            if (!res) {
+                await appApi.signOut();
+            } else {
+                appApi.authenticate(res);
+                await authApi.initMyProfile();
+            }
             window.location.replace(paths.app.index);
         };
 

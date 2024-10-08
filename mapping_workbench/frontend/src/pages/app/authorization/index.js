@@ -13,6 +13,7 @@ import {CustomerListTable} from 'src/sections/app/authorization/authorization-ta
 import {securityApi} from "../../../api/security";
 import {useRouter} from "next/router";
 import {useAuth} from "../../../hooks/use-auth";
+import {paths} from "../../../paths";
 
 const useCustomersSearch = (items) => {
     const [state, setState] = useState({
@@ -161,7 +162,7 @@ const useCustomersStore = () => {
     useEffect(
         () => {
             if (!securityApi.isUserAdmin(auth?.user)) {
-                router.replace('404');
+                router.replace(paths.notFound);
             }
             handleCustomersGet();
             handleRolesGet()
@@ -205,15 +206,15 @@ const Page = () => {
                         onSearchChange={customersSearch.handleSearchChange}
                     />
                     <CustomerListTable
-                        count={customersStore.state.length}
+                        count={customersStore.state?.length}
                         items={customersSearch.pagedItems}
                         onPageChange={customersSearch.handlePageChange}
                         onRowsPerPageChange={customersSearch.handleRowsPerPageChange}
-                        page={customersSearch.state.page}
-                        rowsPerPage={customersSearch.state.rowsPerPage}
+                        page={customersSearch.state?.page}
+                        rowsPerPage={customersSearch.state?.rowsPerPage}
                         onAuthorizeChange={customersStore.handleCustomerAuthorizeChange}
                         onTypeChange={customersStore.handleCustomerTypeChange}
-                        sort={customersSearch.state.sort}
+                        sort={customersSearch.state?.sort}
                         onSort={customersSearch.handleSort}
                         roles={customersStore.roles}
                     />
