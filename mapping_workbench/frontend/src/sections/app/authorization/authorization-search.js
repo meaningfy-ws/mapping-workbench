@@ -18,7 +18,6 @@ export const CustomerListSearch = (props) => {
   const [filters, setFilters] = useState({});
 
   const handleFiltersUpdate = useCallback(() => {
-    console.log(onSearchChange,filters)
     onSearchChange?.(filters.query);
   }, [filters, onSearchChange]);
 
