@@ -37,7 +37,6 @@ Then('I click on View Last State', () => {
     cy.get('#view_last_state_button').click()
 })
 
-
 Then('I receive Mapping Packages State', () => {
     cy.wait('@getState').its('response.statusCode').should('eq', 200)
 })
@@ -51,9 +50,7 @@ Then('I click on {string} Reports Tab', (tabName) => {
 
 })
 
-
 Then('I click on {string} Data', () => {
-    cy.wait(1000)
     cy.get('.MuiListItem-root > .MuiButtonBase-root').click()
 })
 
@@ -68,5 +65,3 @@ Then('I receive Mapping Packages Suite {string}', () => {
 Then('I receive Mapping Packages Test {string}', () => {
     cy.wait('@getTest').its('response.statusCode').should('eq', 200)
 })
-
-// http://localhost:8000/api/v1/package_validator/xpath/state/66f28d29f3e024ccf5d17ae5/suite/66f28d1700382c02672d2eb0
