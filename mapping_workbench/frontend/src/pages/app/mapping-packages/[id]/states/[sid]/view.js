@@ -177,6 +177,7 @@ const Page = () => {
                         {tabs.map((tab) => (
                             <Tab
                                 key={tab.value}
+                                id={tab.value + '_reports_tab'}
                                 label={tab.label}
                                 value={tab.value}
                                 disabled={!validationReportTree.test_data_suites?.length}
