@@ -13,9 +13,25 @@ Feature: Mapping Packages States
     Then I receive Mapping Packages State
 
   Scenario: Xpath Reports
-    Then I click on Xpath Reports Tab
-    Then I receive Mapping Packages State Xpath
-    Then I click on Xpath Data
-    Then I receive Mapping Packages State Xpath
-    Then I click on Xpath Data
-#    Then I receive Mapping Packages State Xpath
+    Then I click on "Xpath" Reports Tab
+    Then I receive Mapping Packages State "Xpath"
+    Then I click on "Xpath" Data
+    Then I receive Mapping Packages Suite "Xpath"
+    Then I click on "Xpath" Data
+    Then I receive Mapping Packages Test "Xpath"
+
+  Scenario: Sparql Reports
+    Then I click on "Sparql" Reports Tab
+    Then I receive Mapping Packages State "Sparql"
+    Then I click on "Sparql" Data
+    Then I receive Mapping Packages Suite "Sparql"
+    Then I click on "Sparql" Data
+    Then I receive Mapping Packages Test "Sparql"
+
+  Scenario: Shacl Reports
+    Then I click on "Shacl" Reports Tab
+    Then I receive Mapping Packages State "Shacl"
+    Then I click on "Shacl" Data
+    Then I receive Mapping Packages Suite "Shacl"
+    Then I click on "Shacl" Data
+    Then I receive Mapping Packages Test "Shacl"
