@@ -8,6 +8,7 @@ import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
 import { codeStyle } from 'src/utils/code-style';
+import {useHighlighterTheme} from "../../hooks/use-highlighter-theme";
 
 const samples = [
   {
@@ -26,7 +27,7 @@ const samples = [
 
 export const HomeCodeSamples = () => {
   const [lang, setLang] = useState(samples[0].lang);
-
+  const syntaxHighlighterTheme = useHighlighterTheme()
   const handleLangChange = useCallback((event, value) => {
     setLang(value);
   }, []);
@@ -141,7 +142,7 @@ export const HomeCodeSamples = () => {
       >
         <SyntaxHighlighter
           language={lang}
-          style={codeStyle}
+          style={syntaxHighlighterTheme}
         >
           {JSON.parse(code)}
         </SyntaxHighlighter>

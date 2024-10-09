@@ -18,13 +18,14 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContentText from "@mui/material/DialogContentText";
 
-import {codeStyle} from "src/utils/code-style";
 import {Scrollbar} from 'src/components/scrollbar';
+import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", text: ""})
+    const highLighterTheme = useHighlighterTheme()
 
     const {
         count = 0,
@@ -94,7 +95,7 @@ export const ListTable = (props) => {
                                             <SyntaxHighlighter
                                                 language="xquery"
                                                 wrapLines
-                                                style={codeStyle}
+                                                style={highLighterTheme}
                                                 lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
                                                 {item.sdk_element_xpath}
                                             </SyntaxHighlighter>
@@ -116,7 +117,7 @@ export const ListTable = (props) => {
                                                             <SyntaxHighlighter
                                                                 language="xquery"
                                                                 wrapLines
-                                                                style={codeStyle}
+                                                                style={highLighterTheme}
                                                                 lineProps={{
                                                                     style: {
                                                                         wordBreak: 'break-all',

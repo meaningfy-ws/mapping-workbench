@@ -45,10 +45,10 @@ class AuthApi {
 
     async initMyProfile() {
         const user = await this.me();
-        if (user.settings.session?.project) {
+        if (user?.settings?.session?.project) {
             sessionApi.setLocalSessionProject(user.settings.session.project);
         }
-        if (user.settings.app?.settings) {
+        if (user?.settings?.app?.settings) {
             sessionApi.setLocalAppSettings(user.settings.app.settings);
         } else if (sessionApi.getLocalAppSettings()) {
             await sessionApi.setAppSettings(JSON.parse(sessionApi.getLocalAppSettings()), !!user);
@@ -82,7 +82,8 @@ class AuthApi {
             const endpoint = paths.auth.google.callback + params_string;
             return await appApi.get(endpoint);
         } catch (err) {
-            window.location.replace("401");
+            await this.signOut();
+            //window.location.replace(paths.notAuthorized);
         }
     }
 }

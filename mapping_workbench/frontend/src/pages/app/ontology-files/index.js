@@ -4,33 +4,31 @@ import {turtle} from 'codemirror-lang-turtle';
 import {githubDark, githubLight} from '@uiw/codemirror-themes-all';
 
 import Upload01Icon from '@untitled-ui/icons-react/build/esm/Upload01';
-import Button from '@mui/material/Button';
-import Grid from '@mui/material/Unstable_Grid2';
+
+import {Box} from "@mui/system";
 import Stack from '@mui/material/Stack';
-import SvgIcon from '@mui/material/SvgIcon';
-import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 import Dialog from "@mui/material/Dialog";
+import SvgIcon from '@mui/material/SvgIcon';
+import {useTheme} from "@mui/material/styles";
+import Grid from '@mui/material/Unstable_Grid2';
+import Typography from '@mui/material/Typography';
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import {Seo} from 'src/components/seo';
-import {Layout as AppLayout} from 'src/layouts/app';
-import {ontologyFilesApi as sectionApi} from 'src/api/ontology-files';
-import {ontologyTermsApi} from "../../../api/ontology-terms";
+import {sessionApi} from "src/api/session";
 import {useDialog} from 'src/hooks/use-dialog';
 import {usePageView} from 'src/hooks/use-page-view';
-import {FileUploader} from 'src/sections/app/files-form//file-uploader';
-import {ItemSearch} from 'src/sections/app/files-form//item-search';
-import {ontologyFileResourcesApi as fileResourcesApi} from "src/api/ontology-files/file-resources";
+import {Layout as AppLayout} from 'src/layouts/app';
+import {ontologyTermsApi} from "src/api/ontology-terms";
 import {ItemList} from "src/sections/app/files-form/item-list";
-import {sessionApi} from "src/api/session";
-
-import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
-import CircularProgress from "@mui/material/CircularProgress";
-import {Box} from "@mui/system";
-import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
-import {xml} from "@codemirror/lang-xml";
-import {useTheme} from "@mui/material/styles";
+import {ItemSearch} from 'src/sections/app/files-form/item-search';
+import {ontologyFilesApi as sectionApi} from 'src/api/ontology-files';
+import {FileUploader} from 'src/sections/app/files-form//file-uploader';
+import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
+import {ontologyFileResourcesApi as fileResourcesApi} from "src/api/ontology-files/file-resources";
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({

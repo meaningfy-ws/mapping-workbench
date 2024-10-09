@@ -19,13 +19,13 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 
-import {codeStyle} from "src/utils/code-style";
 import {Scrollbar} from 'src/components/scrollbar';
 import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
+import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 
 export const ListTable = (props) => {
-
+    const highLighterTheme = useHighlighterTheme()
     const {
         count = 0,
         items = [],
@@ -125,7 +125,7 @@ export const ListTable = (props) => {
                                             <SyntaxHighlighter
                                                 language="xquery"
                                                 wrapLines
-                                                style={codeStyle}
+                                                style={highLighterTheme}
                                                 lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
                                                 {item.sdk_element_xpath}
                                             </SyntaxHighlighter>
@@ -148,7 +148,7 @@ export const ListTable = (props) => {
                                                                 <SyntaxHighlighter
                                                                     language="xquery"
                                                                     wrapLines
-                                                                    style={codeStyle}
+                                                                    style={highLighterTheme}
                                                                     lineProps={{
                                                                         style: {
                                                                             wordBreak: 'break-all',

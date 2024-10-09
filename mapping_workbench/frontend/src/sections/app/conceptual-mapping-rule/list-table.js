@@ -18,7 +18,6 @@ import SvgIcon from '@mui/material/SvgIcon';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableSortLabel from '@mui/material/TableSortLabel';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
@@ -61,6 +60,7 @@ import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import TablePagination from "../../components/table-pagination";
 import TableSorterHeader from "../../components/table-sorter-header";
 import {sessionApi} from "../../../api/session";
+import {useHighlighterTheme} from "../../../hooks/use-highlighter-theme";
 
 
 export const ListTableTripleMapFragment = (props) => {
@@ -69,7 +69,6 @@ export const ListTableTripleMapFragment = (props) => {
         isCurrent,
         isHovered
     } = props;
-
 
     const [tripleMapFragment, setTripleMapFragment] = useState({});
     const [projectTripleMapFragments, setProjectTripleMapFragments] = useState(initProjectTripleMapFragments || []);
@@ -631,6 +630,7 @@ const RuleComment = (props) => {
 
 export const ListTableRow = (props) => {
     const router = useRouter();
+    const syntaxHighlighterTheme = useHighlighterTheme()
 
     const {
         item,
@@ -859,6 +859,7 @@ export const ListTableRow = (props) => {
                                             <SyntaxHighlighter
                                                 language="xquery"
                                                 wrapLines
+                                                style={syntaxHighlighterTheme}
                                                 lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
                                                 {item.source_structural_element.absolute_xpath}
                                             </SyntaxHighlighter>
@@ -880,6 +881,7 @@ export const ListTableRow = (props) => {
                                             <SyntaxHighlighter
                                                 language="sparql"
                                                 wrapLines
+                                                style={syntaxHighlighterTheme}
                                                 lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
                                                 {item.target_class_path}
                                             </SyntaxHighlighter>
@@ -889,6 +891,7 @@ export const ListTableRow = (props) => {
                                             <SyntaxHighlighter
                                                 language="sparql"
                                                 wrapLines
+                                                style={syntaxHighlighterTheme}
                                                 lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
                                                 {item.target_property_path}
                                             </SyntaxHighlighter>
