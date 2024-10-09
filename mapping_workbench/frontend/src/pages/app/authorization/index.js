@@ -126,6 +126,9 @@ const useCustomersSearch = (items) => {
 const useCustomersStore = () => {
     const [state, setState] = useState([]);
     const [roles, setRoles] = useState([])
+    const auth = useAuth();
+    const router = useRouter();
+
 
     const handleCustomersGet = () => {
         sectionApi.getItems()
@@ -140,16 +143,11 @@ const useCustomersStore = () => {
     }
 
     const handleCustomerAuthorizeChange = (id, is_verified) => {
-        if (is_verified) {
-            sectionApi.authorize([id])
-                .then(res =>
-                    setState(e => e.map(el => el._id === id ? {...el, is_verified, is_active: is_verified} : el)))
-                .catch(err => console.error(err))
-        } else {
-            sectionApi.unauthorize([id])
-                .then(res =>
-                    setState(e => e.map(el => el._id === id ? {...el, is_verified, is_active: is_verified} : el)))
-                .catch(err => console.error(err))
+        try {
+            is_verified ? sectionApi.authorize([id]) : sectionApi.unauthorize([id])
+            setState(e => e.map(el => el._id === id ? {...el, is_verified, is_active: is_verified} : el))
+        } catch (err) {
+            console.error(err)
         }
     }
 
@@ -162,6 +160,9 @@ const useCustomersStore = () => {
 
     useEffect(
         () => {
+            if (!securityApi.isUserAdmin(auth?.user)) {
+                router.replace('404');
+            }
             handleCustomersGet();
             handleRolesGet()
         },
@@ -179,14 +180,7 @@ const useCustomersStore = () => {
 
 
 const Page = () => {
-    const auth = useAuth();
-    if (!securityApi.isUserAdmin(auth?.user)) {
-        const router = useRouter();
-        useEffect(async () => {
-            await router.replace('404');
-        }, []);
-        return;
-    }
+
     const customersStore = useCustomersStore();
     const customersSearch = useCustomersSearch(customersStore.state);
 
@@ -194,7 +188,7 @@ const Page = () => {
 
     return (
         <>
-            <Seo title="Dashboard: Customer List"/>
+            <Seo title="Authorization"/>
 
             <Stack spacing={4}>
                 <Stack
