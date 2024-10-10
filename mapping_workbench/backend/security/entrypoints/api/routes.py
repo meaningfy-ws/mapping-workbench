@@ -35,7 +35,7 @@ router.include_router(
                                    auth_backend,
                                    settings.JWT_SECRET,
                                    associate_by_email=True,
-                                   is_verified_by_default=True,
+                                   is_verified_by_default=False,
 
                                    # Redirect url to user according to the OAuth2.0 protocol flow
                                    # see: https://datatracker.ietf.org/doc/html/rfc6749#section-1.2

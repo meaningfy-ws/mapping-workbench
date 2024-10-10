@@ -189,6 +189,18 @@ class AppApi {
         return {accessToken};
     }
 
+    async authWithCheckUserIsVerified(data){
+        this.authenticate(data);
+        const user = await this.get(apiPaths.session.user_check_verified)
+
+        if (!securityApi.isUserVerified(user)) {
+            await this.signOut();
+            window.location.replace(paths.accountNotVerified);
+            return false;
+        }
+        return true;
+    }
+
     async signIn(request) {
         const {username, password, remember_me} = request;
 
@@ -208,13 +220,7 @@ class AppApi {
         return axios
             .post(this.url(LOGIN_ENDPOINT), data, config)
             .then(async function (response) {
-                $this.authenticate(response.data);
-                const user = await $this.get(apiPaths.session.user_check_verified)
-
-                if (!securityApi.isUserVerified(user)) {
-                    await $this.signOut();
-                    window.location.replace(paths.accountNotVerified);
-                }
+                return await $this.authWithCheckUserIsVerified(response.data);
             })
             .catch(function (error) {
                 console.log(error, "error");
