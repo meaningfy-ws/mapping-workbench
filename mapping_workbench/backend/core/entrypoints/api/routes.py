@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
+from mapping_workbench.backend.core.models.api_response import AppSettingsResponse
 
-from mapping_workbench.backend.core.models.app import AppSettingsResponse
 from mapping_workbench.backend.core.services.app import get_current_app_version
 
 router = APIRouter()
