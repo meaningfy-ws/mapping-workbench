@@ -68,7 +68,7 @@ const Page = () => {
             try {
                 await signUp(values.username, values.name, values.password);
 
-                toast.success('Your account is created and is being verified')
+                toast.success('Your account has been created and is being verified.')
 
                 if (isMounted()) {
                     router.push(returnTo || paths.app.index);
