@@ -209,7 +209,7 @@ class AppApi {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         }
-        let $this = this;
+
         let data = {
             "username": username,
             "password": password
@@ -217,15 +217,14 @@ class AppApi {
         if (remember_me) {
             data['remember_me'] = true
         }
-        return axios
-            .post(this.url(LOGIN_ENDPOINT), data, config)
-            .then(async function (response) {
-                return await $this.authWithCheckUserIsVerified(response.data);
-            })
-            .catch(function (error) {
-                console.log(error, "error");
-                throw new HTTPException(error)
-            });
+
+        try {
+            const response = await axios.post(this.url(LOGIN_ENDPOINT), data, config);
+            return await this.authWithCheckUserIsVerified(response.data)
+        } catch (err) {
+            console.log(err, "error");
+            throw new HTTPException(err)
+        }
     }
 
     async signUp(request) {
@@ -251,15 +250,14 @@ class AppApi {
             headers: this.addAuth()
         }
 
-        let $this = this;
-        return axios
-            .post(this.url(LOGOUT_ENDPOINT), null, config)
-            .then(function (response) {
-                $this.removeAccessToken();
-            })
-            .catch(function (error) {
-                console.log(error, "error");
-            });
+        try {
+            await axios.post(this.url(LOGOUT_ENDPOINT), null, config);
+            this.removeAccessToken();
+            return true;
+        } catch (err) {
+            console.log(err, "error");
+            throw new HTTPException(err)
+        }
     }
 
     async listItems() {
