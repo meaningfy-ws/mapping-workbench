@@ -21,7 +21,7 @@ from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuit
 from mapping_workbench.backend.triple_map_fragment.models.entity import SpecificTripleMapFragment, \
     GenericTripleMapFragment
 from mapping_workbench.backend.triple_map_registry.models.entity import TripleMapRegistry
-from mapping_workbench.backend.user.models.user import User
+from mapping_workbench.backend.user.models.user import User, Role
 from mapping_workbench.backend.xsd_schema.models.xsd_file_resource import XSDFileResource
 
 
@@ -30,13 +30,13 @@ async def init_admin_user() -> None:
         email=settings.DATABASE_ADMIN_NAME,
         hashed_password=settings.DATABASE_ADMIN_HASHED_PASSWORD,
         name="admin",
+        is_active=True,
         is_superuser=True,
-        is_verified=True
+        is_verified=True,
+        roles=[Role.ADMIN]
     )
 
-    if await User.find_one(
-            User.email == admin_user.email
-    ).count() == 0:
+    if await User.find_one(User.email == admin_user.email).count() == 0:
         await admin_user.create()
     return
 
