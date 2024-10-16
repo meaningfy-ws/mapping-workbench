@@ -2,11 +2,11 @@ import pytest
 from beanie import PydanticObjectId
 from pydantic import ValidationError
 
-from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement, StructuralElementIn
+from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement, BaseStructuralElementIn
 
 
 def test_structural_element_general_in(dummy_project_link):
-    dummy_structural_element_in = StructuralElementIn(
+    dummy_structural_element_in = BaseStructuralElementIn(
         id=str(PydanticObjectId()),
         label="Dummy ST In",
         absolute_xpath="/*/dummy/absolute/xpath",
@@ -23,9 +23,9 @@ def test_structural_element_general_in(dummy_project_link):
 
 def test_structural_element_general_in_mandatory_fields(dummy_project_link):
     with pytest.raises(ValidationError):
-        StructuralElementIn()
+        BaseStructuralElementIn()
 
-    StructuralElementIn(
+    BaseStructuralElementIn(
         id=str(PydanticObjectId()),
         label="Dummy ST In",
         absolute_xpath="/*/dummy/absolute/xpath",
