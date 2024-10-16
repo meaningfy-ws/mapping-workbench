@@ -23,10 +23,12 @@ class StructuralElementIn(BaseProjectResourceEntityInSchema):
     """
         General input model for Structural Element
     """
-    sdk_element_id: str
-    absolute_xpath: str
+    sdk_element_id: Optional[str] = None
+    absolute_xpath: Optional[str] = None
     relative_xpath: Optional[str] = None
     parent_node_id: Optional[str] = None
+    name: Optional[str] = None
+    bt_id: Optional[str] = None
 
 
 class StructuralElementOut(BaseProjectResourceEntityOutSchema):
