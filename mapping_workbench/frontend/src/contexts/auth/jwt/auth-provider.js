@@ -112,17 +112,17 @@ export const AuthProvider = (props) => {
         []);
 
     const signIn = async (username, password, remember_me) => {
-        console.log('signin')
         const loadingToastId = toast.loading("Logging in...");
         try {
             const user = await authApi.signInWithSessionInit({username, password, remember_me});
-
-            dispatch({
-                type: ActionType.SIGN_IN,
-                payload: {
-                    user
-                }
-            });
+            if (user !== null) {
+                dispatch({
+                    type: ActionType.SIGN_IN,
+                    payload: {
+                        user
+                    }
+                });
+            }
         } catch (e) {
             toast.error(e.message)
             throw new HTTPException(e)

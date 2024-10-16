@@ -11,7 +11,7 @@ class FieldsOverview  extends SectionApi {
     }
 
     get SECTION_LIST_ACTIONS() {
-        return [ACTION.VIEW, ACTION.DELETE];
+        return [ACTION.VIEW, ACTION.EDIT, ACTION.DELETE];
     }
 
     constructor() {
@@ -28,13 +28,8 @@ class FieldsOverview  extends SectionApi {
         }
     }
 
-    async getStructuralElementsForSelector(request = {}) {
-        request.page = 0;
-        request.rowsPerPage = -1;
-        let structuralElementsStore = await this.getItems(request, 'elements');
-        return structuralElementsStore.items.map(
-            structuralElement => ({id: structuralElement._id, sdk_element_id: structuralElement.sdk_element_id})
-        ).sort((a, b) => a.sdk_element_id.localeCompare(b.sdk_element_id));
+    async createItem(request) {
+        return await super.createItem(request, "create");
     }
 }
 

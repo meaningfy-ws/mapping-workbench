@@ -164,6 +164,8 @@ export const ListTable = (props) => {
                                                 <ListItemActions
                                                     itemctx={new ForListItemAction(item_id, sectionApi)}
                                                     pathnames={{
+                                                        delete_after_path: () => paths.app.fields_and_nodes.overview.elements,
+                                                        edit: () => paths.app.fields_and_nodes.overview.elements.edit(item_id),
                                                         view: () => paths.app.fields_and_nodes.overview.elements.view(item_id)
                                                     }}
                                                 />

@@ -7,7 +7,7 @@ from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.api_response import APIListPaginatedResponse
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
-    BaseProjectResourceEntityOutSchema
+    BaseProjectResourceEntityOutSchema, BaseProjectResourceEntityInSchema
 from mapping_workbench.backend.state_manager.models.state_object import StatefulObjectABC, ObjectState
 
 
@@ -17,6 +17,18 @@ class StructuralElementLabelOut(BaseModel):
     """
     id: str = Field(..., alias='_id')
     sdk_element_id: str
+
+
+class StructuralElementIn(BaseProjectResourceEntityInSchema):
+    """
+        General input model for Structural Element
+    """
+    sdk_element_id: Optional[str] = None
+    absolute_xpath: Optional[str] = None
+    relative_xpath: Optional[str] = None
+    parent_node_id: Optional[str] = None
+    name: Optional[str] = None
+    bt_id: Optional[str] = None
 
 
 class StructuralElementOut(BaseProjectResourceEntityOutSchema):
@@ -139,7 +151,7 @@ class APIListStructuralElementsVersionedViewPaginatedResponse(APIListPaginatedRe
     items: List[StructuralElementsVersionedView]
 
 
-class StructuralElementIn(BaseModel):
+class BaseStructuralElementIn(BaseModel):
     """
         General input model for Structural Element
     """

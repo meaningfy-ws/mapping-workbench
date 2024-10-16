@@ -2,14 +2,19 @@ from typing import List
 
 from beanie import PydanticObjectId
 from beanie.odm.operators.update.general import Set
+from pymongo.errors import DuplicateKeyError
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
-from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
-from mapping_workbench.backend.core.services.request import api_entity_is_found, prepare_search_param, pagination_params
+from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException, DuplicateKeyException
+from mapping_workbench.backend.core.services.request import api_entity_is_found, prepare_search_param, \
+    pagination_params, request_create_data, request_update_data
+from mapping_workbench.backend.fields_registry.models.eforms_fields_structure import generate_eforms_node_hash_id
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement, \
-    StructuralElementsVersionedView, StructuralElementOut, StructuralElementLabelOut, StructuralElementIn
+    StructuralElementsVersionedView, StructuralElementOut, StructuralElementLabelOut, BaseStructuralElementIn, \
+    StructuralElementIn
 from mapping_workbench.backend.project.models.entity import Project
+from mapping_workbench.backend.user.models.user import User
 
 
 async def list_structural_elements(filters: dict = None, page: int = None, limit: int = None) -> \
@@ -112,8 +117,42 @@ async def get_structural_element_label_list(project_id: PydanticObjectId) -> Lis
     ).to_list()
 
 
-async def insert_structural_element(structural_element_in: StructuralElementIn, project_id: PydanticObjectId) -> None:
+async def insert_structural_element(structural_element_in: BaseStructuralElementIn,
+                                    project_id: PydanticObjectId) -> None:
     structural_element_in_json = structural_element_in.model_dump()
     structural_element = StructuralElement.model_validate(structural_element_in_json)
     structural_element.project = Project.link_from_id(project_id)
     await structural_element.save()
+
+
+async def create_structural_element(
+        data: StructuralElementIn,
+        user: User
+) -> StructuralElementOut:
+    element: StructuralElement = \
+        StructuralElement(
+            **request_create_data(data, user=user)
+        )
+    element.id = generate_eforms_node_hash_id(
+        id=element.sdk_element_id,
+        parent_id=element.parent_node_id,
+        xpath_absolute=element.absolute_xpath,
+        xpath_relative=element.relative_xpath,
+        repeatable=element.repeatable,
+        project_id=data.project.to_ref().id
+    )
+    try:
+        await element.create()
+    except DuplicateKeyError as e:
+        raise DuplicateKeyException(e)
+    return StructuralElementOut(**element.model_dump())
+
+
+async def update_structural_element(
+        element: StructuralElement,
+        data: StructuralElementIn,
+        user: User
+) -> StructuralElementOut:
+    return StructuralElementOut(**(
+        await element.set(request_update_data(data, user=user))
+    ).model_dump())
