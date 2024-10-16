@@ -8,13 +8,14 @@ from mapping_workbench.backend.core.models.api_response import APIEmptyContentWi
     APIEmptyContentWithStrIdResponse
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement, \
     APIListStructuralElementsPaginatedResponse, APIListStructuralElementsVersionedViewPaginatedResponse, \
-    StructuralElementsVersionedView, StructuralElementLabelOut, StructuralElementIn
+    StructuralElementsVersionedView, StructuralElementLabelOut, BaseStructuralElementIn, StructuralElementOut, \
+    StructuralElementIn
 from mapping_workbench.backend.fields_registry.services import tasks
 from mapping_workbench.backend.fields_registry.services.api import list_structural_elements_versioned_view, \
     get_structural_elements_versioned_view, \
     delete_structural_elements_versioned_view, get_structural_elements_versioned_view_by_version, \
     list_structural_elements, get_structural_element, delete_structural_element, get_project_structural_elements, \
-    get_structural_element_label_list, insert_structural_element
+    get_structural_element_label_list, insert_structural_element, create_structural_element, update_structural_element
 from mapping_workbench.backend.fields_registry.services.data import tree_of_structural_elements
 from mapping_workbench.backend.fields_registry.services.generate_conceptual_mapping_rules import \
     generate_conceptual_mapping_rules
@@ -73,6 +74,34 @@ async def route_list_structural_elements(
 )
 async def route_get_structural_element(structural_element: StructuralElement = Depends(get_structural_element)):
     return structural_element
+
+
+@router.post(
+    "/elements/create",
+    description=f"Create element",
+    name=f"elements:create_element",
+    response_model=StructuralElementOut,
+    status_code=status.HTTP_201_CREATED
+)
+async def route_create_structural_element(
+        data: StructuralElementIn,
+        user: User = Depends(current_active_user)
+):
+    return await create_structural_element(data, user=user)
+
+
+@router.patch(
+    "/elements/{structural_element_id}",
+    description=f"Update element",
+    name=f"elements:update_element",
+    response_model=StructuralElementOut
+)
+async def route_update_structural_element(
+        data: StructuralElementIn,
+        element: StructuralElement = Depends(get_structural_element),
+        user: User = Depends(current_active_user)
+):
+    return await update_structural_element(element, data, user=user)
 
 
 @router.delete(
@@ -226,7 +255,7 @@ async def route_get_structural_elements_label(
     tags=[TAG],
     status_code=status.HTTP_201_CREATED
 )
-async def route_post_structural_element(project_id: PydanticObjectId, structural_element_in: StructuralElementIn):
+async def route_post_structural_element(project_id: PydanticObjectId, structural_element_in: BaseStructuralElementIn):
     try:
         return await insert_structural_element(structural_element_in=structural_element_in, project_id=project_id)
     except (Exception,) as expected_exception:

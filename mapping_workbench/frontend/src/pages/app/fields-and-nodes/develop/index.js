@@ -134,7 +134,6 @@ const Page = () => {
                     toastError(err, toastId)
                     helpers.setStatus({success: false});
                 })
-
                 .finally(() => helpers.setSubmitting(false))
         }
     });
