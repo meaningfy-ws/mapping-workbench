@@ -4,9 +4,12 @@ import subprocess
 def get_current_app_tag():
     try:
         # Get the tag of the current commit (if any)
-        current_tag = subprocess.check_output(["git", "describe", "--exact-match", "--tags"]).strip().decode('utf-8')
+        current_tag = subprocess.check_output(
+            ["git", "describe", "--exact-match", "--tags"],
+            stderr=subprocess.DEVNULL
+        ).strip().decode('utf-8')
         return current_tag
-    except subprocess.CalledProcessError as e:
+    except subprocess.CalledProcessError:
         return None
 
 
@@ -34,4 +37,4 @@ def get_current_app_version():
 
 
 if __name__ == "__main__":
-    print(get_current_app_version())
+    print(get_current_app_tag() or "")
