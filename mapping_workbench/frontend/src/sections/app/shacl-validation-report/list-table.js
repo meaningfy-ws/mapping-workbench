@@ -20,6 +20,7 @@ import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
+import {TableFilterHeader} from "../../../layouts/app/table-filter-header/table-filter-header";
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", text: ""})
@@ -34,9 +35,13 @@ export const ListTable = (props) => {
         rowsPerPage = 0,
         sort,
         onSort,
+        filters,
+        onFilter,
         sectionApi,
         handleSelectFile
     } = props;
+
+    console.log(filters)
 
     const handleOpenDetails = ({title, notices}) => {
         const description = notices.map((notice, i) =>
@@ -98,17 +103,24 @@ export const ListTable = (props) => {
                         <TableHead>
                             <TableRow>
                                 <TableCell>
-                                    <SorterHeader fieldName="shacl_suite"
-                                                  title="Test Suite"/>
+                                    <TableFilterHeader sort={sort}
+                                                       onSort={onSort}
+                                                       onFilter={onFilter}
+                                                       filters={filters}
+                                                       fieldName="shacl_suite"
+                                                       title="Test Suite"/>
                                 </TableCell>
                                 <TableCell width="25%">
                                     <SorterHeader fieldName="conforms"
                                                   title="Conforms"/>
                                 </TableCell>
-
                                 <TableCell>
-                                    <SorterHeader fieldName="short_result_path"
-                                                  title="Result Path"/>
+                                    <TableFilterHeader sort={sort}
+                                                       onSort={onSort}
+                                                       onFilter={onFilter}
+                                                       filters={filters}
+                                                       fieldName="short_result_path"
+                                                       title="Result Path"/>
                                 </TableCell>
                                 <TableCell align="center">
                                     <SorterHeader fieldName="infoCount"

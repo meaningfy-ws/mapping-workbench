@@ -23,6 +23,7 @@ import {Scrollbar} from 'src/components/scrollbar';
 import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
+import {TableFilterHeader} from "../../../layouts/app/table-filter-header/table-filter-header";
 
 export const ListTable = (props) => {
     const highLighterTheme = useHighlighterTheme()
@@ -36,7 +37,9 @@ export const ListTable = (props) => {
         sectionApi,
         handleSelectFile,
         onSort,
-        sort
+        sort,
+        onFilter,
+        filters
     } = props;
 
     const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", description: ""})
@@ -90,12 +93,20 @@ export const ListTable = (props) => {
                         <TableHead>
                             <TableRow>
                                 <TableCell width="25%">
-                                    <SorterHeader fieldName="sdk_element_id"
-                                                  title="Field"/>
+                                    <TableFilterHeader sort={sort}
+                                                       onSort={onSort}
+                                                       onFilter={onFilter}
+                                                       filters={filters}
+                                                       fieldName="sdk_element_id"
+                                                       title="Field"/>
                                 </TableCell>
                                 <TableCell>
-                                    <SorterHeader fieldName="sdk_element_xpath"
-                                                  title="XPath"/>
+                                    <TableFilterHeader sort={sort}
+                                                       onSort={onSort}
+                                                       onFilter={onFilter}
+                                                       filters={filters}
+                                                       fieldName="sdk_element_xpath"
+                                                       title="XPath"/>
                                 </TableCell>
                                 <TableCell align="left">
                                     <SorterHeader fieldName="xpath_condition"
