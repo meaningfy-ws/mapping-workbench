@@ -43,7 +43,7 @@ const useItemsSearch = (items) => {
             const [key, value] = filter
             if (value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
                 returnItem = null
-            if (value !== "" && value !== undefined && typeof item[key] === "string" && item[key] !== value.toLowerCase())
+            if (value !== "" && value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase()))
                 returnItem = null
         })
         return returnItem
@@ -109,7 +109,7 @@ const useItemsSearch = (items) => {
     };
 };
 
-const ShaclFileReport = ({sid, suiteId, testId, files, mappingSuiteIdentifier}) => {
+const ShaclFileReport = ({sid, suiteId, testId}) => {
     const [validationReport, setValidationReport] = useState([])
     const [validationResult, setValidationResult] = useState([])
     const [dataState, setDataState] = useState({load: true, error: false})
@@ -160,7 +160,7 @@ const ShaclFileReport = ({sid, suiteId, testId, files, mappingSuiteIdentifier}) 
             </Typography>
             <TableLoadWrapper dataState={dataState}
                               data={validationReport}>
-                <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
+                {/*<ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>*/}
                 <ListTableFile
                     items={itemsSearch.pagedItems}
                     count={itemsSearch.count}
@@ -170,6 +170,8 @@ const ShaclFileReport = ({sid, suiteId, testId, files, mappingSuiteIdentifier}) 
                     rowsPerPage={itemsSearch.state.rowsPerPage}
                     onSort={itemsSearch.handleSort}
                     sort={itemsSearch.state.sort}
+                    onFilter={itemsSearch.handleFiltersChange}
+                    filters={itemsSearch.state.filters}
                     sectionApi={sectionApi}
                 />
             </TableLoadWrapper>

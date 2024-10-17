@@ -10,7 +10,7 @@ import TableRow from '@mui/material/TableRow';
 import {Scrollbar} from 'src/components/scrollbar';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import TablePagination from 'src/sections/components/table-pagination';
-import TableSorterHeader from "src/sections/components/table-sorter-header";
+import {TableFilterHeader} from "../../../layouts/app/table-filter-header/table-filter-header";
 
 export const ListTableFile = (props) => {
 
@@ -23,15 +23,12 @@ export const ListTableFile = (props) => {
         rowsPerPage = 0,
         sort,
         onSort,
+        filters,
+        onFilter,
         sectionApi
     } = props;
 
     const syntaxHighlighterTheme = useHighlighterTheme()
-
-    const SorterHeader = (props) => <TableSorterHeader sort={sort}
-                                                       onSort={onSort}
-                                                       {...props}
-    />
 
     return (
         <TablePagination
@@ -48,24 +45,44 @@ export const ListTableFile = (props) => {
                     <TableHead>
                         <TableRow>
                             <TableCell>
-                                <SorterHeader fieldName="short_focus_node"
-                                              title="Focus Node"/>
+                                <TableFilterHeader sort={sort}
+                                                   onSort={onSort}
+                                                   onFilter={onFilter}
+                                                   filters={filters}
+                                                   fieldName="short_focus_node"
+                                                   title="Focus Node"/>
                             </TableCell>
                             <TableCell>
-                                <SorterHeader fieldName="message"
-                                              title="Message"/>
+                                <TableFilterHeader sort={sort}
+                                                   onSort={onSort}
+                                                   onFilter={onFilter}
+                                                   filters={filters}
+                                                   fieldName="message"
+                                                   title="Message"/>
                             </TableCell>
                             <TableCell>
-                                <SorterHeader fieldName="short_result_path"
-                                              title="Result Path"/>
+                                <TableFilterHeader sort={sort}
+                                                   onSort={onSort}
+                                                   onFilter={onFilter}
+                                                   filters={filters}
+                                                   fieldName="short_result_path"
+                                                   title="Result Path"/>
                             </TableCell>
                             <TableCell>
-                                <SorterHeader fieldName="short_result_severity"
-                                              title="Result Severity"/>
+                                <TableFilterHeader sort={sort}
+                                                   onSort={onSort}
+                                                   onFilter={onFilter}
+                                                   filters={filters}
+                                                   fieldName="short_result_severity"
+                                                   title="Result Severity"/>
                             </TableCell>
                             <TableCell>
-                                <SorterHeader fieldName="short_source_constraint_component"
-                                              title="Source Constraint Component"/>
+                                <TableFilterHeader sort={sort}
+                                                   onSort={onSort}
+                                                   onFilter={onFilter}
+                                                   filters={filters}
+                                                   fieldName="short_source_constraint_component"
+                                                   title="Source Constraint Component"/>
                             </TableCell>
                         </TableRow>
                     </TableHead>
