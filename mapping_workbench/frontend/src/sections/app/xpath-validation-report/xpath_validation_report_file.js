@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import {TableLoadWrapper} from "./utils";
 import {ListTable} from "./list-table-file";
 import CoverageReport from "./coverage_report";
-import ItemSearchInput from "../file-manager/item-search-input";
+// import ItemSearchInput from "../file-manager/item-search-input";
 import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
 
 const useItemsSearch = (items) => {
@@ -40,11 +40,14 @@ const useItemsSearch = (items) => {
             const [key, value] = e
             if (value !== undefined && typeof item[key] === "boolean" && item[key]?.toString() != value)
                 returnItem = null
-            if (value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase))
+            if (value !== undefined && value !== '' && typeof item[key] === "string" && !(item[key].toLowerCase().includes(value.toLowerCase()))) {
                 returnItem = null
+            }
         })
         return returnItem
     })
+
+    console.log(filteredItems)
 
     const sortedItems = () => {
         const sortColumn = state.sort.column
@@ -157,7 +160,7 @@ const XpathValidationReportTest = ({sid, suiteId, testId, mappingSuiteIdentifier
             </Typography>
             <TableLoadWrapper dataState={dataState}
                               data={validationReport}>
-                <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
+                {/*<ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>*/}
                 <ListTable
                     items={itemsSearch.pagedItems}
                     count={itemsSearch.count}
@@ -165,6 +168,8 @@ const XpathValidationReportTest = ({sid, suiteId, testId, mappingSuiteIdentifier
                     onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                     page={itemsSearch.state.page}
                     rowsPerPage={itemsSearch.state.rowsPerPage}
+                    onFilter={itemsSearch.handleFiltersChange}
+                    filters={itemsSearch.state.filters}
                     onSort={itemsSearch.handleSort}
                     sort={itemsSearch.state.sort}
                     sectionApi={sectionApi}

@@ -39,7 +39,7 @@ const useItemsSearch = (items) => {
             const [key, value] = filter
             if (value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
                 returnItem = null
-            if (value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase))
+            if (value !== undefined && value !== "" && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase()))
                 returnItem = null
         })
         return returnItem
@@ -74,7 +74,7 @@ const useItemsSearch = (items) => {
     }
 
     const handleFiltersChange = (filters) => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             filters,
             page: 0
@@ -82,7 +82,7 @@ const useItemsSearch = (items) => {
     }
 
     const handlePageChange = (event, page) => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             page
         }));
@@ -97,7 +97,7 @@ const useItemsSearch = (items) => {
         }))
     }
     const handleRowsPerPageChange = (event) => {
-        setState((prevState) => ({
+        setState(prevState => ({
             ...prevState,
             rowsPerPage: parseInt(event.target.value, 10)
         }));
@@ -160,7 +160,7 @@ const XpathValidationReportSuite = ({sid, suiteId, files, mappingSuiteIdentifier
             </Typography>
             <TableLoadWrapper dataState={dataState}
                               data={validationReport}>
-                <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
+                {/*<ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>*/}
                 <CoverageFilter onChange={handleCoverageFilterChange}
                                 filterState={itemsSearch.state.filters.is_covered}/>
                 <ListTable
@@ -172,6 +172,8 @@ const XpathValidationReportSuite = ({sid, suiteId, files, mappingSuiteIdentifier
                     rowsPerPage={itemsSearch.state.rowsPerPage}
                     onSort={itemsSearch.handleSort}
                     sort={itemsSearch.state.sort}
+                    onFilter={itemsSearch.handleFiltersChange}
+                    filters={itemsSearch.state.filters}
                     handleSelectFile={handleSelectFile}
                     sectionApi={sectionApi}
                 />

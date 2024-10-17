@@ -10,10 +10,9 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import ClearIcon from '@mui/icons-material/Clear';
 
-export const TableFilterHeader = ({fieldName, title, sort, desc, onSort}) => {
-    console.log(sort)
+export const TableFilterHeader = ({fieldName, title, sort, desc, onSort, filters, onFilter}) => {
     const [popover, setPopover] = useState(null)
-    const [filter, setFilter] = useState('')
+    const filter = filters[fieldName] ?? ''
 
     const handleClick = (event) => {
         setPopover(event.currentTarget);
@@ -23,11 +22,17 @@ export const TableFilterHeader = ({fieldName, title, sort, desc, onSort}) => {
         setPopover(null);
     };
 
+    const handleFilterChange = (value) => {
+        onFilter({...filters, [fieldName]: value})
+    }
+
+    const direction = fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
 
     return (
         <Stack direction='row'
                alignItems='center'>
             <Typography variant='h7'
+                        sx={{cursor: 'pointer'}}
                         onClick={() => onSort(fieldName, desc)}>
                 {title ?? fieldName}
             </Typography>
@@ -35,9 +40,9 @@ export const TableFilterHeader = ({fieldName, title, sort, desc, onSort}) => {
                         sx={{rotate: 90}}
                         onClick={() => onSort(fieldName, desc)}
                         size="small">
-                <ArrowDownwardIcon
-                    style={{transform: sort.direction === 'desc' ? 'rotate(180deg)' : '', transition: 'transform 0.4s'}}
-                    fontSize='10px'/>
+                {sort.column === fieldName && <ArrowDownwardIcon
+                    style={{transform: direction !== 'desc' ? 'rotate(180deg)' : '', transition: 'transform 0.4s'}}
+                    fontSize='10px'/>}
             </IconButton>
             <IconButton onClick={handleClick}
                         size="small">
@@ -46,7 +51,7 @@ export const TableFilterHeader = ({fieldName, title, sort, desc, onSort}) => {
             </IconButton>
             <Popover
                 id={fieldName + '_popover'}
-                open={popover}
+                open={!!popover}
                 anchorEl={popover}
                 onClose={handleClose}
                 anchorOrigin={{
@@ -60,11 +65,12 @@ export const TableFilterHeader = ({fieldName, title, sort, desc, onSort}) => {
                                variant="standard"
                                fullWidth
                                InputProps={{
-                                   endAdornment: (<IconButton onClick={() => setFilter('')}
+                                   endAdornment: (<IconButton onClick={() => handleFilterChange(undefined)}
                                                               sx={{visibility: filter ? "visible" : "hidden"}}><ClearIcon/></IconButton>)
                                }}
                                value={filter}
-                               onChange={(e) => setFilter(e.target.value)}/>
+                               onChange={(e) => handleFilterChange(e.target.value)}
+                               sx={{m: 2, "& .Mui-focused .MuiIconButton-root": {color: "primary.main"}}}/>
                 </Paper>
             </Popover>
         </Stack>

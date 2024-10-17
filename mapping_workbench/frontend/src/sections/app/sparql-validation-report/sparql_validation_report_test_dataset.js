@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import {ListTable} from "./list-table";
 import {TableLoadWrapper} from "./utils";
 import ResultSummaryTable from "./result-summary-table";
-import ItemSearchInput from "../file-manager/item-search-input";
+// import ItemSearchInput from "../file-manager/item-search-input";
 import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
 
 const useItemsSearch = (items) => {
@@ -37,11 +37,15 @@ const useItemsSearch = (items) => {
             const [key, value] = filter
             if (value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
                 returnItem = null
-            if (value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase))
+            if (value !== "" && value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase()))
                 returnItem = null
         })
         return returnItem
     })
+
+    console.log(filteredItems)
+
+    console.log('filters',filters)
 
     const sortedItems = () => {
         const sortColumn = state.sort.column
@@ -177,7 +181,7 @@ const SparqlTestDatasetReport = ({sid, suiteId, handleSelectFile}) => {
             <TableLoadWrapper dataState={dataState}
                               lines={6}
                               data={validationReport}>
-                <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
+                {/*<ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>*/}
                 <ListTable
                     items={itemsSearch.pagedItems}
                     count={itemsSearch.count}
@@ -187,6 +191,8 @@ const SparqlTestDatasetReport = ({sid, suiteId, handleSelectFile}) => {
                     rowsPerPage={itemsSearch.state.rowsPerPage}
                     onSort={itemsSearch.handleSort}
                     sort={itemsSearch.state.sort}
+                    onFilter={itemsSearch.handleFiltersChange}
+                    filters={itemsSearch.state.filters}
                     sectionApi={sectionApi}
                     handleSelectFile={handleSelectFile}
                 />

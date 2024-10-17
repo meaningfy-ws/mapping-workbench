@@ -37,7 +37,9 @@ export const ListTable = (props) => {
         rowsPerPage = 0,
         sectionApi,
         onSort,
-        sort
+        sort,
+        onFilter,
+        filters
     } = props;
 
     const handleClose = () => setDescriptionDialog(e => ({...e, open: false}));
@@ -58,23 +60,27 @@ export const ListTable = (props) => {
                 rowsPerPage={rowsPerPage}
                 rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
                 showFirstButton
-                showLastButton
+                showLastButtonw
             >
                 <Scrollbar>
                     <Table sx={{minWidth: 1200}}>
                         <TableHead>
                             <TableRow>
                                 <TableCell width="25%">
-                                    {/*<SorterHeader fieldName="sdk_element_id"*/}
-                                    {/*              title="Field"/>*/}
                                     <TableFilterHeader sort={sort}
                                                        onSort={onSort}
+                                                       onFilter={onFilter}
+                                                       filters={filters}
                                                        fieldName="sdk_element_id"
                                                        title="Field"/>
                                 </TableCell>
                                 <TableCell>
-                                    <SorterHeader fieldName="sdk_element_xpath"
-                                                  title="XPath"/>
+                                    <TableFilterHeader sort={sort}
+                                                       onSort={onSort}
+                                                       onFilter={onFilter}
+                                                       filters={filters}
+                                                       fieldName="sdk_element_xpath"
+                                                       title="XPath"/>
                                 </TableCell>
                                 <TableCell align="left">
                                     <SorterHeader fieldName="xpath_condition"

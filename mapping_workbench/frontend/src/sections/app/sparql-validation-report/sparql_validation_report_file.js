@@ -39,7 +39,7 @@ const useItemsSearch = (items) => {
             const [key, value] = filter
             if (value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
                 returnItem = null
-            if (value !== "" && value !== undefined && typeof item[key] === "string" && item[key] !== value.toLowerCase())
+            if (value !== "" && value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase()))
                 returnItem = null
         })
         return returnItem
@@ -179,7 +179,7 @@ const SparqlFileReport = ({sid, suiteId, testId, files, mappingSuiteIdentifier})
             </Typography>
             <TableLoadWrapper dataState={dataState}
                               data={validationReport}>
-                <ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>
+                {/*<ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>*/}
                 <ResultFilter onStateChange={handleResultFilterChange}
                               currentState={itemsSearch.state.filters.result}/>
                 <ListTableFile
@@ -191,6 +191,8 @@ const SparqlFileReport = ({sid, suiteId, testId, files, mappingSuiteIdentifier})
                     rowsPerPage={itemsSearch.state.rowsPerPage}
                     onSort={itemsSearch.handleSort}
                     sort={itemsSearch.state.sort}
+                    onFilter={itemsSearch.handleFiltersChange}
+                    filters={itemsSearch.state.filters}
                     sectionApi={sectionApi}
                 />
             </TableLoadWrapper>

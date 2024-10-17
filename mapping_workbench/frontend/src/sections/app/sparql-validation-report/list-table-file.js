@@ -20,6 +20,7 @@ import TableSorterHeader from "src/sections/components/table-sorter-header";
 
 import PropTypes from "prop-types";
 import {useHighlighterTheme} from "../../../hooks/use-highlighter-theme";
+import {TableFilterHeader} from "../../../layouts/app/table-filter-header/table-filter-header";
 
 
 export const ListTableFile = (props) => {
@@ -33,6 +34,8 @@ export const ListTableFile = (props) => {
         rowsPerPage = 0,
         sort,
         onSort,
+        filters,
+        onFilter,
         sectionApi
     } = props;
 
@@ -66,12 +69,20 @@ export const ListTableFile = (props) => {
                         <TableHead>
                             <TableRow>
                                 <TableCell width="15%">
-                                    <SorterHeader fieldName="title"
-                                                  title="Field"/>
+                                    <TableFilterHeader sort={sort}
+                                                       onSort={onSort}
+                                                       onFilter={onFilter}
+                                                       filters={filters}
+                                                       fieldName="title"
+                                                       title="Field"/>
                                 </TableCell>
                                 <TableCell align="left">
-                                    <SorterHeader fieldName="xpath_condition"
-                                                  title="XPath Condition"/>
+                                    <TableFilterHeader sort={sort}
+                                                       onSort={onSort}
+                                                       onFilter={onFilter}
+                                                       filters={filters}
+                                                       fieldName="xpath_condition"
+                                                       title="XPath Condition"/>
                                 </TableCell>
                                 <TableCell>
                                     <SorterHeader fieldName="description"
@@ -157,7 +168,7 @@ export const ListTableFile = (props) => {
                                         <TableCell align="left">
                                             <Box>
                                                 <Typography>{`Query result: ${item.query_result}`}</Typography>
-                                                <Divider sx={{my:1}}/>
+                                                <Divider sx={{my: 1}}/>
                                                 <Typography>{`Fields covered: ${item.fields_covered}`}</Typography>
                                             </Box>
                                         </TableCell>
