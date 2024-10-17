@@ -36,5 +36,9 @@ def get_current_app_version():
     return get_current_app_tag_or_branch()
 
 
+def main():
+    return get_current_app_version() or ""
+
+
 if __name__ == "__main__":
-    print(get_current_app_tag() or "")
+    print(main())
