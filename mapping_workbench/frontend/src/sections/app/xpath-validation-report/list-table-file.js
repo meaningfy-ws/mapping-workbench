@@ -60,7 +60,7 @@ export const ListTable = (props) => {
                 rowsPerPage={rowsPerPage}
                 rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
                 showFirstButton
-                showLastButtonw
+                showLastButton
             >
                 <Scrollbar>
                     <Table sx={{minWidth: 1200}}>

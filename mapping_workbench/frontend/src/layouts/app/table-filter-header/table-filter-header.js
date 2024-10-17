@@ -61,6 +61,7 @@ export const TableFilterHeader = ({fieldName, title, sort, desc, onSort, filters
             >
                 <Paper sx={{p: '2px 4px', display: 'flex', alignItems: 'center', width: 400}}>
                     <TextField id="outlined-basic"
+                               autoFocus
                                label={title ?? fieldName}
                                variant="standard"
                                fullWidth
