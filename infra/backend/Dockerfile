@@ -17,6 +17,7 @@ COPY ./mapping_workbench/backend ./mapping_workbench/backend
 COPY ./requirements.txt ./
 COPY ./Makefile ./
 COPY ./.env ./
+RUN make prepare-env-deploy
 
 RUN make install-backend
 
