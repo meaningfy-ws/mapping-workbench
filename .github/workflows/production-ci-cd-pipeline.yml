@@ -29,7 +29,7 @@ jobs:
 
     - name: connect, pull and build
       run: |
-        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "source ~/.bashrc && cd ${{ secrets.PROD_WORK_DIR }} && git checkout main && git pull && make prod-dotenv-file && make stop-frontend && make build-frontend && make stop-backend && make build-backend && exit"
+        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "source ~/.bashrc && cd ${{ secrets.PROD_WORK_DIR }} && git checkout main && git pull && make deploy-prod-dotenv-file && make stop-frontend && make build-frontend && make stop-backend && make build-backend && exit"
 
     - name: cleanup unused containers, images, volumes, and networks
       run: |
