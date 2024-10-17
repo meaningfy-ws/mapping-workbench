@@ -248,9 +248,15 @@ setup-env-paths:
 	@ perl -i -ne 'print unless /^RML_MAPPER_PATH/' ${ENV_FILE}
 	@ echo RML_MAPPER_PATH=${RML_MAPPER_PATH} >> ${ENV_FILE}
 
-add-app-version:
+deploy-app-version:
 	@ perl -i -ne 'print unless /^MW_APP_VERSION/' ${ENV_FILE}
 	@ echo MW_APP_VERSION=$$($(PYTHON) $(APP_VERSION_SCRIPT)) >> ${ENV_FILE}
 
-prepare-env-deploy: add-app-version
-	@ echo "Prepared ENV Deploy"
+deploy-env-app-settings: deploy-app-version
+	@ echo "Deployed ENV App Settings"
+
+deploy-prod-dotenv-file: prod-dotenv-file deploy-env-app-settings
+	@ echo "Deployed PROD ENV file"
+
+deploy-staging-dotenv-file: staging-dotenv-file deploy-env-app-settings
+	@ echo "Deployed STAGING ENV file"
