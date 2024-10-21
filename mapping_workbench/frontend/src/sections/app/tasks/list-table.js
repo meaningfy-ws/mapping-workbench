@@ -153,9 +153,6 @@ export const ListTable = (props) => {
                                 <SorterHeader fieldName="finished_at"
                                               title='Finished At'/>
                             </TableCell>
-                            {/*<TableCell>*/}
-                            {/*    Task Duration*/}
-                            {/*</TableCell>*/}
                             <TableCell>
                                 <SorterHeader fieldName="task_status"
                                               title='Status'/>
@@ -192,14 +189,14 @@ export const ListTable = (props) => {
                                             }}
                                             width="25%"
                                         >
-                                            <IconButton onClick={() => handleItemToggle(item_id)}>
+                                            {(item.exception_message || !!item.warnings?.length) && <IconButton onClick={() => handleItemToggle(item_id)}>
                                                 <SvgIcon sx={{
-                                                    transform: isCurrent && 'rotate(90deg)',
+                                                    transform: isCurrent ? 'rotate(90deg)' : '',
                                                     transition: '0.2s linear'
                                                 }}>
                                                     <ChevronRightIcon/>
                                                 </SvgIcon>
-                                            </IconButton>
+                                            </IconButton>}
                                         </TableCell>
                                         <TableCell width="25%">
                                             <Typography variant="subtitle3">
@@ -285,7 +282,7 @@ export const ListTable = (props) => {
                                                                 {nl2br(item.exception_message)}
                                                             </Typography>
                                                         </>}
-                                                        {item.warnings && !!item.warnings.length &&
+                                                        {!!item.warnings?.length &&
                                                             <>
                                                                 <Typography sx={{pl: 3, pt: 1}}
                                                                             variant="h6"
