@@ -26,6 +26,7 @@ import {Scrollbar} from 'src/components/scrollbar';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
+import {TableFilterHeader} from "../../../layouts/app/table-filter-header/table-filter-header";
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", description: ""})
@@ -40,6 +41,8 @@ export const ListTable = (props) => {
         rowsPerPage = 0,
         sort,
         onSort,
+        filters,
+        onFilter,
         sectionApi,
         handleSelectFile
     } = props;
@@ -114,16 +117,28 @@ export const ListTable = (props) => {
                         <TableHead>
                             <TableRow>
                                 <TableCell width="25%">
-                                    <SorterHeader fieldName="title"
-                                                  title="Field"/>
+                                    <TableFilterHeader sort={sort}
+                                                       onSort={onSort}
+                                                       onFilter={onFilter}
+                                                       filters={filters}
+                                                       fieldName="title"
+                                                       title="Field"/>
                                 </TableCell>
                                 <TableCell width="15%">
-                                    <SorterHeader fieldName="xpath_condition"
-                                                  title="XPath Condition"/>
+                                    <TableFilterHeader sort={sort}
+                                                       onSort={onSort}
+                                                       onFilter={onFilter}
+                                                       filters={filters}
+                                                       fieldName="xpath_condition"
+                                                       title="XPath Condition"/>
                                 </TableCell>
                                 <TableCell>
-                                    <SorterHeader fieldName="query"
-                                                  title="Query"/>
+                                     <TableFilterHeader sort={sort}
+                                                       onSort={onSort}
+                                                       onFilter={onFilter}
+                                                       filters={filters}
+                                                       fieldName="query"
+                                                       title="Query"/>
                                 </TableCell>
                                 <TableCell align="center">
                                     <SorterHeader fieldName="validCount"
@@ -288,7 +303,7 @@ export const ListTable = (props) => {
                     <Stack direction="row">
                         {xpathConditionDialog.data?.xpath_condition?.meets_xpath_condition ?
                             <><CheckIcon color="success"/> - At least one Test Data meets this XPath Condition</> :
-                            <><CloseIcon color="error"/> -  No Test Data meets this XPath Condition</>}
+                            <><CloseIcon color="error"/> - No Test Data meets this XPath Condition</>}
                     </Stack>
 
                 </DialogContent>

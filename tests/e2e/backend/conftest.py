@@ -7,8 +7,7 @@ from mongomock_motor import AsyncMongoMockClient
 
 from mapping_workbench.backend.core.services.project_initilisers import init_project_models
 from mapping_workbench.backend.database.adapters.gridfs_storage import AsyncGridFSStorage
-from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
-from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElementIn
+from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement, BaseStructuralElementIn
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.ontology.models.term import Term, TermType
 from mapping_workbench.backend.ontology_suite.models.ontology_file_resource import OntologyFileResource
@@ -124,8 +123,8 @@ def dummy_data_type_term() -> Term:
 
 
 @pytest.fixture
-def dummy_structural_element_in() -> StructuralElementIn:
-    return StructuralElementIn(
+def dummy_structural_element_in() -> BaseStructuralElementIn:
+    return BaseStructuralElementIn(
         id="dummy_id",
         label="Dummy element",
         absolute_xpath="dummy_xpath",

@@ -28,22 +28,27 @@ export const ListItemActions = (props) => {
     }
 
     const handleEditAction = () => {
-        router.push({
-            pathname: paths.app[itemctx.api.section].edit,
-            query: {id: itemctx.id}
-        });
+        if (pathnames?.edit)
+            router.push(pathnames.edit())
+        else
+            router.push({
+                pathname: paths.app[itemctx.api.section].edit,
+                query: {id: itemctx.id}
+            });
 
     }
 
     const handleDeleteAction = () => {
         itemctx.api.deleteItem(itemctx.id)
-            .then(() =>
-                {
+            .then(() => {
+                if (pathnames?.delete_after_path)
+                    router.push(pathnames.delete_after_path())
+                else
                     router.push({
                         pathname: paths.app[itemctx.api.section].index
                     });
-                    router.reload()
-                })
+                router.reload()
+            })
             .catch(err => toastError(err))
     }
 

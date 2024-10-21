@@ -13,6 +13,8 @@ FRONTEND_INFRA_FOLDER := ${PROJECT_PATH}/${FRONTEND_HOME}
 
 RML_MAPPER_PATH = ${PROJECT_PATH}/.rmlmapper/rmlmapper.jar
 
+PYTHON := python3
+APP_VERSION_SCRIPT := ${BACKEND_INFRA_FOLDER}/core/scripts/get_app_version.py
 
 #-----------------------------------------------------------------------------
 # INSTALLING
@@ -245,3 +247,16 @@ init-rml-mapper:
 setup-env-paths:
 	@ perl -i -ne 'print unless /^RML_MAPPER_PATH/' ${ENV_FILE}
 	@ echo RML_MAPPER_PATH=${RML_MAPPER_PATH} >> ${ENV_FILE}
+
+deploy-app-version:
+	@ perl -i -ne 'print unless /^MW_APP_VERSION/' ${ENV_FILE}
+	@ echo MW_APP_VERSION=$$($(PYTHON) $(APP_VERSION_SCRIPT)) >> ${ENV_FILE}
+
+deploy-env-app-settings: deploy-app-version
+	@ echo "Deployed ENV App Settings"
+
+deploy-prod-dotenv-file: prod-dotenv-file deploy-env-app-settings
+	@ echo "Deployed PROD ENV file"
+
+deploy-staging-dotenv-file: staging-dotenv-file deploy-env-app-settings
+	@ echo "Deployed STAGING ENV file"

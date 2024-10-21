@@ -207,6 +207,8 @@ export const paths = {
                 index: '/app/fields-and-nodes/overview',
                 import: '/app/fields-and-nodes/overview/import',
                 elements: {
+                    create: `/app/fields-and-nodes/overview/create`,
+                    edit: (id) => `/app/fields-and-nodes/overview/${id}/edit`,
                     view: (id) => `/app/fields-and-nodes/overview/${id}/view`,
                 }
             }
@@ -383,6 +385,7 @@ export const apiPaths = {
 
     fields_overview: {
         items: '/fields_registry/elements',
+        create: '/fields_registry/elements/create',
         item: '/fields_registry/elements/:id',
         import_eforms_from_github: '/fields_registry/tasks/import_eforms_from_github',
         element: '/fields_registry/elements/:id',
@@ -419,5 +422,9 @@ export const apiPaths = {
         terms_validator: '/tasks/terms_validator',
         generate_cm_assertions_queries: '/tasks/generate_cm_assertions_queries',
         transform_test_data: '/tasks/transform_test_data'
+    },
+
+    version: {
+        items: '/app/settings'
     }
 }

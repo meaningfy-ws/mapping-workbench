@@ -83,15 +83,17 @@ export class SectionApi {
         return await appApi.delete(endpoint);
     }
 
-    async updateItem(request) {
+    async updateItem(request, path = null) {
+        path = path || "item";
         const {id} = request;
-        let endpoint = this.paths['item'].replace(':id', id);
+        let endpoint = this.paths[path].replace(':id', id);
         delete request['id'];
         return await appApi.update(endpoint, request);
     }
 
-    async createItem(request) {
-        let endpoint = this.paths['items'];
+    async createItem(request, path = null) {
+        path = path || "items";
+        let endpoint = this.paths[path];
         return await appApi.create(endpoint, request);
     }
 

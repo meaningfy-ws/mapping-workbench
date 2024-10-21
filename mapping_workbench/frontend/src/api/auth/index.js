@@ -35,12 +35,14 @@ const persistUser = (user) => {
 
 class AuthApi {
     async signIn(request) {
-        return appApi.signIn(request);
+        return await appApi.signIn(request);
     }
 
     async signInWithSessionInit(request) {
-        await this.signIn(request);
-        return await this.initMyProfile();
+        if (await this.signIn(request)) {
+            return await this.initMyProfile();
+        }
+        return null;
     }
 
     async initMyProfile() {

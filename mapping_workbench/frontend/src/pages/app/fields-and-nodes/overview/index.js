@@ -19,6 +19,7 @@ import {ListTable} from 'src/sections/app/fields-registry/list-table';
 import {fieldsOverviewApi as sectionApi} from 'src/api/fields-overview';
 import {ListSearch} from 'src/sections/app/fields-registry/list-search';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
+import PlusIcon from "@untitled-ui/icons-react/build/esm/Plus";
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
@@ -196,6 +197,19 @@ const Page = () => {
                         direction="row"
                         spacing={3}
                     >
+                        <Button
+                            component={RouterLink}
+                            href={paths.app.fields_and_nodes.overview.elements.create}
+                            id="add-field-button"
+                            startIcon={(
+                                <SvgIcon>
+                                    <PlusIcon/>
+                                </SvgIcon>
+                            )}
+                            variant="contained"
+                        >
+                            Add
+                        </Button>
                         <Button
                             id="import_shema_button"
                             component={RouterLink}

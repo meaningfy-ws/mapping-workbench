@@ -15,6 +15,7 @@ import {SideNavSection} from './side-nav-section';
 import {ProjectSwitch} from "../project-switch";
 import {AppTitle} from "../../../components/app-title";
 import {useProjects} from "../../../hooks/use-projects";
+import {VersionLabel} from "../version-label";
 
 const SIDE_NAV_WIDTH = 280;
 
@@ -241,6 +242,7 @@ export const SideNav = (props) => {
                             />
                         )))}
                     </Stack>
+                    <VersionLabel/>
                 </Stack>
             </Scrollbar>
         </Drawer>

@@ -81,13 +81,13 @@ export const HomeApp = () => {
                         </li>
                     </ul>
                 </Typography>
-                <Typography>A simplified view of the mapping lifecycle is depicted in Figure 1. Next, we provide you
+                <Typography variant='subtitle1'>A simplified view of the mapping lifecycle is depicted in Figure 1. Next, we provide you
                     with a wizard meant to guide through a series of concrete steps from A to Z of a successful mapping
                     project. Each step will lead you to the specific page in the MWB.</Typography>
                 <Image src={schemaImage}
                        width={800}
                        alt={'schema image'}/>
-                <Typography>
+                <Box>
                     <Typography sx={{textAlign: 'center'}}>
                         Figure 1. MWB Mapping workflow.
                     </Typography>
@@ -282,7 +282,7 @@ export const HomeApp = () => {
                             </Typography>
                         </li>
                     </ul>
-                </Typography>
+                </Box>
             </Box>
         </Box>
     );

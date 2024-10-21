@@ -16,5 +16,9 @@ def element_data(dummy_project):
     return {
         "name": "test-entity-name",
         "bt_id": "test-entity-content",
+        "sdk_element_id": "test-entity-id",
+        "absolute_xpath": "test-entity-absolute-xpath",
+        "relative_xpath": "test-entity-relative-xpath",
+        "parent_node_id": "test-entity-parent",
         "project": str(dummy_project.id)
     }

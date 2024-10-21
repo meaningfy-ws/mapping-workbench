@@ -15,6 +15,7 @@ import {paths} from 'src/paths';
 import {MobileNavSection} from './mobile-nav-section';
 import {ProjectSwitch} from "../project-switch";
 import {useProjects} from "../../../hooks/use-projects";
+import {VersionLabel} from "../version-label";
 
 const MOBILE_NAV_WIDTH = 280;
 
@@ -201,6 +202,7 @@ export const MobileNav = (props) => {
                         )))}
 
                     </Stack>
+                    <VersionLabel/>
                 </Stack>
             </Scrollbar>
         </Drawer>

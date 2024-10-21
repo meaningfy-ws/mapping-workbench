@@ -14,6 +14,10 @@ class AppSettings(BaseSettings):
     def APP_NAME(self, config_value: str) -> str:
         return config_value
 
+    @env_property(config_key='MW_APP_VERSION')
+    def APP_VERSION(self, config_value: str) -> str:
+        return config_value
+
     @env_property(config_key='MW_APP_DEBUG_MODE')
     def DEBUG_MODE(self, config_value: str) -> bool:
         return config_value == '1'

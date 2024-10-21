@@ -1,5 +1,6 @@
 import hashlib
 from typing import List, Optional
+
 from pydantic import BaseModel, Field
 
 
@@ -27,6 +28,19 @@ class EFormsField(BaseModel):
         return str(hashlib.sha1(str_content.encode("utf-8")).hexdigest())
 
 
+def generate_eforms_node_hash_id(
+        id: str,
+        repeatable: bool,
+        parent_id: Optional[str] = None,
+        xpath_absolute: str = None,
+        xpath_relative: str = None,
+        project_id: str = None
+):
+    fields_to_hash = [project_id, id, xpath_absolute, xpath_relative, repeatable, parent_id]
+    str_content = "_".join(map(str, fields_to_hash))
+    return str(hashlib.sha1(str_content.encode("utf-8")).hexdigest())
+
+
 class EFormsNode(BaseModel):
     id: str
     parent_id: Optional[str] = Field(default=None, alias='parentId')
@@ -35,11 +49,14 @@ class EFormsNode(BaseModel):
     repeatable: bool
 
     def generate_hash_id(self, project_id: str = None):
-        fields_to_hash = [
-            project_id, self.id, self.xpath_absolute, self.xpath_relative, self.repeatable, self.parent_id
-        ]
-        str_content = "_".join(map(str, fields_to_hash))
-        return str(hashlib.sha1(str_content.encode("utf-8")).hexdigest())
+        return generate_eforms_node_hash_id(
+            id=self.id,
+            repeatable=self.repeatable,
+            parent_id=self.parent_id,
+            xpath_absolute=self.xpath_absolute,
+            xpath_relative=self.xpath_relative,
+            project_id=project_id
+        )
 
 
 class EFormsSDKFields(BaseModel):
