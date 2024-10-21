@@ -32,6 +32,7 @@ import {useGlobalState} from "src/hooks/use-global-state";
 import {SeverityPill} from "src/components/severity-pill";
 import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
+import {TaskActions, TaskLine} from "./task-actions";
 
 
 export const taskStatuses = {
@@ -42,6 +43,8 @@ export const taskStatuses = {
     FAILED: "FAILED",
     CANCELED: "CANCELED"
 }
+
+
 
 export const ListTable = (props) => {
     const {
@@ -154,6 +157,9 @@ export const ListTable = (props) => {
                                               title='Finished At'/>
                             </TableCell>
                             <TableCell>
+                                Duration
+                            </TableCell>
+                            <TableCell width={200}>
                                 <SorterHeader fieldName="task_status"
                                               title='Status'/>
                             </TableCell>
@@ -216,12 +222,16 @@ export const ListTable = (props) => {
                                         <TableCell>
                                             {timeTransformer(item.finished_at, timeSetting)}
                                         </TableCell>
+                                        <TableCell>
+                                    {item?.finished_at ? moment.utc(moment(item?.finished_at).diff(moment(item?.started_at))).format("HH:mm:ss") : '-'}
+                                        </TableCell>
                                         <TableCell align="left">
                                             <Stack onMouseEnter={(event) => handlePopoverEnter(event, item)}
                                                    onMouseLeave={handlePopoverLeave}>
-                                                <SvgIcon>
-                                                    <MapStatusIcon task_status={item.task_status}/>
-                                                </SvgIcon>
+                                                <SeverityPill color={ mapStatusColor(item?.task_status)}>
+                                                    {item?.task_status}
+                                                </SeverityPill>
+                                                <TaskLine item={item}/>
                                             </Stack>
                                         </TableCell>
                                         <TableCell align="right">
@@ -327,30 +337,7 @@ export const ListTable = (props) => {
                     onClose={handlePopoverLeave}
                     disableRestoreFocus
                 >
-                    <Stack gap={2}
-                           sx={{m: 2}}
-                           alignItems='center'>
-                        <Stack gap={2}
-                               direction='row'
-                               alignItems='center'>
-                            <SeverityPill color={mapStatusColor(popoverShow?.item?.task_status)}>
-                                {popoverShow?.item?.task_status}
-                            </SeverityPill>
-                            <Stack direction='row'
-                                   alignItems='center'>
-                                <Typography variant="h6">
-                                    Duration:
-                                </Typography>
-                                <Typography>
-                                    {popoverShow?.item?.finished_at ? moment.utc(moment(popoverShow?.item?.finished_at).diff(moment(popoverShow?.item?.started_at))).format("HH:mm:ss") : '-'}
-                                </Typography>
-                            </Stack>
-                        </Stack>
-                        {[taskStatuses.QUEUED,taskStatuses.RUNNING].includes(popoverShow.item?.task_status) && <Typography variant='subtitle2'
-                                    color='gray'>
-                            Click refresh to update
-                        </Typography>}
-                    </Stack>
+                    <TaskActions item={popoverShow?.item}/>
                 </Popover>
             </Scrollbar>
         </TablePagination>
