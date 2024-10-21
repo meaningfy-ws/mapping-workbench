@@ -261,7 +261,7 @@ deploy-prod-dotenv-file: prod-dotenv-file deploy-env-app-settings
 deploy-staging-dotenv-file: staging-dotenv-file deploy-env-app-settings
 	@ echo "Deployed STAGING ENV file"
 
-release:
+create-release-tag:
 	@ git tag -a v$(V) -m "Release version $(V)"
 	@ git push origin v$(V)
 	@ echo "Release Tag `v$(V)` was successfully created and pushed."
