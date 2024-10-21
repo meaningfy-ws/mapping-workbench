@@ -58,6 +58,9 @@ async def import_mapping_package_from_archive(
     result = await import_mapping_package(dir_contents[0], project, package_type, user)
     if task_response:
         task_response.data = result
+        task_response.args = {
+            "package_id": result.mapping_package.id
+        }
     return result
 
 

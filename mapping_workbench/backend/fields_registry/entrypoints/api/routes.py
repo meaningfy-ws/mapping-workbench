@@ -205,7 +205,7 @@ async def route_task_import_eforms_from_github(
         None,
         user.email,
         github_repository_url, branch_or_tag_name, Project.link_from_id(project_id)
-    )
+    ).task_metadata
 
 
 @router.post(

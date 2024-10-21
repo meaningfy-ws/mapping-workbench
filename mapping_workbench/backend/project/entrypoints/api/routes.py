@@ -107,4 +107,4 @@ async def route_cleanup_project(
         project: Project = Depends(get_project),
         user: User = Depends(current_active_user)
 ):
-    return add_task_remove_project_orphan_shareable_resources(project.id, user.email)
+    return add_task_remove_project_orphan_shareable_resources(project.id, user.email).task_metadata

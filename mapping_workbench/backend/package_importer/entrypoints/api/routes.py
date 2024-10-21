@@ -2,12 +2,15 @@ from beanie import PydanticObjectId
 from fastapi import APIRouter, status, Form, UploadFile, Depends
 
 from mapping_workbench.backend.mapping_package import PackageType
+from mapping_workbench.backend.package_importer import DEFAULT_PACKAGE_TYPE
 from mapping_workbench.backend.package_importer.models.imported_mapping_suite import ImportedMappingSuiteResponse
 from mapping_workbench.backend.package_importer.services import tasks
 from mapping_workbench.backend.package_importer.services.import_mapping_suite import \
     import_mapping_package_from_archive, clear_project_data
+from mapping_workbench.backend.package_processor.services.tasks import add_task_process_mapping_package
 from mapping_workbench.backend.project.services.api import get_project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
+from mapping_workbench.backend.task_manager.adapters.task import Task
 from mapping_workbench.backend.task_manager.services.task_wrapper import add_task
 from mapping_workbench.backend.user.models.user import User
 
@@ -41,12 +44,10 @@ async def route_clear_project_data(
 )
 async def route_import_package_archive(
         project: PydanticObjectId = Form(...),
-        package_type: PackageType = Form(...),
+        package_type: PackageType = Form(default=DEFAULT_PACKAGE_TYPE),
         file: UploadFile = Form(...),
         user: User = Depends(current_active_user)
 ):
-    if not package_type:
-        package_type = PackageType.EFORMS
     imported_mapping_package: ImportedMappingSuiteResponse = await import_mapping_package_from_archive(
         file.file.read(), await get_project(project), package_type, user
     )
@@ -62,14 +63,24 @@ async def route_import_package_archive(
 )
 async def route_task_import_package(
         project: PydanticObjectId = Form(...),
-        package_type: PackageType = Form(...),
+        package_type: PackageType = Form(default=DEFAULT_PACKAGE_TYPE),
+        trigger_package_process: bool = False,
         file: UploadFile = Form(...),
         user: User = Depends(current_active_user)
 ):
-    return add_task(
+    import_task: Task = add_task(
         tasks.task_import_mapping_package,
         f"Importing package from {file.filename} archive",
         None,
         user.email,
         file.file.read(), await get_project(project), package_type, user
     )
+
+    if trigger_package_process:
+        process_task = (await add_task_process_mapping_package(
+            package_id=package_id,
+            user=user,
+        ))
+        import_task.get_future().add_done_callback()
+
+    return import_task.task_metadata

@@ -37,7 +37,7 @@ async def route_task_terms_validator(
         TASK_TERMS_VALIDATOR_NAME,
         None,
         filters
-    )
+    ).task_metadata
 
 
 @router.post(
@@ -55,7 +55,7 @@ async def route_task_transform_test_data(
         TASK_TRANSFORM_TEST_DATA_NAME,
         None,
         filters
-    )
+    ).task_metadata
 
 
 @router.post(
@@ -73,4 +73,4 @@ async def route_task_generate_cm_assertions_queries(
         TASK_GENERATE_CM_ASSERTIONS_QUERIES_NAME,
         None,
         filters
-    )
+    ).task_metadata

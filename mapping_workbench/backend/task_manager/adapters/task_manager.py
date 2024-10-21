@@ -55,7 +55,7 @@ class TaskManager:
         self.workers_pool = ProcessPool(max_workers=max_workers)
         self.tasks = []
 
-    def add_task(self, task: Task):
+    def add_task(self, task: Task) -> Task:
         """
         Adds task to the task manager
         :param task: task to be added
@@ -71,6 +71,7 @@ class TaskManager:
         future.task = task
         future.add_done_callback(on_task_done_callback)
         self.tasks.append(task)
+        return task
 
     def get_active_tasks(self) -> List[Task]:
         """

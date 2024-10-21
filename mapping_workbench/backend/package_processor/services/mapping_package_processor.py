@@ -43,15 +43,12 @@ async def process_mapping_package(
     :return:
     """
 
-    if tasks_to_run is None:
-        tasks_to_run = []
-
     mapping_package: MappingPackage = await get_mapping_package(package_id)
     project_id: PydanticObjectId = mapping_package.project.to_ref().id
 
     mwb_logger.log_all_info(f"Processing Mapping Package '{mapping_package.identifier}' ... ")
 
-    if TaskToRun.TRANSFORM_TEST_DATA.value in tasks_to_run:
+    if tasks_to_run is None or TaskToRun.TRANSFORM_TEST_DATA.value in tasks_to_run:
         mwb_logger.log_all_info(f"Transforming '{mapping_package.identifier}' Test Data ...")
         await transform_mapping_package(
             mapping_package=mapping_package,
@@ -59,7 +56,7 @@ async def process_mapping_package(
         )
         mwb_logger.log_all_info(f"Transforming '{mapping_package.identifier}' Test Data ... DONE")
 
-    if TaskToRun.GENERATE_CM_ASSERTIONS.value in tasks_to_run:
+    if tasks_to_run is None or TaskToRun.GENERATE_CM_ASSERTIONS.value in tasks_to_run:
         mwb_logger.log_all_info("Generating CM Assertions Queries ...")
         await generate_and_save_cm_assertions_queries(
             project_id=project_id,
@@ -72,7 +69,7 @@ async def process_mapping_package(
     mapping_package_state: MappingPackageState = await create_mapping_package_state(mapping_package)
     mwb_logger.log_all_info("Initializing Package State ... DONE")
 
-    if TaskToRun.VALIDATE_PACKAGE.value in tasks_to_run:
+    if tasks_to_run is None or TaskToRun.VALIDATE_PACKAGE.value in tasks_to_run:
         mwb_logger.log_all_info("Validating Package State ...")
         await validate_mapping_package(mapping_package_state, tasks_to_run)
         mwb_logger.log_all_info("Validating Package State ... DONE")
