@@ -1,9 +1,10 @@
 name: Sync Develop with Main
 
 on:
-  push:
-    branches:
-      - main
+#  push:
+#    branches:
+#      - main
+  workflow_dispatch:
 
 jobs:
   sync:
