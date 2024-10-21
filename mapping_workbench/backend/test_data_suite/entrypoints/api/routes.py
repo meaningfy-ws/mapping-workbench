@@ -311,7 +311,7 @@ async def route_task_transform_test_data(
         None,
         user.email,
         filters, user
-    )
+    ).task_metadata
 
 
 @router.post(

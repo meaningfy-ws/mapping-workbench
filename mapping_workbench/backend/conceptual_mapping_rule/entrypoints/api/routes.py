@@ -167,7 +167,7 @@ async def route_task_generate_cm_assertions_queries(
         None,
         user.email,
         filters.project, bool(filters.cleanup), user
-    )
+    ).task_metadata
 
 
 @router.get(

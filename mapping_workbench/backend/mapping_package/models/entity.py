@@ -13,11 +13,11 @@ from mapping_workbench.backend.conceptual_mapping_rule.models.entity import Conc
 from mapping_workbench.backend.core.models.base_entity import BaseTitledEntityListFiltersSchema, BaseEntity
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
-from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package import PackageType
 from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroupState, MappingGroup
 from mapping_workbench.backend.ontology.models.namespace import NamespaceState, Namespace
 from mapping_workbench.backend.ontology.models.term import TermState, Term
+from mapping_workbench.backend.package_importer import DEFAULT_PACKAGE_TYPE
 from mapping_workbench.backend.resource_collection.models.entity import ResourceCollection, ResourceFileState
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestSuiteState
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuiteState, SPARQLTestSuite, \
@@ -167,7 +167,7 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
     eform_subtypes: Optional[List[str]] = []
     start_date: Optional[str] = None
     end_date: Optional[str] = None
-    package_type: Optional[PackageType] = PackageType.EFORMS
+    package_type: Optional[PackageType] = DEFAULT_PACKAGE_TYPE
     eforms_sdk_versions: Optional[List[str]] = []
     shacl_test_suites: Optional[List[Link[SHACLTestSuite]]] = None
     sparql_test_suites: Optional[List[Link[SPARQLTestSuite]]] = None

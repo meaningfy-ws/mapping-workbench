@@ -310,7 +310,7 @@ async def route_task_discover_terms(
         None,
         user.email,
         req.project, user
-    )
+    ).task_metadata
 
 
 @router.post(
@@ -372,4 +372,4 @@ async def route_task_terms_validator(
         None,
         user.email,
         filters
-    )
+    ).task_metadata

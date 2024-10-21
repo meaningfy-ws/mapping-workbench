@@ -5,8 +5,11 @@ import {useGlobalState} from "../../../hooks/use-global-state";
 export const VersionLabel = () => {
     const globalSettings = useGlobalState()
 
-    return(<Typography variant='subtitle2'
-                color='gray'>
-        <Stack alignItems='center'>{globalSettings.version}</Stack>
-    </Typography>)
+    return (
+        <Typography
+            variant='subtitle2'
+            color='gray' sx={{my: 1}}
+        >
+            <Stack alignItems='center'>{globalSettings.version}</Stack>
+        </Typography>)
 }
