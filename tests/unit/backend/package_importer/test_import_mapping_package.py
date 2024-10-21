@@ -8,7 +8,7 @@ from mapping_workbench.backend.mapping_package import PackageType
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroup
 from mapping_workbench.backend.package_importer.services.import_mapping_suite import \
-    import_mapping_package_from_archive, clear_project_data
+    import_mapping_package_from_archive, clear_project_data, import_and_process_mapping_package_from_archive
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.resource_collection.models.entity import ResourceCollection, ResourceFile
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestFileResource
@@ -85,7 +85,7 @@ async def check_cleared_imported_data(project):
 async def test_import_eforms_mapping_package(dummy_project, dummy_structural_element):
     await dummy_structural_element.create()
 
-    eforms_package = (await import_mapping_package_from_archive(
+    eforms_package = (await import_and_process_mapping_package_from_archive(
         read_archive(EFORMS_PACKAGE_PATH), dummy_project, PackageType.EFORMS
     )).mapping_package
 
