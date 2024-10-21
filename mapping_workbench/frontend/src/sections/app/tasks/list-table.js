@@ -189,14 +189,15 @@ export const ListTable = (props) => {
                                             }}
                                             width="25%"
                                         >
-                                            {(item.exception_message || !!item.warnings?.length) && <IconButton onClick={() => handleItemToggle(item_id)}>
-                                                <SvgIcon sx={{
-                                                    transform: isCurrent ? 'rotate(90deg)' : '',
-                                                    transition: '0.2s linear'
-                                                }}>
-                                                    <ChevronRightIcon/>
-                                                </SvgIcon>
-                                            </IconButton>}
+                                            {(item.exception_message || !!item.warnings?.length) &&
+                                                <IconButton onClick={() => handleItemToggle(item_id)}>
+                                                    <SvgIcon sx={{
+                                                        transform: isCurrent ? 'rotate(90deg)' : '',
+                                                        transition: '0.2s linear'
+                                                    }}>
+                                                        <ChevronRightIcon/>
+                                                    </SvgIcon>
+                                                </IconButton>}
                                         </TableCell>
                                         <TableCell width="25%">
                                             <Typography variant="subtitle3">
@@ -326,22 +327,29 @@ export const ListTable = (props) => {
                     onClose={handlePopoverLeave}
                     disableRestoreFocus
                 >
-                    <Stack direction='row'
-                           alignItems='center'
-                           gap={2}
-                           sx={{m: 2}}>
-                        <SeverityPill color={mapStatusColor(popoverShow?.item?.task_status)}>
-                            {popoverShow?.item?.task_status}
-                        </SeverityPill>
-                        <Stack direction='row'
+                    <Stack gap={2}
+                           sx={{m: 2}}
+                           alignItems='center'>
+                        <Stack gap={2}
+                               direction='row'
                                alignItems='center'>
-                            <Typography variant="h6">
-                                Duration:
-                            </Typography>
-                            <Typography>
-                                {popoverShow?.item?.finished_at ? moment.utc(moment(popoverShow?.item?.finished_at).diff(moment(popoverShow?.item?.started_at))).format("HH:mm:ss") : '-'}
-                            </Typography>
+                            <SeverityPill color={mapStatusColor(popoverShow?.item?.task_status)}>
+                                {popoverShow?.item?.task_status}
+                            </SeverityPill>
+                            <Stack direction='row'
+                                   alignItems='center'>
+                                <Typography variant="h6">
+                                    Duration:
+                                </Typography>
+                                <Typography>
+                                    {popoverShow?.item?.finished_at ? moment.utc(moment(popoverShow?.item?.finished_at).diff(moment(popoverShow?.item?.started_at))).format("HH:mm:ss") : '-'}
+                                </Typography>
+                            </Stack>
                         </Stack>
+                        {[taskStatuses.QUEUED,taskStatuses.RUNNING].includes(popoverShow.item?.task_status) && <Typography variant='subtitle2'
+                                    color='gray'>
+                            Click refresh to update
+                        </Typography>}
                     </Stack>
                 </Popover>
             </Scrollbar>
