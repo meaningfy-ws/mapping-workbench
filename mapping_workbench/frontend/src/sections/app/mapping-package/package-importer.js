@@ -32,7 +32,7 @@ export const PackageImporter = (props) => {
 
     const [files, setFiles] = useState([]);
     const [packageType, setPackageType] = useState(defaultPackageTypeValue);
-    const [triggerPackageProcess, setTriggerPackageProcess] = useState(false);
+    const [triggerPackageProcessing, setTriggerPackageProcessing] = useState(false);
 
     useEffect(() => {
         setFiles([]);
@@ -46,6 +46,7 @@ export const PackageImporter = (props) => {
             formData = new FormData();
             formData.append("file", file);
             formData.append("package_type", packageType);
+            formData.append("trigger_package_processing", triggerPackageProcessing);
             formData.append("project", sessionApi.getSessionProject());
             const toastId = toastLoad(`Importing "${file.name}" ... `)
             sectionApi.importPackage(formData)
@@ -124,9 +125,9 @@ export const PackageImporter = (props) => {
                 <FormGroup sx={{ mb: 2}}>
                     <FormControlLabel
                         control={<Checkbox
-                            checked={triggerPackageProcess}
-                            onChange={e => setTriggerPackageProcess(e.target.checked)}
-                            name="trigger_package_process"
+                            checked={triggerPackageProcessing}
+                            onChange={e => setTriggerPackageProcessing(e.target.checked)}
+                            name="trigger_package_processing"
                         />
                         }
                         label={<Typography>Process Package after Import </Typography>}

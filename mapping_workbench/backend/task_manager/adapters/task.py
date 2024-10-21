@@ -2,7 +2,7 @@ import re
 import unicodedata
 from datetime import datetime
 from enum import Enum
-from typing import Callable, Optional, List
+from typing import Callable, Optional, List, Dict
 
 from dateutil.tz import tzlocal
 from pebble import ProcessFuture
@@ -32,6 +32,7 @@ class TaskResult:
     finished_at: datetime = None
     exception_message: str = None
     warnings: List[str] = []
+    task_result: Dict = None
     task_status: TaskStatus = TaskStatus.FINISHED
 
 
@@ -75,6 +76,7 @@ class TaskExecutor(Callable):
             if isinstance(response, TaskResponse):
                 if hasattr(response.data, 'warnings'):
                     task_result.warnings = response.data.warnings
+                    task_result.task_result = response.result
             task_result.task_status = TaskStatus.FINISHED
         except Exception as e:
             task_result.exception_message = str(e)

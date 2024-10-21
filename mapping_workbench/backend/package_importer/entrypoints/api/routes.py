@@ -7,7 +7,6 @@ from mapping_workbench.backend.package_importer.models.imported_mapping_suite im
 from mapping_workbench.backend.package_importer.services import tasks
 from mapping_workbench.backend.package_importer.services.import_mapping_suite import \
     import_mapping_package_from_archive, clear_project_data
-from mapping_workbench.backend.package_processor.services.tasks import add_task_process_mapping_package
 from mapping_workbench.backend.project.services.api import get_project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.task_manager.adapters.task import Task
@@ -64,23 +63,19 @@ async def route_import_package_archive(
 async def route_task_import_package(
         project: PydanticObjectId = Form(...),
         package_type: PackageType = Form(default=DEFAULT_PACKAGE_TYPE),
-        trigger_package_process: bool = False,
+        trigger_package_processing: bool = Form(default=False),
         file: UploadFile = Form(...),
         user: User = Depends(current_active_user)
 ):
-    import_task: Task = add_task(
+    task_name = f"Importing & Processing Package from {file.filename} archive" \
+        if trigger_package_processing else f"Importing Package from {file.filename} archive"
+
+    task: Task = add_task(
         tasks.task_import_mapping_package,
-        f"Importing package from {file.filename} archive",
+        task_name,
         None,
         user.email,
-        file.file.read(), await get_project(project), package_type, user
+        file.file.read(), await get_project(project), package_type, trigger_package_processing, user
     )
 
-    if trigger_package_process:
-        process_task = (await add_task_process_mapping_package(
-            package_id=package_id,
-            user=user,
-        ))
-        import_task.get_future().add_done_callback()
-
-    return import_task.task_metadata
+    return task.task_metadata

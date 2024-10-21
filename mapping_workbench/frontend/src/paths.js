@@ -424,7 +424,7 @@ export const apiPaths = {
         transform_test_data: '/tasks/transform_test_data'
     },
 
-    version: {
-        items: '/app/settings'
+    app: {
+        settings: '/app/settings'
     }
 }

@@ -15,9 +15,12 @@ from mapping_workbench.backend.package_importer.services.import_mono_eforms_mapp
     import_eforms_mapping_suite_from_file_system
 from mapping_workbench.backend.package_importer.services.import_mono_standard_mapping_suite import \
     import_standard_mapping_suite_from_file_system
+from mapping_workbench.backend.package_processor.services.mapping_package_processor import process_mapping_package
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.tasks.models.task_response import TaskResponse
 from mapping_workbench.backend.user.models.user import User
+
+RESULT_MAPPING_PACKAGE_ID_KEY = "mapping_package_id"
 
 
 async def import_mapping_package(
@@ -40,6 +43,21 @@ async def import_mapping_package(
     )
 
 
+async def import_and_process_mapping_package_from_archive(
+        file_content: bytes, project: Project, package_type: PackageType,
+        user: User = None,
+        task_response: TaskResponse = None
+) -> ImportedMappingSuiteResponse:
+    result = await import_mapping_package_from_archive(file_content, project, package_type, user, task_response)
+
+    await process_mapping_package(
+        package_id=result.mapping_package.id,
+        user=user
+    )
+
+    return result
+
+
 async def import_mapping_package_from_archive(
         file_content: bytes, project: Project, package_type: PackageType, user: User = None,
         task_response: TaskResponse = None
@@ -58,8 +76,8 @@ async def import_mapping_package_from_archive(
     result = await import_mapping_package(dir_contents[0], project, package_type, user)
     if task_response:
         task_response.data = result
-        task_response.args = {
-            "package_id": result.mapping_package.id
+        task_response.result = {
+            RESULT_MAPPING_PACKAGE_ID_KEY: result.mapping_package.id
         }
     return result
 
