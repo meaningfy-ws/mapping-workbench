@@ -1,31 +1,50 @@
 import {Fragment, useState} from 'react';
 import PropTypes from 'prop-types';
-
-import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
-import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
-import CardContent from '@mui/material/CardContent';
-import Divider from '@mui/material/Divider';
-import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
-import SvgIcon from '@mui/material/SvgIcon';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Typography from '@mui/material/Typography';
-import Button from "@mui/material/Button";
-
-import {Scrollbar} from 'src/components/scrollbar';
-import {SeverityPill} from "../../../components/severity-pill";
-import TablePagination from "../../components/table-pagination";
-import timeTransformer from "../../../utils/time-transformer";
-import {useGlobalState} from "../../../hooks/use-global-state";
-import TableSorterHeader from "../../components/table-sorter-header";
 import moment from "moment";
-import nl2br from "../../../utils/nl2br";
-import ListItem from "@mui/material/ListItem";
-import List from "@mui/material/List";
+
+import InfoIcon from '@mui/icons-material/Info';
+import CancelIcon from '@mui/icons-material/Cancel';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
+
+import List from '@mui/material/List';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+import Table from '@mui/material/Table';
+import Button from '@mui/material/Button';
+import SvgIcon from '@mui/material/SvgIcon';
+import Popover from '@mui/material/Popover';
+import Divider from '@mui/material/Divider';
+import ListItem from '@mui/material/ListItem';
+import TableRow from '@mui/material/TableRow';
+import TableHead from '@mui/material/TableHead';
+import TableCell from '@mui/material/TableCell';
+import TableBody from '@mui/material/TableBody';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import CardContent from '@mui/material/CardContent';
+
+import nl2br from "src/utils/nl2br";
+import {Scrollbar} from 'src/components/scrollbar';
+import timeTransformer from "src/utils/time-transformer";
+import {useGlobalState} from "src/hooks/use-global-state";
+import {SeverityPill} from "src/components/severity-pill";
+import TablePagination from "src/sections/components/table-pagination";
+import TableSorterHeader from "src/sections/components/table-sorter-header";
+import {TaskActions, TaskLine} from "./task-actions";
+
+
+export const taskStatuses = {
+    QUEUED: "QUEUED",
+    RUNNING: "RUNNING",
+    FINISHED: "FINISHED",
+    TIMEOUT: "TIMEOUT",
+    FAILED: "FAILED",
+    CANCELED: "CANCELED"
+}
+
+
 
 export const ListTable = (props) => {
     const {
@@ -44,14 +63,6 @@ export const ListTable = (props) => {
         onDeleteAction
     } = props;
 
-    const taskStatuses = {
-        QUEUED: "QUEUED",
-        RUNNING: "RUNNING",
-        FINISHED: "FINISHED",
-        TIMEOUT: "TIMEOUT",
-        FAILED: "FAILED",
-        CANCELED: "CANCELED"
-    }
 
     const mapStatusColor = (task_status) => {
         switch (task_status) {
@@ -68,8 +79,25 @@ export const ListTable = (props) => {
         }
     }
 
+    const MapStatusIcon = ({task_status}) => {
+        const color = mapStatusColor(task_status)
+        switch (task_status) {
+            case taskStatuses.RUNNING:
+                return <RadioButtonCheckedIcon color={color}/>
+            case taskStatuses.FINISHED:
+                return <CheckCircleOutlineIcon color={color}/>
+            case taskStatuses.TIMEOUT:
+            case taskStatuses.FAILED:
+            case taskStatuses.CANCELED:
+                return <CancelIcon color={color}/>
+            default:
+                return <InfoIcon color={color}/>
+        }
+    }
+
 
     const [currentItem, setCurrentItem] = useState(null);
+    const [popoverShow, setPopoverShow] = useState({})
     const {timeSetting} = useGlobalState()
 
     const handleItemToggle = itemId => setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
@@ -82,6 +110,14 @@ export const ListTable = (props) => {
                                {...props}
             />
         )
+    }
+
+    const handlePopoverEnter = (event, item) => {
+        setPopoverShow({anchor: event.currentTarget, item})
+    }
+
+    const handlePopoverLeave = () => {
+        setPopoverShow(e => ({...e, anchor: undefined}))
     }
 
     return (
@@ -121,9 +157,9 @@ export const ListTable = (props) => {
                                               title='Finished At'/>
                             </TableCell>
                             <TableCell>
-                                Task Duration
+                                Duration
                             </TableCell>
-                            <TableCell>
+                            <TableCell width={200}>
                                 <SorterHeader fieldName="task_status"
                                               title='Status'/>
                             </TableCell>
@@ -134,15 +170,12 @@ export const ListTable = (props) => {
                     </TableHead>
                     <TableBody>
                         {items.map((item) => {
-                            console.log(item);
                             const item_id = item.task_id;
                             const isCurrent = item_id === currentItem;
-
                             return (
                                 <Fragment key={item_id}>
-                                    <TableRow
-                                        hover
-                                        key={item_id}
+                                    <TableRow hover
+                                              key={item_id}
                                     >
                                         <TableCell
                                             padding="checkbox"
@@ -162,11 +195,15 @@ export const ListTable = (props) => {
                                             }}
                                             width="25%"
                                         >
-                                            <IconButton onClick={() => handleItemToggle(item_id)}>
-                                                <SvgIcon>
-                                                    {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
-                                                </SvgIcon>
-                                            </IconButton>
+                                            {(item.exception_message || !!item.warnings?.length) &&
+                                                <IconButton onClick={() => handleItemToggle(item_id)}>
+                                                    <SvgIcon sx={{
+                                                        transform: isCurrent ? 'rotate(90deg)' : '',
+                                                        transition: '0.2s linear'
+                                                    }}>
+                                                        <ChevronRightIcon/>
+                                                    </SvgIcon>
+                                                </IconButton>}
                                         </TableCell>
                                         <TableCell width="25%">
                                             <Typography variant="subtitle3">
@@ -186,12 +223,16 @@ export const ListTable = (props) => {
                                             {timeTransformer(item.finished_at, timeSetting)}
                                         </TableCell>
                                         <TableCell>
-                                            {item.finished_at ? moment.utc(moment(item.finished_at).diff(moment(item.started_at))).format("HH:mm:ss") : '-'}
+                                    {item?.finished_at ? moment.utc(moment(item?.finished_at).diff(moment(item?.started_at))).format("HH:mm:ss") : '-'}
                                         </TableCell>
                                         <TableCell align="left">
-                                            <SeverityPill color={mapStatusColor(item.task_status)}>
-                                                {item.task_status}
-                                            </SeverityPill>
+                                            <Stack onMouseEnter={(event) => handlePopoverEnter(event, item)}
+                                                   onMouseLeave={handlePopoverLeave}>
+                                                <SeverityPill color={ mapStatusColor(item?.task_status)}>
+                                                    {item?.task_status}
+                                                </SeverityPill>
+                                                <TaskLine item={item}/>
+                                            </Stack>
                                         </TableCell>
                                         <TableCell align="right">
                                             {[taskStatuses.QUEUED, taskStatuses.RUNNING].includes(item.task_status)
@@ -242,7 +283,9 @@ export const ListTable = (props) => {
                                                         gap={3}
                                                     >
                                                         {item.exception_message && <>
-                                                            <Typography sx={{pl: 3, pt: 1}} variant="h6" color="error">
+                                                            <Typography sx={{pl: 3, pt: 1}}
+                                                                        variant="h6"
+                                                                        color="error">
                                                                 Message
                                                             </Typography>
                                                             <Divider/>
@@ -250,18 +293,23 @@ export const ListTable = (props) => {
                                                                 {nl2br(item.exception_message)}
                                                             </Typography>
                                                         </>}
-                                                        {item.warnings && item.warnings.length > 0 && <>
-                                                            <Typography sx={{pl: 3, pt: 1}} variant="h6"
-                                                                        color="orange">
-                                                                Warning
-                                                            </Typography>
-                                                            <Divider/>
-                                                            <List sx={{pl: 3}}>
-                                                                {item.warnings.map((warning) =>
-                                                                        <ListItem>{warning}</ListItem>
-                                                                )}
-                                                            </List>
-                                                        </>}
+                                                        {!!item.warnings?.length &&
+                                                            <>
+                                                                <Typography sx={{pl: 3, pt: 1}}
+                                                                            variant="h6"
+                                                                            color="orange">
+                                                                    Warning
+                                                                </Typography>
+                                                                <Divider/>
+                                                                <List sx={{pl: 3}}>
+                                                                    {item.warnings.map((warning, key) =>
+                                                                        <ListItem
+                                                                            key={'warning' + key}>
+                                                                            {warning}
+                                                                        </ListItem>
+                                                                    )}
+                                                                </List>
+                                                            </>}
                                                     </Grid>
                                                 </CardContent>
                                                 <Divider/>
@@ -273,9 +321,28 @@ export const ListTable = (props) => {
                         })}
                     </TableBody>
                 </Table>
+                <Popover
+                    id="mouse-over-popover"
+                    sx={{pointerEvents: 'none'}}
+                    open={!!popoverShow?.anchor}
+                    anchorEl={popoverShow?.anchor}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }}
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    onClose={handlePopoverLeave}
+                    disableRestoreFocus
+                >
+                    <TaskActions item={popoverShow?.item}/>
+                </Popover>
             </Scrollbar>
         </TablePagination>
-    );
+    )
+        ;
 };
 
 ListTable.propTypes = {
