@@ -12,14 +12,12 @@ def task_import_mapping_package(
         project: Project,
         package_type: PackageType,
         trigger_package_processing: bool = False,
-        user: User = None
-) -> TaskResponse:
-    task_response: TaskResponse = TaskResponse()
-
+        user: User = None,
+        task_response: TaskResponse = None
+):
     task_to_run = import_and_process_mapping_package_from_archive \
         if trigger_package_processing else import_mapping_package_from_archive
     run_task(
         task_to_run,
         file_content, project, package_type, user, task_response
     )
-    return task_response

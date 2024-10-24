@@ -36,6 +36,8 @@ async def route_task_terms_validator(
         tasks.task_terms_validator,
         TASK_TERMS_VALIDATOR_NAME,
         None,
+        None,
+        False,
         filters
     ).task_metadata
 
@@ -54,6 +56,8 @@ async def route_task_transform_test_data(
         tasks.task_transform_test_data,
         TASK_TRANSFORM_TEST_DATA_NAME,
         None,
+        None,
+        False,
         filters
     ).task_metadata
 
@@ -72,5 +76,7 @@ async def route_task_generate_cm_assertions_queries(
         tasks.task_generate_cm_assertions_queries,
         TASK_GENERATE_CM_ASSERTIONS_QUERIES_NAME,
         None,
+        None,
+        False,
         filters
     ).task_metadata

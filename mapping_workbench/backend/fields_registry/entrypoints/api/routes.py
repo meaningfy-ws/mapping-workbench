@@ -204,6 +204,7 @@ async def route_task_import_eforms_from_github(
         f"Importing eForms from {github_repository_url}, branch: {branch_or_tag_name}",
         None,
         user.email,
+        False,
         github_repository_url, branch_or_tag_name, Project.link_from_id(project_id)
     ).task_metadata
 

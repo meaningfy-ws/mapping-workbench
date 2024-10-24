@@ -2,7 +2,7 @@ import {SectionApi} from "../section";
 import {appApi} from "../app";
 import {apiPaths} from "../../paths";
 
-class TasksApi extends SectionApi{
+class TasksApi extends SectionApi {
     get TASKS_TITLE() {
         return "Activities";
     }
@@ -28,6 +28,7 @@ class TasksApi extends SectionApi{
         } catch (err) {
         }
     }
+
     async runGenerateCMAssertionsQueries(request = {}) {
         try {
             let endpoint = this.paths['generate_cm_assertions_queries'];
@@ -65,6 +66,11 @@ class TasksApi extends SectionApi{
     async deleteAllTasks() {
         const endpoint = this.paths['task_delete_all'];
         return appApi.delete(endpoint);
+    }
+
+    async getTasks() {
+        const endpoint = this.paths['items'];
+        return appApi.get(endpoint);
     }
 }
 

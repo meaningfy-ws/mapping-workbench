@@ -255,6 +255,9 @@ deploy-app-version:
 deploy-env-app-settings: deploy-app-version
 	@ echo "Deployed ENV App Settings"
 
+deploy-env: deploy-env-app-settings
+	@ echo "Deployed ENV"
+
 deploy-prod-dotenv-file: prod-dotenv-file deploy-env-app-settings
 	@ echo "Deployed PROD ENV file"
 

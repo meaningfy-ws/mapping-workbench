@@ -75,6 +75,7 @@ async def route_task_import_package(
         task_name,
         None,
         user.email,
+        True,
         file.file.read(), await get_project(project), package_type, trigger_package_processing, user
     )
 
