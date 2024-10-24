@@ -113,4 +113,3 @@ class ImportedStandardMappingSuite(ImportedMappingSuite):
 
 class ImportedMappingSuiteResponse(BaseModel):
     mapping_package: MappingPackage
-    warnings: List[str] = []

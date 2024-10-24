@@ -1,9 +1,13 @@
+import multiprocessing
 from concurrent.futures import CancelledError, TimeoutError
+from multiprocessing.managers import BaseManager
 from typing import List
 
 from pebble import ProcessPool, ProcessFuture
 
 from mapping_workbench.backend.task_manager.adapters.task import Task, TaskStatus, TaskMetadata
+from mapping_workbench.backend.task_manager.adapters.task_progress import TaskProgress
+from mapping_workbench.backend.tasks.models.task_response import TaskResponse, TaskProgressData, TaskProgressStatus
 
 
 def on_task_done_callback(future):
@@ -20,8 +24,19 @@ def on_task_done_callback(future):
         task.update_task_status(task_result.task_status)
         task.update_started_at(task_result.started_at)
         task.update_finished_at(task_result.finished_at)
-        task.update_warnings(task_result.warnings)
         task.update_exception_message(task_result.exception_message)
+        if task.has_response:
+            task.update_warnings(task.task_response.get_result().warnings)
+            task.update_progress(task.task_response.get_progress())
+        else:
+            progress: TaskProgressData = task.task_response.get_progress()
+            progress.finished_at = TaskProgress.current_time()
+            progress.status = TaskProgressStatus.FINISHED
+            progress.duration = (
+                    progress.finished_at - progress.started_at
+            )
+            task.update_progress(progress)
+
     except CancelledError:
         task.update_task_status(TaskStatus.CANCELED)
         task.update_exception_message("Task was canceled!")
@@ -32,6 +47,13 @@ def on_task_done_callback(future):
         task.update_task_status(TaskStatus.FAILED)
         task.update_exception_message(
             f"Task raised error: {str(error)}\n{error.__traceback__}, error_type={type(error)}")
+
+
+class TaskSharedDataManager(BaseManager):
+    pass
+
+
+TaskSharedDataManager.register('TaskResponse', TaskResponse)
 
 
 class TaskManager:
@@ -58,9 +80,21 @@ class TaskManager:
     def add_task(self, task: Task) -> Task:
         """
         Adds task to the task manager
+        :param task_has_response:
         :param task: task to be added
         :return: None
         """
+        shared_data_manager = TaskSharedDataManager()
+        shared_data_manager.start()
+        task.task_response = shared_data_manager.TaskResponse()
+        if task.has_response:
+            task.task_kwargs['task_response'] = task.task_response
+        else:
+            task.task_response.update_progress(TaskProgressData(
+                started_at=TaskProgress.current_time(),
+                status=TaskProgressStatus.RUNNING
+            ))
+
         future: ProcessFuture = self.workers_pool.schedule(
             task.task_function,
             args=list(task.task_args),
@@ -90,6 +124,7 @@ class TaskManager:
             if future:
                 if future.running():
                     task.update_task_status(TaskStatus.RUNNING)
+                    task.update_progress(task.task_response.get_progress())
 
     def get_task_statuses(self, update_task_statuses: bool = True) -> List[TaskMetadata]:
         """

@@ -25,7 +25,6 @@ def loop_task(task_to_run, *args):
 
         return event_loop
 
-
     async def task():
         await init_task()  # This is because of beanie implementation
         await task_to_run(*args)
@@ -39,9 +38,10 @@ def run_task(task_to_run, *args):
     loop_task(task_to_run, *args)
 
 
-def add_task(task_to_run, task_name, task_timeout, created_by, *args) -> Task:
+def add_task(task_to_run, task_name, task_timeout, created_by, task_has_response: bool = False, *args) -> Task:
     if task_timeout is None:
         task_timeout = settings.TASK_TIMEOUT
-    task = Task(task_to_run, task_name, task_timeout, created_by, *args)
+
+    task = Task(task_to_run, task_name, task_timeout, created_by, task_has_response, *args)
     AppTaskManager.add_task(task)
     return task

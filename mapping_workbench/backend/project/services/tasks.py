@@ -20,5 +20,6 @@ def add_task_remove_project_orphan_shareable_resources(project_id: PydanticObjec
         "Cleanup Project Resources",
         None,
         user_email,
+        False,
         project_id
     )

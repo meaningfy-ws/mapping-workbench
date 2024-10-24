@@ -113,7 +113,7 @@ export const ListTable = (props) => {
     }
 
     const handlePopoverEnter = (event, item) => {
-        setPopoverShow({anchor: event.currentTarget, item})
+        item?.progress?.actions?.length > 0 && setPopoverShow({anchor: event.currentTarget, item})
     }
 
     const handlePopoverLeave = () => {
