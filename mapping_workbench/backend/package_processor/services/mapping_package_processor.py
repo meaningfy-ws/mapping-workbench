@@ -47,6 +47,9 @@ async def process_mapping_package(
     :return:
     """
 
+    if not task_response:
+        task_response = TaskResponse()
+
     task_progress = TaskProgress(task_response)
     task_progress.start_progress(actions_count=1)
 

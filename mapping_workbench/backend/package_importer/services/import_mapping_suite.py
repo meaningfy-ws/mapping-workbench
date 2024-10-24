@@ -52,6 +52,8 @@ async def import_and_process_mapping_package_from_archive(
         user: User = None,
         task_response: TaskResponse = None
 ) -> ImportedMappingSuiteResponse:
+    if not task_response:
+        task_response = TaskResponse()
     result = await import_mapping_package_from_archive(file_content, project, package_type, user, task_response)
 
     await process_mapping_package(
@@ -67,6 +69,8 @@ async def import_mapping_package_from_archive(
         file_content: bytes, project: Project, package_type: PackageType, user: User = None,
         task_response: TaskResponse = None
 ) -> ImportedMappingSuiteResponse:
+    if not task_response:
+        task_response = TaskResponse()
     zf = zipfile.ZipFile(io.BytesIO(file_content))
     tempdir = tempfile.TemporaryDirectory()
     tempdir_name = tempdir.name
