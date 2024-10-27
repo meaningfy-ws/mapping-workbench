@@ -97,7 +97,8 @@ async def transform_test_data_file_resource(
 
     if resources is None:
         resources = await get_resource_files_for_project(
-            project_id=project_id
+            project_id=project_id,
+            package_id=package_id
         )
 
     test_data_file_resource.rdf_manifestation = await transform_test_data_file_resource_content(
@@ -108,9 +109,10 @@ async def transform_test_data_file_resource(
         test_data_title=test_data_file_resource.title or test_data_file_resource.filename
     )
 
+    if user is not None:
+        test_data_file_resource.on_update(user=user)
+
     if save:
-        if user is not None:
-            test_data_file_resource.on_update(user=user)
         await test_data_file_resource.save()
 
     return test_data_file_resource
@@ -120,15 +122,17 @@ async def transform_test_data_file_resources(
         test_data_file_resources: List[TestDataFileResource],
         project_id: PydanticObjectId,
         package_id: PydanticObjectId = None,
-        user: User = None
-):
+        user: User = None,
+        save: bool = True
+) -> List[TestDataFileResource]:
     mappings = await get_mappings_to_transform_test_data(
         project_id=project_id,
         package_id=package_id
     )
 
     resources = await get_resource_files_for_project(
-        project_id=project_id
+        project_id=project_id,
+        package_id=package_id
     )
 
     rml_mapper: RMLMapper = RMLMapper(rml_mapper_path=Path(settings.RML_MAPPER_PATH))
@@ -143,12 +147,14 @@ async def transform_test_data_file_resources(
             mappings=mappings,
             resources=resources,
             rml_mapper=rml_mapper,
-            save=True
+            save=save
         )
     if rml_mapper.errors:
         raise RMLMapperException(message=('\n\n' + '\n'.join([
             error.message + (" :: " + str(error.metadata) if error.metadata else "") for error in rml_mapper.errors
         ])))
+
+    return test_data_file_resources
 
 
 async def transform_test_data_for_project(
@@ -169,11 +175,11 @@ async def transform_test_data_for_package(
         package_id: PydanticObjectId,
         project_id: PydanticObjectId,
         user: User = None
-):
+) -> List[TestDataFileResource]:
     test_data_file_resources: List[TestDataFileResource] = \
         await get_test_data_file_resources_for_package(package_id=package_id)
 
-    await transform_test_data_file_resources(
+    return await transform_test_data_file_resources(
         test_data_file_resources=test_data_file_resources,
         project_id=project_id,
         package_id=package_id,

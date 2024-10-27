@@ -5,7 +5,7 @@ from mapping_workbench.backend.user.models.user import User
 
 async def transform_mapping_package(mapping_package: MappingPackage, user: User = None):
     """
-    Transform the given mapping package state.
+    Transform the given mapping package.
 
     :param user:
     :param mapping_package: The mapping package to transform.

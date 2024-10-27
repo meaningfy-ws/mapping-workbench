@@ -59,7 +59,6 @@ const PackageRow = (props) => {
         validationSchema: Yup.object({}),
         onSubmit: async (values, helpers) => {
             setIsProcessing(true)
-
             const tasks_to_run = [];
             if (values['transform_test_data']) {
                 tasks_to_run.push('transform_test_data');
@@ -69,13 +68,14 @@ const PackageRow = (props) => {
             }
             if (values['validate_package']) {
                 tasks_to_run.push('validate_package');
-            }
-            if (values['validate_package_xpath_sparql']) {
-                tasks_to_run.push('validate_package_xpath');
-                tasks_to_run.push('validate_package_sparql');
-            }
-            if (values['validate_package_shacl']) {
-                tasks_to_run.push('validate_package_shacl');
+
+                if (values['validate_package_xpath_sparql']) {
+                    tasks_to_run.push('validate_package_xpath');
+                    tasks_to_run.push('validate_package_sparql');
+                }
+                if (values['validate_package_shacl']) {
+                    tasks_to_run.push('validate_package_shacl');
+                }
             }
             const data = {
                 package_id: item._id,

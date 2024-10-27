@@ -46,7 +46,6 @@ async def route_list_mapping_packages(
         limit: int = None,
         q: str = None
 ):
-    print('here111')
     filters: dict = {}
     if project:
         filters['project'] = Project.link_from_id(project)

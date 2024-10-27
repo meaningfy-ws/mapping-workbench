@@ -59,7 +59,7 @@ export const ListTableRow = (props) => {
     const [collectionResources, setCollectionResources] = useState([]);
 
     useEffect(() => {
-        sectionApi.getFileResources(item_id)
+        sectionApi.getFileResources(item_id, {rowsPerPage: -1})
             .then(res => setCollectionResources(res.items))
     }, [sectionApi])
 

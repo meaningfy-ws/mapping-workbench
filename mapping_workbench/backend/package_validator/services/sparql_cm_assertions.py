@@ -165,14 +165,14 @@ async def generate_and_save_cm_assertions_queries(
             )
             if user is not None:
                 sparql_test_file_resource.on_create(user)
-            await sparql_test_file_resource.save()
         else:
             sparql_test_file_resource.title = sparql_title
             sparql_test_file_resource.content = file_content
             sparql_test_file_resource.cm_rule = cm_rule_sdk_element
             if user is not None:
                 sparql_test_file_resource.on_update(user)
-            await sparql_test_file_resource.save()
+
+        await sparql_test_file_resource.save()
 
         cm_rule.sparql_assertions = [SPARQLTestFileResource.link_from_id(sparql_test_file_resource.id)]
         await cm_rule.save()
