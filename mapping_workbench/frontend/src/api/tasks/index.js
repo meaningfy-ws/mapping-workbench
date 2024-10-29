@@ -17,40 +17,31 @@ class TasksApi extends SectionApi {
         this.paths = apiPaths[this.section];
     }
 
-    async runTermsValidator(request = {}) {
-        try {
-            let endpoint = this.paths['terms_validator'];
-            let filters = {}
-            if (request['filters']) {
-                filters = request['filters'];
-            }
-            return appApi.post(endpoint, filters);
-        } catch (err) {
+    runTermsValidator(request = {}) {
+        let endpoint = this.paths['terms_validator'];
+        let filters = {}
+        if (request['filters']) {
+            filters = request['filters'];
         }
+        return appApi.post(endpoint, filters);
     }
 
-    async runGenerateCMAssertionsQueries(request = {}) {
-        try {
-            let endpoint = this.paths['generate_cm_assertions_queries'];
-            let filters = {}
-            if (request['filters']) {
-                filters = request['filters'];
-            }
-            return appApi.post(endpoint, filters);
-        } catch (err) {
+    runGenerateCMAssertionsQueries(request = {}) {
+        let endpoint = this.paths['generate_cm_assertions_queries'];
+        let filters = {}
+        if (request['filters']) {
+            filters = request['filters'];
         }
+        return appApi.post(endpoint, filters);
     }
 
-    async runTransformTestData(request = {}) {
-        try {
-            let endpoint = this.paths['transform_test_data'];
-            let filters = {}
-            if (request['filters']) {
-                filters = request['filters'];
-            }
-            return appApi.post(endpoint, filters);
-        } catch (err) {
+    runTransformTestData(request = {}) {
+        let endpoint = this.paths['transform_test_data'];
+        let filters = {}
+        if (request['filters']) {
+            filters = request['filters'];
         }
+        return appApi.post(endpoint, filters);
     }
 
     async cancelTask(id) {

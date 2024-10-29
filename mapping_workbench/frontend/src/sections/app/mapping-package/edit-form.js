@@ -166,20 +166,20 @@ export const EditForm = (props) => {
                     </Grid>
                 </CardContent>
             </Card>
-            {false && <Card sx={{mt: 3}}>
-                <CardHeader title={testDataSuitesApi.SECTION_TITLE}/>
-                <CardContent sx={{pt: 0}}>
-                    <Grid container
-                          spacing={3}>
-                        <Grid xs={12}
-                              md={12}>
-                            <ResourceListSelector
-                                valuesApi={testDataSuitesApi}
-                                listValues={formik.values.test_data_suites}/>
-                        </Grid>
-                    </Grid>
-                </CardContent>
-            </Card>}
+            {/*<Card sx={{mt: 3}}>*/}
+            {/*    <CardHeader title={testDataSuitesApi.SECTION_TITLE}/>*/}
+            {/*    <CardContent sx={{pt: 0}}>*/}
+            {/*        <Grid container*/}
+            {/*              spacing={3}>*/}
+            {/*            <Grid xs={12}*/}
+            {/*                  md={12}>*/}
+            {/*                <ResourceListSelector*/}
+            {/*                    valuesApi={testDataSuitesApi}*/}
+            {/*                    listValues={formik.values.test_data_suites}/>*/}
+            {/*            </Grid>*/}
+            {/*        </Grid>*/}
+            {/*    </CardContent>*/}
+            {/*</Card>*/}
             <Card sx={{mt: 3}}>
                 <CardHeader title={shaclTestSuitesApi.SECTION_TITLE}/>
                 <CardContent sx={{pt: 0}}>

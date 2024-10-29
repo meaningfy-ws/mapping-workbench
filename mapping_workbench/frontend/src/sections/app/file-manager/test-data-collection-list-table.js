@@ -101,7 +101,7 @@ export const ListTableRow = (props) => {
                 title="Delete It?"
                 open={!!confirmOpen}
                 setOpen={setConfirmOpen}
-                onConfirm={() => handleDeleteResourceAction(confirmOpen)}
+                onConfirm={() => handleDeleteResourceAction()}
             >
                 Are you sure you want to delete it?
             </ConfirmDialog>
