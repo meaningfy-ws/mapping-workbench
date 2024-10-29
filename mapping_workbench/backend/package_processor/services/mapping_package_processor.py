@@ -79,8 +79,6 @@ async def process_mapping_package(
     task_progress.finish_current_action_step()
     mwb_logger.log_all_info("Initializing Package State ... DONE")
 
-    # TODO: Store all package data in the Package State and make all the processing only on Package State Data
-
     if tasks_to_run is None or TaskToRun.TRANSFORM_TEST_DATA.value in tasks_to_run:
         mwb_logger.log_all_info(f"Transforming '{mapping_package.identifier}' Test Data ...")
         task_progress.start_action_step(name=TaskToRun.TRANSFORM_TEST_DATA.value)

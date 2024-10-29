@@ -187,7 +187,10 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
         mapping_groups = await MappingGroup.find(
             Eq(MappingGroup.project, self.project.to_ref())
         ).to_list()
-        mapping_groups_states = [await mapping_group.get_state() for mapping_group in mapping_groups]
+        mapping_groups_states = [
+            await mapping_group.get_state() for mapping_group in mapping_groups
+            if isinstance(mapping_group, MappingGroup)
+        ]
         return mapping_groups_states
 
     async def get_test_data_suites_states(self) -> List[TestDataSuiteState]:
