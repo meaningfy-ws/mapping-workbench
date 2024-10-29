@@ -67,7 +67,7 @@ class XPATHValidator(TestDataValidator):
             return None
         path_parts = [xpath]
         parent = node.get_parent()
-        while parent and isinstance(parent, PyXdmNode) and parent.name:
+        while isinstance(parent, PyXdmNode) and parent.name:
             xpath = self.get_ns_tag(parent)
             if xpath is not None:
                 path_parts.insert(0, xpath)

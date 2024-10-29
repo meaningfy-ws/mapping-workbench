@@ -199,7 +199,7 @@ class ConceptualMappingRule(
                 for sparql_assertion in sparql_assertions:
                     sparql_assertion_state = \
                         await sparql_assertion.get_state() \
-                            if (sparql_assertion and isinstance(sparql_assertion, SPARQLTestFileResource)) else None
+                            if isinstance(sparql_assertion, SPARQLTestFileResource) else None
                     if isinstance(sparql_assertion_state, SPARQLTestState):
                         sparql_assertions_states.append(sparql_assertion_state)
 
@@ -207,7 +207,10 @@ class ConceptualMappingRule(
         if self.mapping_groups:
             mapping_groups = [await mapping_group.fetch() for mapping_group in self.mapping_groups]
             if mapping_groups:
-                mapping_groups_states = [await mapping_group.get_state() for mapping_group in mapping_groups]
+                mapping_groups_states = [
+                    await mapping_group.get_state() for mapping_group in mapping_groups
+                    if isinstance(mapping_group, MappingGroup)
+                ]
 
         return ConceptualMappingRuleState(
             oid=self.id,
@@ -215,13 +218,13 @@ class ConceptualMappingRule(
             max_sdk_version=self.max_sdk_version,
             source_structural_element=(
                 await source_structural_element.get_state()
-            ) if (source_structural_element and isinstance(source_structural_element, StructuralElement)) else None,
+            ) if isinstance(source_structural_element, StructuralElement) else None,
             xpath_condition=self.xpath_condition,
             target_class_path=self.target_class_path,
             target_property_path=self.target_property_path,
             triple_map_fragment=(
                 await triple_map_fragment.get_state()
-            ) if (triple_map_fragment and isinstance(triple_map_fragment, GenericTripleMapFragment)) else None,
+            ) if isinstance(triple_map_fragment, GenericTripleMapFragment) else None,
             sparql_assertions=sparql_assertions_states,
             status=self.status,
             mapping_notes=self.mapping_notes,

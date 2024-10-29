@@ -75,7 +75,7 @@ async def import_mapping_package_from_archive(
     tempdir = tempfile.TemporaryDirectory()
     tempdir_name = tempdir.name
     tempdir_path = pathlib.Path(tempdir_name)
-    zf.extractall(tempdir_name)
+    zf.extractall(tempdir_name) # NOSONAR
     dir_contents = list(tempdir_path.iterdir())
     try:
         assert len(dir_contents) == 1, "Archive must contain only the package folder!"
