@@ -21,7 +21,7 @@ from mapping_workbench.backend.user.models.user import User
 
 DEFAULT_RQ_NAME = 'cm_assertion_'
 
-SPARQL_PREFIX_PATTERN = re.compile('(?:\\s+|^)([\\w\\-]+)?:')
+SPARQL_PREFIX_PATTERN = re.compile('(?:\\s+|^)([\\w\\-]+)?:') # NOSONAR
 SPARQL_PREFIX_LINE = 'PREFIX {prefix}: <{value}>'
 
 SPARQL_XPATH_SEPARATOR = " ;; "

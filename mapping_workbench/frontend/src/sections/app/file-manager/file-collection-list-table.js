@@ -68,6 +68,7 @@ export const ListTableRow = (props) => {
             pathname: paths.app[sectionApi.section].resource_manager.edit,
             query: {id: item_id, fid: resource_id}
         });
+        return true;
     }
 
     return (
