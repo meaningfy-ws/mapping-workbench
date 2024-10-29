@@ -140,10 +140,10 @@ const PackageRow = (props) => {
                     px: 3
                 }}
             >
-                <Alert severity="warning" sx={{my: 1, mx: 3}}>
+                <Alert severity="warning" sx={{mt: 3, mx: 3}}>
                     Do not modify Project's Resources while the Mapping Package Processing task is initializing.
                 </Alert>
-                {isProcessing && <Alert severity="warning" sx={{my: 1, mx: 3}}>
+                {isProcessing && <Alert severity="warning" sx={{mt: 1, mx: 3}}>
                     <b>Mapping Package Processing task is initializing!</b>
                 </Alert>}
                 <form onSubmit={formik.handleSubmit}>
