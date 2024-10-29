@@ -235,7 +235,6 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
             conceptual_mapping_rules_states = self.get_conceptual_mapping_rules_states()
 
         cm_assertions = []
-
         for cm_rule_state in conceptual_mapping_rules_states:
             if cm_rule_state.sparql_assertions:
                 for cm_assertion in cm_rule_state.sparql_assertions:

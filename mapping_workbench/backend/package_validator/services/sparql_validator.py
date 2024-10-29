@@ -93,9 +93,13 @@ def validate_mapping_package_state_with_sparql(mapping_package_state: MappingPac
     sparql_assertions = []
 
     for conceptual_mapping_rule_state in mapping_package_state.conceptual_mapping_rules:
+        if not conceptual_mapping_rule_state.sparql_assertions:
+            continue
         sparql_assertions.extend(conceptual_mapping_rule_state.sparql_assertions)
 
     for sparql_test_suite in mapping_package_state.sparql_test_suites:
+        if not sparql_test_suite.sparql_test_states:
+            continue
         sparql_assertions.extend(sparql_test_suite.sparql_test_states)
 
     seen = set()

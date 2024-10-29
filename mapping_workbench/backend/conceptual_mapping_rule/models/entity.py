@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Optional, List
 
 import pymongo
-from beanie import Link
+from beanie import Link, PydanticObjectId
 from dateutil.tz import tzlocal
 from pydantic import BaseModel, Field, field_validator
 from pydantic_core.core_schema import ValidationInfo
@@ -131,6 +131,7 @@ class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema, BaseMappingPa
 
 
 class ConceptualMappingRuleState(ObjectState):
+    oid: Optional[PydanticObjectId] = None
     min_sdk_version: Optional[str] = None
     max_sdk_version: Optional[str] = None
     source_structural_element: Optional[StructuralElementState] = None
@@ -184,9 +185,12 @@ class ConceptualMappingRule(BaseProjectResourceEntity, BaseMappingPackagesResour
         if self.sparql_assertions:
             sparql_assertions = [await sparql_assertion.fetch() for sparql_assertion in self.sparql_assertions]
             if sparql_assertions:
-                sparql_assertions_states = [
-                    await sparql_assertion.get_state() for sparql_assertion in sparql_assertions
-                ]
+                for sparql_assertion in sparql_assertions:
+                    sparql_assertion_state = \
+                        await sparql_assertion.get_state() \
+                        if (sparql_assertion and isinstance(sparql_assertion, SPARQLTestFileResource)) else None
+                    if isinstance(sparql_assertion_state, SPARQLTestState):
+                        sparql_assertions_states.append(sparql_assertion_state)
 
         mapping_groups_states = []
         if self.mapping_groups:
@@ -195,6 +199,7 @@ class ConceptualMappingRule(BaseProjectResourceEntity, BaseMappingPackagesResour
                 mapping_groups_states = [await mapping_group.get_state() for mapping_group in mapping_groups]
 
         return ConceptualMappingRuleState(
+            oid=self.id,
             min_sdk_version=self.min_sdk_version,
             max_sdk_version=self.max_sdk_version,
             source_structural_element=(

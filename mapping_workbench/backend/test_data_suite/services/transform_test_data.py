@@ -1,20 +1,23 @@
 import tempfile
 from pathlib import Path
-from typing import List
+from typing import List, Union
 
 from beanie import PydanticObjectId
 
 from mapping_workbench.backend.config import settings
+from mapping_workbench.backend.file_resource.models.file_resource import FileResourceState, FileResourceFormat
 from mapping_workbench.backend.logger.services import mwb_logger
-from mapping_workbench.backend.resource_collection.models.entity import ResourceFile
+from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState
+from mapping_workbench.backend.resource_collection.models.entity import ResourceFile, ResourceFileState
 from mapping_workbench.backend.resource_collection.services.data import get_resource_files_for_project
 from mapping_workbench.backend.test_data_suite.adapters.rml_mapper import RMLMapperABC, RMLMapper, RMLMapperException
-from mapping_workbench.backend.test_data_suite.models.entity import TestDataFileResource
+from mapping_workbench.backend.test_data_suite.models.entity import TestDataFileResource, TestDataState, \
+    TestDataSuiteState
 from mapping_workbench.backend.test_data_suite.services import DATA_SOURCE_PATH_NAME, \
     TRANSFORMATION_PATH_NAME, MAPPINGS_PATH_NAME, RESOURCES_PATH_NAME
 from mapping_workbench.backend.test_data_suite.services.data import get_test_data_file_resources_for_project, \
     get_test_data_file_resources_for_package
-from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragment
+from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragment, TripleMapFragmentState
 from mapping_workbench.backend.triple_map_fragment.services.data_for_generic import \
     get_generic_triple_map_fragments_for_project, get_specific_triple_map_fragments_for_package
 from mapping_workbench.backend.user.models.user import User
@@ -22,8 +25,8 @@ from mapping_workbench.backend.user.models.user import User
 
 async def transform_test_data_file_resource_content(
         content: str,
-        mappings: List[TripleMapFragment],
-        resources: List[ResourceFile] = None,
+        mappings: List[Union[TripleMapFragment, TripleMapFragmentState]],
+        resources: List[Union[ResourceFile, ResourceFileState]] = None,
         rml_mapper: RMLMapperABC = None,
         test_data_title: str = None
 ) -> str:
@@ -185,3 +188,54 @@ async def transform_test_data_for_package(
         package_id=package_id,
         user=user
     )
+
+
+async def transform_test_data_state(
+        test_data_state: TestDataState,
+        mappings: List[TripleMapFragmentState] = None,
+        resources: List[ResourceFileState] = None,
+        rml_mapper: RMLMapperABC = None
+) -> TestDataState:
+    """
+    """
+
+    if not test_data_state.rdf_manifestation:
+        test_data_state.rdf_manifestation = FileResourceState(
+            format=FileResourceFormat.RDF
+        )
+    test_data_state.rdf_manifestation.content = await transform_test_data_file_resource_content(
+        content=test_data_state.xml_manifestation.content,
+        mappings=mappings,
+        resources=resources,
+        rml_mapper=rml_mapper,
+        test_data_title=test_data_state.title or test_data_state.filename
+    )
+
+    return test_data_state
+
+
+async def transform_test_data_for_package_state(
+        mapping_package_state: MappingPackageState
+):
+    test_data_suites_states: List[TestDataSuiteState] = mapping_package_state.test_data_suites
+
+    mappings: List[TripleMapFragmentState] = mapping_package_state.triple_map_fragments
+    resources: List[ResourceFileState] = mapping_package_state.resources
+
+    rml_mapper: RMLMapper = RMLMapper(rml_mapper_path=Path(settings.RML_MAPPER_PATH))
+
+    for test_data_suite_state in test_data_suites_states:
+        for test_data_state in test_data_suite_state.test_data_states:
+            mwb_logger.log_all_info(
+                f"Transform Test Data :: {test_data_state.filename or test_data_state.title}"
+            )
+            await transform_test_data_state(
+                test_data_state=test_data_state,
+                mappings=mappings,
+                resources=resources,
+                rml_mapper=rml_mapper
+            )
+    if rml_mapper.errors:
+        raise RMLMapperException(message=('\n\n' + '\n'.join([
+            error.message + (" :: " + str(error.metadata) if error.metadata else "") for error in rml_mapper.errors
+        ])))

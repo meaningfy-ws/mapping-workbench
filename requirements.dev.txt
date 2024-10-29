@@ -8,5 +8,5 @@ tox~=3.24.5
 tox-pytest-summary~=0.1.2
 mongomock==4.1.2
 pytest-asyncio~=0.21.1
-mongomock-motor==0.0.34
+mongomock-motor==0.0.26
 httpx~=0.26
