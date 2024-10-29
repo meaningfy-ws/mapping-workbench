@@ -1,12 +1,13 @@
 import re
-from typing import List, Union, Dict
+from typing import List, Dict
 
 from beanie import PydanticObjectId
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule, \
-    ConceptualMappingRuleState
+    ConceptualMappingRuleState, ConceptualMappingRuleABC
 from mapping_workbench.backend.conceptual_mapping_rule.services.data import get_conceptual_mapping_rules_for_project
-from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement, StructuralElementState
+from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement, StructuralElementState, \
+    StructuralElementABC
 from mapping_workbench.backend.file_resource.models.file_resource import FileResourceFormat
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState
 from mapping_workbench.backend.ontology.services.namespaces import get_prefixes_definitions
@@ -50,8 +51,8 @@ def get_sparql_prefix_line_for_cm_assertion(prefixes_string: str, prefixes_defin
 
 
 def get_sparql_content_for_cm_assertion(
-        cm_rule: Union[ConceptualMappingRule, ConceptualMappingRuleState],
-        structural_element: Union[StructuralElement, StructuralElementState],
+        cm_rule: ConceptualMappingRuleABC,
+        structural_element: StructuralElementABC,
         sparql_title: str,
         prefixes_definitions: Dict
 ) -> str:
@@ -88,7 +89,7 @@ def get_sparql_content_for_cm_assertion(
     )
 
 
-def is_cm_rule_assertable(cm_rule: Union[ConceptualMappingRule, ConceptualMappingRuleState]) -> bool:
+def is_cm_rule_assertable(cm_rule: ConceptualMappingRuleABC) -> bool:
     return bool(cm_rule.target_class_path or cm_rule.target_property_path)
 
 

@@ -1,6 +1,6 @@
 import tempfile
 from pathlib import Path
-from typing import List, Union
+from typing import List
 
 from beanie import PydanticObjectId
 
@@ -8,7 +8,7 @@ from mapping_workbench.backend.config import settings
 from mapping_workbench.backend.file_resource.models.file_resource import FileResourceState, FileResourceFormat
 from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState
-from mapping_workbench.backend.resource_collection.models.entity import ResourceFile, ResourceFileState
+from mapping_workbench.backend.resource_collection.models.entity import ResourceFile, ResourceFileState, ResourceFileABC
 from mapping_workbench.backend.resource_collection.services.data import get_resource_files_for_project
 from mapping_workbench.backend.test_data_suite.adapters.rml_mapper import RMLMapperABC, RMLMapper, RMLMapperException
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataFileResource, TestDataState, \
@@ -17,7 +17,8 @@ from mapping_workbench.backend.test_data_suite.services import DATA_SOURCE_PATH_
     TRANSFORMATION_PATH_NAME, MAPPINGS_PATH_NAME, RESOURCES_PATH_NAME
 from mapping_workbench.backend.test_data_suite.services.data import get_test_data_file_resources_for_project, \
     get_test_data_file_resources_for_package
-from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragment, TripleMapFragmentState
+from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragment, TripleMapFragmentState, \
+    TripleMapFragmentABC
 from mapping_workbench.backend.triple_map_fragment.services.data_for_generic import \
     get_generic_triple_map_fragments_for_project, get_specific_triple_map_fragments_for_package
 from mapping_workbench.backend.user.models.user import User
@@ -25,8 +26,8 @@ from mapping_workbench.backend.user.models.user import User
 
 async def transform_test_data_file_resource_content(
         content: str,
-        mappings: List[Union[TripleMapFragment, TripleMapFragmentState]],
-        resources: List[Union[ResourceFile, ResourceFileState]] = None,
+        mappings: List[TripleMapFragmentABC],
+        resources: List[ResourceFileABC] = None,
         rml_mapper: RMLMapperABC = None,
         test_data_title: str = None
 ) -> str:

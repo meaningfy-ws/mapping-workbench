@@ -1,3 +1,4 @@
+from abc import ABC
 from typing import Optional, List, Literal
 
 import pymongo
@@ -51,7 +52,12 @@ class StructuralElementOut(BaseProjectResourceEntityOutSchema):
     element_type: Literal["node", "field"] = "field"
 
 
-class StructuralElementState(ObjectState):
+class StructuralElementABC(ABC):
+    absolute_xpath: Optional[str]
+    descriptions: Optional[List[str]]
+
+
+class StructuralElementState(ObjectState, StructuralElementABC):
     """
 
     """
@@ -71,7 +77,7 @@ class StructuralElementState(ObjectState):
     element_type: Literal["node", "field"] = "field"
 
 
-class StructuralElement(BaseProjectResourceEntity, StatefulObjectABC):
+class StructuralElement(BaseProjectResourceEntity, StatefulObjectABC, StructuralElementABC):
     """
 
     """

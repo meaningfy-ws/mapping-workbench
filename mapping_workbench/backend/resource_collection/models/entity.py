@@ -19,13 +19,15 @@ class ResourceFileFormat(Enum):
     JSON = "JSON"
 
 
-class ResourceFileInterface(ABC):
+class ResourceFileABC(ABC):
+    content: Optional[str]
 
     @abstractmethod
     def guess_name(self) -> str:
         pass
 
-class ResourceFileState(ObjectState, ResourceFileInterface):
+
+class ResourceFileState(ObjectState, ResourceFileABC):
     oid: Optional[PydanticObjectId] = None
     format: Optional[ResourceFileFormat] = None
     title: Optional[str] = None
@@ -97,7 +99,7 @@ class ResourceFileUpdateIn(ResourceFileIn):
     pass
 
 
-class ResourceFile(FileResource, StatefulObjectABC, ResourceFileInterface):
+class ResourceFile(FileResource, StatefulObjectABC, ResourceFileABC):
     format: Optional[ResourceFileFormat] = None
     resource_collection: Optional[Link[ResourceCollection]] = None
 

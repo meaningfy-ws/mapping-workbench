@@ -1,3 +1,4 @@
+from abc import ABC
 from datetime import datetime
 from enum import Enum
 from typing import Optional, List
@@ -37,6 +38,11 @@ class ConceptualMappingRuleCommentPriority(Enum):
     HIGH = "high"
     NORMAL = "normal"
     LOW = "low"
+
+
+class ConceptualMappingRuleABC(ABC):
+    target_class_path: Optional[str]
+    target_property_path: Optional[str]
 
 
 class ConceptualMappingRuleComment(BaseModel):
@@ -130,7 +136,7 @@ class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema, BaseMappingPa
     sort_order: Optional[float] = None
 
 
-class ConceptualMappingRuleState(ObjectState):
+class ConceptualMappingRuleState(ObjectState, ConceptualMappingRuleABC):
     oid: Optional[PydanticObjectId] = None
     min_sdk_version: Optional[str] = None
     max_sdk_version: Optional[str] = None
@@ -148,7 +154,12 @@ class ConceptualMappingRuleState(ObjectState):
     sort_order: Optional[float] = None
 
 
-class ConceptualMappingRule(BaseProjectResourceEntity, BaseMappingPackagesResourceSchemaTrait, StatefulObjectABC):
+class ConceptualMappingRule(
+    BaseProjectResourceEntity,
+    BaseMappingPackagesResourceSchemaTrait,
+    StatefulObjectABC,
+    ConceptualMappingRuleABC
+):
     model_config = DEFAULT_MODEL_CONFIG
 
     status: Optional[CMRuleStatus] | Optional[str] = CMRuleStatus.UNDER_DEVELOPMENT
@@ -157,8 +168,8 @@ class ConceptualMappingRule(BaseProjectResourceEntity, BaseMappingPackagesResour
     feedback_notes: Optional[List[ConceptualMappingRuleComment]] = []
     mapping_groups: Optional[List[Link[MappingGroup]]] = None
 
-    @field_validator('status', 'mapping_notes', 'editorial_notes', 'feedback_notes')
     @classmethod
+    @field_validator('status', 'mapping_notes', 'editorial_notes', 'feedback_notes')
     def check_none(cls, current_value: str, info: ValidationInfo) -> str:
         if current_value is None:
             return cls.model_fields[info.field_name].default
@@ -188,7 +199,7 @@ class ConceptualMappingRule(BaseProjectResourceEntity, BaseMappingPackagesResour
                 for sparql_assertion in sparql_assertions:
                     sparql_assertion_state = \
                         await sparql_assertion.get_state() \
-                        if (sparql_assertion and isinstance(sparql_assertion, SPARQLTestFileResource)) else None
+                            if (sparql_assertion and isinstance(sparql_assertion, SPARQLTestFileResource)) else None
                     if isinstance(sparql_assertion_state, SPARQLTestState):
                         sparql_assertions_states.append(sparql_assertion_state)
 

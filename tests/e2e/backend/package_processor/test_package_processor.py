@@ -11,3 +11,4 @@ async def test_process_mapping_package(dummy_mapping_package: MappingPackage):
         await dummy_mapping_package.save()
         mapping_package_state: MappingPackageState = await process_mapping_package(package_id=dummy_mapping_package.id)
         assert mapping_package_state
+        assert mapping_package_state.validation

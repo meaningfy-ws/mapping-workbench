@@ -39,6 +39,9 @@ import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
+import {AlertTitle} from "@mui/material";
+import Alert from "@mui/material/Alert";
+import * as React from "react";
 
 
 const PackageRow = (props) => {
@@ -137,6 +140,12 @@ const PackageRow = (props) => {
                     px: 3
                 }}
             >
+                <Alert severity="warning" sx={{my: 1, mx: 3}}>
+                    Do not modify Project's Resources while the Mapping Package Processing task is initializing.
+                </Alert>
+                {isProcessing && <Alert severity="warning" sx={{my: 1, mx: 3}}>
+                    <b>Mapping Package Processing task is initializing!</b>
+                </Alert>}
                 <form onSubmit={formik.handleSubmit}>
                     <Stack
                         direction={{
