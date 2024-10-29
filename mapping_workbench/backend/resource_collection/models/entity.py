@@ -1,8 +1,9 @@
 from enum import Enum
 from typing import Optional, List
 
+from abc import ABC, abstractmethod
 import pymongo
-from beanie import Link
+from beanie import Link, PydanticObjectId
 from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_mapping_package_resource_entity import \
@@ -18,13 +19,25 @@ class ResourceFileFormat(Enum):
     JSON = "JSON"
 
 
-class ResourceFileState(ObjectState):
+class ResourceFileABC(ABC):
+    content: Optional[str]
+
+    @abstractmethod
+    def guess_name(self) -> str:
+        pass
+
+
+class ResourceFileState(ObjectState, ResourceFileABC):
+    oid: Optional[PydanticObjectId] = None
     format: Optional[ResourceFileFormat] = None
     title: Optional[str] = None
     description: Optional[str] = None
     filename: Optional[str] = None
     path: Optional[List[str]] = None
     content: Optional[str] = None
+
+    def guess_name(self) -> str:
+        return self.filename or self.title or str(self.oid)
 
 
 class ResourceCollectionState(ObjectState):
@@ -42,8 +55,9 @@ class ResourceCollection(FileResourceCollection, BaseMappingPackagesResourceSche
             ResourceFile.project == self.project
         ).to_list()
 
-        resource_files_states = [await resource_file.get_state() for resource_file in
-                                 resource_files] if resource_files else []
+        resource_files_states = [
+            await resource_file.get_state() for resource_file in resource_files
+        ] if resource_files else []
 
         return resource_files_states
 
@@ -85,12 +99,13 @@ class ResourceFileUpdateIn(ResourceFileIn):
     pass
 
 
-class ResourceFile(FileResource, StatefulObjectABC):
+class ResourceFile(FileResource, StatefulObjectABC, ResourceFileABC):
     format: Optional[ResourceFileFormat] = None
     resource_collection: Optional[Link[ResourceCollection]] = None
 
     async def get_state(self) -> ResourceFileState:
         return ResourceFileState(
+            oid=self.id,
             format=self.format,
             title=self.title,
             description=self.description,

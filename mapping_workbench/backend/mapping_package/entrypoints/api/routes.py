@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, status
 
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageOut, MappingPackageCreateIn, \
-    MappingPackageUpdateIn, MappingPackage, MappingPackageStateGate
+    MappingPackageUpdateIn, MappingPackage, MappingPackageStateGate, MappingPackageState
 from mapping_workbench.backend.mapping_package.models.entity_api_request import APIDeleteMappingPackageRequest
 from mapping_workbench.backend.mapping_package.models.entity_api_response import \
     APIListMappingPackagesPaginatedResponse, APIListMappingPackageStatesPaginatedResponse
@@ -16,7 +16,7 @@ from mapping_workbench.backend.mapping_package.services.api import (
     delete_mapping_package_state
 )
 from mapping_workbench.backend.mapping_package.services.data import get_latest_mapping_package_state_gate, \
-    DEFAULT_PACKAGE_NAME, DEFAULT_PACKAGE_IDENTIFIER
+    DEFAULT_PACKAGE_NAME, DEFAULT_PACKAGE_IDENTIFIER, get_latest_mapping_package_state
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.project.services.api import get_project
 from mapping_workbench.backend.project.services.tasks import add_task_remove_project_orphan_shareable_resources
@@ -46,7 +46,6 @@ async def route_list_mapping_packages(
         limit: int = None,
         q: str = None
 ):
-    print('here111')
     filters: dict = {}
     if project:
         filters['project'] = Project.link_from_id(project)
@@ -214,3 +213,15 @@ async def route_get_latest_package_state(
         mapping_package: MappingPackage = Depends(get_mapping_package)
 ):
     return await get_latest_mapping_package_state_gate(mapping_package)
+
+
+@router.get(
+    "/{id}/latest_state_content",
+    description=f"Get {NAME_FOR_ONE} Latest State Content",
+    name=f"{NAME_FOR_MANY}:get_{NAME_FOR_ONE}_latest_state_content",
+    response_model=MappingPackageState
+)
+async def route_get_latest_package_state_content(
+        mapping_package: MappingPackage = Depends(get_mapping_package)
+):
+    return await get_latest_mapping_package_state(mapping_package)

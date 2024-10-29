@@ -27,7 +27,7 @@ from mapping_workbench.backend.state_manager.models.state_object import ObjectSt
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuiteState, TestDataSuite, \
     TestDataValidation
 from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragmentState, \
-    GenericTripleMapFragment, SpecificTripleMapFragment
+    GenericTripleMapFragment, SpecificTripleMapFragment, TripleMapFragment
 
 
 class MappingPackageException(Exception):
@@ -235,7 +235,6 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
             conceptual_mapping_rules_states = self.get_conceptual_mapping_rules_states()
 
         cm_assertions = []
-
         for cm_rule_state in conceptual_mapping_rules_states:
             if cm_rule_state.sparql_assertions:
                 for cm_assertion in cm_rule_state.sparql_assertions:
@@ -250,35 +249,22 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
         return sparql_test_suites_states
 
     async def get_triple_map_fragments_states(self) -> List[TripleMapFragmentState]:
-        generic_triple_map_fragments = await GenericTripleMapFragment.find(
+        triple_map_fragments: List[TripleMapFragment] = (await GenericTripleMapFragment.find(
             Eq(GenericTripleMapFragment.project, self.project.to_ref())
-        ).to_list()
-        generic_triple_map_fragments_states = [
-            await generic_triple_map_fragment.get_state()
-            for generic_triple_map_fragment in generic_triple_map_fragments
-        ]
-
-        specific_triple_map_fragments = await SpecificTripleMapFragment.find(
+        ).to_list()) + (await SpecificTripleMapFragment.find(
             SpecificTripleMapFragment.mapping_package_id == self.id,
             Eq(TestDataSuite.project, self.project.to_ref())
-        ).to_list()
-        specific_triple_map_fragments_states = [
-            await specific_triple_map_fragment.get_state()
-            for specific_triple_map_fragment in specific_triple_map_fragments
-        ]
-        return generic_triple_map_fragments_states + specific_triple_map_fragments_states
+        ).to_list())
+
+        return [await triple_map_fragment.get_state() for triple_map_fragment in triple_map_fragments]
 
     async def get_resources_states(self) -> List[ResourceFileState]:
         resources_states = []
 
-        # default_resource_collection: ResourceCollection = \
-        #     await get_default_resource_collection(self.project.to_ref().id)
-        # if default_resource_collection:
-        #     resources_states = await default_resource_collection.get_resource_files_states()
-
         if self.resource_collections:
-            resource_collections_ids = [resource_collection.to_ref().id for resource_collection in
-                                        self.resource_collections]
+            resource_collections_ids = [
+                resource_collection.to_ref().id for resource_collection in self.resource_collections
+            ]
             resource_collections = await ResourceCollection.find(
                 In(ResourceCollection.id, resource_collections_ids),
                 Eq(ResourceCollection.project, self.project.to_ref())

@@ -53,6 +53,9 @@ const getProgressElement = (arr, index) => {
 
 
 export const TaskLine = ({item}) => {
+    if (!item.progress) {
+        return;
+    }
     const actions = item.progress.actions
     let actionsCount = Array.from({length: item.progress.actions_count}, (_, i) => i);
 
@@ -88,6 +91,9 @@ export const TaskLine = ({item}) => {
 }
 
 export const TaskActions = ({item}) => {
+    if (!item.progress) {
+        return;
+    }
     const actions = item.progress.actions
     let actionsCount = Array.from({length: item.progress.actions_count}, (_, i) => i);
 

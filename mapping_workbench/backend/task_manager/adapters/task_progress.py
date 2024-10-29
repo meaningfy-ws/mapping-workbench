@@ -6,7 +6,6 @@ from mapping_workbench.backend.tasks.models.task_response import TaskResponse, T
 
 class TaskProgress:
     current_action: TaskProgressAction = None
-    current_action_idx: int = 0
     current_action_step: TaskProgressActionStep = None
 
     def __init__(self, task_response: TaskResponse):
@@ -59,13 +58,9 @@ class TaskProgress:
 
     def set_current_action(self, action: TaskProgressAction):
         self.current_action = action
-        self.current_action_idx = len(self.progress.actions) - 1
 
     def get_current_action(self) -> TaskProgressAction:
         return self.current_action
-
-    def get_current_action_idx(self) -> int:
-        return self.current_action_idx
 
     def update_current_action_status(self, status: TaskProgressStatus):
         self.get_current_action().status = status
@@ -90,7 +85,7 @@ class TaskProgress:
     def add_action_step(self, step: TaskProgressActionStep):
         if self.task_response is None:
             return
-        self.progress.actions[self.get_current_action_idx()].steps.append(step)
+        self.get_current_action().steps.append(step)
         self.set_current_action_step(step)
         self.update_task_response()
 

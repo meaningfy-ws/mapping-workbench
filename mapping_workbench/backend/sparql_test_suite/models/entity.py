@@ -55,6 +55,7 @@ class SPARQLTestSuiteState(ObjectState):
     oid: Optional[PydanticObjectId] = None
     title: Optional[str] = None
     description: Optional[str] = None
+    type: Optional[SPARQLQueryValidationType] = None
     sparql_test_states: Optional[List[SPARQLTestState]] = []
 
 
@@ -77,6 +78,7 @@ class SPARQLTestSuite(FileResourceCollection, BaseMappingPackagesResourceSchemaT
             oid=self.id,
             title=self.title,
             description=self.description,
+            type=self.type,
             sparql_test_states=sparql_test_states
         )
 
