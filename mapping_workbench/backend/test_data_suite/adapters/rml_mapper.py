@@ -44,6 +44,7 @@ class RMLMapperABC(abc.ABC):
         This class is a general interface of an adapter for rml-mapper.
     """
     serialization_format: SerializationFormat
+    errors: List[RMLMapperException]
 
     def set_serialization_format(self, serialization_format: SerializationFormat):
         """
@@ -83,6 +84,7 @@ class RMLMapper(RMLMapperABC):
         """
         self.rml_mapper_path = rml_mapper_path
         self.serialization_format = serialization_format
+        self.errors = []
 
     def execute(self, data_path: Path, data_title: str = None) -> str:
         """
