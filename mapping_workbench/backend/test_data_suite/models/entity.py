@@ -129,7 +129,8 @@ class TestDataSuite(
 
     async def get_test_data_states(self) -> List[TestDataState]:
         test_data_file_resources = await TestDataFileResource.find(
-            TestDataFileResource.test_data_suite == TestDataSuite.link_from_id(self.id)).to_list()
+            TestDataFileResource.test_data_suite == TestDataSuite.link_from_id(self.id)
+        ).to_list()
 
         test_data_states = [await test_data_file_resource.get_state() for test_data_file_resource in
                             test_data_file_resources] if test_data_file_resources else []

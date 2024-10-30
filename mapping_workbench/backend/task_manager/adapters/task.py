@@ -133,7 +133,7 @@ class Task:
         # Remove leading and trailing hyphens
         task_id = task_id.strip('-')
 
-        return f"{task_id}_{created_at}_{random.randint(100, 999)}" # NOSONAR
+        return f"{task_id}_{created_at}_{random.randint(10000, 99999)}" # NOSONAR
 
     def set_future(self, future: ProcessFuture):
         """

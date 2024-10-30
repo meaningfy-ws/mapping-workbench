@@ -153,10 +153,8 @@ async def transform_test_data_file_resources(
             rml_mapper=rml_mapper,
             save=save
         )
-    if rml_mapper.errors:
-        raise RMLMapperException(message=('\n\n' + '\n'.join([
-            error.message + (" :: " + str(error.metadata) if error.metadata else "") for error in rml_mapper.errors
-        ])))
+
+    process_transform_test_data_mapper_errors(rml_mapper)
 
     return test_data_file_resources
 
@@ -236,6 +234,11 @@ async def transform_test_data_for_package_state(
                 resources=resources,
                 rml_mapper=rml_mapper
             )
+
+    process_transform_test_data_mapper_errors(rml_mapper)
+
+
+def process_transform_test_data_mapper_errors(rml_mapper: RMLMapperABC):
     if rml_mapper.errors:
         raise RMLMapperException(message=('\n\n' + '\n'.join([
             error.message + (" :: " + str(error.metadata) if error.metadata else "") for error in rml_mapper.errors

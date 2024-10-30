@@ -36,13 +36,10 @@ class OntologyTermsApi extends SectionApi {
     }
 
     discoverTerms(request) {
-        try {
-            let endpoint = this.paths['discover_terms'];
-            let filters = {}
-            filters['project'] = sessionApi.getSessionProject();
-            return appApi.post(endpoint, filters);
-        } catch (err) {
-        }
+        let endpoint = this.paths['discover_terms'];
+        let filters = {}
+        filters['project'] = sessionApi.getSessionProject();
+        return appApi.post(endpoint, filters);
     }
 }
 
