@@ -12,6 +12,7 @@ import Grid from '@mui/material/Grid';
 import Card from "@mui/material/Card";
 import Table from '@mui/material/Table';
 import Stack from "@mui/material/Stack";
+import Alert from "@mui/material/Alert";
 import Switch from "@mui/material/Switch";
 import Button from "@mui/material/Button";
 import Divider from '@mui/material/Divider';
@@ -27,7 +28,6 @@ import CardContent from '@mui/material/CardContent';
 import FormControlLabel from "@mui/material/FormControlLabel";
 
 import {paths} from "src/paths";
-import Alert from "@mui/material/Alert";
 import {sessionApi} from "src/api/session";
 import {Scrollbar} from 'src/components/scrollbar';
 import timeTransformer from "src/utils/time-transformer";
@@ -137,10 +137,12 @@ const PackageRow = ({item, sectionApi}) => {
                     px: 3
                 }}
             >
-                <Alert severity="warning" sx={{mt: 3, mx: 3}}>
+                <Alert severity="warning"
+                       sx={{mt: 3, mx: 3}}>
                     Do not modify Project's Resources while the Mapping Package Processing task is initializing.
                 </Alert>
-                {isProcessing && <Alert severity="warning" sx={{mt: 1, mx: 3}}>
+                {isProcessing && <Alert severity="warning"
+                                        sx={{mt: 1, mx: 3}}>
                     <b>Mapping Package Processing task is initializing!</b>
                 </Alert>}
                 <form onSubmit={formik.handleSubmit}>
@@ -431,16 +433,6 @@ export const ListTable = (props) => {
         setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
     }
 
-    const SorterHeader = (props) => {
-        const direction = props.fieldName === sort.column && sort.direction === 1 ? 'asc' : 'desc';
-        return (
-            <TableSorterHeader sort={{direction, column: sort.column}}
-                               onSort={onSort}
-                               {...props}
-            />
-        )
-    }
-
     const handleGoLastState = (id) => {
         sectionApi.getLatestState(id)
             .then(res => {
@@ -522,13 +514,15 @@ ListTable.propTypes = {
     items: PropTypes.array,
     onPageChange: PropTypes.func,
     onRowsPerPageChange: PropTypes.func,
+    sort: PropTypes.object,
+    onSort: PropTypes.func,
     page: PropTypes.number,
     rowsPerPage: PropTypes.number
 };
 
 PackageRow.propTypes = {
     item: PropTypes.object,
-    sessionApi: PropTypes.number
+    sectionApi: PropTypes.object
 }
 
 MappingPackageRowFragment.propTypes = {

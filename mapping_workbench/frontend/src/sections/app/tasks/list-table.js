@@ -350,6 +350,7 @@ ListTable.propTypes = {
     items: PropTypes.array,
     onPageChange: PropTypes.func,
     onSort: PropTypes.func,
+    sort: PropTypes.object,
     onRowsPerPageChange: PropTypes.func,
     page: PropTypes.number,
     rowsPerPage: PropTypes.number,
@@ -361,4 +362,8 @@ ListTable.propTypes = {
 
 MapStatusIcon.propTypes = {
     task_status: PropTypes.string
+}
+
+SorterHeader.propTypes = {
+    fieldName: PropTypes.string
 }

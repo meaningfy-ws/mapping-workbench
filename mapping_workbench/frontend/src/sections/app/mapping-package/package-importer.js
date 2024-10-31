@@ -145,5 +145,5 @@ export const PackageImporter = (props) => {
 PackageImporter.propTypes = {
     onClose: PropTypes.func,
     open: PropTypes.bool,
-    sessionApi: PropTypes.object
+    sectionApi: PropTypes.object
 };

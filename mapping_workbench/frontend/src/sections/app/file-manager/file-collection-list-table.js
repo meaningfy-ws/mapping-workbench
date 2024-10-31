@@ -424,13 +424,13 @@ FileCollectionListTable.propTypes = {
 
 }
 
-ListTableRow.protoTypes = {
+ListTableRow.propTypes = {
+    item: PropTypes.object,
     handleItemSelect: PropTypes.func,
     isItemSelected: PropTypes.bool,
     router: PropTypes.func,
     sectionApi: PropTypes.object,
     openUploadModal: PropTypes.func,
     projectMappingPackages: PropTypes.array,
-    selectable: PropTypes.bool,
-    item: PropTypes.object
+    selectable: PropTypes.bool
 };
