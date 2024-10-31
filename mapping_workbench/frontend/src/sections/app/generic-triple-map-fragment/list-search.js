@@ -232,20 +232,6 @@ export const ListSearch = (props) => {
                     </Box>
                 )}
             <Divider/>
-            {/*<Stack*/}
-            {/*    alignItems="center"*/}
-            {/*    direction="row"*/}
-            {/*    flexWrap="wrap"*/}
-            {/*    spacing={1}*/}
-            {/*    sx={{p: 1}}*/}
-            {/*>*/}
-            {/*    <MultiSelect*/}
-            {/*        label="Status"*/}
-            {/*        onChange={handleStatusChange}*/}
-            {/*        options={statusOptions}*/}
-            {/*        value={statusValues}*/}
-            {/*    />*/}
-            {/*</Stack>*/}
         </div>
     );
 };

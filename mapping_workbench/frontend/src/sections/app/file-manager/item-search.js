@@ -59,26 +59,6 @@ export const ItemSearch = (props) => {
         sx={{ p: 2 }}
         justifyContent="flex-end"
       >
-        {/*<Box*/}
-        {/*  component="form"*/}
-        {/*  onSubmit={handleQueryChange}*/}
-        {/*  sx={{ flexGrow: 1 }}*/}
-        {/*>*/}
-        {/*  <OutlinedInput*/}
-        {/*    defaultValue=""*/}
-        {/*    fullWidth*/}
-        {/*    inputProps={{ ref: queryRef }}*/}
-        {/*    name="itemName"*/}
-        {/*    placeholder="Search"*/}
-        {/*    startAdornment={(*/}
-        {/*      <InputAdornment position="start">*/}
-        {/*        <SvgIcon>*/}
-        {/*          <SearchMdIcon />*/}
-        {/*        </SvgIcon>*/}
-        {/*      </InputAdornment>*/}
-        {/*    )}*/}
-        {/*  />*/}
-        {/*</Box>*/}
         <ToggleButtonGroup
           exclusive
           onChange={handleViewChange}
@@ -110,23 +90,6 @@ export const ItemSearch = (props) => {
             </SvgIcon>
           </ToggleButton>
         </ToggleButtonGroup>
-        {/*<TextField*/}
-        {/*  label="Sort By"*/}
-        {/*  name="sort"*/}
-        {/*  onChange={handleSortChange}*/}
-        {/*  select*/}
-        {/*  SelectProps={{ native: true }}*/}
-        {/*  value={sortDir}*/}
-        {/*>*/}
-        {/*  {sortOptions.map((option) => (*/}
-        {/*    <option*/}
-        {/*      key={option.value}*/}
-        {/*      value={option.value}*/}
-        {/*    >*/}
-        {/*      {option.label}*/}
-        {/*    </option>*/}
-        {/*  ))}*/}
-        {/*</TextField>*/}
       </Stack>
     </Card>
   );
