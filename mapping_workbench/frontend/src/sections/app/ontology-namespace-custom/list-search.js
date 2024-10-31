@@ -9,8 +9,6 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {MultiSelect} from 'src/components/multi-select';
-
 const statusOptions = [
     {
         label: 'Published',

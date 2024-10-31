@@ -37,7 +37,6 @@ import {PropertyListItem} from 'src/components/property-list-item';
 import ConfirmDialog from "src/components/app/dialog/confirm-dialog";
 import TablePagination from "src/sections/components/table-pagination";
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
-import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 
@@ -139,7 +138,7 @@ const PackageRow = ({item, sectionApi}) => {
             >
                 <Alert severity="warning"
                        sx={{mt: 3, mx: 3}}>
-                    Do not modify Project's Resources while the Mapping Package Processing task is initializing.
+                    {"Do not modify Project's Resources while the Mapping Package Processing task is initializing."}
                 </Alert>
                 {isProcessing && <Alert severity="warning"
                                         sx={{mt: 1, mx: 3}}>
@@ -405,7 +404,7 @@ const MappingPackageRowFragment = (props) => {
                     />
                 </Box>}
             >
-                <>Are you sure you want to delete it?</>
+                Are you sure you want to delete it?
             </ConfirmDialog>
         </>
     )
@@ -418,8 +417,6 @@ export const ListTable = (props) => {
         onPageChange = () => {
         },
         onRowsPerPageChange,
-        sort,
-        onSort,
         page = 0,
         rowsPerPage = 0,
         sectionApi
@@ -514,10 +511,9 @@ ListTable.propTypes = {
     items: PropTypes.array,
     onPageChange: PropTypes.func,
     onRowsPerPageChange: PropTypes.func,
-    sort: PropTypes.object,
-    onSort: PropTypes.func,
     page: PropTypes.number,
-    rowsPerPage: PropTypes.number
+    rowsPerPage: PropTypes.number,
+    sectionApi: PropTypes.object
 };
 
 PackageRow.propTypes = {

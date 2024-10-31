@@ -1,4 +1,4 @@
-import {Fragment, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
@@ -274,14 +274,14 @@ export const TestDataCollectionListTable = (props) => {
         page = 0,
         rowsPerPage = 0,
         sectionApi,
-        getItems = () => {}
+        getItems = () => {
+        }
     } = props;
 
     const router = useRouter();
 
     const [currentItem, setCurrentItem] = useState(null);
     const [selectedItems, setSelectedItems] = useState([]);
-    const [toMappingPackages, setToMappingPackages] = useState([]);
 
     const isItemSelected = (itemId) => {
         return selectedItems.indexOf(itemId) !== -1;
@@ -331,7 +331,6 @@ export const TestDataCollectionListTable = (props) => {
                     sectionApi={sectionApi}
                     idsToAssignTo={selectedItems}
                     initProjectMappingPackages={projectMappingPackages}
-                    toMappingPackages={toMappingPackages}
                     disabled={selectedItems.length === 0}
                     onMappingPackagesAssign={onMappingPackagesAssign}
                 />
@@ -409,14 +408,14 @@ TestDataCollectionListTable.propTypes = {
 
 
 ListTableRow.propTypes = {
-        item: PropTypes.object,
-        item_id: PropTypes.number,
-        isCurrent: PropTypes.bool,
-        handleItemToggle: PropTypes.func,
-        handleItemSelect: PropTypes.func,
-        isItemSelected: PropTypes.bool,
-        sectionApi: PropTypes.object,
-        router: PropTypes.object,
-        getItems: PropTypes.func,
-        projectMappingPackagesMap: PropTypes.array
+    item: PropTypes.object,
+    item_id: PropTypes.number,
+    isCurrent: PropTypes.bool,
+    handleItemToggle: PropTypes.func,
+    handleItemSelect: PropTypes.func,
+    isItemSelected: PropTypes.bool,
+    sectionApi: PropTypes.object,
+    router: PropTypes.object,
+    getItems: PropTypes.func,
+    projectMappingPackagesMap: PropTypes.array
 }
