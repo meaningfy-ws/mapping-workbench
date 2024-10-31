@@ -412,10 +412,15 @@ export const FileCollectionListTable = (props) => {
 FileCollectionListTable.propTypes = {
     count: PropTypes.number,
     items: PropTypes.array,
+    itemsForces: PropTypes.number,
     onPageChange: PropTypes.func,
     onRowsPerPageChange: PropTypes.func,
     page: PropTypes.number,
     rowsPerPage: PropTypes.number,
+    sectionApi: PropTypes.object,
+    getItems: PropTypes.func,
+    selectable: PropTypes.bool,
+    fileResourceApi: PropTypes.func
 
 }
 
@@ -423,7 +428,9 @@ ListTableRow.protoTypes = {
     handleItemSelect: PropTypes.func,
     isItemSelected: PropTypes.bool,
     router: PropTypes.func,
+    sectionApi: PropTypes.object,
     openUploadModal: PropTypes.func,
     projectMappingPackages: PropTypes.array,
-    selectable: PropTypes.bool
+    selectable: PropTypes.bool,
+    item: PropTypes.object
 };

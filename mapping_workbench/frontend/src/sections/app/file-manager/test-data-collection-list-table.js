@@ -36,7 +36,7 @@ import {PropertyListItem} from "../../../components/property-list-item";
 import ConfirmDialog from "../../../components/app/dialog/confirm-dialog";
 import {mappingPackagesApi} from "../../../api/mapping-packages";
 import Checkbox from "@mui/material/Checkbox";
-import {MappingPackagesBulkAssigner} from "/src/sections/app/mapping-package/components/mapping-packages-bulk-assigner";
+import {MappingPackagesBulkAssigner} from "src/sections/app/mapping-package/components/mapping-packages-bulk-assigner";
 
 
 export const ListTableRow = (props) => {
@@ -404,3 +404,17 @@ TestDataCollectionListTable.propTypes = {
     page: PropTypes.number,
     rowsPerPage: PropTypes.number
 };
+
+
+ListTableRow.propTypes = {
+        item: PropTypes.object,
+        item_id: PropTypes.number,
+        isCurrent: PropTypes.bool,
+        handleItemToggle: PropTypes.func,
+        handleItemSelect: PropTypes.func,
+        isItemSelected: PropTypes.bool,
+        sectionApi: PropTypes.object,
+        router: PropTypes.object,
+        getItems: PropTypes.func,
+        projectMappingPackagesMap: PropTypes.array
+}

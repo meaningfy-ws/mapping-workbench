@@ -27,6 +27,7 @@ import CardContent from '@mui/material/CardContent';
 import FormControlLabel from "@mui/material/FormControlLabel";
 
 import {paths} from "src/paths";
+import Alert from "@mui/material/Alert";
 import {sessionApi} from "src/api/session";
 import {Scrollbar} from 'src/components/scrollbar';
 import timeTransformer from "src/utils/time-transformer";
@@ -39,13 +40,9 @@ import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import {AlertTitle} from "@mui/material";
-import Alert from "@mui/material/Alert";
-import * as React from "react";
 
 
-const PackageRow = (props) => {
-    const {item, sectionApi} = props;
+const PackageRow = ({item, sectionApi}) => {
 
     const [isProcessing, setIsProcessing] = useState(false);
     const [isExporting, setIsExporting] = useState(false);
@@ -528,3 +525,19 @@ ListTable.propTypes = {
     page: PropTypes.number,
     rowsPerPage: PropTypes.number
 };
+
+PackageRow.propTypes = {
+    item: PropTypes.object,
+    sessionApi: PropTypes.number
+}
+
+MappingPackageRowFragment.propTypes = {
+    item_id: PropTypes.number,
+    item: PropTypes.object,
+    isCurrent: PropTypes.bool,
+    handleItemToggle: PropTypes.func,
+    handleGoLastState: PropTypes.func,
+    handleDeleteAction: PropTypes.func,
+    timeSetting: PropTypes.object,
+    sectionApi: PropTypes.object
+}

@@ -349,7 +349,16 @@ ListTable.propTypes = {
     count: PropTypes.number,
     items: PropTypes.array,
     onPageChange: PropTypes.func,
+    onSort: PropTypes.func,
     onRowsPerPageChange: PropTypes.func,
     page: PropTypes.number,
-    rowsPerPage: PropTypes.number
+    rowsPerPage: PropTypes.number,
+    sectionApi: PropTypes.object,
+    onCancelAction: PropTypes.func,
+    onDeleteAction: PropTypes.func
 };
+
+
+MapStatusIcon.propTypes = {
+    task_status: PropTypes.string
+}
