@@ -27,10 +27,6 @@ class OntologyTermsApi extends SectionApi {
         this.isProjectResource = true;
     }
 
-    get SECTION_LIST_ACTIONS() {
-        return [ACTION.DELETE]
-    }
-
     get DEFAULT_ROWS_PER_PAGE() {
         return 10
     }

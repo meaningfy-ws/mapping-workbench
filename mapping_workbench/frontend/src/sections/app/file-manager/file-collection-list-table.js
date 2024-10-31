@@ -50,7 +50,6 @@ export const ListTableRow = (props) => {
         sectionApi,
         router,
         openUploadModal,
-        projectMappingPackagesMap,
         projectMappingPackages,
         selectable
     } = props;
@@ -416,5 +415,15 @@ FileCollectionListTable.propTypes = {
     onPageChange: PropTypes.func,
     onRowsPerPageChange: PropTypes.func,
     page: PropTypes.number,
-    rowsPerPage: PropTypes.number
+    rowsPerPage: PropTypes.number,
+
+}
+
+ListTableRow.protoTypes = {
+    handleItemSelect: PropTypes.func,
+    isItemSelected: PropTypes.bool,
+    router: PropTypes.func,
+    openUploadModal: PropTypes.func,
+    projectMappingPackages: PropTypes.array,
+    selectable: PropTypes.bool
 };
