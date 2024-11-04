@@ -3,6 +3,7 @@ import Typography from "@mui/material/Typography";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import {taskStatuses as taskStatus} from "./list-table";
+import PropTypes from "prop-types";
 
 export const taskProgressStatus = {
     QUEUED: "QUEUED",
@@ -95,17 +96,17 @@ export const TaskActions = ({item}) => {
         return;
     }
     const actions = item.progress.actions
-    let actionsCount = Array.from({length: item.progress.actions_count}, (_, i) => i);
+    const actionsCount = Array.from({length: item.progress.actions_count}, (_, i) => i);
 
     return (
         <Stack gap={2}
                sx={{m: 2}}
         >
-            {actionsCount && actionsCount.map((actionIdx) => {
+            {actionsCount?.map((actionIdx) => {
                 const action = getProgressElement(actions, actionIdx);
                 const actionName = action != null ? action.name : "";
                 const steps = action != null ? action.steps : [];
-                let stepsCount = Array.from({length: action != null ? action.steps_count : 0}, (_, i) => i);
+                const stepsCount = Array.from({length: action != null ? action.steps_count : 0}, (_, i) => i);
                 return (<>
                     <Stack gap={2}
                            direction='row'
@@ -127,18 +128,25 @@ export const TaskActions = ({item}) => {
                         }
                     </Stack>
                     <Stack>
-                        {stepsCount && stepsCount.map((stepIdx) => {
+                        {stepsCount?.map((stepIdx) => {
                             const step = getProgressElement(steps, stepIdx);
-                            let stepStatus = step != null ? step.status : taskProgressStatus.QUEUED
-                            let stepName = step != null ? step.name : ""
-                            return (<Typography
-                                color={progressStepColor(stepStatus)}>
-                                {stepName}
-                            </Typography>)
+                            const stepStatus = step.status ?? taskProgressStatus.QUEUED
+                            const stepName = step.name ?? ""
+                            return (
+                                <Typography
+                                    key={'step' + stepIdx}
+                                    color={progressStepColor(stepStatus)}>
+                                    {stepName}
+                                </Typography>)
                         })}
                     </Stack>
                 </>)
             })}
         </Stack>
     )
+}
+
+
+TaskActions.propTypes = {
+    item: PropTypes.object
 }

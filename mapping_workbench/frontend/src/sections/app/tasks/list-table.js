@@ -45,7 +45,6 @@ export const taskStatuses = {
 }
 
 
-
 export const ListTable = (props) => {
     const {
         count = 0,
@@ -79,21 +78,21 @@ export const ListTable = (props) => {
         }
     }
 
-    const MapStatusIcon = ({task_status}) => {
-        const color = mapStatusColor(task_status)
-        switch (task_status) {
-            case taskStatuses.RUNNING:
-                return <RadioButtonCheckedIcon color={color}/>
-            case taskStatuses.FINISHED:
-                return <CheckCircleOutlineIcon color={color}/>
-            case taskStatuses.TIMEOUT:
-            case taskStatuses.FAILED:
-            case taskStatuses.CANCELED:
-                return <CancelIcon color={color}/>
-            default:
-                return <InfoIcon color={color}/>
-        }
-    }
+    // const MapStatusIcon = ({task_status}) => {
+    //     const color = mapStatusColor(task_status)
+    //     switch (task_status) {
+    //         case taskStatuses.RUNNING:
+    //             return <RadioButtonCheckedIcon color={color}/>
+    //         case taskStatuses.FINISHED:
+    //             return <CheckCircleOutlineIcon color={color}/>
+    //         case taskStatuses.TIMEOUT:
+    //         case taskStatuses.FAILED:
+    //         case taskStatuses.CANCELED:
+    //             return <CancelIcon color={color}/>
+    //         default:
+    //             return <InfoIcon color={color}/>
+    //     }
+    // }
 
 
     const [currentItem, setCurrentItem] = useState(null);
@@ -110,6 +109,10 @@ export const ListTable = (props) => {
                                {...props}
             />
         )
+    }
+
+    SorterHeader.propTypes = {
+        fieldName: PropTypes.string
     }
 
     const handlePopoverEnter = (event, item) => {
@@ -223,12 +226,12 @@ export const ListTable = (props) => {
                                             {timeTransformer(item.finished_at, timeSetting)}
                                         </TableCell>
                                         <TableCell>
-                                    {item?.finished_at ? moment.utc(moment(item?.finished_at).diff(moment(item?.started_at))).format("HH:mm:ss") : '-'}
+                                            {item?.finished_at ? moment.utc(moment(item?.finished_at).diff(moment(item?.started_at))).format("HH:mm:ss") : '-'}
                                         </TableCell>
                                         <TableCell align="left">
                                             <Stack onMouseEnter={(event) => handlePopoverEnter(event, item)}
                                                    onMouseLeave={handlePopoverLeave}>
-                                                <SeverityPill color={ mapStatusColor(item?.task_status)}>
+                                                <SeverityPill color={mapStatusColor(item?.task_status)}>
                                                     {item?.task_status}
                                                 </SeverityPill>
                                                 <TaskLine item={item}/>
@@ -341,15 +344,20 @@ export const ListTable = (props) => {
                 </Popover>
             </Scrollbar>
         </TablePagination>
-    )
-        ;
+    );
 };
 
 ListTable.propTypes = {
     count: PropTypes.number,
     items: PropTypes.array,
     onPageChange: PropTypes.func,
+    onSort: PropTypes.func,
+    sort: PropTypes.object,
     onRowsPerPageChange: PropTypes.func,
     page: PropTypes.number,
-    rowsPerPage: PropTypes.number
+    rowsPerPage: PropTypes.number,
+    sectionApi: PropTypes.object,
+    onCancelAction: PropTypes.func,
+    onDeleteAction: PropTypes.func
 };
+

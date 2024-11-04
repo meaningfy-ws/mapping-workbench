@@ -1,4 +1,4 @@
-import {Fragment, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {toast} from 'react-hot-toast';
 import PropTypes from 'prop-types';
 
@@ -50,7 +50,6 @@ export const ListTableRow = (props) => {
         sectionApi,
         router,
         openUploadModal,
-        projectMappingPackagesMap,
         projectMappingPackages,
         selectable
     } = props;
@@ -61,7 +60,7 @@ export const ListTableRow = (props) => {
     useEffect(() => {
         sectionApi.getFileResources(item_id, {rowsPerPage: -1})
             .then(res => setCollectionResources(res.items))
-    }, [sectionApi])
+    }, [])
 
     const handleResourceEdit = resource_id => {
         router.push({
@@ -119,9 +118,8 @@ export const ListTableRow = (props) => {
                             sectionApi.MAPPING_PACKAGE_LINK_FIELD
                             && projectMappingPackages
                                 .filter(
-                                    projectMappingPackage => projectMappingPackage[sectionApi.MAPPING_PACKAGE_LINK_FIELD]
-                                        && projectMappingPackage[sectionApi.MAPPING_PACKAGE_LINK_FIELD]
-                                            .some(resource_ref => item_id === resource_ref.id)
+                                    projectMappingPackage => projectMappingPackage?.[sectionApi.MAPPING_PACKAGE_LINK_FIELD]
+                                        .some(resource_ref => item_id === resource_ref.id)
                                 )
                                 .map((mapping_package) => {
                                     return (
@@ -267,12 +265,9 @@ export const FileCollectionListTable = (props) => {
     const router = useRouter();
     const [currentItem, setCurrentItem] = useState(null);
     const [selectedItems, setSelectedItems] = useState([]);
-    const [toMappingPackages, setToMappingPackages] = useState([]);
     const uploadDialog = useDialog();
 
-    const isItemSelected = (itemId) => {
-        return selectedItems.indexOf(itemId) !== -1;
-    }
+    const isItemSelected = (itemId) => selectedItems.indexOf(itemId) !== -1;
 
     const handleItemSelect = (e, itemId) => {
         let items = new Set(selectedItems);
@@ -287,19 +282,6 @@ export const FileCollectionListTable = (props) => {
 
     const handleItemToggle = itemId => {
         setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId)
-    }
-
-    const handleItemClose = () => {
-        setCurrentItem(null);
-    }
-
-    const handleItemUpdate = () => {
-        setCurrentItem(null);
-        toast.success('Item updated');
-    }
-
-    const handleItemDelete = () => {
-        toast.error('Item cannot be deleted');
     }
 
     //TODO: This should be exported to a component that will be used (by extending or composing) by listings that need packages names
@@ -336,7 +318,6 @@ export const FileCollectionListTable = (props) => {
                     sectionApi={sectionApi}
                     idsToAssignTo={selectedItems}
                     initProjectMappingPackages={projectMappingPackages}
-                    toMappingPackages={toMappingPackages}
                     disabled={selectedItems.length === 0}
                     onMappingPackagesAssign={onMappingPackagesAssign}
                 />
@@ -413,8 +394,25 @@ export const FileCollectionListTable = (props) => {
 FileCollectionListTable.propTypes = {
     count: PropTypes.number,
     items: PropTypes.array,
+    itemsForced: PropTypes.number,
     onPageChange: PropTypes.func,
     onRowsPerPageChange: PropTypes.func,
     page: PropTypes.number,
-    rowsPerPage: PropTypes.number
+    rowsPerPage: PropTypes.number,
+    sectionApi: PropTypes.object,
+    getItems: PropTypes.func,
+    selectable: PropTypes.bool,
+    fileResourceApi: PropTypes.func
+
+}
+
+ListTableRow.propTypes = {
+    item: PropTypes.object,
+    handleItemSelect: PropTypes.func,
+    isItemSelected: PropTypes.bool,
+    router: PropTypes.func,
+    sectionApi: PropTypes.object,
+    openUploadModal: PropTypes.func,
+    projectMappingPackages: PropTypes.array,
+    selectable: PropTypes.bool
 };

@@ -3,9 +3,6 @@ import {apiPaths} from "../../paths";
 
 class AppConfigApi {
 
-    constructor() {
-    }
-
     async getSettings() {
         return await appApi.get(apiPaths.app.settings);
     }
