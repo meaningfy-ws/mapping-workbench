@@ -1,9 +1,10 @@
+from abc import ABC
 from datetime import datetime
 from enum import Enum
 from typing import Optional, List
 
 import pymongo
-from beanie import Link
+from beanie import Link, PydanticObjectId
 from dateutil.tz import tzlocal
 from pydantic import BaseModel, Field, field_validator
 from pydantic_core.core_schema import ValidationInfo
@@ -37,6 +38,11 @@ class ConceptualMappingRuleCommentPriority(Enum):
     HIGH = "high"
     NORMAL = "normal"
     LOW = "low"
+
+
+class ConceptualMappingRuleABC(ABC):
+    target_class_path: Optional[str]
+    target_property_path: Optional[str]
 
 
 class ConceptualMappingRuleComment(BaseModel):
@@ -130,7 +136,8 @@ class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema, BaseMappingPa
     sort_order: Optional[float] = None
 
 
-class ConceptualMappingRuleState(ObjectState):
+class ConceptualMappingRuleState(ObjectState, ConceptualMappingRuleABC):
+    oid: Optional[PydanticObjectId] = None
     min_sdk_version: Optional[str] = None
     max_sdk_version: Optional[str] = None
     source_structural_element: Optional[StructuralElementState] = None
@@ -147,7 +154,12 @@ class ConceptualMappingRuleState(ObjectState):
     sort_order: Optional[float] = None
 
 
-class ConceptualMappingRule(BaseProjectResourceEntity, BaseMappingPackagesResourceSchemaTrait, StatefulObjectABC):
+class ConceptualMappingRule(
+    BaseProjectResourceEntity,
+    BaseMappingPackagesResourceSchemaTrait,
+    StatefulObjectABC,
+    ConceptualMappingRuleABC
+):
     model_config = DEFAULT_MODEL_CONFIG
 
     status: Optional[CMRuleStatus] | Optional[str] = CMRuleStatus.UNDER_DEVELOPMENT
@@ -156,8 +168,8 @@ class ConceptualMappingRule(BaseProjectResourceEntity, BaseMappingPackagesResour
     feedback_notes: Optional[List[ConceptualMappingRuleComment]] = []
     mapping_groups: Optional[List[Link[MappingGroup]]] = None
 
-    @field_validator('status', 'mapping_notes', 'editorial_notes', 'feedback_notes')
     @classmethod
+    @field_validator('status', 'mapping_notes', 'editorial_notes', 'feedback_notes')
     def check_none(cls, current_value: str, info: ValidationInfo) -> str:
         if current_value is None:
             return cls.model_fields[info.field_name].default
@@ -184,28 +196,35 @@ class ConceptualMappingRule(BaseProjectResourceEntity, BaseMappingPackagesResour
         if self.sparql_assertions:
             sparql_assertions = [await sparql_assertion.fetch() for sparql_assertion in self.sparql_assertions]
             if sparql_assertions:
-                sparql_assertions_states = [
-                    await sparql_assertion.get_state() for sparql_assertion in sparql_assertions
-                ]
+                for sparql_assertion in sparql_assertions:
+                    sparql_assertion_state = \
+                        await sparql_assertion.get_state() \
+                            if isinstance(sparql_assertion, SPARQLTestFileResource) else None
+                    if isinstance(sparql_assertion_state, SPARQLTestState):
+                        sparql_assertions_states.append(sparql_assertion_state)
 
         mapping_groups_states = []
         if self.mapping_groups:
             mapping_groups = [await mapping_group.fetch() for mapping_group in self.mapping_groups]
             if mapping_groups:
-                mapping_groups_states = [await mapping_group.get_state() for mapping_group in mapping_groups]
+                mapping_groups_states = [
+                    await mapping_group.get_state() for mapping_group in mapping_groups
+                    if isinstance(mapping_group, MappingGroup)
+                ]
 
         return ConceptualMappingRuleState(
+            oid=self.id,
             min_sdk_version=self.min_sdk_version,
             max_sdk_version=self.max_sdk_version,
             source_structural_element=(
                 await source_structural_element.get_state()
-            ) if (source_structural_element and isinstance(source_structural_element, StructuralElement)) else None,
+            ) if isinstance(source_structural_element, StructuralElement) else None,
             xpath_condition=self.xpath_condition,
             target_class_path=self.target_class_path,
             target_property_path=self.target_property_path,
             triple_map_fragment=(
                 await triple_map_fragment.get_state()
-            ) if (triple_map_fragment and isinstance(triple_map_fragment, GenericTripleMapFragment)) else None,
+            ) if isinstance(triple_map_fragment, GenericTripleMapFragment) else None,
             sparql_assertions=sparql_assertions_states,
             status=self.status,
             mapping_notes=self.mapping_notes,

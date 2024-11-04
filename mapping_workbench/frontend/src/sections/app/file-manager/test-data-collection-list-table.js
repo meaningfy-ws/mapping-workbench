@@ -1,42 +1,42 @@
-import {Fragment, useEffect, useState} from 'react';
-import {toast} from 'react-hot-toast';
+import {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
-import CardContent from '@mui/material/CardContent';
-import Divider from '@mui/material/Divider';
+
+import {Box} from "@mui/system";
 import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
-import SvgIcon from '@mui/material/SvgIcon';
+import Stack from "@mui/material/Stack";
 import Table from '@mui/material/Table';
+import Button from "@mui/material/Button";
+import Divider from '@mui/material/Divider';
+import SvgIcon from '@mui/material/SvgIcon';
+import Checkbox from "@mui/material/Checkbox";
+import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
-import {Box} from "@mui/system";
 import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import CardContent from '@mui/material/CardContent';
 
-import {Scrollbar} from 'src/components/scrollbar';
-import {useRouter} from "src/hooks/use-router";
-import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-
-import {paths} from "../../../paths";
-import {PropertyList} from "../../../components/property-list";
-import TablePagination from "../../components/table-pagination";
-import timeTransformer from "../../../utils/time-transformer";
-import {useGlobalState} from "../../../hooks/use-global-state";
-import {ListItemActions} from "../../../components/app/list/list-item-actions";
 import {FileUploader} from "./file-uploader";
+
+import {paths} from "src/paths";
+import {useRouter} from "src/hooks/use-router";
+import {useDialog} from "src/hooks/use-dialog";
+import {Scrollbar} from 'src/components/scrollbar';
+import timeTransformer from "src/utils/time-transformer";
+import {PropertyList} from "src/components/property-list";
+import {useGlobalState} from "src/hooks/use-global-state";
+import {mappingPackagesApi} from "src/api/mapping-packages";
+import {PropertyListItem} from "src/components/property-list-item";
+import ConfirmDialog from "src/components/app/dialog/confirm-dialog";
+import TablePagination from "src/sections/components/table-pagination";
+import {ListItemActions} from "src/components/app/list/list-item-actions";
+import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {testDataFileResourcesApi as fileResourcesApi} from "src/api/test-data-suites/file-resources";
-import {useDialog} from "../../../hooks/use-dialog";
-import {PropertyListItem} from "../../../components/property-list-item";
-import ConfirmDialog from "../../../components/app/dialog/confirm-dialog";
-import {mappingPackagesApi} from "../../../api/mapping-packages";
-import Checkbox from "@mui/material/Checkbox";
-import {MappingPackagesBulkAssigner} from "/src/sections/app/mapping-package/components/mapping-packages-bulk-assigner";
+import {MappingPackagesBulkAssigner} from "src/sections/app/mapping-package/components/mapping-packages-bulk-assigner";
 
 
 export const ListTableRow = (props) => {
@@ -73,6 +73,7 @@ export const ListTableRow = (props) => {
             pathname: paths.app[sectionApi.section].resource_manager.edit,
             query: {id: item_id, fid: resource_id}
         });
+        return true;
     }
 
     const handleDeleteAction = () => {
@@ -100,7 +101,7 @@ export const ListTableRow = (props) => {
                 title="Delete It?"
                 open={!!confirmOpen}
                 setOpen={setConfirmOpen}
-                onConfirm={() => handleDeleteResourceAction(confirmOpen)}
+                onConfirm={() => handleDeleteResourceAction()}
             >
                 Are you sure you want to delete it?
             </ConfirmDialog>
@@ -273,14 +274,14 @@ export const TestDataCollectionListTable = (props) => {
         page = 0,
         rowsPerPage = 0,
         sectionApi,
-        getItems = () => {}
+        getItems = () => {
+        }
     } = props;
 
     const router = useRouter();
 
     const [currentItem, setCurrentItem] = useState(null);
     const [selectedItems, setSelectedItems] = useState([]);
-    const [toMappingPackages, setToMappingPackages] = useState([]);
 
     const isItemSelected = (itemId) => {
         return selectedItems.indexOf(itemId) !== -1;
@@ -330,7 +331,6 @@ export const TestDataCollectionListTable = (props) => {
                     sectionApi={sectionApi}
                     idsToAssignTo={selectedItems}
                     initProjectMappingPackages={projectMappingPackages}
-                    toMappingPackages={toMappingPackages}
                     disabled={selectedItems.length === 0}
                     onMappingPackagesAssign={onMappingPackagesAssign}
                 />
@@ -401,5 +401,21 @@ TestDataCollectionListTable.propTypes = {
     onPageChange: PropTypes.func,
     onRowsPerPageChange: PropTypes.func,
     page: PropTypes.number,
-    rowsPerPage: PropTypes.number
+    rowsPerPage: PropTypes.number,
+    sectionApi: PropTypes.object,
+    getItems: PropTypes.func
 };
+
+
+ListTableRow.propTypes = {
+    item: PropTypes.object,
+    item_id: PropTypes.number,
+    isCurrent: PropTypes.bool,
+    handleItemToggle: PropTypes.func,
+    handleItemSelect: PropTypes.func,
+    isItemSelected: PropTypes.bool,
+    sectionApi: PropTypes.object,
+    router: PropTypes.object,
+    getItems: PropTypes.func,
+    projectMappingPackagesMap: PropTypes.array
+}

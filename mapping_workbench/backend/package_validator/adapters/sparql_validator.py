@@ -76,7 +76,10 @@ class SPARQLValidator(TestDataValidator):
             sparql_query_xpath = sparql_query_result.query.cm_rule.sdk_element_xpath.strip() \
                 if sparql_query_result.query.cm_rule else None
             sparql_xpath_condition = sparql_query_result.query.cm_rule.xpath_condition.xpath_condition.strip() \
-                if sparql_query_result.query.cm_rule else None
+                if (sparql_query_result.query.cm_rule and
+                    sparql_query_result.query.cm_rule.xpath_condition and
+                    sparql_query_result.query.cm_rule.xpath_condition.xpath_condition) \
+                else None
             validation_xpaths = set()
             validation_xpath_conditions = set()
             for xpath_assertion in xpath_validation_results:

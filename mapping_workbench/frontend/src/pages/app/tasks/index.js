@@ -144,7 +144,7 @@ export const Page = () => {
 
     const handleItemsGet = () => {
         setState(prevState => ({...prevState, load: true}))
-        sectionApi.getItems(itemsSearch.state)
+        sectionApi.getTasks(itemsSearch.state)
             .then(res =>
                 setState({
                     items: res.tasks_metadata,

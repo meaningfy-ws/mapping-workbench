@@ -310,8 +310,9 @@ async def route_task_transform_test_data(
         "Transform all test data task",
         None,
         user.email,
+        False,
         filters, user
-    )
+    ).task_metadata
 
 
 @router.post(

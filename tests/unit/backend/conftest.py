@@ -33,16 +33,15 @@ def dummy_project_link(dummy_project) -> Link:
     return Project.link_from_id(dummy_project.id)
 
 
-
 @pytest.fixture
 def dummy_structural_element(dummy_project_link):
     return StructuralElement(
-            sdk_element_id="ND-Root",
-            absolute_xpath="/*",
-            relative_xpath="/*",
-            project=dummy_project_link,
-            repeatable=False,
-            id=str(PydanticObjectId())
+        sdk_element_id="ND-Root",
+        absolute_xpath="/*",
+        relative_xpath="/*",
+        project=dummy_project_link,
+        repeatable=False,
+        id=str(PydanticObjectId())
     )
 
 
@@ -50,8 +49,8 @@ def get_ontology_file_resource_by_name(ontology_file_name: str) -> OntologyFileR
     file_path = TEST_DATA_EPO_ONTOLOGY / ontology_file_name
 
     return OntologyFileResource(
-        filename = file_path.name,
-        content = file_path.read_text()
+        filename=file_path.name,
+        content=file_path.read_text()
     )
 
 

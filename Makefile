@@ -209,7 +209,7 @@ start-frontend-console-mode:
 	@ cd ${FRONTEND_HOME} && make start-dev-frontend
 
 start-backend-console-mode:
-	uvicorn mapping_workbench.backend.core.entrypoints.api.main:app --reload
+	uvicorn mapping_workbench.backend.core.entrypoints.api.main:app --reload --log-level debug
 
 start-mongo-console-mode:
 	mongod --dbpath=/usr/local/var/mongodb/data/
@@ -255,8 +255,16 @@ deploy-app-version:
 deploy-env-app-settings: deploy-app-version
 	@ echo "Deployed ENV App Settings"
 
+deploy-env: deploy-env-app-settings
+	@ echo "Deployed ENV"
+
 deploy-prod-dotenv-file: prod-dotenv-file deploy-env-app-settings
 	@ echo "Deployed PROD ENV file"
 
 deploy-staging-dotenv-file: staging-dotenv-file deploy-env-app-settings
 	@ echo "Deployed STAGING ENV file"
+
+create-release-tag:
+	@ git tag -a v$(V) -m "Release version $(V)"
+	@ git push origin v$(V)
+	@ echo "Release Tag `v$(V)` was successfully created and pushed."

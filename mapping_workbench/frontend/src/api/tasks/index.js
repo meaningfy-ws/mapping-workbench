@@ -2,7 +2,7 @@ import {SectionApi} from "../section";
 import {appApi} from "../app";
 import {apiPaths} from "../../paths";
 
-class TasksApi extends SectionApi{
+class TasksApi extends SectionApi {
     get TASKS_TITLE() {
         return "Activities";
     }
@@ -17,39 +17,31 @@ class TasksApi extends SectionApi{
         this.paths = apiPaths[this.section];
     }
 
-    async runTermsValidator(request = {}) {
-        try {
-            let endpoint = this.paths['terms_validator'];
-            let filters = {}
-            if (request['filters']) {
-                filters = request['filters'];
-            }
-            return appApi.post(endpoint, filters);
-        } catch (err) {
+    runTermsValidator(request = {}) {
+        let endpoint = this.paths['terms_validator'];
+        let filters = {}
+        if (request['filters']) {
+            filters = request['filters'];
         }
-    }
-    async runGenerateCMAssertionsQueries(request = {}) {
-        try {
-            let endpoint = this.paths['generate_cm_assertions_queries'];
-            let filters = {}
-            if (request['filters']) {
-                filters = request['filters'];
-            }
-            return appApi.post(endpoint, filters);
-        } catch (err) {
-        }
+        return appApi.post(endpoint, filters);
     }
 
-    async runTransformTestData(request = {}) {
-        try {
-            let endpoint = this.paths['transform_test_data'];
-            let filters = {}
-            if (request['filters']) {
-                filters = request['filters'];
-            }
-            return appApi.post(endpoint, filters);
-        } catch (err) {
+    runGenerateCMAssertionsQueries(request = {}) {
+        let endpoint = this.paths['generate_cm_assertions_queries'];
+        let filters = {}
+        if (request['filters']) {
+            filters = request['filters'];
         }
+        return appApi.post(endpoint, filters);
+    }
+
+    runTransformTestData(request = {}) {
+        let endpoint = this.paths['transform_test_data'];
+        let filters = {}
+        if (request['filters']) {
+            filters = request['filters'];
+        }
+        return appApi.post(endpoint, filters);
     }
 
     async cancelTask(id) {
@@ -65,6 +57,11 @@ class TasksApi extends SectionApi{
     async deleteAllTasks() {
         const endpoint = this.paths['task_delete_all'];
         return appApi.delete(endpoint);
+    }
+
+    async getTasks() {
+        const endpoint = this.paths['items'];
+        return appApi.get(endpoint);
     }
 }
 

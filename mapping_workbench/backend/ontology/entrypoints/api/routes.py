@@ -309,8 +309,9 @@ async def route_task_discover_terms(
         "Terms Discovery Task",
         None,
         user.email,
+        False,
         req.project, user
-    )
+    ).task_metadata
 
 
 @router.post(
@@ -371,5 +372,6 @@ async def route_task_terms_validator(
         "Terms Validation Task",
         None,
         user.email,
+        False,
         filters
-    )
+    ).task_metadata

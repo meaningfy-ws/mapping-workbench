@@ -17,6 +17,8 @@ from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTest
     SPARQLTestFileResource, SPARQLQueryValidationType, SPARQLCMRule
 from mapping_workbench.backend.sparql_test_suite.services.data import SPARQL_CM_ASSERTIONS_SUITE_TITLE, \
     SPARQL_INTEGRATION_TESTS_SUITE_TITLE
+from mapping_workbench.backend.task_manager.adapters.task_progress import TaskProgress
+from mapping_workbench.backend.tasks.models.task_response import TaskResponse, TaskProgressAction, TaskProgressStatus
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
     TestDataFileResourceFormat
 from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragmentFormat, \
@@ -27,11 +29,14 @@ from mapping_workbench.backend.user.models.user import User
 class PackageImporterABC(ABC):
     package: MappingPackage
     warnings: List[str] = []
+    task_progress: TaskProgress
 
-    def __init__(self, project: Project, user: User):
+    def __init__(self, project: Project, user: User, task_response: TaskResponse = None):
         self.project = project
         self.project_link = Project.link_from_id(self.project.id)
         self.user = user
+        self.task_response = task_response
+        self.task_progress = TaskProgress(self.task_response)
         self.package = None
 
 
@@ -44,6 +49,8 @@ class PackageImporterABC(ABC):
         """
 
     async def add_test_data_from_mono(self, mono_package: ImportedMappingSuite):
+        self.task_progress.start_action_step(name="add_test_data")
+
         resource_formats = [e.value for e in TestDataFileResourceFormat]
 
         for mono_resource_collection in mono_package.test_data_resources:
@@ -96,7 +103,11 @@ class PackageImporterABC(ABC):
                     test_data_file_resource.content = resource_content
                     await test_data_file_resource.on_update(self.user).save()
 
+        self.task_progress.finish_current_action_step()
+
     async def add_transformation_mappings_from_mono(self, mono_package: ImportedMappingSuite):
+        self.task_progress.start_action_step(name="add_transformation_mappings")
+
         resource_formats = [e.value for e in TripleMapFragmentFormat]
 
         for mono_file_resource in mono_package.transformation_mappings.file_resources:
@@ -126,6 +137,8 @@ class PackageImporterABC(ABC):
                 triple_map_fragment.triple_map_content = resource_content
                 await triple_map_fragment.on_update(self.user).save()
 
+        self.task_progress.finish_current_action_step()
+
     @classmethod
     def extract_metadata_from_sparql_query(cls, content) -> dict:
         """
@@ -143,6 +156,8 @@ class PackageImporterABC(ABC):
         return dict([_process_line(line) for line in content_lines_with_comments])
 
     async def add_sparql_test_suites_from_mono(self, mono_package: ImportedMappingSuite):
+        self.task_progress.start_action_step(name="add_sparql_test_suites")
+
         resource_formats = [e.value for e in SPARQLTestFileResourceFormat]
 
         for mono_resource_collection in mono_package.sparql_validation_resources:
@@ -211,7 +226,11 @@ class PackageImporterABC(ABC):
                     sparql_test_file_resource.cm_rule = cm_rule_sdk_element
                     await sparql_test_file_resource.on_update(self.user).save()
 
+        self.task_progress.finish_current_action_step()
+
     async def add_shacl_test_suites_from_mono(self, mono_package: ImportedMappingSuite):
+        self.task_progress.start_action_step(name="add_shacl_test_suites")
+
         resource_formats = [e.value for e in SHACLTestFileResourceFormat]
 
         for mono_resource_collection in mono_package.shacl_validation_resources:
@@ -263,7 +282,11 @@ class PackageImporterABC(ABC):
                     shacl_test_file_resource.content = resource_content
                     await shacl_test_file_resource.on_update(self.user).save()
 
+        self.task_progress.finish_current_action_step()
+
     async def add_transformation_resources_from_mono(self, mono_package: ImportedMappingSuite):
+        self.task_progress.start_action_step(name="add_transformation_resources")
+
         resource_formats = [e.value for e in ResourceFileFormat]
 
         resource_collection: ResourceCollection = await get_default_resource_collection(project_id=self.project.id)
@@ -307,7 +330,11 @@ class PackageImporterABC(ABC):
                 resource_file.content = resource_content
                 await resource_file.on_update(self.user).save()
 
+        self.task_progress.finish_current_action_step()
+
     async def add_mapping_package_from_mono(self, mono_package: ImportedMappingSuite):
+        self.task_progress.start_action_step(name="add_mapping_package")
+
         package: MappingPackage = await MappingPackage.find_one(
             MappingPackage.project == self.project_link,
             MappingPackage.identifier == mono_package.metadata.identifier
@@ -327,6 +354,8 @@ class PackageImporterABC(ABC):
         await package.on_update(self.user).save() if package.id else await package.on_create(self.user).save()
 
         self.package = package
+
+        self.task_progress.finish_current_action_step()
 
     @classmethod
     async def clear_project_data(cls, project: Project):

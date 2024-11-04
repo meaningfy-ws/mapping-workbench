@@ -3,31 +3,34 @@ import PropTypes from 'prop-types';
 import nProgress from 'nprogress';
 
 import XIcon from '@untitled-ui/icons-react/build/esm/X';
-import Dialog from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
-import IconButton from '@mui/material/IconButton';
-import Stack from '@mui/material/Stack';
-import SvgIcon from '@mui/material/SvgIcon';
 
-import Typography from '@mui/material/Typography';
-import {FileDropzone} from 'src/components/file-dropzone';
-import {useRouter} from 'src/hooks/use-router';
-import {sessionApi} from "../../../api/session";
-import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
+import Stack from '@mui/material/Stack';
+import Dialog from '@mui/material/Dialog';
+import SvgIcon from '@mui/material/SvgIcon';
+import Checkbox from "@mui/material/Checkbox";
 import MenuItem from "@mui/material/MenuItem";
+import FormGroup from "@mui/material/FormGroup";
 import TextField from "@mui/material/TextField";
-import {DEFAULT_PACKAGE_TYPE, PACKAGE_TYPE} from "../../../api/mapping-packages";
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import DialogContent from '@mui/material/DialogContent';
+import FormControlLabel from "@mui/material/FormControlLabel";
+
+import {sessionApi} from "src/api/session";
+import {FileDropzone} from 'src/components/file-dropzone';
+import {DEFAULT_PACKAGE_TYPE, PACKAGE_TYPE} from "src/api/mapping-packages";
+import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
+
 
 
 export const PackageImporter = (props) => {
-    const router = useRouter();
-
     const {onClose, open = false, sectionApi} = props;
 
     const defaultPackageTypeValue = DEFAULT_PACKAGE_TYPE;
 
     const [files, setFiles] = useState([]);
     const [packageType, setPackageType] = useState(defaultPackageTypeValue);
+    const [triggerPackageProcessing, setTriggerPackageProcessing] = useState(false);
 
     useEffect(() => {
         setFiles([]);
@@ -41,6 +44,7 @@ export const PackageImporter = (props) => {
             formData = new FormData();
             formData.append("file", file);
             formData.append("package_type", packageType);
+            formData.append("trigger_package_processing", triggerPackageProcessing);
             formData.append("project", sessionApi.getSessionProject());
             const toastId = toastLoad(`Importing "${file.name}" ... `)
             sectionApi.importPackage(formData)
@@ -51,10 +55,6 @@ export const PackageImporter = (props) => {
         }
         nProgress.done();
         onClose();
-        // router.push({
-        //     pathname: paths.app[sectionApi.section].index
-        // });
-        //router.reload();
     }, [files])
 
     const handleDrop = useCallback((newFiles) => {
@@ -110,12 +110,23 @@ export const PackageImporter = (props) => {
                     select
                     required
                     value={packageType}
-                    sx={{mb: 3}}
+                    sx={{mb: 2}}
                 >
                     {Object.keys(PACKAGE_TYPE).map((key) => (
                         <MenuItem key={key} value={key}>{PACKAGE_TYPE[key]}</MenuItem>
                     ))}
                 </TextField>
+                <FormGroup sx={{ mb: 2}}>
+                    <FormControlLabel
+                        control={<Checkbox
+                            checked={triggerPackageProcessing}
+                            onChange={e => setTriggerPackageProcessing(e.target.checked)}
+                            name="trigger_package_processing"
+                        />
+                        }
+                        label={<Typography>Process Package after Import </Typography>}
+                    />
+                </FormGroup>
                 <FileDropzone
                     accept={{'*/*': []}}
                     caption="Required name: {PACKAGE_NAME}.zip"
@@ -133,5 +144,6 @@ export const PackageImporter = (props) => {
 
 PackageImporter.propTypes = {
     onClose: PropTypes.func,
-    open: PropTypes.bool
+    open: PropTypes.bool,
+    sectionApi: PropTypes.object
 };

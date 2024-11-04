@@ -17,7 +17,7 @@ from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuit
 from mapping_workbench.backend.triple_map_fragment.models.entity import GenericTripleMapFragment, \
     SpecificTripleMapFragment
 from tests.test_data.mapping_package_archives import EFORMS_PACKAGE_PATH, STANDARD_PACKAGE_PATH, \
-    INVALID_EFORMS_PACKAGE_PATH, INVALID_ARCHIVE_PATH
+    INVALID_ARCHIVE_PATH
 
 
 def read_archive(archive_path: Path) -> bytes:

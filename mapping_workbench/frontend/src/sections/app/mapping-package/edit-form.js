@@ -1,26 +1,25 @@
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
-import Grid from '@mui/material/Unstable_Grid2';
-import Stack from '@mui/material/Stack';
 
-import {RouterLink} from 'src/components/router-link';
+import Card from '@mui/material/Card';
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Unstable_Grid2';
+import CardHeader from '@mui/material/CardHeader';
+import CardContent from '@mui/material/CardContent';
+
 import {paths} from 'src/paths';
+import {sessionApi} from "src/api/session";
 import {useRouter} from 'src/hooks/use-router';
-import {FormTextField} from "../../../components/app/form/text-field";
-import {FormTextArea} from "../../../components/app/form/text-area";
-import {FormDateField} from "../../../components/app/form/date-field";
-import {sessionApi} from "../../../api/session";
-//import {testDataSuitesApi} from "../../../api/test-data-suites";
-import {shaclTestSuitesApi} from "../../../api/shacl-test-suites";
+import {RouterLink} from 'src/components/router-link';
+import {shaclTestSuitesApi} from "src/api/shacl-test-suites";
+import {FormTextArea} from "src/components/app/form/text-area";
+import {sparqlTestSuitesApi} from "src/api/sparql-test-suites";
+import {FormTextField} from "src/components/app/form/text-field";
+import {resourceCollectionsApi} from "src/api/resource-collections";
+import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {ListSelectorSelect as ResourceListSelector} from "src/components/app/list-selector/select";
-import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
-import {sparqlTestSuitesApi} from "../../../api/sparql-test-suites";
-import {resourceCollectionsApi} from "../../../api/resource-collections";
 
 
 export const EditForm = (props) => {
@@ -166,20 +165,20 @@ export const EditForm = (props) => {
                     </Grid>
                 </CardContent>
             </Card>
-            {false && <Card sx={{mt: 3}}>
-                <CardHeader title={testDataSuitesApi.SECTION_TITLE}/>
-                <CardContent sx={{pt: 0}}>
-                    <Grid container
-                          spacing={3}>
-                        <Grid xs={12}
-                              md={12}>
-                            <ResourceListSelector
-                                valuesApi={testDataSuitesApi}
-                                listValues={formik.values.test_data_suites}/>
-                        </Grid>
-                    </Grid>
-                </CardContent>
-            </Card>}
+            {/*<Card sx={{mt: 3}}>*/}
+            {/*    <CardHeader title={testDataSuitesApi.SECTION_TITLE}/>*/}
+            {/*    <CardContent sx={{pt: 0}}>*/}
+            {/*        <Grid container*/}
+            {/*              spacing={3}>*/}
+            {/*            <Grid xs={12}*/}
+            {/*                  md={12}>*/}
+            {/*                <ResourceListSelector*/}
+            {/*                    valuesApi={testDataSuitesApi}*/}
+            {/*                    listValues={formik.values.test_data_suites}/>*/}
+            {/*            </Grid>*/}
+            {/*        </Grid>*/}
+            {/*    </CardContent>*/}
+            {/*</Card>*/}
             <Card sx={{mt: 3}}>
                 <CardHeader title={shaclTestSuitesApi.SECTION_TITLE}/>
                 <CardContent sx={{pt: 0}}>

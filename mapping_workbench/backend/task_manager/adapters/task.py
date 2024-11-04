@@ -1,7 +1,8 @@
 import re
+import random
+import re
 import unicodedata
 from datetime import datetime
-from enum import Enum
 from typing import Callable, Optional, List
 
 from dateutil.tz import tzlocal
@@ -9,19 +10,7 @@ from pebble import ProcessFuture
 from pydantic import BaseModel
 
 from mapping_workbench.backend.config import settings
-from mapping_workbench.backend.tasks.models.task_response import TaskResponse
-
-
-class TaskStatus(str, Enum):
-    """
-    TaskStatus is an enum that represents task status.
-    """
-    QUEUED = "QUEUED"
-    RUNNING = "RUNNING"
-    FINISHED = "FINISHED"
-    TIMEOUT = "TIMEOUT"
-    FAILED = "FAILED"
-    CANCELED = "CANCELED"
+from mapping_workbench.backend.tasks.models.task_response import TaskStatus, TaskProgressData
 
 
 class TaskResult:
@@ -48,6 +37,7 @@ class TaskMetadata(BaseModel):
     finished_at: datetime = None
     exception_message: str = None
     warnings: List[str] = []
+    progress: TaskProgressData = None
     created_by: Optional[str] = None
 
 
@@ -71,10 +61,7 @@ class TaskExecutor(Callable):
         task_result = TaskResult()
         task_result.started_at = datetime.now(tzlocal())
         try:
-            response = self.task_function(*args, **kwargs)
-            if isinstance(response, TaskResponse):
-                if hasattr(response.data, 'warnings'):
-                    task_result.warnings = response.data.warnings
+            self.task_function(*args, **kwargs)
             task_result.task_status = TaskStatus.FINISHED
         except Exception as e:
             task_result.exception_message = str(e)
@@ -105,6 +92,7 @@ class Task:
                  task_name: str,
                  task_timeout: Optional[float] = settings.TASK_TIMEOUT,
                  created_by: Optional[str] = None,
+                 has_response: bool = False,
                  *args, **kwargs):
         """
         :param task_function: task function to be executed by task
@@ -113,7 +101,9 @@ class Task:
         :param args: task function args to be passed to task function
         :param kwargs: task function kwargs to be passed to task function
         """
+
         self.task_function = TaskExecutor(task_function)
+        self.has_response = has_response
         self.task_args = args
         self.task_kwargs = kwargs
         created_at = datetime.now(tzlocal())
@@ -143,7 +133,7 @@ class Task:
         # Remove leading and trailing hyphens
         task_id = task_id.strip('-')
 
-        return f"{task_id}_{created_at}"
+        return f"{task_id}_{created_at}_{random.randint(10000, 99999)}" # NOSONAR
 
     def set_future(self, future: ProcessFuture):
         """
@@ -211,6 +201,11 @@ class Task:
         """
         """
         self.task_metadata.warnings = warnings
+
+    def update_progress(self, progress: TaskProgressData):
+        """
+        """
+        self.task_metadata.progress = progress
 
     def get_task_status(self) -> TaskStatus:
         """

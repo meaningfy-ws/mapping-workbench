@@ -1,3 +1,4 @@
+from abc import ABC
 from enum import Enum
 from typing import Optional
 
@@ -77,14 +78,19 @@ class GenericTripleMapFragmentOut(BaseProjectResourceEntityOutSchema):
     format: Optional[TripleMapFragmentFormat] = None
 
 
-class TripleMapFragmentState(ObjectState):
+class TripleMapFragmentABC(ABC):
+    triple_map_uri: Optional[str]
+    triple_map_content: Optional[str]
+
+
+class TripleMapFragmentState(ObjectState, TripleMapFragmentABC):
     identifier: Optional[str] = None
     triple_map_uri: Optional[str] = None
     triple_map_content: Optional[str] = None
     format: Optional[TripleMapFragmentFormat] = None
 
 
-class TripleMapFragment(BaseProjectResourceEntity, StatefulObjectABC):
+class TripleMapFragment(BaseProjectResourceEntity, StatefulObjectABC, TripleMapFragmentABC):
     identifier: Optional[str] = None
     triple_map_uri: Optional[str] = None
     triple_map_content: Optional[str] = None

@@ -9,8 +9,6 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {MultiSelect} from 'src/components/multi-select';
-
 const statusOptions = [
     {
         label: 'Published',
@@ -233,20 +231,6 @@ export const ListSearch = (props) => {
                     </Box>
                 )}
             <Divider/>
-            {false && <Stack
-                alignItems="center"
-                direction="row"
-                flexWrap="wrap"
-                spacing={1}
-                sx={{p: 1}}
-            >
-                <MultiSelect
-                    label="Status"
-                    onChange={handleStatusChange}
-                    options={statusOptions}
-                    value={statusValues}
-                />
-            </Stack>}
         </div>
     );
 };

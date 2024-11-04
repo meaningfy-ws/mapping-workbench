@@ -12,6 +12,7 @@ import Grid from '@mui/material/Grid';
 import Card from "@mui/material/Card";
 import Table from '@mui/material/Table';
 import Stack from "@mui/material/Stack";
+import Alert from "@mui/material/Alert";
 import Switch from "@mui/material/Switch";
 import Button from "@mui/material/Button";
 import Divider from '@mui/material/Divider';
@@ -36,13 +37,11 @@ import {PropertyListItem} from 'src/components/property-list-item';
 import ConfirmDialog from "src/components/app/dialog/confirm-dialog";
 import TablePagination from "src/sections/components/table-pagination";
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
-import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 
 
-const PackageRow = (props) => {
-    const {item, sectionApi} = props;
+const PackageRow = ({item, sectionApi}) => {
 
     const [isProcessing, setIsProcessing] = useState(false);
     const [isExporting, setIsExporting] = useState(false);
@@ -59,7 +58,6 @@ const PackageRow = (props) => {
         validationSchema: Yup.object({}),
         onSubmit: async (values, helpers) => {
             setIsProcessing(true)
-
             const tasks_to_run = [];
             if (values['transform_test_data']) {
                 tasks_to_run.push('transform_test_data');
@@ -69,13 +67,14 @@ const PackageRow = (props) => {
             }
             if (values['validate_package']) {
                 tasks_to_run.push('validate_package');
-            }
-            if (values['validate_package_xpath_sparql']) {
-                tasks_to_run.push('validate_package_xpath');
-                tasks_to_run.push('validate_package_sparql');
-            }
-            if (values['validate_package_shacl']) {
-                tasks_to_run.push('validate_package_shacl');
+
+                if (values['validate_package_xpath_sparql']) {
+                    tasks_to_run.push('validate_package_xpath');
+                    tasks_to_run.push('validate_package_sparql');
+                }
+                if (values['validate_package_shacl']) {
+                    tasks_to_run.push('validate_package_shacl');
+                }
             }
             const data = {
                 package_id: item._id,
@@ -137,6 +136,14 @@ const PackageRow = (props) => {
                     px: 3
                 }}
             >
+                <Alert severity="warning"
+                       sx={{mt: 3, mx: 3}}>
+                    {"Do not modify Project's Resources while the Mapping Package Processing task is initializing."}
+                </Alert>
+                {isProcessing && <Alert severity="warning"
+                                        sx={{mt: 1, mx: 3}}>
+                    <b>Mapping Package Processing task is initializing!</b>
+                </Alert>}
                 <form onSubmit={formik.handleSubmit}>
                     <Stack
                         direction={{
@@ -397,7 +404,7 @@ const MappingPackageRowFragment = (props) => {
                     />
                 </Box>}
             >
-                <>Are you sure you want to delete it?</>
+                Are you sure you want to delete it?
             </ConfirmDialog>
         </>
     )
@@ -410,8 +417,6 @@ export const ListTable = (props) => {
         onPageChange = () => {
         },
         onRowsPerPageChange,
-        sort,
-        onSort,
         page = 0,
         rowsPerPage = 0,
         sectionApi
@@ -423,16 +428,6 @@ export const ListTable = (props) => {
 
     const handleItemToggle = itemId => {
         setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
-    }
-
-    const SorterHeader = (props) => {
-        const direction = props.fieldName === sort.column && sort.direction === 1 ? 'asc' : 'desc';
-        return (
-            <TableSorterHeader sort={{direction, column: sort.column}}
-                               onSort={onSort}
-                               {...props}
-            />
-        )
     }
 
     const handleGoLastState = (id) => {
@@ -517,5 +512,22 @@ ListTable.propTypes = {
     onPageChange: PropTypes.func,
     onRowsPerPageChange: PropTypes.func,
     page: PropTypes.number,
-    rowsPerPage: PropTypes.number
+    rowsPerPage: PropTypes.number,
+    sectionApi: PropTypes.object
 };
+
+PackageRow.propTypes = {
+    item: PropTypes.object,
+    sectionApi: PropTypes.object
+}
+
+MappingPackageRowFragment.propTypes = {
+    item_id: PropTypes.number,
+    item: PropTypes.object,
+    isCurrent: PropTypes.bool,
+    handleItemToggle: PropTypes.func,
+    handleGoLastState: PropTypes.func,
+    handleDeleteAction: PropTypes.func,
+    timeSetting: PropTypes.object,
+    sectionApi: PropTypes.object
+}

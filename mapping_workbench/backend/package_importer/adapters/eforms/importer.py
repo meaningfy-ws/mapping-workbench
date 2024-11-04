@@ -8,6 +8,7 @@ from mapping_workbench.backend.mapping_rule_registry.models.entity import Mappin
 from mapping_workbench.backend.package_importer.adapters.importer_abc import PackageImporterABC
 from mapping_workbench.backend.package_importer.models.imported_mapping_suite import ImportedMappingSuite
 from mapping_workbench.backend.project.models.entity import Project
+from mapping_workbench.backend.tasks.models.task_response import TaskResponse
 from mapping_workbench.backend.triple_map_fragment.models.entity import GenericTripleMapFragment
 from mapping_workbench.backend.user.models.user import User
 
@@ -15,10 +16,13 @@ from mapping_workbench.backend.user.models.user import User
 class EFormsPackageImporter(PackageImporterABC):
     package: MappingPackage
 
-    def __init__(self, project: Project, user: User):
-        super().__init__(project, user)
+    def __init__(self, project: Project, user: User, task_response: TaskResponse = None):
+        super().__init__(project, user, task_response)
 
     async def import_from_mono_mapping_suite(self, mono_package: ImportedMappingSuite):
+        self.task_progress.start_progress(actions_count=1)
+        self.task_progress.start_action(name="Import EForms Package", steps_count=8)
+
         await self.add_mapping_package_from_mono(mono_package)
         await self.add_transformation_resources_from_mono(mono_package)
         await self.add_transformation_mappings_from_mono(mono_package)
@@ -30,9 +34,14 @@ class EFormsPackageImporter(PackageImporterABC):
 
         await self.package.save()
 
+        self.task_progress.finish_current_action()
+        self.task_progress.finish_progress()
+
         return self.package
 
     async def add_mapping_groups_from_mono(self, mono_package: ImportedMappingSuite):
+        self.task_progress.start_action_step(name="add_mapping_groups")
+
         for mono_group in mono_package.mapping_groups:
             group: MappingGroup = await MappingGroup.find_one(
                 MappingGroup.name == mono_group.mapping_group_id
@@ -53,7 +62,11 @@ class EFormsPackageImporter(PackageImporterABC):
 
             await group.on_update(self.user).save() if group.id else await group.on_create(self.user).create()
 
+        self.task_progress.finish_current_action_step()
+
     async def add_mapping_rules_from_mono(self, mono_package: ImportedMappingSuite):
+        self.task_progress.start_action_step(name="add_mapping_rules")
+
         sort_order: int = 0
         for mono_rule in mono_package.conceptual_rules:
             source_structural_element: StructuralElement = await get_structural_element_by_unique_fields(
@@ -61,7 +74,7 @@ class EFormsPackageImporter(PackageImporterABC):
                 bt_id=mono_rule.bt_id,
                 absolute_xpath=mono_rule.absolute_xpath,
                 project_id=self.project.id,
-                #name=mono_rule.field_name
+                # name=mono_rule.field_name
             )
 
             if not source_structural_element:
@@ -74,13 +87,15 @@ class EFormsPackageImporter(PackageImporterABC):
 
             # A conceptual mapping rule may have same structural element but different Ontology Fragment
             rule: ConceptualMappingRule = await ConceptualMappingRule.find_one(
-                ConceptualMappingRule.source_structural_element == StructuralElement.link_from_id(source_structural_element.id),
+                ConceptualMappingRule.source_structural_element == StructuralElement.link_from_id(
+                    source_structural_element.id),
                 ConceptualMappingRule.project == Project.link_from_id(self.project.id),
                 ConceptualMappingRule.target_class_path == mono_rule.class_path,
                 ConceptualMappingRule.target_property_path == mono_rule.property_path
             )
             if rule:
-                mwb_logger.log_all_info(f"CM Rule with Ontology Fragment: {rule.target_class_path} | {rule.target_property_path} already exist")
+                mwb_logger.log_all_info(
+                    f"CM Rule with Ontology Fragment: {rule.target_class_path} | {rule.target_property_path} already exist")
                 continue
 
             rule = ConceptualMappingRule(
@@ -125,10 +140,12 @@ class EFormsPackageImporter(PackageImporterABC):
             if mono_rule.feedback_notes:
                 rule.feedback_notes = [ConceptualMappingRuleComment(comment=mono_rule.feedback_notes)]
 
-            #await rule.on_update(self.user).save() if rule.id else \
+            # await rule.on_update(self.user).save() if rule.id else \
             await rule.on_create(self.user).create()
 
             sort_order += 1
+
+        self.task_progress.finish_current_action_step()
 
     @classmethod
     async def clear_project_data(cls, project: Project):

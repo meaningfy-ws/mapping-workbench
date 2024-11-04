@@ -3,7 +3,7 @@ import asyncio
 from mapping_workbench.backend.config import settings
 from mapping_workbench.backend.core.services.project_initilisers import init_project_models
 from mapping_workbench.backend.database.adapters.mongodb import DB
-from mapping_workbench.backend.task_manager.adapters.task import Task, TaskMetadata
+from mapping_workbench.backend.task_manager.adapters.task import Task
 from mapping_workbench.backend.task_manager.entrypoints import AppTaskManager
 
 
@@ -25,7 +25,6 @@ def loop_task(task_to_run, *args):
 
         return event_loop
 
-
     async def task():
         await init_task()  # This is because of beanie implementation
         await task_to_run(*args)
@@ -39,9 +38,10 @@ def run_task(task_to_run, *args):
     loop_task(task_to_run, *args)
 
 
-def add_task(task_to_run, task_name, task_timeout, created_by, *args) -> TaskMetadata:
+def add_task(task_to_run, task_name, task_timeout, created_by, task_has_response: bool = False, *args) -> Task:
     if task_timeout is None:
         task_timeout = settings.TASK_TIMEOUT
-    task = Task(task_to_run, task_name, task_timeout, created_by, *args)
+
+    task = Task(task_to_run, task_name, task_timeout, created_by, task_has_response, *args)
     AppTaskManager.add_task(task)
-    return task.task_metadata
+    return task
