@@ -76,7 +76,7 @@ export const TaskLine = ({item}) => {
             >
                 {stepsCount && stepsCount.map((stepIdx) => {
                     const step = getProgressElement(steps, stepIdx);
-                    let stepStatus = step != null ? step.status : taskProgressStatus.QUEUED
+                    let stepStatus = step?.status ?? taskProgressStatus.QUEUED
                     return (<span
                         key={'task_action_step_' + actionIdx + '_' + stepIdx}
                         style={{
@@ -130,8 +130,8 @@ export const TaskActions = ({item}) => {
                     <Stack>
                         {stepsCount?.map((stepIdx) => {
                             const step = getProgressElement(steps, stepIdx);
-                            const stepStatus = step.status ?? taskProgressStatus.QUEUED
-                            const stepName = step.name ?? ""
+                            const stepStatus = step?.status ?? taskProgressStatus.QUEUED
+                            const stepName = step?.name ?? ""
                             return (
                                 <Typography
                                     key={'step' + stepIdx}
