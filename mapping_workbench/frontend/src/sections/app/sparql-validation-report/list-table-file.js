@@ -55,6 +55,8 @@ export const ListTableFile = (props) => {
         )
     }
 
+    console.log(items.map(e=> e.xpath_condition))
+
     return (
         <>
             <TablePagination

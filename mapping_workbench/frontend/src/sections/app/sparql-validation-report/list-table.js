@@ -199,9 +199,11 @@ export const ListTable = (props) => {
                                                         alignItems="center"
                                                         spacing={2}
                                                     >
-                                                        <Button variant="text" type='link'
-                                                                onClick={() => openXPathConditionDialog(item)}
-                                                        >XQuery</Button>
+                                                        <Button variant="text"
+                                                                type='link'
+                                                                onClick={() => openXPathConditionDialog(item)}>
+                                                            XQuery
+                                                        </Button>
                                                         {item?.xpath_condition?.meets_xpath_condition ?
                                                             <CheckIcon color="success"/> :
                                                             <CloseIcon color="error"/>}
