@@ -31,16 +31,6 @@ import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {mapStatusColor, TaskActions, TaskLine, taskProgressStatus as taskStatuses} from "./task-actions";
 
 
-// export const taskStatuses = {
-//     QUEUED: "QUEUED",
-//     RUNNING: "RUNNING",
-//     FINISHED: "FINISHED",
-//     TIMEOUT: "TIMEOUT",
-//     FAILED: "FAILED",
-//     CANCELED: "CANCELED"
-// }
-
-
 export const ListTable = (props) => {
     const {
         count = 0,
@@ -57,12 +47,6 @@ export const ListTable = (props) => {
         onCancelAction,
         onDeleteAction
     } = props;
-
-
-
-
-
-
 
     const [currentItem, setCurrentItem] = useState(null);
     const [popoverShow, setPopoverShow] = useState({})

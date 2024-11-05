@@ -1,5 +1,4 @@
 import {useEffect, useState} from 'react';
-import {toast} from 'react-hot-toast';
 import PropTypes from 'prop-types';
 
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
@@ -119,7 +118,7 @@ export const ListTableRow = (props) => {
                             && projectMappingPackages
                                 .filter(
                                     projectMappingPackage => projectMappingPackage?.[sectionApi.MAPPING_PACKAGE_LINK_FIELD]
-                                        .some(resource_ref => item_id === resource_ref.id)
+                                        ?.some(resource_ref => item_id === resource_ref.id)
                                 )
                                 .map((mapping_package) => {
                                     return (
