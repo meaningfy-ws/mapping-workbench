@@ -1,6 +1,6 @@
 import io
 import re
-from typing import List, Any, Union
+from typing import Any, Union
 from xml.etree import ElementTree
 
 from pydantic import validate_call
@@ -9,29 +9,30 @@ from saxonche import PySaxonProcessor, PySaxonApiError, PyXPathProcessor, PyXdmN
 
 from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.package_validator.adapters.data_validator import TestDataValidator
-from mapping_workbench.backend.package_validator.models.xpath_validation import XPathAssertionEntry
+from mapping_workbench.backend.package_validator.models.xpath_validation import XPathAssertionEntry, \
+    XPATHMatchingElements
 
 
 class XPATHValidator(TestDataValidator):
     """
     """
 
-    xp: Any = None # saxon_processor
-    xpp: Any = None # xpath_processor
-    xqp: Any = None # xquery_processor
+    xp: Any = None  # saxon_processor
+    xpp: Any = None  # xpath_processor
+    xqp: Any = None  # xquery_processor
     namespaces: Any = None
     prefixes: Any = None
     DEFAULT_XML_NS_PREFIX: str = ''
 
     @validate_call
-    def __init__(self, xml_content, **data: Any):
+    def __init__(self, xml_content, namespaces=None, **data: Any):
         super().__init__(**data)
-        self.namespaces = self.extract_namespaces(xml_content)
+        self.namespaces = namespaces or self.extract_namespaces(xml_content)
         self.prefixes = {v: k for k, v in self.namespaces.items()}
         self.xp = PySaxonProcessor(license=False)
         self.init_xp_processors(xml_content)
 
-    def validate(self, xpath_expression) -> List[XPathAssertionEntry]:
+    def validate(self, xpath_expression) -> XPATHMatchingElements:
         return self.get_unique_xpaths(xpath_expression)
 
     def check_xpath_condition(self, xquery_expression) -> bool:
@@ -114,7 +115,7 @@ class XPATHValidator(TestDataValidator):
             mwb_logger.log_all_error(str(e), str(e))
             return None
 
-    def get_unique_xpaths(self, xpath_expression) -> List[XPathAssertionEntry]:
+    def get_unique_xpaths(self, xpath_expression) -> XPATHMatchingElements:
         """Get unique XPaths that cover elements matching e XPath expression."""
         xpath_assertions = []
         matching_elements = self.check_xpath_expression(xpath_expression)
@@ -129,4 +130,7 @@ class XPATHValidator(TestDataValidator):
                         value=self.get_node_text_value(xpath_node)
                     ))
 
-        return xpath_assertions
+        return XPATHMatchingElements(
+            xpath_assertions=xpath_assertions,
+            elements=matching_elements or []
+        )

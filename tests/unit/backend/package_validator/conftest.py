@@ -2,8 +2,10 @@ import pathlib
 
 import pytest
 
-from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
-from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
+from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule, \
+    ConceptualMappingRuleState
+from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement, StructuralElementState
+from mapping_workbench.backend.file_resource.models.file_resource import FileResourceState
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageState
 from mapping_workbench.backend.package_importer.adapters.eforms.importer import PackageImporter
 from mapping_workbench.backend.project.models.entity import Project
@@ -12,9 +14,14 @@ from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestFi
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestFileResourceFormat, SPARQLTestState, \
     SPARQLCMRule
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataFileResource, \
-    TestDataFileResourceFormat
+    TestDataFileResourceFormat, TestDataState
 from mapping_workbench.backend.user.models.user import User
-from tests import TEST_DATA_SPARQL_TEST_SUITE_PATH, TEST_DATA_SHACL_TEST_SUITE_PATH
+from tests import TEST_DATA_SPARQL_TEST_SUITE_PATH, TEST_DATA_SHACL_TEST_SUITE_PATH, TEST_DATA_VALIDATION_PATH
+
+
+@pytest.fixture
+def test_data_file_path() -> pathlib.Path:
+    return TEST_DATA_VALIDATION_PATH / "dummy_test_data.xml"
 
 
 @pytest.fixture
@@ -35,6 +42,47 @@ def shacl_test_data_file_path() -> pathlib.Path:
 @pytest.fixture
 def shacl_test_resources_file_path() -> pathlib.Path:
     return TEST_DATA_SHACL_TEST_SUITE_PATH / "shacl_test_resources" / "ePO_shacl_shapes.xml"
+
+
+@pytest.fixture
+def dummy_test_data_state(test_data_file_path: pathlib.Path) -> TestDataState:
+    return TestDataState(
+        xml_manifestation=FileResourceState(
+            content=test_data_file_path.read_text(encoding="utf-8")
+        ),
+        filename=test_data_file_path.name,
+        identifier="dummy_identifier"
+    )
+
+
+@pytest.fixture
+def dummy_cm_rule_states():
+    return [
+        ConceptualMappingRuleState(
+            source_structural_element=StructuralElementState(
+                id="dummy_id1",
+                sdk_element_id="ND-ContractingParty",
+                absolute_xpath="/*/cac:ContractingParty"
+            ),
+            xpath_condition="/*/cbc:NoticeTypeCode/@listName='competition' or exists(/*/ext:UBLExtensions/ext:UBLExtension/ext:ExtensionContent/efext:EformsExtension/efac:NoticeSubType/cbc:SubTypeCode[contains('10 11 12 13 14 15 16 17 18 19 20 21 22 23 24', text())]) or exists(/ContractNotice)"
+        ),
+        ConceptualMappingRuleState(
+            source_structural_element=StructuralElementState(
+                id="dummy_id2",
+                sdk_element_id="OPT-030-Procedure-SProvider",
+                absolute_xpath="/*/cac:ContractingParty/cac:Party/cac:ServiceProviderParty/cbc:ServiceTypeCode"
+            ),
+            xpath_condition="cbc:ServiceTypeCode[@listName='organisation-role']/text()='ted-esen'"
+        ),
+        ConceptualMappingRuleState(
+            source_structural_element=StructuralElementState(
+                id="dummy_id3",
+                sdk_element_id="BT-01-notice",
+                absolute_xpath="/*/cbc:RegulatoryDomain"
+            ),
+            xpath_condition=None
+        )
+    ]
 
 
 @pytest.fixture
