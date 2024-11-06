@@ -1,7 +1,8 @@
 import {useEffect, useState} from 'react';
 
-import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
-import {Upload04 as ImportIcon} from '@untitled-ui/icons-react/build/esm';
+import AddIcon from '@mui/icons-material/Add';
+import UploadIcon from '@mui/icons-material/Upload';
+
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -16,19 +17,14 @@ import {useDialog} from "src/hooks/use-dialog";
 import {Layout as AppLayout} from 'src/layouts/app';
 import {RouterLink} from 'src/components/router-link';
 import {ListTable} from "src/sections/app/mapping-package/list-table";
-import {ListSearch} from "src/sections/app/mapping-package/list-search";
+import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {mappingPackagesApi as sectionApi} from 'src/api/mapping-packages';
 import {PackageImporter} from 'src/sections/app/mapping-package/package-importer';
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
-        filters: {
-            name: undefined,
-            category: [],
-            status: [],
-            inStock: undefined
-        },
+        filters: {},
         sortDirection: undefined,
         sortField: '',
         page: sectionApi.DEFAULT_PAGE,
@@ -38,7 +34,7 @@ const useItemsSearch = () => {
     const handleFiltersChange = filters => {
         setState(prevState => ({
             ...prevState,
-            filters,
+            filters: filters ? {q: filters} : {},
             page: 0
         }));
     };
@@ -149,7 +145,7 @@ const Page = () => {
                             href={paths.app[sectionApi.section].create}
                             startIcon={(
                                 <SvgIcon>
-                                    <PlusIcon/>
+                                    <AddIcon/>
                                 </SvgIcon>
                             )}
                             variant="contained"
@@ -161,7 +157,7 @@ const Page = () => {
                             id="import_package_button"
                             startIcon={(
                                 <SvgIcon>
-                                    <ImportIcon/>
+                                    <UploadIcon/>
                                 </SvgIcon>
                             )}
                             variant="contained"
@@ -172,7 +168,9 @@ const Page = () => {
 
                 </Stack>
                 <Card>
-                    <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
+                    {/*<ListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>*/}
+                    <TableSearchBar onChange={itemsSearch.handleFiltersChange}
+                                    value={itemsSearch.state.filters.q}/>
                     <ListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}

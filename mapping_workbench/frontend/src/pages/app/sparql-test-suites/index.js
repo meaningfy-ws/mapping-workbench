@@ -1,33 +1,30 @@
 import {useEffect, useState} from 'react';
 
 import AddIcon from '@mui/icons-material/Add';
+
 import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import Divider from "@mui/material/Divider";
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
+import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {RouterLink} from 'src/components/router-link';
-import {usePageView} from 'src/hooks/use-page-view';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {sparqlTestSuitesApi as sectionApi} from 'src/api/sparql-test-suites';
 import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
-import {FileCollectionListSearch} from 'src/sections/app/file-manager/file-collection-list-search';
-import {sparqlTestFileResourcesApi as fileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
+import {sparqlTestFileResourcesApi as fileResourcesApi} from "src/api/sparql-test-suites/file-resources";
+import {TableSearchBar} from "../../../sections/components/table-search-bar";
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
-        filters: {
-            name: undefined,
-            category: [],
-            status: [],
-            inStock: undefined
-        },
+        filters: {},
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -35,7 +32,7 @@ const useItemsSearch = () => {
     const handleFiltersChange = filters => {
         setState(prevState => ({
             ...prevState,
-            filters,
+            filters: filters ? {q: filters} : {},
             page: 0
         }));
     }
@@ -150,7 +147,9 @@ const Page = () => {
                     </Stack>
                 </Stack>
                 <Card>
-                    <FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
+                    <TableSearchBar onChange={itemsSearch.handleFiltersChange}
+                                    value={itemsSearch.state.filters.q}/>
+                    <Divider/>
                     <FileCollectionListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}

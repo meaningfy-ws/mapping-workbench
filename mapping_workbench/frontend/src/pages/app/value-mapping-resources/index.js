@@ -1,34 +1,30 @@
 import {useEffect, useState} from 'react';
 
-import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Button from '@mui/material/Button';
+import AddIcon from '@mui/icons-material/Add';
+
 import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {usePageView} from 'src/hooks/use-page-view';
 import {RouterLink} from 'src/components/router-link';
+import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {resourceCollectionsApi as sectionApi} from 'src/api/resource-collections';
-import {FileCollectionListSearch} from 'src/sections/app/file-manager/file-collection-list-search';
-import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
 import {resourceFilesApi} from 'src/api/resource-collections/file-resources';
+import {resourceCollectionsApi as sectionApi} from 'src/api/resource-collections';
+import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
 
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
-        filters: {
-            name: undefined,
-            category: [],
-            status: [],
-            inStock: undefined
-        },
+        filters: {},
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -36,7 +32,7 @@ const useItemsSearch = () => {
     const handleFiltersChange = filters => {
         setState(prevState => ({
             ...prevState,
-            filters,
+            filters: filters ? {q: filters} : {},
             page: 0
         }));
     }
@@ -63,7 +59,7 @@ const useItemsSearch = () => {
     };
 };
 
-const useItemsStore = (searchState) => {
+const useItemsStore = searchState => {
     const [state, setState] = useState({
         items: [],
         itemsCount: 0,
@@ -76,7 +72,7 @@ const useItemsStore = (searchState) => {
                 setState({
                     items: res.items,
                     itemsCount: res.count,
-                     force: force
+                    force
                 }))
             .catch(err => console.warn(err))
     }
@@ -86,7 +82,7 @@ const useItemsStore = (searchState) => {
             handleItemsGet()
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState.state]);
+        [searchState]);
 
     return {
         handleItemsGet,
@@ -142,7 +138,7 @@ const Page = () => {
                             href={paths.app[sectionApi.section].create}
                             startIcon={(
                                 <SvgIcon>
-                                    <PlusIcon/>
+                                    <AddIcon/>
                                 </SvgIcon>
                             )}
                             variant="contained"
@@ -152,7 +148,9 @@ const Page = () => {
                     </Stack>
                 </Stack>
                 <Card>
-                    <FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
+                    {/*<FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>*/}
+                    <TableSearchBar onChange={itemsSearch.handleFiltersChange}
+                                    value={itemsSearch.state.filters.q}/>
                     <FileCollectionListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}

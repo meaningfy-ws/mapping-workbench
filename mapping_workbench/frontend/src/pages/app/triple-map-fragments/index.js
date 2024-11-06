@@ -23,6 +23,7 @@ import {ListTable} from "src/sections/app/generic-triple-map-fragment/list-table
 import {ListSearch} from "src/sections/app/generic-triple-map-fragment/list-search";
 import {FileUploader} from "src/sections/app/generic-triple-map-fragment/file-uploader";
 import {specificTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/specific';
+import {TableSearchBar} from "../../../sections/components/table-search-bar";
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
@@ -84,8 +85,8 @@ const useItemsSearch = (items) => {
             return item
     })
 
-    const handleSearchItems = (filters) => {
-        setState(prevState => ({...prevState, search: filters.q, page: 0}))
+    const handleSearchItems = (search) => {
+        setState(prevState => ({...prevState, search, page: 0}))
     }
 
     const handleFiltersChange = filters => {
@@ -246,7 +247,9 @@ const Page = () => {
                     </Stack>
                 </Stack>
                 <Card>
-                    <ListSearch onFiltersChange={itemsSearch.handleSearchItems}/>
+                    {/*<ListSearch onFiltersChange={itemsSearch.handleSearchItems}/>*/}
+                    <TableSearchBar onChange={itemsSearch.handleSearchItems}
+                                    value={itemsSearch.state.search}/>
                     <ListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}

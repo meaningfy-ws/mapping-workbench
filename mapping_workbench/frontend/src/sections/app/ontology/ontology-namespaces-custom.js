@@ -2,10 +2,11 @@ import {useEffect, useState} from 'react';
 
 import AddIcon from '@mui/icons-material/Add';
 
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
 import SvgIcon from '@mui/material/SvgIcon';
+import Divider from "@mui/material/Divider";
 import Typography from '@mui/material/Typography';
 
 import {paths} from 'src/paths';
@@ -122,6 +123,7 @@ const OntologyNamespacesCustom = () => {
                 <TableSearchBar onChange={itemsSearch.handleFiltersChange}
                                 value={itemsSearch.state.filters.q}
                                 placeholder='Search Namespaces'/>
+                <Divider/>
                 <ListTable
                     onPageChange={itemsSearch.handlePageChange}
                     onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}

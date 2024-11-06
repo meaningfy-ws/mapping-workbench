@@ -119,7 +119,7 @@ export const ListTableRow = (props) => {
                             && projectMappingPackages
                                 .filter(
                                     projectMappingPackage => projectMappingPackage?.[sectionApi.MAPPING_PACKAGE_LINK_FIELD]
-                                        .some(resource_ref => item_id === resource_ref.id)
+                                        ?.some(resource_ref => item_id === resource_ref.id)
                                 )
                                 .map((mapping_package) => {
                                     return (

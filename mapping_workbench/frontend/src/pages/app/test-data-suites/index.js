@@ -1,10 +1,13 @@
 import {useEffect, useState} from 'react';
 
-import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
+import AddIcon from '@mui/icons-material/Add';
+import UploadIcon from '@mui/icons-material/Upload';
+
 import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import Divider from "@mui/material/Divider";
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
@@ -15,22 +18,16 @@ import {useDialog} from "src/hooks/use-dialog";
 import {Layout as AppLayout} from 'src/layouts/app';
 import {usePageView} from 'src/hooks/use-page-view';
 import {RouterLink} from 'src/components/router-link';
+import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {testDataSuitesApi as sectionApi} from 'src/api/test-data-suites';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {Upload04 as ImportIcon} from '@untitled-ui/icons-react/build/esm';
-import {FileCollectionListSearch} from 'src/sections/app/file-manager/file-collection-list-search';
-import {FileCollectionUploader} from "../../../sections/app/file-manager/file-collection-uploader";
-import {TestDataCollectionListTable} from "../../../sections/app/file-manager/test-data-collection-list-table";
+import {FileCollectionUploader} from "src/sections/app/file-manager/file-collection-uploader";
+import {TestDataCollectionListTable} from "src/sections/app/file-manager/test-data-collection-list-table";
 
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
-        filters: {
-            name: undefined,
-            category: [],
-            status: [],
-            inStock: undefined
-        },
+        filters: {},
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -38,7 +35,7 @@ const useItemsSearch = () => {
     const handleFiltersChange = filters => {
         setState(prevState => ({
             ...prevState,
-            filters,
+            filters: filters ? {q: filters} : {},
             page: 0
         }));
     }
@@ -141,7 +138,7 @@ const Page = () => {
                             href={paths.app[sectionApi.section].create}
                             startIcon={(
                                 <SvgIcon>
-                                    <PlusIcon/>
+                                    <AddIcon/>
                                 </SvgIcon>
                             )}
                             variant="contained"
@@ -154,7 +151,7 @@ const Page = () => {
                             onClick={uploadDialog.handleOpen}
                             startIcon={(
                                 <SvgIcon>
-                                    <ImportIcon/>
+                                    <UploadIcon/>
                                 </SvgIcon>
                             )}
                             variant="contained"
@@ -166,7 +163,9 @@ const Page = () => {
                     </Stack>
                 </Stack>
                 <Card>
-                    <FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
+                    <TableSearchBar onChange={itemsSearch.handleFiltersChange}
+                                    value={itemsSearch.state.filters.q}/>
+                    <Divider/>
                     <TestDataCollectionListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}

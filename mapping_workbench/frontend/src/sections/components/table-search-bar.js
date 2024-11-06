@@ -1,10 +1,11 @@
 import {useRef, useState} from 'react';
 import PropTypes from 'prop-types';
-import SearchIcon from '@mui/icons-material/Search';
+
 import Input from '@mui/material/Input';
 import Stack from '@mui/material/Stack';
 import ClearIcon from '@mui/icons-material/Clear';
-import IconButton from "@mui/material/IconButton";
+import IconButton from '@mui/material/IconButton';
+import SearchIcon from '@mui/icons-material/Search';
 
 export const TableSearchBar = (props) => {
     const {onChange, value, placeholder} = props;

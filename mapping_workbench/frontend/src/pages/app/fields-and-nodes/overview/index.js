@@ -20,6 +20,8 @@ import {fieldsOverviewApi as sectionApi} from 'src/api/fields-overview';
 import {ListSearch} from 'src/sections/app/fields-registry/list-search';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import PlusIcon from "@untitled-ui/icons-react/build/esm/Plus";
+import {TableSearchBar} from "../../../../sections/components/table-search-bar";
+import Divider from "@mui/material/Divider";
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
@@ -74,8 +76,8 @@ const useItemsSearch = (items) => {
             return item
     })
 
-    const handleSearchItems = (filters) => {
-        setState(prevState => ({...prevState, search: filters.q, page: 0}))
+    const handleSearchItems = (search) => {
+        setState(prevState => ({...prevState, search, page: 0}))
     }
 
     const handleFiltersChange = filters => {
@@ -227,10 +229,13 @@ const Page = () => {
 
                 </Stack>
                 <Card>
-                    <ListSearch onFiltersChange={itemsSearch.handleSearchItems}/>
+                    <TableSearchBar onChange={itemsSearch.handleSearchItems}
+                                    value={itemsSearch.state.search}/>
+                    <Divider/>
                     <Filter values={itemsSearch.filterValues}
                             value={itemsSearch.state.filters}
                             onValueChange={itemsSearch.handleFiltersChange}/>
+                    <Divider/>
                     <ListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
