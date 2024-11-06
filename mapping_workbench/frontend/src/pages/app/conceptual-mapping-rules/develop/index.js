@@ -20,6 +20,8 @@ import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {ListSearch} from 'src/sections/app/conceptual-mapping-rule/develop/list-search';
 import {ListTable} from 'src/sections/app/conceptual-mapping-rule/develop/list-table';
 import AddEditDrawer from "src/sections/app/conceptual-mapping-rule/develop/add-edit-drawer";
+import {TableSearchBar} from "../../../../sections/components/table-search-bar";
+import Divider from "@mui/material/Divider";
 
 const useItemsSearch = (items) => {
     const [state, setState] = useState({
@@ -89,8 +91,8 @@ const useItemsSearch = (items) => {
             return item
     })
 
-    const handleSearchItems = (filters) => {
-        setState(prevState => ({...prevState, search: filters.q, page: 0}))
+    const handleSearchItems = search => {
+        setState(prevState => ({...prevState, search, page: 0}))
     }
 
     const handleFiltersChange = (filters) => {
@@ -256,7 +258,10 @@ export const Page = () => {
                     </Stack>
                 </Stack>
                 <Card>
-                    <ListSearch onFiltersChange={itemsSearch.handleSearchItems}/>
+                    <TableSearchBar onChange={itemsSearch.handleSearchItems}
+                                    value={itemsSearch.state.search}
+                                    placeholder='Search Terms'/>
+                    <Divider/>
                     <ListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
