@@ -2,11 +2,7 @@ import {Fragment, useState} from 'react';
 import PropTypes from 'prop-types';
 import moment from "moment";
 
-import InfoIcon from '@mui/icons-material/Info';
-import CancelIcon from '@mui/icons-material/Cancel';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 
 import List from '@mui/material/List';
 import Grid from '@mui/material/Grid';
@@ -32,17 +28,7 @@ import {useGlobalState} from "src/hooks/use-global-state";
 import {SeverityPill} from "src/components/severity-pill";
 import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
-import {TaskActions, TaskLine} from "./task-actions";
-
-
-export const taskStatuses = {
-    QUEUED: "QUEUED",
-    RUNNING: "RUNNING",
-    FINISHED: "FINISHED",
-    TIMEOUT: "TIMEOUT",
-    FAILED: "FAILED",
-    CANCELED: "CANCELED"
-}
+import {mapStatusColor, TaskActions, TaskLine, taskProgressStatus as taskStatuses} from "./task-actions";
 
 
 export const ListTable = (props) => {
@@ -61,39 +47,6 @@ export const ListTable = (props) => {
         onCancelAction,
         onDeleteAction
     } = props;
-
-
-    const mapStatusColor = (task_status) => {
-        switch (task_status) {
-            case taskStatuses.RUNNING:
-                return "warning"
-            case taskStatuses.FINISHED:
-                return "success"
-            case taskStatuses.TIMEOUT:
-            case taskStatuses.FAILED:
-            case taskStatuses.CANCELED:
-                return "error"
-            default:
-                return "info"
-        }
-    }
-
-    // const MapStatusIcon = ({task_status}) => {
-    //     const color = mapStatusColor(task_status)
-    //     switch (task_status) {
-    //         case taskStatuses.RUNNING:
-    //             return <RadioButtonCheckedIcon color={color}/>
-    //         case taskStatuses.FINISHED:
-    //             return <CheckCircleOutlineIcon color={color}/>
-    //         case taskStatuses.TIMEOUT:
-    //         case taskStatuses.FAILED:
-    //         case taskStatuses.CANCELED:
-    //             return <CancelIcon color={color}/>
-    //         default:
-    //             return <InfoIcon color={color}/>
-    //     }
-    // }
-
 
     const [currentItem, setCurrentItem] = useState(null);
     const [popoverShow, setPopoverShow] = useState({})

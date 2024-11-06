@@ -41,8 +41,6 @@ export const ListTable = (props) => {
         handleSelectFile
     } = props;
 
-    console.log(filters)
-
     const handleOpenDetails = ({title, notices}) => {
         const description = notices.map((notice, i) =>
             <Box key={'notice' + i}>
