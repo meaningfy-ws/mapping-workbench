@@ -71,27 +71,37 @@ const SparqlValidationReportView = ({sid, reportTree}) => {
             </Stack>
             {currentTab === PACKAGE_STATE &&
                 <>
-                    <CoverageFiles files={reportTree.test_data_suites}
-                                   onClick={handleSetPackageState}/>
-                    <SparqlPackageStateReport sid={sid}
-                                              handleSelectFile={handleSetTestAndPackage}
-                                              files={reportTree.test_data_suites}/>
+                    <CoverageFiles
+                        files={reportTree.test_data_suites}
+                        onClick={handleSetPackageState}
+                    />
+                    <SparqlPackageStateReport
+                        sid={sid}
+                        handleSelectFile={handleSetTestAndPackage}
+                        files={reportTree.test_data_suites}
+                    />
                 </>
             }
             {currentTab === TEST_DATASET &&
                 <>
-                    <CoverageFiles files={selectedPackageState?.test_data_states}
-                                   onClick={handleSetTestDataset}
-                                   fileIcon/>
-                    <SparqlTestDatasetReport sid={sid}
-                                             handleSelectFile={handleSetTestAndPackage}
-                                             suiteId={selectedPackageState.oid}/>
+                    <CoverageFiles
+                        files={selectedPackageState?.test_data_states}
+                        onClick={handleSetTestDataset}
+                        fileIcon
+                    />
+                    <SparqlTestDatasetReport
+                        sid={sid}
+                        handleSelectFile={handleSetTestAndPackage}
+                        suiteId={selectedPackageState.oid}
+                    />
                 </>
             }
             {currentTab === FILE_COVERAGE &&
-                <SparqlFileReport sid={sid}
-                                  suiteId={selectedPackageState.oid}
-                                  testId={selectedTestDataset.oid}/>
+                <SparqlFileReport
+                    sid={sid}
+                    suiteId={selectedPackageState.oid}
+                    testId={selectedTestDataset.oid}
+                />
             }
         </>
     )

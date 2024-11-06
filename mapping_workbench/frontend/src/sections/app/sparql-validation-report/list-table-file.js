@@ -100,9 +100,6 @@ export const ListTableFile = (props) => {
                                     <SorterHeader fieldName="result"
                                                   title="result"/>
                                 </TableCell>
-                                <TableCell align="center">
-                                    Details
-                                </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -180,20 +177,6 @@ export const ListTableFile = (props) => {
                                                 <Condition text='Query result:'
                                                            value={item.query_result}/>
                                             </Box>
-                                        </TableCell>
-                                        <TableCell>
-                                            <SyntaxHighlighter
-                                                language="xquery"
-                                                wrapLines
-                                                style={syntaxHightligterTheme}
-                                                lineProps={{
-                                                    style: {
-                                                        wordBreak: 'break-all',
-                                                        whiteSpace: 'pre-wrap'
-                                                    }
-                                                }}>
-                                                {item.query.cm_rule?.xpath_condition ?? '-'}
-                                            </SyntaxHighlighter>
                                         </TableCell>
                                     </TableRow>
                                 );
