@@ -1,13 +1,14 @@
 import {useEffect, useState} from "react";
 
 import Card from "@mui/material/Card";
-import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
+import Divider from "@mui/material/Divider";
+import Typography from "@mui/material/Typography";
 
-import {ontologyTermsApi as sectionApi} from "src/api/ontology-terms";
-import {ListSearch} from "../ontology-term/list-search";
-import {ListTable} from "../ontology-term/list-table";
 import {Filter} from "../../components/filter";
+import {ListTable} from "../ontology-term/list-table";
+import {TableSearchBar} from "../../components/table-search-bar";
+import {ontologyTermsApi as sectionApi} from "src/api/ontology-terms";
 
 
 const useItemsSearch = (items) => {
@@ -62,8 +63,8 @@ const useItemsSearch = (items) => {
             return item
     })
 
-    const handleSearchItems = (filters) => {
-        setState(prevState => ({...prevState, search: filters.q}))
+    const handleSearchItems = (search) => {
+        setState(prevState => ({...prevState, search}))
     }
 
     const handleFiltersChange = filters => {
@@ -151,7 +152,10 @@ const OntologyTerms = () => {
         <Stack spacing={4}>
             <Typography variant='h5'>Terms</Typography>
             <Card>
-                <ListSearch onFiltersChange={itemsSearch.handleSearchItems}/>
+                <TableSearchBar onChange={itemsSearch.handleSearchItems}
+                                value={itemsSearch.state.search}
+                                placeholder='Search Terms'/>
+                <Divider/>
                 <Filter values={itemsSearch.filterValues}
                         value={itemsSearch.state.filters}
                         onValueChange={itemsSearch.handleFiltersChange}/>

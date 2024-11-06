@@ -8,8 +8,8 @@ import IconButton from "@mui/material/IconButton";
 
 export const TableSearchBar = (props) => {
     const {onChange, value, placeholder} = props;
+    const [localValue, setLocalValue] = useState(value ?? '')
     const queryRef = useRef(null);
-    const [localValue, setLocalValue] = useState(value)
 
 
     const handleChange = (event, value) => {
@@ -30,7 +30,7 @@ export const TableSearchBar = (props) => {
             direction="row"
             onSubmit={(event) => handleChange(event, localValue)}
             spacing={2}
-            sx={{p: 2}}
+            sx={{p: 1}}
         >
             <IconButton onClick={() => onChange(localValue)}
                         disabled={value === localValue}>
@@ -43,10 +43,10 @@ export const TableSearchBar = (props) => {
                 onChange={e => setLocalValue(e.target.value)}
                 inputProps={{ref: queryRef}}
                 placeholder={placeholder ?? "Search"}
-                sx={{flexGrow: 1, color:  value === localValue && 'primary.main'}}
+                sx={{flexGrow: 1, ...(value === localValue && {color: 'primary.main'})}}
                 endAdornment={<IconButton onClick={handleClear}
                                           sx={{visibility: value ? "visible" : "hidden"}}>
-                    <ClearIcon sx={{'&.Mui-focused .MuiIconButton': {color: 'primary.main'}}}/>
+                    <ClearIcon/>
                 </IconButton>}
             />
         </Stack>
@@ -54,5 +54,7 @@ export const TableSearchBar = (props) => {
 };
 
 TableSearchBar.propTypes = {
-    onFiltersChange: PropTypes.func
+    onChange: PropTypes.func,
+    value: PropTypes.string,
+    placeholder: PropTypes.string
 };

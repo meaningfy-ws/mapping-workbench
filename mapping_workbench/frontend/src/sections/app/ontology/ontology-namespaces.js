@@ -6,17 +6,13 @@ import Typography from '@mui/material/Typography';
 
 import {usePageView} from 'src/hooks/use-page-view';
 import {ontologyNamespacesApi as sectionApi} from 'src/api/ontology-namespaces';
-import {ListSearch} from "src/sections/app/ontology-namespace/list-search";
 import {ListTable} from "src/sections/app/ontology-namespace/list-table";
+import {TableSearchBar} from "../../components/table-search-bar";
+import Divider from "@mui/material/Divider";
 
 const useItemsSearch = () => {
     const [state, setState] = useState({
-        filters: {
-            name: undefined,
-            category: [],
-            status: [],
-            inStock: undefined
-        },
+        filters: {},
         sortField: '',
         sortDirection: undefined,
         page: sectionApi.DEFAULT_PAGE,
@@ -26,7 +22,7 @@ const useItemsSearch = () => {
     const handleFiltersChange = filters => {
         setState(prevState => ({
             ...prevState,
-            filters,
+            filters: filters ? {q: filters} : {},
             page: 0
         }));
     }
@@ -60,13 +56,13 @@ const useItemsStore = (searchState) => {
     });
 
     const handleItemsGet = () => {
-       sectionApi.getItems(searchState)
-           .then(res =>
-               setState({
+        sectionApi.getItems(searchState)
+            .then(res =>
+                setState({
                     items: res.items,
                     itemsCount: res.count
                 }))
-           .catch(err => console.warn(err))
+            .catch(err => console.warn(err))
     }
 
     useEffect(() => {
@@ -92,7 +88,10 @@ const OntologyNamespaces = () => {
                 Discovered Namespaces
             </Typography>
             <Card>
-                <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
+                <TableSearchBar onChange={itemsSearch.handleFiltersChange}
+                                value={itemsSearch.state.filters.q}
+                                placeholder='Search Discovered Namespaces'/>
+                <Divider/>
                 <ListTable
                     onPageChange={itemsSearch.handlePageChange}
                     onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
