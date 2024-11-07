@@ -56,7 +56,7 @@ const OntologyTerms = () => {
                 <Divider/>
                 <Filter values={filterValues}
                         value={itemsSearch.state.filters.type}
-                        onValueChange={(e) => itemsSearch.handleFiltersChange({type: e})}/>
+                        onValueChange={e => itemsSearch.handleFiltersChange({type: e})}/>
                 <Divider/>
                 <ListTable
                     onPageChange={itemsSearch.handlePageChange}

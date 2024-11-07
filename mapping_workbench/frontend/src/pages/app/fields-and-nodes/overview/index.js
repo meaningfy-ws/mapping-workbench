@@ -1,134 +1,35 @@
 import {useEffect, useState} from 'react';
 
-import {Upload04 as ImportIcon} from '@untitled-ui/icons-react/build/esm';
+import AddIcon from '@mui/icons-material/Add';
+import UploadIcon from '@mui/icons-material/Upload';
+
 import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Button from "@mui/material/Button";
 import SvgIcon from "@mui/material/SvgIcon";
+import Divider from "@mui/material/Divider";
 import Typography from '@mui/material/Typography';
-
 import Breadcrumbs from '@mui/material/Breadcrumbs';
+
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {RouterLink} from 'src/components/router-link';
 import {Filter} from 'src/sections/components/filter';
+import useItemsSearch from 'src/hooks/use-items-search';
 import {ListTable} from 'src/sections/app/fields-registry/list-table';
+import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {fieldsOverviewApi as sectionApi} from 'src/api/fields-overview';
-import {ListSearch} from 'src/sections/app/fields-registry/list-search';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import PlusIcon from "@untitled-ui/icons-react/build/esm/Plus";
-import {TableSearchBar} from "../../../../sections/components/table-search-bar";
-import Divider from "@mui/material/Divider";
-
-const useItemsSearch = (items) => {
-    const [state, setState] = useState({
-        filters: "",
-        sort: {
-            column: "",
-            direction: "desc"
-        },
-        search: '',
-        searchColumns: ["sdk_element_id", "relative_xpath", "absolute_xpath"],
-        page: sectionApi.DEFAULT_PAGE,
-        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
-    });
-
-    const filterValues = [{label: 'All', value: ''},
-        {label: 'Node', value: 'node'},
-        {label: 'Field', value: 'field'}]
 
 
-    const searchItems = state.search ? items.filter(item => {
-        let returnItem = null;
-        state.searchColumns.forEach(column => {
-            if (item[column]?.toLowerCase()?.includes(state.search.toLowerCase()))
-                returnItem = item
-        })
-        return returnItem
-    }) : items
+const filterValues = [{label: 'All', value: ''},
+    {label: 'Node', value: 'node'},
+    {label: 'Field', value: 'field'}]
 
-    const filteredItems = searchItems.filter((item) => state.filters === "" || state.filters === item.element_type ? item : null)
-
-    const sortedItems = () => {
-        const sortColumn = state.sort.column
-        if (!sortColumn) {
-            return filteredItems
-        } else {
-            return filteredItems.sort((a, b) => {
-                if (typeof a[sortColumn] === "string")
-                    return state.sort.direction === "asc" ?
-                        a[sortColumn]?.localeCompare(b[sortColumn]) :
-                        b[sortColumn]?.localeCompare(a[sortColumn])
-                else
-                    return state.sort.direction === "asc" ?
-                        a[sortColumn] - b[sortColumn] :
-                        b[sortColumn] - a[sortColumn]
-            })
-        }
-    }
-
-    const pagedItems = sortedItems().filter((item, i) => {
-        const pageSize = state.page * state.rowsPerPage
-        if ((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
-            return item
-    })
-
-    const handleSearchItems = (search) => {
-        setState(prevState => ({...prevState, search, page: 0}))
-    }
-
-    const handleFiltersChange = filters => {
-        setState(prevState => ({
-            ...prevState,
-            filters,
-            page: 0
-        }));
-    }
-
-    const handlePageChange = (event, page) => {
-        setState(prevState => ({
-            ...prevState,
-            page
-        }));
-    }
-
-    const handleSort = (column, desc) => {
-        setState(prevState => ({
-            ...prevState, sort: {
-                column,
-                direction: prevState.sort.column === column
-                    ? prevState.sort.direction === "desc"
-                        ? "asc"
-                        : "desc"
-                    : desc
-                        ? "desc"
-                        : "asc"
-            }
-        }))
-    }
-
-    const handleRowsPerPageChange = event => {
-        setState(prevState => ({
-            ...prevState,
-            rowsPerPage: parseInt(event.target.value, 10)
-        }));
-    }
-
-    return {
-        handleFiltersChange,
-        handlePageChange,
-        handleRowsPerPageChange,
-        handleSort,
-        handleSearchItems,
-        filterValues,
-        pagedItems,
-        count: filteredItems.length,
-        state
-    };
-};
+const searchColumns = ["sdk_element_id", "relative_xpath", "absolute_xpath"];
 
 
 const useItemsStore = () => {
@@ -160,7 +61,7 @@ const useItemsStore = () => {
 
 const Page = () => {
     const itemsStore = useItemsStore();
-    const itemsSearch = useItemsSearch(itemsStore.items);
+    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, searchColumns, {element_type: ''});
 
     usePageView();
 
@@ -205,7 +106,7 @@ const Page = () => {
                             id="add-field-button"
                             startIcon={(
                                 <SvgIcon>
-                                    <PlusIcon/>
+                                    <AddIcon/>
                                 </SvgIcon>
                             )}
                             variant="contained"
@@ -218,7 +119,7 @@ const Page = () => {
                             href={paths.app.fields_and_nodes.overview.import}
                             startIcon={(
                                 <SvgIcon>
-                                    <ImportIcon/>
+                                    <UploadIcon/>
                                 </SvgIcon>
                             )}
                             variant="contained"
@@ -229,12 +130,12 @@ const Page = () => {
 
                 </Stack>
                 <Card>
-                    <TableSearchBar onChange={itemsSearch.handleSearchItems}
-                                    value={itemsSearch.state.search}/>
+                    <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                    value={itemsSearch.state.search[0]}/>
                     <Divider/>
-                    <Filter values={itemsSearch.filterValues}
-                            value={itemsSearch.state.filters}
-                            onValueChange={itemsSearch.handleFiltersChange}/>
+                    <Filter values={filterValues}
+                            value={itemsSearch.state.filters.element_type}
+                            onValueChange={e => itemsSearch.handleFiltersChange({element_type: e})}/>
                     <Divider/>
                     <ListTable
                         onPageChange={itemsSearch.handlePageChange}
