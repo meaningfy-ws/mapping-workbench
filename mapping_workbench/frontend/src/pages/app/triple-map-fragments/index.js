@@ -1,15 +1,16 @@
-import Divider from '@mui/material/Divider';
 import {useEffect, useState} from 'react';
 import {useFormik} from "formik";
 import * as Yup from "yup";
 
-import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
-import Upload01Icon from "@untitled-ui/icons-react/build/esm/Upload01";
+import AddIcon from '@mui/icons-material/Add';
+import UploadIcon from '@mui/icons-material/Upload';
+
 import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import SvgIcon from '@mui/material/SvgIcon';
+import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 
@@ -19,126 +20,12 @@ import {useDialog} from "src/hooks/use-dialog";
 import {Layout as AppLayout} from 'src/layouts/app';
 import {usePageView} from 'src/hooks/use-page-view';
 import {RouterLink} from 'src/components/router-link';
+import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {ListTable} from "src/sections/app/generic-triple-map-fragment/list-table";
-import {ListSearch} from "src/sections/app/generic-triple-map-fragment/list-search";
 import {FileUploader} from "src/sections/app/generic-triple-map-fragment/file-uploader";
 import {specificTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/specific';
-import {TableSearchBar} from "../../../sections/components/table-search-bar";
-
-const useItemsSearch = (items) => {
-    const [state, setState] = useState({
-        filters: {},
-        sort: {
-            column: "",
-            direction: "desc"
-        },
-        search: '',
-        searchColumns: ['triple_map_uri', 'created_at'],
-        page: sectionApi.DEFAULT_PAGE,
-        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
-    });
-
-    const {show, ...filters} = state.filters
-
-    const searchItems = state.search ? items.filter(item => {
-        let returnItem = null;
-        state.searchColumns.forEach(column => {
-            if (item[column]?.toLowerCase()?.includes(state.search.toLowerCase()))
-                returnItem = item
-        })
-        return returnItem
-    }) : items
-
-    const filteredItems = searchItems.filter((item) => {
-        let returnItem = item;
-        Object.entries(filters).forEach(filter => {
-            const [key, value] = filter
-            if (value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
-                returnItem = null
-            if (value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase))
-                returnItem = null
-        })
-        return returnItem
-    })
-
-    const sortedItems = () => {
-        const sortColumn = state.sort.column
-        if (!sortColumn) {
-            return filteredItems
-        } else {
-            return filteredItems.sort((a, b) => {
-                if (typeof a[sortColumn] === "string")
-                    return state.sort.direction === "asc" ?
-                        a[sortColumn]?.localeCompare(b[sortColumn]) :
-                        b[sortColumn]?.localeCompare(a[sortColumn])
-                else
-                    return state.sort.direction === "asc" ?
-                        a[sortColumn] - b[sortColumn] :
-                        b[sortColumn] - a[sortColumn]
-            })
-        }
-    }
-
-    const pagedItems = sortedItems().filter((item, i) => {
-        const pageSize = state.page * state.rowsPerPage
-        if ((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
-            return item
-    })
-
-    const handleSearchItems = (search) => {
-        setState(prevState => ({...prevState, search, page: 0}))
-    }
-
-    const handleFiltersChange = filters => {
-        setState(prevState => ({
-            ...prevState,
-            filters,
-            page: 0
-        }));
-    }
-
-    const handlePageChange = (event, page) => {
-        setState(prevState => ({
-            ...prevState,
-            page
-        }));
-    }
-
-    const handleRowsPerPageChange = event => {
-        setState(prevState => ({
-            ...prevState,
-            rowsPerPage: parseInt(event.target.value, 10)
-        }));
-    }
-
-    const handleSorterChange = (column, desc) => {
-        setState(prevState => ({
-            ...prevState, sort: {
-                column,
-                direction: prevState.sort.column === column
-                    ? prevState.sort.direction === "desc"
-                        ? "asc"
-                        : "desc"
-                    : desc
-                        ? "desc"
-                        : "asc"
-            }
-        }))
-    }
-
-    return {
-        handleSorterChange,
-        handleFiltersChange,
-        handlePageChange,
-        handleRowsPerPageChange,
-        handleSearchItems,
-        pagedItems,
-        count: filteredItems.length,
-        state
-    };
-};
-
+import useItemsSearch from '../../../hooks/use-items-search';
 
 const useItemsStore = () => {
     const [state, setState] = useState({
@@ -168,7 +55,7 @@ const useItemsStore = () => {
 
 const Page = () => {
     const itemsStore = useItemsStore();
-    const itemsSearch = useItemsSearch(itemsStore.items);
+    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['triple_map_uri']);
 
     const uploadDialog = useDialog();
 
@@ -224,7 +111,7 @@ const Page = () => {
                             onClick={uploadDialog.handleOpen}
                             startIcon={(
                                 <SvgIcon>
-                                    <Upload01Icon/>
+                                    <UploadIcon/>
                                 </SvgIcon>
                             )}
                             id="upload_fragment_button"
@@ -237,7 +124,7 @@ const Page = () => {
                             href={paths.app[sectionApi.section].create}
                             startIcon={(
                                 <SvgIcon>
-                                    <PlusIcon/>
+                                    <AddIcon/>
                                 </SvgIcon>
                             )}
                             id="add_button"
@@ -248,8 +135,8 @@ const Page = () => {
                     </Stack>
                 </Stack>
                 <Card>
-                    <TableSearchBar onChange={itemsSearch.handleSearchItems}
-                                    value={itemsSearch.state.search}/>
+                    <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                    value={itemsSearch.state.search[0]}/>
                     <Divider/>
                     <ListTable
                         onPageChange={itemsSearch.handlePageChange}
@@ -257,7 +144,7 @@ const Page = () => {
                         page={itemsSearch.state.page}
                         items={itemsSearch.pagedItems}
                         count={itemsSearch.count}
-                        onSort={itemsSearch.handleSorterChange}
+                        onSort={itemsSearch.handleSort}
                         sort={itemsSearch.state.sort}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}

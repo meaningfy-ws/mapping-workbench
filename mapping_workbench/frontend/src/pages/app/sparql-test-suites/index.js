@@ -16,50 +16,14 @@ import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {RouterLink} from 'src/components/router-link';
+import useItemsSearch from 'src/hooks/use-items-search';
+import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {sparqlTestSuitesApi as sectionApi} from 'src/api/sparql-test-suites';
 import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
 import {sparqlTestFileResourcesApi as fileResourcesApi} from "src/api/sparql-test-suites/file-resources";
-import {TableSearchBar} from "../../../sections/components/table-search-bar";
 
-const useItemsSearch = () => {
-    const [state, setState] = useState({
-        filters: {},
-        page: sectionApi.DEFAULT_PAGE,
-        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
-    });
-
-    const handleFiltersChange = filters => {
-        setState(prevState => ({
-            ...prevState,
-            filters: filters ? {q: filters} : {},
-            page: 0
-        }));
-    }
-
-    const handlePageChange = (event, page) => {
-        setState(prevState => ({
-            ...prevState,
-            page
-        }));
-    }
-
-    const handleRowsPerPageChange = (event) => {
-        setState(prevState => ({
-            ...prevState,
-            rowsPerPage: parseInt(event.target.value, 10)
-        }));
-    }
-
-    return {
-        handleFiltersChange,
-        handlePageChange,
-        handleRowsPerPageChange,
-        state
-    };
-};
-
-const useItemsStore = (searchState) => {
+const useItemsStore = () => {
     const [state, setState] = useState({
         items: [],
         itemsCount: 0,
@@ -67,18 +31,18 @@ const useItemsStore = (searchState) => {
     });
 
     const handleItemsGet = (force = 0) => {
-        sectionApi.getItems(searchState)
+        sectionApi.getItems()
             .then(res => setState({
                 items: res.items,
                 itemsCount: res.count,
                 force: force
             }))
-            .catch(err => console.warn(err))
+            .catch(err => console.error(err))
     }
 
     useEffect(() => {
         handleItemsGet();
-    }, [searchState]);
+    }, []);
 
     return {
         handleItemsGet,
@@ -87,14 +51,12 @@ const useItemsStore = (searchState) => {
 };
 
 const Page = () => {
-    const itemsSearch = useItemsSearch();
-    const itemsStore = useItemsStore(itemsSearch.state);
+    const itemsStore = useItemsStore();
+    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['title']);
 
     usePageView();
 
-    const selectable = (item) => {
-        return item.title !== sectionApi.CM_ASSERTIONS_SUITE_TITLE
-    }
+    const selectable = (item) =>  item.title !== sectionApi.CM_ASSERTIONS_SUITE_TITLE
 
     return (
         <>
@@ -147,14 +109,14 @@ const Page = () => {
                     </Stack>
                 </Stack>
                 <Card>
-                    <TableSearchBar onChange={itemsSearch.handleFiltersChange}
-                                    value={itemsSearch.state.filters.q}/>
+                    <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                    value={itemsSearch.state.search[0]}/>
                     <Divider/>
                     <FileCollectionListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                         page={itemsSearch.state.page}
-                        items={itemsStore.items}
+                        items={itemsSearch.pagedItems}
                         itemsForced={itemsStore.force}
                         count={itemsStore.itemsCount}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
