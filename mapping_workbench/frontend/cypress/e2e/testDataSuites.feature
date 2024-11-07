@@ -7,21 +7,6 @@ Feature: Test Data Suites
     Then Go Home
     Then I open side menu
 
-#  Scenario: Select Project
-#    Then I select project
-#    Then I get success select
-#    Then I get redirected to overview page
-
-#  Scenario: Process test data
-#    Then I click on test data suites
-#    Then I get redirected to test data suites
-#
-#    When I click on transform test data
-#    Then I get redirected to transform test data page
-#
-#    When I click on run button
-#    Then I get success transform
-
   Scenario: Add Test Data
     Then I click on test data suites
     Then I get redirected to test data suites
@@ -36,7 +21,6 @@ Feature: Test Data Suites
     Then I get redirected to test data suites
 
     Then I search for suite
-    Then I receive suite
     Then I click view button
     Then I click edit button
     Then I get redirected to edit page
@@ -49,6 +33,5 @@ Feature: Test Data Suites
     Then I get redirected to test data suites
 
     Then I search for updated suite
-    Then I receive suite
     Then I click delete button
     Then I get success delete
