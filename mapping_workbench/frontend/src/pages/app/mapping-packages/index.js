@@ -7,6 +7,7 @@ import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
@@ -168,9 +169,9 @@ const Page = () => {
 
                 </Stack>
                 <Card>
-                    {/*<ListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>*/}
                     <TableSearchBar onChange={itemsSearch.handleFiltersChange}
                                     value={itemsSearch.state.filters.q}/>
+                    <Divider/>
                     <ListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}

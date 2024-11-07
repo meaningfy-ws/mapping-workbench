@@ -1,3 +1,4 @@
+import Divider from '@mui/material/Divider';
 import {useEffect, useState} from 'react';
 import {useFormik} from "formik";
 import * as Yup from "yup";
@@ -247,9 +248,9 @@ const Page = () => {
                     </Stack>
                 </Stack>
                 <Card>
-                    {/*<ListSearch onFiltersChange={itemsSearch.handleSearchItems}/>*/}
                     <TableSearchBar onChange={itemsSearch.handleSearchItems}
                                     value={itemsSearch.state.search}/>
+                    <Divider/>
                     <ListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}

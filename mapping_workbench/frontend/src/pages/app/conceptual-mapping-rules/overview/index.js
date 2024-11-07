@@ -1,8 +1,9 @@
 import {useEffect, useState} from 'react';
 import {useTranslation} from "react-i18next";
 
-import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
-import RefreshIcon from '@untitled-ui/icons-react/build/esm/Repeat02';
+import AddIcon from '@mui/icons-material/Add';
+import CachedIcon from '@mui/icons-material/Cached';
+
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -152,7 +153,7 @@ const Page = () => {
                             id="add-mapping-rules-button"
                             startIcon={(
                                 <SvgIcon>
-                                    <PlusIcon/>
+                                    <AddIcon/>
                                 </SvgIcon>
                             )}
                             variant="contained"
@@ -165,7 +166,7 @@ const Page = () => {
                             href={paths.app[sectionApi.section].tasks.generate_cm_assertions_queries}
                             startIcon={(
                                 <SvgIcon>
-                                    <RefreshIcon/>
+                                    <CachedIcon/>
                                 </SvgIcon>
                             )}
                             variant="contained"
