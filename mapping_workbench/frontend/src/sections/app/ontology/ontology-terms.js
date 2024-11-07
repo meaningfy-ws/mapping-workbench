@@ -5,119 +5,17 @@ import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 
-import {Filter} from "../../components/filter";
-import {ListTable} from "../ontology-term/list-table";
-import {TableSearchBar} from "../../components/table-search-bar";
+import {Filter} from "src/sections/components/filter";
+import useItemsSearch from 'src/hooks/use-items-search';
+import {ListTable} from "src/sections/app/ontology-term/list-table";
 import {ontologyTermsApi as sectionApi} from "src/api/ontology-terms";
+import {TableSearchBar} from "src/sections/components/table-search-bar";
 
+const filterValues = [{label: 'All', value: ''},
+    {label: 'CLASS', value: 'CLASS'},
+    {label: 'PROPERTY', value: 'PROPERTY'}]
 
-const useItemsSearch = (items) => {
-    const [state, setState] = useState({
-        filters: "",
-        sort: {
-            column: "",
-            direction: "desc"
-        },
-        search: '',
-        searchColumns: ["short_term", "term"],
-        page: sectionApi.DEFAULT_PAGE,
-        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
-    });
-
-    const filterValues = [{label: 'All', value: ''},
-        {label: 'CLASS', value: 'CLASS'},
-        {label: 'PROPERTY', value: 'PROPERTY'}]
-
-    const searchItems = state.search ? items.filter(item => {
-        let returnItem = null;
-        state.searchColumns.forEach(column => {
-            if (item[column]?.toLowerCase()?.includes(state.search.toLowerCase()))
-                returnItem = item
-        })
-        return returnItem
-    }) : items
-
-    const filteredItems = searchItems.filter((item) => state.filters === "" || state.filters === item.type ? item : null)
-
-    const sortedItems = () => {
-        const sortColumn = state.sort.column
-        if (!sortColumn) {
-            return filteredItems
-        } else {
-            return filteredItems.sort((a, b) => {
-                if (typeof a[sortColumn] === "string")
-                    return state.sort.direction === "asc" ?
-                        a[sortColumn]?.localeCompare(b[sortColumn]) :
-                        b[sortColumn]?.localeCompare(a[sortColumn])
-                else
-                    return state.sort.direction === "asc" ?
-                        a[sortColumn] - b[sortColumn] :
-                        b[sortColumn] - a[sortColumn]
-            })
-        }
-    }
-
-    const pagedItems = sortedItems().filter((item, i) => {
-        const pageSize = state.page * state.rowsPerPage
-        if ((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
-            return item
-    })
-
-    const handleSearchItems = (search) => {
-        setState(prevState => ({...prevState, search}))
-    }
-
-    const handleFiltersChange = filters => {
-        setState(prevState => ({
-            ...prevState,
-            filters,
-            page: 0
-        }));
-    }
-
-    const handlePageChange = (event, page) => {
-        setState(prevState => ({
-            ...prevState,
-            page
-        }));
-    }
-
-    const handleSort = (column, desc) => {
-        setState(prevState => ({
-            ...prevState, sort: {
-                column,
-                direction: prevState.sort.column === column
-                    ? prevState.sort.direction === "desc"
-                        ? "asc"
-                        : "desc"
-                    : desc
-                        ? "desc"
-                        : "asc"
-            }
-        }))
-    }
-
-    const handleRowsPerPageChange = event => {
-        setState(prevState => ({
-            ...prevState,
-            rowsPerPage: parseInt(event.target.value, 10)
-        }));
-    }
-
-    return {
-        handleFiltersChange,
-        handlePageChange,
-        handleRowsPerPageChange,
-        handleSort,
-        handleSearchItems,
-        filterValues,
-        pagedItems,
-        count: filteredItems.length,
-        state
-    };
-};
-
-const useItemsStore = (searchState) => {
+const useItemsStore = () => {
     const [state, setState] = useState({
         items: [],
         itemsCount: 0
@@ -146,19 +44,20 @@ const useItemsStore = (searchState) => {
 
 const OntologyTerms = () => {
     const itemsStore = useItemsStore();
-    const itemsSearch = useItemsSearch(itemsStore.items);
+    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ["short_term", "term"], {type: ''});
 
     return (
         <Stack spacing={4}>
             <Typography variant='h5'>Terms</Typography>
             <Card>
-                <TableSearchBar onChange={itemsSearch.handleSearchItems}
-                                value={itemsSearch.state.search}
+                <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                value={itemsSearch.state.search[0]}
                                 placeholder='Search Terms'/>
                 <Divider/>
-                <Filter values={itemsSearch.filterValues}
-                        value={itemsSearch.state.filters}
-                        onValueChange={itemsSearch.handleFiltersChange}/>
+                <Filter values={filterValues}
+                        value={itemsSearch.state.filters.type}
+                        onValueChange={(e) => itemsSearch.handleFiltersChange({type: e})}/>
+                <Divider/>
                 <ListTable
                     onPageChange={itemsSearch.handlePageChange}
                     onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}

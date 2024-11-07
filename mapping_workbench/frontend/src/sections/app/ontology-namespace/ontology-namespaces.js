@@ -2,74 +2,36 @@ import {useEffect, useState} from 'react';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
+import Divider from "@mui/material/Divider";
 import Typography from '@mui/material/Typography';
 
 import {usePageView} from 'src/hooks/use-page-view';
-import {ontologyNamespacesApi as sectionApi} from 'src/api/ontology-namespaces';
+import useItemsSearch from 'src/hooks/use-items-search';
+import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {ListTable} from "src/sections/app/ontology-namespace/list-table";
-import {TableSearchBar} from "../../components/table-search-bar";
-import Divider from "@mui/material/Divider";
+import {ontologyNamespacesApi as sectionApi} from 'src/api/ontology-namespaces';
 
-const useItemsSearch = () => {
-    const [state, setState] = useState({
-        filters: {},
-        sortField: '',
-        sortDirection: undefined,
-        page: sectionApi.DEFAULT_PAGE,
-        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
-    });
-
-    const handleFiltersChange = filters => {
-        setState(prevState => ({
-            ...prevState,
-            filters: filters ? {q: filters} : {},
-            page: 0
-        }));
-    }
-
-    const handlePageChange = (event, page) => {
-        setState(prevState => ({
-            ...prevState,
-            page
-        }));
-    }
-
-    const handleRowsPerPageChange = event => {
-        setState(prevState => ({
-            ...prevState,
-            rowsPerPage: parseInt(event.target.value, 10)
-        }));
-    }
-
-    return {
-        handleFiltersChange,
-        handlePageChange,
-        handleRowsPerPageChange,
-        state
-    };
-};
-
-const useItemsStore = (searchState) => {
+const useItemsStore = () => {
     const [state, setState] = useState({
         items: [],
         itemsCount: 0
     });
 
     const handleItemsGet = () => {
-        sectionApi.getItems(searchState)
+        sectionApi.getItems()
             .then(res =>
                 setState({
                     items: res.items,
                     itemsCount: res.count
                 }))
-            .catch(err => console.warn(err))
+            .catch(err => console.error(err))
     }
 
     useEffect(() => {
             handleItemsGet();
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState]);
+        []);
 
     return {
         ...state
@@ -77,8 +39,8 @@ const useItemsStore = (searchState) => {
 };
 
 const OntologyNamespaces = () => {
-    const itemsSearch = useItemsSearch();
-    const itemsStore = useItemsStore(itemsSearch.state);
+    const itemsStore = useItemsStore();
+    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['prefix','uri']);
 
     usePageView();
 
@@ -88,15 +50,17 @@ const OntologyNamespaces = () => {
                 Discovered Namespaces
             </Typography>
             <Card>
-                <TableSearchBar onChange={itemsSearch.handleFiltersChange}
-                                value={itemsSearch.state.filters.q}
+                <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                value={itemsSearch.state.search[0]}
                                 placeholder='Search Discovered Namespaces'/>
                 <Divider/>
                 <ListTable
                     onPageChange={itemsSearch.handlePageChange}
                     onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                    sort={itemsSearch.state.sort}
+                    onSort={itemsSearch.handleSort}
                     page={itemsSearch.state.page}
-                    items={itemsStore.items}
+                    items={itemsSearch.pagedItems}
                     count={itemsStore.itemsCount}
                     rowsPerPage={itemsSearch.state.rowsPerPage}
                     sectionApi={sectionApi}

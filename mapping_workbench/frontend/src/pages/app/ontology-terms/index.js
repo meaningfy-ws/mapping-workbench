@@ -19,8 +19,8 @@ import OntologyTerms from "src/sections/app/ontology/ontology-terms";
 import {ontologyTermsApi as sectionApi} from 'src/api/ontology-terms';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
-import OntologyNamespaces from "src/sections/app/ontology/ontology-namespaces";
-import OntologyNamespacesCustom from "src/sections/app/ontology/ontology-namespaces-custom";
+import OntologyNamespaces from "src/sections/app/ontology-namespace/ontology-namespaces";
+import OntologyNamespacesCustom from "src/sections/app/ontology-namespace-custom/ontology-namespaces-custom";
 
 
 const Page = () => {
