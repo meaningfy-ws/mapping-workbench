@@ -1,5 +1,3 @@
-import {useEffect, useState} from 'react';
-
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Divider from "@mui/material/Divider";
@@ -7,39 +5,13 @@ import Typography from '@mui/material/Typography';
 
 import {usePageView} from 'src/hooks/use-page-view';
 import useItemsSearch from 'src/hooks/use-items-search';
+import {useItemsStore} from 'src/hooks/use-items-store';
 import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {ListTable} from "src/sections/app/ontology-namespace/list-table";
 import {ontologyNamespacesApi as sectionApi} from 'src/api/ontology-namespaces';
 
-const useItemsStore = () => {
-    const [state, setState] = useState({
-        items: [],
-        itemsCount: 0
-    });
-
-    const handleItemsGet = () => {
-        sectionApi.getItems()
-            .then(res =>
-                setState({
-                    items: res.items,
-                    itemsCount: res.count
-                }))
-            .catch(err => console.error(err))
-    }
-
-    useEffect(() => {
-            handleItemsGet();
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        []);
-
-    return {
-        ...state
-    };
-};
-
 const OntologyNamespaces = () => {
-    const itemsStore = useItemsStore();
+    const itemsStore = useItemsStore(sectionApi);
     const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['prefix','uri']);
 
     usePageView();

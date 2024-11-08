@@ -24,6 +24,7 @@ import {Layout as AppLayout} from 'src/layouts/app';
 import {RouterLink} from 'src/components/router-link';
 import {Filter} from 'src/sections/components/filter';
 import useItemsSearch from 'src/hooks/use-items-search';
+import {useItemsStore} from 'src/hooks/use-items-store';
 import {TableSearchBar} from 'src/sections/components/table-search-bar';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {ListTable} from "src/sections/app/conceptual-mapping-rule/list-table";
@@ -33,35 +34,11 @@ const filterValues = [{label: 'All', value: ''},
     {label: 'Valid', value: 'valid'},
     {label: 'Invalid', value: 'invalid'}]
 
-const useItemsStore = () => {
-    const [state, setState] = useState({
-        items: [],
-        itemsCount: 0
-    });
-
-    const handleItemsGet = () => {
-        sectionApi.getItems()
-            .then(res => setState({items: res.items, itemsCount: res.count}))
-            .catch(err => console.error(err))
-    }
-
-    useEffect(() => {
-            handleItemsGet();
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        []);
-
-    return {
-        ...state
-    };
-};
-
-
 const Page = () => {
     const [detailedView, setDetailedView] = useState(true)
     const {t} = useTranslation();
 
-    const itemsStore = useItemsStore();
+    const itemsStore = useItemsStore(sectionApi);
     const itemsSearch = useItemsSearch(itemsStore.items, sectionApi,
         ['source_structural_element_sdk_element_id', 'target_class_path', 'target_property_path'],
         {terms: ''});

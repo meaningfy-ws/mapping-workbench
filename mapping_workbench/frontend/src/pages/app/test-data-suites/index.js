@@ -1,5 +1,3 @@
-import {useEffect, useState} from 'react';
-
 import AddIcon from '@mui/icons-material/Add';
 import UploadIcon from '@mui/icons-material/Upload';
 
@@ -19,43 +17,16 @@ import {Layout as AppLayout} from 'src/layouts/app';
 import {usePageView} from 'src/hooks/use-page-view';
 import {RouterLink} from 'src/components/router-link';
 import useItemsSearch from 'src/hooks/use-items-search';
+import {useItemsStore} from 'src/hooks/use-items-store';
 import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {testDataSuitesApi as sectionApi} from 'src/api/test-data-suites';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {FileCollectionUploader} from "src/sections/app/file-manager/file-collection-uploader";
 import {TestDataCollectionListTable} from "src/sections/app/file-manager/test-data-collection-list-table";
 
-const useItemsStore = () => {
-    const [state, setState] = useState({
-        items: [],
-        itemsCount: 0
-    });
-
-    const handleItemsGet = () => {
-        sectionApi.getItems()
-            .then(res => setState({
-                items: res.items,
-                itemsCount: res.count
-            }))
-            .catch(err => console.warn(err))
-    }
-
-    useEffect(() => {
-            handleItemsGet();
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        []);
-
-    return {
-        handleItemsGet,
-        ...state
-    };
-};
-
 const Page = () => {
-
     const uploadDialog = useDialog()
-    const itemsStore = useItemsStore();
+    const itemsStore = useItemsStore(sectionApi);
     const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['title', 'package']);
 
     usePageView();
@@ -147,7 +118,6 @@ const Page = () => {
                     open={uploadDialog.open}
                     sectionApi={sectionApi}
                 />
-
             </Stack>
         </>
     );

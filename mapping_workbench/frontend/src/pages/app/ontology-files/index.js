@@ -1,9 +1,9 @@
 import {useEffect, useState} from 'react';
-import CodeMirror from '@uiw/react-codemirror';
 import {turtle} from 'codemirror-lang-turtle';
+import CodeMirror from '@uiw/react-codemirror';
 import {githubDark, githubLight} from '@uiw/codemirror-themes-all';
 
-import Upload01Icon from '@untitled-ui/icons-react/build/esm/Upload01';
+import UploadIcon from '@mui/icons-material/Upload';
 
 import {Box} from "@mui/system";
 import Stack from '@mui/material/Stack';
@@ -22,6 +22,7 @@ import {sessionApi} from "src/api/session";
 import {useDialog} from 'src/hooks/use-dialog';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
+import useItemsSearch from 'src/hooks/use-items-store';
 import {ontologyTermsApi} from "src/api/ontology-terms";
 import {ItemList} from "src/sections/app/files-form/item-list";
 import {ItemSearch} from 'src/sections/app/files-form/item-search';
@@ -30,124 +31,6 @@ import {FileUploader} from 'src/sections/app/files-form//file-uploader';
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {ontologyFileResourcesApi as fileResourcesApi} from "src/api/ontology-files/file-resources";
 
-const useItemsSearch = (items) => {
-    const [state, setState] = useState({
-        filters: {},
-        page: sectionApi.DEFAULT_PAGE,
-        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE,
-        sort: {
-            column: "filename",
-            direction: "desc"
-        },
-        search: '',
-        searchColumns: ["filename"],
-    });
-
-    const searchItems = state.search ? items.filter(item => {
-        let returnItem = null;
-        state.searchColumns.forEach(column => {
-            if (item[column]?.toLowerCase()?.includes(state.search.toLowerCase()))
-                returnItem = item
-        })
-        return returnItem
-    }) : items
-
-
-    const filteredItems = searchItems.filter((item) => {
-        let returnItem = item;
-        Object.entries(state.filters).forEach(filter => {
-            const [key, value] = filter
-            if (value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
-                returnItem = null
-            if (value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase))
-                returnItem = null
-        })
-        return returnItem
-    })
-
-    const sortedItems = () => {
-        const sortColumn = state.sort.column
-        if (!sortColumn) {
-            return searchItems
-        } else {
-            return searchItems.sort((a, b) => {
-                if (typeof a[sortColumn] === "string")
-                    return state.sort.direction === "asc" ?
-                        a[sortColumn]?.localeCompare(b[sortColumn]) :
-                        b[sortColumn]?.localeCompare(a[sortColumn])
-                else
-                    return state.sort.direction === "asc" ?
-                        a[sortColumn] - b[sortColumn] :
-                        b[sortColumn] - a[sortColumn]
-            })
-        }
-    }
-
-    const pagedItems = sortedItems().filter((item, i) => {
-        const pageSize = state.page * state.rowsPerPage
-        if ((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
-            return item
-    })
-
-    const handleSearchItems = (filters) => {
-        setState(prevState => ({...prevState, search: filters, page: 0}))
-    }
-
-
-    const handleFiltersChange = filters => {
-        setState(prevState => ({
-            ...prevState,
-            filters
-        }));
-    };
-
-    const handleSortChange = sortDir => {
-        setState(prevState => ({
-            ...prevState,
-            sortDir
-        }));
-    }
-
-    const handlePageChange = (event, page) => {
-        setState(prevState => ({
-            ...prevState,
-            page
-        }));
-    }
-
-    const handleSort = (column, desc) => {
-        setState(prevState => ({
-            ...prevState, sort: {
-                column,
-                direction: prevState.sort.column === column
-                    ? prevState.sort.direction === "desc"
-                        ? "asc"
-                        : "desc"
-                    : desc
-                        ? "desc"
-                        : "asc"
-            }
-        }))
-    }
-
-    const handleRowsPerPageChange = event => {
-        setState(prevState => ({
-            ...prevState,
-            rowsPerPage: parseInt(event.target.value, 10)
-        }));
-    }
-
-    return {
-        handleFiltersChange,
-        handleSortChange,
-        handlePageChange,
-        handleRowsPerPageChange,
-        handleSearchItems,
-        pagedItems,
-        count: filteredItems.length,
-        state
-    };
-};
 
 const Page = () => {
     const [view, setView] = useState('grid');
@@ -155,7 +38,7 @@ const Page = () => {
 
     const uploadDialog = useDialog();
     const detailsDialog = useDialog();
-    const itemsSearch = useItemsSearch(state);
+    const itemsSearch = useItemsSearch(state, sectionApi);
 
     const theme = useTheme();
 
@@ -225,7 +108,7 @@ const Page = () => {
                                 onClick={uploadDialog.handleOpen}
                                 startIcon={(
                                     <SvgIcon>
-                                        <Upload01Icon/>
+                                        <UploadIcon/>
                                     </SvgIcon>
                                 )}
                                 variant="contained"
@@ -281,18 +164,17 @@ const Page = () => {
                     {detailsDialog.data?.fileName}
                 </DialogTitle>
                 <DialogContent>
-                    {
-                        detailsDialog.data?.load ?
-                            <Box sx={{display: 'flex', justifyContent: 'center', marginY: 10}}>
-                                <CircularProgress/>
-                            </Box> :
-                            <CodeMirror
-                                theme={theme.palette.mode === 'dark' ? githubDark : githubLight}
-                                style={{resize: 'vertical', overflow: 'auto'}}
-                                value={detailsDialog.data?.content}
-                                editable={false}
-                                extensions={[turtle()]}
-                            />}
+                    {detailsDialog.data?.load ?
+                        <Box sx={{display: 'flex', justifyContent: 'center', marginY: 10}}>
+                            <CircularProgress/>
+                        </Box> :
+                        <CodeMirror
+                            theme={theme.palette.mode === 'dark' ? githubDark : githubLight}
+                            style={{resize: 'vertical', overflow: 'auto'}}
+                            value={detailsDialog.data?.content}
+                            editable={false}
+                            extensions={[turtle()]}
+                        />}
                 </DialogContent>
             </Dialog>
             <FileUploader

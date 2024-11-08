@@ -1,10 +1,10 @@
 import {useState} from "react";
 
-const useItemsSearch = (items, sectionApi, searchColumns, newFilters) => {
+const useItemsSearch = (items, sectionApi, searchColumns, newFilters, sort) => {
     const [state, setState] = useState({
         search: [],
         filters: newFilters ?? {},
-        sort: {
+        sort: sort ?? {
             column: "",
             direction: "desc"
         },

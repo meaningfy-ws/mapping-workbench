@@ -1,5 +1,6 @@
-import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
-import SearchIcon from "@untitled-ui/icons-react/build/esm/SearchRefraction";
+
+import AddIcon from '@mui/icons-material/Add';
+import SearchIcon from '@mui/icons-material/Search';
 
 import Link from '@mui/material/Link';
 import Grid from "@mui/material/Grid";
@@ -24,8 +25,8 @@ import OntologyNamespacesCustom from "src/sections/app/ontology-namespace-custom
 
 
 const Page = () => {
-
     const router = useRouter()
+
     const handleDiscover = () => {
         const toastId = toastLoad('Discovering terms ...')
         sectionApi.discoverTerms()
@@ -94,7 +95,7 @@ const Page = () => {
                                 href={paths.app[sectionApi.section].create}
                                 startIcon={(
                                     <SvgIcon>
-                                        <PlusIcon/>
+                                        <AddIcon/>
                                     </SvgIcon>
                                 )}
                                 variant="contained"

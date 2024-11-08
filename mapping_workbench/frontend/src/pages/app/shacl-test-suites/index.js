@@ -38,7 +38,7 @@ const useItemsStore = () => {
                     itemsCount: res.count,
                     force: force
                 }))
-            .catch(err => console.warn(err))
+            .catch(err => console.error(err))
     }
 
     useEffect(() => {

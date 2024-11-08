@@ -20,44 +20,18 @@ import {useDialog} from "src/hooks/use-dialog";
 import {Layout as AppLayout} from 'src/layouts/app';
 import {usePageView} from 'src/hooks/use-page-view';
 import {RouterLink} from 'src/components/router-link';
+import useItemsSearch from 'src/hooks/use-items-search';
+import {useItemsStore} from 'src/hooks/use-items-store';
 import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {ListTable} from "src/sections/app/generic-triple-map-fragment/list-table";
 import {FileUploader} from "src/sections/app/generic-triple-map-fragment/file-uploader";
 import {specificTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/specific';
-import useItemsSearch from '../../../hooks/use-items-search';
-
-const useItemsStore = () => {
-    const [state, setState] = useState({
-        items: [],
-        itemsCount: 0
-    });
-
-    const handleItemsGet = () => {
-        sectionApi.getItems({rowsPerPage: -1})
-            .then(res =>
-                setState({
-                    items: res.items,
-                    itemsCount: res.count
-                }))
-            .catch(err => console.warn(err))
-    }
-
-    useEffect(() => {
-        handleItemsGet();
-    }, []);
-
-    return {
-        ...state
-    };
-};
-
 
 const Page = () => {
-    const itemsStore = useItemsStore();
-    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['triple_map_uri']);
-
     const uploadDialog = useDialog();
+    const itemsStore = useItemsStore(sectionApi);
+    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['triple_map_uri']);
 
     usePageView();
 

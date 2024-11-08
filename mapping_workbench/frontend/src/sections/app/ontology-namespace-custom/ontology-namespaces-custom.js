@@ -1,5 +1,3 @@
-import {useEffect, useState} from 'react';
-
 import AddIcon from '@mui/icons-material/Add';
 
 import Card from '@mui/material/Card';
@@ -15,35 +13,10 @@ import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {ListTable} from "src/sections/app/ontology-namespace-custom/list-table";
 import {ontologyNamespacesCustomApi as sectionApi} from 'src/api/ontology-namespaces-custom';
 import useItemsSearch from '../../../hooks/use-items-search';
-
-const useItemsStore = searchState => {
-    const [state, setState] = useState({
-        items: [],
-        itemsCount: 0
-    });
-
-    const handleItemsGet = () => {
-        sectionApi.getItems()
-            .then(res => setState({
-                items: res.items,
-                itemsCount: res.count
-            }))
-            .catch(err => console.error(err))
-    }
-
-    useEffect(() => {
-            handleItemsGet();
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        []);
-
-    return {
-        ...state
-    };
-};
+import {useItemsStore} from '../../../hooks/use-items-store';
 
 const OntologyNamespacesCustom = () => {
-    const itemsStore = useItemsStore();
+    const itemsStore = useItemsStore(sectionApi);
     const itemsSearch = useItemsSearch(itemsStore.items,sectionApi,['prefix','uri'],{});
 
     return (
