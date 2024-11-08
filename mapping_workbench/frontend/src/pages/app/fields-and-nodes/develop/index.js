@@ -246,7 +246,7 @@ const Page = () => {
                                             disabled={formik.isSubmitting || !formik.values.absolute_xpath}
                                             error={formik.touched['parent_node'] && formik.errors['parent_node']}
                                             isOptionEqualToValue={(option, value) => option.absolute_xpath === value}
-                                            // getOptionLabel={option => option.absolute_xpath ?? ''}
+                                            // getOptionLabel={option => option?.absolute_xpath ?? ''}
                                             onBlur={formik.handleBlur}
                                             defaultValue={''}
                                             onChange={(e, value) => formik.setFieldValue('parent_node', value)}

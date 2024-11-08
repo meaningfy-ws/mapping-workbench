@@ -4,9 +4,12 @@ from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState
 from mapping_workbench.backend.package_validator.adapters.xpath_validator import XPATHValidator
 from mapping_workbench.backend.package_validator.models.xpath_validation import XPathAssertion, \
-    XPATHTestDataValidationResult, XPathAssertionTestDataEntry, XPathAssertionEntry, XPathAssertionCondition
+    XPATHTestDataValidationResult, XPathAssertionTestDataEntry, XPathAssertionEntry, XPathAssertionCondition, \
+    XPATHMatchingElements
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuiteState, TestDataValidation, \
     TestDataState
+
+TRY_TO_MEET_XPATH_CONDITION = True  # try to meet xpath condition on matched elements and if not, try it on whole test data
 
 
 def update_xpath_assertion(
@@ -95,10 +98,14 @@ def update_xpath_assertion_test_data_entry(
         if idx < 0:
             test_data_xpath_assertion.xpath_conditions.append(xpath_condition)
         else:
-            test_data_xpath_assertion.xpath_conditions[idx].meets_xpath_condition &= xpath_condition.meets_xpath_condition
+            if test_data_xpath_assertion.xpath_conditions[idx]:
+                test_data_xpath_assertion.xpath_conditions[idx].meets_xpath_condition \
+                    |= xpath_condition.meets_xpath_condition
+            else:
+                test_data_xpath_assertion.xpath_conditions[idx].meets_xpath_condition \
+                    &= xpath_condition.meets_xpath_condition
 
     test_data_xpath_assertion.is_covered = (len(test_data_xpath_assertion.test_data_xpaths) > 0)
-
 
 
 def update_xpath_assertion_test_data_entry_xpaths(
@@ -136,15 +143,27 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
 
                 validation_message = None
                 xpaths: List[XPathAssertionEntry] = []
+                matching_elements: XPATHMatchingElements = xpath_validator.validate(cm_xpath)
                 try:
-                    xpaths = xpath_validator.validate(cm_xpath)
+                    xpaths = matching_elements.xpath_assertions
                 except Exception as e:
                     validation_message = str(e)
 
                 cm_xpath_condition = conceptual_mapping_rule_state.xpath_condition
                 meets_xpath_condition: bool = True
                 if cm_xpath_condition:
-                    meets_xpath_condition = xpath_validator.check_xpath_condition(cm_xpath_condition)
+                    meets_xpath_condition = False
+                    if TRY_TO_MEET_XPATH_CONDITION:
+                        for matching_element in matching_elements.elements:
+                            element_xpath_validator: XPATHValidator = XPATHValidator(
+                                xml_content=str(matching_element),
+                                namespaces=xpath_validator.namespaces
+                            )
+                            meets_xpath_condition = element_xpath_validator.check_xpath_condition(cm_xpath_condition)
+                            if meets_xpath_condition:
+                                break
+                    if not meets_xpath_condition:
+                        meets_xpath_condition = xpath_validator.check_xpath_condition(cm_xpath_condition)
 
                 xpath_condition = XPathAssertionCondition(
                     xpath_condition=cm_xpath_condition or '',
