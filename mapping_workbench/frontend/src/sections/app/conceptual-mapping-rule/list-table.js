@@ -696,6 +696,8 @@ export const ListTableRow = (props) => {
 
     const notesCount = (item.mapping_notes?.length ?? 0) + (item.editorial_notes?.length ?? 0) + (item.feedback_notes?.length ?? 0)
 
+    console.log(item)
+
     return (<>
         <TableRow
             hover
