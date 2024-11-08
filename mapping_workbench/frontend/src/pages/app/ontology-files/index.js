@@ -38,7 +38,7 @@ const Page = () => {
 
     const uploadDialog = useDialog();
     const detailsDialog = useDialog();
-    const itemsSearch = useItemsSearch(state, sectionApi);
+    const itemsSearch = useItemsSearch(state, sectionApi,['filename', 'content']);
 
     const theme = useTheme();
 
@@ -129,7 +129,7 @@ const Page = () => {
                         }}
                     >
                         <ItemSearch
-                            onFiltersChange={itemsSearch.handleSearchItems}
+                            onFiltersChange={e => itemsSearch.handleSearchItems([e])}
                             onSortChange={itemsSearch.handleSortChange}
                             onViewChange={setView}
                             sortBy={itemsSearch.state.sortBy}

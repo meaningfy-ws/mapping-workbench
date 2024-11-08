@@ -43,8 +43,6 @@ const Page = () => {
         ['source_structural_element_sdk_element_id', 'target_class_path', 'target_property_path'],
         {terms: ''});
 
-    console.log(itemsStore.items)
-
     usePageView();
 
     return (

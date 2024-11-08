@@ -696,24 +696,131 @@ export const ListTableRow = (props) => {
 
     const notesCount = (item.mapping_notes?.length ?? 0) + (item.editorial_notes?.length ?? 0) + (item.feedback_notes?.length ?? 0)
 
-    console.log(item)
-
-    return (<>
-        <TableRow
-            hover
-            key={`rule_${item_id}`}
-            sx={{
-                verticalAlign: 'top',
-                wordBreak: "break-all"
-            }}
-            onMouseEnter={() => handleItemHover(item_id)}
-            onMouseLeave={() => handleItemHover(null)}
-        >
-            <TableCell
-                padding="checkbox"
+    return (
+        <>
+            <TableRow
+                hover
+                key={`rule_${item_id}`}
                 sx={{
-                    ...(isCurrent && {
-                        position: 'relative', '&:after': {
+                    verticalAlign: 'top',
+                    wordBreak: "break-all"
+                }}
+                onMouseEnter={() => handleItemHover(item_id)}
+                onMouseLeave={() => handleItemHover(null)}
+            >
+                <TableCell
+                    padding="checkbox"
+                    sx={{
+                        ...(isCurrent && {
+                            position: 'relative', '&:after': {
+                                position: 'absolute',
+                                content: '" "',
+                                top: 0,
+                                left: 0,
+                                backgroundColor: 'primary.main',
+                                width: 3,
+                                height: 'calc(100% + 1px)'
+                            }
+                        })
+                    }}
+                >
+                    <IconButton onClick={() => handleItemToggle(item_id)}>
+                        <SvgIcon>
+                            {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
+                        </SvgIcon>
+                    </IconButton>
+                </TableCell>
+                <TableCell>{item.sort_order}</TableCell>
+                <TableCell sx={{
+                    wordBreak: "normal"
+                }}>
+                    <Link onClick={() => handleViewAction(item_id)}
+                          sx={{cursor: "pointer"}}
+                          color="primary"
+                    >
+                        <Typography variant="subtitle2">
+                            <Box>
+                                {item.source_structural_element?.sdk_element_id}
+                                {item.mapping_group_id && ` / ${item.mapping_group_id}`}
+                            </Box>
+                        </Typography>
+                    </Link>
+                    {item.source_structural_element?.name}
+                </TableCell>
+                <TableCell>{item.min_sdk_version}</TableCell>
+                <TableCell>{item.max_sdk_version}</TableCell>
+                <TableCell>
+                    <Box title={item.target_class_path}>
+                        {detailedView && item.target_class_path &&
+                            <Alert severity={hasTargetClassPathValidityErrors ? "error" : "success"}>
+                                {parse(targetClassPathValidityInfo)}
+                            </Alert>}
+                        {!detailedView && (
+                            <>
+                                {item.target_class_path?.length > TRUNCATE_LENGTH && "..."}
+                                {item.target_class_path?.substring(item.target_class_path.length - TRUNCATE_LENGTH)}
+                            </>
+                        )}
+                    </Box>
+                </TableCell>
+                <TableCell>
+                    <Box title={item.target_property_path}>
+                        {detailedView && item.target_property_path &&
+                            <Alert severity={hasTargetPropertyPathValidityErrors ? "error" : "success"}>
+                                {parse(targetPropertyPathValidityInfo)}
+                            </Alert>}
+                        {!detailedView && (
+                            <>
+                                {item.target_property_path && item.target_property_path.length > TRUNCATE_LENGTH && "..."}
+                                {item.target_property_path && item.target_property_path.substring(item.target_property_path.length - TRUNCATE_LENGTH)}
+                            </>
+                        )}
+                    </Box>
+                </TableCell>
+                <TableCell sx={{position: "relative"}}>
+                    <ListTableTripleMapFragment
+                        item={item}
+                        initProjectTripleMapFragments={initProjectTripleMapFragments}
+                        isCurrent={isCurrent}
+                        isHovered={isHovered}
+                    />
+                </TableCell>
+                <TableCell sx={{position: "relative", wordBreak: "normal"}}>
+                    <ListTableMappingPackages
+                        item={item}
+                        initProjectMappingPackages={initProjectMappingPackages}
+                        onPackagesUpdate={onPackagesUpdate}
+                        isCurrent={isCurrent}
+                        isHovered={isHovered}
+                    />
+                </TableCell>
+                <TableCell sx={{position: "relative"}}>
+                    <ListTableSPARQLAssertions
+                        item={item}
+                        initProjectSPARQLResources={initProjectSPARQLResources}
+                        isCurrent={isCurrent}
+                        isHovered={isHovered}
+                    />
+                </TableCell>
+                <TableCell align="center">
+                    {!!notesCount &&
+                        <Button variant="text"
+                                size="small"
+                                color="warning"
+                                onClick={() => handleNotesDialogOpen(item)}
+                        >{notesCount}</Button>}
+                </TableCell>
+
+                <TableCell align="right">
+                    <ListItemActions
+                        itemctx={new ForListItemAction(item_id, sectionApi)}/>
+                </TableCell>
+            </TableRow>
+            {isCurrent && (<TableRow>
+                <TableCell
+                    colSpan={11}
+                    sx={{
+                        p: 0, position: 'relative', '&:after': {
                             position: 'absolute',
                             content: '" "',
                             top: 0,
@@ -722,189 +829,96 @@ export const ListTableRow = (props) => {
                             width: 3,
                             height: 'calc(100% + 1px)'
                         }
-                    })
-                }}
-            >
-                <IconButton onClick={() => handleItemToggle(item_id)}>
-                    <SvgIcon>
-                        {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
-                    </SvgIcon>
-                </IconButton>
-            </TableCell>
-            <TableCell>{item.sort_order}</TableCell>
-            <TableCell sx={{
-                wordBreak: "normal"
-            }}>
-                <Link onClick={() => handleViewAction(item_id)}
-                      sx={{cursor: "pointer"}}
-                      color="primary"
+                    }}
                 >
-                    <Typography variant="subtitle2">
-                        <Box>
-                            {item.source_structural_element?.sdk_element_id}
-                            {item.mapping_group_id && ` / ${item.mapping_group_id}`}
-                        </Box>
-                    </Typography>
-                </Link>
-                {item.source_structural_element?.name}
-            </TableCell>
-            <TableCell>{item.min_sdk_version}</TableCell>
-            <TableCell>{item.max_sdk_version}</TableCell>
-            <TableCell>
-                <Box title={item.target_class_path}>
-                    {detailedView && item.target_class_path &&
-                        <Alert severity={hasTargetClassPathValidityErrors ? "error" : "success"}>
-                            {parse(targetClassPathValidityInfo)}
-                        </Alert>}
-                    {!detailedView && (
-                        <>
-                            {item.target_class_path?.length > TRUNCATE_LENGTH && "..."}
-                            {item.target_class_path?.substring(item.target_class_path.length - TRUNCATE_LENGTH)}
-                        </>
-                    )}
-                </Box>
-            </TableCell>
-            <TableCell>
-                <Box title={item.target_property_path}>
-                    {detailedView && item.target_property_path &&
-                        <Alert severity={hasTargetPropertyPathValidityErrors ? "error" : "success"}>
-                            {parse(targetPropertyPathValidityInfo)}
-                        </Alert>}
-                    {!detailedView && (
-                        <>
-                            {item.target_property_path && item.target_property_path.length > TRUNCATE_LENGTH && "..."}
-                            {item.target_property_path && item.target_property_path.substring(item.target_property_path.length - TRUNCATE_LENGTH)}
-                        </>
-                    )}
-                </Box>
-            </TableCell>
-            <TableCell sx={{position: "relative"}}>
-                <ListTableTripleMapFragment
-                    item={item}
-                    initProjectTripleMapFragments={initProjectTripleMapFragments}
-                    isCurrent={isCurrent}
-                    isHovered={isHovered}
-                />
-            </TableCell>
-            <TableCell sx={{position: "relative", wordBreak: "normal"}}>
-                <ListTableMappingPackages
-                    item={item}
-                    initProjectMappingPackages={initProjectMappingPackages}
-                    onPackagesUpdate={onPackagesUpdate}
-                    isCurrent={isCurrent}
-                    isHovered={isHovered}
-                />
-            </TableCell>
-            <TableCell sx={{position: "relative"}}>
-                <ListTableSPARQLAssertions
-                    item={item}
-                    initProjectSPARQLResources={initProjectSPARQLResources}
-                    isCurrent={isCurrent}
-                    isHovered={isHovered}
-                />
-            </TableCell>
-            <TableCell align="center">
-                {!!notesCount &&
-                    <Button variant="text"
-                            size="small"
-                            color="warning"
-                            onClick={() => handleNotesDialogOpen(item)}
-                    >{notesCount}</Button>}
-            </TableCell>
-
-            <TableCell align="right">
-                <ListItemActions
-                    itemctx={new ForListItemAction(item_id, sectionApi)}/>
-            </TableCell>
-        </TableRow>
-        {isCurrent && (<TableRow>
-            <TableCell
-                colSpan={11}
-                sx={{
-                    p: 0, position: 'relative', '&:after': {
-                        position: 'absolute',
-                        content: '" "',
-                        top: 0,
-                        left: 0,
-                        backgroundColor: 'primary.main',
-                        width: 3,
-                        height: 'calc(100% + 1px)'
-                    }
-                }}
-            >
-                <CardContent>
-                    <Grid container
-                          rowSpacing={2}>
-                        <Grid item
-                              xl={6}
-                              md={12}>
-                            <PropertyList>
-                                {item.source_structural_element && (
-                                    <>
-                                        <Typography variant='h5'>
-                                            Source
-                                        </Typography>
-                                        {item.source_structural_element.sdk_element_id && <PropertyListItem
-                                            key="sdk_element_id"
-                                            label="Field/Node ID"
-                                            value={item.source_structural_element.sdk_element_id}
-                                        />}
-                                        {item.source_structural_element.name && <PropertyListItem
-                                            key="name"
-                                            label="Field Name"
-                                            value={item.source_structural_element.name}
-                                        />}
-                                        {item.source_structural_element.absolute_xpath && <PropertyListItem
-                                            key="absolute_xpath"
-                                            label="Absolute XPath"
-                                        >
-                                            <SyntaxHighlighter
-                                                language="xquery"
-                                                wrapLines
-                                                style={syntaxHighlighterTheme}
-                                                lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
-                                                {item.source_structural_element.absolute_xpath}
-                                            </SyntaxHighlighter>
-                                        </PropertyListItem>}
-                                    </>
-                                )}
-                            </PropertyList>
-                        </Grid>
-                        <Grid item
-                              xl={6}
-                              md={12}>
-                            {!!(item.target_class_path_terms_validity?.length || item.target_property_path_terms_validity?.length) &&
+                    <CardContent>
+                        <Grid container
+                              rowSpacing={2}>
+                            <Grid item
+                                  xl={6}
+                                  md={12}>
                                 <PropertyList>
-                                    <Typography variant='h5'>
-                                        Target
-                                    </Typography>
-                                    {!!item.target_class_path_terms_validity?.length &&
-                                        <PropertyListItem label='Ontology Fragment Class path'>
-                                            <SyntaxHighlighter
-                                                language="sparql"
-                                                wrapLines
-                                                style={syntaxHighlighterTheme}
-                                                lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
-                                                {item.target_class_path}
-                                            </SyntaxHighlighter>
-                                        </PropertyListItem>}
-                                    {!!item.target_property_path_terms_validity?.length &&
-                                        <PropertyListItem label='Ontology Fragment Property path'>
-                                            <SyntaxHighlighter
-                                                language="sparql"
-                                                wrapLines
-                                                style={syntaxHighlighterTheme}
-                                                lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
-                                                {item.target_property_path}
-                                            </SyntaxHighlighter>
-                                        </PropertyListItem>}
-                                </PropertyList>}
+                                    {item.source_structural_element && (
+                                        <>
+                                            <Typography variant='h5'>
+                                                Source
+                                            </Typography>
+                                            {item.source_structural_element.sdk_element_id && <PropertyListItem
+                                                key="sdk_element_id"
+                                                label="Field/Node ID"
+                                                value={item.source_structural_element.sdk_element_id}
+                                            />}
+                                            {item.source_structural_element.name && <PropertyListItem
+                                                key="name"
+                                                label="Field Name"
+                                                value={item.source_structural_element.name}
+                                            />}
+                                            {item.source_structural_element.absolute_xpath && <PropertyListItem
+                                                key="absolute_xpath"
+                                                label="Absolute XPath"
+                                            >
+                                                <SyntaxHighlighter
+                                                    language="xquery"
+                                                    wrapLines
+                                                    style={syntaxHighlighterTheme}
+                                                    lineProps={{
+                                                        style: {
+                                                            wordBreak: 'break-all',
+                                                            whiteSpace: 'pre-wrap'
+                                                        }
+                                                    }}>
+                                                    {item.source_structural_element.absolute_xpath}
+                                                </SyntaxHighlighter>
+                                            </PropertyListItem>}
+                                        </>
+                                    )}
+                                </PropertyList>
+                            </Grid>
+                            <Grid item
+                                  xl={6}
+                                  md={12}>
+                                {!!(item.target_class_path_terms_validity?.length || item.target_property_path_terms_validity?.length) &&
+                                    <PropertyList>
+                                        <Typography variant='h5'>
+                                            Target
+                                        </Typography>
+                                        {!!item.target_class_path_terms_validity?.length &&
+                                            <PropertyListItem label='Ontology Fragment Class path'>
+                                                <SyntaxHighlighter
+                                                    language="sparql"
+                                                    wrapLines
+                                                    style={syntaxHighlighterTheme}
+                                                    lineProps={{
+                                                        style: {
+                                                            wordBreak: 'break-all',
+                                                            whiteSpace: 'pre-wrap'
+                                                        }
+                                                    }}>
+                                                    {item.target_class_path}
+                                                </SyntaxHighlighter>
+                                            </PropertyListItem>}
+                                        {!!item.target_property_path_terms_validity?.length &&
+                                            <PropertyListItem label='Ontology Fragment Property path'>
+                                                <SyntaxHighlighter
+                                                    language="sparql"
+                                                    wrapLines
+                                                    style={syntaxHighlighterTheme}
+                                                    lineProps={{
+                                                        style: {
+                                                            wordBreak: 'break-all',
+                                                            whiteSpace: 'pre-wrap'
+                                                        }
+                                                    }}>
+                                                    {item.target_property_path}
+                                                </SyntaxHighlighter>
+                                            </PropertyListItem>}
+                                    </PropertyList>}
+                            </Grid>
                         </Grid>
-                    </Grid>
-                </CardContent>
-            </TableCell>
-        </TableRow>)}
-    </>)
+                    </CardContent>
+                </TableCell>
+            </TableRow>)}
+        </>)
 }
 
 export const ListTable = (props) => {
@@ -1062,7 +1076,7 @@ export const ListTable = (props) => {
                                     </>}
                                     <Divider sx={{
                                         my: 2
-                                    }} />
+                                    }}/>
                                     {notesDialog.data?.editorial_notes && <>
                                         <Typography>Editorial Notes:</Typography>
                                         {notesDialog.data.editorial_notes.map((editorial_note, i) => <RuleComment
@@ -1073,7 +1087,7 @@ export const ListTable = (props) => {
                                     </>}
                                     <Divider sx={{
                                         my: 2
-                                    }} />
+                                    }}/>
                                     {notesDialog.data?.feedback_notes && <>
                                         <Typography>Feedback Notes:</Typography>
                                         {notesDialog.data.feedback_notes.map((feedback_note, i) => <RuleComment
