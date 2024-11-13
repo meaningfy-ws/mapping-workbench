@@ -2,10 +2,11 @@ import {useEffect, useState} from "react";
 import {useTheme} from "@mui/material/styles";
 import {executeXPaths} from "./utils";
 
+import styles from './styles/style.module.scss'
+
 const MARGIN = 4
 const ATTRIBUTE_SIGN = '$'
 const NAME_SIGH = '_'
-
 
 const styless = (name, themeDark) => {
     switch (name) {
@@ -23,7 +24,7 @@ const styless = (name, themeDark) => {
         case 'node':
             return themeDark ? 'lightgreen' : '#007f00'
         case 'region':
-            return themeDark ? '#086aad' : '#e2f2ff'
+            return themeDark ? '#007cd1' : '#e2f2ff'
         default:
             return themeDark ? '#c9d1d9' : '#24292e'
     }
@@ -34,6 +35,7 @@ const Attribute = ({name, value, parent, handleClick, theme}) => {
     return (
         <span onClick={() => handleClick([...parent, `[${name}='${value}']`])}
               style={{color: styless('attr', themeDark)}}
+              className={styles.tag}
         >
                 <span style={{color: styless('attr-name', themeDark)}}>{` ${name}=`}</span>
                 <span>{'"'}</span>
@@ -76,8 +78,9 @@ const Tag = ({
             <span name='tag'
                   style={{
                       color: styless('tag', themeDark),
-                      backgroundColor: selectedNode && styless(isField ? 'field' : 'node', themeDark)
+                      backgroundColor: selectedNode && styless(isField ? 'field' : 'node', themeDark),
                   }}
+                  className={styles.tag}
                   onClick={() => handleClick([...parent, name])}>
                {name}
             </span>
@@ -98,7 +101,7 @@ const Tag = ({
                       color: styless('tag', themeDark),
                       backgroundColor: selectedNode && styless(isField ? 'field' : 'node', themeDark)
                   }}
-
+                  className={styles.tag}
                   onClick={() => handleClick([...parent, name])}>
                {name}
             </span>
