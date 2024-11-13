@@ -1,6 +1,4 @@
 import {useEffect, useState} from "react";
-import classNames from "classnames/bind";
-import styles from './styles/style.module.scss'
 import {useTheme} from "@mui/material/styles";
 import {executeXPaths} from "./utils";
 
@@ -8,21 +6,55 @@ const MARGIN = 4
 const ATTRIBUTE_SIGN = '$'
 const NAME_SIGH = '_'
 
-const cx = classNames.bind(styles);
 
-const Attribute = ({name, value, parent, handleClick}) => {
+const styless = (name, themeDark) => {
+    switch (name) {
+        case 'attr':
+        case 'attr-name':
+            return themeDark ? '#79c0ff' : '#005cc5'
+        case 'attr-value':
+            return themeDark ? '#a5d6ff' : '#032f62'
+        case 'tag':
+            return themeDark ? '#116329' : '#7ee787'
+        case 'brace':
+            return themeDark ? '#8b949e' : '#6a737d'
+        case 'field':
+            return themeDark ? 'yellow' : '#ffffbe'
+        case 'node':
+            return themeDark ? 'lightgreen' : '#007f00'
+        case 'region':
+            return themeDark ? '#086aad' : '#e2f2ff'
+        default:
+            return themeDark ? '#c9d1d9' : '#24292e'
+    }
+}
+
+const Attribute = ({name, value, parent, handleClick, theme}) => {
+    const themeDark = theme.palette.mode === 'dark'
     return (
         <span onClick={() => handleClick([...parent, `[${name}='${value}']`])}
-              className={cx('attr')}>
-                <span className={cx('attr-name')}>{` ${name}=`}</span>
+              style={{color: styless('attr', themeDark)}}
+        >
+                <span style={{color: styless('attr-name', themeDark)}}>{` ${name}=`}</span>
                 <span>{'"'}</span>
-                    <span className={cx('attr-value')}>{value}</span>
+                    <span style={{color: styless('attr-value', themeDark)}}>{value}</span>
                 <span>{'"'}</span>
             </span>)
 }
 
-const Tag = ({name, attributes, children, parent, level, isField, relativeXPath, xPath, xPaths, handleClick}) => {
-
+const Tag = ({
+                 name,
+                 attributes,
+                 children,
+                 parent,
+                 level,
+                 isField,
+                 relativeXPath,
+                 xPath,
+                 xPaths,
+                 handleClick,
+                 theme
+             }) => {
     const shiftedParent = [...parent]
     if (shiftedParent.length)
         shiftedParent.shift()
@@ -30,38 +62,43 @@ const Tag = ({name, attributes, children, parent, level, isField, relativeXPath,
     const selectedNode = xPaths?.some(xpath => nodeXPath.endsWith(xpath))
 
     const selectedXpath = xPath && nodeXPath === xPath
+
+    const themeDark = theme.palette.mode === 'dark'
     return (
         <span style={{
             marginLeft: level * MARGIN,
             display: 'block',
-            backgroundColor: selectedXpath ? '#ffacac' : 'inherit'
+            backgroundColor: selectedXpath && styless('region', themeDark),
+            color: styless('brace', themeDark)
         }}
-              className={cx('text-color')}>
-               <span>{'<'}</span>
-               <span name='tag'
-                     className={cx('tag', {
-                         'tag-selected-field': (selectedNode && isField),
-                         'tag-selected-node': (selectedNode && !isField)
-                     })}
-                     onClick={() => handleClick([...parent, name])}>
-                   {name}
-               </span>
+        >
+            <span>{'<'}</span>
+            <span name='tag'
+                  style={{
+                      color: styless('tag', themeDark),
+                      backgroundColor: selectedNode && styless(isField ? 'field' : 'node', themeDark)
+                  }}
+                  onClick={() => handleClick([...parent, name])}>
+               {name}
+            </span>
             {attributes && <span name={'attributes'}>{Object.entries(attributes).map(([name, value]) =>
                 <Attribute key={name}
                            name={name}
                            handleClick={handleClick}
                            value={value}
+                           theme={theme}
                            parent={parent}/>)}
             </span>}
             <span>{'>'}</span>
             {!isField && <br/>}
             {children}
-            <span style={{marginLeft: isField ? 0 : level * MARGIN}}>{'</'}</span>
+            <span style={{marginLeft: 0}}>{'</'}</span>
             <span name='close-tag'
-                  className={cx('tag', {
-                      'tag-selected-field': (selectedNode && isField),
-                      'tag-selected-node': (selectedNode && !isField)
-                  })}
+                  style={{
+                      color: styless('tag', themeDark),
+                      backgroundColor: selectedNode && styless(isField ? 'field' : 'node', themeDark)
+                  }}
+
                   onClick={() => handleClick([...parent, name])}>
                {name}
             </span>
@@ -77,6 +114,7 @@ const BuildNodes = ({nodes, level = 0, parent = [], xPath, xPaths, relativeXPath
             if (!isNaN(name))
                 return <BuildNodes nodes={Object.entries(value).filter(en => en[0] !== ATTRIBUTE_SIGN)}
                                    key={'obj' + name}
+                                   theme={theme}
                                    level={level}
                                    xPath={xPath}
                                    xPaths={xPaths}
@@ -90,6 +128,7 @@ const BuildNodes = ({nodes, level = 0, parent = [], xPath, xPaths, relativeXPath
                              name={name}
                              isField
                              parent={parent}
+                             theme={theme}
                              xPath={xPath}
                              xPaths={xPaths}
                              handleClick={handleClick}
@@ -112,6 +151,7 @@ const BuildNodes = ({nodes, level = 0, parent = [], xPath, xPaths, relativeXPath
                      parent={parent}
                      xPath={xPath}
                      xPaths={xPaths}
+                     theme={theme}
                      handleClick={handleClick}
                      relativeXPath={relativeXPath}
                      isField={Object.entries(value).some(e => e[0] === NAME_SIGH)}
@@ -120,6 +160,7 @@ const BuildNodes = ({nodes, level = 0, parent = [], xPath, xPaths, relativeXPath
                                 level={level + 1}
                                 xPaths={xPaths}
                                 xPath={xPath}
+                                theme={theme}
                                 relativeXPath={relativeXPath}
                                 handleClick={handleClick}
                                 parent={[...parent, name]}/>
@@ -141,7 +182,7 @@ const File = ({xmlContent, fileContent, fileError, relativeXPath, xmlNodes, xPat
 
     return (
         <>
-            {!!xmlNodes && <div className={cx('container')}>
+            {!!xmlNodes && <div style={{overflow: 'auto', resize: 'vertical', height: 600}}>
                 <BuildNodes nodes={Object.entries(xmlNodes)}
                             theme={theme}
                             handleClick={handleClick}
