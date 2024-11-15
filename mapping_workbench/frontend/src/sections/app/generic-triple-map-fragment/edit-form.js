@@ -2,8 +2,6 @@ import {useCallback, useEffect, useState} from "react";
 import PropTypes from 'prop-types';
 import {useFormik} from 'formik';
 import * as Yup from 'yup';
-import {turtle} from 'codemirror-lang-turtle';
-import {yaml} from '@codemirror/lang-yaml';
 
 import {Box} from "@mui/system";
 import Tab from "@mui/material/Tab";
