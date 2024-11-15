@@ -1,35 +1,30 @@
-import Card from "@mui/material/Card";
-import Stack from "@mui/material/Stack";
+import Card from '@mui/material/Card';
+import Stack from '@mui/material/Stack';
 import Divider from "@mui/material/Divider";
-import Typography from "@mui/material/Typography";
+import Typography from '@mui/material/Typography';
 
-import {Filter} from "src/sections/components/filter";
+import {usePageView} from 'src/hooks/use-page-view';
 import useItemsSearch from 'src/hooks/use-items-search';
 import {useItemsStore} from 'src/hooks/use-items-store';
-import {ListTable} from "src/sections/app/ontology-term/list-table";
-import {ontologyTermsApi as sectionApi} from "src/api/ontology-terms";
 import {TableSearchBar} from "src/sections/components/table-search-bar";
+import {ListTable} from "src/sections/app/ontology-namespace/list-table";
+import {ontologyNamespacesApi as sectionApi} from 'src/api/ontology-namespaces';
 
-const filterValues = [{label: 'All', value: ''},
-    {label: 'CLASS', value: 'CLASS'},
-    {label: 'PROPERTY', value: 'PROPERTY'}]
-
-const OntologyTerms = () => {
+const OntologyNamespaces = () => {
     const itemsStore = useItemsStore(sectionApi);
-    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ["short_term", "term"], {type: ''});
+    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['prefix','uri']);
+
+    usePageView();
 
     return (
-        <Stack spacing={4}>
-            <Typography variant='h5'>Terms</Typography>
+        <Stack spacing={5}>
+            <Typography variant="h5">
+                Discovered Namespaces
+            </Typography>
             <Card>
                 <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
                                 value={itemsSearch.state.search[0]}
-                                placeholder='Search Terms'/>
-                <Divider/>
-                <Filter title='Type:'
-                        values={filterValues}
-                        value={itemsSearch.state.filters.type}
-                        onValueChange={e => itemsSearch.handleFiltersChange({type: e})}/>
+                                placeholder='Search Discovered Namespaces'/>
                 <Divider/>
                 <ListTable
                     onPageChange={itemsSearch.handlePageChange}
@@ -45,6 +40,6 @@ const OntologyTerms = () => {
             </Card>
         </Stack>
     )
-}
+};
 
-export default OntologyTerms
+export default OntologyNamespaces;

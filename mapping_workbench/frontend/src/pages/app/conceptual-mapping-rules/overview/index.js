@@ -1,15 +1,20 @@
 import {useEffect, useState} from 'react';
 import {useTranslation} from "react-i18next";
 
-import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
-import RefreshIcon from '@untitled-ui/icons-react/build/esm/Repeat02';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Button from '@mui/material/Button';
+import AddIcon from '@mui/icons-material/Add';
+import CachedIcon from '@mui/icons-material/Cached';
+
 import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
+import Paper from '@mui/material/Paper';
+import Switch from '@mui/material/Switch';
+import Button from '@mui/material/Button';
 import SvgIcon from '@mui/material/SvgIcon';
+import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
@@ -17,97 +22,26 @@ import {tokens} from "/src/locales/tokens";
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {RouterLink} from 'src/components/router-link';
+import {Filter} from 'src/sections/components/filter';
+import useItemsSearch from 'src/hooks/use-items-search';
+import {useItemsStore} from 'src/hooks/use-items-store';
+import {TableSearchBar} from 'src/sections/components/table-search-bar';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {ListSearch} from "src/sections/app/conceptual-mapping-rule/list-search";
 import {ListTable} from "src/sections/app/conceptual-mapping-rule/list-table";
 import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
 
-const useItemsSearch = () => {
-    const [state, setState] = useState({
-        filters: {
-            q: undefined,
-            terms_validity: undefined
-        },
-        sortField: '',
-        sortDirection: undefined,
-        page: sectionApi.DEFAULT_PAGE,
-        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE,
-        detailedView: true
-    });
-
-    const handleFiltersChange = filters => {
-        setState(prevState => ({
-            ...prevState,
-            filters,
-            page: 0
-        }));
-    }
-
-    const handlePageChange = (event, page) => {
-        setState(prevState => ({
-            ...prevState,
-            page
-        }));
-    }
-
-    const handleRowsPerPageChange = event => {
-        setState(prevState => ({
-            ...prevState,
-            rowsPerPage: parseInt(event.target.value, 10)
-        }));
-    }
-
-    const handleDetailedViewChange = (event, detailedView) => {
-        setState(prevState => ({
-            ...prevState,
-            detailedView
-        }));
-    }
-
-    const handleSorterChange = sortField => {
-        setState(prevState => ({...prevState, sortField, sortDirection: state.sortField === sortField && prevState.sortDirection === -1 ? 1 : -1 }))
-    }
-
-    return {
-        handleSorterChange,
-        handleFiltersChange,
-        handlePageChange,
-        handleRowsPerPageChange,
-        handleDetailedViewChange,
-        state
-    };
-};
-
-
-const useItemsStore = (searchState) => {
-    const [state, setState] = useState({
-        items: [],
-        itemsCount: 0
-    });
-
-    const handleItemsGet = () => {
-        sectionApi.getItems(searchState)
-            .then(res => setState({items: res.items, itemsCount: res.count}))
-            .catch(err => console.warn(err))
-    }
-
-    useEffect(() => {
-            handleItemsGet();
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState]);
-
-    return {
-        ...state
-    };
-};
-
+const filterValues = [{label: 'All', value: ''},
+    {label: 'Valid', value: 'valid'},
+    {label: 'Invalid', value: 'invalid'}]
 
 const Page = () => {
+    const [detailedView, setDetailedView] = useState(true)
     const {t} = useTranslation();
 
-    const itemsSearch = useItemsSearch();
-    const itemsStore = useItemsStore(itemsSearch.state);
+    const itemsStore = useItemsStore(sectionApi);
+    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi,
+        ['source_structural_element_sdk_element_id', 'target_class_path', 'target_property_path'],
+        {terms: ''});
 
     usePageView();
 
@@ -152,7 +86,7 @@ const Page = () => {
                             id="add-mapping-rules-button"
                             startIcon={(
                                 <SvgIcon>
-                                    <PlusIcon/>
+                                    <AddIcon/>
                                 </SvgIcon>
                             )}
                             variant="contained"
@@ -165,7 +99,7 @@ const Page = () => {
                             href={paths.app[sectionApi.section].tasks.generate_cm_assertions_queries}
                             startIcon={(
                                 <SvgIcon>
-                                    <RefreshIcon/>
+                                    <CachedIcon/>
                                 </SvgIcon>
                             )}
                             variant="contained"
@@ -175,21 +109,33 @@ const Page = () => {
                     </Stack>
                 </Stack>
                 <Card>
-                    <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}
-                                onDetailedViewChange={itemsSearch.handleDetailedViewChange}
-                                detailedView={itemsSearch.state.detailedView}
-                    />
+                    <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                    value={itemsSearch.state.search[0]}/>
+                    <Divider/>
+                    <Stack direction='row'
+                           padding={3}>
+                        <FormControlLabel control={<Switch checked={detailedView}
+                                                           onChange={e => setDetailedView(e.target.checked)}/>}
+                                          label='Detailed View'/>
+                        <Paper variant='outlined'>
+                            <Filter title={'Terms:'}
+                                    values={filterValues}
+                                    value={itemsSearch.state.filters.terms}
+                                    onValueChange={e => itemsSearch.handleFiltersChange({terms: e})}/>
+                        </Paper>
+                    </Stack>
+                    <Divider/>
                     <ListTable
+                        sectionApi={sectionApi}
+                        items={itemsSearch.pagedItems}
+                        count={itemsStore.itemsCount}
+                        detailedView={detailedView}
+                        page={itemsSearch.state.page}
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        page={itemsSearch.state.page}
-                        items={itemsStore.items}
-                        count={itemsStore.itemsCount}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
-                        sectionApi={sectionApi}
-                        onSort={itemsSearch.handleSorterChange}
+                        onSort={itemsSearch.handleSort}
                         sort={{direction: itemsSearch.state.sortDirection, column: itemsSearch.state.sortField}}
-                        detailedView={itemsSearch.state.detailedView}
                     />
                 </Card>
             </Stack>

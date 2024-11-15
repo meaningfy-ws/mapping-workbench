@@ -1,68 +1,29 @@
 import {useEffect, useState} from 'react';
 
-import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Button from '@mui/material/Button';
+import AddIcon from '@mui/icons-material/Add';
+
 import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {usePageView} from 'src/hooks/use-page-view';
 import {RouterLink} from 'src/components/router-link';
-import {shaclTestSuitesApi as sectionApi} from 'src/api/shacl-test-suites';
+import useItemsSearch from 'src/hooks/use-items-search';
+import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {FileCollectionListSearch} from 'src/sections/app/file-manager/file-collection-list-search';
+import {shaclTestSuitesApi as sectionApi} from 'src/api/shacl-test-suites';
 import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
 import {shaclTestFileResourcesApi as fileResourceApi} from 'src/api/shacl-test-suites/file-resources'
 
-const useItemsSearch = () => {
-    const [state, setState] = useState({
-        filters: {
-            name: undefined,
-            category: [],
-            status: [],
-            inStock: undefined
-        },
-        page: sectionApi.DEFAULT_PAGE,
-        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
-    });
-
-    const handleFiltersChange = filters => {
-        setState(prevState => ({
-            ...prevState,
-            filters,
-            page: 0
-        }));
-    }
-
-    const handlePageChange = (event, page) => {
-        setState(prevState => ({
-            ...prevState,
-            page
-        }));
-    }
-
-    const handleRowsPerPageChange = event => {
-        setState(prevState => ({
-            ...prevState,
-            rowsPerPage: parseInt(event.target.value, 10)
-        }));
-    }
-
-    return {
-        handleFiltersChange,
-        handlePageChange,
-        handleRowsPerPageChange,
-        state
-    };
-};
-
-const useItemsStore = searchState => {
+const useItemsStore = () => {
     const [state, setState] = useState({
         items: [],
         itemsCount: 0,
@@ -70,21 +31,21 @@ const useItemsStore = searchState => {
     });
 
     const handleItemsGet = (force = 0) => {
-        sectionApi.getItems(searchState)
+        sectionApi.getItems()
             .then(res =>
                 setState({
                     items: res.items,
                     itemsCount: res.count,
                     force: force
                 }))
-            .catch(err => console.warn(err))
+            .catch(err => console.error(err))
     }
 
     useEffect(() => {
             handleItemsGet();
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState.state]);
+        []);
 
     return {
         handleItemsGet,
@@ -93,8 +54,8 @@ const useItemsStore = searchState => {
 };
 
 const Page = () => {
-    const itemsSearch = useItemsSearch();
-    const itemsStore = useItemsStore(itemsSearch.state);
+    const itemsStore = useItemsStore();
+    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['title']);
 
     usePageView();
 
@@ -139,7 +100,7 @@ const Page = () => {
                             href={paths.app[sectionApi.section].create}
                             startIcon={(
                                 <SvgIcon>
-                                    <PlusIcon/>
+                                    <AddIcon/>
                                 </SvgIcon>
                             )}
                             variant="contained"
@@ -149,12 +110,14 @@ const Page = () => {
                     </Stack>
                 </Stack>
                 <Card>
-                    <FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
+                    <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                    value={itemsSearch.state.search[0]}/>
+                    <Divider/>
                     <FileCollectionListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                         page={itemsSearch.state.page}
-                        items={itemsStore.items}
+                        items={itemsSearch.pagedItems}
                         itemsForced={itemsStore.force}
                         count={itemsStore.itemsCount}
                         rowsPerPage={itemsSearch.state.rowsPerPage}

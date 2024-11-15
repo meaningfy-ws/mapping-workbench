@@ -409,13 +409,13 @@ TestDataCollectionListTable.propTypes = {
 
 ListTableRow.propTypes = {
     item: PropTypes.object,
-    item_id: PropTypes.number,
+    item_id: PropTypes.string,
     isCurrent: PropTypes.bool,
     handleItemToggle: PropTypes.func,
     handleItemSelect: PropTypes.func,
-    isItemSelected: PropTypes.bool,
+    isItemSelected: PropTypes.func,
     sectionApi: PropTypes.object,
     router: PropTypes.object,
     getItems: PropTypes.func,
-    projectMappingPackagesMap: PropTypes.array
+    projectMappingPackagesMap: PropTypes.object
 }
