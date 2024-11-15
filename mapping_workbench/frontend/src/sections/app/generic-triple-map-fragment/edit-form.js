@@ -1,4 +1,3 @@
-import * as React from "react";
 import {useCallback, useEffect, useState} from "react";
 import PropTypes from 'prop-types';
 import {useFormik} from 'formik';
@@ -7,37 +6,37 @@ import {turtle} from 'codemirror-lang-turtle';
 import {yaml} from '@codemirror/lang-yaml';
 
 import {Box} from "@mui/system";
-import Card from '@mui/material/Card';
+import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
+import Card from '@mui/material/Card';
+import Alert from "@mui/material/Alert";
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import Checkbox from "@mui/material/Checkbox";
 import MenuItem from "@mui/material/MenuItem";
-import {useTheme} from "@mui/material/styles";
 import Grid from '@mui/material/Unstable_Grid2';
 import TextField from "@mui/material/TextField";
 import Accordion from "@mui/material/Accordion";
+import AlertTitle from "@mui/material/AlertTitle";
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 
 
-import Tab from "@mui/material/Tab";
 import {paths} from 'src/paths';
 import {sessionApi} from "src/api/session";
-import {MappingPackageFormSelect} from "../mapping-package/components/mapping-package-form-select";
 import {useRouter} from 'src/hooks/use-router';
 import {RouterLink} from 'src/components/router-link';
 import turtleValidator from "src/utils/turtle-validator";
 import {FormTextField} from "src/components/app/form/text-field";
-import {toastError, toastLoad, toastSuccess, toastWarning} from "src/components/app-toast";
+import CodeMirrorDefault from "src/components/app/form/codeMirrorDefault";
 import {FormCodeReadOnlyArea} from "src/components/app/form/code-read-only-area";
-import Checkbox from "@mui/material/Checkbox";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Alert from "@mui/material/Alert";
-import {AlertTitle} from "@mui/material";
-import CodeMirrorDefault from "../../../components/app/form/codeMirrorDefault";
+import {toastError, toastLoad, toastSuccess, toastWarning} from "src/components/app-toast";
+import {MappingPackageFormSelect} from "../mapping-package/components/mapping-package-form-select";
+
 
 export const EditForm = (props) => {
     const {itemctx, tree, ...other} = props;
@@ -45,7 +44,6 @@ export const EditForm = (props) => {
     const sectionApi = itemctx.api;
     const item = itemctx.data;
 
-    const theme = useTheme()
     const [currentTab, setCurrentTab] = useState('tabEdit')
 
     const [selectedTree, setSelectedTree] = useState(tree?.[0]?.test_datas?.[0]?.test_data_id)
@@ -78,8 +76,8 @@ export const EditForm = (props) => {
                 .required('Format is required'),
             mapping_package_id:
                 Yup
-                .string()
-                .required('Mapping Package is required'),
+                    .string()
+                    .required('Mapping Package is required'),
         }),
         onSubmit: async (values, helpers) => {
             const toastId = toastLoad("Updating...")
@@ -115,8 +113,6 @@ export const EditForm = (props) => {
             }
         }
     });
-
-    const lng = {TTL: {mode: 'text/turtle', extension: turtle}, YAML: {mode: 'text/yaml', extension: yaml}}
 
     useEffect(() => {
         selectedTree && handleGetXmlContent(selectedTree)
@@ -182,7 +178,7 @@ export const EditForm = (props) => {
             .catch(err => setValidation({error: err}))
     }
 
-    const handleTransformUsingThisTripleMap = useCallback((event) => {
+    const handleTransformUsingThisTripleMap = useCallback(event => {
         setUseThisTripleMap(event.target.checked);
     }, []);
 
@@ -245,15 +241,10 @@ export const EditForm = (props) => {
                             </Grid>
                             <Grid xs={12}>
                                 <CodeMirrorDefault
-                                    // theme={theme.palette.mode === 'dark' ? githubDark : githubLight}
                                     style={{resize: 'vertical', overflow: 'auto', height: 600}}
                                     value={formik.values.triple_map_content}
                                     lang={formik.values.format}
-                                    // extensions={[lng[formik.values.format].extension()]}
                                     onChange={(value) => formik.setFieldValue('triple_map_content', value)}
-                                    // options={{
-                                    //     mode: lng[formik.values.format].mode,
-                                    // }}
                                 />
                             </Grid>
 
@@ -271,9 +262,7 @@ export const EditForm = (props) => {
                               spacing={2}>
                             <Grid xs={12}>
                                 <FormControlLabel
-                                    sx={{
-                                        width: '100%'
-                                    }}
+                                    sx={{width: '100%'}}
                                     control={
                                         <Checkbox
                                             checked={useThisTripleMap}
@@ -336,7 +325,8 @@ export const EditForm = (props) => {
                             <Grid md={12}
                                   lg={6}>
                                 <Grid>
-                                    <Accordion disabled={!rdfResultContent} expanded={!!rdfResultContent}>
+                                    <Accordion disabled={!rdfResultContent}
+                                               expanded={!!rdfResultContent}>
                                         <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                                             RDF Result
                                         </AccordionSummary>
@@ -353,7 +343,8 @@ export const EditForm = (props) => {
                                     </Accordion>
                                 </Grid>
                                 {hasRdfResult && !rdfResultContent && <>
-                                    <Alert severity="warning" sx={{mt: 2}}>
+                                    <Alert severity="warning"
+                                           sx={{mt: 2}}>
                                         <AlertTitle></AlertTitle>
                                         Our service could not generate the RDF by using the provided resources.
                                     </Alert>
