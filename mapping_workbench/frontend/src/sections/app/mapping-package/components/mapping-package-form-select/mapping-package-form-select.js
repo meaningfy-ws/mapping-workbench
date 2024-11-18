@@ -1,27 +1,18 @@
-import {useCallback, useEffect, useState} from "react";
-import {mappingPackagesApi} from "src/api/mapping-packages";
-import {useMounted} from "src/hooks/use-mounted";
+import {useEffect, useState} from "react";
+
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
 
-const useMappingPackagesStore = () => {
-    const isMounted = useMounted();
-    const [state, setState] = useState({
-        items: []
-    });
+import {mappingPackagesApi} from "src/api/mapping-packages";
 
-    const handleMappingPackagesGet = useCallback(async () => {
-        try {
-            const mappingPackages = await mappingPackagesApi.getProjectPackages();
-            if (isMounted()) {
-                setState({
-                    items: mappingPackages,
-                });
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    }, [isMounted]);
+const useMappingPackagesStore = () => {
+    const [state, setState] = useState({items: []});
+
+    const handleMappingPackagesGet = () => {
+        mappingPackagesApi.getProjectPackages()
+            .then(res => setState({items: res}))
+            .catch(err => console.error(err))
+    }
 
     useEffect(() => {
         handleMappingPackagesGet();
@@ -36,10 +27,11 @@ export const MappingPackageFormSelect = (props) => {
     const {formik, isRequired, withDefaultPackage = false, ...other} = props;
     const mappingPackagesStore = useMappingPackagesStore();
 
-    const handleMappingPackageChange = async (event) => {
+    const handleMappingPackageChange = event => {
         const value = event.target.value;
         formik.setFieldValue('mapping_package_id', value);
     }
+
     useEffect(() => {
         if (withDefaultPackage) {
             const defaultPackage = mappingPackagesStore.items.find(pkg => pkg.identifier === 'default');
@@ -63,7 +55,10 @@ export const MappingPackageFormSelect = (props) => {
                 value={formik.values.mapping_package_id}
                 required={isRequired}
             >
-                <MenuItem key="" value="">&nbsp;</MenuItem>
+                <MenuItem key=""
+                          value="">
+                    &nbsp;
+                </MenuItem>
                 {mappingPackagesStore.items.map((mapping_package) => (
                     <MenuItem
                         key={mapping_package.id}

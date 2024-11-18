@@ -20,7 +20,7 @@ export const useItem = (sectionApi, id, path = null) => {
             id && handleItemGet();
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        []);
+        [id]);
 
     return new ForItemDataState(item, setItem);
     // return item
