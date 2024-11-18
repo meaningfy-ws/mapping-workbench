@@ -24,7 +24,7 @@ const useMappingPackagesStore = () => {
 };
 
 export const MappingPackageFormSelect = (props) => {
-    const {formik, isRequired, withDefaultPackage = false, ...other} = props;
+    const {formik, isRequired, disabled, withDefaultPackage = false, ...other} = props;
     const mappingPackagesStore = useMappingPackagesStore();
 
     const handleMappingPackageChange = event => {
@@ -54,6 +54,7 @@ export const MappingPackageFormSelect = (props) => {
                 select
                 value={formik.values.mapping_package_id}
                 required={isRequired}
+                disabled={disabled}
             >
                 <MenuItem key=""
                           value="">

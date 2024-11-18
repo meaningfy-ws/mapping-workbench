@@ -1,14 +1,17 @@
-import {useFormik} from 'formik';
 import {useEffect, useState} from 'react';
+import {useFormik} from 'formik';
 import {useTranslation} from "react-i18next";
+import * as Yup from 'yup';
 
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
 import RefreshIcon from '@untitled-ui/icons-react/build/esm/Repeat02';
+
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
+import LoadingButton from '@mui/lab/LoadingButton';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 import Checkbox from '@mui/material/Checkbox';
@@ -26,7 +29,6 @@ import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {ListSearch} from "src/sections/app/conceptual-mapping-rule/list-search";
 import {ListTable} from "src/sections/app/conceptual-mapping-rule/list-table";
 import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
-import * as Yup from 'yup';
 import {sessionApi} from '../../../../api/session';
 import {toastError, toastLoad, toastSuccess} from '../../../../components/app-toast';
 import {
@@ -139,39 +141,32 @@ const Page = () => {
                     .string()
                     .required('Mapping Package is required'),
         }),
-        onSubmit: async (values, helpers) => {
-            const toastId = toastLoad("Updating...")
-            try {
-                let response;
-                if (!values['mapping_package_id']) values['mapping_package_id'] = null;
-                values['project'] = sessionApi.getSessionProject();
+        onSubmit: (values, helpers) => {
+            const toastId = toastLoad("Generating SHACL...")
+            helpers.setSubmitting(true)
 
-                sectionApi.generateSHACL()
-
-                helpers.setStatus({success: true});
-                helpers.setSubmitting(false);
-                toastSuccess(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "created" : "updated"), toastId);
-                if (response) {
-                    if (itemctx.isNew) {
-                        router.push({
-                            pathname: paths.app[sectionApi.section].index,
-                            query: {id: response._id}
-                        });
-                    } else if (itemctx.isStateable) {
-                        itemctx.setState(response);
-                    }
-                }
-            } catch (err) {
-                console.error(err);
-                toastError(err, toastId);
-                helpers.setStatus({success: false});
-                helpers.setErrors({submit: err.message});
-                helpers.setSubmitting(false);
-            }
+            sectionApi.generateSHACL()
+                .then(res => {
+                    if (!values['mapping_package_id']) values['mapping_package_id'] = null;
+                    values['project'] = sessionApi.getSessionProject();
+                    helpers.setStatus({success: true});
+                    toastSuccess('SHACL Generated', toastId);
+                })
+                .catch(err => {
+                    console.error(err);
+                    toastError(err, toastId);
+                    helpers.setStatus({success: false});
+                    helpers.setErrors({submit: err.message});
+                })
+                .finally(res => {
+                    helpers.setSubmitting(false)
+                })
         }
     });
 
     usePageView();
+
+    console.log('isSubmitting', formik.isSubmitting)
 
     return (
         <>
@@ -272,6 +267,7 @@ const Page = () => {
                             </Typography>
                             <MappingPackageFormSelect
                                 formik={formik}
+                                disabled={formik.isSubmitting}
                                 // isRequired={sectionApi.isMappingPackageRequired ?? false}
                                 // withDefaultPackage={itemctx.isNew}
                             />
@@ -284,19 +280,20 @@ const Page = () => {
                                         }}
                                     />
                                 }
+                                disabled={formik.isSubmitting}
                                 label="Close SHACL"
                                 value="cleanup_project"
                             />
-                            <Button type='submit'
-                                    variant="contained"
-                                    fullWidth
-                                    size="small"
-                                    color="success"
-                                // disabled={formik.isSubmitting}
-                                // onClick={handleTripleMapFragmentUpdate}
+                            <LoadingButton type='submit'
+                                           variant="contained"
+                                           fullWidth
+                                           size="small"
+                                           color="success"
+                                           loading={formik.isSubmitting}
+                                           loadingPosition="start"
                             >
                                 Generate
-                            </Button>
+                            </LoadingButton>
                         </Stack>
                     </form>
 
