@@ -4,7 +4,7 @@ from beanie import PydanticObjectId
 
 from mapping_workbench.backend.conceptual_mapping_rule.adapters.cm_rule_beanie_repository import CMRuleBeanieRepository
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule, \
-    ConceptualMappingRuleCommentOut
+    ConceptualMappingRuleCommentOut, ConceptualMappingRuleData
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.user.models.user import UserRef
@@ -17,6 +17,18 @@ async def get_conceptual_mapping_rules_for_project(project_id: PydanticObjectId)
     items: List[ConceptualMappingRule] = await ConceptualMappingRule.find(
         ConceptualMappingRule.project == Project.link_from_id(project_id)
     ).to_list()
+
+    return items
+
+
+async def get_conceptual_mapping_rules_with_elements_for_project(project_id: PydanticObjectId) -> \
+        List[ConceptualMappingRuleData]:
+
+    items: List[ConceptualMappingRule] = await get_conceptual_mapping_rules_for_project(project_id)
+    for item in items:
+        source_structural_element = await item.source_structural_element.fetch()
+        item.source_structural_element = source_structural_element \
+            if isinstance(source_structural_element, StructuralElement) else None
 
     return items
 

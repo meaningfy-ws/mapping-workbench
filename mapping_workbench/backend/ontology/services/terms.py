@@ -131,9 +131,11 @@ def get_terms_from_graph_by_query(query: str, graph: rdflib.Graph) -> List[str]:
     return [element[0] for element in result]
 
 
-async def discover_and_save_terms(project_id: PydanticObjectId,
-                                  user: User = None,
-                                  ontology_sources: List[OntologyFileResource] = None):
+async def discover_and_save_terms(
+        project_id: PydanticObjectId,
+        user: User = None,
+        ontology_sources: List[OntologyFileResource] = None
+):
     if not ontology_sources:
         ontology_sources_repo = OntologyFileResourceBeanieRepository()
         ontology_sources = await ontology_sources_repo.get_all(project_id=project_id)
