@@ -1,11 +1,13 @@
 import {useEffect, useState} from 'react';
 
-import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
-import {Upload04 as ImportIcon} from '@untitled-ui/icons-react/build/esm';
+import AddIcon from '@mui/icons-material/Add';
+import UploadIcon from '@mui/icons-material/Upload';
+
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
@@ -15,74 +17,21 @@ import {Seo} from 'src/components/seo';
 import {useDialog} from "src/hooks/use-dialog";
 import {Layout as AppLayout} from 'src/layouts/app';
 import {RouterLink} from 'src/components/router-link';
+import useItemsSearch from 'src/hooks/use-items-search';
 import {ListTable} from "src/sections/app/mapping-package/list-table";
-import {ListSearch} from "src/sections/app/mapping-package/list-search";
+import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {mappingPackagesApi as sectionApi} from 'src/api/mapping-packages';
 import {PackageImporter} from 'src/sections/app/mapping-package/package-importer';
 
-const useItemsSearch = () => {
-    const [state, setState] = useState({
-        filters: {
-            name: undefined,
-            category: [],
-            status: [],
-            inStock: undefined
-        },
-        sortDirection: undefined,
-        sortField: '',
-        page: sectionApi.DEFAULT_PAGE,
-        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
-    });
-
-    const handleFiltersChange = filters => {
-        setState(prevState => ({
-            ...prevState,
-            filters,
-            page: 0
-        }));
-    };
-
-    const handleSorterChange = sortField => {
-        setState(prevState => ({
-            ...prevState,
-            sortField,
-            sortDirection: state.sortField === sortField && prevState.sortDirection === -1 ? 1 : -1
-        }))
-    }
-
-    const handlePageChange = (event, page) => {
-        setState(prevState => ({
-            ...prevState,
-            page
-        }));
-    };
-
-    const handleRowsPerPageChange = event => {
-        setState(prevState => ({
-            ...prevState,
-            rowsPerPage: parseInt(event.target.value, 10)
-        }));
-    };
-
-    return {
-        handleFiltersChange,
-        handlePageChange,
-        handleRowsPerPageChange,
-        handleSorterChange,
-        state
-    };
-};
-
-
-const useItemsStore = searchState => {
+const useItemsStore = () => {
     const [state, setState] = useState({
         items: [],
         itemsCount: 0
     });
 
     const handleItemsGet = () => {
-        sectionApi.getItems(searchState)
+        sectionApi.getItems()
             .then(res => setState({
                 items: res.items,
                 itemsCount: res.count
@@ -94,7 +43,7 @@ const useItemsStore = searchState => {
             handleItemsGet();
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState]);
+        []);
 
     return {
         ...state
@@ -103,8 +52,8 @@ const useItemsStore = searchState => {
 
 
 const Page = () => {
-    const itemsSearch = useItemsSearch();
-    const itemsStore = useItemsStore(itemsSearch.state);
+    const itemsStore = useItemsStore();
+    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['title', 'identifier']);
 
     const importDialog = useDialog();
 
@@ -149,7 +98,7 @@ const Page = () => {
                             href={paths.app[sectionApi.section].create}
                             startIcon={(
                                 <SvgIcon>
-                                    <PlusIcon/>
+                                    <AddIcon/>
                                 </SvgIcon>
                             )}
                             variant="contained"
@@ -161,7 +110,7 @@ const Page = () => {
                             id="import_package_button"
                             startIcon={(
                                 <SvgIcon>
-                                    <ImportIcon/>
+                                    <UploadIcon/>
                                 </SvgIcon>
                             )}
                             variant="contained"
@@ -172,13 +121,15 @@ const Page = () => {
 
                 </Stack>
                 <Card>
-                    <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
+                    <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                    value={itemsSearch.state.search[0]}/>
+                    <Divider/>
                     <ListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                         page={itemsSearch.state.page}
-                        items={itemsStore.items}
-                        count={itemsStore.itemsCount}
+                        items={itemsSearch.pagedItems}
+                        count={itemsSearch.count}
                         onSort={itemsSearch.handleSorterChange}
                         sort={{direction: itemsSearch.state.sortDirection, column: itemsSearch.state.sortField}}
                         rowsPerPage={itemsSearch.state.rowsPerPage}

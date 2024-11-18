@@ -13,12 +13,16 @@ import {Scrollbar} from 'src/components/scrollbar';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
+import TableSorterHeader from '../../components/table-sorter-header';
 
 export const ListTable = (props) => {
     const {
         count = 0,
         items = [],
         onPageChange = () => {
+        },
+        sort,
+        onSort = () => {
         },
         onRowsPerPageChange,
         page = 0,
@@ -27,19 +31,28 @@ export const ListTable = (props) => {
     } = props;
 
     const handleDeleteAction = (id) => {
-        const toastId= toastLoad("Deleting")
-        const itemctx= new ForListItemAction(id, sectionApi)
+        const toastId = toastLoad("Deleting")
+        const itemctx = new ForListItemAction(id, sectionApi)
         itemctx.api.deleteItem(id)
             .then(res => {
-                if(res)
-                {
+                if (res) {
                     toastSuccess("Deleted", toastId)
                     onPageChange(0)
-                }
-                else toastError("Error deleting", toastId)
+                } else toastError("Error deleting", toastId)
             })
     }
 
+    const SorterHeader = (props) => {
+        const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
+        return (
+            <TableCell>
+                <TableSorterHeader sort={{direction, column: sort.column}}
+                                   onSort={onSort}
+                                   {...props}
+                />
+            </TableCell>
+        )
+    }
 
     return (
         <div>
@@ -56,21 +69,8 @@ export const ListTable = (props) => {
                 <Table sx={{minWidth: 1200}}>
                     <TableHead>
                         <TableRow>
-                            <TableCell width="25%">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        Prefix
-                                    </TableSortLabel>
-                                </Tooltip>
-                            </TableCell>
-                            <TableCell>
-                                URI
-                            </TableCell>
+                            <SorterHeader fieldName='prefix'/>
+                            <SorterHeader fieldName='uri'/>
                             <TableCell align="right">
                                 Actions
                             </TableCell>
@@ -79,27 +79,26 @@ export const ListTable = (props) => {
                     <TableBody>
                         {items.map((item) => {
                             const item_id = item._id;
-                            const statusColor = item.status === 'published' ? 'success' : 'info';
 
                             return (
-                                    <TableRow hover
-                                              key={item_id}
-                                    >
-                                        <TableCell width="25%">
-                                            <Typography variant="subtitle2">
-                                                {item.prefix}
-                                            </Typography>
-                                        </TableCell>
-                                        <TableCell>
-                                            {item.uri}
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            <ListItemActions
-                                                itemctx={new ForListItemAction(item_id, sectionApi)}
-                                                onDeleteAction={() => handleDeleteAction(item_id)}
-                                            />
-                                        </TableCell>
-                                    </TableRow>
+                                <TableRow hover
+                                          key={item_id}
+                                >
+                                    <TableCell width="25%">
+                                        <Typography variant="subtitle2">
+                                            {item.prefix}
+                                        </Typography>
+                                    </TableCell>
+                                    <TableCell>
+                                        {item.uri}
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        <ListItemActions
+                                            itemctx={new ForListItemAction(item_id, sectionApi)}
+                                            onDeleteAction={() => handleDeleteAction(item_id)}
+                                        />
+                                    </TableCell>
+                                </TableRow>
                             );
                         })}
                     </TableBody>

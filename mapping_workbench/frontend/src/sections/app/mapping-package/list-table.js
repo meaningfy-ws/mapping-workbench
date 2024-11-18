@@ -522,12 +522,12 @@ PackageRow.propTypes = {
 }
 
 MappingPackageRowFragment.propTypes = {
-    item_id: PropTypes.number,
+    item_id: PropTypes.string,
     item: PropTypes.object,
     isCurrent: PropTypes.bool,
     handleItemToggle: PropTypes.func,
     handleGoLastState: PropTypes.func,
     handleDeleteAction: PropTypes.func,
-    timeSetting: PropTypes.object,
+    timeSetting: PropTypes.number,
     sectionApi: PropTypes.object
 }
