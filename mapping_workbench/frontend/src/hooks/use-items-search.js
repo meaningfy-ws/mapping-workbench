@@ -1,15 +1,13 @@
 import {useState} from "react";
 
-const useItemsSearch = (items, sectionApi, searchColumns) => {
+const useItemsSearch = (items, sectionApi, searchColumns, newFilters, sort) => {
     const [state, setState] = useState({
-        filters: {
-            result: ""
-        },
-        sort: {
+        search: [],
+        filters: newFilters ?? {},
+        sort: sort ?? {
             column: "",
             direction: "desc"
         },
-        search: [],
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
@@ -27,6 +25,7 @@ const useItemsSearch = (items, sectionApi, searchColumns) => {
         return returnItem
     }) : items
 
+
     const filteredItems = searchItems.filter((item) => {
         let returnItem = item;
         Object.entries(filters).forEach(filter => {
@@ -38,6 +37,7 @@ const useItemsSearch = (items, sectionApi, searchColumns) => {
         })
         return returnItem
     })
+
 
     const sortedItems = () => {
         const sortColumn = state.sort.column
@@ -63,8 +63,8 @@ const useItemsSearch = (items, sectionApi, searchColumns) => {
             return item
     })
 
-    const handleSearchItems = (filters) => {
-        setState(prevState => ({...prevState, search: filters}))
+    const handleSearchItems = (search) => {
+        setState(prevState => ({...prevState, search}))
     }
 
     const handleFiltersChange = (filters) => {

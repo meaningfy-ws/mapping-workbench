@@ -7,14 +7,6 @@ Feature: SPARQL Test Suites
     Then Go Home
     Then I open side menu
 
-#  Scenario: Select Project
-#    Then I get redirected to projects list page
-#    Then I search for project
-#
-#    When I select project
-#    Then I get success select
-#    Then I get redirected to projects list page
-
   Scenario: Add SPARQL Test Suite
     Then I click on Sparql Test Suites
     Then I get redirected to Sparql Test Suites
@@ -29,7 +21,6 @@ Feature: SPARQL Test Suites
     Then I get redirected to Sparql Test Suites
 
     Then I search for suite
-    Then I receive suite
     Then I click edit button
     Then I get redirected to edit page
 
@@ -41,6 +32,5 @@ Feature: SPARQL Test Suites
     Then I get redirected to Sparql Test Suites
 
     Then I search for updated suite
-    Then I receive suite
     Then I click delete button
     Then I get success delete

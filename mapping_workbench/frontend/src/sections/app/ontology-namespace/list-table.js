@@ -13,6 +13,7 @@ import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 import TablePagination from "../../components/table-pagination";
+import TableSorterHeader from '../../components/table-sorter-header';
 
 export const ListTable = (props) => {
     const {
@@ -20,6 +21,8 @@ export const ListTable = (props) => {
         items = [],
         onPageChange = () => {
         },
+        sort,
+        onSort = () => {},
         onRowsPerPageChange,
         page = 0,
         rowsPerPage = 0,
@@ -27,17 +30,27 @@ export const ListTable = (props) => {
     } = props;
 
     const handleDeleteAction = (id) => {
-        const toastId= toastLoad("Deleting")
-        const itemctx= new ForListItemAction(id, sectionApi)
+        const toastId = toastLoad("Deleting")
+        const itemctx = new ForListItemAction(id, sectionApi)
         itemctx.api.deleteItem(id)
             .then(res => {
-                if(res)
-                {
+                if (res) {
                     toastSuccess("Deleted", toastId)
                     onPageChange(0)
-                }
-                else toastError("Error deleting", toastId)
+                } else toastError("Error deleting", toastId)
             })
+    }
+
+    const SorterHeader = (props) => {
+        const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
+        return (
+            <TableCell>
+                <TableSorterHeader sort={{direction, column: sort.column}}
+                                   onSort={onSort}
+                                   {...props}
+                />
+            </TableCell>
+        )
     }
 
     return (
@@ -57,12 +70,8 @@ export const ListTable = (props) => {
                     <Table sx={{minWidth: 1200}}>
                         <TableHead>
                             <TableRow>
-                                <TableCell width="25%">
-                                    Prefix
-                                </TableCell>
-                                <TableCell>
-                                    URI
-                                </TableCell>
+                                <SorterHeader fieldName='prefix'/>
+                                <SorterHeader fieldName='uri'/>
                                 <TableCell>
                                     Syncable
                                 </TableCell>

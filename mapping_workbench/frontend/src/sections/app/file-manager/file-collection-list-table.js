@@ -119,7 +119,7 @@ export const ListTableRow = (props) => {
                             && projectMappingPackages
                                 .filter(
                                     projectMappingPackage => projectMappingPackage?.[sectionApi.MAPPING_PACKAGE_LINK_FIELD]
-                                        .some(resource_ref => item_id === resource_ref.id)
+                                        ?.some(resource_ref => item_id === resource_ref.id)
                                 )
                                 .map((mapping_package) => {
                                     return (
@@ -401,18 +401,18 @@ FileCollectionListTable.propTypes = {
     rowsPerPage: PropTypes.number,
     sectionApi: PropTypes.object,
     getItems: PropTypes.func,
-    selectable: PropTypes.bool,
-    fileResourceApi: PropTypes.func
+    selectable: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]),
+    fileResourceApi: PropTypes.object
 
 }
 
 ListTableRow.propTypes = {
     item: PropTypes.object,
     handleItemSelect: PropTypes.func,
-    isItemSelected: PropTypes.bool,
-    router: PropTypes.func,
+    isItemSelected: PropTypes.func,
+    router: PropTypes.object,
     sectionApi: PropTypes.object,
     openUploadModal: PropTypes.func,
     projectMappingPackages: PropTypes.array,
-    selectable: PropTypes.bool
+    selectable: PropTypes.oneOfType([PropTypes.func, PropTypes.bool])
 };
