@@ -1,3 +1,4 @@
+import * as React from 'react';
 import {useCallback, useEffect, useState} from "react";
 import {useFormik} from "formik";
 
@@ -24,6 +25,9 @@ import CodeMirrorDefault from "src/components/app/form/codeMirrorDefault";
 import {ForItemDataState} from "src/contexts/app/section/for-item-data-state";
 import {FileResourceEditForm} from 'src/sections/app/file-manager/file-resource-edit-form';
 import {testDataFileResourcesApi as sectionApi} from 'src/api/test-data-suites/file-resources';
+import {
+    MappingPackageFormSelect
+} from '../../../../../../sections/app/mapping-package/components/mapping-package-form-select';
 
 
 const useItem = (sectionApi, id) => {
@@ -56,7 +60,7 @@ const ExtraForm = (props) => {
     }, [formik]);
 
     return (
-        <>
+        <Stack gap={3}>
             <Grid xs={12}
                   md={12}>
                 <FormTextField formik={formik}
@@ -64,12 +68,19 @@ const ExtraForm = (props) => {
                                label="Identifier"
                                required/>
             </Grid>
+            <Grid xs={12}
+                  md={12}>
+                <MappingPackageFormSelect
+                    formik={formik}
+                    isRequired={sectionApi.isMappingPackageRequired ?? false}
+                    withDefaultPackage={false}
+                />
+            </Grid>
             <Paper
                 sx={{
                     alignItems: 'flex-start',
                     display: 'flex',
                     px: 2,
-                    my: 4
                 }}
                 variant="outlined"
             >
@@ -89,15 +100,14 @@ const ExtraForm = (props) => {
             </Paper>
             <Grid xs={12}
                   md={12}>
-                <CodeMirrorDefault
-                    label="RDF Manifestation"
-                    style={{resize: 'vertical', overflow: 'auto', height: 600}}
-                    value={formik.values.rdf_manifestation}
-                    onChange={value => formik.setValues('rdf_manifestation',value)}
-                    lang={'TTL'}
-                    />
+                <CodeMirrorDefault label="RDF Manifestation"
+                                   style={{resize: 'vertical', overflow: 'auto', height: 600}}
+                                   value={formik.values.rdf_manifestation}
+                                   onChange={value => formik.setValues('rdf_manifestation', value)}
+                                   lang={'TTL'}
+                />
             </Grid>
-        </>
+        </Stack>
     )
 }
 

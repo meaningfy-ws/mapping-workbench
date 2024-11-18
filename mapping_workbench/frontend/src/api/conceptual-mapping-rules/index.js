@@ -70,6 +70,13 @@ class ConceptualMappingRulesApi extends SectionApi {
         }
     }
 
+    async generateSHACL(request = {}) {
+        const endpoint = this.paths['generate_shacl'];
+        const data = {}
+        console.log(this.paths)
+        return appApi.post(endpoint, data)
+    }
+
     async getCMStatuses() {
         let endpoint = this.paths['statuses'];
         let params = {}
