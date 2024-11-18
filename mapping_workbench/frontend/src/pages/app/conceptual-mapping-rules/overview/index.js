@@ -1,28 +1,29 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {useFormik} from 'formik';
 import {useTranslation} from "react-i18next";
 import * as Yup from 'yup';
 
 import AddIcon from '@mui/icons-material/Add';
 import CachedIcon from '@mui/icons-material/Cached';
+
 import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import Switch from '@mui/material/Switch';
 import Button from '@mui/material/Button';
-import LoadingButton from '@mui/lab/LoadingButton';
+import Dialog from '@mui/material/Dialog';
 import SvgIcon from '@mui/material/SvgIcon';
 import Divider from '@mui/material/Divider';
+import Checkbox from '@mui/material/Checkbox';
 import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Dialog from '@mui/material/Dialog';
+import LoadingButton from '@mui/lab/LoadingButton';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
+import {sessionApi} from 'src/api/session';
 import {tokens} from "/src/locales/tokens";
 import {useDialog} from 'src/hooks/use-dialog';
 import {usePageView} from 'src/hooks/use-page-view';
@@ -33,13 +34,10 @@ import useItemsSearch from 'src/hooks/use-items-search';
 import {useItemsStore} from 'src/hooks/use-items-store';
 import {TableSearchBar} from 'src/sections/components/table-search-bar';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
+import {toastError, toastLoad, toastSuccess} from 'src/components/app-toast';
 import {ListTable} from "src/sections/app/conceptual-mapping-rule/list-table";
 import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
-import {sessionApi} from '../../../../api/session';
-import {toastError, toastLoad, toastSuccess} from '../../../../components/app-toast';
-import {
-    MappingPackageFormSelect
-} from '../../../../sections/app/mapping-package/components/mapping-package-form-select';
+import {MappingPackageFormSelect} from 'src/sections/app/mapping-package/components/mapping-package-form-select';
 
 const filterValues = [{label: 'All', value: ''},
     {label: 'Valid', value: 'valid'},
@@ -93,8 +91,6 @@ const Page = () => {
     });
 
     usePageView();
-
-    console.log('isSubmitting', formik.isSubmitting)
 
     return (
         <>
@@ -208,8 +204,6 @@ const Page = () => {
                             <MappingPackageFormSelect
                                 formik={formik}
                                 disabled={formik.isSubmitting}
-                                // isRequired={sectionApi.isMappingPackageRequired ?? false}
-                                // withDefaultPackage={itemctx.isNew}
                             />
                             <FormControlLabel
                                 control={
