@@ -272,14 +272,15 @@ export const EditForm = (props) => {
                                 />
                             </Grid>
                             <Grid xs={12}
-                                  md={12}>
+                                  lg={6}>
                                 <MappingPackageFormSelect
                                     formik={formik}
                                     isRequired={sectionApi.isMappingPackageRequired ?? false}
                                     withDefaultPackage={itemctx.isNew}
                                 />
                             </Grid>
-                            <Grid xs={12}>
+                            <Grid xs={12}
+                                  lg={6}>
                                 <TextField
                                     fullWidth
                                     label="Select Test Data"
@@ -304,9 +305,9 @@ export const EditForm = (props) => {
                                     }
                                 </TextField>
                             </Grid>
-                            <Grid md={12}
+                            <Grid xs={12}
                                   lg={6}>
-                                <Accordion>
+                                <Accordion sx={{width: '100%'}}>
                                     <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                                         Test Data Content
                                     </AccordionSummary>
@@ -320,15 +321,16 @@ export const EditForm = (props) => {
                                     </AccordionDetails>
                                 </Accordion>
                             </Grid>
-                            <Grid md={12}
+                            <Grid xs={12}
                                   lg={6}>
-                                <Grid>
+                                <Stack>
                                     <Accordion disabled={!rdfResultContent}
-                                               expanded={!!rdfResultContent}>
+                                               expanded={!!rdfResultContent}
+                                    >
                                         <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                                             RDF Result
                                         </AccordionSummary>
-                                        <AccordionDetails sx={{resize: 'vertical'}}>
+                                        <AccordionDetails>
                                             <FormCodeReadOnlyArea
                                                 disabled
                                                 name="triple_map_content"
@@ -339,14 +341,12 @@ export const EditForm = (props) => {
                                             />
                                         </AccordionDetails>
                                     </Accordion>
-                                </Grid>
-                                {hasRdfResult && !rdfResultContent && <>
-                                    <Alert severity="warning"
-                                           sx={{mt: 2}}>
-                                        <AlertTitle></AlertTitle>
-                                        Our service could not generate the RDF by using the provided resources.
-                                    </Alert>
-                                </>}
+                                    {hasRdfResult && !rdfResultContent &&
+                                        <Alert severity="warning"
+                                               sx={{mt: 2}}>
+                                            Our service could not generate the RDF by using the provided resources.
+                                        </Alert>}
+                                </Stack>
                             </Grid>
                         </Grid>
                     </CardContent>
