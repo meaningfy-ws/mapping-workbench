@@ -13,7 +13,12 @@ from mapping_workbench.backend.ontology.services.data import get_ontology_resour
 
 
 class CMtoSHACL():
-    def __init__(self, project_id: PydanticObjectId, prefixes: Dict[str, str], cm_rules: List[ConceptualMappingRule]):
+    def __init__(
+            self,
+            project_id: PydanticObjectId,
+            prefixes: Dict[str, str],
+            cm_rules: List[ConceptualMappingRule]
+    ):
         if not "dct" in prefixes or not "epo" in prefixes:
             raise Exception("One of required prefixes ['epo', 'dct'] is not defined/provided.")
 

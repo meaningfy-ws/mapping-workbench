@@ -8,7 +8,7 @@ from mapping_workbench.backend.conceptual_mapping_group.adapters.cmg_beanie_repo
 from mapping_workbench.backend.conceptual_mapping_group.services.cmg_generation import CMGroupServiceException
 from mapping_workbench.backend.conceptual_mapping_rule.adapters.cm_rule_beanie_repository import CMRuleNotFoundException
 from mapping_workbench.backend.conceptual_mapping_rule.models.api_request import \
-    APIRequestForGenerateCMAssertionsQueries
+    APIRequestForGenerateCMAssertionsQueries, APIRequestForGenerateSHACLShapes
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRuleOut, \
     ConceptualMappingRuleCreateIn, \
     ConceptualMappingRuleUpdateIn, ConceptualMappingRule, ConceptualMappingRuleTermsValidity, \
@@ -29,6 +29,8 @@ from mapping_workbench.backend.conceptual_mapping_rule.services.data import cm_r
     get_list_with_mapping_notes_out_from_cm_rule_by_project
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
+from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
+from mapping_workbench.backend.mapping_package.services.api import get_mapping_package
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.task_manager.services.task_wrapper import add_task
@@ -376,3 +378,30 @@ async def route_assign_cm_rules_to_mapping_package(
         return await assign_mapping_package_to_cm_rule(cm_rule, mp_ids)
     except (Exception,) as expected_exception:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(expected_exception))
+
+
+@router.post(
+    "/generate_shacl_shapes",
+    description=f"Generate SHACL Shapes",
+    name=f"generate_shacl_shapes",
+    status_code=status.HTTP_201_CREATED
+)
+async def route_generate_shacl_shapes(
+        data: APIRequestForGenerateSHACLShapes,
+        user: User = Depends(current_active_user)
+):
+    task_name = "Generate SHACL Shapes"
+    mapping_package: MappingPackage = None
+    package_id: PydanticObjectId = data.mapping_package_id
+    if package_id:
+        mapping_package = await get_mapping_package(package_id)
+        task_name += f" for {mapping_package.identifier}"
+
+    return add_task(
+        tasks.task_generate_shacl_shapes,
+        task_name,
+        None,
+        user.email,
+        False,
+        data.project_id, mapping_package, bool(data.close_shacl), user
+    ).task_metadata
