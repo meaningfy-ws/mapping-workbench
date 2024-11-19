@@ -2,32 +2,31 @@ import re
 from collections import defaultdict
 from typing import Dict, List
 
-from beanie import PydanticObjectId
 from pyshacl import validate
 from rdflib import Graph, URIRef, Literal, Namespace, BNode
 from rdflib.namespace import RDF, RDFS, XSD, SH
 
-from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
+from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRuleData
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
 from mapping_workbench.backend.ontology.services.data import get_ontology_resource_map
+from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestFileResource, SHACLTestFileResourceFormat
 
 
 class CMtoSHACL():
     def __init__(
             self,
-            project_id: PydanticObjectId,
             prefixes: Dict[str, str],
-            cm_rules: List[ConceptualMappingRule]
+            cm_rules: List[ConceptualMappingRuleData],
+            close_shacl: bool = True
     ):
         if not "dct" in prefixes or not "epo" in prefixes:
             raise Exception("One of required prefixes ['epo', 'dct'] is not defined/provided.")
 
-        self.project_id = project_id
         self.vocab = prefixes
         self.vocab_exceptions = ["at-voc"]
         self.cm_rules = cm_rules
 
-        self.close = True
+        self.close = close_shacl
 
         self.datatype = get_ontology_resource_map("xmlschema11_2.json")
 
@@ -46,25 +45,20 @@ class CMtoSHACL():
         self.constraint_dict = {SH["datatype"]: {}, SH["class"]: {}}
 
     def translate(self):
-        # load the data
-        self.metadata_info, self.class_path, self.property_path, self.field_xpath, self.controlled_list_c1, self.field_id = self.dL.load()
-        self.controlled_list_c1 = self.controlled_list_c1["CL1"]
-
         # loop through the rules
         num = 0
         for cm_rule in self.cm_rules:
             struct_elem: StructuralElement = cm_rule.source_structural_element
             xpath = cm_rule.source_structural_element.absolute_xpath
-        for xpath, class_path, property_path, ID in zip(self.field_xpath, self.class_path, self.property_path,
-                                                        self.field_id):
+            class_path = cm_rule.target_class_path
+            property_path = cm_rule.target_property_path
+            elem_id = struct_elem.sdk_element_id
+
             num += 1
-            print(f"Processing Rule {num}...")
-            # print(f"C: {class_path}, P: {property_path}")
-            if 'FILTER' in property_path or num == 551:  # TODO: to be fixed Lot and FILTER
-                continue
+            print(f"Processing Rule {num} [{elem_id}]...")
 
             c_list = p_list = []
-            if "{" in property_path and "UNION" in property_path:
+            if property_path and "{" in property_path and "UNION" in property_path:
                 property_path = [i.replace("{", "").replace("}", "").strip() for i in property_path.split("UNION")]
                 for p in property_path:
                     c_list = self.parse_class_path(class_path, xpath)
@@ -82,22 +76,22 @@ class CMtoSHACL():
                     c = c_list[index]
                     p = p_list[index]
                     if index == len(c_list) - 2:
-                        self.add_node_property_shape(c, p, c_list[index + 1], p_list[index + 1], ID, True)
+                        self.add_node_property_shape(c, p, c_list[index + 1], p_list[index + 1], elem_id, True)
                     else:
-                        self.add_node_property_shape(c, p, c_list[index + 1], p_list[index + 1], ID)
+                        self.add_node_property_shape(c, p, c_list[index + 1], p_list[index + 1], elem_id)
 
         self.g = self.combine_shapes_with_same_path(self.g)
 
-    def add_node_property_shape(self, c, p, next_c, next_p, ID, is_last=False):
+    def add_node_property_shape(self, c, p, next_c, next_p, elem_id, is_last=False):
         c = URIRef(c)
         p = URIRef(p)
         if c not in self.identifiers:
             self.identifiers[c] = {}
             self.g.add((c, RDF.type, SH.NodeShape))
-            self.g.add((c, self.dct_source, Literal(ID)))
+            self.g.add((c, self.dct_source, Literal(elem_id)))
             if self.close:
                 self.g.add((c, SH.closed, Literal("true", datatype=XSD.boolean)))
-            self.g.add((c, SH.target_class, c))
+            self.g.add((c, SH.targetClass, c))
             self.g.add((c, SH["class"], c))
             self.g.add((c, SH["nodeKind"], SH["IRI"]))
         if p not in self.identifiers[c]:
@@ -105,13 +99,13 @@ class CMtoSHACL():
             self.identifiers[c][p] = [ps]
             self.g.add((c, SH.property, ps))
             self.g.add((ps, SH.path, p))
-            self.g.add((ps, self.dct_source, Literal(ID)))
+            self.g.add((ps, self.dct_source, Literal(elem_id)))
         else:
             ps = BNode()
             self.identifiers[c][p].append(ps)
             self.g.add((c, SH.property, ps))
             self.g.add((ps, SH.path, p))
-            self.g.add((ps, self.dct_source, Literal(ID)))
+            self.g.add((ps, self.dct_source, Literal(id)))
 
         if is_last == False and next_c is not None:
             self.g.add((ps, SH["class"], URIRef(next_c)))
@@ -119,34 +113,24 @@ class CMtoSHACL():
         elif is_last:
             next_c_type = self.check_type(next_c)
             if next_c_type == "class":
-                # self.g.add((self.identifiers[c][p], SH["class"], URIRef(next_c)))
-                # currentClass = self.constraint_dict[SH["class"]].get(self.identifiers[c][p], [])
-                # currentClass.append(URIRef(next_c))
-                # self.constraint_dict[SH["class"]][self.identifiers[c][p]] = currentClass
                 self.g.add((ps, SH["nodeKind"], SH["IRI"]))
                 self.g.add((ps, SH["class"], URIRef(next_c)))
             elif next_c_type == "datatype":
-                # self.g.add((self.identifiers[c][p], SH["datatype"], next_c))
-                # currentDatatype = self.constraint_dict[SH["datatype"]].get(self.identifiers[c][p], [])
-                # currentDatatype.append(next_c)
-                # self.constraint_dict[SH["datatype"]][self.identifiers[c][p]] = currentDatatype
                 self.g.add((ps, SH["nodeKind"], SH["Literal"]))
                 self.g.add((ps, SH["datatype"], next_c))
             elif next_c_type == None:
                 self.g.add((ps, SH["nodeKind"], SH["IRI"]))
             if next_p != "?value":
-                # self.g.add((self.identifiers[c][p], SH["hasValue"], Literal(next_p)))
-                # currentIn = self.shacl_in_dict.get(self.identifiers[c][p], [])
-                # currentIn.append(Literal(next_p))
-                # self.shacl_in_dict[self.identifiers[c][p]] = currentIn
                 bn = BNode()
                 self.g.add((ps, SH["in"], bn))
                 self.g.add((bn, RDF.first, Literal(next_p)))
                 self.g.add((bn, RDF.rest, RDF.nil))
-                # TODO to be added nodeKind
+                # TODO: to be added nodeKind
 
     def parse_class_path(self, class_path, xpath):
         class_path_clean = []
+        if not class_path:
+            return class_path_clean
         if "<http" not in class_path:
             class_path = class_path.split("/")
         else:
@@ -154,31 +138,18 @@ class CMtoSHACL():
         for c in class_path:
             if c == "":
                 continue
-            if "(from CL1)" in c:
-                c = c.replace("(from CL1)", "")
-                c = self.controlled_class_replace(c.strip(), "CL1", xpath)
-                class_path_clean.append(self.word_to_url(c))
-            elif "(from CL2)" in c:
-                c = c.replace("(from CL2)", "")
-                c = self.controlled_class_replace(c.strip(), "CL2", xpath)
-                class_path_clean.append(self.word_to_url(c))
-            else:
-                class_path_clean.append(self.word_to_url(c.strip()))
+            class_path_clean.append(self.word_to_url(c.strip()))
 
-        # # Check final element is class or datatype
-        # if class_path_clean[-1][1] == None:
-        #     class_path_clean[-1] = (None, None)
-        # else:
-        #     t = self.check_type(class_path_clean[-1][1])
-        #     class_path_clean[-1] = (SH[t], class_path_clean[-1][1])
         return class_path_clean
 
     def parse_property_path(self, property_path):
         property_path_clean = []
+        if not property_path:
+            return property_path_clean
         if "?this" in property_path:
             property_path = property_path.replace("?this", "").strip()
         else:
-            raise Exception("The property path should start with ?this")
+            raise Exception(f"The property path should start with ?this: {property_path}")
         property_path = property_path.strip()
         if property_path[-1] == ".":
             property_path = property_path[:-1]
@@ -187,30 +158,17 @@ class CMtoSHACL():
         else:
             property_path = self.split_string_preserve_url(property_path)
         p = property_path.pop(-1).strip()
-        property_path.extend(p.split(" "))
+        property_path.extend(p.replace('(', ' ').replace(')', ' ').split(" "))
+
         for p in property_path:
             if p == "":
                 continue
             property_path_clean.append(self.word_to_url(p.strip()))
 
-        # # Check final element is variable or constant IRI
-        # if property_path_clean[-1][1] == "?value":
-        #     pass
-        # else:
-        #     property_path_clean[-1] = (SH["hasValue"], property_path_clean[-1][1]) # TODO: To be fixed
-
         return property_path_clean
 
-    def controlled_class_replace(self, c, list_type, xpath):
-        class_xpath_fragment = xpath.split("/")[1]
-        if list_type == "CL1":
-            c = self.controlled_list_c1.get(class_xpath_fragment, c)
-        elif list_type == "CL2":
-            c = c  # TODO: DOUBLE CHECK CL2 CONTROLLED LIST
-        return c
-
     def word_to_url(self, word):
-        if word == "?value" or word == "true" or word == "false":
+        if word in ["?value", "?type", ".", "true", "false"]:
             return word
         # elif word.startswith("<") and (re.match(r'https?://', word[1:-1]) or re.match(r'http?://', word[1:-1])): #TODO: ASK FOR THIS TYPO
         elif word.startswith("<"):
@@ -227,7 +185,9 @@ class CMtoSHACL():
             else:
                 raise Exception(f"Prefix {word[0]} not found in the vocabulary")
         else:
-            raise Exception(f"Term {word} is not a URL or a prefix")
+            # raise Exception(f"Term {word} is not a URL or a prefix")
+            pass
+        return word
 
     @classmethod
     def check_type(cls, url):
@@ -255,13 +215,7 @@ class CMtoSHACL():
 
         return parts
 
-    def write_shape_to_file(self, file_name):
-        self.g.serialize(destination=file_name, format='turtle')
-        # write comments to the beginning of the file
-        with open(file_name, 'r') as original: data = original.read()
-        with open(file_name, 'w') as modified: modified.write(f"{self.metadata_info}\n" + data)
-
-    def evaluate(self, args):
+    def evaluate(self) -> List[SHACLTestFileResource]:
         # start the translation
         self.translate()
 
@@ -269,14 +223,18 @@ class CMtoSHACL():
         shacl_validation = Graph()
         shacl_validation.parse("https://www.w3.org/ns/shacl-shacl")
 
-        r = validate(self.g, shacl_graph=shacl_validation)
-        if not r[0]:
-            print(r[2])
+        conforms, report_graph, report_text = validate(self.g, shacl_graph=shacl_validation)
 
-        if args.output_file:
-            self.write_shape_to_file(args.output_file)
-        else:
-            self.write_shape_to_file(args.cm_file + ".shape.ttl")
+        if not conforms:
+            print(report_text)
+
+        shacl_file_resource: SHACLTestFileResource = SHACLTestFileResource(
+            format=SHACLTestFileResourceFormat.SHACL_TTL,
+            title="cm2shacl.shape.ttl",
+            filename="cm2shacl.shape.ttl",
+            content=self.g.serialize(format='turtle')
+        )
+        return [shacl_file_resource]
 
     @classmethod
     def combine_shapes_with_same_path(cls, graph):
@@ -371,9 +329,9 @@ class CMtoSHACL():
                 g.add((bn, RDF.first, bn_prop))
                 g.add((bn_prop, SH.property, i))
 
-                nextBn = BNode()
-                g.add((bn, RDF.rest, nextBn))
-                bn = nextBn
+                next_bn = BNode()
+                g.add((bn, RDF.rest, next_bn))
+                bn = next_bn
             g.remove((ns, SH.property, property_shapes[-1]))
             bn_prop = BNode()
             g.add((bn, RDF.first, bn_prop))

@@ -63,6 +63,10 @@ async def discover_and_save_prefix_namespace(
 
 
 async def get_prefixes_definitions(project_id: PydanticObjectId) -> Dict[str, str]:
+    return await get_project_prefixes_definitions(project_id)
+
+
+async def get_project_prefixes_definitions(project_id: PydanticObjectId) -> Dict[str, str]:
     return {x.prefix: (x.uri or '') for x in (await Namespace.find(
         Namespace.project == Project.link_from_id(project_id)
     ).to_list())}

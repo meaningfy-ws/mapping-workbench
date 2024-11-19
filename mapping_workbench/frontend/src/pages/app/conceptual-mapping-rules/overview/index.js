@@ -63,14 +63,11 @@ const Page = () => {
     const formik = useFormik({
         initialValues,
         validationSchema: Yup.object({
-            mapping_package_id:
-                Yup
-                    .string()
         }),
         onSubmit: (values, helpers) => {
             const toastId = toastLoad("Generating SHACL Shapes...")
             helpers.setSubmitting(true)
-
+            values.mapping_package_id = values.mapping_package_id ? values.mapping_package_id : null;
             sectionApi.generateSHACL(values)
                 .then((res) => {
                     helpers.setStatus({success: true});
@@ -83,7 +80,8 @@ const Page = () => {
                     toastError(`SHACL Shapes Generator failed: ${err.message}.`, toastId);
                 })
                 .finally(res => {
-                    helpers.setSubmitting(false)
+                    helpers.setSubmitting(false);
+                    generateSHACLDialog.handleClose();
                 });
         }
     });

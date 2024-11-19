@@ -11,8 +11,8 @@ from mapping_workbench.backend.ontology.adapters.namespace_handler import Namesp
 from mapping_workbench.backend.ontology.models.namespace import Namespace
 from mapping_workbench.backend.ontology.models.term import Term, TermValidityResponse, TermType
 from mapping_workbench.backend.ontology.services.namespaces import discover_and_save_prefix_namespace, get_ns_handler, \
-    get_prefixes_definitions, get_custom_prefixes_definitions, get_project_ns_definitions, get_namespace_by_uri, \
-    get_default_prefixes_definitions
+    get_custom_prefixes_definitions, get_project_ns_definitions, get_namespace_by_uri, \
+    get_default_prefixes_definitions, get_prefixes_definitions
 from mapping_workbench.backend.ontology_suite.adapters.ontology_file_beanie_repository import \
     OntologyFileResourceBeanieRepository
 from mapping_workbench.backend.ontology_suite.models.ontology_file_resource import OntologyFileResource

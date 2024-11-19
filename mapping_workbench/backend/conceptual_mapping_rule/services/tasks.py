@@ -27,5 +27,5 @@ def task_generate_shacl_shapes(
 ):
     run_task(
         generate_shacl_shapes_from_cm_rules,
-        project_id, mapping_package, close_shacl, user
+        project_id, mapping_package, close_shacl, None, user
     )
