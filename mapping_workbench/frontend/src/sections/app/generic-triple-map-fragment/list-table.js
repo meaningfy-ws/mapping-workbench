@@ -1,9 +1,7 @@
 import {Fragment, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
-import CodeMirror from '@uiw/react-codemirror';
 import {turtle} from 'codemirror-lang-turtle';
 import {yaml} from '@codemirror/lang-yaml';
-import {githubDark, githubLight} from "@uiw/codemirror-themes-all";
 
 import EditIcon from '@untitled-ui/icons-react/build/esm/Edit05';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -11,7 +9,6 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Box from "@mui/system/Box";
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
-import Link from '@mui/material/Link';
 import Table from '@mui/material/Table';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -34,11 +31,14 @@ import timeTransformer from "src/utils/time-transformer";
 import {useGlobalState} from "src/hooks/use-global-state";
 import {mappingPackagesApi} from "src/api/mapping-packages";
 import TablePagination from "src/sections/components/table-pagination";
+import CodeMirrorDefault from 'src/components/app/form/codeMirrorDefault';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import {conceptualMappingRulesApi} from 'src/api/conceptual-mapping-rules';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import {MappingPackageCheckboxList} from 'src/sections/app/mapping-package/components/mapping-package-real-checkbox-list';
+import {
+    MappingPackageCheckboxList
+} from 'src/sections/app/mapping-package/components/mapping-package-real-checkbox-list';
 
 
 export const ListTableMappingPackages = (props) => {
@@ -84,27 +84,21 @@ export const ListTableMappingPackages = (props) => {
         {!!ruleMappingPackages.length && <Box sx={{mb: 1}}>
             {ruleMappingPackages.map(x => <Chip key={"mapping_package_" + x.id}
                                                 label={x.identifier}/>)}
-        </Box>
-
-        }
-        <Box sx={{
-            position: "absolute", left: "50%", top: "50%",
-        }}>
-            {isHovered && <Button
+        </Box>}
+        {isHovered && <Box sx={{position: "absolute", left: "50%", top: "50%"}}>
+            <Button
                 aria-describedby={"mapping_packages_dialog_" + item._id}
                 variant="contained"
                 size="small"
                 color="primary"
                 onClick={mappingPackagesDialog.handleOpen}
-                sx={{
-                    marginLeft: "-50%", marginTop: "-50%"
-                }}
+                sx={{marginLeft: "-50%", marginTop: "-50%"}}
             >
                 <SvgIcon fontSize="small">
                     <EditIcon/>
                 </SvgIcon>
-            </Button>}
-        </Box>
+            </Button>
+        </Box>}
         <Dialog
             id={"mapping_packages_dialog_" + item._id}
             onClose={mappingPackagesDialogHandleClose}
@@ -148,12 +142,9 @@ export const ListTable = (props) => {
         }, rowsPerPage = 0, sectionApi
     } = props;
 
-    const lng = {TTL: {mode: 'text/turtle', extension: turtle}, YAML: {mode: 'text/yaml', extension: yaml}}
-
     const [currentItem, setCurrentItem] = useState(null);
     const [hoveredItem, setHoveredItem] = useState(null);
 
-    const theme = useTheme();
     const {timeSetting} = useGlobalState()
 
     const handleItemToggle = itemId => setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
@@ -243,8 +234,11 @@ export const ListTable = (props) => {
                                     >
                                         {item.triple_map_content &&
                                             <IconButton onClick={() => handleItemToggle(item_id)}>
-                                                <SvgIcon sx={{transform: isCurrent ? 'rotate(90deg)' :'', transition: 'linear 0.2s'}}>
-                                                    { <ChevronRightIcon/> }
+                                                <SvgIcon sx={{
+                                                    transform: isCurrent ? 'rotate(90deg)' : '',
+                                                    transition: 'linear 0.2s'
+                                                }}>
+                                                    {<ChevronRightIcon/>}
                                                 </SvgIcon>
                                             </IconButton>}
                                     </TableCell>
@@ -297,17 +291,11 @@ export const ListTable = (props) => {
                                                     xs={12}
                                                 >
                                                     <Box>Content:</Box>
-                                                    <CodeMirror
-                                                        theme={theme.palette.mode === 'dark' ? githubDark : githubLight}
+                                                    <CodeMirrorDefault
+                                                        style={{resize: 'vertical', overflow: 'auto', height: 600}}
                                                         value={item.triple_map_content}
-                                                        extensions={[lng[item.format].extension()]}
-                                                        editable={false}
-                                                        style={{
-                                                            resize: 'vertical',
-                                                            overflow: 'auto',
-                                                            height: 600
-                                                        }}
-                                                    />
+                                                        lang={item.format}
+                                                        disabled/>
                                                 </Grid>
                                             </Grid>
                                         </CardContent>
