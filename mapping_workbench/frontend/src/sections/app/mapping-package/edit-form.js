@@ -24,6 +24,7 @@ import {FormTextField} from "src/components/app/form/text-field";
 import {resourceCollectionsApi} from "src/api/resource-collections";
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {ListSelectorSelect as ResourceListSelector} from "src/components/app/list-selector/select";
+import {testDataSuitesApi} from '../../../api/test-data-suites';
 
 
 export const EditForm = (props) => {
@@ -43,7 +44,7 @@ export const EditForm = (props) => {
         start_date: item.start_date || '',
         end_date: item.end_date || '',
         eforms_sdk_versions: item.eforms_sdk_versions || '',
-        //test_data_suites: (item.test_data_suites || []).map(x => x.id),
+        test_data_suites: (item.test_data_suites || []).map(x => x.id),
         shacl_test_suites: (item.shacl_test_suites || []).map(x => x.id),
         sparql_test_suites: (item.sparql_test_suites || []).map(x => x.id),
         resource_collections: (item.resource_collections || []).map(x => x.id)
@@ -184,6 +185,21 @@ export const EditForm = (props) => {
             {currentTab === 'tabResources' &&
                 <>
                     <Card sx={{mt: 3}}>
+                        <CardHeader title={testDataSuitesApi.SECTION_TITLE}/>
+                        <CardContent sx={{pt: 0}}>
+                            <Grid container
+                                  spacing={3}>
+                                <Grid xs={12}
+                                      md={12}>
+                                    <ResourceListSelector
+                                        valuesApi={testDataSuitesApi}
+                                        listValues={formik.values.test_data_suites}/>
+                                </Grid>
+                            </Grid>
+                        </CardContent>
+                    </Card>
+
+                    <Card sx={{mt: 3}}>
                         <CardHeader title={shaclTestSuitesApi.SECTION_TITLE}/>
                         <CardContent sx={{pt: 0}}>
                             <Grid container
@@ -197,6 +213,7 @@ export const EditForm = (props) => {
                             </Grid>
                         </CardContent>
                     </Card>
+
                     <Card sx={{mt: 3}}>
                         <CardHeader title={sparqlTestSuitesApi.SECTION_TITLE}/>
                         <CardContent sx={{pt: 0}}>
@@ -211,6 +228,7 @@ export const EditForm = (props) => {
                             </Grid>
                         </CardContent>
                     </Card>
+
                     <Card sx={{mt: 3}}>
                         <CardHeader title={resourceCollectionsApi.SECTION_TITLE}/>
                         <CardContent sx={{pt: 0}}>
