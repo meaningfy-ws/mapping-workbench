@@ -1,4 +1,5 @@
-import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
 import Chip from '@mui/material/Chip';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
@@ -6,15 +7,15 @@ import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
 import {paths} from 'src/paths';
-import {useRouter} from "src/hooks/use-router";
-import {mappingPackagesApi as sectionApi} from 'src/api/mapping-packages';
-import {RouterLink} from 'src/components/router-link';
 import {Seo} from 'src/components/seo';
+import {useRouter} from "src/hooks/use-router";
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
-import {ForItemEditForm} from "src/contexts/app/section/for-item-form";
+import {RouterLink} from 'src/components/router-link';
+import {EditForm} from "src/sections/app/mapping-package/edit-form";
 import {useItem} from "src/contexts/app/section/for-item-data-state";
-import {EditForm} from "../../../../sections/app/mapping-package/edit-form";
+import {ForItemEditForm} from "src/contexts/app/section/for-item-form";
+import {mappingPackagesApi as sectionApi} from 'src/api/mapping-packages';
 
 
 const Page = () => {
@@ -53,7 +54,7 @@ const Page = () => {
                             underline="hover"
                         >
                             <SvgIcon sx={{mr: 1}}>
-                                <ArrowLeftIcon/>
+                                <ArrowBackIcon/>
                             </SvgIcon>
                             <Typography variant="subtitle2">
                                 {sectionApi.SECTION_TITLE}

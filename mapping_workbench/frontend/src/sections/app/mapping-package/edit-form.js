@@ -1,7 +1,11 @@
+
+import {useState} from 'react';
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
 
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -20,10 +24,12 @@ import {FormTextField} from "src/components/app/form/text-field";
 import {resourceCollectionsApi} from "src/api/resource-collections";
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {ListSelectorSelect as ResourceListSelector} from "src/components/app/list-selector/select";
+import {testDataSuitesApi} from '../../../api/test-data-suites';
 
 
 export const EditForm = (props) => {
     const {itemctx, ...other} = props;
+    const [currentTab, setCurrentTab] = useState('tabEdit')
     const router = useRouter();
     const sectionApi = itemctx.api;
     const item = itemctx.data;
@@ -38,7 +44,7 @@ export const EditForm = (props) => {
         start_date: item.start_date || '',
         end_date: item.end_date || '',
         eforms_sdk_versions: item.eforms_sdk_versions || '',
-        //test_data_suites: (item.test_data_suites || []).map(x => x.id),
+        test_data_suites: (item.test_data_suites || []).map(x => x.id),
         shacl_test_suites: (item.shacl_test_suites || []).map(x => x.id),
         sparql_test_suites: (item.sparql_test_suites || []).map(x => x.id),
         resource_collections: (item.resource_collections || []).map(x => x.id)
@@ -95,132 +101,150 @@ export const EditForm = (props) => {
     });
 
     return (
+
         <form onSubmit={formik.handleSubmit}
               {...other}>
-            <Card>
-                <CardHeader title={(itemctx.isNew ? 'Create' : 'Edit') + ' ' + sectionApi.SECTION_ITEM_TITLE}/>
-                <CardContent sx={{pt: 0}}>
-                    <Grid container
-                          spacing={3}>
-                        <Grid xs={12}
-                              md={12}>
-                            <FormTextField formik={formik}
-                                           name="title"
-                                           label="Title"
-                                           required/>
+            {!itemctx.isNew && <Tabs value={currentTab}
+                                     onChange={(e, v) => setCurrentTab(v)}>
+                <Tab label='Edit Details'
+                     value='tabEdit'></Tab>
+                <Tab label='Edit Resources'
+                     value='tabResources'></Tab>
+            </Tabs>}
+            {currentTab === 'tabEdit' &&
+                <Card sx={{mt: 3}}>
+                    <CardHeader title={(itemctx.isNew ? 'Create' : 'Edit') + ' ' + sectionApi.SECTION_ITEM_TITLE}/>
+                    <CardContent sx={{pt: 0}}>
+                        <Grid container
+                              spacing={3}>
+                            <Grid xs={12}
+                                  md={12}>
+                                <FormTextField formik={formik}
+                                               name="title"
+                                               label="Title"
+                                               required/>
+                            </Grid>
+                            <Grid xs={12}
+                                  md={12}>
+                                <FormTextArea formik={formik}
+                                              name="description"
+                                              label="Description"/>
+                            </Grid>
+                            <Grid xs={12}
+                                  md={12}>
+                                <FormTextField formik={formik}
+                                               name="identifier"
+                                               label="Identifier"
+                                               required/>
+                            </Grid>
+                            <Grid xs={12}
+                                  md={12}>
+                                <FormTextField formik={formik}
+                                               name="mapping_version"
+                                               label="Mapping Version"/>
+                            </Grid>
+                            <Grid xs={12}
+                                  md={12}>
+                                <FormTextField formik={formik}
+                                               name="epo_version"
+                                               label="EPO Version"/>
+                            </Grid>
+                            <Grid xs={12}
+                                  md={12}>
+                                <FormTextField formik={formik}
+                                               name="eform_subtypes"
+                                               label="eForms Subtype"/>
+                            </Grid>
+                            <Grid xs={12}
+                                  md={6}>
+                                <FormTextField formik={formik}
+                                               name="start_date"
+                                               label="Start Date"
+                                               helperText="YYYY-MM-DD"
+                                />
+                            </Grid>
+                            <Grid xs={12}
+                                  md={6}>
+                                <FormTextField formik={formik}
+                                               name="end_date"
+                                               label="End Date"
+                                               helperText="YYYY-MM-DD"
+                                />
+                            </Grid>
+                            <Grid xs={12}
+                                  md={12}>
+                                <FormTextField formik={formik}
+                                               name="eforms_sdk_versions"
+                                               label="eForms XSD version"/>
+                            </Grid>
                         </Grid>
-                        <Grid xs={12}
-                              md={12}>
-                            <FormTextArea formik={formik}
-                                          name="description"
-                                          label="Description"/>
-                        </Grid>
-                        <Grid xs={12}
-                              md={12}>
-                            <FormTextField formik={formik}
-                                           name="identifier"
-                                           label="Identifier"
-                                           required/>
-                        </Grid>
-                        <Grid xs={12}
-                              md={12}>
-                            <FormTextField formik={formik}
-                                           name="mapping_version"
-                                           label="Mapping Version"/>
-                        </Grid>
-                        <Grid xs={12}
-                              md={12}>
-                            <FormTextField formik={formik}
-                                           name="epo_version"
-                                           label="EPO Version"/>
-                        </Grid>
-                        <Grid xs={12}
-                              md={12}>
-                            <FormTextField formik={formik}
-                                           name="eform_subtypes"
-                                           label="eForms Subtype"/>
-                        </Grid>
-                        <Grid xs={12}
-                              md={6}>
-                            <FormTextField formik={formik}
-                                           name="start_date"
-                                           label="Start Date"
-                                           helperText="YYYY-MM-DD"
-                            />
-                        </Grid>
-                        <Grid xs={12}
-                              md={6}>
-                            <FormTextField formik={formik}
-                                           name="end_date"
-                                           label="End Date"
-                                           helperText="YYYY-MM-DD"
-                            />
-                        </Grid>
-                        <Grid xs={12}
-                              md={12}>
-                            <FormTextField formik={formik}
-                                           name="eforms_sdk_versions"
-                                           label="eForms XSD version"/>
-                        </Grid>
-                    </Grid>
-                </CardContent>
-            </Card>
-            {/*<Card sx={{mt: 3}}>*/}
-            {/*    <CardHeader title={testDataSuitesApi.SECTION_TITLE}/>*/}
-            {/*    <CardContent sx={{pt: 0}}>*/}
-            {/*        <Grid container*/}
-            {/*              spacing={3}>*/}
-            {/*            <Grid xs={12}*/}
-            {/*                  md={12}>*/}
-            {/*                <ResourceListSelector*/}
-            {/*                    valuesApi={testDataSuitesApi}*/}
-            {/*                    listValues={formik.values.test_data_suites}/>*/}
-            {/*            </Grid>*/}
-            {/*        </Grid>*/}
-            {/*    </CardContent>*/}
-            {/*</Card>*/}
-            <Card sx={{mt: 3}}>
-                <CardHeader title={shaclTestSuitesApi.SECTION_TITLE}/>
-                <CardContent sx={{pt: 0}}>
-                    <Grid container
-                          spacing={3}>
-                        <Grid xs={12}
-                              md={12}>
-                            <ResourceListSelector
-                                valuesApi={shaclTestSuitesApi}
-                                listValues={formik.values.shacl_test_suites}/>
-                        </Grid>
-                    </Grid>
-                </CardContent>
-            </Card>
-            <Card sx={{mt: 3}}>
-                <CardHeader title={sparqlTestSuitesApi.SECTION_TITLE}/>
-                <CardContent sx={{pt: 0}}>
-                    <Grid container
-                          spacing={3}>
-                        <Grid xs={12}
-                              md={12}>
-                            <ResourceListSelector
-                                valuesApi={sparqlTestSuitesApi}
-                                listValues={formik.values.sparql_test_suites}/>
-                        </Grid>
-                    </Grid>
-                </CardContent>
-            </Card>
-            <Card sx={{mt: 3}}>
-                <CardHeader title={resourceCollectionsApi.SECTION_TITLE}/>
-                <CardContent sx={{pt: 0}}>
-                    <Grid container
-                          spacing={3}>
-                        <Grid xs={12}
-                              md={12}>
-                            <ResourceListSelector
-                                valuesApi={resourceCollectionsApi}
-                                listValues={formik.values.resource_collections}/>
-                        </Grid>
-                    </Grid>
-                </CardContent>
-            </Card>
+                    </CardContent>
+                </Card>
+            }
+
+            {currentTab === 'tabResources' &&
+                <>
+                    <Card sx={{mt: 3}}>
+                        <CardHeader title={testDataSuitesApi.SECTION_TITLE}/>
+                        <CardContent sx={{pt: 0}}>
+                            <Grid container
+                                  spacing={3}>
+                                <Grid xs={12}
+                                      md={12}>
+                                    <ResourceListSelector
+                                        valuesApi={testDataSuitesApi}
+                                        listValues={formik.values.test_data_suites}/>
+                                </Grid>
+                            </Grid>
+                        </CardContent>
+                    </Card>
+
+                    <Card sx={{mt: 3}}>
+                        <CardHeader title={shaclTestSuitesApi.SECTION_TITLE}/>
+                        <CardContent sx={{pt: 0}}>
+                            <Grid container
+                                  spacing={3}>
+                                <Grid xs={12}
+                                      md={12}>
+                                    <ResourceListSelector
+                                        valuesApi={shaclTestSuitesApi}
+                                        listValues={formik.values.shacl_test_suites}/>
+                                </Grid>
+                            </Grid>
+                        </CardContent>
+                    </Card>
+
+                    <Card sx={{mt: 3}}>
+                        <CardHeader title={sparqlTestSuitesApi.SECTION_TITLE}/>
+                        <CardContent sx={{pt: 0}}>
+                            <Grid container
+                                  spacing={3}>
+                                <Grid xs={12}
+                                      md={12}>
+                                    <ResourceListSelector
+                                        valuesApi={sparqlTestSuitesApi}
+                                        listValues={formik.values.sparql_test_suites}/>
+                                </Grid>
+                            </Grid>
+                        </CardContent>
+                    </Card>
+
+                    <Card sx={{mt: 3}}>
+                        <CardHeader title={resourceCollectionsApi.SECTION_TITLE}/>
+                        <CardContent sx={{pt: 0}}>
+                            <Grid container
+                                  spacing={3}>
+                                <Grid xs={12}
+                                      md={12}>
+                                    <ResourceListSelector
+                                        valuesApi={resourceCollectionsApi}
+                                        listValues={formik.values.resource_collections}/>
+                                </Grid>
+                            </Grid>
+                        </CardContent>
+                    </Card>
+                </>
+            }
 
             <Card sx={{mt: 3}}>
                 <Stack
