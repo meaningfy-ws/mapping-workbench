@@ -466,6 +466,7 @@ export const EditForm = (props) => {
                                         label="Structural Element"
                                         onChange={handleSourceStructuralElementSelect}
                                         select
+                                        required={true}
                                         value={formik.values.source_structural_element}
                                     >
                                         <MenuItem value={null}>&nbsp;</MenuItem>

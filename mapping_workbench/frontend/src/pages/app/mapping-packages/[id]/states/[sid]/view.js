@@ -192,24 +192,30 @@ const Page = () => {
                 {currentTab === 'xpath' && (
                     <Card>
                         <CardContent>
-                            <XpathValidationReportView sid={sid}
-                                                       reportTree={validationReportTree}/>
+                            <XpathValidationReportView
+                                sid={sid}
+                                reportTree={validationReportTree}
+                            />
                         </CardContent>
                     </Card>
                 )}
                 {currentTab === 'sparql' && (
                     <Card>
                         <CardContent>
-                            <SparqlValidationReport sid={sid}
-                                                    reportTree={validationReportTree}/>
+                            <SparqlValidationReport
+                                sid={sid}
+                                reportTree={validationReportTree}
+                            />
                         </CardContent>
                     </Card>
                 )}
                 {currentTab === 'shacl' && (
                     <Card>
                         <CardContent>
-                            <ShaclValidationReport sid={sid}
-                                                   reportTree={validationReportTree}/>
+                            <ShaclValidationReport
+                                sid={sid}
+                                reportTree={validationReportTree}
+                            />
                         </CardContent>
                     </Card>
                 )}

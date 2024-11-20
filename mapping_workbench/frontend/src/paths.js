@@ -323,7 +323,7 @@ export const apiPaths = {
         mapping_notes: '/conceptual_mapping_rules/:id/mapping_notes',
         editorial_notes: '/conceptual_mapping_rules/:id/editorial_notes',
         feedback_notes: '/conceptual_mapping_rules/:id/feedback_notes',
-        generate_shacl: '/conceptual_mapping_rules/generate_shacl',
+        generate_shacl: '/conceptual_mapping_rules/generate_shacl_shapes',
         tasks: {
             generate_cm_assertions_queries: '/conceptual_mapping_rules/tasks/generate_cm_assertions_queries'
         }

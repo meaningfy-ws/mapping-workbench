@@ -22,6 +22,10 @@ import PropTypes from "prop-types";
 import {useHighlighterTheme} from "../../../hooks/use-highlighter-theme";
 import {TableFilterHeader} from "../../../layouts/app/table-filter-header/table-filter-header";
 
+const Condition = ({text, value}) => {
+    const color = value ? 'green' : 'red'
+    return <span style={{textWrap: 'nowrap'}}>{`${text} `}<b style={{color}}>{`${value}`}</b></span>
+}
 
 export const ListTableFile = (props) => {
 
@@ -96,9 +100,6 @@ export const ListTableFile = (props) => {
                                     <SorterHeader fieldName="result"
                                                   title="result"/>
                                 </TableCell>
-                                <TableCell align="center">
-                                    Details
-                                </TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -167,15 +168,18 @@ export const ListTableFile = (props) => {
                                         </TableCell>
                                         <TableCell align="left">
                                             <Box>
-                                                <Typography>{`Query result: ${item.query_result}`}</Typography>
+                                                <Condition text='Fields covered:'
+                                                           value={item.fields_covered}/>
                                                 <Divider sx={{my: 1}}/>
-                                                <Typography>{`Fields covered: ${item.fields_covered}`}</Typography>
+                                                <Condition text='XPath condition fulfilled:'
+                                                           value={item.fields_covered}/>
+                                                <Divider sx={{my: 1}}/>
+                                                <Condition text='Query result:'
+                                                           value={item.query_result}/>
                                             </Box>
                                         </TableCell>
                                     </TableRow>
-
-                                )
-                                    ;
+                                );
                             })}
                         </TableBody>
                     </Table>

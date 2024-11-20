@@ -1,5 +1,4 @@
 import {useEffect, useState} from 'react';
-import {toast} from 'react-hot-toast';
 import PropTypes from 'prop-types';
 
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';

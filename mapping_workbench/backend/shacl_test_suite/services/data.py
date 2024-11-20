@@ -1,0 +1,1 @@
+SHACL_CM_RULES_SUITE_TITLE = "cm_shacl_shapes"

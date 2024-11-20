@@ -65,7 +65,8 @@ class SPARQLTestSuite(FileResourceCollection, BaseMappingPackagesResourceSchemaT
 
     async def get_sparql_test_states(self) -> List[SPARQLTestState]:
         sparql_test_file_resources = await SPARQLTestFileResource.find(
-            SPARQLTestFileResource.sparql_test_suite == SPARQLTestSuite.link_from_id(self.id)).to_list()
+            SPARQLTestFileResource.sparql_test_suite == SPARQLTestSuite.link_from_id(self.id)
+        ).to_list()
 
         sparql_test_states = [await sparql_test_file_resource.get_state() for sparql_test_file_resource in
                               sparql_test_file_resources] if sparql_test_file_resources else []

@@ -38,6 +38,7 @@ import {toastError, toastLoad, toastSuccess} from 'src/components/app-toast';
 import {ListTable} from "src/sections/app/conceptual-mapping-rule/list-table";
 import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
 import {MappingPackageFormSelect} from 'src/sections/app/mapping-package/components/mapping-package-form-select';
+import Alert from "@mui/material/Alert";
 
 const filterValues = [{label: 'All', value: ''},
     {label: 'Valid', value: 'valid'},
@@ -55,38 +56,33 @@ const Page = () => {
     const generateSHACLDialog = useDialog();
 
     const initialValues = {
-        shacl_checked: true,
+        close_shacl: true,
         mapping_package_id: '',
     };
 
     const formik = useFormik({
         initialValues,
         validationSchema: Yup.object({
-            mapping_package_id:
-                Yup
-                    .string()
-                    .required('Mapping Package is required'),
         }),
         onSubmit: (values, helpers) => {
-            const toastId = toastLoad("Generating SHACL...")
+            const toastId = toastLoad("Generating SHACL Shapes...")
             helpers.setSubmitting(true)
-
-            sectionApi.generateSHACL()
-                .then(res => {
-                    if (!values['mapping_package_id']) values['mapping_package_id'] = null;
-                    values['project'] = sessionApi.getSessionProject();
+            values.mapping_package_id = values.mapping_package_id ? values.mapping_package_id : null;
+            sectionApi.generateSHACL(values)
+                .then((res) => {
                     helpers.setStatus({success: true});
-                    toastSuccess('SHACL Generated', toastId);
+                    toastSuccess(`${res.task_name} successfully started.`, toastId)
                 })
                 .catch(err => {
-                    console.error(err);
-                    toastError(err, toastId);
+                    console.log(err)
                     helpers.setStatus({success: false});
                     helpers.setErrors({submit: err.message});
+                    toastError(`SHACL Shapes Generator failed: ${err.message}.`, toastId);
                 })
                 .finally(res => {
-                    helpers.setSubmitting(false)
-                })
+                    helpers.setSubmitting(false);
+                    generateSHACLDialog.handleClose();
+                });
         }
     });
 
@@ -199,24 +195,30 @@ const Page = () => {
                             spacing={3}
                             sx={{px: 3, py: 2}}>
                             <Typography variant="h6">
-                                Mapping Rule Triple Map Fragment
+                                SHACL Shapes Generator
                             </Typography>
+                            <Alert severity="info">
+                                Select the Mapping Package to use needed resources from or leave empty to use all
+                                Project's resources
+                            </Alert>
                             <MappingPackageFormSelect
                                 formik={formik}
                                 disabled={formik.isSubmitting}
+                                isRequired={false}
                             />
+                            <Divider/>
                             <FormControlLabel
                                 control={
                                     <Checkbox
-                                        checked={formik.values.shacl_checked}
+                                        checked={formik.values.close_shacl}
                                         onChange={(e) => {
-                                            formik.setFieldValue('shacl_checked', e.target.checked)
+                                            formik.setFieldValue('close_shacl', e.target.checked)
                                         }}
                                     />
                                 }
                                 disabled={formik.isSubmitting}
-                                label="Close SHACL"
-                                value="cleanup_project"
+                                label="Close SHACL Shapes"
+                                value="close_shacl"
                             />
                             <LoadingButton type='submit'
                                            variant="contained"

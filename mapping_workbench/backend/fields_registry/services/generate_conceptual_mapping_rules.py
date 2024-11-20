@@ -11,8 +11,10 @@ async def generate_conceptual_mapping_rules(project_link: Link[Document] = None)
     :return: None
     """
 
-    uncovered_structural_elements = await StructuralElement.find(StructuralElement.project == project_link,
-                                                                 StructuralElement.is_used_in_conceptual_mapping_rules == False).to_list()
+    uncovered_structural_elements = await StructuralElement.find(
+        StructuralElement.project == project_link,
+        StructuralElement.is_used_in_conceptual_mapping_rules == False
+    ).to_list()
 
     for uncovered_structural_element in uncovered_structural_elements:
         conceptual_mapping_rule = ConceptualMappingRule(

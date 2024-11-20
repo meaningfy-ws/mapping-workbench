@@ -813,7 +813,11 @@ export const ListTableRow = (props) => {
 
                 <TableCell align="right">
                     <ListItemActions
-                        itemctx={new ForListItemAction(item_id, sectionApi)}/>
+                        itemctx={new ForListItemAction(item_id, sectionApi)}
+                        pathnames={{
+                            delete_after_path: () => paths.app.conceptual_mapping_rules.overview
+                        }}
+                    />
                 </TableCell>
             </TableRow>
             {isCurrent && (<TableRow>

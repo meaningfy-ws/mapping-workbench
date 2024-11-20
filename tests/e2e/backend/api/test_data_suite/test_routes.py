@@ -34,3 +34,18 @@ async def test_test_data_suites_assign_mapping_packages_route(
 
     await dummy_test_data_suite.delete()
     assert not await TestDataSuite.get(dummy_test_data_suite.id)
+
+
+@pytest.mark.asyncio
+async def test_test_data_file_resources_struct_tree_route(
+        req_headers,
+        dummy_project
+):
+    response = client.get(
+        api_endpoint(f"{ROUTE_PREFIX}/file_resources_struct_tree"),
+        params={"project": dummy_project.id},
+        headers=req_headers
+    )
+
+    assert response.status_code == 200
+
