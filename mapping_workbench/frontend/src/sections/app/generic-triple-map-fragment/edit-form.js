@@ -146,7 +146,8 @@ export const EditForm = (props) => {
         sectionApi.updateItem(values)
             .then(res => {
                 toastLoad("Transforming Content", toastId);
-                sectionApi.getTripleMapRdfResultContent(item._id, selectedTree, useThisTripleMap)
+                const mapping_package_id = values['mapping_package_id']
+                sectionApi.getTripleMapRdfResultContent(item._id, selectedTree, useThisTripleMap, mapping_package_id)
                     .then(res => {
                         setRdfResultContent(res.rdf_manifestation)
                         setHasRdfResult(true);
@@ -275,7 +276,7 @@ export const EditForm = (props) => {
                                   lg={6}>
                                 <MappingPackageFormSelect
                                     formik={formik}
-                                    isRequired={sectionApi.isMappingPackageRequired ?? false}
+                                    isRequired={false}
                                     withDefaultPackage={itemctx.isNew}
                                 />
                             </Grid>

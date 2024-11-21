@@ -28,6 +28,7 @@ import {testDataFileResourcesApi as sectionApi} from 'src/api/test-data-suites/f
 import {
     MappingPackageFormSelect
 } from '../../../../../../sections/app/mapping-package/components/mapping-package-form-select';
+import Divider from "@mui/material/Divider";
 
 
 const useItem = (sectionApi, id) => {
@@ -68,14 +69,7 @@ const ExtraForm = (props) => {
                                label="Identifier"
                                required/>
             </Grid>
-            <Grid xs={12}
-                  md={12}>
-                <MappingPackageFormSelect
-                    formik={formik}
-                    isRequired={sectionApi.isMappingPackageRequired ?? false}
-                    withDefaultPackage={false}
-                />
-            </Grid>
+            <Divider/>
             <Paper
                 sx={{
                     alignItems: 'flex-start',
@@ -98,6 +92,15 @@ const ExtraForm = (props) => {
                     value=""
                 />
             </Paper>
+            <Grid xs={12}
+                  md={12}>
+                <MappingPackageFormSelect
+                    formik={formik}
+                    isRequired={sectionApi.isMappingPackageRequired ?? false}
+                    withDefaultPackage={false}
+                    disabled={!formik.values.transform_test_data}
+                />
+            </Grid>
             <Grid xs={12}
                   md={12}>
                 <CodeMirrorDefault label="RDF Manifestation"
@@ -131,7 +134,8 @@ const Page = () => {
     const extra_form_fields = {
         identifier: item.identifier || '',
         rdf_manifestation: item.rdf_manifestation || '',
-        transform_test_data: false
+        transform_test_data: false,
+        mapping_package_id: ''
     }
 
     return (
