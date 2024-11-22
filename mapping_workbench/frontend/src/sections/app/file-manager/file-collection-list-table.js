@@ -1,17 +1,16 @@
 import {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 
-import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
-import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+
 import Box from "@mui/system/Box";
+import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
-import List from "@mui/material/List";
 import Table from '@mui/material/Table';
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Divider from '@mui/material/Divider';
 import SvgIcon from '@mui/material/SvgIcon';
-import ListItem from "@mui/material/ListItem";
 import Checkbox from "@mui/material/Checkbox";
 import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
@@ -21,22 +20,20 @@ import IconButton from '@mui/material/IconButton';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 
-import {Scrollbar} from 'src/components/scrollbar';
-import {useRouter} from "src/hooks/use-router";
-import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import {ListFileCollectionActions} from "src/components/app/list/list-file-collection-actions";
-import {PropertyListItem} from 'src/components/property-list-item';
-
 import {paths} from "src/paths";
 import {useDialog} from "src/hooks/use-dialog";
+import {useRouter} from "src/hooks/use-router";
+import {Scrollbar} from 'src/components/scrollbar';
 import timeTransformer from "src/utils/time-transformer";
 import {useGlobalState} from "src/hooks/use-global-state";
 import {PropertyList} from "src/components/property-list";
 import {mappingPackagesApi} from "src/api/mapping-packages";
+import {PropertyListItem} from 'src/components/property-list-item';
 import TablePagination from "src/sections/components/table-pagination";
 import {FileUploader} from "src/sections/app/file-manager/file-uploader";
+import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
+import {ListFileCollectionActions} from "src/components/app/list/list-file-collection-actions";
 import {MappingPackagesBulkAssigner} from "src/sections/app/mapping-package/components/mapping-packages-bulk-assigner";
-
 
 export const ListTableRow = (props) => {
     const {
@@ -66,7 +63,6 @@ export const ListTableRow = (props) => {
             pathname: paths.app[sectionApi.section].resource_manager.edit,
             query: {id: item_id, fid: resource_id}
         });
-        return true;
     }
 
     return (
@@ -100,8 +96,11 @@ export const ListTableRow = (props) => {
                         onClick={(event) => handleItemSelect(event, item_id)}
                     />
                     <IconButton onClick={() => handleItemToggle(item_id)}>
-                        <SvgIcon>
-                            {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
+                        <SvgIcon sx={{
+                            transform: isCurrent ? 'rotate(90deg)' : '',
+                            transition: '0.2s linear'
+                        }}>
+                            <ChevronRightIcon/>
                         </SvgIcon>
                     </IconButton>
                 </TableCell>
@@ -111,26 +110,22 @@ export const ListTableRow = (props) => {
                     </Typography>
                 </TableCell>
                 <TableCell>
-                    <List sx={{p: 0, m: 0}}>
+                    <Box sx={{p: 0, m: 0}}>
                         {
-
                             sectionApi.MAPPING_PACKAGE_LINK_FIELD
                             && projectMappingPackages
                                 .filter(
                                     projectMappingPackage => projectMappingPackage?.[sectionApi.MAPPING_PACKAGE_LINK_FIELD]
                                         ?.some(resource_ref => item_id === resource_ref.id)
                                 )
-                                .map((mapping_package) => {
-                                    return (
-                                        <ListItem
-                                            key={"mapping_package_" + mapping_package.id}
-                                            sx={{p: 0, m: 0}}
-                                        >
-                                            {mapping_package['title']}
-                                        </ListItem>
-                                    );
-                                })}
-                    </List>
+                                .map(mapping_package =>
+                                    <Chip
+                                        key={"mapping_package_" + mapping_package.id}
+                                        sx={{p: 0, m: 0}}
+                                        label={mapping_package['title']}
+                                    />
+                                )}
+                    </Box>
                 </TableCell>
                 <TableCell align="left">
                     {timeTransformer(item.created_at, timeSetting)}

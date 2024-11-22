@@ -3,28 +3,26 @@ import toast from 'react-hot-toast';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
 
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
-import Grid from '@mui/material/Unstable_Grid2';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Divider from "@mui/material/Divider";
 import MenuItem from "@mui/material/MenuItem";
+import TextField from '@mui/material/TextField';
+import Grid from '@mui/material/Unstable_Grid2';
+import CardHeader from '@mui/material/CardHeader';
+import Typography from "@mui/material/Typography";
+import CardContent from '@mui/material/CardContent';
 
-import {RouterLink} from 'src/components/router-link';
 import {paths} from 'src/paths';
 import {useRouter} from 'src/hooks/use-router';
-import {sessionApi} from "../../../api/session";
-import {FormTextField} from "../../../components/app/form/text-field";
-import {FormTextArea} from "../../../components/app/form/text-area";
+import {sessionApi} from "src/api/session";
+import {RouterLink} from 'src/components/router-link';
+import {FormTextArea} from "src/components/app/form/text-area";
+import {FormTextField} from "src/components/app/form/text-field";
+import {toastError, toastSuccess} from "src/components/app-toast";
 import {MappingPackageFormSelect} from "../mapping-package/components/mapping-package-form-select";
-import {toastError, toastSuccess} from "../../../components/app-toast";
-import {ListSelectorSelect as ResourceListSelector} from "../../../components/app/list-selector/select";
-import {sparqlTestFileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
-import {MappingPackageCheckboxList} from "../mapping-package/components/mapping-package-checkbox-list";
-import Divider from "@mui/material/Divider";
-import Typography from "@mui/material/Typography";
+import {MappingPackageCheckboxList} from '../mapping-package/components/mapping-package-real-checkbox-list';
 
 
 export const FileCollectionEditForm = (props) => {
@@ -141,10 +139,14 @@ export const FileCollectionEditForm = (props) => {
                             xs={12}
                             md={12}
                         >
-                            <FormTextField formik={formik} name="title" label="Title" required={true}/>
+                            <FormTextField formik={formik}
+                                           name="title"
+                                           label="Title"
+                                           required/>
                         </Grid>
                         {sectionApi.hasMappingPackage && (
-                            <Grid xs={12} md={12}>
+                            <Grid xs={12}
+                                  md={12}>
                                 <MappingPackageFormSelect
                                     formik={formik}
                                     isRequired={sectionApi.isMappingPackageRequired ?? false}
@@ -153,7 +155,8 @@ export const FileCollectionEditForm = (props) => {
                             </Grid>
                         )}
                         {sectionApi.hasFileCollectionType && (
-                            <Grid xs={12} md={12}>
+                            <Grid xs={12}
+                                  md={12}>
                                 <TextField
                                     error={!!(formik.touched.type && formik.errors.type)}
                                     fullWidth
@@ -166,9 +169,12 @@ export const FileCollectionEditForm = (props) => {
                                     select
                                     value={formik.values.type}
                                 >
-                                    <MenuItem key="" value={null}>&nbsp;</MenuItem>
+                                    <MenuItem key=""
+                                              value={null}>&nbsp;
+                                    </MenuItem>
                                     {Object.keys(sectionApi.FILE_COLLECTION_TYPES).map((key) => (
-                                        <MenuItem key={key} value={key}>
+                                        <MenuItem key={key}
+                                                  value={key}>
                                             {sectionApi.FILE_COLLECTION_TYPES[key]}
                                         </MenuItem>
                                     ))}
@@ -179,12 +185,16 @@ export const FileCollectionEditForm = (props) => {
                             xs={12}
                             md={12}
                         >
-                            <Grid xs={12} md={12}>
-                                <FormTextArea formik={formik} name="description" label="Description"/>
+                            <Grid xs={12}
+                                  md={12}>
+                                <FormTextArea formik={formik}
+                                              name="description"
+                                              label="Description"/>
                             </Grid>
                         </Grid>
                         {sectionApi.refersToMappingPackages && itemctx.isNew && (
-                            <Grid xs={12} md={12}>
+                            <Grid xs={12}
+                                  md={12}>
                                 <Divider sx={{mb: 3}}/>
                                 <Typography variant="subtitle2">
                                     Mapping Packages
@@ -194,6 +204,7 @@ export const FileCollectionEditForm = (props) => {
                                     <Grid xs={12}
                                           md={12}>
                                         <MappingPackageCheckboxList
+                                            handleUpdate={values => formik.setFieldValue('refers_to_mapping_package_ids',values)}
                                             mappingPackages={formik.values.refers_to_mapping_package_ids}
                                             withDefaultPackage={itemctx.isNew}
                                         />
