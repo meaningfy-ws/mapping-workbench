@@ -93,7 +93,7 @@ export const ListTableRow = (props) => {
                         color="primary"
                         disabled={selectable && !selectable(item)}
                         checked={isItemSelected(item_id)}
-                        onClick={(event) => handleItemSelect(event, item_id)}
+                        onClick={event => handleItemSelect(event.target.checked, item_id)}
                     />
                     <IconButton onClick={() => handleItemToggle(item_id)}>
                         <SvgIcon sx={{
@@ -257,21 +257,20 @@ export const FileCollectionListTable = (props) => {
     } = props;
 
     const router = useRouter();
+    const uploadDialog = useDialog();
     const [currentItem, setCurrentItem] = useState(null);
     const [selectedItems, setSelectedItems] = useState([]);
-    const uploadDialog = useDialog();
 
-    const isItemSelected = (itemId) => selectedItems.indexOf(itemId) !== -1;
+    const isItemSelected = itemId => selectedItems.indexOf(itemId) !== -1;
 
-    const handleItemSelect = (e, itemId) => {
-        let items = new Set(selectedItems);
-        const isChecked = e.target.checked;
-        if (isChecked) {
-            items.add(itemId);
-        } else {
-            items.delete(itemId);
-        }
-        setSelectedItems([...items]);
+    const allChecked = selectedItems.length === items.length
+
+    const handleItemsSelectAll = checked => {
+        setSelectedItems(checked ? items.map(item => item._id) : [])
+    }
+
+    const handleItemSelect = (checked, itemId) => {
+        setSelectedItems(items => checked ? [...items, itemId] : items.filter(item => item !== itemId));
     }
 
     const handleItemToggle = itemId => {
@@ -321,7 +320,13 @@ export const FileCollectionListTable = (props) => {
                     <Table sx={{minWidth: 1200}}>
                         <TableHead>
                             <TableRow>
-                                <TableCell/>
+                                <TableCell>
+                                    <Checkbox
+                                        checked={allChecked}
+                                        indeterminate={selectedItems.length && !allChecked}
+                                        onChange={(event) => handleItemsSelectAll(event.target.checked)}
+                                    />
+                                </TableCell>
                                 <TableCell width="25%">
                                     Title
                                 </TableCell>
