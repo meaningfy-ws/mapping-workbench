@@ -384,10 +384,7 @@ async def route_transform_test_data_file_resource_with_triple_map(
     mappings = [await get_specific_triple_map_fragment(specific_triple_map_id)] if use_this_triple_map else None
 
     try:
-        package_id = (
-            mapping_package_id
-            # or await get_mapping_package_id_for_test_data_file_resource(test_data_file_resource)
-        )
+        package_id = mapping_package_id
         test_data_file_resource = await transform_test_data_file_resource(
             test_data_file_resource=test_data_file_resource,
             package_id=package_id,

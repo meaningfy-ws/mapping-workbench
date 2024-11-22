@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {specificTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/specific';
+import {genericTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/generic';
 
 import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
 import Link from '@mui/material/Link';

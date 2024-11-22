@@ -1,7 +1,5 @@
 import {Fragment, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
-import {turtle} from 'codemirror-lang-turtle';
-import {yaml} from '@codemirror/lang-yaml';
 
 import EditIcon from '@untitled-ui/icons-react/build/esm/Edit05';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -14,7 +12,6 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import SvgIcon from '@mui/material/SvgIcon';
-import {useTheme} from "@mui/material/styles";
 import TableRow from '@mui/material/TableRow';
 import TableHead from '@mui/material/TableHead';
 import TableBody from '@mui/material/TableBody';
@@ -33,7 +30,7 @@ import {mappingPackagesApi} from "src/api/mapping-packages";
 import TablePagination from "src/sections/components/table-pagination";
 import CodeMirrorDefault from 'src/components/app/form/codeMirrorDefault';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
-import {conceptualMappingRulesApi} from 'src/api/conceptual-mapping-rules';
+import {genericTripleMapFragmentsApi} from 'src/api/triple-map-fragments/generic';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {
@@ -45,15 +42,15 @@ export const ListTableMappingPackages = (props) => {
     const {
         item,
         initProjectMappingPackages = null,
-        onPackagesUpdate = () => { },
+        onPackagesUpdate = () => {
+        },
         isCurrent,
         isHovered,
-        ruleFilteredMappingPackages
+        itemFilteredMappingPackages
     } = props;
-
-    const [mappingPackages, setMappingPackages] = useState(ruleFilteredMappingPackages);
+    const [mappingPackages, setMappingPackages] = useState(itemFilteredMappingPackages);
     const [projectMappingPackages, setProjectMappingPackages] = useState(initProjectMappingPackages ?? []);
-    const [tempMappingPackages, setTempMappingPackages] = useState(ruleFilteredMappingPackages);
+    const [tempMappingPackages, setTempMappingPackages] = useState(itemFilteredMappingPackages);
 
     const mappingPackagesDialog = useDialog();
 
@@ -62,28 +59,31 @@ export const ListTableMappingPackages = (props) => {
         values['id'] = item._id;
         values['project'] = sessionApi.getSessionProject();
         values['refers_to_mapping_package_ids'] = tempMappingPackages;
-        conceptualMappingRulesApi.updateItem(values)
+        genericTripleMapFragmentsApi.updateItem(values)
             .then(res => {
                 setMappingPackages(tempMappingPackages);
                 item.refers_to_mapping_package_ids = tempMappingPackages;
-                toastSuccess(conceptualMappingRulesApi.SECTION_ITEM_TITLE + ' updated');
+                toastSuccess(genericTripleMapFragmentsApi.SECTION_ITEM_TITLE + ' updated');
                 mappingPackagesDialog.handleClose();
                 onPackagesUpdate()
             })
             .catch(err => console.error(err))
     };
 
-    const ruleMappingPackages = projectMappingPackages.filter(x => mappingPackages.includes(x.id))
-
+    const itemMappingPackages = projectMappingPackages.filter(x => mappingPackages.includes(x.id))
     const mappingPackagesDialogHandleClose = () => {
         mappingPackagesDialog.handleClose();
-        setTempMappingPackages(ruleFilteredMappingPackages);
+        setTempMappingPackages(itemFilteredMappingPackages);
     }
 
     return (<>
-        {!!ruleMappingPackages.length && <Box sx={{mb: 1}}>
-            {ruleMappingPackages.map(x => <Chip key={"mapping_package_" + x.id}
-                                                label={x.identifier}/>)}
+        {!!itemMappingPackages.length && <Box sx={{mb: 1}}>
+            {itemMappingPackages.map(
+                x =>
+                    <Box sx={{mb: 1}}>
+                        <Chip key={"mapping_package_" + x.id} label={x.title}/>
+                    </Box>
+            )}
         </Box>}
         {isHovered && <Box sx={{position: "absolute", left: "50%", top: "50%"}}>
             <Button
@@ -157,7 +157,8 @@ export const ListTable = (props) => {
         />)
     }
 
-    const onPackagesUpdate = () => {}
+    const onPackagesUpdate = () => {
+    }
 
     const [projectMappingPackages, setProjectMappingPackages] = useState([]);
 
@@ -194,7 +195,7 @@ export const ListTable = (props) => {
                                               title="URI"/>
                             </TableCell>
                             <TableCell>
-                                Package
+                                Packages
                             </TableCell>
                             <TableCell align="left">
                                 <SorterHeader fieldName="created_at"
@@ -253,7 +254,7 @@ export const ListTable = (props) => {
                                                onMouseLeave={() => setHoveredItem(null)}>
                                         {projectMappingPackagesMap && <ListTableMappingPackages
                                             item={item}
-                                            ruleFilteredMappingPackages={[item.mapping_package_id]}
+                                            itemFilteredMappingPackages={item.refers_to_mapping_package_ids}
                                             initProjectMappingPackages={projectMappingPackages}
                                             onPackagesUpdate={onPackagesUpdate}
                                             isCurrent={isCurrent}

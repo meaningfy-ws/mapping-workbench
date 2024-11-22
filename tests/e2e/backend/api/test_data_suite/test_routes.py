@@ -30,7 +30,7 @@ async def test_test_data_suites_assign_mapping_packages_route(
     assert response.status_code == 200
 
     test_data_suite = await TestDataSuite.get(dummy_test_data_suite.id)
-    assert test_data_suite.mapping_package_id == dummy_mapping_package.id
+    assert dummy_mapping_package.id in test_data_suite.refers_to_mapping_package_ids
 
     await dummy_test_data_suite.delete()
     assert not await TestDataSuite.get(dummy_test_data_suite.id)

@@ -255,7 +255,7 @@ export const FileCollectionListTable = (props) => {
         page = 0,
         rowsPerPage = 0,
         sectionApi,
-        getItems = () => {
+        getItems = (number) => {
         },
         selectable = null,
         fileResourceApi,
@@ -291,17 +291,6 @@ export const FileCollectionListTable = (props) => {
             .then(res => setProjectMappingPackages(res))
             .catch(err => console.error(err))
     }, [itemsForced])
-
-    const [projectMappingPackagesMap, setProjectMappingPackagesMap] = useState({});
-
-    useEffect(() => {
-        (() => {
-            setProjectMappingPackagesMap(projectMappingPackages.reduce((a, b) => {
-                a[b['id']] = b['title'];
-                return a
-            }, {}));
-        })()
-    }, [projectMappingPackages])
 
     const onMappingPackagesAssign = () => {
         getItems(Date.now());
@@ -369,7 +358,6 @@ export const FileCollectionListTable = (props) => {
                                         isItemSelected={isItemSelected}
                                         sectionApi={sectionApi}
                                         router={router}
-                                        projectMappingPackagesMap={projectMappingPackagesMap}
                                         projectMappingPackages={projectMappingPackages}
                                         selectable={selectable}
                                     />

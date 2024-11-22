@@ -34,6 +34,8 @@ import CodeMirrorDefault from "src/components/app/form/codeMirrorDefault";
 import {FormCodeReadOnlyArea} from "src/components/app/form/code-read-only-area";
 import {toastError, toastLoad, toastSuccess, toastWarning} from "src/components/app-toast";
 import {MappingPackageFormSelect} from "../mapping-package/components/mapping-package-form-select";
+import {MappingPackageCheckboxList} from "../mapping-package/components/mapping-package-checkbox-list";
+import Divider from "@mui/material/Divider";
 
 
 export const EditForm = (props) => {
@@ -55,7 +57,7 @@ export const EditForm = (props) => {
     const initialValues = {
         triple_map_uri: item.triple_map_uri ?? '',
         triple_map_content: item.triple_map_content ?? '',
-        mapping_package_id: item.mapping_package_id ?? '',
+        refers_to_mapping_package_ids: item.refers_to_mapping_package_ids ?? [],
         format: item.format ?? sectionApi.FILE_RESOURCE_DEFAULT_FORMAT ?? '',
     };
 
@@ -72,16 +74,11 @@ export const EditForm = (props) => {
                 .string()
                 .max(255)
                 .required('Format is required'),
-            mapping_package_id:
-                Yup
-                    .string()
-                    .required('Mapping Package is required'),
         }),
         onSubmit: async (values, helpers) => {
             const toastId = toastLoad("Updating...")
             try {
                 let response;
-                if (!values['mapping_package_id']) values['mapping_package_id'] = null;
                 values['project'] = sessionApi.getSessionProject();
                 if (itemctx.isNew) {
                     response = await sectionApi.createItem(values);
@@ -125,7 +122,6 @@ export const EditForm = (props) => {
     }
 
     const onUpdateAndTransform = (values, helpers) => {
-
         values['project'] = sessionApi.getSessionProject();
         if (!values['mapping_package_id']) values['mapping_package_id'] = null;
         values['id'] = item._id;
@@ -230,13 +226,17 @@ export const EditForm = (props) => {
                                     ))}
                                 </TextField>
                             </Grid>
-                            <Grid xs={12}
-                                  md={12}>
-                                <MappingPackageFormSelect
-                                    formik={formik}
-                                    isRequired={sectionApi.isMappingPackageRequired ?? false}
-                                    withDefaultPackage={itemctx.isNew}
-                                />
+                            <Grid xs={12}>
+                                <Card sx={{m: 0, p: 0}}>
+                                    <CardHeader sx={{mt: 0, pt: 0, pb: 0}} title="Mapping Packages"/>
+                                    <Box sx={{ml: 2, mt: 2}}>
+                                        <MappingPackageCheckboxList
+                                            mappingPackages={formik.values.refers_to_mapping_package_ids}
+                                            withDefaultPackage={itemctx.isNew}
+                                        />
+                                    </Box>
+                                </Card>
+                                <Divider/>
                             </Grid>
                             <Grid xs={12}>
                                 <CodeMirrorDefault
@@ -274,14 +274,6 @@ export const EditForm = (props) => {
                             </Grid>
                             <Grid xs={12}
                                   lg={6}>
-                                <MappingPackageFormSelect
-                                    formik={formik}
-                                    isRequired={false}
-                                    withDefaultPackage={itemctx.isNew}
-                                />
-                            </Grid>
-                            <Grid xs={12}
-                                  lg={6}>
                                 <TextField
                                     fullWidth
                                     label="Select Test Data"
@@ -305,6 +297,14 @@ export const EditForm = (props) => {
                                                 </MenuItem>)])
                                     }
                                 </TextField>
+                            </Grid>
+                            <Grid xs={12}
+                                  lg={6}>
+                                <MappingPackageFormSelect
+                                    formik={formik}
+                                    isRequired={false}
+                                    withDefaultPackage={itemctx.isNew}
+                                />
                             </Grid>
                             <Grid xs={12}
                                   lg={6}>

@@ -7,6 +7,8 @@ from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundE
 from mapping_workbench.backend.core.services.request import request_update_data, api_entity_is_found, \
     request_create_data, prepare_search_param, pagination_params
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
+from mapping_workbench.backend.mapping_package.services.link import ResourceField, \
+    unassign_resources_from_mapping_packages
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestFileResource
 from mapping_workbench.backend.shacl_test_suite.models.entity_api_response import SHACLTestFileResourceCreateIn, \
@@ -67,6 +69,11 @@ async def get_shacl_test_suite(id: PydanticObjectId) -> SHACLTestSuite:
 
 
 async def delete_shacl_test_suite(shacl_test_suite: SHACLTestSuite):
+    await unassign_resources_from_mapping_packages(
+        project_id=shacl_test_suite.project.to_ref().id,
+        resources_ids=[shacl_test_suite.id],
+        resources_field=ResourceField.SHACL_TEST_SUITES
+    )
     return await shacl_test_suite.delete()
 
 
