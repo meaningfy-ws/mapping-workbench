@@ -329,8 +329,6 @@ export const EditForm = (props) => {
             }
         }
 
-        console.log(formik.values)
-
         if (isProjectDataReady >= 3) return <CircularProgress/>;
         return (
             <form onSubmit={formik.handleSubmit}
