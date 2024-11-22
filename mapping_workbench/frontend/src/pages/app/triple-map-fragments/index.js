@@ -1,4 +1,3 @@
-import {useEffect, useState} from 'react';
 import {useFormik} from "formik";
 import * as Yup from "yup";
 
@@ -26,7 +25,7 @@ import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {ListTable} from "src/sections/app/generic-triple-map-fragment/list-table";
 import {FileUploader} from "src/sections/app/generic-triple-map-fragment/file-uploader";
-import {specificTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/specific';
+import {genericTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/generic';
 
 const Page = () => {
     const uploadDialog = useDialog();

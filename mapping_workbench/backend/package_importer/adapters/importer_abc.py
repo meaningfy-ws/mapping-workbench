@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Dict, Tuple, List
 
+from beanie.odm.operators.find.comparison import Eq
+
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroup
@@ -18,7 +20,7 @@ from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTest
 from mapping_workbench.backend.sparql_test_suite.services.data import SPARQL_CM_ASSERTIONS_SUITE_TITLE, \
     SPARQL_INTEGRATION_TESTS_SUITE_TITLE
 from mapping_workbench.backend.task_manager.adapters.task_progress import TaskProgress
-from mapping_workbench.backend.tasks.models.task_response import TaskResponse, TaskProgressAction, TaskProgressStatus
+from mapping_workbench.backend.tasks.models.task_response import TaskResponse
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
     TestDataFileResourceFormat
 from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragmentFormat, \
@@ -56,18 +58,19 @@ class PackageImporterABC(ABC):
         for mono_resource_collection in mono_package.test_data_resources:
             test_data_suite: TestDataSuite = await TestDataSuite.find_one(
                 TestDataSuite.project == self.project_link,
-                TestDataSuite.title == mono_resource_collection.name,
-                TestDataSuite.mapping_package_id == self.package.id
+                TestDataSuite.title == mono_resource_collection.name
             )
 
             if not test_data_suite:
                 test_data_suite = TestDataSuite(
                     project=self.project,
-                    mapping_package_id=self.package.id,
                     title=mono_resource_collection.name
                 )
-
                 await test_data_suite.on_create(self.user).save()
+
+            test_data_suite_link = TestDataSuite.link_from_id(test_data_suite.id)
+            if test_data_suite_link not in self.package.test_data_suites:
+                self.package.test_data_suites.append(test_data_suite_link)
 
             for mono_file_resource in mono_resource_collection.file_resources:
                 resource_path = [mono_resource_collection.name]
@@ -118,23 +121,24 @@ class PackageImporterABC(ABC):
                 continue
 
             resource_content = mono_file_resource.content
-            triple_map_fragment = await SpecificTripleMapFragment.find_one(
-                SpecificTripleMapFragment.project == self.project_link,
-                SpecificTripleMapFragment.mapping_package_id == self.package.id,
-                SpecificTripleMapFragment.triple_map_uri == resource_name
+            triple_map_fragment = await GenericTripleMapFragment.find_one(
+                GenericTripleMapFragment.project == self.project_link,
+                GenericTripleMapFragment.triple_map_uri == resource_name
             )
 
             if not triple_map_fragment:
-                triple_map_fragment = SpecificTripleMapFragment(
+                triple_map_fragment = GenericTripleMapFragment(
                     triple_map_uri=resource_name,
                     triple_map_content=resource_content,
                     format=resource_format,
                     project=self.project,
-                    mapping_package_id=self.package.id
+                    refers_to_mapping_package_ids=[self.package.id]
                 )
                 await triple_map_fragment.on_create(self.user).save()
             else:
                 triple_map_fragment.triple_map_content = resource_content
+                if self.package.id not in triple_map_fragment.refers_to_mapping_package_ids:
+                    triple_map_fragment.refers_to_mapping_package_ids.append(self.package.id)
                 await triple_map_fragment.on_update(self.user).save()
 
         self.task_progress.finish_current_action_step()
@@ -347,6 +351,7 @@ class PackageImporterABC(ABC):
             package = MappingPackage(**metadata)
 
         package.project = self.project
+        package.test_data_suites = []
         package.shacl_test_suites = []
         package.sparql_test_suites = []
         package.resource_collections = []

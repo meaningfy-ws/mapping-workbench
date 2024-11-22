@@ -7,9 +7,9 @@ from pydantic import field_validator
 from pydantic_core.core_schema import ValidationInfo
 
 from mapping_workbench.backend.core.models.base_mapping_package_resource_entity import \
-    BaseMappingPackageResourceSchemaTrait, BaseMappingPackageResourceEntityInSchema
-from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
-    BaseProjectResourceEntityInSchema, BaseProjectAbleResourceEntity
+    BaseMappingPackageResourceEntityInSchema, BaseMappingPackagesResourceSchemaTrait
+from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntityInSchema, \
+    BaseProjectAbleResourceEntity
 from mapping_workbench.backend.state_manager.models.state_object import ObjectState
 
 
@@ -52,7 +52,7 @@ class FileResourceIn(
 
 class FileResource(
     BaseProjectAbleResourceEntity,
-    BaseMappingPackageResourceSchemaTrait
+    BaseMappingPackagesResourceSchemaTrait
 ):
     title: Optional[str] = None
     description: Optional[str] = None
@@ -64,7 +64,7 @@ class FileResource(
 
 class FileResourceCollection(
     BaseProjectAbleResourceEntity,
-    BaseMappingPackageResourceSchemaTrait
+    BaseMappingPackagesResourceSchemaTrait
 ):
     title: Optional[str] = None
     description: Optional[str] = None

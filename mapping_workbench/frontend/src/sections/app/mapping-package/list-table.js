@@ -48,7 +48,7 @@ const PackageRow = ({item, sectionApi}) => {
 
     const formik = useFormik({
         initialValues: {
-            use_latest_package_state: false,
+            use_only_package_state: false,
             transform_test_data: true,
             generate_cm_assertions: true,
             validate_package: true,
@@ -79,7 +79,7 @@ const PackageRow = ({item, sectionApi}) => {
             const data = {
                 package_id: item._id,
                 project_id: sessionApi.getSessionProject(),
-                use_latest_package_state: values['use_latest_package_state']
+                use_only_package_state: values['use_only_package_state']
             }
             if (tasks_to_run.length > 0) {
                 data.tasks_to_run = tasks_to_run.join(',');
@@ -91,6 +91,10 @@ const PackageRow = ({item, sectionApi}) => {
                 .finally(() => setIsProcessing(false))
         }
     });
+
+    const processTasksEnabled = () => {
+        return !formik.values.use_only_package_state;
+    }
 
     const handleExport = itemId => {
         setIsExporting(true)
@@ -171,12 +175,11 @@ const PackageRow = ({item, sectionApi}) => {
                                 }}
                                 control={
                                     <Switch
-                                        disabled={true}
-                                        checked={formik.values.use_latest_package_state}
-                                        onChange={(event) => formik.setFieldValue('use_latest_package_state', event.target.checked)}
+                                        checked={formik.values.use_only_package_state}
+                                        onChange={(event) => formik.setFieldValue('use_only_package_state', event.target.checked)}
                                     />
                                 }
-                                label="Use latest Package State"
+                                label="Use only the Package State"
                             />
                             <Divider sx={{my: 2}}/>
                             <b>Processing a Mapping Package includes:</b>
@@ -188,7 +191,8 @@ const PackageRow = ({item, sectionApi}) => {
                                         }}
                                         control={
                                             <Switch
-                                                checked={formik.values.transform_test_data}
+                                                disabled={!processTasksEnabled()}
+                                                checked={processTasksEnabled() && formik.values.transform_test_data}
                                                 onChange={(event) => formik.setFieldValue('transform_test_data', event.target.checked)}
                                             />
                                         }
@@ -202,7 +206,8 @@ const PackageRow = ({item, sectionApi}) => {
                                         }}
                                         control={
                                             <Switch
-                                                checked={formik.values.generate_cm_assertions}
+                                                disabled={!processTasksEnabled()}
+                                                checked={processTasksEnabled() && formik.values.generate_cm_assertions}
                                                 onChange={(event) => formik.setFieldValue('generate_cm_assertions', event.target.checked)}
                                             />
                                         }
@@ -216,7 +221,8 @@ const PackageRow = ({item, sectionApi}) => {
                                         }}
                                         control={
                                             <Switch
-                                                checked={formik.values.validate_package}
+                                                disabled={!processTasksEnabled()}
+                                                checked={processTasksEnabled() && formik.values.validate_package}
                                                 onChange={(event) => formik.setFieldValue('validate_package', event.target.checked)}
                                             />
                                         }
@@ -230,8 +236,8 @@ const PackageRow = ({item, sectionApi}) => {
                                                 }}
                                                 control={
                                                     <Switch
-                                                        checked={formik.values.validate_package_shacl && formik.values.validate_package}
-                                                        disabled={!formik.values.validate_package}
+                                                        checked={processTasksEnabled() && formik.values.validate_package_shacl && formik.values.validate_package}
+                                                        disabled={!processTasksEnabled() || !formik.values.validate_package}
                                                         onChange={(event) => formik.setFieldValue('validate_package_shacl', event.target.checked)}
                                                     />
                                                 }
@@ -245,8 +251,8 @@ const PackageRow = ({item, sectionApi}) => {
                                                 }}
                                                 control={
                                                     <Switch
-                                                        checked={formik.values.validate_package_xpath_sparql && formik.values.validate_package}
-                                                        disabled={!formik.values.validate_package}
+                                                        checked={processTasksEnabled() && formik.values.validate_package_xpath_sparql && formik.values.validate_package}
+                                                        disabled={!processTasksEnabled() || !formik.values.validate_package}
                                                         onChange={(event) => formik.setFieldValue('validate_package_xpath_sparql', event.target.checked)}
                                                     />
                                                 }

@@ -3,6 +3,7 @@ import {appApi} from "../app";
 import {shaclTestSuitesApi} from "../shacl-test-suites";
 import {sparqlTestSuitesApi} from "../sparql-test-suites";
 import {resourceCollectionsApi} from "../resource-collections";
+import {testDataSuitesApi} from "../test-data-suites";
 
 export const PACKAGE_TYPE = {
     EFORMS: 'eForms', STANDARD: 'Standard'
@@ -37,6 +38,7 @@ class MappingPackagesApi extends SectionApi {
                 id: mappingPackage._id, title: mappingPackage.title, identifier: mappingPackage.identifier
             }
             if (full) {
+                data[testDataSuitesApi.MAPPING_PACKAGE_LINK_FIELD] = mappingPackage[testDataSuitesApi.MAPPING_PACKAGE_LINK_FIELD];
                 data[shaclTestSuitesApi.MAPPING_PACKAGE_LINK_FIELD] = mappingPackage[shaclTestSuitesApi.MAPPING_PACKAGE_LINK_FIELD];
                 data[sparqlTestSuitesApi.MAPPING_PACKAGE_LINK_FIELD] = mappingPackage[sparqlTestSuitesApi.MAPPING_PACKAGE_LINK_FIELD];
                 data[resourceCollectionsApi.MAPPING_PACKAGE_LINK_FIELD] = mappingPackage[resourceCollectionsApi.MAPPING_PACKAGE_LINK_FIELD];

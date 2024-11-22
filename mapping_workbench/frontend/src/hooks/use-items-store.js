@@ -20,6 +20,7 @@ export const useItemsStore = (sectionApi) => {
         []);
 
     return {
+        handleItemsGet,
         ...state
     };
 };

@@ -37,7 +37,7 @@ async def create_mapping_package_state(mapping_package: MappingPackage):
 
 async def process_mapping_package(
         package_id: PydanticObjectId,
-        use_latest_package_state: bool = False,
+        use_only_package_state: bool = False,
         tasks_to_run: List[str] = None,
         user: User = None,
         task_response: TaskResponse = None
@@ -45,7 +45,7 @@ async def process_mapping_package(
     """
 
     :param task_response:
-    :param use_latest_package_state:
+    :param use_only_package_state:
     :param tasks_to_run:
     :param package_id:
     :param user:
@@ -59,10 +59,11 @@ async def process_mapping_package(
     task_progress.start_progress(actions_count=1)
 
     steps_count = 2
-    if tasks_to_run is None:
-        steps_count += len(TaskToRun) - COMPOUND_TASKS_COUNT
-    else:
-        steps_count += len(tasks_to_run) - len(set([x.value for x in COMPOUND_TASKS]) & set(tasks_to_run))
+    if not use_only_package_state:
+        if tasks_to_run is None:
+            steps_count += len(TaskToRun) - COMPOUND_TASKS_COUNT
+        else:
+            steps_count += len(tasks_to_run) - len(set([x.value for x in COMPOUND_TASKS]) & set(tasks_to_run))
 
     task_progress.start_action(
         name="Process Package",
@@ -79,24 +80,25 @@ async def process_mapping_package(
     task_progress.finish_current_action_step()
     mwb_logger.log_all_info("Initializing Package State ... DONE")
 
-    if tasks_to_run is None or TaskToRun.TRANSFORM_TEST_DATA.value in tasks_to_run:
-        mwb_logger.log_all_info(f"Transforming '{mapping_package.identifier}' Test Data ...")
-        task_progress.start_action_step(name=TaskToRun.TRANSFORM_TEST_DATA.value)
-        await transform_mapping_package_state(mapping_package_state=mapping_package_state)
-        task_progress.finish_current_action_step()
-        mwb_logger.log_all_info(f"Transforming '{mapping_package.identifier}' Test Data ... DONE")
+    if not use_only_package_state:
+        if tasks_to_run is None or TaskToRun.TRANSFORM_TEST_DATA.value in tasks_to_run:
+            mwb_logger.log_all_info(f"Transforming '{mapping_package.identifier}' Test Data ...")
+            task_progress.start_action_step(name=TaskToRun.TRANSFORM_TEST_DATA.value)
+            await transform_mapping_package_state(mapping_package_state=mapping_package_state)
+            task_progress.finish_current_action_step()
+            mwb_logger.log_all_info(f"Transforming '{mapping_package.identifier}' Test Data ... DONE")
 
-    if tasks_to_run is None or TaskToRun.GENERATE_CM_ASSERTIONS.value in tasks_to_run:
-        mwb_logger.log_all_info("Generating CM Assertions Queries ...")
-        task_progress.start_action_step(name=TaskToRun.GENERATE_CM_ASSERTIONS.value)
-        await generate_cm_assertions_queries_for_package_state(mapping_package_state=mapping_package_state)
-        task_progress.finish_current_action_step()
-        mwb_logger.log_all_info("Generating CM Assertions Queries ... DONE")
+        if tasks_to_run is None or TaskToRun.GENERATE_CM_ASSERTIONS.value in tasks_to_run:
+            mwb_logger.log_all_info("Generating CM Assertions Queries ...")
+            task_progress.start_action_step(name=TaskToRun.GENERATE_CM_ASSERTIONS.value)
+            await generate_cm_assertions_queries_for_package_state(mapping_package_state=mapping_package_state)
+            task_progress.finish_current_action_step()
+            mwb_logger.log_all_info("Generating CM Assertions Queries ... DONE")
 
-    if tasks_to_run is None or TaskToRun.VALIDATE_PACKAGE.value in tasks_to_run:
-        mwb_logger.log_all_info("Validating Package State ...")
-        await validate_mapping_package(mapping_package_state, tasks_to_run, task_progress=task_progress)
-        mwb_logger.log_all_info("Validating Package State ... DONE")
+        if tasks_to_run is None or TaskToRun.VALIDATE_PACKAGE.value in tasks_to_run:
+            mwb_logger.log_all_info("Validating Package State ...")
+            await validate_mapping_package(mapping_package_state, tasks_to_run, task_progress=task_progress)
+            mwb_logger.log_all_info("Validating Package State ... DONE")
 
     mwb_logger.log_all_info("Saving Package State ...")
     task_progress.start_action_step(name="save_package_state")
