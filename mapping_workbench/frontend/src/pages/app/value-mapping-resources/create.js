@@ -1,17 +1,18 @@
-import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {resourceCollectionsApi as sectionApi} from 'src/api/resource-collections';
-import {RouterLink} from 'src/components/router-link';
+import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
-import {paths} from 'src/paths';
-import {FileCollectionEditForm} from 'src/sections/app/file-manager/file-collection-edit-form';
+import {RouterLink} from 'src/components/router-link';
 import {ForItemCreateForm} from "src/contexts/app/section/for-item-form";
+import {resourceCollectionsApi as sectionApi} from 'src/api/resource-collections';
+import {FileCollectionEditForm} from 'src/sections/app/file-manager/file-collection-edit-form';
 
 
 const Page = () => {
@@ -36,7 +37,7 @@ const Page = () => {
                             underline="hover"
                         >
                             <SvgIcon sx={{mr: 1}}>
-                                <ArrowLeftIcon/>
+                                <ArrowBackIcon/>
                             </SvgIcon>
                             <Typography variant="subtitle2">
                                 {sectionApi.SECTION_TITLE}

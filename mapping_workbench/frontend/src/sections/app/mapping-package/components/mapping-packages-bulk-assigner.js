@@ -1,60 +1,51 @@
-import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
+import {useState} from "react";
+
+import AssignmentIcon from "@mui/icons-material/Assignment";
+
 import Box from "@mui/material/Box";
-import {MappingPackageCheckboxList} from "./mapping-package-checkbox-list";
+import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
-import {useEffect, useState} from "react";
-import {mappingPackagesApi} from "/src/api/mapping-packages";
 import SvgIcon from "@mui/material/SvgIcon";
-import {Assignment as AssignmentIcon} from "@mui/icons-material";
-import {useDialog} from "../../../../hooks/use-dialog";
-import {toastError, toastLoad, toastSuccess} from "../../../../components/app-toast";
-import {paths} from "../../../../paths";
+import Typography from "@mui/material/Typography";
+
+import {useDialog} from "src/hooks/use-dialog";
+import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
+import {MappingPackageCheckboxList} from './mapping-package-real-checkbox-list';
 
 export const MappingPackagesBulkAssigner = (props) => {
     const {
-        idsToAssignTo,
         sectionApi,
         disabled,
-        onMappingPackagesAssign = () => {},
-        toMappingPackages = [],
-        initProjectMappingPackages = null
+        idsToAssignTo,
+        initProjectMappingPackages = null,
+        onMappingPackagesAssign = () => {}
     } = props;
 
     const mappingPackagesDialog = useDialog()
 
-    const [projectMappingPackages, setProjectMappingPackages] = useState([]);
     const [isRunning, setIsRunning] = useState(false);
+    const [selectedPackagesIds, setSelectedPackagesIds] = useState(idsToAssignTo)
 
-    useEffect(() => {
-        (async () => {
-            if (initProjectMappingPackages === null) {
-                setProjectMappingPackages(await mappingPackagesApi.getProjectPackages());
-            } else {
-                setProjectMappingPackages(initProjectMappingPackages)
-            }
-        })()
-    }, [initProjectMappingPackages])
-
-    const handleMappingPackagesAssign = async () => {
+    const handleMappingPackagesAssign = () => {
         setIsRunning(true);
         const toastId = toastLoad(`Assigning MappingPackages ... `)
-        sectionApi.assignMappingPackages(idsToAssignTo, toMappingPackages).then((res) => {
-            toastSuccess(sectionApi.SECTION_TITLE + ' updated', toastId);
-        }).catch(err => {
-            toastError(err, toastId);
-        }).finally(() => {
-            setIsRunning(false)
-            mappingPackagesDialog.handleClose();
-            onMappingPackagesAssign()
-        });
+        sectionApi.assignMappingPackages(idsToAssignTo, selectedPackagesIds)
+            .then((res) => {
+                toastSuccess(sectionApi.SECTION_TITLE + ' updated', toastId);
+            })
+            .catch(err => {
+                toastError(err, toastId);
+            })
+            .finally(() => {
+                setIsRunning(false)
+                mappingPackagesDialog.handleClose();
+                onMappingPackagesAssign()
+            });
     };
 
     return (<>
-        <Box
-            align="left"
-        >
+        <Box align="left">
             <Button
                 type='link'
                 onClick={mappingPackagesDialog.handleOpen}
@@ -79,9 +70,7 @@ export const MappingPackagesBulkAssigner = (props) => {
         >
             <Stack
                 spacing={3}
-                sx={{
-                    px: 3, py: 2
-                }}
+                sx={{px: 3, py: 2}}
             >
                 <Typography variant="h6">
                     Mapping Packages
@@ -89,8 +78,9 @@ export const MappingPackagesBulkAssigner = (props) => {
                 <Box
                     spacing={3}>
                     <MappingPackageCheckboxList
-                        mappingPackages={toMappingPackages}
-                        initProjectMappingPackages={projectMappingPackages}
+                        handleUpdate={setSelectedPackagesIds}
+                        mappingPackages={selectedPackagesIds}
+                        initProjectMappingPackages={initProjectMappingPackages}
                     />
                 </Box>
                 <Button

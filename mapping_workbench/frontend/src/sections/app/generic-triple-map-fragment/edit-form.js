@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import {useFormik} from 'formik';
 import * as Yup from 'yup';
 
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+
 import {Box} from "@mui/system";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
@@ -10,15 +12,14 @@ import Card from '@mui/material/Card';
 import Alert from "@mui/material/Alert";
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import Divider from "@mui/material/Divider";
 import Checkbox from "@mui/material/Checkbox";
 import MenuItem from "@mui/material/MenuItem";
 import Grid from '@mui/material/Unstable_Grid2';
 import TextField from "@mui/material/TextField";
 import Accordion from "@mui/material/Accordion";
-import AlertTitle from "@mui/material/AlertTitle";
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -34,8 +35,7 @@ import CodeMirrorDefault from "src/components/app/form/codeMirrorDefault";
 import {FormCodeReadOnlyArea} from "src/components/app/form/code-read-only-area";
 import {toastError, toastLoad, toastSuccess, toastWarning} from "src/components/app-toast";
 import {MappingPackageFormSelect} from "../mapping-package/components/mapping-package-form-select";
-import {MappingPackageCheckboxList} from "../mapping-package/components/mapping-package-checkbox-list";
-import Divider from "@mui/material/Divider";
+import {MappingPackageCheckboxList} from '../mapping-package/components/mapping-package-real-checkbox-list';
 
 
 export const EditForm = (props) => {
@@ -228,11 +228,12 @@ export const EditForm = (props) => {
                             </Grid>
                             <Grid xs={12}>
                                 <Card sx={{m: 0, p: 0}}>
-                                    <CardHeader sx={{mt: 0, pt: 0, pb: 0}} title="Mapping Packages"/>
+                                    <CardHeader sx={{mt: 0, pt: 0, pb: 0}}
+                                                title="Mapping Packages"/>
                                     <Box sx={{ml: 2, mt: 2}}>
-                                        <MappingPackageCheckboxList
-                                            mappingPackages={formik.values.refers_to_mapping_package_ids}
-                                            withDefaultPackage={itemctx.isNew}
+                                        <MappingPackageCheckboxList handleUpdate={values => formik.setFieldValue('refers_to_mapping_package_ids',values)}
+                                                                    mappingPackages={formik.values.refers_to_mapping_package_ids}
+                                                                    withDefaultPackage={itemctx.isNew}
                                         />
                                     </Box>
                                 </Card>

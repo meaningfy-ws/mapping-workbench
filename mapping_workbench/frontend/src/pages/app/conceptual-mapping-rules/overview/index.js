@@ -10,6 +10,7 @@ import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
+import Alert from "@mui/material/Alert";
 import Switch from '@mui/material/Switch';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -37,7 +38,6 @@ import {toastError, toastLoad, toastSuccess} from 'src/components/app-toast';
 import {ListTable} from "src/sections/app/conceptual-mapping-rule/list-table";
 import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
 import {MappingPackageFormSelect} from 'src/sections/app/mapping-package/components/mapping-package-form-select';
-import Alert from "@mui/material/Alert";
 
 const filterValues = [{label: 'All', value: ''},
     {label: 'Valid', value: 'valid'},
@@ -225,7 +225,6 @@ const Page = () => {
                                            size="small"
                                            color="success"
                                            loading={formik.isSubmitting}
-                                           loadingPosition="start"
                             >
                                 Generate
                             </LoadingButton>

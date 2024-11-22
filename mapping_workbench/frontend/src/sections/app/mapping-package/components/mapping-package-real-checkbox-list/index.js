@@ -14,9 +14,7 @@ const useMappingPackagesStore = (initProjectMappingPackages = null) => {
     const handleMappingPackagesGet = () => {
         if (initProjectMappingPackages === null) {
             mappingPackagesApi.getProjectPackages()
-                .then(res => setState({
-                    items: res
-                }))
+                .then(res => setState({items: res}))
                 .catch(err => console.error(err))
         }
     }
@@ -47,7 +45,10 @@ export const MappingPackageCheckboxList = (props) => {
 
     useEffect(() => {
         setProjectMappingPackages(mappingPackagesStore.items);
-    }, [mappingPackagesStore]);
+        if (withDefaultPackage) {
+            handleUpdate([mappingPackagesStore.items.find(pkg => pkg.identifier === 'default')?.id])
+        }
+    }, [JSON.stringify(mappingPackagesStore.items)]);
 
 
     const handleMappingPackageChangeAll = (event) => {
@@ -55,7 +56,7 @@ export const MappingPackageCheckboxList = (props) => {
     }
 
     const handleMappingPackageChange = (id, checked) => {
-        handleUpdate(checkedPacks => checked ? [...checkedPacks, id] : [...checkedPacks.filter(pack => pack !== id)])
+        handleUpdate(checked ? [...mappingPackages, id] : [...mappingPackages.filter(pack => pack !== id)])
     };
 
     return (
