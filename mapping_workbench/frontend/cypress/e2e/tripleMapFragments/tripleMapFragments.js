@@ -4,7 +4,7 @@ const {username, password, homeURL, appURLPrefix, projectName} = Cypress.env()
 
 
 let sessionProject = ''
-const specificTripleMapName = 'test_specific_triple_map'
+const genericTripleMapName = 'test_generic_triple_map'
 
 Given('Session Login', () => {
     // Caching session when logging in via page visit
@@ -31,12 +31,12 @@ When('I expand Triple Maps Fragments', () => {
 })
 
 Then('I click on Triple Map Fragments', () => {
-    cy.intercept('GET', appURLPrefix + 'specific_triple_map_fragments*').as('get')
+    cy.intercept('GET', appURLPrefix + 'generic_triple_map_fragments*').as('get')
     cy.get('#nav_technical_mappings').click()
     cy.get('#nav_triple_map_fragments').click()
 })
 
-Then('I get redirected to Specific Triple Maps', () => {
+Then('I get redirected to Generic Triple Maps', () => {
     cy.url().should('include','triple-map-fragments')
     cy.wait('@get').its('response.statusCode').should('eq', 200)
 })
@@ -51,25 +51,25 @@ Then('I get redirected to create page', () => {
 
 
 Then('I enter name', () => {
-    cy.intercept('POST', appURLPrefix + 'specific_triple_map_fragments*').as('create')
+    cy.intercept('POST', appURLPrefix + 'generic_triple_map_fragments*').as('create')
     cy.get("input[name=mapping_package_id]").parent().click()
     .get('ul.MuiList-root').click()
-    cy.get("input[name=triple_map_uri]").clear().type(specificTripleMapName)
+    cy.get("input[name=triple_map_uri]").clear().type(genericTripleMapName)
     cy.get("button[type=submit]").click('right')
 })
 
 
-Then('I successfully create Specific Triple Maps', () => {
+Then('I successfully create Generic Triple Maps', () => {
     cy.wait('@create').its('response.statusCode').should('eq', 201)
 })
 
 // update
 
-Then('I search for Specific Triple Map', () => {
-    cy.get('input[type=text]').clear().type(specificTripleMapName + '{enter}')
+Then('I search for Generic Triple Map', () => {
+    cy.get('input[type=text]').clear().type(genericTripleMapName + '{enter}')
 })
 
-Then('I receive Specific Triple Maps', () => {
+Then('I receive Generic Triple Maps', () => {
     cy.wait('@get').its('response.statusCode').should('eq', 200)
 })
 
@@ -82,21 +82,21 @@ Then('I get redirected to edit page', () => {
 })
 
 Then('I enter updated name', () => {
-    cy.intercept('PATCH', appURLPrefix + 'specific_triple_map_fragments/*').as('update')
-    cy.get("input[name=triple_map_uri]").clear().type( specificTripleMapName + 1 +'{enter}')
+    cy.intercept('PATCH', appURLPrefix + 'generic_triple_map_fragments/*').as('update')
+    cy.get("input[name=triple_map_uri]").clear().type( genericTripleMapName + 1 +'{enter}')
 })
 
 Then('I get success update', () => {
     cy.wait('@update').its('response.statusCode').should('eq', 200)
 })
 
-Then('I search for updated Specific Triple Map', () => {
-    cy.get('input[type=text]').clear().type(specificTripleMapName + 1 + '{enter}')
+Then('I search for updated Generic Triple Map', () => {
+    cy.get('input[type=text]').clear().type(genericTripleMapName + 1 + '{enter}')
 })
 
 //delete
 Then('I click delete button', () => {
-    cy.intercept('DELETE',appURLPrefix + 'specific_triple_map_fragments/*').as('delete')
+    cy.intercept('DELETE',appURLPrefix + 'generic_triple_map_fragments/*').as('delete')
     cy.get('#delete_button').click()
     cy.get('#yes_dialog_button').click()
 })
