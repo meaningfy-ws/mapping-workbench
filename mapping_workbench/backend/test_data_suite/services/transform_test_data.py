@@ -20,7 +20,9 @@ from mapping_workbench.backend.test_data_suite.services.data import get_test_dat
 from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragment, TripleMapFragmentState, \
     TripleMapFragmentABC
 from mapping_workbench.backend.triple_map_fragment.services.data_for_generic import \
-    get_generic_triple_map_fragments_for_project, get_specific_triple_map_fragments_for_package
+    get_generic_triple_map_fragments_for_project_package
+from mapping_workbench.backend.triple_map_fragment.services.data_for_specific import \
+    get_specific_triple_map_fragments_for_package
 from mapping_workbench.backend.user.models.user import User
 
 
@@ -68,15 +70,19 @@ async def get_mappings_to_transform_test_data(
         project_id: PydanticObjectId,
         package_id: PydanticObjectId = None
 ):
-    generic_mappings = await get_generic_triple_map_fragments_for_project(
-        project_id=project_id
-    )
+    mappings = []
+
     specific_mappings = []
     if package_id is not None:
-        specific_mappings = await get_specific_triple_map_fragments_for_package(
+        generic_mappings = await get_generic_triple_map_fragments_for_project_package(
+            project_id=project_id,
             package_id=package_id
         )
-    return generic_mappings + specific_mappings
+        specific_mappings = await get_specific_triple_map_fragments_for_package(
+            project_id=project_id,
+            package_id=package_id
+        )
+    return mappings
 
 
 async def transform_test_data_file_resource(

@@ -37,6 +37,8 @@ import {ListItemActions} from "src/components/app/list/list-item-actions";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {testDataFileResourcesApi as fileResourcesApi} from "src/api/test-data-suites/file-resources";
 import {MappingPackagesBulkAssigner} from "src/sections/app/mapping-package/components/mapping-packages-bulk-assigner";
+import ListItem from "@mui/material/ListItem";
+import List from "@mui/material/List";
 
 
 export const ListTableRow = (props) => {
@@ -50,7 +52,7 @@ export const ListTableRow = (props) => {
         sectionApi,
         router,
         getItems,
-        projectMappingPackagesMap
+        projectMappingPackages
     } = props;
 
     const {timeSetting} = useGlobalState()
@@ -58,13 +60,12 @@ export const ListTableRow = (props) => {
     const [confirmOpen, setConfirmOpen] = useState(false);
     const uploadDialog = useDialog()
 
-
     useEffect(() => {
         getFileResources()
     }, [])
 
     const getFileResources = () => {
-        sectionApi.getFileResources(item_id)
+        sectionApi.getFileResources(item_id, {rowsPerPage: -1})
             .then(res => setCollectionResources(res.items))
     }
 
@@ -144,7 +145,26 @@ export const ListTableRow = (props) => {
                     </Typography>
                 </TableCell>
                 <TableCell>
-                    {item.mapping_package_id && projectMappingPackagesMap[item.mapping_package_id]}
+                    <List sx={{p: 0, m: 0}}>
+                        {
+                            sectionApi.MAPPING_PACKAGE_LINK_FIELD
+                            && projectMappingPackages
+                                .filter(
+                                    projectMappingPackage => projectMappingPackage?.[sectionApi.MAPPING_PACKAGE_LINK_FIELD]
+                                        ?.some(resource_ref => item_id === resource_ref.id)
+                                )
+                                .map((mapping_package) => {
+                                    console.log(mapping_package.title);
+                                    return (
+                                        <ListItem
+                                            key={"mapping_package_" + mapping_package.id}
+                                            sx={{p: 0, m: 0}}
+                                        >
+                                            {mapping_package['title']}
+                                        </ListItem>
+                                    );
+                                })}
+                    </List>
                 </TableCell>
                 <TableCell align="left">
                     {timeTransformer(item.created_at, timeSetting)}
@@ -268,13 +288,14 @@ export const TestDataCollectionListTable = (props) => {
     const {
         count = 0,
         items = [],
+        itemsForced = 0,
         onPageChange = () => {
         },
         onRowsPerPageChange,
         page = 0,
         rowsPerPage = 0,
         sectionApi,
-        getItems = () => {
+        getItems = (number) => {
         }
     } = props;
 
@@ -306,24 +327,13 @@ export const TestDataCollectionListTable = (props) => {
     const [projectMappingPackages, setProjectMappingPackages] = useState([]);
 
     useEffect(() => {
-        (async () => {
-            setProjectMappingPackages(await mappingPackagesApi.getProjectPackages());
-        })()
-    }, [])
-
-    const [projectMappingPackagesMap, setProjectMappingPackagesMap] = useState({});
-
-    useEffect(() => {
-        (() => {
-            setProjectMappingPackagesMap(projectMappingPackages.reduce((a, b) => {
-                a[b['id']] = b['title'];
-                return a
-            }, {}));
-        })()
-    }, [projectMappingPackages])
+        mappingPackagesApi.getProjectPackages(true)
+            .then(res => setProjectMappingPackages(res))
+            .catch(err => console.error(err))
+    }, [itemsForced])
 
     const onMappingPackagesAssign = () => {
-        getItems()
+        getItems(Date.now())
     }
     return (<>
             <Box sx={{p: 1}}>
@@ -357,7 +367,7 @@ export const TestDataCollectionListTable = (props) => {
                                     Title
                                 </TableCell>
                                 <TableCell>
-                                    Package
+                                    Packages
                                 </TableCell>
                                 <TableCell align="left">
                                     Created
@@ -383,7 +393,7 @@ export const TestDataCollectionListTable = (props) => {
                                         sectionApi={sectionApi}
                                         router={router}
                                         getItems={getItems}
-                                        projectMappingPackagesMap={projectMappingPackagesMap}
+                                        projectMappingPackages={projectMappingPackages}
                                     />
                                 )
                             })}
@@ -398,6 +408,7 @@ export const TestDataCollectionListTable = (props) => {
 TestDataCollectionListTable.propTypes = {
     count: PropTypes.number,
     items: PropTypes.array,
+    itemsForced: PropTypes.number,
     onPageChange: PropTypes.func,
     onRowsPerPageChange: PropTypes.func,
     page: PropTypes.number,
@@ -417,5 +428,5 @@ ListTableRow.propTypes = {
     sectionApi: PropTypes.object,
     router: PropTypes.object,
     getItems: PropTypes.func,
-    projectMappingPackagesMap: PropTypes.object
+    projectMappingPackages: PropTypes.array
 }

@@ -6,6 +6,8 @@ from beanie import Link, PydanticObjectId
 from pydantic import BaseModel
 from pymongo import IndexModel
 
+from mapping_workbench.backend.core.models.base_mapping_package_resource_entity import \
+    BaseMappingPackagesResourceSchemaTrait
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
 from mapping_workbench.backend.file_resource.models.file_resource import FileResource, FileResourceCollection, \
     FileResourceIn, FileResourceFormat, FileResourceState
@@ -123,6 +125,7 @@ class TestDataSuiteState(TestDataValidation, ObjectState):
 
 class TestDataSuite(
     FileResourceCollection,
+    BaseMappingPackagesResourceSchemaTrait,
     StatefulObjectABC
 ):
     file_resources: Optional[List[Link[TestDataFileResource]]] = []

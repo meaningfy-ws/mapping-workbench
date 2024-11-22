@@ -12,21 +12,21 @@ from mapping_workbench.backend.user.models.user import User
 
 def task_process_mapping_package(
         package_id: PydanticObjectId,
-        use_latest_package_state: bool = False,
+        use_only_package_state: bool = False,
         tasks_to_run: List[str] = None,
         user: User = None,
         task_response: TaskResponse = None
 ):
     run_task(
         process_mapping_package,
-        package_id, use_latest_package_state, tasks_to_run, user, task_response
+        package_id, use_only_package_state, tasks_to_run, user, task_response
     )
 
 
 async def add_task_process_mapping_package(
         package_id: PydanticObjectId,
         user: User = None,
-        use_latest_package_state: bool = False,
+        use_only_package_state: bool = False,
         tasks_to_run: List[str] = None
 ) -> Task:
     task_timeout = 4 * 60 * 60  # 4 hours
@@ -39,5 +39,5 @@ async def add_task_process_mapping_package(
         task_timeout,
         user.email,
         True,
-        package_id, use_latest_package_state, tasks_to_run, user
+        package_id, use_only_package_state, tasks_to_run, user
     )

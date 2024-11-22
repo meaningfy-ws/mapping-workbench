@@ -23,7 +23,6 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
-import {sessionApi} from 'src/api/session';
 import {tokens} from "/src/locales/tokens";
 import {useDialog} from 'src/hooks/use-dialog';
 import {usePageView} from 'src/hooks/use-page-view';

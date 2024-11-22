@@ -7,6 +7,8 @@ from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundE
 from mapping_workbench.backend.core.services.request import request_update_data, api_entity_is_found, \
     request_create_data, prepare_search_param, pagination_params
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
+from mapping_workbench.backend.mapping_package.services.link import unassign_resources_from_mapping_packages, \
+    ResourceField
 from mapping_workbench.backend.resource_collection.models.entity import ResourceCollection, ResourceFile, \
     ResourceFileUpdateIn, ResourceFileCreateIn
 from mapping_workbench.backend.user.models.user import User
@@ -66,6 +68,11 @@ async def get_resource_collection(id: PydanticObjectId) -> ResourceCollection:
 
 
 async def delete_resource_collection(resource_collection: ResourceCollection):
+    await unassign_resources_from_mapping_packages(
+        project_id=resource_collection.project.to_ref().id,
+        resources_ids=[resource_collection.id],
+        resources_field=ResourceField.RESOURCE_COLLECTIONS
+    )
     return await resource_collection.delete()
 
 
