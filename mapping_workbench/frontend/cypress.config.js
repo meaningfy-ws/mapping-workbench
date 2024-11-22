@@ -24,45 +24,45 @@ module.exports = defineConfig({
         viewportWidth: 1280,
         viewportHeight: 800,
         specPattern: [
-            // "cypress/e2e/login.feature",
-            // // "cypress/e2e/scenarioOne.feature",
-            // // "cypress/e2e/scenarioTwo.feature",
-            // // "cypress/e2e/cleanUp.feature",
-            // "cypress/e2e/projects.feature",
-            // "cypress/e2e/projectCreate.feature",
-            // //Project Setup
-            // "cypress/e2e/ontologyFiles.feature",
-            // "cypress/e2e/ontologyTerms.feature",
-            // "cypress/e2e/testDataSuites.feature",
-            // //Fields & Nodes
-            // "cypress/e2e/fieldsDevelop.feature",
-            // "cypress/e2e/fieldsTree.feature",
-            // "cypress/e2e/fieldsOverview.feature",
-            // //ConceptualMappings
-            // "cypress/e2e/conceptualMappingsDevelop.feature",
-            // "cypress/e2e/conceptualMappingsReview.feature",
-            // "cypress/e2e/conceptualMappingsOverview.feature",
-            // //Technical Mappings
-            // "cypress/e2e/valueMappingResources.feature",
-            "cypress/e2e/tripleMapFragments.feature",
-            // //Quality Control
-            // "cypress/e2e/sparqlTestSuites.feature",
-            // "cypress/e2e/shaclTestSuites.feature",
-            // //Mapping Packages
-            // "cypress/e2e/mappingPackages.feature",
-            // "cypress/e2e/mappingPackagesStates.feature",
-            // //Activities
-            // "cypress/e2e/activities.feature",
-            //
-            // // "cypress/e2e/ontologyNamespaces.feature",
-            // // "cypress/e2e/schemaFiles.feature",
-            // // "cypress/e2e/removeTripleMap.feature",
-            // // "cypress/e2e/transformTestData.feature",
-            // // "cypress/e2e/conceptualMapping.feature",
-            // // "cypress/e2e/termValidator.feature",
-            // // "cypress/e2e/sparqlQueries.feature",
-            // // "cypress/e2e/genericTripleMaps.feature",
+            "cypress/e2e/login.feature",
+            // "cypress/e2e/scenarioOne.feature",
+            // "cypress/e2e/scenarioTwo.feature",
             // "cypress/e2e/cleanUp.feature",
+            "cypress/e2e/projects.feature",
+            "cypress/e2e/projectCreate.feature",
+            //Project Setup
+            "cypress/e2e/ontologyFiles.feature",
+            "cypress/e2e/ontologyTerms.feature",
+            "cypress/e2e/testDataSuites.feature",
+            //Fields & Nodes
+            "cypress/e2e/fieldsDevelop.feature",
+            "cypress/e2e/fieldsTree.feature",
+            "cypress/e2e/fieldsOverview.feature",
+            //ConceptualMappings
+            "cypress/e2e/conceptualMappingsDevelop.feature",
+            "cypress/e2e/conceptualMappingsReview.feature",
+            "cypress/e2e/conceptualMappingsOverview.feature",
+            //Technical Mappings
+            "cypress/e2e/valueMappingResources.feature",
+            "cypress/e2e/tripleMapFragments.feature",
+            //Quality Control
+            "cypress/e2e/sparqlTestSuites.feature",
+            "cypress/e2e/shaclTestSuites.feature",
+            //Mapping Packages
+            "cypress/e2e/mappingPackages.feature",
+            "cypress/e2e/mappingPackagesStates.feature",
+            //Activities
+            "cypress/e2e/activities.feature",
+
+            // "cypress/e2e/ontologyNamespaces.feature",
+            // "cypress/e2e/schemaFiles.feature",
+            // "cypress/e2e/removeTripleMap.feature",
+            // "cypress/e2e/transformTestData.feature",
+            // "cypress/e2e/conceptualMapping.feature",
+            // "cypress/e2e/termValidator.feature",
+            // "cypress/e2e/sparqlQueries.feature",
+            // "cypress/e2e/genericTripleMaps.feature",
+            "cypress/e2e/cleanUp.feature",
         ],
         video: false,
         // reporter: 'junit',
