@@ -74,14 +74,12 @@ export const ListTableRow = (props) => {
             pathname: paths.app[sectionApi.section].resource_manager.edit,
             query: {id: item_id, fid: resource_id}
         });
-        return true;
     }
 
     const handleDeleteAction = () => {
         sectionApi.deleteItem(item_id)
             .then(res => getItems())
     }
-
 
     const handleDeleteResourceAction = () => {
         fileResourcesApi.deleteFileResource(item_id)
@@ -131,7 +129,7 @@ export const ListTableRow = (props) => {
                     <Checkbox
                         color="primary"
                         checked={isItemSelected(item_id)}
-                        onClick={(event) => handleItemSelect(event, item_id)}
+                        onClick={event => handleItemSelect(event.target.checked, item_id)}
                     />
                     <IconButton onClick={() => handleItemToggle(item_id)}>
                         <SvgIcon>
@@ -312,15 +310,8 @@ export const TestDataCollectionListTable = (props) => {
         setSelectedItems(checked ? items.map(item => item._id) : [])
     }
 
-    const handleItemSelect = (e, itemId) => {
-        let items = new Set(selectedItems);
-        const isChecked = e.target.checked;
-        if (isChecked) {
-            items.add(itemId);
-        } else {
-            items.delete(itemId);
-        }
-        setSelectedItems([...items]);
+    const handleItemSelect = (checked, itemId) => {
+        setSelectedItems(items => checked ? [...items, itemId] : items.filter(item => item !== itemId));
     }
 
     const handleItemToggle = itemId => {

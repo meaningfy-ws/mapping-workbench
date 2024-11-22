@@ -16,13 +16,13 @@ const styless = (name, themeDark) => {
         case 'attr-value':
             return themeDark ? '#a5d6ff' : '#032f62'
         case 'tag':
-            return themeDark ? '#116329' : '#7ee787'
+            return themeDark ?  '#7ee787':'#116329'
         case 'brace':
             return themeDark ? '#8b949e' : '#6a737d'
         case 'field':
-            return themeDark ? 'yellow' : '#ffffbe'
+            return themeDark ? '#fbfb7c' : '#ffffbe'
         case 'node':
-            return themeDark ? 'lightgreen' : '#007f00'
+            return themeDark ? '#007f00':  'lightgreen'
         case 'region':
             return themeDark ? '#007cd1' : '#e2f2ff'
         default:
