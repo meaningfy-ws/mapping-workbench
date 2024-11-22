@@ -1,66 +1,68 @@
 import {useEffect, useState} from 'react';
 import {useRouter} from "next/router";
 import PropTypes from 'prop-types';
-import parse from "html-react-parser";
 import {useFormik} from "formik";
 import * as Yup from "yup";
+import parse from "html-react-parser";
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 
 import EditIcon from '@untitled-ui/icons-react/build/esm/Edit05';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import InfoIcon from '@mui/icons-material/Info';
-import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
-import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
-import CardContent from '@mui/material/CardContent';
+
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
-import SvgIcon from '@mui/material/SvgIcon';
+import Link from "@mui/material/Link";
 import Table from '@mui/material/Table';
+import Stack from "@mui/material/Stack";
+import Alert from "@mui/material/Alert";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import Select from "@mui/material/Select";
+import Switch from "@mui/material/Switch";
+import Tooltip from "@mui/material/Tooltip";
+import SvgIcon from '@mui/material/SvgIcon';
+import Divider from "@mui/material/Divider";
+import ListItem from "@mui/material/ListItem";
+import TableRow from '@mui/material/TableRow';
+import MenuItem from "@mui/material/MenuItem";
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Typography from '@mui/material/Typography';
-import Tooltip from "@mui/material/Tooltip";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Stack from "@mui/material/Stack";
-import Dialog from "@mui/material/Dialog";
 import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
-import Select from "@mui/material/Select";
-import Switch from "@mui/material/Switch";
-import ListItem from "@mui/material/ListItem";
-import Alert from "@mui/material/Alert";
-import Divider from "@mui/material/Divider";
-import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import CardContent from '@mui/material/CardContent';
+import FormControl from "@mui/material/FormControl";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
 import {paths} from "src/paths";
-import {PropertyList} from 'src/components/property-list';
-import {PropertyListItem} from 'src/components/property-list-item';
+import {sessionApi} from "src/api/session";
+import {useDialog} from "src/hooks/use-dialog";
 import {Scrollbar} from 'src/components/scrollbar';
+import {toastSuccess} from "src/components/app-toast";
+import {PropertyList} from 'src/components/property-list';
+import {mappingPackagesApi} from "src/api/mapping-packages";
+import {PropertyListItem} from 'src/components/property-list-item';
+import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
+import {FormCodeTextArea} from "src/components/app/form/code-text-area";
+import TablePagination from "src/sections/components/table-pagination";
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
+import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-
-import {useDialog} from "../../../hooks/use-dialog";
-import {mappingPackagesApi} from "../../../api/mapping-packages";
-import {FormCodeTextArea} from "../../../components/app/form/code-text-area";
-import {genericTripleMapFragmentsApi} from "../../../api/triple-map-fragments/generic";
-import {MappingPackageCheckboxList} from "../mapping-package/components/mapping-package-checkbox-list";
-import {COMMENT_PRIORITY, conceptualMappingRulesApi} from "../../../api/conceptual-mapping-rules";
-import {ListSelectorSelect as ResourceListSelector} from "../../../components/app/list-selector/select";
-import {sparqlTestFileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
-import {toastSuccess} from "../../../components/app-toast";
-import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
-import TablePagination from "../../components/table-pagination";
-import TableSorterHeader from "../../components/table-sorter-header";
-import {sessionApi} from "../../../api/session";
-import {useHighlighterTheme} from "../../../hooks/use-highlighter-theme";
+import {genericTripleMapFragmentsApi} from "src/api/triple-map-fragments/generic";
+import {sparqlTestFileResourcesApi} from "src/api/sparql-test-suites/file-resources";
+import {COMMENT_PRIORITY, conceptualMappingRulesApi} from "src/api/conceptual-mapping-rules";
+import {ListSelectorSelect as ResourceListSelector} from "src/components/app/list-selector/select";
+import {
+    MappingPackageCheckboxList
+} from 'src/sections/app/mapping-package/components/mapping-package-real-checkbox-list';
 
 
 export const ListTableTripleMapFragment = (props) => {
@@ -72,18 +74,18 @@ export const ListTableTripleMapFragment = (props) => {
 
     const [tripleMapFragment, setTripleMapFragment] = useState({});
     const [projectTripleMapFragments, setProjectTripleMapFragments] = useState(initProjectTripleMapFragments || []);
-    const triple_map_fragment_id = item.triple_map_fragment && item.triple_map_fragment.id;
+    const triple_map_fragment_id = item.triple_map_fragment?.id;
 
     useEffect(() => {
-        (async () => {
-            if (initProjectTripleMapFragments === null) {
-                setProjectTripleMapFragments(await genericTripleMapFragmentsApi.getValuesForSelector());
-            }
-            if (triple_map_fragment_id) {
-                setTripleMapFragment(projectTripleMapFragments.find(x => x._id === triple_map_fragment_id));
-            }
-        })()
-    }, [genericTripleMapFragmentsApi])
+        if (initProjectTripleMapFragments === null) {
+            genericTripleMapFragmentsApi.getValuesForSelector()
+                .then(res => setProjectTripleMapFragments(res))
+                .catch(err => console.error(err))
+        }
+        if (triple_map_fragment_id) {
+            setTripleMapFragment(projectTripleMapFragments.find(x => x._id === triple_map_fragment_id));
+        }
+    }, [])
 
     const [ruleTripleMapFragment, setRuleTripleMapFragment] = useState(triple_map_fragment_id);
 
@@ -129,7 +131,7 @@ export const ListTableTripleMapFragment = (props) => {
         tripleMapFragmentDialog.handleOpen();
     }
 
-    const handleTripleMapFragmentDialogClose = async () => {
+    const handleTripleMapFragmentDialogClose = () => {
         tripleMapFragmentDialog.handleClose();
         setUpdateContent(false);
         setTripleMapFragment({});
@@ -157,9 +159,11 @@ export const ListTableTripleMapFragment = (props) => {
         handleTripleMapFragmentDialogClose();
     }
 
-    const handleTripleMapFragmentSelect = async (e) => {
+    const handleTripleMapFragmentSelect = (e) => {
         setUpdateContent(false);
-        e.target.value && await setTripleMapFragment(await genericTripleMapFragmentsApi.getItem(e.target.value));
+        e.target.value && genericTripleMapFragmentsApi.getItem(e.target.value)
+            .then(res => setTripleMapFragment(res))
+            .catch(err => console.error(err))
     }
 
     const ruleTripleMapFragments = projectTripleMapFragments.filter(x => ruleTripleMapFragment === x.id);
@@ -193,7 +197,6 @@ export const ListTableTripleMapFragment = (props) => {
                        }}
                 >
                     {isRuleTripleMapFragments && <Button
-                        // sx={{backgroundColor: "#fff"}}
                         aria-describedby={"triple_map_fragment_dialog_" + item._id}
                         variant="contained"
                         size="small"
@@ -293,6 +296,7 @@ export const ListTableTripleMapFragment = (props) => {
                                                     Format
                                                 </FormLabel>
                                                 <Select
+                                                    variant='standard'
                                                     name="format"
                                                     error={!!(formik.touched.format && formik.errors.format)}
                                                     fullWidth
@@ -376,15 +380,15 @@ export const ListTableMappingPackages = (props) => {
     const [mappingPackages, setMappingPackages] = useState(ruleFilteredMappingPackages);
     const [projectMappingPackages, setProjectMappingPackages] = useState(initProjectMappingPackages ?? []);
     const [tempMappingPackages, setTempMappingPackages] =
-        useState(JSON.parse(JSON.stringify(ruleFilteredMappingPackages)));
+        useState(ruleFilteredMappingPackages);
 
     useEffect(() => {
-        (async () => {
-            if (initProjectMappingPackages === null) {
-                setProjectMappingPackages(await mappingPackagesApi.getProjectPackages());
-            }
-        })()
-    }, [mappingPackagesApi])
+        if (initProjectMappingPackages === null) {
+            mappingPackagesApi.getProjectPackages()
+                .then(res => setProjectMappingPackages(res))
+                .catch(err => console.error(err))
+        }
+    }, [])
 
     const mappingPackagesDialog = useDialog();
 
@@ -405,14 +409,15 @@ export const ListTableMappingPackages = (props) => {
 
     const mappingPackagesDialogHandleClose = () => {
         mappingPackagesDialog.handleClose();
-        setTempMappingPackages(JSON.parse(JSON.stringify(ruleFilteredMappingPackages)));
+        setTempMappingPackages(ruleFilteredMappingPackages);
     }
 
     return (<>
         {ruleMappingPackages.length > 0 && (
             <Box sx={{mb: 1}}>
                 {ruleMappingPackages.map(x => (
-                    <ListItem key={"mapping_package_" + x.id}>{x.identifier}</ListItem>
+                    <Chip key={"mapping_package_" + x.id}
+                          label={x.identifier}/>
                 ))}
             </Box>
         )}
@@ -459,6 +464,7 @@ export const ListTableMappingPackages = (props) => {
                 <Box
                     spacing={3}>
                     <MappingPackageCheckboxList
+                        handleUpdate={setTempMappingPackages}
                         mappingPackages={tempMappingPackages}
                         initProjectMappingPackages={projectMappingPackages}/>
                 </Box>
@@ -486,17 +492,15 @@ export const ListTableSPARQLAssertions = (props) => {
     const ruleFilteredSparqlResources = (item.sparql_assertions ?? []).map(x => x.id);
     const [sparqlResources, setSparqlResources] = useState(ruleFilteredSparqlResources);
     const [projectSPARQLResources, setProjectSPARQLResources] = useState(initProjectSPARQLResources ?? []);
-    const [tempSparqlResources, setTempSparqlResources] = useState(
-        JSON.parse(JSON.stringify(ruleFilteredSparqlResources))
-    );
+    const [tempSparqlResources, setTempSparqlResources] = useState(ruleFilteredSparqlResources)
 
     useEffect(() => {
-        (async () => {
-            if (initProjectSPARQLResources === null) {
-                setProjectSPARQLResources(await sparqlTestFileResourcesApi.getMappingRuleSPARQLAssertions());
-            }
-        })()
-    }, [sparqlTestFileResourcesApi])
+        if (initProjectSPARQLResources === null) {
+            sparqlTestFileResourcesApi.getMappingRuleSPARQLAssertions()
+                .then(res => setProjectSPARQLResources(res))
+                .catch(err => console.error(err))
+        }
+    }, [])
 
     const sparqlTestFileResourcesDialog = useDialog();
 
@@ -507,9 +511,7 @@ export const ListTableSPARQLAssertions = (props) => {
         values['sparql_assertions'] = tempSparqlResources;
         await conceptualMappingRulesApi.updateItem(values);
         setSparqlResources(tempSparqlResources);
-        item.sparql_assertions = tempSparqlResources.map(x => {
-            return {id: x}
-        });
+        item.sparql_assertions = tempSparqlResources.map(x => ({id: x}));
         toastSuccess(conceptualMappingRulesApi.SECTION_ITEM_TITLE + ' updated');
         sparqlTestFileResourcesDialog.handleClose();
     }
@@ -520,7 +522,7 @@ export const ListTableSPARQLAssertions = (props) => {
 
     const sparqlTestFileResourcesDialogHandleClose = () => {
         sparqlTestFileResourcesDialog.handleClose();
-        setTempSparqlResources(JSON.parse(JSON.stringify(ruleFilteredSparqlResources)));
+        setTempSparqlResources(ruleFilteredSparqlResources);
     }
 
     const ruleSPARQLResources = projectSPARQLResources.filter(x => sparqlResources.includes(x.id))
@@ -725,8 +727,11 @@ export const ListTableRow = (props) => {
                     }}
                 >
                     <IconButton onClick={() => handleItemToggle(item_id)}>
-                        <SvgIcon>
-                            {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
+                        <SvgIcon sx={{
+                            transform: isCurrent ? 'rotate(90deg)' : '',
+                            transition: '0.2s linear'
+                        }}>
+                            <ChevronRightIcon/>
                         </SvgIcon>
                     </IconButton>
                 </TableCell>
@@ -807,8 +812,9 @@ export const ListTableRow = (props) => {
                         <Button variant="text"
                                 size="small"
                                 color="warning"
-                                onClick={() => handleNotesDialogOpen(item)}
-                        >{notesCount}</Button>}
+                                onClick={() => handleNotesDialogOpen(item)}>
+                            {notesCount}
+                        </Button>}
                 </TableCell>
 
                 <TableCell align="right">
@@ -961,16 +967,6 @@ export const ListTable = (props) => {
         })()
     }, [])
 
-    const SorterHeader = (props) => {
-        const direction = props.fieldName === sort.column && sort.direction === 1 ? 'asc' : 'desc';
-        return (
-            <TableSorterHeader sort={{direction, column: sort.column}}
-                               onSort={onSort}
-                               {...props}
-            />
-        )
-    }
-
     if (!isProjectDataReady) return null;
 
     return (
@@ -1035,7 +1031,7 @@ export const ListTable = (props) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {items.map((item) => {
+                        {items.map(item => {
                             const item_id = item._id;
                             const isCurrent = item_id === currentItem;
                             const isHovered = item_id === hoveredItem;
@@ -1069,38 +1065,34 @@ export const ListTable = (props) => {
                                 <CardHeader title="Notes"
                                             sx={{mb: 2}}/>
                                 <Divider/>
-                                <CardContent sx={{pt: 1}}><Box style={{overflow: 'auto', maxHeight: '40vh'}}>
-                                    {notesDialog.data?.mapping_notes && <>
-                                        <Typography>Mapping Notes:</Typography>
-                                        {notesDialog.data.mapping_notes.map((mapping_note, i) => <RuleComment
-                                                key={'mapping_note' + i}
-                                                comment={mapping_note}
-                                            />
-                                        )}
-                                    </>}
-                                    <Divider sx={{
-                                        my: 2
-                                    }}/>
-                                    {notesDialog.data?.editorial_notes && <>
-                                        <Typography>Editorial Notes:</Typography>
-                                        {notesDialog.data.editorial_notes.map((editorial_note, i) => <RuleComment
-                                                key={'editorial_notes' + i}
-                                                comment={editorial_note}
-                                            />
-                                        )}
-                                    </>}
-                                    <Divider sx={{
-                                        my: 2
-                                    }}/>
-                                    {notesDialog.data?.feedback_notes && <>
-                                        <Typography>Feedback Notes:</Typography>
-                                        {notesDialog.data.feedback_notes.map((feedback_note, i) => <RuleComment
-                                                key={'feedback_notes' + i}
-                                                comment={feedback_note}
-                                            />
-                                        )}
-                                    </>}
-                                </Box>
+                                <CardContent sx={{pt: 1}}>
+                                    <Box style={{overflow: 'auto', maxHeight: '40vh'}}>
+                                        {notesDialog.data?.mapping_notes && <>
+                                            <Typography>Mapping Notes:</Typography>
+                                            {notesDialog.data.mapping_notes.map((mapping_note, i) => <RuleComment
+                                                    key={'mapping_note' + i}
+                                                    comment={mapping_note}
+                                                />
+                                            )}
+                                        </>}
+                                        <Divider sx={{my: 2}}/>
+                                        {notesDialog.data?.editorial_notes && <>
+                                            <Typography>Editorial Notes:</Typography>
+                                            {notesDialog.data.editorial_notes.map((editorial_note, i) => <RuleComment
+                                                    key={'editorial_notes' + i}
+                                                    comment={editorial_note}
+                                                />
+                                            )}
+                                        </>}
+                                        <Divider sx={{my: 2}}/>
+                                        {notesDialog.data?.feedback_notes && <>
+                                            <Typography>Feedback Notes:</Typography>
+                                            {notesDialog.data.feedback_notes.map((feedback_note, i) =>
+                                                <RuleComment key={'feedback_notes' + i}
+                                                             comment={feedback_note}/>
+                                            )}
+                                        </>}
+                                    </Box>
                                 </CardContent>
                             </Card>
                         </Dialog>
