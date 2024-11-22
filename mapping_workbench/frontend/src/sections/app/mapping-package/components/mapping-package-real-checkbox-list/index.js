@@ -38,7 +38,6 @@ export const MappingPackageCheckboxList = (props) => {
     } = props;
 
     const [projectMappingPackages, setProjectMappingPackages] = useState([]);
-
     const allChecked = projectMappingPackages.length === mappingPackages.length
 
     const mappingPackagesStore = useMappingPackagesStore(initProjectMappingPackages)
@@ -46,7 +45,10 @@ export const MappingPackageCheckboxList = (props) => {
     useEffect(() => {
         setProjectMappingPackages(mappingPackagesStore.items);
         if (withDefaultPackage) {
-            handleUpdate([mappingPackagesStore.items.find(pkg => pkg.identifier === 'default')?.id])
+            const defaultPackage = mappingPackagesStore.items.find(pkg => pkg.identifier === 'default')
+            if (defaultPackage) {
+                handleUpdate([defaultPackage.id])
+            }
         }
     }, [JSON.stringify(mappingPackagesStore.items)]);
 

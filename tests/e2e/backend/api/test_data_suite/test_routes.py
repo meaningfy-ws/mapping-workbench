@@ -1,6 +1,8 @@
 import pytest
 from beanie import PydanticObjectId
 
+from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
+from mapping_workbench.backend.mapping_package.services.api import get_mapping_package
 from mapping_workbench.backend.test_data_suite.entrypoints.api.routes import ROUTE_PREFIX
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite
 from tests.e2e.backend.api import client, api_endpoint
@@ -14,6 +16,7 @@ async def test_test_data_suites_assign_mapping_packages_route(
         dummy_mapping_package
 ):
     await dummy_test_data_suite.save()
+    await dummy_mapping_package.save()
 
     data = {
         "project": str(dummy_project.id),
@@ -29,11 +32,16 @@ async def test_test_data_suites_assign_mapping_packages_route(
 
     assert response.status_code == 200
 
-    test_data_suite = await TestDataSuite.get(dummy_test_data_suite.id)
-    assert dummy_mapping_package.id in test_data_suite.refers_to_mapping_package_ids
+    mapping_package: MappingPackage = await get_mapping_package(dummy_mapping_package.id)
+
+    test_data_suites_ids = [test_data_suite.to_ref().id for test_data_suite in mapping_package.test_data_suites]
+    assert dummy_test_data_suite.id in test_data_suites_ids
 
     await dummy_test_data_suite.delete()
     assert not await TestDataSuite.get(dummy_test_data_suite.id)
+
+    await dummy_mapping_package.delete()
+    assert not await MappingPackage.get(dummy_mapping_package.id)
 
 
 @pytest.mark.asyncio

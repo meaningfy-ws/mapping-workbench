@@ -123,7 +123,9 @@ export const EditForm = (props) => {
 
     const onUpdateAndTransform = (values, helpers) => {
         values['project'] = sessionApi.getSessionProject();
-        if (!values['mapping_package_id']) values['mapping_package_id'] = null;
+        const mapping_package_id = values['mapping_package_id'] || null;
+        delete values['mapping_package_id'];
+
         values['id'] = item._id;
         formik.setSubmitting(true)
         const toastId = toastLoad("Updating Content")
@@ -142,7 +144,6 @@ export const EditForm = (props) => {
         sectionApi.updateItem(values)
             .then(res => {
                 toastLoad("Transforming Content", toastId);
-                const mapping_package_id = values['mapping_package_id']
                 sectionApi.getTripleMapRdfResultContent(item._id, selectedTree, useThisTripleMap, mapping_package_id)
                     .then(res => {
                         setRdfResultContent(res.rdf_manifestation)

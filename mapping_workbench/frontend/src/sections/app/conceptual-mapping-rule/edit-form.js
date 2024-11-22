@@ -197,7 +197,6 @@ export const EditForm = (props) => {
             priority: COMMENT_PRIORITY.NORMAL
         }
 
-
         const initialValues = {
             source_structural_element: item.source_structural_element?.id ?? '',
             xpath_condition: item.xpath_condition ?? '',

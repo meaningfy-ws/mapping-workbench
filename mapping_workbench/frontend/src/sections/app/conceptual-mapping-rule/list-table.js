@@ -54,7 +54,6 @@ import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import {FormCodeTextArea} from "src/components/app/form/code-text-area";
 import TablePagination from "src/sections/components/table-pagination";
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
-import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {genericTripleMapFragmentsApi} from "src/api/triple-map-fragments/generic";
 import {sparqlTestFileResourcesApi} from "src/api/sparql-test-suites/file-resources";
@@ -372,7 +371,6 @@ export const ListTableMappingPackages = (props) => {
     const {
         item, initProjectMappingPackages = null, onPackagesUpdate = () => {
         },
-        isCurrent,
         isHovered
     } = props;
 
@@ -415,10 +413,7 @@ export const ListTableMappingPackages = (props) => {
     return (<>
         {ruleMappingPackages.length > 0 && (
             <Box sx={{mb: 1}}>
-                {ruleMappingPackages.map(x => (
-                    <Chip key={"mapping_package_" + x.id}
-                          label={x.identifier}/>
-                ))}
+                {ruleMappingPackages.map(x => (<Chip key={"mapping_package_" + x.id} label={x.title}/>))}
             </Box>
         )}
         <Box sx={{

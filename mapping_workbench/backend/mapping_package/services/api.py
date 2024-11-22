@@ -108,7 +108,7 @@ async def remove_mapping_package_resources(mapping_package: MappingPackage):
     ).update_many(
         Pull({ConceptualMappingRule.refers_to_mapping_package_ids: package_id})
     )
-    print(Pull({GenericTripleMapFragment.refers_to_mapping_package_ids: package_id}))
+
     await GenericTripleMapFragment.find(
         GenericTripleMapFragment.project == project_link
     ).update_many(
