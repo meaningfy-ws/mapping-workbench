@@ -263,7 +263,7 @@ export const FileCollectionListTable = (props) => {
 
     const isItemSelected = itemId => selectedItems.indexOf(itemId) !== -1;
 
-    const allChecked = selectedItems.length === items.length
+    const allChecked = items.length > 0 && selectedItems.length === items.length
 
     const handleItemsSelectAll = checked => {
         setSelectedItems(checked ? items.map(item => item._id) : [])

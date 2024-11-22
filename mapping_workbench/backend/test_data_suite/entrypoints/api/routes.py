@@ -260,8 +260,10 @@ async def route_update_test_data_file_resource(
         del req_data['transform_test_data']
     transform_mapping_package_id = None
     if 'mapping_package_id' in req_data:
-        transform_mapping_package_id = PydanticObjectId(req_data['mapping_package_id'])
+        transform_mapping_package_id = PydanticObjectId(req_data['mapping_package_id']) \
+            if req_data['mapping_package_id'] else None
         del req_data['mapping_package_id']
+
     data = TestDataFileResourceUpdateIn(**req_data)
     try:
         return await update_test_data_file_resource(

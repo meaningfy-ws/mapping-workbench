@@ -135,7 +135,7 @@ const Page = () => {
         identifier: item.identifier || '',
         rdf_manifestation: item.rdf_manifestation || '',
         transform_test_data: false,
-        mapping_package_id: ''
+        mapping_package_id: null
     }
 
     return (

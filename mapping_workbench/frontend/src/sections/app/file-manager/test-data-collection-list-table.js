@@ -304,8 +304,12 @@ export const TestDataCollectionListTable = (props) => {
     const [currentItem, setCurrentItem] = useState(null);
     const [selectedItems, setSelectedItems] = useState([]);
 
-    const isItemSelected = (itemId) => {
-        return selectedItems.indexOf(itemId) !== -1;
+    const isItemSelected = itemId => selectedItems.indexOf(itemId) !== -1;
+
+    const allChecked = items.length > 0 && selectedItems.length === items.length
+
+    const handleItemsSelectAll = checked => {
+        setSelectedItems(checked ? items.map(item => item._id) : [])
     }
 
     const handleItemSelect = (e, itemId) => {
@@ -362,6 +366,11 @@ export const TestDataCollectionListTable = (props) => {
                         <TableHead>
                             <TableRow>
                                 <TableCell>
+                                    <Checkbox
+                                        checked={allChecked}
+                                        indeterminate={selectedItems.length && !allChecked}
+                                        onChange={(event) => handleItemsSelectAll(event.target.checked)}
+                                    />
                                 </TableCell>
                                 <TableCell width="25%">
                                     Title
