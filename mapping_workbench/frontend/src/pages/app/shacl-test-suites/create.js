@@ -1,17 +1,18 @@
-import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {shaclTestSuitesApi as sectionApi} from 'src/api/shacl-test-suites';
-import {RouterLink} from 'src/components/router-link';
-import {Seo} from 'src/components/seo';
-import {usePageView} from 'src/hooks/use-page-view';
-import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
-import {FileCollectionEditForm} from 'src/sections/app/file-manager/file-collection-edit-form';
+import {Seo} from 'src/components/seo';
+import {Layout as AppLayout} from 'src/layouts/app';
+import {RouterLink} from 'src/components/router-link';
+import {usePageView} from 'src/hooks/use-page-view';
+import {shaclTestSuitesApi as sectionApi} from 'src/api/shacl-test-suites';
 import {ForItemCreateForm} from "src/contexts/app/section/for-item-form";
+import {FileCollectionEditForm} from 'src/sections/app/file-manager/file-collection-edit-form';
 
 const Page = () => {
     let item = {};
@@ -35,7 +36,7 @@ const Page = () => {
                             underline="hover"
                         >
                             <SvgIcon sx={{mr: 1}}>
-                                <ArrowLeftIcon/>
+                                <ArrowBackIcon/>
                             </SvgIcon>
                             <Typography variant="subtitle2">
                                 {sectionApi.SECTION_TITLE}

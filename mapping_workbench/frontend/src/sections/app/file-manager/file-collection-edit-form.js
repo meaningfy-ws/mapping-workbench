@@ -172,12 +172,12 @@ export const FileCollectionEditForm = (props) => {
                                     <MenuItem key=""
                                               value={null}>&nbsp;
                                     </MenuItem>
-                                    {Object.keys(sectionApi.FILE_COLLECTION_TYPES).map((key) => (
+                                    {Object.keys(sectionApi.FILE_COLLECTION_TYPES).map(key =>
                                         <MenuItem key={key}
                                                   value={key}>
                                             {sectionApi.FILE_COLLECTION_TYPES[key]}
                                         </MenuItem>
-                                    ))}
+                                    )}
                                 </TextField>
                             </Grid>
                         )}
@@ -204,7 +204,7 @@ export const FileCollectionEditForm = (props) => {
                                     <Grid xs={12}
                                           md={12}>
                                         <MappingPackageCheckboxList
-                                            handleUpdate={values => formik.setFieldValue('refers_to_mapping_package_ids',values)}
+                                            handleUpdate={values => formik.setFieldValue('refers_to_mapping_package_ids', values)}
                                             mappingPackages={formik.values.refers_to_mapping_package_ids}
                                             withDefaultPackage={itemctx.isNew}
                                         />
