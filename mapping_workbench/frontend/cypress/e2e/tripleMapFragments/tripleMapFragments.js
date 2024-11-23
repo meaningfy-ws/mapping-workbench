@@ -52,8 +52,6 @@ Then('I get redirected to create page', () => {
 
 Then('I enter name', () => {
     cy.intercept('POST', appURLPrefix + 'generic_triple_map_fragments*').as('create')
-    cy.get("input[name=mapping_package_id]").parent().click()
-    .get('ul.MuiList-root').click()
     cy.get("input[name=triple_map_uri]").clear().type(genericTripleMapName)
     cy.get("button[type=submit]").click('right')
 })
