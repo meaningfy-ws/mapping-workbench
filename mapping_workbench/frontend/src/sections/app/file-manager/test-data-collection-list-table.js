@@ -1,4 +1,3 @@
-import Chip from '@mui/material/Chip';
 import {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 
@@ -6,6 +5,7 @@ import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
 
 import {Box} from "@mui/system";
+import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import Stack from "@mui/material/Stack";
 import Table from '@mui/material/Table';
@@ -20,6 +20,7 @@ import TableHead from '@mui/material/TableHead';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import CardContent from '@mui/material/CardContent';
+import TableSorterHeader from '../../components/table-sorter-header';
 
 import {FileUploader} from "./file-uploader";
 
@@ -38,9 +39,6 @@ import {ListItemActions} from "src/components/app/list/list-item-actions";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {testDataFileResourcesApi as fileResourcesApi} from "src/api/test-data-suites/file-resources";
 import {MappingPackagesBulkAssigner} from "src/sections/app/mapping-package/components/mapping-packages-bulk-assigner";
-import ListItem from "@mui/material/ListItem";
-import List from "@mui/material/List";
-
 
 export const ListTableRow = (props) => {
     const {
@@ -282,14 +280,14 @@ export const TestDataCollectionListTable = (props) => {
         count = 0,
         items = [],
         itemsForced = 0,
-        onPageChange = () => {
-        },
+        onPageChange = () => { },
+        sort,
+        onSort = () => {},
         onRowsPerPageChange,
         page = 0,
         rowsPerPage = 0,
         sectionApi,
-        getItems = (number) => {
-        }
+        getItems = (number) => { }
     } = props;
 
     const router = useRouter();
@@ -325,6 +323,19 @@ export const TestDataCollectionListTable = (props) => {
     const onMappingPackagesAssign = () => {
         getItems(Date.now())
     }
+
+    const SorterHeader = (props) => {
+        const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
+        return (
+            <TableCell>
+                <TableSorterHeader sort={{direction, column: sort.column}}
+                                   onSort={onSort}
+                                   {...props}
+                />
+            </TableCell>
+        )
+    }
+
     return (<>
             <Box sx={{p: 1}}>
                 <MappingPackagesBulkAssigner
@@ -351,22 +362,24 @@ export const TestDataCollectionListTable = (props) => {
                     <Table sx={{minWidth: 1200}}>
                         <TableHead>
                             <TableRow>
-                                <TableCell>
-                                    <Checkbox
-                                        checked={allChecked}
-                                        indeterminate={selectedItems.length && !allChecked}
-                                        onChange={(event) => handleItemsSelectAll(event.target.checked)}
+                                <TableCell sx={{py: 1, backgroundColor: 'red'}}>
+                                    <Checkbox checked={allChecked}
+                                              indeterminate={selectedItems.length && !allChecked}
+                                              onChange={(event) => handleItemsSelectAll(event.target.checked)}
                                     />
                                 </TableCell>
-                                <TableCell width="25%">
-                                    Title
-                                </TableCell>
+                                <SorterHeader width="25%" fieldName='title'/>
+                                {/*<TableCell width="25%">*/}
+                                {/*    Title*/}
+                                {/*</TableCell>*/}
                                 <TableCell>
                                     Packages
                                 </TableCell>
-                                <TableCell align="left">
-                                    Created
-                                </TableCell>
+                                {/*<TableCell align="left">*/}
+                                {/*    Created*/}
+                                {/*</TableCell>*/}
+                                <SorterHeader fieldName='created_at'
+                                              title='created'/>
                                 <TableCell align="right">
                                     Actions
                                 </TableCell>

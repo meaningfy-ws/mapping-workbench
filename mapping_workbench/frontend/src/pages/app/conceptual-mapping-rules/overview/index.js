@@ -154,14 +154,14 @@ const Page = () => {
                     <ListTable
                         sectionApi={sectionApi}
                         items={itemsSearch.pagedItems}
-                        count={itemsStore.itemsCount}
+                        count={itemsSearch.count}
                         detailedView={detailedView}
                         page={itemsSearch.state.page}
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         onSort={itemsSearch.handleSort}
-                        sort={{direction: itemsSearch.state.sortDirection, column: itemsSearch.state.sortField}}
+                        sort={itemsSearch.state.sort}
                     />
                 </Card>
                 <Dialog id='shacl_generate_dialog'

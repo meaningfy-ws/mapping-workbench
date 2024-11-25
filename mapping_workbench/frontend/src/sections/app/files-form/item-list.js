@@ -39,7 +39,7 @@ export const ItemList = (props) => {
                             gridTemplateColumns: 'repeat(3, 1fr)'
                         }}
                     >
-                        {items.map((item) => (
+                        {items.map(item => (
                             <ItemListCard
                                 key={item.filename}
                                 item={item}
@@ -65,7 +65,7 @@ export const ItemList = (props) => {
                                 }}
                             >
                                 <TableBody>
-                                    {items.map((item) => (
+                                    {items.map(item => (
                                         <ItemListRow
                                             key={item.filename}
                                             item={item}
