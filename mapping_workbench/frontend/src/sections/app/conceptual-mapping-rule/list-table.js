@@ -369,8 +369,9 @@ export const ListTableTripleMapFragment = (props) => {
 
 export const ListTableMappingPackages = (props) => {
     const {
-        item, initProjectMappingPackages = null, onPackagesUpdate = () => {
-        },
+        item,
+        initProjectMappingPackages = null,
+        onPackagesUpdate = () => { },
         isHovered
     } = props;
 
@@ -411,9 +412,12 @@ export const ListTableMappingPackages = (props) => {
     }
 
     return (<>
-        {ruleMappingPackages.length > 0 && <>
-            {ruleMappingPackages.map(x => (<Box sx={{mb: 1}}><Chip key={"mapping_package_" + x.id} label={x.title}/></Box>))}
-        </>}
+        {ruleMappingPackages.length > 0 && <Box>
+            {ruleMappingPackages.map((x) => (
+                <Chip key={"mapping_package_" + x.id}
+                      sx={{mb: 1}}
+                      label={x.title}/>))}
+        </Box>}
         <Box sx={{
             position: "absolute",
             left: "50%",
