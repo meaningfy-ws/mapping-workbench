@@ -1,18 +1,18 @@
+import {useCallback} from "react";
 import PropTypes from 'prop-types';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import {ontologyNamespacesApi as sectionApi} from 'src/api/ontology-namespaces';
 
+import Card from '@mui/material/Card';
+import Stack from "@mui/material/Stack";
+import Switch from "@mui/material/Switch";
+import Button from "@mui/material/Button";
+import CardHeader from '@mui/material/CardHeader';
+
+import {paths} from "src/paths";
+import {useRouter} from "src/hooks/use-router";
 import {PropertyList} from 'src/components/property-list';
 import {PropertyListItem} from 'src/components/property-list-item';
-import Button from "@mui/material/Button";
-import CardActions from "@mui/material/CardActions";
-import {useCallback} from "react";
-import {paths} from "../../../paths";
-import {useRouter} from "../../../hooks/use-router";
-import Switch from "@mui/material/Switch";
-import Stack from "@mui/material/Stack";
+import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
+import {ontologyNamespacesApi as sectionApi} from 'src/api/ontology-namespaces';
 
 export const BasicDetails = (props) => {
     const {id, prefix, uri, is_syncable, ...other} = props;
@@ -98,5 +98,8 @@ export const BasicDetails = (props) => {
 };
 
 BasicDetails.propTypes = {
-    id: PropTypes.string.isRequired, prefix: PropTypes.string, uri: PropTypes.string, is_syncable: PropTypes.string
+    id: PropTypes.string.isRequired,
+    prefix: PropTypes.string,
+    uri: PropTypes.string,
+    is_syncable: PropTypes.oneOfType([PropTypes.string, PropTypes.bool])
 };

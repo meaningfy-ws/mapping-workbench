@@ -1,3 +1,4 @@
+import Chip from '@mui/material/Chip';
 import {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 
@@ -143,7 +144,7 @@ export const ListTableRow = (props) => {
                     </Typography>
                 </TableCell>
                 <TableCell>
-                    <List sx={{p: 0, m: 0}}>
+                    <Box>
                         {
                             sectionApi.MAPPING_PACKAGE_LINK_FIELD
                             && projectMappingPackages
@@ -151,18 +152,14 @@ export const ListTableRow = (props) => {
                                     projectMappingPackage => projectMappingPackage?.[sectionApi.MAPPING_PACKAGE_LINK_FIELD]
                                         ?.some(resource_ref => item_id === resource_ref.id)
                                 )
-                                .map((mapping_package) => {
-                                    console.log(mapping_package.title);
-                                    return (
-                                        <ListItem
-                                            key={"mapping_package_" + mapping_package.id}
-                                            sx={{p: 0, m: 0}}
-                                        >
-                                            {mapping_package['title']}
-                                        </ListItem>
-                                    );
-                                })}
-                    </List>
+                                .map(mapping_package =>
+                                    <Chip key={"mapping_package_" + mapping_package.id}
+                                          label={mapping_package['title']}
+                                          sx={{mb: 1}}
+                                    />
+                                )
+                        }
+                    </Box>
                 </TableCell>
                 <TableCell align="left">
                     {timeTransformer(item.created_at, timeSetting)}
@@ -225,50 +222,48 @@ export const ListTableRow = (props) => {
                                     {collectionResources && collectionResources.length > 0 && (
                                         <Box sx={{mt: 2}}>
                                             <Stack divider={<Divider/>}>
-                                                {collectionResources.map((resource) => {
-                                                    return (
+                                                {collectionResources.map(resource =>
+                                                    <Stack
+                                                        alignItems="center"
+                                                        direction="row"
+                                                        flexWrap="wrap"
+                                                        justifyContent="space-between"
+                                                        key={item_id + "_" + resource._id}
+                                                        sx={{
+                                                            px: 2,
+                                                            py: 1.5,
+                                                        }}
+                                                    >
+                                                        <div>
+                                                            <Typography
+                                                                variant="subtitle1">{resource.title}</Typography>
+                                                            <Typography
+                                                                color="text.secondary"
+                                                                variant="caption"
+                                                            >
+                                                                {}
+                                                            </Typography>
+                                                        </div>
                                                         <Stack
                                                             alignItems="center"
                                                             direction="row"
-                                                            flexWrap="wrap"
-                                                            justifyContent="space-between"
-                                                            key={item_id + "_" + resource._id}
-                                                            sx={{
-                                                                px: 2,
-                                                                py: 1.5,
-                                                            }}
+                                                            spacing={2}
                                                         >
-                                                            <div>
-                                                                <Typography
-                                                                    variant="subtitle1">{resource.title}</Typography>
-                                                                <Typography
-                                                                    color="text.secondary"
-                                                                    variant="caption"
-                                                                >
-                                                                    {}
-                                                                </Typography>
-                                                            </div>
-                                                            <Stack
-                                                                alignItems="center"
-                                                                direction="row"
-                                                                spacing={2}
-                                                            >
-                                                                <Button
-                                                                    size="small"
-                                                                    onClick={() => handleResourceEdit?.(resource._id)}
-                                                                    color="success">
-                                                                    Edit
-                                                                </Button>
-                                                                <Button
-                                                                    size="small"
-                                                                    onClick={() => setConfirmOpen(resource._id)}
-                                                                    color="error">
-                                                                    Delete
-                                                                </Button>
-                                                            </Stack>
+                                                            <Button
+                                                                size="small"
+                                                                onClick={() => handleResourceEdit?.(resource._id)}
+                                                                color="success">
+                                                                Edit
+                                                            </Button>
+                                                            <Button
+                                                                size="small"
+                                                                onClick={() => setConfirmOpen(resource._id)}
+                                                                color="error">
+                                                                Delete
+                                                            </Button>
                                                         </Stack>
-                                                    );
-                                                })}
+                                                    </Stack>
+                                                )}
                                             </Stack>
                                         </Box>
                                     )}
