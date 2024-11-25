@@ -34,6 +34,7 @@ import {FileUploader} from "src/sections/app/file-manager/file-uploader";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {ListFileCollectionActions} from "src/components/app/list/list-file-collection-actions";
 import {MappingPackagesBulkAssigner} from "src/sections/app/mapping-package/components/mapping-packages-bulk-assigner";
+import TableSorterHeader from '../../components/table-sorter-header';
 
 export const ListTableRow = (props) => {
     const {
@@ -110,7 +111,7 @@ export const ListTableRow = (props) => {
                     </Typography>
                 </TableCell>
                 <TableCell>
-                    <Box sx={{p: 0, m: 0}}>
+                    <Box sx={{p: 0, mb: 0}}>
                         {
                             sectionApi.MAPPING_PACKAGE_LINK_FIELD
                             && projectMappingPackages
@@ -121,7 +122,7 @@ export const ListTableRow = (props) => {
                                 .map(mapping_package =>
                                     <Chip
                                         key={"mapping_package_" + mapping_package.id}
-                                        sx={{p: 0, m: 0}}
+                                        sx={{p: 0, mb: 1}}
                                         label={mapping_package['title']}
                                     />
                                 )}
@@ -189,43 +190,42 @@ export const ListTableRow = (props) => {
                                     {collectionResources && collectionResources.length > 0 && (
                                         <Box sx={{mt: 2}}>
                                             <Stack divider={<Divider/>}>
-                                                {collectionResources.map((resource) => {
-                                                    return (
+                                                {collectionResources.map(resource =>
+
+                                                    <Stack
+                                                        alignItems="center"
+                                                        direction="row"
+                                                        flexWrap="wrap"
+                                                        justifyContent="space-between"
+                                                        key={item_id + "_" + resource._id}
+                                                        sx={{
+                                                            px: 2,
+                                                            py: 1.5,
+                                                        }}
+                                                    >
+                                                        <div>
+                                                            <Typography
+                                                                variant="subtitle1">{resource.title}</Typography>
+                                                            <Typography
+                                                                color="text.secondary"
+                                                                variant="caption"
+                                                            >
+                                                                {}
+                                                            </Typography>
+                                                        </div>
                                                         <Stack
                                                             alignItems="center"
                                                             direction="row"
-                                                            flexWrap="wrap"
-                                                            justifyContent="space-between"
-                                                            key={item_id + "_" + resource._id}
-                                                            sx={{
-                                                                px: 2,
-                                                                py: 1.5,
-                                                            }}
+                                                            spacing={2}
                                                         >
-                                                            <div>
-                                                                <Typography
-                                                                    variant="subtitle1">{resource.title}</Typography>
-                                                                <Typography
-                                                                    color="text.secondary"
-                                                                    variant="caption"
-                                                                >
-                                                                    {}
-                                                                </Typography>
-                                                            </div>
-                                                            <Stack
-                                                                alignItems="center"
-                                                                direction="row"
-                                                                spacing={2}
-                                                            >
-                                                                <Button
-                                                                    size="small"
-                                                                    onClick={() => handleResourceEdit?.(resource._id)}
-                                                                    color="success"
-                                                                >Edit</Button>
-                                                            </Stack>
+                                                            <Button
+                                                                size="small"
+                                                                onClick={() => handleResourceEdit?.(resource._id)}
+                                                                color="success"
+                                                            >Edit</Button>
                                                         </Stack>
-                                                    );
-                                                })}
+                                                    </Stack>
+                                                )}
                                             </Stack>
                                         </Box>
                                     )}
@@ -252,6 +252,8 @@ export const FileCollectionListTable = (props) => {
         sectionApi,
         getItems = (number) => {
         },
+        sort,
+        onSort = () => {},
         selectable = null,
         fileResourceApi,
     } = props;
@@ -294,6 +296,19 @@ export const FileCollectionListTable = (props) => {
         uploadDialog.handleOpen({id})
     }
 
+    const SorterHeader = (props) => {
+        const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
+        return (
+            <TableCell>
+                <TableSorterHeader sort={{direction, column: sort.column}}
+                                   onSort={onSort}
+                                   {...props}
+                />
+            </TableCell>
+        )
+    }
+
+
     return (<>
             <Box sx={{p: 1}}>
                 <MappingPackagesBulkAssigner
@@ -305,6 +320,7 @@ export const FileCollectionListTable = (props) => {
                 />
             </Box>
             <Divider/>
+            {/*<Filter*/}
             <TablePagination
                 component="div"
                 count={count}
@@ -320,22 +336,20 @@ export const FileCollectionListTable = (props) => {
                     <Table sx={{minWidth: 1200}}>
                         <TableHead>
                             <TableRow>
-                                <TableCell>
-                                    <Checkbox
-                                        checked={allChecked}
-                                        indeterminate={selectedItems.length && !allChecked}
-                                        onChange={(event) => handleItemsSelectAll(event.target.checked)}
+                                <TableCell sx={{my: 2}}>
+                                    <Checkbox checked={allChecked}
+                                              indeterminate={selectedItems.length && !allChecked}
+                                              onChange={(event) => handleItemsSelectAll(event.target.checked)}
                                     />
                                 </TableCell>
-                                <TableCell width="25%">
-                                    Title
-                                </TableCell>
+                                <SorterHeader fieldName='title'
+                                              width='25%'/>
                                 <TableCell align="left">
                                     Packages
                                 </TableCell>
-                                <TableCell align="left">
-                                    Created
-                                </TableCell>
+                                <SorterHeader align="left"
+                                              title='created'
+                                              fieldName='created_at'/>
                                 <TableCell align="right">
                                     Actions
                                 </TableCell>

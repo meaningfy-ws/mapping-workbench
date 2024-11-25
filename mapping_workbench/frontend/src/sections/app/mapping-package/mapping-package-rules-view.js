@@ -1,62 +1,48 @@
+import Divider from '@mui/material/Divider';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
+import Switch from '@mui/material/Switch';
 import {useEffect, useState} from "react";
 
 import Card from "@mui/material/Card";
 
-import {conceptualMappingRulesApi} from "../../../api/conceptual-mapping-rules";
+import {
+    conceptualMappingRulesApi as sectionApi,
+    conceptualMappingRulesApi
+} from "../../../api/conceptual-mapping-rules";
+import useItemsSearch from '../../../hooks/use-items-search';
+import {Filter} from '../../components/filter';
+import {TableSearchBar} from '../../components/table-search-bar';
 import {ListSearch as MappingRulesListSearch} from "../conceptual-mapping-rule/list-search";
 import {ListTable as MappingRulesListTable} from "../conceptual-mapping-rule/list-table";
 
 
-const useMappingRulesSearch = () => {
+export const useItemsStore = (sectionApi) => {
     const [state, setState] = useState({
-        filters: {
-            q: undefined,
-            terms_validity: undefined,
-        },
-        page: conceptualMappingRulesApi.DEFAULT_PAGE,
-        rowsPerPage: conceptualMappingRulesApi.DEFAULT_ROWS_PER_PAGE,
-        detailedView: true
+        items: [],
+        itemsCount: 0
     });
 
-    const handleFiltersChange = filters => {
-        setState(prevState => ({
-            ...prevState,
-            filters,
-            //page: 0
-        }));
+    const handleItemsGet = () => {
+        sectionApi.getItems()
+            .then(res => setState({items: res.items, itemsCount: res.count}))
+            .catch(err => console.error(err))
     }
 
-    const handlePageChange = (event, page) => {
-        setState(prevState => ({
-            ...prevState,
-            page
-        }));
-    }
-
-    const handleRowsPerPageChange = event => {
-        setState(prevState => ({
-            ...prevState,
-            rowsPerPage: parseInt(event.target.value, 10)
-        }));
-    }
-
-    const handleDetailedViewChange = (event, detailedView) => {
-        setState(prevState => ({
-            ...prevState,
-            detailedView
-        }));
-    }
+    useEffect(() => {
+            handleItemsGet();
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        []);
 
     return {
-        handleFiltersChange,
-        handlePageChange,
-        handleRowsPerPageChange,
-        handleDetailedViewChange,
-        state
+        handleItemsGet,
+        ...state
     };
 };
 
-const useMappingRulesStore = (searchState, mappingPackage) => {
+const useMappingRulesStore = (mappingPackage) => {
     const [state, setState] = useState({
         items: [],
         itemsCount: 0,
@@ -64,17 +50,16 @@ const useMappingRulesStore = (searchState, mappingPackage) => {
 
     useEffect(() => {
         handleItemsGet();
-    }, [searchState]);
+    }, []);
+
     const handleItemsGet = () => {
-            const request = searchState;
-            request['filters']['mapping_packages'] = [mappingPackage];
-            conceptualMappingRulesApi.getItems(request)
-                .then(res =>
-                    setState({
-                        items: res.items,
-                        itemsCount: res.count
-                    }))
-                .catch(err => console.error(err))
+        conceptualMappingRulesApi.getItems({filters: {mapping_packages: [mappingPackage]}})
+            .then(res =>
+                setState({
+                    items: res.items,
+                    itemsCount: res.count
+                }))
+            .catch(err => console.error(err))
     }
 
 
@@ -83,36 +68,58 @@ const useMappingRulesStore = (searchState, mappingPackage) => {
     };
 };
 const MappingPackageRulesView = (props) => {
-
+    const [detailedView, setDetailedView] = useState(true)
     const {id} = props
 
-    const mappingRulesSearch = useMappingRulesSearch();
-    const mappingRulesStore = useMappingRulesStore(mappingRulesSearch.state, id);
+    const mappingRulesStore = useMappingRulesStore(id);
+    // const mappingRulesSearch = useMappingRulesSearch(mappingRulesStore);
 
     const handlePackagesUpdate = (event, value) => {
         mappingRulesStore.handleItemsGet();
     }
 
-    return(
-            <Card>
-                <MappingRulesListSearch
-                    onFiltersChange={mappingRulesSearch.handleFiltersChange}
-                    onDetailedViewChange={mappingRulesSearch.handleDetailedViewChange}
-                    detailedView={mappingRulesSearch.state.detailedView}
-                />
-                <MappingRulesListTable
-                    onPageChange={mappingRulesSearch.handlePageChange}
-                    onRowsPerPageChange={mappingRulesSearch.handleRowsPerPageChange}
-                    page={mappingRulesSearch.state.page}
-                    items={mappingRulesStore.items}
-                    count={mappingRulesStore.itemsCount}
-                    rowsPerPage={mappingRulesSearch.state.rowsPerPage}
-                    sectionApi={conceptualMappingRulesApi}
-                    onPackagesUpdate={handlePackagesUpdate}
-                    detailedView={mappingRulesSearch.state.detailedView}
-                />
-            </Card>
+    const mappingRulesSearch = useItemsSearch(mappingRulesStore.items, sectionApi,
+        ['source_structural_element_sdk_element_id', 'target_class_path', 'target_property_path'],
+        {terms: ''});
+
+    const filterValues = [{label: 'All', value: ''},
+        {label: 'Valid', value: 'valid'},
+        {label: 'Invalid', value: 'invalid'}]
+
+
+    return (
+        <Card>
+            <TableSearchBar onChange={e => mappingRulesSearch.handleSearchItems([e])}
+                            value={mappingRulesSearch.state.search[0]}/>
+            <Divider/>
+            <Stack direction='row'
+                   padding={3}>
+                <FormControlLabel control={<Switch checked={detailedView}
+                                                   onChange={e => setDetailedView(e.target.checked)}/>}
+                                  label='Detailed View'/>
+                <Paper variant='outlined'>
+                    <Filter title={'Terms:'}
+                            values={filterValues}
+                            value={mappingRulesSearch.state.filters.terms}
+                            onValueChange={e => mappingRulesSearch.handleFiltersChange({terms: e})}/>
+                </Paper>
+            </Stack>
+            <Divider/>
+            <MappingRulesListTable
+                onPageChange={mappingRulesSearch.handlePageChange}
+                onRowsPerPageChange={mappingRulesSearch.handleRowsPerPageChange}
+                page={mappingRulesSearch.state.page}
+                items={mappingRulesSearch.pagedItems}
+                count={mappingRulesSearch.count}
+                sort={mappingRulesSearch.state.sort}
+                onSort={mappingRulesSearch.handleSort}
+                rowsPerPage={mappingRulesSearch.state.rowsPerPage}
+                sectionApi={conceptualMappingRulesApi}
+                onPackagesUpdate={handlePackagesUpdate}
+                detailedView={detailedView}
+            />
+        </Card>
     )
 }
 
-export default  MappingPackageRulesView
+export default MappingPackageRulesView

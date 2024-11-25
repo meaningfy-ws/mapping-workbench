@@ -62,6 +62,7 @@ import {ListSelectorSelect as ResourceListSelector} from "src/components/app/lis
 import {
     MappingPackageCheckboxList
 } from 'src/sections/app/mapping-package/components/mapping-package-real-checkbox-list';
+import TableSorterHeader from '../../components/table-sorter-header';
 
 
 export const ListTableTripleMapFragment = (props) => {
@@ -413,7 +414,7 @@ export const ListTableMappingPackages = (props) => {
 
     return (<>
         {ruleMappingPackages.length > 0 && <Box>
-            {ruleMappingPackages.map((x) => (
+            {ruleMappingPackages.map(x => (
                 <Chip key={"mapping_package_" + x.id}
                       sx={{mb: 1}}
                       label={x.title}/>))}
@@ -964,6 +965,18 @@ export const ListTable = (props) => {
         })()
     }, [])
 
+    const SorterHeader = (props) => {
+        const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
+        return (
+            <TableCell>
+                <TableSorterHeader sort={{direction, column: sort.column}}
+                                   onSort={onSort}
+                                   {...props}
+                />
+            </TableCell>
+        )
+    }
+
     if (!isProjectDataReady) return null;
 
     return (
@@ -983,9 +996,8 @@ export const ListTable = (props) => {
                     <TableHead>
                         <TableRow>
                             <TableCell/>
-                            <TableCell>
-                                CM Rule Order
-                            </TableCell>
+                            <SorterHeader fieldName='sort_order'
+                                          title='CM Rule Order'/>
                             <TableCell width="10%">
                                 Conceptual Field/Group
                             </TableCell>
