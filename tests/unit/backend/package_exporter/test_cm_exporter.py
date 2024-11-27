@@ -14,7 +14,7 @@ def test_cm_exporter_is_interface():
 def test_eforms_cm_exporter_gets_wrong_data():
     eforms_cm_exporter = EFormsCMExporter()
     with pytest.raises(CMExporterException):
-        eforms_cm_exporter.export(None)
+        eforms_cm_exporter.export_for_package_state(None)
 
 
 def test_eforms_cm_exporter_export_and_fetch_success():

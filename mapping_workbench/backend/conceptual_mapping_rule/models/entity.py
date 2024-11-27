@@ -251,3 +251,4 @@ class ConceptualMappingRule(
 
 class ConceptualMappingRuleData(ConceptualMappingRule):
     source_structural_element: Optional[StructuralElement] = None
+    mapping_groups: Optional[List[MappingGroup]] = None

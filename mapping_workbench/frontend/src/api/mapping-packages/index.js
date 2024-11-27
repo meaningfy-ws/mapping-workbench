@@ -65,7 +65,7 @@ class MappingPackagesApi extends SectionApi {
     async createDefault(projectId) {
         try {
             let endpoint = this.paths['create_default'];
-            return  await appApi.post(endpoint, {}, {project_id: projectId});
+            return await appApi.post(endpoint, {}, {project_id: projectId});
         } catch (err) {
         }
     }
@@ -77,7 +77,6 @@ class MappingPackagesApi extends SectionApi {
         return appApi.get(endpoint, params, headers, {
             responseType: 'blob'
         });
-
     }
 
     getLatestState(package_id) {

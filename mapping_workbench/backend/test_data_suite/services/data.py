@@ -10,6 +10,25 @@ from mapping_workbench.backend.test_data_suite.models.entity import TestDataFile
     TestDataFileResourceFormat
 
 
+async def get_test_data_suites_for_project(project_id: PydanticObjectId) -> \
+        List[TestDataSuite]:
+    items: List[TestDataSuite] = await TestDataSuite.find(
+        TestDataSuite.project == Project.link_from_id(project_id)
+    ).to_list()
+
+    return items
+
+
+async def get_test_datas_for_suite(project_id: PydanticObjectId, suite_id: PydanticObjectId) -> \
+        List[TestDataFileResource]:
+    items: List[TestDataFileResource] = await TestDataFileResource.find(
+        TestDataFileResource.project == Project.link_from_id(project_id),
+        Eq(TestDataFileResource.test_data_suite, TestDataSuite.link_from_id(suite_id))
+    ).to_list()
+
+    return items
+
+
 async def get_test_data_file_resources_for_project(project_id: PydanticObjectId) -> \
         List[TestDataFileResource]:
     items: List[TestDataFileResource] = await TestDataFileResource.find(

@@ -181,6 +181,7 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
             Eq(ConceptualMappingRule.refers_to_mapping_package_ids, self.id),
             Eq(ConceptualMappingRule.project, self.project)
         ).to_list()
+
         conceptual_mapping_rule_states = [
             await conceptual_mapping_rule.get_state() for conceptual_mapping_rule in conceptual_mapping_rules
         ]
@@ -205,10 +206,12 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
             In(TestDataSuite.id, test_data_suites_ids),
             Eq(TestDataSuite.project, self.project)
         ).to_list()
+
         if test_data_suites:
             for test_data_suite in test_data_suites:
                 test_data_suite_state = await test_data_suite.get_state()
                 test_data_suites_states.append(test_data_suite_state)
+
         return test_data_suites_states
 
     async def get_shacl_test_suites_states(self) -> List[SHACLTestSuiteState]:

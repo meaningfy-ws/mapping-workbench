@@ -17,3 +17,13 @@ async def get_generic_triple_map_fragments_for_project_package(
     ).to_list()
 
     return items
+
+
+async def get_generic_triple_map_fragments_for_project(
+        project_id: PydanticObjectId
+) -> List[GenericTripleMapFragment]:
+    items: List[GenericTripleMapFragment] = await GenericTripleMapFragment.find(
+        GenericTripleMapFragment.project == Project.link_from_id(project_id)
+    ).to_list()
+
+    return items

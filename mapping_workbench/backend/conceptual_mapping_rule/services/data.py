@@ -36,7 +36,7 @@ async def get_conceptual_mapping_rules_for_project_and_package(
     return items
 
 
-async def get_conceptual_mapping_rules_with_elements_for_project_and_package(
+async def get_conceptual_mapping_rules_with_data_for_project_and_package(
         project_id: PydanticObjectId,
         mapping_package: MappingPackage = None
 ) -> \
@@ -55,6 +55,11 @@ async def get_conceptual_mapping_rules_with_elements_for_project_and_package(
         source_structural_element = await item.source_structural_element.fetch()
         item_data.source_structural_element = source_structural_element \
             if isinstance(source_structural_element, StructuralElement) else None
+
+        mapping_groups_data = []
+        if item.mapping_groups:
+            mapping_groups_data = [await mapping_group.fetch() for mapping_group in item.mapping_groups]
+        item_data.mapping_groups = mapping_groups_data
 
         items_data.append(item_data)
 
