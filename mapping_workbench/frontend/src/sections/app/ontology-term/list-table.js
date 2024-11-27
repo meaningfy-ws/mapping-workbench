@@ -84,7 +84,7 @@ export const ListTable = (props) => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {items.map((item) => {
+                            {items.map(item => {
                                 const item_id = item._id;
                                 const isCurrent = item_id === currentItem;
 

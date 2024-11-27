@@ -120,6 +120,8 @@ const Page = () => {
                                              page={itemsSearch.state.page}
                                              items={itemsSearch.pagedItems}
                                              itemsForced={itemsStore.force}
+                                             sort={itemsSearch.state.sort}
+                                             onSort={itemsSearch.handleSort}
                                              count={itemsStore.itemsCount}
                                              rowsPerPage={itemsSearch.state.rowsPerPage}
                                              sectionApi={sectionApi}

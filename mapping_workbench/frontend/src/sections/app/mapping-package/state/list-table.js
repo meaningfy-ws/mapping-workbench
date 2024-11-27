@@ -4,11 +4,9 @@ import PropTypes from 'prop-types';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableSortLabel from '@mui/material/TableSortLabel';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import Tooltip from "@mui/material/Tooltip";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 
@@ -20,6 +18,7 @@ import exportPackage from "../../../../utils/export-mapping-package";
 import TablePagination from "../../../components/table-pagination";
 import timeTransformer from "../../../../utils/time-transformer";
 import {useGlobalState} from "../../../../hooks/use-global-state";
+import TableSorterHeader from '../../../components/table-sorter-header';
 
 export const ListTable = (props) => {
     const {
@@ -30,8 +29,7 @@ export const ListTable = (props) => {
         onPageChange,
         rowsPerPage = 0,
         onRowsPerPageChange,
-        sortField,
-        sortDirection,
+        sort,
         onSort,
         sectionApi
     } = props;
@@ -42,17 +40,16 @@ export const ListTable = (props) => {
         return exportPackage(sectionApi, id, setIsExporting, item)
     }
 
-    const SorterHeader = ({fieldName, title}) => {
-        return <Tooltip enterDelay={300}
-                        title="Sort"
-        >
-            <TableSortLabel
-                active={sortField === fieldName}
-                direction={sortField === fieldName && sortDirection === 1 ? "asc" : "desc"}
-                onClick={() => onSort(fieldName)}>
-                {title ?? fieldName}
-            </TableSortLabel>
-        </Tooltip>
+    const SorterHeader = (props) => {
+        const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
+        return (
+            <TableCell>
+                <TableSorterHeader sort={{direction, column: sort.column}}
+                                   onSort={onSort}
+                                   {...props}
+                />
+            </TableCell>
+        )
     }
 
     return (
@@ -71,20 +68,14 @@ export const ListTable = (props) => {
                 <Table sx={{minWidth: 1200}}>
                     <TableHead>
                         <TableRow>
-                            <TableCell width="25%">
-                                <SorterHeader fieldName="title"/>
-                            </TableCell>
-                            <TableCell>
-                                <SorterHeader fieldName="description"/>
-                            </TableCell>
-                            <TableCell>
-                                <SorterHeader fieldName="mapping_version"
-                                              title="Version"/>
-                            </TableCell>
-                            <TableCell align="left">
-                                <SorterHeader fieldName="created_at"
-                                              title="Created"/>
-                            </TableCell>
+                            <SorterHeader width="25%"
+                                          fieldName="title"/>
+                            <SorterHeader fieldName="description"/>
+                            <SorterHeader fieldName="mapping_version"
+                                          title="Version"/>
+                            <SorterHeader align="left"
+                                          fieldName="created_at"
+                                          title="Created"/>
                             <TableCell align="center">
                                 Actions
                             </TableCell>
@@ -117,7 +108,7 @@ export const ListTable = (props) => {
                                             <ListItemActions
                                                 itemctx={new ForListItemAction(item_id, sectionApi)}
                                                 pathnames={{
-                                                    view: () => paths.app[sectionApi.section].states.view(id,item_id),
+                                                    view: () => paths.app[sectionApi.section].states.view(id, item_id),
                                                 }}
                                             />
                                             <Button

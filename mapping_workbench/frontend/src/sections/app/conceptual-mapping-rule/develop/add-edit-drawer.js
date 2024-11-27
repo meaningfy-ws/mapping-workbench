@@ -1,27 +1,28 @@
 import {useEffect, useState} from "react";
+import * as Yup from "yup";
+import {useFormik} from "formik";
 
 import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Drawer from "@mui/material/Drawer";
+import Divider from "@mui/material/Divider";
 import Checkbox from "@mui/material/Checkbox";
+import Grid from "@mui/material/Unstable_Grid2";
 import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import FormControl from "@mui/material/FormControl";
 import Autocomplete from "@mui/material/Autocomplete";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
-import * as Yup from "yup";
-import {useFormik} from "formik";
-import AutocompleteCM from "./ontology_fragment_editor";
+
 import {sessionApi} from "src/api/session";
+import {MappingPackageCheckboxList} from '../../mapping-package/components/mapping-package-real-checkbox-list';
+import AutocompleteCM from "./ontology_fragment_editor";
 import {FormTextField} from "src/components/app/form/text-field";
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
-import Grid from "@mui/material/Unstable_Grid2";
-import {MappingPackageCheckboxList} from "../../mapping-package/components/mapping-package-checkbox-list";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
 
 
 const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, afterItemSave, ontologyFragments}) => {
@@ -208,6 +209,7 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
                             <Grid xs={12}
                                   md={12}>
                                 <MappingPackageCheckboxList
+                                    handleUpdate={setMappingPackages}
                                     mappingPackages={mappingPackages}
                                     withDefaultPackage={!item}
                                 />
@@ -217,10 +219,10 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
                     </CardContent>
 
                     <Button type='submit'
-                            sx={{width: '100%'}}
-                            disabled={false}>Save</Button>
+                            sx={{width: '100%'}}>
+                        Save
+                    </Button>
                 </Card>
-
             </form>
         </Drawer>
     )

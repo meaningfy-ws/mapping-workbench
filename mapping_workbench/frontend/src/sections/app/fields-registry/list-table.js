@@ -1,8 +1,8 @@
 import {Fragment, useState} from 'react';
 import PropTypes from 'prop-types';
 
-import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
-import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+
 import List from "@mui/material/List";
 import Grid from "@mui/material/Grid";
 import Table from '@mui/material/Table';
@@ -124,8 +124,11 @@ export const ListTable = (props) => {
                                                 width="25%"
                                             >
                                                 <IconButton onClick={() => handleItemToggle(item_id)}>
-                                                    <SvgIcon>
-                                                        {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
+                                                    <SvgIcon sx={{
+                                                        transform: isCurrent ? 'rotate(90deg)' : '',
+                                                        transition: '0.2s linear'
+                                                    }}>
+                                                        <ChevronRightIcon/>
                                                     </SvgIcon>
                                                 </IconButton>
                                             </TableCell>
@@ -144,17 +147,17 @@ export const ListTable = (props) => {
                                                     padding: 0,
                                                     margin: 0
                                                 }}>
-                                                    {item.versions.sort().map((version) => {
-                                                        return (
-                                                            <ListItem
-                                                                key={version}
-                                                                sx={{
-                                                                    padding: 0,
-                                                                    margin: 0
-                                                                }}
-                                                            >{version}</ListItem>
-                                                        )
-                                                    })}
+                                                    {item.versions.sort().map(version =>
+                                                        <ListItem
+                                                            key={version}
+                                                            sx={{
+                                                                padding: 0,
+                                                                margin: 0
+                                                            }}
+                                                        >
+                                                            {version}
+                                                        </ListItem>
+                                                    )}
                                                 </List>
                                             </TableCell>
                                             <TableCell>

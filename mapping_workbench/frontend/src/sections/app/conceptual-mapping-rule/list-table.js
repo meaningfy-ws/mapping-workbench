@@ -62,6 +62,7 @@ import {ListSelectorSelect as ResourceListSelector} from "src/components/app/lis
 import {
     MappingPackageCheckboxList
 } from 'src/sections/app/mapping-package/components/mapping-package-real-checkbox-list';
+import TableSorterHeader from '../../components/table-sorter-header';
 
 
 export const ListTableTripleMapFragment = (props) => {
@@ -369,8 +370,9 @@ export const ListTableTripleMapFragment = (props) => {
 
 export const ListTableMappingPackages = (props) => {
     const {
-        item, initProjectMappingPackages = null, onPackagesUpdate = () => {
-        },
+        item,
+        initProjectMappingPackages = null,
+        onPackagesUpdate = () => { },
         isHovered
     } = props;
 
@@ -411,9 +413,12 @@ export const ListTableMappingPackages = (props) => {
     }
 
     return (<>
-        {ruleMappingPackages.length > 0 && <>
-            {ruleMappingPackages.map(x => (<Box sx={{mb: 1}}><Chip key={"mapping_package_" + x.id} label={x.title}/></Box>))}
-        </>}
+        {ruleMappingPackages.length > 0 && <Box>
+            {ruleMappingPackages.map(x => (
+                <Chip key={"mapping_package_" + x.id}
+                      sx={{mb: 1}}
+                      label={x.title}/>))}
+        </Box>}
         <Box sx={{
             position: "absolute",
             left: "50%",
@@ -960,6 +965,18 @@ export const ListTable = (props) => {
         })()
     }, [])
 
+    const SorterHeader = (props) => {
+        const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
+        return (
+            <TableCell>
+                <TableSorterHeader sort={{direction, column: sort.column}}
+                                   onSort={onSort}
+                                   {...props}
+                />
+            </TableCell>
+        )
+    }
+
     if (!isProjectDataReady) return null;
 
     return (
@@ -979,9 +996,8 @@ export const ListTable = (props) => {
                     <TableHead>
                         <TableRow>
                             <TableCell/>
-                            <TableCell>
-                                CM Rule Order
-                            </TableCell>
+                            <SorterHeader fieldName='sort_order'
+                                          title='CM Rule Order'/>
                             <TableCell width="10%">
                                 Conceptual Field/Group
                             </TableCell>
