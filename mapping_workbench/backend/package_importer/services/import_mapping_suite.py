@@ -38,9 +38,10 @@ async def import_mapping_package(
     )
     package: MappingPackage = await importer.import_from_mono_mapping_suite(monolith_mapping_suite)
 
-    task_response.update_result(TaskResultData(
-        warnings=importer.warnings
-    ))
+    if task_response:
+        task_response.update_result(TaskResultData(
+            warnings=importer.warnings
+        ))
 
     return ImportedMappingSuiteResponse(
         mapping_package=package

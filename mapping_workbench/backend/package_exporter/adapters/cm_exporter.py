@@ -6,7 +6,12 @@ from typing import List
 import pandas as pd
 from pandas import DataFrame
 
+from mapping_workbench.backend.conceptual_mapping_rule.services.data import \
+    get_conceptual_mapping_rules_with_data_for_project_and_package
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageState
+from mapping_workbench.backend.mapping_rule_registry.services.data import get_mapping_groups_for_project
+from mapping_workbench.backend.project.models.entity import Project
+from mapping_workbench.backend.resource_collection.services.data import get_resource_files_for_project
 
 
 class CMExporterException(Exception):
@@ -16,7 +21,7 @@ class CMExporterException(Exception):
 class CMExporter(ABC):
 
     @abstractmethod
-    def export(self, mapping_package: MappingPackage) -> 'CMExporter':
+    def export_for_package_state(self, mapping_package: MappingPackage) -> 'CMExporter':
         pass
 
     @abstractmethod
@@ -78,7 +83,7 @@ class EFormsCMExporter(CMExporter):
         return metadata_table
 
     @classmethod
-    def generate_rules_table(cls, mapping_package_state: MappingPackageState) -> DataFrame:
+    def generate_rules_table(cls, conceptual_mapping_rules) -> DataFrame:
         def prepare_notes(notes: List) -> str:
             return '; '.join(note.comment for note in notes) if notes else ""
 
@@ -99,17 +104,17 @@ class EFormsCMExporter(CMExporter):
             "Feedback Notes (private)"
         ])
         cm_rules = sorted(
-            mapping_package_state.conceptual_mapping_rules, key=lambda x: (x.sort_order is not None, x.sort_order)
+            conceptual_mapping_rules, key=lambda x: (x.sort_order is not None, x.sort_order)
         )
         for idx, cm_rule in enumerate(cm_rules):
-            mapping_groups_ids = map(lambda x: x.name, cm_rule.mapping_groups)
+            mapping_groups_ids = [x.name for x in (cm_rule.mapping_groups or []) if x.name is not None]
             rules_table.loc[idx] = [
                 cm_rule.min_sdk_version,
                 cm_rule.max_sdk_version,
                 cm_rule.source_structural_element.sdk_element_id,
                 cm_rule.source_structural_element.name,
                 cm_rule.source_structural_element.bt_id,
-                ', '.join(mapping_groups_ids),
+                ', '.join(mapping_groups_ids or []),
                 cm_rule.source_structural_element.absolute_xpath,
                 cm_rule.xpath_condition,
                 cm_rule.target_class_path,
@@ -122,7 +127,7 @@ class EFormsCMExporter(CMExporter):
         return rules_table
 
     @classmethod
-    def generate_mapping_groups_table(cls, mapping_package_state: MappingPackageState) -> DataFrame:
+    def generate_mapping_groups_table(cls, mapping_groups) -> DataFrame:
         mapping_groups_table: DataFrame = pd.DataFrame(columns=[
             "Mapping Group ID",
             "Instance Type (ontology Class)",
@@ -130,7 +135,7 @@ class EFormsCMExporter(CMExporter):
             "Instance URI Template",
             "TripleMap"
         ])
-        for idx, mapping_group in enumerate(mapping_package_state.mapping_groups):
+        for idx, mapping_group in enumerate(mapping_groups):
             mapping_groups_table.loc[idx] = [
                 mapping_group.name,
                 mapping_group.class_uri,
@@ -141,22 +146,42 @@ class EFormsCMExporter(CMExporter):
         return mapping_groups_table
 
     @classmethod
-    def generate_resources_table(cls, mapping_package_state: MappingPackageState) -> DataFrame:
+    def generate_resources_table(cls, resources) -> DataFrame:
         filename_col_name = "File name"
         resources_table: DataFrame = pd.DataFrame(columns=[filename_col_name])
 
-        for idx, resource in enumerate(mapping_package_state.resources):
+        for idx, resource in enumerate(resources):
             resources_table.loc[idx] = [resource.filename]
 
         return resources_table
 
-    def export(self, mapping_package_state: MappingPackageState) -> 'CMExporter':
+    def export_for_package_state(self, mapping_package_state: MappingPackageState) -> 'CMExporter':
         if not isinstance(mapping_package_state, MappingPackageState):
             raise CMExporterException()
         self.cm_tables[self.metadata_table_name] = self.generate_metadata_table(mapping_package_state)
-        self.cm_tables[self.rules_table_name] = self.generate_rules_table(mapping_package_state)
-        self.cm_tables[self.mapping_groups_table_name] = self.generate_mapping_groups_table(mapping_package_state)
-        self.cm_tables[self.resources_table_name] = self.generate_resources_table(mapping_package_state)
+        self.cm_tables[self.rules_table_name] = self.generate_rules_table(
+            mapping_package_state.conceptual_mapping_rules)
+        self.cm_tables[self.mapping_groups_table_name] = self.generate_mapping_groups_table(
+            mapping_package_state.mapping_groups
+        )
+        self.cm_tables[self.resources_table_name] = self.generate_resources_table(
+            mapping_package_state.resources
+        )
+
+        return self
+
+    async def export_for_project(self, project: Project) -> 'CMExporter':
+        if not isinstance(project, Project):
+            raise CMExporterException()
+        self.cm_tables[self.rules_table_name] = self.generate_rules_table(
+            await get_conceptual_mapping_rules_with_data_for_project_and_package(project.id)
+        )
+        self.cm_tables[self.mapping_groups_table_name] = self.generate_mapping_groups_table(
+            await get_mapping_groups_for_project(project.id)
+        )
+        self.cm_tables[self.resources_table_name] = self.generate_resources_table(
+            await get_resource_files_for_project(project_id=project.id)
+        )
 
         return self
 
@@ -165,6 +190,8 @@ class EFormsCMExporter(CMExporter):
 
         with pd.ExcelWriter(output_bytes, engine='xlsxwriter') as excel_writer:
             for table_name, table in self.cm_tables.items():
+                if table is None:
+                    continue
                 table.to_excel(excel_writer, sheet_name=table_name, index=False)
 
         output_bytes.seek(0)

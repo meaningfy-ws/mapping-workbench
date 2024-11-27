@@ -14,3 +14,12 @@ async def get_specific_triple_map_fragments_for_package(project_id: PydanticObje
     ).to_list()
 
     return items
+
+
+async def get_specific_triple_map_fragments_for_project(project_id: PydanticObjectId) -> \
+        List[SpecificTripleMapFragment]:
+    items: List[SpecificTripleMapFragment] = await SpecificTripleMapFragment.find(
+        SpecificTripleMapFragment.project == Project.link_from_id(project_id)
+    ).to_list()
+
+    return items

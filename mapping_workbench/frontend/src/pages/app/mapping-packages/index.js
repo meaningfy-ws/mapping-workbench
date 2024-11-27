@@ -2,6 +2,8 @@ import {useEffect, useState} from 'react';
 
 import AddIcon from '@mui/icons-material/Add';
 import UploadIcon from '@mui/icons-material/Upload';
+import DownloadIcon from '@mui/icons-material/Download';
+import XIcon from '@untitled-ui/icons-react/build/esm/X';
 
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
@@ -22,7 +24,13 @@ import {ListTable} from "src/sections/app/mapping-package/list-table";
 import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {mappingPackagesApi as sectionApi} from 'src/api/mapping-packages';
+import {projectsApi} from 'src/api/projects';
 import {PackageImporter} from 'src/sections/app/mapping-package/package-importer';
+import IconButton from "@mui/material/IconButton";
+import DialogContent from "@mui/material/DialogContent";
+import Dialog from "@mui/material/Dialog";
+import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
+import {sessionApi} from "../../../api/session";
 
 const useItemsStore = () => {
     const [state, setState] = useState({
@@ -56,6 +64,19 @@ const Page = () => {
     const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['title', 'identifier']);
 
     const importDialog = useDialog();
+    const srcExportDialog = useDialog();
+
+    const exportSourceFiles = () => {
+        const toastId = toastLoad(`Exporting Source Files ... `)
+        projectsApi.exportSourceFiles()
+            .then(response => {
+                const filename =  `src_${sessionApi.getSessionProject()}.zip`;
+                saveAs(new Blob([response], {type: "application/x-zip-compressed"}), filename);
+                toastSuccess(`Source Files successfully exported.`, toastId)
+            }).catch(err => toastError(`Exporting Source Files failed: ${err.message}.`, toastId))
+
+        srcExportDialog.handleClose();
+    }
 
     return (
         <>
@@ -92,6 +113,18 @@ const Page = () => {
                         direction="row"
                         spacing={3}
                     >
+                        <Button
+                            onClick={srcExportDialog.handleOpen}
+                            id="src_export_button"
+                            startIcon={(
+                                <SvgIcon>
+                                    <DownloadIcon/>
+                                </SvgIcon>
+                            )}
+                            variant="contained"
+                        >
+                            Export SRC
+                        </Button>
                         <Button
                             component={RouterLink}
                             id="add_package_button"
@@ -143,6 +176,55 @@ const Page = () => {
                 open={importDialog.open}
                 sectionApi={sectionApi}
             />
+            <Dialog
+                fullWidth
+                maxWidth="sm"
+                open={srcExportDialog.open}
+                onClose={srcExportDialog.handleClose}
+            >
+                <Stack
+                    alignItems="center"
+                    direction="row"
+                    justifyContent="space-between"
+                    spacing={3}
+                    sx={{
+                        px: 3,
+                        py: 2
+                    }}
+                >
+                    <Typography variant="h6">
+                        Export Source Files
+                    </Typography>
+                    <IconButton
+                        color="inherit"
+                        onClick={srcExportDialog.handleClose}
+                    >
+                        <SvgIcon>
+                            <XIcon/>
+                        </SvgIcon>
+                    </IconButton>
+                </Stack>
+                <DialogContent id="drop-zone">
+                    <Stack
+                        alignItems="center"
+                        direction="row"
+                        justifyContent="flex-end"
+                        spacing={2}
+                        sx={{mt: 2}}
+                    >
+                        <Button
+                            id="upload_button"
+                            onClick={exportSourceFiles}
+                            size="small"
+                            type="button"
+                            variant="contained"
+                        >
+                            Export
+                        </Button>
+                    </Stack>
+
+                </DialogContent>
+            </Dialog>
         </>
     );
 };

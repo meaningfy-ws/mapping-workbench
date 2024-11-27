@@ -1,6 +1,10 @@
+import io
+
 from fastapi import APIRouter, Depends, status
+from starlette.responses import StreamingResponse
 
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
+from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
 from mapping_workbench.backend.project.models.entity import ProjectOut, ProjectCreateIn, ProjectUpdateIn, Project
 from mapping_workbench.backend.project.models.entity_api_response import APIListProjectsPaginatedResponse
 from mapping_workbench.backend.project.services.api import (
@@ -11,6 +15,7 @@ from mapping_workbench.backend.project.services.api import (
     get_project_out,
     delete_project
 )
+from mapping_workbench.backend.project.services.export_source_files import export_source_files
 from mapping_workbench.backend.project.services.tasks import add_task_remove_project_orphan_shareable_resources
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.user.models.user import User
@@ -108,3 +113,23 @@ async def route_cleanup_project(
         user: User = Depends(current_active_user)
 ):
     return add_task_remove_project_orphan_shareable_resources(project.id, user.email).task_metadata
+
+
+@router.post(
+    "/{id}/export_source_files",
+    description=f"Export {NAME_FOR_ONE} source files",
+    name=f"{NAME_FOR_ONE}:export_source_files",
+    status_code=status.HTTP_200_OK
+)
+async def route_export_source_files(
+        project: Project = Depends(get_project),
+):
+    try:
+        archive: bytes = await export_source_files(project)
+    except ResourceNotFoundException as http_exception:
+        raise http_exception
+
+    return StreamingResponse(
+        io.BytesIO(archive),
+        media_type="application/x-zip-compressed"
+    )
