@@ -6,6 +6,7 @@ from pathlib import Path
 import pandas as pd
 
 from mapping_workbench.backend.core.adapters.archiver import ZipArchiver, ARCHIVE_ZIP_FORMAT
+from mapping_workbench.backend.core.adapters.exporter import ArchiveExporter
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState
 from mapping_workbench.backend.package_exporter.adapters.mapping_package_hasher import MappingPackageHasher
 from mapping_workbench.backend.package_exporter.adapters.mapping_package_reporter import MappingPackageReporter
@@ -23,7 +24,7 @@ from mapping_workbench.backend.test_data_suite.models.entity import TestDataVali
 from mapping_workbench.backend.user.models.user import User
 
 
-class PackageStateExporter:
+class PackageStateExporter(ArchiveExporter):
     package_state: MappingPackageState
 
     def __init__(self, package_state: MappingPackageState, project: Project, user: User = None):
@@ -67,14 +68,6 @@ class PackageStateExporter:
 
         with open(self.archive_file_path, 'rb') as zip_file:
             return zip_file.read()
-
-    @classmethod
-    def write_to_file(cls, file_path: Path, file_content: str):
-        file_path.write_text(file_content, encoding="utf-8")
-
-    @classmethod
-    def create_dir(cls, path: Path):
-        path.mkdir(parents=True, exist_ok=True)
 
     def create_dirs(self):
         self.create_dir(self.package_path)

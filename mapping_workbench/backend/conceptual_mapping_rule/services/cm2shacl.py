@@ -4,8 +4,8 @@ from beanie import PydanticObjectId
 
 from mapping_workbench.backend.conceptual_mapping_rule.adapters.cm2shacl import CMtoSHACL
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRuleData
-from mapping_workbench.backend.conceptual_mapping_rule.services.data import get_conceptual_mapping_rules_for_project, \
-    get_conceptual_mapping_rules_with_elements_for_project_and_package
+from mapping_workbench.backend.conceptual_mapping_rule.services.data import \
+    get_conceptual_mapping_rules_with_data_for_project_and_package
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.ontology.services.namespaces import get_prefixes_definitions
 from mapping_workbench.backend.project.models.entity import Project
@@ -43,7 +43,7 @@ async def generate_shacl_shapes_from_cm_rules(
         ).delete()
 
     cm_rules: List[ConceptualMappingRuleData] = \
-        await get_conceptual_mapping_rules_with_elements_for_project_and_package(project_id, mapping_package)
+        await get_conceptual_mapping_rules_with_data_for_project_and_package(project_id, mapping_package)
 
     shacl_shapes: List[SHACLTestFileResource] = CMtoSHACL(
         prefixes=(prefixes or (await get_prefixes_definitions(project_id))),

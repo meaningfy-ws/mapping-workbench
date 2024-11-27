@@ -50,7 +50,7 @@ class EFormsPackageImporter(PackageImporterABC):
             if not group:
                 group = MappingGroup(name=mono_group.mapping_group_id)
 
-            group.project = self.project
+            group.project = self.project_link
 
             group.class_uri = mono_group.ontology_class
             group.iterator_xpath = mono_group.iterator_xpath
@@ -89,7 +89,7 @@ class EFormsPackageImporter(PackageImporterABC):
             rule: ConceptualMappingRule = await ConceptualMappingRule.find_one(
                 ConceptualMappingRule.source_structural_element == StructuralElement.link_from_id(
                     source_structural_element.id),
-                ConceptualMappingRule.project == Project.link_from_id(self.project.id),
+                ConceptualMappingRule.project == self.project_link,
                 ConceptualMappingRule.target_class_path == mono_rule.class_path,
                 ConceptualMappingRule.target_property_path == mono_rule.property_path
             )
@@ -103,7 +103,7 @@ class EFormsPackageImporter(PackageImporterABC):
             )
 
             # rule: ConceptualMappingRule = ConceptualMappingRule()
-            rule.project = self.project
+            rule.project = self.project_link
             if source_structural_element:
                 rule.source_structural_element = source_structural_element
 
