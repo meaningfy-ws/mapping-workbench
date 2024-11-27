@@ -7,7 +7,7 @@ from mapping_workbench.backend.package_exporter.adapters.cm_exporter import CMEx
 def test_cm_exporter_is_interface():
     with pytest.raises(TypeError):
         cm_exporter = CMExporter()
-        cm_exporter.export(None)
+        cm_exporter.export_for_package_state(None)
         cm_exporter.fetch_excel()
 
 
