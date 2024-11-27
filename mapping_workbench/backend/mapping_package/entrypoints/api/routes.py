@@ -101,7 +101,7 @@ async def route_create_default_mapping_package(
         epo_version=package_epo_version,
         eform_subtypes=[],
         eforms_sdk_versions=package_eforms_sdk_versions,
-        project=project
+        project=Project.link_from_id(project.id)
     )
     return await create_mapping_package(data, user=user)
 
