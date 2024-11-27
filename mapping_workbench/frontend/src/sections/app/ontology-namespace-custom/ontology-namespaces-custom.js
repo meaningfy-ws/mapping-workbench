@@ -1,23 +1,37 @@
 import AddIcon from '@mui/icons-material/Add';
 
+import {DataGrid} from '@mui/x-data-grid';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import SvgIcon from '@mui/material/SvgIcon';
-import Divider from "@mui/material/Divider";
 import Typography from '@mui/material/Typography';
 
 import {paths} from 'src/paths';
 import {RouterLink} from 'src/components/router-link';
-import {TableSearchBar} from "src/sections/components/table-search-bar";
-import {ListTable} from "src/sections/app/ontology-namespace-custom/list-table";
 import {ontologyNamespacesCustomApi as sectionApi} from 'src/api/ontology-namespaces-custom';
-import useItemsSearch from '../../../hooks/use-items-search';
+import {ListItemActions} from '../../../components/app/list/list-item-actions';
+import {ForListItemAction} from '../../../contexts/app/section/for-list-item-action';
 import {useItemsStore} from '../../../hooks/use-items-store';
 
 const OntologyNamespacesCustom = () => {
     const itemsStore = useItemsStore(sectionApi);
-    const itemsSearch = useItemsSearch(itemsStore.items,sectionApi,['prefix','uri'],{});
+
+    const columns = [
+        {field: 'prefix', headerName: 'Prefix', width: 90},
+        {field: 'uri', headerName: 'URI', flex: 1},
+        {
+            field: 'id',
+            headerName: 'Action',
+            width: 200,
+            sortable: false,
+            filterable: false,
+            renderCell: ({id}) => <ListItemActions
+                itemctx={new ForListItemAction(id, sectionApi)}
+                onDeleteAction={() => handleDeleteAction(id)}
+            />
+        },
+    ]
 
     return (
         <Stack spacing={4}>
@@ -52,20 +66,20 @@ const OntologyNamespacesCustom = () => {
                 </Stack>
             </Stack>
             <Card>
-                <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
-                                value={itemsSearch.state.search[0]}
-                                placeholder='Search Namespaces'/>
-                <Divider/>
-                <ListTable
-                    onPageChange={itemsSearch.handlePageChange}
-                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                    sort={itemsSearch.state.sort}
-                    onSort={itemsSearch.handleSort}
-                    page={itemsSearch.state.page}
-                    items={itemsSearch.pagedItems}
-                    count={itemsStore.itemsCount}
-                    rowsPerPage={itemsSearch.state.rowsPerPage}
-                    sectionApi={sectionApi}
+                <DataGrid
+                    getRowId={row => row._id}
+                    row
+                    rows={itemsStore.items}
+                    columns={columns}
+                    initialState={{
+                        pagination: {
+                            paginationModel: {
+                                pageSize: 5,
+                            },
+                        },
+                    }}
+                    pageSizeOptions={[5, 10, 20, 100]}
+                    disableRowSelectionOnClick
                 />
             </Card>
         </Stack>

@@ -1,46 +1,53 @@
 import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
-import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
+import {Box} from '@mui/system';
+import {DataGrid} from '@mui/x-data-grid';
 
-import {Filter} from "src/sections/components/filter";
-import useItemsSearch from 'src/hooks/use-items-search';
 import {useItemsStore} from 'src/hooks/use-items-store';
-import {ListTable} from "src/sections/app/ontology-term/list-table";
 import {ontologyTermsApi as sectionApi} from "src/api/ontology-terms";
-import {TableSearchBar} from "src/sections/components/table-search-bar";
-
-const filterValues = [{label: 'All', value: ''},
-    {label: 'CLASS', value: 'CLASS'},
-    {label: 'PROPERTY', value: 'PROPERTY'}]
+import {ListItemActions} from '../../../components/app/list/list-item-actions';
+import {ForListItemAction} from '../../../contexts/app/section/for-list-item-action';
 
 const OntologyTerms = () => {
     const itemsStore = useItemsStore(sectionApi);
-    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ["short_term", "term"], {type: ''});
+
+    const columns = [
+        {field: 'short_term', headerName: 'Term', width: 90},
+        {field: 'type', headerName: 'Type', flex: 1},
+        {
+            field: 'id',
+            headerName: 'Action',
+            width: 200,
+            sortable: false,
+            filterable: false,
+            renderCell: ({id}) => <ListItemActions
+                itemctx={new ForListItemAction(id, sectionApi)}
+                onDeleteAction={() => handleDeleteAction(id)}
+            />
+        },
+    ]
 
     return (
         <Stack spacing={4}>
             <Typography variant='h5'>Terms</Typography>
             <Card>
-                <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
-                                value={itemsSearch.state.search[0]}
-                                placeholder='Search Terms'/>
-                <Divider/>
-                <Filter title='Type:'
-                        values={filterValues}
-                        value={itemsSearch.state.filters.type}
-                        onValueChange={e => itemsSearch.handleFiltersChange({type: e})}/>
-                <Divider/>
-                <ListTable
-                    onPageChange={itemsSearch.handlePageChange}
-                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                    sort={itemsSearch.state.sort}
-                    onSort={itemsSearch.handleSort}
-                    page={itemsSearch.state.page}
-                    items={itemsSearch.pagedItems}
-                    count={itemsStore.itemsCount}
-                    rowsPerPage={itemsSearch.state.rowsPerPage}
-                    sectionApi={sectionApi}
+                <DataGrid
+                    getRowId={row => row._id}
+                    row
+                    rows={itemsStore.items}
+                    columns={columns}
+                    initialState={{
+                        pagination: {
+                            paginationModel: {
+                                pageSize: 5,
+                            },
+                        },
+                    }}
+                    pageSizeOptions={[5, 10, 20, 100]}
+                    disableRowSelectionOnClick
+                    getDetailPanelHeight={50}
+                    getDetailPanelContent={({row}) => <Box sx={{ p: 2 }}>{`Order #${row.id}`}</Box>}
                 />
             </Card>
         </Stack>
