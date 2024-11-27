@@ -8,13 +8,17 @@ from mapping_workbench.backend.core.models.base_entity import BaseEntity
 from mapping_workbench.backend.user.models.user import User
 
 
-def request_update_data(entity_data: BaseModel, user: User = None) -> dict:
-    data = entity_data.model_dump(exclude_unset=True)
-
+def request_data_update_refs(data: dict, entity_data: BaseModel) -> dict:
     for field in entity_data.model_fields:
         prop = entity_data.__dict__[field]
         if isinstance(prop, (Link, PydanticObjectId)):
             data[field] = prop
+    return data
+
+
+def request_update_data(entity_data: BaseModel, user: User = None) -> dict:
+    data = entity_data.model_dump(exclude_unset=True)
+    data = request_data_update_refs(data, entity_data)
 
     if user:
         data['updated_by'] = User.link_from_id(user.id)
@@ -25,6 +29,7 @@ def request_update_data(entity_data: BaseModel, user: User = None) -> dict:
 
 def request_create_data(entity_data: BaseModel, user: User = None) -> dict:
     data = entity_data.model_dump()
+    data = request_data_update_refs(data, entity_data)
 
     if user:
         data['created_by'] = User.link_from_id(user.id)
