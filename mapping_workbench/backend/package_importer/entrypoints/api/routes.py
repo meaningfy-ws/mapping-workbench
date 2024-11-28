@@ -64,6 +64,7 @@ async def route_task_import_package(
         project: PydanticObjectId = Form(...),
         package_type: PackageType = Form(default=DEFAULT_PACKAGE_TYPE),
         trigger_package_processing: bool = Form(default=False),
+        cleanup_project: bool = Form(default=False),
         file: UploadFile = Form(...),
         user: User = Depends(current_active_user)
 ):
@@ -76,7 +77,7 @@ async def route_task_import_package(
         None,
         user.email,
         True,
-        file.file.read(), await get_project(project), package_type, trigger_package_processing, user
+        file.file.read(), await get_project(project), package_type, trigger_package_processing, cleanup_project, user
     )
 
     return task.task_metadata

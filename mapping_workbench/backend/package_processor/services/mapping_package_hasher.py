@@ -9,6 +9,8 @@ from typing import Tuple, List
 
 from mapping_workbench.backend.package_importer.services.import_mono_mapping_suite import TRANSFORMATION_DIR_NAME, \
     TRANSFORMATION_MAPPINGS_DIR_NAME, TRANSFORMATION_RESOURCES_DIR_NAME
+from mapping_workbench.backend.package_processor.services import MS_TRANSFORM_FOLDER_NAME, \
+    MS_CONCEPTUAL_MAPPING_FILE_NAME, MAPPING_SUITE_HASH
 
 
 class MappingPackageHasher:
@@ -18,7 +20,9 @@ class MappingPackageHasher:
 
     def __init__(self, mapping_package_path: pathlib.Path, mapping_package_metadata: dict):
         self.package_path = mapping_package_path
-        self.package_metadata = mapping_package_metadata
+        self.package_metadata = mapping_package_metadata.copy()
+        del self.package_metadata[MAPPING_SUITE_HASH]
+
 
     def hash_a_file(self, file_path: pathlib.Path) -> Tuple[str, str]:
         """
@@ -40,17 +44,19 @@ class MappingPackageHasher:
                 ensure a deterministic order.
         """
 
-        files_to_hash = []
+        files_to_hash = [
+            self.package_path / MS_TRANSFORM_FOLDER_NAME / MS_CONCEPTUAL_MAPPING_FILE_NAME,
+        ]
 
-        mapping_files = filter(
+        mapping_files = list(filter(
             lambda item: item.is_file(),
             (self.package_path / TRANSFORMATION_DIR_NAME / TRANSFORMATION_MAPPINGS_DIR_NAME).iterdir()
-        )
+        ))
 
-        mapping_resource_files = filter(
+        mapping_resource_files = list(filter(
             lambda item: item.is_file(),
             (self.package_path / TRANSFORMATION_DIR_NAME / TRANSFORMATION_RESOURCES_DIR_NAME).iterdir()
-        )
+        ))
 
         files_to_hash += mapping_files
         files_to_hash += mapping_resource_files
@@ -78,8 +84,6 @@ class MappingPackageHasher:
         list_of_hashes = self.hash_critical_mapping_files()
         signatures = [signature[1] for signature in list_of_hashes]
         signatures.append(self.hash_mapping_metadata())
-
         if with_version:
             signatures += with_version
-
         return hashlib.sha256(str.encode(",".join(signatures))).hexdigest()

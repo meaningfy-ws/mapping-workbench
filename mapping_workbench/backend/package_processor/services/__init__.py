@@ -1,0 +1,13 @@
+MS_METADATA_FILE_NAME = "metadata.json"
+MS_TRANSFORM_FOLDER_NAME = "transformation"
+MS_MAPPINGS_FOLDER_NAME = "mappings"
+MS_RESOURCES_FOLDER_NAME = "resources"
+MS_VALIDATE_FOLDER_NAME = "validation"
+MS_SHACL_FOLDER_NAME = "shacl"
+MS_SPARQL_FOLDER_NAME = "sparql"
+MS_TEST_DATA_FOLDER_NAME = "test_data"
+MS_CONCEPTUAL_MAPPING_FILE_NAME = "conceptual_mappings.xlsx"
+CONCEPTUAL_MAPPINGS_METADATA_SHEET_NAME = "Metadata"
+MAPPING_SUITE_HASH = "mapping_suite_hash_digest"
+VERSION_KEY = "mapping_version"
+VERSION_FIELD = 'Mapping Version'

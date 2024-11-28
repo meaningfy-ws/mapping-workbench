@@ -20,6 +20,7 @@ import {sessionApi} from "src/api/session";
 import {FileDropzone} from 'src/components/file-dropzone';
 import {DEFAULT_PACKAGE_TYPE, PACKAGE_TYPE} from "src/api/mapping-packages";
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
+import Divider from "@mui/material/Divider";
 
 
 
@@ -31,6 +32,7 @@ export const PackageImporter = (props) => {
     const [files, setFiles] = useState([]);
     const [packageType, setPackageType] = useState(defaultPackageTypeValue);
     const [triggerPackageProcessing, setTriggerPackageProcessing] = useState(false);
+    const [cleanupProject, setCleanupProject] = useState(false);
 
     useEffect(() => {
         setFiles([]);
@@ -45,6 +47,7 @@ export const PackageImporter = (props) => {
             formData.append("file", file);
             formData.append("package_type", packageType);
             formData.append("trigger_package_processing", triggerPackageProcessing);
+            formData.append("cleanup_project", cleanupProject);
             formData.append("project", sessionApi.getSessionProject());
             const toastId = toastLoad(`Importing "${file.name}" ... `)
             sectionApi.importPackage(formData)
@@ -117,6 +120,19 @@ export const PackageImporter = (props) => {
                     ))}
                 </TextField>
                 <FormGroup sx={{ mb: 2}}>
+                    <Typography variant="h7" sx={{mb: 1}}>After Import</Typography>
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={cleanupProject}
+                                onChange={(e) => {
+                                    setCleanupProject(e.target.checked)
+                                }}
+                            />
+                        }
+                        label="Cleanup Project Resources"
+                        value="cleanup_project"
+                    />
                     <FormControlLabel
                         control={<Checkbox
                             checked={triggerPackageProcessing}
@@ -124,8 +140,9 @@ export const PackageImporter = (props) => {
                             name="trigger_package_processing"
                         />
                         }
-                        label={<Typography>Process Package after Import </Typography>}
+                        label="Process Package"
                     />
+                    <Divider sx={{mt: 1}}/>
                 </FormGroup>
                 <FileDropzone
                     accept={{'*/*': []}}
