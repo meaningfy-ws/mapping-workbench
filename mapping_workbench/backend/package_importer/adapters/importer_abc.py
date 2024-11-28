@@ -350,7 +350,7 @@ class PackageImporterABC(ABC):
         else:
             package = MappingPackage(**metadata)
 
-        package.project = self.project
+        package.project = self.project_link
         package.test_data_suites = []
         package.shacl_test_suites = []
         package.sparql_test_suites = []

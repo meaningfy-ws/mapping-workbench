@@ -5,6 +5,7 @@ import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
 
 import {Box} from "@mui/system";
+import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import Stack from "@mui/material/Stack";
 import Table from '@mui/material/Table';
@@ -19,6 +20,7 @@ import TableHead from '@mui/material/TableHead';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import CardContent from '@mui/material/CardContent';
+import TableSorterHeader from '../../components/table-sorter-header';
 
 import {FileUploader} from "./file-uploader";
 
@@ -37,9 +39,6 @@ import {ListItemActions} from "src/components/app/list/list-item-actions";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {testDataFileResourcesApi as fileResourcesApi} from "src/api/test-data-suites/file-resources";
 import {MappingPackagesBulkAssigner} from "src/sections/app/mapping-package/components/mapping-packages-bulk-assigner";
-import ListItem from "@mui/material/ListItem";
-import List from "@mui/material/List";
-
 
 export const ListTableRow = (props) => {
     const {
@@ -74,14 +73,12 @@ export const ListTableRow = (props) => {
             pathname: paths.app[sectionApi.section].resource_manager.edit,
             query: {id: item_id, fid: resource_id}
         });
-        return true;
     }
 
     const handleDeleteAction = () => {
         sectionApi.deleteItem(item_id)
             .then(res => getItems())
     }
-
 
     const handleDeleteResourceAction = () => {
         fileResourcesApi.deleteFileResource(item_id)
@@ -131,7 +128,7 @@ export const ListTableRow = (props) => {
                     <Checkbox
                         color="primary"
                         checked={isItemSelected(item_id)}
-                        onClick={(event) => handleItemSelect(event, item_id)}
+                        onClick={event => handleItemSelect(event.target.checked, item_id)}
                     />
                     <IconButton onClick={() => handleItemToggle(item_id)}>
                         <SvgIcon>
@@ -145,7 +142,7 @@ export const ListTableRow = (props) => {
                     </Typography>
                 </TableCell>
                 <TableCell>
-                    <List sx={{p: 0, m: 0}}>
+                    <Box>
                         {
                             sectionApi.MAPPING_PACKAGE_LINK_FIELD
                             && projectMappingPackages
@@ -153,18 +150,14 @@ export const ListTableRow = (props) => {
                                     projectMappingPackage => projectMappingPackage?.[sectionApi.MAPPING_PACKAGE_LINK_FIELD]
                                         ?.some(resource_ref => item_id === resource_ref.id)
                                 )
-                                .map((mapping_package) => {
-                                    console.log(mapping_package.title);
-                                    return (
-                                        <ListItem
-                                            key={"mapping_package_" + mapping_package.id}
-                                            sx={{p: 0, m: 0}}
-                                        >
-                                            {mapping_package['title']}
-                                        </ListItem>
-                                    );
-                                })}
-                    </List>
+                                .map(mapping_package =>
+                                    <Chip key={"mapping_package_" + mapping_package.id}
+                                          label={mapping_package['title']}
+                                          sx={{mb: 1}}
+                                    />
+                                )
+                        }
+                    </Box>
                 </TableCell>
                 <TableCell align="left">
                     {timeTransformer(item.created_at, timeSetting)}
@@ -227,50 +220,48 @@ export const ListTableRow = (props) => {
                                     {collectionResources && collectionResources.length > 0 && (
                                         <Box sx={{mt: 2}}>
                                             <Stack divider={<Divider/>}>
-                                                {collectionResources.map((resource) => {
-                                                    return (
+                                                {collectionResources.map(resource =>
+                                                    <Stack
+                                                        alignItems="center"
+                                                        direction="row"
+                                                        flexWrap="wrap"
+                                                        justifyContent="space-between"
+                                                        key={item_id + "_" + resource._id}
+                                                        sx={{
+                                                            px: 2,
+                                                            py: 1.5,
+                                                        }}
+                                                    >
+                                                        <div>
+                                                            <Typography
+                                                                variant="subtitle1">{resource.title}</Typography>
+                                                            <Typography
+                                                                color="text.secondary"
+                                                                variant="caption"
+                                                            >
+                                                                {}
+                                                            </Typography>
+                                                        </div>
                                                         <Stack
                                                             alignItems="center"
                                                             direction="row"
-                                                            flexWrap="wrap"
-                                                            justifyContent="space-between"
-                                                            key={item_id + "_" + resource._id}
-                                                            sx={{
-                                                                px: 2,
-                                                                py: 1.5,
-                                                            }}
+                                                            spacing={2}
                                                         >
-                                                            <div>
-                                                                <Typography
-                                                                    variant="subtitle1">{resource.title}</Typography>
-                                                                <Typography
-                                                                    color="text.secondary"
-                                                                    variant="caption"
-                                                                >
-                                                                    {}
-                                                                </Typography>
-                                                            </div>
-                                                            <Stack
-                                                                alignItems="center"
-                                                                direction="row"
-                                                                spacing={2}
-                                                            >
-                                                                <Button
-                                                                    size="small"
-                                                                    onClick={() => handleResourceEdit?.(resource._id)}
-                                                                    color="success">
-                                                                    Edit
-                                                                </Button>
-                                                                <Button
-                                                                    size="small"
-                                                                    onClick={() => setConfirmOpen(resource._id)}
-                                                                    color="error">
-                                                                    Delete
-                                                                </Button>
-                                                            </Stack>
+                                                            <Button
+                                                                size="small"
+                                                                onClick={() => handleResourceEdit?.(resource._id)}
+                                                                color="success">
+                                                                Edit
+                                                            </Button>
+                                                            <Button
+                                                                size="small"
+                                                                onClick={() => setConfirmOpen(resource._id)}
+                                                                color="error">
+                                                                Delete
+                                                            </Button>
                                                         </Stack>
-                                                    );
-                                                })}
+                                                    </Stack>
+                                                )}
                                             </Stack>
                                         </Box>
                                     )}
@@ -289,14 +280,14 @@ export const TestDataCollectionListTable = (props) => {
         count = 0,
         items = [],
         itemsForced = 0,
-        onPageChange = () => {
-        },
+        onPageChange = () => { },
+        sort,
+        onSort = () => {},
         onRowsPerPageChange,
         page = 0,
         rowsPerPage = 0,
         sectionApi,
-        getItems = (number) => {
-        }
+        getItems = (number) => { }
     } = props;
 
     const router = useRouter();
@@ -312,15 +303,8 @@ export const TestDataCollectionListTable = (props) => {
         setSelectedItems(checked ? items.map(item => item._id) : [])
     }
 
-    const handleItemSelect = (e, itemId) => {
-        let items = new Set(selectedItems);
-        const isChecked = e.target.checked;
-        if (isChecked) {
-            items.add(itemId);
-        } else {
-            items.delete(itemId);
-        }
-        setSelectedItems([...items]);
+    const handleItemSelect = (checked, itemId) => {
+        setSelectedItems(items => checked ? [...items, itemId] : items.filter(item => item !== itemId));
     }
 
     const handleItemToggle = itemId => {
@@ -339,6 +323,19 @@ export const TestDataCollectionListTable = (props) => {
     const onMappingPackagesAssign = () => {
         getItems(Date.now())
     }
+
+    const SorterHeader = (props) => {
+        const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
+        return (
+            <TableCell>
+                <TableSorterHeader sort={{direction, column: sort.column}}
+                                   onSort={onSort}
+                                   {...props}
+                />
+            </TableCell>
+        )
+    }
+
     return (<>
             <Box sx={{p: 1}}>
                 <MappingPackagesBulkAssigner
@@ -365,22 +362,24 @@ export const TestDataCollectionListTable = (props) => {
                     <Table sx={{minWidth: 1200}}>
                         <TableHead>
                             <TableRow>
-                                <TableCell>
-                                    <Checkbox
-                                        checked={allChecked}
-                                        indeterminate={selectedItems.length && !allChecked}
-                                        onChange={(event) => handleItemsSelectAll(event.target.checked)}
+                                <TableCell sx={{py: 1, backgroundColor: 'red'}}>
+                                    <Checkbox checked={allChecked}
+                                              indeterminate={selectedItems.length && !allChecked}
+                                              onChange={(event) => handleItemsSelectAll(event.target.checked)}
                                     />
                                 </TableCell>
-                                <TableCell width="25%">
-                                    Title
-                                </TableCell>
+                                <SorterHeader width="25%" fieldName='title'/>
+                                {/*<TableCell width="25%">*/}
+                                {/*    Title*/}
+                                {/*</TableCell>*/}
                                 <TableCell>
                                     Packages
                                 </TableCell>
-                                <TableCell align="left">
-                                    Created
-                                </TableCell>
+                                {/*<TableCell align="left">*/}
+                                {/*    Created*/}
+                                {/*</TableCell>*/}
+                                <SorterHeader fieldName='created_at'
+                                              title='created'/>
                                 <TableCell align="right">
                                     Actions
                                 </TableCell>

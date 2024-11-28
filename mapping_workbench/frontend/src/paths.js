@@ -245,7 +245,8 @@ export const apiPaths = {
     projects: {
         items: '/projects',
         item: '/projects/:id',
-        cleanup: '/projects/:id/cleanup'
+        cleanup: '/projects/:id/cleanup',
+        export_source_files: '/projects/:id/export_source_files',
     },
     test_data_suites: {
         items: '/test_data_suites',

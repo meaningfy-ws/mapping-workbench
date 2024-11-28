@@ -77,7 +77,7 @@ class StandardPackageImporter(PackageImporterABC):
                     source_structural_element=StructuralElement.link_from_id(source_structural_element.id)
                 )
 
-            rule.project = self.project
+            rule.project = self.project_link
             if source_structural_element:
                 rule.source_structural_element = source_structural_element
 

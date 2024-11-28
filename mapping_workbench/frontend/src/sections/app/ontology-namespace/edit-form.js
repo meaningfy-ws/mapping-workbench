@@ -2,24 +2,23 @@ import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
 
-import Button from '@mui/material/Button';
-import MenuItem from '@mui/material/MenuItem';
 import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
-import Grid from '@mui/material/Unstable_Grid2';
-import Switch from "@mui/material/Switch";
-import MenuList from "@mui/material/MenuList";
 import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import Switch from "@mui/material/Switch";
+import MenuItem from '@mui/material/MenuItem';
+import MenuList from "@mui/material/MenuList";
+import Grid from '@mui/material/Unstable_Grid2';
+import CardHeader from '@mui/material/CardHeader';
+import CardContent from '@mui/material/CardContent';
 import FormControlLabel from "@mui/material/FormControlLabel";
 
-import {RouterLink} from 'src/components/router-link';
 import {paths} from 'src/paths';
+import {sessionApi} from "src/api/session";
 import {useRouter} from 'src/hooks/use-router';
-
-import {FormTextField} from "../../../components/app/form/text-field";
-import {getToastId, toastError, toastSuccess} from "../../../components/app-toast";
-import {sessionApi} from "../../../api/session";
+import {RouterLink} from 'src/components/router-link';
+import {FormTextField} from "src/components/app/form/text-field";
+import {getToastId, toastError, toastSuccess} from "src/components/app-toast";
 
 
 export const EditForm = (props) => {
