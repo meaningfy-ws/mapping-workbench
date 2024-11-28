@@ -75,7 +75,3 @@ async def get_project_link(project_id: PydanticObjectId):
     if await Project.get(project_id) is None:
         raise ProjectNotFoundException(f"Project {project_id} doesn't exist")
     return Link(DBRef(Project.Settings.name, project_id), Project)
-
-
-async def cleanup_project(project: Project):
-    await remove_project_orphan_shareable_resources(project.id)
