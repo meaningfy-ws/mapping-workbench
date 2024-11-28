@@ -1,3 +1,8 @@
+import {useState} from 'react';
+import {useRouter} from 'next/router';
+
+import CloseIcon from '@mui/icons-material/Close';
+
 import Box from '@mui/system/Box';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
@@ -7,9 +12,6 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import DialogContent from '@mui/material/DialogContent';
 import Typography from '@mui/material/Typography';
-import XIcon from '@untitled-ui/icons-react/build/esm/X';
-import {useRouter} from 'next/router';
-import {useState} from 'react';
 import {testDataFileResourcesApi as fileResourcesApi} from '../../../api/test-data-suites/file-resources';
 import ConfirmDialog from '../../../components/app/dialog/confirm-dialog';
 import {paths} from '../../../paths';
@@ -54,7 +56,7 @@ export const TestDataSuitesResourcesDialog = ({itemId, collectionResources, open
                         color="inherit"
                         onClick={handleClose}
                     >
-                        <XIcon/>
+                        <CloseIcon/>
                     </IconButton>
                 </Stack>
 
@@ -75,8 +77,7 @@ export const TestDataSuitesResourcesDialog = ({itemId, collectionResources, open
                                         }}
                                     >
                                         <div>
-                                            <Typography
-                                                variant="subtitle1">{resource.title}</Typography>
+                                            <Typography variant="subtitle1">{resource.title}</Typography>
                                             <Typography
                                                 color="text.secondary"
                                                 variant="caption"
