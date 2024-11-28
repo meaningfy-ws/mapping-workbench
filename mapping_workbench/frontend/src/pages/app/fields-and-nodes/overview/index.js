@@ -185,7 +185,7 @@ const Page = () => {
                                           },
                                       },
                                   }}
-                                  pageSizeOptions={[5, 10, 20, 100]}
+                                  pageSizeOptions={[5, 10, 25, 50, 100]}
                                   disableRowSelectionOnClick
                         />
                     </Card>

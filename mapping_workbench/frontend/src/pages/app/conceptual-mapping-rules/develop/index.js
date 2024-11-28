@@ -1,47 +1,41 @@
+import {DataGrid} from '@mui/x-data-grid';
 import {useEffect, useState} from 'react';
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 
 import AddIcon from '@mui/icons-material/Add';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Button from '@mui/material/Button';
+
 import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
-import Divider from "@mui/material/Divider";
+import Button from '@mui/material/Button';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
+import {useDialog} from 'src/hooks/use-dialog';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {RouterLink} from 'src/components/router-link';
 import {ontologyTermsApi} from 'src/api/ontology-terms'
 import {fieldsRegistryApi} from "src/api/fields-registry";
-import useItemsSearch from 'src/hooks/use-items-search';
-import {TableSearchBar} from "src/sections/components/table-search-bar";
+import {useHighlighterTheme} from 'src/hooks/use-highlighter-theme';
+import ConfirmDialog from 'src/components/app/dialog/confirm-dialog';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {ListTable} from 'src/sections/app/conceptual-mapping-rule/develop/list-table';
 import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
+import {XqueryDialog} from 'src/sections/app/conceptual-mapping-rule/develop/xquery-dialog';
 import AddEditDrawer from "src/sections/app/conceptual-mapping-rule/develop/add-edit-drawer";
 
-const searchColumns = [
-    "source_structural_element_sdk_element_id",
-    "source_structural_element_absolute_xpath",
-    "xpath_condition",
-    "min_sdk_version",
-    "max_sdk_version",
-    "target_class_path",
-    "target_property_path"
-]
 
 export const Page = () => {
     const [state, setState] = useState({})
     const [ontologyFragments, setOntologyFragments] = useState([])
+    const syntaxHighlighterTheme = useHighlighterTheme()
 
     const [itemsStore, setItemsStore] = useState({
         items: [],
         itemsCount: 0
     });
-
 
     useEffect(() => {
         handleItemsGet();
@@ -62,8 +56,6 @@ export const Page = () => {
             })
     }
 
-    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, searchColumns);
-
     const [isProjectDataReady, setIsProjectDataReady] = useState(false);
 
     const [projectSourceStructuralElements, setProjectSourceStructuralElements] = useState([]);
@@ -76,7 +68,12 @@ export const Page = () => {
             })
     }, [])
 
+    const xpathConditionDialog = useDialog()
+
+    const [confirmOpen, setConfirmOpen] = useState(false);
+
     if (!isProjectDataReady) return null;
+
 
     const handleEdit = (item) => {
         setState(e => ({...e, openDrawer: true, item}))
@@ -94,10 +91,87 @@ export const Page = () => {
         handleItemsGet()
     }
 
-    const handleDelete = (item) => {
-        sectionApi.deleteItem(item._id)
+    const handleDelete = (id) => {
+        sectionApi.deleteItem(id)
             .finally(() => afterItemProcess(null))
     }
+
+
+    const columns = [
+        {
+            field: 'source_structural_element_sdk_element_id', headerName: 'Field Id', flex: 1,
+        },
+        {
+            field: 'source_structural_element_absolute_xpath', headerName: 'Absolute XPath', width: 160, height: 'auto',
+            renderCell: ({row}) => <SyntaxHighlighter language="xquery"
+                                                      wrapLines
+                                                      style={syntaxHighlighterTheme}
+                                                      lineProps={{
+                                                          style: {
+                                                              wordBreak: 'break-all',
+                                                              whiteSpace: 'pre-wrap'
+                                                          }
+                                                      }}>
+                {row.source_structural_element_absolute_xpath}
+            </SyntaxHighlighter>
+        },
+        {
+            field: 'created_at', headerName: 'Created', width: 90,
+            renderCell: ({row}) =>
+                row.xpath_condition &&
+                <Button variant="text"
+                        type='link'
+                        onClick={() => xpathConditionDialog.handleOpen(row.xpath_condition)}>XQuery</Button>
+
+        },
+        {
+            field: 'min_sdk_version', headerName: 'Min XSD', width: 90
+        },
+        {
+            field: 'max_sdk_version', headerName: 'Max XSD', width: 90
+        },
+        {
+            field: 'target_class_path', headerName: 'Ontology Class Path', width: 160
+        },
+        {
+            field: 'target_property_path', headerName: 'Ontology Property Path', width: 160
+        },
+        {
+            field: 'id',
+            headerName: 'Action',
+            width: 200,
+            sortable: false,
+            filterable: false,
+            renderCell: ({id, row}) => <>
+                <Button id="edit_button"
+                        variant="text"
+                        size="small"
+                        color="primary"
+                        onClick={() => handleEdit(row)}
+                >
+                    Edit
+                </Button>
+                <Button id="delete_button"
+                        variant="text"
+                        size="small"
+                        color="error"
+                        onClick={() => setConfirmOpen(true)}
+                        sx={{
+                            whiteSpace: "nowrap"
+                        }}
+                >
+                    Delete
+                </Button>
+                <ConfirmDialog title="Delete It?"
+                               open={confirmOpen}
+                               setOpen={setConfirmOpen}
+                               onConfirm={() => handleDelete(id)}
+                >
+                    Are you sure you want to delete it?
+                </ConfirmDialog>
+            </>
+        },
+    ]
 
     return (
         <>
@@ -149,22 +223,25 @@ export const Page = () => {
                     </Stack>
                 </Stack>
                 <Card>
-                    <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
-                                    value={itemsSearch.state.search[0]}
-                                    placeholder='Search Terms'/>
-                    <Divider/>
-                    <ListTable
-                        onPageChange={itemsSearch.handlePageChange}
-                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        onSort={itemsSearch.handleSort}
-                        sort={itemsSearch.state.sort}
-                        page={itemsSearch.state.page}
-                        items={itemsSearch.pagedItems}
-                        count={itemsSearch.count}
-                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                        sectionApi={sectionApi}
-                        onEdit={handleEdit}
-                        onDelete={handleDelete}
+                    <DataGrid getRowHeight={() => 'auto'}
+                              getRowId={row => row._id}
+                              rows={itemsStore.items}
+                              columns={columns}
+                              slotProps={{
+                                  pagination: {
+                                      showFirstButton: true,
+                                      showLastButton: true,
+                                  }
+                              }}
+                              initialState={{
+                                  pagination: {
+                                      paginationModel: {
+                                          pageSize: sectionApi.DEFAULT_ROWS_PER_PAGE,
+                                      },
+                                  },
+                              }}
+                              pageSizeOptions={[5, 10, 25, 100]}
+                              disableRowSelectionOnClick
                     />
                 </Card>
                 <AddEditDrawer open={state.openDrawer}
@@ -176,6 +253,9 @@ export const Page = () => {
                                ontologyFragments={ontologyFragments}
                 />
             </Stack>
+            <XqueryDialog open={xpathConditionDialog.open}
+                          handleClose={xpathConditionDialog.handleClose}
+                          item={xpathConditionDialog.data}/>
         </>
     )
 };
