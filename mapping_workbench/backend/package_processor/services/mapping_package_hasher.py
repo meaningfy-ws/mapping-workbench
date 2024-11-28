@@ -21,7 +21,7 @@ class MappingPackageHasher:
     def __init__(self, mapping_package_path: pathlib.Path, mapping_package_metadata: dict):
         self.package_path = mapping_package_path
         self.package_metadata = mapping_package_metadata.copy()
-        del self.package_metadata[MAPPING_SUITE_HASH]
+        self.package_metadata.pop(MAPPING_SUITE_HASH, None)
 
 
     def hash_a_file(self, file_path: pathlib.Path) -> Tuple[str, str]:
