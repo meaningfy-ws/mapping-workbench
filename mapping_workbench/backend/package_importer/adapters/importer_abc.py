@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from itertools import takewhile
 from pathlib import Path
 from typing import Dict, Tuple, List
 
@@ -6,6 +7,7 @@ from beanie.odm.operators.find.comparison import Eq
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
+from mapping_workbench.backend.mapping_package.services.api import remove_mapping_package_resources
 from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroup
 from mapping_workbench.backend.package_importer.models.imported_mapping_suite import ImportedMappingSuite
 from mapping_workbench.backend.project.models.entity import Project
@@ -156,13 +158,14 @@ class PackageImporterABC(ABC):
                 value_part = value_part.strip()
                 return key_part, value_part
 
-        content_lines_with_comments = filter(lambda x: x.strip().startswith("#"), content.splitlines())
-        return dict([_process_line(line) for line in content_lines_with_comments])
+        content = content.strip()
+        content_lines_with_meta = list(takewhile(lambda line: line.strip().startswith("#"), content.splitlines()))
+        return dict([_process_line(line) for line in content_lines_with_meta])
 
     async def add_sparql_test_suites_from_mono(self, mono_package: ImportedMappingSuite):
         self.task_progress.start_action_step(name="add_sparql_test_suites")
 
-        resource_formats = [e.value for e in SPARQLTestFileResourceFormat]
+        resource_formats = [e for e in SPARQLTestFileResourceFormat]
 
         for mono_resource_collection in mono_package.sparql_validation_resources:
             sparql_test_suite: SPARQLTestSuite = await SPARQLTestSuite.find_one(
@@ -357,6 +360,7 @@ class PackageImporterABC(ABC):
         package.resource_collections = []
 
         await package.on_update(self.user).save() if package.id else await package.on_create(self.user).save()
+        await remove_mapping_package_resources(package)
 
         self.package = package
 
