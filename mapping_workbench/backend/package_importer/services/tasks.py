@@ -12,6 +12,7 @@ def task_import_mapping_package(
         project: Project,
         package_type: PackageType,
         trigger_package_processing: bool = False,
+        cleanup_project: bool = False,
         user: User = None,
         task_response: TaskResponse = None
 ):
@@ -19,5 +20,5 @@ def task_import_mapping_package(
         if trigger_package_processing else import_mapping_package_from_archive
     run_task(
         task_to_run,
-        file_content, project, package_type, user, task_response
+        file_content, project, package_type, cleanup_project, user, task_response
     )

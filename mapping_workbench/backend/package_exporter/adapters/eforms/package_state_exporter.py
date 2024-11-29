@@ -8,7 +8,7 @@ import pandas as pd
 from mapping_workbench.backend.core.adapters.archiver import ZipArchiver, ARCHIVE_ZIP_FORMAT
 from mapping_workbench.backend.core.adapters.exporter import ArchiveExporter
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState
-from mapping_workbench.backend.package_exporter.adapters.mapping_package_hasher import MappingPackageHasher
+from mapping_workbench.backend.package_processor.services.mapping_package_hasher import MappingPackageHasher
 from mapping_workbench.backend.package_exporter.adapters.mapping_package_reporter import MappingPackageReporter
 from mapping_workbench.backend.package_exporter.models.exported_mapping_suite import EFormsConstraints, \
     MappingMetadataConstraints, MappingMetadataExportBaseForEForms, MappingMetadataExportForEForms, MappingSuiteType
