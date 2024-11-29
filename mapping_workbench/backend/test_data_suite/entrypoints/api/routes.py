@@ -352,7 +352,7 @@ async def route_get_test_data_file_resource_content(
     description=f"Transform Test Data using Triple Map",
     name=f"{FILE_RESOURCE_NAME_FOR_ONE}:transform"
 )
-async def route_transform_test_data_file_resource_with_triple_map(
+async def route_transform_test_data_file_resource_with_generic_triple_map(
         generic_triple_map_id: PydanticObjectId,
         test_data_file_resource: TestDataFileResource = Depends(get_test_data_file_resource),
         user: User = Depends(current_active_user)
@@ -361,7 +361,8 @@ async def route_transform_test_data_file_resource_with_triple_map(
         test_data_file_resource = await transform_test_data_file_resource(
             test_data_file_resource=test_data_file_resource,
             mappings=[await get_generic_triple_map_fragment(generic_triple_map_id)],
-            user=user
+            user=user,
+            silent_exception=False
         )
     except RMLMapperException as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
@@ -376,7 +377,7 @@ async def route_transform_test_data_file_resource_with_triple_map(
     description=f"Transform Test Data using Triple Map",
     name=f"{FILE_RESOURCE_NAME_FOR_ONE}:transform"
 )
-async def route_transform_test_data_file_resource_with_triple_map(
+async def route_transform_test_data_file_resource_with_specific_triple_map(
         specific_triple_map_id: PydanticObjectId,
         test_data_file_resource: TestDataFileResource = Depends(get_test_data_file_resource),
         use_this_triple_map: bool = False,
@@ -391,7 +392,8 @@ async def route_transform_test_data_file_resource_with_triple_map(
             test_data_file_resource=test_data_file_resource,
             package_id=package_id,
             mappings=mappings,
-            user=user
+            user=user,
+            silent_exception=False
         )
     except RMLMapperException as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
