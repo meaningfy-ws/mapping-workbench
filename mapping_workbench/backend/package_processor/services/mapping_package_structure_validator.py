@@ -59,7 +59,7 @@ class MappingPackageStructureValidator:
         mandatory_paths_l2 = [
             # self.mapping_package_path / MS_METADATA_FILE_NAME,
             self.mapping_package_path / MS_VALIDATE_FOLDER_NAME,
-            self.mapping_package_path / MS_VALIDATE_FOLDER_NAME / MS_SPARQL_FOLDER_NAME,
+            # self.mapping_package_path / MS_VALIDATE_FOLDER_NAME / MS_SPARQL_FOLDER_NAME,
             self.mapping_package_path / MS_VALIDATE_FOLDER_NAME / MS_SHACL_FOLDER_NAME,
         ]
         return self.assert_path(mandatory_paths_l2)
