@@ -1,4 +1,3 @@
-const browserify = require('@cypress/browserify-preprocessor');
 const cucumber = require('cypress-cucumber-preprocessor').default;
 const {defineConfig} = require('cypress')
 require('dotenv').config()

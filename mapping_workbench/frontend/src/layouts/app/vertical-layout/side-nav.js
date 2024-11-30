@@ -45,7 +45,7 @@ const useCssVars = (color) => {
                     };
                 } else {
                     return {
-                        '--nav-bg': theme.palette.background.default,
+                        '--nav-bg': '#FFF',
                         '--nav-color': theme.palette.text.primary,
                         '--nav-border-color': theme.palette.neutral[100],
                         '--nav-logo-border': theme.palette.neutral[100],
@@ -163,11 +163,9 @@ export const SideNav = (props) => {
                 sx: {
                     ...cssVars,
                     backgroundColor: 'var(--nav-bg)',
-                    borderRightColor: 'var(--nav-border-color)',
-                    borderRightStyle: 'solid',
-                    borderRightWidth: 1,
                     color: 'var(--nav-color)',
-                    width: SIDE_NAV_WIDTH
+                    width: SIDE_NAV_WIDTH,
+                    borderRight: '1px solid #E4E7EC'
                 }
             }}
             variant="permanent"
@@ -187,20 +185,15 @@ export const SideNav = (props) => {
                     <Stack
                         alignItems="center"
                         direction="row"
-                        spacing={2}
-                        sx={{p: 3}}
+                        spacing={'14px'}
+                        sx={{px: '20px',py:'25px'}}
                     >
                         <Box
                             component={RouterLink}
                             href={paths.index}
                             sx={{
-                                borderColor: 'var(--nav-logo-border)',
-                                borderRadius: 1,
-                                borderStyle: 'solid',
-                                borderWidth: 1,
                                 display: 'flex',
                                 height: 40,
-                                p: '4px',
                                 width: 40
                             }}
                         >
