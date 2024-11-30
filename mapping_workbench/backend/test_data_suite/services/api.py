@@ -120,7 +120,8 @@ async def update_test_data_file_resource(
         test_data_file_resource = await transform_test_data_file_resource(
             test_data_file_resource=test_data_file_resource,
             package_id=package_id,
-            user=user
+            user=user,
+            silent_exception=False
         )
 
     return test_data_file_resource

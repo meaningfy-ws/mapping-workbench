@@ -96,7 +96,8 @@ async def transform_test_data_file_resource(
         mappings: List[TripleMapFragment] = None,
         resources: List[ResourceFile] = None,
         rml_mapper: RMLMapperABC = None,
-        save: bool = True
+        save: bool = True,
+        silent_exception: bool = True
 ) -> TestDataFileResource:
     """
     """
@@ -115,6 +116,10 @@ async def transform_test_data_file_resource(
             package_id=package_id
         )
 
+    if not isinstance(rml_mapper, RMLMapperABC):
+        rml_mapper: RMLMapper = RMLMapper(rml_mapper_path=Path(settings.RML_MAPPER_PATH))
+
+
     test_data_file_resource.rdf_manifestation = await transform_test_data_file_resource_content(
         content=test_data_file_resource.content,
         mappings=mappings,
@@ -122,6 +127,9 @@ async def transform_test_data_file_resource(
         rml_mapper=rml_mapper,
         test_data_title=test_data_file_resource.title or test_data_file_resource.filename
     )
+
+    if not silent_exception:
+        process_transform_test_data_mapper_errors(rml_mapper)
 
     if user is not None:
         test_data_file_resource.on_update(user=user)
@@ -249,7 +257,7 @@ async def transform_test_data_for_package_state(
 
 
 def process_transform_test_data_mapper_errors(rml_mapper: RMLMapperABC):
-    if rml_mapper.errors:
+    if rml_mapper.has_errors():
         raise RMLMapperException(message=('\n\n' + '\n'.join([
             error.message + (" :: " + str(error.metadata) if error.metadata else "") for error in rml_mapper.errors
         ])))
