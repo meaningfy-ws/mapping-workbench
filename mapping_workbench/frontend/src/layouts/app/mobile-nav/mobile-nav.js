@@ -1,18 +1,18 @@
-import Divider from '@mui/material/Divider';
 import {useMemo} from 'react';
 import PropTypes from 'prop-types';
 
+import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import Stack from '@mui/material/Stack';
 import {useTheme} from '@mui/material/styles';
 
+import {paths} from 'src/paths';
 import {Logo} from 'src/components/logo';
 import {AppTitle} from 'src/components/app-title';
 import {RouterLink} from 'src/components/router-link';
 import {Scrollbar} from 'src/components/scrollbar';
 import {usePathname} from 'src/hooks/use-pathname';
-import {paths} from 'src/paths';
 import {MobileNavSection} from './mobile-nav-section';
 import {ProjectSwitch} from "../project-switch2";
 import {useProjects} from "../../../hooks/use-projects";
@@ -22,6 +22,8 @@ const MOBILE_NAV_WIDTH = 280;
 
 const useCssVars = (color) => {
     const theme = useTheme();
+
+    console.log(theme.palette)
 
     return useMemo(() => {
         switch (color) {
@@ -36,7 +38,7 @@ const useCssVars = (color) => {
                         '--nav-logo-border': theme.palette.neutral[700],
                         '--nav-section-title-color': theme.palette.neutral[400],
                         '--nav-item-color': theme.palette.neutral[400],
-                        '--nav-item-hover-bg': 'rgba(255, 255, 255, 0.04)',
+                        '--nav-item-hover-bg': theme.palette.primary.dark,
                         '--nav-item-active-bg': 'rgba(255, 255, 255, 0.04)',
                         '--nav-item-active-color': theme.palette.text.primary,
                         '--nav-item-disabled-color': theme.palette.neutral[600],
@@ -53,7 +55,7 @@ const useCssVars = (color) => {
                         '--nav-logo-border': theme.palette.neutral[100],
                         '--nav-section-title-color': theme.palette.neutral[400],
                         '--nav-item-color': theme.palette.text.secondary,
-                        '--nav-item-hover-bg': theme.palette.action.hover,
+                        '--nav-item-hover-bg': theme.palette.primary.light,
                         '--nav-item-active-bg': theme.palette.action.selected,
                         '--nav-item-active-color': theme.palette.text.primary,
                         '--nav-item-disabled-color': theme.palette.neutral[400],

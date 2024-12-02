@@ -1,3 +1,6 @@
+import Chip from '@mui/material/Chip';
+import Menu from '@mui/material/Menu';
+import {Box} from '@mui/system';
 import {useContext, useState} from "react";
 
 import AddIcon from '@mui/icons-material/Add';
@@ -44,11 +47,25 @@ export const ProjectSwitch = () => {
     };
 
     return (<Stack sx={{px: 2}}>
-            <Button variant='contained'
-                    onClick={handleClick}
-                    endIcon={<ArrowForwardIosIcon
-                        fontSize='small'/>}>{projectsStore.items?.find(project => project._id === projectsStore.sessionProject)?.title}</Button>
-            <Popover
+            {/*<Chip variant='contained'*/}
+            {/*      color='primary'*/}
+            {/*      icon={<ArrowForwardIosIcon*/}
+            {/*          fontSize='small'/>}*/}
+            {/*      label={projectsStore.items?.find(project => project._id === projectsStore.sessionProject)?.title}*/}
+            {/*      clickable*/}
+            {/*      onClick={handleClick}/>*/}
+            <Stack onClick={handleClick}
+                   direction='row'
+                   alignItems='center'
+                   justifyContent='center'
+                   gap={3}
+                 sx={{backgroundColor: '#f0edf9', borderRadius: '8px', p: '9px', cursor:'pointer'}}>
+                {projectsStore.items?.find(project => project._id === projectsStore.sessionProject)?.title}
+                <ArrowForwardIosIcon color='primary'
+                                     fontWeight='bold'
+                                     fontSize='small'/>
+            </Stack>
+            <Menu
                 id={'project_switch_popover'}
                 open={!!anchorEl}
                 anchorEl={anchorEl}
@@ -61,51 +78,50 @@ export const ProjectSwitch = () => {
                     vertical: 'top',
                     horizontal: 'left',
                 }}
+                width={'250px'}
             >
 
-                <Card sx={{border: '1px solid #E4E7EC', width: 250}}>
-                    <Stack direction='column'>
-                        <OutlinedInput sx={{m: '16px', backgroundColor: '#F2F4F7',}}
-                                       placeholder='Search project'
-                                       inputProps={{style: {padding: '10px'}}}
-                                       onChange={event => setSearchInputValue(event.target.value)}
-                                       startAdornment={(
-                                           <InputAdornment position="start">
-                                               <SearchIcon/>
-                                           </InputAdornment>
-                                       )}>
+                <Stack direction='column'>
+                    <OutlinedInput sx={{m: '16px', backgroundColor: '#F2F4F7',}}
+                                   placeholder='Search project'
+                                   inputProps={{style: {padding: '10px'}}}
+                                   onChange={event => setSearchInputValue(event.target.value)}
+                                   startAdornment={(
+                                       <InputAdornment position="start">
+                                           <SearchIcon/>
+                                       </InputAdornment>
+                                   )}>
 
-                        </OutlinedInput>
-                        {projectsStore.items?.filter(project => project.title.toLowerCase()
-                            .includes(searchInputValue.toLowerCase()))
-                            .map(project => (
-                                <MenuItem
-                                    key={project._id}
-                                    value={project._id}
-                                    sx={{px: '15px', py: '8px'}}
-                                    onClick={() => handleProjectSelect(project._id)}
+                    </OutlinedInput>
+                    {projectsStore.items?.filter(project => project.title.toLowerCase()
+                        .includes(searchInputValue.toLowerCase()))
+                        .map(project => (
+                            <MenuItem
+                                key={project._id}
+                                value={project._id}
+                                sx={{px: '15px', py: '8px'}}
+                                onClick={() => handleProjectSelect(project._id)}
+                            >
+                                <Typography
+                                    color="var(--nav-color)"
+                                    variant="body2"
                                 >
-                                    <Typography
-                                        color="var(--nav-color)"
-                                        variant="body2"
-                                    >
-                                        {project.title}
-                                    </Typography>
-                                </MenuItem>))}
-
-                        <Divider sx={{m: '15px'}} marginHeight={3} marginWidth={3}/>
-                        <MenuItem key={'project_create'}
-                                  onClick={() => handleProjectSelect()}
-                                  sx={{color: theme.palette.primary.main, mb: 2}}
-                                  id='create_project_button'>
-                            <AddIcon/>
-                            <Typography>
-                                Create Project
-                            </Typography>
-                        </MenuItem>
-                    </Stack>
-                </Card>
-            </Popover>
+                                    {project.title}
+                                </Typography>
+                            </MenuItem>))}
+                    <Divider sx={{m: '15px'}}/>
+                    <MenuItem key={'project_create'}
+                              onClick={() => handleProjectSelect()}
+                              sx={{color: theme.palette.primary.main, mb: 2}}
+                              id='create_project_button'>
+                        <AddIcon fontWeight='bold'/>
+                        <Typography sx={{ml: '4px'}}
+                                    fontWeight='bold'>
+                            Create Project
+                        </Typography>
+                    </MenuItem>
+                </Stack>
+            </Menu>
         </Stack>
     )
         ;
