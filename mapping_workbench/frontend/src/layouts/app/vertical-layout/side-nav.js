@@ -12,7 +12,7 @@ import {Scrollbar} from 'src/components/scrollbar';
 import {usePathname} from 'src/hooks/use-pathname';
 import {paths} from 'src/paths';
 import {SideNavSection} from './side-nav-section';
-import {ProjectSwitch} from "../project-switch";
+import {ProjectSwitch} from "../project-switch2";
 import {AppTitle} from "../../../components/app-title";
 import {useProjects} from "../../../hooks/use-projects";
 import {VersionLabel} from "../version-label";

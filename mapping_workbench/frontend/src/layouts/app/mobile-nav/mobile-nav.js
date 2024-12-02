@@ -1,3 +1,4 @@
+import Divider from '@mui/material/Divider';
 import {useMemo} from 'react';
 import PropTypes from 'prop-types';
 
@@ -13,7 +14,7 @@ import {Scrollbar} from 'src/components/scrollbar';
 import {usePathname} from 'src/hooks/use-pathname';
 import {paths} from 'src/paths';
 import {MobileNavSection} from './mobile-nav-section';
-import {ProjectSwitch} from "../project-switch";
+import {ProjectSwitch} from "../project-switch2";
 import {useProjects} from "../../../hooks/use-projects";
 import {VersionLabel} from "../version-label";
 
@@ -145,20 +146,15 @@ export const MobileNav = (props) => {
                     <Stack
                         alignItems="center"
                         direction="row"
-                        spacing={2}
-                        sx={{p: 3}}
+                        spacing={'14px'}
+                        sx={{px: '20px', py: '25px'}}
                     >
                         <Box
                             component={RouterLink}
                             href={paths.index}
                             sx={{
-                                borderColor: 'var(--nav-logo-border)',
-                                borderRadius: 1,
-                                borderStyle: 'solid',
-                                borderWidth: 1,
                                 display: 'flex',
                                 height: 40,
-                                p: '4px',
                                 width: 40
                             }}
                         >
@@ -171,7 +167,6 @@ export const MobileNav = (props) => {
                         spacing={2}
                         sx={{
                             flexGrow: 1,
-                            px: 2
                         }}
                     >
                         <Stack
@@ -184,6 +179,7 @@ export const MobileNav = (props) => {
                             }}>
                             <ProjectSwitch/>
                         </Stack>
+                        <Divider color='#F2F4F7' />
                         {overview.map((section, index) => (
                             <MobileNavSection
                                 items={section.items}

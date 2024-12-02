@@ -76,7 +76,8 @@ export const MobileNavSection = (props) => {
       sx={{
         listStyle: 'none',
         m: 0,
-        p: 0
+        p: 0,
+        px:2
       }}
       {...other}>
       {subheader && (
