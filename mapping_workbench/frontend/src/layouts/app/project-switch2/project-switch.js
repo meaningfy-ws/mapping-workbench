@@ -1,29 +1,23 @@
-import Chip from '@mui/material/Chip';
 import Menu from '@mui/material/Menu';
-import {Box} from '@mui/system';
 import {useContext, useState} from "react";
 
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
-import Card from '@mui/material/Card';
-import Divider from '@mui/material/Divider';
-import Popover from '@mui/material/Popover';
 import Stack from '@mui/material/Stack';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputAdornment from '@mui/material/InputAdornment';
+import Divider from '@mui/material/Divider';
 import {useTheme} from '@mui/material/styles';
-import Button from '@mui/material/Button';
-
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputAdornment from '@mui/material/InputAdornment';
 
 import {ProjectsContext} from "../../../contexts/projects";
 import {useRouter} from "../../../hooks/use-router";
 import {paths} from 'src/paths';
 
-export const ProjectSwitch = () => {
+export const ProjectSwitch = ({small}) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const projectsStore = useContext(ProjectsContext)
     const [searchInputValue, setSearchInputValue] = useState('')
@@ -47,20 +41,13 @@ export const ProjectSwitch = () => {
     };
 
     return (<Stack sx={{px: 2}}>
-            {/*<Chip variant='contained'*/}
-            {/*      color='primary'*/}
-            {/*      icon={<ArrowForwardIosIcon*/}
-            {/*          fontSize='small'/>}*/}
-            {/*      label={projectsStore.items?.find(project => project._id === projectsStore.sessionProject)?.title}*/}
-            {/*      clickable*/}
-            {/*      onClick={handleClick}/>*/}
             <Stack onClick={handleClick}
                    direction='row'
                    alignItems='center'
                    justifyContent='center'
                    gap={3}
-                 sx={{backgroundColor: '#f0edf9', borderRadius: '8px', p: '9px', cursor:'pointer'}}>
-                {projectsStore.items?.find(project => project._id === projectsStore.sessionProject)?.title}
+                   sx={{backgroundColor: '#f0edf9', borderRadius: '8px', p: '9px', cursor: 'pointer'}}>
+                {!small && projectsStore.items?.find(project => project._id === projectsStore.sessionProject)?.title}
                 <ArrowForwardIosIcon color='primary'
                                      fontWeight='bold'
                                      fontSize='small'/>
@@ -123,6 +110,5 @@ export const ProjectSwitch = () => {
                 </Stack>
             </Menu>
         </Stack>
-    )
-        ;
+    );
 };

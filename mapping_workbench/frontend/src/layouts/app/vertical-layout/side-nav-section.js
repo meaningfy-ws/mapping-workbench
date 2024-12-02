@@ -3,21 +3,21 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 
 import {SideNavItem} from './side-nav-item';
-import {useEffect, useState} from "react";
 
 const renderItems = (
-    {depth = 0, items, parentId, pathname}
+    {depth = 0, items, parentId, pathname, small}
 ) => items.reduce(
     (acc, item) => reduceChildRoutes({
         acc,
         depth,
         item,
         parentId,
-        pathname
+        pathname,
+        small
     }), []);
 
 
-const reduceChildRoutes = ({acc, depth, item, parentId, pathname}) => {
+const reduceChildRoutes = ({acc, depth, item, parentId, pathname, small}) => {
     const checkPath = !!(item.path && pathname);
     const partialMatch = checkPath ? pathname.includes(item.path) : false;
     const exactMatch = checkPath ? pathname === item.path : false;
@@ -36,6 +36,7 @@ const reduceChildRoutes = ({acc, depth, item, parentId, pathname}) => {
                 title={item.title}
                 path={item.path}
                 parentId={parentId}
+                small={small}
             >
                 {<Stack
                     component="ul"
@@ -50,7 +51,8 @@ const reduceChildRoutes = ({acc, depth, item, parentId, pathname}) => {
                         depth: depth + 1,
                         items: item.items,
                         parentId: item.title.toLowerCase(),
-                        pathname
+                        pathname,
+                        small
                     })}
                 </Stack>}
             </SideNavItem>
@@ -68,6 +70,7 @@ const reduceChildRoutes = ({acc, depth, item, parentId, pathname}) => {
                 path={item.path}
                 title={item.title}
                 parentId={parentId}
+                small={small}
             />
         );
     }
@@ -76,7 +79,7 @@ const reduceChildRoutes = ({acc, depth, item, parentId, pathname}) => {
 };
 
 export const SideNavSection = (props) => {
-    const {items = [], pathname, subheader = '', ...other} = props;
+    const {items = [], pathname, subheader = '', small, ...other} = props;
 
     return (
         <Stack
@@ -104,7 +107,7 @@ export const SideNavSection = (props) => {
                     {subheader}
                 </Box>
             )}
-            {renderItems({items, pathname})}
+            {renderItems({items, pathname, small})}
         </Stack>
     );
 };

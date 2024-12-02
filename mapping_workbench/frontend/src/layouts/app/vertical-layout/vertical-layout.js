@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import {styled} from '@mui/material/styles';
 import {MobileNav} from '../mobile-nav';
-import {SideNav} from './side-nav';
+import {SideNavSmall} from './side-nav-small';
 import {TopNav} from './top-nav';
 import {useMobileNav} from './use-mobile-nav';
 import Container from "@mui/material/Container";
@@ -10,7 +10,7 @@ import {useSettings} from "../../../hooks/use-settings";
 import {Box} from "@mui/system";
 
 const BREAK_POINT = 1500;
-const SIDE_NAV_WIDTH = 280;
+const SIDE_NAV_WIDTH = 88;
 
 const VerticalLayoutRoot = styled('div')(({theme}) => ({
     display: 'flex',
@@ -38,7 +38,7 @@ export const VerticalLayout = (props) => {
         <>
             <TopNav onMobileNavOpen={mobileNav.handleOpen}/>
             {breakPointUp ?
-                <SideNav
+                <SideNavSmall
                     color={navColor}
                     sections={sections}
                 />

@@ -21,6 +21,7 @@ export const SideNavItem = (props) => {
         open: openProp,
         path,
         title,
+        small,
         parentId
     } = props;
     const [open, setOpen] = useState(false);
@@ -118,7 +119,7 @@ export const SideNavItem = (props) => {
                             {startIcon}
                         </Box>
                     )}
-                    <Box
+                    {!small && <Box
                         component="span"
                         sx={{
                             color: 'var(--nav-item-color)',
@@ -137,7 +138,7 @@ export const SideNavItem = (props) => {
                         }}
                     >
                         {title}
-                    </Box>
+                    </Box>}
                     <SvgIcon
                         sx={{
                             color: 'var(--nav-item-chevron-color)',
@@ -215,7 +216,7 @@ export const SideNavItem = (props) => {
                         {startIcon}
                     </Box>
                 )}
-                <Box
+                {!small && <Box
                     component="span"
                     sx={{
                         color: 'var(--nav-item-color)',
@@ -234,7 +235,7 @@ export const SideNavItem = (props) => {
                     }}
                 >
                     {title}
-                </Box>
+                </Box>}
                 {label && (
                     <Box
                         component="span"
