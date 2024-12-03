@@ -9,10 +9,13 @@ import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import Dialog from "@mui/material/Dialog";
 import Divider from '@mui/material/Divider';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
+import IconButton from "@mui/material/IconButton";
 import Breadcrumbs from '@mui/material/Breadcrumbs';
+import DialogContent from "@mui/material/DialogContent";
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
@@ -26,13 +29,9 @@ import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {mappingPackagesApi as sectionApi} from 'src/api/mapping-packages';
 import {projectsApi} from 'src/api/projects';
 import {PackageImporter} from 'src/sections/app/mapping-package/package-importer';
-import IconButton from "@mui/material/IconButton";
-import DialogContent from "@mui/material/DialogContent";
-import Dialog from "@mui/material/Dialog";
+
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 import {sessionApi} from "../../../api/session";
-import Checkbox from "@mui/material/Checkbox";
-import FormControlLabel from "@mui/material/FormControlLabel";
 
 const useItemsStore = () => {
     const [state, setState] = useState({
@@ -63,7 +62,10 @@ const useItemsStore = () => {
 
 const Page = () => {
     const itemsStore = useItemsStore();
-    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['title', 'identifier']);
+    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['title', 'identifier'], {}, {
+        column: 'created_at',
+        sort: 'desc'
+    });
 
     const importDialog = useDialog();
     const srcExportDialog = useDialog();
@@ -72,7 +74,7 @@ const Page = () => {
         const toastId = toastLoad(`Exporting Source Files ... `)
         projectsApi.exportSourceFiles()
             .then(response => {
-                const filename =  `src_${sessionApi.getSessionProject()}.zip`;
+                const filename = `src_${sessionApi.getSessionProject()}.zip`;
                 saveAs(new Blob([response], {type: "application/x-zip-compressed"}), filename);
                 toastSuccess(`Source Files successfully exported.`, toastId)
             }).catch(err => toastError(`Exporting Source Files failed: ${err.message}.`, toastId))
@@ -165,8 +167,8 @@ const Page = () => {
                         page={itemsSearch.state.page}
                         items={itemsSearch.pagedItems}
                         count={itemsSearch.count}
-                        onSort={itemsSearch.handleSorterChange}
-                        sort={{direction: itemsSearch.state.sortDirection, column: itemsSearch.state.sortField}}
+                        onSort={itemsSearch.handleSort}
+                        sort={itemsSearch.state.sort}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
                     />
