@@ -364,11 +364,12 @@ export const TestDataCollectionListTable = (props) => {
                             <TableRow>
                                 <TableCell sx={{py: 1, backgroundColor: 'red'}}>
                                     <Checkbox checked={allChecked}
-                                              indeterminate={selectedItems.length && !allChecked}
+                                              indeterminate={!!selectedItems.length && !allChecked}
                                               onChange={(event) => handleItemsSelectAll(event.target.checked)}
                                     />
                                 </TableCell>
-                                <SorterHeader width="25%" fieldName='title'/>
+                                <SorterHeader width="25%"
+                                              fieldName='title'/>
                                 {/*<TableCell width="25%">*/}
                                 {/*    Title*/}
                                 {/*</TableCell>*/}
