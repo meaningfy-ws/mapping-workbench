@@ -1,9 +1,15 @@
+import ArchiveIcon from '@mui/icons-material/Archive';
+import DvrIcon from '@mui/icons-material/Dvr';
+import LightbulbCircleIcon from '@mui/icons-material/LightbulbCircle';
+import VerifiedIcon from '@mui/icons-material/Verified';
 import {useEffect, useState} from 'react';
 import {turtle} from 'codemirror-lang-turtle';
 import CodeMirror from '@uiw/react-codemirror';
 import {githubDark, githubLight} from '@uiw/codemirror-themes-all';
 
 import UploadIcon from '@mui/icons-material/Upload';
+import ModeStandbyIcon from '@mui/icons-material/ModeStandby';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 
 import {Box} from "@mui/system";
 import Stack from '@mui/material/Stack';
@@ -30,6 +36,7 @@ import {ontologyFilesApi as sectionApi} from 'src/api/ontology-files';
 import {FileUploader} from 'src/sections/app/files-form//file-uploader';
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {ontologyFileResourcesApi as fileResourcesApi} from "src/api/ontology-files/file-resources";
+import {ArrowButton, ArrowButtonGroup} from '../../../sections/components/arrow-buttons/arrow-buttons';
 
 
 const Page = () => {
@@ -38,7 +45,7 @@ const Page = () => {
 
     const uploadDialog = useDialog();
     const detailsDialog = useDialog();
-    const itemsSearch = useItemsSearch(state, sectionApi,['filename', 'content']);
+    const itemsSearch = useItemsSearch(state, sectionApi, ['filename', 'content']);
 
     const theme = useTheme();
 
@@ -87,6 +94,38 @@ const Page = () => {
                     lg: 4
                 }}
             >
+                <Grid xs={12}>
+                    <Stack justifyContent='center'
+                           direction='row'>
+                        <ArrowButtonGroup>
+                            <ArrowButton active
+                                         icon={<ModeStandbyIcon fontSize='small'
+                                                                style={{marginRight: '4px'}}/>}>
+                                Source & Target
+                            </ArrowButton>
+                            <ArrowButton icon={<InsertDriveFileIcon fontSize='small'
+                                                                    style={{marginRight: '4px'}}/>}>
+                                Elements Definition
+                            </ArrowButton>
+                            <ArrowButton icon={<LightbulbCircleIcon fontSize='small'
+                                                                    style={{marginRight: '4px'}}/>}>
+                                Conceptual Mappings
+                            </ArrowButton>
+                            <ArrowButton icon={<DvrIcon fontSize='small'
+                                                        style={{marginRight: '4px'}}/>}>
+                                Technical Mappings
+                            </ArrowButton>
+                            <ArrowButton icon={<VerifiedIcon fontSize='small'
+                                                             style={{marginRight: '4px'}}/>}>
+                                Quality Control
+                            </ArrowButton>
+                            <ArrowButton icon={<ArchiveIcon fontSize='small'
+                                                            style={{marginRight: '4px'}}/>}>
+                                Export Mapping
+                            </ArrowButton>
+                        </ArrowButtonGroup>
+                    </Stack>
+                </Grid>
                 <Grid xs={12}>
                     <Stack
                         direction="row"
