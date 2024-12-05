@@ -1,14 +1,19 @@
-
 import AddIcon from '@mui/icons-material/Add';
+import ArchiveIcon from '@mui/icons-material/Archive';
+import DvrIcon from '@mui/icons-material/Dvr';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import LightbulbCircleIcon from '@mui/icons-material/LightbulbCircle';
+import ModeStandbyIcon from '@mui/icons-material/ModeStandby';
 import SearchIcon from '@mui/icons-material/Search';
+import VerifiedIcon from '@mui/icons-material/Verified';
 
-import Link from '@mui/material/Link';
 import Grid from "@mui/material/Grid";
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import SvgIcon from '@mui/material/SvgIcon';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
@@ -18,10 +23,13 @@ import {RouterLink} from 'src/components/router-link';
 import {usePageView} from 'src/hooks/use-page-view';
 import OntologyTerms from "src/sections/app/ontology/ontology-terms";
 import {ontologyTermsApi as sectionApi} from 'src/api/ontology-terms';
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import OntologyNamespaces from "src/sections/app/ontology-namespace/ontology-namespaces";
 import OntologyNamespacesCustom from "src/sections/app/ontology-namespace-custom/ontology-namespaces-custom";
+import {ArrowButton, ArrowButtonGroup} from '../../../sections/components/arrow-buttons/arrow-buttons';
+
+const TABS = [{label: 'Source Files', value: 'source-files'}, {label: 'Ontology Files', value: 'ontology_files'},
+    {label: 'Ontology Terms', value: 'ontology_terms'}, {label: 'Namespaces', value: 'namespaces'}]
 
 
 const Page = () => {
@@ -37,41 +45,31 @@ const Page = () => {
             .catch(err => toastError(`Discovering terms failed: ${err.message}.`, toastId))
     };
 
+    const handleTabsChange = (event, value) => {
+        return router.push(paths.app[value].index)
+    }
+
     usePageView();
 
     return (
         <>
-            <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
+            <Seo title={`App: ${sectionApi.SECTION_TITLE}`}/>
             <Grid container
-                  direction='column'
-                  spacing={4}>
-                <Grid item>
+                  spacing={{xs: 3, lg: 4}}
+            >
+                <Grid xs={12}
+                      direction="row"
+                      justifyContent="space-between"
+                      spacing={4}
+                >
                     <Stack
                         direction="row"
                         justifyContent="space-between"
                         spacing={4}
                     >
-                        <Stack spacing={1}>
-                            <Typography variant="h4">
-                                {sectionApi.SECTION_TITLE}
-                            </Typography>
-                            <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
-                                <Link
-                                    color="text.primary"
-                                    component={RouterLink}
-                                    href={paths.index}
-                                    variant="subtitle2"
-                                >
-                                    App
-                                </Link>
-                                <Typography
-                                    color="text.secondary"
-                                    variant="subtitle2"
-                                >
-                                    {sectionApi.SECTION_TITLE}
-                                </Typography>
-                            </Breadcrumbs>
-                        </Stack>
+                        <Typography variant="h5">
+                            Mapping Process
+                        </Typography>
                         <Stack
                             alignItems="center"
                             direction="row"
@@ -105,13 +103,54 @@ const Page = () => {
                         </Stack>
                     </Stack>
                 </Grid>
-                <Grid item>
+                <Grid xs={12}>
+                    <Stack justifyContent='center'
+                           direction='row'>
+                        <ArrowButtonGroup>
+                            <ArrowButton active
+                                         icon={<ModeStandbyIcon fontSize='small'
+                                                                style={{marginRight: '4px'}}/>}>
+                                Source & Target
+                            </ArrowButton>
+                            <ArrowButton icon={<InsertDriveFileIcon fontSize='small'
+                                                                    style={{marginRight: '4px'}}/>}>
+                                Elements Definition
+                            </ArrowButton>
+                            <ArrowButton icon={<LightbulbCircleIcon fontSize='small'
+                                                                    style={{marginRight: '4px'}}/>}>
+                                Conceptual Mappings
+                            </ArrowButton>
+                            <ArrowButton icon={<DvrIcon fontSize='small'
+                                                        style={{marginRight: '4px'}}/>}>
+                                Technical Mappings
+                            </ArrowButton>
+                            <ArrowButton icon={<VerifiedIcon fontSize='small'
+                                                             style={{marginRight: '4px'}}/>}>
+                                Quality Control
+                            </ArrowButton>
+                            <ArrowButton icon={<ArchiveIcon fontSize='small'
+                                                            style={{marginRight: '4px'}}/>}>
+                                Export Mapping
+                            </ArrowButton>
+                        </ArrowButtonGroup>
+                    </Stack>
+                </Grid>
+                <Grid xs={12}>
+                    <Tabs value={'ontology_terms'}
+                          onChange={handleTabsChange}>
+                        {TABS.map(tab => <Tab key={tab.value}
+                                              label={tab.label}
+                                              value={tab.value}/>)}
+                    </Tabs>
+                </Grid>
+                <Grid xs={12}>
                     <OntologyTerms/>
                 </Grid>
-               <Grid container
-                     item
-                     spacing={4}
-               >
+                <Grid container
+                      marginTop={2}
+                      xs={12}
+                      spacing={4}
+                >
                     <Grid item
                           xs={12}
                           xl={6}

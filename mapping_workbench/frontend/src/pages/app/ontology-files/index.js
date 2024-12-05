@@ -2,6 +2,9 @@ import ArchiveIcon from '@mui/icons-material/Archive';
 import DvrIcon from '@mui/icons-material/Dvr';
 import LightbulbCircleIcon from '@mui/icons-material/LightbulbCircle';
 import VerifiedIcon from '@mui/icons-material/Verified';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
 import {turtle} from 'codemirror-lang-turtle';
 import CodeMirror from '@uiw/react-codemirror';
@@ -36,8 +39,12 @@ import {ontologyFilesApi as sectionApi} from 'src/api/ontology-files';
 import {FileUploader} from 'src/sections/app/files-form//file-uploader';
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {ontologyFileResourcesApi as fileResourcesApi} from "src/api/ontology-files/file-resources";
+import {paths} from '../../../paths';
 import {ArrowButton, ArrowButtonGroup} from '../../../sections/components/arrow-buttons/arrow-buttons';
 
+
+const TABS = [{label: 'Source Files', value: 'source-files'}, {label: 'Ontology Files', value: 'ontology_files'},
+    {label: 'Ontology Terms', value: 'ontology_terms'}, {label: 'Namespaces', value: 'namespaces'}]
 
 const Page = () => {
     const [view, setView] = useState('grid');
@@ -48,6 +55,8 @@ const Page = () => {
     const itemsSearch = useItemsSearch(state, sectionApi, ['filename', 'content']);
 
     const theme = useTheme();
+
+    const router = useRouter();
 
     usePageView();
 
@@ -83,17 +92,28 @@ const Page = () => {
             .catch(err => console.log(err));
     }
 
+    const handleTabsChange = (event, value) => {
+        return router.push(paths.app[value].index)
+    }
+
     return (
         <>
-            <Seo title="App: Resource Manager"/>
-
-            <Grid
-                container
-                spacing={{
-                    xs: 3,
-                    lg: 4
-                }}
+            <Seo title={`App: ${sectionApi.SECTION_TITLE}`}/>
+            <Grid container
+                  spacing={{
+                      xs: 3,
+                      lg: 4
+                  }}
             >
+                <Grid xs={12}
+                      direction="row"
+                      justifyContent="space-between"
+                      spacing={4}
+                >
+                    <Typography variant="h5">
+                        Mapping Process
+                    </Typography>
+                </Grid>
                 <Grid xs={12}>
                     <Stack justifyContent='center'
                            direction='row'>
@@ -127,45 +147,18 @@ const Page = () => {
                     </Stack>
                 </Grid>
                 <Grid xs={12}>
+                    <Tabs value={'ontology_files'}
+                          onChange={handleTabsChange}>
+                        {TABS.map(tab => <Tab key={tab.value}
+                                              label={tab.label}
+                                              value={tab.value}/>)}
+                    </Tabs>
+                </Grid>
+                <Grid xs={12}>
                     <Stack
                         direction="row"
                         justifyContent="space-between"
                         spacing={4}
-                    >
-                        <div>
-                            <Typography variant="h5">
-                                {sectionApi.SECTION_TITLE}
-                            </Typography>
-                        </div>
-                        <Stack
-                            alignItems="center"
-                            direction="row"
-                            spacing={2}
-                        >
-                            <Button
-                                id='import_button'
-                                onClick={uploadDialog.handleOpen}
-                                startIcon={(
-                                    <SvgIcon>
-                                        <UploadIcon/>
-                                    </SvgIcon>
-                                )}
-                                variant="contained"
-                            >
-                                Upload
-                            </Button>
-                        </Stack>
-                    </Stack>
-                </Grid>
-                <Grid
-                    xs={12}
-                    md={12}
-                >
-                    <Stack
-                        spacing={{
-                            xs: 3,
-                            lg: 4
-                        }}
                     >
                         <ItemSearch
                             onFiltersChange={e => itemsSearch.handleSearchItems([e])}
@@ -175,6 +168,27 @@ const Page = () => {
                             sortDir={itemsSearch.state.sortDir}
                             view={view}
                         />
+                        <Button
+                            id='import_button'
+                            onClick={uploadDialog.handleOpen}
+                            startIcon={(
+                                <SvgIcon>
+                                    <UploadIcon/>
+                                </SvgIcon>
+                            )}
+                            variant="text"
+                        >
+                            Add ontology file
+                        </Button>
+                    </Stack>
+                </Grid>
+                <Grid xs={12}>
+                    <Stack
+                        spacing={{
+                            xs: 3,
+                            lg: 4
+                        }}
+                    >
                         <ItemList
                             count={itemsSearch.count}
                             items={itemsSearch.pagedItems}

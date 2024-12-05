@@ -50,7 +50,7 @@ const useCssVars = (color) => {
                     };
                 } else {
                     return {
-                        '--nav-bg': theme.palette.background.default,
+                        '--nav-bg': theme.palette.background.paper,
                         '--nav-color': theme.palette.text.primary,
                         '--nav-logo-border': theme.palette.neutral[100],
                         '--nav-section-title-color': theme.palette.neutral[400],
