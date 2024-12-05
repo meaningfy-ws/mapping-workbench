@@ -100,10 +100,7 @@ const Page = () => {
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE}`}/>
             <Grid container
-                  spacing={{
-                      xs: 3,
-                      lg: 4
-                  }}
+                  spacing={{xs: 3, lg: 4}}
             >
                 <Grid xs={12}
                       direction="row"
@@ -183,12 +180,7 @@ const Page = () => {
                     </Stack>
                 </Grid>
                 <Grid xs={12}>
-                    <Stack
-                        spacing={{
-                            xs: 3,
-                            lg: 4
-                        }}
-                    >
+                    <Stack spacing={{xs: 3, lg: 4}}>
                         <ItemList
                             count={itemsSearch.count}
                             items={itemsSearch.pagedItems}
