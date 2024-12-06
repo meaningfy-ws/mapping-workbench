@@ -5,21 +5,19 @@ import {paths} from '../../../paths';
 
 const TABS = [
     {
-        label: 'Source Files',
-        value: paths.app.test_data_suites.index
-    }, {
-        label: 'Ontology Files',
-        value: paths.app.ontology_files.index
+        label: 'Define',
+        value: paths.app.fields_and_nodes.develop.index
     },
     {
-        label: 'Ontology Terms',
-        value: paths.app.ontology_terms.index
-    }, {
-        label: 'Namespaces',
-        value: paths.app.ontology_namespaces.index
+        label: 'Tree View',
+        value: paths.app.fields_and_nodes.tree_view.index
+    },
+    {
+        label: 'Overview',
+        value: paths.app.fields_and_nodes.overview.index
     }]
 
-export const SourceAndTargetTabs = () => {
+export const ElementsDefinitionTabs = () => {
     const router = useRouter()
     const handleTabsChange = (event, value) => router.push(value)
 
