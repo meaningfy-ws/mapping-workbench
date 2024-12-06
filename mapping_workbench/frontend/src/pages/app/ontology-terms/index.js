@@ -1,26 +1,21 @@
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
-import Grid from "@mui/material/Unstable_Grid2";
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import SvgIcon from '@mui/material/SvgIcon';
+import Grid from "@mui/material/Unstable_Grid2";
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
 import {useRouter} from "src/hooks/use-router";
 import {Layout as AppLayout} from 'src/layouts/app';
-import {RouterLink} from 'src/components/router-link';
 import {usePageView} from 'src/hooks/use-page-view';
+import {RouterLink} from 'src/components/router-link';
 import OntologyTerms from "src/sections/app/ontology/ontology-terms";
 import {ontologyTermsApi as sectionApi} from 'src/api/ontology-terms';
+import {SourceAndTargetTabs} from 'src/sections/app/source-and-target';
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
-
-const TABS = [{label: 'Source Files', value: 'test_data_suites'}, {label: 'Ontology Files', value: 'ontology_files'},
-    {label: 'Ontology Terms', value: 'ontology_terms'}, {label: 'Namespaces', value: 'ontology_namespaces'}]
-
 
 const Page = () => {
     const router = useRouter()
@@ -35,10 +30,6 @@ const Page = () => {
             .catch(err => toastError(`Discovering terms failed: ${err.message}.`, toastId))
     };
 
-    const handleTabsChange = (event, value) => {
-        return router.push(paths.app[value].index)
-    }
-
     usePageView();
 
     return (
@@ -49,12 +40,7 @@ const Page = () => {
             >
 
                 <Grid xs={12}>
-                    <Tabs value={'ontology_terms'}
-                          onChange={handleTabsChange}>
-                        {TABS.map(tab => <Tab key={tab.value}
-                                              label={tab.label}
-                                              value={tab.value}/>)}
-                    </Tabs>
+                    <SourceAndTargetTabs/>
                 </Grid>
                 <Grid xs={12}
                       direction="row"

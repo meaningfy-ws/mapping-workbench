@@ -1,41 +1,31 @@
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
-import Grid from '@mui/material/Unstable_Grid2';
-import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Button from '@mui/material/Button';
+import AddIcon from '@mui/icons-material/Add';
+
 import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
 import SvgIcon from '@mui/material/SvgIcon';
+import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
-import {useRouter} from 'next/router';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {RouterLink} from 'src/components/router-link';
-import useItemsSearch from '../../../hooks/use-items-search';
-import {useItemsStore} from '../../../hooks/use-items-store';
+import useItemsSearch from 'src/hooks/use-items-search';
+import {useItemsStore} from 'src/hooks/use-items-store';
+import {SourceAndTargetTabs} from 'src/sections/app/source-and-target';
+import {ListTable} from "src/sections/app/ontology-namespace/list-table";
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
+import {ListSearch} from "src/sections/app/ontology-namespace/list-search";
 import {ontologyNamespacesApi as sectionApi} from 'src/api/ontology-namespaces';
-import {ListSearch} from "../../../sections/app/ontology-namespace/list-search";
-import {ListTable} from "../../../sections/app/ontology-namespace/list-table";
-import OntologyNamespacesCustom from '../ontology-namespaces-custom';
-
-const TABS = [{label: 'Source Files', value: 'test_data_suites'}, {label: 'Ontology Files', value: 'ontology_files'},
-    {label: 'Ontology Terms', value: 'ontology_terms'}, {label: 'Namespaces', value: 'ontology_namespaces'}]
-
+import OntologyNamespacesCustom from 'src/pages/app/ontology-namespaces-custom';
 
 const Page = () => {
-    const router = useRouter()
     const itemsStore = useItemsStore(sectionApi);
     const itemsSearch = useItemsSearch(itemsStore.items, sectionApi);
-
-    const handleTabsChange = (event, value) => {
-        return router.push(paths.app[value].index)
-    }
 
     usePageView();
 
@@ -44,12 +34,7 @@ const Page = () => {
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
             <Stack spacing={4}>
                 <Grid xs={12}>
-                    <Tabs value={'ontology_namespaces'}
-                          onChange={handleTabsChange}>
-                        {TABS.map(tab => <Tab key={tab.value}
-                                              label={tab.label}
-                                              value={tab.value}/>)}
-                    </Tabs>
+                    <SourceAndTargetTabs/>
                 </Grid>
                 <Stack
                     direction="row"
@@ -96,7 +81,7 @@ const Page = () => {
                             href={paths.app[sectionApi.section].create}
                             startIcon={(
                                 <SvgIcon>
-                                    <PlusIcon/>
+                                    <AddIcon/>
                                 </SvgIcon>
                             )}
                             variant="contained"

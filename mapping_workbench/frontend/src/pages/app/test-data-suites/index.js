@@ -1,11 +1,8 @@
 import {useEffect, useState} from "react";
-import {useRouter} from 'next/router';
 
 import AddIcon from '@mui/icons-material/Add';
 import UploadIcon from '@mui/icons-material/Upload';
 
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -18,6 +15,7 @@ import {Layout as AppLayout} from 'src/layouts/app';
 import {usePageView} from 'src/hooks/use-page-view';
 import {RouterLink} from 'src/components/router-link';
 import useItemsSearch from 'src/hooks/use-items-search';
+import {SourceAndTargetTabs} from 'src/sections/app/source-and-target';
 import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {testDataSuitesApi as sectionApi} from 'src/api/test-data-suites';
 import {FileCollectionUploader} from "src/sections/app/file-manager/file-collection-uploader";
@@ -53,25 +51,19 @@ const useItemsStore = () => {
     };
 };
 
-const TABS = [{label: 'Source Files', value: 'test_data_suites'}, {label: 'Ontology Files', value: 'ontology_files'},
-    {label: 'Ontology Terms', value: 'ontology_terms'}, {label: 'Namespaces', value: 'ontology_namespaces'}]
-
-
 const Page = () => {
     const uploadDialog = useDialog()
-    const router = useRouter()
     const itemsStore = useItemsStore(sectionApi);
     const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['title', 'package']);
-
-    const handleTabsChange = (event, value) => {
-        return router.push(paths.app[value].index)
-    }
 
     usePageView();
 
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
+            <Stack>
+                <SourceAndTargetTabs/>
+            </Stack>
             <Stack spacing={4}>
                 <Stack
                     alignItems="center"
@@ -100,15 +92,6 @@ const Page = () => {
                     >
                         Create Test Data Suite
                     </Button>
-
-                </Stack>
-                <Stack>
-                    <Tabs value={'test_data_suites'}
-                          onChange={handleTabsChange}>
-                        {TABS.map(tab => <Tab key={tab.value}
-                                              label={tab.label}
-                                              value={tab.value}/>)}
-                    </Tabs>
                 </Stack>
                 <Card>
                     <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}

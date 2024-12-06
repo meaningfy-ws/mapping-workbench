@@ -1,5 +1,3 @@
-
-import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
 import {turtle} from 'codemirror-lang-turtle';
 import CodeMirror from '@uiw/react-codemirror';
@@ -8,8 +6,6 @@ import {githubDark, githubLight} from '@uiw/codemirror-themes-all';
 import UploadIcon from '@mui/icons-material/Upload';
 
 import {Box} from "@mui/system";
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Dialog from "@mui/material/Dialog";
@@ -30,14 +26,10 @@ import useItemsSearch from 'src/hooks/use-items-search';
 import {ItemList} from "src/sections/app/files-form/item-list";
 import {ItemSearch} from 'src/sections/app/files-form/item-search';
 import {ontologyFilesApi as sectionApi} from 'src/api/ontology-files';
+import {SourceAndTargetTabs} from 'src/sections/app/source-and-target';
 import {FileUploader} from 'src/sections/app/files-form//file-uploader';
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {ontologyFileResourcesApi as fileResourcesApi} from "src/api/ontology-files/file-resources";
-import {paths} from '../../../paths';
-
-
-const TABS = [{label: 'Source Files', value: 'test_data_suites'}, {label: 'Ontology Files', value: 'ontology_files'},
-    {label: 'Ontology Terms', value: 'ontology_terms'}, {label: 'Namespaces', value: 'ontology_namespaces'}]
 
 const Page = () => {
     const [view, setView] = useState('grid');
@@ -48,8 +40,6 @@ const Page = () => {
     const itemsSearch = useItemsSearch(state, sectionApi, ['filename', 'content']);
 
     const theme = useTheme();
-
-    const router = useRouter();
 
     usePageView();
 
@@ -85,10 +75,6 @@ const Page = () => {
             .catch(err => console.log(err));
     }
 
-    const handleTabsChange = (event, value) => {
-        return router.push(paths.app[value].index)
-    }
-
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE}`}/>
@@ -96,12 +82,7 @@ const Page = () => {
                   spacing={{xs: 3, lg: 4}}
             >
                 <Grid xs={12}>
-                    <Tabs value={'ontology_files'}
-                          onChange={handleTabsChange}>
-                        {TABS.map(tab => <Tab key={tab.value}
-                                              label={tab.label}
-                                              value={tab.value}/>)}
-                    </Tabs>
+                   <SourceAndTargetTabs/>
                 </Grid>
                 <Grid xs={12}>
                     <Stack
