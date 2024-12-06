@@ -63,8 +63,10 @@ export const ArrowButtons = () => {
                      href={paths.app.sparql_test_suites.index}>
             Quality Control
         </ArrowButton>
-        <ArrowButton icon={<ArchiveIcon fontSize='small'
+        <ArrowButton active={router.pathname.includes('mapping-packages')}
+                     icon={<ArchiveIcon fontSize='small'
                                         style={{marginRight: '4px'}}/>}
+                     href={paths.app.mapping_packages.index}
                      last>
             Export Mapping
         </ArrowButton>
