@@ -1,14 +1,15 @@
+import {useEffect, useState} from "react";
+import {useRouter} from 'next/router';
+
 import AddIcon from '@mui/icons-material/Add';
 import UploadIcon from '@mui/icons-material/Upload';
 
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
 import Card from '@mui/material/Card';
-import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Divider from "@mui/material/Divider";
-import SvgIcon from '@mui/material/SvgIcon';
-import Typography from '@mui/material/Typography';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
@@ -19,10 +20,8 @@ import {RouterLink} from 'src/components/router-link';
 import useItemsSearch from 'src/hooks/use-items-search';
 import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {testDataSuitesApi as sectionApi} from 'src/api/test-data-suites';
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {FileCollectionUploader} from "src/sections/app/file-manager/file-collection-uploader";
 import {TestDataCollectionListTable} from "src/sections/app/file-manager/test-data-collection-list-table";
-import {useEffect, useState} from "react";
 
 const useItemsStore = () => {
     const [state, setState] = useState({
@@ -54,10 +53,19 @@ const useItemsStore = () => {
     };
 };
 
+const TABS = [{label: 'Source Files', value: 'test_data_suites'}, {label: 'Ontology Files', value: 'ontology_files'},
+    {label: 'Ontology Terms', value: 'ontology_terms'}, {label: 'Namespaces', value: 'namespaces'}]
+
+
 const Page = () => {
     const uploadDialog = useDialog()
+    const router = useRouter()
     const itemsStore = useItemsStore(sectionApi);
     const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['title', 'package']);
+
+    const handleTabsChange = (event, value) => {
+        return router.push(paths.app[value].index)
+    }
 
     usePageView();
 
@@ -66,65 +74,41 @@ const Page = () => {
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
             <Stack spacing={4}>
                 <Stack
+                    alignItems="center"
                     direction="row"
-                    justifyContent="space-between"
-                    spacing={4}
+                    justifyContent='end'
+                    spacing={3}
                 >
-                    <Stack spacing={1}>
-                        <Typography variant="h4">
-                            {sectionApi.SECTION_TITLE}
-                        </Typography>
-
-                        <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.index}
-                                variant="subtitle2"
-                            >
-                                App
-                            </Link>
-                            <Typography
-                                color="text.secondary"
-                                variant="subtitle2"
-                            >
-                                {sectionApi.SECTION_TITLE}
-                            </Typography>
-                        </Breadcrumbs>
-                    </Stack>
-                    <Stack
-                        alignItems="center"
-                        direction="row"
-                        spacing={3}
+                    <Button
+                        type='link'
+                        onClick={uploadDialog.handleOpen}
+                        startIcon={(
+                            <UploadIcon/>
+                        )}
+                        id="import-test-data_button"
                     >
-                        <Button
-                            component={RouterLink}
-                            href={paths.app[sectionApi.section].create}
-                            startIcon={(
-                                <SvgIcon>
-                                    <AddIcon/>
-                                </SvgIcon>
-                            )}
-                            variant="contained"
-                            id="add_button"
-                        >
-                            Create Test Data Suite
-                        </Button>
-                        <Button
-                            type='link'
-                            onClick={uploadDialog.handleOpen}
-                            startIcon={(
-                                <SvgIcon>
-                                    <UploadIcon/>
-                                </SvgIcon>
-                            )}
-                            variant="contained"
-                            id="import-test-data_button"
-                        >
-                            Import Test Data Suites
-                        </Button>
+                        Import Test Data Suites
+                    </Button>
+                    <Button
+                        component={RouterLink}
+                        href={paths.app[sectionApi.section].create}
+                        startIcon={(
+                            <AddIcon/>
+                        )}
+                        variant="contained"
+                        id="add_button"
+                    >
+                        Create Test Data Suite
+                    </Button>
 
-                    </Stack>
+                </Stack>
+                <Stack>
+                    <Tabs value={'test_data_suites'}
+                          onChange={handleTabsChange}>
+                        {TABS.map(tab => <Tab key={tab.value}
+                                              label={tab.label}
+                                              value={tab.value}/>)}
+                    </Tabs>
                 </Stack>
                 <Card>
                     <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}

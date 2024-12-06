@@ -1,14 +1,16 @@
+import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
 import Menu01Icon from '@untitled-ui/icons-react/build/esm/Menu01';
-import { alpha } from '@mui/system/colorManipulator';
+import {alpha} from '@mui/system/colorManipulator';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import {ArrowButtons} from '../../../sections/components/arrow-buttons/arrow-buttons';
 
-import { AccountButton } from '../account-button';
-import { LanguageSwitch } from '../language-switch';
+import {AccountButton} from '../account-button';
+import {LanguageSwitch} from '../language-switch';
 import TimeSwitch from "../time-switch/time-switch";
 
 const BREAK_POINT = 1500;
@@ -16,7 +18,7 @@ const TOP_NAV_HEIGHT = 64;
 const SIDE_NAV_WIDTH = 280;
 
 export const TopNav = (props) => {
-    const { onMobileNavOpen, ...other } = props;
+    const {onMobileNavOpen, ...other} = props;
     const breakPointUp = useMediaQuery((theme) => theme.breakpoints.up(BREAK_POINT));
 
     return (
@@ -37,41 +39,52 @@ export const TopNav = (props) => {
                 zIndex: (theme) => theme.zIndex.appBar
             }}
             {...other}>
-            <Stack
-                alignItems="center"
-                direction="row"
-                justifyContent="space-between"
-                spacing={2}
-                sx={{
-                    minHeight: TOP_NAV_HEIGHT,
-                    px: 2
-                }}
-            >
+            <Stack direction='column'>
                 <Stack
                     alignItems="center"
                     direction="row"
+                    // justifyContent="space-between"
                     spacing={2}
+                    sx={{
+                        minHeight: TOP_NAV_HEIGHT,
+                        p: 2,
+                    }}
                 >
-                    {!breakPointUp && (
+                    <Stack
+                        alignItems="center"
+                        direction="row"
+                        spacing={2}
+                    >
                         <IconButton
                             id='open_sidebar'
                             onClick={onMobileNavOpen}>
-                            <SvgIcon>
-                                <Menu01Icon />
-                            </SvgIcon>
+                            <Menu01Icon/>
                         </IconButton>
-                    )}
+                    </Stack>
+                    <Stack direction='row'
+                           width='100%'
+                           alignItems='center'
+                           justifyContent='space-between'>
+                        <Typography variant="h5"
+                                    marginLeft={5}>
+                            Mapping Process
+                        </Typography>
+                        <Stack
+                            alignItems="center"
+                            direction="row"
+                            spacing={2}
+                        >
+                            <TimeSwitch/>
+                            <LanguageSwitch/>
+                            <AccountButton/>
+                        </Stack>
+                    </Stack>
                 </Stack>
-                <Stack
-                    alignItems="center"
-                    direction="row"
-                    spacing={2}
-                >
-                    <TimeSwitch/>
-                    <LanguageSwitch />
-                    <AccountButton />
+                <Stack alignItems="center">
+                    <ArrowButtons/>
                 </Stack>
             </Stack>
+
         </Box>
     );
 };

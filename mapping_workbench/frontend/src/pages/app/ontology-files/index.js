@@ -102,47 +102,6 @@ const Page = () => {
             <Grid container
                   spacing={{xs: 3, lg: 4}}
             >
-                <Grid xs={12}
-                      direction="row"
-                      justifyContent="space-between"
-                      spacing={4}
-                >
-                    <Typography variant="h5">
-                        Mapping Process
-                    </Typography>
-                </Grid>
-                <Grid xs={12}>
-                    <Stack justifyContent='center'
-                           direction='row'>
-                        <ArrowButtonGroup>
-                            <ArrowButton active
-                                         icon={<ModeStandbyIcon fontSize='small'
-                                                                style={{marginRight: '4px'}}/>}>
-                                Source & Target
-                            </ArrowButton>
-                            <ArrowButton icon={<InsertDriveFileIcon fontSize='small'
-                                                                    style={{marginRight: '4px'}}/>}>
-                                Elements Definition
-                            </ArrowButton>
-                            <ArrowButton icon={<LightbulbCircleIcon fontSize='small'
-                                                                    style={{marginRight: '4px'}}/>}>
-                                Conceptual Mappings
-                            </ArrowButton>
-                            <ArrowButton icon={<DvrIcon fontSize='small'
-                                                        style={{marginRight: '4px'}}/>}>
-                                Technical Mappings
-                            </ArrowButton>
-                            <ArrowButton icon={<VerifiedIcon fontSize='small'
-                                                             style={{marginRight: '4px'}}/>}>
-                                Quality Control
-                            </ArrowButton>
-                            <ArrowButton icon={<ArchiveIcon fontSize='small'
-                                                            style={{marginRight: '4px'}}/>}>
-                                Export Mapping
-                            </ArrowButton>
-                        </ArrowButtonGroup>
-                    </Stack>
-                </Grid>
                 <Grid xs={12}>
                     <Tabs value={'ontology_files'}
                           onChange={handleTabsChange}>
