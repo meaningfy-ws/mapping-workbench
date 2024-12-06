@@ -15,83 +15,14 @@ import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {paths} from 'src/paths';
+import useItemsSearch from '../../../hooks/use-items-search';
+import {useItemsStore} from '../../../hooks/use-items-store';
 import {ListSearch} from "../../../sections/app/ontology-namespace-custom/list-search";
 import {ListTable} from "../../../sections/app/ontology-namespace-custom/list-table";
 
-const useItemsSearch = () => {
-    const [state, setState] = useState({
-        filters: {
-            name: undefined,
-            category: [],
-            status: [],
-            inStock: undefined
-        },
-        page: sectionApi.DEFAULT_PAGE,
-        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
-    });
-
-    const handleFiltersChange = filters => {
-        setState(prevState => ({
-            ...prevState,
-            filters,
-            page: 0
-        }));
-    }
-
-    const handlePageChange = (event, page) => {
-        setState(prevState => ({
-            ...prevState,
-            page
-        }));
-    }
-
-    const handleRowsPerPageChange = event => {
-        setState(prevState => ({
-            ...prevState,
-            rowsPerPage: parseInt(event.target.value, 10)
-        }));
-    }
-
-    return {
-        handleFiltersChange,
-        handlePageChange,
-        handleRowsPerPageChange,
-        state
-    };
-};
-
-const useItemsStore = (searchState) => {
-    const [state, setState] = useState({
-        items: [],
-        itemsCount: 0
-    });
-
-    const handleItemsGet = async () => {
-        try {
-                const response = await sectionApi.getItems(searchState);
-                setState({
-                    items: response.items,
-                    itemsCount: response.count
-                });
-        } catch (err) {
-            console.error(err);
-        }
-    }
-
-    useEffect(() => {
-            handleItemsGet();
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState]);
-
-    return {
-        ...state
-    };
-};
-
 const Page = () => {
-    const itemsSearch = useItemsSearch();
-    const itemsStore = useItemsStore(itemsSearch.state);
+    const itemsStore = useItemsStore(sectionApi);
+    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['prefix','uri']);
 
     usePageView();
 
@@ -159,8 +90,10 @@ const Page = () => {
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                         page={itemsSearch.state.page}
-                        items={itemsStore.items}
-                        count={itemsStore.itemsCount}
+                        items={itemsSearch.pagedItems}
+                        count={itemsSearch.count}
+                        sort={itemsSearch.state.sort}
+                        onSort={itemsSearch.handleSort}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
                     />

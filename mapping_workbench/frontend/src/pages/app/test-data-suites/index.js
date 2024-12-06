@@ -54,7 +54,7 @@ const useItemsStore = () => {
 };
 
 const TABS = [{label: 'Source Files', value: 'test_data_suites'}, {label: 'Ontology Files', value: 'ontology_files'},
-    {label: 'Ontology Terms', value: 'ontology_terms'}, {label: 'Namespaces', value: 'namespaces'}]
+    {label: 'Ontology Terms', value: 'ontology_terms'}, {label: 'Namespaces', value: 'ontology_namespaces'}]
 
 
 const Page = () => {

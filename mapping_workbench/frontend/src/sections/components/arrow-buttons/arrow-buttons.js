@@ -8,7 +8,7 @@ import Link from 'next/link';
 import {useRouter} from 'next/router';
 import {paths} from '../../../paths';
 
-export const ArrowButton = ({children, icon, style, active, href = '#', first, last}) => {
+const ArrowButton = ({children, icon, style, active, href = '#', first, last}) => {
     return <Link href={href}>
         <button style={style}
                 className={`btn-arrow btn-arrow-right ${active ? 'active' : ''} ${first ? 'first' : ''} ${last ? 'last' : ''}`}>
@@ -17,7 +17,7 @@ export const ArrowButton = ({children, icon, style, active, href = '#', first, l
     </Link>
 }
 
-export const ArrowButtonGroup = ({
+const ArrowButtonGroup = ({
                                      children
                                  }) => {
     return <div className={'btn-group'}>
@@ -29,7 +29,6 @@ const SOURCE_AND_TARGET = ['ontology-terms', 'ontology-files', 'namespaces', 'te
 
 export const ArrowButtons = () => {
     const router = useRouter()
-    console.log(router)
     return (<ArrowButtonGroup>
         <ArrowButton active={SOURCE_AND_TARGET.some(snt => router.pathname.includes(snt))}
                      href={paths.app.test_data_suites.index}
@@ -39,13 +38,15 @@ export const ArrowButtons = () => {
             Source & Target
         </ArrowButton>
         <ArrowButton active={router.pathname.includes('fields-and-nodes')}
-            icon={<InsertDriveFileIcon fontSize='small'
+                     icon={<InsertDriveFileIcon fontSize='small'
                                                 style={{marginRight: '4px'}}/>}
                      href={paths.app.fields_and_nodes.develop.index}>
             Elements Definition
         </ArrowButton>
-        <ArrowButton icon={<LightbulbCircleIcon fontSize='small'
-                                                style={{marginRight: '4px'}}/>}>
+        <ArrowButton active={router.pathname.includes('conceptual-mapping-rules')}
+            icon={<LightbulbCircleIcon fontSize='small'
+                                                style={{marginRight: '4px'}}/>}
+                     href={paths.app.conceptual_mapping_rules.develop.index}>
             Conceptual Mappings
         </ArrowButton>
         <ArrowButton icon={<DvrIcon fontSize='small'

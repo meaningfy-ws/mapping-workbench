@@ -1,7 +1,6 @@
 import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
-import Typography from "@mui/material/Typography";
 
 import {Filter} from "src/sections/components/filter";
 import useItemsSearch from 'src/hooks/use-items-search';
@@ -20,7 +19,6 @@ const OntologyTerms = () => {
 
     return (
         <Stack spacing={4}>
-            <Typography variant='h5'>Terms</Typography>
             <Card>
                 <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
                                 value={itemsSearch.state.search[0]}

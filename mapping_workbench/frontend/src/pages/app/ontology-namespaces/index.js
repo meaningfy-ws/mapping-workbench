@@ -1,4 +1,6 @@
-import {useEffect, useState} from 'react';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+import Grid from '@mui/material/Unstable_Grid2';
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
@@ -7,91 +9,33 @@ import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
+import {useRouter} from 'next/router';
 
-import {ontologyNamespacesApi as sectionApi} from 'src/api/ontology-namespaces';
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {RouterLink} from 'src/components/router-link';
+import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
-import {paths} from 'src/paths';
+import {RouterLink} from 'src/components/router-link';
+import useItemsSearch from '../../../hooks/use-items-search';
+import {useItemsStore} from '../../../hooks/use-items-store';
+import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
+import {ontologyNamespacesApi as sectionApi} from 'src/api/ontology-namespaces';
 import {ListSearch} from "../../../sections/app/ontology-namespace/list-search";
 import {ListTable} from "../../../sections/app/ontology-namespace/list-table";
+import OntologyNamespacesCustom from '../ontology-namespaces-custom';
 
-const useItemsSearch = () => {
-    const [state, setState] = useState({
-        filters: {
-            name: undefined,
-            category: [],
-            status: [],
-            inStock: undefined
-        },
-        sortField: '',
-        sortDirection: undefined,
-        page: sectionApi.DEFAULT_PAGE,
-        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
-    });
+const TABS = [{label: 'Source Files', value: 'test_data_suites'}, {label: 'Ontology Files', value: 'ontology_files'},
+    {label: 'Ontology Terms', value: 'ontology_terms'}, {label: 'Namespaces', value: 'ontology_namespaces'}]
 
-    const handleFiltersChange = filters => {
-        setState(prevState => ({
-            ...prevState,
-            filters,
-            page: 0
-        }));
-    }
-
-    const handlePageChange = (event, page) => {
-        setState(prevState => ({
-            ...prevState,
-            page
-        }));
-    }
-
-    const handleRowsPerPageChange = event => {
-        setState(prevState => ({
-            ...prevState,
-            rowsPerPage: parseInt(event.target.value, 10)
-        }));
-    }
-
-    return {
-        handleFiltersChange,
-        handlePageChange,
-        handleRowsPerPageChange,
-        state
-    };
-};
-
-const useItemsStore = (searchState) => {
-    const [state, setState] = useState({
-        items: [],
-        itemsCount: 0
-    });
-
-    const handleItemsGet = () => {
-       sectionApi.getItems(searchState)
-           .then(res =>
-               setState({
-                    items: res.items,
-                    itemsCount: res.count
-                }))
-           .catch(err => console.warn(err))
-    }
-
-    useEffect(() => {
-            handleItemsGet();
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState]);
-
-    return {
-        ...state
-    };
-};
 
 const Page = () => {
-    const itemsSearch = useItemsSearch();
-    const itemsStore = useItemsStore(itemsSearch.state);
+    const router = useRouter()
+    const itemsStore = useItemsStore(sectionApi);
+    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi);
+
+    const handleTabsChange = (event, value) => {
+        return router.push(paths.app[value].index)
+    }
 
     usePageView();
 
@@ -99,6 +43,14 @@ const Page = () => {
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
             <Stack spacing={4}>
+                <Grid xs={12}>
+                    <Tabs value={'ontology_namespaces'}
+                          onChange={handleTabsChange}>
+                        {TABS.map(tab => <Tab key={tab.value}
+                                              label={tab.label}
+                                              value={tab.value}/>)}
+                    </Tabs>
+                </Grid>
                 <Stack
                     direction="row"
                     justifyContent="space-between"
@@ -159,12 +111,15 @@ const Page = () => {
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                         page={itemsSearch.state.page}
-                        items={itemsStore.items}
-                        count={itemsStore.itemsCount}
+                        items={itemsSearch.pagedItems}
+                        count={itemsSearch.count}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
+                        sort={itemsSearch.state.sort}
+                        onSort={itemsSearch.handleSort}
                         sectionApi={sectionApi}
                     />
                 </Card>
+                <OntologyNamespacesCustom/>
             </Stack>
         </>
     )

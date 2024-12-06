@@ -1,9 +1,4 @@
-import ArchiveIcon from '@mui/icons-material/Archive';
-import DvrIcon from '@mui/icons-material/Dvr';
-import LightbulbCircleIcon from '@mui/icons-material/LightbulbCircle';
-import VerifiedIcon from '@mui/icons-material/Verified';
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
+
 import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
 import {turtle} from 'codemirror-lang-turtle';
@@ -11,17 +6,16 @@ import CodeMirror from '@uiw/react-codemirror';
 import {githubDark, githubLight} from '@uiw/codemirror-themes-all';
 
 import UploadIcon from '@mui/icons-material/Upload';
-import ModeStandbyIcon from '@mui/icons-material/ModeStandby';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 
 import {Box} from "@mui/system";
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Dialog from "@mui/material/Dialog";
 import SvgIcon from '@mui/material/SvgIcon';
 import {useTheme} from "@mui/material/styles";
 import Grid from '@mui/material/Unstable_Grid2';
-import Typography from '@mui/material/Typography';
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -40,11 +34,10 @@ import {FileUploader} from 'src/sections/app/files-form//file-uploader';
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {ontologyFileResourcesApi as fileResourcesApi} from "src/api/ontology-files/file-resources";
 import {paths} from '../../../paths';
-import {ArrowButton, ArrowButtonGroup} from '../../../sections/components/arrow-buttons/arrow-buttons';
 
 
-const TABS = [{label: 'Source Files', value: 'source-files'}, {label: 'Ontology Files', value: 'ontology_files'},
-    {label: 'Ontology Terms', value: 'ontology_terms'}, {label: 'Namespaces', value: 'namespaces'}]
+const TABS = [{label: 'Source Files', value: 'test_data_suites'}, {label: 'Ontology Files', value: 'ontology_files'},
+    {label: 'Ontology Terms', value: 'ontology_terms'}, {label: 'Namespaces', value: 'ontology_namespaces'}]
 
 const Page = () => {
     const [view, setView] = useState('grid');

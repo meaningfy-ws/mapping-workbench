@@ -17,11 +17,9 @@ import {usePageView} from 'src/hooks/use-page-view';
 import OntologyTerms from "src/sections/app/ontology/ontology-terms";
 import {ontologyTermsApi as sectionApi} from 'src/api/ontology-terms';
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
-import OntologyNamespaces from "src/sections/app/ontology-namespace/ontology-namespaces";
-import OntologyNamespacesCustom from "src/sections/app/ontology-namespace-custom/ontology-namespaces-custom";
 
 const TABS = [{label: 'Source Files', value: 'test_data_suites'}, {label: 'Ontology Files', value: 'ontology_files'},
-    {label: 'Ontology Terms', value: 'ontology_terms'}, {label: 'Namespaces', value: 'namespaces'}]
+    {label: 'Ontology Terms', value: 'ontology_terms'}, {label: 'Namespaces', value: 'ontology_namespaces'}]
 
 
 const Page = () => {
@@ -49,6 +47,15 @@ const Page = () => {
             <Grid container
                   spacing={{xs: 3, lg: 4}}
             >
+
+                <Grid xs={12}>
+                    <Tabs value={'ontology_terms'}
+                          onChange={handleTabsChange}>
+                        {TABS.map(tab => <Tab key={tab.value}
+                                              label={tab.label}
+                                              value={tab.value}/>)}
+                    </Tabs>
+                </Grid>
                 <Grid xs={12}
                       direction="row"
                       justifyContent="space-between"
@@ -88,32 +95,7 @@ const Page = () => {
                     </Stack>
                 </Grid>
                 <Grid xs={12}>
-                    <Tabs value={'ontology_terms'}
-                          onChange={handleTabsChange}>
-                        {TABS.map(tab => <Tab key={tab.value}
-                                              label={tab.label}
-                                              value={tab.value}/>)}
-                    </Tabs>
-                </Grid>
-                <Grid xs={12}>
                     <OntologyTerms/>
-                </Grid>
-                <Grid container
-                      marginTop={2}
-                      xs={12}
-                      spacing={4}
-                >
-                    <Grid item
-                          xs={12}
-                          xl={6}
-                    >
-                        <OntologyNamespacesCustom/>
-                    </Grid>
-                    <Grid item
-                          xs={12}
-                          xl={6}>
-                        <OntologyNamespaces/>
-                    </Grid>
                 </Grid>
             </Grid>
         </>
