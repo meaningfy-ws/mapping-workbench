@@ -26,7 +26,8 @@ const ArrowButtonGroup = ({
 }
 
 const SOURCE_AND_TARGET = ['ontology-terms', 'ontology-files', 'namespaces', 'test-data-suites']
-const TECHNICAL_MAPPINGS = ['triple-map-fragments','value-mapping-resources']
+const TECHNICAL_MAPPINGS = ['triple-map-fragments', 'value-mapping-resources']
+const QUALITY_CONTROL = ['sparql-test-suites', 'shacl-test-suites']
 
 export const ArrowButtons = () => {
     const router = useRouter()
@@ -51,13 +52,15 @@ export const ArrowButtons = () => {
             Conceptual Mappings
         </ArrowButton>
         <ArrowButton active={TECHNICAL_MAPPINGS.some(tm => router.pathname.includes(tm))}
-            icon={<DvrIcon fontSize='small'
+                     icon={<DvrIcon fontSize='small'
                                     style={{marginRight: '4px'}}/>}
                      href={paths.app.triple_map_fragments.index}>
             Technical Mappings
         </ArrowButton>
-        <ArrowButton icon={<VerifiedIcon fontSize='small'
-                                         style={{marginRight: '4px'}}/>}>
+        <ArrowButton active={QUALITY_CONTROL.some(qc => router.pathname.includes(qc))}
+                     icon={<VerifiedIcon fontSize='small'
+                                         style={{marginRight: '4px'}}/>}
+                     href={paths.app.sparql_test_suites.index}>
             Quality Control
         </ArrowButton>
         <ArrowButton icon={<ArchiveIcon fontSize='small'
