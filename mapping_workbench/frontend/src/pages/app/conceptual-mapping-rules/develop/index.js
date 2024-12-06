@@ -1,29 +1,23 @@
 import {useEffect, useState} from 'react';
 
 import AddIcon from '@mui/icons-material/Add';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Divider from "@mui/material/Divider";
-import SvgIcon from '@mui/material/SvgIcon';
-import Typography from '@mui/material/Typography';
 
-import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
 import {Layout as AppLayout} from 'src/layouts/app';
-import {RouterLink} from 'src/components/router-link';
 import {ontologyTermsApi} from 'src/api/ontology-terms'
 import {fieldsRegistryApi} from "src/api/fields-registry";
 import useItemsSearch from 'src/hooks/use-items-search';
 import {TableSearchBar} from "src/sections/components/table-search-bar";
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {ListTable} from 'src/sections/app/conceptual-mapping-rule/develop/list-table';
 import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
 import AddEditDrawer from "src/sections/app/conceptual-mapping-rule/develop/add-edit-drawer";
+import {ConceptualMappingTabs} from 'src/sections/app/conceptual-mapping-rule/conceptual-mapping-tabs';
 
-const searchColumns = [
+const SEARCH_COLUMNS = [
     "source_structural_element_sdk_element_id",
     "source_structural_element_absolute_xpath",
     "xpath_condition",
@@ -62,7 +56,7 @@ export const Page = () => {
             })
     }
 
-    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, searchColumns);
+    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, SEARCH_COLUMNS);
 
     const [isProjectDataReady, setIsProjectDataReady] = useState(false);
 
@@ -108,45 +102,14 @@ export const Page = () => {
                     justifyContent="space-between"
                     spacing={4}
                 >
-                    <Stack spacing={1}>
-                        <Typography variant="h4">
-                            Develop {sectionApi.SECTION_TITLE}
-                        </Typography>
-                        <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.index}
-                                variant="subtitle2"
-                            >
-                                App
-                            </Link>
-                            <Typography
-                                color="text.secondary"
-                                variant="subtitle2"
-                            >
-                                Develop {sectionApi.SECTION_TITLE}
-                            </Typography>
-                        </Breadcrumbs>
-                    </Stack>
-                    <Stack
-                        alignItems="center"
-                        direction="row"
-                        spacing={3}
+                    <ConceptualMappingTabs/>
+                    <Button
+                        id="add_button"
+                        startIcon={(<AddIcon/>)}
+                        onClick={handleAdd}
                     >
-                        <Button
-                            id="add_button"
-                            startIcon={(
-                                <SvgIcon>
-                                    <AddIcon/>
-                                </SvgIcon>
-                            )}
-                            variant="contained"
-                            onClick={handleAdd}
-                        >
-                            Add
-                        </Button>
-                    </Stack>
+                        Add
+                    </Button>
                 </Stack>
                 <Card>
                     <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}

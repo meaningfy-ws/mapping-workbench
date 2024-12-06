@@ -38,6 +38,7 @@ import {toastError, toastLoad, toastSuccess} from 'src/components/app-toast';
 import {ListTable} from "src/sections/app/conceptual-mapping-rule/list-table";
 import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
 import {MappingPackageFormSelect} from 'src/sections/app/mapping-package/components/mapping-package-form-select';
+import {ConceptualMappingTabs} from '../../../../sections/app/conceptual-mapping-rule/conceptual-mapping-tabs';
 
 const filterValues = [{label: 'All', value: ''},
     {label: 'Valid', value: 'valid'},
@@ -61,8 +62,7 @@ const Page = () => {
 
     const formik = useFormik({
         initialValues,
-        validationSchema: Yup.object({
-        }),
+        validationSchema: Yup.object({}),
         onSubmit: (values, helpers) => {
             const toastId = toastLoad("Generating SHACL Shapes...")
             helpers.setSubmitting(true)
@@ -96,27 +96,7 @@ const Page = () => {
                     justifyContent="space-between"
                     spacing={4}
                 >
-                    <Stack spacing={1}>
-                        <Typography variant="h4">
-                            Overview {sectionApi.SECTION_TITLE}
-                        </Typography>
-                        <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.index}
-                                variant="subtitle2"
-                            >
-                                App
-                            </Link>
-                            <Typography
-                                color="text.secondary"
-                                variant="subtitle2"
-                            >
-                                Overview {sectionApi.SECTION_TITLE}
-                            </Typography>
-                        </Breadcrumbs>
-                    </Stack>
+                    <ConceptualMappingTabs/>
                     <Stack
                         alignItems="center"
                         direction="row"
