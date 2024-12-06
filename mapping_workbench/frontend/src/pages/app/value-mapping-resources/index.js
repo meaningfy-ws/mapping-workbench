@@ -22,6 +22,7 @@ import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {resourceFilesApi} from 'src/api/resource-collections/file-resources';
 import {resourceCollectionsApi as sectionApi} from 'src/api/resource-collections';
 import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
+import {TechnicalMappingsTabs} from '../../../sections/app/technical-mappings';
 
 const useItemsStore = () => {
     const [state, setState] = useState({
@@ -70,27 +71,7 @@ const Page = () => {
                     justifyContent="space-between"
                     spacing={4}
                 >
-                    <Stack spacing={1}>
-                        <Typography variant="h4">
-                            {sectionApi.SECTION_TITLE}
-                        </Typography>
-                        <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.index}
-                                variant="subtitle2"
-                            >
-                                App
-                            </Link>
-                            <Typography
-                                color="text.secondary"
-                                variant="subtitle2"
-                            >
-                                {sectionApi.SECTION_TITLE}
-                            </Typography>
-                        </Breadcrumbs>
-                    </Stack>
+                    <TechnicalMappingsTabs/>
                     <Stack
                         alignItems="center"
                         direction="row"
@@ -100,11 +81,7 @@ const Page = () => {
                             id="add_button"
                             component={RouterLink}
                             href={paths.app[sectionApi.section].create}
-                            startIcon={(
-                                <SvgIcon>
-                                    <AddIcon/>
-                                </SvgIcon>
-                            )}
+                            startIcon={<AddIcon/>}
                             variant="contained"
                         >
                             Add

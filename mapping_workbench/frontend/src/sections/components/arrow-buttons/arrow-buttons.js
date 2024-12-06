@@ -18,14 +18,15 @@ const ArrowButton = ({children, icon, style, active, href = '#', first, last}) =
 }
 
 const ArrowButtonGroup = ({
-                                     children
-                                 }) => {
+                              children
+                          }) => {
     return <div className={'btn-group'}>
         {children}
     </div>
 }
 
 const SOURCE_AND_TARGET = ['ontology-terms', 'ontology-files', 'namespaces', 'test-data-suites']
+const TECHNICAL_MAPPINGS = ['triple-map-fragments','value-mapping-resources']
 
 export const ArrowButtons = () => {
     const router = useRouter()
@@ -44,13 +45,15 @@ export const ArrowButtons = () => {
             Elements Definition
         </ArrowButton>
         <ArrowButton active={router.pathname.includes('conceptual-mapping-rules')}
-            icon={<LightbulbCircleIcon fontSize='small'
+                     icon={<LightbulbCircleIcon fontSize='small'
                                                 style={{marginRight: '4px'}}/>}
                      href={paths.app.conceptual_mapping_rules.develop.index}>
             Conceptual Mappings
         </ArrowButton>
-        <ArrowButton icon={<DvrIcon fontSize='small'
-                                    style={{marginRight: '4px'}}/>}>
+        <ArrowButton active={TECHNICAL_MAPPINGS.some(tm => router.pathname.includes(tm))}
+            icon={<DvrIcon fontSize='small'
+                                    style={{marginRight: '4px'}}/>}
+                     href={paths.app.triple_map_fragments.index}>
             Technical Mappings
         </ArrowButton>
         <ArrowButton icon={<VerifiedIcon fontSize='small'
