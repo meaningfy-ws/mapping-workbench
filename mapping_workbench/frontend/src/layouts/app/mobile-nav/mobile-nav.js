@@ -181,15 +181,8 @@ export const MobileNav = (props) => {
                             }}>
                             <ProjectSwitch/>
                         </Stack>
-                        <Divider color='#F2F4F7' />
-                        {overview.map((section, index) => (
-                            <MobileNavSection
-                                items={section.items}
-                                key={index}
-                                pathname={pathname}
-                                subheader={section.subheader}
-                            />
-                        ))}
+                        <Divider color='#F2F4F7'
+                                 sx={{borderBottomWidth: 2}}/>
                         {projects.sessionProject && Object.values(menus).map(menu => menu.map((section, index) => (
                             <MobileNavSection
                                 items={section.items}

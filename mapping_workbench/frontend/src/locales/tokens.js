@@ -71,6 +71,7 @@ export const tokens = {
         terms: 'nav.terms',
         dissemination: 'nav.dissemination',
 
+        mapping_process: 'nav,mapping_process',
         mapping_packages: 'nav.mapping_packages',
         conceptual_mapping_rules: 'nav.conceptual_mapping_rules',
         triple_map_fragments: 'nav.triple_map_fragments',
@@ -89,6 +90,7 @@ export const tokens = {
         users: 'nav.users',
         project_setup: 'nav.project_setup',
         project_description: 'nav.project_description',
+        project_files: 'nav.project_files',
         mapping_entities: 'nav.mapping_entities',
         ontology_files: 'nav.ontology_files',
         schema_files: 'nav.schema_files',
@@ -104,6 +106,7 @@ export const tokens = {
         value_mapping_resources: 'nav.value_mapping_resources',
         conceptual_mappings: 'nav.conceptual_mappings',
         technical_mappings: 'nav.technical_mappings',
+        process_monitor: 'nav.process_monitor',
         quality_control: 'nav.quality_control',
         validation_execution: 'nav.validation_execution',
         validation_reports: 'nav.validation_reports',

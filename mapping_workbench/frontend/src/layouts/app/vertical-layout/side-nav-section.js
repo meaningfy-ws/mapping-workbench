@@ -38,7 +38,7 @@ const reduceChildRoutes = ({acc, depth, item, parentId, pathname, small}) => {
                 parentId={parentId}
                 small={small}
             >
-                {<Stack
+                <Stack
                     component="ul"
                     spacing={0.5}
                     sx={{
@@ -54,7 +54,7 @@ const reduceChildRoutes = ({acc, depth, item, parentId, pathname, small}) => {
                         pathname,
                         small
                     })}
-                </Stack>}
+                </Stack>
             </SideNavItem>
         );
     } else {

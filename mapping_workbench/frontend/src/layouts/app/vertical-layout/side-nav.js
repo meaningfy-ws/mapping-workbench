@@ -2,8 +2,9 @@ import {useMemo} from 'react';
 import PropTypes from 'prop-types';
 
 import Box from '@mui/material/Box';
-import Drawer from '@mui/material/Drawer';
 import Stack from '@mui/material/Stack';
+import Drawer from '@mui/material/Drawer';
+import Divider from '@mui/material/Divider';
 import {useTheme} from '@mui/material/styles';
 
 import {Logo} from 'src/components/logo';
@@ -18,6 +19,7 @@ import {useProjects} from "../../../hooks/use-projects";
 import {VersionLabel} from "../version-label";
 
 const SIDE_NAV_WIDTH = 280;
+const SIDE_NAV_WIDTH_SMALL = 88;
 
 const useCssVars = (color) => {
     const theme = useTheme();
@@ -148,7 +150,7 @@ const useCssVars = (color) => {
 };
 
 export const SideNav = (props) => {
-    const {color = 'evident', sections = []} = props;
+    const {color = 'evident', sections = [], small} = props;
     const pathname = usePathname();
     const cssVars = useCssVars(color);
     const projects = useProjects()
@@ -164,7 +166,7 @@ export const SideNav = (props) => {
                     ...cssVars,
                     backgroundColor: 'var(--nav-bg)',
                     color: 'var(--nav-color)',
-                    width: SIDE_NAV_WIDTH,
+                    width: small ? SIDE_NAV_WIDTH_SMALL : SIDE_NAV_WIDTH,
                     borderRight: '1px solid #E4E7EC'
                 }
             }}
@@ -186,7 +188,7 @@ export const SideNav = (props) => {
                         alignItems="center"
                         direction="row"
                         spacing={'14px'}
-                        sx={{px: '20px',py:'25px'}}
+                        sx={{px: '20px', py: '25px'}}
                     >
                         <Box
                             component={RouterLink}
@@ -199,14 +201,13 @@ export const SideNav = (props) => {
                         >
                             <Logo/>
                         </Box>
-                        <AppTitle/>
+                        {!small && <AppTitle/>}
                     </Stack>
                     <Stack
                         component="nav"
                         spacing={2}
                         sx={{
                             flexGrow: 1,
-                            px: 2
                         }}
                     >
                         <Stack
@@ -216,22 +217,17 @@ export const SideNav = (props) => {
                                 m: 0,
                                 p: 0
                             }}>
-                            <ProjectSwitch/>
+                            <ProjectSwitch small={small}/>
                         </Stack>
-                        {overview.map((section, index) => (
-                            <SideNavSection
-                                items={section.items}
-                                key={index}
-                                pathname={pathname}
-                                subheader={section.subheader}
-                            />
-                        ))}
+                        <Divider color='#F2F4F7'
+                                 sx={{borderBottomWidth: 2}}/>
                         {projects.sessionProject && Object.values(menus).map(menu => menu.map((section, index) => (
                             <SideNavSection
                                 items={section.items}
                                 key={index}
                                 pathname={pathname}
                                 subheader={section.subheader}
+                                small={small}
                             />
                         )))}
                     </Stack>

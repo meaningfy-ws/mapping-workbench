@@ -1,17 +1,17 @@
-import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
 import Menu01Icon from '@untitled-ui/icons-react/build/esm/Menu01';
-import {alpha} from '@mui/system/colorManipulator';
+
 import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
-import SvgIcon from '@mui/material/SvgIcon';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import {alpha} from '@mui/system/colorManipulator';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import {ArrowButtons} from '../../../sections/components/arrow-buttons/arrow-buttons';
 
 import {AccountButton} from '../account-button';
 import {LanguageSwitch} from '../language-switch';
 import TimeSwitch from "../time-switch/time-switch";
+import {ArrowButtons} from 'src/sections/components/arrow-buttons/arrow-buttons';
 
 const BREAK_POINT = 1500;
 const TOP_NAV_HEIGHT = 64;
@@ -33,7 +33,6 @@ export const TopNav = (props) => {
                 ,
                 top: 0,
                 width: {
-                    //xl: `calc(100% - ${SIDE_NAV_WIDTH}px)`
                     xl: '100%'
                 },
                 zIndex: (theme) => theme.zIndex.appBar

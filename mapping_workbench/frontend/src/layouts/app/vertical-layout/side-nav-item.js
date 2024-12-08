@@ -174,6 +174,7 @@ export const SideNavItem = (props) => {
             }
         : {};
 
+    console.log(active, title, depth)
     return (
         <li>
             <ButtonBase
@@ -183,15 +184,18 @@ export const SideNavItem = (props) => {
                     alignItems: 'center',
                     borderRadius: 1,
                     display: 'flex',
-                    justifyContent: 'flex-start',
+                    justifyContent: small ? 'center' : 'flex-start',
                     pl: `${16 + offset}px`,
                     pr: '16px',
                     py: '6px',
                     textAlign: 'left',
                     width: '100%',
                     ...(active && {
-                        ...(depth === 0 && {
-                            backgroundColor: 'var(--nav-item-active-bg)'
+                        ...(depth >= -1 && {
+                            borderTopRightRadius:0,
+                            borderBottomRightRadius:0,
+                            borderRight: '4px solid var(--nav-item-icon-active-color)',
+
                         })
                     }),
                     '&:hover': {
@@ -207,7 +211,7 @@ export const SideNavItem = (props) => {
                             color: 'var(--nav-item-icon-color)',
                             display: 'inline-flex',
                             justifyContent: 'center',
-                            mr: 2,
+                            mr: small ? 0 : 2,
                             ...(active && {
                                 color: 'var(--nav-item-icon-active-color)'
                             })

@@ -1,13 +1,15 @@
 import PropTypes from 'prop-types';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import {styled} from '@mui/material/styles';
-import {MobileNav} from '../mobile-nav';
-import {SideNavSmall} from './side-nav-small';
-import {TopNav} from './top-nav';
-import {useMobileNav} from './use-mobile-nav';
-import Container from "@mui/material/Container";
-import {useSettings} from "../../../hooks/use-settings";
+
 import {Box} from "@mui/system";
+import {styled} from '@mui/material/styles';
+import Container from "@mui/material/Container";
+import useMediaQuery from '@mui/material/useMediaQuery';
+
+import {TopNav} from './top-nav';
+import {SideNav} from './side-nav';
+import {MobileNav} from '../mobile-nav';
+import {useMobileNav} from './use-mobile-nav';
+import {useSettings} from "src/hooks/use-settings";
 
 const BREAK_POINT = 1500;
 const SIDE_NAV_WIDTH = 88;
@@ -38,9 +40,10 @@ export const VerticalLayout = (props) => {
         <>
             <TopNav onMobileNavOpen={mobileNav.handleOpen}/>
             {breakPointUp ?
-                <SideNavSmall
+                <SideNav
                     color={navColor}
                     sections={sections}
+                    small
                 />
                 :
                 <MobileNav
