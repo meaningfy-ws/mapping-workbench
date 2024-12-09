@@ -5,11 +5,10 @@ Feature: SPARQL Test Suites
   Background:
     Given Session Login
     Then Go Home
-    Then I open side menu
-
-  Scenario: Add SPARQL Test Suite
     Then I click on Sparql Test Suites
     Then I get redirected to Sparql Test Suites
+
+  Scenario: Add SPARQL Test Suite
 
     When I click on add button
     Then I get redirected to create page
@@ -17,8 +16,6 @@ Feature: SPARQL Test Suites
     Then I successfully create suite
 
   Scenario: Update SPARQL Test Suite
-    Then I click on Sparql Test Suites
-    Then I get redirected to Sparql Test Suites
 
     Then I search for suite
     Then I click edit button
@@ -28,8 +25,6 @@ Feature: SPARQL Test Suites
     Then I get success update
 
   Scenario: Delete SPARQL Test Suite
-    Then I click on Sparql Test Suites
-    Then I get redirected to Sparql Test Suites
 
     Then I search for updated suite
     Then I click delete button

@@ -6,19 +6,10 @@ Feature: SHACL Test Suite
   Background:
     Given Session Login
     Then Go Home
-    Then I open side menu
-
-#  Scenario: Select Project
-#    Then I get redirected to projects list page
-#    Then I search for project
-#
-#    When I select project
-#    Then I get success select
-#    Then I get redirected to projects list page
-
-  Scenario: Add SHACL Test Suite
     Then I click on Shacl Test Suites
     Then I get redirected to Shacl Test Suites
+
+  Scenario: Add SHACL Test Suite
 
     When I click on add button
     Then I get redirected to create page
@@ -26,8 +17,6 @@ Feature: SHACL Test Suite
     Then I successfully create suite
 
   Scenario: Update SHACL Test Suite
-    Then I click on Shacl Test Suites
-    Then I get redirected to Shacl Test Suites
 
     Then I search for suite
     Then I click edit button
@@ -37,8 +26,6 @@ Feature: SHACL Test Suite
     Then I get success update
 
   Scenario: Delete SHACL Test Suite
-    Then I click on Shacl Test Suites
-    Then I get redirected to Shacl Test Suites
 
     Then I search for updated suite
     Then I click delete button
