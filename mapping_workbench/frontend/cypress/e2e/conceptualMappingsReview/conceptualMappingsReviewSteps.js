@@ -19,8 +19,8 @@ Given('Session Login', () => {
 
 When('I click on CM Review', () => {
     cy.intercept('GET', appURLPrefix + 'conceptual_mapping_rules*',).as('get')
-    cy.get('#nav_conceptual_mappings').click();
-    cy.get('#nav_review').click();
+    cy.get('#conceptual_mappings').click();
+    cy.get('#conceptual_mappings_review_tab').click();
 })
 
 

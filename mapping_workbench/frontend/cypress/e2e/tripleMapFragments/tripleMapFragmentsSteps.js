@@ -32,8 +32,8 @@ When('I expand Triple Maps Fragments', () => {
 
 Then('I click on Triple Map Fragments', () => {
     cy.intercept('GET', appURLPrefix + 'generic_triple_map_fragments*').as('get')
-    cy.get('#nav_technical_mappings').click()
-    cy.get('#nav_triple_map_fragments').click()
+    cy.get('#technical_mappings').click()
+    cy.get('#triple_map_fragments_tab').click()
 })
 
 Then('I get redirected to Generic Triple Maps', () => {

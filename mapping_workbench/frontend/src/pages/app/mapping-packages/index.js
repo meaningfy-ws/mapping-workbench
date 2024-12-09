@@ -29,7 +29,6 @@ import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {mappingPackagesApi as sectionApi} from 'src/api/mapping-packages';
 import {projectsApi} from 'src/api/projects';
 import {PackageImporter} from 'src/sections/app/mapping-package/package-importer';
-
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 import {sessionApi} from "../../../api/session";
 
@@ -74,7 +73,7 @@ const Page = () => {
         const toastId = toastLoad(`Exporting Source Files ... `)
         projectsApi.exportSourceFiles()
             .then(response => {
-                const filename = `src_${sessionApi.getSessionProject()}.zip`;
+                const filename =  `src_${sessionApi.getSessionProject()}.zip`;
                 saveAs(new Blob([response], {type: "application/x-zip-compressed"}), filename);
                 toastSuccess(`Source Files successfully exported.`, toastId)
             }).catch(err => toastError(`Exporting Source Files failed: ${err.message}.`, toastId))

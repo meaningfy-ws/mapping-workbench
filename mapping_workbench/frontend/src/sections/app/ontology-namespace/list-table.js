@@ -36,7 +36,7 @@ export const ListTable = (props) => {
             .then(res => {
                 if (res) {
                     toastSuccess("Deleted", toastId)
-                    onPageChange(0)
+                    onPageChange('', 0)
                 } else toastError("Error deleting", toastId)
             })
     }

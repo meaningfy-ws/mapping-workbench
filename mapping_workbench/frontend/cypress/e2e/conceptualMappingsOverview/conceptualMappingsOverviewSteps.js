@@ -19,8 +19,8 @@ Given('Session Login', () => {
 
 When('I click on CM Overview', () => {
     cy.intercept('GET', appURLPrefix + 'conceptual_mapping_rules*',).as('get')
-    cy.get('#nav_conceptual_mappings').click();
-    cy.get(':nth-child(3) > #nav_overview').click();
+    cy.get('#conceptual_mappings').click();
+    cy.get('#conceptual_mappings_overview_tab').click();
 })
 
 

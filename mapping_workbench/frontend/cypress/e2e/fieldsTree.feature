@@ -5,7 +5,6 @@ Feature: Fields Tree
   Background:
     Given Session Login
     Then Go Home
-    Then I open side menu
 
   Scenario: View Fields Tree
     When I click on Fields Tree

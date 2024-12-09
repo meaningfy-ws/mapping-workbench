@@ -368,8 +368,7 @@ export const TestDataCollectionListTable = (props) => {
                                               onChange={(event) => handleItemsSelectAll(event.target.checked)}
                                     />
                                 </TableCell>
-                                <SorterHeader width="25%"
-                                              fieldName='title'/>
+                                <SorterHeader width="25%" fieldName='title'/>
                                 {/*<TableCell width="25%">*/}
                                 {/*    Title*/}
                                 {/*</TableCell>*/}

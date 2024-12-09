@@ -40,12 +40,10 @@ export const ProjectSwitch = ({small}) => {
         setAnchorEl(null);
     };
 
-    console.log(theme)
-                   {/*{backgroundColor: '#f0edf9',*/}
-
     return (
         <Stack sx={{px: 2}}>
             <Stack onClick={handleClick}
+                   id='project_switch'
                    direction='row'
                    alignItems='center'
                    justifyContent='center'
@@ -104,10 +102,10 @@ export const ProjectSwitch = ({small}) => {
                             </MenuItem>))}
                     <Divider sx={{borderBottomWidth: 2, mx:2}}
                              style={{marginTop: 16, marginBottom: 16}}/>
-                    <MenuItem key={'project_create'}
-                              onClick={handleProjectSelect}
-                              sx={{color: theme.palette.primary.main}}
-                              id='create_project_button'>
+                    <MenuItem key='project_create'
+                              id='create_project_button'
+                              onClick={() => handleProjectSelect(null)}
+                              sx={{color: theme.palette.primary.main}}>
                         <AddIcon fontWeight='bold'/>
                         <Typography sx={{ml: '4px'}}
                                     fontWeight='bold'>

@@ -320,7 +320,6 @@ export const FileCollectionListTable = (props) => {
                 />
             </Box>
             <Divider/>
-            {/*<Filter*/}
             <TablePagination
                 component="div"
                 count={count}
