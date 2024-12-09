@@ -32,7 +32,7 @@ export const Page = () => {
         itemsCount: 0,
     });
 
-    const itemsSearch = useItemsSearch(state.items, sectionApi, searchColumns,
+    const itemsSearch = useItemsSearch(state.items, sectionApi, searchColumns, {},
         {
             column: 'created_at',
             direction: 'desc'

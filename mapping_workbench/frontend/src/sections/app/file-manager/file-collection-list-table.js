@@ -320,7 +320,6 @@ export const FileCollectionListTable = (props) => {
                 />
             </Box>
             <Divider/>
-            {/*<Filter*/}
             <TablePagination
                 component="div"
                 count={count}
@@ -338,7 +337,7 @@ export const FileCollectionListTable = (props) => {
                             <TableRow>
                                 <TableCell sx={{my: 2}}>
                                     <Checkbox checked={allChecked}
-                                              indeterminate={selectedItems.length && !allChecked}
+                                              indeterminate={!!selectedItems.length && !allChecked}
                                               onChange={(event) => handleItemsSelectAll(event.target.checked)}
                                     />
                                 </TableCell>
