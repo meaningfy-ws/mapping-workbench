@@ -43,8 +43,8 @@ module.exports = defineConfig({
             "cypress/e2e/conceptualMappingsReview.feature",
             "cypress/e2e/conceptualMappingsOverview.feature",
             //Technical Mappings
-            "cypress/e2e/valueMappingResources.feature",
             "cypress/e2e/tripleMapFragments.feature",
+            "cypress/e2e/valueMappingResources.feature",
             //Quality Control
             "cypress/e2e/sparqlTestSuites.feature",
             "cypress/e2e/shaclTestSuites.feature",
