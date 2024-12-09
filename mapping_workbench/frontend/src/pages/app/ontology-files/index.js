@@ -12,7 +12,6 @@ import Dialog from "@mui/material/Dialog";
 import SvgIcon from '@mui/material/SvgIcon';
 import {useTheme} from "@mui/material/styles";
 import Grid from '@mui/material/Unstable_Grid2';
-import Typography from '@mui/material/Typography';
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -27,10 +26,10 @@ import useItemsSearch from 'src/hooks/use-items-search';
 import {ItemList} from "src/sections/app/files-form/item-list";
 import {ItemSearch} from 'src/sections/app/files-form/item-search';
 import {ontologyFilesApi as sectionApi} from 'src/api/ontology-files';
+import {SourceAndTargetTabs} from 'src/sections/app/source-and-target';
 import {FileUploader} from 'src/sections/app/files-form//file-uploader';
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {ontologyFileResourcesApi as fileResourcesApi} from "src/api/ontology-files/file-resources";
-
 
 const Page = () => {
     const [view, setView] = useState('grid');
@@ -38,7 +37,7 @@ const Page = () => {
 
     const uploadDialog = useDialog();
     const detailsDialog = useDialog();
-    const itemsSearch = useItemsSearch(state, sectionApi,['filename', 'content']);
+    const itemsSearch = useItemsSearch(state, sectionApi, ['filename', 'content']);
 
     const theme = useTheme();
 
@@ -78,55 +77,18 @@ const Page = () => {
 
     return (
         <>
-            <Seo title="App: Resource Manager"/>
-
-            <Grid
-                container
-                spacing={{
-                    xs: 3,
-                    lg: 4
-                }}
+            <Seo title={`App: ${sectionApi.SECTION_TITLE}`}/>
+            <Grid container
+                  spacing={{xs: 3, lg: 4}}
             >
+                <Grid xs={12}>
+                   <SourceAndTargetTabs/>
+                </Grid>
                 <Grid xs={12}>
                     <Stack
                         direction="row"
                         justifyContent="space-between"
                         spacing={4}
-                    >
-                        <div>
-                            <Typography variant="h5">
-                                {sectionApi.SECTION_TITLE}
-                            </Typography>
-                        </div>
-                        <Stack
-                            alignItems="center"
-                            direction="row"
-                            spacing={2}
-                        >
-                            <Button
-                                id='import_button'
-                                onClick={uploadDialog.handleOpen}
-                                startIcon={(
-                                    <SvgIcon>
-                                        <UploadIcon/>
-                                    </SvgIcon>
-                                )}
-                                variant="contained"
-                            >
-                                Upload
-                            </Button>
-                        </Stack>
-                    </Stack>
-                </Grid>
-                <Grid
-                    xs={12}
-                    md={12}
-                >
-                    <Stack
-                        spacing={{
-                            xs: 3,
-                            lg: 4
-                        }}
                     >
                         <ItemSearch
                             onFiltersChange={e => itemsSearch.handleSearchItems([e])}
@@ -136,6 +98,22 @@ const Page = () => {
                             sortDir={itemsSearch.state.sortDir}
                             view={view}
                         />
+                        <Button
+                            id='import_button'
+                            onClick={uploadDialog.handleOpen}
+                            startIcon={(
+                                <SvgIcon>
+                                    <UploadIcon/>
+                                </SvgIcon>
+                            )}
+                            variant="text"
+                        >
+                            Add ontology file
+                        </Button>
+                    </Stack>
+                </Grid>
+                <Grid xs={12}>
+                    <Stack spacing={{xs: 3, lg: 4}}>
                         <ItemList
                             count={itemsSearch.count}
                             items={itemsSearch.pagedItems}

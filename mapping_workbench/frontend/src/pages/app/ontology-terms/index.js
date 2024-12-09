@@ -1,28 +1,21 @@
-
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 
-import Link from '@mui/material/Link';
-import Grid from "@mui/material/Grid";
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import SvgIcon from '@mui/material/SvgIcon';
-import Typography from '@mui/material/Typography';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
+import Grid from "@mui/material/Unstable_Grid2";
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
 import {useRouter} from "src/hooks/use-router";
 import {Layout as AppLayout} from 'src/layouts/app';
-import {RouterLink} from 'src/components/router-link';
 import {usePageView} from 'src/hooks/use-page-view';
+import {RouterLink} from 'src/components/router-link';
 import OntologyTerms from "src/sections/app/ontology/ontology-terms";
 import {ontologyTermsApi as sectionApi} from 'src/api/ontology-terms';
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
+import {SourceAndTargetTabs} from 'src/sections/app/source-and-target';
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
-import OntologyNamespaces from "src/sections/app/ontology-namespace/ontology-namespaces";
-import OntologyNamespacesCustom from "src/sections/app/ontology-namespace-custom/ontology-namespaces-custom";
-
 
 const Page = () => {
     const router = useRouter()
@@ -41,88 +34,54 @@ const Page = () => {
 
     return (
         <>
-            <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
+            <Seo title={`App: ${sectionApi.SECTION_TITLE}`}/>
             <Grid container
-                  direction='column'
-                  spacing={4}>
-                <Grid item>
-                    <Stack
-                        direction="row"
-                        justifyContent="space-between"
-                        spacing={4}
+                  spacing={{xs: 3, lg: 4}}
+            >
+
+                <Grid xs={12}>
+                    <SourceAndTargetTabs/>
+                </Grid>
+                <Grid xs={12}
+                      direction="row"
+                      justifyContent="space-between"
+                      spacing={4}
+                >
+
+                    <Stack justifyContent='end'
+                           alignItems="center"
+                           direction="row"
+                           spacing={3}
                     >
-                        <Stack spacing={1}>
-                            <Typography variant="h4">
-                                {sectionApi.SECTION_TITLE}
-                            </Typography>
-                            <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
-                                <Link
-                                    color="text.primary"
-                                    component={RouterLink}
-                                    href={paths.index}
-                                    variant="subtitle2"
-                                >
-                                    App
-                                </Link>
-                                <Typography
-                                    color="text.secondary"
-                                    variant="subtitle2"
-                                >
-                                    {sectionApi.SECTION_TITLE}
-                                </Typography>
-                            </Breadcrumbs>
-                        </Stack>
-                        <Stack
-                            alignItems="center"
-                            direction="row"
-                            spacing={3}
+                        <Button
+                            id="discover_button"
+                            onClick={handleDiscover}
+                            startIcon={(
+                                <SvgIcon>
+                                    <SearchIcon/>
+                                </SvgIcon>
+                            )}
+                            variant="text"
                         >
-                            <Button
-                                id="discover_button"
-                                onClick={handleDiscover}
-                                startIcon={(
-                                    <SvgIcon>
-                                        <SearchIcon/>
-                                    </SvgIcon>
-                                )}
-                                variant="contained"
-                            >
-                                Discover Terms
-                            </Button>
-                            <Button
-                                id="add_term_button"
-                                component={RouterLink}
-                                href={paths.app[sectionApi.section].create}
-                                startIcon={(
-                                    <SvgIcon>
-                                        <AddIcon/>
-                                    </SvgIcon>
-                                )}
-                                variant="contained"
-                            >
-                                Add Term
-                            </Button>
-                        </Stack>
+                            Discover Terms
+                        </Button>
+                        <Button
+                            id="add_term_button"
+                            component={RouterLink}
+                            href={paths.app[sectionApi.section].create}
+                            startIcon={(
+                                <SvgIcon>
+                                    <AddIcon/>
+                                </SvgIcon>
+                            )}
+                            variant="contained"
+                        >
+                            Add Term
+                        </Button>
                     </Stack>
                 </Grid>
-                <Grid item>
+                <Grid xs={12}>
                     <OntologyTerms/>
-                </Grid>
-               <Grid container
-                     item
-                     spacing={4}
-               >
-                    <Grid item
-                          xs={12}
-                          xl={6}
-                    >
-                        <OntologyNamespacesCustom/>
-                    </Grid>
-                    <Grid item
-                          xs={12}
-                          xl={6}>
-                        <OntologyNamespaces/>
-                    </Grid>
                 </Grid>
             </Grid>
         </>

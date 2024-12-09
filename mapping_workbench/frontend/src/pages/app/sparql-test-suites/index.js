@@ -3,13 +3,9 @@ import {useEffect, useState} from 'react';
 import AddIcon from '@mui/icons-material/Add';
 
 import Card from '@mui/material/Card';
-import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Divider from "@mui/material/Divider";
-import SvgIcon from '@mui/material/SvgIcon';
-import Typography from '@mui/material/Typography';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
@@ -17,8 +13,8 @@ import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {RouterLink} from 'src/components/router-link';
 import useItemsSearch from 'src/hooks/use-items-search';
+import {QualityControlTabs} from 'src/sections/app/quality-control';
 import {TableSearchBar} from "src/sections/components/table-search-bar";
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {sparqlTestSuitesApi as sectionApi} from 'src/api/sparql-test-suites';
 import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
 import {sparqlTestFileResourcesApi as fileResourcesApi} from "src/api/sparql-test-suites/file-resources";
@@ -56,7 +52,7 @@ const Page = () => {
 
     usePageView();
 
-    const selectable = (item) =>  item.title !== sectionApi.CM_ASSERTIONS_SUITE_TITLE
+    const selectable = (item) => item.title !== sectionApi.CM_ASSERTIONS_SUITE_TITLE
 
     return (
         <>
@@ -67,27 +63,7 @@ const Page = () => {
                     justifyContent="space-between"
                     spacing={4}
                 >
-                    <Stack spacing={1}>
-                        <Typography variant="h4">
-                            {sectionApi.SECTION_TITLE}
-                        </Typography>
-                        <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.index}
-                                variant="subtitle2"
-                            >
-                                App
-                            </Link>
-                            <Typography
-                                color="text.secondary"
-                                variant="subtitle2"
-                            >
-                                {sectionApi.SECTION_TITLE}
-                            </Typography>
-                        </Breadcrumbs>
-                    </Stack>
+                    <QualityControlTabs/>
                     <Stack
                         alignItems="center"
                         direction="row"
@@ -97,11 +73,7 @@ const Page = () => {
                             id="add_button"
                             component={RouterLink}
                             href={paths.app[sectionApi.section].create}
-                            startIcon={(
-                                <SvgIcon>
-                                    <AddIcon/>
-                                </SvgIcon>
-                            )}
+                            startIcon={<AddIcon/>}
                             variant="contained"
                         >
                             Add

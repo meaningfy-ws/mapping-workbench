@@ -1,14 +1,12 @@
+import {useEffect, useState} from "react";
+
 import AddIcon from '@mui/icons-material/Add';
 import UploadIcon from '@mui/icons-material/Upload';
 
 import Card from '@mui/material/Card';
-import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Divider from "@mui/material/Divider";
-import SvgIcon from '@mui/material/SvgIcon';
-import Typography from '@mui/material/Typography';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
@@ -17,12 +15,11 @@ import {Layout as AppLayout} from 'src/layouts/app';
 import {usePageView} from 'src/hooks/use-page-view';
 import {RouterLink} from 'src/components/router-link';
 import useItemsSearch from 'src/hooks/use-items-search';
+import {SourceAndTargetTabs} from 'src/sections/app/source-and-target';
 import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {testDataSuitesApi as sectionApi} from 'src/api/test-data-suites';
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {FileCollectionUploader} from "src/sections/app/file-manager/file-collection-uploader";
 import {TestDataCollectionListTable} from "src/sections/app/file-manager/test-data-collection-list-table";
-import {useEffect, useState} from "react";
 
 const useItemsStore = () => {
     const [state, setState] = useState({
@@ -64,67 +61,37 @@ const Page = () => {
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
+            <Stack>
+                <SourceAndTargetTabs/>
+            </Stack>
             <Stack spacing={4}>
                 <Stack
+                    alignItems="center"
                     direction="row"
-                    justifyContent="space-between"
-                    spacing={4}
+                    justifyContent='end'
+                    spacing={3}
                 >
-                    <Stack spacing={1}>
-                        <Typography variant="h4">
-                            {sectionApi.SECTION_TITLE}
-                        </Typography>
-
-                        <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.index}
-                                variant="subtitle2"
-                            >
-                                App
-                            </Link>
-                            <Typography
-                                color="text.secondary"
-                                variant="subtitle2"
-                            >
-                                {sectionApi.SECTION_TITLE}
-                            </Typography>
-                        </Breadcrumbs>
-                    </Stack>
-                    <Stack
-                        alignItems="center"
-                        direction="row"
-                        spacing={3}
+                    <Button
+                        type='link'
+                        onClick={uploadDialog.handleOpen}
+                        startIcon={(
+                            <UploadIcon/>
+                        )}
+                        id="import-test-data_button"
                     >
-                        <Button
-                            component={RouterLink}
-                            href={paths.app[sectionApi.section].create}
-                            startIcon={(
-                                <SvgIcon>
-                                    <AddIcon/>
-                                </SvgIcon>
-                            )}
-                            variant="contained"
-                            id="add_button"
-                        >
-                            Create Test Data Suite
-                        </Button>
-                        <Button
-                            type='link'
-                            onClick={uploadDialog.handleOpen}
-                            startIcon={(
-                                <SvgIcon>
-                                    <UploadIcon/>
-                                </SvgIcon>
-                            )}
-                            variant="contained"
-                            id="import-test-data_button"
-                        >
-                            Import Test Data Suites
-                        </Button>
-
-                    </Stack>
+                        Import Test Data Suites
+                    </Button>
+                    <Button
+                        component={RouterLink}
+                        href={paths.app[sectionApi.section].create}
+                        startIcon={(
+                            <AddIcon/>
+                        )}
+                        variant="contained"
+                        id="add_button"
+                    >
+                        Create Test Data Suite
+                    </Button>
                 </Stack>
                 <Card>
                     <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}

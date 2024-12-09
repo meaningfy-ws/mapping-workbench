@@ -18,6 +18,7 @@ import {fieldsRegistryApi} from "src/api/fields-registry";
 import CMCard from "src/sections/app/conceptual-mapping-rule/cm-card";
 import {BreadcrumbsSeparator} from "src/components/breadcrumbs-separator";
 import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
+import {ConceptualMappingTabs} from '../../../../sections/app/conceptual-mapping-rule/conceptual-mapping-tabs';
 
 
 const useItemsSearch = (items) => {
@@ -119,7 +120,9 @@ const Page = () => {
             fieldsRegistryApi.getItem(value.id, 'element')
                 .then(res => setStructuralElement(res))
                 .catch(err => console.error(err))
-        } else setStructuralElement('')
+        } else {
+            setStructuralElement('')
+        }
         getCMRules(value?.id)
     }
 
@@ -134,27 +137,7 @@ const Page = () => {
                 }}
             >
                 <Grid xs={12}>
-                    <Stack spacing={1}>
-                        <Typography variant="h4">
-                            Review {sectionApi.SECTION_TITLE}
-                        </Typography>
-                        <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.index}
-                                variant="subtitle2"
-                            >
-                                App
-                            </Link>
-                            <Typography
-                                color="text.secondary"
-                                variant="subtitle2"
-                            >
-                                {sectionApi.SECTION_TITLE}
-                            </Typography>
-                        </Breadcrumbs>
-                    </Stack>
+                    <ConceptualMappingTabs/>
                 </Grid>
                 <Grid
                     xs={12}

@@ -26,6 +26,7 @@ import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {ListTable} from "src/sections/app/generic-triple-map-fragment/list-table";
 import {FileUploader} from "src/sections/app/generic-triple-map-fragment/file-uploader";
 import {genericTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/generic';
+import {TechnicalMappingsTabs} from '../../../sections/app/technical-mappings';
 
 const Page = () => {
     const uploadDialog = useDialog();
@@ -40,8 +41,8 @@ const Page = () => {
         },
         validationSchema: Yup.object({
             mapping_package_id: Yup
-                    .string()
-                    .required('Mapping Package is required'),
+                .string()
+                .required('Mapping Package is required'),
         })
     });
 
@@ -54,27 +55,7 @@ const Page = () => {
                     justifyContent="space-between"
                     spacing={4}
                 >
-                    <Stack spacing={1}>
-                        <Typography variant="h4">
-                            {sectionApi.SECTION_TITLE}
-                        </Typography>
-                        <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.index}
-                                variant="subtitle2"
-                            >
-                                App
-                            </Link>
-                            <Typography
-                                color="text.secondary"
-                                variant="subtitle2"
-                            >
-                                {sectionApi.SECTION_TITLE}
-                            </Typography>
-                        </Breadcrumbs>
-                    </Stack>
+                    <TechnicalMappingsTabs/>
                     <Stack
                         alignItems="center"
                         direction="row"
@@ -82,24 +63,15 @@ const Page = () => {
                     >
                         <Button
                             onClick={uploadDialog.handleOpen}
-                            startIcon={(
-                                <SvgIcon>
-                                    <UploadIcon/>
-                                </SvgIcon>
-                            )}
+                            startIcon={<UploadIcon/>}
                             id="upload_fragment_button"
-                            variant="contained"
                         >
                             Upload
                         </Button>
                         <Button
                             component={RouterLink}
                             href={paths.app[sectionApi.section].create}
-                            startIcon={(
-                                <SvgIcon>
-                                    <AddIcon/>
-                                </SvgIcon>
-                            )}
+                            startIcon={<AddIcon/>}
                             id="add_button"
                             variant="contained"
                         >

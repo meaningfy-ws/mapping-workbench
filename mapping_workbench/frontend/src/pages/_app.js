@@ -29,6 +29,7 @@ import {SettingsDrawer} from 'src/components/settings/settings-drawer';
 import {SettingsConsumer, SettingsProvider} from 'src/contexts/settings';
 import {ProjectsConsumer, ProjectsProvider} from 'src/contexts/projects';
 import './style.scss';
+import './arrow-buttons.scss'
 
 // Remove if locales are not used
 // import {SessionProvider} from "next-auth/react";
