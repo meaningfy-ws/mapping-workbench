@@ -19,17 +19,19 @@ import useItemsSearch from '../../../hooks/use-items-search';
 import {useItemsStore} from '../../../hooks/use-items-store';
 import {ListSearch} from "../../../sections/app/ontology-namespace-custom/list-search";
 import {ListTable} from "../../../sections/app/ontology-namespace-custom/list-table";
+import {TableSearchBar} from '../../../sections/components/table-search-bar';
 
 const Page = () => {
     const itemsStore = useItemsStore(sectionApi);
-    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['prefix','uri']);
+    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['prefix', 'uri']);
 
     usePageView();
 
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
-            <Stack spacing={4}>
+            <Stack spacing={4}
+                   id='ontology_namespaces_custom'>
                 <Stack
                     direction="row"
                     justifyContent="space-between"
@@ -70,7 +72,7 @@ const Page = () => {
                         spacing={3}
                     >
                         <Button
-                            id="add_button"
+                            id="add_namespace_button"
                             component={RouterLink}
                             href={paths.app[sectionApi.section].create}
                             startIcon={(
@@ -85,7 +87,8 @@ const Page = () => {
                     </Stack>
                 </Stack>
                 <Card>
-                    <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
+                    <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                    value={itemsSearch.state.search[0]}/>
                     <ListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}

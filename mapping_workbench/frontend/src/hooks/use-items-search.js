@@ -72,6 +72,7 @@ const useItemsSearch = (items, sectionApi, searchColumns, newFilters, sort) => {
     }
 
     const handlePageChange = (event, page) => {
+        console.log()
         setState(prevState => ({...prevState, page}));
     }
 

@@ -12,6 +12,7 @@ import {RouterLink} from 'src/components/router-link';
 import {Scrollbar} from 'src/components/scrollbar';
 import {usePathname} from 'src/hooks/use-pathname';
 import {paths} from 'src/paths';
+import {MobileNavSection} from '../mobile-nav/mobile-nav-section';
 import {SideNavSection} from './side-nav-section';
 import {ProjectSwitch} from "../project-switch2";
 import {AppTitle} from "../../../components/app-title";
@@ -155,7 +156,9 @@ export const SideNav = (props) => {
     const cssVars = useCssVars(color);
     const projects = useProjects()
 
-    const {overview, ...menus} = sections
+    const {dashboard, ...menus} = sections
+
+    console.log(sections)
 
     return (
         <Drawer
@@ -221,6 +224,14 @@ export const SideNav = (props) => {
                         </Stack>
                         <Divider color='#F2F4F7'
                                  sx={{borderBottomWidth: 2}}/>
+                        {dashboard.map((section, index) => (
+                            <SideNavSection items={section.items}
+                                            key={index}
+                                            pathname={pathname}
+                                            subheader={section.subheader}
+                                            small={small}
+                            />
+                        ))}
                         {projects.sessionProject && Object.values(menus).map(menu => menu.map((section, index) => (
                             <SideNavSection
                                 items={section.items}

@@ -29,10 +29,11 @@ module.exports = defineConfig({
             // "cypress/e2e/cleanUp.feature",
             "cypress/e2e/projects.feature",
             "cypress/e2e/projectCreate.feature",
-            //Project Setup
+            //Source & Target
+            "cypress/e2e/testDataSuites.feature",
             "cypress/e2e/ontologyFiles.feature",
             "cypress/e2e/ontologyTerms.feature",
-            "cypress/e2e/testDataSuites.feature",
+            "cypress/e2e/ontologyNamespaces.feature",
             //Fields & Nodes
             "cypress/e2e/fieldsDevelop.feature",
             "cypress/e2e/fieldsTree.feature",
@@ -53,7 +54,6 @@ module.exports = defineConfig({
             //Activities
             "cypress/e2e/activities.feature",
 
-            // "cypress/e2e/ontologyNamespaces.feature",
             // "cypress/e2e/schemaFiles.feature",
             // "cypress/e2e/removeTripleMap.feature",
             // "cypress/e2e/transformTestData.feature",

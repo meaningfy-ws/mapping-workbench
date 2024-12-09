@@ -13,6 +13,7 @@ import {AppTitle} from 'src/components/app-title';
 import {RouterLink} from 'src/components/router-link';
 import {Scrollbar} from 'src/components/scrollbar';
 import {usePathname} from 'src/hooks/use-pathname';
+import {SideNavSection} from '../vertical-layout/side-nav-section';
 import {MobileNavSection} from './mobile-nav-section';
 import {ProjectSwitch} from "../project-switch2";
 import {useProjects} from "../../../hooks/use-projects";
@@ -116,7 +117,7 @@ export const MobileNav = (props) => {
     const cssVars = useCssVars(color);
     const projects = useProjects()
 
-    const {overview, ...menus} = sections
+    const {dashboard, ...menus} = sections
 
     return (
         <Drawer
@@ -183,12 +184,18 @@ export const MobileNav = (props) => {
                         </Stack>
                         <Divider color='#F2F4F7'
                                  sx={{borderBottomWidth: 2}}/>
+                        {dashboard.map((section, index) => (
+                            <MobileNavSection items={section.items}
+                                              key={index}
+                                              pathname={pathname}
+                                              subheader={section.subheader}
+                            />
+                        ))}
                         {projects.sessionProject && Object.values(menus).map(menu => menu.map((section, index) => (
-                            <MobileNavSection
-                                items={section.items}
-                                key={index}
-                                pathname={pathname}
-                                subheader={section.subheader}
+                            <MobileNavSection items={section.items}
+                                              key={index}
+                                              pathname={pathname}
+                                              subheader={section.subheader}
                             />
                         )))}
 

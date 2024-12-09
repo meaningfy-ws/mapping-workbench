@@ -19,15 +19,18 @@ import {useItemsStore} from 'src/hooks/use-items-store';
 import {SourceAndTargetTabs} from 'src/sections/app/source-and-target';
 import {ListTable} from "src/sections/app/ontology-namespace/list-table";
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {ListSearch} from "src/sections/app/ontology-namespace/list-search";
 import {ontologyNamespacesApi as sectionApi} from 'src/api/ontology-namespaces';
 import OntologyNamespacesCustom from 'src/pages/app/ontology-namespaces-custom';
+import {TableSearchBar} from '../../../sections/components/table-search-bar';
 
 const Page = () => {
     const itemsStore = useItemsStore(sectionApi);
-    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi);
+    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['prefix','uri']);
 
     usePageView();
+
+    console.log(itemsStore.items)
+    console.log(itemsSearch)
 
     return (
         <>
@@ -91,7 +94,8 @@ const Page = () => {
                     </Stack>
                 </Stack>
                 <Card>
-                    <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
+                    <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                    value={itemsSearch.state.search[0]}/>
                     <ListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
