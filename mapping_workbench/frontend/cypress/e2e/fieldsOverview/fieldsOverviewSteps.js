@@ -28,8 +28,8 @@ Then('Check home title', () => {
 
 Given('I click on Fields Overview', () => {
     cy.intercept('GET', appURLPrefix + 'fields_registry/elements*',).as('getFields')
-    cy.get('#nav_fields_\\&_nodes').click()
-    cy.get(':nth-child(2) > #nav_overview').click()
+    cy.get('#elements_definition').click()
+    cy.get('#elements_define_overview_tab').click()
 })
 
 

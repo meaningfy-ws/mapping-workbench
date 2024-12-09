@@ -34,7 +34,7 @@ module.exports = defineConfig({
             "cypress/e2e/ontologyFiles.feature",
             "cypress/e2e/ontologyTerms.feature",
             "cypress/e2e/ontologyNamespaces.feature",
-            //Fields & Nodes
+            //Element Definition
             "cypress/e2e/fieldsDevelop.feature",
             "cypress/e2e/fieldsTree.feature",
             "cypress/e2e/fieldsOverview.feature",

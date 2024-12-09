@@ -18,8 +18,8 @@ Given('Session Login', () => {
 
 When('I click on Fields Tree', () => {
     cy.intercept('GET', appURLPrefix + 'fields_registry/elements_tree*',).as('get')
-    cy.get('#nav_fields_\\&_nodes').click()
-    cy.get("#nav_tree_view").click()
+    cy.get('#elements_definition').click()
+    cy.get("#elements_define_tree_tab").click()
 })
 
 

@@ -5,7 +5,6 @@ Feature: Fields And Nodes
   Background:
     Given Session Login
     Then Go Home
-    Then I open side menu
 
   Scenario: View Fields And Nodes
     When I click on Fields And Nodes
