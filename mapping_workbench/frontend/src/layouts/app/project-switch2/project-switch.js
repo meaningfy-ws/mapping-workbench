@@ -14,7 +14,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import {ProjectsContext} from "../../../contexts/projects";
-import {useRouter} from "../../../hooks/use-router";
+import {useRouter} from "next/router";
 import {paths} from 'src/paths';
 
 export const ProjectSwitch = ({small}) => {
@@ -40,13 +40,18 @@ export const ProjectSwitch = ({small}) => {
         setAnchorEl(null);
     };
 
-    return (<Stack sx={{px: 2}}>
+    console.log(theme)
+                   {/*{backgroundColor: '#f0edf9',*/}
+
+    return (
+        <Stack sx={{px: 2}}>
             <Stack onClick={handleClick}
                    direction='row'
                    alignItems='center'
                    justifyContent='center'
                    gap={3}
-                   sx={{backgroundColor: '#f0edf9', borderRadius: '8px', p: '9px', cursor: 'pointer'}}>
+                   color={'#1D2939'}
+                   sx={{backgroundColor:theme.palette.primary.light, borderRadius: '8px', p: '9px', cursor: 'pointer'}}>
                 {!small && projectsStore.items?.find(project => project._id === projectsStore.sessionProject)?.title}
                 <ArrowForwardIosIcon color='primary'
                                      fontWeight='bold'
@@ -69,7 +74,7 @@ export const ProjectSwitch = ({small}) => {
             >
 
                 <Stack direction='column'>
-                    <OutlinedInput sx={{m: '16px', backgroundColor: '#F2F4F7',}}
+                    <OutlinedInput sx={{m: '16px'}}
                                    placeholder='Search project'
                                    inputProps={{style: {padding: '10px'}}}
                                    onChange={event => setSearchInputValue(event.target.value)}
@@ -80,26 +85,28 @@ export const ProjectSwitch = ({small}) => {
                                    )}>
 
                     </OutlinedInput>
-                    {projectsStore.items?.filter(project => project.title.toLowerCase()
-                        .includes(searchInputValue.toLowerCase()))
-                        .map(project => (
+                    {projectsStore.items?.filter(project =>
+                        project.title.toLowerCase().includes(searchInputValue.toLowerCase()))
+                        .map((project, idx) => (
                             <MenuItem
+                                selected={project._id === projectsStore.sessionProject}
                                 key={project._id}
                                 value={project._id}
                                 sx={{px: '15px', py: '8px'}}
                                 onClick={() => handleProjectSelect(project._id)}
                             >
                                 <Typography
-                                    color="var(--nav-color)"
+                                    color="#344054"
                                     variant="body2"
                                 >
                                     {project.title}
                                 </Typography>
                             </MenuItem>))}
-                    <Divider sx={{m: '15px'}}/>
+                    <Divider sx={{borderBottomWidth: 2, mx:2}}
+                             style={{marginTop: 16, marginBottom: 16}}/>
                     <MenuItem key={'project_create'}
-                              onClick={() => handleProjectSelect()}
-                              sx={{color: theme.palette.primary.main, mb: 2}}
+                              onClick={handleProjectSelect}
+                              sx={{color: theme.palette.primary.main}}
                               id='create_project_button'>
                         <AddIcon fontWeight='bold'/>
                         <Typography sx={{ml: '4px'}}
