@@ -5,9 +5,10 @@ import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
 
 import Box from '@mui/material/Box';
-import ButtonBase from '@mui/material/ButtonBase';
-import Collapse from '@mui/material/Collapse';
+import Tooltip from '@mui/material/Tooltip';
 import SvgIcon from '@mui/material/SvgIcon';
+import Collapse from '@mui/material/Collapse';
+import ButtonBase from '@mui/material/ButtonBase';
 
 import {RouterLink} from 'src/components/router-link';
 
@@ -78,30 +79,135 @@ export const SideNavItem = (props) => {
     if (children) {
         return (
             <li>
+                <Tooltip title={small && title}
+                         placement='right'>
+                    <ButtonBase
+                        id={['nav', ...title.toLowerCase().split(' ')].join('_')}
+                        disabled={disabled}
+                        onClick={handleToggle}
+                        sx={{
+                            alignItems: 'center',
+                            borderRadius: 1,
+                            display: 'flex',
+                            justifyContent: 'flex-start',
+                            pl: `${offset}px`,
+                            pr: '16px',
+                            py: '6px',
+                            textAlign: 'left',
+                            width: '100%',
+                            ...(active && {
+                                ...(depth === 0 && {
+                                    backgroundColor: 'var(--nav-item-active-bg)'
+                                })
+                            }),
+                            '&:hover': {
+                                backgroundColor: 'var(--nav-item-hover-bg)'
+                            },
+                        }}
+                    >
+                        {startIcon && (
+                            <Box
+                                component="span"
+                                sx={{
+                                    alignItems: 'center',
+                                    color: 'var(--nav-item-icon-color)',
+                                    display: 'inline-flex',
+                                    justifyContent: 'center',
+                                    mr: 2,
+                                    ...(active && {
+                                        color: 'var(--nav-item-icon-active-color)'
+                                    })
+                                }}
+                            >
+                                {startIcon}
+                            </Box>
+                        )}
+                        {!small && <Box
+                            component="span"
+                            sx={{
+                                color: 'var(--nav-item-color)',
+                                flexGrow: 1,
+                                fontFamily: (theme) => theme.typography.fontFamily,
+                                fontSize: depth > 0 ? 13 : 14,
+                                fontWeight: depth > 0 ? 500 : 600,
+                                lineHeight: '24px',
+                                whiteSpace: 'nowrap',
+                                ...(active && {
+                                    color: 'var(--nav-item-active-color)'
+                                }),
+                                ...(disabled && {
+                                    color: 'var(--nav-item-disabled-color)'
+                                })
+                            }}
+                        >
+                            {title}
+                        </Box>}
+                        <SvgIcon
+                            sx={{
+                                color: 'var(--nav-item-chevron-color)',
+                                fontSize: 16,
+                                ml: 2
+                            }}
+                        >
+                            {open ? <ChevronDownIcon/> : <ChevronRightIcon/>}
+                        </SvgIcon>
+                    </ButtonBase>
+                </Tooltip>
+                <Collapse
+                    in={open}
+                    sx={{mt: 0.5}}
+                >
+                    {children}
+                </Collapse>
+            </li>
+        );
+    }
+
+    // Leaf
+
+    const linkProps = path
+        ? external
+            ? {
+                component: 'a',
+                href: path,
+                target: '_blank'
+            }
+            : {
+                component: RouterLink,
+                href: path
+            }
+        : {};
+
+    return (
+        <li>
+            <Tooltip title={small && title}
+                     placement='right'>
                 <ButtonBase
                     id={['nav', ...title.toLowerCase().split(' ')].join('_')}
                     disabled={disabled}
-                    onClick={handleToggle}
                     sx={{
                         alignItems: 'center',
                         borderRadius: 1,
                         display: 'flex',
-                        justifyContent: 'flex-start',
-                        pl: `${offset}px`,
+                        justifyContent: small ? 'center' : 'flex-start',
+                        pl: `${16 + offset}px`,
                         pr: '16px',
                         py: '6px',
                         textAlign: 'left',
                         width: '100%',
                         ...(active && {
-                            ...(depth === 0 && {
-                                backgroundColor: 'var(--nav-item-active-bg)'
+                            ...(depth >= -1 && {
+                                borderTopRightRadius: 0,
+                                borderBottomRightRadius: 0,
+                                borderRight: '4px solid var(--nav-item-icon-active-color)',
+
                             })
                         }),
                         '&:hover': {
                             backgroundColor: 'var(--nav-item-hover-bg)'
-                        },
+                        }
                     }}
-                >
+                    {...linkProps}>
                     {startIcon && (
                         <Box
                             component="span"
@@ -110,7 +216,7 @@ export const SideNavItem = (props) => {
                                 color: 'var(--nav-item-icon-color)',
                                 display: 'inline-flex',
                                 justifyContent: 'center',
-                                mr: 2,
+                                mr: small ? 0 : 2,
                                 ...(active && {
                                     color: 'var(--nav-item-icon-active-color)'
                                 })
@@ -139,115 +245,16 @@ export const SideNavItem = (props) => {
                     >
                         {title}
                     </Box>}
-                    <SvgIcon
-                        sx={{
-                            color: 'var(--nav-item-chevron-color)',
-                            fontSize: 16,
-                            ml: 2
-                        }}
-                    >
-                        {open ? <ChevronDownIcon/> : <ChevronRightIcon/>}
-                    </SvgIcon>
+                    {label && (
+                        <Box
+                            component="span"
+                            sx={{ml: 2}}
+                        >
+                            {label}
+                        </Box>
+                    )}
                 </ButtonBase>
-                <Collapse
-                    in={open}
-                    sx={{mt: 0.5}}
-                >
-                    {children}
-                </Collapse>
-            </li>
-        );
-    }
-
-    // Leaf
-
-    const linkProps = path
-        ? external
-            ? {
-                component: 'a',
-                href: path,
-                target: '_blank'
-            }
-            : {
-                component: RouterLink,
-                href: path
-            }
-        : {};
-
-    return (
-        <li>
-            <ButtonBase
-                id={['nav', ...title.toLowerCase().split(' ')].join('_')}
-                disabled={disabled}
-                sx={{
-                    alignItems: 'center',
-                    borderRadius: 1,
-                    display: 'flex',
-                    justifyContent: small ? 'center' : 'flex-start',
-                    pl: `${16 + offset}px`,
-                    pr: '16px',
-                    py: '6px',
-                    textAlign: 'left',
-                    width: '100%',
-                    ...(active && {
-                        ...(depth >= -1 && {
-                            borderTopRightRadius:0,
-                            borderBottomRightRadius:0,
-                            borderRight: '4px solid var(--nav-item-icon-active-color)',
-
-                        })
-                    }),
-                    '&:hover': {
-                        backgroundColor: 'var(--nav-item-hover-bg)'
-                    }
-                }}
-                {...linkProps}>
-                {startIcon && (
-                    <Box
-                        component="span"
-                        sx={{
-                            alignItems: 'center',
-                            color: 'var(--nav-item-icon-color)',
-                            display: 'inline-flex',
-                            justifyContent: 'center',
-                            mr: small ? 0 : 2,
-                            ...(active && {
-                                color: 'var(--nav-item-icon-active-color)'
-                            })
-                        }}
-                    >
-                        {startIcon}
-                    </Box>
-                )}
-                {!small && <Box
-                    component="span"
-                    sx={{
-                        color: 'var(--nav-item-color)',
-                        flexGrow: 1,
-                        fontFamily: (theme) => theme.typography.fontFamily,
-                        fontSize: depth > 0 ? 13 : 14,
-                        fontWeight: depth > 0 ? 500 : 600,
-                        lineHeight: '24px',
-                        whiteSpace: 'nowrap',
-                        ...(active && {
-                            color: 'var(--nav-item-active-color)'
-                        }),
-                        ...(disabled && {
-                            color: 'var(--nav-item-disabled-color)'
-                        })
-                    }}
-                >
-                    {title}
-                </Box>}
-                {label && (
-                    <Box
-                        component="span"
-                        sx={{ml: 2}}
-                    >
-                        {label}
-                    </Box>
-                )}
-            </ButtonBase>
+            </Tooltip>
         </li>
     );
 };
