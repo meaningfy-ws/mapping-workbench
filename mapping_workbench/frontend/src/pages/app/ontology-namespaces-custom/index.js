@@ -1,25 +1,23 @@
-import {useEffect, useState} from 'react';
-import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Button from '@mui/material/Button';
+import AddIcon from '@mui/icons-material/Add';
+
 import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
-import SvgIcon from '@mui/material/SvgIcon';
+import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
 
-import {ontologyNamespacesCustomApi as sectionApi} from 'src/api/ontology-namespaces-custom';
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {RouterLink} from 'src/components/router-link';
+import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
-import {paths} from 'src/paths';
-import useItemsSearch from '../../../hooks/use-items-search';
-import {useItemsStore} from '../../../hooks/use-items-store';
-import {ListSearch} from "../../../sections/app/ontology-namespace-custom/list-search";
-import {ListTable} from "../../../sections/app/ontology-namespace-custom/list-table";
-import {TableSearchBar} from '../../../sections/components/table-search-bar';
+import {RouterLink} from 'src/components/router-link';
+import useItemsSearch from 'src/hooks/use-items-search';
+import {useItemsStore} from 'src/hooks/use-items-store';
+import {TableSearchBar} from 'src/sections/components/table-search-bar';
+import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
+import {ListTable} from "src/sections/app/ontology-namespace-custom/list-table";
+import {ontologyNamespacesCustomApi as sectionApi} from 'src/api/ontology-namespaces-custom';
 
 const Page = () => {
     const itemsStore = useItemsStore(sectionApi);
@@ -50,19 +48,11 @@ const Page = () => {
                             >
                                 App
                             </Link>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.app[sectionApi.section].index}
-                                variant="subtitle2"
-                            >
-                                {sectionApi.SECTION_TITLE}
-                            </Link>
                             <Typography
                                 color="text.secondary"
                                 variant="subtitle2"
                             >
-                                List
+                                {sectionApi.SECTION_TITLE}
                             </Typography>
                         </Breadcrumbs>
                     </Stack>
@@ -75,11 +65,7 @@ const Page = () => {
                             id="add_namespace_button"
                             component={RouterLink}
                             href={paths.app[sectionApi.section].create}
-                            startIcon={(
-                                <SvgIcon>
-                                    <PlusIcon/>
-                                </SvgIcon>
-                            )}
+                            startIcon={<AddIcon/>}
                             variant="contained"
                         >
                             Add

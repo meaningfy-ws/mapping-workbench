@@ -152,7 +152,7 @@ const Page = () => {
                             <Grid container
                                   spacing={2}>
                                 <Grid item
-                                      md={12}
+                                      xs={12}
                                       xl={6}>
                                     <Stack gap={2}>
                                         <TextField
@@ -190,7 +190,7 @@ const Page = () => {
                                     </Stack>
                                 </Grid>
                                 <Grid item
-                                      md={12}
+                                      xs={12}
                                       xl={6}>
                                     <Stack gap={2}>
                                         <FormTextField
@@ -217,7 +217,6 @@ const Page = () => {
                                             disabled={formik.isSubmitting || !formik.values.absolute_xpath}
                                             error={formik.touched['parent_node'] && formik.errors['parent_node']}
                                             isOptionEqualToValue={(option, value) => option.absolute_xpath === value}
-                                            // getOptionLabel={option => option?.absolute_xpath ?? ''}
                                             onBlur={formik.handleBlur}
                                             defaultValue={''}
                                             onChange={(e, value) => formik.setFieldValue('parent_node', value)}

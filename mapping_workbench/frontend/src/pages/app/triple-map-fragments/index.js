@@ -5,13 +5,9 @@ import AddIcon from '@mui/icons-material/Add';
 import UploadIcon from '@mui/icons-material/Upload';
 
 import Card from '@mui/material/Card';
-import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import SvgIcon from '@mui/material/SvgIcon';
 import Divider from '@mui/material/Divider';
-import Typography from '@mui/material/Typography';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
@@ -22,7 +18,6 @@ import {RouterLink} from 'src/components/router-link';
 import useItemsSearch from 'src/hooks/use-items-search';
 import {useItemsStore} from 'src/hooks/use-items-store';
 import {TableSearchBar} from "src/sections/components/table-search-bar";
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {ListTable} from "src/sections/app/generic-triple-map-fragment/list-table";
 import {FileUploader} from "src/sections/app/generic-triple-map-fragment/file-uploader";
 import {genericTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/generic';
