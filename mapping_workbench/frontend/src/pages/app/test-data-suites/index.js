@@ -61,41 +61,46 @@ const Page = () => {
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
+            <Stack spacing={4}>
             <Stack>
                 <SourceAndTargetTabs/>
             </Stack>
-            <Stack spacing={4}>
-                <Stack
-                    alignItems="center"
-                    direction="row"
-                    justifyContent='end'
-                    spacing={3}
-                >
-                    <Button
-                        type='link'
-                        onClick={uploadDialog.handleOpen}
-                        startIcon={(
-                            <UploadIcon/>
-                        )}
-                        id="import-test-data_button"
+                <Stack direction='row'
+                       justifyContent='space-between'>
+                    <Card sx={{p:0}}>
+                        <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                        value={itemsSearch.state.search[0]}/>
+                    </Card>
+                    <Stack
+                        alignItems="center"
+                        direction="row"
+                        justifyContent='end'
+                        spacing={3}
                     >
-                        Import Test Data Suites
-                    </Button>
-                    <Button
-                        component={RouterLink}
-                        href={paths.app[sectionApi.section].create}
-                        startIcon={(
-                            <AddIcon/>
-                        )}
-                        variant="contained"
-                        id="add_button"
-                    >
-                        Create Test Data Suite
-                    </Button>
+                        <Button
+                            type='link'
+                            onClick={uploadDialog.handleOpen}
+                            startIcon={(
+                                <UploadIcon/>
+                            )}
+                            id="import-test-data_button"
+                        >
+                            Import Test Data Suites
+                        </Button>
+                        <Button
+                            component={RouterLink}
+                            href={paths.app[sectionApi.section].create}
+                            startIcon={(
+                                <AddIcon/>
+                            )}
+                            variant="contained"
+                            id="add_button"
+                        >
+                            Create Test Data Suite
+                        </Button>
+                    </Stack>
                 </Stack>
                 <Card>
-                    <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
-                                    value={itemsSearch.state.search[0]}/>
                     <Divider/>
                     <TestDataCollectionListTable
                         onPageChange={itemsSearch.handlePageChange}

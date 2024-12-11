@@ -68,9 +68,7 @@ export const ItemSearch = (props) => {
             placeholder="Search"
             startAdornment={(
               <InputAdornment position="start">
-                <SvgIcon>
                   <SearchMdIcon />
-                </SvgIcon>
               </InputAdornment>
             )}
           />
