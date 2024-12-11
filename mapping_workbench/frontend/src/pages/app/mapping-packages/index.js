@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-
+import {saveAs} from 'file-saver';
 import AddIcon from '@mui/icons-material/Add';
 import UploadIcon from '@mui/icons-material/Upload';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -73,7 +73,7 @@ const Page = () => {
         const toastId = toastLoad(`Exporting Source Files ... `)
         projectsApi.exportSourceFiles()
             .then(response => {
-                const filename =  `src_${sessionApi.getSessionProject()}.zip`;
+                const filename = `src_${sessionApi.getSessionProject()}.zip`;
                 saveAs(new Blob([response], {type: "application/x-zip-compressed"}), filename);
                 toastSuccess(`Source Files successfully exported.`, toastId)
             }).catch(err => toastError(`Exporting Source Files failed: ${err.message}.`, toastId))

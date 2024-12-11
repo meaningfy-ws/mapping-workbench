@@ -148,7 +148,7 @@ async def import_notice_types_versioned_view(notice_type_structure: NoticeTypeSt
 
 async def import_eforms_fields_from_folder(eforms_fields_folder_path: pathlib.Path,
                                            project_link: Link[Document] = None,
-                                           import_notice_type_views: bool = True
+                                           import_notice_type_views: bool = False
                                            ):
     notice_types_dir_path = eforms_fields_folder_path / NOTICE_TYPES_PATH_NAME
     fields_dir_path = eforms_fields_folder_path / FIELDS_PATH_NAME
