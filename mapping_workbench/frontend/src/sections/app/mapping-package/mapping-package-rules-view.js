@@ -1,11 +1,14 @@
-import Divider from '@mui/material/Divider';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import {useEffect, useState} from "react";
+
+import FilterListIcon from '@mui/icons-material/FilterList';
+
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
-import {useEffect, useState} from "react";
+import Button from '@mui/material/Button';
+import Popover from '@mui/material/Popover';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
-import Card from "@mui/material/Card";
 
 import {
     conceptualMappingRulesApi as sectionApi,
@@ -14,7 +17,6 @@ import {
 import useItemsSearch from '../../../hooks/use-items-search';
 import {Filter} from '../../components/filter';
 import {TableSearchBar} from '../../components/table-search-bar';
-import {ListSearch as MappingRulesListSearch} from "../conceptual-mapping-rule/list-search";
 import {ListTable as MappingRulesListTable} from "../conceptual-mapping-rule/list-table";
 
 
@@ -67,9 +69,9 @@ const useMappingRulesStore = (mappingPackage) => {
         handleItemsGet, ...state
     };
 };
-const MappingPackageRulesView = (props) => {
+const MappingPackageRulesView = ({id}) => {
     const [detailedView, setDetailedView] = useState(true)
-    const {id} = props
+    const [filterPopover, setFilterPopover] = useState(null)
 
     const mappingRulesStore = useMappingRulesStore(id);
     // const mappingRulesSearch = useMappingRulesSearch(mappingRulesStore);
@@ -88,23 +90,41 @@ const MappingPackageRulesView = (props) => {
 
 
     return (
-        <Card>
-            <TableSearchBar onChange={e => mappingRulesSearch.handleSearchItems([e])}
-                            value={mappingRulesSearch.state.search[0]}/>
-            <Divider/>
+        <>
             <Stack direction='row'
-                   padding={3}>
+                   spacing={3}>
+                <Paper>
+                    <TableSearchBar onChange={e => mappingRulesSearch.handleSearchItems([e])}
+                                    value={mappingRulesSearch.state.search[0]}/>
+                </Paper>
+                <Paper>
+                    <Button variant='text'
+                            color={mappingRulesSearch.state.filters.terms ? 'primary' : 'inherit'}
+                            onClick={e => setFilterPopover(e.currentTarget)}
+                            startIcon={<FilterListIcon/>}>
+                        Filter
+                    </Button>
+                    <Popover
+                        id={'filter-popover'}
+                        open={!!filterPopover}
+                        anchorEl={filterPopover}
+                        onClose={() => setFilterPopover(null)}
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'left',
+                        }}
+                    >
+                        <Filter title={'Terms:'}
+                                values={filterValues}
+                                value={mappingRulesSearch.state.filters.terms}
+                                onValueChange={e => mappingRulesSearch.handleFiltersChange({terms: e})}/>
+                    </Popover>
+                </Paper>
                 <FormControlLabel control={<Switch checked={detailedView}
                                                    onChange={e => setDetailedView(e.target.checked)}/>}
                                   label='Detailed View'/>
-                <Paper variant='outlined'>
-                    <Filter title={'Terms:'}
-                            values={filterValues}
-                            value={mappingRulesSearch.state.filters.terms}
-                            onValueChange={e => mappingRulesSearch.handleFiltersChange({terms: e})}/>
-                </Paper>
+
             </Stack>
-            <Divider/>
             <MappingRulesListTable
                 onPageChange={mappingRulesSearch.handlePageChange}
                 onRowsPerPageChange={mappingRulesSearch.handleRowsPerPageChange}
@@ -118,7 +138,7 @@ const MappingPackageRulesView = (props) => {
                 onPackagesUpdate={handlePackagesUpdate}
                 detailedView={detailedView}
             />
-        </Card>
+        </>
     )
 }
 

@@ -1,62 +1,13 @@
 import {useEffect, useState} from "react";
 
+import Paper from '@mui/material/Paper';
 import Stack from "@mui/material/Stack";
 import Alert from "@mui/material/Alert";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
 
-import {mappingPackageStatesApi as sectionApi} from 'src/api/mapping-packages/states';
-import useItemsSearch from '../../../../hooks/use-items-search';
-import {TableSearchBar} from '../../../components/table-search-bar';
 import {ListTable} from "./list-table";
-import {FileCollectionListSearch} from "../../file-manager/file-collection-list-search";
-
-//
-//
-// const useItemsSearch = () => {
-//     const [state, setState] = useState({
-//         filters: {},
-//         page: sectionApi.DEFAULT_PAGE,
-//         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE,
-//         sortField: "",
-//         sortDirection: undefined,
-//     });
-//
-//     const handleFiltersChange = filters => {
-//         setState(prevState => ({
-//             ...prevState,
-//             filters,
-//             page: 0
-//         }));
-//     }
-//
-//     const handlePageChange = (event, page) => {
-//         setState(prevState => ({
-//             ...prevState,
-//             page
-//         }));
-//     };
-//
-//     const handleRowsPerPageChange = (event) => {
-//         setState(prevState => ({
-//             ...prevState,
-//             rowsPerPage: parseInt(event.target.value, 10)
-//         }));
-//     };
-//
-//     const handleSort = (sortField) => {
-//         setState(prevState => ({...prevState, sortField, sortDirection: state.sortField === sortField && prevState.sortDirection === -1 ? 1 : -1 }))
-//     }
-//
-//     return {
-//         handleFiltersChange,
-//         handlePageChange,
-//         handleRowsPerPageChange,
-//         handleSort,
-//         state
-//     };
-// };
-
+import useItemsSearch from 'src/hooks/use-items-search';
+import {TableSearchBar} from 'src/sections/components/table-search-bar';
+import {mappingPackageStatesApi as sectionApi} from 'src/api/mapping-packages/states';
 
 const useItemsStore = (id, searchState) => {
     const [state, setState] = useState({
@@ -95,10 +46,13 @@ const StatesView = ({id}) => {
     const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, SEARCH_COLUMNS);
 
     return (
-        <Card sx={{mt: 3}}>
-            <CardContent>
-                <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
-                                value={itemsSearch.state.search[0]}/>
+            <Stack spacing={3}>
+                <Stack direction='row'>
+                    <Paper>
+                        <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                        value={itemsSearch.state.search[0]}/>
+                    </Paper>
+                </Stack>
                 {
                     itemsStore.itemsCount ?
                         <ListTable
@@ -118,8 +72,7 @@ const StatesView = ({id}) => {
                             <Alert severity="info">No Data !</Alert>
                         </Stack>
                 }
-            </CardContent>
-        </Card>
+            </Stack>
     )
 }
 
