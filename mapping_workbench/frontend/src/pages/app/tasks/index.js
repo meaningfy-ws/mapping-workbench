@@ -3,12 +3,10 @@ import {useEffect, useState} from 'react';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
-import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
+import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
-import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 
@@ -93,32 +91,36 @@ export const Page = () => {
         <>
             <Seo title={`App: ${sectionApi.TASKS_TITLE} List`}/>
             <Stack spacing={4}>
+                <Stack spacing={1}>
+                    <Typography variant="h4">
+                        {sectionApi.TASKS_TITLE}
+                    </Typography>
+                    <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
+                        <Link
+                            color="text.primary"
+                            component={RouterLink}
+                            href={paths.index}
+                            variant="subtitle2"
+                        >
+                            App
+                        </Link>
+                        <Typography
+                            color="text.secondary"
+                            variant="subtitle2"
+                        >
+                            {sectionApi.TASKS_TITLE}
+                        </Typography>
+                    </Breadcrumbs>
+                </Stack>
                 <Stack
                     direction="row"
                     justifyContent="space-between"
                     spacing={4}
                 >
-                    <Stack spacing={1}>
-                        <Typography variant="h4">
-                            {sectionApi.TASKS_TITLE}
-                        </Typography>
-                        <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.index}
-                                variant="subtitle2"
-                            >
-                                App
-                            </Link>
-                            <Typography
-                                color="text.secondary"
-                                variant="subtitle2"
-                            >
-                                {sectionApi.TASKS_TITLE}
-                            </Typography>
-                        </Breadcrumbs>
-                    </Stack>
+                    <Paper>
+                        <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                        value={itemsSearch.state.search[0]}/>
+                    </Paper>
                     <Stack
                         alignItems="center"
                         direction="row"
@@ -142,11 +144,7 @@ export const Page = () => {
                         </Button>
                     </Stack>
                 </Stack>
-                <Card>
-                    <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
-                                    value={itemsSearch.state.search[0]}
-                                    placeholder='Search by Project Title'/>
-                    <Divider/>
+                <Paper>
                     <TableLoadWrapper dataState={{load: state.load}}
                                       lines={5}
                                       data={state.items}>
@@ -164,7 +162,7 @@ export const Page = () => {
                             onDeleteAction={handleDeleteAction}
                         />
                     </TableLoadWrapper>
-                </Card>
+                </Paper>
             </Stack>
         </>
     )

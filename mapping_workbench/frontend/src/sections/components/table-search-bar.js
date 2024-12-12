@@ -7,8 +7,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 
-export const TableSearchBar = (props) => {
-    const {onChange, value, placeholder} = props;
+export const TableSearchBar = ({onChange, value, placeholder}) => {
     const [localValue, setLocalValue] = useState(value ?? '')
     const queryRef = useRef(null);
 

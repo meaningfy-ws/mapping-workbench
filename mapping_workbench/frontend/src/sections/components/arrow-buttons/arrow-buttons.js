@@ -20,9 +20,7 @@ const ArrowButton = ({children, id, icon, style, active, href = '#', first, last
     </Link>
 }
 
-const ArrowButtonGroup = ({
-                              children
-                          }) => {
+const ArrowButtonGroup = ({children}) => {
     return <div className={'btn-group'}
                 style={{display: 'flex'}}>
         {children}
