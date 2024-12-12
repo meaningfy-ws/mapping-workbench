@@ -1,3 +1,4 @@
+import Paper from '@mui/material/Paper';
 import {useEffect, useState} from 'react';
 import {saveAs} from 'file-saver';
 
@@ -86,10 +87,10 @@ const Page = () => {
                     justifyContent="space-between"
                     spacing={4}
                 >
-                    <Card>
+                    <Paper>
                         <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
                                         value={itemsSearch.state.search[0]}/>
-                    </Card>
+                    </Paper>
                     <Stack
                         alignItems="center"
                         direction="row"
@@ -121,19 +122,17 @@ const Page = () => {
                     </Stack>
 
                 </Stack>
-                <Card>
-                    <ListTable
-                        onPageChange={itemsSearch.handlePageChange}
-                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        page={itemsSearch.state.page}
-                        items={itemsSearch.pagedItems}
-                        count={itemsSearch.count}
-                        onSort={itemsSearch.handleSort}
-                        sort={itemsSearch.state.sort}
-                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                        sectionApi={sectionApi}
-                    />
-                </Card>
+                <ListTable
+                    onPageChange={itemsSearch.handlePageChange}
+                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                    page={itemsSearch.state.page}
+                    items={itemsSearch.pagedItems}
+                    count={itemsSearch.count}
+                    onSort={itemsSearch.handleSort}
+                    sort={itemsSearch.state.sort}
+                    rowsPerPage={itemsSearch.state.rowsPerPage}
+                    sectionApi={sectionApi}
+                />
             </Stack>
 
             <PackageImporter

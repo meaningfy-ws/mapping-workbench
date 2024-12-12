@@ -1,33 +1,30 @@
 import {Fragment, useState} from 'react';
 import PropTypes from 'prop-types';
 
-import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
-import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
-import CardContent from '@mui/material/CardContent';
-import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
-import SvgIcon from '@mui/material/SvgIcon';
+import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
+import Button from "@mui/material/Button";
+import Divider from '@mui/material/Divider';
+import TableRow from '@mui/material/TableRow';
+import TableHead from '@mui/material/TableHead';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import Button from "@mui/material/Button";
+import CardContent from '@mui/material/CardContent';
 
-import {PropertyList} from 'src/components/property-list';
-import {PropertyListItem} from 'src/components/property-list-item';
+import {useProjects} from "src/hooks/use-projects";
 import {Scrollbar} from 'src/components/scrollbar';
+import timeTransformer from "src/utils/time-transformer";
+import {useGlobalState} from "src/hooks/use-global-state";
+import {PropertyList} from 'src/components/property-list';
+import {SeverityPill} from "src/components/severity-pill";
+import {PropertyListItem} from 'src/components/property-list-item';
+import {ChevronButton} from 'src/sections/components/chevron-button';
+import TablePagination from "src/sections/components/table-pagination";
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
+import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import {SeverityPill} from "../../../components/severity-pill";
-import {useProjects} from "../../../hooks/use-projects";
-import TablePagination from "../../components/table-pagination";
-import {useGlobalState} from "../../../hooks/use-global-state";
-import timeTransformer from "../../../utils/time-transformer";
-import TableSorterHeader from "../../components/table-sorter-header";
-import ConfirmDialog from "../../../components/app/dialog/confirm-dialog";
 
 
 export const ListTable = (props) => {
@@ -62,18 +59,17 @@ export const ListTable = (props) => {
         )
     }
     return (
-        <>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-                showFirstButton
-                showLastButton
-            >
+        <TablePagination component="div"
+                         count={count}
+                         onPageChange={onPageChange}
+                         onRowsPerPageChange={onRowsPerPageChange}
+                         page={page}
+                         rowsPerPage={rowsPerPage}
+                         rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+                         showFirstButton
+                         showLastButton
+        >
+            <Paper>
                 <Scrollbar>
                     <Table sx={{minWidth: 1200}}>
                         <TableHead>
@@ -125,11 +121,8 @@ export const ListTable = (props) => {
                                                 }}
                                                 width="25%"
                                             >
-                                                <IconButton onClick={() => handleItemToggle(item_id)}>
-                                                    <SvgIcon>
-                                                        {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
-                                                    </SvgIcon>
-                                                </IconButton>
+                                                <ChevronButton onClick={() => handleItemToggle(item_id)}
+                                                               isCurrent={isCurrent}/>
                                             </TableCell>
                                             <TableCell
                                                 width="25%"
@@ -298,8 +291,8 @@ export const ListTable = (props) => {
                         </TableBody>
                     </Table>
                 </Scrollbar>
-            </TablePagination>
-        </>
+            </Paper>
+        </TablePagination>
     );
 
 };

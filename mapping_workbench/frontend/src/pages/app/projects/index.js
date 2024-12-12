@@ -1,7 +1,7 @@
 import AddIcon from '@mui/icons-material/Add';
 
-import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
+import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -53,11 +53,11 @@ export const Page = () => {
                     justifyContent="space-between"
                     spacing={4}
                 >
-                    <Card>
+                    <Paper>
                         <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
                                         value={itemsSearch.state.search[0]}
-                        placeholder='Search by Project Title'/>
-                    </Card>
+                                        placeholder='Search by Project Title'/>
+                    </Paper>
                     <Stack
                         alignItems="center"
                         direction="row"
@@ -74,19 +74,17 @@ export const Page = () => {
                         </Button>
                     </Stack>
                 </Stack>
-                <Card>
-                    <ListTable
-                        onPageChange={itemsSearch.handlePageChange}
-                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        onSort={itemsSearch.handleSort}
-                        sort={itemsSearch.state.sort}
-                        page={itemsSearch.state.page}
-                        items={itemsSearch.pagedItems}
-                        count={itemsSearch.count}
-                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                        sectionApi={sectionApi}
-                    />
-                </Card>
+                <ListTable
+                    onPageChange={itemsSearch.handlePageChange}
+                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                    onSort={itemsSearch.handleSort}
+                    sort={itemsSearch.state.sort}
+                    page={itemsSearch.state.page}
+                    items={itemsSearch.pagedItems}
+                    count={itemsSearch.count}
+                    rowsPerPage={itemsSearch.state.rowsPerPage}
+                    sectionApi={sectionApi}
+                />
             </Stack>
         </>
     )

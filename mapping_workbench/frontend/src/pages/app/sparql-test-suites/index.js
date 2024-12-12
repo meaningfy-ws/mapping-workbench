@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 
 import AddIcon from '@mui/icons-material/Add';
 
-import Card from '@mui/material/Card';
+import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 
@@ -63,10 +63,10 @@ const Page = () => {
                     justifyContent="space-between"
                     spacing={4}
                 >
-                    <Card>
+                    <Paper>
                         <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
                                         value={itemsSearch.state.search[0]}/>
-                    </Card>
+                    </Paper>
                     <Stack
                         alignItems="center"
                         direction="row"
@@ -83,23 +83,21 @@ const Page = () => {
                         </Button>
                     </Stack>
                 </Stack>
-                <Card>
-                    <FileCollectionListTable
-                        onPageChange={itemsSearch.handlePageChange}
-                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        page={itemsSearch.state.page}
-                        items={itemsSearch.pagedItems}
-                        itemsForced={itemsStore.force}
-                        count={itemsStore.itemsCount}
-                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                        sort={itemsSearch.state.sort}
-                        onSort={itemsSearch.handleSort}
-                        sectionApi={sectionApi}
-                        getItems={itemsStore.handleItemsGet}
-                        selectable={selectable}
-                        fileResourceApi={fileResourcesApi}
-                    />
-                </Card>
+                <FileCollectionListTable
+                    onPageChange={itemsSearch.handlePageChange}
+                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                    page={itemsSearch.state.page}
+                    items={itemsSearch.pagedItems}
+                    itemsForced={itemsStore.force}
+                    count={itemsStore.itemsCount}
+                    rowsPerPage={itemsSearch.state.rowsPerPage}
+                    sort={itemsSearch.state.sort}
+                    onSort={itemsSearch.handleSort}
+                    sectionApi={sectionApi}
+                    getItems={itemsStore.handleItemsGet}
+                    selectable={selectable}
+                    fileResourceApi={fileResourcesApi}
+                />
             </Stack>
         </>
     )

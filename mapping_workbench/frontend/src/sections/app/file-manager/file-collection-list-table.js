@@ -2,8 +2,6 @@ import Paper from '@mui/material/Paper';
 import {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-
 import Box from "@mui/system/Box";
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
@@ -11,13 +9,11 @@ import Table from '@mui/material/Table';
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Divider from '@mui/material/Divider';
-import SvgIcon from '@mui/material/SvgIcon';
 import Checkbox from "@mui/material/Checkbox";
 import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
-import IconButton from '@mui/material/IconButton';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 

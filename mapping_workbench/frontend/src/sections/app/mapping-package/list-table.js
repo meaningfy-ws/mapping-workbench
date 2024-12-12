@@ -2,22 +2,19 @@ import {Fragment, useState} from 'react';
 import {useRouter} from "next/router";
 import PropTypes from 'prop-types';
 
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-
 import Box from "@mui/system/Box";
 import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Divider from '@mui/material/Divider';
-import SvgIcon from '@mui/material/SvgIcon';
 import Checkbox from "@mui/material/Checkbox";
 import TableRow from '@mui/material/TableRow';
 import TableHead from '@mui/material/TableHead';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
 import CardContent from '@mui/material/CardContent';
 import FormControlLabel from "@mui/material/FormControlLabel";
 
@@ -32,6 +29,7 @@ import ConfirmDialog from "src/components/app/dialog/confirm-dialog";
 import TablePagination from "src/sections/components/table-pagination";
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
+import {ChevronButton} from '../../components/chevron-button';
 import TableSorterHeader from '../../components/table-sorter-header';
 import {MappingPackageProcessForm} from './components/mapping-package-process-form';
 import {MappingPackagesBulkActions} from './components/mapping-packages-bulk-actions';
@@ -87,15 +85,8 @@ const MappingPackageRowFragment = (props) => {
                             checked={isItemSelected(item_id)}
                             onClick={event => handleItemSelect(event.target.checked, item_id)}
                         />
-                        <IconButton onClick={() => handleItemToggle(item_id)}
-                                    id="expand_button">
-                            <SvgIcon sx={{
-                                transform: isCurrent ? 'rotate(90deg)' : '',
-                                transition: '0.2s linear'
-                            }}>
-                                <ChevronRightIcon/>
-                            </SvgIcon>
-                        </IconButton>
+                        <ChevronButton onClick={() => handleItemToggle(item_id)}
+                                       isCurrent={isCurrent}/>
                     </TableCell>
 
                     <TableCell width="25%">
@@ -247,7 +238,6 @@ export const ListTable = (props) => {
         setSelectedItems(items => checked ? [...items, itemId] : items.filter(item => item !== itemId));
     }
 
-
     const handleItemToggle = itemId => {
         setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
     }
@@ -282,7 +272,7 @@ export const ListTable = (props) => {
     }
 
     return (
-        <div>
+        <>
             <MappingPackagesBulkActions items={items.filter(item => selectedItems.includes(item._id))}
                                         disabled={!selectedItems.length}/>
             <Divider/>
@@ -297,54 +287,56 @@ export const ListTable = (props) => {
                 showFirstButton
                 showLastButton
             >
-                <Scrollbar>
-                    <Table sx={{minWidth: 1200}}>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>
-                                    <Checkbox checked={allChecked}
-                                              indeterminate={!!selectedItems.length && !allChecked}
-                                              onChange={(event) => handleItemsSelectAll(event.target.checked)}
-                                    />
-                                </TableCell>
-                                <SorterHeader width="25%"
-                                              fieldName='title'/>
-                                <SorterHeader fieldName='identifier'/>
-                                <SorterHeader fieldName='created_at'
-                                              label='created'
-                                              align="left"/>
-                                <TableCell align="center">
-                                    Actions
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {items.map((item) => {
-                                const item_id = item._id;
-                                const isCurrent = item_id === currentItem;
+                <Paper>
+                    <Scrollbar>
+                        <Table sx={{minWidth: 1200}}>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>
+                                        <Checkbox checked={allChecked}
+                                                  indeterminate={!!selectedItems.length && !allChecked}
+                                                  onChange={(event) => handleItemsSelectAll(event.target.checked)}
+                                        />
+                                    </TableCell>
+                                    <SorterHeader width="25%"
+                                                  fieldName='title'/>
+                                    <SorterHeader fieldName='identifier'/>
+                                    <SorterHeader fieldName='created_at'
+                                                  label='created'
+                                                  align="left"/>
+                                    <TableCell align="center">
+                                        Actions
+                                    </TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {items.map((item) => {
+                                    const item_id = item._id;
+                                    const isCurrent = item_id === currentItem;
 
-                                return (
-                                    <MappingPackageRowFragment
-                                        key={item_id}
-                                        item_id={item_id}
-                                        item={item}
-                                        isCurrent={isCurrent}
-                                        handleItemToggle={handleItemToggle}
-                                        handleItemSelect={handleItemSelect}
-                                        handleGoLastState={handleGoLastState}
-                                        handleDeleteAction={handleDeleteAction}
-                                        isItemSelected={isItemSelected}
-                                        timeSetting={timeSetting}
-                                        sectionApi={sectionApi}
-                                        selectable={selectable}
-                                    />
-                                );
-                            })}
-                        </TableBody>
-                    </Table>
-                </Scrollbar>
+                                    return (
+                                        <MappingPackageRowFragment
+                                            key={item_id}
+                                            item_id={item_id}
+                                            item={item}
+                                            isCurrent={isCurrent}
+                                            handleItemToggle={handleItemToggle}
+                                            handleItemSelect={handleItemSelect}
+                                            handleGoLastState={handleGoLastState}
+                                            handleDeleteAction={handleDeleteAction}
+                                            isItemSelected={isItemSelected}
+                                            timeSetting={timeSetting}
+                                            sectionApi={sectionApi}
+                                            selectable={selectable}
+                                        />
+                                    );
+                                })}
+                            </TableBody>
+                        </Table>
+                    </Scrollbar>
+                </Paper>
             </TablePagination>
-        </div>
+        </>
     );
 };
 
