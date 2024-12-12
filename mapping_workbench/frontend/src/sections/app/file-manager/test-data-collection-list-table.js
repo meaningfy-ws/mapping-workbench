@@ -1,3 +1,4 @@
+import Paper from '@mui/material/Paper';
 import {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 
@@ -336,28 +337,30 @@ export const TestDataCollectionListTable = (props) => {
         )
     }
 
-    return (<>
-            <Box sx={{p: 1}}>
-                <MappingPackagesBulkAssigner
-                    sectionApi={sectionApi}
-                    idsToAssignTo={selectedItems}
-                    initProjectMappingPackages={projectMappingPackages}
-                    disabled={selectedItems.length === 0}
-                    onMappingPackagesAssign={onMappingPackagesAssign}
-                />
-            </Box>
-            <Divider/>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-                showFirstButton
-                showLastButton
-            >
+    return (
+        <TablePagination
+            component="div"
+            count={count}
+            onPageChange={onPageChange}
+            onRowsPerPageChange={onRowsPerPageChange}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+            showFirstButton
+            showLastButton
+        >
+            <Paper>
+                <Box sx={{p: 1}}>
+                    <MappingPackagesBulkAssigner
+                        sectionApi={sectionApi}
+                        idsToAssignTo={selectedItems}
+                        initProjectMappingPackages={projectMappingPackages}
+                        disabled={selectedItems.length === 0}
+                        onMappingPackagesAssign={onMappingPackagesAssign}
+                    />
+                </Box>
+                <Divider/>
+
                 <Scrollbar>
                     <Table sx={{minWidth: 1200}}>
                         <TableHead>
@@ -368,16 +371,11 @@ export const TestDataCollectionListTable = (props) => {
                                               onChange={(event) => handleItemsSelectAll(event.target.checked)}
                                     />
                                 </TableCell>
-                                <SorterHeader width="25%" fieldName='title'/>
-                                {/*<TableCell width="25%">*/}
-                                {/*    Title*/}
-                                {/*</TableCell>*/}
+                                <SorterHeader width="25%"
+                                              fieldName='title'/>
                                 <TableCell>
                                     Packages
                                 </TableCell>
-                                {/*<TableCell align="left">*/}
-                                {/*    Created*/}
-                                {/*</TableCell>*/}
                                 <SorterHeader fieldName='created_at'
                                               title='created'/>
                                 <TableCell align="right">
@@ -408,8 +406,8 @@ export const TestDataCollectionListTable = (props) => {
                         </TableBody>
                     </Table>
                 </Scrollbar>
-            </TablePagination>
-        </>
+            </Paper>
+        </TablePagination>
     );
 };
 

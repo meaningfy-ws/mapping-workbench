@@ -62,12 +62,12 @@ const Page = () => {
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
             <Stack spacing={4}>
-            <Stack>
-                <SourceAndTargetTabs/>
-            </Stack>
+                <Stack>
+                    <SourceAndTargetTabs/>
+                </Stack>
                 <Stack direction='row'
                        justifyContent='space-between'>
-                    <Card sx={{p:0}}>
+                    <Card sx={{p: 0}}>
                         <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
                                         value={itemsSearch.state.search[0]}/>
                     </Card>
@@ -100,22 +100,19 @@ const Page = () => {
                         </Button>
                     </Stack>
                 </Stack>
-                <Card>
-                    <Divider/>
-                    <TestDataCollectionListTable
-                        onPageChange={itemsSearch.handlePageChange}
-                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        sort={itemsSearch.state.sort}
-                        onSort={itemsSearch.handleSort}
-                        page={itemsSearch.state.page}
-                        items={itemsSearch.pagedItems}
-                        itemsForced={itemsStore.force}
-                        count={itemsStore.itemsCount}
-                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                        sectionApi={sectionApi}
-                        getItems={itemsStore.handleItemsGet}
-                    />
-                </Card>
+                <TestDataCollectionListTable
+                    onPageChange={itemsSearch.handlePageChange}
+                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                    sort={itemsSearch.state.sort}
+                    onSort={itemsSearch.handleSort}
+                    page={itemsSearch.state.page}
+                    items={itemsSearch.pagedItems}
+                    itemsForced={itemsStore.force}
+                    count={itemsSearch.count}
+                    rowsPerPage={itemsSearch.state.rowsPerPage}
+                    sectionApi={sectionApi}
+                    getItems={itemsStore.handleItemsGet}
+                />
                 <FileCollectionUploader
                     onClose={uploadDialog.handleClose}
                     open={uploadDialog.open}

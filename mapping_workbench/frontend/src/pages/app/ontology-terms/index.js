@@ -116,20 +116,17 @@ const Page = () => {
                     </Stack>
                 </Grid>
                 <Grid xs={12}>
-                    <Card>
-                        <ListTable
-                            onPageChange={itemsSearch.handlePageChange}
-                            onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                            sort={itemsSearch.state.sort}
-                            onSort={itemsSearch.handleSort}
-                            page={itemsSearch.state.page}
-                            items={itemsSearch.pagedItems}
-                            count={itemsStore.itemsCount}
-                            rowsPerPage={itemsSearch.state.rowsPerPage}
-                            sectionApi={sectionApi}
-                        />
-                    </Card>
-
+                    <ListTable
+                        onPageChange={itemsSearch.handlePageChange}
+                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                        sort={itemsSearch.state.sort}
+                        onSort={itemsSearch.handleSort}
+                        page={itemsSearch.state.page}
+                        items={itemsSearch.pagedItems}
+                        count={itemsStore.itemsCount}
+                        rowsPerPage={itemsSearch.state.rowsPerPage}
+                        sectionApi={sectionApi}
+                    />
                 </Grid>
             </Grid>
         </>

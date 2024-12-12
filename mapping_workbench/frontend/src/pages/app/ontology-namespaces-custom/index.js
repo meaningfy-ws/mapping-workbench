@@ -55,19 +55,17 @@ const Page = () => {
                         </Button>
                     </Stack>
                 </Stack>
-                <Card>
-                    <ListTable
-                        onPageChange={itemsSearch.handlePageChange}
-                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        page={itemsSearch.state.page}
-                        items={itemsSearch.pagedItems}
-                        count={itemsSearch.count}
-                        sort={itemsSearch.state.sort}
-                        onSort={itemsSearch.handleSort}
-                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                        sectionApi={sectionApi}
-                    />
-                </Card>
+                <ListTable
+                    onPageChange={itemsSearch.handlePageChange}
+                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                    page={itemsSearch.state.page}
+                    items={itemsSearch.pagedItems}
+                    count={itemsSearch.count}
+                    sort={itemsSearch.state.sort}
+                    onSort={itemsSearch.handleSort}
+                    rowsPerPage={itemsSearch.state.rowsPerPage}
+                    sectionApi={sectionApi}
+                />
             </Stack>
         </>
     )

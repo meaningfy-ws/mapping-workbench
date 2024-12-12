@@ -1,3 +1,4 @@
+import Paper from '@mui/material/Paper';
 import PropTypes from 'prop-types';
 
 import Table from '@mui/material/Table';
@@ -54,18 +55,18 @@ export const ListTable = (props) => {
     }
 
     return (
-        <div>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-                showFirstButton
-                showLastButton
-            >
+        <TablePagination
+            component="div"
+            count={count}
+            onPageChange={onPageChange}
+            onRowsPerPageChange={onRowsPerPageChange}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+            showFirstButton
+            showLastButton
+        >
+            <Paper>
                 <Scrollbar>
                     <Table sx={{minWidth: 1200}}>
                         <TableHead>
@@ -116,8 +117,8 @@ export const ListTable = (props) => {
                         </TableBody>
                     </Table>
                 </Scrollbar>
-            </TablePagination>
-        </div>
+            </Paper>
+        </TablePagination>
     );
 };
 

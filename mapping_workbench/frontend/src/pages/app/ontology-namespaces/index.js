@@ -62,19 +62,17 @@ const Page = () => {
                         </Button>
                     </Stack>
                 </Stack>
-                <Card>
-                    <ListTable
-                        onPageChange={itemsSearch.handlePageChange}
-                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        page={itemsSearch.state.page}
-                        items={itemsSearch.pagedItems}
-                        count={itemsSearch.count}
-                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                        sort={itemsSearch.state.sort}
-                        onSort={itemsSearch.handleSort}
-                        sectionApi={sectionApi}
-                    />
-                </Card>
+                <ListTable
+                    onPageChange={itemsSearch.handlePageChange}
+                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                    page={itemsSearch.state.page}
+                    items={itemsSearch.pagedItems}
+                    count={itemsSearch.count}
+                    rowsPerPage={itemsSearch.state.rowsPerPage}
+                    sort={itemsSearch.state.sort}
+                    onSort={itemsSearch.handleSort}
+                    sectionApi={sectionApi}
+                />
                 <OntologyNamespacesCustom/>
             </Stack>
         </>
