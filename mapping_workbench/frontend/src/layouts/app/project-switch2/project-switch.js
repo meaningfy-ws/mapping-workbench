@@ -1,11 +1,11 @@
-import Menu from '@mui/material/Menu';
-import {Box} from '@mui/system';
+import Tooltip from '@mui/material/Tooltip';
 import {useContext, useState} from "react";
 
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
+import Menu from '@mui/material/Menu';
 import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import {useTheme} from '@mui/material/styles';
@@ -13,11 +13,11 @@ import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
-import {Scrollbar} from '../../../components/scrollbar';
 
-import {ProjectsContext} from "../../../contexts/projects";
-import {useRouter} from "next/router";
 import {paths} from 'src/paths';
+import {useRouter} from "next/router";
+import {Scrollbar} from 'src/components/scrollbar';
+import {ProjectsContext} from "src/contexts/projects";
 
 export const ProjectSwitch = ({small}) => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -42,26 +42,30 @@ export const ProjectSwitch = ({small}) => {
         setAnchorEl(null);
     };
 
+    const projectName = projectsStore.items?.find(project => project._id === projectsStore.sessionProject)?.title
     return (
         <Stack sx={{px: 2}}>
-            <Stack onClick={handleClick}
-                   id='project_switch'
-                   direction='row'
-                   alignItems='center'
-                   justifyContent='center'
-                   gap={3}
-                   color={'#1D2939'}
-                   sx={{
-                       backgroundColor: theme.palette.primary.light,
-                       borderRadius: '8px',
-                       p: '9px',
-                       cursor: 'pointer'
-                   }}>
-                {!small && projectsStore.items?.find(project => project._id === projectsStore.sessionProject)?.title}
-                <ArrowForwardIosIcon color='primary'
-                                     fontWeight='bold'
-                                     fontSize='small'/>
-            </Stack>
+            <Tooltip title={small && projectName}>
+
+                <Stack onClick={handleClick}
+                       id='project_switch'
+                       direction='row'
+                       alignItems='center'
+                       justifyContent='center'
+                       gap={3}
+                       color={'#1D2939'}
+                       sx={{
+                           backgroundColor: theme.palette.primary.light,
+                           borderRadius: '8px',
+                           p: '9px',
+                           cursor: 'pointer'
+                       }}>
+                    {!small && projectName}
+                    <ArrowForwardIosIcon color='primary'
+                                         fontWeight='bold'
+                                         fontSize='small'/>
+                </Stack>
+            </Tooltip>
             <Menu
                 id={'project_switch_popover'}
                 open={!!anchorEl}
