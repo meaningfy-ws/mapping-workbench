@@ -1,24 +1,20 @@
-import Paper from '@mui/material/Paper';
 import {Fragment, useState} from 'react';
 import PropTypes from 'prop-types';
 
-import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
-import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
-import CardContent from '@mui/material/CardContent';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import SvgIcon from '@mui/material/SvgIcon';
 import Table from '@mui/material/Table';
+import Paper from '@mui/material/Paper';
+import Divider from '@mui/material/Divider';
+import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
+import CardContent from '@mui/material/CardContent';
 
 import {Scrollbar} from 'src/components/scrollbar';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
-
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
+import {ChevronButton} from '../../components/chevron-button';
 import TablePagination from "../../components/table-pagination";
 import TableSorterHeader from "../../components/table-sorter-header";
 
@@ -113,11 +109,8 @@ export const ListTable = (props) => {
                                                 }}
                                                 width="25%"
                                             >
-                                                <IconButton onClick={() => handleItemToggle(item_id)}>
-                                                    <SvgIcon>
-                                                        {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
-                                                    </SvgIcon>
-                                                </IconButton>
+                                                <ChevronButton onClick={() => handleItemToggle(item_id)}
+                                                               isCurrent={isCurrent}/>
                                             </TableCell>
                                             <TableCell width="25%">
                                                 <Typography variant="subtitle2">

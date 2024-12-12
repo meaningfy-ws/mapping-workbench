@@ -1,27 +1,21 @@
-import Paper from '@mui/material/Paper';
 import {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
-
-import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
-import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
 
 import {Box} from "@mui/system";
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
 import Stack from "@mui/material/Stack";
 import Table from '@mui/material/Table';
 import Button from "@mui/material/Button";
 import Divider from '@mui/material/Divider';
-import SvgIcon from '@mui/material/SvgIcon';
 import Checkbox from "@mui/material/Checkbox";
 import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
 import CardContent from '@mui/material/CardContent';
-import TableSorterHeader from '../../components/table-sorter-header';
 
 import {FileUploader} from "./file-uploader";
 
@@ -29,6 +23,7 @@ import {paths} from "src/paths";
 import {useRouter} from "src/hooks/use-router";
 import {useDialog} from "src/hooks/use-dialog";
 import {Scrollbar} from 'src/components/scrollbar';
+import {ChevronButton} from 'src/sections/components/chevron-button';
 import timeTransformer from "src/utils/time-transformer";
 import {PropertyList} from "src/components/property-list";
 import {useGlobalState} from "src/hooks/use-global-state";
@@ -37,9 +32,11 @@ import {PropertyListItem} from "src/components/property-list-item";
 import ConfirmDialog from "src/components/app/dialog/confirm-dialog";
 import TablePagination from "src/sections/components/table-pagination";
 import {ListItemActions} from "src/components/app/list/list-item-actions";
+import TableSorterHeader from 'src/sections/components/table-sorter-header';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {testDataFileResourcesApi as fileResourcesApi} from "src/api/test-data-suites/file-resources";
 import {MappingPackagesBulkAssigner} from "src/sections/app/mapping-package/components/mapping-packages-bulk-assigner";
+
 
 export const ListTableRow = (props) => {
     const {
@@ -131,11 +128,8 @@ export const ListTableRow = (props) => {
                         checked={isItemSelected(item_id)}
                         onClick={event => handleItemSelect(event.target.checked, item_id)}
                     />
-                    <IconButton onClick={() => handleItemToggle(item_id)}>
-                        <SvgIcon>
-                            {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
-                        </SvgIcon>
-                    </IconButton>
+                    <ChevronButton onClick={() => handleItemToggle(item_id)}
+                                   isCurrent={isCurrent}/>
                 </TableCell>
                 <TableCell width="25%">
                     <Typography variant="subtitle2">

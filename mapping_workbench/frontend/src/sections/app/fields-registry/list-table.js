@@ -1,19 +1,17 @@
 import {Fragment, useState} from 'react';
 import PropTypes from 'prop-types';
-
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 
 import List from "@mui/material/List";
 import Grid from "@mui/material/Grid";
 import Table from '@mui/material/Table';
+import Paper from '@mui/material/Paper';
 import Divider from '@mui/material/Divider';
-import SvgIcon from '@mui/material/SvgIcon';
 import TableRow from '@mui/material/TableRow';
 import ListItem from "@mui/material/ListItem";
 import TableHead from '@mui/material/TableHead';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 
@@ -21,12 +19,12 @@ import {paths} from "src/paths";
 import {Scrollbar} from 'src/components/scrollbar';
 import {PropertyList} from "src/components/property-list";
 import {PropertyListItem} from "src/components/property-list-item";
-import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
+import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
+import {ChevronButton} from 'src/sections/components/chevron-button';
 import TablePagination from "src/sections/components/table-pagination";
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import {useHighlighterTheme} from "../../../hooks/use-highlighter-theme";
 
 
 export const ListTable = (props) => {
@@ -63,18 +61,18 @@ export const ListTable = (props) => {
     }
 
     return (
-        <div>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-                showFirstButton
-                showLastButton
-            >
+        <TablePagination
+            component="div"
+            count={count}
+            onPageChange={onPageChange}
+            onRowsPerPageChange={onRowsPerPageChange}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+            showFirstButton
+            showLastButton
+        >
+            <Paper>
                 <Scrollbar>
                     <Table sx={{minWidth: 1200}}>
                         <TableHead>
@@ -123,14 +121,8 @@ export const ListTable = (props) => {
                                                 }}
                                                 width="25%"
                                             >
-                                                <IconButton onClick={() => handleItemToggle(item_id)}>
-                                                    <SvgIcon sx={{
-                                                        transform: isCurrent ? 'rotate(90deg)' : '',
-                                                        transition: '0.2s linear'
-                                                    }}>
-                                                        <ChevronRightIcon/>
-                                                    </SvgIcon>
-                                                </IconButton>
+                                                <ChevronButton onClick={() => handleItemToggle(item_id)}
+                                                               isCurrent={isCurrent}/>
                                             </TableCell>
                                             <TableCell>
                                                 <Typography variant="subtitle2">
@@ -258,8 +250,8 @@ export const ListTable = (props) => {
                         </TableBody>
                     </Table>
                 </Scrollbar>
-            </TablePagination>
-        </div>
+            </Paper>
+        </TablePagination>
     );
 };
 
