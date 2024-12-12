@@ -122,7 +122,7 @@ export const ListTableRow = (props) => {
                                 .map(mapping_package =>
                                     <Chip
                                         key={"mapping_package_" + mapping_package.id}
-                                        sx={{p: 0, mb: 1}}
+                                        sx={{p: 0, mr: 1, mb: 1}}
                                         label={mapping_package['title']}
                                     />
                                 )}
@@ -191,7 +191,6 @@ export const ListTableRow = (props) => {
                                         <Box sx={{mt: 2}}>
                                             <Stack divider={<Divider/>}>
                                                 {collectionResources.map(resource =>
-
                                                     <Stack
                                                         alignItems="center"
                                                         direction="row"

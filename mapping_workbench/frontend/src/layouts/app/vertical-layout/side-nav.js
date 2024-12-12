@@ -7,12 +7,11 @@ import Drawer from '@mui/material/Drawer';
 import Divider from '@mui/material/Divider';
 import {useTheme} from '@mui/material/styles';
 
+import {paths} from 'src/paths';
 import {Logo} from 'src/components/logo';
 import {RouterLink} from 'src/components/router-link';
 import {Scrollbar} from 'src/components/scrollbar';
 import {usePathname} from 'src/hooks/use-pathname';
-import {paths} from 'src/paths';
-import {MobileNavSection} from '../mobile-nav/mobile-nav-section';
 import {SideNavSection} from './side-nav-section';
 import {ProjectSwitch} from "../project-switch2";
 import {AppTitle} from "../../../components/app-title";
@@ -157,8 +156,6 @@ export const SideNav = (props) => {
     const projects = useProjects()
 
     const {dashboard, ...menus} = sections
-
-    console.log(sections)
 
     return (
         <Drawer

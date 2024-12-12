@@ -127,8 +127,7 @@ export const Page = () => {
                         <Button
                             id="refresh_button"
                             color="inherit"
-                            startIcon={<SvgIcon><AutorenewIcon/></SvgIcon>}
-                            variant="contained"
+                            startIcon={<AutorenewIcon/>}
                             onClick={handleItemsGet}
                         >
                             Refresh
@@ -136,8 +135,7 @@ export const Page = () => {
                         <Button
                             id="delete_all_button"
                             color="error"
-                            startIcon={<SvgIcon><DeleteOutlineIcon/></SvgIcon>}
-                            variant="contained"
+                            startIcon={<DeleteOutlineIcon/>}
                             onClick={handleDeleteAllTasks}
                         >
                             Delete All Tasks

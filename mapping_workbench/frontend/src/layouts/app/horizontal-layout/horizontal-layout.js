@@ -1,12 +1,15 @@
 import PropTypes from 'prop-types';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import {styled} from '@mui/material/styles';
-import {MobileNav} from '../mobile-nav';
-import {TopNav} from './top-nav';
-import {useMobileNav} from './use-mobile-nav';
+
 import {Box} from "@mui/system";
+import {styled} from '@mui/material/styles';
 import Container from "@mui/material/Container";
-import {useSettings} from "../../../hooks/use-settings";
+import useMediaQuery from '@mui/material/useMediaQuery';
+import {ArrowButtons} from '../../../sections/components/arrow-buttons/arrow-buttons';
+
+import {TopNav} from './top-nav';
+import {MobileNav} from '../mobile-nav';
+import {useMobileNav} from './use-mobile-nav';
+import {useSettings} from "src/hooks/use-settings";
 
 const HorizontalLayoutRoot = styled('div')({
     display: 'flex',

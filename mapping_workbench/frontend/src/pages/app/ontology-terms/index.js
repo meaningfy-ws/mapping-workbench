@@ -5,7 +5,6 @@ import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import SvgIcon from '@mui/material/SvgIcon';
 import Grid from "@mui/material/Unstable_Grid2";
 
 import {paths} from 'src/paths';
@@ -72,11 +71,7 @@ const Page = () => {
                             <Button
                                 id="discover_button"
                                 onClick={handleDiscover}
-                                startIcon={(
-                                    <SvgIcon>
-                                        <SearchIcon/>
-                                    </SvgIcon>
-                                )}
+                                startIcon={<SearchIcon/>}
                                 variant="text"
                             >
                                 Discover Terms
@@ -85,11 +80,7 @@ const Page = () => {
                                 id="add_term_button"
                                 component={RouterLink}
                                 href={paths.app[sectionApi.section].create}
-                                startIcon={(
-                                    <SvgIcon>
-                                        <AddIcon/>
-                                    </SvgIcon>
-                                )}
+                                startIcon={<AddIcon/>}
                                 variant="contained"
                             >
                                 Add Term
@@ -99,7 +90,6 @@ const Page = () => {
                 </Grid>
                 <Grid xs={12}>
                     <Card>
-
                         <Filter title='Type:'
                                 values={filterValues}
                                 value={itemsSearch.state.filters.type}

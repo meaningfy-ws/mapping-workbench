@@ -102,7 +102,6 @@ const Page = () => {
 
                     </Stack>
                 </Stack>
-
                 <Card>
                     <Filter values={FILTER_VALUE}
                             value={itemsSearch.state.filters.element_type}

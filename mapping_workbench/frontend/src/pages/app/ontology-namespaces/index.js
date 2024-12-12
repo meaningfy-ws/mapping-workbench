@@ -40,7 +40,6 @@ const Page = () => {
                     justifyContent="space-between"
                     spacing={4}
                 >
-
                     <Stack spacing={1}>
                         <Card>
                             <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
