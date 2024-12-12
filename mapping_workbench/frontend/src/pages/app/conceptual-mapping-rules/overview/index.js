@@ -1,5 +1,3 @@
-import FilterListIcon from '@mui/icons-material/FilterList';
-import Popover from '@mui/material/Popover';
 import {useState} from 'react';
 import {useFormik} from 'formik';
 import {useTranslation} from "react-i18next";
@@ -8,17 +6,18 @@ import * as Yup from 'yup';
 import AddIcon from '@mui/icons-material/Add';
 import CachedIcon from '@mui/icons-material/Cached';
 
-import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import Alert from "@mui/material/Alert";
 import Switch from '@mui/material/Switch';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
+import Popover from '@mui/material/Popover';
 import Divider from '@mui/material/Divider';
 import Checkbox from '@mui/material/Checkbox';
 import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
+import FilterListIcon from '@mui/icons-material/FilterList';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 import {paths} from 'src/paths';
@@ -98,11 +97,11 @@ const Page = () => {
                 >
                     <Stack direction='row'
                            spacing={3}>
-                        <Card>
+                        <Paper>
                             <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
                                             value={itemsSearch.state.search[0]}/>
-                        </Card>
-                        <Card>
+                        </Paper>
+                        <Paper>
                             <Button variant='text'
                                     color={itemsSearch.state.filters.terms ? 'primary' : 'inherit'}
                                     onClick={e => setFilterPopover(e.currentTarget)}
@@ -124,7 +123,7 @@ const Page = () => {
                                         value={itemsSearch.state.filters.terms}
                                         onValueChange={e => itemsSearch.handleFiltersChange({terms: e})}/>
                             </Popover>
-                        </Card>
+                        </Paper>
                     </Stack>
                     <Stack
                         alignItems="center"
@@ -155,27 +154,24 @@ const Page = () => {
                         </Button>
                     </Stack>
                 </Stack>
-                <Card>
-                    <Stack direction='row'
-                           padding={3}>
-                        <FormControlLabel control={<Switch checked={detailedView}
-                                                           onChange={e => setDetailedView(e.target.checked)}/>}
-                                          label='Detailed View'/>
-                    </Stack>
-                    <Divider/>
-                    <ListTable
-                        sectionApi={sectionApi}
-                        items={itemsSearch.pagedItems}
-                        count={itemsSearch.count}
-                        detailedView={detailedView}
-                        page={itemsSearch.state.page}
-                        onPageChange={itemsSearch.handlePageChange}
-                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                        onSort={itemsSearch.handleSort}
-                        sort={itemsSearch.state.sort}
-                    />
-                </Card>
+                <Stack direction='row'
+                       padding={3}>
+                    <FormControlLabel control={<Switch checked={detailedView}
+                                                       onChange={e => setDetailedView(e.target.checked)}/>}
+                                      label='Detailed View'/>
+                </Stack>
+                <ListTable
+                    sectionApi={sectionApi}
+                    items={itemsSearch.pagedItems}
+                    count={itemsSearch.count}
+                    detailedView={detailedView}
+                    page={itemsSearch.state.page}
+                    onPageChange={itemsSearch.handlePageChange}
+                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                    rowsPerPage={itemsSearch.state.rowsPerPage}
+                    onSort={itemsSearch.handleSort}
+                    sort={itemsSearch.state.sort}
+                />
                 <Dialog id='shacl_generate_dialog'
                         open={generateSHACLDialog.open}
                         onClose={generateSHACLDialog.handleClose}

@@ -1,10 +1,10 @@
 import {useEffect, useState} from 'react';
 
 import AddIcon from '@mui/icons-material/Add';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
+
+import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
-import Divider from "@mui/material/Divider";
+import Button from '@mui/material/Button';
 
 import {Seo} from 'src/components/seo';
 import {Layout as AppLayout} from 'src/layouts/app';
@@ -97,18 +97,17 @@ export const Page = () => {
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE}`}/>
             <Stack spacing={4}>
-
                 <ConceptualMappingTabs/>
                 <Stack
                     direction="row"
                     justifyContent="space-between"
                     spacing={4}
                 >
-                    <Card>
+                    <Paper>
                         <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
                                         value={itemsSearch.state.search[0]}
                                         placeholder='Search Terms'/>
-                    </Card>
+                    </Paper>
                     <Button
                         id="add_button"
                         startIcon={<AddIcon/>}
@@ -117,21 +116,19 @@ export const Page = () => {
                         Add
                     </Button>
                 </Stack>
-                <Card>
-                    <ListTable
-                        onPageChange={itemsSearch.handlePageChange}
-                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        onSort={itemsSearch.handleSort}
-                        sort={itemsSearch.state.sort}
-                        page={itemsSearch.state.page}
-                        items={itemsSearch.pagedItems}
-                        count={itemsSearch.count}
-                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                        sectionApi={sectionApi}
-                        onEdit={handleEdit}
-                        onDelete={handleDelete}
-                    />
-                </Card>
+                <ListTable
+                    onPageChange={itemsSearch.handlePageChange}
+                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                    onSort={itemsSearch.handleSort}
+                    sort={itemsSearch.state.sort}
+                    page={itemsSearch.state.page}
+                    items={itemsSearch.pagedItems}
+                    count={itemsSearch.count}
+                    rowsPerPage={itemsSearch.state.rowsPerPage}
+                    sectionApi={sectionApi}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                />
                 <AddEditDrawer open={state.openDrawer}
                                onClose={handleCloseDrawer}
                                item={state.item}

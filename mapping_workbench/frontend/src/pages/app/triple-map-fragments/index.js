@@ -1,10 +1,10 @@
+import Paper from '@mui/material/Paper';
 import {useFormik} from "formik";
 import * as Yup from "yup";
 
 import AddIcon from '@mui/icons-material/Add';
 import UploadIcon from '@mui/icons-material/Upload';
 
-import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 
@@ -50,10 +50,10 @@ const Page = () => {
                     justifyContent="space-between"
                     spacing={4}
                 >
-                    <Card>
+                    <Paper>
                         <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
                                         value={itemsSearch.state.search[0]}/>
-                    </Card>
+                    </Paper>
                     <Stack
                         alignItems="center"
                         direction="row"
@@ -77,19 +77,17 @@ const Page = () => {
                         </Button>
                     </Stack>
                 </Stack>
-                <Card>
-                    <ListTable
-                        onPageChange={itemsSearch.handlePageChange}
-                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        page={itemsSearch.state.page}
-                        items={itemsSearch.pagedItems}
-                        count={itemsSearch.count}
-                        onSort={itemsSearch.handleSort}
-                        sort={itemsSearch.state.sort}
-                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                        sectionApi={sectionApi}
-                    />
-                </Card>
+                <ListTable
+                    onPageChange={itemsSearch.handlePageChange}
+                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                    page={itemsSearch.state.page}
+                    items={itemsSearch.pagedItems}
+                    count={itemsSearch.count}
+                    onSort={itemsSearch.handleSort}
+                    sort={itemsSearch.state.sort}
+                    rowsPerPage={itemsSearch.state.rowsPerPage}
+                    sectionApi={sectionApi}
+                />
                 <FileUploader
                     onClose={uploadDialog.handleClose}
                     open={uploadDialog.open}

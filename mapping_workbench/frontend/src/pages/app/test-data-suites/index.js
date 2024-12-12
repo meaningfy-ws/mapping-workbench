@@ -3,10 +3,9 @@ import {useEffect, useState} from "react";
 import AddIcon from '@mui/icons-material/Add';
 import UploadIcon from '@mui/icons-material/Upload';
 
-import Card from '@mui/material/Card';
+import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import Divider from "@mui/material/Divider";
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
@@ -67,10 +66,10 @@ const Page = () => {
                 </Stack>
                 <Stack direction='row'
                        justifyContent='space-between'>
-                    <Card sx={{p: 0}}>
+                    <Paper>
                         <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
                                         value={itemsSearch.state.search[0]}/>
-                    </Card>
+                    </Paper>
                     <Stack
                         alignItems="center"
                         direction="row"

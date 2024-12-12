@@ -1,6 +1,6 @@
 import AddIcon from '@mui/icons-material/Add';
 
-import Card from '@mui/material/Card';
+import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -35,10 +35,10 @@ const Page = () => {
                     justifyContent="space-between"
                     spacing={4}
                 >
-                    <Card>
+                    <Paper>
                         <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
                                         value={itemsSearch.state.search[0]}/>
-                    </Card>
+                    </Paper>
                     <Stack
                         alignItems="center"
                         direction="row"

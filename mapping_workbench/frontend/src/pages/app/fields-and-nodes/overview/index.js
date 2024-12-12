@@ -1,14 +1,14 @@
 import {useEffect, useState} from 'react';
 
+
 import AddIcon from '@mui/icons-material/Add';
-import Card from '@mui/material/Card';
 import UploadIcon from '@mui/icons-material/Upload';
 import FilterListIcon from '@mui/icons-material/FilterList';
 
 import Stack from '@mui/material/Stack';
+import Paper from '@mui/material/Paper';
 import Button from "@mui/material/Button";
 import Popover from '@mui/material/Popover';
-import Divider from "@mui/material/Divider";
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
@@ -74,11 +74,11 @@ const Page = () => {
                        justifyContent='space-between'>
                     <Stack direction='row'
                            spacing={3}>
-                        <Card>
+                        <Paper>
                             <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
                                             value={itemsSearch.state.search[0]}/>
-                        </Card>
-                        <Card>
+                        </Paper>
+                        <Paper>
                             <Button variant='text'
                                     color={itemsSearch.state.filters.element_type ? 'primary' : 'inherit'}
                                     onClick={e => setFilterPopover(e.currentTarget)}
@@ -100,7 +100,7 @@ const Page = () => {
                                         value={itemsSearch.state.filters.element_type}
                                         onValueChange={e => itemsSearch.handleFiltersChange({element_type: e})}/>
                             </Popover>
-                        </Card>
+                        </Paper>
                     </Stack>
                     <Stack
                         alignItems="center"

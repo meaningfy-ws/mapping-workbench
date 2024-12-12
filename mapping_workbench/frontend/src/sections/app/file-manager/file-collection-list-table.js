@@ -1,3 +1,4 @@
+import Paper from '@mui/material/Paper';
 import {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 
@@ -34,6 +35,7 @@ import {FileUploader} from "src/sections/app/file-manager/file-uploader";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {ListFileCollectionActions} from "src/components/app/list/list-file-collection-actions";
 import {MappingPackagesBulkAssigner} from "src/sections/app/mapping-package/components/mapping-packages-bulk-assigner";
+import {ChevronButton} from '../../components/chevron-button';
 import TableSorterHeader from '../../components/table-sorter-header';
 
 export const ListTableRow = (props) => {
@@ -96,14 +98,8 @@ export const ListTableRow = (props) => {
                         checked={isItemSelected(item_id)}
                         onClick={event => handleItemSelect(event.target.checked, item_id)}
                     />
-                    <IconButton onClick={() => handleItemToggle(item_id)}>
-                        <SvgIcon sx={{
-                            transform: isCurrent ? 'rotate(90deg)' : '',
-                            transition: '0.2s linear'
-                        }}>
-                            <ChevronRightIcon/>
-                        </SvgIcon>
-                    </IconButton>
+                    <ChevronButton onClick={() => handleItemToggle(item_id)}
+                                   isCurrent={isCurrent}/>
                 </TableCell>
                 <TableCell width="25%">
                     <Typography variant="subtitle2">
@@ -318,7 +314,6 @@ export const FileCollectionListTable = (props) => {
                     onMappingPackagesAssign={onMappingPackagesAssign}
                 />
             </Box>
-            <Divider/>
             <TablePagination
                 component="div"
                 count={count}
@@ -330,54 +325,56 @@ export const FileCollectionListTable = (props) => {
                 showFirstButton
                 showLastButton
             >
-                <Scrollbar>
-                    <Table sx={{minWidth: 1200}}>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell sx={{my: 2}}>
-                                    <Checkbox checked={allChecked}
-                                              indeterminate={!!selectedItems.length && !allChecked}
-                                              onChange={(event) => handleItemsSelectAll(event.target.checked)}
-                                    />
-                                </TableCell>
-                                <SorterHeader fieldName='title'
-                                              width='25%'/>
-                                <TableCell align="left">
-                                    Packages
-                                </TableCell>
-                                <SorterHeader align="left"
-                                              title='created'
-                                              fieldName='created_at'/>
-                                <TableCell align="right">
-                                    Actions
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {items.map((item) => {
-                                const item_id = item._id;
-                                const isCurrent = item_id === currentItem;
+                <Paper>
+                    <Scrollbar>
+                        <Table sx={{minWidth: 1200}}>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell sx={{my: 2}}>
+                                        <Checkbox checked={allChecked}
+                                                  indeterminate={!!selectedItems.length && !allChecked}
+                                                  onChange={(event) => handleItemsSelectAll(event.target.checked)}
+                                        />
+                                    </TableCell>
+                                    <SorterHeader fieldName='title'
+                                                  width='25%'/>
+                                    <TableCell align="left">
+                                        Packages
+                                    </TableCell>
+                                    <SorterHeader align="left"
+                                                  title='created'
+                                                  fieldName='created_at'/>
+                                    <TableCell align="right">
+                                        Actions
+                                    </TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {items.map((item) => {
+                                    const item_id = item._id;
+                                    const isCurrent = item_id === currentItem;
 
-                                return (
-                                    <ListTableRow
-                                        key={item_id}
-                                        item={item}
-                                        item_id={item_id}
-                                        isCurrent={isCurrent}
-                                        openUploadModal={openUploadModal}
-                                        handleItemToggle={handleItemToggle}
-                                        handleItemSelect={handleItemSelect}
-                                        isItemSelected={isItemSelected}
-                                        sectionApi={sectionApi}
-                                        router={router}
-                                        projectMappingPackages={projectMappingPackages}
-                                        selectable={selectable}
-                                    />
-                                )
-                            })}
-                        </TableBody>
-                    </Table>
-                </Scrollbar>
+                                    return (
+                                        <ListTableRow
+                                            key={item_id}
+                                            item={item}
+                                            item_id={item_id}
+                                            isCurrent={isCurrent}
+                                            openUploadModal={openUploadModal}
+                                            handleItemToggle={handleItemToggle}
+                                            handleItemSelect={handleItemSelect}
+                                            isItemSelected={isItemSelected}
+                                            sectionApi={sectionApi}
+                                            router={router}
+                                            projectMappingPackages={projectMappingPackages}
+                                            selectable={selectable}
+                                        />
+                                    )
+                                })}
+                            </TableBody>
+                        </Table>
+                    </Scrollbar>
+                </Paper>
             </TablePagination>
             <FileUploader
                 onClose={uploadDialog.handleClose}

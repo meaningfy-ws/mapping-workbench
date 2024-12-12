@@ -4,10 +4,10 @@ import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
 
-import Card from '@mui/material/Card';
-import Popover from '@mui/material/Popover';
+import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import Popover from '@mui/material/Popover';
 import Grid from "@mui/material/Unstable_Grid2";
 
 import {paths} from 'src/paths';
@@ -65,12 +65,12 @@ const Page = () => {
                     >
                         <Stack direction='row'
                                spacing={3}>
-                            <Card>
+                            <Paper>
                                 <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
                                                 value={itemsSearch.state.search[0]}
                                                 placeholder='Search Terms'/>
-                            </Card>
-                            <Card>
+                            </Paper>
+                            <Paper>
                                 <Button variant='text'
                                         color={itemsSearch.state.filters.type ? 'primary' : 'inherit'}
                                         onClick={e => setFilterPopover(e.currentTarget)}
@@ -90,7 +90,7 @@ const Page = () => {
                                             value={itemsSearch.state.filters.type}
                                             onValueChange={e => itemsSearch.handleFiltersChange({type: e})}/>
                                 </Popover>
-                            </Card>
+                            </Paper>
                         </Stack>
                         <Stack alignItems="center"
                                direction="row"

@@ -1,6 +1,6 @@
 import AddIcon from '@mui/icons-material/Add';
 
-import Card from '@mui/material/Card';
+import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -40,12 +40,10 @@ const Page = () => {
                     justifyContent="space-between"
                     spacing={4}
                 >
-                    <Stack spacing={1}>
-                        <Card>
-                            <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
-                                            value={itemsSearch.state.search[0]}/>
-                        </Card>
-                    </Stack>
+                    <Paper>
+                        <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                        value={itemsSearch.state.search[0]}/>
+                    </Paper>
                     <Stack
                         alignItems="center"
                         direction="row"
