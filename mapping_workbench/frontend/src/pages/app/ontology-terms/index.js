@@ -1,10 +1,13 @@
+import {useState} from 'react';
+
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
+import FilterListIcon from '@mui/icons-material/FilterList';
 
 import Card from '@mui/material/Card';
+import Popover from '@mui/material/Popover';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
 import Grid from "@mui/material/Unstable_Grid2";
 
 import {paths} from 'src/paths';
@@ -32,6 +35,8 @@ const Page = () => {
     const itemsStore = useItemsStore(sectionApi);
     const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ["short_term", "term"], {type: ''});
 
+    const [filterPopover, setFilterPopover] = useState(null)
+
     const handleDiscover = () => {
         const toastId = toastLoad('Discovering terms ...')
         sectionApi.discoverTerms()
@@ -58,16 +63,38 @@ const Page = () => {
                     <Stack direction="row"
                            justifyContent="space-between"
                     >
-                        <Card>
-                            <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
-                                            value={itemsSearch.state.search[0]}
-                                            placeholder='Search Terms'/>
-                        </Card>
-                        <Stack justifyContent='end'
-                               alignItems="center"
+                        <Stack direction='row'
+                               spacing={3}>
+                            <Card>
+                                <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                                value={itemsSearch.state.search[0]}
+                                                placeholder='Search Terms'/>
+                            </Card>
+                            <Card>
+                                <Button variant='text'
+                                        color={itemsSearch.state.filters.type ? 'primary' : 'inherit'}
+                                        onClick={e => setFilterPopover(e.currentTarget)}
+                                        startIcon={<FilterListIcon/>}>Filter</Button>
+                                <Popover
+                                    id={'filter-popover'}
+                                    open={!!filterPopover}
+                                    anchorEl={filterPopover}
+                                    onClose={() => setFilterPopover(null)}
+                                    anchorOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'left',
+                                    }}
+                                >
+                                    <Filter title='Type:'
+                                            values={filterValues}
+                                            value={itemsSearch.state.filters.type}
+                                            onValueChange={e => itemsSearch.handleFiltersChange({type: e})}/>
+                                </Popover>
+                            </Card>
+                        </Stack>
+                        <Stack alignItems="center"
                                direction="row"
-                               spacing={3}
-                        >
+                               spacing={3}>
                             <Button
                                 id="discover_button"
                                 onClick={handleDiscover}
@@ -90,11 +117,6 @@ const Page = () => {
                 </Grid>
                 <Grid xs={12}>
                     <Card>
-                        <Filter title='Type:'
-                                values={filterValues}
-                                value={itemsSearch.state.filters.type}
-                                onValueChange={e => itemsSearch.handleFiltersChange({type: e})}/>
-                        <Divider/>
                         <ListTable
                             onPageChange={itemsSearch.handlePageChange}
                             onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}

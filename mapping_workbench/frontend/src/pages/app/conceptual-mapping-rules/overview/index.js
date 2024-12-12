@@ -1,3 +1,5 @@
+import FilterListIcon from '@mui/icons-material/FilterList';
+import Popover from '@mui/material/Popover';
 import {useState} from 'react';
 import {useFormik} from 'formik';
 import {useTranslation} from "react-i18next";
@@ -36,7 +38,7 @@ import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mappin
 import {MappingPackageFormSelect} from 'src/sections/app/mapping-package/components/mapping-package-form-select';
 import {ConceptualMappingTabs} from '../../../../sections/app/conceptual-mapping-rule/conceptual-mapping-tabs';
 
-const filterValues = [{label: 'All', value: ''},
+const FILTER_VALUES = [{label: 'All', value: ''},
     {label: 'Valid', value: 'valid'},
     {label: 'Invalid', value: 'invalid'}]
 
@@ -44,6 +46,7 @@ const Page = () => {
     const [detailedView, setDetailedView] = useState(true)
     const {t} = useTranslation();
 
+    const [filterPopover, setFilterPopover] = useState(null)
     const itemsStore = useItemsStore(sectionApi);
     const itemsSearch = useItemsSearch(itemsStore.items, sectionApi,
         ['source_structural_element_sdk_element_id', 'target_class_path', 'target_property_path'],
@@ -93,10 +96,36 @@ const Page = () => {
                     justifyContent="space-between"
                     spacing={4}
                 >
-                    <Card>
-                        <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
-                                        value={itemsSearch.state.search[0]}/>
-                    </Card>
+                    <Stack direction='row'
+                           spacing={3}>
+                        <Card>
+                            <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                            value={itemsSearch.state.search[0]}/>
+                        </Card>
+                        <Card>
+                            <Button variant='text'
+                                    color={itemsSearch.state.filters.terms ? 'primary' : 'inherit'}
+                                    onClick={e => setFilterPopover(e.currentTarget)}
+                                    startIcon={<FilterListIcon/>}>
+                                Filter
+                            </Button>
+                            <Popover
+                                id={'filter-popover'}
+                                open={!!filterPopover}
+                                anchorEl={filterPopover}
+                                onClose={() => setFilterPopover(null)}
+                                anchorOrigin={{
+                                    vertical: 'bottom',
+                                    horizontal: 'left',
+                                }}
+                            >
+                                <Filter title='Terms:'
+                                        values={FILTER_VALUES}
+                                        value={itemsSearch.state.filters.terms}
+                                        onValueChange={e => itemsSearch.handleFiltersChange({terms: e})}/>
+                            </Popover>
+                        </Card>
+                    </Stack>
                     <Stack
                         alignItems="center"
                         direction="row"
@@ -132,12 +161,6 @@ const Page = () => {
                         <FormControlLabel control={<Switch checked={detailedView}
                                                            onChange={e => setDetailedView(e.target.checked)}/>}
                                           label='Detailed View'/>
-                        <Paper variant='outlined'>
-                            <Filter title={'Terms:'}
-                                    values={filterValues}
-                                    value={itemsSearch.state.filters.terms}
-                                    onValueChange={e => itemsSearch.handleFiltersChange({terms: e})}/>
-                        </Paper>
                     </Stack>
                     <Divider/>
                     <ListTable

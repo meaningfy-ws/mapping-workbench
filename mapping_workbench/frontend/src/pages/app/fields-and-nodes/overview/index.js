@@ -1,11 +1,13 @@
 import {useEffect, useState} from 'react';
 
 import AddIcon from '@mui/icons-material/Add';
-import UploadIcon from '@mui/icons-material/Upload';
-
 import Card from '@mui/material/Card';
+import UploadIcon from '@mui/icons-material/Upload';
+import FilterListIcon from '@mui/icons-material/FilterList';
+
 import Stack from '@mui/material/Stack';
 import Button from "@mui/material/Button";
+import Popover from '@mui/material/Popover';
 import Divider from "@mui/material/Divider";
 
 import {paths} from 'src/paths';
@@ -20,7 +22,7 @@ import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {fieldsOverviewApi as sectionApi} from 'src/api/fields-overview';
 import {ElementsDefinitionTabs} from 'src/sections/app/elements-definition';
 
-const FILTER_VALUE = [
+const FILTER_VALUES = [
     {label: 'All', value: ''},
     {label: 'Node', value: 'node'},
     {label: 'Field', value: 'field'}
@@ -54,10 +56,10 @@ const useItemsStore = () => {
     };
 };
 
-
 const Page = () => {
     const itemsStore = useItemsStore();
     const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, SEARCH_COLUMNS, {element_type: ''});
+    const [filterPopover, setFilterPopover] = useState(null)
 
     usePageView();
 
@@ -68,13 +70,38 @@ const Page = () => {
                 <Stack>
                     <ElementsDefinitionTabs/>
                 </Stack>
-
                 <Stack direction='row'
                        justifyContent='space-between'>
-                    <Card>
-                        <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
-                                        value={itemsSearch.state.search[0]}/>
-                    </Card>
+                    <Stack direction='row'
+                           spacing={3}>
+                        <Card>
+                            <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                            value={itemsSearch.state.search[0]}/>
+                        </Card>
+                        <Card>
+                            <Button variant='text'
+                                    color={itemsSearch.state.filters.element_type ? 'primary' : 'inherit'}
+                                    onClick={e => setFilterPopover(e.currentTarget)}
+                                    startIcon={<FilterListIcon/>}>
+                                Filter
+                            </Button>
+                            <Popover
+                                id={'filter-popover'}
+                                open={!!filterPopover}
+                                anchorEl={filterPopover}
+                                onClose={() => setFilterPopover(null)}
+                                anchorOrigin={{
+                                    vertical: 'bottom',
+                                    horizontal: 'left',
+                                }}
+                            >
+                                <Filter title='Type:'
+                                        values={FILTER_VALUES}
+                                        value={itemsSearch.state.filters.element_type}
+                                        onValueChange={e => itemsSearch.handleFiltersChange({element_type: e})}/>
+                            </Popover>
+                        </Card>
+                    </Stack>
                     <Stack
                         alignItems="center"
                         justifyContent='end'
@@ -103,9 +130,7 @@ const Page = () => {
                     </Stack>
                 </Stack>
                 <Card>
-                    <Filter values={FILTER_VALUE}
-                            value={itemsSearch.state.filters.element_type}
-                            onValueChange={e => itemsSearch.handleFiltersChange({element_type: e})}/>
+
                     <Divider/>
                     <ListTable
                         onPageChange={itemsSearch.handlePageChange}
