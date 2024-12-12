@@ -7,18 +7,15 @@ import AddIcon from '@mui/icons-material/Add';
 import CachedIcon from '@mui/icons-material/Cached';
 
 import Card from '@mui/material/Card';
-import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import Alert from "@mui/material/Alert";
 import Switch from '@mui/material/Switch';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-import SvgIcon from '@mui/material/SvgIcon';
 import Divider from '@mui/material/Divider';
 import Checkbox from '@mui/material/Checkbox';
 import Typography from '@mui/material/Typography';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
 import LoadingButton from '@mui/lab/LoadingButton';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
@@ -33,7 +30,6 @@ import {Filter} from 'src/sections/components/filter';
 import useItemsSearch from 'src/hooks/use-items-search';
 import {useItemsStore} from 'src/hooks/use-items-store';
 import {TableSearchBar} from 'src/sections/components/table-search-bar';
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {toastError, toastLoad, toastSuccess} from 'src/components/app-toast';
 import {ListTable} from "src/sections/app/conceptual-mapping-rule/list-table";
 import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
@@ -91,12 +87,16 @@ const Page = () => {
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
             <Stack spacing={4}>
+                <ConceptualMappingTabs/>
                 <Stack
                     direction="row"
                     justifyContent="space-between"
                     spacing={4}
                 >
-                    <ConceptualMappingTabs/>
+                    <Card>
+                        <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                        value={itemsSearch.state.search[0]}/>
+                    </Card>
                     <Stack
                         alignItems="center"
                         direction="row"
@@ -110,11 +110,7 @@ const Page = () => {
                             component={RouterLink}
                             href={paths.app[sectionApi.section].overview.create}
                             id="add-mapping-rules-button"
-                            startIcon={(
-                                <SvgIcon>
-                                    <AddIcon/>
-                                </SvgIcon>
-                            )}
+                            startIcon={<AddIcon/>}
                             variant="contained"
                         >
                             Add
@@ -123,11 +119,7 @@ const Page = () => {
                             id="generate_button"
                             component={RouterLink}
                             href={paths.app[sectionApi.section].tasks.generate_cm_assertions_queries}
-                            startIcon={(
-                                <SvgIcon>
-                                    <CachedIcon/>
-                                </SvgIcon>
-                            )}
+                            startIcon={<CachedIcon/>}
                             variant="contained"
                         >
                             {t(tokens.nav.generate_cm_assertions_queries)}
@@ -135,9 +127,6 @@ const Page = () => {
                     </Stack>
                 </Stack>
                 <Card>
-                    <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
-                                    value={itemsSearch.state.search[0]}/>
-                    <Divider/>
                     <Stack direction='row'
                            padding={3}>
                         <FormControlLabel control={<Switch checked={detailedView}

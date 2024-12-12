@@ -69,40 +69,41 @@ const Page = () => {
                     <ElementsDefinitionTabs/>
                 </Stack>
 
-                <Stack
-                    alignItems="center"
-                    justifyContent='end'
-                    direction="row"
-                    spacing={3}
-                >
-                    <Button
-                        component={RouterLink}
-                        href={paths.app.fields_and_nodes.overview.elements.create}
-                        id="add-field-button"
-                        startIcon={(
-                            <AddIcon/>
-                        )}
-                        variant="contained"
+                <Stack direction='row'
+                       justifyContent='space-between'>
+                    <Card>
+                        <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                        value={itemsSearch.state.search[0]}/>
+                    </Card>
+                    <Stack
+                        alignItems="center"
+                        justifyContent='end'
+                        direction="row"
+                        spacing={3}
                     >
-                        Add
-                    </Button>
-                    <Button
-                        id="import_shema_button"
-                        component={RouterLink}
-                        href={paths.app.fields_and_nodes.overview.import}
-                        startIcon={(
-                            <UploadIcon/>
-                        )}
-                        variant="contained"
-                    >
-                        Import schema from github
-                    </Button>
+                        <Button
+                            component={RouterLink}
+                            href={paths.app.fields_and_nodes.overview.elements.create}
+                            id="add-field-button"
+                            startIcon={<AddIcon/>}
+                            variant="contained"
+                        >
+                            Add
+                        </Button>
+                        <Button
+                            id="import_shema_button"
+                            component={RouterLink}
+                            href={paths.app.fields_and_nodes.overview.import}
+                            startIcon={<UploadIcon/>}
+                            variant="contained"
+                        >
+                            Import schema from github
+                        </Button>
 
+                    </Stack>
                 </Stack>
+
                 <Card>
-                    <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
-                                    value={itemsSearch.state.search[0]}/>
-                    <Divider/>
                     <Filter values={FILTER_VALUE}
                             value={itemsSearch.state.filters.element_type}
                             onValueChange={e => itemsSearch.handleFiltersChange({element_type: e})}/>

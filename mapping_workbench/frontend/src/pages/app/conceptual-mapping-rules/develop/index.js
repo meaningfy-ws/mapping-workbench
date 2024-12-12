@@ -97,25 +97,27 @@ export const Page = () => {
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE}`}/>
             <Stack spacing={4}>
+
+                <ConceptualMappingTabs/>
                 <Stack
                     direction="row"
                     justifyContent="space-between"
                     spacing={4}
                 >
-                    <ConceptualMappingTabs/>
+                    <Card>
+                        <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                        value={itemsSearch.state.search[0]}
+                                        placeholder='Search Terms'/>
+                    </Card>
                     <Button
                         id="add_button"
-                        startIcon={(<AddIcon/>)}
+                        startIcon={<AddIcon/>}
                         onClick={handleAdd}
                     >
                         Add
                     </Button>
                 </Stack>
                 <Card>
-                    <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
-                                    value={itemsSearch.state.search[0]}
-                                    placeholder='Search Terms'/>
-                    <Divider/>
                     <ListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}

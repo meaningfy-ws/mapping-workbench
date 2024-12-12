@@ -1,9 +1,9 @@
 import {useRef} from 'react';
 import PropTypes from 'prop-types';
 
-import SearchMdIcon from '@untitled-ui/icons-react/build/esm/SearchMd';
-import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+import SearchIcon from '@mui/icons-material/Search';
 import GridViewIcon from '@mui/icons-material/GridView';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -12,7 +12,6 @@ import ToggleButton from '@mui/material/ToggleButton';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import ToggleButtonGroup, {toggleButtonGroupClasses} from '@mui/material/ToggleButtonGroup';
-import {TableSearchBar} from '../../components/table-search-bar';
 
 export const ItemSearch = (props) => {
     const {
@@ -52,7 +51,7 @@ export const ItemSearch = (props) => {
                         placeholder="Search"
                         startAdornment={(
                             <InputAdornment position="start">
-                                <SearchMdIcon/>
+                                <SearchIcon/>
                             </InputAdornment>
                         )}
                     />
