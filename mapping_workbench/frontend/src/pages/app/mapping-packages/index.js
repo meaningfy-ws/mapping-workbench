@@ -1,19 +1,17 @@
 import {useEffect, useState} from 'react';
 import {saveAs} from 'file-saver';
+
 import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
 import UploadIcon from '@mui/icons-material/Upload';
 import DownloadIcon from '@mui/icons-material/Download';
 
-import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Dialog from "@mui/material/Dialog";
-import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import IconButton from "@mui/material/IconButton";
-import Breadcrumbs from '@mui/material/Breadcrumbs';
 import DialogContent from "@mui/material/DialogContent";
 
 import {paths} from 'src/paths';
@@ -26,7 +24,6 @@ import {RouterLink} from 'src/components/router-link';
 import useItemsSearch from 'src/hooks/use-items-search';
 import {ListTable} from "src/sections/app/mapping-package/list-table";
 import {TableSearchBar} from "src/sections/components/table-search-bar";
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {mappingPackagesApi as sectionApi} from 'src/api/mapping-packages';
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {PackageImporter} from 'src/sections/app/mapping-package/package-importer';
@@ -89,27 +86,10 @@ const Page = () => {
                     justifyContent="space-between"
                     spacing={4}
                 >
-                    <Stack spacing={1}>
-                        <Typography variant="h4">
-                            {sectionApi.SECTION_TITLE}
-                        </Typography>
-                        <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.index}
-                                variant="subtitle2"
-                            >
-                                App
-                            </Link>
-                            <Typography
-                                color="text.secondary"
-                                variant="subtitle2"
-                            >
-                                {sectionApi.SECTION_TITLE}
-                            </Typography>
-                        </Breadcrumbs>
-                    </Stack>
+                    <Card>
+                        <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                        value={itemsSearch.state.search[0]}/>
+                    </Card>
                     <Stack
                         alignItems="center"
                         direction="row"
@@ -142,9 +122,6 @@ const Page = () => {
 
                 </Stack>
                 <Card>
-                    <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
-                                    value={itemsSearch.state.search[0]}/>
-                    <Divider/>
                     <ListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
