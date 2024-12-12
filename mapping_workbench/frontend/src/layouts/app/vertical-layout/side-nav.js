@@ -167,7 +167,7 @@ export const SideNav = (props) => {
                     backgroundColor: 'var(--nav-bg)',
                     color: 'var(--nav-color)',
                     width: small ? SIDE_NAV_WIDTH_SMALL : SIDE_NAV_WIDTH,
-                    borderRight: '1px solid #E4E7EC'
+                    borderRight: '1px solid var(--nav-border-color)'
                 }
             }}
             variant="permanent"

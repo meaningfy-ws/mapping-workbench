@@ -199,6 +199,7 @@ export const SideNavItem = (props) => {
                             ...(depth >= -1 && {
                                 borderTopRightRadius: 0,
                                 borderBottomRightRadius: 0,
+                                paddingRight: '12px',
                                 borderRight: '4px solid var(--nav-item-icon-active-color)',
 
                             })
