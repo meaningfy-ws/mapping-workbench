@@ -1,10 +1,10 @@
-import Paper from '@mui/material/Paper';
 import {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 
 import Box from "@mui/system/Box";
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
@@ -26,13 +26,13 @@ import {useGlobalState} from "src/hooks/use-global-state";
 import {PropertyList} from "src/components/property-list";
 import {mappingPackagesApi} from "src/api/mapping-packages";
 import {PropertyListItem} from 'src/components/property-list-item';
+import {ChevronButton} from 'src/sections/components/chevron-button';
 import TablePagination from "src/sections/components/table-pagination";
 import {FileUploader} from "src/sections/app/file-manager/file-uploader";
+import TableSorterHeader from 'src/sections/components/table-sorter-header';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {ListFileCollectionActions} from "src/components/app/list/list-file-collection-actions";
 import {MappingPackagesBulkAssigner} from "src/sections/app/mapping-package/components/mapping-packages-bulk-assigner";
-import {ChevronButton} from '../../components/chevron-button';
-import TableSorterHeader from '../../components/table-sorter-header';
 
 export const ListTableRow = (props) => {
     const {
@@ -301,15 +301,6 @@ export const FileCollectionListTable = (props) => {
 
 
     return (<>
-            <Box sx={{p: 1}}>
-                <MappingPackagesBulkAssigner
-                    sectionApi={sectionApi}
-                    idsToAssignTo={selectedItems}
-                    initProjectMappingPackages={projectMappingPackages}
-                    disabled={selectedItems.length === 0}
-                    onMappingPackagesAssign={onMappingPackagesAssign}
-                />
-            </Box>
             <TablePagination
                 component="div"
                 count={count}
@@ -322,6 +313,16 @@ export const FileCollectionListTable = (props) => {
                 showLastButton
             >
                 <Paper>
+                    <Box sx={{p: 1}}>
+                        <MappingPackagesBulkAssigner
+                            sectionApi={sectionApi}
+                            idsToAssignTo={selectedItems}
+                            initProjectMappingPackages={projectMappingPackages}
+                            disabled={selectedItems.length === 0}
+                            onMappingPackagesAssign={onMappingPackagesAssign}
+                        />
+                    </Box>
+                    <Divider/>
                     <Scrollbar>
                         <Table sx={{minWidth: 1200}}>
                             <TableHead>

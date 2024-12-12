@@ -1,3 +1,4 @@
+import ApiIcon from '@mui/icons-material/Api';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
 
@@ -44,7 +45,7 @@ export const ArrowButtons = () => {
         </ArrowButton>
         <ArrowButton id='elements_definition'
                      active={router.pathname.includes('fields-and-nodes')}
-                     icon={<InsertDriveFileIcon fontSize='small'
+                     icon={<ApiIcon fontSize='small'
                                                 style={{marginRight: '4px'}}/>}
                      href={paths.app.fields_and_nodes.develop.index}>
             Elements Definition
@@ -76,7 +77,7 @@ export const ArrowButtons = () => {
                                         style={{marginRight: '4px'}}/>}
                      href={paths.app.mapping_packages.index}
                      last>
-            Export Mapping
+            Mapping Packages
         </ArrowButton>
     </ArrowButtonGroup>)
 }

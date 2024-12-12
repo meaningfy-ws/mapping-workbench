@@ -273,9 +273,7 @@ export const ListTable = (props) => {
 
     return (
         <>
-            <MappingPackagesBulkActions items={items.filter(item => selectedItems.includes(item._id))}
-                                        disabled={!selectedItems.length}/>
-            <Divider/>
+
             <TablePagination
                 component="div"
                 count={count}
@@ -288,6 +286,9 @@ export const ListTable = (props) => {
                 showLastButton
             >
                 <Paper>
+                    <MappingPackagesBulkActions items={items.filter(item => selectedItems.includes(item._id))}
+                                                disabled={!selectedItems.length}/>
+                    <Divider/>
                     <Scrollbar>
                         <Table sx={{minWidth: 1200}}>
                             <TableHead>

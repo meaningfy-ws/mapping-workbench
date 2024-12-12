@@ -71,7 +71,9 @@ export const tokens = {
         terms: 'nav.terms',
         dissemination: 'nav.dissemination',
 
-        mapping_process: 'nav,mapping_process',
+        elements_definition: 'nav.elements_definition',
+        source_and_target: 'nav.source_and_target',
+        mapping_process: 'nav.mapping_process',
         mapping_packages: 'nav.mapping_packages',
         conceptual_mapping_rules: 'nav.conceptual_mapping_rules',
         triple_map_fragments: 'nav.triple_map_fragments',
