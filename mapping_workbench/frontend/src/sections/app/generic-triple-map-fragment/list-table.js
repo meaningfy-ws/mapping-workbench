@@ -77,9 +77,11 @@ export const ListTableMappingPackages = (props) => {
     }
 
     return (<>
-        {!!itemMappingPackages.length && <>
-            {itemMappingPackages.map(x => <Box sx={{mb: 1}}><Chip key={"mapping_package_" + x.id} label={x.title}/></Box>)}
-        </>}
+        {!!itemMappingPackages.length && <Box>
+            {itemMappingPackages.map(x => <Chip key={"mapping_package_" + x.id}
+                                                sx={{mb: 1, mr: 1}}
+                                                label={x.title}/>)}
+        </Box>}
         {isHovered && <Box sx={{position: "absolute", left: "50%", top: "50%"}}>
             <Button
                 aria-describedby={"mapping_packages_dialog_" + item._id}

@@ -1,9 +1,9 @@
 import {useEffect, useState} from 'react';
 import {saveAs} from 'file-saver';
 import AddIcon from '@mui/icons-material/Add';
+import ClearIcon from '@mui/icons-material/Clear';
 import UploadIcon from '@mui/icons-material/Upload';
 import DownloadIcon from '@mui/icons-material/Download';
-import XIcon from '@untitled-ui/icons-react/build/esm/X';
 
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
@@ -11,7 +11,6 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Dialog from "@mui/material/Dialog";
 import Divider from '@mui/material/Divider';
-import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 import IconButton from "@mui/material/IconButton";
 import Breadcrumbs from '@mui/material/Breadcrumbs';
@@ -19,6 +18,8 @@ import DialogContent from "@mui/material/DialogContent";
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
+import {sessionApi} from "src/api/session";
+import {projectsApi} from 'src/api/projects';
 import {useDialog} from "src/hooks/use-dialog";
 import {Layout as AppLayout} from 'src/layouts/app';
 import {RouterLink} from 'src/components/router-link';
@@ -27,10 +28,8 @@ import {ListTable} from "src/sections/app/mapping-package/list-table";
 import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {mappingPackagesApi as sectionApi} from 'src/api/mapping-packages';
-import {projectsApi} from 'src/api/projects';
+import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {PackageImporter} from 'src/sections/app/mapping-package/package-importer';
-import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
-import {sessionApi} from "../../../api/session";
 
 const useItemsStore = () => {
     const [state, setState] = useState({
@@ -73,7 +72,7 @@ const Page = () => {
         const toastId = toastLoad(`Exporting Source Files ... `)
         projectsApi.exportSourceFiles()
             .then(response => {
-                const filename =  `src_${sessionApi.getSessionProject()}.zip`;
+                const filename = `src_${sessionApi.getSessionProject()}.zip`;
                 saveAs(new Blob([response], {type: "application/x-zip-compressed"}), filename);
                 toastSuccess(`Source Files successfully exported.`, toastId)
             }).catch(err => toastError(`Exporting Source Files failed: ${err.message}.`, toastId))
@@ -119,39 +118,25 @@ const Page = () => {
                         <Button
                             onClick={srcExportDialog.handleOpen}
                             id="src_export_button"
-                            startIcon={(
-                                <SvgIcon>
-                                    <DownloadIcon/>
-                                </SvgIcon>
-                            )}
-                            variant="contained"
+                            startIcon={<UploadIcon/>}
                         >
                             Export SRC
+                        </Button>
+                        <Button
+                            onClick={importDialog.handleOpen}
+                            id="import_package_button"
+                            startIcon={<DownloadIcon/>}
+                        >
+                            Import
                         </Button>
                         <Button
                             component={RouterLink}
                             id="add_package_button"
                             href={paths.app[sectionApi.section].create}
-                            startIcon={(
-                                <SvgIcon>
-                                    <AddIcon/>
-                                </SvgIcon>
-                            )}
+                            startIcon={<AddIcon/>}
                             variant="contained"
                         >
                             Add
-                        </Button>
-                        <Button
-                            onClick={importDialog.handleOpen}
-                            id="import_package_button"
-                            startIcon={(
-                                <SvgIcon>
-                                    <UploadIcon/>
-                                </SvgIcon>
-                            )}
-                            variant="contained"
-                        >
-                            Import
                         </Button>
                     </Stack>
 
@@ -202,9 +187,7 @@ const Page = () => {
                         color="inherit"
                         onClick={srcExportDialog.handleClose}
                     >
-                        <SvgIcon>
-                            <XIcon/>
-                        </SvgIcon>
+                        <ClearIcon/>
                     </IconButton>
                 </Stack>
                 <DialogContent id="drop-zone">

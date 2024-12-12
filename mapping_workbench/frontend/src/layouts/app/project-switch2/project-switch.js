@@ -1,4 +1,5 @@
 import Menu from '@mui/material/Menu';
+import {Box} from '@mui/system';
 import {useContext, useState} from "react";
 
 import AddIcon from '@mui/icons-material/Add';
@@ -12,6 +13,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
+import {Scrollbar} from '../../../components/scrollbar';
 
 import {ProjectsContext} from "../../../contexts/projects";
 import {useRouter} from "next/router";
@@ -49,7 +51,12 @@ export const ProjectSwitch = ({small}) => {
                    justifyContent='center'
                    gap={3}
                    color={'#1D2939'}
-                   sx={{backgroundColor:theme.palette.primary.light, borderRadius: '8px', p: '9px', cursor: 'pointer'}}>
+                   sx={{
+                       backgroundColor: theme.palette.primary.light,
+                       borderRadius: '8px',
+                       p: '9px',
+                       cursor: 'pointer'
+                   }}>
                 {!small && projectsStore.items?.find(project => project._id === projectsStore.sessionProject)?.title}
                 <ArrowForwardIosIcon color='primary'
                                      fontWeight='bold'
@@ -83,29 +90,31 @@ export const ProjectSwitch = ({small}) => {
                                    )}>
 
                     </OutlinedInput>
-                    {projectsStore.items?.filter(project =>
-                        project.title.toLowerCase().includes(searchInputValue.toLowerCase()))
-                        .map((project, idx) => (
-                            <MenuItem
-                                selected={project._id === projectsStore.sessionProject}
-                                key={project._id}
-                                value={project._id}
-                                sx={{px: '15px', py: '8px'}}
-                                onClick={() => handleProjectSelect(project._id)}
-                            >
-                                <Typography
-                                    color="#344054"
-                                    variant="body2"
+                    <Scrollbar sx={{maxHeight: 400}}>
+                        {projectsStore.items?.filter(project =>
+                            project.title.toLowerCase().includes(searchInputValue.toLowerCase()))
+                            .map((project, idx) => (
+                                <MenuItem
+                                    selected={project._id === projectsStore.sessionProject}
+                                    key={project._id}
+                                    value={project._id}
+                                    sx={{px: '15px', py: '8px'}}
+                                    onClick={() => handleProjectSelect(project._id)}
                                 >
-                                    {project.title}
-                                </Typography>
-                            </MenuItem>))}
-                    <Divider sx={{borderBottomWidth: 2, mx:2}}
+                                    <Typography
+                                        color="#344054"
+                                        variant="body2"
+                                    >
+                                        {project.title}
+                                    </Typography>
+                                </MenuItem>))}
+                    </Scrollbar>
+                    <Divider sx={{borderBottomWidth: 2, mx: 2}}
                              style={{marginTop: 16, marginBottom: 16}}/>
                     <MenuItem key='project_create'
                               id='create_project_button'
                               onClick={() => handleProjectSelect(null)}
-                              sx={{color: theme.palette.primary.main}}>
+                              sx={{color: theme.palette.primary.main, mb: 1}}>
                         <AddIcon fontWeight='bold'/>
                         <Typography sx={{ml: '4px'}}
                                     fontWeight='bold'>

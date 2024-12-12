@@ -4,7 +4,6 @@ import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import SvgIcon from '@mui/material/SvgIcon';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
@@ -17,20 +16,17 @@ import {RouterLink} from 'src/components/router-link';
 import useItemsSearch from 'src/hooks/use-items-search';
 import {useItemsStore} from 'src/hooks/use-items-store';
 import {SourceAndTargetTabs} from 'src/sections/app/source-and-target';
+import {TableSearchBar} from 'src/sections/components/table-search-bar';
 import {ListTable} from "src/sections/app/ontology-namespace/list-table";
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {ontologyNamespacesApi as sectionApi} from 'src/api/ontology-namespaces';
 import OntologyNamespacesCustom from 'src/pages/app/ontology-namespaces-custom';
-import {TableSearchBar} from '../../../sections/components/table-search-bar';
 
 const Page = () => {
     const itemsStore = useItemsStore(sectionApi);
-    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['prefix','uri']);
+    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['prefix', 'uri']);
 
     usePageView();
-
-    console.log(itemsStore.items)
-    console.log(itemsSearch)
 
     return (
         <>
@@ -57,19 +53,11 @@ const Page = () => {
                             >
                                 App
                             </Link>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.app[sectionApi.section].index}
-                                variant="subtitle2"
-                            >
-                                {sectionApi.SECTION_TITLE}
-                            </Link>
                             <Typography
                                 color="text.secondary"
                                 variant="subtitle2"
                             >
-                                List
+                                {sectionApi.SECTION_TITLE}
                             </Typography>
                         </Breadcrumbs>
                     </Stack>
@@ -82,11 +70,7 @@ const Page = () => {
                             id="add_button"
                             component={RouterLink}
                             href={paths.app[sectionApi.section].create}
-                            startIcon={(
-                                <SvgIcon>
-                                    <AddIcon/>
-                                </SvgIcon>
-                            )}
+                            startIcon={<AddIcon/>}
                             variant="contained"
                         >
                             Add

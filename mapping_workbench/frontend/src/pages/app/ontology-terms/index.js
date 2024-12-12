@@ -3,7 +3,6 @@ import SearchIcon from '@mui/icons-material/Search';
 
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import SvgIcon from '@mui/material/SvgIcon';
 import Grid from "@mui/material/Unstable_Grid2";
 
 import {paths} from 'src/paths';
@@ -56,11 +55,7 @@ const Page = () => {
                         <Button
                             id="discover_button"
                             onClick={handleDiscover}
-                            startIcon={(
-                                <SvgIcon>
-                                    <SearchIcon/>
-                                </SvgIcon>
-                            )}
+                            startIcon={(<SearchIcon/>)}
                             variant="text"
                         >
                             Discover Terms
@@ -69,11 +64,7 @@ const Page = () => {
                             id="add_term_button"
                             component={RouterLink}
                             href={paths.app[sectionApi.section].create}
-                            startIcon={(
-                                <SvgIcon>
-                                    <AddIcon/>
-                                </SvgIcon>
-                            )}
+                            startIcon={(<AddIcon/>)}
                             variant="contained"
                         >
                             Add Term

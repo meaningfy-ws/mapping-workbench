@@ -13,18 +13,15 @@ import {AppTitle} from 'src/components/app-title';
 import {RouterLink} from 'src/components/router-link';
 import {Scrollbar} from 'src/components/scrollbar';
 import {usePathname} from 'src/hooks/use-pathname';
-import {SideNavSection} from '../vertical-layout/side-nav-section';
+import {useProjects} from "src/hooks/use-projects";
 import {MobileNavSection} from './mobile-nav-section';
 import {ProjectSwitch} from "../project-switch2";
-import {useProjects} from "../../../hooks/use-projects";
 import {VersionLabel} from "../version-label";
 
 const MOBILE_NAV_WIDTH = 280;
 
 const useCssVars = (color) => {
     const theme = useTheme();
-
-    console.log(theme.palette)
 
     return useMemo(() => {
         switch (color) {

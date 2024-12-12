@@ -3,13 +3,9 @@ import {useEffect, useState} from 'react';
 import AddIcon from '@mui/icons-material/Add';
 
 import Card from '@mui/material/Card';
-import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import SvgIcon from '@mui/material/SvgIcon';
 import Divider from '@mui/material/Divider';
-import Typography from '@mui/material/Typography';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
@@ -18,11 +14,10 @@ import {usePageView} from 'src/hooks/use-page-view';
 import {RouterLink} from 'src/components/router-link';
 import useItemsSearch from 'src/hooks/use-items-search';
 import {TableSearchBar} from "src/sections/components/table-search-bar";
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
+import {TechnicalMappingsTabs} from 'src/sections/app/technical-mappings';
 import {resourceFilesApi} from 'src/api/resource-collections/file-resources';
 import {resourceCollectionsApi as sectionApi} from 'src/api/resource-collections';
 import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
-import {TechnicalMappingsTabs} from '../../../sections/app/technical-mappings';
 
 const useItemsStore = () => {
     const [state, setState] = useState({

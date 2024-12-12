@@ -79,9 +79,7 @@ const Page = () => {
                         component={RouterLink}
                         href={paths.app.fields_and_nodes.overview.elements.create}
                         id="add-field-button"
-                        startIcon={(
-                            <AddIcon/>
-                        )}
+                        startIcon={(<AddIcon/>)}
                         variant="contained"
                     >
                         Add
@@ -90,9 +88,7 @@ const Page = () => {
                         id="import_shema_button"
                         component={RouterLink}
                         href={paths.app.fields_and_nodes.overview.import}
-                        startIcon={(
-                            <UploadIcon/>
-                        )}
+                        startIcon={(<UploadIcon/>)}
                         variant="contained"
                     >
                         Import schema from github

@@ -1,12 +1,14 @@
-import ArchiveIcon from '@mui/icons-material/Archive';
-import DvrIcon from '@mui/icons-material/Dvr';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
-import LightbulbCircleIcon from '@mui/icons-material/LightbulbCircle';
-import ModeStandbyIcon from '@mui/icons-material/ModeStandby';
-import VerifiedIcon from '@mui/icons-material/Verified';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
-import {paths} from '../../../paths';
+
+import DvrIcon from '@mui/icons-material/Dvr';
+import ArchiveIcon from '@mui/icons-material/Archive';
+import VerifiedIcon from '@mui/icons-material/Verified';
+import ModeStandbyIcon from '@mui/icons-material/ModeStandby';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import LightbulbCircleIcon from '@mui/icons-material/LightbulbCircle';
+
+import {paths} from 'src/paths';
 
 const ArrowButton = ({children, id, icon, style, active, href = '#', first, last}) => {
     return <Link id={id}
@@ -21,7 +23,8 @@ const ArrowButton = ({children, id, icon, style, active, href = '#', first, last
 const ArrowButtonGroup = ({
                               children
                           }) => {
-    return <div className={'btn-group'}>
+    return <div className={'btn-group'}
+                style={{display: 'flex'}}>
         {children}
     </div>
 }
