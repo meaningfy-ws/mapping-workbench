@@ -17,11 +17,11 @@ import {Scrollbar} from 'src/components/scrollbar';
 import timeTransformer from "src/utils/time-transformer";
 import {useGlobalState} from "src/hooks/use-global-state";
 import exportPackage from "src/utils/export-mapping-package";
-import TablePagination from "src/sections/components/table-pagination";
+import {MenuActionButton, MenuActions} from 'src/components/menu-actions';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import TableSorterHeader from 'src/sections/components/table-sorter-header';
+import TablePagination from "src/sections/components/table-pagination-pages";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import {MenuActionButton, MenuActions} from '../../../../components/menu-actions';
 
 export const ListTable = (props) => {
     const {
@@ -120,15 +120,12 @@ export const ListTable = (props) => {
                                                         onClick={() => handleExport(item)}
                                                         icon={<FileUploadOutlinedIcon/>}
                                                         disabled={isExporting}
-                                                        last
                                                         title={isExporting ? "Exporting..." : "Export"}/>
                                                 </MenuActions>
                                             </Stack>
                                         </TableCell>
                                     </TableRow>
-
-                                )
-                                    ;
+                                );
                             })}
                         </TableBody>
                     </Table>

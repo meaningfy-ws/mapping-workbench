@@ -66,7 +66,6 @@ export const ListFileCollectionActions = (props) => {
                 onClick={() => setConfirmOpen(true)}
                 title='Delete'
                 icon={<DeleteOutlineIcon/>}
-                last
             />
             <ConfirmDialog
                 title="Delete It?"

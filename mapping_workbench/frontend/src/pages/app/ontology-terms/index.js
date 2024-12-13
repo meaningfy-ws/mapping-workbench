@@ -25,7 +25,7 @@ import {ListTable} from '../../../sections/app/ontology-term/list-table';
 import {Filter} from '../../../sections/components/filter';
 import {TableSearchBar} from '../../../sections/components/table-search-bar';
 
-const filterValues = [{label: 'All', value: ''},
+const FILTER_VALUES = [{label: 'All', value: ''},
     {label: 'CLASS', value: 'CLASS'},
     {label: 'PROPERTY', value: 'PROPERTY'}]
 
@@ -86,7 +86,7 @@ const Page = () => {
                                     }}
                                 >
                                     <Filter title='Type:'
-                                            values={filterValues}
+                                            values={FILTER_VALUES}
                                             value={itemsSearch.state.filters.type}
                                             onValueChange={e => itemsSearch.handleFiltersChange({type: e})}/>
                                 </Popover>

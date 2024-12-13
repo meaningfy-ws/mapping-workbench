@@ -72,7 +72,6 @@ export const ListItemActions = (props) => {
             {itemctx.api.SECTION_LIST_ACTIONS.includes(ACTION.DELETE) && <>
                 <MenuActionButton
                     id="delete_button"
-                    last
                     onClick={() => setConfirmOpen(true)}
                     icon={<DeleteOutlineIcon/>}
                     title='Delete'

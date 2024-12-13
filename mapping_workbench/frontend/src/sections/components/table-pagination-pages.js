@@ -1,13 +1,67 @@
+import {useState} from 'react';
+
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+
+import Stack from '@mui/material/Stack';
 import {Pagination} from '@mui/material';
+import Button from '@mui/material/Button';
+import Popover from '@mui/material/Popover';
+import Tooltip from '@mui/material/Tooltip';
+import MenuItem from '@mui/material/MenuItem';
 
+const TablePagination = ({
+                             children,
+                             onRowsPerPageChange,
+                             rowsPerPage,
+                             rowsPerPageOptions,
+                             onPageChange,
+                             count,
+                             ...otherProps
+                         }) => {
 
-const TablePagination = (props) => {
-    const {children, ...otherProps} = props
+    const [rppAnchor, setRppAnchor] = useState(null)
+    const handleChange = (event) => {
+        onRowsPerPageChange(event)
+        setRppAnchor(null)
+    }
+
     return (
         <>
-            <Pagination {...otherProps}/>
-                {children}
-            <Pagination {...otherProps}/>
+            {/*<Pagination color='primary'*/}
+            {/*            {...otherProps}/>*/}
+            {children}
+            <Stack direction='row'
+                   alignItems='center'
+                   justifyContent='end'>
+                <Tooltip title='rows per page'>
+                    <Button endIcon={<KeyboardArrowDownIcon/>}
+                            onClick={e => setRppAnchor(e.target)}>
+                        {rowsPerPage > 0 ? rowsPerPage : count}
+                    </Button>
+                </Tooltip>
+                <Popover
+                    id={'rppPopover'}
+                    open={!!rppAnchor}
+                    anchorEl={rppAnchor}
+                    onClose={() => setRppAnchor(null)}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }}
+                >
+                    {rowsPerPageOptions.map(option => <MenuItem
+                        key={option.value ?? option}
+                        value={option.value ?? option}
+                        selected={(option.value ?? option) === rowsPerPage}
+                        onClick={handleChange}>
+                        {option.label ?? option}
+                    </MenuItem>)}
+                </Popover>
+                <Pagination color='primary'
+                            onChange={onPageChange}
+                            count={Math.ceil(count / (rowsPerPage > 0 ? rowsPerPage : count))}
+                            {...otherProps}/>
+            </Stack>
         </>
     )
 }

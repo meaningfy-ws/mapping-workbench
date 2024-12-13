@@ -1,6 +1,5 @@
 import {useEffect, useState} from 'react';
 
-
 import AddIcon from '@mui/icons-material/Add';
 import UploadIcon from '@mui/icons-material/Upload';
 import FilterListIcon from '@mui/icons-material/FilterList';
@@ -126,7 +125,6 @@ const Page = () => {
                         >
                             Import schema from github
                         </Button>
-
                     </Stack>
                 </Stack>
                 <ListTable

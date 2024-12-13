@@ -1,16 +1,15 @@
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import {Fragment, useState} from 'react';
 import PropTypes from 'prop-types';
 import moment from "moment";
 
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 import List from '@mui/material/List';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import Popover from '@mui/material/Popover';
 import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
@@ -26,10 +25,10 @@ import {Scrollbar} from 'src/components/scrollbar';
 import timeTransformer from "src/utils/time-transformer";
 import {useGlobalState} from "src/hooks/use-global-state";
 import {SeverityPill} from "src/components/severity-pill";
-import TablePagination from "src/sections/components/table-pagination";
+import {ChevronButton} from 'src/sections/components/chevron-button';
+import {MenuActionButton, MenuActions} from 'src/components/menu-actions';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
-import {MenuActionButton, MenuActions} from '../../../components/menu-actions';
-import {ChevronButton} from '../../components/chevron-button';
+import TablePagination from "src/sections/components/table-pagination-pages";
 import {mapStatusColor, TaskActions, TaskLine, taskProgressStatus as taskStatuses} from "./task-actions";
 
 
@@ -200,7 +199,6 @@ export const ListTable = (props) => {
                                                         id="delete_button"
                                                         onClick={() => onDeleteAction(item_id)}
                                                         title='Delete'
-                                                        last
                                                         icon={<DeleteOutlineIcon/>}
                                                     />
                                                 </MenuActions>

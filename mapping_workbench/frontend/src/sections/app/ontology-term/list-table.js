@@ -16,7 +16,7 @@ import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {MenuActions} from '../../../components/menu-actions';
 import {ChevronButton} from '../../components/chevron-button';
-import TablePagination from "../../components/table-pagination";
+import TablePagination from "../../components/table-pagination-pages";
 import TableSorterHeader from "../../components/table-sorter-header";
 
 

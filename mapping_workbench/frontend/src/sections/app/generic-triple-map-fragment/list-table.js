@@ -23,20 +23,20 @@ import {sessionApi} from 'src/api/session';
 import {useDialog} from 'src/hooks/use-dialog';
 import {Scrollbar} from 'src/components/scrollbar';
 import {toastSuccess} from 'src/components/app-toast';
+import {MenuActions} from 'src/components/menu-actions';
 import timeTransformer from "src/utils/time-transformer";
 import {useGlobalState} from "src/hooks/use-global-state";
 import {mappingPackagesApi} from "src/api/mapping-packages";
-import TablePagination from "src/sections/components/table-pagination";
+import {ChevronButton} from 'src/sections/components/chevron-button';
 import CodeMirrorDefault from 'src/components/app/form/codeMirrorDefault';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
-import {genericTripleMapFragmentsApi} from 'src/api/triple-map-fragments/generic';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
+import TablePagination from "src/sections/components/table-pagination-pages";
+import {genericTripleMapFragmentsApi} from 'src/api/triple-map-fragments/generic';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {
     MappingPackageCheckboxList
 } from 'src/sections/app/mapping-package/components/mapping-package-real-checkbox-list';
-import {MenuActions} from '../../../components/menu-actions';
-import {ChevronButton} from '../../components/chevron-button';
 
 
 export const ListTableMappingPackages = (props) => {

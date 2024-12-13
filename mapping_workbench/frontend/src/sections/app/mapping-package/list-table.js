@@ -27,12 +27,12 @@ import {useGlobalState} from "src/hooks/use-global-state";
 import {PropertyList} from 'src/components/property-list';
 import {PropertyListItem} from 'src/components/property-list-item';
 import ConfirmDialog from "src/components/app/dialog/confirm-dialog";
-import TablePagination from "src/sections/components/table-pagination";
+import {ChevronButton} from 'src/sections/components/chevron-button';
+import {MenuActionButton, MenuActions} from 'src/components/menu-actions';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
+import TableSorterHeader from 'src/sections/components/table-sorter-header';
+import TablePagination from "src/sections/components/table-pagination-pages";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import {MenuActionButton, MenuActions} from '../../../components/menu-actions';
-import {ChevronButton} from '../../components/chevron-button';
-import TableSorterHeader from '../../components/table-sorter-header';
 import {MappingPackageProcessForm} from './components/mapping-package-process-form';
 import {MappingPackagesBulkActions} from './components/mapping-packages-bulk-actions';
 
@@ -117,7 +117,6 @@ const MappingPackageRowFragment = (props) => {
                                 id="delete_button"
                                 onClick={() => setConfirmOpen(true)}
                                 icon={<DeleteOutlineIcon/>}
-                                last
                                 title='Delete'/>
                         </MenuActions>
                     </TableCell>

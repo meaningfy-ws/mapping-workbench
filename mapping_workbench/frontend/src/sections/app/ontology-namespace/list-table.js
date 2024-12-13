@@ -10,12 +10,12 @@ import TableHead from '@mui/material/TableHead';
 import Typography from '@mui/material/Typography';
 
 import {Scrollbar} from 'src/components/scrollbar';
-import TablePagination from "src/sections/components/table-pagination";
+import {MenuActions} from 'src/components/menu-actions';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import TableSorterHeader from 'src/sections/components/table-sorter-header';
+import TablePagination from "src/sections/components/table-pagination-pages";
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import {MenuActions} from '../../../components/menu-actions';
 
 export const ListTable = (props) => {
     const {

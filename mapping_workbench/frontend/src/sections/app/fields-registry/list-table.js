@@ -17,15 +17,15 @@ import CardContent from '@mui/material/CardContent';
 
 import {paths} from "src/paths";
 import {Scrollbar} from 'src/components/scrollbar';
+import {MenuActions} from 'src/components/menu-actions';
 import {PropertyList} from "src/components/property-list";
 import {PropertyListItem} from "src/components/property-list-item";
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import {ChevronButton} from 'src/sections/components/chevron-button';
-import TablePagination from "src/sections/components/table-pagination";
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
+import TablePagination from "src/sections/components/table-pagination-pages";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import {MenuActions} from '../../../components/menu-actions';
 
 
 export const ListTable = (props) => {

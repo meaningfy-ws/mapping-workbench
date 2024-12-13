@@ -8,7 +8,7 @@ const useItemsSearch = (items, sectionApi, searchColumns, newFilters, sort) => {
             column: "",
             direction: "desc"
         },
-        page: sectionApi.DEFAULT_PAGE,
+        page: sectionApi.DEFAULT_PAGE + 1,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
 
@@ -58,7 +58,7 @@ const useItemsSearch = (items, sectionApi, searchColumns, newFilters, sort) => {
     }
 
     const pagedItems = sortedItems().filter((item, i) => {
-        const pageSize = state.page * state.rowsPerPage
+        const pageSize = (state.page - 1)  * state.rowsPerPage
         if ((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
             return item
     })

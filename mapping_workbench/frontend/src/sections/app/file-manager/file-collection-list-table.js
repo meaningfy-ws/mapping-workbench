@@ -1,7 +1,7 @@
-import BorderColorIcon from '@mui/icons-material/BorderColor';
-import UploadIcon from '@mui/icons-material/Upload';
 import {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
+
+import UploadIcon from '@mui/icons-material/Upload';
 
 import Box from "@mui/system/Box";
 import Chip from '@mui/material/Chip';
@@ -29,13 +29,13 @@ import {PropertyList} from "src/components/property-list";
 import {mappingPackagesApi} from "src/api/mapping-packages";
 import {PropertyListItem} from 'src/components/property-list-item';
 import {ChevronButton} from 'src/sections/components/chevron-button';
-import TablePagination from "src/sections/components/table-pagination";
 import {FileUploader} from "src/sections/app/file-manager/file-uploader";
+import {MenuActionButton, MenuActions} from 'src/components/menu-actions';
 import TableSorterHeader from 'src/sections/components/table-sorter-header';
+import TablePagination from "src/sections/components/table-pagination-pages";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {ListFileCollectionActions} from "src/components/app/list/list-file-collection-actions";
 import {MappingPackagesBulkAssigner} from "src/sections/app/mapping-package/components/mapping-packages-bulk-assigner";
-import {MenuActionButton, MenuActions} from '../../../components/menu-actions';
 
 export const ListTableRow = (props) => {
     const {

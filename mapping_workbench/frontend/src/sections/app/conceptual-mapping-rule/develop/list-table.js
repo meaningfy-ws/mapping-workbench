@@ -1,9 +1,10 @@
-import BorderColorIcon from '@mui/icons-material/BorderColor';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import {useState} from "react";
 import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
 
 import PropTypes from 'prop-types';
+
+import BorderColorIcon from '@mui/icons-material/BorderColor';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
@@ -21,9 +22,9 @@ import {useDialog} from "src/hooks/use-dialog";
 import {Scrollbar} from 'src/components/scrollbar';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import ConfirmDialog from "src/components/app/dialog/confirm-dialog";
-import TablePagination from "src/sections/components/table-pagination";
+import {MenuActionButton, MenuActions} from 'src/components/menu-actions';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
-import {MenuActionButton, MenuActions} from '../../../../components/menu-actions';
+import TablePagination from "src/sections/components/table-pagination-pages";
 
 export const ListTableRow = (props) => {
     const {
@@ -89,7 +90,6 @@ export const ListTableRow = (props) => {
                             id="delete_button"
                             icon={<DeleteOutlineIcon/>}
                             onClick={() => setConfirmOpen(true)}
-                            last
                             title='Delete'/>
                     </MenuActions>
                     <ConfirmDialog
