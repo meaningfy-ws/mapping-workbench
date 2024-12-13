@@ -1,4 +1,3 @@
-import Tooltip from '@mui/material/Tooltip';
 import {useContext, useState} from "react";
 
 import AddIcon from '@mui/icons-material/Add';
@@ -7,6 +6,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 import Menu from '@mui/material/Menu';
 import Stack from '@mui/material/Stack';
+import Tooltip from '@mui/material/Tooltip';
 import Divider from '@mui/material/Divider';
 import {useTheme} from '@mui/material/styles';
 import MenuItem from "@mui/material/MenuItem";
@@ -19,12 +19,25 @@ import {useRouter} from "next/router";
 import {Scrollbar} from 'src/components/scrollbar';
 import {ProjectsContext} from "src/contexts/projects";
 
+const colors = ['error', 'info', 'primary', 'secondary', 'success', 'warning'];
+
+const getColorForId = (id) => {
+    const hash = Array.from(id).reduce((sum, char) => sum + char.charCodeAt(0), 0);
+    return colors[hash % colors.length];
+};
+
+const Circle = ({color}) => {
+    return <span style={{width: 12, height: 12, borderRadius: '100%', backgroundColor: color}}/>
+}
+
 export const ProjectSwitch = ({small}) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const projectsStore = useContext(ProjectsContext)
     const [searchInputValue, setSearchInputValue] = useState('')
     const router = useRouter();
     const theme = useTheme()
+
+    console.log(theme)
 
 
     const handleProjectSelect = (value) => {
@@ -42,17 +55,20 @@ export const ProjectSwitch = ({small}) => {
         setAnchorEl(null);
     };
 
-    const projectName = projectsStore.items?.find(project => project._id === projectsStore.sessionProject)?.title
+    const currentProject = projectsStore.items?.find(project => project._id === projectsStore.sessionProject)
+
+
+    console.log(currentProject._id)
+
     return (
         <Stack sx={{px: 2}}>
-            <Tooltip title={small && projectName}>
-
+            <Tooltip title={small && currentProject?.title}>
                 <Stack onClick={handleClick}
                        id='project_switch'
                        direction='row'
                        alignItems='center'
                        justifyContent='center'
-                       gap={3}
+                       gap={small ? 1 : 2}
                        color={'#1D2939'}
                        sx={{
                            backgroundColor: theme.palette.primary.light,
@@ -60,10 +76,16 @@ export const ProjectSwitch = ({small}) => {
                            p: '9px',
                            cursor: 'pointer'
                        }}>
-                    {!small && projectName}
+                    {!!currentProject && <Stack direction='row'
+                                                alignItems='center'
+                                                gap={1}>
+                        <Circle color={theme.palette[getColorForId(currentProject._id)].main}/>
+                        {!small && currentProject.title}
+                    </Stack>}
                     <ArrowForwardIosIcon color='primary'
                                          fontWeight='bold'
-                                         fontSize='small'/>
+                                         sx={{fontSize: '18px'}}
+                    />
                 </Stack>
             </Tooltip>
             <Menu
@@ -105,9 +127,12 @@ export const ProjectSwitch = ({small}) => {
                                     sx={{px: '15px', py: '8px'}}
                                     onClick={() => handleProjectSelect(project._id)}
                                 >
+                                    <Circle color={theme.palette[getColorForId(project._id)].main}/>
+
                                     <Typography
                                         color="#344054"
                                         variant="body2"
+                                        marginLeft={1}
                                     >
                                         {project.title}
                                     </Typography>
