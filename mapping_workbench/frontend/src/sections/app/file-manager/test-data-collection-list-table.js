@@ -1,7 +1,11 @@
 import {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import UploadIcon from '@mui/icons-material/Upload';
+
 import {Box} from "@mui/system";
+import Menu from '@mui/material/Menu';
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
@@ -14,6 +18,7 @@ import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
+import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 
@@ -23,12 +28,13 @@ import {paths} from "src/paths";
 import {useRouter} from "src/hooks/use-router";
 import {useDialog} from "src/hooks/use-dialog";
 import {Scrollbar} from 'src/components/scrollbar';
-import {ChevronButton} from 'src/sections/components/chevron-button';
 import timeTransformer from "src/utils/time-transformer";
 import {PropertyList} from "src/components/property-list";
 import {useGlobalState} from "src/hooks/use-global-state";
 import {mappingPackagesApi} from "src/api/mapping-packages";
+import {MenuActionButton} from 'src/components/menu-action-button';
 import {PropertyListItem} from "src/components/property-list-item";
+import {ChevronButton} from 'src/sections/components/chevron-button';
 import ConfirmDialog from "src/components/app/dialog/confirm-dialog";
 import TablePagination from "src/sections/components/table-pagination";
 import {ListItemActions} from "src/components/app/list/list-item-actions";
@@ -55,6 +61,7 @@ export const ListTableRow = (props) => {
     const {timeSetting} = useGlobalState()
     const [collectionResources, setCollectionResources] = useState([]);
     const [confirmOpen, setConfirmOpen] = useState(false);
+    const [actionsMenu, setActionsMenu] = useState(null)
     const uploadDialog = useDialog()
 
     useEffect(() => {
@@ -101,10 +108,8 @@ export const ListTableRow = (props) => {
             >
                 Are you sure you want to delete it?
             </ConfirmDialog>
-            <TableRow
-                hover
-                key={item_id}
-            >
+            <TableRow hover
+                      key={item_id}>
                 <TableCell
                     padding="checkbox"
                     sx={{
@@ -158,15 +163,19 @@ export const ListTableRow = (props) => {
                     {timeTransformer(item.created_at, timeSetting)}
                 </TableCell>
                 <TableCell align="right">
-                    <Stack justifyContent='end'
-                           alignItems='center'
-                           direction='row'>
-                        <Button type='link'
-                                onClick={() => uploadDialog.handleOpen({id: item_id})}>Import test data</Button>
+                    <IconButton onClick={e => setActionsMenu(e.target)}>
+                        <MoreHorizIcon/>
+                    </IconButton>
+                    <Menu anchorEl={actionsMenu}
+                          open={!!actionsMenu}
+                          onClose={() => setActionsMenu(null)}>
+                        <MenuActionButton action={() => uploadDialog.handleOpen({id: item_id})}
+                                          icon={<UploadIcon/>}
+                                          text='Import test data'/>
                         <ListItemActions
                             itemctx={new ForListItemAction(item_id, sectionApi)}
                             onDeleteAction={handleDeleteAction}/>
-                    </Stack>
+                    </Menu>
                 </TableCell>
             </TableRow>
             {isCurrent && (
@@ -373,7 +382,6 @@ export const TestDataCollectionListTable = (props) => {
                                 <SorterHeader fieldName='created_at'
                                               title='created'/>
                                 <TableCell align="right">
-                                    Actions
                                 </TableCell>
                             </TableRow>
                         </TableHead>

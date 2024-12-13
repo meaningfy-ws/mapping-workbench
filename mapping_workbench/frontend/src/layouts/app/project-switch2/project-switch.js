@@ -101,7 +101,7 @@ export const ProjectSwitch = ({small}) => {
                     vertical: 'top',
                     horizontal: 'left',
                 }}
-                width={'250px'}
+                width='250px'
             >
 
                 <Stack direction='column'>
