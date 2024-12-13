@@ -26,14 +26,17 @@ export const MenuActions = ({children}) => {
     </>
 }
 
-export const MenuActionButton = ({icon, title, last, ...other}) => {
+export const MenuActionButton = ({icon, title, ...other}) => {
     const theme = useTheme()
-    return <MenuItem sx={{...(!last && {borderBottom: `1px solid ${theme.palette.divider}`})}}
+    return <MenuItem sx={{':not(:last-of-type)': {borderBottom: `1px solid ${theme.palette.divider}`}, height: '44px'}}
                      {...other}
     >
         {icon && <ListItemIcon sx={{mr: 0}}>
             {cloneElement(icon, {color: 'primary'})}
-        </ListItemIcon>}
-        {title && <ListItemText>{title}</ListItemText>}
+        </ListItemIcon>
+        }
+        {
+            title && <ListItemText>{title}</ListItemText>
+        }
     </MenuItem>
 }

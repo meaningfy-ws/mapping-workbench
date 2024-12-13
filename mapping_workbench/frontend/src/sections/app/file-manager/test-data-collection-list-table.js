@@ -149,7 +149,7 @@ export const ListTableRow = (props) => {
                                 .map(mapping_package =>
                                     <Chip key={"mapping_package_" + mapping_package.id}
                                           label={mapping_package['title']}
-                                          sx={{mb: 1}}
+                                          sx={{mb: 1, mr: 1}}
                                     />
                                 )
                         }
