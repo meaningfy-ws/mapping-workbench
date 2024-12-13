@@ -42,7 +42,6 @@ const FILTER_VALUES = [{label: 'All', value: ''},
     {label: 'Invalid', value: 'invalid'}]
 
 const Page = () => {
-    const [detailedView, setDetailedView] = useState(true)
     const {t} = useTranslation();
 
     const [filterPopover, setFilterPopover] = useState(null)
@@ -154,17 +153,11 @@ const Page = () => {
                         </Button>
                     </Stack>
                 </Stack>
-                <Stack direction='row'
-                       padding={3}>
-                    <FormControlLabel control={<Switch checked={detailedView}
-                                                       onChange={e => setDetailedView(e.target.checked)}/>}
-                                      label='Detailed View'/>
-                </Stack>
+
                 <ListTable
                     sectionApi={sectionApi}
                     items={itemsSearch.pagedItems}
                     count={itemsSearch.count}
-                    detailedView={detailedView}
                     page={itemsSearch.state.page}
                     onPageChange={itemsSearch.handlePageChange}
                     onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}

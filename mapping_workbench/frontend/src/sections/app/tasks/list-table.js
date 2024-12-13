@@ -1,6 +1,9 @@
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import {Fragment, useState} from 'react';
 import PropTypes from 'prop-types';
 import moment from "moment";
+
+import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 
 import List from '@mui/material/List';
 import Grid from '@mui/material/Grid';
@@ -25,6 +28,7 @@ import {useGlobalState} from "src/hooks/use-global-state";
 import {SeverityPill} from "src/components/severity-pill";
 import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
+import {MenuActionButton, MenuActions} from '../../../components/menu-actions';
 import {ChevronButton} from '../../components/chevron-button';
 import {mapStatusColor, TaskActions, TaskLine, taskProgressStatus as taskStatuses} from "./task-actions";
 
@@ -118,9 +122,7 @@ export const ListTable = (props) => {
                                     <SorterHeader fieldName="task_status"
                                                   title='Status'/>
                                 </TableCell>
-                                <TableCell align="right">
-                                    Actions
-                                </TableCell>
+                                <TableCell/>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -183,26 +185,25 @@ export const ListTable = (props) => {
                                                 </Stack>
                                             </TableCell>
                                             <TableCell align="right">
-                                                {[taskStatuses.QUEUED, taskStatuses.RUNNING].includes(item.task_status)
-                                                    && <Button
-                                                        id="cancel_button"
-                                                        variant="text"
-                                                        size="small"
-                                                        color="warning"
-                                                        onClick={() => onCancelAction(item_id)}
-                                                    >
-                                                        Cancel
-                                                    </Button>
-                                                }
-                                                <Button
-                                                    id="delete_button"
-                                                    variant="text"
-                                                    size="small"
-                                                    color="error"
-                                                    onClick={() => onDeleteAction(item_id)}
-                                                >
-                                                    Delete
-                                                </Button>
+                                                <MenuActions>
+                                                    {[taskStatuses.QUEUED, taskStatuses.RUNNING].includes(item.task_status)
+                                                        && <MenuActionButton
+                                                            id="cancel_button"
+                                                            action={() => onCancelAction(item_id)}
+                                                            text='Cancel'
+                                                            icon={<CancelOutlinedIcon/>}
+                                                        >
+                                                            Cancel
+                                                        </MenuActionButton>
+                                                    }
+                                                    <MenuActionButton
+                                                        id="delete_button"
+                                                        action={() => onDeleteAction(item_id)}
+                                                        text='Delete'
+                                                        last
+                                                        icon={<DeleteOutlineIcon/>}
+                                                    />
+                                                </MenuActions>
                                             </TableCell>
                                         </TableRow>
                                         {isCurrent && (

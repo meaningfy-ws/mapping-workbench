@@ -16,7 +16,7 @@ import useItemsSearch from 'src/hooks/use-items-search';
 import {projectsApi as sectionApi} from 'src/api/projects';
 import {ListTable} from 'src/sections/app/project/list-table';
 import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {TableSearchBar} from '../../../sections/components/table-search-bar';
+import {TableSearchBar} from 'src/sections/components/table-search-bar';
 
 
 export const Page = () => {

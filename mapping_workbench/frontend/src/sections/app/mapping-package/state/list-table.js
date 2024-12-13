@@ -1,10 +1,11 @@
 import {useState} from 'react';
 import PropTypes from 'prop-types';
 
+import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
+
 import Table from '@mui/material/Table';
 import Paper from '@mui/material/Paper';
 import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
 import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -20,6 +21,7 @@ import TablePagination from "src/sections/components/table-pagination";
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import TableSorterHeader from 'src/sections/components/table-sorter-header';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
+import {MenuActionButton, MenuActions} from '../../../../components/menu-actions';
 
 export const ListTable = (props) => {
     const {
@@ -107,22 +109,25 @@ export const ListTable = (props) => {
                                                 alignItems="center"
                                                 direction="row"
                                             >
-                                                <ListItemActions
-                                                    itemctx={new ForListItemAction(item_id, sectionApi)}
-                                                    pathnames={{
-                                                        view: () => paths.app[sectionApi.section].states.view(id, item_id),
-                                                    }}
-                                                />
-                                                <Button
-                                                    onClick={() => handleExport(item)}
-                                                    disabled={isExporting}>
-                                                    {isExporting ? "Exporting..." : "Export"}
-                                                </Button>
+                                                <MenuActions>
+                                                    <ListItemActions
+                                                        itemctx={new ForListItemAction(item_id, sectionApi)}
+                                                        pathnames={{
+                                                            view: () => paths.app[sectionApi.section].states.view(id, item_id),
+                                                        }}
+                                                    />
+                                                    <MenuActionButton
+                                                        onClick={() => handleExport(item)}
+                                                        icon={<FileUploadOutlinedIcon/>}
+                                                        // disabled={isExporting}>
+                                                        text={isExporting ? "Exporting..." : "Export"}/>
+                                                </MenuActions>
                                             </Stack>
                                         </TableCell>
                                     </TableRow>
 
-                                );
+                                )
+                                    ;
                             })}
                         </TableBody>
                     </Table>

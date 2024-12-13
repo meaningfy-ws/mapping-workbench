@@ -89,6 +89,7 @@ export const ListTableRow = (props) => {
                             id="delete_button"
                             icon={<DeleteOutlineIcon/>}
                             action={() => setConfirmOpen(true)}
+                            last
                             text='Delete'/>
                     </MenuActions>
                     <ConfirmDialog
@@ -196,9 +197,7 @@ export const ListTable = (props) => {
                                                   title="Ontology Property Path"/>
                                 </TableCell>
 
-                                <TableCell align="right">
-                                    Actions
-                                </TableCell>
+                                <TableCell align="right"/>
                             </TableRow>
                         </TableHead>
                         <TableBody>

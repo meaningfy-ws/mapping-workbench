@@ -1,7 +1,9 @@
-import {Button} from '@mui/material';
-
-import {usePopover} from 'src/hooks/use-popover';
 import {useCallback, useState} from "react";
+
+import BorderColorIcon from '@mui/icons-material/BorderColor';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
+
 import {paths} from 'src/paths';
 import {useRouter} from "next/router";
 import {MenuActionButton} from '../../menu-actions';
@@ -51,23 +53,26 @@ export const ListFileCollectionActions = (props) => {
                 id="resources_button"
                 action={handleResourceManagerAction}
                 text='Resources'
+                icon={<DescriptionOutlinedIcon/>}
             />
             <MenuActionButton
                 id="edit_button"
                 action={handleEditAction}
                 text='Edit'
+                icon={<BorderColorIcon/>}
             />
             <MenuActionButton
                 id="delete_button"
                 action={() => setConfirmOpen(true)}
                 text='Delete'
+                icon={<DeleteOutlineIcon/>}
+                last
             />
             <ConfirmDialog
                 title="Delete It?"
                 open={confirmOpen}
                 setOpen={setConfirmOpen}
                 onConfirm={handleDeleteAction}
-                last
             >
                 Are you sure you want to delete it?
             </ConfirmDialog>

@@ -930,9 +930,10 @@ export const ListTable = (props) => {
     const {
         count = 0, items = [], onPageChange = () => {
         }, onRowsPerPageChange, page = 0, rowsPerPage = 0, sectionApi, onPackagesUpdate = () => {
-        }, sort, sortField, onSort, detailedView
+        }, sort, sortField, onSort
     } = props;
 
+    const [detailedView, setDetailedView] = useState(true)
     const [currentItem, setCurrentItem] = useState(null);
     const [hoveredItem, setHoveredItem] = useState(null);
     const notesDialog = useDialog()
@@ -976,6 +977,7 @@ export const ListTable = (props) => {
 
     if (!isProjectDataReady) return null;
 
+
     return (
         <TablePagination
             component="div"
@@ -989,6 +991,12 @@ export const ListTable = (props) => {
             showLastButton
         >
             <Paper>
+                <Stack direction='row'
+                       padding={3}>
+                    <FormControlLabel control={<Switch checked={detailedView}
+                                                       onChange={e => setDetailedView(e.target.checked)}/>}
+                                      label='Detailed View'/>
+                </Stack>
                 <Scrollbar>
                     <Table sx={{minWidth: 1200}}>
                         <TableHead>

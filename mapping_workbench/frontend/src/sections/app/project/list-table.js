@@ -1,10 +1,12 @@
 import {Fragment, useState} from 'react';
 import PropTypes from 'prop-types';
 
+import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
+import CleaningServicesOutlinedIcon from '@mui/icons-material/CleaningServicesOutlined';
+
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
-import Button from "@mui/material/Button";
 import Divider from '@mui/material/Divider';
 import TableRow from '@mui/material/TableRow';
 import TableHead from '@mui/material/TableHead';
@@ -25,6 +27,7 @@ import TablePagination from "src/sections/components/table-pagination";
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
+import {MenuActionButton, MenuActions} from '../../../components/menu-actions';
 
 
 export const ListTable = (props) => {
@@ -88,9 +91,7 @@ export const ListTable = (props) => {
                                     <SorterHeader fieldName="created_at"
                                                   title="created"/>
                                 </TableCell>
-                                <TableCell align="right">
-                                    Actions
-                                </TableCell>
+                                <TableCell/>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -147,27 +148,23 @@ export const ListTable = (props) => {
                                                 {timeTransformer(item.created_at, timeSetting)}
                                             </TableCell>
                                             <TableCell align="right">
-                                                <Button
-                                                    id="select_button"
-                                                    variant="text"
-                                                    size="small"
-                                                    color="warning"
-                                                    onClick={() => projectStore.handleSessionProjectChange(item_id)}
-                                                >
-                                                    Select
-                                                </Button>
-                                                <ListItemActions
-                                                    onDeleteAction={() => projectStore.handleDeleteProject(item_id)}
-                                                    itemctx={new ForListItemAction(item_id, sectionApi)}/>
-                                                <Button
-                                                    id="cleanup_button"
-                                                    variant="text"
-                                                    size="small"
-                                                    color="warning"
-                                                    onClick={() => { projectStore.handleProjectCleanup(item_id) }}
-                                                >
-                                                    Cleanup
-                                                </Button>
+                                                <MenuActions>
+                                                    <MenuActionButton
+                                                        id="select_button"
+                                                        action={() => projectStore.handleSessionProjectChange(item_id)}
+                                                        text='Select'
+                                                        icon={<CheckOutlinedIcon/>}
+                                                    />
+                                                    <ListItemActions
+                                                        onDeleteAction={() => projectStore.handleDeleteProject(item_id)}
+                                                        itemctx={new ForListItemAction(item_id, sectionApi)}/>
+                                                    <MenuActionButton
+                                                        id="cleanup_button"
+                                                        action={() => { projectStore.handleProjectCleanup(item_id) }}
+                                                        icon={<CleaningServicesOutlinedIcon/>}
+                                                        text='Cleanup'
+                                                    />
+                                                </MenuActions>
                                             </TableCell>
                                         </TableRow>
                                         {isCurrent && (

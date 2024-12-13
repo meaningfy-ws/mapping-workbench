@@ -70,7 +70,6 @@ const useMappingRulesStore = (mappingPackage) => {
     };
 };
 const MappingPackageRulesView = ({id}) => {
-    const [detailedView, setDetailedView] = useState(true)
     const [filterPopover, setFilterPopover] = useState(null)
 
     const mappingRulesStore = useMappingRulesStore(id);
@@ -120,10 +119,6 @@ const MappingPackageRulesView = ({id}) => {
                                 onValueChange={e => mappingRulesSearch.handleFiltersChange({terms: e})}/>
                     </Popover>
                 </Paper>
-                <FormControlLabel control={<Switch checked={detailedView}
-                                                   onChange={e => setDetailedView(e.target.checked)}/>}
-                                  label='Detailed View'/>
-
             </Stack>
             <MappingRulesListTable
                 onPageChange={mappingRulesSearch.handlePageChange}
@@ -136,7 +131,6 @@ const MappingPackageRulesView = ({id}) => {
                 rowsPerPage={mappingRulesSearch.state.rowsPerPage}
                 sectionApi={conceptualMappingRulesApi}
                 onPackagesUpdate={handlePackagesUpdate}
-                detailedView={detailedView}
             />
         </>
     )
