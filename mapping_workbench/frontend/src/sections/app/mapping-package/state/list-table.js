@@ -119,8 +119,9 @@ export const ListTable = (props) => {
                                                     <MenuActionButton
                                                         onClick={() => handleExport(item)}
                                                         icon={<FileUploadOutlinedIcon/>}
-                                                        // disabled={isExporting}>
-                                                        text={isExporting ? "Exporting..." : "Export"}/>
+                                                        disabled={isExporting}
+                                                        last
+                                                        title={isExporting ? "Exporting..." : "Export"}/>
                                                 </MenuActions>
                                             </Stack>
                                         </TableCell>

@@ -51,20 +51,20 @@ export const ListFileCollectionActions = (props) => {
         <>
             <MenuActionButton
                 id="resources_button"
-                action={handleResourceManagerAction}
-                text='Resources'
+                onClick={handleResourceManagerAction}
+                title='Resources'
                 icon={<DescriptionOutlinedIcon/>}
             />
             <MenuActionButton
                 id="edit_button"
-                action={handleEditAction}
-                text='Edit'
+                onClick={handleEditAction}
+                title='Edit'
                 icon={<BorderColorIcon/>}
             />
             <MenuActionButton
                 id="delete_button"
-                action={() => setConfirmOpen(true)}
-                text='Delete'
+                onClick={() => setConfirmOpen(true)}
+                title='Delete'
                 icon={<DeleteOutlineIcon/>}
                 last
             />

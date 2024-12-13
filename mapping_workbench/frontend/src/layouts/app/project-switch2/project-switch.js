@@ -37,9 +37,6 @@ export const ProjectSwitch = ({small}) => {
     const router = useRouter();
     const theme = useTheme()
 
-    console.log(theme)
-
-
     const handleProjectSelect = (value) => {
         if (value)
             projectsStore.handleSessionProjectChange(value)
@@ -56,9 +53,6 @@ export const ProjectSwitch = ({small}) => {
     };
 
     const currentProject = projectsStore.items?.find(project => project._id === projectsStore.sessionProject)
-
-
-    console.log(currentProject._id)
 
     return (
         <Stack sx={{px: 2}}>

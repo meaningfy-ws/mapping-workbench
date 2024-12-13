@@ -160,9 +160,9 @@ export const ListTableRow = (props) => {
                 </TableCell>
                 <TableCell align="right">
                     <MenuActions>
-                        <MenuActionButton action={() => uploadDialog.handleOpen({id: item_id})}
+                        <MenuActionButton onClick={() => uploadDialog.handleOpen({id: item_id})}
                                           icon={<UploadIcon/>}
-                                          text='Import test data'/>
+                                          title='Import test data'/>
                         <ListItemActions
                             itemctx={new ForListItemAction(item_id, sectionApi)}
                             onDeleteAction={handleDeleteAction}/>

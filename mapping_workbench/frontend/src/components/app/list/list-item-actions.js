@@ -59,23 +59,23 @@ export const ListItemActions = (props) => {
         <>
             {itemctx.api.SECTION_LIST_ACTIONS.includes(ACTION.VIEW) && <MenuActionButton
                 id="view_button"
-                action={handleViewAction}
+                onClick={handleViewAction}
                 icon={<VisibilityIcon/>}
-                text='View'
+                title='View'
             />}
             {itemctx.api.SECTION_LIST_ACTIONS.includes(ACTION.EDIT) && <MenuActionButton
                 id="edit_button"
-                action={handleEditAction}
+                onClick={handleEditAction}
                 icon={<BorderColorIcon/>}
-                text='Edit'
+                title='Edit'
             />}
             {itemctx.api.SECTION_LIST_ACTIONS.includes(ACTION.DELETE) && <>
                 <MenuActionButton
                     id="delete_button"
                     last
-                    action={() => setConfirmOpen(true)}
+                    onClick={() => setConfirmOpen(true)}
                     icon={<DeleteOutlineIcon/>}
-                    text='Delete'
+                    title='Delete'
                 />
                 <ConfirmDialog
                     title="Delete It?"

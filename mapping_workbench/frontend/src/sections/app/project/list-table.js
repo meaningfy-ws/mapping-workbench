@@ -151,19 +151,19 @@ export const ListTable = (props) => {
                                                 <MenuActions>
                                                     <MenuActionButton
                                                         id="select_button"
-                                                        action={() => projectStore.handleSessionProjectChange(item_id)}
-                                                        text='Select'
+                                                        onClick={() => projectStore.handleSessionProjectChange(item_id)}
+                                                        title='Select'
                                                         icon={<CheckOutlinedIcon/>}
+                                                    />
+                                                    <MenuActionButton
+                                                        id="cleanup_button"
+                                                        onClick={() => projectStore.handleProjectCleanup(item_id)}
+                                                        icon={<CleaningServicesOutlinedIcon/>}
+                                                        title='Cleanup'
                                                     />
                                                     <ListItemActions
                                                         onDeleteAction={() => projectStore.handleDeleteProject(item_id)}
                                                         itemctx={new ForListItemAction(item_id, sectionApi)}/>
-                                                    <MenuActionButton
-                                                        id="cleanup_button"
-                                                        action={() => { projectStore.handleProjectCleanup(item_id) }}
-                                                        icon={<CleaningServicesOutlinedIcon/>}
-                                                        text='Cleanup'
-                                                    />
                                                 </MenuActions>
                                             </TableCell>
                                         </TableRow>

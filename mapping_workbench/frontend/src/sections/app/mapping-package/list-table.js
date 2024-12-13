@@ -106,8 +106,8 @@ const MappingPackageRowFragment = (props) => {
                         <MenuActions>
                             <MenuActionButton
                                 id='view_last_state_button'
-                                action={() => handleGoLastState(item_id)}
-                                text='View Last State'
+                                onClick={() => handleGoLastState(item_id)}
+                                title='View Last State'
                                 icon={<DownloadDoneOutlinedIcon/>}
                             />
                             <ListItemActions
@@ -115,9 +115,10 @@ const MappingPackageRowFragment = (props) => {
                             />
                             <MenuActionButton
                                 id="delete_button"
-                                action={() => setConfirmOpen(true)}
+                                onClick={() => setConfirmOpen(true)}
                                 icon={<DeleteOutlineIcon/>}
-                                text='Delete'/>
+                                last
+                                title='Delete'/>
                         </MenuActions>
                     </TableCell>
                 </TableRow>

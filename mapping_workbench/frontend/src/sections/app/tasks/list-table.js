@@ -189,8 +189,8 @@ export const ListTable = (props) => {
                                                     {[taskStatuses.QUEUED, taskStatuses.RUNNING].includes(item.task_status)
                                                         && <MenuActionButton
                                                             id="cancel_button"
-                                                            action={() => onCancelAction(item_id)}
-                                                            text='Cancel'
+                                                            onClick={() => onCancelAction(item_id)}
+                                                            title='Cancel'
                                                             icon={<CancelOutlinedIcon/>}
                                                         >
                                                             Cancel
@@ -198,8 +198,8 @@ export const ListTable = (props) => {
                                                     }
                                                     <MenuActionButton
                                                         id="delete_button"
-                                                        action={() => onDeleteAction(item_id)}
-                                                        text='Delete'
+                                                        onClick={() => onDeleteAction(item_id)}
+                                                        title='Delete'
                                                         last
                                                         icon={<DeleteOutlineIcon/>}
                                                     />

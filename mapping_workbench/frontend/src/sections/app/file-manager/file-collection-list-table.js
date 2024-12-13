@@ -130,8 +130,8 @@ export const ListTableRow = (props) => {
                     <MenuActions>
                         <MenuActionButton
                             icon={<UploadIcon/>}
-                            action={() => openUploadModal?.(item._id)}
-                            text='Upload'
+                            onClick={() => openUploadModal?.(item._id)}
+                            title='Upload'
                         />
                         <ListFileCollectionActions
                             itemctx={new ForListItemAction(item_id, sectionApi)}/>

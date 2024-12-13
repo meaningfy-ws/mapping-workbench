@@ -82,15 +82,15 @@ export const ListTableRow = (props) => {
                     <MenuActions>
                         <MenuActionButton
                             id="edit_button"
-                            text='Edit'
+                            title='Edit'
                             icon={<BorderColorIcon/>}
-                            action={() => onEdit(item)}/>
+                            onClick={() => onEdit(item)}/>
                         <MenuActionButton
                             id="delete_button"
                             icon={<DeleteOutlineIcon/>}
-                            action={() => setConfirmOpen(true)}
+                            onClick={() => setConfirmOpen(true)}
                             last
-                            text='Delete'/>
+                            title='Delete'/>
                     </MenuActions>
                     <ConfirmDialog
                         title="Delete It?"
