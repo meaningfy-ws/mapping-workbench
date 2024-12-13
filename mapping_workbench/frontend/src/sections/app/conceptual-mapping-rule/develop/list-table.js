@@ -1,3 +1,5 @@
+import BorderColorIcon from '@mui/icons-material/BorderColor';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import {useState} from "react";
 import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
 
@@ -21,6 +23,7 @@ import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import ConfirmDialog from "src/components/app/dialog/confirm-dialog";
 import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
+import {MenuActionButton, MenuActions} from '../../../../components/menu-actions';
 
 export const ListTableRow = (props) => {
     const {
@@ -76,25 +79,18 @@ export const ListTableRow = (props) => {
                     {item.target_property_path}
                 </TableCell>
                 <TableCell align="right">
-                    <Button
-                        id="edit_button"
-                        variant="text"
-                        size="small"
-                        color="primary"
-                        onClick={() => onEdit(item)}
-                    >
-                        Edit
-                    </Button>
-                    <Button
-                        id="delete_button"
-                        variant="text"
-                        size="small"
-                        color="error"
-                        onClick={() => setConfirmOpen(true)}
-                        sx={{whiteSpace: "nowrap"}}
-                    >
-                        Delete
-                    </Button>
+                    <MenuActions>
+                        <MenuActionButton
+                            id="edit_button"
+                            text='Edit'
+                            icon={<BorderColorIcon/>}
+                            action={() => onEdit(item)}/>
+                        <MenuActionButton
+                            id="delete_button"
+                            icon={<DeleteOutlineIcon/>}
+                            action={() => setConfirmOpen(true)}
+                            text='Delete'/>
+                    </MenuActions>
                     <ConfirmDialog
                         title="Delete It?"
                         open={confirmOpen}

@@ -6,23 +6,16 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
-import {useTheme} from '@mui/material/styles';
-import MenuItem from '@mui/material/MenuItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
 
 import {paths} from 'src/paths';
 import {ACTION} from "../../../api/section";
-import {MenuActionButton} from '../../menu-action-button';
+import {MenuActionButton} from '../../menu-actions';
+
 import ConfirmDialog from "../dialog/confirm-dialog";
 import {toastError} from "../../app-toast";
 
 export const ListItemActions = (props) => {
     const router = useRouter();
-    const theme = useTheme()
-
-    console.log(theme)
-
     const {itemctx, pathnames, onDeleteAction, confirmDialogContent, confirmDialogFooter} = props;
 
     const handleViewAction = () => {
@@ -81,7 +74,7 @@ export const ListItemActions = (props) => {
                     id="delete_button"
                     last
                     action={() => setConfirmOpen(true)}
-                    icon={<DeleteOutlineIcon color='primary'/>}
+                    icon={<DeleteOutlineIcon/>}
                     text='Delete'
                 />
                 <ConfirmDialog

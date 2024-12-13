@@ -46,13 +46,16 @@ import {sessionApi} from "src/api/session";
 import {useDialog} from "src/hooks/use-dialog";
 import {Scrollbar} from 'src/components/scrollbar';
 import {toastSuccess} from "src/components/app-toast";
+import {MenuActions} from 'src/components/menu-actions';
 import {PropertyList} from 'src/components/property-list';
 import {mappingPackagesApi} from "src/api/mapping-packages";
 import {PropertyListItem} from 'src/components/property-list-item';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
+import {ChevronButton} from 'src/sections/components/chevron-button';
 import {FormCodeTextArea} from "src/components/app/form/code-text-area";
 import TablePagination from "src/sections/components/table-pagination";
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
+import TableSorterHeader from 'src/sections/components/table-sorter-header';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {genericTripleMapFragmentsApi} from "src/api/triple-map-fragments/generic";
 import {sparqlTestFileResourcesApi} from "src/api/sparql-test-suites/file-resources";
@@ -61,8 +64,6 @@ import {ListSelectorSelect as ResourceListSelector} from "src/components/app/lis
 import {
     MappingPackageCheckboxList
 } from 'src/sections/app/mapping-package/components/mapping-package-real-checkbox-list';
-import {ChevronButton} from '../../components/chevron-button';
-import TableSorterHeader from '../../components/table-sorter-header';
 
 
 export const ListTableTripleMapFragment = (props) => {
@@ -810,12 +811,14 @@ export const ListTableRow = (props) => {
                 </TableCell>
 
                 <TableCell align="right">
-                    <ListItemActions
-                        itemctx={new ForListItemAction(item_id, sectionApi)}
-                        pathnames={{
-                            delete_after_path: () => paths.app.conceptual_mapping_rules.overview
-                        }}
-                    />
+                    <MenuActions>
+                        <ListItemActions
+                            itemctx={new ForListItemAction(item_id, sectionApi)}
+                            pathnames={{
+                                delete_after_path: () => paths.app.conceptual_mapping_rules.overview
+                            }}
+                        />
+                    </MenuActions>
                 </TableCell>
             </TableRow>
             {isCurrent && (<TableRow>
@@ -1029,9 +1032,7 @@ export const ListTable = (props) => {
                                            sx={{
                                                whiteSpace: "nowrap"
                                            }}
-                                >
-                                    Actions
-                                </TableCell>
+                                />
                             </TableRow>
                         </TableHead>
                         <TableBody>

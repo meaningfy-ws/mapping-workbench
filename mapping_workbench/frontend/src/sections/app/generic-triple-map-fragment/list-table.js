@@ -35,6 +35,7 @@ import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {
     MappingPackageCheckboxList
 } from 'src/sections/app/mapping-package/components/mapping-package-real-checkbox-list';
+import {MenuActions} from '../../../components/menu-actions';
 import {ChevronButton} from '../../components/chevron-button';
 
 
@@ -199,9 +200,7 @@ export const ListTable = (props) => {
                                     <SorterHeader fieldName="created_at"
                                                   title="Created"/>
                                 </TableCell>
-                                <TableCell align="right">
-                                    Actions
-                                </TableCell>
+                                <TableCell align="right"/>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -257,8 +256,10 @@ export const ListTable = (props) => {
                                             {timeTransformer(item.created_at, timeSetting)}
                                         </TableCell>
                                         <TableCell align="right">
-                                            <ListItemActions
-                                                itemctx={new ForListItemAction(item_id, sectionApi)}/>
+                                            <MenuActions>
+                                                <ListItemActions
+                                                    itemctx={new ForListItemAction(item_id, sectionApi)}/>
+                                            </MenuActions>
                                         </TableCell>
                                     </TableRow>
                                     {isCurrent && (<TableRow>

@@ -25,6 +25,7 @@ import TablePagination from "src/sections/components/table-pagination";
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
+import {MenuActions} from '../../../components/menu-actions';
 
 
 export const ListTable = (props) => {
@@ -87,9 +88,7 @@ export const ListTable = (props) => {
                                 </TableCell>
                                 <SorterHeader fieldName='element_type'
                                               title='Type'/>
-                                <TableCell align="right">
-                                    Actions
-                                </TableCell>
+                                <TableCell align="right"/>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -156,14 +155,16 @@ export const ListTable = (props) => {
                                                 {item.element_type}
                                             </TableCell>
                                             <TableCell align="right">
-                                                <ListItemActions
-                                                    itemctx={new ForListItemAction(item_id, sectionApi)}
-                                                    pathnames={{
-                                                        delete_after_path: () => paths.app.fields_and_nodes.overview.elements,
-                                                        edit: () => paths.app.fields_and_nodes.overview.elements.edit(item_id),
-                                                        view: () => paths.app.fields_and_nodes.overview.elements.view(item_id)
-                                                    }}
-                                                />
+                                                <MenuActions>
+                                                    <ListItemActions
+                                                        itemctx={new ForListItemAction(item_id, sectionApi)}
+                                                        pathnames={{
+                                                            delete_after_path: () => paths.app.fields_and_nodes.overview.elements,
+                                                            edit: () => paths.app.fields_and_nodes.overview.elements.edit(item_id),
+                                                            view: () => paths.app.fields_and_nodes.overview.elements.view(item_id)
+                                                        }}
+                                                    />
+                                                </MenuActions>
                                             </TableCell>
                                         </TableRow>
                                         {isCurrent && (

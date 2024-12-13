@@ -1,3 +1,5 @@
+import BorderColorIcon from '@mui/icons-material/BorderColor';
+import UploadIcon from '@mui/icons-material/Upload';
 import {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 
@@ -14,8 +16,8 @@ import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
-import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
+import CardContent from '@mui/material/CardContent';
 
 import {paths} from "src/paths";
 import {useDialog} from "src/hooks/use-dialog";
@@ -33,6 +35,7 @@ import TableSorterHeader from 'src/sections/components/table-sorter-header';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {ListFileCollectionActions} from "src/components/app/list/list-file-collection-actions";
 import {MappingPackagesBulkAssigner} from "src/sections/app/mapping-package/components/mapping-packages-bulk-assigner";
+import {MenuActionButton, MenuActions} from '../../../components/menu-actions';
 
 export const ListTableRow = (props) => {
     const {
@@ -124,16 +127,15 @@ export const ListTableRow = (props) => {
                     {timeTransformer(item.created_at, timeSetting)}
                 </TableCell>
                 <TableCell align="right">
-                    <Stack direction='row'
-                           justifyContent='end'>
-                        <Button size="small"
-                                onClick={() => openUploadModal?.(item._id)}
-                        >
-                            Upload
-                        </Button>
+                    <MenuActions>
+                        <MenuActionButton
+                            icon={<UploadIcon/>}
+                            action={() => openUploadModal?.(item._id)}
+                            text='Upload'
+                        />
                         <ListFileCollectionActions
                             itemctx={new ForListItemAction(item_id, sectionApi)}/>
-                    </Stack>
+                    </MenuActions>
                 </TableCell>
             </TableRow>
             {isCurrent && (
@@ -341,9 +343,7 @@ export const FileCollectionListTable = (props) => {
                                     <SorterHeader align="left"
                                                   title='created'
                                                   fieldName='created_at'/>
-                                    <TableCell align="right">
-                                        Actions
-                                    </TableCell>
+                                    <TableCell align="right"/>
                                 </TableRow>
                             </TableHead>
                             <TableBody>

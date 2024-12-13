@@ -9,11 +9,12 @@ import TableHead from '@mui/material/TableHead';
 import Typography from '@mui/material/Typography';
 
 import {Scrollbar} from 'src/components/scrollbar';
+import TablePagination from 'src/sections/components/table-pagination';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
+import TableSorterHeader from 'src/sections/components/table-sorter-header';
+import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
-import TablePagination from '../../components/table-pagination';
-import TableSorterHeader from '../../components/table-sorter-header';
+import {MenuActions} from '../../../components/menu-actions';
 
 export const ListTable = (props) => {
     const {
@@ -72,9 +73,7 @@ export const ListTable = (props) => {
                             <TableRow>
                                 <SorterHeader fieldName='prefix'/>
                                 <SorterHeader fieldName='uri'/>
-                                <TableCell align="right">
-                                    Actions
-                                </TableCell>
+                                <TableCell align="right"/>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -94,10 +93,12 @@ export const ListTable = (props) => {
                                             {item.uri}
                                         </TableCell>
                                         <TableCell align="right">
-                                            <ListItemActions
-                                                itemctx={new ForListItemAction(item_id, sectionApi)}
-                                                onDeleteAction={() => handleDeleteAction(item_id)}
-                                            />
+                                            <MenuActions>
+                                                <ListItemActions
+                                                    itemctx={new ForListItemAction(item_id, sectionApi)}
+                                                    onDeleteAction={() => handleDeleteAction(item_id)}
+                                                />
+                                            </MenuActions>
                                         </TableCell>
                                     </TableRow>
                                 );

@@ -1,9 +1,27 @@
-import {cloneElement} from 'react';
+import {cloneElement, useState} from 'react';
 
-import {useTheme} from '@mui/material/styles';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+
+import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import {useTheme} from '@mui/material/styles';
+import IconButton from '@mui/material/IconButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+
+export const MenuActions = ({children}) => {
+    const [anchor, setAnchor] = useState(null)
+    return <>
+        <IconButton onClick={e => setAnchor(e.target)}>
+            <MoreHorizIcon/>
+        </IconButton>
+        <Menu anchorEl={anchor}
+              open={!!anchor}
+              onClose={() => setAnchor(null)}>
+            {children}
+        </Menu>
+    </>
+}
 
 export const MenuActionButton = ({id, icon, text, action, last}) => {
     const theme = useTheme()

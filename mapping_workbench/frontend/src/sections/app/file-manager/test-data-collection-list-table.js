@@ -1,11 +1,9 @@
 import {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import UploadIcon from '@mui/icons-material/Upload';
 
 import {Box} from "@mui/system";
-import Menu from '@mui/material/Menu';
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
@@ -18,7 +16,6 @@ import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 
@@ -32,11 +29,11 @@ import timeTransformer from "src/utils/time-transformer";
 import {PropertyList} from "src/components/property-list";
 import {useGlobalState} from "src/hooks/use-global-state";
 import {mappingPackagesApi} from "src/api/mapping-packages";
-import {MenuActionButton} from 'src/components/menu-action-button';
 import {PropertyListItem} from "src/components/property-list-item";
 import {ChevronButton} from 'src/sections/components/chevron-button';
 import ConfirmDialog from "src/components/app/dialog/confirm-dialog";
 import TablePagination from "src/sections/components/table-pagination";
+import {MenuActions, MenuActionButton} from 'src/components/menu-actions';
 import {ListItemActions} from "src/components/app/list/list-item-actions";
 import TableSorterHeader from 'src/sections/components/table-sorter-header';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
@@ -61,7 +58,6 @@ export const ListTableRow = (props) => {
     const {timeSetting} = useGlobalState()
     const [collectionResources, setCollectionResources] = useState([]);
     const [confirmOpen, setConfirmOpen] = useState(false);
-    const [actionsMenu, setActionsMenu] = useState(null)
     const uploadDialog = useDialog()
 
     useEffect(() => {
@@ -163,19 +159,14 @@ export const ListTableRow = (props) => {
                     {timeTransformer(item.created_at, timeSetting)}
                 </TableCell>
                 <TableCell align="right">
-                    <IconButton onClick={e => setActionsMenu(e.target)}>
-                        <MoreHorizIcon/>
-                    </IconButton>
-                    <Menu anchorEl={actionsMenu}
-                          open={!!actionsMenu}
-                          onClose={() => setActionsMenu(null)}>
+                    <MenuActions>
                         <MenuActionButton action={() => uploadDialog.handleOpen({id: item_id})}
                                           icon={<UploadIcon/>}
                                           text='Import test data'/>
                         <ListItemActions
                             itemctx={new ForListItemAction(item_id, sectionApi)}
                             onDeleteAction={handleDeleteAction}/>
-                    </Menu>
+                    </MenuActions>
                 </TableCell>
             </TableRow>
             {isCurrent && (
@@ -371,7 +362,7 @@ export const TestDataCollectionListTable = (props) => {
                                 <TableCell sx={{py: 1, backgroundColor: 'red'}}>
                                     <Checkbox checked={allChecked}
                                               indeterminate={!!selectedItems.length && !allChecked}
-                                              onChange={(event) => handleItemsSelectAll(event.target.checked)}
+                                              onChange={event => handleItemsSelectAll(event.target.checked)}
                                     />
                                 </TableCell>
                                 <SorterHeader width="25%"

@@ -14,6 +14,7 @@ import CardContent from '@mui/material/CardContent';
 import {Scrollbar} from 'src/components/scrollbar';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
+import {MenuActions} from '../../../components/menu-actions';
 import {ChevronButton} from '../../components/chevron-button';
 import TablePagination from "../../components/table-pagination";
 import TableSorterHeader from "../../components/table-sorter-header";
@@ -75,9 +76,7 @@ export const ListTable = (props) => {
                                               title='Term'/>
                                 <SorterHeader fieldName='type'
                                               title='Type'/>
-                                <TableCell align="right">
-                                    Actions
-                                </TableCell>
+                                <TableCell align="right"/>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -121,8 +120,10 @@ export const ListTable = (props) => {
                                                 {item.type}
                                             </TableCell>
                                             <TableCell align="right">
-                                                <ListItemActions
-                                                    itemctx={new ForListItemAction(item_id, sectionApi)}/>
+                                                <MenuActions>
+                                                    <ListItemActions
+                                                        itemctx={new ForListItemAction(item_id, sectionApi)}/>
+                                                </MenuActions>
                                             </TableCell>
                                         </TableRow>
                                         {isCurrent && (
