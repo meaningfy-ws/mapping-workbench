@@ -28,51 +28,63 @@ const Page = () => {
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
-            <Stack spacing={4}>
+            <Grid container
+                  spacing={4}>
                 <Grid xs={12}>
                     <SourceAndTargetTabs/>
                 </Grid>
-                <Typography variant="h5">
-                    {sectionApi.SECTION_TITLE}
-                </Typography>
-                <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    spacing={4}
-                >
-                    <Paper>
-                        <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
-                                        value={itemsSearch.state.search[0]}/>
-                    </Paper>
-                    <Stack
-                        alignItems="center"
-                        direction="row"
-                        spacing={3}
-                    >
-                        <Button
-                            id="add_button"
-                            component={RouterLink}
-                            href={paths.app[sectionApi.section].create}
-                            startIcon={<AddIcon/>}
-                            variant="contained"
+
+                <Grid xs={12}
+                      xl={6}
+                      item>
+                    <Stack spacing={4}>
+                        <Typography variant="h5">
+                            {sectionApi.SECTION_TITLE}
+                        </Typography>
+                        <Stack
+                            direction="row"
+                            justifyContent="space-between"
+                            spacing={4}
                         >
-                            Add
-                        </Button>
+                            <Paper>
+                                <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                                value={itemsSearch.state.search[0]}/>
+                            </Paper>
+                            <Stack
+                                alignItems="center"
+                                direction="row"
+                                spacing={3}
+                            >
+                                <Button
+                                    id="add_button"
+                                    component={RouterLink}
+                                    href={paths.app[sectionApi.section].create}
+                                    startIcon={<AddIcon/>}
+                                    variant="contained"
+                                >
+                                    Add
+                                </Button>
+                            </Stack>
+                        </Stack>
+                        <ListTable
+                            onPageChange={itemsSearch.handlePageChange}
+                            onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                            page={itemsSearch.state.page}
+                            items={itemsSearch.pagedItems}
+                            count={itemsSearch.count}
+                            rowsPerPage={itemsSearch.state.rowsPerPage}
+                            sort={itemsSearch.state.sort}
+                            onSort={itemsSearch.handleSort}
+                            sectionApi={sectionApi}
+                        />
                     </Stack>
-                </Stack>
-                <ListTable
-                    onPageChange={itemsSearch.handlePageChange}
-                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                    page={itemsSearch.state.page}
-                    items={itemsSearch.pagedItems}
-                    count={itemsSearch.count}
-                    rowsPerPage={itemsSearch.state.rowsPerPage}
-                    sort={itemsSearch.state.sort}
-                    onSort={itemsSearch.handleSort}
-                    sectionApi={sectionApi}
-                />
-                <OntologyNamespacesCustom/>
-            </Stack>
+                </Grid>
+                <Grid xs={12}
+                      xl={6}>
+                    <OntologyNamespacesCustom/>
+                </Grid>
+            </Grid>
+
         </>
     )
 };
