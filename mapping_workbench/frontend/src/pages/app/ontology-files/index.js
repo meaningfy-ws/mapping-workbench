@@ -82,7 +82,7 @@ const Page = () => {
                   spacing={{xs: 3, lg: 4}}
             >
                 <Grid xs={12}>
-                   <SourceAndTargetTabs/>
+                    <SourceAndTargetTabs/>
                 </Grid>
                 <Grid xs={12}>
                     <Stack
@@ -101,11 +101,7 @@ const Page = () => {
                         <Button
                             id='import_button'
                             onClick={uploadDialog.handleOpen}
-                            startIcon={(
-                                <SvgIcon>
-                                    <UploadIcon/>
-                                </SvgIcon>
-                            )}
+                            startIcon={<UploadIcon/>}
                             variant="text"
                         >
                             Add ontology file

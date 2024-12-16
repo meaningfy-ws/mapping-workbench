@@ -16,6 +16,7 @@ Feature: Test Data Suites
 
   Scenario: Update Test Data
     Then I search for suite
+    When I open actions menu
     Then I click view button
     Then I click edit button
     Then I get redirected to edit page
@@ -25,5 +26,6 @@ Feature: Test Data Suites
 
   Scenario: Delete Test Data
     Then I search for updated suite
+    When I open actions menu
     Then I click delete button
     Then I get success delete

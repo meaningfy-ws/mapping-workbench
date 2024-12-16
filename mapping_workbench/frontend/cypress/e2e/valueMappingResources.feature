@@ -20,6 +20,7 @@ Feature: Resources
     Then I get redirected to Resources
 
     Then I search for resource
+    When I open actions menu
     Then I click edit button
     Then I get redirected to edit page
 
@@ -31,5 +32,6 @@ Feature: Resources
     Then I get redirected to Resources
 
     Then I search for updated resource
+    When I open actions menu
     Then I click delete button
     Then I get success delete

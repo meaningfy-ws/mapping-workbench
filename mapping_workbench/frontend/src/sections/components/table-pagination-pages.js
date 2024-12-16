@@ -16,6 +16,7 @@ const TablePagination = ({
                              rowsPerPageOptions,
                              onPageChange,
                              count,
+                             page,
                              ...otherProps
                          }) => {
 
@@ -58,7 +59,8 @@ const TablePagination = ({
                     </MenuItem>)}
                 </Popover>
                 <Pagination color='primary'
-                            onChange={onPageChange}
+                            page={page + 1}
+                            onChange={(e,page) => onPageChange(e,page - 1)}
                             count={Math.ceil(count / (rowsPerPage > 0 ? rowsPerPage : count))}
                             {...otherProps}/>
             </Stack>
