@@ -6,20 +6,18 @@ import * as Yup from 'yup';
 import AddIcon from '@mui/icons-material/Add';
 import CachedIcon from '@mui/icons-material/Cached';
 
-import Card from '@mui/material/Card';
-import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import Alert from "@mui/material/Alert";
 import Switch from '@mui/material/Switch';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-import SvgIcon from '@mui/material/SvgIcon';
+import Popover from '@mui/material/Popover';
 import Divider from '@mui/material/Divider';
 import Checkbox from '@mui/material/Checkbox';
 import Typography from '@mui/material/Typography';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
 import LoadingButton from '@mui/lab/LoadingButton';
+import FilterListIcon from '@mui/icons-material/FilterList';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 import {paths} from 'src/paths';
@@ -33,21 +31,20 @@ import {Filter} from 'src/sections/components/filter';
 import useItemsSearch from 'src/hooks/use-items-search';
 import {useItemsStore} from 'src/hooks/use-items-store';
 import {TableSearchBar} from 'src/sections/components/table-search-bar';
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
 import {toastError, toastLoad, toastSuccess} from 'src/components/app-toast';
 import {ListTable} from "src/sections/app/conceptual-mapping-rule/list-table";
 import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
+import {ConceptualMappingTabs} from 'src/sections/app/conceptual-mapping-rule/conceptual-mapping-tabs';
 import {MappingPackageFormSelect} from 'src/sections/app/mapping-package/components/mapping-package-form-select';
-import {ConceptualMappingTabs} from '../../../../sections/app/conceptual-mapping-rule/conceptual-mapping-tabs';
 
-const filterValues = [{label: 'All', value: ''},
+const FILTER_VALUES = [{label: 'All', value: ''},
     {label: 'Valid', value: 'valid'},
     {label: 'Invalid', value: 'invalid'}]
 
 const Page = () => {
-    const [detailedView, setDetailedView] = useState(true)
     const {t} = useTranslation();
 
+    const [filterPopover, setFilterPopover] = useState(null)
     const itemsStore = useItemsStore(sectionApi);
     const itemsSearch = useItemsSearch(itemsStore.items, sectionApi,
         ['source_structural_element_sdk_element_id', 'target_class_path', 'target_property_path'],
@@ -91,12 +88,42 @@ const Page = () => {
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
             <Stack spacing={4}>
+                <ConceptualMappingTabs/>
                 <Stack
                     direction="row"
                     justifyContent="space-between"
                     spacing={4}
                 >
-                    <ConceptualMappingTabs/>
+                    <Stack direction='row'
+                           spacing={3}>
+                        <Paper>
+                            <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                            value={itemsSearch.state.search[0]}/>
+                        </Paper>
+                        <Paper>
+                            <Button variant='text'
+                                    color={itemsSearch.state.filters.terms ? 'primary' : 'inherit'}
+                                    onClick={e => setFilterPopover(e.currentTarget)}
+                                    startIcon={<FilterListIcon/>}>
+                                Filter
+                            </Button>
+                            <Popover
+                                id={'filter-popover'}
+                                open={!!filterPopover}
+                                anchorEl={filterPopover}
+                                onClose={() => setFilterPopover(null)}
+                                anchorOrigin={{
+                                    vertical: 'bottom',
+                                    horizontal: 'left',
+                                }}
+                            >
+                                <Filter title='Terms:'
+                                        values={FILTER_VALUES}
+                                        value={itemsSearch.state.filters.terms}
+                                        onValueChange={e => itemsSearch.handleFiltersChange({terms: e})}/>
+                            </Popover>
+                        </Paper>
+                    </Stack>
                     <Stack
                         alignItems="center"
                         direction="row"
@@ -110,11 +137,7 @@ const Page = () => {
                             component={RouterLink}
                             href={paths.app[sectionApi.section].overview.create}
                             id="add-mapping-rules-button"
-                            startIcon={(
-                                <SvgIcon>
-                                    <AddIcon/>
-                                </SvgIcon>
-                            )}
+                            startIcon={<AddIcon/>}
                             variant="contained"
                         >
                             Add
@@ -123,47 +146,25 @@ const Page = () => {
                             id="generate_button"
                             component={RouterLink}
                             href={paths.app[sectionApi.section].tasks.generate_cm_assertions_queries}
-                            startIcon={(
-                                <SvgIcon>
-                                    <CachedIcon/>
-                                </SvgIcon>
-                            )}
+                            startIcon={<CachedIcon/>}
                             variant="contained"
                         >
                             {t(tokens.nav.generate_cm_assertions_queries)}
                         </Button>
                     </Stack>
                 </Stack>
-                <Card>
-                    <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
-                                    value={itemsSearch.state.search[0]}/>
-                    <Divider/>
-                    <Stack direction='row'
-                           padding={3}>
-                        <FormControlLabel control={<Switch checked={detailedView}
-                                                           onChange={e => setDetailedView(e.target.checked)}/>}
-                                          label='Detailed View'/>
-                        <Paper variant='outlined'>
-                            <Filter title={'Terms:'}
-                                    values={filterValues}
-                                    value={itemsSearch.state.filters.terms}
-                                    onValueChange={e => itemsSearch.handleFiltersChange({terms: e})}/>
-                        </Paper>
-                    </Stack>
-                    <Divider/>
-                    <ListTable
-                        sectionApi={sectionApi}
-                        items={itemsSearch.pagedItems}
-                        count={itemsSearch.count}
-                        detailedView={detailedView}
-                        page={itemsSearch.state.page}
-                        onPageChange={itemsSearch.handlePageChange}
-                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                        onSort={itemsSearch.handleSort}
-                        sort={itemsSearch.state.sort}
-                    />
-                </Card>
+
+                <ListTable
+                    sectionApi={sectionApi}
+                    items={itemsSearch.pagedItems}
+                    count={itemsSearch.count}
+                    page={itemsSearch.state.page}
+                    onPageChange={itemsSearch.handlePageChange}
+                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                    rowsPerPage={itemsSearch.state.rowsPerPage}
+                    onSort={itemsSearch.handleSort}
+                    sort={itemsSearch.state.sort}
+                />
                 <Dialog id='shacl_generate_dialog'
                         open={generateSHACLDialog.open}
                         onClose={generateSHACLDialog.handleClose}

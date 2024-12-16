@@ -18,6 +18,7 @@ Feature: SPARQL Test Suites
   Scenario: Update SPARQL Test Suite
 
     Then I search for suite
+    When I open actions menu
     Then I click edit button
     Then I get redirected to edit page
 
@@ -27,5 +28,6 @@ Feature: SPARQL Test Suites
   Scenario: Delete SPARQL Test Suite
 
     Then I search for updated suite
+    When I open actions menu
     Then I click delete button
     Then I get success delete

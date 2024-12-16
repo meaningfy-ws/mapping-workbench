@@ -12,6 +12,7 @@ Feature: CleanUp after test
     Then I get redirected to projects list page
     Then I type project name
 
+    When I open actions menu
     When I click on delete button
     Then I click yes button
     Then I get success delete

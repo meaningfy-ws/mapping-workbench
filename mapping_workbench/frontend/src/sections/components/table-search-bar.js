@@ -7,8 +7,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 
-export const TableSearchBar = (props) => {
-    const {onChange, value, placeholder} = props;
+export const TableSearchBar = ({onChange, value, placeholder}) => {
     const [localValue, setLocalValue] = useState(value ?? '')
     const queryRef = useRef(null);
 
@@ -23,7 +22,6 @@ export const TableSearchBar = (props) => {
         onChange('')
     }
 
-
     return (
         <Stack
             alignItems="center"
@@ -31,7 +29,7 @@ export const TableSearchBar = (props) => {
             direction="row"
             onSubmit={(event) => handleChange(event, localValue)}
             spacing={2}
-            sx={{p: 1}}
+            sx={{p: '3px'}}
         >
             <IconButton onClick={() => onChange(localValue)}
                         disabled={value === localValue}>

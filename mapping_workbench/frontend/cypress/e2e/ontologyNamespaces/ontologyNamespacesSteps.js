@@ -112,7 +112,7 @@ Then('I search for Custom Namespaces', () => {
 
 Then('I click delete Custom Namespace button', () => {
     cy.intercept('DELETE', appURLPrefix + 'ontology/namespaces_custom/*').as('delete')
-    cy.get('#ontology_namespaces_custom #delete_button').click()
+    cy.get('#delete_button').click()
     cy.get('#yes_dialog_button').click()
 })
 

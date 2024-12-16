@@ -143,7 +143,7 @@ export const createComponents = ({ palette }) => {
       styleOverrides: {
         root: {
           [`& .${tableCellClasses.root}`]: {
-            backgroundColor: palette.neutral[50],
+            backgroundColor: palette.neutral[0],
             color: palette.neutral[700]
           }
         }

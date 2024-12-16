@@ -77,6 +77,8 @@ export const en = {
     [tokens.nav.namespaces_custom]: 'Custom Namespaces',
     [tokens.nav.terms]: 'Terms',
     [tokens.nav.resource_collections]: 'Resources',
+    [tokens.nav.elements_definition]: 'Elements Definition',
+    [tokens.nav.source_and_target]: 'Source & Target',
     [tokens.nav.mapping_packages]: 'Mapping Packages',
     [tokens.nav.mapping_process]: 'Mapping Process',
     [tokens.nav.conceptual_mapping_rules]: 'Conceptual Mappings',

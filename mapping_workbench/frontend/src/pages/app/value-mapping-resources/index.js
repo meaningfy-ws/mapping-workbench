@@ -2,10 +2,9 @@ import {useEffect, useState} from 'react';
 
 import AddIcon from '@mui/icons-material/Add';
 
-import Card from '@mui/material/Card';
+import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
@@ -61,12 +60,16 @@ const Page = () => {
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
             <Stack spacing={4}>
+                <TechnicalMappingsTabs/>
                 <Stack
                     direction="row"
                     justifyContent="space-between"
                     spacing={4}
                 >
-                    <TechnicalMappingsTabs/>
+                    <Paper>
+                        <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                        value={itemsSearch.state.search[0]}/>
+                    </Paper>
                     <Stack
                         alignItems="center"
                         direction="row"
@@ -83,24 +86,19 @@ const Page = () => {
                         </Button>
                     </Stack>
                 </Stack>
-                <Card>
-                    <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
-                                    value={itemsSearch.state.search[0]}/>
-                    <Divider/>
-                    <FileCollectionListTable onPageChange={itemsSearch.handlePageChange}
-                                             onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                                             page={itemsSearch.state.page}
-                                             items={itemsSearch.pagedItems}
-                                             itemsForced={itemsStore.force}
-                                             sort={itemsSearch.state.sort}
-                                             onSort={itemsSearch.handleSort}
-                                             count={itemsStore.itemsCount}
-                                             rowsPerPage={itemsSearch.state.rowsPerPage}
-                                             sectionApi={sectionApi}
-                                             fileResourceApi={resourceFilesApi}
-                                             getItems={itemsStore.handleItemsGet}
-                    />
-                </Card>
+                <FileCollectionListTable onPageChange={itemsSearch.handlePageChange}
+                                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                                         page={itemsSearch.state.page}
+                                         items={itemsSearch.pagedItems}
+                                         itemsForced={itemsStore.force}
+                                         sort={itemsSearch.state.sort}
+                                         onSort={itemsSearch.handleSort}
+                                         count={itemsStore.itemsCount}
+                                         rowsPerPage={itemsSearch.state.rowsPerPage}
+                                         sectionApi={sectionApi}
+                                         fileResourceApi={resourceFilesApi}
+                                         getItems={itemsStore.handleItemsGet}
+                />
             </Stack>
         </>
     )

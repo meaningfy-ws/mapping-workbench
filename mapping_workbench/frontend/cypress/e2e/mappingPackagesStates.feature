@@ -9,6 +9,7 @@ Feature: Mapping Packages States
     Then I go to Mapping Packages
     Then I get redirected to Mapping Packages list page
     Then I search for Mapping Package
+    When I open actions menu
     Then I click on View Last State
     Then I receive Mapping Packages State
 
@@ -20,7 +21,7 @@ Feature: Mapping Packages States
     Then I click on "<tab_name>" Data
     Then I receive Mapping Packages Test "<tab_name>"
     Examples:
-    | tab_name |
-    | Xpath |
-    | Sparql |
-    | Shacl |
+      | tab_name |
+      | Xpath    |
+      | Sparql   |
+      | Shacl    |

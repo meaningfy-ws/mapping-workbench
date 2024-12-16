@@ -19,6 +19,7 @@ Feature: SHACL Test Suite
   Scenario: Update SHACL Test Suite
 
     Then I search for suite
+    When I open actions menu
     Then I click edit button
     Then I get redirected to edit page
 
@@ -28,5 +29,6 @@ Feature: SHACL Test Suite
   Scenario: Delete SHACL Test Suite
 
     Then I search for updated suite
+    When I open actions menu
     Then I click delete button
     Then I get success delete

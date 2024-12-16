@@ -3,10 +3,9 @@ import {useEffect, useState} from "react";
 import AddIcon from '@mui/icons-material/Add';
 import UploadIcon from '@mui/icons-material/Upload';
 
-import Card from '@mui/material/Card';
+import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import Divider from "@mui/material/Divider";
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
@@ -61,56 +60,58 @@ const Page = () => {
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
-            <Stack>
-                <SourceAndTargetTabs/>
-            </Stack>
             <Stack spacing={4}>
-                <Stack
-                    alignItems="center"
-                    direction="row"
-                    justifyContent='end'
-                    spacing={3}
-                >
-                    <Button
-                        type='link'
-                        onClick={uploadDialog.handleOpen}
-                        startIcon={(
-                            <UploadIcon/>
-                        )}
-                        id="import-test-data_button"
-                    >
-                        Import Test Data Suites
-                    </Button>
-                    <Button
-                        component={RouterLink}
-                        href={paths.app[sectionApi.section].create}
-                        startIcon={(
-                            <AddIcon/>
-                        )}
-                        variant="contained"
-                        id="add_button"
-                    >
-                        Create Test Data Suite
-                    </Button>
+                <Stack>
+                    <SourceAndTargetTabs/>
                 </Stack>
-                <Card>
-                    <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
-                                    value={itemsSearch.state.search[0]}/>
-                    <Divider/>
-                    <TestDataCollectionListTable
-                        onPageChange={itemsSearch.handlePageChange}
-                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        sort={itemsSearch.state.sort}
-                        onSort={itemsSearch.handleSort}
-                        page={itemsSearch.state.page}
-                        items={itemsSearch.pagedItems}
-                        itemsForced={itemsStore.force}
-                        count={itemsStore.itemsCount}
-                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                        sectionApi={sectionApi}
-                        getItems={itemsStore.handleItemsGet}
-                    />
-                </Card>
+                <Stack direction='row'
+                       justifyContent='space-between'>
+                    <Paper>
+                        <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                        value={itemsSearch.state.search[0]}/>
+                    </Paper>
+                    <Stack
+                        alignItems="center"
+                        direction="row"
+                        justifyContent='end'
+                        spacing={3}
+                    >
+                        <Button
+                            type='link'
+                            onClick={uploadDialog.handleOpen}
+                            startIcon={(
+                                <UploadIcon/>
+                            )}
+                            id="import-test-data_button"
+                        >
+                            Import Test Data Suites
+                        </Button>
+                        <Button
+                            component={RouterLink}
+                            href={paths.app[sectionApi.section].create}
+                            startIcon={(
+                                <AddIcon/>
+                            )}
+                            variant="contained"
+                            id="add_button"
+                        >
+                            Create Test Data Suite
+                        </Button>
+                    </Stack>
+                </Stack>
+                <TestDataCollectionListTable
+                    onPageChange={itemsSearch.handlePageChange}
+                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                    sort={itemsSearch.state.sort}
+                    onSort={itemsSearch.handleSort}
+                    page={itemsSearch.state.page}
+                    items={itemsSearch.pagedItems}
+                    itemsForced={itemsStore.force}
+                    count={itemsSearch.count}
+                    rowsPerPage={itemsSearch.state.rowsPerPage}
+                    sectionApi={sectionApi}
+                    getItems={itemsStore.handleItemsGet}
+                />
                 <FileCollectionUploader
                     onClose={uploadDialog.handleClose}
                     open={uploadDialog.open}
