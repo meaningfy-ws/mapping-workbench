@@ -14,7 +14,8 @@ export const MenuActions = ({children}) => {
     const [anchor, setAnchor] = useState(null)
     return <>
         <Tooltip title='Actions'>
-            <IconButton onClick={e => setAnchor(e.target)}>
+            <IconButton id='actions-menu-button'
+                onClick={e => setAnchor(e.target)}>
                 <MoreHorizIcon/>
             </IconButton>
         </Tooltip>

@@ -20,5 +20,6 @@ Feature: Ontology Terms
 
   Scenario: Delete Ontology Term
     Then I search for Ontology Terms
+    When I open actions menu
     Then I click delete button
     Then I get success delete

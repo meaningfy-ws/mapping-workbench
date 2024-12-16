@@ -34,6 +34,9 @@ When('I select project', () => {
     cy.get('#project_switch').click().get('ul > li > p').contains('TEST_PROJECT').click()
 })
 
+When('I open actions menu',() => {
+    cy.get('#actions-menu-button').click()
+})
 
 Then('I expand tasks', () => {
     cy.get('#nav_tasks').click()

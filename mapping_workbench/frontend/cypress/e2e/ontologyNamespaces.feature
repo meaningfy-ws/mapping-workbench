@@ -16,6 +16,7 @@ Feature: Namespaces
 
   Scenario: Update Namespace
     Then I search for Namespaces
+    When I open actions menu
     Then I click edit Namespace button
     Then I get redirected to edit page
 
@@ -24,6 +25,7 @@ Feature: Namespaces
 
   Scenario: Delete Namespace
     Then I search for updated Namespace
+    When I open actions menu
     Then I click delete Namespace button
     Then I get success delete
 
@@ -34,6 +36,8 @@ Feature: Namespaces
     Then I successfully create Namespace
 
   Scenario: Delete Custom Namespace Ontology
+    Then I search for updated Namespace
     Then I search for Custom Namespaces
+    When I open actions menu
     Then I click delete Custom Namespace button
     Then I get success delete
