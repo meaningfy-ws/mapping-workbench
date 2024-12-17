@@ -10,7 +10,7 @@ from pymongo import IndexModel
 from mapping_workbench.backend.core.models.api_response import APIListPaginatedResponse
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityOutSchema, BaseProjectResourceEntityInSchema
-from mapping_workbench.backend.core.models.pool import PoolSDKField
+from mapping_workbench.backend.fields_registry.models.pool import PoolSDKField
 from mapping_workbench.backend.state_manager.models.state_object import StatefulObjectABC, ObjectState
 
 
