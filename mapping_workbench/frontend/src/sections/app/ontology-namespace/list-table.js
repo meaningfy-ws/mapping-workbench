@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 
+import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import Switch from "@mui/material/Switch";
 import TableRow from '@mui/material/TableRow';
@@ -9,11 +10,12 @@ import TableHead from '@mui/material/TableHead';
 import Typography from '@mui/material/Typography';
 
 import {Scrollbar} from 'src/components/scrollbar';
+import {MenuActions} from 'src/components/menu-actions';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
+import TableSorterHeader from 'src/sections/components/table-sorter-header';
+import TablePagination from "src/sections/components/table-pagination-pages";
+import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
-import TablePagination from "../../components/table-pagination";
-import TableSorterHeader from '../../components/table-sorter-header';
 
 export const ListTable = (props) => {
     const {
@@ -54,18 +56,18 @@ export const ListTable = (props) => {
     }
 
     return (
-        <div>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-                showFirstButton
-                showLastButton
-            >
+        <TablePagination
+            component="div"
+            count={count}
+            onPageChange={onPageChange}
+            onRowsPerPageChange={onRowsPerPageChange}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+            showFirstButton
+            showLastButton
+        >
+            <Paper>
                 <Scrollbar>
                     <Table sx={{minWidth: 1200}}>
                         <TableHead>
@@ -75,9 +77,7 @@ export const ListTable = (props) => {
                                 <TableCell>
                                     Syncable
                                 </TableCell>
-                                <TableCell align="right">
-                                    Actions
-                                </TableCell>
+                                <TableCell align="right"/>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -105,10 +105,12 @@ export const ListTable = (props) => {
                                             />
                                         </TableCell>
                                         <TableCell align="right">
-                                            <ListItemActions
-                                                itemctx={new ForListItemAction(item_id, sectionApi)}
-                                                onDeleteAction={() => handleDeleteAction(item_id)}
-                                            />
+                                            <MenuActions>
+                                                <ListItemActions
+                                                    itemctx={new ForListItemAction(item_id, sectionApi)}
+                                                    onDeleteAction={() => handleDeleteAction(item_id)}
+                                                />
+                                            </MenuActions>
                                         </TableCell>
                                     </TableRow>
                                 );
@@ -116,8 +118,8 @@ export const ListTable = (props) => {
                         </TableBody>
                     </Table>
                 </Scrollbar>
-            </TablePagination>
-        </div>
+            </Paper>
+        </TablePagination>
     );
 };
 

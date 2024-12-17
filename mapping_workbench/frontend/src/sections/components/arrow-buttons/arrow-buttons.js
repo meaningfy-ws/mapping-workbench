@@ -1,12 +1,15 @@
-import ArchiveIcon from '@mui/icons-material/Archive';
-import DvrIcon from '@mui/icons-material/Dvr';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
-import LightbulbCircleIcon from '@mui/icons-material/LightbulbCircle';
-import ModeStandbyIcon from '@mui/icons-material/ModeStandby';
-import VerifiedIcon from '@mui/icons-material/Verified';
+import ApiIcon from '@mui/icons-material/Api';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
-import {paths} from '../../../paths';
+
+import DvrIcon from '@mui/icons-material/Dvr';
+import ArchiveIcon from '@mui/icons-material/Archive';
+import VerifiedIcon from '@mui/icons-material/Verified';
+import ModeStandbyIcon from '@mui/icons-material/ModeStandby';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import LightbulbCircleIcon from '@mui/icons-material/LightbulbCircle';
+
+import {paths} from 'src/paths';
 
 const ArrowButton = ({children, id, icon, style, active, href = '#', first, last}) => {
     return <Link id={id}
@@ -18,10 +21,9 @@ const ArrowButton = ({children, id, icon, style, active, href = '#', first, last
     </Link>
 }
 
-const ArrowButtonGroup = ({
-                              children
-                          }) => {
-    return <div className={'btn-group'}>
+const ArrowButtonGroup = ({children}) => {
+    return <div className={'btn-group'}
+                style={{display: 'flex'}}>
         {children}
     </div>
 }
@@ -43,7 +45,7 @@ export const ArrowButtons = () => {
         </ArrowButton>
         <ArrowButton id='elements_definition'
                      active={router.pathname.includes('fields-and-nodes')}
-                     icon={<InsertDriveFileIcon fontSize='small'
+                     icon={<ApiIcon fontSize='small'
                                                 style={{marginRight: '4px'}}/>}
                      href={paths.app.fields_and_nodes.develop.index}>
             Elements Definition
@@ -75,7 +77,7 @@ export const ArrowButtons = () => {
                                         style={{marginRight: '4px'}}/>}
                      href={paths.app.mapping_packages.index}
                      last>
-            Export Mapping
+            Mapping Packages
         </ArrowButton>
     </ArrowButtonGroup>)
 }

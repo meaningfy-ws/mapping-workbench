@@ -2,24 +2,25 @@ import {useMemo} from 'react';
 import PropTypes from 'prop-types';
 
 import Menu01Icon from '@untitled-ui/icons-react/build/esm/Menu01';
-import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
-import Stack from '@mui/material/Stack';
-import SvgIcon from '@mui/material/SvgIcon';
-import {useTheme} from '@mui/material/styles';
 
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import {useTheme} from '@mui/material/styles';
+import IconButton from '@mui/material/IconButton';
+
+import {paths} from 'src/paths';
 import {Logo} from 'src/components/logo';
 import {AppTitle} from 'src/components/app-title';
 import {RouterLink} from 'src/components/router-link';
 import {Scrollbar} from 'src/components/scrollbar';
 import {usePathname} from 'src/hooks/use-pathname';
-import {paths} from 'src/paths';
+import {ArrowButtons} from '../../../sections/components/arrow-buttons/arrow-buttons';
 
 import {AccountButton} from '../account-button';
 import {LanguageSwitch} from '../language-switch';
 import {NotificationsButton} from '../notifications-button';
 import {TopNavSection} from './top-nav-section';
-import {ProjectSwitch} from "../project-switch";
+import {ProjectSwitch} from "../project-switch2";
 import {useProjects} from "../../../hooks/use-projects";
 import TimeSwitch from "../time-switch/time-switch";
 import {MobileNavSection} from "../mobile-nav/mobile-nav-section";
@@ -160,7 +161,7 @@ export const TopNav = (props) => {
         const cssVars = useCssVars(color);
         const projects = useProjects()
 
-        const {overview, ...menus} = sections
+        const {dashboard, ...menus} = sections
 
         return (
             <Box
@@ -195,9 +196,7 @@ export const TopNav = (props) => {
                     >
                         {!mdUp && (
                             <IconButton onClick={onMobileNav}>
-                                <SvgIcon>
-                                    <Menu01Icon/>
-                                </SvgIcon>
+                                <Menu01Icon/>
                             </IconButton>
                         )}
                         <Box
@@ -266,7 +265,7 @@ export const TopNav = (props) => {
                                 >
                                     <ProjectSwitch/>
                                 </Stack>
-                                {overview.map((section, index) => (
+                                {dashboard.map((section, index) => (
                                     <TopNavSection
                                         items={section.items}
                                         key={index}
@@ -287,6 +286,9 @@ export const TopNav = (props) => {
                         </Scrollbar>
                     </Box>
                 )}
+                <Stack sx={{alignItems: 'center'}}>
+                    <ArrowButtons/>
+                </Stack>
             </Box>
         )
             ;

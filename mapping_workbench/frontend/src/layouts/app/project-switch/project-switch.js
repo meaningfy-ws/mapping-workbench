@@ -4,9 +4,9 @@ import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 
-import {ProjectsContext} from "../../../contexts/projects";
-import {useRouter} from "../../../hooks/use-router";
 import {paths} from 'src/paths';
+import {useRouter} from "next/router";
+import {ProjectsContext} from "src/contexts/projects";
 
 export const ProjectSwitch = () => {
 

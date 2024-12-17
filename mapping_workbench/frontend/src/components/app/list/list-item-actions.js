@@ -2,20 +2,21 @@ import {useState} from "react";
 import {useRouter} from "next/router";
 import PropTypes from 'prop-types';
 
-import {Button} from '@mui/material';
-import {Box} from "@mui/system";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+
 
 import {paths} from 'src/paths';
-import {usePopover} from 'src/hooks/use-popover';
 import {ACTION} from "../../../api/section";
+import {MenuActionButton} from '../../menu-actions';
+
 import ConfirmDialog from "../dialog/confirm-dialog";
 import {toastError} from "../../app-toast";
 
 export const ListItemActions = (props) => {
     const router = useRouter();
-
     const {itemctx, pathnames, onDeleteAction, confirmDialogContent, confirmDialogFooter} = props;
-    const popover = usePopover();
 
     const handleViewAction = () => {
         if (pathnames?.view)
@@ -55,44 +56,26 @@ export const ListItemActions = (props) => {
     const [confirmOpen, setConfirmOpen] = useState(false);
 
     return (
-        <Box>
-            {itemctx.api.SECTION_LIST_ACTIONS.includes(ACTION.VIEW) && <Button
+        <>
+            {itemctx.api.SECTION_LIST_ACTIONS.includes(ACTION.VIEW) && <MenuActionButton
                 id="view_button"
-                variant="text"
-                size="small"
-                color="info"
                 onClick={handleViewAction}
-                sx={{
-                    whiteSpace: "nowrap"
-                }}
-            >
-                View
-            </Button>}
-            {itemctx.api.SECTION_LIST_ACTIONS.includes(ACTION.EDIT) && <Button
+                icon={<VisibilityIcon/>}
+                title='View'
+            />}
+            {itemctx.api.SECTION_LIST_ACTIONS.includes(ACTION.EDIT) && <MenuActionButton
                 id="edit_button"
-                variant="text"
-                size="small"
-                color="success"
                 onClick={handleEditAction}
-                sx={{
-                    whiteSpace: "nowrap"
-                }}
-            >
-                Edit
-            </Button>}
+                icon={<BorderColorIcon/>}
+                title='Edit'
+            />}
             {itemctx.api.SECTION_LIST_ACTIONS.includes(ACTION.DELETE) && <>
-                <Button
+                <MenuActionButton
                     id="delete_button"
-                    variant="text"
-                    size="small"
-                    color="error"
                     onClick={() => setConfirmOpen(true)}
-                    sx={{
-                        whiteSpace: "nowrap"
-                    }}
-                >
-                    Delete
-                </Button>
+                    icon={<DeleteOutlineIcon/>}
+                    title='Delete'
+                />
                 <ConfirmDialog
                     title="Delete It?"
                     open={confirmOpen}
@@ -104,62 +87,7 @@ export const ListItemActions = (props) => {
                     <>{confirmDialogContent}</>
                 </ConfirmDialog>
             </>}
-
-            {/* <Tooltip title="More options">
-                <IconButton
-                    onClick={popover.handleOpen}
-                    ref={popover.anchorRef}
-                    {...props}>
-                    <SvgIcon>
-                        <DotsHorizontalIcon/>
-                    </SvgIcon>
-                </IconButton>
-            </Tooltip>
-            <Menu
-                anchorEl={popover.anchorRef.current}
-                anchorOrigin={{
-                    horizontal: 'right',
-                    vertical: 'bottom'
-                }}
-                onClose={popover.handleClose}
-                open={popover.open}
-                PaperProps={{
-                    sx: {
-                        maxWidth: '100%',
-                        width: 200
-                    }
-                }}
-                transformOrigin={{
-                    horizontal: 'right',
-                    vertical: 'top'
-                }}
-            >
-                <MenuItem onClick={handleViewAction}>
-                    <ListItemIcon>
-                        <SvgIcon>
-                            <Eye/>
-                        </SvgIcon>
-                    </ListItemIcon>
-                    <ListItemText primary="View"/>
-                </MenuItem>
-                <MenuItem onClick={handleEditAction}>
-                    <ListItemIcon>
-                        <SvgIcon>
-                            <EditIcon/>
-                        </SvgIcon>
-                    </ListItemIcon>
-                    <ListItemText primary="Edit"/>
-                </MenuItem>
-                <MenuItem onClick={handleDeleteAction}>
-                    <ListItemIcon>
-                        <SvgIcon>
-                            <DeleteIcon/>
-                        </SvgIcon>
-                    </ListItemIcon>
-                    <ListItemText primary="Delete"/>
-                </MenuItem>
-            </Menu> */}
-        </Box>
+        </>
     );
 };
 

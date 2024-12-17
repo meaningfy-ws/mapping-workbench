@@ -7,7 +7,6 @@ import parse from "html-react-parser";
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 
 import EditIcon from '@untitled-ui/icons-react/build/esm/Edit05';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import InfoIcon from '@mui/icons-material/Info';
@@ -17,6 +16,7 @@ import Card from "@mui/material/Card";
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import Link from "@mui/material/Link";
+import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import Stack from "@mui/material/Stack";
 import Alert from "@mui/material/Alert";
@@ -36,7 +36,6 @@ import TableHead from '@mui/material/TableHead';
 import TextField from "@mui/material/TextField";
 import FormLabel from "@mui/material/FormLabel";
 import CardHeader from "@mui/material/CardHeader";
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 import FormControl from "@mui/material/FormControl";
@@ -47,13 +46,16 @@ import {sessionApi} from "src/api/session";
 import {useDialog} from "src/hooks/use-dialog";
 import {Scrollbar} from 'src/components/scrollbar';
 import {toastSuccess} from "src/components/app-toast";
+import {MenuActions} from 'src/components/menu-actions';
 import {PropertyList} from 'src/components/property-list';
 import {mappingPackagesApi} from "src/api/mapping-packages";
 import {PropertyListItem} from 'src/components/property-list-item';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
+import {ChevronButton} from 'src/sections/components/chevron-button';
 import {FormCodeTextArea} from "src/components/app/form/code-text-area";
-import TablePagination from "src/sections/components/table-pagination";
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
+import TableSorterHeader from 'src/sections/components/table-sorter-header';
+import TablePagination from "src/sections/components/table-pagination-pages";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {genericTripleMapFragmentsApi} from "src/api/triple-map-fragments/generic";
 import {sparqlTestFileResourcesApi} from "src/api/sparql-test-suites/file-resources";
@@ -62,7 +64,6 @@ import {ListSelectorSelect as ResourceListSelector} from "src/components/app/lis
 import {
     MappingPackageCheckboxList
 } from 'src/sections/app/mapping-package/components/mapping-package-real-checkbox-list';
-import TableSorterHeader from '../../components/table-sorter-header';
 
 
 export const ListTableTripleMapFragment = (props) => {
@@ -724,14 +725,8 @@ export const ListTableRow = (props) => {
                         })
                     }}
                 >
-                    <IconButton onClick={() => handleItemToggle(item_id)}>
-                        <SvgIcon sx={{
-                            transform: isCurrent ? 'rotate(90deg)' : '',
-                            transition: '0.2s linear'
-                        }}>
-                            <ChevronRightIcon/>
-                        </SvgIcon>
-                    </IconButton>
+                    <ChevronButton onClick={() => handleItemToggle(item_id)}
+                                   isCurrent={isCurrent}/>
                 </TableCell>
                 <TableCell>{item.sort_order}</TableCell>
                 <TableCell sx={{
@@ -816,12 +811,14 @@ export const ListTableRow = (props) => {
                 </TableCell>
 
                 <TableCell align="right">
-                    <ListItemActions
-                        itemctx={new ForListItemAction(item_id, sectionApi)}
-                        pathnames={{
-                            delete_after_path: () => paths.app.conceptual_mapping_rules.overview
-                        }}
-                    />
+                    <MenuActions>
+                        <ListItemActions
+                            itemctx={new ForListItemAction(item_id, sectionApi)}
+                            pathnames={{
+                                delete_after_path: () => paths.app.conceptual_mapping_rules.overview
+                            }}
+                        />
+                    </MenuActions>
                 </TableCell>
             </TableRow>
             {isCurrent && (<TableRow>
@@ -933,9 +930,10 @@ export const ListTable = (props) => {
     const {
         count = 0, items = [], onPageChange = () => {
         }, onRowsPerPageChange, page = 0, rowsPerPage = 0, sectionApi, onPackagesUpdate = () => {
-        }, sort, sortField, onSort, detailedView
+        }, sort, sortField, onSort
     } = props;
 
+    const [detailedView, setDetailedView] = useState(true)
     const [currentItem, setCurrentItem] = useState(null);
     const [hoveredItem, setHoveredItem] = useState(null);
     const notesDialog = useDialog()
@@ -979,6 +977,7 @@ export const ListTable = (props) => {
 
     if (!isProjectDataReady) return null;
 
+
     return (
         <TablePagination
             component="div"
@@ -991,123 +990,130 @@ export const ListTable = (props) => {
             showFirstButton
             showLastButton
         >
-            <Scrollbar>
-                <Table sx={{minWidth: 1200}}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell/>
-                            <SorterHeader fieldName='sort_order'
-                                          title='CM Rule Order'/>
-                            <TableCell width="10%">
-                                Conceptual Field/Group
-                            </TableCell>
-                            <TableCell>
-                                Min XSD
-                            </TableCell>
-                            <TableCell>
-                                Max XSD
-                            </TableCell>
-                            <TableCell width="18%">
-                                Ontology Fragment Class path
-                            </TableCell>
-                            <TableCell width="18%">
-                                Ontology Fragment Property path
-                            </TableCell>
-                            <TableCell>
-                                RML Triple Map
-                            </TableCell>
-                            <TableCell>
-                                Mapping Package
-                            </TableCell>
-                            <TableCell>
-                                SPARQL assertions
-                            </TableCell>
-                            <TableCell align="center"
-                                       title="Notes"
-                                       sx={{
-                                           whiteSpace: "nowrap"
-                                       }}
-                            >
-                                Notes
-                            </TableCell>
-                            <TableCell align="right"
-                                       sx={{
-                                           whiteSpace: "nowrap"
-                                       }}
-                            >
-                                Actions
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {items.map(item => {
-                            const item_id = item._id;
-                            const isCurrent = item_id === currentItem;
-                            const isHovered = item_id === hoveredItem;
+            <Paper>
+                <Stack direction='row'
+                       padding={3}>
+                    <FormControlLabel control={<Switch checked={detailedView}
+                                                       onChange={e => setDetailedView(e.target.checked)}/>}
+                                      label='Detailed View'/>
+                </Stack>
+                <Scrollbar>
+                    <Table sx={{minWidth: 1200}}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell/>
+                                <SorterHeader fieldName='sort_order'
+                                              title='CM Rule Order'/>
+                                <TableCell width="10%">
+                                    Conceptual Field/Group
+                                </TableCell>
+                                <TableCell>
+                                    Min XSD
+                                </TableCell>
+                                <TableCell>
+                                    Max XSD
+                                </TableCell>
+                                <TableCell width="18%">
+                                    Ontology Fragment Class path
+                                </TableCell>
+                                <TableCell width="18%">
+                                    Ontology Fragment Property path
+                                </TableCell>
+                                <TableCell>
+                                    RML Triple Map
+                                </TableCell>
+                                <TableCell>
+                                    Mapping Package
+                                </TableCell>
+                                <TableCell>
+                                    SPARQL assertions
+                                </TableCell>
+                                <TableCell align="center"
+                                           title="Notes"
+                                           sx={{
+                                               whiteSpace: "nowrap"
+                                           }}
+                                >
+                                    Notes
+                                </TableCell>
+                                <TableCell align="right"
+                                           sx={{
+                                               whiteSpace: "nowrap"
+                                           }}
+                                />
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {items.map(item => {
+                                const item_id = item._id;
+                                const isCurrent = item_id === currentItem;
+                                const isHovered = item_id === hoveredItem;
 
-                            return (
-                                <ListTableRow
-                                    key={`rules_list_row_${item_id}`}
-                                    item={item}
-                                    item_id={item_id}
-                                    isCurrent={isCurrent}
-                                    handleItemToggle={handleItemToggle}
-                                    sectionApi={sectionApi}
-                                    initProjectMappingPackages={projectMappingPackages}
-                                    initProjectTripleMapFragments={projectTripleMapFragments}
-                                    initProjectSPARQLResources={projectSPARQLResources}
-                                    onPackagesUpdate={onPackagesUpdate}
-                                    handleItemHover={handleItemHover}
-                                    isHovered={isHovered}
-                                    detailedView={detailedView}
-                                    handleNotesDialogOpen={notesDialog.handleOpen}
-                                />)
-                        })}
-                        <Dialog
-                            id='notes_dialog'
-                            onClose={notesDialog.handleClose}
-                            open={notesDialog.open}
-                            fullWidth
-                            maxWidth="md"
-                        >
-                            <Card>
-                                <CardHeader title="Notes"
-                                            sx={{mb: 2}}/>
-                                <Divider/>
-                                <CardContent sx={{pt: 1}}>
-                                    <Box style={{overflow: 'auto', maxHeight: '40vh'}}>
-                                        {notesDialog.data?.mapping_notes && <>
-                                            <Typography>Mapping Notes:</Typography>
-                                            {notesDialog.data.mapping_notes.map((mapping_note, i) => <RuleComment
-                                                    key={'mapping_note' + i}
-                                                    comment={mapping_note}
-                                                />
-                                            )}
-                                        </>}
-                                        <Divider sx={{my: 2}}/>
-                                        {notesDialog.data?.editorial_notes && <>
-                                            <Typography>Editorial Notes:</Typography>
-                                            {notesDialog.data.editorial_notes.map((editorial_note, i) => <RuleComment
-                                                    key={'editorial_notes' + i}
-                                                    comment={editorial_note}
-                                                />
-                                            )}
-                                        </>}
-                                        <Divider sx={{my: 2}}/>
-                                        {notesDialog.data?.feedback_notes && <>
-                                            <Typography>Feedback Notes:</Typography>
-                                            {notesDialog.data.feedback_notes.map((feedback_note, i) =>
-                                                <RuleComment key={'feedback_notes' + i}
-                                                             comment={feedback_note}/>
-                                            )}
-                                        </>}
-                                    </Box>
-                                </CardContent>
-                            </Card>
-                        </Dialog>
-                    </TableBody>
-                </Table>
-            </Scrollbar>
+                                return (
+                                    <ListTableRow
+                                        key={`rules_list_row_${item_id}`}
+                                        item={item}
+                                        item_id={item_id}
+                                        isCurrent={isCurrent}
+                                        handleItemToggle={handleItemToggle}
+                                        sectionApi={sectionApi}
+                                        initProjectMappingPackages={projectMappingPackages}
+                                        initProjectTripleMapFragments={projectTripleMapFragments}
+                                        initProjectSPARQLResources={projectSPARQLResources}
+                                        onPackagesUpdate={onPackagesUpdate}
+                                        handleItemHover={handleItemHover}
+                                        isHovered={isHovered}
+                                        detailedView={detailedView}
+                                        handleNotesDialogOpen={notesDialog.handleOpen}
+                                    />)
+                            })}
+                            <Dialog
+                                id='notes_dialog'
+                                onClose={notesDialog.handleClose}
+                                open={notesDialog.open}
+                                fullWidth
+                                maxWidth="md"
+                            >
+                                <Card>
+                                    <CardHeader title="Notes"
+                                                sx={{mb: 2}}/>
+                                    <Divider/>
+                                    <CardContent sx={{pt: 1}}>
+                                        <Box style={{overflow: 'auto', maxHeight: '40vh'}}>
+                                            {notesDialog.data?.mapping_notes && <>
+                                                <Typography>Mapping Notes:</Typography>
+                                                {notesDialog.data.mapping_notes.map((mapping_note, i) => <RuleComment
+                                                        key={'mapping_note' + i}
+                                                        comment={mapping_note}
+                                                    />
+                                                )}
+                                            </>}
+                                            <Divider sx={{my: 2}}/>
+                                            {notesDialog.data?.editorial_notes && <>
+                                                <Typography>Editorial Notes:</Typography>
+                                                {notesDialog.data.editorial_notes.map((editorial_note, i) =>
+                                                    <RuleComment
+                                                        key={'editorial_notes' + i}
+                                                        comment={editorial_note}
+                                                    />
+                                                )}
+                                            </>}
+                                            <Divider sx={{my: 2}}/>
+                                            {notesDialog.data?.feedback_notes && <>
+                                                <Typography>Feedback Notes:</Typography>
+                                                {notesDialog.data.feedback_notes.map((feedback_note, i) =>
+                                                    <RuleComment key={'feedback_notes' + i}
+                                                                 comment={feedback_note}/>
+                                                )}
+                                            </>}
+                                        </Box>
+                                    </CardContent>
+                                </Card>
+                            </Dialog>
+                        </TableBody>
+                    </Table>
+                </Scrollbar>
+            </Paper>
         </TablePagination>
     );
 };

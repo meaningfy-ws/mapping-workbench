@@ -2,11 +2,12 @@ import {useEffect, useState} from 'react';
 
 import AddIcon from '@mui/icons-material/Add';
 import UploadIcon from '@mui/icons-material/Upload';
+import FilterListIcon from '@mui/icons-material/FilterList';
 
-import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
+import Paper from '@mui/material/Paper';
 import Button from "@mui/material/Button";
-import Divider from "@mui/material/Divider";
+import Popover from '@mui/material/Popover';
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
@@ -20,7 +21,7 @@ import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {fieldsOverviewApi as sectionApi} from 'src/api/fields-overview';
 import {ElementsDefinitionTabs} from 'src/sections/app/elements-definition';
 
-const FILTER_VALUE = [
+const FILTER_VALUES = [
     {label: 'All', value: ''},
     {label: 'Node', value: 'node'},
     {label: 'Field', value: 'field'}
@@ -54,10 +55,10 @@ const useItemsStore = () => {
     };
 };
 
-
 const Page = () => {
     const itemsStore = useItemsStore();
     const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, SEARCH_COLUMNS, {element_type: ''});
+    const [filterPopover, setFilterPopover] = useState(null)
 
     usePageView();
 
@@ -68,57 +69,75 @@ const Page = () => {
                 <Stack>
                     <ElementsDefinitionTabs/>
                 </Stack>
-
-                <Stack
-                    alignItems="center"
-                    justifyContent='end'
-                    direction="row"
-                    spacing={3}
-                >
-                    <Button
-                        component={RouterLink}
-                        href={paths.app.fields_and_nodes.overview.elements.create}
-                        id="add-field-button"
-                        startIcon={(
-                            <AddIcon/>
-                        )}
-                        variant="contained"
+                <Stack direction='row'
+                       justifyContent='space-between'>
+                    <Stack direction='row'
+                           spacing={3}>
+                        <Paper>
+                            <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                            value={itemsSearch.state.search[0]}/>
+                        </Paper>
+                        <Paper>
+                            <Button variant='text'
+                                    color={itemsSearch.state.filters.element_type ? 'primary' : 'inherit'}
+                                    onClick={e => setFilterPopover(e.currentTarget)}
+                                    startIcon={<FilterListIcon/>}>
+                                Filter
+                            </Button>
+                            <Popover
+                                id={'filter-popover'}
+                                open={!!filterPopover}
+                                anchorEl={filterPopover}
+                                onClose={() => setFilterPopover(null)}
+                                anchorOrigin={{
+                                    vertical: 'bottom',
+                                    horizontal: 'left',
+                                }}
+                            >
+                                <Filter title='Type:'
+                                        values={FILTER_VALUES}
+                                        value={itemsSearch.state.filters.element_type}
+                                        onValueChange={e => itemsSearch.handleFiltersChange({element_type: e})}/>
+                            </Popover>
+                        </Paper>
+                    </Stack>
+                    <Stack
+                        alignItems="center"
+                        justifyContent='end'
+                        direction="row"
+                        spacing={3}
                     >
-                        Add
-                    </Button>
-                    <Button
-                        id="import_shema_button"
-                        component={RouterLink}
-                        href={paths.app.fields_and_nodes.overview.import}
-                        startIcon={(
-                            <UploadIcon/>
-                        )}
-                        variant="contained"
-                    >
-                        Import schema from github
-                    </Button>
-
+                        <Button
+                            component={RouterLink}
+                            href={paths.app.fields_and_nodes.overview.elements.create}
+                            id="add-field-button"
+                            startIcon={<AddIcon/>}
+                            variant="contained"
+                        >
+                            Add
+                        </Button>
+                        <Button
+                            id="import_shema_button"
+                            component={RouterLink}
+                            href={paths.app.fields_and_nodes.overview.import}
+                            startIcon={<UploadIcon/>}
+                            variant="contained"
+                        >
+                            Import schema from github
+                        </Button>
+                    </Stack>
                 </Stack>
-                <Card>
-                    <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
-                                    value={itemsSearch.state.search[0]}/>
-                    <Divider/>
-                    <Filter values={FILTER_VALUE}
-                            value={itemsSearch.state.filters.element_type}
-                            onValueChange={e => itemsSearch.handleFiltersChange({element_type: e})}/>
-                    <Divider/>
-                    <ListTable
-                        onPageChange={itemsSearch.handlePageChange}
-                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        sort={itemsSearch.state.sort}
-                        onSort={itemsSearch.handleSort}
-                        page={itemsSearch.state.page}
-                        items={itemsSearch.pagedItems}
-                        count={itemsStore.itemsCount}
-                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                        sectionApi={sectionApi}
-                    />
-                </Card>
+                <ListTable
+                    onPageChange={itemsSearch.handlePageChange}
+                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                    sort={itemsSearch.state.sort}
+                    onSort={itemsSearch.handleSort}
+                    page={itemsSearch.state.page}
+                    items={itemsSearch.pagedItems}
+                    count={itemsStore.itemsCount}
+                    rowsPerPage={itemsSearch.state.rowsPerPage}
+                    sectionApi={sectionApi}
+                />
             </Stack>
         </>
     );

@@ -2,22 +2,20 @@ import {Fragment, useState} from 'react';
 import {useRouter} from "next/router";
 import PropTypes from 'prop-types';
 
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import DownloadDoneOutlinedIcon from '@mui/icons-material/DownloadDoneOutlined';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 import Box from "@mui/system/Box";
 import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
-import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
 import Divider from '@mui/material/Divider';
-import SvgIcon from '@mui/material/SvgIcon';
 import Checkbox from "@mui/material/Checkbox";
 import TableRow from '@mui/material/TableRow';
 import TableHead from '@mui/material/TableHead';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
 import CardContent from '@mui/material/CardContent';
 import FormControlLabel from "@mui/material/FormControlLabel";
 
@@ -29,10 +27,12 @@ import {useGlobalState} from "src/hooks/use-global-state";
 import {PropertyList} from 'src/components/property-list';
 import {PropertyListItem} from 'src/components/property-list-item';
 import ConfirmDialog from "src/components/app/dialog/confirm-dialog";
-import TablePagination from "src/sections/components/table-pagination";
+import {ChevronButton} from 'src/sections/components/chevron-button';
+import {MenuActionButton, MenuActions} from 'src/components/menu-actions';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
+import TableSorterHeader from 'src/sections/components/table-sorter-header';
+import TablePagination from "src/sections/components/table-pagination-pages";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import TableSorterHeader from '../../components/table-sorter-header';
 import {MappingPackageProcessForm} from './components/mapping-package-process-form';
 import {MappingPackagesBulkActions} from './components/mapping-packages-bulk-actions';
 
@@ -87,15 +87,8 @@ const MappingPackageRowFragment = (props) => {
                             checked={isItemSelected(item_id)}
                             onClick={event => handleItemSelect(event.target.checked, item_id)}
                         />
-                        <IconButton onClick={() => handleItemToggle(item_id)}
-                                    id="expand_button">
-                            <SvgIcon sx={{
-                                transform: isCurrent ? 'rotate(90deg)' : '',
-                                transition: '0.2s linear'
-                            }}>
-                                <ChevronRightIcon/>
-                            </SvgIcon>
-                        </IconButton>
+                        <ChevronButton onClick={() => handleItemToggle(item_id)}
+                                       isCurrent={isCurrent}/>
                     </TableCell>
 
                     <TableCell width="25%">
@@ -110,31 +103,22 @@ const MappingPackageRowFragment = (props) => {
                         {timeTransformer(item.created_at, timeSetting)}
                     </TableCell>
                     <TableCell align="center">
-                        <Stack direction='row'
-                               justifyContent='center'
-                               alignItems='center'>
-                            <Button type='link'
-                                    id='view_last_state_button'
-                                    size="small"
-                                    onClick={() => handleGoLastState(item_id)}>
-                                View Last State
-                            </Button>
+                        <MenuActions>
+                            <MenuActionButton
+                                id='view_last_state_button'
+                                onClick={() => handleGoLastState(item_id)}
+                                title='View Last State'
+                                icon={<DownloadDoneOutlinedIcon/>}
+                            />
                             <ListItemActions
                                 itemctx={new ForListItemAction(item_id, sectionApi)}
                             />
-                            <Button
+                            <MenuActionButton
                                 id="delete_button"
-                                variant="text"
-                                size="small"
-                                color="error"
                                 onClick={() => setConfirmOpen(true)}
-                                sx={{
-                                    whiteSpace: "nowrap"
-                                }}
-                            >
-                                Delete
-                            </Button>
-                        </Stack>
+                                icon={<DeleteOutlineIcon/>}
+                                title='Delete'/>
+                        </MenuActions>
                     </TableCell>
                 </TableRow>
                 {isCurrent && (
@@ -247,7 +231,6 @@ export const ListTable = (props) => {
         setSelectedItems(items => checked ? [...items, itemId] : items.filter(item => item !== itemId));
     }
 
-
     const handleItemToggle = itemId => {
         setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
     }
@@ -282,21 +265,21 @@ export const ListTable = (props) => {
     }
 
     return (
-        <div>
-            <MappingPackagesBulkActions items={items.filter(item => selectedItems.includes(item._id))}
-                                        disabled={!selectedItems.length}/>
-            <Divider/>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-                showFirstButton
-                showLastButton
-            >
+        <TablePagination
+            component="div"
+            count={count}
+            onPageChange={onPageChange}
+            onRowsPerPageChange={onRowsPerPageChange}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+            showFirstButton
+            showLastButton
+        >
+            <Paper>
+                <MappingPackagesBulkActions items={items.filter(item => selectedItems.includes(item._id))}
+                                            disabled={!selectedItems.length}/>
+                <Divider/>
                 <Scrollbar>
                     <Table sx={{minWidth: 1200}}>
                         <TableHead>
@@ -313,9 +296,7 @@ export const ListTable = (props) => {
                                 <SorterHeader fieldName='created_at'
                                               label='created'
                                               align="left"/>
-                                <TableCell align="center">
-                                    Actions
-                                </TableCell>
+                                <TableCell align="center"/>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -343,28 +324,41 @@ export const ListTable = (props) => {
                         </TableBody>
                     </Table>
                 </Scrollbar>
-            </TablePagination>
-        </div>
+            </Paper>
+        </TablePagination>
     );
 };
 
 ListTable.propTypes = {
     count: PropTypes.number,
-    items: PropTypes.array,
-    onPageChange: PropTypes.func,
-    onRowsPerPageChange: PropTypes.func,
-    page: PropTypes.number,
-    rowsPerPage: PropTypes.number,
-    sectionApi: PropTypes.object
+    items:
+    PropTypes.array,
+    onPageChange:
+    PropTypes.func,
+    onRowsPerPageChange:
+    PropTypes.func,
+    page:
+    PropTypes.number,
+    rowsPerPage:
+    PropTypes.number,
+    sectionApi:
+    PropTypes.object
 };
 
 MappingPackageRowFragment.propTypes = {
     item_id: PropTypes.string,
-    item: PropTypes.object,
-    isCurrent: PropTypes.bool,
-    handleItemToggle: PropTypes.func,
-    handleGoLastState: PropTypes.func,
-    handleDeleteAction: PropTypes.func,
-    timeSetting: PropTypes.number,
-    sectionApi: PropTypes.object
+    item:
+    PropTypes.object,
+    isCurrent:
+    PropTypes.bool,
+    handleItemToggle:
+    PropTypes.func,
+    handleGoLastState:
+    PropTypes.func,
+    handleDeleteAction:
+    PropTypes.func,
+    timeSetting:
+    PropTypes.number,
+    sectionApi:
+    PropTypes.object
 }

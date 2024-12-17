@@ -22,6 +22,7 @@ Feature: Entry Projects
     Then I get redirected to projects list page
     Then I search for project
 
+    When I open actions menu
     When I select project
     Then I get success select
 
@@ -33,6 +34,7 @@ Feature: Entry Projects
     Then I get redirected to projects list page
     Then I search for project
 
+    When I open actions menu
     When I click on edit button
     Then I get redirected to project edit page
     Then I update project description
@@ -48,6 +50,7 @@ Feature: Entry Projects
     Then I get redirected to projects list page
     Then I search for project
 
+    When I open actions menu
     When I click on view button
     Then I get redirected to project view page
     Then I read description
@@ -61,6 +64,7 @@ Feature: Entry Projects
     Then I get redirected to projects list page
     Then I search for project
 
+    When I open actions menu
     When I click on delete button
     Then I click yes button
     Then I get success delete

@@ -1,73 +1,25 @@
 import {useEffect, useState} from "react";
 
-import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
 import Card from "@mui/material/Card";
 import Chip from "@mui/material/Chip";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import Breadcrumbs from "@mui/material/Breadcrumbs";
 
 import {paths} from "src/paths";
 import {Seo} from "src/components/seo";
-import {Layout as AppLayout} from "src/layouts/app";
-import {BreadcrumbsSeparator} from "src/components/breadcrumbs-separator";
-import {RouterLink} from "src/components/router-link";
-import {FileCollectionListSearch} from "src/sections/app/file-manager/file-collection-list-search";
-import {usePageView} from "src/hooks/use-page-view";
 import {useRouter} from "src/hooks/use-router";
+import {usePageView} from "src/hooks/use-page-view";
+import {Layout as AppLayout} from "src/layouts/app";
+import {RouterLink} from "src/components/router-link";
+import useItemsSearch from 'src/hooks/use-items-search';
+import {BreadcrumbsSeparator} from "src/components/breadcrumbs-separator";
 import {ListTable} from "src/sections/app/mapping-package/state/list-table";
-import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 import {mappingPackagesApi as upperSectionApi} from "src/api/mapping-packages";
+import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
+import {FileCollectionListSearch} from "src/sections/app/file-manager/file-collection-list-search";
 
-
-const useItemsSearch = () => {
-    const [state, setState] = useState({
-        filters: {
-            name: undefined,
-            category: [],
-            status: [],
-            inStock: undefined,
-            sortField: "",
-            sortDirection: undefined,
-        },
-        page: sectionApi.DEFAULT_PAGE,
-        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
-    });
-
-    const handleFiltersChange = filters => {
-        setState(prevState => ({
-            ...prevState,
-            filters,
-            page: 0
-        }));
-    }
-
-    const handlePageChange = (event, page) => {
-        setState(prevState => ({
-            ...prevState,
-            page
-        }));
-    }
-
-    const handleRowsPerPageChange = event => {
-        setState(prevState => ({
-            ...prevState,
-            rowsPerPage: parseInt(event.target.value, 10)
-        }));
-    }
-
-    const handleSort = (sortField) => {
-        setState(prevState => ({sortField, sortDirection: state.sortField === sortField && prevState.sortDirection === -1 ? 1 : -1 }))
-    }
-
-    return {
-        handleSort,
-        handleFiltersChange,
-        handlePageChange,
-        handleRowsPerPageChange,
-        state
-    };
-};
 
 const Page = () => {
     const [state, setState] = useState({
@@ -76,7 +28,7 @@ const Page = () => {
     });
 
     const router = useRouter();
-    const itemsSearch = useItemsSearch();
+    const itemsSearch = useItemsSearch(state.items,sectionApi);
 
     const {id} = router.query;
 

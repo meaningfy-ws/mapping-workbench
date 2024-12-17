@@ -10,7 +10,7 @@ import {Scrollbar} from 'src/components/scrollbar';
 import {TableNoData} from '../shacl-validation-report/utils';
 import {ItemListCard} from './item-list-card';
 import {ItemListRow} from './item-list-row';
-import TablePagination from "../../components/table-pagination";
+import TablePagination from "../../components/table-pagination-pages";
 
 export const ItemList = (props) => {
         const {
@@ -84,24 +84,23 @@ export const ItemList = (props) => {
             : <TableNoData/>
 
         return (
-            <Card>
-                <Stack spacing={4}>
-                    <TablePagination
-                        component="div"
-                        count={count}
-                        onPageChange={onPageChange}
-                        onRowsPerPageChange={onRowsPerPageChange}
-                        page={page}
-                        rowsPerPage={rowsPerPage}
-                        rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-                        showFirstButton
-                        showLastButton
-                    >
+            <TablePagination
+                component="div"
+                count={count}
+                onPageChange={onPageChange}
+                onRowsPerPageChange={onRowsPerPageChange}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+                showFirstButton
+                showLastButton
+            >
+                <Card>
+                    <Stack spacing={4}>
                         {content}
-                    </TablePagination>
-                </Stack>
-            </Card>
-
+                    </Stack>
+                </Card>
+            </TablePagination>
         );
     }
 ;

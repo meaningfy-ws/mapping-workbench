@@ -7,6 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import {alpha} from '@mui/system/colorManipulator';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import {sessionApi} from '../../../api/session';
 
 import {AccountButton} from '../account-button';
 import {LanguageSwitch} from '../language-switch';
@@ -20,6 +21,7 @@ const SIDE_NAV_WIDTH = 280;
 export const TopNav = (props) => {
     const {onMobileNavOpen, ...other} = props;
     const breakPointUp = useMediaQuery((theme) => theme.breakpoints.up(BREAK_POINT));
+    const project = sessionApi.getSessionProject()
 
     return (
         <Box
@@ -79,9 +81,9 @@ export const TopNav = (props) => {
                         </Stack>
                     </Stack>
                 </Stack>
-                <Stack alignItems="center">
+                {project && <Stack alignItems="center">
                     <ArrowButtons/>
-                </Stack>
+                </Stack>}
             </Stack>
 
         </Box>

@@ -3,6 +3,10 @@ import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
 
 import PropTypes from 'prop-types';
 
+import BorderColorIcon from '@mui/icons-material/BorderColor';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+
+import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import Dialog from "@mui/material/Dialog";
 import Button from "@mui/material/Button";
@@ -18,8 +22,9 @@ import {useDialog} from "src/hooks/use-dialog";
 import {Scrollbar} from 'src/components/scrollbar';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import ConfirmDialog from "src/components/app/dialog/confirm-dialog";
-import TablePagination from "src/sections/components/table-pagination";
+import {MenuActionButton, MenuActions} from 'src/components/menu-actions';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
+import TablePagination from "src/sections/components/table-pagination-pages";
 
 export const ListTableRow = (props) => {
     const {
@@ -47,11 +52,7 @@ export const ListTableRow = (props) => {
                         {item.source_structural_element_sdk_element_id}
                     </Typography>
                 </TableCell>
-                <TableCell
-                    sx={{
-                        wordBreak: "break-all"
-                    }}
-                >
+                <TableCell sx={{wordBreak: "break-all"}}>
                     <SyntaxHighlighter
                         language="xquery"
                         wrapLines
@@ -79,27 +80,18 @@ export const ListTableRow = (props) => {
                     {item.target_property_path}
                 </TableCell>
                 <TableCell align="right">
-                    <Button
-                        id="edit_button"
-                        variant="text"
-                        size="small"
-                        color="primary"
-                        onClick={() => onEdit(item)}
-                    >
-                        Edit
-                    </Button>
-                    <Button
-                        id="delete_button"
-                        variant="text"
-                        size="small"
-                        color="error"
-                        onClick={() => setConfirmOpen(true)}
-                        sx={{
-                            whiteSpace: "nowrap"
-                        }}
-                    >
-                        Delete
-                    </Button>
+                    <MenuActions>
+                        <MenuActionButton
+                            id="edit_button"
+                            title='Edit'
+                            icon={<BorderColorIcon/>}
+                            onClick={() => onEdit(item)}/>
+                        <MenuActionButton
+                            id="delete_button"
+                            icon={<DeleteOutlineIcon/>}
+                            onClick={() => setConfirmOpen(true)}
+                            title='Delete'/>
+                    </MenuActions>
                     <ConfirmDialog
                         title="Delete It?"
                         open={confirmOpen}
@@ -171,54 +163,54 @@ export const ListTable = (props) => {
             showFirstButton
             showLastButton
         >
-            <Scrollbar>
-                <Table sx={{minWidth: 1200}}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell width="10%">
-                                <SorterHeader fieldName="source_structural_element_sdk_element_id"
-                                              title="Field ID"/>
-                            </TableCell>
-                            <TableCell>
-                                <SorterHeader fieldName="source_structural_element_absolute_xpath"
-                                              title="Absolute XPath"/>
-                            </TableCell>
-                            <TableCell>
-                                <SorterHeader fieldName="xpath_condition"
-                                              title="XPath condition"/>
-                            </TableCell>
-                            <TableCell>
-                                <SorterHeader fieldName="min_sdk_version"
-                                              title="Min XSD"/>
-                            </TableCell>
-                            <TableCell>
-                                <SorterHeader fieldName="max_sdk_version"
-                                              title="Max XSD"/>
-                            </TableCell>
-                            <TableCell>
-                                <SorterHeader fieldName="target_class_path"
-                                              title="Ontology Class Path"/>
-                            </TableCell>
-                            <TableCell>
-                                <SorterHeader fieldName="target_property_path"
-                                              title="Ontology Property Path"/>
-                            </TableCell>
+            <Paper>
+                <Scrollbar>
+                    <Table sx={{minWidth: 1200}}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell width="10%">
+                                    <SorterHeader fieldName="source_structural_element_sdk_element_id"
+                                                  title="Field ID"/>
+                                </TableCell>
+                                <TableCell>
+                                    <SorterHeader fieldName="source_structural_element_absolute_xpath"
+                                                  title="Absolute XPath"/>
+                                </TableCell>
+                                <TableCell>
+                                    <SorterHeader fieldName="xpath_condition"
+                                                  title="XPath condition"/>
+                                </TableCell>
+                                <TableCell>
+                                    <SorterHeader fieldName="min_sdk_version"
+                                                  title="Min XSD"/>
+                                </TableCell>
+                                <TableCell>
+                                    <SorterHeader fieldName="max_sdk_version"
+                                                  title="Max XSD"/>
+                                </TableCell>
+                                <TableCell>
+                                    <SorterHeader fieldName="target_class_path"
+                                                  title="Ontology Class Path"/>
+                                </TableCell>
+                                <TableCell>
+                                    <SorterHeader fieldName="target_property_path"
+                                                  title="Ontology Property Path"/>
+                                </TableCell>
 
-                            <TableCell align="right">
-                                Actions
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {items.map(item => <ListTableRow
-                            key={item._id}
-                            item={item}
-                            onEdit={onEdit}
-                            onDelete={onDelete}
-                        />)}
-                    </TableBody>
-                </Table>
-            </Scrollbar>
+                                <TableCell align="right"/>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {items.map(item => <ListTableRow
+                                key={item._id}
+                                item={item}
+                                onEdit={onEdit}
+                                onDelete={onDelete}
+                            />)}
+                        </TableBody>
+                    </Table>
+                </Scrollbar>
+            </Paper>
         </TablePagination>
     );
 

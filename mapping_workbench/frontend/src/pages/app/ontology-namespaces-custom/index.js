@@ -1,25 +1,20 @@
-import {useEffect, useState} from 'react';
-import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import Link from '@mui/material/Link';
+import AddIcon from '@mui/icons-material/Add';
+
+import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
-import SvgIcon from '@mui/material/SvgIcon';
+import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
-import {ontologyNamespacesCustomApi as sectionApi} from 'src/api/ontology-namespaces-custom';
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {RouterLink} from 'src/components/router-link';
+import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
-import {paths} from 'src/paths';
-import useItemsSearch from '../../../hooks/use-items-search';
-import {useItemsStore} from '../../../hooks/use-items-store';
-import {ListSearch} from "../../../sections/app/ontology-namespace-custom/list-search";
-import {ListTable} from "../../../sections/app/ontology-namespace-custom/list-table";
-import {TableSearchBar} from '../../../sections/components/table-search-bar';
+import {RouterLink} from 'src/components/router-link';
+import useItemsSearch from 'src/hooks/use-items-search';
+import {useItemsStore} from 'src/hooks/use-items-store';
+import {TableSearchBar} from 'src/sections/components/table-search-bar';
+import {ListTable} from "src/sections/app/ontology-namespace-custom/list-table";
+import {ontologyNamespacesCustomApi as sectionApi} from 'src/api/ontology-namespaces-custom';
 
 const Page = () => {
     const itemsStore = useItemsStore(sectionApi);
@@ -32,40 +27,18 @@ const Page = () => {
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
             <Stack spacing={4}
                    id='ontology_namespaces_custom'>
+                <Typography variant="h5">
+                    {sectionApi.SECTION_TITLE}
+                </Typography>
                 <Stack
                     direction="row"
                     justifyContent="space-between"
                     spacing={4}
                 >
-                    <Stack spacing={1}>
-                        <Typography variant="h4">
-                            {sectionApi.SECTION_TITLE}
-                        </Typography>
-                        <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.index}
-                                variant="subtitle2"
-                            >
-                                App
-                            </Link>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.app[sectionApi.section].index}
-                                variant="subtitle2"
-                            >
-                                {sectionApi.SECTION_TITLE}
-                            </Link>
-                            <Typography
-                                color="text.secondary"
-                                variant="subtitle2"
-                            >
-                                List
-                            </Typography>
-                        </Breadcrumbs>
-                    </Stack>
+                    <Paper>
+                        <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                        value={itemsSearch.state.search[0]}/>
+                    </Paper>
                     <Stack
                         alignItems="center"
                         direction="row"
@@ -75,32 +48,24 @@ const Page = () => {
                             id="add_namespace_button"
                             component={RouterLink}
                             href={paths.app[sectionApi.section].create}
-                            startIcon={(
-                                <SvgIcon>
-                                    <PlusIcon/>
-                                </SvgIcon>
-                            )}
+                            startIcon={<AddIcon/>}
                             variant="contained"
                         >
                             Add
                         </Button>
                     </Stack>
                 </Stack>
-                <Card>
-                    <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
-                                    value={itemsSearch.state.search[0]}/>
-                    <ListTable
-                        onPageChange={itemsSearch.handlePageChange}
-                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        page={itemsSearch.state.page}
-                        items={itemsSearch.pagedItems}
-                        count={itemsSearch.count}
-                        sort={itemsSearch.state.sort}
-                        onSort={itemsSearch.handleSort}
-                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                        sectionApi={sectionApi}
-                    />
-                </Card>
+                <ListTable
+                    onPageChange={itemsSearch.handlePageChange}
+                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                    page={itemsSearch.state.page}
+                    items={itemsSearch.pagedItems}
+                    count={itemsSearch.count}
+                    sort={itemsSearch.state.sort}
+                    onSort={itemsSearch.handleSort}
+                    rowsPerPage={itemsSearch.state.rowsPerPage}
+                    sectionApi={sectionApi}
+                />
             </Stack>
         </>
     )

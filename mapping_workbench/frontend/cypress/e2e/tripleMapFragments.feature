@@ -20,6 +20,7 @@ Feature: Generic Triple Maps
     Then I get redirected to Generic Triple Maps
 
     Then I search for Generic Triple Map
+    When I open actions menu
     Then I click edit button
     Then I get redirected to edit page
 
@@ -31,5 +32,6 @@ Feature: Generic Triple Maps
     Then I get redirected to Generic Triple Maps
 
     Then I search for updated Generic Triple Map
+    When I open actions menu
     Then I click delete button
     Then I get success delete

@@ -1,24 +1,22 @@
 import {Fragment, useState} from 'react';
 import PropTypes from 'prop-types';
 
-import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
-import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
-import CardContent from '@mui/material/CardContent';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import SvgIcon from '@mui/material/SvgIcon';
 import Table from '@mui/material/Table';
+import Paper from '@mui/material/Paper';
+import Divider from '@mui/material/Divider';
+import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
+import CardContent from '@mui/material/CardContent';
 
 import {Scrollbar} from 'src/components/scrollbar';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
-
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import TablePagination from "../../components/table-pagination";
+import {MenuActions} from '../../../components/menu-actions';
+import {ChevronButton} from '../../components/chevron-button';
+import TablePagination from "../../components/table-pagination-pages";
 import TableSorterHeader from "../../components/table-sorter-header";
 
 
@@ -57,18 +55,18 @@ export const ListTable = (props) => {
     }
 
     return (
-        <div>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-                showFirstButton
-                showLastButton
-            >
+        <TablePagination
+            component="div"
+            count={count}
+            onPageChange={onPageChange}
+            onRowsPerPageChange={onRowsPerPageChange}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+            showFirstButton
+            showLastButton
+        >
+            <Paper>
                 <Scrollbar>
                     <Table sx={{minWidth: 1200}}>
                         <TableHead>
@@ -78,9 +76,7 @@ export const ListTable = (props) => {
                                               title='Term'/>
                                 <SorterHeader fieldName='type'
                                               title='Type'/>
-                                <TableCell align="right">
-                                    Actions
-                                </TableCell>
+                                <TableCell align="right"/>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -112,11 +108,8 @@ export const ListTable = (props) => {
                                                 }}
                                                 width="25%"
                                             >
-                                                <IconButton onClick={() => handleItemToggle(item_id)}>
-                                                    <SvgIcon>
-                                                        {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
-                                                    </SvgIcon>
-                                                </IconButton>
+                                                <ChevronButton onClick={() => handleItemToggle(item_id)}
+                                                               isCurrent={isCurrent}/>
                                             </TableCell>
                                             <TableCell width="25%">
                                                 <Typography variant="subtitle2">
@@ -127,8 +120,10 @@ export const ListTable = (props) => {
                                                 {item.type}
                                             </TableCell>
                                             <TableCell align="right">
-                                                <ListItemActions
-                                                    itemctx={new ForListItemAction(item_id, sectionApi)}/>
+                                                <MenuActions>
+                                                    <ListItemActions
+                                                        itemctx={new ForListItemAction(item_id, sectionApi)}/>
+                                                </MenuActions>
                                             </TableCell>
                                         </TableRow>
                                         {isCurrent && (
@@ -164,8 +159,8 @@ export const ListTable = (props) => {
                         </TableBody>
                     </Table>
                 </Scrollbar>
-            </TablePagination>
-        </div>
+            </Paper>
+        </TablePagination>
     );
 };
 

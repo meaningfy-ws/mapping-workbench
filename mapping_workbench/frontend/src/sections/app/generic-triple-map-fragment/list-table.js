@@ -2,11 +2,11 @@ import {Fragment, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 
 import EditIcon from '@untitled-ui/icons-react/build/esm/Edit05';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import Box from "@mui/system/Box";
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -16,7 +16,6 @@ import TableRow from '@mui/material/TableRow';
 import TableHead from '@mui/material/TableHead';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 
@@ -24,14 +23,16 @@ import {sessionApi} from 'src/api/session';
 import {useDialog} from 'src/hooks/use-dialog';
 import {Scrollbar} from 'src/components/scrollbar';
 import {toastSuccess} from 'src/components/app-toast';
+import {MenuActions} from 'src/components/menu-actions';
 import timeTransformer from "src/utils/time-transformer";
 import {useGlobalState} from "src/hooks/use-global-state";
 import {mappingPackagesApi} from "src/api/mapping-packages";
-import TablePagination from "src/sections/components/table-pagination";
+import {ChevronButton} from 'src/sections/components/chevron-button';
 import CodeMirrorDefault from 'src/components/app/form/codeMirrorDefault';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
-import {genericTripleMapFragmentsApi} from 'src/api/triple-map-fragments/generic';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
+import TablePagination from "src/sections/components/table-pagination-pages";
+import {genericTripleMapFragmentsApi} from 'src/api/triple-map-fragments/generic';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {
     MappingPackageCheckboxList
@@ -77,9 +78,11 @@ export const ListTableMappingPackages = (props) => {
     }
 
     return (<>
-        {!!itemMappingPackages.length && <>
-            {itemMappingPackages.map(x => <Box sx={{mb: 1}}><Chip key={"mapping_package_" + x.id} label={x.title}/></Box>)}
-        </>}
+        {!!itemMappingPackages.length && <Box>
+            {itemMappingPackages.map(x => <Chip key={"mapping_package_" + x.id}
+                                                sx={{mb: 1, mr: 1}}
+                                                label={x.title}/>)}
+        </Box>}
         {isHovered && <Box sx={{position: "absolute", left: "50%", top: "50%"}}>
             <Button
                 aria-describedby={"mapping_packages_dialog_" + item._id}
@@ -168,7 +171,7 @@ export const ListTable = (props) => {
         return a
     }, {})
 
-    return (<div>
+    return (
         <TablePagination
             component="div"
             count={count}
@@ -180,42 +183,90 @@ export const ListTable = (props) => {
             showFirstButton
             showLastButton
         >
-            <Scrollbar>
-                <Table sx={{minWidth: 1200}}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell/>
-                            <TableCell width="25%">
-                                <SorterHeader fieldName="triple_map_uri"
-                                              title="URI"/>
-                            </TableCell>
-                            <TableCell>
-                                Packages
-                            </TableCell>
-                            <TableCell align="left">
-                                <SorterHeader fieldName="created_at"
-                                              title="Created"/>
-                            </TableCell>
-                            <TableCell align="right">
-                                Actions
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {items.map(item => {
-                            const item_id = item._id;
-                            const isCurrent = item_id === currentItem;
+            <Paper>
+                <Scrollbar>
+                    <Table sx={{minWidth: 1200}}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell/>
+                                <TableCell width="25%">
+                                    <SorterHeader fieldName="triple_map_uri"
+                                                  title="URI"/>
+                                </TableCell>
+                                <TableCell>
+                                    Packages
+                                </TableCell>
+                                <TableCell align="left">
+                                    <SorterHeader fieldName="created_at"
+                                                  title="Created"/>
+                                </TableCell>
+                                <TableCell align="right"/>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {items.map(item => {
+                                const item_id = item._id;
+                                const isCurrent = item_id === currentItem;
 
-                            return (<Fragment key={item_id}>
-                                <TableRow
-                                    hover
-                                    key={item_id}
-                                >
-                                    <TableCell
-                                        padding="checkbox"
-                                        sx={{
-                                            ...(isCurrent && {
-                                                position: 'relative', '&:after': {
+                                return (<Fragment key={item_id}>
+                                    <TableRow
+                                        hover
+                                        key={item_id}
+                                    >
+                                        <TableCell
+                                            padding="checkbox"
+                                            sx={{
+                                                ...(isCurrent && {
+                                                    position: 'relative', '&:after': {
+                                                        position: 'absolute',
+                                                        content: '" "',
+                                                        top: 0,
+                                                        left: 0,
+                                                        backgroundColor: 'primary.main',
+                                                        width: 3,
+                                                        height: 'calc(100% + 1px)'
+                                                    }
+                                                })
+                                            }}
+                                            width="25%"
+                                        >
+                                            {item.triple_map_content &&
+                                                <ChevronButton onClick={() => handleItemToggle(item_id)}
+                                                               isCurrent={isCurrent}/>}
+                                        </TableCell>
+
+                                        <TableCell width="25%">
+                                            <Typography variant="subtitle2">
+                                                {item.triple_map_uri}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell sx={{position: "relative"}}
+                                                   onMouseEnter={() => setHoveredItem(item._id)}
+                                                   onMouseLeave={() => setHoveredItem(null)}>
+                                            {projectMappingPackagesMap && <ListTableMappingPackages
+                                                item={item}
+                                                itemFilteredMappingPackages={item.refers_to_mapping_package_ids}
+                                                initProjectMappingPackages={projectMappingPackages}
+                                                onPackagesUpdate={onPackagesUpdate}
+                                                isCurrent={isCurrent}
+                                                isHovered={hoveredItem === item._id}
+                                            />}
+                                        </TableCell>
+                                        <TableCell align="left">
+                                            {timeTransformer(item.created_at, timeSetting)}
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            <MenuActions>
+                                                <ListItemActions
+                                                    itemctx={new ForListItemAction(item_id, sectionApi)}/>
+                                            </MenuActions>
+                                        </TableCell>
+                                    </TableRow>
+                                    {isCurrent && (<TableRow>
+                                        <TableCell
+                                            colSpan={7}
+                                            sx={{
+                                                p: 0, position: 'relative', '&:after': {
                                                     position: 'absolute',
                                                     content: '" "',
                                                     top: 0,
@@ -224,86 +275,34 @@ export const ListTable = (props) => {
                                                     width: 3,
                                                     height: 'calc(100% + 1px)'
                                                 }
-                                            })
-                                        }}
-                                        width="25%"
-                                    >
-                                        {item.triple_map_content &&
-                                            <IconButton onClick={() => handleItemToggle(item_id)}>
-                                                <SvgIcon sx={{
-                                                    transform: isCurrent ? 'rotate(90deg)' : '',
-                                                    transition: 'linear 0.2s'
-                                                }}>
-                                                    {<ChevronRightIcon/>}
-                                                </SvgIcon>
-                                            </IconButton>}
-                                    </TableCell>
-
-                                    <TableCell width="25%">
-                                        <Typography variant="subtitle2">
-                                            {item.triple_map_uri}
-                                        </Typography>
-                                    </TableCell>
-                                    <TableCell sx={{position: "relative"}}
-                                               onMouseEnter={() => setHoveredItem(item._id)}
-                                               onMouseLeave={() => setHoveredItem(null)}>
-                                        {projectMappingPackagesMap && <ListTableMappingPackages
-                                            item={item}
-                                            itemFilteredMappingPackages={item.refers_to_mapping_package_ids}
-                                            initProjectMappingPackages={projectMappingPackages}
-                                            onPackagesUpdate={onPackagesUpdate}
-                                            isCurrent={isCurrent}
-                                            isHovered={hoveredItem === item._id}
-                                        />}
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        {timeTransformer(item.created_at, timeSetting)}
-                                    </TableCell>
-                                    <TableCell align="right">
-                                        <ListItemActions
-                                            itemctx={new ForListItemAction(item_id, sectionApi)}/>
-                                    </TableCell>
-                                </TableRow>
-                                {isCurrent && (<TableRow>
-                                    <TableCell
-                                        colSpan={7}
-                                        sx={{
-                                            p: 0, position: 'relative', '&:after': {
-                                                position: 'absolute',
-                                                content: '" "',
-                                                top: 0,
-                                                left: 0,
-                                                backgroundColor: 'primary.main',
-                                                width: 3,
-                                                height: 'calc(100% + 1px)'
-                                            }
-                                        }}
-                                    >
-                                        <CardContent>
-                                            <Grid container>
-                                                <Grid
-                                                    item
-                                                    md={12}
-                                                    xs={12}
-                                                >
-                                                    <Box>Content:</Box>
-                                                    <CodeMirrorDefault
-                                                        style={{resize: 'vertical', overflow: 'auto', height: 600}}
-                                                        value={item.triple_map_content}
-                                                        lang={item.format}
-                                                        disabled/>
+                                            }}
+                                        >
+                                            <CardContent>
+                                                <Grid container>
+                                                    <Grid
+                                                        item
+                                                        md={12}
+                                                        xs={12}
+                                                    >
+                                                        <Box>Content:</Box>
+                                                        <CodeMirrorDefault
+                                                            style={{resize: 'vertical', overflow: 'auto', height: 600}}
+                                                            value={item.triple_map_content}
+                                                            lang={item.format}
+                                                            disabled/>
+                                                    </Grid>
                                                 </Grid>
-                                            </Grid>
-                                        </CardContent>
-                                    </TableCell>
-                                </TableRow>)}
-                            </Fragment>);
-                        })}
-                    </TableBody>
-                </Table>
-            </Scrollbar>
+                                            </CardContent>
+                                        </TableCell>
+                                    </TableRow>)}
+                                </Fragment>);
+                            })}
+                        </TableBody>
+                    </Table>
+                </Scrollbar>
+            </Paper>
         </TablePagination>
-    </div>);
+    );
 };
 
 ListTable.propTypes = {

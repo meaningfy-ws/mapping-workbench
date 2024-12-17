@@ -1,17 +1,18 @@
-import {Button} from '@mui/material';
-
-
-import {usePopover} from 'src/hooks/use-popover';
 import {useCallback, useState} from "react";
+
+import BorderColorIcon from '@mui/icons-material/BorderColor';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
+
 import {paths} from 'src/paths';
-import {useRouter} from "../../../hooks/use-router";
+import {useRouter} from "next/router";
+import {MenuActionButton} from '../../menu-actions';
 import ConfirmDialog from "../dialog/confirm-dialog";
 
 export const ListFileCollectionActions = (props) => {
     const router = useRouter();
 
     const {itemctx} = props;
-    const popover = usePopover();
 
     const handleResourceManagerAction = useCallback(async () => {
         router.push({
@@ -48,116 +49,32 @@ export const ListFileCollectionActions = (props) => {
 
     return (
         <>
-            <div
-                className='newActionButtons'
-                sx={{display: "flex", flexDirection: "inline", justifyContent: "space-evenly"}}
+            <MenuActionButton
+                id="resources_button"
+                onClick={handleResourceManagerAction}
+                title='Resources'
+                icon={<DescriptionOutlinedIcon/>}
+            />
+            <MenuActionButton
+                id="edit_button"
+                onClick={handleEditAction}
+                title='Edit'
+                icon={<BorderColorIcon/>}
+            />
+            <MenuActionButton
+                id="delete_button"
+                onClick={() => setConfirmOpen(true)}
+                title='Delete'
+                icon={<DeleteOutlineIcon/>}
+            />
+            <ConfirmDialog
+                title="Delete It?"
+                open={confirmOpen}
+                setOpen={setConfirmOpen}
+                onConfirm={handleDeleteAction}
             >
-                {/*<Button
-                    variant="text"
-                    size="small"
-                    color="secondary"
-                    onClick={handleViewAction}
-                >
-                View
-                </Button>*/}
-                <Button
-                    id="resources_button"
-                    variant="text"
-                    size="small"
-                    color="info"
-                    onClick={handleResourceManagerAction}
-                >
-                    Resources
-                </Button>
-                <Button
-                    id="edit_button"
-                    variant="text"
-                    size="small"
-                    color="success"
-                    onClick={handleEditAction}
-                >
-                    Edit
-                </Button>
-                <Button
-                    id="delete_button"
-                    variant="text"
-                    size="small"
-                    color="error"
-                    onClick={() => setConfirmOpen(true)}
-                >
-                    Delete
-                </Button>
-                <ConfirmDialog
-                    title="Delete It?"
-                    open={confirmOpen}
-                    setOpen={setConfirmOpen}
-                    onConfirm={handleDeleteAction}
-                >
-                    Are you sure you want to delete it?
-                </ConfirmDialog>
-            </div>
-            {/* <Tooltip title="More options">
-                <IconButton
-                    onClick={popover.handleOpen}
-                    ref={popover.anchorRef}
-                    {...props}>
-                    <SvgIcon>
-                        <DotsHorizontalIcon/>
-                    </SvgIcon>
-                </IconButton>
-            </Tooltip>
-            <Menu
-                anchorEl={popover.anchorRef.current}
-                anchorOrigin={{
-                    horizontal: 'right',
-                    vertical: 'bottom'
-                }}
-                onClose={popover.handleClose}
-                open={popover.open}
-                PaperProps={{
-                    sx: {
-                        maxWidth: '100%',
-                        width: 200
-                    }
-                }}
-                transformOrigin={{
-                    horizontal: 'right',
-                    vertical: 'top'
-                }}
-            >
-                <MenuItem onClick={handleResourceManagerAction}>
-                    <ListItemIcon>
-                        <SvgIcon>
-                            <FileAttachment04/>
-                        </SvgIcon>
-                    </ListItemIcon>
-                    <ListItemText primary="File Manager"/>
-                </MenuItem>
-                <MenuItem onClick={handleViewAction}>
-                    <ListItemIcon>
-                        <SvgIcon>
-                            <Eye/>
-                        </SvgIcon>
-                    </ListItemIcon>
-                    <ListItemText primary="View"/>
-                </MenuItem>
-                <MenuItem onClick={handleEditAction}>
-                    <ListItemIcon>
-                        <SvgIcon>
-                            <EditIcon/>
-                        </SvgIcon>
-                    </ListItemIcon>
-                    <ListItemText primary="Edit"/>
-                </MenuItem>
-                <MenuItem onClick={handleDeleteAction}>
-                    <ListItemIcon>
-                        <SvgIcon>
-                            <DeleteIcon/>
-                        </SvgIcon>
-                    </ListItemIcon>
-                    <ListItemText primary="Delete"/>
-                </MenuItem>
-            </Menu> */}
+                Are you sure you want to delete it?
+            </ConfirmDialog>
         </>
     );
 };

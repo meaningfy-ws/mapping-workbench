@@ -1,26 +1,23 @@
 import {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 
-import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
-import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
+import UploadIcon from '@mui/icons-material/Upload';
 
 import {Box} from "@mui/system";
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
 import Stack from "@mui/material/Stack";
 import Table from '@mui/material/Table';
 import Button from "@mui/material/Button";
 import Divider from '@mui/material/Divider';
-import SvgIcon from '@mui/material/SvgIcon';
 import Checkbox from "@mui/material/Checkbox";
 import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
 import CardContent from '@mui/material/CardContent';
-import TableSorterHeader from '../../components/table-sorter-header';
 
 import {FileUploader} from "./file-uploader";
 
@@ -33,12 +30,16 @@ import {PropertyList} from "src/components/property-list";
 import {useGlobalState} from "src/hooks/use-global-state";
 import {mappingPackagesApi} from "src/api/mapping-packages";
 import {PropertyListItem} from "src/components/property-list-item";
+import {ChevronButton} from 'src/sections/components/chevron-button';
 import ConfirmDialog from "src/components/app/dialog/confirm-dialog";
-import TablePagination from "src/sections/components/table-pagination";
+import TablePagination from "src/sections/components/table-pagination-pages";
+import {MenuActions, MenuActionButton} from 'src/components/menu-actions';
 import {ListItemActions} from "src/components/app/list/list-item-actions";
+import TableSorterHeader from 'src/sections/components/table-sorter-header';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {testDataFileResourcesApi as fileResourcesApi} from "src/api/test-data-suites/file-resources";
 import {MappingPackagesBulkAssigner} from "src/sections/app/mapping-package/components/mapping-packages-bulk-assigner";
+
 
 export const ListTableRow = (props) => {
     const {
@@ -103,10 +104,8 @@ export const ListTableRow = (props) => {
             >
                 Are you sure you want to delete it?
             </ConfirmDialog>
-            <TableRow
-                hover
-                key={item_id}
-            >
+            <TableRow hover
+                      key={item_id}>
                 <TableCell
                     padding="checkbox"
                     sx={{
@@ -130,11 +129,8 @@ export const ListTableRow = (props) => {
                         checked={isItemSelected(item_id)}
                         onClick={event => handleItemSelect(event.target.checked, item_id)}
                     />
-                    <IconButton onClick={() => handleItemToggle(item_id)}>
-                        <SvgIcon>
-                            {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
-                        </SvgIcon>
-                    </IconButton>
+                    <ChevronButton onClick={() => handleItemToggle(item_id)}
+                                   isCurrent={isCurrent}/>
                 </TableCell>
                 <TableCell width="25%">
                     <Typography variant="subtitle2">
@@ -153,7 +149,7 @@ export const ListTableRow = (props) => {
                                 .map(mapping_package =>
                                     <Chip key={"mapping_package_" + mapping_package.id}
                                           label={mapping_package['title']}
-                                          sx={{mb: 1}}
+                                          sx={{mb: 1, mr: 1}}
                                     />
                                 )
                         }
@@ -163,15 +159,14 @@ export const ListTableRow = (props) => {
                     {timeTransformer(item.created_at, timeSetting)}
                 </TableCell>
                 <TableCell align="right">
-                    <Stack justifyContent='end'
-                           alignItems='center'
-                           direction='row'>
-                        <Button type='link'
-                                onClick={() => uploadDialog.handleOpen({id: item_id})}>Import test data</Button>
+                    <MenuActions>
+                        <MenuActionButton onClick={() => uploadDialog.handleOpen({id: item_id})}
+                                          icon={<UploadIcon/>}
+                                          title='Import test data'/>
                         <ListItemActions
                             itemctx={new ForListItemAction(item_id, sectionApi)}
                             onDeleteAction={handleDeleteAction}/>
-                    </Stack>
+                    </MenuActions>
                 </TableCell>
             </TableRow>
             {isCurrent && (
@@ -336,28 +331,30 @@ export const TestDataCollectionListTable = (props) => {
         )
     }
 
-    return (<>
-            <Box sx={{p: 1}}>
-                <MappingPackagesBulkAssigner
-                    sectionApi={sectionApi}
-                    idsToAssignTo={selectedItems}
-                    initProjectMappingPackages={projectMappingPackages}
-                    disabled={selectedItems.length === 0}
-                    onMappingPackagesAssign={onMappingPackagesAssign}
-                />
-            </Box>
-            <Divider/>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-                showFirstButton
-                showLastButton
-            >
+    return (
+        <TablePagination
+            component="div"
+            count={count}
+            onPageChange={onPageChange}
+            onRowsPerPageChange={onRowsPerPageChange}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+            showFirstButton
+            showLastButton
+        >
+            <Paper>
+                <Box sx={{p: 1}}>
+                    <MappingPackagesBulkAssigner
+                        sectionApi={sectionApi}
+                        idsToAssignTo={selectedItems}
+                        initProjectMappingPackages={projectMappingPackages}
+                        disabled={selectedItems.length === 0}
+                        onMappingPackagesAssign={onMappingPackagesAssign}
+                    />
+                </Box>
+                <Divider/>
+
                 <Scrollbar>
                     <Table sx={{minWidth: 1200}}>
                         <TableHead>
@@ -365,23 +362,17 @@ export const TestDataCollectionListTable = (props) => {
                                 <TableCell sx={{py: 1, backgroundColor: 'red'}}>
                                     <Checkbox checked={allChecked}
                                               indeterminate={!!selectedItems.length && !allChecked}
-                                              onChange={(event) => handleItemsSelectAll(event.target.checked)}
+                                              onChange={event => handleItemsSelectAll(event.target.checked)}
                                     />
                                 </TableCell>
-                                <SorterHeader width="25%" fieldName='title'/>
-                                {/*<TableCell width="25%">*/}
-                                {/*    Title*/}
-                                {/*</TableCell>*/}
+                                <SorterHeader width="25%"
+                                              fieldName='title'/>
                                 <TableCell>
                                     Packages
                                 </TableCell>
-                                {/*<TableCell align="left">*/}
-                                {/*    Created*/}
-                                {/*</TableCell>*/}
                                 <SorterHeader fieldName='created_at'
                                               title='created'/>
                                 <TableCell align="right">
-                                    Actions
                                 </TableCell>
                             </TableRow>
                         </TableHead>
@@ -408,8 +399,8 @@ export const TestDataCollectionListTable = (props) => {
                         </TableBody>
                     </Table>
                 </Scrollbar>
-            </TablePagination>
-        </>
+            </Paper>
+        </TablePagination>
     );
 };
 
