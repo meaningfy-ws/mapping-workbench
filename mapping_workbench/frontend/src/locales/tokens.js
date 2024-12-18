@@ -16,7 +16,7 @@ export const tokens = {
         course: 'nav.course',
         create: 'nav.create',
         import: 'nav.import',
-        import_eforms_from_github: 'nav.import_eforms_from_github',
+        import_eforms_xsd: 'nav.import_eforms_xsd',
         crypto: 'nav.crypto',
         customers: 'nav.customers',
         dashboard: 'nav.dashboard',

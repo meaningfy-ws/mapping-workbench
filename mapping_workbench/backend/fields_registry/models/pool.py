@@ -1,9 +1,9 @@
 from typing import Optional, List, Literal
 
-from pydantic import BaseModel
+from beanie import Link, Document
 
 
-class PoolSDKField(BaseModel):
+class PoolSDKField(Document):
     """
 
     """
@@ -24,3 +24,17 @@ class PoolSDKField(BaseModel):
 
     class Settings:
         name = "pool_sdk_fields"
+
+
+class PoolSDKFieldsVersionedView(Document):
+    """
+
+    """
+    view_id: str
+    eforms_sdk_version: str
+    eforms_subtype: str
+    ordered_elements: List[Link[PoolSDKField]] = None
+
+    class Settings:
+        name = "pool_sdk_fields_versioned_view"
+

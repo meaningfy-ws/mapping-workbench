@@ -379,7 +379,7 @@ export const apiPaths = {
     fields_registry: {
         items: '/fields_registry',
         item: '/fields_registry/:id',
-        import_eforms_from_github: '/fields_registry/tasks/import_eforms_from_github',
+        import_eforms_xsd: '/fields_registry/tasks/import_eforms_xsd',
         elements: '/fields_registry/elements',
         elements_tree: '/fields_registry/elements_tree',
         element: '/fields_registry/elements/:id',
@@ -389,7 +389,7 @@ export const apiPaths = {
         items: '/fields_registry/elements',
         create: '/fields_registry/elements/create',
         item: '/fields_registry/elements/:id',
-        import_eforms_from_github: '/fields_registry/tasks/import_eforms_from_github',
+        import_eforms_xsd: '/fields_registry/tasks/import_eforms_xsd',
         element: '/fields_registry/elements/:id',
     },
 

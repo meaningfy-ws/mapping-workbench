@@ -123,7 +123,7 @@ const Page = () => {
                             startIcon={<UploadIcon/>}
                             variant="contained"
                         >
-                            Import schema from github
+                            Import eForms XSD
                         </Button>
                     </Stack>
                 </Stack>

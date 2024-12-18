@@ -16,7 +16,7 @@ export const en = {
     [tokens.nav.course]: 'Course',
     [tokens.nav.create]: 'Create',
     [tokens.nav.import]: 'Import',
-    [tokens.nav.import_eforms_from_github]: 'Import EForms Fields',
+    [tokens.nav.import_eforms_xsd]: 'Import EForms Fields',
     [tokens.nav.crypto]: 'Crypto',
     [tokens.nav.customers]: 'Customers',
     [tokens.nav.dashboard]: 'Dashboard',

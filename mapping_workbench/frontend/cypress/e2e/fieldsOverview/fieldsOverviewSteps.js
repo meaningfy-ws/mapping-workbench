@@ -51,7 +51,7 @@ Then('I type branch name', () => {
 })
 
 When('I click on import button', () => {
-    cy.intercept('POST', appURLPrefix + 'fields_registry/tasks/import_eforms_from_github',).as('import')
+    cy.intercept('POST', appURLPrefix + 'fields_registry/tasks/import_eforms_xsd',).as('import')
     cy.get('#import').click()
 })
 

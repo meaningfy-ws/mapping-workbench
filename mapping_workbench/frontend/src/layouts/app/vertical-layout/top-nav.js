@@ -81,7 +81,7 @@ export const TopNav = (props) => {
                         </Stack>
                     </Stack>
                 </Stack>
-                {project && <Stack alignItems="center">
+                {project && <Stack alignItems="center" sx={{pb: 2}}>
                     <ArrowButtons/>
                 </Stack>}
             </Stack>

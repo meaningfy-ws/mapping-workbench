@@ -31,7 +31,7 @@ TAG = "fields_registry"
 NAME_FOR_MANY = "fields_registries"
 NAME_FOR_ONE = "fields_registry"
 
-TASK_IMPORT_EFORMS_FROM_GITHUB_NAME = f"{NAME_FOR_ONE}:tasks:import_eforms_from_github"
+TASK_IMPORT_EFORMS_XSD_NAME = f"{NAME_FOR_ONE}:tasks:import_eforms_xsd"
 
 router = APIRouter(
     prefix=ROUTE_PREFIX,
@@ -188,20 +188,20 @@ async def route_search_structural_elements_versioned_view_by_eforms_version(
 
 
 @router.post(
-    "/tasks/import_eforms_from_github",
-    description=f"Task Import eforms from github",
-    name=TASK_IMPORT_EFORMS_FROM_GITHUB_NAME,
+    "/tasks/import_eforms_xsd",
+    description=f"Task Import eForms XSD",
+    name=TASK_IMPORT_EFORMS_XSD_NAME,
     status_code=status.HTTP_201_CREATED
 )
-async def route_task_import_eforms_from_github(
+async def route_task_import_eforms_xsd(
         github_repository_url: str = Form(...),
         branch_or_tag_name: str = Form(...),
         project_id: PydanticObjectId = Form(...),
         user: User = Depends(current_active_user)
 ):
     return add_task(
-        tasks.task_import_eforms_from_github,
-        f"Importing eForms from {github_repository_url}, branch: {branch_or_tag_name}",
+        tasks.task_import_eforms_xsd,
+        f"Importing eForms XSD versions: {branch_or_tag_name}",
         None,
         user.email,
         False,

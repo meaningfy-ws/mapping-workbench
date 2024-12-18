@@ -26,7 +26,7 @@ class FieldsRegistryApi extends SectionApi {
 
     importEFormsFromGithub(request) {
         try {
-            let endpoint = this.paths['import_eforms_from_github'];
+            let endpoint = this.paths['import_eforms_xsd'];
             const headers = {"Content-Type": "multipart/form-data"};
             return appApi.post(endpoint, request, null, headers);
         } catch (err) {

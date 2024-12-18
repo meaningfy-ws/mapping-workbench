@@ -3,7 +3,7 @@ from abc import ABC
 from typing import Optional, List, Literal
 
 import pymongo
-from beanie import Link
+from beanie import Link, PydanticObjectId
 from pydantic import Field, BaseModel
 from pymongo import IndexModel
 
@@ -120,7 +120,7 @@ class StructuralElement(BaseProjectResourceEntity, StatefulObjectABC, Structural
         raise Exception("Setting the state of a structural element is not supported.")
 
     @classmethod
-    def from_pool_sdk_field(cls, sdk_field: PoolSDKField) -> 'StructuralElement':
+    def from_pool_sdk_field(cls, sdk_field: PoolSDKField, project_id: PydanticObjectId) -> 'StructuralElement':
         # Create and return an instance of StructuralElement by mapping fields
         return cls(
             id=sdk_field.element_id,
