@@ -1,20 +1,18 @@
-import ArchiveIcon from '@mui/icons-material/Archive';
-import TaskAltIcon from '@mui/icons-material/TaskAlt';
-import ModeStandbyIcon from '@mui/icons-material/ModeStandby';
-import VerifiedIcon from '@mui/icons-material/Verified';
 import {useTranslation} from 'react-i18next';
 
+import DvrIcon from '@mui/icons-material/Dvr';
+import ArchiveIcon from '@mui/icons-material/Archive';
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
+import VerifiedIcon from '@mui/icons-material/Verified';
+import ModeStandbyIcon from '@mui/icons-material/ModeStandby';
+import LightbulbCircleIcon from '@mui/icons-material/LightbulbCircle';
+import HomeSmileIcon from 'src/icons/ui/duocolor/home-smile';
+
+import ApiIcon from '@mui/icons-material/Api';
 import SvgIcon from '@mui/material/SvgIcon';
 
-import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications';
-import ApiIcon from '@mui/icons-material/Api';
-import LightbulbCircleIcon from '@mui/icons-material/LightbulbCircle';
-import DvrIcon from '@mui/icons-material/Dvr';
-
-import HomeSmileIcon from 'src/icons/ui/duocolor/home-smile';
-import {tokens} from 'src/locales/tokens';
 import {paths} from 'src/paths';
-
+import {tokens} from 'src/locales/tokens';
 
 export const useSections = () => {
     const {t} = useTranslation();
@@ -45,44 +43,28 @@ export const useSections = () => {
             items: [{
                 title: t(tokens.nav.elements_definition),
                 path: paths.app.fields_and_nodes.develop.index,
-                icon: (
-                    <SvgIcon fontSize="small">
-                        <ApiIcon/>
-                    </SvgIcon>
-                ),
+                icon: (<ApiIcon fontSize="small"/>),
             }]
         }],
         conceptualMappings: [{
             items: [{
                 title: t(tokens.nav.conceptual_mappings),
                 path: paths.app.conceptual_mapping_rules.develop.index,
-                icon: (
-                    <SvgIcon fontSize="small">
-                        <LightbulbCircleIcon/>
-                    </SvgIcon>
-                ),
+                icon: (<LightbulbCircleIcon fontSize="small"/>),
             }]
         }],
         technical_mappings: [{
             items: [{
                 title: t(tokens.nav.technical_mappings),
                 path: paths.app.triple_map_fragments.index,
-                icon: (
-                    <SvgIcon fontSize="small">
-                        <DvrIcon/>
-                    </SvgIcon>
-                ),
+                icon: (<DvrIcon fontSize="small"/>),
             }]
         }],
         quality_control: [{
             items: [{
                 title: t(tokens.nav.quality_control),
                 path: paths.app.sparql_test_suites.index,
-                icon: (
-                    <SvgIcon fontSize="small">
-                        <VerifiedIcon/>
-                    </SvgIcon>
-                ),
+                icon: (<VerifiedIcon fontSize="small"/>),
             }]
         }],
         mappingPackages: [
@@ -91,11 +73,7 @@ export const useSections = () => {
                     {
                         title: t(tokens.nav.mapping_packages),
                         path: paths.app.mapping_packages.index,
-                        icon: (
-                            <SvgIcon fontSize="small">
-                                <ArchiveIcon/>
-                            </SvgIcon>
-                        ),
+                        icon: (<ArchiveIcon fontSize="small"/>),
                     }]
             }
         ],
@@ -104,11 +82,7 @@ export const useSections = () => {
                 {
                     title: t(tokens.nav.process_monitor),
                     path: paths.app.tasks.index,
-                    icon: (
-                        <SvgIcon fontSize="small">
-                            <TaskAltIcon/>
-                        </SvgIcon>
-                    )
+                    icon: (<TaskAltIcon fontSize="small"/>)
                 }]
         }],
     };
