@@ -31,7 +31,6 @@ async def import_mapping_package(
         package_type: PackageType, user: User = None,
         task_response: TaskResponse = None
 ) -> ImportedMappingSuiteResponse:
-
     MappingPackageStructureValidator(mapping_package_dir_path).validate()
 
     if package_type == PackageType.STANDARD:
@@ -62,7 +61,9 @@ async def import_and_process_mapping_package_from_archive(
 ) -> ImportedMappingSuiteResponse:
     if not task_response:
         task_response = TaskResponse()
-    result = await import_mapping_package_from_archive(file_content, project, package_type, cleanup_project, user, task_response)
+    result = await import_mapping_package_from_archive(
+        file_content, project, package_type, cleanup_project, user, task_response
+    )
 
     await process_mapping_package(
         package_id=result.mapping_package.id,
@@ -75,7 +76,8 @@ async def import_and_process_mapping_package_from_archive(
 
 async def import_mapping_package_from_archive(
         file_content: bytes, project: Project, package_type: PackageType,
-        cleanup_project: bool = False, user: User = None,
+        cleanup_project: bool = False,
+        user: User = None,
         task_response: TaskResponse = None
 ) -> ImportedMappingSuiteResponse:
     if not task_response:
@@ -84,7 +86,7 @@ async def import_mapping_package_from_archive(
     tempdir = tempfile.TemporaryDirectory()
     tempdir_name = tempdir.name
     tempdir_path = pathlib.Path(tempdir_name)
-    zf.extractall(tempdir_name) # NOSONAR
+    zf.extractall(tempdir_name)  # NOSONAR
     dir_contents = list(tempdir_path.iterdir())
     try:
         assert len(dir_contents) == 1, "Archive must contain only the package folder!"

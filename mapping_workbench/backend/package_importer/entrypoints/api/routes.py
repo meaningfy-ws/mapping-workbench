@@ -48,7 +48,7 @@ async def route_import_package_archive(
         user: User = Depends(current_active_user)
 ):
     imported_mapping_package: ImportedMappingSuiteResponse = await import_mapping_package_from_archive(
-        file.file.read(), await get_project(project), package_type, user
+        file.file.read(), await get_project(project), package_type, False, user
     )
 
     return imported_mapping_package

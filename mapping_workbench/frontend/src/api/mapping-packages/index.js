@@ -9,7 +9,8 @@ export const PACKAGE_TYPE = {
     EFORMS: 'eForms', STANDARD: 'Standard'
 };
 
-export const DEFAULT_PACKAGE_TYPE = "EFORMS";
+export const EFORMS_PACKAGE_TYPE = "EFORMS";
+export const DEFAULT_PACKAGE_TYPE = EFORMS_PACKAGE_TYPE;
 
 class MappingPackagesApi extends SectionApi {
     get SECTION_TITLE() {

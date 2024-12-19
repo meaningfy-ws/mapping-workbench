@@ -23,7 +23,6 @@ import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import Divider from "@mui/material/Divider";
 
 
-
 export const PackageImporter = (props) => {
     const {onClose, open = false, sectionApi} = props;
 
@@ -119,7 +118,7 @@ export const PackageImporter = (props) => {
                         <MenuItem key={key} value={key}>{PACKAGE_TYPE[key]}</MenuItem>
                     ))}
                 </TextField>
-                <FormGroup sx={{ mb: 2}}>
+                <FormGroup sx={{mb: 2}}>
                     <Typography variant="h7" sx={{mb: 1}}>After Import</Typography>
                     <FormControlLabel
                         control={

@@ -194,7 +194,7 @@ async def route_search_structural_elements_versioned_view_by_eforms_version(
     status_code=status.HTTP_201_CREATED
 )
 async def route_task_import_eforms_xsd(
-        github_repository_url: str = Form(...),
+        github_repository_url: str = Form(default=None),
         branch_or_tag_name: str = Form(...),
         project_id: PydanticObjectId = Form(...),
         user: User = Depends(current_active_user)
