@@ -12,6 +12,7 @@ async def test_import_eforms_xsd(
         eforms_sdk_github_repository_url,
         eforms_sdk_github_repository_v1_9_1_tag_name
 ):
+    await StructuralElement.delete_all()
     await import_eforms_xsd(
         github_repository_url=eforms_sdk_github_repository_url,
         branch_or_tag_name=eforms_sdk_github_repository_v1_9_1_tag_name,
@@ -36,3 +37,6 @@ async def test_import_eforms_xsd(
         PoolSDKFieldsVersionedView.eforms_subtype == "1").to_list()
     assert imported_versioned_view
     assert len(imported_versioned_view) == 1
+
+    await StructuralElement.delete_all()
+    await PoolSDKFieldsVersionedView.delete_all()
