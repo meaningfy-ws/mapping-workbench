@@ -28,6 +28,7 @@ import {Box} from "@mui/system";
 import {mappingPackagesApi} from "../../../api/mapping-packages";
 import ConfirmDialog from "../../../components/app/dialog/confirm-dialog";
 import {useState} from "react";
+import Alert from "@mui/material/Alert";
 
 export const EditForm = (props) => {
     const {itemctx, ...other} = props;
@@ -51,7 +52,7 @@ export const EditForm = (props) => {
         title: item.title ?? '',
         description: item.description ?? '',
         version: item.version ?? '',
-        with_default_mapping_package: true,
+        with_default_mapping_package: false,
         automatically_discover_namespaces: false,
         //add_specific_namespaces: false,
         source_schema: {
@@ -83,7 +84,7 @@ export const EditForm = (props) => {
 
     const handleImportFieldRegistry = (values, projectId) => {
         const toastId = toastLoad(`Importing eForm Fields ... `)
-        fieldsRegistryApi.importEFormsFromGithub({
+        fieldsRegistryApi.importEFormsXSD({
             ...values,
             project_id: projectId,
             checked: undefined
@@ -401,7 +402,7 @@ export const EditForm = (props) => {
                                                                onChange={formik.handleChange}
                                                                name="import_eform.checked"/>
                                             }
-                                            label={<Typography variant='h6'>Import eForms XSD from GitHub</Typography>}
+                                            label={<Typography variant='h6'>Import eForms XSD</Typography>}
                                         />
                                     </FormGroup>
                                     {formik.values.import_eform.checked &&
@@ -409,18 +410,19 @@ export const EditForm = (props) => {
                                             <Grid xs={12}
                                                   md={12}>
                                                 <FormTextField formik={formik}
-                                                               name="import_eform.github_repository_url"
-                                                               label="GitHub Repository URL"
+                                                               name="import_eform.branch_or_tag_name"
+                                                               label="Version(s)"
                                                                disabled={!formik.values.import_eform.checked}
+                                                               helperText="separated by comma (,)"
                                                                required/>
                                             </Grid>
                                             <Grid xs={12}
                                                   md={12}>
                                                 <FormTextField formik={formik}
-                                                               name="import_eform.branch_or_tag_name"
-                                                               label="Branch or Tag name"
+                                                               name="import_eform.github_repository_url"
+                                                               label="GitHub Repository URL"
                                                                disabled={!formik.values.import_eform.checked}
-                                                               required/>
+                                                />
                                             </Grid>
                                         </>
                                     }

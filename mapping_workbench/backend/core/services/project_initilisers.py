@@ -7,6 +7,7 @@ from mapping_workbench.backend.conceptual_mapping_rule.models.entity import Conc
 from mapping_workbench.backend.config import settings
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElementsVersionedView, \
     StructuralElement
+from mapping_workbench.backend.fields_registry.models.pool import PoolSDKField, PoolSDKFieldsVersionedView
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageStateGate
 from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingRuleRegistry, MappingGroup
 from mapping_workbench.backend.ontology.models.namespace import Namespace, NamespaceCustom
@@ -72,5 +73,7 @@ async def init_project_models(mongodb_database: AsyncIOMotorDatabase):
             StructuralElementsVersionedView,
             XSDFileResource,
             ConceptualMappingGroupBeanie,
+            PoolSDKField,
+            PoolSDKFieldsVersionedView
         ],
     )

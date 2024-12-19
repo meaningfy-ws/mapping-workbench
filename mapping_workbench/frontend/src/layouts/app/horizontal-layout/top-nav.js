@@ -286,7 +286,7 @@ export const TopNav = (props) => {
                         </Scrollbar>
                     </Box>
                 )}
-                <Stack sx={{alignItems: 'center'}}>
+                <Stack sx={{alignItems: 'center', pb: 2}} >
                     <ArrowButtons/>
                 </Stack>
             </Box>
