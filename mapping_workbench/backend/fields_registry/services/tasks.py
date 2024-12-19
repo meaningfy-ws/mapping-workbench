@@ -12,5 +12,5 @@ def task_import_eforms_xsd(
 ):
     run_task(
         import_eforms_xsd,
-        github_repository_url, branch_or_tag_name, project_link
+        branch_or_tag_name, github_repository_url, project_link
     )

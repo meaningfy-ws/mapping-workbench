@@ -49,7 +49,7 @@ const Page = () => {
             setIsRunning(true)
             values['project_id'] = sessionApi.getSessionProject();
             const toastId = toastLoad(`Importing eForm Fields ... `)
-            sectionApi.importEFormsFromGithub(values)
+            sectionApi.importEFormsXSD(values)
                 .then((res) => {
                     helpers.setStatus({success: true});
                     toastSuccess(`${res.task_name} successfully started.`, toastId)

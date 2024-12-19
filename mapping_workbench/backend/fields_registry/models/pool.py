@@ -14,6 +14,7 @@ class PoolSDKField(Document):
     repeatable: Optional[bool] = None
     parent_node_id: Optional[str] = None
     descriptions: Optional[List[str]] = None
+    sdk_version: str = None
     version: str = None
     name: Optional[str] = None
     bt_id: Optional[str] = None

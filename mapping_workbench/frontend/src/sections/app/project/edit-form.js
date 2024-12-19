@@ -84,7 +84,7 @@ export const EditForm = (props) => {
 
     const handleImportFieldRegistry = (values, projectId) => {
         const toastId = toastLoad(`Importing eForm Fields ... `)
-        fieldsRegistryApi.importEFormsFromGithub({
+        fieldsRegistryApi.importEFormsXSD({
             ...values,
             project_id: projectId,
             checked: undefined

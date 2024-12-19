@@ -36,7 +36,14 @@ async def import_eforms_fields_from_pool_to_project(project_link: Link[Project],
     sdk_fields = await PoolSDKField.find(PoolSDKField.version == version).to_list()
 
     for sdk_field in sdk_fields:
-        field_hash_id = generate_project_eforms_field_hash_id(sdk_field.element_id, project_id)
+        field_hash_id = generate_project_eforms_field_hash_id(
+            sdk_element_id=sdk_field.sdk_element_id,
+            repeatable=sdk_field.repeatable,
+            parent_node_id=sdk_field.parent_node_id,
+            absolute_xpath=sdk_field.absolute_xpath,
+            relative_xpath=sdk_field.relative_xpath,
+            project_id=project_id
+        )
         structural_node = await StructuralElement.find_one(
             StructuralElement.id == field_hash_id,
             StructuralElement.project == project_link
@@ -45,14 +52,14 @@ async def import_eforms_fields_from_pool_to_project(project_link: Link[Project],
             structural_node = StructuralElement(
                 id=field_hash_id,
                 sdk_element_id=sdk_field.sdk_element_id,
-                absolute_xpath=sdk_field.xpath_absolute,
-                relative_xpath=sdk_field.xpath_relative,
+                absolute_xpath=sdk_field.absolute_xpath,
+                relative_xpath=sdk_field.relative_xpath,
                 repeatable=sdk_field.repeatable,
                 name=sdk_field.name,
                 bt_id=sdk_field.bt_id,
                 value_type=sdk_field.value_type,
                 legal_type=sdk_field.legal_type,
-                parent_node_id=sdk_field.parent_id,
+                parent_node_id=sdk_field.parent_node_id,
                 project=project_link,
                 element_type=sdk_field.element_type,
                 created_at=datetime.now(tzlocal())
@@ -66,6 +73,10 @@ async def import_eforms_fields_from_pool_to_project(project_link: Link[Project],
     return len(sdk_fields) > 0
 
 
+def field_version_from_sdk_version(sdk_version: str) -> str:
+    return sdk_version.replace("eforms-sdk-", "")
+
+
 async def import_eforms_fields_to_pool(eforms_fields_content: dict) -> dict:
     """
 
@@ -73,6 +84,7 @@ async def import_eforms_fields_to_pool(eforms_fields_content: dict) -> dict:
     eforms_sdk_fields = EFormsSDKFields(**eforms_fields_content)
 
     eforms_sdk_version = eforms_sdk_fields.sdk_version
+    field_version = field_version_from_sdk_version(eforms_sdk_version)
     result_dict = {VERSION_KEY: eforms_sdk_version}
     id_to_hash_mapping = {}
     for eforms_node in eforms_sdk_fields.xml_structure:
@@ -91,7 +103,8 @@ async def import_eforms_fields_to_pool(eforms_fields_content: dict) -> dict:
                 relative_xpath=eforms_node.xpath_relative,
                 repeatable=eforms_node.repeatable,
                 parent_node_id=eforms_node.parent_id,
-                version=eforms_sdk_version,
+                sdk_version=eforms_sdk_version,
+                version=field_version,
                 element_type="node"
             )
             await sdk_field.save()
@@ -115,7 +128,8 @@ async def import_eforms_fields_to_pool(eforms_fields_content: dict) -> dict:
                 value_type=eforms_field.value_type,
                 legal_type=eforms_field.legal_type,
                 parent_node_id=eforms_field.parent_node_id,
-                version=eforms_sdk_version
+                sdk_version=eforms_sdk_version,
+                version=field_version
             )
             await sdk_field.save()
         id_to_hash_mapping[eforms_field.id] = sdk_field.element_id
@@ -155,7 +169,7 @@ async def import_notice_types_versioned_view_to_pool(
 
     pool_sdk_fields_versioned_view_id = f"{fields_metadata[VERSION_KEY]}_{notice_type_structure.notice_type_id}"
 
-    pool_sdk_fields_versioned_view = PoolSDKFieldsVersionedView.find_one(
+    pool_sdk_fields_versioned_view = await PoolSDKFieldsVersionedView.find_one(
         PoolSDKFieldsVersionedView.view_id == pool_sdk_fields_versioned_view_id
     )
     if not pool_sdk_fields_versioned_view:
@@ -216,18 +230,20 @@ async def import_eforms_fields_from_folder_to_pool(
 
 
 async def import_eforms_xsd(
-        github_repository_url: str,
         branch_or_tag_name: str,
+        github_repository_url: str = None,
         project_link: Link[Project] = None
 ):
     versions = [item.strip() for item in branch_or_tag_name.split(',')]
     for version in versions:
-        if not await import_eforms_fields_from_pool_to_project(project_link=project_link, version=version):
+        if not await import_eforms_fields_from_pool_to_project(project_link=project_link, version=version) \
+                and github_repository_url:
             await import_eforms_fields_from_github_repository(
                 github_repository_url=github_repository_url,
                 branch_or_tag_name=version,
                 project_link=project_link
             )
+
 
 async def import_eforms_fields_from_github_repository(
         github_repository_url: str,

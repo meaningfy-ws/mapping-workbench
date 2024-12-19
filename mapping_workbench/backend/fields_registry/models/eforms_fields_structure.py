@@ -29,8 +29,15 @@ class EFormsField(BaseModel):
         return str(hashlib.sha1(str_content.encode("utf-8")).hexdigest())
 
 
-def generate_project_eforms_field_hash_id(element_id: str, project_id: str) -> str:
-    fields_to_hash = [element_id, project_id, id]
+def generate_project_eforms_field_hash_id(
+        sdk_element_id: str,
+        repeatable: bool,
+        parent_node_id: Optional[str] = None,
+        absolute_xpath: str = None,
+        relative_xpath: str = None,
+        project_id: str = None
+):
+    fields_to_hash = [project_id, sdk_element_id, absolute_xpath, relative_xpath, repeatable, parent_node_id]
     str_content = "_".join(map(str, fields_to_hash))
     return str(hashlib.sha1(str_content.encode("utf-8")).hexdigest())
 
