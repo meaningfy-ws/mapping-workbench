@@ -52,7 +52,7 @@ export const ListFileCollectionActions = (props) => {
             <MenuActionButton
                 id="resources_button"
                 onClick={handleResourceManagerAction}
-                title='Resources'
+                title='Assets'
                 icon={<DescriptionOutlinedIcon/>}
             />
             <MenuActionButton

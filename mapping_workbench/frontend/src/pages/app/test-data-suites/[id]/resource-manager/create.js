@@ -1,7 +1,9 @@
-import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
+import Grid from "@mui/material/Unstable_Grid2";
 import Typography from '@mui/material/Typography';
 
 import {paths} from 'src/paths';
@@ -10,12 +12,10 @@ import {useRouter} from "src/hooks/use-router";
 import {Layout as AppLayout} from 'src/layouts/app';
 import {usePageView} from 'src/hooks/use-page-view';
 import {RouterLink} from 'src/components/router-link';
+import {FormTextField} from "src/components/app/form/text-field";
 import {ForItemCreateForm} from "src/contexts/app/section/for-item-form";
 import {FileResourceEditForm} from 'src/sections/app/file-manager/file-resource-edit-form';
 import {testDataFileResourcesApi as sectionApi} from 'src/api/test-data-suites/file-resources';
-import * as React from "react";
-import Grid from "@mui/material/Unstable_Grid2";
-import {FormTextField} from "../../../../../components/app/form/text-field";
 
 const ExtraForm = (props) => {
     const {
@@ -72,7 +72,7 @@ const Page = () => {
                             underline="hover"
                         >
                             <SvgIcon sx={{mr: 1}}>
-                                <ArrowLeftIcon/>
+                                <ArrowBackIcon/>
                             </SvgIcon>
                             <Typography variant="subtitle2">
                                 {sectionApi.SECTION_TITLE}

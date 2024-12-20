@@ -105,7 +105,7 @@ export const MappingPackagesBulkActions = (props) => {
                                 onChange={e => setCleanUpProject(e.target.checked)}
                             />
                         }
-                        label="Cleanup Project Resources"
+                        label="Cleanup Project Assets"
                         value="cleanup_project"
                     />
                 </Box>}

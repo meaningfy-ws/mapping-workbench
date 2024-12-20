@@ -1,12 +1,11 @@
-import {useEffect, useMemo, useState} from 'react';
+import {useEffect, useState} from 'react';
 
-import Plus from '@untitled-ui/icons-react/build/esm/Plus';
-import Upload01Icon from '@untitled-ui/icons-react/build/esm/Upload01';
+import AddIcon from '@mui/icons-material/Add';
+import UploadIcon from '@mui/icons-material/Upload';
 
 import Link from "@mui/material/Link";
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 
@@ -17,71 +16,13 @@ import {useRouter} from "src/hooks/use-router";
 import {Layout as AppLayout} from 'src/layouts/app';
 import {usePageView} from 'src/hooks/use-page-view';
 import {RouterLink} from "src/components/router-link";
+import useItemsSearch from 'src/hooks/use-items-search';
 import {ItemList} from 'src/sections/app/file-manager/item-list';
-import {ItemDrawer} from 'src/sections/app/file-manager/item-drawer';
-import {ItemSearch} from 'src/sections/app/file-manager/item-search';
+import {ItemSearch} from 'src/sections/app/files-form/item-search';
 import {testDataSuitesApi as sectionApi} from 'src/api/test-data-suites';
 import {FileUploader} from 'src/sections/app/file-manager/file-uploader';
 import {BreadcrumbsSeparator} from "src/components/breadcrumbs-separator";
 import {testDataFileResourcesApi as fileResourcesApi} from 'src/api/test-data-suites/file-resources';
-
-const useItemsSearch = () => {
-    const [state, setState] = useState({
-        filters: {
-            query: undefined
-        },
-        page: sectionApi.DEFAULT_PAGE,
-        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE,
-        sortBy: 'createdAt',
-        sortDir: 'desc'
-    });
-
-    const handleFiltersChange = filters => {
-        setState(prevState => ({
-            ...prevState,
-            filters
-        }));
-    }
-
-    const handleSortChange = sortDir => {
-        setState(prevState => ({
-            ...prevState,
-            sortDir
-        }));
-    }
-
-    const handlePageChange = (event, page) => {
-        setState(prevState => ({
-            ...prevState,
-            page
-        }));
-    }
-
-    const handleRowsPerPageChange = event => {
-        setState(prevState => ({
-            ...prevState,
-            rowsPerPage: parseInt(event.target.value, 10)
-        }));
-    }
-
-    return {
-        handleFiltersChange,
-        handleSortChange,
-        handlePageChange,
-        handleRowsPerPageChange,
-        state
-    };
-};
-
-const useCurrentItem = (items, itemId) => {
-    return useMemo(() => {
-        if (!itemId) {
-            return undefined;
-        }
-
-        return items.find((item) => item.id === itemId);
-    }, [items, itemId]);
-};
 
 const Page = () => {
     const [view, setView] = useState('grid');
@@ -92,10 +33,8 @@ const Page = () => {
     });
 
     const uploadDialog = useDialog();
-    const detailsDialog = useDialog();
-    const itemsSearch = useItemsSearch();
+    const itemsSearch = useItemsSearch(state.items, sectionApi, ['title']);
 
-    const currentItem = useCurrentItem(state.items, detailsDialog.data);
 
     const router = useRouter();
     const {id} = router.query;
@@ -105,7 +44,7 @@ const Page = () => {
     useEffect(() => {
         id && handleItemsGet();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [itemsSearch.state, id]);
+    }, [id]);
 
     const handleItemsGet = async () => {
         try {
@@ -133,7 +72,7 @@ const Page = () => {
                 >
                     <Stack spacing={1}>
                         <Typography variant="h4">
-                            {`Resource Manager: ${state.collection.title}`}
+                            {`Assets Manager: ${state.collection.title}`}
                         </Typography>
 
                         <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
@@ -157,7 +96,7 @@ const Page = () => {
                                 color="text.secondary"
                                 variant="subtitle2"
                             >
-                                Resource Manager
+                                Assets Manager
                             </Typography>
                         </Breadcrumbs>
                     </Stack>
@@ -168,23 +107,14 @@ const Page = () => {
                     >
                         <Button
                             onClick={uploadDialog.handleOpen}
-                            startIcon={(
-                                <SvgIcon>
-                                    <Upload01Icon/>
-                                </SvgIcon>
-                            )}
-                            variant="contained"
+                            startIcon={<UploadIcon/>}
                         >
                             Upload
                         </Button>
                         <Button
                             component={Link}
                             href={paths.app[sectionApi.section].resource_manager.create.replace('[id]', id)}
-                            startIcon={(
-                                <SvgIcon>
-                                    <Plus/>
-                                </SvgIcon>
-                            )}
+                            startIcon={<AddIcon/>}
                             variant="contained"
                         >
                             Add
@@ -193,7 +123,7 @@ const Page = () => {
                 </Stack>
                 <Stack spacing={{xs: 3, lg: 4}}>
                     <ItemSearch
-                        onFiltersChange={itemsSearch.handleFiltersChange}
+                        onFiltersChange={e => itemsSearch.handleSearchItems([e])}
                         onSortChange={itemsSearch.handleSortChange}
                         onViewChange={setView}
                         sortBy={itemsSearch.state.sortBy}
@@ -201,8 +131,8 @@ const Page = () => {
                         view={view}
                     />
                     <ItemList
-                        count={state.itemsCount}
-                        items={state.items}
+                        count={itemsSearch.count}
+                        items={itemsSearch.pagedItems}
                         collection={state.collection}
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
@@ -216,11 +146,6 @@ const Page = () => {
                 </Stack>
             </Stack>
 
-            <ItemDrawer
-                item={currentItem}
-                onClose={detailsDialog.handleClose}
-                open={detailsDialog.open}
-            />
             <FileUploader
                 onClose={uploadDialog.handleClose}
                 open={uploadDialog.open}

@@ -1,13 +1,14 @@
-import * as React from 'react';
 import {useCallback, useEffect, useState} from "react";
 import {useFormik} from "formik";
 
-import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
 import Chip from '@mui/material/Chip';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Paper from "@mui/material/Paper";
 import SvgIcon from '@mui/material/SvgIcon';
+import Divider from "@mui/material/Divider";
 import Checkbox from "@mui/material/Checkbox";
 import Grid from "@mui/material/Unstable_Grid2";
 import Typography from '@mui/material/Typography';
@@ -25,10 +26,7 @@ import CodeMirrorDefault from "src/components/app/form/codeMirrorDefault";
 import {ForItemDataState} from "src/contexts/app/section/for-item-data-state";
 import {FileResourceEditForm} from 'src/sections/app/file-manager/file-resource-edit-form';
 import {testDataFileResourcesApi as sectionApi} from 'src/api/test-data-suites/file-resources';
-import {
-    MappingPackageFormSelect
-} from '../../../../../../sections/app/mapping-package/components/mapping-package-form-select';
-import Divider from "@mui/material/Divider";
+import {MappingPackageFormSelect} from 'src/sections/app/mapping-package/components/mapping-package-form-select';
 
 
 const useItem = (sectionApi, id) => {
@@ -158,7 +156,7 @@ const Page = () => {
                             underline="hover"
                         >
                             <SvgIcon sx={{mr: 1}}>
-                                <ArrowLeftIcon/>
+                                <ArrowBackIcon/>
                             </SvgIcon>
                             <Typography variant="subtitle2">
                                 {sectionApi.SECTION_TITLE}
