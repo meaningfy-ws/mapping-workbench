@@ -9,7 +9,6 @@ import {Box} from "@mui/system";
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Dialog from "@mui/material/Dialog";
-import SvgIcon from '@mui/material/SvgIcon';
 import {useTheme} from "@mui/material/styles";
 import Grid from '@mui/material/Unstable_Grid2';
 import DialogTitle from "@mui/material/DialogTitle";
@@ -51,9 +50,7 @@ const Page = () => {
     const handleDiscover = () => {
         const toastId = toastLoad('Discovering terms ...')
         ontologyTermsApi.discoverTerms()
-            .then(res => {
-                toastSuccess(`${res.task_name} successfully started.`, toastId)
-            })
+            .then(res => toastSuccess(`${res.task_name} successfully started.`, toastId))
             .catch(err => toastError(`Discovering terms failed: ${err.message}.`, toastId))
     };
 

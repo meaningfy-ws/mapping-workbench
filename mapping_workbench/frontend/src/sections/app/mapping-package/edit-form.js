@@ -17,6 +17,7 @@ import {paths} from 'src/paths';
 import {sessionApi} from "src/api/session";
 import {useRouter} from 'src/hooks/use-router';
 import {RouterLink} from 'src/components/router-link';
+import {testDataSuitesApi} from 'src/api/test-data-suites';
 import {shaclTestSuitesApi} from "src/api/shacl-test-suites";
 import {FormTextArea} from "src/components/app/form/text-area";
 import {sparqlTestSuitesApi} from "src/api/sparql-test-suites";
@@ -24,7 +25,6 @@ import {FormTextField} from "src/components/app/form/text-field";
 import {resourceCollectionsApi} from "src/api/resource-collections";
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {ListSelectorSelect as ResourceListSelector} from "src/components/app/list-selector/select";
-import {testDataSuitesApi} from '../../../api/test-data-suites';
 
 
 export const EditForm = (props) => {
@@ -107,9 +107,9 @@ export const EditForm = (props) => {
             {!itemctx.isNew && <Tabs value={currentTab}
                                      onChange={(e, v) => setCurrentTab(v)}>
                 <Tab label='Edit Details'
-                     value='tabEdit'></Tab>
-                <Tab label='Edit Resources'
-                     value='tabResources'></Tab>
+                     value='tabEdit'/>
+                <Tab label='Edit Assets'
+                     value='tabResources'/>
             </Tabs>}
             {currentTab === 'tabEdit' &&
                 <Card sx={{mt: 3}}>

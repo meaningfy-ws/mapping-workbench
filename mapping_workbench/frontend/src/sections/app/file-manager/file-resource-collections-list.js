@@ -1,44 +1,36 @@
+import {useEffect, useState} from "react";
+
+import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import {useMounted} from "../../../hooks/use-mounted";
-import {useCallback, useEffect, useState} from "react";
-import {paths} from "../../../paths";
-import {useRouter} from "../../../hooks/use-router";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
 
-const useItemsStore = (collectionApi, filters, request={}) => {
-    const isMounted = useMounted();
+import {paths} from "../../../paths";
+import {useRouter} from "next/router";
+
+const useItemsStore = (collectionApi, filters, request = {}) => {
     const [state, setState] = useState({
         collections: [],
         collectionsCount: 0
     });
 
     request.filters = filters
-    const handleItemsGet = useCallback(async () => {
-        try {
-            const collectionResponse = await collectionApi.getItems(request);
 
-            if (isMounted()) {
-                setState({
-                    collections: collectionResponse.items,
-                    collectionsCount: collectionResponse.count
-                });
-
-            }
-
-        } catch (err) {
-            console.error(err);
-        }
-    }, [collectionApi, filters, isMounted]);
+    const handleItemsGet = () => {
+        collectionApi.getItems(request)
+            .then(res => setState({
+                    collections: res.items,
+                    collectionsCount: res.count
+                })
+            )
+            .catch(err => console.error(err))
+    }
 
     useEffect(() => {
             handleItemsGet();
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [collectionApi]);
+        []);
 
     return {
         ...state
@@ -52,7 +44,7 @@ export const FileResourceCollectionsList = (props) => {
 
     return (
         <Stack divider={<Divider/>}>
-            {itemsStore.collections.map((collection) => {
+            {itemsStore.collections.map(collection => {
                 return (
                     <Stack
                         alignItems="center"
@@ -67,12 +59,6 @@ export const FileResourceCollectionsList = (props) => {
                     >
                         <div>
                             <Typography variant="subtitle1">{collection.title}</Typography>
-                            <Typography
-                                color="text.secondary"
-                                variant="caption"
-                            >
-                                {}
-                            </Typography>
                         </div>
                         <Stack
                             alignItems="center"
@@ -87,8 +73,9 @@ export const FileResourceCollectionsList = (props) => {
                                         query: {id: collection._id}
                                     });
                                 }}
-                                color="info"
-                            >Resources</Button>
+                                color="info">
+                                Assets
+                            </Button>
                             <Button
                                 size="small"
                                 onClick={() => {
@@ -97,8 +84,9 @@ export const FileResourceCollectionsList = (props) => {
                                         query: {id: collection._id}
                                     });
                                 }}
-                                color="success"
-                            >Edit</Button>
+                                color="success">
+                                Edit
+                            </Button>
                         </Stack>
                     </Stack>
                 );

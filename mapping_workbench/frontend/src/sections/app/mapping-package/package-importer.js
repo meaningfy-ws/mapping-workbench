@@ -2,11 +2,10 @@ import {useCallback, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import nProgress from 'nprogress';
 
-import XIcon from '@untitled-ui/icons-react/build/esm/X';
+import CloseIcon from '@mui/icons-material/Close';
 
 import Stack from '@mui/material/Stack';
 import Dialog from '@mui/material/Dialog';
-import SvgIcon from '@mui/material/SvgIcon';
 import Checkbox from "@mui/material/Checkbox";
 import MenuItem from "@mui/material/MenuItem";
 import FormGroup from "@mui/material/FormGroup";
@@ -99,9 +98,7 @@ export const PackageImporter = (props) => {
                     color="inherit"
                     onClick={onClose}
                 >
-                    <SvgIcon>
-                        <XIcon/>
-                    </SvgIcon>
+                    <CloseIcon/>
                 </IconButton>
             </Stack>
             <DialogContent id="drop-zone">
@@ -115,11 +112,13 @@ export const PackageImporter = (props) => {
                     sx={{mb: 2}}
                 >
                     {Object.keys(PACKAGE_TYPE).map((key) => (
-                        <MenuItem key={key} value={key}>{PACKAGE_TYPE[key]}</MenuItem>
+                        <MenuItem key={key}
+                                  value={key}>{PACKAGE_TYPE[key]}</MenuItem>
                     ))}
                 </TextField>
                 <FormGroup sx={{mb: 2}}>
-                    <Typography variant="h7" sx={{mb: 1}}>After Import</Typography>
+                    <Typography variant="h7"
+                                sx={{mb: 1}}>After Import</Typography>
                     <FormControlLabel
                         control={
                             <Checkbox
@@ -129,7 +128,7 @@ export const PackageImporter = (props) => {
                                 }}
                             />
                         }
-                        label="Cleanup Project Resources"
+                        label="Cleanup Project Assets"
                         value="cleanup_project"
                     />
                     <FormControlLabel
@@ -137,8 +136,7 @@ export const PackageImporter = (props) => {
                             checked={triggerPackageProcessing}
                             onChange={e => setTriggerPackageProcessing(e.target.checked)}
                             name="trigger_package_processing"
-                        />
-                        }
+                        />}
                         label="Process Package"
                     />
                     <Divider sx={{mt: 1}}/>

@@ -1,8 +1,10 @@
 import multiprocessing
 from concurrent.futures import CancelledError, TimeoutError
+from datetime import datetime
 from multiprocessing.managers import BaseManager
 from typing import List
 
+from dateutil.tz import tzlocal
 from pebble import ProcessPool, ProcessFuture
 
 from mapping_workbench.backend.task_manager.adapters.task import Task, TaskStatus, TaskMetadata
@@ -22,7 +24,6 @@ def on_task_done_callback(future):
     try:
         task_result = future.result()
         task.update_task_status(task_result.task_status)
-        task.update_started_at(task_result.started_at)
         task.update_finished_at(task_result.finished_at)
         task.update_exception_message(task_result.exception_message)
         if task.has_response:
@@ -123,6 +124,8 @@ class TaskManager:
             future = task.get_future()
             if future:
                 if future.running():
+                    if task.get_task_status() == TaskStatus.QUEUED:
+                        task.update_started_at(datetime.now(tzlocal()))
                     task.update_task_status(TaskStatus.RUNNING)
                     task.update_progress(task.task_response.get_progress())
 

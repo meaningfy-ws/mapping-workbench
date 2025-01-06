@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
-import DotsVerticalIcon from '@untitled-ui/icons-react/build/esm/DotsVertical';
+
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
+import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import Stack from '@mui/material/Stack';
-import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
 import {usePopover} from 'src/hooks/use-popover';
@@ -70,9 +71,7 @@ export const ItemListCard = (props) => {
                         onClick={popover.handleOpen}
                         ref={popover.anchorRef}
                     >
-                        <SvgIcon fontSize="small">
-                            <DotsVerticalIcon/>
-                        </SvgIcon>
+                        <MoreVertIcon fontSize='small'/>
                     </IconButton>
                 </Stack>
                 <Box sx={{p: 2}}>
