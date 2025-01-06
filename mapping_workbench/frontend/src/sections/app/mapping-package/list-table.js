@@ -188,7 +188,7 @@ const MappingPackageRowFragment = (props) => {
                                 }}
                             />
                         }
-                        label="Cleanup Project Resources"
+                        label="Cleanup Project Assets"
                         value="cleanup_project"
                     />
                 </Box>}
@@ -203,8 +203,7 @@ export const ListTable = (props) => {
     const {
         count = 0,
         items = [],
-        onPageChange = () => {
-        },
+        onPageChange = () => {},
         onRowsPerPageChange,
         page = 0,
         rowsPerPage = 0,

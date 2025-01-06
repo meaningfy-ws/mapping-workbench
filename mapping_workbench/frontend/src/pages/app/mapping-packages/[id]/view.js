@@ -19,7 +19,7 @@ import {RouterLink} from 'src/components/router-link';
 import {mappingPackagesApi as sectionApi} from 'src/api/mapping-packages';
 import MappingPackageDetails from "src/sections/app/mapping-package/details";
 
-const Resources =
+const Assets =
     dynamic(() => import("src/sections/app/mapping-package/resources"));
 const MappingPackageRulesView =
     dynamic(() => import("src/sections/app/mapping-package/mapping-package-rules-view"));
@@ -31,7 +31,7 @@ const StatesView =
 
 const tabs = [
     {label: 'Details', value: 'details'},
-    {label: 'Resources', value: 'resources'},
+    {label: 'Assets', value: 'assets'},
     {label: 'Mapping Rules', value: 'mappingRules'},
     {label: 'Triple Map Fragments', value: 'tripleMapFragments'},
     {label: 'States', value: 'states'}
@@ -127,8 +127,8 @@ const Page = () => {
                 {currentTab === 'details' && (
                     <MappingPackageDetails item={item}/>
                 )}
-                {currentTab === 'resources' && (
-                    <Resources item={item}/>
+                {currentTab === 'assets' && (
+                    <Assets item={item}/>
                 )}
                 {currentTab === "mappingRules" && (
                     <MappingPackageRulesView id={id}/>

@@ -1,5 +1,6 @@
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
+
 import {useRouter} from 'next/router';
 import {paths} from '../../../paths';
 
@@ -10,7 +11,7 @@ const TABS = [
         id: 'triple_map_fragments_tab'
     },
     {
-        label: 'Mapping Resources',
+        label: 'Vocabulary Resources',
         value: paths.app.value_mapping_resources.index,
         id: 'value_mapping_resources_tab'
     }]
