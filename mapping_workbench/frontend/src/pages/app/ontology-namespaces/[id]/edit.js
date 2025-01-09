@@ -40,7 +40,7 @@ const Page = () => {
                         <Link
                             color="text.primary"
                             component={RouterLink}
-                            href={paths.app['ontology_terms'].index}
+                            href={paths.app.ontology_namespaces.index}
                             sx={{
                                 alignItems: 'center',
                                 display: 'inline-flex'
