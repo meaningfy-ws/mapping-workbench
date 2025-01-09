@@ -106,15 +106,6 @@ const Page = () => {
                             >
                                 Discover Terms
                             </Button>
-                            <Button
-                                id="add_term_button"
-                                component={RouterLink}
-                                href={paths.app[sectionApi.section].create}
-                                startIcon={<AddIcon/>}
-                                variant="contained"
-                            >
-                                Add Term
-                            </Button>
                         </Stack>
                     </Stack>
                 </Grid>
