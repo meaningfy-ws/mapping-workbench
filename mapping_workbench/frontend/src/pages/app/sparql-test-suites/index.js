@@ -17,6 +17,7 @@ import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {sparqlTestSuitesApi as sectionApi} from 'src/api/sparql-test-suites';
 import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
 import {sparqlTestFileResourcesApi as fileResourcesApi} from "src/api/sparql-test-suites/file-resources";
+import {NavigationTabsWrapper} from '../../../components/navigation-tabs-wrapper';
 
 const useItemsStore = () => {
     const [state, setState] = useState({
@@ -56,8 +57,11 @@ const Page = () => {
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
-            <Stack spacing={4}>
+            <NavigationTabsWrapper>
                 <QualityControlTabs/>
+            </NavigationTabsWrapper>
+            <Stack spacing={4}
+                   mt={5}>
                 <Stack
                     direction="row"
                     justifyContent="space-between"

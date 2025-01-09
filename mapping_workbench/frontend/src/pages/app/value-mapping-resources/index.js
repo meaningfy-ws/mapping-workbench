@@ -17,6 +17,7 @@ import {TechnicalMappingsTabs} from 'src/sections/app/technical-mappings';
 import {resourceFilesApi} from 'src/api/resource-collections/file-resources';
 import {resourceCollectionsApi as sectionApi} from 'src/api/resource-collections';
 import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
+import {NavigationTabsWrapper} from '../../../components/navigation-tabs-wrapper';
 
 const useItemsStore = () => {
     const [state, setState] = useState({
@@ -59,8 +60,11 @@ const Page = () => {
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
-            <Stack spacing={4}>
+            <NavigationTabsWrapper>
                 <TechnicalMappingsTabs/>
+            </NavigationTabsWrapper>
+            <Stack spacing={4}
+                   mt={5}>
                 <Stack
                     direction="row"
                     justifyContent="space-between"
