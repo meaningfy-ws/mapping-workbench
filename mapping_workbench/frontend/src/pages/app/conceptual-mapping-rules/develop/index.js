@@ -16,6 +16,7 @@ import {ListTable} from 'src/sections/app/conceptual-mapping-rule/develop/list-t
 import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
 import AddEditDrawer from "src/sections/app/conceptual-mapping-rule/develop/add-edit-drawer";
 import {ConceptualMappingTabs} from 'src/sections/app/conceptual-mapping-rule/conceptual-mapping-tabs';
+import {NavigationTabsWrapper} from '../../../../components/navigation-tabs-wrapper';
 
 const SEARCH_COLUMNS = [
     "source_structural_element_sdk_element_id",
@@ -96,8 +97,11 @@ export const Page = () => {
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE}`}/>
-            <Stack spacing={4}>
+            <NavigationTabsWrapper>
                 <ConceptualMappingTabs/>
+            </NavigationTabsWrapper>
+            <Stack spacing={4}
+                   mt={5}>
                 <Stack
                     direction="row"
                     justifyContent="space-between"
