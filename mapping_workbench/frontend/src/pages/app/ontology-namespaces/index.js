@@ -51,21 +51,6 @@ const Page = () => {
                                 <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
                                                 value={itemsSearch.state.search[0]}/>
                             </Paper>
-                            <Stack
-                                alignItems="center"
-                                direction="row"
-                                spacing={3}
-                            >
-                                <Button
-                                    id="add_button"
-                                    component={RouterLink}
-                                    href={paths.app[sectionApi.section].create}
-                                    startIcon={<AddIcon/>}
-                                    variant="contained"
-                                >
-                                    Add
-                                </Button>
-                            </Stack>
                         </Stack>
                         <ListTable
                             onPageChange={itemsSearch.handlePageChange}
