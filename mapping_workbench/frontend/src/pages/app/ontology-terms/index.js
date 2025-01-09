@@ -19,6 +19,7 @@ import {RouterLink} from 'src/components/router-link';
 import {ontologyTermsApi as sectionApi} from 'src/api/ontology-terms';
 import {SourceAndTargetTabs} from 'src/sections/app/source-and-target';
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
+import {NavigationTabsWrapper} from '../../../components/navigation-tabs-wrapper';
 import useItemsSearch from '../../../hooks/use-items-search';
 import {useItemsStore} from '../../../hooks/use-items-store';
 import {ListTable} from '../../../sections/app/ontology-term/list-table';
@@ -52,13 +53,13 @@ const Page = () => {
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE}`}/>
+            <NavigationTabsWrapper>
+                <SourceAndTargetTabs/>
+            </NavigationTabsWrapper>
             <Grid container
+                  mt={5}
                   spacing={{xs: 3, lg: 4}}
             >
-
-                <Grid xs={12}>
-                    <SourceAndTargetTabs/>
-                </Grid>
                 <Grid xs={12}>
                     <Stack direction="row"
                            justifyContent="space-between"

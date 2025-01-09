@@ -18,6 +18,7 @@ import {TableSearchBar} from 'src/sections/components/table-search-bar';
 import {ListTable} from "src/sections/app/ontology-namespace/list-table";
 import {ontologyNamespacesApi as sectionApi} from 'src/api/ontology-namespaces';
 import OntologyNamespacesCustom from 'src/pages/app/ontology-namespaces-custom';
+import {NavigationTabsWrapper} from '../../../components/navigation-tabs-wrapper';
 
 const Page = () => {
     const itemsStore = useItemsStore(sectionApi);
@@ -28,12 +29,12 @@ const Page = () => {
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
+            <NavigationTabsWrapper>
+                <SourceAndTargetTabs/>
+            </NavigationTabsWrapper>
             <Grid container
+                  mt={5}
                   spacing={4}>
-                <Grid xs={12}>
-                    <SourceAndTargetTabs/>
-                </Grid>
-
                 <Grid xs={12}
                       xl={6}
                       item>

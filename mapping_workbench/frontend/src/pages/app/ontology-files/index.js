@@ -30,6 +30,7 @@ import {SourceAndTargetTabs} from 'src/sections/app/source-and-target';
 import {FileUploader} from 'src/sections/app/files-form//file-uploader';
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {ontologyFileResourcesApi as fileResourcesApi} from "src/api/ontology-files/file-resources";
+import {NavigationTabsWrapper} from '../../../components/navigation-tabs-wrapper';
 
 const Page = () => {
     const [view, setView] = useState('grid');
@@ -78,12 +79,13 @@ const Page = () => {
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE}`}/>
+            <NavigationTabsWrapper>
+                <SourceAndTargetTabs/>
+            </NavigationTabsWrapper>
             <Grid container
+                  mt={5}
                   spacing={{xs: 3, lg: 4}}
             >
-                <Grid xs={12}>
-                    <SourceAndTargetTabs/>
-                </Grid>
                 <Grid xs={12}>
                     <Stack
                         direction="row"
