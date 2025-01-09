@@ -50,6 +50,8 @@ const Page = () => {
 
     usePageView();
 
+    console.log(itemsSearch)
+
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE}`}/>
@@ -124,7 +126,7 @@ const Page = () => {
                         onSort={itemsSearch.handleSort}
                         page={itemsSearch.state.page}
                         items={itemsSearch.pagedItems}
-                        count={itemsStore.itemsCount}
+                        count={itemsSearch.count}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
                     />

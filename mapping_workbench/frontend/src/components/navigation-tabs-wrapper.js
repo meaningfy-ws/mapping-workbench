@@ -2,8 +2,6 @@ import Stack from '@mui/material/Stack';
 import {useTheme} from '@mui/material/styles';
 
 export const NavigationTabsWrapper = ({children}) => {
-    const theme = useTheme()
-    console.log(theme)
     return <Stack direction='row'
                   sx={{
                       position: 'fixed',

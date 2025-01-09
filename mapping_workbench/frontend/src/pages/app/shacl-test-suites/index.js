@@ -94,7 +94,7 @@ const Page = () => {
                     page={itemsSearch.state.page}
                     items={itemsSearch.pagedItems}
                     itemsForced={itemsStore.force}
-                    count={itemsStore.itemsCount}
+                    count={itemsSearch.count}
                     sort={itemsSearch.state.sort}
                     onSort={itemsSearch.handleSort}
                     rowsPerPage={itemsSearch.state.rowsPerPage}
