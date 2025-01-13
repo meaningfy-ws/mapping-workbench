@@ -4,9 +4,8 @@ import {toastError, toastLoad, toastSuccess} from "../components/app-toast";
 
 const exportPackage = (api, package_id, setLoading, item ) => {
         setLoading(true);
-        const project_id = sessionApi.getSessionProject();
         const data = {
-            project_id,
+            project_id: sessionApi.getSessionProject(),
             package_id,
             state_id: item._id
         }

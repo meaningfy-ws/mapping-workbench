@@ -3,6 +3,7 @@ import * as Yup from 'yup';
 import {useFormik} from 'formik';
 import PropTypes from 'prop-types';
 import {saveAs} from 'file-saver';
+
 import Box from '@mui/system/Box';
 import Card from '@mui/material/Card';
 import Alert from '@mui/material/Alert';
@@ -53,7 +54,6 @@ export const MappingPackageProcessForm = ({items, sectionApi, showExport}) => {
             {
                 console.log(items)
                 items.forEach(item => {
-                        console.log(item)
                         const data = {
                             package_id: item._id,
                             project_id: sessionApi.getSessionProject(),
@@ -77,7 +77,7 @@ export const MappingPackageProcessForm = ({items, sectionApi, showExport}) => {
         return !formik.values.use_only_package_state;
     }
 
-    const handleExport = itemId => {
+    const handleExport = item => {
         setIsExporting(true)
         const data = {
             package_id: item._id,
@@ -225,7 +225,7 @@ export const MappingPackageProcessForm = ({items, sectionApi, showExport}) => {
                                 type="button"
                                 variant="contained"
                                 color="primary"
-                                onClick={handleExport}
+                                onClick={() => handleExport(items[0])}
                             >
                                 {isExporting ? "Exporting Latest ..." : "Export Latest"}
                             </Button>}
