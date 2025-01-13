@@ -67,8 +67,7 @@ const Page = () => {
             <Stack spacing={4}
                    sx={{mt: 5}}>
                 <Stack direction='row'
-                       justifyContent='space-between'
-                       sx={{pt: 5}}>
+                       justifyContent='space-between'>
                     <Paper>
                         <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
                                         value={itemsSearch.state.search[0]}/>

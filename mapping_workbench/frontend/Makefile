@@ -9,8 +9,7 @@ start-staging-frontend:
 
 start-prod-frontend:
 	@ echo "Starting PROD FRONTEND"
-	@ npm run dev
-#	@ serve -s build
+	@ npm run start
 
 install-dev-frontend:
 	@ echo "Installing DEV FRONTEND"
@@ -23,7 +22,7 @@ install-staging-frontend:
 
 install-prod-frontend:
 	@ echo "Installing PROD FRONTEND"
-	@ npm install
+	@ npm install && npm run build
 #	@ npm install && npm install -g serve && npm run build && rm -fr node_modules
 
 test-e2e:
