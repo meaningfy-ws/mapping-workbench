@@ -245,7 +245,8 @@ export const apiPaths = {
     projects: {
         items: '/projects',
         item: '/projects/:id',
-        cleanup: '/projects/:id/cleanup'
+        cleanup: '/projects/:id/cleanup',
+        export_source_files: '/projects/:id/export_source_files',
     },
     test_data_suites: {
         items: '/test_data_suites',
@@ -323,6 +324,7 @@ export const apiPaths = {
         mapping_notes: '/conceptual_mapping_rules/:id/mapping_notes',
         editorial_notes: '/conceptual_mapping_rules/:id/editorial_notes',
         feedback_notes: '/conceptual_mapping_rules/:id/feedback_notes',
+        generate_shacl: '/conceptual_mapping_rules/generate_shacl_shapes',
         tasks: {
             generate_cm_assertions_queries: '/conceptual_mapping_rules/tasks/generate_cm_assertions_queries'
         }
@@ -377,7 +379,7 @@ export const apiPaths = {
     fields_registry: {
         items: '/fields_registry',
         item: '/fields_registry/:id',
-        import_eforms_from_github: '/fields_registry/tasks/import_eforms_from_github',
+        import_eforms_xsd: '/fields_registry/tasks/import_eforms_xsd',
         elements: '/fields_registry/elements',
         elements_tree: '/fields_registry/elements_tree',
         element: '/fields_registry/elements/:id',
@@ -387,7 +389,7 @@ export const apiPaths = {
         items: '/fields_registry/elements',
         create: '/fields_registry/elements/create',
         item: '/fields_registry/elements/:id',
-        import_eforms_from_github: '/fields_registry/tasks/import_eforms_from_github',
+        import_eforms_xsd: '/fields_registry/tasks/import_eforms_xsd',
         element: '/fields_registry/elements/:id',
     },
 

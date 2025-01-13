@@ -1,68 +1,25 @@
 import {useEffect, useState} from 'react';
 
 import AddIcon from '@mui/icons-material/Add';
-import Card from '@mui/material/Card';
-import Link from '@mui/material/Link';
+
+import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import SvgIcon from '@mui/material/SvgIcon';
-import Typography from '@mui/material/Typography';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
+import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {RouterLink} from 'src/components/router-link';
-import {usePageView} from 'src/hooks/use-page-view';
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
+import useItemsSearch from 'src/hooks/use-items-search';
+import {QualityControlTabs} from 'src/sections/app/quality-control';
+import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {sparqlTestSuitesApi as sectionApi} from 'src/api/sparql-test-suites';
 import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
-import {FileCollectionListSearch} from 'src/sections/app/file-manager/file-collection-list-search';
-import {sparqlTestFileResourcesApi as fileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
+import {sparqlTestFileResourcesApi as fileResourcesApi} from "src/api/sparql-test-suites/file-resources";
+import {NavigationTabsWrapper} from '../../../components/navigation-tabs-wrapper';
 
-const useItemsSearch = () => {
-    const [state, setState] = useState({
-        filters: {
-            name: undefined,
-            category: [],
-            status: [],
-            inStock: undefined
-        },
-        page: sectionApi.DEFAULT_PAGE,
-        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
-    });
-
-    const handleFiltersChange = filters => {
-        setState(prevState => ({
-            ...prevState,
-            filters,
-            page: 0
-        }));
-    }
-
-    const handlePageChange = (event, page) => {
-        setState(prevState => ({
-            ...prevState,
-            page
-        }));
-    }
-
-    const handleRowsPerPageChange = (event) => {
-        setState(prevState => ({
-            ...prevState,
-            rowsPerPage: parseInt(event.target.value, 10)
-        }));
-    }
-
-    return {
-        handleFiltersChange,
-        handlePageChange,
-        handleRowsPerPageChange,
-        state
-    };
-};
-
-const useItemsStore = (searchState) => {
+const useItemsStore = () => {
     const [state, setState] = useState({
         items: [],
         itemsCount: 0,
@@ -70,18 +27,18 @@ const useItemsStore = (searchState) => {
     });
 
     const handleItemsGet = (force = 0) => {
-        sectionApi.getItems(searchState)
+        sectionApi.getItems()
             .then(res => setState({
                 items: res.items,
                 itemsCount: res.count,
                 force: force
             }))
-            .catch(err => console.warn(err))
+            .catch(err => console.error(err))
     }
 
     useEffect(() => {
         handleItemsGet();
-    }, [searchState]);
+    }, []);
 
     return {
         handleItemsGet,
@@ -90,45 +47,30 @@ const useItemsStore = (searchState) => {
 };
 
 const Page = () => {
-    const itemsSearch = useItemsSearch();
-    const itemsStore = useItemsStore(itemsSearch.state);
+    const itemsStore = useItemsStore();
+    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['title']);
 
     usePageView();
 
-    const selectable = (item) => {
-        return item.title !== sectionApi.CM_ASSERTIONS_SUITE_TITLE
-    }
+    const selectable = (item) => item.title !== sectionApi.CM_ASSERTIONS_SUITE_TITLE
 
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
-            <Stack spacing={4}>
+            <NavigationTabsWrapper>
+                <QualityControlTabs/>
+            </NavigationTabsWrapper>
+            <Stack spacing={4}
+                   mt={5}>
                 <Stack
                     direction="row"
                     justifyContent="space-between"
                     spacing={4}
                 >
-                    <Stack spacing={1}>
-                        <Typography variant="h4">
-                            {sectionApi.SECTION_TITLE}
-                        </Typography>
-                        <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.index}
-                                variant="subtitle2"
-                            >
-                                App
-                            </Link>
-                            <Typography
-                                color="text.secondary"
-                                variant="subtitle2"
-                            >
-                                {sectionApi.SECTION_TITLE}
-                            </Typography>
-                        </Breadcrumbs>
-                    </Stack>
+                    <Paper>
+                        <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                        value={itemsSearch.state.search[0]}/>
+                    </Paper>
                     <Stack
                         alignItems="center"
                         direction="row"
@@ -138,33 +80,28 @@ const Page = () => {
                             id="add_button"
                             component={RouterLink}
                             href={paths.app[sectionApi.section].create}
-                            startIcon={(
-                                <SvgIcon>
-                                    <AddIcon/>
-                                </SvgIcon>
-                            )}
+                            startIcon={<AddIcon/>}
                             variant="contained"
                         >
                             Add
                         </Button>
                     </Stack>
                 </Stack>
-                <Card>
-                    <FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
-                    <FileCollectionListTable
-                        onPageChange={itemsSearch.handlePageChange}
-                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        page={itemsSearch.state.page}
-                        items={itemsStore.items}
-                        itemsForced={itemsStore.force}
-                        count={itemsStore.itemsCount}
-                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                        sectionApi={sectionApi}
-                        getItems={itemsStore.handleItemsGet}
-                        selectable={selectable}
-                        fileResourceApi={fileResourcesApi}
-                    />
-                </Card>
+                <FileCollectionListTable
+                    onPageChange={itemsSearch.handlePageChange}
+                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                    page={itemsSearch.state.page}
+                    items={itemsSearch.pagedItems}
+                    itemsForced={itemsStore.force}
+                    count={itemsSearch.count}
+                    rowsPerPage={itemsSearch.state.rowsPerPage}
+                    sort={itemsSearch.state.sort}
+                    onSort={itemsSearch.handleSort}
+                    sectionApi={sectionApi}
+                    getItems={itemsStore.handleItemsGet}
+                    selectable={selectable}
+                    fileResourceApi={fileResourcesApi}
+                />
             </Stack>
         </>
     )

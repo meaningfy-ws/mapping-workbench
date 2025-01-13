@@ -7,7 +7,9 @@ from pymongo import IndexModel
 
 from mapping_workbench.backend.core.models.base_mapping_package_resource_entity import \
     BaseMappingPackageResourceEntityOutSchema, BaseMappingPackageResourceEntityInSchema, \
-    BaseMappingPackageResourceEntityUpdateInSchema, BaseMappingPackageResourceSchemaTrait
+    BaseMappingPackageResourceEntityUpdateInSchema, BaseMappingPackageResourceSchemaTrait, \
+    BaseMappingPackagesResourceEntityOutSchema, BaseMappingPackagesResourceEntityInSchema, \
+    BaseMappingPackagesResourceSchemaTrait
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
     BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema, BaseProjectResourceEntityUpdateInSchema
 from mapping_workbench.backend.state_manager.models.state_object import ObjectState, StatefulObjectABC
@@ -56,7 +58,7 @@ class SpecificTripleMapFragmentOut(
     format: Optional[TripleMapFragmentFormat] = None
 
 
-class GenericTripleMapFragmentIn(BaseProjectResourceEntityInSchema):
+class GenericTripleMapFragmentIn(BaseProjectResourceEntityInSchema, BaseMappingPackagesResourceEntityInSchema):
     identifier: Optional[str] = None
     triple_map_uri: Optional[str] = None
     triple_map_content: Optional[str] = None
@@ -71,7 +73,7 @@ class GenericTripleMapFragmentUpdateIn(GenericTripleMapFragmentIn):
     pass
 
 
-class GenericTripleMapFragmentOut(BaseProjectResourceEntityOutSchema):
+class GenericTripleMapFragmentOut(BaseProjectResourceEntityOutSchema, BaseMappingPackagesResourceEntityOutSchema):
     identifier: Optional[str] = None
     triple_map_uri: Optional[str] = None
     triple_map_content: Optional[str] = None
@@ -90,7 +92,11 @@ class TripleMapFragmentState(ObjectState, TripleMapFragmentABC):
     format: Optional[TripleMapFragmentFormat] = None
 
 
-class TripleMapFragment(BaseProjectResourceEntity, StatefulObjectABC, TripleMapFragmentABC):
+class TripleMapFragment(
+    BaseProjectResourceEntity,
+    StatefulObjectABC,
+    TripleMapFragmentABC
+):
     identifier: Optional[str] = None
     triple_map_uri: Optional[str] = None
     triple_map_content: Optional[str] = None
@@ -124,7 +130,10 @@ class SpecificTripleMapFragment(TripleMapFragment, BaseMappingPackageResourceSch
         ]
 
 
-class GenericTripleMapFragment(TripleMapFragment):
+class GenericTripleMapFragment(
+    TripleMapFragment,
+    BaseMappingPackagesResourceSchemaTrait
+):
     class Settings(TripleMapFragment.Settings):
         name = "generic_triple_map_fragments"
 

@@ -1,143 +1,32 @@
 import {useEffect, useState} from 'react';
 
 import AddIcon from '@mui/icons-material/Add';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import Link from '@mui/material/Link';
-import Stack from '@mui/material/Stack';
-import SvgIcon from '@mui/material/SvgIcon';
-import Typography from '@mui/material/Typography';
 
-import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
-import {ontologyTermsApi} from 'src/api/ontology-terms'
-import {paths} from 'src/paths';
+import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+
 import {Seo} from 'src/components/seo';
 import {Layout as AppLayout} from 'src/layouts/app';
-import {RouterLink} from 'src/components/router-link';
+import {ontologyTermsApi} from 'src/api/ontology-terms'
 import {fieldsRegistryApi} from "src/api/fields-registry";
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {ListSearch} from 'src/sections/app/conceptual-mapping-rule/develop/list-search';
+import useItemsSearch from 'src/hooks/use-items-search';
+import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {ListTable} from 'src/sections/app/conceptual-mapping-rule/develop/list-table';
+import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
 import AddEditDrawer from "src/sections/app/conceptual-mapping-rule/develop/add-edit-drawer";
+import {ConceptualMappingTabs} from 'src/sections/app/conceptual-mapping-rule/conceptual-mapping-tabs';
+import {NavigationTabsWrapper} from '../../../../components/navigation-tabs-wrapper';
 
-const useItemsSearch = (items) => {
-    const [state, setState] = useState({
-        filters: {},
-        sort: {
-            column: "",
-            direction: "desc"
-        },
-        search: '',
-        searchColumns: [
-            "source_structural_element_sdk_element_id",
-            "source_structural_element_absolute_xpath",
-            "xpath_condition",
-            "min_sdk_version",
-            "max_sdk_version",
-            "target_class_path",
-            "target_property_path"
-        ],
-        page: sectionApi.DEFAULT_PAGE,
-        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
-    });
-
-    const {show, ...filters} = state.filters
-
-    const searchItems = state.search ? items.filter(item => {
-        let returnItem = null;
-        state.searchColumns.forEach(column => {
-            if (item[column]?.toLowerCase()?.includes(state.search.toLowerCase()))
-                returnItem = item
-        })
-        return returnItem
-    }) : items
-
-    const filteredItems = searchItems.filter((item) => {
-        let returnItem = item;
-        Object.entries(filters).forEach(filter => {
-            const [key, value] = filter
-            if (value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
-                returnItem = null
-            if (value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase))
-                returnItem = null
-        })
-        return returnItem
-    })
-
-    const sortedItems = () => {
-        const sortColumn = state.sort.column
-        if (!sortColumn) {
-            return filteredItems
-        } else {
-            return filteredItems.sort((a, b) => {
-                if (typeof a[sortColumn] === "string")
-                    return state.sort.direction === "asc" ?
-                        a[sortColumn]?.localeCompare(b[sortColumn]) :
-                        b[sortColumn]?.localeCompare(a[sortColumn])
-                else
-                    return state.sort.direction === "asc" ?
-                        a[sortColumn] - b[sortColumn] :
-                        b[sortColumn] - a[sortColumn]
-            })
-        }
-    }
-
-    const pagedItems = sortedItems().filter((item, i) => {
-        const pageSize = state.page * state.rowsPerPage
-        if ((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
-            return item
-    })
-
-    const handleSearchItems = (filters) => {
-        setState(prevState => ({...prevState, search: filters.q, page: 0}))
-    }
-
-    const handleFiltersChange = (filters) => {
-        setState(prevState => ({
-            ...prevState,
-            filters,
-            page: 0
-        }));
-    }
-
-    const handlePageChange = (event, page) => setState(prevState => ({...prevState, page}));
-
-    const handleSort = (column, desc) => {
-        setState(prevState => ({
-            ...prevState, sort: {
-                column,
-                direction: prevState.sort.column === column
-                    ? prevState.sort.direction === "desc"
-                        ? "asc"
-                        : "desc"
-                    : desc
-                        ? "desc"
-                        : "asc"
-            }
-        }))
-
-    }
-
-    const handleRowsPerPageChange = (event) => {
-        setState(prevState => ({
-            ...prevState,
-            rowsPerPage: parseInt(event.target.value, 10)
-        }));
-    }
-
-    return {
-        handleFiltersChange,
-        handlePageChange,
-        handleRowsPerPageChange,
-        handleSort,
-        handleSearchItems,
-        pagedItems,
-        count: filteredItems.length,
-        state
-    };
-};
-
+const SEARCH_COLUMNS = [
+    "source_structural_element_sdk_element_id",
+    "source_structural_element_absolute_xpath",
+    "xpath_condition",
+    "min_sdk_version",
+    "max_sdk_version",
+    "target_class_path",
+    "target_property_path"
+]
 
 export const Page = () => {
     const [state, setState] = useState({})
@@ -168,8 +57,7 @@ export const Page = () => {
             })
     }
 
-
-    const itemsSearch = useItemsSearch(itemsStore.items);
+    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, SEARCH_COLUMNS);
 
     const [isProjectDataReady, setIsProjectDataReady] = useState(false);
 
@@ -209,68 +97,42 @@ export const Page = () => {
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE}`}/>
-            <Stack spacing={4}>
+            <NavigationTabsWrapper>
+                <ConceptualMappingTabs/>
+            </NavigationTabsWrapper>
+            <Stack spacing={4}
+                   mt={5}>
                 <Stack
                     direction="row"
                     justifyContent="space-between"
                     spacing={4}
                 >
-                    <Stack spacing={1}>
-                        <Typography variant="h4">
-                            Develop {sectionApi.SECTION_TITLE}
-                        </Typography>
-                        <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.index}
-                                variant="subtitle2"
-                            >
-                                App
-                            </Link>
-                            <Typography
-                                color="text.secondary"
-                                variant="subtitle2"
-                            >
-                                Develop {sectionApi.SECTION_TITLE}
-                            </Typography>
-                        </Breadcrumbs>
-                    </Stack>
-                    <Stack
-                        alignItems="center"
-                        direction="row"
-                        spacing={3}
+                    <Paper>
+                        <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                        value={itemsSearch.state.search[0]}
+                                        placeholder='Search Terms'/>
+                    </Paper>
+                    <Button
+                        id="add_button"
+                        startIcon={<AddIcon/>}
+                        onClick={handleAdd}
                     >
-                        <Button
-                            id="add_button"
-                            startIcon={(
-                                <SvgIcon>
-                                    <AddIcon/>
-                                </SvgIcon>
-                            )}
-                            variant="contained"
-                            onClick={handleAdd}
-                        >
-                            Add
-                        </Button>
-                    </Stack>
+                        Add
+                    </Button>
                 </Stack>
-                <Card>
-                    <ListSearch onFiltersChange={itemsSearch.handleSearchItems}/>
-                    <ListTable
-                        onPageChange={itemsSearch.handlePageChange}
-                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        onSort={itemsSearch.handleSort}
-                        sort={itemsSearch.state.sort}
-                        page={itemsSearch.state.page}
-                        items={itemsSearch.pagedItems}
-                        count={itemsSearch.count}
-                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                        sectionApi={sectionApi}
-                        onEdit={handleEdit}
-                        onDelete={handleDelete}
-                    />
-                </Card>
+                <ListTable
+                    onPageChange={itemsSearch.handlePageChange}
+                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                    onSort={itemsSearch.handleSort}
+                    sort={itemsSearch.state.sort}
+                    page={itemsSearch.state.page}
+                    items={itemsSearch.pagedItems}
+                    count={itemsSearch.count}
+                    rowsPerPage={itemsSearch.state.rowsPerPage}
+                    sectionApi={sectionApi}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                />
                 <AddEditDrawer open={state.openDrawer}
                                onClose={handleCloseDrawer}
                                item={state.item}

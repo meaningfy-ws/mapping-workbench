@@ -1,43 +1,41 @@
 import {useEffect, useState} from 'react';
-import {toast} from 'react-hot-toast';
 import PropTypes from 'prop-types';
 
-import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
-import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
+import UploadIcon from '@mui/icons-material/Upload';
+
 import Box from "@mui/system/Box";
+import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
-import List from "@mui/material/List";
+import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Divider from '@mui/material/Divider';
-import SvgIcon from '@mui/material/SvgIcon';
-import ListItem from "@mui/material/ListItem";
 import Checkbox from "@mui/material/Checkbox";
 import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
-import IconButton from '@mui/material/IconButton';
-import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-
-import {Scrollbar} from 'src/components/scrollbar';
-import {useRouter} from "src/hooks/use-router";
-import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import {ListFileCollectionActions} from "src/components/app/list/list-file-collection-actions";
-import {PropertyListItem} from 'src/components/property-list-item';
+import CardContent from '@mui/material/CardContent';
 
 import {paths} from "src/paths";
 import {useDialog} from "src/hooks/use-dialog";
+import {useRouter} from "src/hooks/use-router";
+import {Scrollbar} from 'src/components/scrollbar';
 import timeTransformer from "src/utils/time-transformer";
 import {useGlobalState} from "src/hooks/use-global-state";
 import {PropertyList} from "src/components/property-list";
 import {mappingPackagesApi} from "src/api/mapping-packages";
-import TablePagination from "src/sections/components/table-pagination";
+import {PropertyListItem} from 'src/components/property-list-item';
+import {ChevronButton} from 'src/sections/components/chevron-button';
 import {FileUploader} from "src/sections/app/file-manager/file-uploader";
+import {MenuActionButton, MenuActions} from 'src/components/menu-actions';
+import TableSorterHeader from 'src/sections/components/table-sorter-header';
+import TablePagination from "src/sections/components/table-pagination-pages";
+import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
+import {ListFileCollectionActions} from "src/components/app/list/list-file-collection-actions";
 import {MappingPackagesBulkAssigner} from "src/sections/app/mapping-package/components/mapping-packages-bulk-assigner";
-
 
 export const ListTableRow = (props) => {
     const {
@@ -67,7 +65,6 @@ export const ListTableRow = (props) => {
             pathname: paths.app[sectionApi.section].resource_manager.edit,
             query: {id: item_id, fid: resource_id}
         });
-        return true;
     }
 
     return (
@@ -98,13 +95,10 @@ export const ListTableRow = (props) => {
                         color="primary"
                         disabled={selectable && !selectable(item)}
                         checked={isItemSelected(item_id)}
-                        onClick={(event) => handleItemSelect(event, item_id)}
+                        onClick={event => handleItemSelect(event.target.checked, item_id)}
                     />
-                    <IconButton onClick={() => handleItemToggle(item_id)}>
-                        <SvgIcon>
-                            {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
-                        </SvgIcon>
-                    </IconButton>
+                    <ChevronButton onClick={() => handleItemToggle(item_id)}
+                                   isCurrent={isCurrent}/>
                 </TableCell>
                 <TableCell width="25%">
                     <Typography variant="subtitle2">
@@ -112,41 +106,36 @@ export const ListTableRow = (props) => {
                     </Typography>
                 </TableCell>
                 <TableCell>
-                    <List sx={{p: 0, m: 0}}>
+                    <Box sx={{p: 0, mb: 0}}>
                         {
-
                             sectionApi.MAPPING_PACKAGE_LINK_FIELD
                             && projectMappingPackages
                                 .filter(
                                     projectMappingPackage => projectMappingPackage?.[sectionApi.MAPPING_PACKAGE_LINK_FIELD]
-                                        .some(resource_ref => item_id === resource_ref.id)
+                                        ?.some(resource_ref => item_id === resource_ref.id)
                                 )
-                                .map((mapping_package) => {
-                                    return (
-                                        <ListItem
-                                            key={"mapping_package_" + mapping_package.id}
-                                            sx={{p: 0, m: 0}}
-                                        >
-                                            {mapping_package['title']}
-                                        </ListItem>
-                                    );
-                                })}
-                    </List>
+                                .map(mapping_package =>
+                                    <Chip
+                                        key={"mapping_package_" + mapping_package.id}
+                                        sx={{p: 0, mr: 1, mb: 1}}
+                                        label={mapping_package['title']}
+                                    />
+                                )}
+                    </Box>
                 </TableCell>
                 <TableCell align="left">
                     {timeTransformer(item.created_at, timeSetting)}
                 </TableCell>
                 <TableCell align="right">
-                    <Stack direction='row'
-                           justifyContent='end'>
-                        <Button size="small"
-                                onClick={() => openUploadModal?.(item._id)}
-                        >
-                            Upload
-                        </Button>
+                    <MenuActions>
+                        <MenuActionButton
+                            icon={<UploadIcon/>}
+                            onClick={() => openUploadModal?.(item._id)}
+                            title='Upload'
+                        />
                         <ListFileCollectionActions
                             itemctx={new ForListItemAction(item_id, sectionApi)}/>
-                    </Stack>
+                    </MenuActions>
                 </TableCell>
             </TableRow>
             {isCurrent && (
@@ -195,43 +184,41 @@ export const ListTableRow = (props) => {
                                     {collectionResources && collectionResources.length > 0 && (
                                         <Box sx={{mt: 2}}>
                                             <Stack divider={<Divider/>}>
-                                                {collectionResources.map((resource) => {
-                                                    return (
+                                                {collectionResources.map(resource =>
+                                                    <Stack
+                                                        alignItems="center"
+                                                        direction="row"
+                                                        flexWrap="wrap"
+                                                        justifyContent="space-between"
+                                                        key={item_id + "_" + resource._id}
+                                                        sx={{
+                                                            px: 2,
+                                                            py: 1.5,
+                                                        }}
+                                                    >
+                                                        <div>
+                                                            <Typography
+                                                                variant="subtitle1">{resource.title}</Typography>
+                                                            <Typography
+                                                                color="text.secondary"
+                                                                variant="caption"
+                                                            >
+                                                                {}
+                                                            </Typography>
+                                                        </div>
                                                         <Stack
                                                             alignItems="center"
                                                             direction="row"
-                                                            flexWrap="wrap"
-                                                            justifyContent="space-between"
-                                                            key={item_id + "_" + resource._id}
-                                                            sx={{
-                                                                px: 2,
-                                                                py: 1.5,
-                                                            }}
+                                                            spacing={2}
                                                         >
-                                                            <div>
-                                                                <Typography
-                                                                    variant="subtitle1">{resource.title}</Typography>
-                                                                <Typography
-                                                                    color="text.secondary"
-                                                                    variant="caption"
-                                                                >
-                                                                    {}
-                                                                </Typography>
-                                                            </div>
-                                                            <Stack
-                                                                alignItems="center"
-                                                                direction="row"
-                                                                spacing={2}
-                                                            >
-                                                                <Button
-                                                                    size="small"
-                                                                    onClick={() => handleResourceEdit?.(resource._id)}
-                                                                    color="success"
-                                                                >Edit</Button>
-                                                            </Stack>
+                                                            <Button
+                                                                size="small"
+                                                                onClick={() => handleResourceEdit?.(resource._id)}
+                                                                color="success"
+                                                            >Edit</Button>
                                                         </Stack>
-                                                    );
-                                                })}
+                                                    </Stack>
+                                                )}
                                             </Stack>
                                         </Box>
                                     )}
@@ -256,28 +243,29 @@ export const FileCollectionListTable = (props) => {
         page = 0,
         rowsPerPage = 0,
         sectionApi,
-        getItems = () => {
+        getItems = (number) => {
         },
+        sort,
+        onSort = () => {},
         selectable = null,
         fileResourceApi,
     } = props;
 
     const router = useRouter();
+    const uploadDialog = useDialog();
     const [currentItem, setCurrentItem] = useState(null);
     const [selectedItems, setSelectedItems] = useState([]);
-    const uploadDialog = useDialog();
 
-    const isItemSelected = (itemId) => selectedItems.indexOf(itemId) !== -1;
+    const isItemSelected = itemId => selectedItems.indexOf(itemId) !== -1;
 
-    const handleItemSelect = (e, itemId) => {
-        let items = new Set(selectedItems);
-        const isChecked = e.target.checked;
-        if (isChecked) {
-            items.add(itemId);
-        } else {
-            items.delete(itemId);
-        }
-        setSelectedItems([...items]);
+    const allChecked = items.length > 0 && selectedItems.length === items.length
+
+    const handleItemsSelectAll = checked => {
+        setSelectedItems(checked ? items.map(item => item._id) : [])
+    }
+
+    const handleItemSelect = (checked, itemId) => {
+        setSelectedItems(items => checked ? [...items, itemId] : items.filter(item => item !== itemId));
     }
 
     const handleItemToggle = itemId => {
@@ -293,17 +281,6 @@ export const FileCollectionListTable = (props) => {
             .catch(err => console.error(err))
     }, [itemsForced])
 
-    const [projectMappingPackagesMap, setProjectMappingPackagesMap] = useState({});
-
-    useEffect(() => {
-        (() => {
-            setProjectMappingPackagesMap(projectMappingPackages.reduce((a, b) => {
-                a[b['id']] = b['title'];
-                return a
-            }, {}));
-        })()
-    }, [projectMappingPackages])
-
     const onMappingPackagesAssign = () => {
         getItems(Date.now());
     }
@@ -312,17 +289,20 @@ export const FileCollectionListTable = (props) => {
         uploadDialog.handleOpen({id})
     }
 
-    return (<>
-            <Box sx={{p: 1}}>
-                <MappingPackagesBulkAssigner
-                    sectionApi={sectionApi}
-                    idsToAssignTo={selectedItems}
-                    initProjectMappingPackages={projectMappingPackages}
-                    disabled={selectedItems.length === 0}
-                    onMappingPackagesAssign={onMappingPackagesAssign}
+    const SorterHeader = (props) => {
+        const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
+        return (
+            <TableCell>
+                <TableSorterHeader sort={{direction, column: sort.column}}
+                                   onSort={onSort}
+                                   {...props}
                 />
-            </Box>
-            <Divider/>
+            </TableCell>
+        )
+    }
+
+
+    return (<>
             <TablePagination
                 component="div"
                 count={count}
@@ -334,51 +314,64 @@ export const FileCollectionListTable = (props) => {
                 showFirstButton
                 showLastButton
             >
-                <Scrollbar>
-                    <Table sx={{minWidth: 1200}}>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell/>
-                                <TableCell width="25%">
-                                    Title
-                                </TableCell>
-                                <TableCell align="left">
-                                    Packages
-                                </TableCell>
-                                <TableCell align="left">
-                                    Created
-                                </TableCell>
-                                <TableCell align="right">
-                                    Actions
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {items.map((item) => {
-                                const item_id = item._id;
-                                const isCurrent = item_id === currentItem;
+                <Paper>
+                    <Box sx={{p: 1}}>
+                        <MappingPackagesBulkAssigner
+                            sectionApi={sectionApi}
+                            idsToAssignTo={selectedItems}
+                            initProjectMappingPackages={projectMappingPackages}
+                            disabled={selectedItems.length === 0}
+                            onMappingPackagesAssign={onMappingPackagesAssign}
+                        />
+                    </Box>
+                    <Divider/>
+                    <Scrollbar>
+                        <Table sx={{minWidth: 1200}}>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell sx={{my: 2}}>
+                                        <Checkbox checked={allChecked}
+                                                  indeterminate={!!selectedItems.length && !allChecked}
+                                                  onChange={(event) => handleItemsSelectAll(event.target.checked)}
+                                        />
+                                    </TableCell>
+                                    <SorterHeader fieldName='title'
+                                                  width='25%'/>
+                                    <TableCell align="left">
+                                        Packages
+                                    </TableCell>
+                                    <SorterHeader align="left"
+                                                  title='created'
+                                                  fieldName='created_at'/>
+                                    <TableCell align="right"/>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {items.map((item) => {
+                                    const item_id = item._id;
+                                    const isCurrent = item_id === currentItem;
 
-                                return (
-                                    <ListTableRow
-                                        key={item_id}
-                                        item={item}
-                                        item_id={item_id}
-                                        isCurrent={isCurrent}
-                                        openUploadModal={openUploadModal}
-                                        handleItemToggle={handleItemToggle}
-                                        handleItemSelect={handleItemSelect}
-                                        isItemSelected={isItemSelected}
-                                        sectionApi={sectionApi}
-                                        router={router}
-                                        projectMappingPackagesMap={projectMappingPackagesMap}
-                                        projectMappingPackages={projectMappingPackages}
-                                        selectable={selectable}
-                                    />
-                                )
-                            })}
-                        </TableBody>
-                    </Table>
-                </Scrollbar>
+                                    return (
+                                        <ListTableRow
+                                            key={item_id}
+                                            item={item}
+                                            item_id={item_id}
+                                            isCurrent={isCurrent}
+                                            openUploadModal={openUploadModal}
+                                            handleItemToggle={handleItemToggle}
+                                            handleItemSelect={handleItemSelect}
+                                            isItemSelected={isItemSelected}
+                                            sectionApi={sectionApi}
+                                            router={router}
+                                            projectMappingPackages={projectMappingPackages}
+                                            selectable={selectable}
+                                        />
+                                    )
+                                })}
+                            </TableBody>
+                        </Table>
+                    </Scrollbar>
+                </Paper>
             </TablePagination>
             <FileUploader
                 onClose={uploadDialog.handleClose}
@@ -401,18 +394,18 @@ FileCollectionListTable.propTypes = {
     rowsPerPage: PropTypes.number,
     sectionApi: PropTypes.object,
     getItems: PropTypes.func,
-    selectable: PropTypes.bool,
-    fileResourceApi: PropTypes.func
+    selectable: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]),
+    fileResourceApi: PropTypes.object
 
 }
 
 ListTableRow.propTypes = {
     item: PropTypes.object,
     handleItemSelect: PropTypes.func,
-    isItemSelected: PropTypes.bool,
-    router: PropTypes.func,
+    isItemSelected: PropTypes.func,
+    router: PropTypes.object,
     sectionApi: PropTypes.object,
     openUploadModal: PropTypes.func,
     projectMappingPackages: PropTypes.array,
-    selectable: PropTypes.bool
+    selectable: PropTypes.oneOfType([PropTypes.func, PropTypes.bool])
 };

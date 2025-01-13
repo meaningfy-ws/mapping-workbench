@@ -1,60 +1,13 @@
 import {useEffect, useState} from "react";
 
+import Paper from '@mui/material/Paper';
 import Stack from "@mui/material/Stack";
 import Alert from "@mui/material/Alert";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
 
-import {mappingPackageStatesApi as sectionApi} from 'src/api/mapping-packages/states';
 import {ListTable} from "./list-table";
-import {FileCollectionListSearch} from "../../file-manager/file-collection-list-search";
-
-
-
-const useItemsSearch = () => {
-    const [state, setState] = useState({
-        filters: {},
-        page: sectionApi.DEFAULT_PAGE,
-        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE,
-        sortField: "",
-        sortDirection: undefined,
-    });
-
-    const handleFiltersChange = filters => {
-        setState(prevState => ({
-            ...prevState,
-            filters,
-            page: 0
-        }));
-    }
-
-    const handlePageChange = (event, page) => {
-        setState(prevState => ({
-            ...prevState,
-            page
-        }));
-    };
-
-    const handleRowsPerPageChange = (event) => {
-        setState(prevState => ({
-            ...prevState,
-            rowsPerPage: parseInt(event.target.value, 10)
-        }));
-    };
-
-    const handleSort = (sortField) => {
-        setState(prevState => ({...prevState, sortField, sortDirection: state.sortField === sortField && prevState.sortDirection === -1 ? 1 : -1 }))
-    }
-
-    return {
-        handleFiltersChange,
-        handlePageChange,
-        handleRowsPerPageChange,
-        handleSort,
-        state
-    };
-};
-
+import useItemsSearch from 'src/hooks/use-items-search';
+import {TableSearchBar} from 'src/sections/components/table-search-bar';
+import {mappingPackageStatesApi as sectionApi} from 'src/api/mapping-packages/states';
 
 const useItemsStore = (id, searchState) => {
     const [state, setState] = useState({
@@ -63,7 +16,7 @@ const useItemsStore = (id, searchState) => {
     });
 
     const handleItemsGet = () => {
-        sectionApi.getStates(id, searchState)
+        sectionApi.getStates(id)
             .then(res =>
                 setState({
                     items: res.items,
@@ -78,45 +31,48 @@ const useItemsStore = (id, searchState) => {
             id && handleItemsGet()
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [id, searchState]);
+        [id]);
 
     return {
         ...state
     };
 };
 
-const StatesView = ({ id }) => {
+const SEARCH_COLUMNS = ['title', 'description']
 
-    const itemsSearch = useItemsSearch();
-    const itemsStore = useItemsStore(id, itemsSearch.state);
+const StatesView = ({id}) => {
+
+    const itemsStore = useItemsStore(id);
+    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, SEARCH_COLUMNS);
 
     return (
-        <Card sx={{mt: 3}}>
-            <CardContent>
-                <FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
+            <Stack spacing={3}>
+                <Stack direction='row'>
+                    <Paper>
+                        <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                        value={itemsSearch.state.search[0]}/>
+                    </Paper>
+                </Stack>
                 {
                     itemsStore.itemsCount ?
                         <ListTable
                             id={id}
-                            items={itemsStore.items}
-                            count={itemsStore.itemsCount}
-                            itemsSearch={itemsSearch}
+                            items={itemsSearch.pagedItems}
+                            count={itemsSearch.count}
                             onPageChange={itemsSearch.handlePageChange}
                             onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
                             onSort={itemsSearch.handleSort}
-                            sortField={itemsSearch.state.sortField}
-                            sortDirection={itemsSearch.state.sortDirection}
+                            sort={itemsSearch.state.sort}
                             page={itemsSearch?.state?.page}
                             rowsPerPage={itemsSearch?.state?.rowsPerPage}
                             sectionApi={sectionApi}
                         /> :
-                    <Stack justifyContent="center"
-                           direction="row">
-                        <Alert severity="info">No Data !</Alert>
-                    </Stack>
+                        <Stack justifyContent="center"
+                               direction="row">
+                            <Alert severity="info">No Data !</Alert>
+                        </Stack>
                 }
-            </CardContent>
-        </Card>
+            </Stack>
     )
 }
 

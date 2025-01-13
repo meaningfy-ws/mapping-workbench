@@ -22,10 +22,10 @@ Then('I get success select', () => {
     cy.window().then(win => sessionProject = win.sessionStorage.getItem('sessionProject'))
 })
 
-Then('I click on test data suites', () => {
+Then('I go to Test Data Suites page', () => {
     cy.intercept('GET', appURLPrefix + 'test_data_suites*').as('get')
-    cy.get('#nav_project_setup').click()
-    cy.get('#nav_test_data_suites').click()
+    cy.get('#source_and_target').click()
+    cy.get('#source_files_tab').click()
 })
 
 Then('I get redirected to test data suites', () => {
@@ -64,7 +64,7 @@ Then('I get redirected to create test data page', () => {
 Then('I enter test data name', () => {
     cy.intercept('POST', appURLPrefix + "test_data_suites").as('create')
     cy.get("input[name=title]").clear().type(test_suite_name)
-    cy.get("button[type=submit]").click()
+    cy.get("button[type=submit]").click('right')
 })
 
 

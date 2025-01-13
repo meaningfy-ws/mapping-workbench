@@ -54,7 +54,7 @@ export const EditForm = (props) => {
                 if (response) {
                     if (itemctx.isNew) {
                         router.push({
-                            pathname: paths.app['ontology'].index,
+                            pathname: paths.app['ontology_terms'].index,
                         });
                     } else if (itemctx.isStateable) {
                         itemctx.setState(response);

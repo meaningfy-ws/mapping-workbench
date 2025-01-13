@@ -6,9 +6,11 @@ from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersS
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
 from mapping_workbench.backend.core.services.request import request_update_data, api_entity_is_found, \
     request_create_data, prepare_search_param, pagination_params
+from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
+from mapping_workbench.backend.mapping_package.services.link import unassign_resources_from_mapping_packages, \
+    ResourceField
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
     TestDataFileResourceUpdateIn, TestDataFileResourceCreateIn
-from mapping_workbench.backend.test_data_suite.services.data import get_mapping_package_id_for_test_data_file_resource
 from mapping_workbench.backend.test_data_suite.services.transform_test_data import transform_test_data_file_resource
 from mapping_workbench.backend.user.models.user import User
 
@@ -33,7 +35,19 @@ async def list_test_data_suites(filters: dict = None, page: int = None, limit: i
 
 async def create_test_data_suite(test_data_suite: TestDataSuite, user: User) -> TestDataSuite:
     test_data_suite.on_create(user=user)
-    return await test_data_suite.create()
+    pkg_ids = test_data_suite.refers_to_mapping_package_ids or []
+    test_data_suite.refers_to_mapping_package_ids = None
+    suite = await test_data_suite.create()
+
+    for pkg_id in pkg_ids:
+        mapping_package = await MappingPackage.get(pkg_id)
+        if mapping_package:
+            if not mapping_package.test_data_suites:
+                mapping_package.test_data_suites = []
+            mapping_package.test_data_suites.append(TestDataSuite.link_from_id(suite.id))
+            await mapping_package.save()
+
+    return suite
 
 
 async def update_test_data_suite(
@@ -54,6 +68,11 @@ async def get_test_data_suite(id: PydanticObjectId) -> TestDataSuite:
 
 
 async def delete_test_data_suite(test_data_suite: TestDataSuite):
+    await unassign_resources_from_mapping_packages(
+        project_id=test_data_suite.project.to_ref().id,
+        resources_ids=[test_data_suite.id],
+        resources_field=ResourceField.TEST_DATA_SUITES
+    )
     return await test_data_suite.delete()
 
 
@@ -91,16 +110,18 @@ async def update_test_data_file_resource(
         test_data_file_resource: TestDataFileResource,
         data: TestDataFileResourceUpdateIn,
         user: User,
-        transform_test_data: bool = False
+        transform_test_data: bool = False,
+        transform_mapping_package_id: PydanticObjectId = None
 ) -> TestDataFileResource:
     update_data = request_update_data(data, user=user)
     test_data_file_resource = await test_data_file_resource.set(update_data)
     if transform_test_data:
-        package_id = await get_mapping_package_id_for_test_data_file_resource(test_data_file_resource)
+        package_id = transform_mapping_package_id
         test_data_file_resource = await transform_test_data_file_resource(
             test_data_file_resource=test_data_file_resource,
             package_id=package_id,
-            user=user
+            user=user,
+            silent_exception=False
         )
 
     return test_data_file_resource

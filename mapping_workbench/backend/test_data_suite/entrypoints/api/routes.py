@@ -29,7 +29,6 @@ from mapping_workbench.backend.test_data_suite.services.api import (
     get_test_data_file_resource,
     delete_test_data_file_resource, update_test_data_file_resource
 )
-from mapping_workbench.backend.test_data_suite.services.data import get_mapping_package_id_for_test_data_file_resource
 from mapping_workbench.backend.test_data_suite.services.import_test_data_suite import \
     import_test_data_suites_from_archive
 from mapping_workbench.backend.test_data_suite.services.link import assign_test_data_suites_to_mapping_packages
@@ -254,16 +253,24 @@ async def route_update_test_data_file_resource(
         user: User = Depends(current_active_user)
 ):
     req_data = await file_resource_data_from_form_request(req)
+
     transform_test_data: bool = False
     if 'transform_test_data' in req_data:
         transform_test_data = req_data['transform_test_data'] == 'true'
         del req_data['transform_test_data']
+    transform_mapping_package_id = None
+    if 'mapping_package_id' in req_data:
+        transform_mapping_package_id = PydanticObjectId(req_data['mapping_package_id']) \
+            if req_data['mapping_package_id'] else None
+        del req_data['mapping_package_id']
+
     data = TestDataFileResourceUpdateIn(**req_data)
     try:
         return await update_test_data_file_resource(
             test_data_file_resource, data,
             user=user,
-            transform_test_data=transform_test_data
+            transform_test_data=transform_test_data,
+            transform_mapping_package_id=transform_mapping_package_id
         )
     except RMLMapperException as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
@@ -345,7 +352,7 @@ async def route_get_test_data_file_resource_content(
     description=f"Transform Test Data using Triple Map",
     name=f"{FILE_RESOURCE_NAME_FOR_ONE}:transform"
 )
-async def route_transform_test_data_file_resource_with_triple_map(
+async def route_transform_test_data_file_resource_with_generic_triple_map(
         generic_triple_map_id: PydanticObjectId,
         test_data_file_resource: TestDataFileResource = Depends(get_test_data_file_resource),
         user: User = Depends(current_active_user)
@@ -354,7 +361,8 @@ async def route_transform_test_data_file_resource_with_triple_map(
         test_data_file_resource = await transform_test_data_file_resource(
             test_data_file_resource=test_data_file_resource,
             mappings=[await get_generic_triple_map_fragment(generic_triple_map_id)],
-            user=user
+            user=user,
+            silent_exception=False
         )
     except RMLMapperException as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
@@ -369,21 +377,23 @@ async def route_transform_test_data_file_resource_with_triple_map(
     description=f"Transform Test Data using Triple Map",
     name=f"{FILE_RESOURCE_NAME_FOR_ONE}:transform"
 )
-async def route_transform_test_data_file_resource_with_triple_map(
+async def route_transform_test_data_file_resource_with_specific_triple_map(
         specific_triple_map_id: PydanticObjectId,
         test_data_file_resource: TestDataFileResource = Depends(get_test_data_file_resource),
         use_this_triple_map: bool = False,
+        mapping_package_id: PydanticObjectId = None,
         user: User = Depends(current_active_user)
 ) -> dict:
     mappings = [await get_specific_triple_map_fragment(specific_triple_map_id)] if use_this_triple_map else None
 
     try:
-        package_id = await get_mapping_package_id_for_test_data_file_resource(test_data_file_resource)
+        package_id = mapping_package_id
         test_data_file_resource = await transform_test_data_file_resource(
             test_data_file_resource=test_data_file_resource,
             package_id=package_id,
             mappings=mappings,
-            user=user
+            user=user,
+            silent_exception=False
         )
     except RMLMapperException as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))

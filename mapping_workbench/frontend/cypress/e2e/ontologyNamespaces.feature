@@ -1,45 +1,43 @@
-Feature: Ontology Namespaces
+Feature: Namespaces
 
-  As a valid user want to interact with Custom Ontology Namespaces
+  As a valid user want to interact with Custom Namespaces
+
   Background:
     Given Session Login
     Then Go Home
+    When I go to Namespaces page
+    Then I get redirected to Namespaces
 
+#  Scenario: Add Namespace
+#    When I click on add Namespace button
+#    Then I get redirected to Namespace create page
+#    Then I enter Namespace name
+#    Then I successfully create Namespace
+#
+#  Scenario: Update Namespace
+#    Then I search for Namespaces
+#    When I open actions menu
+#    Then I click edit Namespace button
+#    Then I get redirected to edit page
+#
+#    When I enter updated Namespace name
+#    Then I get success Namespace update
+#
+#  Scenario: Delete Namespace
+#    Then I search for updated Namespace
+#    When I open actions menu
+#    Then I click delete Namespace button
+#    Then I get success delete
 
-  Scenario: Select Project
-    Then I get redirected to projects list page
-    Then I search for project
+  Scenario: Add Custom Namespace
+    When I click on add Custom Namespace button
+    Then I get redirected to Custom Namespace create page
+    Then I enter Custom Namespace name
+    Then I successfully create Namespace
 
-    When I select project
-    Then I get success select
-    Then I get redirected to projects list page
-
-  Scenario: Add Namespace
-    When I click on Ontology Terms
-    Then I get redirected to Ontology Terms
-
-    When I click on add namespace button
-    Then I get redirected to create page
-    Then I enter name
-    Then I successfully create Ontology Namespace
-
-  Scenario: Update Namespace
-    When I click on Ontology Terms
-    Then I get redirected to Ontology Terms
-
-    Then I search for Ontology Namespaces
-    Then I receive Ontology Namespaces
-    Then I click edit button
-    Then I get redirected to edit page
-
-    When I enter updated name
-    Then I get success update
-
-  Scenario: Delete Ontology
-    When I click on Ontology Terms
-    Then I get redirected to Ontology Terms
-
-    Then I search for updated Ontology Namespaces
-    Then I receive Ontology Namespaces
-    Then I click delete button
+  Scenario: Delete Custom Namespace Ontology
+    Then I search for updated Namespace
+    Then I search for Custom Namespaces
+    When I open actions menu
+    Then I click delete Custom Namespace button
     Then I get success delete

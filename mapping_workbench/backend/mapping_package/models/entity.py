@@ -44,6 +44,7 @@ class MappingPackageIn(BaseProjectResourceEntityInSchema):
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
     eforms_sdk_versions: List[str] = None
+    test_data_suites: Optional[List[Optional[Link[TestDataSuite]]]] = None
     shacl_test_suites: Optional[List[Optional[Link[SHACLTestSuite]]]] = None
     sparql_test_suites: Optional[List[Optional[Link[SPARQLTestSuite]]]] = None
     resource_collections: Optional[List[Optional[Link[ResourceCollection]]]] = None
@@ -71,6 +72,7 @@ class MappingPackageOut(BaseProjectResourceEntityOutSchema):
     # start_date: Optional[datetime] = None
     # end_date: Optional[datetime] = None
     eforms_sdk_versions: List[str] = None
+    test_data_suites: Optional[List[Link[TestDataSuite]]] = None
     shacl_test_suites: Optional[List[Link[SHACLTestSuite]]] = None
     sparql_test_suites: Optional[List[Link[SPARQLTestSuite]]] = None
     resource_collections: Optional[List[Link[ResourceCollection]]] = None
@@ -169,6 +171,7 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
     end_date: Optional[str] = None
     package_type: Optional[PackageType] = DEFAULT_PACKAGE_TYPE
     eforms_sdk_versions: Optional[List[str]] = []
+    test_data_suites: Optional[List[Link[TestDataSuite]]] = None
     shacl_test_suites: Optional[List[Link[SHACLTestSuite]]] = None
     sparql_test_suites: Optional[List[Link[SPARQLTestSuite]]] = None
     resource_collections: Optional[List[Link[ResourceCollection]]] = None
@@ -176,8 +179,9 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
     async def get_conceptual_mapping_rules_states(self) -> List[ConceptualMappingRuleState]:
         conceptual_mapping_rules = await ConceptualMappingRule.find(
             Eq(ConceptualMappingRule.refers_to_mapping_package_ids, self.id),
-            Eq(ConceptualMappingRule.project, self.project.to_ref())
+            Eq(ConceptualMappingRule.project, self.project)
         ).to_list()
+
         conceptual_mapping_rule_states = [
             await conceptual_mapping_rule.get_state() for conceptual_mapping_rule in conceptual_mapping_rules
         ]
@@ -185,7 +189,7 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
 
     async def get_mapping_groups_states(self) -> List[MappingGroupState]:
         mapping_groups = await MappingGroup.find(
-            Eq(MappingGroup.project, self.project.to_ref())
+            Eq(MappingGroup.project, self.project)
         ).to_list()
         mapping_groups_states = [
             await mapping_group.get_state() for mapping_group in mapping_groups
@@ -194,11 +198,20 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
         return mapping_groups_states
 
     async def get_test_data_suites_states(self) -> List[TestDataSuiteState]:
+        test_data_suites_states = []
+        test_data_suites_ids = []
+        if self.test_data_suites:
+            test_data_suites_ids = [test_data_suite.to_ref().id for test_data_suite in self.test_data_suites]
         test_data_suites = await TestDataSuite.find(
-            TestDataSuite.mapping_package_id == self.id,
-            Eq(TestDataSuite.project, self.project.to_ref())
+            In(TestDataSuite.id, test_data_suites_ids),
+            Eq(TestDataSuite.project, self.project)
         ).to_list()
-        test_data_suites_states = [await test_data_suite.get_state() for test_data_suite in test_data_suites]
+
+        if test_data_suites:
+            for test_data_suite in test_data_suites:
+                test_data_suite_state = await test_data_suite.get_state()
+                test_data_suites_states.append(test_data_suite_state)
+
         return test_data_suites_states
 
     async def get_shacl_test_suites_states(self) -> List[SHACLTestSuiteState]:
@@ -208,7 +221,7 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
             shacl_test_suites_ids = [shacl_test_suite.to_ref().id for shacl_test_suite in self.shacl_test_suites]
         shacl_test_suites = await SHACLTestSuite.find(
             In(SHACLTestSuite.id, shacl_test_suites_ids),
-            Eq(SHACLTestSuite.project, self.project.to_ref())
+            Eq(SHACLTestSuite.project, self.project)
         ).to_list()
         if shacl_test_suites:
             for shacl_test_suite in shacl_test_suites:
@@ -227,7 +240,7 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
         sparql_test_suites = await SPARQLTestSuite.find(
             In(SPARQLTestSuite.id, sparql_test_suites_ids),
             NE(SPARQLTestSuite.type, SPARQLQueryValidationType.CM_ASSERTION),
-            Eq(SPARQLTestSuite.project, self.project.to_ref())
+            Eq(SPARQLTestSuite.project, self.project)
         ).to_list()
         if sparql_test_suites:
             for sparql_test_suite in sparql_test_suites:
@@ -253,10 +266,11 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
 
     async def get_triple_map_fragments_states(self) -> List[TripleMapFragmentState]:
         triple_map_fragments: List[TripleMapFragment] = (await GenericTripleMapFragment.find(
-            Eq(GenericTripleMapFragment.project, self.project.to_ref())
+            Eq(GenericTripleMapFragment.refers_to_mapping_package_ids, self.id),
+            Eq(GenericTripleMapFragment.project, self.project)
         ).to_list()) + (await SpecificTripleMapFragment.find(
             SpecificTripleMapFragment.mapping_package_id == self.id,
-            Eq(TestDataSuite.project, self.project.to_ref())
+            Eq(TestDataSuite.project, self.project)
         ).to_list())
 
         return [await triple_map_fragment.get_state() for triple_map_fragment in triple_map_fragments]
@@ -270,7 +284,7 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
             ]
             resource_collections = await ResourceCollection.find(
                 In(ResourceCollection.id, resource_collections_ids),
-                Eq(ResourceCollection.project, self.project.to_ref())
+                Eq(ResourceCollection.project, self.project)
             ).to_list()
             if resource_collections:
                 for resource_collection in resource_collections:
@@ -280,14 +294,14 @@ class MappingPackage(BaseProjectResourceEntity, StatefulObjectABC):
 
     async def get_terms_states(self) -> List[TermState]:
         terms = await Term.find(
-            Eq(Term.project, self.project.to_ref())
+            Eq(Term.project, self.project)
         ).to_list()
         terms_states = [await term.get_state() for term in terms]
         return terms_states
 
     async def get_namespaces_states(self) -> List[NamespaceState]:
         namespaces = await Namespace.find(
-            Eq(Namespace.project, self.project.to_ref())
+            Eq(Namespace.project, self.project)
         ).to_list()
         namespaces_states = [await namespace.get_state() for namespace in namespaces]
         return namespaces_states

@@ -1,88 +1,41 @@
 import {useEffect, useState} from 'react';
+import {saveAs} from 'file-saver';
 
-import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
-import {Upload04 as ImportIcon} from '@untitled-ui/icons-react/build/esm';
-import Link from '@mui/material/Link';
-import Card from '@mui/material/Card';
+import AddIcon from '@mui/icons-material/Add';
+import ClearIcon from '@mui/icons-material/Clear';
+import UploadIcon from '@mui/icons-material/Upload';
+import DownloadIcon from '@mui/icons-material/Download';
+
 import Stack from '@mui/material/Stack';
+import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
-import SvgIcon from '@mui/material/SvgIcon';
+import Dialog from "@mui/material/Dialog";
 import Typography from '@mui/material/Typography';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
+import IconButton from "@mui/material/IconButton";
+import DialogContent from "@mui/material/DialogContent";
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
+import {sessionApi} from "src/api/session";
+import {projectsApi} from 'src/api/projects';
 import {useDialog} from "src/hooks/use-dialog";
 import {Layout as AppLayout} from 'src/layouts/app';
 import {RouterLink} from 'src/components/router-link';
+import useItemsSearch from 'src/hooks/use-items-search';
 import {ListTable} from "src/sections/app/mapping-package/list-table";
-import {ListSearch} from "src/sections/app/mapping-package/list-search";
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
+import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {mappingPackagesApi as sectionApi} from 'src/api/mapping-packages';
+import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {PackageImporter} from 'src/sections/app/mapping-package/package-importer';
 
-const useItemsSearch = () => {
-    const [state, setState] = useState({
-        filters: {
-            name: undefined,
-            category: [],
-            status: [],
-            inStock: undefined
-        },
-        sortDirection: undefined,
-        sortField: '',
-        page: sectionApi.DEFAULT_PAGE,
-        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
-    });
-
-    const handleFiltersChange = filters => {
-        setState(prevState => ({
-            ...prevState,
-            filters,
-            page: 0
-        }));
-    };
-
-    const handleSorterChange = sortField => {
-        setState(prevState => ({
-            ...prevState,
-            sortField,
-            sortDirection: state.sortField === sortField && prevState.sortDirection === -1 ? 1 : -1
-        }))
-    }
-
-    const handlePageChange = (event, page) => {
-        setState(prevState => ({
-            ...prevState,
-            page
-        }));
-    };
-
-    const handleRowsPerPageChange = event => {
-        setState(prevState => ({
-            ...prevState,
-            rowsPerPage: parseInt(event.target.value, 10)
-        }));
-    };
-
-    return {
-        handleFiltersChange,
-        handlePageChange,
-        handleRowsPerPageChange,
-        handleSorterChange,
-        state
-    };
-};
-
-
-const useItemsStore = searchState => {
+const useItemsStore = () => {
     const [state, setState] = useState({
         items: [],
         itemsCount: 0
     });
 
     const handleItemsGet = () => {
-        sectionApi.getItems(searchState)
+        sectionApi.getItems()
             .then(res => setState({
                 items: res.items,
                 itemsCount: res.count
@@ -94,7 +47,7 @@ const useItemsStore = searchState => {
             handleItemsGet();
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState]);
+        []);
 
     return {
         ...state
@@ -103,10 +56,26 @@ const useItemsStore = searchState => {
 
 
 const Page = () => {
-    const itemsSearch = useItemsSearch();
-    const itemsStore = useItemsStore(itemsSearch.state);
+    const itemsStore = useItemsStore();
+    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['title', 'identifier'], {}, {
+        column: 'created_at',
+        sort: 'desc'
+    });
 
     const importDialog = useDialog();
+    const srcExportDialog = useDialog();
+
+    const exportSourceFiles = () => {
+        const toastId = toastLoad(`Exporting Source Files ... `)
+        projectsApi.exportSourceFiles()
+            .then(response => {
+                const filename = `src_${sessionApi.getSessionProject()}.zip`;
+                saveAs(new Blob([response], {type: "application/x-zip-compressed"}), filename);
+                toastSuccess(`Source Files successfully exported.`, toastId)
+            }).catch(err => toastError(`Exporting Source Files failed: ${err.message}.`, toastId))
+
+        srcExportDialog.handleClose();
+    }
 
     return (
         <>
@@ -117,74 +86,52 @@ const Page = () => {
                     justifyContent="space-between"
                     spacing={4}
                 >
-                    <Stack spacing={1}>
-                        <Typography variant="h4">
-                            {sectionApi.SECTION_TITLE}
-                        </Typography>
-                        <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.index}
-                                variant="subtitle2"
-                            >
-                                App
-                            </Link>
-                            <Typography
-                                color="text.secondary"
-                                variant="subtitle2"
-                            >
-                                {sectionApi.SECTION_TITLE}
-                            </Typography>
-                        </Breadcrumbs>
-                    </Stack>
+                    <Paper>
+                        <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                        value={itemsSearch.state.search[0]}/>
+                    </Paper>
                     <Stack
                         alignItems="center"
                         direction="row"
                         spacing={3}
                     >
                         <Button
-                            component={RouterLink}
-                            id="add_package_button"
-                            href={paths.app[sectionApi.section].create}
-                            startIcon={(
-                                <SvgIcon>
-                                    <PlusIcon/>
-                                </SvgIcon>
-                            )}
-                            variant="contained"
+                            onClick={srcExportDialog.handleOpen}
+                            id="src_export_button"
+                            startIcon={<UploadIcon/>}
                         >
-                            Add
+                            Export SRC
                         </Button>
                         <Button
                             onClick={importDialog.handleOpen}
                             id="import_package_button"
-                            startIcon={(
-                                <SvgIcon>
-                                    <ImportIcon/>
-                                </SvgIcon>
-                            )}
-                            variant="contained"
+                            startIcon={<DownloadIcon/>}
                         >
                             Import
+                        </Button>
+                        <Button
+                            component={RouterLink}
+                            id="add_package_button"
+                            href={paths.app[sectionApi.section].create}
+                            startIcon={<AddIcon/>}
+                            variant="contained"
+                        >
+                            Add
                         </Button>
                     </Stack>
 
                 </Stack>
-                <Card>
-                    <ListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
-                    <ListTable
-                        onPageChange={itemsSearch.handlePageChange}
-                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        page={itemsSearch.state.page}
-                        items={itemsStore.items}
-                        count={itemsStore.itemsCount}
-                        onSort={itemsSearch.handleSorterChange}
-                        sort={{direction: itemsSearch.state.sortDirection, column: itemsSearch.state.sortField}}
-                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                        sectionApi={sectionApi}
-                    />
-                </Card>
+                <ListTable
+                    onPageChange={itemsSearch.handlePageChange}
+                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                    page={itemsSearch.state.page}
+                    items={itemsSearch.pagedItems}
+                    count={itemsSearch.count}
+                    onSort={itemsSearch.handleSort}
+                    sort={itemsSearch.state.sort}
+                    rowsPerPage={itemsSearch.state.rowsPerPage}
+                    sectionApi={sectionApi}
+                />
             </Stack>
 
             <PackageImporter
@@ -192,6 +139,52 @@ const Page = () => {
                 open={importDialog.open}
                 sectionApi={sectionApi}
             />
+            <Dialog
+                fullWidth
+                maxWidth="sm"
+                open={srcExportDialog.open}
+                onClose={srcExportDialog.handleClose}
+            >
+                <Stack
+                    alignItems="center"
+                    direction="row"
+                    justifyContent="space-between"
+                    spacing={3}
+                    sx={{
+                        px: 3,
+                        py: 2
+                    }}
+                >
+                    <Typography variant="h6">
+                        Export Source Files
+                    </Typography>
+                    <IconButton
+                        color="inherit"
+                        onClick={srcExportDialog.handleClose}
+                    >
+                        <ClearIcon/>
+                    </IconButton>
+                </Stack>
+                <DialogContent id="drop-zone">
+                    <Stack
+                        alignItems="center"
+                        direction="row"
+                        justifyContent="flex-end"
+                        spacing={2}
+                        sx={{mt: 2}}
+                    >
+                        <Button
+                            id="upload_button"
+                            onClick={exportSourceFiles}
+                            size="small"
+                            type="button"
+                            variant="contained"
+                        >
+                            Export
+                        </Button>
+                    </Stack>
+                </DialogContent>
+            </Dialog>
         </>
     );
 };

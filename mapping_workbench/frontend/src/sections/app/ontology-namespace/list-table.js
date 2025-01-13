@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 
+import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import Switch from "@mui/material/Switch";
 import TableRow from '@mui/material/TableRow';
@@ -9,10 +10,12 @@ import TableHead from '@mui/material/TableHead';
 import Typography from '@mui/material/Typography';
 
 import {Scrollbar} from 'src/components/scrollbar';
+import {MenuActions} from 'src/components/menu-actions';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
+import TableSorterHeader from 'src/sections/components/table-sorter-header';
+import TablePagination from "src/sections/components/table-pagination-pages";
+import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
-import TablePagination from "../../components/table-pagination";
 
 export const ListTable = (props) => {
     const {
@@ -20,6 +23,8 @@ export const ListTable = (props) => {
         items = [],
         onPageChange = () => {
         },
+        sort,
+        onSort = () => {},
         onRowsPerPageChange,
         page = 0,
         rowsPerPage = 0,
@@ -27,48 +32,52 @@ export const ListTable = (props) => {
     } = props;
 
     const handleDeleteAction = (id) => {
-        const toastId= toastLoad("Deleting")
-        const itemctx= new ForListItemAction(id, sectionApi)
+        const toastId = toastLoad("Deleting")
+        const itemctx = new ForListItemAction(id, sectionApi)
         itemctx.api.deleteItem(id)
             .then(res => {
-                if(res)
-                {
+                if (res) {
                     toastSuccess("Deleted", toastId)
-                    onPageChange(0)
-                }
-                else toastError("Error deleting", toastId)
+                    onPageChange('', 0)
+                } else toastError("Error deleting", toastId)
             })
     }
 
+    const SorterHeader = (props) => {
+        const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
+        return (
+            <TableCell>
+                <TableSorterHeader sort={{direction, column: sort.column}}
+                                   onSort={onSort}
+                                   {...props}
+                />
+            </TableCell>
+        )
+    }
+
     return (
-        <div>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-                showFirstButton
-                showLastButton
-            >
+        <TablePagination
+            component="div"
+            count={count}
+            onPageChange={onPageChange}
+            onRowsPerPageChange={onRowsPerPageChange}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+            showFirstButton
+            showLastButton
+        >
+            <Paper>
                 <Scrollbar>
                     <Table sx={{minWidth: 1200}}>
                         <TableHead>
                             <TableRow>
-                                <TableCell width="25%">
-                                    Prefix
-                                </TableCell>
-                                <TableCell>
-                                    URI
-                                </TableCell>
+                                <SorterHeader fieldName='prefix'/>
+                                <SorterHeader fieldName='uri'/>
                                 <TableCell>
                                     Syncable
                                 </TableCell>
-                                <TableCell align="right">
-                                    Actions
-                                </TableCell>
+                                <TableCell align="right"/>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -96,10 +105,12 @@ export const ListTable = (props) => {
                                             />
                                         </TableCell>
                                         <TableCell align="right">
-                                            <ListItemActions
-                                                itemctx={new ForListItemAction(item_id, sectionApi)}
-                                                onDeleteAction={() => handleDeleteAction(item_id)}
-                                            />
+                                            <MenuActions>
+                                                <ListItemActions
+                                                    itemctx={new ForListItemAction(item_id, sectionApi)}
+                                                    onDeleteAction={() => handleDeleteAction(item_id)}
+                                                />
+                                            </MenuActions>
                                         </TableCell>
                                     </TableRow>
                                 );
@@ -107,8 +118,8 @@ export const ListTable = (props) => {
                         </TableBody>
                     </Table>
                 </Scrollbar>
-            </TablePagination>
-        </div>
+            </Paper>
+        </TablePagination>
     );
 };
 

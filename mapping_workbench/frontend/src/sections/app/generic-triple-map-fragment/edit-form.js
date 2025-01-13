@@ -1,43 +1,42 @@
-import * as React from "react";
 import {useCallback, useEffect, useState} from "react";
 import PropTypes from 'prop-types';
 import {useFormik} from 'formik';
 import * as Yup from 'yup';
-import {turtle} from 'codemirror-lang-turtle';
-import {yaml} from '@codemirror/lang-yaml';
+
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import {Box} from "@mui/system";
-import Card from '@mui/material/Card';
+import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
+import Card from '@mui/material/Card';
+import Alert from "@mui/material/Alert";
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import Divider from "@mui/material/Divider";
+import Checkbox from "@mui/material/Checkbox";
 import MenuItem from "@mui/material/MenuItem";
-import {useTheme} from "@mui/material/styles";
 import Grid from '@mui/material/Unstable_Grid2';
 import TextField from "@mui/material/TextField";
 import Accordion from "@mui/material/Accordion";
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 
 
-import Tab from "@mui/material/Tab";
 import {paths} from 'src/paths';
 import {sessionApi} from "src/api/session";
-import {MappingPackageFormSelect} from "../mapping-package/components/mapping-package-form-select";
 import {useRouter} from 'src/hooks/use-router';
 import {RouterLink} from 'src/components/router-link';
 import turtleValidator from "src/utils/turtle-validator";
 import {FormTextField} from "src/components/app/form/text-field";
-import {toastError, toastLoad, toastSuccess, toastWarning} from "src/components/app-toast";
+import CodeMirrorDefault from "src/components/app/form/codeMirrorDefault";
 import {FormCodeReadOnlyArea} from "src/components/app/form/code-read-only-area";
-import Checkbox from "@mui/material/Checkbox";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Alert from "@mui/material/Alert";
-import {AlertTitle} from "@mui/material";
-import CodeMirrorDefault from "../../../components/app/form/codeMirrorDefault";
+import {toastError, toastLoad, toastSuccess, toastWarning} from "src/components/app-toast";
+import {MappingPackageFormSelect} from "../mapping-package/components/mapping-package-form-select";
+import {MappingPackageCheckboxList} from '../mapping-package/components/mapping-package-real-checkbox-list';
+
 
 export const EditForm = (props) => {
     const {itemctx, tree, ...other} = props;
@@ -45,7 +44,6 @@ export const EditForm = (props) => {
     const sectionApi = itemctx.api;
     const item = itemctx.data;
 
-    const theme = useTheme()
     const [currentTab, setCurrentTab] = useState('tabEdit')
 
     const [selectedTree, setSelectedTree] = useState(tree?.[0]?.test_datas?.[0]?.test_data_id)
@@ -59,7 +57,7 @@ export const EditForm = (props) => {
     const initialValues = {
         triple_map_uri: item.triple_map_uri ?? '',
         triple_map_content: item.triple_map_content ?? '',
-        mapping_package_id: item.mapping_package_id ?? '',
+        refers_to_mapping_package_ids: item.refers_to_mapping_package_ids ?? [],
         format: item.format ?? sectionApi.FILE_RESOURCE_DEFAULT_FORMAT ?? '',
     };
 
@@ -76,16 +74,11 @@ export const EditForm = (props) => {
                 .string()
                 .max(255)
                 .required('Format is required'),
-            mapping_package_id:
-                Yup
-                .string()
-                .required('Mapping Package is required'),
         }),
         onSubmit: async (values, helpers) => {
             const toastId = toastLoad("Updating...")
             try {
                 let response;
-                if (!values['mapping_package_id']) values['mapping_package_id'] = null;
                 values['project'] = sessionApi.getSessionProject();
                 if (itemctx.isNew) {
                     response = await sectionApi.createItem(values);
@@ -116,8 +109,6 @@ export const EditForm = (props) => {
         }
     });
 
-    const lng = {TTL: {mode: 'text/turtle', extension: turtle}, YAML: {mode: 'text/yaml', extension: yaml}}
-
     useEffect(() => {
         selectedTree && handleGetXmlContent(selectedTree)
     }, [selectedTree]);
@@ -131,9 +122,10 @@ export const EditForm = (props) => {
     }
 
     const onUpdateAndTransform = (values, helpers) => {
-
         values['project'] = sessionApi.getSessionProject();
-        if (!values['mapping_package_id']) values['mapping_package_id'] = null;
+        const mapping_package_id = values['mapping_package_id'] || null;
+        delete values['mapping_package_id'];
+
         values['id'] = item._id;
         formik.setSubmitting(true)
         const toastId = toastLoad("Updating Content")
@@ -152,7 +144,7 @@ export const EditForm = (props) => {
         sectionApi.updateItem(values)
             .then(res => {
                 toastLoad("Transforming Content", toastId);
-                sectionApi.getTripleMapRdfResultContent(item._id, selectedTree, useThisTripleMap)
+                sectionApi.getTripleMapRdfResultContent(item._id, selectedTree, useThisTripleMap, mapping_package_id)
                     .then(res => {
                         setRdfResultContent(res.rdf_manifestation)
                         setHasRdfResult(true);
@@ -182,7 +174,7 @@ export const EditForm = (props) => {
             .catch(err => setValidation({error: err}))
     }
 
-    const handleTransformUsingThisTripleMap = useCallback((event) => {
+    const handleTransformUsingThisTripleMap = useCallback(event => {
         setUseThisTripleMap(event.target.checked);
     }, []);
 
@@ -235,25 +227,25 @@ export const EditForm = (props) => {
                                     ))}
                                 </TextField>
                             </Grid>
-                            <Grid xs={12}
-                                  md={12}>
-                                <MappingPackageFormSelect
-                                    formik={formik}
-                                    isRequired={sectionApi.isMappingPackageRequired ?? false}
-                                    withDefaultPackage={itemctx.isNew}
-                                />
+                            <Grid xs={12}>
+                                <Card sx={{m: 0, p: 0}}>
+                                    <CardHeader sx={{mt: 0, pt: 0, pb: 0}}
+                                                title="Mapping Packages"/>
+                                    <Box sx={{ml: 2, mt: 2}}>
+                                        <MappingPackageCheckboxList handleUpdate={values => formik.setFieldValue('refers_to_mapping_package_ids',values)}
+                                                                    mappingPackages={formik.values.refers_to_mapping_package_ids}
+                                                                    withDefaultPackage={itemctx.isNew}
+                                        />
+                                    </Box>
+                                </Card>
+                                <Divider/>
                             </Grid>
                             <Grid xs={12}>
                                 <CodeMirrorDefault
-                                    // theme={theme.palette.mode === 'dark' ? githubDark : githubLight}
                                     style={{resize: 'vertical', overflow: 'auto', height: 600}}
                                     value={formik.values.triple_map_content}
                                     lang={formik.values.format}
-                                    // extensions={[lng[formik.values.format].extension()]}
                                     onChange={(value) => formik.setFieldValue('triple_map_content', value)}
-                                    // options={{
-                                    //     mode: lng[formik.values.format].mode,
-                                    // }}
                                 />
                             </Grid>
 
@@ -271,9 +263,7 @@ export const EditForm = (props) => {
                               spacing={2}>
                             <Grid xs={12}>
                                 <FormControlLabel
-                                    sx={{
-                                        width: '100%'
-                                    }}
+                                    sx={{width: '100%'}}
                                     control={
                                         <Checkbox
                                             checked={useThisTripleMap}
@@ -284,7 +274,8 @@ export const EditForm = (props) => {
                                     value=""
                                 />
                             </Grid>
-                            <Grid xs={12}>
+                            <Grid xs={12}
+                                  lg={6}>
                                 <TextField
                                     fullWidth
                                     label="Select Test Data"
@@ -309,9 +300,17 @@ export const EditForm = (props) => {
                                     }
                                 </TextField>
                             </Grid>
-                            <Grid md={12}
+                            <Grid xs={12}
                                   lg={6}>
-                                <Accordion>
+                                <MappingPackageFormSelect
+                                    formik={formik}
+                                    isRequired={false}
+                                    withDefaultPackage={itemctx.isNew}
+                                />
+                            </Grid>
+                            <Grid xs={12}
+                                  lg={6}>
+                                <Accordion sx={{width: '100%'}}>
                                     <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                                         Test Data Content
                                     </AccordionSummary>
@@ -325,14 +324,16 @@ export const EditForm = (props) => {
                                     </AccordionDetails>
                                 </Accordion>
                             </Grid>
-                            <Grid md={12}
+                            <Grid xs={12}
                                   lg={6}>
-                                <Grid>
-                                    <Accordion disabled={!rdfResultContent} expanded={!!rdfResultContent}>
+                                <Stack>
+                                    <Accordion disabled={!rdfResultContent}
+                                               expanded={!!rdfResultContent}
+                                    >
                                         <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                                             RDF Result
                                         </AccordionSummary>
-                                        <AccordionDetails sx={{resize: 'vertical'}}>
+                                        <AccordionDetails>
                                             <FormCodeReadOnlyArea
                                                 disabled
                                                 name="triple_map_content"
@@ -343,13 +344,12 @@ export const EditForm = (props) => {
                                             />
                                         </AccordionDetails>
                                     </Accordion>
-                                </Grid>
-                                {hasRdfResult && !rdfResultContent && <>
-                                    <Alert severity="warning" sx={{mt: 2}}>
-                                        <AlertTitle></AlertTitle>
-                                        Our service could not generate the RDF by using the provided resources.
-                                    </Alert>
-                                </>}
+                                    {hasRdfResult && !rdfResultContent &&
+                                        <Alert severity="warning"
+                                               sx={{mt: 2}}>
+                                            Our service could not generate the RDF by using the provided resources.
+                                        </Alert>}
+                                </Stack>
                             </Grid>
                         </Grid>
                     </CardContent>

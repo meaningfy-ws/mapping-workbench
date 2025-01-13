@@ -11,8 +11,8 @@ from mapping_workbench.backend.ontology.adapters.namespace_handler import Namesp
 from mapping_workbench.backend.ontology.models.namespace import Namespace
 from mapping_workbench.backend.ontology.models.term import Term, TermValidityResponse, TermType
 from mapping_workbench.backend.ontology.services.namespaces import discover_and_save_prefix_namespace, get_ns_handler, \
-    get_prefixes_definitions, get_custom_prefixes_definitions, get_project_ns_definitions, get_namespace_by_uri, \
-    get_default_prefixes_definitions
+    get_custom_prefixes_definitions, get_project_ns_definitions, get_namespace_by_uri, \
+    get_default_prefixes_definitions, get_prefixes_definitions
 from mapping_workbench.backend.ontology_suite.adapters.ontology_file_beanie_repository import \
     OntologyFileResourceBeanieRepository
 from mapping_workbench.backend.ontology_suite.models.ontology_file_resource import OntologyFileResource
@@ -131,9 +131,11 @@ def get_terms_from_graph_by_query(query: str, graph: rdflib.Graph) -> List[str]:
     return [element[0] for element in result]
 
 
-async def discover_and_save_terms(project_id: PydanticObjectId,
-                                  user: User = None,
-                                  ontology_sources: List[OntologyFileResource] = None):
+async def discover_and_save_terms(
+        project_id: PydanticObjectId,
+        user: User = None,
+        ontology_sources: List[OntologyFileResource] = None
+):
     if not ontology_sources:
         ontology_sources_repo = OntologyFileResourceBeanieRepository()
         ontology_sources = await ontology_sources_repo.get_all(project_id=project_id)

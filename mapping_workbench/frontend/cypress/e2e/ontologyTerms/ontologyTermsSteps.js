@@ -28,10 +28,10 @@ Then('I get redirected to Ontology Terms', () => {
     cy.wait('@get').its('response.statusCode').should('eq', 200)
 })
 
-Then('I click on Ontology Terms', () => {
+Then('I go to Ontology Terms page', () => {
     cy.intercept('GET', appURLPrefix + 'ontology/terms*').as('get')
-    cy.get('#nav_project_setup').click()
-    cy.get('#nav_ontology_terms').click()
+    cy.get('#source_and_target').click()
+    cy.get('#ontology_terms_tab').click()
 })
 
 When('I click on discover button', () => {

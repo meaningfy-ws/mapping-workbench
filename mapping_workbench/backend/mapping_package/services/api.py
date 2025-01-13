@@ -13,8 +13,8 @@ from mapping_workbench.backend.core.services.request import request_update_data,
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageCreateIn, \
     MappingPackageUpdateIn, MappingPackageOut, MappingPackageStateGate
 from mapping_workbench.backend.state_manager.services.object_state_manager import delete_object_state
-from mapping_workbench.backend.test_data_suite.models.entity import TestDataFileResource, TestDataSuite
-from mapping_workbench.backend.triple_map_fragment.models.entity import SpecificTripleMapFragment
+from mapping_workbench.backend.triple_map_fragment.models.entity import SpecificTripleMapFragment, \
+    GenericTripleMapFragment
 from mapping_workbench.backend.user.models.user import User
 
 
@@ -103,22 +103,16 @@ async def remove_mapping_package_resources(mapping_package: MappingPackage):
     for resource_type in resources_to_delete:
         await delete_mapping_package_resource_by_type(resource_type, project_link, package_id)
 
-    test_data_suites = await TestDataSuite.find(
-        TestDataSuite.mapping_package_id == package_id,
-        TestDataSuite.project == project_link
-    ).to_list()
-    if test_data_suites:
-        for test_data_suite in test_data_suites:
-            await TestDataFileResource.find(
-                TestDataFileResource.test_data_suite == TestDataSuite.link_from_id(test_data_suite.id),
-                TestDataFileResource.project == project_link
-            ).delete()
-            await test_data_suite.delete()
-
     await ConceptualMappingRule.find(
         ConceptualMappingRule.project == project_link
     ).update_many(
         Pull({ConceptualMappingRule.refers_to_mapping_package_ids: package_id})
+    )
+
+    await GenericTripleMapFragment.find(
+        GenericTripleMapFragment.project == project_link
+    ).update_many(
+        Pull({GenericTripleMapFragment.refers_to_mapping_package_ids: package_id})
     )
 
 

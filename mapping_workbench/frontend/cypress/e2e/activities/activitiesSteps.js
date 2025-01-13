@@ -90,7 +90,7 @@ Then('I get success transform', () => {
 })
 
 When('I go to Activities page', () => {
-    cy.get('#nav_activities').click()
+    cy.get('#nav_process_monitor').click()
 })
 
 

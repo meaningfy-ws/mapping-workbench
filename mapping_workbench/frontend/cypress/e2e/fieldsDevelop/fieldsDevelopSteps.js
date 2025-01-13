@@ -19,8 +19,8 @@ Given('Session Login', () => {
 When('I click on Fields And Nodes', () => {
     cy.intercept('GET', appURLPrefix + 'test_data_suites/file_resources_struct_tree*',).as('getTree')
     cy.intercept('GET', appURLPrefix + 'fields_registry/elements*',).as('getElements')
-    cy.get('#nav_fields_\\&_nodes').click()
-    cy.get("#nav_develop").click()
+    cy.get('#elements_definition').click()
+    cy.get("#elements_define_tab").click()
 })
 
 

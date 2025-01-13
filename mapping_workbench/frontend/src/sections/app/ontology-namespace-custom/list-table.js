@@ -1,24 +1,29 @@
 import PropTypes from 'prop-types';
+
+import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
+import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableSortLabel from '@mui/material/TableSortLabel';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import Tooltip from "@mui/material/Tooltip";
 
 import {Scrollbar} from 'src/components/scrollbar';
+import TablePagination from 'src/sections/components/table-pagination-pages';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
+import TableSorterHeader from 'src/sections/components/table-sorter-header';
+import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
+import {MenuActions} from '../../../components/menu-actions';
 
 export const ListTable = (props) => {
     const {
         count = 0,
         items = [],
         onPageChange = () => {
+        },
+        sort,
+        onSort = () => {
         },
         onRowsPerPageChange,
         page = 0,
@@ -27,61 +32,55 @@ export const ListTable = (props) => {
     } = props;
 
     const handleDeleteAction = (id) => {
-        const toastId= toastLoad("Deleting")
-        const itemctx= new ForListItemAction(id, sectionApi)
+        const toastId = toastLoad("Deleting")
+        const itemctx = new ForListItemAction(id, sectionApi)
         itemctx.api.deleteItem(id)
             .then(res => {
-                if(res)
-                {
+                if (res) {
                     toastSuccess("Deleted", toastId)
                     onPageChange(0)
-                }
-                else toastError("Error deleting", toastId)
+                } else toastError("Error deleting", toastId)
             })
     }
 
+    const SorterHeader = (props) => {
+        const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
+        return (
+            <TableCell>
+                <TableSorterHeader sort={{direction, column: sort.column}}
+                                   onSort={onSort}
+                                   {...props}
+                />
+            </TableCell>
+        )
+    }
 
     return (
-        <div>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-            />
-            <Scrollbar>
-                <Table sx={{minWidth: 1200}}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell width="25%">
-                                <Tooltip
-                                    enterDelay={300}
-                                    title="Sort"
-                                >
-                                    <TableSortLabel
-                                        direction="asc"
-                                    >
-                                        Prefix
-                                    </TableSortLabel>
-                                </Tooltip>
-                            </TableCell>
-                            <TableCell>
-                                URI
-                            </TableCell>
-                            <TableCell align="right">
-                                Actions
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {items.map((item) => {
-                            const item_id = item._id;
-                            const statusColor = item.status === 'published' ? 'success' : 'info';
+        <TablePagination component="div"
+                         count={count}
+                         onPageChange={onPageChange}
+                         onRowsPerPageChange={onRowsPerPageChange}
+                         page={page}
+                         rowsPerPage={rowsPerPage}
+                         rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+                         showFirstButton
+                         showLastButton
+        >
+            <Paper>
+                <Scrollbar>
+                    <Table sx={{minWidth: 1200}}>
+                        <TableHead>
+                            <TableRow>
+                                <SorterHeader fieldName='prefix'/>
+                                <SorterHeader fieldName='uri'/>
+                                <TableCell align="right"/>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {items.map((item) => {
+                                const item_id = item._id;
 
-                            return (
+                                return (
                                     <TableRow hover
                                               key={item_id}
                                     >
@@ -94,27 +93,21 @@ export const ListTable = (props) => {
                                             {item.uri}
                                         </TableCell>
                                         <TableCell align="right">
-                                            <ListItemActions
-                                                itemctx={new ForListItemAction(item_id, sectionApi)}
-                                                onDeleteAction={() => handleDeleteAction(item_id)}
-                                            />
+                                            <MenuActions>
+                                                <ListItemActions
+                                                    itemctx={new ForListItemAction(item_id, sectionApi)}
+                                                    onDeleteAction={() => handleDeleteAction(item_id)}
+                                                />
+                                            </MenuActions>
                                         </TableCell>
                                     </TableRow>
-                            );
-                        })}
-                    </TableBody>
-                </Table>
-            </Scrollbar>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-            />
-        </div>
+                                );
+                            })}
+                        </TableBody>
+                    </Table>
+                </Scrollbar>
+            </Paper>
+        </TablePagination>
     );
 };
 

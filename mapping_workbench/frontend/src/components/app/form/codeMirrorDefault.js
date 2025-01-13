@@ -50,7 +50,7 @@ const CodeMirrorDefault = ({value, onChange, lang, label, disabled, style}) => {
                 <CodeMirror
                     theme={theme.palette.mode === 'dark' ? githubDark : githubLight}
                     style={style}
-                    enabled={!disabled}
+                    editable={!disabled}
                     value={value}
                     extensions={[languageSwitch(lang)()]}
                     onChange={onChange}/>

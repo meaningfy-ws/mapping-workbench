@@ -16,7 +16,8 @@ const Resources = ({item}) => {
                 <FileResourceCollectionsCard
                     collectionApi={testDataSuitesApi}
                     filters={{
-                        mapping_package_id: item._id
+                        ids: ((item.test_data_suites || []).length > 0
+                            && item.test_data_suites.map(x => x.id)) || ''
                     }}
                 />
                 <Divider sx={{m: 3}}/>

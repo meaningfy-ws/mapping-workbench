@@ -39,8 +39,7 @@ const Page = () => {
         validationSchema: Yup.object({
             github_repository_url: Yup
                 .string()
-                .max(1024)
-                .required('GitHub Repo URL is required'),
+                .max(1024),
             branch_or_tag_name: Yup
                 .string()
                 .max(20)
@@ -50,13 +49,13 @@ const Page = () => {
             setIsRunning(true)
             values['project_id'] = sessionApi.getSessionProject();
             const toastId = toastLoad(`Importing eForm Fields ... `)
-            sectionApi.importEFormsFromGithub(values)
+            sectionApi.importEFormsXSD(values)
                 .then((res) => {
                     helpers.setStatus({success: true});
                     toastSuccess(`${res.task_name} successfully started.`, toastId)
-                    router.push({
-                        pathname: paths.app.fields_and_nodes.overview.index
-                    })
+                    // router.push({
+                    //     pathname: paths.app.fields_and_nodes.overview.index
+                    // })
                 })
                 .catch(err => {
                     console.log(err)
@@ -69,71 +68,72 @@ const Page = () => {
     });
 
     return (
-         <Stack spacing={4}>
-                    <div>
-                        <Link
-                            color="text.primary"
-                            component={RouterLink}
-                            href={paths.app.fields_and_nodes.overview.index}
-                            sx={{
-                                alignItems: 'center',
-                                display: 'inline-flex'
-                            }}
-                            underline="hover"
-                        >
-                            <SvgIcon sx={{mr: 1}}>
-                                <ArrowLeftIcon/>
-                            </SvgIcon>
-                            <Typography variant="subtitle2">
-                                {sectionApi.SECTION_TITLE}
-                            </Typography>
-                        </Link>
-                    </div>
-        <form onSubmit={formik.handleSubmit}>
-            <Card>
-                <CardHeader title="Import eForms SDK from GitHub"/>
-                <CardContent sx={{pt: 0}}>
-                    <Grid container
-                          spacing={3}>
-                        <Grid xs={12}
-                              md={12}>
-                            <FormTextField formik={formik}
-                                           name="github_repository_url"
-                                           label="GitHub Repository URL"
-                                           required/>
-                        </Grid>
-                        <Grid xs={12}
-                              md={12}>
-                            <FormTextField formik={formik}
-                                           name="branch_or_tag_name"
-                                           label="Branch or Tag name"
-                                           required/>
-                        </Grid>
-                    </Grid>
-                </CardContent>
-            </Card>
-            <Card sx={{mt: 3}}>
-                <Stack
-                    direction={{
-                        xs: 'column',
-                        sm: 'row'
+        <Stack spacing={4}>
+            <div>
+                <Link
+                    color="text.primary"
+                    component={RouterLink}
+                    href={paths.app.fields_and_nodes.overview.index}
+                    sx={{
+                        alignItems: 'center',
+                        display: 'inline-flex'
                     }}
-                    flexWrap="wrap"
-                    spacing={3}
-                    sx={{p: 3}}
+                    underline="hover"
                 >
-                    <Button
-                        id='import'
-                        disabled={isRunning}
-                        type="submit"
-                        variant="contained"
+                    <SvgIcon sx={{mr: 1}}>
+                        <ArrowLeftIcon/>
+                    </SvgIcon>
+                    <Typography variant="subtitle2">
+                        {sectionApi.SECTION_TITLE}
+                    </Typography>
+                </Link>
+            </div>
+            <form onSubmit={formik.handleSubmit}>
+                <Card>
+                    <CardHeader title="Import eForms XSD"/>
+                    <CardContent sx={{pt: 0}}>
+                        <Grid container
+                              spacing={3}>
+                            <Grid xs={12}
+                                  md={12}>
+                                <FormTextField formik={formik}
+                                               name="branch_or_tag_name"
+                                               label="Version(s)"
+                                               helperText="separated by comma (,)"
+                                               required/>
+                            </Grid>
+                            <Grid xs={12}
+                                  md={12}>
+                                <FormTextField formik={formik}
+                                               name="github_repository_url"
+                                               label="GitHub Repository URL"
+                                />
+                            </Grid>
+                        </Grid>
+                    </CardContent>
+                </Card>
+                <Card sx={{mt: 3}}>
+                    <Stack
+                        direction={{
+                            xs: 'column',
+                            sm: 'row'
+                        }}
+                        flexWrap="wrap"
+                        spacing={3}
+                        sx={{p: 3}}
                     >
-                        Import
-                    </Button>
-                </Stack>
-            </Card>
-        </form>
-         </Stack>
+                        <Button
+                            id='import'
+                            disabled={isRunning}
+                            type="submit"
+                            variant="contained"
+                        >
+                            Import
+                        </Button>
+                    </Stack>
+                </Card>
+            </form>
+        </Stack>
     );
 };
 

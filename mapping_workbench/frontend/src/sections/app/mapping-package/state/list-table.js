@@ -1,25 +1,27 @@
 import {useState} from 'react';
 import PropTypes from 'prop-types';
 
+import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
+
 import Table from '@mui/material/Table';
+import Paper from '@mui/material/Paper';
+import Stack from "@mui/material/Stack";
+import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableSortLabel from '@mui/material/TableSortLabel';
 import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import Tooltip from "@mui/material/Tooltip";
-import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
 
 import {paths} from "src/paths";
 import {Scrollbar} from 'src/components/scrollbar';
+import timeTransformer from "src/utils/time-transformer";
+import {useGlobalState} from "src/hooks/use-global-state";
+import exportPackage from "src/utils/export-mapping-package";
+import {MenuActionButton, MenuActions} from 'src/components/menu-actions';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
+import TableSorterHeader from 'src/sections/components/table-sorter-header';
+import TablePagination from "src/sections/components/table-pagination-pages";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import exportPackage from "../../../../utils/export-mapping-package";
-import TablePagination from "../../../components/table-pagination";
-import timeTransformer from "../../../../utils/time-transformer";
-import {useGlobalState} from "../../../../hooks/use-global-state";
 
 export const ListTable = (props) => {
     const {
@@ -30,8 +32,7 @@ export const ListTable = (props) => {
         onPageChange,
         rowsPerPage = 0,
         onRowsPerPageChange,
-        sortField,
-        sortDirection,
+        sort,
         onSort,
         sectionApi
     } = props;
@@ -42,17 +43,16 @@ export const ListTable = (props) => {
         return exportPackage(sectionApi, id, setIsExporting, item)
     }
 
-    const SorterHeader = ({fieldName, title}) => {
-        return <Tooltip enterDelay={300}
-                        title="Sort"
-        >
-            <TableSortLabel
-                active={sortField === fieldName}
-                direction={sortField === fieldName && sortDirection === 1 ? "asc" : "desc"}
-                onClick={() => onSort(fieldName)}>
-                {title ?? fieldName}
-            </TableSortLabel>
-        </Tooltip>
+    const SorterHeader = (props) => {
+        const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
+        return (
+            <TableCell>
+                <TableSorterHeader sort={{direction, column: sort.column}}
+                                   onSort={onSort}
+                                   {...props}
+                />
+            </TableCell>
+        )
     }
 
     return (
@@ -67,73 +67,70 @@ export const ListTable = (props) => {
             showFirstButton
             showLastButton
         >
-            <Scrollbar>
-                <Table sx={{minWidth: 1200}}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell width="25%">
-                                <SorterHeader fieldName="title"/>
-                            </TableCell>
-                            <TableCell>
+            <Paper>
+                <Scrollbar>
+                    <Table sx={{minWidth: 1200}}>
+                        <TableHead>
+                            <TableRow>
+                                <SorterHeader width="25%"
+                                              fieldName="title"/>
                                 <SorterHeader fieldName="description"/>
-                            </TableCell>
-                            <TableCell>
                                 <SorterHeader fieldName="mapping_version"
                                               title="Version"/>
-                            </TableCell>
-                            <TableCell align="left">
-                                <SorterHeader fieldName="created_at"
+                                <SorterHeader align="left"
+                                              fieldName="created_at"
                                               title="Created"/>
-                            </TableCell>
-                            <TableCell align="center">
-                                Actions
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {items?.map(item => {
-                            const item_id = item._id;
-                            return (
-                                <TableRow key={item_id}>
-                                    <TableCell width="25%">
-                                        <Typography variant="subtitle3">
-                                            {item.title}
-                                        </Typography>
-                                    </TableCell>
-                                    <TableCell>
-                                        {item.description}
-                                    </TableCell>
-                                    <TableCell>
-                                        {item.mapping_version}
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        {timeTransformer(item.created_at, timeSetting)}
-                                    </TableCell>
-                                    <TableCell align="right">
-                                        <Stack
-                                            alignItems="center"
-                                            direction="row"
-                                        >
-                                            <ListItemActions
-                                                itemctx={new ForListItemAction(item_id, sectionApi)}
-                                                pathnames={{
-                                                    view: () => paths.app[sectionApi.section].states.view(id,item_id),
-                                                }}
-                                            />
-                                            <Button
-                                                onClick={() => handleExport(item)}
-                                                disabled={isExporting}>
-                                                {isExporting ? "Exporting..." : "Export"}
-                                            </Button>
-                                        </Stack>
-                                    </TableCell>
-                                </TableRow>
-
-                            );
-                        })}
-                    </TableBody>
-                </Table>
-            </Scrollbar>
+                                <TableCell align="center">
+                                    Actions
+                                </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {items?.map(item => {
+                                const item_id = item._id;
+                                return (
+                                    <TableRow key={item_id}>
+                                        <TableCell width="25%">
+                                            <Typography variant="subtitle3">
+                                                {item.title}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell>
+                                            {item.description}
+                                        </TableCell>
+                                        <TableCell>
+                                            {item.mapping_version}
+                                        </TableCell>
+                                        <TableCell align="left">
+                                            {timeTransformer(item.created_at, timeSetting)}
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            <Stack
+                                                alignItems="center"
+                                                direction="row"
+                                            >
+                                                <MenuActions>
+                                                    <ListItemActions
+                                                        itemctx={new ForListItemAction(item_id, sectionApi)}
+                                                        pathnames={{
+                                                            view: () => paths.app[sectionApi.section].states.view(id, item_id),
+                                                        }}
+                                                    />
+                                                    <MenuActionButton
+                                                        onClick={() => handleExport(item)}
+                                                        icon={<FileUploadOutlinedIcon/>}
+                                                        disabled={isExporting}
+                                                        title={isExporting ? "Exporting..." : "Export"}/>
+                                                </MenuActions>
+                                            </Stack>
+                                        </TableCell>
+                                    </TableRow>
+                                );
+                            })}
+                        </TableBody>
+                    </Table>
+                </Scrollbar>
+            </Paper>
         </TablePagination>
     );
 };

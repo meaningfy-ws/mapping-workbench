@@ -70,6 +70,12 @@ class ConceptualMappingRulesApi extends SectionApi {
         }
     }
 
+    async generateSHACL(request = {}) {
+        const endpoint = this.paths['generate_shacl'];
+        request['project_id'] = sessionApi.getSessionProject();
+        return appApi.post(endpoint, request)
+    }
+
     async getCMStatuses() {
         let endpoint = this.paths['statuses'];
         let params = {}

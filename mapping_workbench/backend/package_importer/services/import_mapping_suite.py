@@ -16,7 +16,10 @@ from mapping_workbench.backend.package_importer.services.import_mono_eforms_mapp
 from mapping_workbench.backend.package_importer.services.import_mono_standard_mapping_suite import \
     import_standard_mapping_suite_from_file_system
 from mapping_workbench.backend.package_processor.services.mapping_package_processor import process_mapping_package
+from mapping_workbench.backend.package_processor.services.mapping_package_structure_validator import \
+    MappingPackageStructureValidator
 from mapping_workbench.backend.project.models.entity import Project
+from mapping_workbench.backend.project.services.data import remove_project_orphan_shareable_resources
 from mapping_workbench.backend.tasks.models.task_response import TaskResponse, TaskResultData
 from mapping_workbench.backend.user.models.user import User
 
@@ -28,6 +31,9 @@ async def import_mapping_package(
         package_type: PackageType, user: User = None,
         task_response: TaskResponse = None
 ) -> ImportedMappingSuiteResponse:
+
+    MappingPackageStructureValidator(mapping_package_dir_path).validate()
+
     if package_type == PackageType.STANDARD:
         monolith_mapping_suite = import_standard_mapping_suite_from_file_system(mapping_package_dir_path)
     else:  # package_type == PackageType.EFORMS:
@@ -38,9 +44,10 @@ async def import_mapping_package(
     )
     package: MappingPackage = await importer.import_from_mono_mapping_suite(monolith_mapping_suite)
 
-    task_response.update_result(TaskResultData(
-        warnings=importer.warnings
-    ))
+    if task_response:
+        task_response.update_result(TaskResultData(
+            warnings=importer.warnings
+        ))
 
     return ImportedMappingSuiteResponse(
         mapping_package=package
@@ -49,12 +56,13 @@ async def import_mapping_package(
 
 async def import_and_process_mapping_package_from_archive(
         file_content: bytes, project: Project, package_type: PackageType,
+        cleanup_project: bool = False,
         user: User = None,
         task_response: TaskResponse = None
 ) -> ImportedMappingSuiteResponse:
     if not task_response:
         task_response = TaskResponse()
-    result = await import_mapping_package_from_archive(file_content, project, package_type, user, task_response)
+    result = await import_mapping_package_from_archive(file_content, project, package_type, cleanup_project, user, task_response)
 
     await process_mapping_package(
         package_id=result.mapping_package.id,
@@ -66,7 +74,8 @@ async def import_and_process_mapping_package_from_archive(
 
 
 async def import_mapping_package_from_archive(
-        file_content: bytes, project: Project, package_type: PackageType, user: User = None,
+        file_content: bytes, project: Project, package_type: PackageType,
+        cleanup_project: bool = False, user: User = None,
         task_response: TaskResponse = None
 ) -> ImportedMappingSuiteResponse:
     if not task_response:
@@ -83,6 +92,9 @@ async def import_mapping_package_from_archive(
         raise InvalidResourceException(str(error))
 
     result = await import_mapping_package(dir_contents[0], project, package_type, user, task_response)
+
+    if cleanup_project:
+        await remove_project_orphan_shareable_resources(project.id)
 
     return result
 

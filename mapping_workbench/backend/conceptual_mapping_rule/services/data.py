@@ -1,11 +1,13 @@
 from typing import List
 
 from beanie import PydanticObjectId
+from beanie.odm.operators.find.comparison import Eq
 
 from mapping_workbench.backend.conceptual_mapping_rule.adapters.cm_rule_beanie_repository import CMRuleBeanieRepository
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule, \
-    ConceptualMappingRuleCommentOut
+    ConceptualMappingRuleCommentOut, ConceptualMappingRuleData
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
+from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.user.models.user import UserRef
 
@@ -19,6 +21,49 @@ async def get_conceptual_mapping_rules_for_project(project_id: PydanticObjectId)
     ).to_list()
 
     return items
+
+
+async def get_conceptual_mapping_rules_for_project_and_package(
+        project_id: PydanticObjectId,
+        mapping_package_id: PydanticObjectId
+) -> \
+        List[ConceptualMappingRule]:
+    items: List[ConceptualMappingRule] = await ConceptualMappingRule.find(
+        ConceptualMappingRule.project == Project.link_from_id(project_id),
+        Eq(ConceptualMappingRule.refers_to_mapping_package_ids, mapping_package_id)
+    ).to_list()
+
+    return items
+
+
+async def get_conceptual_mapping_rules_with_data_for_project_and_package(
+        project_id: PydanticObjectId,
+        mapping_package: MappingPackage = None
+) -> \
+        List[ConceptualMappingRuleData]:
+
+    items: List[ConceptualMappingRule] = await (
+        get_conceptual_mapping_rules_for_project_and_package(project_id, mapping_package.id)
+        if mapping_package else get_conceptual_mapping_rules_for_project(project_id)
+    )
+    items_data: List[ConceptualMappingRuleData] = []
+    item_data: ConceptualMappingRuleData
+
+    for item in items:
+        item_data = ConceptualMappingRuleData(**item.dict())
+
+        source_structural_element = await item.source_structural_element.fetch()
+        item_data.source_structural_element = source_structural_element \
+            if isinstance(source_structural_element, StructuralElement) else None
+
+        mapping_groups_data = []
+        if item.mapping_groups:
+            mapping_groups_data = [await mapping_group.fetch() for mapping_group in item.mapping_groups]
+        item_data.mapping_groups = mapping_groups_data
+
+        items_data.append(item_data)
+
+    return items_data
 
 
 async def get_conceptual_mapping_rule_by_key(

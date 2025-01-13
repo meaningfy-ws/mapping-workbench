@@ -15,7 +15,7 @@ Feature: Mapping Packages
     Then I click on upload button
     Then I get success upload
 
-  Scenario: View Pacakges
+  Scenario: View Packages
     Then I receive Mapping Packages
     When I expand first package details
 
@@ -26,9 +26,9 @@ Feature: Mapping Packages
     Then I click on submit button
     Then I get success create
 
-
   Scenario: Update Package
     Then I search for Mapping Package
+    When I open actions menu
     Then I edit Mapping Package
     Then I update name
     Then I click on submit button
@@ -36,6 +36,7 @@ Feature: Mapping Packages
 
   Scenario: Delete Package
     Then I search for updated Mapping Package
+    When I open actions menu
     When I delete Mapping Package
     Then I click yes
     Then I get success delete

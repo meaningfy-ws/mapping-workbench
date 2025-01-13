@@ -35,10 +35,10 @@ import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {genericTripleMapFragmentsApi} from "src/api/triple-map-fragments/generic";
 import {sparqlTestFileResourcesApi} from "src/api/sparql-test-suites/file-resources";
 import {ListSelectorSelect as ResourceListSelector} from "src/components/app/list-selector/select";
+import {MappingPackageCheckboxList} from '../mapping-package/components/mapping-package-real-checkbox-list';
 
-import {MappingPackageCheckboxList} from "src/sections/app/mapping-package/components/mapping-package-checkbox-list";
 import {TermValidityInfo} from "./term-validity";
-import {FormCodeTextArea} from "../../../components/app/form/code-text-area";
+import {FormCodeTextArea} from "src/components/app/form/code-text-area";
 import 'prismjs/components/prism-xquery';
 
 
@@ -197,7 +197,6 @@ export const EditForm = (props) => {
             priority: COMMENT_PRIORITY.NORMAL
         }
 
-
         const initialValues = {
             source_structural_element: item.source_structural_element?.id ?? '',
             xpath_condition: item.xpath_condition ?? '',
@@ -329,7 +328,6 @@ export const EditForm = (props) => {
             }
         }
 
-
         if (isProjectDataReady >= 3) return <CircularProgress/>;
         return (
             <form onSubmit={formik.handleSubmit}
@@ -401,7 +399,7 @@ export const EditForm = (props) => {
                                     <TermValidityInfo key={'target' + i}
                                                       item={item}/>
                                 )}
-                                {targetClassPathTermsValidityInfo.length > 0 && <Divider/>}
+                                {!!targetClassPathTermsValidityInfo.length && <Divider/>}
                             </Grid>
                             <Grid xs={12}
                                   md={12}>
@@ -418,9 +416,8 @@ export const EditForm = (props) => {
                                     disableCloseOnSelect={false}
                                     includeInputInList={false}
                                     onChange={
-                                        (event, newValue) => onTermsInputChange(
-                                            event, newValue, formik, "target_property_path"
-                                        )
+                                        (event, newValue) =>
+                                            onTermsInputChange(event, newValue, formik, "target_property_path")
                                     }
                                     inputValue={formik.values.target_property_path}
                                     renderInput={(params) => (
@@ -448,7 +445,7 @@ export const EditForm = (props) => {
                                         key={'target' + i}
                                         item={item}/>
                                 )}
-                                {targetPropertyPathTermsValidityInfo.length > 0 && <Divider/>}
+                                {!!targetPropertyPathTermsValidityInfo.length && <Divider/>}
                             </Grid>
                         </Grid>
                     </CardContent>
@@ -466,6 +463,7 @@ export const EditForm = (props) => {
                                         label="Structural Element"
                                         onChange={handleSourceStructuralElementSelect}
                                         select
+                                        required={true}
                                         value={formik.values.source_structural_element}
                                     >
                                         <MenuItem value={null}>&nbsp;</MenuItem>
@@ -525,6 +523,7 @@ export const EditForm = (props) => {
                             <Grid xs={12}
                                   md={12}>
                                 <MappingPackageCheckboxList
+                                    handleUpdate={values => formik.setFieldValue('refers_to_mapping_package_ids',values)}
                                     mappingPackages={formik.values.refers_to_mapping_package_ids}
                                     withDefaultPackage={itemctx.isNew}
                                 />
@@ -675,17 +674,15 @@ export const EditForm = (props) => {
                         </Typography>
                     </CardContent>
                     <CardContent sx={{pt: 0}}>
-                        {showEditorialNotes && <>
-                            {formik.values.editorial_notes.map(
-                                (editorial_note, idx) => <RuleComment
-                                    key={idx}
-                                    idx={idx}
-                                    formik={formik}
-                                    fieldName="editorial_notes"
-                                    handleDelete={handleDeleteComment}
-                                />
-                            )}
-                        </>}
+                        {showEditorialNotes && formik.values.editorial_notes.map((editorial_note, idx) =>
+                            <RuleComment
+                                key={idx}
+                                idx={idx}
+                                formik={formik}
+                                fieldName="editorial_notes"
+                                handleDelete={handleDeleteComment}
+                            />
+                        )}
                         <Divider sx={{py: 1}}/>
                         <Grid xs={12}
                               md={12}
@@ -785,17 +782,15 @@ export const EditForm = (props) => {
                         </Typography>
                     </CardContent>
                     <CardContent sx={{pt: 0}}>
-                        {showFeedbackNotes && <>
-                            {formik.values.feedback_notes.map(
-                                (feedback_note, id) => <RuleComment
-                                    key={id}
-                                    idx={id}
-                                    formik={formik}
-                                    fieldName="feedback_notes"
-                                    handleDelete={handleDeleteComment}
-                                />
-                            )}
-                        </>}
+                        {showFeedbackNotes && formik.values.feedback_notes.map(
+                            (feedback_note, id) => <RuleComment
+                                key={id}
+                                idx={id}
+                                formik={formik}
+                                fieldName="feedback_notes"
+                                handleDelete={handleDeleteComment}
+                            />
+                        )}
                         <Divider sx={{py: 1}}/>
                         <Grid xs={12}
                               md={12}

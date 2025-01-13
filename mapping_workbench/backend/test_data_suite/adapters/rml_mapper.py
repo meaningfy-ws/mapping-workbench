@@ -65,6 +65,9 @@ class RMLMapperABC(abc.ABC):
         """
         return self.get_serialization_format().value
 
+    def has_errors(self) -> bool:
+        return len(self.errors) > 0
+
     @abc.abstractmethod
     def execute(self, data_path: Path) -> str:
         """

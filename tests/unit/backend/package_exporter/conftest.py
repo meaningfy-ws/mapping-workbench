@@ -1,17 +1,9 @@
-import pathlib
-
 import pytest
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule, \
     ConceptualMappingRuleComment
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
-from tests import TEST_DATA_PATH
-
-
-@pytest.fixture
-def eforms_sdk_repo_v_1_9_1_dir_path() -> pathlib.Path:
-    return TEST_DATA_PATH / "eforms_sdk_1.9.1_repo"
 
 
 @pytest.fixture

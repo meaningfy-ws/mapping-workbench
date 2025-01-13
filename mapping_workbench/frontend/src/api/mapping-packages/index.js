@@ -3,6 +3,7 @@ import {appApi} from "../app";
 import {shaclTestSuitesApi} from "../shacl-test-suites";
 import {sparqlTestSuitesApi} from "../sparql-test-suites";
 import {resourceCollectionsApi} from "../resource-collections";
+import {testDataSuitesApi} from "../test-data-suites";
 
 export const PACKAGE_TYPE = {
     EFORMS: 'eForms', STANDARD: 'Standard'
@@ -37,6 +38,7 @@ class MappingPackagesApi extends SectionApi {
                 id: mappingPackage._id, title: mappingPackage.title, identifier: mappingPackage.identifier
             }
             if (full) {
+                data[testDataSuitesApi.MAPPING_PACKAGE_LINK_FIELD] = mappingPackage[testDataSuitesApi.MAPPING_PACKAGE_LINK_FIELD];
                 data[shaclTestSuitesApi.MAPPING_PACKAGE_LINK_FIELD] = mappingPackage[shaclTestSuitesApi.MAPPING_PACKAGE_LINK_FIELD];
                 data[sparqlTestSuitesApi.MAPPING_PACKAGE_LINK_FIELD] = mappingPackage[sparqlTestSuitesApi.MAPPING_PACKAGE_LINK_FIELD];
                 data[resourceCollectionsApi.MAPPING_PACKAGE_LINK_FIELD] = mappingPackage[resourceCollectionsApi.MAPPING_PACKAGE_LINK_FIELD];
@@ -63,7 +65,7 @@ class MappingPackagesApi extends SectionApi {
     async createDefault(projectId) {
         try {
             let endpoint = this.paths['create_default'];
-            return  await appApi.post(endpoint, {}, {project_id: projectId});
+            return await appApi.post(endpoint, {}, {project_id: projectId});
         } catch (err) {
         }
     }
@@ -75,7 +77,6 @@ class MappingPackagesApi extends SectionApi {
         return appApi.get(endpoint, params, headers, {
             responseType: 'blob'
         });
-
     }
 
     getLatestState(package_id) {

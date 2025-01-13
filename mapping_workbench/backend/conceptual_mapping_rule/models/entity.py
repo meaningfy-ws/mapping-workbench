@@ -248,3 +248,7 @@ class ConceptualMappingRule(
                 name="search_text_idx"
             )
         ]
+
+class ConceptualMappingRuleData(ConceptualMappingRule):
+    source_structural_element: Optional[StructuralElement] = None
+    mapping_groups: Optional[List[MappingGroup]] = None

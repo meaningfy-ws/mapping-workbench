@@ -1,282 +1,55 @@
 import {Fragment, useState} from 'react';
 import {useRouter} from "next/router";
 import PropTypes from 'prop-types';
-import {saveAs} from 'file-saver';
-import {useFormik} from "formik";
-import * as Yup from "yup";
 
-import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
-import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
+import DownloadDoneOutlinedIcon from '@mui/icons-material/DownloadDoneOutlined';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+
 import Box from "@mui/system/Box";
 import Grid from '@mui/material/Grid';
-import Card from "@mui/material/Card";
+import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
-import Stack from "@mui/material/Stack";
-import Alert from "@mui/material/Alert";
-import Switch from "@mui/material/Switch";
-import Button from "@mui/material/Button";
 import Divider from '@mui/material/Divider';
-import SvgIcon from '@mui/material/SvgIcon';
 import Checkbox from "@mui/material/Checkbox";
 import TableRow from '@mui/material/TableRow';
 import TableHead from '@mui/material/TableHead';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
 import CardContent from '@mui/material/CardContent';
 import FormControlLabel from "@mui/material/FormControlLabel";
 
 import {paths} from "src/paths";
-import {sessionApi} from "src/api/session";
 import {Scrollbar} from 'src/components/scrollbar';
+import {toastError} from "src/components/app-toast";
 import timeTransformer from "src/utils/time-transformer";
 import {useGlobalState} from "src/hooks/use-global-state";
 import {PropertyList} from 'src/components/property-list';
 import {PropertyListItem} from 'src/components/property-list-item';
 import ConfirmDialog from "src/components/app/dialog/confirm-dialog";
-import TablePagination from "src/sections/components/table-pagination";
+import {ChevronButton} from 'src/sections/components/chevron-button';
+import {MenuActionButton, MenuActions} from 'src/components/menu-actions';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
-import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
+import TableSorterHeader from 'src/sections/components/table-sorter-header';
+import TablePagination from "src/sections/components/table-pagination-pages";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
+import {MappingPackageProcessForm} from './components/mapping-package-process-form';
+import {MappingPackagesBulkActions} from './components/mapping-packages-bulk-actions';
 
-
-const PackageRow = ({item, sectionApi}) => {
-
-    const [isProcessing, setIsProcessing] = useState(false);
-    const [isExporting, setIsExporting] = useState(false);
-
-    const formik = useFormik({
-        initialValues: {
-            use_latest_package_state: false,
-            transform_test_data: true,
-            generate_cm_assertions: true,
-            validate_package: true,
-            validate_package_xpath_sparql: true,
-            validate_package_shacl: true
-        },
-        validationSchema: Yup.object({}),
-        onSubmit: async (values, helpers) => {
-            setIsProcessing(true)
-            const tasks_to_run = [];
-            if (values['transform_test_data']) {
-                tasks_to_run.push('transform_test_data');
-            }
-            if (values['generate_cm_assertions']) {
-                tasks_to_run.push('generate_cm_assertions');
-            }
-            if (values['validate_package']) {
-                tasks_to_run.push('validate_package');
-
-                if (values['validate_package_xpath_sparql']) {
-                    tasks_to_run.push('validate_package_xpath');
-                    tasks_to_run.push('validate_package_sparql');
-                }
-                if (values['validate_package_shacl']) {
-                    tasks_to_run.push('validate_package_shacl');
-                }
-            }
-            const data = {
-                package_id: item._id,
-                project_id: sessionApi.getSessionProject(),
-                use_latest_package_state: values['use_latest_package_state']
-            }
-            if (tasks_to_run.length > 0) {
-                data.tasks_to_run = tasks_to_run.join(',');
-            }
-            const toastId = toastLoad(`Processing "${item.identifier}" ... This may take a while. Please, be patient.`)
-            sectionApi.processPackage(data)
-                .then(res => toastSuccess(`${res.task_name} successfully started.`, toastId))
-                .catch(err => toastError(err, toastId))
-                .finally(() => setIsProcessing(false))
-        }
-    });
-
-    const handleExport = itemId => {
-        setIsExporting(true)
-        const data = {
-            package_id: item._id,
-            project_id: sessionApi.getSessionProject()
-        }
-        const toastId = toastLoad(`Exporting "${item.identifier}" ... This may take a while. Please, be patient.`)
-        sectionApi.exportPackage(data)
-            .then(response => {
-                saveAs(new Blob([response], {type: "application/x-zip-compressed"}), `${item.identifier}.zip`);
-                toastSuccess(`"${item.identifier}" successfully exported.`, toastId)
-            })
-            .catch(err => toastError(err, toastId))
-            .finally(() => setIsExporting(false))
-    }
-
-    return (<>
-            <CardContent>
-                <Grid container>
-                    <Grid
-                        item
-                        md={12}
-                        xs={12}
-                    >
-                        <PropertyList>
-                            <PropertyListItem
-                                label="Description"
-                                value={item.description}
-                                sx={{
-                                    whiteSpace: "pre-wrap",
-                                    px: 3,
-                                    py: 1.5
-                                }}
-                            />
-                        </PropertyList>
-                    </Grid>
-                </Grid>
-            </CardContent>
-            <Divider/>
-            <Card
-                sx={{
-                    px: 3
-                }}
-            >
-                <Alert severity="warning"
-                       sx={{mt: 3, mx: 3}}>
-                    {"Do not modify Project's Resources while the Mapping Package Processing task is initializing."}
-                </Alert>
-                {isProcessing && <Alert severity="warning"
-                                        sx={{mt: 1, mx: 3}}>
-                    <b>Mapping Package Processing task is initializing!</b>
-                </Alert>}
-                <form onSubmit={formik.handleSubmit}>
-                    <Stack
-                        direction={{
-                            xs: 'column',
-                            sm: 'row'
-                        }}
-                        flexWrap="wrap"
-                        spacing={3}
-                        sx={{p: 3}}
-                    >
-                        <Button
-                            id='process_button'
-                            disabled={isProcessing || isExporting}
-                            type="submit"
-                            variant="contained"
-                            color="primary"
-                        >
-                            {!isProcessing && "Process"}
-                            {isProcessing && "Processing ..."}
-                        </Button>
-                        <Box>
-                            <FormControlLabel
-                                sx={{
-                                    width: '100%',
-                                }}
-                                control={
-                                    <Switch
-                                        disabled={true}
-                                        checked={formik.values.use_latest_package_state}
-                                        onChange={(event) => formik.setFieldValue('use_latest_package_state', event.target.checked)}
-                                    />
-                                }
-                                label="Use latest Package State"
-                            />
-                            <Divider sx={{my: 2}}/>
-                            <b>Processing a Mapping Package includes:</b>
-                            <ul style={{listStyleType: "none", padding: 0}}>
-                                <li>
-                                    <FormControlLabel
-                                        sx={{
-                                            width: '100%'
-                                        }}
-                                        control={
-                                            <Switch
-                                                checked={formik.values.transform_test_data}
-                                                onChange={(event) => formik.setFieldValue('transform_test_data', event.target.checked)}
-                                            />
-                                        }
-                                        label="Transform Test Data"
-                                    />
-                                </li>
-                                <li>
-                                    <FormControlLabel
-                                        sx={{
-                                            width: '100%'
-                                        }}
-                                        control={
-                                            <Switch
-                                                checked={formik.values.generate_cm_assertions}
-                                                onChange={(event) => formik.setFieldValue('generate_cm_assertions', event.target.checked)}
-                                            />
-                                        }
-                                        label="Generate CM Assertions Queries"
-                                    />
-                                </li>
-                                <li>
-                                    <FormControlLabel
-                                        sx={{
-                                            width: '100%'
-                                        }}
-                                        control={
-                                            <Switch
-                                                checked={formik.values.validate_package}
-                                                onChange={(event) => formik.setFieldValue('validate_package', event.target.checked)}
-                                            />
-                                        }
-                                        label="Validate the Mapping Package"
-                                    />
-                                    <ul style={{listStyleType: "none"}}>
-                                        <li>
-                                            <FormControlLabel
-                                                sx={{
-                                                    width: '100%'
-                                                }}
-                                                control={
-                                                    <Switch
-                                                        checked={formik.values.validate_package_shacl && formik.values.validate_package}
-                                                        disabled={!formik.values.validate_package}
-                                                        onChange={(event) => formik.setFieldValue('validate_package_shacl', event.target.checked)}
-                                                    />
-                                                }
-                                                label="SHACL"
-                                            />
-                                        </li>
-                                        <li>
-                                            <FormControlLabel
-                                                sx={{
-                                                    width: '100%'
-                                                }}
-                                                control={
-                                                    <Switch
-                                                        checked={formik.values.validate_package_xpath_sparql && formik.values.validate_package}
-                                                        disabled={!formik.values.validate_package}
-                                                        onChange={(event) => formik.setFieldValue('validate_package_xpath_sparql', event.target.checked)}
-                                                    />
-                                                }
-                                                label="XPATH / SPARQL"
-                                            />
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </Box>
-                        <Button
-                            id='export_latest_button'
-                            disabled={isProcessing || isExporting}
-                            type="button"
-                            variant="contained"
-                            color="primary"
-                            onClick={handleExport}
-                        >
-                            {isExporting ? "Exporting Latest ..." : "Export Latest"}
-                        </Button>
-                    </Stack>
-                </form>
-            </Card>
-        </>
-    )
-}
 
 const MappingPackageRowFragment = (props) => {
     const {
-        item_id, item, isCurrent, handleItemToggle, handleGoLastState, handleDeleteAction, timeSetting, sectionApi
+        item,
+        item_id,
+        isCurrent,
+        handleItemToggle,
+        handleItemSelect,
+        handleGoLastState,
+        handleDeleteAction,
+        isItemSelected,
+        timeSetting,
+        sectionApi,
+        selectable
     } = props;
 
     const [confirmOpen, setConfirmOpen] = useState(false);
@@ -304,16 +77,18 @@ const MappingPackageRowFragment = (props) => {
                                     width: 3,
                                     height: 'calc(100% + 1px)'
                                 }
-                            })
+                            }),
+                            whiteSpace: "nowrap"
                         }}
-                        width="25%"
                     >
-                        <IconButton onClick={() => handleItemToggle(item_id)}
-                                    id="expand_button">
-                            <SvgIcon>
-                                {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
-                            </SvgIcon>
-                        </IconButton>
+                        <Checkbox
+                            color="primary"
+                            disabled={selectable && !selectable(item)}
+                            checked={isItemSelected(item_id)}
+                            onClick={event => handleItemSelect(event.target.checked, item_id)}
+                        />
+                        <ChevronButton onClick={() => handleItemToggle(item_id)}
+                                       isCurrent={isCurrent}/>
                     </TableCell>
 
                     <TableCell width="25%">
@@ -328,31 +103,22 @@ const MappingPackageRowFragment = (props) => {
                         {timeTransformer(item.created_at, timeSetting)}
                     </TableCell>
                     <TableCell align="center">
-                        <Stack direction='row'
-                               justifyContent='center'
-                               alignItems='center'>
-                            <Button type='link'
-                                    id='view_last_state_button'
-                                    size="small"
-                                    onClick={() => handleGoLastState(item_id)}>
-                                View Last State
-                            </Button>
+                        <MenuActions>
+                            <MenuActionButton
+                                id='view_last_state_button'
+                                onClick={() => handleGoLastState(item_id)}
+                                title='View Last State'
+                                icon={<DownloadDoneOutlinedIcon/>}
+                            />
                             <ListItemActions
                                 itemctx={new ForListItemAction(item_id, sectionApi)}
                             />
-                            <Button
+                            <MenuActionButton
                                 id="delete_button"
-                                variant="text"
-                                size="small"
-                                color="error"
                                 onClick={() => setConfirmOpen(true)}
-                                sx={{
-                                    whiteSpace: "nowrap"
-                                }}
-                            >
-                                Delete
-                            </Button>
-                        </Stack>
+                                icon={<DeleteOutlineIcon/>}
+                                title='Delete'/>
+                        </MenuActions>
                     </TableCell>
                 </TableRow>
                 {isCurrent && (
@@ -373,9 +139,32 @@ const MappingPackageRowFragment = (props) => {
                                 }
                             }}
                         >
-                            <PackageRow
-                                item={item}
+                            <CardContent>
+                                <Grid container>
+                                    <Grid
+                                        item
+                                        md={12}
+                                        xs={12}
+                                    >
+                                        <PropertyList>
+                                            <PropertyListItem
+                                                label="Description"
+                                                value={item.description}
+                                                sx={{
+                                                    whiteSpace: "pre-wrap",
+                                                    px: 3,
+                                                    py: 1.5
+                                                }}
+                                            />
+                                        </PropertyList>
+                                    </Grid>
+                                </Grid>
+                            </CardContent>
+                            <Divider/>
+                            <MappingPackageProcessForm
+                                items={[item]}
                                 sectionApi={sectionApi}
+                                showExport
                             />
                         </TableCell>
                     </TableRow>
@@ -399,7 +188,7 @@ const MappingPackageRowFragment = (props) => {
                                 }}
                             />
                         }
-                        label="Cleanup Project Resources"
+                        label="Cleanup Project Assets"
                         value="cleanup_project"
                     />
                 </Box>}
@@ -414,17 +203,32 @@ export const ListTable = (props) => {
     const {
         count = 0,
         items = [],
-        onPageChange = () => {
-        },
+        onPageChange = () => {},
         onRowsPerPageChange,
         page = 0,
         rowsPerPage = 0,
+        sort,
+        onSort = () => {},
+        selectable = null,
         sectionApi
     } = props;
 
     const [currentItem, setCurrentItem] = useState(null);
     const {timeSetting} = useGlobalState();
     const router = useRouter();
+    const [selectedItems, setSelectedItems] = useState([]);
+
+    const isItemSelected = itemId => selectedItems.indexOf(itemId) !== -1;
+
+    const allChecked = items.length > 0 && selectedItems.length === items.length
+
+    const handleItemsSelectAll = checked => {
+        setSelectedItems(checked ? items.map(item => item._id) : [])
+    }
+
+    const handleItemSelect = (checked, itemId) => {
+        setSelectedItems(items => checked ? [...items, itemId] : items.filter(item => item !== itemId));
+    }
 
     const handleItemToggle = itemId => {
         setCurrentItem(prevItemId => prevItemId === itemId ? null : itemId);
@@ -447,36 +251,51 @@ export const ListTable = (props) => {
             )
     }
 
+    const SorterHeader = (props) => {
+        const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
+        return (
+            <TableCell>
+                <TableSorterHeader sort={{direction, column: sort.column}}
+                                   onSort={onSort}
+                                   {...props}
+                />
+            </TableCell>
+        )
+    }
+
     return (
-        <div>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-                showFirstButton
-                showLastButton
-            >
+        <TablePagination
+            component="div"
+            count={count}
+            onPageChange={onPageChange}
+            onRowsPerPageChange={onRowsPerPageChange}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+            showFirstButton
+            showLastButton
+        >
+            <Paper>
+                <MappingPackagesBulkActions items={items.filter(item => selectedItems.includes(item._id))}
+                                            disabled={!selectedItems.length}/>
+                <Divider/>
                 <Scrollbar>
                     <Table sx={{minWidth: 1200}}>
                         <TableHead>
                             <TableRow>
-                                <TableCell/>
-                                <TableCell width="25%">
-                                    Title
-                                </TableCell>
                                 <TableCell>
-                                    Identifier
+                                    <Checkbox checked={allChecked}
+                                              indeterminate={!!selectedItems.length && !allChecked}
+                                              onChange={(event) => handleItemsSelectAll(event.target.checked)}
+                                    />
                                 </TableCell>
-                                <TableCell align="left">
-                                    Created
-                                </TableCell>
-                                <TableCell align="center">
-                                    Actions
-                                </TableCell>
+                                <SorterHeader width="25%"
+                                              fieldName='title'/>
+                                <SorterHeader fieldName='identifier'/>
+                                <SorterHeader fieldName='created_at'
+                                              label='created'
+                                              align="left"/>
+                                <TableCell align="center"/>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -491,43 +310,54 @@ export const ListTable = (props) => {
                                         item={item}
                                         isCurrent={isCurrent}
                                         handleItemToggle={handleItemToggle}
+                                        handleItemSelect={handleItemSelect}
                                         handleGoLastState={handleGoLastState}
                                         handleDeleteAction={handleDeleteAction}
+                                        isItemSelected={isItemSelected}
                                         timeSetting={timeSetting}
                                         sectionApi={sectionApi}
+                                        selectable={selectable}
                                     />
                                 );
                             })}
                         </TableBody>
                     </Table>
                 </Scrollbar>
-            </TablePagination>
-        </div>
+            </Paper>
+        </TablePagination>
     );
 };
 
 ListTable.propTypes = {
     count: PropTypes.number,
-    items: PropTypes.array,
-    onPageChange: PropTypes.func,
-    onRowsPerPageChange: PropTypes.func,
-    page: PropTypes.number,
-    rowsPerPage: PropTypes.number,
-    sectionApi: PropTypes.object
+    items:
+    PropTypes.array,
+    onPageChange:
+    PropTypes.func,
+    onRowsPerPageChange:
+    PropTypes.func,
+    page:
+    PropTypes.number,
+    rowsPerPage:
+    PropTypes.number,
+    sectionApi:
+    PropTypes.object
 };
 
-PackageRow.propTypes = {
-    item: PropTypes.object,
-    sectionApi: PropTypes.object
-}
-
 MappingPackageRowFragment.propTypes = {
-    item_id: PropTypes.number,
-    item: PropTypes.object,
-    isCurrent: PropTypes.bool,
-    handleItemToggle: PropTypes.func,
-    handleGoLastState: PropTypes.func,
-    handleDeleteAction: PropTypes.func,
-    timeSetting: PropTypes.object,
-    sectionApi: PropTypes.object
+    item_id: PropTypes.string,
+    item:
+    PropTypes.object,
+    isCurrent:
+    PropTypes.bool,
+    handleItemToggle:
+    PropTypes.func,
+    handleGoLastState:
+    PropTypes.func,
+    handleDeleteAction:
+    PropTypes.func,
+    timeSetting:
+    PropTypes.number,
+    sectionApi:
+    PropTypes.object
 }

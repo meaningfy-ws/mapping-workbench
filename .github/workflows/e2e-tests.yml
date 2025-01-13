@@ -54,7 +54,7 @@ jobs:
 
       - name: Run PR e2e Tests
         run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'source ~/.bashrc && cd ${{ secrets.STAGING_WORK_DIR }} && python3 -m venv venv && source venv/bin/activate && make dotenv-file-frontend && make install && make test-e2e && exit'
+          ssh -o ServerAliveInterval=60 -o ServerAliveCountMax=3 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'source ~/.bashrc && cd ${{ secrets.STAGING_WORK_DIR }} && python3 -m venv venv && source venv/bin/activate && make dotenv-file-frontend && make install && make test-e2e && exit'
 
       - uses: actions/checkout@v2
         with:
@@ -75,7 +75,7 @@ jobs:
       - name: Revert to develop branch
         if: always()
         run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "source ~/.bashrc && cd ${{ secrets.STAGING_WORK_DIR }} && git checkout develop && git pull && make staging-dotenv-file && make stop-frontend && make build-frontend && make stop-backend && make build-backend && exit"
+          ssh -o ServerAliveInterval=60 -o ServerAliveCountMax=3 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "source ~/.bashrc && cd ${{ secrets.STAGING_WORK_DIR }} && git checkout develop && git pull && make staging-dotenv-file && make stop-frontend && make build-frontend && make stop-backend && make build-backend && exit"
 
       - name: cleanup
         if: always()

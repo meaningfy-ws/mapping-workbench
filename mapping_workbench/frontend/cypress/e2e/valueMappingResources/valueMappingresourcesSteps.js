@@ -28,8 +28,8 @@ Then('I get success select', () => {
 
 Then('I click on Resources', () => {
     cy.intercept('GET', appURLPrefix + 'resource_collections*').as('get')
-    cy.get('#nav_technical_mappings').click()
-    cy.get('#nav_value_mapping_resources').click()
+    cy.get('#technical_mappings').click()
+    cy.get('#value_mapping_resources_tab').click()
 })
 
 Then('I get redirected to Resources', () => {
@@ -49,7 +49,7 @@ Then('I get redirected to create page', () => {
 Then('I enter name', () => {
     cy.intercept('POST', appURLPrefix + "resource_collections*").as('create')
     cy.get("input[name=title]").clear().type(resource_name)
-    cy.get("button[type=submit]").click()
+    cy.get("button[type=submit]").click('right')
 })
 
 

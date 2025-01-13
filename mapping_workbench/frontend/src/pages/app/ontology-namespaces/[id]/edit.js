@@ -1,31 +1,26 @@
-import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
 import Chip from '@mui/material/Chip';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
-import {ontologyNamespacesApi as sectionApi} from 'src/api/ontology-namespaces';
-import {RouterLink} from 'src/components/router-link';
+import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
+import {useRouter} from "src/hooks/use-router";
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
-import {paths} from 'src/paths';
+import {RouterLink} from 'src/components/router-link';
+import {useItem} from "src/contexts/app/section/for-item-data-state";
 import {EditForm} from 'src/sections/app/ontology-namespace/edit-form';
 import {ForItemEditForm} from "src/contexts/app/section/for-item-form";
-import {useItem} from "src/contexts/app/section/for-item-data-state";
-import {useRouter} from "src/hooks/use-router";
+import {ontologyNamespacesApi as sectionApi} from 'src/api/ontology-namespaces';
 
 
 const Page = () => {
     const router = useRouter();
-    if (!router.isReady) return;
-
     const {id} = router.query;
-
-    if (!id) {
-        return;
-    }
 
     const formState = useItem(sectionApi, id);
     const item = formState.item;
@@ -45,7 +40,7 @@ const Page = () => {
                         <Link
                             color="text.primary"
                             component={RouterLink}
-                            href={paths.app[sectionApi.section].index}
+                            href={paths.app.ontology_namespaces.index}
                             sx={{
                                 alignItems: 'center',
                                 display: 'inline-flex'
@@ -53,7 +48,7 @@ const Page = () => {
                             underline="hover"
                         >
                             <SvgIcon sx={{mr: 1}}>
-                                <ArrowLeftIcon/>
+                                <ArrowBackIcon/>
                             </SvgIcon>
                             <Typography variant="subtitle2">
                                 {sectionApi.SECTION_TITLE}

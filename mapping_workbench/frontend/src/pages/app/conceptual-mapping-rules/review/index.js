@@ -1,23 +1,20 @@
 import {useEffect, useState} from 'react';
-import Link from "@mui/material/Link";
-import Stack from '@mui/material/Stack';
+
 import Card from "@mui/material/Card";
+import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Unstable_Grid2';
 import TextField from "@mui/material/TextField";
-import Typography from '@mui/material/Typography';
-import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Autocomplete from "@mui/material/Autocomplete";
 import TablePagination from "@mui/material/TablePagination";
 
-import {paths} from "src/paths";
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
-import {RouterLink} from "src/components/router-link";
 import {fieldsRegistryApi} from "src/api/fields-registry";
 import CMCard from "src/sections/app/conceptual-mapping-rule/cm-card";
-import {BreadcrumbsSeparator} from "src/components/breadcrumbs-separator";
 import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
+import {NavigationTabsWrapper} from '../../../../components/navigation-tabs-wrapper';
+import {ConceptualMappingTabs} from '../../../../sections/app/conceptual-mapping-rule/conceptual-mapping-tabs';
 
 
 const useItemsSearch = (items) => {
@@ -119,43 +116,26 @@ const Page = () => {
             fieldsRegistryApi.getItem(value.id, 'element')
                 .then(res => setStructuralElement(res))
                 .catch(err => console.error(err))
-        } else setStructuralElement('')
+        } else {
+            setStructuralElement('')
+        }
         getCMRules(value?.id)
     }
 
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE}`}/>
+            <NavigationTabsWrapper>
+                <ConceptualMappingTabs/>
+            </NavigationTabsWrapper>
             <Grid
                 container
                 spacing={{
                     xs: 3,
                     lg: 4
                 }}
+                mt={5}
             >
-                <Grid xs={12}>
-                    <Stack spacing={1}>
-                        <Typography variant="h4">
-                            Review {sectionApi.SECTION_TITLE}
-                        </Typography>
-                        <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.index}
-                                variant="subtitle2"
-                            >
-                                App
-                            </Link>
-                            <Typography
-                                color="text.secondary"
-                                variant="subtitle2"
-                            >
-                                {sectionApi.SECTION_TITLE}
-                            </Typography>
-                        </Breadcrumbs>
-                    </Stack>
-                </Grid>
                 <Grid
                     xs={12}
                     md={12}

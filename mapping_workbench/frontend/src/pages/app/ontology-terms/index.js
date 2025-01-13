@@ -1,31 +1,43 @@
-import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
-import SearchIcon from "@untitled-ui/icons-react/build/esm/SearchRefraction";
+import {useState} from 'react';
 
-import Link from '@mui/material/Link';
-import Grid from "@mui/material/Grid";
+import AddIcon from '@mui/icons-material/Add';
+import SearchIcon from '@mui/icons-material/Search';
+import FilterListIcon from '@mui/icons-material/FilterList';
+
+import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import SvgIcon from '@mui/material/SvgIcon';
-import Typography from '@mui/material/Typography';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
+import Popover from '@mui/material/Popover';
+import Grid from "@mui/material/Unstable_Grid2";
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
 import {useRouter} from "src/hooks/use-router";
 import {Layout as AppLayout} from 'src/layouts/app';
-import {RouterLink} from 'src/components/router-link';
 import {usePageView} from 'src/hooks/use-page-view';
-import OntologyTerms from "src/sections/app/ontology/ontology-terms";
+import {RouterLink} from 'src/components/router-link';
 import {ontologyTermsApi as sectionApi} from 'src/api/ontology-terms';
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
+import {SourceAndTargetTabs} from 'src/sections/app/source-and-target';
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
-import OntologyNamespaces from "src/sections/app/ontology/ontology-namespaces";
-import OntologyNamespacesCustom from "src/sections/app/ontology/ontology-namespaces-custom";
+import {NavigationTabsWrapper} from '../../../components/navigation-tabs-wrapper';
+import useItemsSearch from '../../../hooks/use-items-search';
+import {useItemsStore} from '../../../hooks/use-items-store';
+import {ListTable} from '../../../sections/app/ontology-term/list-table';
+import {Filter} from '../../../sections/components/filter';
+import {TableSearchBar} from '../../../sections/components/table-search-bar';
 
+const FILTER_VALUES = [{label: 'All', value: ''},
+    {label: 'CLASS', value: 'CLASS'},
+    {label: 'PROPERTY', value: 'PROPERTY'}]
 
 const Page = () => {
-
     const router = useRouter()
+
+    const itemsStore = useItemsStore(sectionApi);
+    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ["short_term", "term"], {type: ''});
+
+    const [filterPopover, setFilterPopover] = useState(null)
+
     const handleDiscover = () => {
         const toastId = toastLoad('Discovering terms ...')
         sectionApi.discoverTerms()
@@ -38,90 +50,77 @@ const Page = () => {
 
     usePageView();
 
+    console.log(itemsSearch)
+
     return (
         <>
-            <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
+            <Seo title={`App: ${sectionApi.SECTION_TITLE}`}/>
+            <NavigationTabsWrapper>
+                <SourceAndTargetTabs/>
+            </NavigationTabsWrapper>
             <Grid container
-                  direction='column'
-                  spacing={4}>
-                <Grid item>
-                    <Stack
-                        direction="row"
-                        justifyContent="space-between"
-                        spacing={4}
+                  mt={5}
+                  spacing={{xs: 3, lg: 4}}
+            >
+                <Grid xs={12}>
+                    <Stack direction="row"
+                           justifyContent="space-between"
                     >
-                        <Stack spacing={1}>
-                            <Typography variant="h4">
-                                {sectionApi.SECTION_TITLE}
-                            </Typography>
-                            <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
-                                <Link
-                                    color="text.primary"
-                                    component={RouterLink}
-                                    href={paths.index}
-                                    variant="subtitle2"
+                        <Stack direction='row'
+                               spacing={3}>
+                            <Paper>
+                                <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                                value={itemsSearch.state.search[0]}
+                                                placeholder='Search Terms'/>
+                            </Paper>
+                            <Paper>
+                                <Button variant='text'
+                                        color={itemsSearch.state.filters.type ? 'primary' : 'inherit'}
+                                        onClick={e => setFilterPopover(e.currentTarget)}
+                                        startIcon={<FilterListIcon/>}>Filter</Button>
+                                <Popover
+                                    id={'filter-popover'}
+                                    open={!!filterPopover}
+                                    anchorEl={filterPopover}
+                                    onClose={() => setFilterPopover(null)}
+                                    anchorOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'left',
+                                    }}
                                 >
-                                    App
-                                </Link>
-                                <Typography
-                                    color="text.secondary"
-                                    variant="subtitle2"
-                                >
-                                    {sectionApi.SECTION_TITLE}
-                                </Typography>
-                            </Breadcrumbs>
+                                    <Filter title='Type:'
+                                            values={FILTER_VALUES}
+                                            value={itemsSearch.state.filters.type}
+                                            onValueChange={e => itemsSearch.handleFiltersChange({type: e})}/>
+                                </Popover>
+                            </Paper>
                         </Stack>
-                        <Stack
-                            alignItems="center"
-                            direction="row"
-                            spacing={3}
-                        >
+                        <Stack alignItems="center"
+                               direction="row"
+                               spacing={3}>
                             <Button
                                 id="discover_button"
                                 onClick={handleDiscover}
-                                startIcon={(
-                                    <SvgIcon>
-                                        <SearchIcon/>
-                                    </SvgIcon>
-                                )}
-                                variant="contained"
+                                startIcon={<SearchIcon/>}
+                                variant="text"
                             >
                                 Discover Terms
-                            </Button>
-                            <Button
-                                id="add_term_button"
-                                component={RouterLink}
-                                href={paths.app[sectionApi.section].create}
-                                startIcon={(
-                                    <SvgIcon>
-                                        <PlusIcon/>
-                                    </SvgIcon>
-                                )}
-                                variant="contained"
-                            >
-                                Add Term
                             </Button>
                         </Stack>
                     </Stack>
                 </Grid>
-                <Grid item>
-                    <OntologyTerms/>
-                </Grid>
-               <Grid container
-                     item
-                     spacing={4}
-               >
-                    <Grid item
-                          xs={12}
-                          xl={6}
-                    >
-                        <OntologyNamespacesCustom/>
-                    </Grid>
-                    <Grid item
-                          xs={12}
-                          xl={6}>
-                        <OntologyNamespaces/>
-                    </Grid>
+                <Grid xs={12}>
+                    <ListTable
+                        onPageChange={itemsSearch.handlePageChange}
+                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                        sort={itemsSearch.state.sort}
+                        onSort={itemsSearch.handleSort}
+                        page={itemsSearch.state.page}
+                        items={itemsSearch.pagedItems}
+                        count={itemsSearch.count}
+                        rowsPerPage={itemsSearch.state.rowsPerPage}
+                        sectionApi={sectionApi}
+                    />
                 </Grid>
             </Grid>
         </>

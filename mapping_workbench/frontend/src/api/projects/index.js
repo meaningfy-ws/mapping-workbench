@@ -1,5 +1,6 @@
 import {SectionApi} from "../section";
 import {appApi} from "../app";
+import {sessionApi} from "../session";
 
 export const SESSION_PROJECT_KEY = 'sessionProject';
 
@@ -26,6 +27,13 @@ class ProjectsApi extends SectionApi {
     async cleanupProject(project_id, request = {}) {
         let endpoint = this.paths['cleanup'].replace(':id', project_id);
         return await appApi.post(endpoint);
+    }
+
+    async exportSourceFiles() {
+        let endpoint = this.paths['export_source_files'].replace(':id', sessionApi.getSessionProject());
+        return appApi.post(endpoint, {}, {}, {}, {
+            responseType: 'blob'
+        });
     }
 }
 

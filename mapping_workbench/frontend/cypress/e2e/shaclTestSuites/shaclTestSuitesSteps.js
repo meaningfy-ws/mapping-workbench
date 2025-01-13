@@ -27,8 +27,8 @@ Then('I get success select', () => {
 
 Then('I click on Shacl Test Suites', () => {
     cy.intercept('GET', appURLPrefix + 'shacl_test_suites*').as('get')
-    cy.get('#nav_quality_control').click()
-    cy.get('#nav_shacl_test_suites').click()
+    cy.get('#quality_control').click()
+    cy.get('#shacl_suites_tab').click()
 })
 
 Then('I get redirected to Shacl Test Suites', () => {

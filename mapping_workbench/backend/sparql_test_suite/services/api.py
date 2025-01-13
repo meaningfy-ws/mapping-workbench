@@ -7,6 +7,8 @@ from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundE
 from mapping_workbench.backend.core.services.request import request_update_data, api_entity_is_found, \
     request_create_data, prepare_search_param, pagination_params
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
+from mapping_workbench.backend.mapping_package.services.link import ResourceField, \
+    unassign_resources_from_mapping_packages
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuite, SPARQLTestFileResource, \
     SPARQLTestFileResourceUpdateIn, SPARQLTestFileResourceCreateIn
@@ -66,6 +68,11 @@ async def get_sparql_test_suite(id: PydanticObjectId) -> SPARQLTestSuite:
 
 
 async def delete_sparql_test_suite(sparql_test_suite: SPARQLTestSuite):
+    await unassign_resources_from_mapping_packages(
+        project_id=sparql_test_suite.project.to_ref().id,
+        resources_ids=[sparql_test_suite.id],
+        resources_field=ResourceField.SPARQL_TEST_SUITES
+    )
     return await sparql_test_suite.delete()
 
 

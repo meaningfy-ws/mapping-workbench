@@ -19,9 +19,9 @@ class FieldsOverview  extends SectionApi {
         this.isProjectResource = true;
     }
 
-    importEFormsFromGithub(request) {
+    importEFormsXSD(request) {
         try {
-            const endpoint = this.paths['import_eforms_from_github'];
+            const endpoint = this.paths['import_eforms_xsd'];
             const headers = {"Content-Type": "multipart/form-data"};
             return appApi.post(endpoint, request, null, headers);
         } catch (err) {

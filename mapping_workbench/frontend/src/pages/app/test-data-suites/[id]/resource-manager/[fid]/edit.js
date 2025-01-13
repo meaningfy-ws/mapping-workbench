@@ -1,12 +1,14 @@
 import {useCallback, useEffect, useState} from "react";
 import {useFormik} from "formik";
 
-import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
 import Chip from '@mui/material/Chip';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Paper from "@mui/material/Paper";
 import SvgIcon from '@mui/material/SvgIcon';
+import Divider from "@mui/material/Divider";
 import Checkbox from "@mui/material/Checkbox";
 import Grid from "@mui/material/Unstable_Grid2";
 import Typography from '@mui/material/Typography';
@@ -24,6 +26,7 @@ import CodeMirrorDefault from "src/components/app/form/codeMirrorDefault";
 import {ForItemDataState} from "src/contexts/app/section/for-item-data-state";
 import {FileResourceEditForm} from 'src/sections/app/file-manager/file-resource-edit-form';
 import {testDataFileResourcesApi as sectionApi} from 'src/api/test-data-suites/file-resources';
+import {MappingPackageFormSelect} from 'src/sections/app/mapping-package/components/mapping-package-form-select';
 
 
 const useItem = (sectionApi, id) => {
@@ -56,7 +59,7 @@ const ExtraForm = (props) => {
     }, [formik]);
 
     return (
-        <>
+        <Stack gap={3}>
             <Grid xs={12}
                   md={12}>
                 <FormTextField formik={formik}
@@ -64,12 +67,12 @@ const ExtraForm = (props) => {
                                label="Identifier"
                                required/>
             </Grid>
+            <Divider/>
             <Paper
                 sx={{
                     alignItems: 'flex-start',
                     display: 'flex',
                     px: 2,
-                    my: 4
                 }}
                 variant="outlined"
             >
@@ -89,15 +92,23 @@ const ExtraForm = (props) => {
             </Paper>
             <Grid xs={12}
                   md={12}>
-                <CodeMirrorDefault
-                    label="RDF Manifestation"
-                    style={{resize: 'vertical', overflow: 'auto', height: 600}}
-                    value={formik.values.rdf_manifestation}
-                    onChange={value => formik.setValues('rdf_manifestation',value)}
-                    lang={'TTL'}
-                    />
+                <MappingPackageFormSelect
+                    formik={formik}
+                    isRequired={sectionApi.isMappingPackageRequired ?? false}
+                    withDefaultPackage={false}
+                    disabled={!formik.values.transform_test_data}
+                />
             </Grid>
-        </>
+            <Grid xs={12}
+                  md={12}>
+                <CodeMirrorDefault label="RDF Manifestation"
+                                   style={{resize: 'vertical', overflow: 'auto', height: 600}}
+                                   value={formik.values.rdf_manifestation}
+                                   onChange={value => formik.setValues('rdf_manifestation', value)}
+                                   lang={'TTL'}
+                />
+            </Grid>
+        </Stack>
     )
 }
 
@@ -121,7 +132,8 @@ const Page = () => {
     const extra_form_fields = {
         identifier: item.identifier || '',
         rdf_manifestation: item.rdf_manifestation || '',
-        transform_test_data: false
+        transform_test_data: false,
+        mapping_package_id: null
     }
 
     return (
@@ -144,7 +156,7 @@ const Page = () => {
                             underline="hover"
                         >
                             <SvgIcon sx={{mr: 1}}>
-                                <ArrowLeftIcon/>
+                                <ArrowBackIcon/>
                             </SvgIcon>
                             <Typography variant="subtitle2">
                                 {sectionApi.SECTION_TITLE}

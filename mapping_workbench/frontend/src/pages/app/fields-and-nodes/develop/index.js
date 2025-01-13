@@ -6,7 +6,6 @@ import {parseString} from "xml2js";
 import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
 
-import Link from "@mui/material/Link";
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 import Alert from "@mui/material/Alert";
@@ -14,24 +13,23 @@ import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Autocomplete from "@mui/material/Autocomplete";
 
-import {paths} from "src/paths";
 import {Seo} from "src/components/seo";
+import {sessionApi} from "src/api/session";
 import {Layout as AppLayout} from 'src/layouts/app';
-import {RouterLink} from "src/components/router-link";
 import File from 'src/sections/app/fields-and-nodes/file'
 import {FormTextField} from "src/components/app/form/text-field";
-import {BreadcrumbsSeparator} from "src/components/breadcrumbs-separator";
+import {executeXPaths} from "src/sections/app/fields-and-nodes/utils";
+import {ElementsDefinitionTabs} from 'src/sections/app/elements-definition';
 import {fieldsRegistryApi as fieldsRegistry} from 'src/api/fields-registry'
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import XpathEvaluator from "src/sections/app/fields-and-nodes/xpath-evaluator";
 import RelativeXpathFinder from "src/sections/app/fields-and-nodes/relative-xpath-finder";
 import {genericTripleMapFragmentsApi as tripleMapFragments} from "src/api/triple-map-fragments/generic";
-import {sessionApi} from "src/api/session";
-import {executeXPaths} from "src/sections/app/fields-and-nodes/utils";
+import {NavigationTabsWrapper} from '../../../../components/navigation-tabs-wrapper';
+
+const SECTION_TITLE = 'Fields Develop'
 
 const Page = () => {
     const [files, setFiles] = useState([])
@@ -41,7 +39,6 @@ const Page = () => {
     const [xPaths, setXPaths] = useState([])
     const [xmlContent, setXmlContent] = useState('')
     const [fileContent, setFileContent] = useState()
-    const SECTION_TITLE = 'Fields Develop'
 
     useEffect(() => {
         const project = sessionApi.getSessionProject()
@@ -145,35 +142,11 @@ const Page = () => {
     return (
         <>
             <Seo title={`App: ${SECTION_TITLE} List`}/>
-            <Stack spacing={4}>
-                <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    spacing={4}
-                >
-                    <Stack spacing={1}>
-                        <Typography variant="h4">
-                            {SECTION_TITLE}
-                        </Typography>
-                        <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.index}
-                                variant="subtitle2"
-                            >
-                                App
-                            </Link>
-                            <Typography
-                                color="text.secondary"
-                                variant="subtitle2"
-                            >
-                                {SECTION_TITLE}
-                            </Typography>
-                        </Breadcrumbs>
-                    </Stack>
-                </Stack>
-
+            <NavigationTabsWrapper>
+                <ElementsDefinitionTabs/>
+            </NavigationTabsWrapper>
+            <Stack spacing={4}
+                   mt={5}>
                 <form onSubmit={formik.handleSubmit}>
                     <Card sx={{p: 2}}>
                         <Grid container
@@ -181,7 +154,7 @@ const Page = () => {
                             <Grid container
                                   spacing={2}>
                                 <Grid item
-                                      md={12}
+                                      xs={12}
                                       xl={6}>
                                     <Stack gap={2}>
                                         <TextField
@@ -219,7 +192,7 @@ const Page = () => {
                                     </Stack>
                                 </Grid>
                                 <Grid item
-                                      md={12}
+                                      xs={12}
                                       xl={6}>
                                     <Stack gap={2}>
                                         <FormTextField
@@ -246,7 +219,6 @@ const Page = () => {
                                             disabled={formik.isSubmitting || !formik.values.absolute_xpath}
                                             error={formik.touched['parent_node'] && formik.errors['parent_node']}
                                             isOptionEqualToValue={(option, value) => option.absolute_xpath === value}
-                                            // getOptionLabel={option => option.absolute_xpath ?? ''}
                                             onBlur={formik.handleBlur}
                                             defaultValue={''}
                                             onChange={(e, value) => formik.setFieldValue('parent_node', value)}
@@ -289,7 +261,7 @@ const Page = () => {
                                 </Grid>
                             </Grid>
                             <Stack direction='row'
-                                   sx={{mt:2}}>
+                                   sx={{mt: 2}}>
                                 <Button type='submit'
                                         disabled={!!fileError || !xmlContent || formik.isSubmitting}>Save</Button>
                                 <Button onClick={handleClear}

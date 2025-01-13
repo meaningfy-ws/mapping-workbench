@@ -50,8 +50,14 @@ async def update_generic_triple_map_fragment(
         data: GenericTripleMapFragmentUpdateIn,
         user: User
 ) -> GenericTripleMapFragmentOut:
+    update_data = request_update_data(data, user=user)
+    if GenericTripleMapFragment.refers_to_mapping_package_ids in update_data:
+        update_data[GenericTripleMapFragment.refers_to_mapping_package_ids] = [
+            PydanticObjectId(package_id) for package_id in
+            update_data[GenericTripleMapFragment.refers_to_mapping_package_ids]
+        ]
     return GenericTripleMapFragmentOut(**(
-        await generic_triple_map_fragment.set(request_update_data(data, user=user))
+        await generic_triple_map_fragment.set(update_data)
     ).model_dump())
 
 

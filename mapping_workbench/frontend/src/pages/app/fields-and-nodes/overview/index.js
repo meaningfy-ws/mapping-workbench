@@ -1,133 +1,34 @@
 import {useEffect, useState} from 'react';
 
-import {Upload04 as ImportIcon} from '@untitled-ui/icons-react/build/esm';
-import Card from '@mui/material/Card';
-import Link from '@mui/material/Link';
-import Stack from '@mui/material/Stack';
-import Button from "@mui/material/Button";
-import SvgIcon from "@mui/material/SvgIcon";
-import Typography from '@mui/material/Typography';
+import AddIcon from '@mui/icons-material/Add';
+import UploadIcon from '@mui/icons-material/Upload';
+import FilterListIcon from '@mui/icons-material/FilterList';
 
-import Breadcrumbs from '@mui/material/Breadcrumbs';
+import Stack from '@mui/material/Stack';
+import Paper from '@mui/material/Paper';
+import Button from "@mui/material/Button";
+import Popover from '@mui/material/Popover';
+
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
 import {usePageView} from 'src/hooks/use-page-view';
 import {Layout as AppLayout} from 'src/layouts/app';
 import {RouterLink} from 'src/components/router-link';
 import {Filter} from 'src/sections/components/filter';
+import useItemsSearch from 'src/hooks/use-items-search';
 import {ListTable} from 'src/sections/app/fields-registry/list-table';
+import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {fieldsOverviewApi as sectionApi} from 'src/api/fields-overview';
-import {ListSearch} from 'src/sections/app/fields-registry/list-search';
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import PlusIcon from "@untitled-ui/icons-react/build/esm/Plus";
+import {ElementsDefinitionTabs} from 'src/sections/app/elements-definition';
+import {NavigationTabsWrapper} from '../../../../components/navigation-tabs-wrapper';
 
-const useItemsSearch = (items) => {
-    const [state, setState] = useState({
-        filters: "",
-        sort: {
-            column: "",
-            direction: "desc"
-        },
-        search: '',
-        searchColumns: ["sdk_element_id", "relative_xpath", "absolute_xpath"],
-        page: sectionApi.DEFAULT_PAGE,
-        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
-    });
+const FILTER_VALUES = [
+    {label: 'All', value: ''},
+    {label: 'Node', value: 'node'},
+    {label: 'Field', value: 'field'}
+]
 
-    const filterValues = [{label: 'All', value: ''},
-        {label: 'Node', value: 'node'},
-        {label: 'Field', value: 'field'}]
-
-
-    const searchItems = state.search ? items.filter(item => {
-        let returnItem = null;
-        state.searchColumns.forEach(column => {
-            if (item[column]?.toLowerCase()?.includes(state.search.toLowerCase()))
-                returnItem = item
-        })
-        return returnItem
-    }) : items
-
-    const filteredItems = searchItems.filter((item) => state.filters === "" || state.filters === item.element_type ? item : null)
-
-    const sortedItems = () => {
-        const sortColumn = state.sort.column
-        if (!sortColumn) {
-            return filteredItems
-        } else {
-            return filteredItems.sort((a, b) => {
-                if (typeof a[sortColumn] === "string")
-                    return state.sort.direction === "asc" ?
-                        a[sortColumn]?.localeCompare(b[sortColumn]) :
-                        b[sortColumn]?.localeCompare(a[sortColumn])
-                else
-                    return state.sort.direction === "asc" ?
-                        a[sortColumn] - b[sortColumn] :
-                        b[sortColumn] - a[sortColumn]
-            })
-        }
-    }
-
-    const pagedItems = sortedItems().filter((item, i) => {
-        const pageSize = state.page * state.rowsPerPage
-        if ((pageSize <= i && pageSize + state.rowsPerPage > i) || state.rowsPerPage < 0)
-            return item
-    })
-
-    const handleSearchItems = (filters) => {
-        setState(prevState => ({...prevState, search: filters.q, page: 0}))
-    }
-
-    const handleFiltersChange = filters => {
-        setState(prevState => ({
-            ...prevState,
-            filters,
-            page: 0
-        }));
-    }
-
-    const handlePageChange = (event, page) => {
-        setState(prevState => ({
-            ...prevState,
-            page
-        }));
-    }
-
-    const handleSort = (column, desc) => {
-        setState(prevState => ({
-            ...prevState, sort: {
-                column,
-                direction: prevState.sort.column === column
-                    ? prevState.sort.direction === "desc"
-                        ? "asc"
-                        : "desc"
-                    : desc
-                        ? "desc"
-                        : "asc"
-            }
-        }))
-    }
-
-    const handleRowsPerPageChange = event => {
-        setState(prevState => ({
-            ...prevState,
-            rowsPerPage: parseInt(event.target.value, 10)
-        }));
-    }
-
-    return {
-        handleFiltersChange,
-        handlePageChange,
-        handleRowsPerPageChange,
-        handleSort,
-        handleSearchItems,
-        filterValues,
-        pagedItems,
-        count: filteredItems.length,
-        state
-    };
-};
-
+const SEARCH_COLUMNS = ["sdk_element_id", "relative_xpath", "absolute_xpath"];
 
 const useItemsStore = () => {
     const [state, setState] = useState({
@@ -155,45 +56,56 @@ const useItemsStore = () => {
     };
 };
 
-
 const Page = () => {
     const itemsStore = useItemsStore();
-    const itemsSearch = useItemsSearch(itemsStore.items);
+    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, SEARCH_COLUMNS, {element_type: ''});
+    const [filterPopover, setFilterPopover] = useState(null)
 
     usePageView();
 
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
-            <Stack spacing={4}>
-                <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    spacing={4}
-                >
-                    <Stack spacing={1}>
-                        <Typography variant="h4">
-                            {sectionApi.SECTION_TITLE}
-                        </Typography>
-                        <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.index}
-                                variant="subtitle2"
+            <NavigationTabsWrapper>
+                <ElementsDefinitionTabs/>
+            </NavigationTabsWrapper>
+            <Stack spacing={4}
+                   mt={5}>
+                <Stack direction='row'
+                       justifyContent='space-between'>
+                    <Stack direction='row'
+                           spacing={3}>
+                        <Paper>
+                            <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                            value={itemsSearch.state.search[0]}/>
+                        </Paper>
+                        <Paper>
+                            <Button variant='text'
+                                    color={itemsSearch.state.filters.element_type ? 'primary' : 'inherit'}
+                                    onClick={e => setFilterPopover(e.currentTarget)}
+                                    startIcon={<FilterListIcon/>}>
+                                Filter
+                            </Button>
+                            <Popover
+                                id={'filter-popover'}
+                                open={!!filterPopover}
+                                anchorEl={filterPopover}
+                                onClose={() => setFilterPopover(null)}
+                                anchorOrigin={{
+                                    vertical: 'bottom',
+                                    horizontal: 'left',
+                                }}
                             >
-                                App
-                            </Link>
-                            <Typography
-                                color="text.secondary"
-                                variant="subtitle2"
-                            >
-                                {sectionApi.SECTION_TITLE}
-                            </Typography>
-                        </Breadcrumbs>
+                                <Filter title='Type:'
+                                        values={FILTER_VALUES}
+                                        value={itemsSearch.state.filters.element_type}
+                                        onValueChange={e => itemsSearch.handleFiltersChange({element_type: e})}/>
+                            </Popover>
+                        </Paper>
                     </Stack>
                     <Stack
                         alignItems="center"
+                        justifyContent='end'
                         direction="row"
                         spacing={3}
                     >
@@ -201,11 +113,7 @@ const Page = () => {
                             component={RouterLink}
                             href={paths.app.fields_and_nodes.overview.elements.create}
                             id="add-field-button"
-                            startIcon={(
-                                <SvgIcon>
-                                    <PlusIcon/>
-                                </SvgIcon>
-                            )}
+                            startIcon={<AddIcon/>}
                             variant="contained"
                         >
                             Add
@@ -214,35 +122,24 @@ const Page = () => {
                             id="import_shema_button"
                             component={RouterLink}
                             href={paths.app.fields_and_nodes.overview.import}
-                            startIcon={(
-                                <SvgIcon>
-                                    <ImportIcon/>
-                                </SvgIcon>
-                            )}
+                            startIcon={<UploadIcon/>}
                             variant="contained"
                         >
-                            Import schema from github
+                            Import eForms XSD
                         </Button>
                     </Stack>
-
                 </Stack>
-                <Card>
-                    <ListSearch onFiltersChange={itemsSearch.handleSearchItems}/>
-                    <Filter values={itemsSearch.filterValues}
-                            value={itemsSearch.state.filters}
-                            onValueChange={itemsSearch.handleFiltersChange}/>
-                    <ListTable
-                        onPageChange={itemsSearch.handlePageChange}
-                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        sort={itemsSearch.state.sort}
-                        onSort={itemsSearch.handleSort}
-                        page={itemsSearch.state.page}
-                        items={itemsSearch.pagedItems}
-                        count={itemsStore.itemsCount}
-                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                        sectionApi={sectionApi}
-                    />
-                </Card>
+                <ListTable
+                    onPageChange={itemsSearch.handlePageChange}
+                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                    sort={itemsSearch.state.sort}
+                    onSort={itemsSearch.handleSort}
+                    page={itemsSearch.state.page}
+                    items={itemsSearch.pagedItems}
+                    count={itemsSearch.count}
+                    rowsPerPage={itemsSearch.state.rowsPerPage}
+                    sectionApi={sectionApi}
+                />
             </Stack>
         </>
     );

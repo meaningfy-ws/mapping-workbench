@@ -4,7 +4,6 @@ import Typography from "@mui/material/Typography";
 import {ListTableFile} from "./list-table-file";
 import {QueryResultTable} from "./query-result-table";
 import {ResultFilter, TableLoadWrapper} from "./utils";
-import ItemSearchInput from "../file-manager/item-search-input";
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 import useItemsSearch from "../../../hooks/use-items-search";
 

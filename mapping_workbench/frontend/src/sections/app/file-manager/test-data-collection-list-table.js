@@ -1,23 +1,22 @@
 import {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 
-import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
-import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
+import UploadIcon from '@mui/icons-material/Upload';
 
 import {Box} from "@mui/system";
+import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
 import Stack from "@mui/material/Stack";
 import Table from '@mui/material/Table';
 import Button from "@mui/material/Button";
 import Divider from '@mui/material/Divider';
-import SvgIcon from '@mui/material/SvgIcon';
 import Checkbox from "@mui/material/Checkbox";
 import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
 import CardContent from '@mui/material/CardContent';
 
 import {FileUploader} from "./file-uploader";
@@ -31,9 +30,12 @@ import {PropertyList} from "src/components/property-list";
 import {useGlobalState} from "src/hooks/use-global-state";
 import {mappingPackagesApi} from "src/api/mapping-packages";
 import {PropertyListItem} from "src/components/property-list-item";
+import {ChevronButton} from 'src/sections/components/chevron-button';
 import ConfirmDialog from "src/components/app/dialog/confirm-dialog";
-import TablePagination from "src/sections/components/table-pagination";
+import TablePagination from "src/sections/components/table-pagination-pages";
+import {MenuActions, MenuActionButton} from 'src/components/menu-actions';
 import {ListItemActions} from "src/components/app/list/list-item-actions";
+import TableSorterHeader from 'src/sections/components/table-sorter-header';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {testDataFileResourcesApi as fileResourcesApi} from "src/api/test-data-suites/file-resources";
 import {MappingPackagesBulkAssigner} from "src/sections/app/mapping-package/components/mapping-packages-bulk-assigner";
@@ -50,7 +52,7 @@ export const ListTableRow = (props) => {
         sectionApi,
         router,
         getItems,
-        projectMappingPackagesMap
+        projectMappingPackages
     } = props;
 
     const {timeSetting} = useGlobalState()
@@ -58,13 +60,12 @@ export const ListTableRow = (props) => {
     const [confirmOpen, setConfirmOpen] = useState(false);
     const uploadDialog = useDialog()
 
-
     useEffect(() => {
         getFileResources()
     }, [])
 
     const getFileResources = () => {
-        sectionApi.getFileResources(item_id)
+        sectionApi.getFileResources(item_id, {rowsPerPage: -1})
             .then(res => setCollectionResources(res.items))
     }
 
@@ -73,14 +74,12 @@ export const ListTableRow = (props) => {
             pathname: paths.app[sectionApi.section].resource_manager.edit,
             query: {id: item_id, fid: resource_id}
         });
-        return true;
     }
 
     const handleDeleteAction = () => {
         sectionApi.deleteItem(item_id)
             .then(res => getItems())
     }
-
 
     const handleDeleteResourceAction = () => {
         fileResourcesApi.deleteFileResource(item_id)
@@ -105,10 +104,8 @@ export const ListTableRow = (props) => {
             >
                 Are you sure you want to delete it?
             </ConfirmDialog>
-            <TableRow
-                hover
-                key={item_id}
-            >
+            <TableRow hover
+                      key={item_id}>
                 <TableCell
                     padding="checkbox"
                     sx={{
@@ -130,13 +127,10 @@ export const ListTableRow = (props) => {
                     <Checkbox
                         color="primary"
                         checked={isItemSelected(item_id)}
-                        onClick={(event) => handleItemSelect(event, item_id)}
+                        onClick={event => handleItemSelect(event.target.checked, item_id)}
                     />
-                    <IconButton onClick={() => handleItemToggle(item_id)}>
-                        <SvgIcon>
-                            {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
-                        </SvgIcon>
-                    </IconButton>
+                    <ChevronButton onClick={() => handleItemToggle(item_id)}
+                                   isCurrent={isCurrent}/>
                 </TableCell>
                 <TableCell width="25%">
                     <Typography variant="subtitle2">
@@ -144,21 +138,35 @@ export const ListTableRow = (props) => {
                     </Typography>
                 </TableCell>
                 <TableCell>
-                    {item.mapping_package_id && projectMappingPackagesMap[item.mapping_package_id]}
+                    <Box>
+                        {
+                            sectionApi.MAPPING_PACKAGE_LINK_FIELD
+                            && projectMappingPackages
+                                .filter(
+                                    projectMappingPackage => projectMappingPackage?.[sectionApi.MAPPING_PACKAGE_LINK_FIELD]
+                                        ?.some(resource_ref => item_id === resource_ref.id)
+                                )
+                                .map(mapping_package =>
+                                    <Chip key={"mapping_package_" + mapping_package.id}
+                                          label={mapping_package['title']}
+                                          sx={{mb: 1, mr: 1}}
+                                    />
+                                )
+                        }
+                    </Box>
                 </TableCell>
                 <TableCell align="left">
                     {timeTransformer(item.created_at, timeSetting)}
                 </TableCell>
                 <TableCell align="right">
-                    <Stack justifyContent='end'
-                           alignItems='center'
-                           direction='row'>
-                        <Button type='link'
-                                onClick={() => uploadDialog.handleOpen({id: item_id})}>Import test data</Button>
+                    <MenuActions>
+                        <MenuActionButton onClick={() => uploadDialog.handleOpen({id: item_id})}
+                                          icon={<UploadIcon/>}
+                                          title='Import test data'/>
                         <ListItemActions
                             itemctx={new ForListItemAction(item_id, sectionApi)}
                             onDeleteAction={handleDeleteAction}/>
-                    </Stack>
+                    </MenuActions>
                 </TableCell>
             </TableRow>
             {isCurrent && (
@@ -207,50 +215,48 @@ export const ListTableRow = (props) => {
                                     {collectionResources && collectionResources.length > 0 && (
                                         <Box sx={{mt: 2}}>
                                             <Stack divider={<Divider/>}>
-                                                {collectionResources.map((resource) => {
-                                                    return (
+                                                {collectionResources.map(resource =>
+                                                    <Stack
+                                                        alignItems="center"
+                                                        direction="row"
+                                                        flexWrap="wrap"
+                                                        justifyContent="space-between"
+                                                        key={item_id + "_" + resource._id}
+                                                        sx={{
+                                                            px: 2,
+                                                            py: 1.5,
+                                                        }}
+                                                    >
+                                                        <div>
+                                                            <Typography
+                                                                variant="subtitle1">{resource.title}</Typography>
+                                                            <Typography
+                                                                color="text.secondary"
+                                                                variant="caption"
+                                                            >
+                                                                {}
+                                                            </Typography>
+                                                        </div>
                                                         <Stack
                                                             alignItems="center"
                                                             direction="row"
-                                                            flexWrap="wrap"
-                                                            justifyContent="space-between"
-                                                            key={item_id + "_" + resource._id}
-                                                            sx={{
-                                                                px: 2,
-                                                                py: 1.5,
-                                                            }}
+                                                            spacing={2}
                                                         >
-                                                            <div>
-                                                                <Typography
-                                                                    variant="subtitle1">{resource.title}</Typography>
-                                                                <Typography
-                                                                    color="text.secondary"
-                                                                    variant="caption"
-                                                                >
-                                                                    {}
-                                                                </Typography>
-                                                            </div>
-                                                            <Stack
-                                                                alignItems="center"
-                                                                direction="row"
-                                                                spacing={2}
-                                                            >
-                                                                <Button
-                                                                    size="small"
-                                                                    onClick={() => handleResourceEdit?.(resource._id)}
-                                                                    color="success">
-                                                                    Edit
-                                                                </Button>
-                                                                <Button
-                                                                    size="small"
-                                                                    onClick={() => setConfirmOpen(resource._id)}
-                                                                    color="error">
-                                                                    Delete
-                                                                </Button>
-                                                            </Stack>
+                                                            <Button
+                                                                size="small"
+                                                                onClick={() => handleResourceEdit?.(resource._id)}
+                                                                color="success">
+                                                                Edit
+                                                            </Button>
+                                                            <Button
+                                                                size="small"
+                                                                onClick={() => setConfirmOpen(resource._id)}
+                                                                color="error">
+                                                                Delete
+                                                            </Button>
                                                         </Stack>
-                                                    );
-                                                })}
+                                                    </Stack>
+                                                )}
                                             </Stack>
                                         </Box>
                                     )}
@@ -268,14 +274,15 @@ export const TestDataCollectionListTable = (props) => {
     const {
         count = 0,
         items = [],
-        onPageChange = () => {
-        },
+        itemsForced = 0,
+        onPageChange = () => { },
+        sort,
+        onSort = () => {},
         onRowsPerPageChange,
         page = 0,
         rowsPerPage = 0,
         sectionApi,
-        getItems = () => {
-        }
+        getItems = (number) => { }
     } = props;
 
     const router = useRouter();
@@ -283,19 +290,16 @@ export const TestDataCollectionListTable = (props) => {
     const [currentItem, setCurrentItem] = useState(null);
     const [selectedItems, setSelectedItems] = useState([]);
 
-    const isItemSelected = (itemId) => {
-        return selectedItems.indexOf(itemId) !== -1;
+    const isItemSelected = itemId => selectedItems.indexOf(itemId) !== -1;
+
+    const allChecked = items.length > 0 && selectedItems.length === items.length
+
+    const handleItemsSelectAll = checked => {
+        setSelectedItems(checked ? items.map(item => item._id) : [])
     }
 
-    const handleItemSelect = (e, itemId) => {
-        let items = new Set(selectedItems);
-        const isChecked = e.target.checked;
-        if (isChecked) {
-            items.add(itemId);
-        } else {
-            items.delete(itemId);
-        }
-        setSelectedItems([...items]);
+    const handleItemSelect = (checked, itemId) => {
+        setSelectedItems(items => checked ? [...items, itemId] : items.filter(item => item !== itemId));
     }
 
     const handleItemToggle = itemId => {
@@ -306,64 +310,69 @@ export const TestDataCollectionListTable = (props) => {
     const [projectMappingPackages, setProjectMappingPackages] = useState([]);
 
     useEffect(() => {
-        (async () => {
-            setProjectMappingPackages(await mappingPackagesApi.getProjectPackages());
-        })()
-    }, [])
-
-    const [projectMappingPackagesMap, setProjectMappingPackagesMap] = useState({});
-
-    useEffect(() => {
-        (() => {
-            setProjectMappingPackagesMap(projectMappingPackages.reduce((a, b) => {
-                a[b['id']] = b['title'];
-                return a
-            }, {}));
-        })()
-    }, [projectMappingPackages])
+        mappingPackagesApi.getProjectPackages(true)
+            .then(res => setProjectMappingPackages(res))
+            .catch(err => console.error(err))
+    }, [itemsForced])
 
     const onMappingPackagesAssign = () => {
-        getItems()
+        getItems(Date.now())
     }
-    return (<>
-            <Box sx={{p: 1}}>
-                <MappingPackagesBulkAssigner
-                    sectionApi={sectionApi}
-                    idsToAssignTo={selectedItems}
-                    initProjectMappingPackages={projectMappingPackages}
-                    disabled={selectedItems.length === 0}
-                    onMappingPackagesAssign={onMappingPackagesAssign}
+
+    const SorterHeader = (props) => {
+        const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
+        return (
+            <TableCell>
+                <TableSorterHeader sort={{direction, column: sort.column}}
+                                   onSort={onSort}
+                                   {...props}
                 />
-            </Box>
-            <Divider/>
-            <TablePagination
-                component="div"
-                count={count}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-                showFirstButton
-                showLastButton
-            >
+            </TableCell>
+        )
+    }
+
+    return (
+        <TablePagination
+            component="div"
+            count={count}
+            onPageChange={onPageChange}
+            onRowsPerPageChange={onRowsPerPageChange}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+            showFirstButton
+            showLastButton
+        >
+            <Paper>
+                <Box sx={{p: 1}}>
+                    <MappingPackagesBulkAssigner
+                        sectionApi={sectionApi}
+                        idsToAssignTo={selectedItems}
+                        initProjectMappingPackages={projectMappingPackages}
+                        disabled={selectedItems.length === 0}
+                        onMappingPackagesAssign={onMappingPackagesAssign}
+                    />
+                </Box>
+                <Divider/>
+
                 <Scrollbar>
                     <Table sx={{minWidth: 1200}}>
                         <TableHead>
                             <TableRow>
+                                <TableCell sx={{py: 1, backgroundColor: 'red'}}>
+                                    <Checkbox checked={allChecked}
+                                              indeterminate={!!selectedItems.length && !allChecked}
+                                              onChange={event => handleItemsSelectAll(event.target.checked)}
+                                    />
+                                </TableCell>
+                                <SorterHeader width="25%"
+                                              fieldName='title'/>
                                 <TableCell>
+                                    Packages
                                 </TableCell>
-                                <TableCell width="25%">
-                                    Title
-                                </TableCell>
-                                <TableCell>
-                                    Package
-                                </TableCell>
-                                <TableCell align="left">
-                                    Created
-                                </TableCell>
+                                <SorterHeader fieldName='created_at'
+                                              title='created'/>
                                 <TableCell align="right">
-                                    Actions
                                 </TableCell>
                             </TableRow>
                         </TableHead>
@@ -383,21 +392,22 @@ export const TestDataCollectionListTable = (props) => {
                                         sectionApi={sectionApi}
                                         router={router}
                                         getItems={getItems}
-                                        projectMappingPackagesMap={projectMappingPackagesMap}
+                                        projectMappingPackages={projectMappingPackages}
                                     />
                                 )
                             })}
                         </TableBody>
                     </Table>
                 </Scrollbar>
-            </TablePagination>
-        </>
+            </Paper>
+        </TablePagination>
     );
 };
 
 TestDataCollectionListTable.propTypes = {
     count: PropTypes.number,
     items: PropTypes.array,
+    itemsForced: PropTypes.number,
     onPageChange: PropTypes.func,
     onRowsPerPageChange: PropTypes.func,
     page: PropTypes.number,
@@ -409,13 +419,13 @@ TestDataCollectionListTable.propTypes = {
 
 ListTableRow.propTypes = {
     item: PropTypes.object,
-    item_id: PropTypes.number,
+    item_id: PropTypes.string,
     isCurrent: PropTypes.bool,
     handleItemToggle: PropTypes.func,
     handleItemSelect: PropTypes.func,
-    isItemSelected: PropTypes.bool,
+    isItemSelected: PropTypes.func,
     sectionApi: PropTypes.object,
     router: PropTypes.object,
     getItems: PropTypes.func,
-    projectMappingPackagesMap: PropTypes.array
+    projectMappingPackages: PropTypes.array
 }

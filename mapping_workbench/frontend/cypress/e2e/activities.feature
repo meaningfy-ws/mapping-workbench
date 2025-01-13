@@ -5,9 +5,9 @@ Feature: Activities
   Background:
     Given Session Login
     Then Go Home
-    Then I open side menu
 
   Scenario: Import Packages
+    When I open side menu
     Then I go to Mapping Packages
     Then I get redirected to Mapping Packages list page
     When I click on Mapping Packages import
@@ -16,12 +16,13 @@ Feature: Activities
     Then I get success upload
 
   Scenario: View Activities
+    When I open side menu
     Then I go to Activities page
     Then I get redirected to Tasks page
     Then I receive Tasks
 
-
   Scenario: Refresh Activities
+    When I open side menu
     Then I go to Activities page
     Then I get redirected to Tasks page
     Then I receive Tasks
@@ -29,14 +30,16 @@ Feature: Activities
     Then I receive Tasks
 
   Scenario: Delete Activity
+    When I open side menu
     Then I go to Activities page
     Then I get redirected to Tasks page
     Then I receive Tasks
+    When I open actions menu
     When I delete Task
     Then I get success delete
 
-
   Scenario: Delete all Activities
+    When I open side menu
     Then I go to Activities page
     Then I get redirected to Tasks page
     Then I receive Tasks

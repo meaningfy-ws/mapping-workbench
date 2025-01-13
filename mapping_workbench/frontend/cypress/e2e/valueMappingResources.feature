@@ -5,15 +5,6 @@ Feature: Resources
   Background:
     Given Session Login
     Then Go Home
-    Then I open side menu
-
-#  Scenario: Select Project
-#    Then I get redirected to projects list page
-#    Then I search for project
-#
-#    When I select project
-#    Then I get success select
-#    Then I get redirected to projects list page
 
   Scenario: Add Resource
     Then I click on Resources
@@ -29,6 +20,7 @@ Feature: Resources
     Then I get redirected to Resources
 
     Then I search for resource
+    When I open actions menu
     Then I click edit button
     Then I get redirected to edit page
 
@@ -40,5 +32,6 @@ Feature: Resources
     Then I get redirected to Resources
 
     Then I search for updated resource
+    When I open actions menu
     Then I click delete button
     Then I get success delete

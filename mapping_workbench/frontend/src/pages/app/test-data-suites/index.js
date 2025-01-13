@@ -1,13 +1,11 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useState} from "react";
 
-import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
-import Card from '@mui/material/Card';
-import Link from '@mui/material/Link';
+import AddIcon from '@mui/icons-material/Add';
+import UploadIcon from '@mui/icons-material/Upload';
+
+import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import SvgIcon from '@mui/material/SvgIcon';
-import Typography from '@mui/material/Typography';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
@@ -15,76 +13,37 @@ import {useDialog} from "src/hooks/use-dialog";
 import {Layout as AppLayout} from 'src/layouts/app';
 import {usePageView} from 'src/hooks/use-page-view';
 import {RouterLink} from 'src/components/router-link';
+import useItemsSearch from 'src/hooks/use-items-search';
+import {SourceAndTargetTabs} from 'src/sections/app/source-and-target';
+import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {testDataSuitesApi as sectionApi} from 'src/api/test-data-suites';
-import {BreadcrumbsSeparator} from 'src/components/breadcrumbs-separator';
-import {Upload04 as ImportIcon} from '@untitled-ui/icons-react/build/esm';
-import {FileCollectionListSearch} from 'src/sections/app/file-manager/file-collection-list-search';
-import {FileCollectionUploader} from "../../../sections/app/file-manager/file-collection-uploader";
-import {TestDataCollectionListTable} from "../../../sections/app/file-manager/test-data-collection-list-table";
+import {FileCollectionUploader} from "src/sections/app/file-manager/file-collection-uploader";
+import {TestDataCollectionListTable} from "src/sections/app/file-manager/test-data-collection-list-table";
+import {NavigationTabsWrapper} from '../../../components/navigation-tabs-wrapper';
 
-
-const useItemsSearch = () => {
-    const [state, setState] = useState({
-        filters: {
-            name: undefined,
-            category: [],
-            status: [],
-            inStock: undefined
-        },
-        page: sectionApi.DEFAULT_PAGE,
-        rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
-    });
-
-    const handleFiltersChange = filters => {
-        setState(prevState => ({
-            ...prevState,
-            filters,
-            page: 0
-        }));
-    }
-
-    const handlePageChange = (event, page) => {
-        setState(prevState => ({
-            ...prevState,
-            page
-        }));
-    }
-
-    const handleRowsPerPageChange = event => {
-        setState(prevState => ({
-            ...prevState,
-            rowsPerPage: parseInt(event.target.value, 10)
-        }));
-    }
-
-    return {
-        handleFiltersChange,
-        handlePageChange,
-        handleRowsPerPageChange,
-        state
-    };
-};
-
-const useItemsStore = (searchState) => {
+const useItemsStore = () => {
     const [state, setState] = useState({
         items: [],
-        itemsCount: 0
+        itemsCount: 0,
+        force: 0
     });
 
-    const handleItemsGet = () => {
-        sectionApi.getItems(searchState)
-            .then(res => setState({
-                items: res.items,
-                itemsCount: res.count
-            }))
-            .catch(err => console.warn(err))
+    const handleItemsGet = (force = 0) => {
+        sectionApi.getItems()
+            .then(res =>
+                setState({
+                    items: res.items,
+                    itemsCount: res.count,
+                    force: force
+                }))
+            .catch(err => console.error(err))
     }
 
     useEffect(() => {
             handleItemsGet();
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [searchState]);
+        []);
 
     return {
         handleItemsGet,
@@ -93,97 +52,73 @@ const useItemsStore = (searchState) => {
 };
 
 const Page = () => {
-
     const uploadDialog = useDialog()
-    const itemsSearch = useItemsSearch();
-    const itemsStore = useItemsStore(itemsSearch.state);
+    const itemsStore = useItemsStore(sectionApi);
+    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['title', 'package']);
 
     usePageView();
 
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
-            <Stack spacing={4}>
-                <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    spacing={4}
-                >
-                    <Stack spacing={1}>
-                        <Typography variant="h4">
-                            {sectionApi.SECTION_TITLE}
-                        </Typography>
-
-                        <Breadcrumbs separator={<BreadcrumbsSeparator/>}>
-                            <Link
-                                color="text.primary"
-                                component={RouterLink}
-                                href={paths.index}
-                                variant="subtitle2"
-                            >
-                                App
-                            </Link>
-                            <Typography
-                                color="text.secondary"
-                                variant="subtitle2"
-                            >
-                                {sectionApi.SECTION_TITLE}
-                            </Typography>
-                        </Breadcrumbs>
-                    </Stack>
+            <NavigationTabsWrapper>
+                <SourceAndTargetTabs/>
+            </NavigationTabsWrapper>
+            <Stack spacing={4}
+                   sx={{mt: 5}}>
+                <Stack direction='row'
+                       justifyContent='space-between'>
+                    <Paper>
+                        <TableSearchBar onChange={e => itemsSearch.handleSearchItems([e])}
+                                        value={itemsSearch.state.search[0]}/>
+                    </Paper>
                     <Stack
                         alignItems="center"
                         direction="row"
+                        justifyContent='end'
                         spacing={3}
                     >
+                        <Button
+                            type='link'
+                            onClick={uploadDialog.handleOpen}
+                            startIcon={(
+                                <UploadIcon/>
+                            )}
+                            id="import-test-data_button"
+                        >
+                            Import Test Data Suites
+                        </Button>
                         <Button
                             component={RouterLink}
                             href={paths.app[sectionApi.section].create}
                             startIcon={(
-                                <SvgIcon>
-                                    <PlusIcon/>
-                                </SvgIcon>
+                                <AddIcon/>
                             )}
                             variant="contained"
                             id="add_button"
                         >
                             Create Test Data Suite
                         </Button>
-                        <Button
-                            type='link'
-                            onClick={uploadDialog.handleOpen}
-                            startIcon={(
-                                <SvgIcon>
-                                    <ImportIcon/>
-                                </SvgIcon>
-                            )}
-                            variant="contained"
-                            id="import-test-data_button"
-                        >
-                            Import Test Data Suites
-                        </Button>
-
                     </Stack>
                 </Stack>
-                <Card>
-                    <FileCollectionListSearch onFiltersChange={itemsSearch.handleFiltersChange}/>
-                    <TestDataCollectionListTable
-                        onPageChange={itemsSearch.handlePageChange}
-                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        page={itemsSearch.state.page}
-                        items={itemsStore.items}
-                        count={itemsStore.itemsCount}
-                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                        sectionApi={sectionApi}
-                        getItems={itemsStore.handleItemsGet}
-                    />
-                </Card>
+                <TestDataCollectionListTable
+                    onPageChange={itemsSearch.handlePageChange}
+                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                    sort={itemsSearch.state.sort}
+                    onSort={itemsSearch.handleSort}
+                    page={itemsSearch.state.page}
+                    items={itemsSearch.pagedItems}
+                    itemsForced={itemsStore.force}
+                    count={itemsSearch.count}
+                    rowsPerPage={itemsSearch.state.rowsPerPage}
+                    sectionApi={sectionApi}
+                    getItems={itemsStore.handleItemsGet}
+                />
                 <FileCollectionUploader
                     onClose={uploadDialog.handleClose}
                     open={uploadDialog.open}
                     sectionApi={sectionApi}
                 />
-
             </Stack>
         </>
     );

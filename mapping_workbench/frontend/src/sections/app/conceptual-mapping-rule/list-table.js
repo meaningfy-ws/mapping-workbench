@@ -1,66 +1,69 @@
 import {useEffect, useState} from 'react';
 import {useRouter} from "next/router";
 import PropTypes from 'prop-types';
-import parse from "html-react-parser";
 import {useFormik} from "formik";
 import * as Yup from "yup";
+import parse from "html-react-parser";
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 
 import EditIcon from '@untitled-ui/icons-react/build/esm/Edit05';
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import InfoIcon from '@mui/icons-material/Info';
-import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
-import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
-import CardContent from '@mui/material/CardContent';
+
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
-import SvgIcon from '@mui/material/SvgIcon';
+import Link from "@mui/material/Link";
+import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
+import Stack from "@mui/material/Stack";
+import Alert from "@mui/material/Alert";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import Select from "@mui/material/Select";
+import Switch from "@mui/material/Switch";
+import Tooltip from "@mui/material/Tooltip";
+import SvgIcon from '@mui/material/SvgIcon';
+import Divider from "@mui/material/Divider";
+import ListItem from "@mui/material/ListItem";
+import TableRow from '@mui/material/TableRow';
+import MenuItem from "@mui/material/MenuItem";
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Typography from '@mui/material/Typography';
-import Tooltip from "@mui/material/Tooltip";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Stack from "@mui/material/Stack";
-import Dialog from "@mui/material/Dialog";
 import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
-import Select from "@mui/material/Select";
-import Switch from "@mui/material/Switch";
-import ListItem from "@mui/material/ListItem";
-import Alert from "@mui/material/Alert";
-import Divider from "@mui/material/Divider";
-import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
+import Typography from '@mui/material/Typography';
+import CardContent from '@mui/material/CardContent';
+import FormControl from "@mui/material/FormControl";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
 import {paths} from "src/paths";
-import {PropertyList} from 'src/components/property-list';
-import {PropertyListItem} from 'src/components/property-list-item';
+import {sessionApi} from "src/api/session";
+import {useDialog} from "src/hooks/use-dialog";
 import {Scrollbar} from 'src/components/scrollbar';
+import {toastSuccess} from "src/components/app-toast";
+import {MenuActions} from 'src/components/menu-actions';
+import {PropertyList} from 'src/components/property-list';
+import {mappingPackagesApi} from "src/api/mapping-packages";
+import {PropertyListItem} from 'src/components/property-list-item';
+import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
+import {ChevronButton} from 'src/sections/components/chevron-button';
+import {FormCodeTextArea} from "src/components/app/form/code-text-area";
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
+import TableSorterHeader from 'src/sections/components/table-sorter-header';
+import TablePagination from "src/sections/components/table-pagination-pages";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-
-import {useDialog} from "../../../hooks/use-dialog";
-import {mappingPackagesApi} from "../../../api/mapping-packages";
-import {FormCodeTextArea} from "../../../components/app/form/code-text-area";
-import {genericTripleMapFragmentsApi} from "../../../api/triple-map-fragments/generic";
-import {MappingPackageCheckboxList} from "../mapping-package/components/mapping-package-checkbox-list";
-import {COMMENT_PRIORITY, conceptualMappingRulesApi} from "../../../api/conceptual-mapping-rules";
-import {ListSelectorSelect as ResourceListSelector} from "../../../components/app/list-selector/select";
-import {sparqlTestFileResourcesApi} from "../../../api/sparql-test-suites/file-resources";
-import {toastSuccess} from "../../../components/app-toast";
-import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
-import TablePagination from "../../components/table-pagination";
-import TableSorterHeader from "../../components/table-sorter-header";
-import {sessionApi} from "../../../api/session";
-import {useHighlighterTheme} from "../../../hooks/use-highlighter-theme";
+import {genericTripleMapFragmentsApi} from "src/api/triple-map-fragments/generic";
+import {sparqlTestFileResourcesApi} from "src/api/sparql-test-suites/file-resources";
+import {COMMENT_PRIORITY, conceptualMappingRulesApi} from "src/api/conceptual-mapping-rules";
+import {ListSelectorSelect as ResourceListSelector} from "src/components/app/list-selector/select";
+import {
+    MappingPackageCheckboxList
+} from 'src/sections/app/mapping-package/components/mapping-package-real-checkbox-list';
 
 
 export const ListTableTripleMapFragment = (props) => {
@@ -72,18 +75,18 @@ export const ListTableTripleMapFragment = (props) => {
 
     const [tripleMapFragment, setTripleMapFragment] = useState({});
     const [projectTripleMapFragments, setProjectTripleMapFragments] = useState(initProjectTripleMapFragments || []);
-    const triple_map_fragment_id = item.triple_map_fragment && item.triple_map_fragment.id;
+    const triple_map_fragment_id = item.triple_map_fragment?.id;
 
     useEffect(() => {
-        (async () => {
-            if (initProjectTripleMapFragments === null) {
-                setProjectTripleMapFragments(await genericTripleMapFragmentsApi.getValuesForSelector());
-            }
-            if (triple_map_fragment_id) {
-                setTripleMapFragment(projectTripleMapFragments.find(x => x._id === triple_map_fragment_id));
-            }
-        })()
-    }, [genericTripleMapFragmentsApi])
+        if (initProjectTripleMapFragments === null) {
+            genericTripleMapFragmentsApi.getValuesForSelector()
+                .then(res => setProjectTripleMapFragments(res))
+                .catch(err => console.error(err))
+        }
+        if (triple_map_fragment_id) {
+            setTripleMapFragment(projectTripleMapFragments.find(x => x._id === triple_map_fragment_id));
+        }
+    }, [])
 
     const [ruleTripleMapFragment, setRuleTripleMapFragment] = useState(triple_map_fragment_id);
 
@@ -129,7 +132,7 @@ export const ListTableTripleMapFragment = (props) => {
         tripleMapFragmentDialog.handleOpen();
     }
 
-    const handleTripleMapFragmentDialogClose = async () => {
+    const handleTripleMapFragmentDialogClose = () => {
         tripleMapFragmentDialog.handleClose();
         setUpdateContent(false);
         setTripleMapFragment({});
@@ -157,9 +160,11 @@ export const ListTableTripleMapFragment = (props) => {
         handleTripleMapFragmentDialogClose();
     }
 
-    const handleTripleMapFragmentSelect = async (e) => {
+    const handleTripleMapFragmentSelect = (e) => {
         setUpdateContent(false);
-        e.target.value && await setTripleMapFragment(await genericTripleMapFragmentsApi.getItem(e.target.value));
+        e.target.value && genericTripleMapFragmentsApi.getItem(e.target.value)
+            .then(res => setTripleMapFragment(res))
+            .catch(err => console.error(err))
     }
 
     const ruleTripleMapFragments = projectTripleMapFragments.filter(x => ruleTripleMapFragment === x.id);
@@ -193,7 +198,6 @@ export const ListTableTripleMapFragment = (props) => {
                        }}
                 >
                     {isRuleTripleMapFragments && <Button
-                        // sx={{backgroundColor: "#fff"}}
                         aria-describedby={"triple_map_fragment_dialog_" + item._id}
                         variant="contained"
                         size="small"
@@ -293,6 +297,7 @@ export const ListTableTripleMapFragment = (props) => {
                                                     Format
                                                 </FormLabel>
                                                 <Select
+                                                    variant='standard'
                                                     name="format"
                                                     error={!!(formik.touched.format && formik.errors.format)}
                                                     fullWidth
@@ -366,9 +371,9 @@ export const ListTableTripleMapFragment = (props) => {
 
 export const ListTableMappingPackages = (props) => {
     const {
-        item, initProjectMappingPackages = null, onPackagesUpdate = () => {
-        },
-        isCurrent,
+        item,
+        initProjectMappingPackages = null,
+        onPackagesUpdate = () => { },
         isHovered
     } = props;
 
@@ -376,15 +381,15 @@ export const ListTableMappingPackages = (props) => {
     const [mappingPackages, setMappingPackages] = useState(ruleFilteredMappingPackages);
     const [projectMappingPackages, setProjectMappingPackages] = useState(initProjectMappingPackages ?? []);
     const [tempMappingPackages, setTempMappingPackages] =
-        useState(JSON.parse(JSON.stringify(ruleFilteredMappingPackages)));
+        useState(ruleFilteredMappingPackages);
 
     useEffect(() => {
-        (async () => {
-            if (initProjectMappingPackages === null) {
-                setProjectMappingPackages(await mappingPackagesApi.getProjectPackages());
-            }
-        })()
-    }, [mappingPackagesApi])
+        if (initProjectMappingPackages === null) {
+            mappingPackagesApi.getProjectPackages()
+                .then(res => setProjectMappingPackages(res))
+                .catch(err => console.error(err))
+        }
+    }, [])
 
     const mappingPackagesDialog = useDialog();
 
@@ -405,17 +410,16 @@ export const ListTableMappingPackages = (props) => {
 
     const mappingPackagesDialogHandleClose = () => {
         mappingPackagesDialog.handleClose();
-        setTempMappingPackages(JSON.parse(JSON.stringify(ruleFilteredMappingPackages)));
+        setTempMappingPackages(ruleFilteredMappingPackages);
     }
 
     return (<>
-        {ruleMappingPackages.length > 0 && (
-            <Box sx={{mb: 1}}>
-                {ruleMappingPackages.map(x => (
-                    <ListItem key={"mapping_package_" + x.id}>{x.identifier}</ListItem>
-                ))}
-            </Box>
-        )}
+        {ruleMappingPackages.length > 0 && <Box>
+            {ruleMappingPackages.map(x => (
+                <Chip key={"mapping_package_" + x.id}
+                      sx={{mb: 1}}
+                      label={x.title}/>))}
+        </Box>}
         <Box sx={{
             position: "absolute",
             left: "50%",
@@ -459,6 +463,7 @@ export const ListTableMappingPackages = (props) => {
                 <Box
                     spacing={3}>
                     <MappingPackageCheckboxList
+                        handleUpdate={setTempMappingPackages}
                         mappingPackages={tempMappingPackages}
                         initProjectMappingPackages={projectMappingPackages}/>
                 </Box>
@@ -486,17 +491,15 @@ export const ListTableSPARQLAssertions = (props) => {
     const ruleFilteredSparqlResources = (item.sparql_assertions ?? []).map(x => x.id);
     const [sparqlResources, setSparqlResources] = useState(ruleFilteredSparqlResources);
     const [projectSPARQLResources, setProjectSPARQLResources] = useState(initProjectSPARQLResources ?? []);
-    const [tempSparqlResources, setTempSparqlResources] = useState(
-        JSON.parse(JSON.stringify(ruleFilteredSparqlResources))
-    );
+    const [tempSparqlResources, setTempSparqlResources] = useState(ruleFilteredSparqlResources)
 
     useEffect(() => {
-        (async () => {
-            if (initProjectSPARQLResources === null) {
-                setProjectSPARQLResources(await sparqlTestFileResourcesApi.getMappingRuleSPARQLAssertions());
-            }
-        })()
-    }, [sparqlTestFileResourcesApi])
+        if (initProjectSPARQLResources === null) {
+            sparqlTestFileResourcesApi.getMappingRuleSPARQLAssertions()
+                .then(res => setProjectSPARQLResources(res))
+                .catch(err => console.error(err))
+        }
+    }, [])
 
     const sparqlTestFileResourcesDialog = useDialog();
 
@@ -507,9 +510,7 @@ export const ListTableSPARQLAssertions = (props) => {
         values['sparql_assertions'] = tempSparqlResources;
         await conceptualMappingRulesApi.updateItem(values);
         setSparqlResources(tempSparqlResources);
-        item.sparql_assertions = tempSparqlResources.map(x => {
-            return {id: x}
-        });
+        item.sparql_assertions = tempSparqlResources.map(x => ({id: x}));
         toastSuccess(conceptualMappingRulesApi.SECTION_ITEM_TITLE + ' updated');
         sparqlTestFileResourcesDialog.handleClose();
     }
@@ -520,7 +521,7 @@ export const ListTableSPARQLAssertions = (props) => {
 
     const sparqlTestFileResourcesDialogHandleClose = () => {
         sparqlTestFileResourcesDialog.handleClose();
-        setTempSparqlResources(JSON.parse(JSON.stringify(ruleFilteredSparqlResources)));
+        setTempSparqlResources(ruleFilteredSparqlResources);
     }
 
     const ruleSPARQLResources = projectSPARQLResources.filter(x => sparqlResources.includes(x.id))
@@ -696,22 +697,135 @@ export const ListTableRow = (props) => {
 
     const notesCount = (item.mapping_notes?.length ?? 0) + (item.editorial_notes?.length ?? 0) + (item.feedback_notes?.length ?? 0)
 
-    return (<>
-        <TableRow
-            hover
-            key={`rule_${item_id}`}
-            sx={{
-                verticalAlign: 'top',
-                wordBreak: "break-all"
-            }}
-            onMouseEnter={() => handleItemHover(item_id)}
-            onMouseLeave={() => handleItemHover(null)}
-        >
-            <TableCell
-                padding="checkbox"
+    return (
+        <>
+            <TableRow
+                hover
+                key={`rule_${item_id}`}
                 sx={{
-                    ...(isCurrent && {
-                        position: 'relative', '&:after': {
+                    verticalAlign: 'top',
+                    wordBreak: "break-all"
+                }}
+                onMouseEnter={() => handleItemHover(item_id)}
+                onMouseLeave={() => handleItemHover(null)}
+            >
+                <TableCell
+                    padding="checkbox"
+                    sx={{
+                        ...(isCurrent && {
+                            position: 'relative', '&:after': {
+                                position: 'absolute',
+                                content: '" "',
+                                top: 0,
+                                left: 0,
+                                backgroundColor: 'primary.main',
+                                width: 3,
+                                height: 'calc(100% + 1px)'
+                            }
+                        })
+                    }}
+                >
+                    <ChevronButton onClick={() => handleItemToggle(item_id)}
+                                   isCurrent={isCurrent}/>
+                </TableCell>
+                <TableCell>{item.sort_order}</TableCell>
+                <TableCell sx={{
+                    wordBreak: "normal"
+                }}>
+                    <Link onClick={() => handleViewAction(item_id)}
+                          sx={{cursor: "pointer"}}
+                          color="primary"
+                    >
+                        <Typography variant="subtitle2">
+                            <Box>
+                                {item.source_structural_element?.sdk_element_id}
+                                {item.mapping_group_id && ` / ${item.mapping_group_id}`}
+                            </Box>
+                        </Typography>
+                    </Link>
+                    {item.source_structural_element?.name}
+                </TableCell>
+                <TableCell>{item.min_sdk_version}</TableCell>
+                <TableCell>{item.max_sdk_version}</TableCell>
+                <TableCell>
+                    <Box title={item.target_class_path}>
+                        {detailedView && item.target_class_path &&
+                            <Alert severity={hasTargetClassPathValidityErrors ? "error" : "success"}>
+                                {parse(targetClassPathValidityInfo)}
+                            </Alert>}
+                        {!detailedView && (
+                            <>
+                                {item.target_class_path?.length > TRUNCATE_LENGTH && "..."}
+                                {item.target_class_path?.substring(item.target_class_path.length - TRUNCATE_LENGTH)}
+                            </>
+                        )}
+                    </Box>
+                </TableCell>
+                <TableCell>
+                    <Box title={item.target_property_path}>
+                        {detailedView && item.target_property_path &&
+                            <Alert severity={hasTargetPropertyPathValidityErrors ? "error" : "success"}>
+                                {parse(targetPropertyPathValidityInfo)}
+                            </Alert>}
+                        {!detailedView && (
+                            <>
+                                {item.target_property_path && item.target_property_path.length > TRUNCATE_LENGTH && "..."}
+                                {item.target_property_path && item.target_property_path.substring(item.target_property_path.length - TRUNCATE_LENGTH)}
+                            </>
+                        )}
+                    </Box>
+                </TableCell>
+                <TableCell sx={{position: "relative"}}>
+                    <ListTableTripleMapFragment
+                        item={item}
+                        initProjectTripleMapFragments={initProjectTripleMapFragments}
+                        isCurrent={isCurrent}
+                        isHovered={isHovered}
+                    />
+                </TableCell>
+                <TableCell sx={{position: "relative", wordBreak: "normal"}}>
+                    <ListTableMappingPackages
+                        item={item}
+                        initProjectMappingPackages={initProjectMappingPackages}
+                        onPackagesUpdate={onPackagesUpdate}
+                        isCurrent={isCurrent}
+                        isHovered={isHovered}
+                    />
+                </TableCell>
+                <TableCell sx={{position: "relative"}}>
+                    <ListTableSPARQLAssertions
+                        item={item}
+                        initProjectSPARQLResources={initProjectSPARQLResources}
+                        isCurrent={isCurrent}
+                        isHovered={isHovered}
+                    />
+                </TableCell>
+                <TableCell align="center">
+                    {!!notesCount &&
+                        <Button variant="text"
+                                size="small"
+                                color="warning"
+                                onClick={() => handleNotesDialogOpen(item)}>
+                            {notesCount}
+                        </Button>}
+                </TableCell>
+
+                <TableCell align="right">
+                    <MenuActions>
+                        <ListItemActions
+                            itemctx={new ForListItemAction(item_id, sectionApi)}
+                            pathnames={{
+                                delete_after_path: () => paths.app.conceptual_mapping_rules.overview
+                            }}
+                        />
+                    </MenuActions>
+                </TableCell>
+            </TableRow>
+            {isCurrent && (<TableRow>
+                <TableCell
+                    colSpan={11}
+                    sx={{
+                        p: 0, position: 'relative', '&:after': {
                             position: 'absolute',
                             content: '" "',
                             top: 0,
@@ -720,198 +834,106 @@ export const ListTableRow = (props) => {
                             width: 3,
                             height: 'calc(100% + 1px)'
                         }
-                    })
-                }}
-            >
-                <IconButton onClick={() => handleItemToggle(item_id)}>
-                    <SvgIcon>
-                        {isCurrent ? <ChevronDownIcon/> : <ChevronRightIcon/>}
-                    </SvgIcon>
-                </IconButton>
-            </TableCell>
-            <TableCell>{item.sort_order}</TableCell>
-            <TableCell sx={{
-                wordBreak: "normal"
-            }}>
-                <Link onClick={() => handleViewAction(item_id)}
-                      sx={{cursor: "pointer"}}
-                      color="primary"
+                    }}
                 >
-                    <Typography variant="subtitle2">
-                        <Box>
-                            {item.source_structural_element?.sdk_element_id}
-                            {item.mapping_group_id && ` / ${item.mapping_group_id}`}
-                        </Box>
-                    </Typography>
-                </Link>
-                {item.source_structural_element?.name}
-            </TableCell>
-            <TableCell>{item.min_sdk_version}</TableCell>
-            <TableCell>{item.max_sdk_version}</TableCell>
-            <TableCell>
-                <Box title={item.target_class_path}>
-                    {detailedView && item.target_class_path &&
-                        <Alert severity={hasTargetClassPathValidityErrors ? "error" : "success"}>
-                            {parse(targetClassPathValidityInfo)}
-                        </Alert>}
-                    {!detailedView && (
-                        <>
-                            {item.target_class_path?.length > TRUNCATE_LENGTH && "..."}
-                            {item.target_class_path?.substring(item.target_class_path.length - TRUNCATE_LENGTH)}
-                        </>
-                    )}
-                </Box>
-            </TableCell>
-            <TableCell>
-                <Box title={item.target_property_path}>
-                    {detailedView && item.target_property_path &&
-                        <Alert severity={hasTargetPropertyPathValidityErrors ? "error" : "success"}>
-                            {parse(targetPropertyPathValidityInfo)}
-                        </Alert>}
-                    {!detailedView && (
-                        <>
-                            {item.target_property_path && item.target_property_path.length > TRUNCATE_LENGTH && "..."}
-                            {item.target_property_path && item.target_property_path.substring(item.target_property_path.length - TRUNCATE_LENGTH)}
-                        </>
-                    )}
-                </Box>
-            </TableCell>
-            <TableCell sx={{position: "relative"}}>
-                <ListTableTripleMapFragment
-                    item={item}
-                    initProjectTripleMapFragments={initProjectTripleMapFragments}
-                    isCurrent={isCurrent}
-                    isHovered={isHovered}
-                />
-            </TableCell>
-            <TableCell sx={{position: "relative", wordBreak: "normal"}}>
-                <ListTableMappingPackages
-                    item={item}
-                    initProjectMappingPackages={initProjectMappingPackages}
-                    onPackagesUpdate={onPackagesUpdate}
-                    isCurrent={isCurrent}
-                    isHovered={isHovered}
-                />
-            </TableCell>
-            <TableCell sx={{position: "relative"}}>
-                <ListTableSPARQLAssertions
-                    item={item}
-                    initProjectSPARQLResources={initProjectSPARQLResources}
-                    isCurrent={isCurrent}
-                    isHovered={isHovered}
-                />
-            </TableCell>
-            <TableCell align="center">
-                {!!notesCount &&
-                    <Button variant="text"
-                            size="small"
-                            color="warning"
-                            onClick={() => handleNotesDialogOpen(item)}
-                    >{notesCount}</Button>}
-            </TableCell>
-
-            <TableCell align="right">
-                <ListItemActions
-                    itemctx={new ForListItemAction(item_id, sectionApi)}/>
-            </TableCell>
-        </TableRow>
-        {isCurrent && (<TableRow>
-            <TableCell
-                colSpan={11}
-                sx={{
-                    p: 0, position: 'relative', '&:after': {
-                        position: 'absolute',
-                        content: '" "',
-                        top: 0,
-                        left: 0,
-                        backgroundColor: 'primary.main',
-                        width: 3,
-                        height: 'calc(100% + 1px)'
-                    }
-                }}
-            >
-                <CardContent>
-                    <Grid container
-                          rowSpacing={2}>
-                        <Grid item
-                              xl={6}
-                              md={12}>
-                            <PropertyList>
-                                {item.source_structural_element && (
-                                    <>
-                                        <Typography variant='h5'>
-                                            Source
-                                        </Typography>
-                                        {item.source_structural_element.sdk_element_id && <PropertyListItem
-                                            key="sdk_element_id"
-                                            label="Field/Node ID"
-                                            value={item.source_structural_element.sdk_element_id}
-                                        />}
-                                        {item.source_structural_element.name && <PropertyListItem
-                                            key="name"
-                                            label="Field Name"
-                                            value={item.source_structural_element.name}
-                                        />}
-                                        {item.source_structural_element.absolute_xpath && <PropertyListItem
-                                            key="absolute_xpath"
-                                            label="Absolute XPath"
-                                        >
-                                            <SyntaxHighlighter
-                                                language="xquery"
-                                                wrapLines
-                                                style={syntaxHighlighterTheme}
-                                                lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
-                                                {item.source_structural_element.absolute_xpath}
-                                            </SyntaxHighlighter>
-                                        </PropertyListItem>}
-                                    </>
-                                )}
-                            </PropertyList>
-                        </Grid>
-                        <Grid item
-                              xl={6}
-                              md={12}>
-                            {!!(item.target_class_path_terms_validity?.length || item.target_property_path_terms_validity?.length) &&
+                    <CardContent>
+                        <Grid container
+                              rowSpacing={2}>
+                            <Grid item
+                                  xl={6}
+                                  md={12}>
                                 <PropertyList>
-                                    <Typography variant='h5'>
-                                        Target
-                                    </Typography>
-                                    {!!item.target_class_path_terms_validity?.length &&
-                                        <PropertyListItem label='Ontology Fragment Class path'>
-                                            <SyntaxHighlighter
-                                                language="sparql"
-                                                wrapLines
-                                                style={syntaxHighlighterTheme}
-                                                lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
-                                                {item.target_class_path}
-                                            </SyntaxHighlighter>
-                                        </PropertyListItem>}
-                                    {!!item.target_property_path_terms_validity?.length &&
-                                        <PropertyListItem label='Ontology Fragment Property path'>
-                                            <SyntaxHighlighter
-                                                language="sparql"
-                                                wrapLines
-                                                style={syntaxHighlighterTheme}
-                                                lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
-                                                {item.target_property_path}
-                                            </SyntaxHighlighter>
-                                        </PropertyListItem>}
-                                </PropertyList>}
+                                    {item.source_structural_element && (
+                                        <>
+                                            <Typography variant='h5'>
+                                                Source
+                                            </Typography>
+                                            {item.source_structural_element.sdk_element_id && <PropertyListItem
+                                                key="sdk_element_id"
+                                                label="Field/Node ID"
+                                                value={item.source_structural_element.sdk_element_id}
+                                            />}
+                                            {item.source_structural_element.name && <PropertyListItem
+                                                key="name"
+                                                label="Field Name"
+                                                value={item.source_structural_element.name}
+                                            />}
+                                            {item.source_structural_element.absolute_xpath && <PropertyListItem
+                                                key="absolute_xpath"
+                                                label="Absolute XPath"
+                                            >
+                                                <SyntaxHighlighter
+                                                    language="xquery"
+                                                    wrapLines
+                                                    style={syntaxHighlighterTheme}
+                                                    lineProps={{
+                                                        style: {
+                                                            wordBreak: 'break-all',
+                                                            whiteSpace: 'pre-wrap'
+                                                        }
+                                                    }}>
+                                                    {item.source_structural_element.absolute_xpath}
+                                                </SyntaxHighlighter>
+                                            </PropertyListItem>}
+                                        </>
+                                    )}
+                                </PropertyList>
+                            </Grid>
+                            <Grid item
+                                  xl={6}
+                                  md={12}>
+                                {!!(item.target_class_path_terms_validity?.length || item.target_property_path_terms_validity?.length) &&
+                                    <PropertyList>
+                                        <Typography variant='h5'>
+                                            Target
+                                        </Typography>
+                                        {!!item.target_class_path_terms_validity?.length &&
+                                            <PropertyListItem label='Ontology Fragment Class path'>
+                                                <SyntaxHighlighter
+                                                    language="sparql"
+                                                    wrapLines
+                                                    style={syntaxHighlighterTheme}
+                                                    lineProps={{
+                                                        style: {
+                                                            wordBreak: 'break-all',
+                                                            whiteSpace: 'pre-wrap'
+                                                        }
+                                                    }}>
+                                                    {item.target_class_path}
+                                                </SyntaxHighlighter>
+                                            </PropertyListItem>}
+                                        {!!item.target_property_path_terms_validity?.length &&
+                                            <PropertyListItem label='Ontology Fragment Property path'>
+                                                <SyntaxHighlighter
+                                                    language="sparql"
+                                                    wrapLines
+                                                    style={syntaxHighlighterTheme}
+                                                    lineProps={{
+                                                        style: {
+                                                            wordBreak: 'break-all',
+                                                            whiteSpace: 'pre-wrap'
+                                                        }
+                                                    }}>
+                                                    {item.target_property_path}
+                                                </SyntaxHighlighter>
+                                            </PropertyListItem>}
+                                    </PropertyList>}
+                            </Grid>
                         </Grid>
-                    </Grid>
-                </CardContent>
-            </TableCell>
-        </TableRow>)}
-    </>)
+                    </CardContent>
+                </TableCell>
+            </TableRow>)}
+        </>)
 }
 
 export const ListTable = (props) => {
     const {
         count = 0, items = [], onPageChange = () => {
         }, onRowsPerPageChange, page = 0, rowsPerPage = 0, sectionApi, onPackagesUpdate = () => {
-        }, sort, sortField, onSort, detailedView
+        }, sort, sortField, onSort
     } = props;
 
+    const [detailedView, setDetailedView] = useState(true)
     const [currentItem, setCurrentItem] = useState(null);
     const [hoveredItem, setHoveredItem] = useState(null);
     const notesDialog = useDialog()
@@ -942,16 +964,19 @@ export const ListTable = (props) => {
     }, [])
 
     const SorterHeader = (props) => {
-        const direction = props.fieldName === sort.column && sort.direction === 1 ? 'asc' : 'desc';
+        const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
         return (
-            <TableSorterHeader sort={{direction, column: sort.column}}
-                               onSort={onSort}
-                               {...props}
-            />
+            <TableCell>
+                <TableSorterHeader sort={{direction, column: sort.column}}
+                                   onSort={onSort}
+                                   {...props}
+                />
+            </TableCell>
         )
     }
 
     if (!isProjectDataReady) return null;
+
 
     return (
         <TablePagination
@@ -965,128 +990,130 @@ export const ListTable = (props) => {
             showFirstButton
             showLastButton
         >
-            <Scrollbar>
-                <Table sx={{minWidth: 1200}}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell/>
-                            <TableCell>
-                                CM Rule Order
-                            </TableCell>
-                            <TableCell width="10%">
-                                Conceptual Field/Group
-                            </TableCell>
-                            <TableCell>
-                                Min XSD
-                            </TableCell>
-                            <TableCell>
-                                Max XSD
-                            </TableCell>
-                            <TableCell width="18%">
-                                Ontology Fragment Class path
-                            </TableCell>
-                            <TableCell width="18%">
-                                Ontology Fragment Property path
-                            </TableCell>
-                            <TableCell>
-                                RML Triple Map
-                            </TableCell>
-                            <TableCell>
-                                Mapping Package
-                            </TableCell>
-                            <TableCell>
-                                SPARQL assertions
-                            </TableCell>
-                            <TableCell align="center"
-                                       title="Notes"
-                                       sx={{
-                                           whiteSpace: "nowrap"
-                                       }}
-                            >
-                                Notes
-                            </TableCell>
-                            <TableCell align="right"
-                                       sx={{
-                                           whiteSpace: "nowrap"
-                                       }}
-                            >
-                                Actions
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {items.map((item) => {
-                            const item_id = item._id;
-                            const isCurrent = item_id === currentItem;
-                            const isHovered = item_id === hoveredItem;
+            <Paper>
+                <Stack direction='row'
+                       padding={3}>
+                    <FormControlLabel control={<Switch checked={detailedView}
+                                                       onChange={e => setDetailedView(e.target.checked)}/>}
+                                      label='Detailed View'/>
+                </Stack>
+                <Scrollbar>
+                    <Table sx={{minWidth: 1200}}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell/>
+                                <SorterHeader fieldName='sort_order'
+                                              title='CM Rule Order'/>
+                                <TableCell width="10%">
+                                    Conceptual Field/Group
+                                </TableCell>
+                                <TableCell>
+                                    Min XSD
+                                </TableCell>
+                                <TableCell>
+                                    Max XSD
+                                </TableCell>
+                                <TableCell width="18%">
+                                    Ontology Fragment Class path
+                                </TableCell>
+                                <TableCell width="18%">
+                                    Ontology Fragment Property path
+                                </TableCell>
+                                <TableCell>
+                                    RML Triple Map
+                                </TableCell>
+                                <TableCell>
+                                    Mapping Package
+                                </TableCell>
+                                <TableCell>
+                                    SPARQL assertions
+                                </TableCell>
+                                <TableCell align="center"
+                                           title="Notes"
+                                           sx={{
+                                               whiteSpace: "nowrap"
+                                           }}
+                                >
+                                    Notes
+                                </TableCell>
+                                <TableCell align="right"
+                                           sx={{
+                                               whiteSpace: "nowrap"
+                                           }}
+                                />
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {items.map(item => {
+                                const item_id = item._id;
+                                const isCurrent = item_id === currentItem;
+                                const isHovered = item_id === hoveredItem;
 
-                            return (
-                                <ListTableRow
-                                    key={`rules_list_row_${item_id}`}
-                                    item={item}
-                                    item_id={item_id}
-                                    isCurrent={isCurrent}
-                                    handleItemToggle={handleItemToggle}
-                                    sectionApi={sectionApi}
-                                    initProjectMappingPackages={projectMappingPackages}
-                                    initProjectTripleMapFragments={projectTripleMapFragments}
-                                    initProjectSPARQLResources={projectSPARQLResources}
-                                    onPackagesUpdate={onPackagesUpdate}
-                                    handleItemHover={handleItemHover}
-                                    isHovered={isHovered}
-                                    detailedView={detailedView}
-                                    handleNotesDialogOpen={notesDialog.handleOpen}
-                                />)
-                        })}
-                        <Dialog
-                            id='notes_dialog'
-                            onClose={notesDialog.handleClose}
-                            open={notesDialog.open}
-                            fullWidth
-                            maxWidth="md"
-                        >
-                            <Card>
-                                <CardHeader title="Notes"
-                                            sx={{mb: 2}}/>
-                                <Divider/>
-                                <CardContent sx={{pt: 1}}><Box style={{overflow: 'auto', maxHeight: '40vh'}}>
-                                    {notesDialog.data?.mapping_notes && <>
-                                        <Typography>Mapping Notes:</Typography>
-                                        {notesDialog.data.mapping_notes.map((mapping_note, i) => <RuleComment
-                                                key={'mapping_note' + i}
-                                                comment={mapping_note}
-                                            />
-                                        )}
-                                    </>}
-                                    <Divider sx={{
-                                        my: 2
-                                    }} />
-                                    {notesDialog.data?.editorial_notes && <>
-                                        <Typography>Editorial Notes:</Typography>
-                                        {notesDialog.data.editorial_notes.map((editorial_note, i) => <RuleComment
-                                                key={'editorial_notes' + i}
-                                                comment={editorial_note}
-                                            />
-                                        )}
-                                    </>}
-                                    <Divider sx={{
-                                        my: 2
-                                    }} />
-                                    {notesDialog.data?.feedback_notes && <>
-                                        <Typography>Feedback Notes:</Typography>
-                                        {notesDialog.data.feedback_notes.map((feedback_note, i) => <RuleComment
-                                                key={'feedback_notes' + i}
-                                                comment={feedback_note}
-                                            />
-                                        )}
-                                    </>}
-                                </Box>
-                                </CardContent>
-                            </Card>
-                        </Dialog>
-                    </TableBody>
-                </Table>
-            </Scrollbar>
+                                return (
+                                    <ListTableRow
+                                        key={`rules_list_row_${item_id}`}
+                                        item={item}
+                                        item_id={item_id}
+                                        isCurrent={isCurrent}
+                                        handleItemToggle={handleItemToggle}
+                                        sectionApi={sectionApi}
+                                        initProjectMappingPackages={projectMappingPackages}
+                                        initProjectTripleMapFragments={projectTripleMapFragments}
+                                        initProjectSPARQLResources={projectSPARQLResources}
+                                        onPackagesUpdate={onPackagesUpdate}
+                                        handleItemHover={handleItemHover}
+                                        isHovered={isHovered}
+                                        detailedView={detailedView}
+                                        handleNotesDialogOpen={notesDialog.handleOpen}
+                                    />)
+                            })}
+                            <Dialog
+                                id='notes_dialog'
+                                onClose={notesDialog.handleClose}
+                                open={notesDialog.open}
+                                fullWidth
+                                maxWidth="md"
+                            >
+                                <Card>
+                                    <CardHeader title="Notes"
+                                                sx={{mb: 2}}/>
+                                    <Divider/>
+                                    <CardContent sx={{pt: 1}}>
+                                        <Box style={{overflow: 'auto', maxHeight: '40vh'}}>
+                                            {notesDialog.data?.mapping_notes && <>
+                                                <Typography>Mapping Notes:</Typography>
+                                                {notesDialog.data.mapping_notes.map((mapping_note, i) => <RuleComment
+                                                        key={'mapping_note' + i}
+                                                        comment={mapping_note}
+                                                    />
+                                                )}
+                                            </>}
+                                            <Divider sx={{my: 2}}/>
+                                            {notesDialog.data?.editorial_notes && <>
+                                                <Typography>Editorial Notes:</Typography>
+                                                {notesDialog.data.editorial_notes.map((editorial_note, i) =>
+                                                    <RuleComment
+                                                        key={'editorial_notes' + i}
+                                                        comment={editorial_note}
+                                                    />
+                                                )}
+                                            </>}
+                                            <Divider sx={{my: 2}}/>
+                                            {notesDialog.data?.feedback_notes && <>
+                                                <Typography>Feedback Notes:</Typography>
+                                                {notesDialog.data.feedback_notes.map((feedback_note, i) =>
+                                                    <RuleComment key={'feedback_notes' + i}
+                                                                 comment={feedback_note}/>
+                                                )}
+                                            </>}
+                                        </Box>
+                                    </CardContent>
+                                </Card>
+                            </Dialog>
+                        </TableBody>
+                    </Table>
+                </Scrollbar>
+            </Paper>
         </TablePagination>
     );
 };

@@ -1,14 +1,14 @@
 import {useEffect, useState} from 'react';
 import dynamic from "next/dynamic";
 
-import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
+import ArrowBack from '@mui/icons-material/ArrowBack';
+
 import Tab from '@mui/material/Tab';
 import Chip from '@mui/material/Chip';
 import Link from '@mui/material/Link';
 import Tabs from '@mui/material/Tabs';
 import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
-import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
 import {paths} from 'src/paths';
@@ -19,7 +19,7 @@ import {RouterLink} from 'src/components/router-link';
 import {mappingPackagesApi as sectionApi} from 'src/api/mapping-packages';
 import MappingPackageDetails from "src/sections/app/mapping-package/details";
 
-const Resources =
+const Assets =
     dynamic(() => import("src/sections/app/mapping-package/resources"));
 const MappingPackageRulesView =
     dynamic(() => import("src/sections/app/mapping-package/mapping-package-rules-view"));
@@ -29,10 +29,9 @@ const StatesView =
     dynamic(() => import("src/sections/app/mapping-package/state/states_view"));
 
 
-
 const tabs = [
     {label: 'Details', value: 'details'},
-    {label: 'Resources', value: 'resources'},
+    {label: 'Assets', value: 'assets'},
     {label: 'Mapping Rules', value: 'mappingRules'},
     {label: 'Triple Map Fragments', value: 'tripleMapFragments'},
     {label: 'States', value: 'states'}
@@ -60,7 +59,6 @@ const Page = () => {
             <Seo title={`App: ${sectionApi.SECTION_ITEM_TITLE} View`}/>
             <Stack spacing={4}>
                 <Stack spacing={4}>
-                    <div>
                         <Link
                             color="text.primary"
                             component={RouterLink}
@@ -71,14 +69,11 @@ const Page = () => {
                             }}
                             underline="hover"
                         >
-                            <SvgIcon sx={{mr: 1}}>
-                                <ArrowLeftIcon/>
-                            </SvgIcon>
+                            <ArrowBack sx={{mr: 1}}/>
                             <Typography variant="subtitle2">
                                 {sectionApi.SECTION_TITLE}
                             </Typography>
                         </Link>
-                    </div>
                     <Stack
                         alignItems="flex-start"
                         direction={{
@@ -94,7 +89,7 @@ const Page = () => {
                             spacing={2}
                         >
                             <Stack spacing={1}>
-                                <Typography variant="h4">
+                                <Typography variant="h5">
                                     {item.title}
                                 </Typography>
                                 <Stack
@@ -132,8 +127,8 @@ const Page = () => {
                 {currentTab === 'details' && (
                     <MappingPackageDetails item={item}/>
                 )}
-                {currentTab === 'resources' && (
-                    <Resources item={item}/>
+                {currentTab === 'assets' && (
+                    <Assets item={item}/>
                 )}
                 {currentTab === "mappingRules" && (
                     <MappingPackageRulesView id={id}/>

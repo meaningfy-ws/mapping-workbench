@@ -20,7 +20,9 @@ from mapping_workbench.backend.test_data_suite.services.data import get_test_dat
 from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragment, TripleMapFragmentState, \
     TripleMapFragmentABC
 from mapping_workbench.backend.triple_map_fragment.services.data_for_generic import \
-    get_generic_triple_map_fragments_for_project, get_specific_triple_map_fragments_for_package
+    get_generic_triple_map_fragments_for_project_package, get_generic_triple_map_fragments_for_project
+from mapping_workbench.backend.triple_map_fragment.services.data_for_specific import \
+    get_specific_triple_map_fragments_for_package
 from mapping_workbench.backend.user.models.user import User
 
 
@@ -68,15 +70,23 @@ async def get_mappings_to_transform_test_data(
         project_id: PydanticObjectId,
         package_id: PydanticObjectId = None
 ):
-    generic_mappings = await get_generic_triple_map_fragments_for_project(
-        project_id=project_id
-    )
     specific_mappings = []
+
     if package_id is not None:
-        specific_mappings = await get_specific_triple_map_fragments_for_package(
+        generic_mappings = await get_generic_triple_map_fragments_for_project_package(
+            project_id=project_id,
             package_id=package_id
         )
-    return generic_mappings + specific_mappings
+        specific_mappings = await get_specific_triple_map_fragments_for_package(
+            project_id=project_id,
+            package_id=package_id
+        )
+    else:
+        generic_mappings = await get_generic_triple_map_fragments_for_project(project_id=project_id)
+
+    mappings = generic_mappings + specific_mappings
+
+    return mappings
 
 
 async def transform_test_data_file_resource(
@@ -86,7 +96,8 @@ async def transform_test_data_file_resource(
         mappings: List[TripleMapFragment] = None,
         resources: List[ResourceFile] = None,
         rml_mapper: RMLMapperABC = None,
-        save: bool = True
+        save: bool = True,
+        silent_exception: bool = True
 ) -> TestDataFileResource:
     """
     """
@@ -105,6 +116,10 @@ async def transform_test_data_file_resource(
             package_id=package_id
         )
 
+    if not isinstance(rml_mapper, RMLMapperABC):
+        rml_mapper: RMLMapper = RMLMapper(rml_mapper_path=Path(settings.RML_MAPPER_PATH))
+
+
     test_data_file_resource.rdf_manifestation = await transform_test_data_file_resource_content(
         content=test_data_file_resource.content,
         mappings=mappings,
@@ -112,6 +127,9 @@ async def transform_test_data_file_resource(
         rml_mapper=rml_mapper,
         test_data_title=test_data_file_resource.title or test_data_file_resource.filename
     )
+
+    if not silent_exception:
+        process_transform_test_data_mapper_errors(rml_mapper)
 
     if user is not None:
         test_data_file_resource.on_update(user=user)
@@ -239,7 +257,7 @@ async def transform_test_data_for_package_state(
 
 
 def process_transform_test_data_mapper_errors(rml_mapper: RMLMapperABC):
-    if rml_mapper.errors:
+    if rml_mapper.has_errors():
         raise RMLMapperException(message=('\n\n' + '\n'.join([
             error.message + (" :: " + str(error.metadata) if error.metadata else "") for error in rml_mapper.errors
         ])))

@@ -1,20 +1,21 @@
 import {useMemo} from 'react';
 import PropTypes from 'prop-types';
 
+import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import Stack from '@mui/material/Stack';
 import {useTheme} from '@mui/material/styles';
 
+import {paths} from 'src/paths';
 import {Logo} from 'src/components/logo';
 import {AppTitle} from 'src/components/app-title';
 import {RouterLink} from 'src/components/router-link';
 import {Scrollbar} from 'src/components/scrollbar';
 import {usePathname} from 'src/hooks/use-pathname';
-import {paths} from 'src/paths';
+import {useProjects} from "src/hooks/use-projects";
 import {MobileNavSection} from './mobile-nav-section';
-import {ProjectSwitch} from "../project-switch";
-import {useProjects} from "../../../hooks/use-projects";
+import {ProjectSwitch} from "../project-switch2";
 import {VersionLabel} from "../version-label";
 
 const MOBILE_NAV_WIDTH = 280;
@@ -35,7 +36,7 @@ const useCssVars = (color) => {
                         '--nav-logo-border': theme.palette.neutral[700],
                         '--nav-section-title-color': theme.palette.neutral[400],
                         '--nav-item-color': theme.palette.neutral[400],
-                        '--nav-item-hover-bg': 'rgba(255, 255, 255, 0.04)',
+                        '--nav-item-hover-bg': theme.palette.primary.dark,
                         '--nav-item-active-bg': 'rgba(255, 255, 255, 0.04)',
                         '--nav-item-active-color': theme.palette.text.primary,
                         '--nav-item-disabled-color': theme.palette.neutral[600],
@@ -47,12 +48,12 @@ const useCssVars = (color) => {
                     };
                 } else {
                     return {
-                        '--nav-bg': theme.palette.background.default,
+                        '--nav-bg': theme.palette.background.paper,
                         '--nav-color': theme.palette.text.primary,
                         '--nav-logo-border': theme.palette.neutral[100],
                         '--nav-section-title-color': theme.palette.neutral[400],
                         '--nav-item-color': theme.palette.text.secondary,
-                        '--nav-item-hover-bg': theme.palette.action.hover,
+                        '--nav-item-hover-bg': theme.palette.primary.light,
                         '--nav-item-active-bg': theme.palette.action.selected,
                         '--nav-item-active-color': theme.palette.text.primary,
                         '--nav-item-disabled-color': theme.palette.neutral[400],
@@ -113,7 +114,7 @@ export const MobileNav = (props) => {
     const cssVars = useCssVars(color);
     const projects = useProjects()
 
-    const {overview, ...menus} = sections
+    const {dashboard, ...menus} = sections
 
     return (
         <Drawer
@@ -145,20 +146,15 @@ export const MobileNav = (props) => {
                     <Stack
                         alignItems="center"
                         direction="row"
-                        spacing={2}
-                        sx={{p: 3}}
+                        spacing={'14px'}
+                        sx={{px: '20px', py: '25px'}}
                     >
                         <Box
                             component={RouterLink}
                             href={paths.index}
                             sx={{
-                                borderColor: 'var(--nav-logo-border)',
-                                borderRadius: 1,
-                                borderStyle: 'solid',
-                                borderWidth: 1,
                                 display: 'flex',
                                 height: 40,
-                                p: '4px',
                                 width: 40
                             }}
                         >
@@ -171,7 +167,6 @@ export const MobileNav = (props) => {
                         spacing={2}
                         sx={{
                             flexGrow: 1,
-                            px: 2
                         }}
                     >
                         <Stack
@@ -184,20 +179,20 @@ export const MobileNav = (props) => {
                             }}>
                             <ProjectSwitch/>
                         </Stack>
-                        {overview.map((section, index) => (
-                            <MobileNavSection
-                                items={section.items}
-                                key={index}
-                                pathname={pathname}
-                                subheader={section.subheader}
+                        <Divider color='#F2F4F7'
+                                 sx={{borderBottomWidth: 2}}/>
+                        {dashboard.map((section, index) => (
+                            <MobileNavSection items={section.items}
+                                              key={index}
+                                              pathname={pathname}
+                                              subheader={section.subheader}
                             />
                         ))}
                         {projects.sessionProject && Object.values(menus).map(menu => menu.map((section, index) => (
-                            <MobileNavSection
-                                items={section.items}
-                                key={index}
-                                pathname={pathname}
-                                subheader={section.subheader}
+                            <MobileNavSection items={section.items}
+                                              key={index}
+                                              pathname={pathname}
+                                              subheader={section.subheader}
                             />
                         )))}
 

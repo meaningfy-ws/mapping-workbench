@@ -19,13 +19,13 @@ import {useFormik} from "formik";
 import {FormTextField} from "../../../components/app/form/text-field";
 import * as Yup from "yup";
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
-import {TableLoadWrapper} from "../../../sections/app/shacl_validation_report/utils";
 import CardContent from "@mui/material/CardContent";
+import {TableLoadWrapper} from '../../../sections/app/shacl-validation-report/utils';
 
-
-
-
-const client = await new FlureeClient({
+let client
+let did
+try {
+ client = await new FlureeClient({
     // isFlureeHosted: true,
     // apiKey: 'qjP6uJ9O7j30JAVShPh-T5x4UbGj7OZxfTd4dqT7KnEmAY-Ylf8e2tU6YwOTtSHjLZhKSGvpZKfW4T73oYvSgw',
     ledger: 'fluree-jld/387028092978552',
@@ -44,9 +44,12 @@ client.setContext({
     f: 'https://ns.flur.ee/ledger#',
     ex: 'http://example.org/',
   });
+ did = client.getDid()
+
+}
+catch (err) {console.error(err)}
 
 
-const did = client.getDid()
 
 const Page = () => {
 
@@ -54,7 +57,7 @@ const Page = () => {
     const [state, setState] = useState({})
     const [dataState, setDataState] = useState({})
 
-    const getTransaction = client.query(
+    const getTransaction = () => client.query(
          sectionApi.getData())
             .sign()
 
@@ -118,7 +121,7 @@ const Page = () => {
     const getItems = () => {
         setDataState(e=> ({...e, load: true}))
 
-        getTransaction.send()
+        getTransaction().send()
            .then(res => {
                setDataState(e => ({}))
                setItems(res.map(e=>({user:e[0],secret:e[1]})))
@@ -127,8 +130,9 @@ const Page = () => {
     }
 
     useEffect(() => {
-        getItems()
-    }, []);
+        console.log('client',client)
+        client && getItems()
+    }, [client]);
 
     usePageView();
 
