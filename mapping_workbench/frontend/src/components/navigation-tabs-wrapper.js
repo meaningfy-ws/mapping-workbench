@@ -1,15 +1,15 @@
 import Stack from '@mui/material/Stack';
-import {useTheme} from '@mui/material/styles';
+import {alpha} from "@mui/system/colorManipulator";
 
 export const NavigationTabsWrapper = ({children}) => {
     return <Stack direction='row'
                   sx={{
                       position: 'fixed',
-                      backgroundColor: 'rgba(248, 249, 250, 0.8)',
+                      backgroundColor: (theme) => alpha(theme.palette.background.default, 0.8),
                       backdropFilter: 'blur(6px)',
                       width: '100%',
-                      top: '142px',
-                      pt: 2,
+                      top: '140px',
+                      //pt: 2,
                       pb:1,
                       zIndex: 10
                   }}>
