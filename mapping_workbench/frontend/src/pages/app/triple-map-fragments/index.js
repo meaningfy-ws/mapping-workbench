@@ -21,6 +21,7 @@ import {TechnicalMappingsTabs} from 'src/sections/app/technical-mappings';
 import {ListTable} from "src/sections/app/generic-triple-map-fragment/list-table";
 import {FileUploader} from "src/sections/app/generic-triple-map-fragment/file-uploader";
 import {genericTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/generic';
+import {NavigationTabsWrapper} from '../../../components/navigation-tabs-wrapper';
 
 const Page = () => {
     const uploadDialog = useDialog();
@@ -43,8 +44,11 @@ const Page = () => {
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
-            <Stack spacing={4}>
+            <NavigationTabsWrapper>
                 <TechnicalMappingsTabs/>
+            </NavigationTabsWrapper>
+            <Stack spacing={4}
+                   mt={5}>
                 <Stack
                     direction="row"
                     justifyContent="space-between"

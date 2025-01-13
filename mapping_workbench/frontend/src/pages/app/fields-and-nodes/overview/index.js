@@ -20,6 +20,7 @@ import {ListTable} from 'src/sections/app/fields-registry/list-table';
 import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {fieldsOverviewApi as sectionApi} from 'src/api/fields-overview';
 import {ElementsDefinitionTabs} from 'src/sections/app/elements-definition';
+import {NavigationTabsWrapper} from '../../../../components/navigation-tabs-wrapper';
 
 const FILTER_VALUES = [
     {label: 'All', value: ''},
@@ -65,10 +66,11 @@ const Page = () => {
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
-            <Stack spacing={4}>
-                <Stack>
-                    <ElementsDefinitionTabs/>
-                </Stack>
+            <NavigationTabsWrapper>
+                <ElementsDefinitionTabs/>
+            </NavigationTabsWrapper>
+            <Stack spacing={4}
+                   mt={5}>
                 <Stack direction='row'
                        justifyContent='space-between'>
                     <Stack direction='row'
@@ -134,7 +136,7 @@ const Page = () => {
                     onSort={itemsSearch.handleSort}
                     page={itemsSearch.state.page}
                     items={itemsSearch.pagedItems}
-                    count={itemsStore.itemsCount}
+                    count={itemsSearch.count}
                     rowsPerPage={itemsSearch.state.rowsPerPage}
                     sectionApi={sectionApi}
                 />

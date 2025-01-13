@@ -1,7 +1,7 @@
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import {useRouter} from 'next/router';
-import {paths} from '../../../paths';
+import {paths} from 'src/paths';
 
 const TABS = [
     {

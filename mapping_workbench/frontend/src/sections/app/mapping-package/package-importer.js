@@ -2,7 +2,7 @@ import {useCallback, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import nProgress from 'nprogress';
 
-import XIcon from '@untitled-ui/icons-react/build/esm/X';
+import CloseIcon from '@mui/icons-material/Close';
 
 import Stack from '@mui/material/Stack';
 import Dialog from '@mui/material/Dialog';
@@ -21,7 +21,6 @@ import {FileDropzone} from 'src/components/file-dropzone';
 import {DEFAULT_PACKAGE_TYPE, PACKAGE_TYPE} from "src/api/mapping-packages";
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import Divider from "@mui/material/Divider";
-
 
 
 export const PackageImporter = (props) => {
@@ -100,9 +99,7 @@ export const PackageImporter = (props) => {
                     color="inherit"
                     onClick={onClose}
                 >
-                    <SvgIcon>
-                        <XIcon/>
-                    </SvgIcon>
+                    <CloseIcon/>
                 </IconButton>
             </Stack>
             <DialogContent id="drop-zone">
@@ -116,11 +113,13 @@ export const PackageImporter = (props) => {
                     sx={{mb: 2}}
                 >
                     {Object.keys(PACKAGE_TYPE).map((key) => (
-                        <MenuItem key={key} value={key}>{PACKAGE_TYPE[key]}</MenuItem>
+                        <MenuItem key={key}
+                                  value={key}>{PACKAGE_TYPE[key]}</MenuItem>
                     ))}
                 </TextField>
-                <FormGroup sx={{ mb: 2}}>
-                    <Typography variant="h7" sx={{mb: 1}}>After Import</Typography>
+                <FormGroup sx={{mb: 2}}>
+                    <Typography variant="h7"
+                                sx={{mb: 1}}>After Import</Typography>
                     <FormControlLabel
                         control={
                             <Checkbox
@@ -130,7 +129,7 @@ export const PackageImporter = (props) => {
                                 }}
                             />
                         }
-                        label="Cleanup Project Resources"
+                        label="Cleanup Project Assets"
                         value="cleanup_project"
                     />
                     <FormControlLabel
@@ -138,8 +137,7 @@ export const PackageImporter = (props) => {
                             checked={triggerPackageProcessing}
                             onChange={e => setTriggerPackageProcessing(e.target.checked)}
                             name="trigger_package_processing"
-                        />
-                        }
+                        />}
                         label="Process Package"
                     />
                     <Divider sx={{mt: 1}}/>

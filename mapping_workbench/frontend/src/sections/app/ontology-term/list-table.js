@@ -76,7 +76,6 @@ export const ListTable = (props) => {
                                               title='Term'/>
                                 <SorterHeader fieldName='type'
                                               title='Type'/>
-                                <TableCell align="right"/>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -118,12 +117,6 @@ export const ListTable = (props) => {
                                             </TableCell>
                                             <TableCell>
                                                 {item.type}
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                <MenuActions>
-                                                    <ListItemActions
-                                                        itemctx={new ForListItemAction(item_id, sectionApi)}/>
-                                                </MenuActions>
                                             </TableCell>
                                         </TableRow>
                                         {isCurrent && (
