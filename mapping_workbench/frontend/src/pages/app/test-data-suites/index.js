@@ -19,6 +19,7 @@ import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {testDataSuitesApi as sectionApi} from 'src/api/test-data-suites';
 import {FileCollectionUploader} from "src/sections/app/file-manager/file-collection-uploader";
 import {TestDataCollectionListTable} from "src/sections/app/file-manager/test-data-collection-list-table";
+import {NavigationTabsWrapper} from '../../../components/navigation-tabs-wrapper';
 
 const useItemsStore = () => {
     const [state, setState] = useState({
@@ -60,10 +61,11 @@ const Page = () => {
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
-            <Stack spacing={4}>
-                <Stack>
-                    <SourceAndTargetTabs/>
-                </Stack>
+            <NavigationTabsWrapper>
+                <SourceAndTargetTabs/>
+            </NavigationTabsWrapper>
+            <Stack spacing={4}
+                   sx={{mt: 5}}>
                 <Stack direction='row'
                        justifyContent='space-between'>
                     <Paper>

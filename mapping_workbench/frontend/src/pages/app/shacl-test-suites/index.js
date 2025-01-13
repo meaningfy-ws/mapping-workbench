@@ -17,6 +17,7 @@ import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {shaclTestSuitesApi as sectionApi} from 'src/api/shacl-test-suites';
 import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
 import {shaclTestFileResourcesApi as fileResourceApi} from 'src/api/shacl-test-suites/file-resources'
+import {NavigationTabsWrapper} from '../../../components/navigation-tabs-wrapper';
 
 const useItemsStore = () => {
     const [state, setState] = useState({
@@ -57,8 +58,11 @@ const Page = () => {
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
-            <Stack spacing={4}>
+            <NavigationTabsWrapper>
                 <QualityControlTabs/>
+            </NavigationTabsWrapper>
+            <Stack spacing={4}
+                   mt={5}>
                 <Stack
                     direction="row"
                     justifyContent="space-between"
@@ -90,7 +94,7 @@ const Page = () => {
                     page={itemsSearch.state.page}
                     items={itemsSearch.pagedItems}
                     itemsForced={itemsStore.force}
-                    count={itemsStore.itemsCount}
+                    count={itemsSearch.count}
                     sort={itemsSearch.state.sort}
                     onSort={itemsSearch.handleSort}
                     rowsPerPage={itemsSearch.state.rowsPerPage}

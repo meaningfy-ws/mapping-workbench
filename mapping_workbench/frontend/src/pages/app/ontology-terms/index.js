@@ -19,6 +19,7 @@ import {RouterLink} from 'src/components/router-link';
 import {ontologyTermsApi as sectionApi} from 'src/api/ontology-terms';
 import {SourceAndTargetTabs} from 'src/sections/app/source-and-target';
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
+import {NavigationTabsWrapper} from '../../../components/navigation-tabs-wrapper';
 import useItemsSearch from '../../../hooks/use-items-search';
 import {useItemsStore} from '../../../hooks/use-items-store';
 import {ListTable} from '../../../sections/app/ontology-term/list-table';
@@ -49,16 +50,18 @@ const Page = () => {
 
     usePageView();
 
+    console.log(itemsSearch)
+
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE}`}/>
+            <NavigationTabsWrapper>
+                <SourceAndTargetTabs/>
+            </NavigationTabsWrapper>
             <Grid container
+                  mt={5}
                   spacing={{xs: 3, lg: 4}}
             >
-
-                <Grid xs={12}>
-                    <SourceAndTargetTabs/>
-                </Grid>
                 <Grid xs={12}>
                     <Stack direction="row"
                            justifyContent="space-between"
@@ -103,15 +106,6 @@ const Page = () => {
                             >
                                 Discover Terms
                             </Button>
-                            <Button
-                                id="add_term_button"
-                                component={RouterLink}
-                                href={paths.app[sectionApi.section].create}
-                                startIcon={<AddIcon/>}
-                                variant="contained"
-                            >
-                                Add Term
-                            </Button>
                         </Stack>
                     </Stack>
                 </Grid>
@@ -123,7 +117,7 @@ const Page = () => {
                         onSort={itemsSearch.handleSort}
                         page={itemsSearch.state.page}
                         items={itemsSearch.pagedItems}
-                        count={itemsStore.itemsCount}
+                        count={itemsSearch.count}
                         rowsPerPage={itemsSearch.state.rowsPerPage}
                         sectionApi={sectionApi}
                     />

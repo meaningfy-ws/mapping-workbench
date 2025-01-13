@@ -27,6 +27,7 @@ import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import XpathEvaluator from "src/sections/app/fields-and-nodes/xpath-evaluator";
 import RelativeXpathFinder from "src/sections/app/fields-and-nodes/relative-xpath-finder";
 import {genericTripleMapFragmentsApi as tripleMapFragments} from "src/api/triple-map-fragments/generic";
+import {NavigationTabsWrapper} from '../../../../components/navigation-tabs-wrapper';
 
 const SECTION_TITLE = 'Fields Develop'
 
@@ -141,10 +142,11 @@ const Page = () => {
     return (
         <>
             <Seo title={`App: ${SECTION_TITLE} List`}/>
-            <Stack spacing={4}>
-                <Stack>
-                    <ElementsDefinitionTabs/>
-                </Stack>
+            <NavigationTabsWrapper>
+                <ElementsDefinitionTabs/>
+            </NavigationTabsWrapper>
+            <Stack spacing={4}
+                   mt={5}>
                 <form onSubmit={formik.handleSubmit}>
                     <Card sx={{p: 2}}>
                         <Grid container
