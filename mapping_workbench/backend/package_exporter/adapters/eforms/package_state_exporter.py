@@ -64,8 +64,7 @@ class PackageStateExporter(ArchiveExporter):
         await self.add_output()
         self.add_metadata()
 
-        self.archiver.make_archive(self.package_path, self.archive_file_path)
-
+        self.archiver.make_archive_with_folder(Path(self.package_state.identifier),  self.tempdir_path, self.archive_file_path)
         with open(self.archive_file_path, 'rb') as zip_file:
             return zip_file.read()
 
