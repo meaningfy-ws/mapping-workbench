@@ -235,7 +235,6 @@ class Task:
         """
         """
         self.task_metadata.meta = meta
-        print(self.task_metadata)
 
     def get_task_id(self) -> str:
         """
