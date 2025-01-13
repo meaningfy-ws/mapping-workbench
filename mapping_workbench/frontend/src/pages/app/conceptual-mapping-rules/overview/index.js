@@ -9,7 +9,6 @@ import CachedIcon from '@mui/icons-material/Cached';
 import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import Alert from "@mui/material/Alert";
-import Switch from '@mui/material/Switch';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import Popover from '@mui/material/Popover';
@@ -36,6 +35,7 @@ import {ListTable} from "src/sections/app/conceptual-mapping-rule/list-table";
 import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
 import {ConceptualMappingTabs} from 'src/sections/app/conceptual-mapping-rule/conceptual-mapping-tabs';
 import {MappingPackageFormSelect} from 'src/sections/app/mapping-package/components/mapping-package-form-select';
+import {NavigationTabsWrapper} from '../../../../components/navigation-tabs-wrapper';
 
 const FILTER_VALUES = [{label: 'All', value: ''},
     {label: 'Valid', value: 'valid'},
@@ -87,8 +87,11 @@ const Page = () => {
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
-            <Stack spacing={4}>
+            <NavigationTabsWrapper>
                 <ConceptualMappingTabs/>
+            </NavigationTabsWrapper>
+            <Stack spacing={4}
+                   mt={5}>
                 <Stack
                     direction="row"
                     justifyContent="space-between"

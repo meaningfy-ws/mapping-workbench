@@ -6,15 +6,17 @@ import {Layout as AppLayout} from 'src/layouts/app';
 import TreeView from "src/sections/app/tree-view/tree-view";
 import {fieldsRegistryApi as sectionApi} from 'src/api/fields-registry';
 import {ElementsDefinitionTabs} from 'src/sections/app/elements-definition';
+import {NavigationTabsWrapper} from '../../../../components/navigation-tabs-wrapper';
 
 export const Page = () => {
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TREE_TITLE} List`}/>
-            <Stack spacing={4}>
-               <Stack>
-                   <ElementsDefinitionTabs/>
-               </Stack>
+            <NavigationTabsWrapper>
+                <ElementsDefinitionTabs/>
+            </NavigationTabsWrapper>
+            <Stack spacing={4}
+                   mt={5}>
                 <Card>
                     <TreeView sectionApi={sectionApi}/>
                 </Card>
