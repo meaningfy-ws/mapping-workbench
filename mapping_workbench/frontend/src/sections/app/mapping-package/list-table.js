@@ -35,7 +35,8 @@ import TablePagination from "src/sections/components/table-pagination-pages";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {MappingPackageProcessForm} from './components/mapping-package-process-form';
 import {MappingPackagesBulkActions} from './components/mapping-packages-bulk-actions';
-
+import {PROCESS_STATUS} from "../../../api/mapping-packages";
+import Alert from "@mui/material/Alert";
 
 const MappingPackageRowFragment = (props) => {
     const {
@@ -54,6 +55,8 @@ const MappingPackageRowFragment = (props) => {
 
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [cleanupProject, setCleanupProject] = useState(false);
+
+    let process_status = PROCESS_STATUS.UNPROCESSED
 
     return (
         <>
@@ -101,6 +104,9 @@ const MappingPackageRowFragment = (props) => {
                     </TableCell>
                     <TableCell align="left">
                         {timeTransformer(item.created_at, timeSetting)}
+                    </TableCell>
+                    <TableCell>
+                        <Alert severity={process_status.color}>{process_status.title}</Alert>
                     </TableCell>
                     <TableCell align="center">
                         <MenuActions>
@@ -295,6 +301,9 @@ export const ListTable = (props) => {
                                 <SorterHeader fieldName='created_at'
                                               label='created'
                                               align="left"/>
+                                <SorterHeader fieldName='status'
+                                              label='status'
+                                              align="right"/>
                                 <TableCell align="center"/>
                             </TableRow>
                         </TableHead>

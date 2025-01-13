@@ -9,6 +9,13 @@ export const PACKAGE_TYPE = {
     EFORMS: 'eForms', STANDARD: 'Standard'
 };
 
+export const PROCESS_STATUS = {
+    PROCESSING: {title: 'Processing', color: "info"},
+    PROCESSED_SUCCESS: {title: 'Processed (success)', color: "success"},
+    PROCESSED_ERROR: {title: 'Processed (error)', color: "error"},
+    UNPROCESSED: {title: 'Unprocessed', color: "warning"}
+};
+
 export const EFORMS_PACKAGE_TYPE = "EFORMS";
 export const DEFAULT_PACKAGE_TYPE = EFORMS_PACKAGE_TYPE;
 
