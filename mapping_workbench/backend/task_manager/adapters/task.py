@@ -1,4 +1,3 @@
-import re
 import random
 import re
 import unicodedata
@@ -23,6 +22,16 @@ class TaskResult:
     warnings: List[str] = []
     task_status: TaskStatus = TaskStatus.FINISHED
 
+class TaskEntity(BaseModel):
+    type:  str = None
+    id: str = None
+    action: str = None
+
+class TaskMetadataMeta(BaseModel):
+    """
+    TaskMetadataMeta is a class that represents task metadata meta.
+    """
+    entity: TaskEntity = None
 
 class TaskMetadata(BaseModel):
     """
@@ -38,6 +47,7 @@ class TaskMetadata(BaseModel):
     exception_message: str = None
     warnings: List[str] = []
     progress: TaskProgressData = None
+    meta: TaskMetadataMeta = None,
     created_by: Optional[str] = None
 
 
@@ -220,6 +230,12 @@ class Task:
         :return: task metadata of task
         """
         return self.task_metadata
+
+    def set_task_metadata_meta(self, meta: TaskMetadataMeta):
+        """
+        """
+        self.task_metadata.meta = meta
+        print(self.task_metadata)
 
     def get_task_id(self) -> str:
         """

@@ -10,10 +10,10 @@ export const PACKAGE_TYPE = {
 };
 
 export const PROCESS_STATUS = {
-    PROCESSING: {title: 'Processing', color: "info"},
+    PROCESSING: {title: 'Processing', color: "warning"},
     PROCESSED_SUCCESS: {title: 'Processed (success)', color: "success"},
     PROCESSED_ERROR: {title: 'Processed (error)', color: "error"},
-    UNPROCESSED: {title: 'Unprocessed', color: "warning"}
+    UNPROCESSED: {title: 'Unprocessed', color: "info"}
 };
 
 export const EFORMS_PACKAGE_TYPE = "EFORMS";
@@ -99,6 +99,19 @@ class MappingPackagesApi extends SectionApi {
     async deleteMappingPackageWithCleanup(id, cleanup_project = false) {
         let endpoint = this.paths['item'].replace(':id', id);
         return await appApi.delete(endpoint, {cleanup_project: cleanup_project});
+    }
+
+    processStatus(api_status) {
+        switch (api_status) {
+            case "PROCESSING":
+                return PROCESS_STATUS.PROCESSING
+            case "PROCESSED_SUCCESS":
+                return PROCESS_STATUS.PROCESSED_SUCCESS
+            case "PROCESSED_ERROR":
+                return PROCESS_STATUS.PROCESSED_ERROR
+            default:
+                return PROCESS_STATUS.UNPROCESSED
+        }
     }
 }
 

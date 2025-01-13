@@ -12,7 +12,10 @@ from mapping_workbench.backend.core.services.request import request_update_data,
     api_entity_is_found, prepare_search_param, pagination_params
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageCreateIn, \
     MappingPackageUpdateIn, MappingPackageOut, MappingPackageStateGate
+from mapping_workbench.backend.mapping_package.services.data import mapping_package_process_status
+from mapping_workbench.backend.package_processor.services import TASK_ENTITY_TYPE
 from mapping_workbench.backend.state_manager.services.object_state_manager import delete_object_state
+from mapping_workbench.backend.task_manager.entrypoints import AppTaskManager
 from mapping_workbench.backend.triple_map_fragment.models.entity import SpecificTripleMapFragment, \
     GenericTripleMapFragment
 from mapping_workbench.backend.user.models.user import User
@@ -32,6 +35,23 @@ async def list_mapping_packages(filters: dict = None, page: int = None, limit: i
         skip=skip,
         limit=limit
     ).to_list()
+
+    tasks_metadata = AppTaskManager.get_task_statuses()
+
+    tasks_statuses = {
+        item.meta.entity.id: item.task_status.value
+        for item in tasks_metadata
+        if item.meta and item.meta.entity and item.meta.entity.type == TASK_ENTITY_TYPE
+    }
+
+    for item in items:
+        item_id = str(item.id)
+        tasks_status = None
+        if item_id in tasks_statuses:
+            tasks_status = tasks_statuses[item_id]
+
+        item.process_status = mapping_package_process_status(tasks_status)
+
 
     total_count: int = await MappingPackage.find(query_filters).count()
     return items, total_count

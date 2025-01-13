@@ -27,6 +27,8 @@ import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {mappingPackagesApi as sectionApi} from 'src/api/mapping-packages';
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {PackageImporter} from 'src/sections/app/mapping-package/package-importer';
+import AutorenewIcon from "@mui/icons-material/Autorenew";
+
 
 const useItemsStore = () => {
     const [state, setState] = useState({
@@ -44,12 +46,11 @@ const useItemsStore = () => {
     }
 
     useEffect(() => {
-            handleItemsGet();
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        []);
+        handleItemsGet();
+    }, []);
 
     return {
+        handleItemsGet,
         ...state
     };
 };
@@ -57,7 +58,7 @@ const useItemsStore = () => {
 
 const Page = () => {
     const itemsStore = useItemsStore();
-    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['title', 'identifier'], {}, {
+    const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['title', 'identifier', 'process_status'], {}, {
         column: 'created_at',
         sort: 'desc'
     });
@@ -96,6 +97,14 @@ const Page = () => {
                         spacing={3}
                     >
                         <Button
+                            id="refresh_button"
+                            color="inherit"
+                            startIcon={<AutorenewIcon/>}
+                            onClick={itemsStore.handleItemsGet}
+                        >
+                            Refresh
+                        </Button>
+                        <Button
                             onClick={srcExportDialog.handleOpen}
                             id="src_export_button"
                             startIcon={<UploadIcon/>}
@@ -121,6 +130,7 @@ const Page = () => {
                     </Stack>
 
                 </Stack>
+
                 <ListTable
                     onPageChange={itemsSearch.handlePageChange}
                     onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
@@ -131,6 +141,7 @@ const Page = () => {
                     sort={itemsSearch.state.sort}
                     rowsPerPage={itemsSearch.state.rowsPerPage}
                     sectionApi={sectionApi}
+                    getItems={itemsStore.handleItemsGet}
                 />
             </Stack>
 

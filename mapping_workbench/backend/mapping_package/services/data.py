@@ -6,6 +6,7 @@ from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundE
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageState, \
     MappingPackageStateGate
 from mapping_workbench.backend.state_manager.services.object_state_manager import load_object_state
+from mapping_workbench.backend.tasks.models.task_response import TaskProgressStatus
 
 DEFAULT_PACKAGE_NAME = "DEFAULT"
 DEFAULT_PACKAGE_IDENTIFIER = "default"
@@ -55,3 +56,14 @@ def get_mapping_package_state_ns_definitions(mapping_package_state: MappingPacka
         )
     }
     return ns_definitions
+
+
+def mapping_package_process_status(task_status):
+    if task_status == TaskProgressStatus.RUNNING:
+        return "PROCESSING"
+    elif task_status == TaskProgressStatus.FINISHED:
+        return "PROCESSED_SUCCESS"
+    elif task_status in [TaskProgressStatus.TIMEOUT, TaskProgressStatus.FAILED, TaskProgressStatus.CANCELED]:
+        return "PROCESSED_ERROR"
+    else:
+        return "UNPROCESSED"
