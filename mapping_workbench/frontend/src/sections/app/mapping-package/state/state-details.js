@@ -2,14 +2,43 @@ import Card from "@mui/material/Card";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Unstable_Grid2";
 import CardContent from "@mui/material/CardContent";
+import {useEffect, useState} from 'react';
 
 import {PropertyList} from "src/components/property-list";
 import {PropertyListItem} from "src/components/property-list-item";
+import {mappingPackageStatesApi as sectionApi} from '../../../../api/mapping-packages/states';
+import ResultSummaryCoverage from './result-summary-coverage';
 
-const StateDetails = ({item}) => {
-    return(
+const StateDetails = ({item, sid, reportTree}) => {
+    const [validationReport, setValidationReport] = useState(undefined)
+    const [dataState, setDataState] = useState()
+
+    useEffect(() => {
+        sid && handleValidationReportsGet(sid)
+    }, [sid])
+
+    const handleValidationReportsGet = (sid) => {
+        setDataState({load: true, error: false})
+        sectionApi.getXpathReports(sid)
+            .then(res => {
+                setValidationReport(res.results.map(e => ({...e, notice_count: e.test_data_xpaths.length})))
+                setDataState(e => ({...e, load: false}))
+            })
+            .catch(err => {
+                console.error(err);
+                setDataState({load: false, error: true})
+            })
+    }
+
+    console.log(validationReport)
+    if (!validationReport) return null
+
+    return (
         <Grid container
               spacing={3}>
+            <ResultSummaryCoverage item={item}
+                                   sid={sid}
+                                   validationReport={validationReport}/>
             <Grid md={12}
                   xs={12}>
                 <Card>

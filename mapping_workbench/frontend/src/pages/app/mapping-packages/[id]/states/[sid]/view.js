@@ -2,7 +2,8 @@ import {useEffect, useState} from 'react';
 import dynamic from "next/dynamic";
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import DownloadingIcon from '@mui/icons-material/Downloading';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+
 import Tab from '@mui/material/Tab';
 import Chip from '@mui/material/Chip';
 import Tabs from '@mui/material/Tabs';
@@ -155,12 +156,9 @@ const Page = () => {
                         <Button
                             onClick={() => handleExport(item)}
                             disabled={isExporting}
-                            startIcon={(
-                                <SvgIcon>
-                                    <DownloadingIcon/>
-                                </SvgIcon>
-                            )}
-                            variant="contained"
+                            startIcon={<FileDownloadIcon/>}
+                            // variant="contained"
+
                         >
                             {isExporting ? "Exporting..." : "Export State"}
                         </Button>
@@ -187,7 +185,9 @@ const Page = () => {
                     <Divider/>
                 </Stack>
                 {currentTab === 'details' && (
-                    <StateDetails item={item}/>
+                    <StateDetails sid={sid}
+                                  item={item}
+                                  reportTree={validationReportTree}/>
                 )}
                 {currentTab === 'xpath' && (
                     <Card>
