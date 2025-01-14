@@ -6,56 +6,10 @@ from typing import Callable, Optional, List
 
 from dateutil.tz import tzlocal
 from pebble import ProcessFuture
-from pydantic import BaseModel
 
 from mapping_workbench.backend.config import settings
-from mapping_workbench.backend.tasks.models.task_response import TaskStatus, TaskProgressData
-
-
-class TaskResult:
-    """
-    TaskResult is a class that represents task result.
-    """
-    started_at: datetime = None
-    finished_at: datetime = None
-    exception_message: str = None
-    warnings: List[str] = []
-    task_status: TaskStatus = TaskStatus.FINISHED
-
-class TaskEntity(BaseModel):
-    type:  str = None
-    id: str = None
-    action: str = None
-
-class TaskMetadataMeta(BaseModel):
-    """
-    TaskMetadataMeta is a class that represents task metadata meta.
-    """
-    entity: TaskEntity = None
-
-class TaskMetadata(BaseModel):
-    """
-    TaskMetadata is a class that represents task metadata.
-    """
-    task_id: str
-    task_name: str
-    task_timeout: Optional[float]
-    task_status: TaskStatus
-    created_at: datetime
-    started_at: datetime = None
-    finished_at: datetime = None
-    exception_message: str = None
-    warnings: List[str] = []
-    progress: TaskProgressData = None
-    meta: TaskMetadataMeta = None,
-    created_by: Optional[str] = None
-
-
-class APIListTaskMetadataResponse(BaseModel):
-    """
-    APIListTaskMetadataResponse is a class that represents response model of list tasks metadata endpoint.
-    """
-    tasks_metadata: List[TaskMetadata] = []
+from mapping_workbench.backend.tasks.models.task_response import TaskStatus, TaskProgressData, TaskResponse
+from mapping_workbench.backend.tasks.models.task_result import TaskResult, TaskMetadata, TaskMetadataMeta
 
 
 class TaskExecutor(Callable):
@@ -122,6 +76,7 @@ class Task:
                                           task_name=task_name,
                                           task_timeout=task_timeout,
                                           task_status=TaskStatus.QUEUED,
+                                          meta=TaskMetadataMeta(),
                                           created_at=created_at,
                                           created_by=created_by)
         self.future: Optional[ProcessFuture] = None
@@ -143,7 +98,7 @@ class Task:
         # Remove leading and trailing hyphens
         task_id = task_id.strip('-')
 
-        return f"{task_id}_{created_at}_{random.randint(10000, 99999)}" # NOSONAR
+        return f"{task_id}_{created_at}_{random.randint(10000, 99999)}"  # NOSONAR
 
     def set_future(self, future: ProcessFuture):
         """
@@ -235,6 +190,13 @@ class Task:
         """
         """
         self.task_metadata.meta = meta
+
+    def update_task_metadata_meta_entity(self, response: TaskResponse):
+        task_entity = response.get_result_data_entity()
+        if task_entity:
+            if not isinstance(self.task_metadata.meta, TaskMetadataMeta):
+                self.task_metadata.meta = TaskMetadataMeta()
+            self.task_metadata.meta.entity = task_entity
 
     def get_task_id(self) -> str:
         """

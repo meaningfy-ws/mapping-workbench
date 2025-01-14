@@ -77,7 +77,8 @@ async def route_task_import_package(
         None,
         user.email,
         True,
-        file.file.read(), await get_project(project), package_type, trigger_package_processing, cleanup_project, user
+        file.file.read(), await get_project(project), package_type, trigger_package_processing, cleanup_project,
+        user
     )
 
     return task.task_metadata

@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 from starlette import status
 
-from mapping_workbench.backend.task_manager.adapters.task import APIListTaskMetadataResponse
 from mapping_workbench.backend.task_manager.entrypoints import AppTaskManager
+from mapping_workbench.backend.tasks.models.task_result import APIListTaskMetadataResponse
 
 ROUTE_PREFIX = "/task_manager"
 TAG = "task_manager"
