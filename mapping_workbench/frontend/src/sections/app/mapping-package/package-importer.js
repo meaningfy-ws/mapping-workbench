@@ -6,7 +6,6 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import Stack from '@mui/material/Stack';
 import Dialog from '@mui/material/Dialog';
-import SvgIcon from '@mui/material/SvgIcon';
 import Checkbox from "@mui/material/Checkbox";
 import MenuItem from "@mui/material/MenuItem";
 import FormGroup from "@mui/material/FormGroup";

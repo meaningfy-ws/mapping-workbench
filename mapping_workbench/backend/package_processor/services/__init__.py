@@ -11,3 +11,6 @@ CONCEPTUAL_MAPPINGS_METADATA_SHEET_NAME = "Metadata"
 MAPPING_SUITE_HASH = "mapping_suite_hash_digest"
 VERSION_KEY = "mapping_version"
 VERSION_FIELD = 'Mapping Version'
+
+TASK_ENTITY_ACTION = "process"
+TASK_ENTITY_TYPE = "mapping_package"

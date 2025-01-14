@@ -1,4 +1,4 @@
-import {Fragment, useState} from 'react';
+import {Fragment, useEffect, useState} from 'react';
 import {useRouter} from "next/router";
 import PropTypes from 'prop-types';
 
@@ -35,9 +35,10 @@ import TablePagination from "src/sections/components/table-pagination-pages";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {MappingPackageProcessForm} from './components/mapping-package-process-form';
 import {MappingPackagesBulkActions} from './components/mapping-packages-bulk-actions';
-
+import {SeverityPill} from "../../../components/severity-pill";
 
 const MappingPackageRowFragment = (props) => {
+
     const {
         item,
         item_id,
@@ -54,6 +55,11 @@ const MappingPackageRowFragment = (props) => {
 
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [cleanupProject, setCleanupProject] = useState(false);
+    const [processStatus, setProcessStatus] = useState("");
+
+    useEffect(() => {
+        setProcessStatus(sectionApi.processStatus(item.process_status));
+    }, [item]);
 
     return (
         <>
@@ -101,6 +107,11 @@ const MappingPackageRowFragment = (props) => {
                     </TableCell>
                     <TableCell align="left">
                         {timeTransformer(item.created_at, timeSetting)}
+                    </TableCell>
+                    <TableCell>
+                        <SeverityPill color={processStatus.color}>
+                            {processStatus.title}
+                        </SeverityPill>
                     </TableCell>
                     <TableCell align="center">
                         <MenuActions>
@@ -212,7 +223,6 @@ export const ListTable = (props) => {
         selectable = null,
         sectionApi
     } = props;
-
     const [currentItem, setCurrentItem] = useState(null);
     const {timeSetting} = useGlobalState();
     const router = useRouter();
@@ -293,8 +303,11 @@ export const ListTable = (props) => {
                                               fieldName='title'/>
                                 <SorterHeader fieldName='identifier'/>
                                 <SorterHeader fieldName='created_at'
-                                              label='created'
+                                              title='created'
                                               align="left"/>
+                                <SorterHeader fieldName='process_status'
+                                              title='status'
+                                              align="right"/>
                                 <TableCell align="center"/>
                             </TableRow>
                         </TableHead>

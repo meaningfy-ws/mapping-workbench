@@ -109,7 +109,7 @@ prod-dotenv-file:
 	@ echo VAULT_TOKEN=${VAULT_TOKEN} >> ${ENV_FILE}
 	@ echo BACKEND_INFRA_FOLDER=${BACKEND_INFRA_FOLDER} >> ${ENV_FILE}
 	@ echo FRONTEND_INFRA_FOLDER=${FRONTEND_INFRA_FOLDER} >> ${ENV_FILE}
-	@ echo NODE_ENV=development >> ${ENV_FILE}
+	@ echo NODE_ENV=production >> ${ENV_FILE}
 	@ echo RML_MAPPER_PATH=${RML_MAPPER_PATH} >> ${ENV_FILE}
 	@ vault kv get -format="json" mapping-workbench-prod/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> ${ENV_FILE}
 

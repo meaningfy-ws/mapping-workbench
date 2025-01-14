@@ -1,4 +1,3 @@
-import multiprocessing
 from concurrent.futures import CancelledError, TimeoutError
 from datetime import datetime
 from multiprocessing.managers import BaseManager
@@ -7,9 +6,10 @@ from typing import List
 from dateutil.tz import tzlocal
 from pebble import ProcessPool, ProcessFuture
 
-from mapping_workbench.backend.task_manager.adapters.task import Task, TaskStatus, TaskMetadata
+from mapping_workbench.backend.task_manager.adapters.task import Task, TaskStatus
 from mapping_workbench.backend.task_manager.adapters.task_progress import TaskProgress
 from mapping_workbench.backend.tasks.models.task_response import TaskResponse, TaskProgressData, TaskProgressStatus
+from mapping_workbench.backend.tasks.models.task_result import TaskMetadata
 
 
 def on_task_done_callback(future):
@@ -128,6 +128,8 @@ class TaskManager:
                         task.update_started_at(datetime.now(tzlocal()))
                     task.update_task_status(TaskStatus.RUNNING)
                     task.update_progress(task.task_response.get_progress())
+                    task.update_task_metadata_meta_entity(task.task_response)
+
 
     def get_task_statuses(self, update_task_statuses: bool = True) -> List[TaskMetadata]:
         """
