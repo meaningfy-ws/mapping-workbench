@@ -1,5 +1,6 @@
 import Card from "@mui/material/Card";
 import Divider from "@mui/material/Divider";
+import Stack from '@mui/material/Stack';
 import Grid from "@mui/material/Unstable_Grid2";
 import CardContent from "@mui/material/CardContent";
 import {useEffect, useState} from 'react';
@@ -7,38 +8,114 @@ import {useEffect, useState} from 'react';
 import {PropertyList} from "src/components/property-list";
 import {PropertyListItem} from "src/components/property-list-item";
 import {mappingPackageStatesApi as sectionApi} from '../../../../api/mapping-packages/states';
-import ResultSummaryCoverage from './result-summary-coverage';
+import ResultSummaryCoverageShacl from './result-summary-coverage-shacl';
+import ResultSummaryCoverageSparql from './result-summary-coverage-sparql';
+import ResultSummaryCoverageXpath from './result-summary-coverage-xpath';
 
 const StateDetails = ({item, sid, reportTree}) => {
-    const [validationReport, setValidationReport] = useState(undefined)
+    const [validationReport, setValidationReport] = useState({})
     const [dataState, setDataState] = useState()
 
     useEffect(() => {
-        sid && handleValidationReportsGet(sid)
+        if (sid) {
+            resultSummaryXPATHGet(sid)
+            resultSummarySPARQLGet(sid)
+            resultSummarySHACLGet(sid)
+        }
     }, [sid])
 
-    const handleValidationReportsGet = (sid) => {
-        setDataState({load: true, error: false})
-        sectionApi.getXpathReports(sid)
+
+    const resultSummarySPARQLGet = (sid) => {
+        sectionApi.getSparqlReports(sid)
             .then(res => {
-                setValidationReport(res.results.map(e => ({...e, notice_count: e.test_data_xpaths.length})))
+                setValidationReport(prev => ({...prev, sparql: mapSparqlResults(res.summary)}))
                 setDataState(e => ({...e, load: false}))
             })
             .catch(err => {
                 console.error(err);
-                setDataState({load: false, error: true})
             })
     }
 
+    const mapSparqlResults = (result) => result.map(e => {
+        const queryAsArray = e.query.content.split("\n")
+        const values = queryAsArray.slice(0, 3)
+        const resultArray = {}
+        values.forEach(e => {
+                const res = e.split(": ")
+                resultArray[res[0].substring(1)] = res[1]
+            }
+        )
+        resultArray["query"] = queryAsArray.slice(4, queryAsArray.length).join("\n")
+        resultArray["test_suite"] = e.query.filename
+        resultArray["result"] = e.result
+        Object.entries(e.result).forEach(entrie => {
+            const [key, value] = entrie
+            resultArray[`${key}Count`] = value.count
+        })
+        resultArray["meets_xpath_condition"] = e.meets_xpath_condition
+        resultArray["xpath_condition"] = e.query?.cm_rule?.xpath_condition
+        return resultArray;
+    })
+
+
+    const resultSummaryXPATHGet = (sid) => {
+        sectionApi.getXpathReports(sid)
+            .then(res => {
+                setValidationReport(prev => ({
+                    ...prev,
+                    xpath: res.results.map(e => ({...e, notice_count: e.test_data_xpaths.length}))
+                }))
+            })
+            .catch(err => {
+                console.error(err);
+            })
+    }
+
+
+    const resultSummarySHACLGet = (sid) => {
+        sectionApi.getShaclReports(sid)
+            .then(res => {
+                setValidationReport(prev => ({...prev, shacl: mapShaclResults(res.summary)}))
+            })
+            .catch(err => {
+                console.error(err);
+            })
+    }
+
+    const mapShaclResults = (result) => {
+        return result.results.map(e => {
+            const resultArray = {}
+            resultArray["shacl_suite"] = result.shacl_suites?.[0]?.shacl_suite_id
+            resultArray["short_result_path"] = e.short_result_path
+            resultArray["result"] = e.result
+            Object.entries(e.result).forEach(entrie => {
+                const [key, value] = entrie
+                resultArray[`${key}Count`] = value.count
+            })
+            return resultArray;
+        })
+    }
+
     console.log(validationReport)
-    if (!validationReport) return null
+
 
     return (
         <Grid container
               spacing={3}>
-            <ResultSummaryCoverage item={item}
-                                   sid={sid}
-                                   validationReport={validationReport}/>
+            <Stack direction='row'
+                   justifyContent='space-between'
+                   width='100%'
+                   gap={3}>
+                <ResultSummaryCoverageXpath item={item}
+                                            sid={sid}
+                                            validationReport={validationReport.xpath}/>
+                <ResultSummaryCoverageSparql item={item}
+                                             sid={sid}
+                                             validationReport={validationReport.sparql}/>
+                <ResultSummaryCoverageShacl  item={item}
+                                             sid={sid}
+                                             validationReport={validationReport.shacl}/>
+            </Stack>
             <Grid md={12}
                   xs={12}>
                 <Card>

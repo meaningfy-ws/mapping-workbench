@@ -7,7 +7,10 @@ import Typography from '@mui/material/Typography';
 import LinearProgress, {linearProgressClasses} from '@mui/material/LinearProgress';
 import {styled} from '@mui/material/styles';
 
-const ResultSummaryCoverage = ({item, sid, validationReport}) => {
+const ResultSummaryCoverageXpath = ({item, validationReport}) => {
+
+    console.log(validationReport)
+    if (!validationReport) return null
 
     const {coveredReports, notCoveredReports} = validationReport?.reduce((acc, report) => {
         acc[report.is_covered ? "coveredReports" : "notCoveredReports"].push({sdk_element_xpath: report.sdk_element_xpath})
@@ -67,4 +70,4 @@ const ResultSummaryCoverage = ({item, sid, validationReport}) => {
     </Paper>
 }
 
-export default ResultSummaryCoverage
+export default ResultSummaryCoverageXpath
