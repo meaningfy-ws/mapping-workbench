@@ -1,12 +1,10 @@
-import Card from "@mui/material/Card";
-import Divider from "@mui/material/Divider";
-import Stack from '@mui/material/Stack';
-import Grid from "@mui/material/Unstable_Grid2";
-import CardContent from "@mui/material/CardContent";
 import {useEffect, useState} from 'react';
 
-import {PropertyList} from "src/components/property-list";
-import {PropertyListItem} from "src/components/property-list-item";
+import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import Grid from "@mui/material/Unstable_Grid2";
+
 import {mappingPackageStatesApi as sectionApi} from '../../../../api/mapping-packages/states';
 import ResultSummaryCoverageShacl from './result-summary-coverage-shacl';
 import ResultSummaryCoverageSparql from './result-summary-coverage-sparql';
@@ -96,102 +94,79 @@ const StateDetails = ({item, sid, reportTree}) => {
         })
     }
 
-    console.log(validationReport)
-
-
     return (
         <Grid container
               spacing={3}>
-            <Stack direction='row'
-                   justifyContent='space-between'
-                   width='100%'
-                   gap={3}>
+            <Grid xs={12}>
+                <Paper sx={{p: 3}}>
+                    <Stack gap={3}>
+                        <Typography fontWeight='bold'>Conceptual mapping for {item.title}</Typography>
+                        <Stack direction={{xs: 'column', md: 'row'}}
+                               gap={3}>
+                            <Stack sx={{
+                                border: '1px solid #E4E7EC',
+                                backgroundColor: '#FCFCFD',
+                                borderRadius: '5px',
+                                py: '12px',
+                                px: '16px'
+                            }}>
+                                <Typography sx={{color: '#667085', mb: '10px'}}>{item._id}</Typography>
+                                <Typography>{item.title}</Typography>
+                            </Stack>
+                            <Stack sx={{
+                                border: '1px solid #E4E7EC',
+                                backgroundColor: '#FCFCFD',
+                                borderRadius: '5px',
+                                py: '12px',
+                                px: '16px'
+                            }}>
+                                <Typography
+                                    sx={{color: '#667085', mb: '10px'}}>{'Mapping / EPO Version'}</Typography>
+                                <Typography>{`${item.mapping_version} / ${item.epo_version}`}</Typography>
+                            </Stack>
+                            <Stack sx={{
+                                border: '1px solid #E4E7EC',
+                                backgroundColor: '#FCFCFD',
+                                borderRadius: '5px',
+                                py: '12px',
+                                px: '16px'
+                            }}>
+                                <Typography
+                                    sx={{color: '#667085', mb: '10px'}}>{'eForms XSD'}</Typography>
+                                <Typography>{item.eforms_sdk_versions?.join(', ')}</Typography>
+                            </Stack>
+                            <Stack sx={{
+                                border: '1px solid #E4E7EC',
+                                backgroundColor: '#FCFCFD',
+                                borderRadius: '5px',
+                                py: '12px',
+                                px: '16px'
+                            }}>
+                                <Typography
+                                    sx={{color: '#667085', mb: '10px'}}>{'eForms Subtype'}</Typography>
+                                <Typography>{item.eform_subtypes?.join(', ')}</Typography>
+                            </Stack>
+                        </Stack>
+                    </Stack>
+                </Paper>
+            </Grid>
+            <Grid xs={12}
+                  md={4}>
                 <ResultSummaryCoverageXpath item={item}
                                             sid={sid}
                                             validationReport={validationReport.xpath}/>
+            </Grid>
+            <Grid xs={12}
+                  md={4}>
                 <ResultSummaryCoverageSparql item={item}
                                              sid={sid}
                                              validationReport={validationReport.sparql}/>
-                <ResultSummaryCoverageShacl  item={item}
-                                             sid={sid}
-                                             validationReport={validationReport.shacl}/>
-            </Stack>
-            <Grid md={12}
-                  xs={12}>
-                <Card>
-                    <CardContent>
-                        <Grid
-                            item={item}
-                            md={12}
-                            xs={12}
-                        >
-                            <PropertyList>
-                                <PropertyListItem
-                                    label="Description"
-                                    value={item.description}
-                                    sx={{
-                                        whiteSpace: "pre-wrap",
-                                        px: 3,
-                                        py: 1.5
-                                    }}
-                                />
-                                <Divider/>
-                                <Grid container
-                                      spacing={3}>
-                                    <Grid md={6}
-                                          xs={12}>
-                                        <PropertyListItem
-                                            label="Identifier"
-                                            value={item.identifier}
-                                        />
-                                    </Grid>
-                                    <Grid md={12}
-                                          xs={12}>
-                                        <PropertyListItem
-                                            label="Mapping Version"
-                                            value={item.mapping_version}
-                                        />
-                                    </Grid>
-                                    <Grid md={12}
-                                          xs={12}>
-                                        <PropertyListItem
-                                            label="EPO Version"
-                                            value={item.epo_version}
-                                        />
-                                    </Grid>
-                                    <Grid md={12}
-                                          xs={12}>
-                                        <PropertyListItem
-                                            label="eForms Subtype"
-                                            value={item.eform_subtypes?.join(', ')}
-                                        />
-                                    </Grid>
-                                    <Grid md={12}
-                                          xs={12}>
-                                        <PropertyListItem
-                                            label="Start Date"
-                                            value={item.start_date}
-                                        />
-                                    </Grid>
-                                    <Grid md={12}
-                                          xs={12}>
-                                        <PropertyListItem
-                                            label="End Date"
-                                            value={item.end_date}
-                                        />
-                                    </Grid>
-                                    <Grid md={12}
-                                          xs={12}>
-                                        <PropertyListItem
-                                            label="eForms XSD version"
-                                            value={item.eforms_sdk_versions?.join(', ')}
-                                        />
-                                    </Grid>
-                                </Grid>
-                            </PropertyList>
-                        </Grid>
-                    </CardContent>
-                </Card>
+            </Grid>
+            <Grid xs={12}
+                  md={4}>
+                <ResultSummaryCoverageShacl item={item}
+                                            sid={sid}
+                                            validationReport={validationReport.shacl}/>
             </Grid>
         </Grid>
     )

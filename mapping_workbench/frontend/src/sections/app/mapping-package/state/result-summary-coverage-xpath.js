@@ -9,7 +9,6 @@ import {styled} from '@mui/material/styles';
 
 const ResultSummaryCoverageXpath = ({item, validationReport}) => {
 
-    console.log(validationReport)
     if (!validationReport) return null
 
     const {coveredReports, notCoveredReports} = validationReport?.reduce((acc, report) => {
@@ -36,8 +35,9 @@ const ResultSummaryCoverageXpath = ({item, validationReport}) => {
         },
     }));
 
-    return <Paper sx={{p: 3}}>
+    return <Paper sx={{p: 3, height:'100%'}}>
         <Stack direction='row'
+               justifyContent='space-between'
                sx={{borderBottom: '2px solid #F2F4F7', pb: 3}}>
             <Stack>
                 <Typography color='#667085'>Result summary</Typography>
@@ -46,20 +46,20 @@ const ResultSummaryCoverageXpath = ({item, validationReport}) => {
             </Stack>
             <Button endIcon={<OpenInNewIcon/>}>See more</Button>
         </Stack>
-        <Stack sx={{mt: 3, mb: 2}}>
-            <Stack sx={{mb: 3}}>
+        <Stack sx={{mt: 3, mb: 'auto'}}>
+            <Stack sx={{mb: 3}} >
                 <Typography fontSize='18'
                             fontWeight='bold'>Mapping suite identifier</Typography>
                 <Typography color='#667085'>{item.identifier}</Typography>
             </Stack>
-            <Stack sx={{mb: 3}}>
+            <Stack>
                 <Typography color='#667085'>XPATHs covered</Typography>
                 <Typography sx={{mb: 2}}>{`${coveredReports.length}/${coveredReportPercent}%`}</Typography>
                 <BorderLinearProgress variant="determinate"
                                       color='success'
                                       value={notCoveredReportPercent}/>
             </Stack>
-            <Stack>
+            <Stack sx={{mb:'auto'}}>
                 <Typography color='#667085'>XPATHs covered</Typography>
                 <Typography sx={{mb: 2}}>{`${notCoveredReports.length}/${notCoveredReportPercent}%`}</Typography>
                 <BorderLinearProgress variant="determinate"

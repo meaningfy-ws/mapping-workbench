@@ -3,13 +3,11 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import {legendClasses, PieChart} from '@mui/x-charts';
 
 const ResultSummaryCoverageShacl = ({validationReport}) => {
 
-    console.log('shacl', validationReport)
     if (!validationReport) return null
 
     const {itemsTotal, ...itemsReduce} =
@@ -27,7 +25,7 @@ const ResultSummaryCoverageShacl = ({validationReport}) => {
         return {label: itemName, value: itemCount, itemPercent: (itemCount / itemsTotal) * 100 ?? 0}
     })
 
-    return <Paper sx={{p: 3}}>
+    return <Paper sx={{p: 3, height: '100%'}}>
         <Stack direction='row'
                justifyContent='space-between'
                sx={{borderBottom: '2px solid #F2F4F7', pb: 3}}>
@@ -38,7 +36,8 @@ const ResultSummaryCoverageShacl = ({validationReport}) => {
             </Stack>
             <Button endIcon={<OpenInNewIcon/>}>See more</Button>
         </Stack>
-        <Stack sx={{mt: 3, mb: 2}}>
+        <Stack sx={{mt: 3, mb: 2}}
+               alignItems='center'>
             <PieChart
                 sx={{
                     [`& .${legendClasses.mark}`]: {
@@ -61,12 +60,13 @@ const ResultSummaryCoverageShacl = ({validationReport}) => {
                         innerRadius: 60,
                         outerRadius: 100,
                         cy: 100,
+                        cx: 180,
                     }
                 ]}
                 tooltip={{
                     trigger: 'item',
                     itemContent: (params) => {
-                        const data=params.series.data[params.itemData.dataIndex]
+                        const data = params.series.data[params.itemData.dataIndex]
                         return (
                             <Paper sx={{p: 1}}>
                                 <Stack direction='column'>

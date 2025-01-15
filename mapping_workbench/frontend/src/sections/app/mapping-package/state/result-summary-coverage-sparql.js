@@ -8,7 +8,6 @@ import {legendClasses, PieChart} from '@mui/x-charts';
 
 const ResultSummaryCoverageSparql = ({item, sid, validationReport}) => {
 
-    console.log(validationReport)
     if (!validationReport) return null
 
     const {itemsTotal, ...itemsReduce} =
@@ -27,7 +26,7 @@ const ResultSummaryCoverageSparql = ({item, sid, validationReport}) => {
     })
 
 
-    return <Paper sx={{p: 3}}>
+    return <Paper sx={{p: 3,  height:'100%'}} >
         <Stack direction='row'
                justifyContent='space-between'
                sx={{borderBottom: '2px solid #F2F4F7', pb: 3}}>
@@ -38,7 +37,8 @@ const ResultSummaryCoverageSparql = ({item, sid, validationReport}) => {
             </Stack>
             <Button endIcon={<OpenInNewIcon/>}>See more</Button>
         </Stack>
-        <Stack sx={{mt: 3, mb: 2}}>
+        <Stack sx={{mt: 3, mb: 2}}
+               alignItems='center'>
             <PieChart
                 sx={{
                     [`& .${legendClasses.mark}`]: {
@@ -59,7 +59,8 @@ const ResultSummaryCoverageSparql = ({item, sid, validationReport}) => {
                         data: itemsDisplay,
                         innerRadius: 60,
                         outerRadius: 100,
-                        cy: 100
+                        cy: 100,
+                        cx: 180,
                     }
                 ]}
                 tooltip={{
