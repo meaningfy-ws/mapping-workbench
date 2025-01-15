@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import {legendClasses, PieChart} from '@mui/x-charts';
 
-const ResultSummaryCoverageShacl = ({validationReport}) => {
+const ResultSummaryCoverageShacl = ({validationReport, handleChangeTab}) => {
 
     if (!validationReport) return null
 
@@ -34,7 +34,10 @@ const ResultSummaryCoverageShacl = ({validationReport}) => {
                 <Typography fontSize='18'
                             fontWeight='bold'>Coverage (SHALC)</Typography>
             </Stack>
-            <Button endIcon={<OpenInNewIcon/>}>See more</Button>
+            <Button endIcon={<OpenInNewIcon/>}
+                    onClick={() => handleChangeTab('shacl')}>
+                See more
+            </Button>
         </Stack>
         <Stack sx={{mt: 3, mb: 2}}
                alignItems='center'>
@@ -50,7 +53,6 @@ const ResultSummaryCoverageShacl = ({validationReport}) => {
                         position: {vertical: 'bottom', horizontal: 'middle'},
                         itemMarkWidth: 12,
                         itemMarkHeight: 12,
-                        // padding:-10
                     }
                 }}
                 series={[

@@ -11,7 +11,6 @@ import Link from '@mui/material/Link';
 import Card from "@mui/material/Card";
 import Stack from '@mui/material/Stack';
 import Button from "@mui/material/Button";
-import Divider from '@mui/material/Divider';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 import CardContent from "@mui/material/CardContent";
@@ -185,6 +184,7 @@ const Page = () => {
                 </Stack>
                 {currentTab === 'details' && (
                     <StateDetails sid={sid}
+                                  handleChangeTab={setCurrentTab}
                                   item={item}
                                   reportTree={validationReportTree}/>
                 )}

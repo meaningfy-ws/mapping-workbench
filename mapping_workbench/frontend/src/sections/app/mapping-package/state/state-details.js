@@ -10,7 +10,7 @@ import ResultSummaryCoverageShacl from './result-summary-coverage-shacl';
 import ResultSummaryCoverageSparql from './result-summary-coverage-sparql';
 import ResultSummaryCoverageXpath from './result-summary-coverage-xpath';
 
-const StateDetails = ({item, sid, reportTree}) => {
+const StateDetails = ({item, sid, handleChangeTab}) => {
     const [validationReport, setValidationReport] = useState({})
     const [dataState, setDataState] = useState()
 
@@ -154,18 +154,21 @@ const StateDetails = ({item, sid, reportTree}) => {
                   md={4}>
                 <ResultSummaryCoverageXpath item={item}
                                             sid={sid}
+                                            handleChangeTab={handleChangeTab}
                                             validationReport={validationReport.xpath}/>
             </Grid>
             <Grid xs={12}
                   md={4}>
                 <ResultSummaryCoverageSparql item={item}
                                              sid={sid}
+                                             handleChangeTab={handleChangeTab}
                                              validationReport={validationReport.sparql}/>
             </Grid>
             <Grid xs={12}
                   md={4}>
                 <ResultSummaryCoverageShacl item={item}
                                             sid={sid}
+                                            handleChangeTab={handleChangeTab}
                                             validationReport={validationReport.shacl}/>
             </Grid>
         </Grid>

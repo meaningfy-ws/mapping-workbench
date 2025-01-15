@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import {legendClasses, PieChart} from '@mui/x-charts';
 
-const ResultSummaryCoverageSparql = ({item, sid, validationReport}) => {
+const ResultSummaryCoverageSparql = ({validationReport, handleChangeTab}) => {
 
     if (!validationReport) return null
 
@@ -26,7 +26,7 @@ const ResultSummaryCoverageSparql = ({item, sid, validationReport}) => {
     })
 
 
-    return <Paper sx={{p: 3,  height:'100%'}} >
+    return <Paper sx={{p: 3, height: '100%'}}>
         <Stack direction='row'
                justifyContent='space-between'
                sx={{borderBottom: '2px solid #F2F4F7', pb: 3}}>
@@ -35,7 +35,10 @@ const ResultSummaryCoverageSparql = ({item, sid, validationReport}) => {
                 <Typography fontSize='18'
                             fontWeight='bold'>Coverage (SPARQL)</Typography>
             </Stack>
-            <Button endIcon={<OpenInNewIcon/>}>See more</Button>
+            <Button endIcon={<OpenInNewIcon/>}
+                    onClick={() => handleChangeTab('sparql')}>
+                See more
+            </Button>
         </Stack>
         <Stack sx={{mt: 3, mb: 2}}
                alignItems='center'>
@@ -50,8 +53,7 @@ const ResultSummaryCoverageSparql = ({item, sid, validationReport}) => {
                         direction: 'row',
                         position: {vertical: 'bottom', horizontal: 'middle'},
                         itemMarkWidth: 12,
-                        itemMarkHeight: 12,
-                        // padding:-10
+                        itemMarkHeight: 12
                     }
                 }}
                 series={[

@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import LinearProgress, {linearProgressClasses} from '@mui/material/LinearProgress';
 import {styled} from '@mui/material/styles';
 
-const ResultSummaryCoverageXpath = ({item, validationReport}) => {
+const ResultSummaryCoverageXpath = ({item, validationReport, handleChangeTab}) => {
 
     if (!validationReport) return null
 
@@ -44,7 +44,12 @@ const ResultSummaryCoverageXpath = ({item, validationReport}) => {
                 <Typography fontSize='18'
                             fontWeight='bold'>Coverage (XPath)</Typography>
             </Stack>
-            <Button endIcon={<OpenInNewIcon/>}>See more</Button>
+            <Button endIcon={<OpenInNewIcon/>}
+                    onClick={() => {
+                        console.log('herre')
+                        handleChangeTab('xpath')}}>
+                See more
+            </Button>
         </Stack>
         <Stack sx={{mt: 3, mb: 'auto'}}>
             <Stack sx={{mb: 3}} >
