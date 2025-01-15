@@ -4,7 +4,7 @@ import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import {PieChart} from '@mui/x-charts';
+import {legendClasses, PieChart} from '@mui/x-charts';
 
 const ResultSummaryCoverageShacl= ({validationReport}) => {
 
@@ -38,14 +38,31 @@ const ResultSummaryCoverageShacl= ({validationReport}) => {
             <Button endIcon={<OpenInNewIcon/>}>See more</Button>
         </Stack>
         <Stack sx={{mt: 3, mb: 2}}>
-            <PieChart series={[
-                {
-                    data: itemsDisplay,
-                    innerRadius: 60
-                }
-            ]}
-                      width={368}
-                      height={348}/>
+             <PieChart
+                sx={{
+                    [`& .${legendClasses.mark}`]: {
+                        ry: 10,
+                    },
+                }}
+                slotProps={{
+                    legend: {
+                        direction: 'row',
+                        position: {vertical: 'bottom', horizontal: 'middle'},
+                        itemMarkWidth: 12,
+                        itemMarkHeight: 12,
+                        // padding:-10
+                    }
+                }}
+                series={[
+                    {
+                        data: itemsDisplay,
+                        innerRadius: 60,
+                        outerRadius: 100,
+                        cy: 100
+                    }
+                ]}
+                width={368}
+                height={348}/>
         </Stack>
     </Paper>
 }
