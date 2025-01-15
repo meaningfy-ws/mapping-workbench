@@ -22,7 +22,7 @@ const ResultSummaryCoverageSparql = ({validationReport, handleChangeTab}) => {
 
     const itemsDisplay = Object.entries(itemsReduce)?.map(item => {
         const [itemName, itemCount] = item
-        return {label: itemName, value: itemCount, itemPercent: (itemCount / itemsTotal) * 100 ?? 0}
+        return {label: itemName, value: itemCount, itemPercent: (itemCount / itemsTotal) * 100 ?? 0, color: itemName==='valid' ? 'red' : 'blue'}
     })
 
 

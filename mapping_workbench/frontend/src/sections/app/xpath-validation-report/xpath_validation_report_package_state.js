@@ -39,21 +39,6 @@ const XpathValidationReport = ({sid, files, mappingSuiteIdentifier, handleSelect
 
     return (
         <>
-            <Typography m={2}
-                        variant="h4">
-                Summary
-            </Typography>
-            <TableLoadWrapper data={validationReport}
-                              dataState={dataState}
-                              lines={3}>
-                <CoverageReport validationReport={validationReport}
-                                mappingSuiteIdentifier={mappingSuiteIdentifier}/>
-            </TableLoadWrapper>
-
-            <Typography m={2}
-                        variant="h4">
-                Assertions
-            </Typography>
             <TableLoadWrapper data={validationReport}
                               dataState={dataState}>
                 {/*<ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>*/}

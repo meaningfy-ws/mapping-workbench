@@ -1,3 +1,4 @@
+import Grid from '@mui/material/Unstable_Grid2';
 import {useState} from "react";
 
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -6,8 +7,10 @@ import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
+import FileList from '../mapping-package/state/file-list';
 
 import CoverageFiles from "./coverage_files";
+import ResultSummaryCoverage from './result-summary-coverage';
 import XpathValidationReportTest from "./xpath_validation_report_file";
 import XpathValidationReport from "./xpath_validation_report_package_state";
 import XpathValidationReportSuite from "./xpath_validation_report_test_dataset";
@@ -19,17 +22,19 @@ const TEST_DATASET_LABEL = "Test Dataset XPath Coverage"
 const FILE_COVERAGE = "file";
 const FILE_COVERAGE_LABEL = "File XPath Coverage"
 
-const XpathValidationReportView = ({sid, reportTree}) => {
+const XpathValidationReportView = ({sid, reportTree, validationReport}) => {
     const [currentTab, setCurrentTab] = useState(PACKAGE_STATE)
     const [selectedPackageState, setSelectedPackageState] = useState(reportTree.test_data_suites[0])
     const [selectedTestDataset, setSelectedTestDataset] = useState(reportTree.test_data_suites[0].test_data_states[0])
 
     const handleSetPackageState = (file) => {
+        console.log(file)
         setSelectedPackageState(file)
         setCurrentTab(TEST_DATASET)
     }
 
     const handleSetTestDataset = (file) => {
+        console.log(file)
         setSelectedTestDataset(file)
         setCurrentTab(FILE_COVERAGE)
     }
@@ -46,43 +51,37 @@ const XpathValidationReportView = ({sid, reportTree}) => {
     }
 
     return (
-        <>
-            <Stack spacing={1}>
-                <Breadcrumbs separator={<ChevronRightIcon/>}>
-                    <Link component="button"
-                          color={currentTab !== PACKAGE_STATE ? "inherit" : "primary"}
-                          onClick={() => setCurrentTab(PACKAGE_STATE)}
-                    >
-                        {PACKAGE_STATE_LABEL}
-                    </Link>
-                    {currentTab !== PACKAGE_STATE &&
-                        <Link component="button"
-                              color={currentTab !== TEST_DATASET ? "inherit" : "primary"}
-                              onClick={() => setCurrentTab(TEST_DATASET)}
-                        >
-                            {FILE_COVERAGE_LABEL}: {<b>{selectedPackageState.identifier}</b>}
-                        </Link>}
-                    {currentTab === FILE_COVERAGE &&
-                        <Typography color="primary">
-                            {TEST_DATASET_LABEL}: {<b>{selectedTestDataset.identifier}</b>}
-                        </Typography>}
-                </Breadcrumbs>
-            </Stack>
+        <Grid container
+              spacing={3}>
             {currentTab === PACKAGE_STATE &&
                 <>
-                    <CoverageFiles files={reportTree.test_data_suites}
-                                   onClick={handleSetPackageState}/>
-                    <XpathValidationReport sid={sid}
-                                           files={reportTree.test_data_suites}
-                                           handleSelectFile={handleSetTestAndPackage}
-                                           mappingSuiteIdentifier={reportTree.identifier}/>
+                    <Grid xs={12}
+                          md={8}>
+                        <ResultSummaryCoverage item={reportTree}
+                                               validationReport={validationReport}/>
+                    </Grid>
+                    <Grid xs={12}
+                          md={4}>
+                        <FileList files={reportTree.test_data_suites}
+                                  handleFolderChange={handleSetPackageState}
+                                  handleFileChange={handleSetTestDataset}/>
+                    </Grid>
+                    <Grid xs={12}>
+                        <XpathValidationReport sid={sid}
+                                               files={reportTree.test_data_suites}
+                                               handleSelectFile={handleSetTestAndPackage}
+                                               mappingSuiteIdentifier={reportTree.identifier}/>
+                    </Grid>
                 </>
             }
             {currentTab === TEST_DATASET &&
                 <>
-                    <CoverageFiles files={selectedPackageState?.test_data_states}
-                                   onClick={handleSetTestDataset}
-                                   fileIcon/>
+                    <Grid xs={12}
+                          md={4}>
+                        <FileList files={reportTree.test_data_suites}
+                                  handleFolderChange={handleSetPackageState}
+                                  handleFileChange={handleSetTestDataset}/>
+                    </Grid>
                     <XpathValidationReportSuite sid={sid}
                                                 suiteId={selectedPackageState.oid}
                                                 files={selectedPackageState?.test_data_states}
@@ -96,7 +95,7 @@ const XpathValidationReportView = ({sid, reportTree}) => {
                                            testId={selectedTestDataset.oid}
                                            mappingSuiteIdentifier={reportTree.identifier}/>
             }
-        </>
+        </Grid>
     )
 }
 
