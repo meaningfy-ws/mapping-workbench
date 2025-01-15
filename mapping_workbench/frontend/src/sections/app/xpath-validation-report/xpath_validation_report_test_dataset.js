@@ -1,11 +1,11 @@
+import Grid from '@mui/material/Unstable_Grid2';
 import {useEffect, useState} from "react";
 
-import Typography from "@mui/material/Typography";
+import Card from '@mui/material/Card';
 
-import {CoverageFilter, TableLoadWrapper} from "./utils";
 import {ListTable} from "./list-table";
-import CoverageReport from "./coverage_report";
-// import ItemSearchInput from "../file-manager/item-search-input";
+import {CoverageFilter, TableLoadWrapper} from "./utils";
+import ResultSummaryCoverage from './result-summary-coverage';
 import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
 import useItemsSearch from "../../../hooks/use-items-search";
 
@@ -32,46 +32,39 @@ const XpathValidationReportSuite = ({sid, suiteId, files, mappingSuiteIdentifier
 
     const itemsSearch = useItemsSearch(validationReport, sectionApi);
 
-    const handleCoverageFilterChange = e => {
-        itemsSearch.handleFiltersChange({is_covered: e.target.value})
-    }
+    const handleCoverageFilterChange = e => itemsSearch.handleFiltersChange({is_covered: e.target.value})
 
     return (
         <>
-            <Typography m={2}
-                        variant="h4">
-                Summary
-            </Typography>
-            <TableLoadWrapper dataState={dataState}
-                              data={validationReport}
-                              lines={3}>
-                <CoverageReport validationReport={validationReport}
-                                mappingSuiteIdentifier={mappingSuiteIdentifier}/>
-            </TableLoadWrapper>
-            <Typography m={2}
-                        variant="h4">
-                Assertions
-            </Typography>
-            <TableLoadWrapper dataState={dataState}
-                              data={validationReport}>
-                {/*<ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>*/}
-                <CoverageFilter onChange={handleCoverageFilterChange}
-                                filterState={itemsSearch.state.filters.is_covered}/>
-                <ListTable
-                    items={itemsSearch.pagedItems}
-                    count={itemsSearch.count}
-                    onPageChange={itemsSearch.handlePageChange}
-                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                    page={itemsSearch.state.page}
-                    rowsPerPage={itemsSearch.state.rowsPerPage}
-                    onSort={itemsSearch.handleSort}
-                    sort={itemsSearch.state.sort}
-                    onFilter={itemsSearch.handleFiltersChange}
-                    filters={itemsSearch.state.filters}
-                    handleSelectFile={handleSelectFile}
-                    sectionApi={sectionApi}
-                />
-            </TableLoadWrapper>
+            <Grid xs={12}
+                  md={8}>
+                <ResultSummaryCoverage load={dataState.load}
+                                       identifier={mappingSuiteIdentifier}
+                                       validationReport={validationReport}/>
+            </Grid>
+            <Grid xs={12}>
+                <Card>
+                    <TableLoadWrapper dataState={dataState}
+                                      data={validationReport}>
+                        <CoverageFilter onChange={handleCoverageFilterChange}
+                                        filterState={itemsSearch.state.filters.is_covered}/>
+                        <ListTable
+                            items={itemsSearch.pagedItems}
+                            count={itemsSearch.count}
+                            onPageChange={itemsSearch.handlePageChange}
+                            onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                            page={itemsSearch.state.page}
+                            rowsPerPage={itemsSearch.state.rowsPerPage}
+                            onSort={itemsSearch.handleSort}
+                            sort={itemsSearch.state.sort}
+                            onFilter={itemsSearch.handleFiltersChange}
+                            filters={itemsSearch.state.filters}
+                            handleSelectFile={handleSelectFile}
+                            sectionApi={sectionApi}
+                        />
+                    </TableLoadWrapper>
+                </Card>
+            </Grid>
         </>
     )
 }

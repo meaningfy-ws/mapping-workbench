@@ -116,9 +116,7 @@ const Page = () => {
 
     const resultSummarySHACLGet = (sid) => {
         sectionApi.getShaclReports(sid)
-            .then(res => {
-                setValidationReport(prev => ({...prev, shacl: mapShaclResults(res.summary)}))
-            })
+            .then(res => setValidationReport(prev => ({...prev, shacl: mapShaclResults(res.summary)})))
             .catch(err => {
                 console.error(err);
             })
@@ -229,8 +227,6 @@ const Page = () => {
                             onClick={() => handleExport(item)}
                             disabled={isExporting}
                             startIcon={<FileDownloadIcon/>}
-                            // variant="contained"
-
                         >
                             {isExporting ? "Exporting..." : "Export State"}
                         </Button>

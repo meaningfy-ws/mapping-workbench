@@ -1,13 +1,13 @@
+import Grid from '@mui/material/Unstable_Grid2';
 import {useEffect, useState} from "react";
 
-import Typography from "@mui/material/Typography";
+import Card from '@mui/material/Card';
 
 import {TableLoadWrapper} from "./utils";
 import {ListTable} from "./list-table-file";
-import CoverageReport from "./coverage_report";
-// import ItemSearchInput from "../file-manager/item-search-input";
-import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
+import ResultSummaryCoverage from './result-summary-coverage';
 import useItemsSearch from "../../../hooks/use-items-search";
+import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
 
 const XpathValidationReportTest = ({sid, suiteId, testId, mappingSuiteIdentifier}) => {
     const [validationReport, setValidationReport] = useState([])
@@ -34,37 +34,32 @@ const XpathValidationReportTest = ({sid, suiteId, testId, mappingSuiteIdentifier
 
     return (
         <>
-            <Typography m={2}
-                        variant="h4">
-                Summary
-            </Typography>
-            <TableLoadWrapper dataState={dataState}
-                              data={validationReport}
-                              lines={3}>
-                <CoverageReport validationReport={validationReport}
-                                mappingSuiteIdentifier={mappingSuiteIdentifier}/>
-            </TableLoadWrapper>
-            <Typography m={2}
-                        variant="h4">
-                Assertions
-            </Typography>
-            <TableLoadWrapper dataState={dataState}
-                              data={validationReport}>
-                {/*<ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>*/}
-                <ListTable
-                    items={itemsSearch.pagedItems}
-                    count={itemsSearch.count}
-                    onPageChange={itemsSearch.handlePageChange}
-                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                    page={itemsSearch.state.page}
-                    rowsPerPage={itemsSearch.state.rowsPerPage}
-                    onFilter={itemsSearch.handleFiltersChange}
-                    filters={itemsSearch.state.filters}
-                    onSort={itemsSearch.handleSort}
-                    sort={itemsSearch.state.sort}
-                    sectionApi={sectionApi}
-                />
-            </TableLoadWrapper>
+            <Grid xs={12}
+                  md={8}>
+                <ResultSummaryCoverage load={dataState.load}
+                                       identifier={mappingSuiteIdentifier}
+                                       validationReport={validationReport}/>
+            </Grid>
+            <Grid xs={12}>
+                <Card>
+                    <TableLoadWrapper dataState={dataState}
+                                      data={validationReport}>
+                        <ListTable
+                            items={itemsSearch.pagedItems}
+                            count={itemsSearch.count}
+                            onPageChange={itemsSearch.handlePageChange}
+                            onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                            page={itemsSearch.state.page}
+                            rowsPerPage={itemsSearch.state.rowsPerPage}
+                            onFilter={itemsSearch.handleFiltersChange}
+                            filters={itemsSearch.state.filters}
+                            onSort={itemsSearch.handleSort}
+                            sort={itemsSearch.state.sort}
+                            sectionApi={sectionApi}
+                        />
+                    </TableLoadWrapper>
+                </Card>
+            </Grid>
         </>
     )
 }

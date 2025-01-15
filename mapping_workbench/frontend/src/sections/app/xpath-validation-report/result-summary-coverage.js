@@ -1,13 +1,13 @@
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 
 import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
+import {styled} from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import LinearProgress, {linearProgressClasses} from '@mui/material/LinearProgress';
-import {styled, useTheme} from '@mui/material/styles';
 
-const ResultSummaryCoverage = ({item, validationReport, handleChangeTab}) => {
+const ResultSummaryCoverage = ({identifier, validationReport, handleChangeTab, load}) => {
 
     if (!validationReport) return null
 
@@ -34,26 +34,27 @@ const ResultSummaryCoverage = ({item, validationReport, handleChangeTab}) => {
 
     return <Paper sx={{p: 3, height: '100%'}}>
         <Stack direction='row'
+               alignItems='center'
                justifyContent='space-between'
                sx={{borderBottom: '2px solid #F2F4F7', pb: 3}}>
             <Stack>
-                <Typography color='#667085'>Result summary</Typography>
                 <Typography fontSize='18'
                             fontWeight='bold'>Coverage (XPath)</Typography>
             </Stack>
-            <Button endIcon={<OpenInNewIcon/>}
+            <Button
+                    startIcon={<FileDownloadOutlinedIcon/>}
                     onClick={() => {
                         console.log('herre')
                         handleChangeTab('xpath')
                     }}>
-                See more
+                Export State
             </Button>
         </Stack>
         <Stack sx={{mt: 3, mb: 'auto'}}>
             <Stack sx={{mb: 3}}>
                 <Typography fontSize='18'
                             fontWeight='bold'>Mapping suite identifier</Typography>
-                <Typography color='#667085'>{item.identifier}</Typography>
+                <Typography color='#667085'>{identifier}</Typography>
             </Stack>
             <Stack direction='row'
                    justifyContent='space-between'>
@@ -69,7 +70,7 @@ const ResultSummaryCoverage = ({item, validationReport, handleChangeTab}) => {
 
                 </Stack>
             </Stack>
-            <BorderLinearProgress variant="determinate"
+            <BorderLinearProgress variant={load ? "indeterminate" : "determinate"}
                                   color='success'
                                   value={notCoveredReportPercent}/>
 

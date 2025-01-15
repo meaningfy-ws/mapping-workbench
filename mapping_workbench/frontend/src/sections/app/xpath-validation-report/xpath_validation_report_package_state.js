@@ -1,47 +1,26 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
 
-import Typography from "@mui/material/Typography";
+import Card from '@mui/material/Card';
 
-import {CoverageFilter, TableLoadWrapper} from "./utils";
 import {ListTable} from "./list-table";
-import CoverageReport from "./coverage_report";
-// import ItemSearchInput from "../file-manager/item-search-input";
+import {CoverageFilter, TableLoadWrapper} from "./utils";
 import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
 import useItemsSearch from "../../../hooks/use-items-search";
 
-const XpathValidationReport = ({sid, files, mappingSuiteIdentifier, handleSelectFile}) => {
-    const [validationReport, setValidationReport] = useState([])
-    const [dataState, setDataState] = useState({load: true, error: false})
+const XpathValidationReport = ({ validationReport,  handleSelectFile}) => {
+    const [dataState, setDataState] = useState({load: false, error: false})
 
-    useEffect(() => {
-        handleValidationReportsGet(sid)
-    }, [])
 
-    const handleValidationReportsGet = (sid) => {
-        setDataState({load: true, error: false})
-        sectionApi.getXpathReports(sid)
-            .then(res => {
-                setValidationReport(res.results.map(e => ({...e, notice_count: e.test_data_xpaths.length})))
-                setDataState(e => ({...e, load: false}))
-            })
-            .catch(err => {
-                console.error(err);
-                setDataState({load: false, error: true})
-            })
-    }
-
-    const itemsSearch = useItemsSearch(validationReport, sectionApi);
+    const itemsSearch = useItemsSearch(validationReport, sectionApi)
 
     const handleCoverageFilterChange = e => {
         itemsSearch.handleFiltersChange({is_covered: e.target.value})
     }
 
-
     return (
-        <>
+        <Card>
             <TableLoadWrapper data={validationReport}
                               dataState={dataState}>
-                {/*<ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>*/}
                 <CoverageFilter onChange={handleCoverageFilterChange}
                                 filterState={itemsSearch.state.filters.is_covered}/>
                 <ListTable
@@ -59,7 +38,7 @@ const XpathValidationReport = ({sid, files, mappingSuiteIdentifier, handleSelect
                     sectionApi={sectionApi}
                 />
             </TableLoadWrapper>
-        </>
+        </Card>
     )
 }
 export default XpathValidationReport

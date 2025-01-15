@@ -1,15 +1,8 @@
-import Grid from '@mui/material/Unstable_Grid2';
 import {useState} from "react";
 
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-
-import Link from "@mui/material/Link";
-import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
+import Grid from '@mui/material/Unstable_Grid2';
 import FileList from '../mapping-package/state/file-list';
 
-import CoverageFiles from "./coverage_files";
 import ResultSummaryCoverage from './result-summary-coverage';
 import XpathValidationReportTest from "./xpath_validation_report_file";
 import XpathValidationReport from "./xpath_validation_report_package_state";
@@ -28,13 +21,11 @@ const XpathValidationReportView = ({sid, reportTree, validationReport}) => {
     const [selectedTestDataset, setSelectedTestDataset] = useState(reportTree.test_data_suites[0].test_data_states[0])
 
     const handleSetPackageState = (file) => {
-        console.log(file)
         setSelectedPackageState(file)
         setCurrentTab(TEST_DATASET)
     }
 
     const handleSetTestDataset = (file) => {
-        console.log(file)
         setSelectedTestDataset(file)
         setCurrentTab(FILE_COVERAGE)
     }
@@ -53,21 +44,23 @@ const XpathValidationReportView = ({sid, reportTree, validationReport}) => {
     return (
         <Grid container
               spacing={3}>
+            <Grid xs={12}
+                  md={4}>
+                <FileList files={reportTree.test_data_suites}
+                          handleFolderChange={handleSetPackageState}
+                          handleFileChange={handleSetTestDataset}/>
+            </Grid>
             {currentTab === PACKAGE_STATE &&
                 <>
                     <Grid xs={12}
                           md={8}>
-                        <ResultSummaryCoverage item={reportTree}
+                        <ResultSummaryCoverage identifier={reportTree.identifier}
                                                validationReport={validationReport}/>
                     </Grid>
-                    <Grid xs={12}
-                          md={4}>
-                        <FileList files={reportTree.test_data_suites}
-                                  handleFolderChange={handleSetPackageState}
-                                  handleFileChange={handleSetTestDataset}/>
-                    </Grid>
+
                     <Grid xs={12}>
                         <XpathValidationReport sid={sid}
+                                               validationReport={validationReport}
                                                files={reportTree.test_data_suites}
                                                handleSelectFile={handleSetTestAndPackage}
                                                mappingSuiteIdentifier={reportTree.identifier}/>
@@ -75,19 +68,11 @@ const XpathValidationReportView = ({sid, reportTree, validationReport}) => {
                 </>
             }
             {currentTab === TEST_DATASET &&
-                <>
-                    <Grid xs={12}
-                          md={4}>
-                        <FileList files={reportTree.test_data_suites}
-                                  handleFolderChange={handleSetPackageState}
-                                  handleFileChange={handleSetTestDataset}/>
-                    </Grid>
-                    <XpathValidationReportSuite sid={sid}
-                                                suiteId={selectedPackageState.oid}
-                                                files={selectedPackageState?.test_data_states}
-                                                handleSelectFile={handleSetTestAndPackage}
-                                                mappingSuiteIdentifier={reportTree.identifier}/>
-                </>
+                <XpathValidationReportSuite sid={sid}
+                                            suiteId={selectedPackageState.oid}
+                                            files={selectedPackageState?.test_data_states}
+                                            handleSelectFile={handleSetTestAndPackage}
+                                            mappingSuiteIdentifier={reportTree.identifier}/>
             }
             {currentTab === FILE_COVERAGE &&
                 <XpathValidationReportTest sid={sid}
