@@ -62,6 +62,20 @@ const ResultSummaryCoverageSparql = ({item, sid, validationReport}) => {
                         cy: 100
                     }
                 ]}
+                tooltip={{
+                    trigger: 'item',
+                    itemContent: (params) => {
+                        const data = params.series.data[params.itemData.dataIndex]
+                        return (
+                            <Paper sx={{p: 1}}>
+                                <Stack direction='column'>
+                                    <strong>{data.itemPercent}%</strong>
+                                    <span>{data.data}</span>
+                                </Stack>
+                            </Paper>
+                        );
+                    }
+                }}
                 width={368}
                 height={348}/>
         </Stack>
