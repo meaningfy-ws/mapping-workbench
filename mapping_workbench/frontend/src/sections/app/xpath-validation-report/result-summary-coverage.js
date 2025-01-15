@@ -35,8 +35,7 @@ const ResultSummaryCoverage = ({identifier, validationReport, handleChangeTab, l
     return <Paper sx={{p: 3, height: '100%'}}>
         <Stack direction='row'
                alignItems='center'
-               justifyContent='space-between'
-               sx={{borderBottom: '2px solid #F2F4F7', pb: 3}}>
+               justifyContent='space-between'>
             <Stack>
                 <Typography fontSize='18'
                             fontWeight='bold'>Coverage (XPath)</Typography>
@@ -61,12 +60,12 @@ const ResultSummaryCoverage = ({identifier, validationReport, handleChangeTab, l
                 <Stack>
                     <Typography color='#667085'>XPATHs covered</Typography>
                     <Typography sx={{mb: 2}}
-                                fontWeight='bold'>{`${coveredReports.length}/${coveredReportPercent}%`}</Typography>
+                                fontWeight='bold'>{`${coveredReports.length} / ${coveredReportPercent}%`}</Typography>
                 </Stack>
                 <Stack sx={{mb: 'auto'}}>
                     <Typography color='#667085'>XPATHs covered</Typography>
                     <Typography sx={{mb: 2}}
-                                fontWeight='bold'>{`${notCoveredReports.length}/${notCoveredReportPercent}%`}</Typography>
+                                fontWeight='bold'>{`${notCoveredReports.length} / ${notCoveredReportPercent}%`}</Typography>
 
                 </Stack>
             </Stack>

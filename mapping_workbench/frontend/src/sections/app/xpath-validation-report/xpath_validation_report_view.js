@@ -43,6 +43,7 @@ const XpathValidationReportView = ({sid, reportTree, validationReport}) => {
 
     return (
         <Grid container
+              direction='row-reverse'
               spacing={3}>
             <Grid xs={12}
                   md={4}>

@@ -9,16 +9,17 @@ import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
 
 const FileList = ({files, handleFileChange, handleFolderChange}) => {
-    console.log(files)
-
     const FileIcon = () => <InsertDriveFileOutlinedIcon sx={{marginLeft: '17px'}}/>
     const CollapseIcon = () => <Stack direction='row'><ExpandMoreIcon/><FolderOpenIcon/></Stack>
     const ExpandIcon = () => <Stack direction='row'><ChevronRightIcon/><FolderOpenIcon/></Stack>
 
     return (
         <Paper>
-            <Stack>
-                <Typography>Test Set Summary</Typography>
+            <Stack sx={{py: 2}}>
+                <Typography sx={{px: 2, mb: 3, fontWeight: 'bold', cursor: 'pointer'}}
+                            onClick={() => console.log('click')}>
+                    Test Set Summary
+                </Typography>
                 <SimpleTreeView slots={{
                     expandIcon: ExpandIcon,
                     collapseIcon: CollapseIcon,
