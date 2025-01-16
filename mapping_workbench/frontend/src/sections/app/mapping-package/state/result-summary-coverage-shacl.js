@@ -3,13 +3,14 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
+import {useTheme} from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import {StatePieChart} from './state-pie-chart';
 import getValidationColor from './validation-color';
 
 const ResultSummaryCoverageShacl = ({validationReport, handleChangeTab}) => {
-
+    const theme = useTheme()
     if (!validationReport) return null
 
     const {itemsTotal, ...itemsReduce} =
@@ -35,7 +36,7 @@ const ResultSummaryCoverageShacl = ({validationReport, handleChangeTab}) => {
     return <Paper sx={{p: 3, height: '100%'}}>
         <Stack direction='row'
                justifyContent='space-between'
-               sx={{borderBottom: '2px solid #F2F4F7', pb: 3}}>
+               sx={{borderBottom: `2px solid ${theme.palette.divider}`, pb: 3}}>
             <Stack>
                 <Typography color='#667085'>Result summary</Typography>
                 <Typography fontSize='18'
