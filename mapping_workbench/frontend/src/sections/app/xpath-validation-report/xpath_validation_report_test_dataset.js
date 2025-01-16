@@ -1,15 +1,15 @@
-import Grid from '@mui/material/Unstable_Grid2';
 import {useEffect, useState} from "react";
 
 import Card from '@mui/material/Card';
+import Grid from '@mui/material/Unstable_Grid2';
 
 import {ListTable} from "./list-table";
+import useItemsSearch from "src/hooks/use-items-search";
 import {CoverageFilter, TableLoadWrapper} from "./utils";
 import ResultSummaryCoverage from './result-summary-coverage';
-import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
-import useItemsSearch from "../../../hooks/use-items-search";
+import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
-const XpathValidationReportSuite = ({sid, suiteId, files, mappingSuiteIdentifier, handleSelectFile}) => {
+const XpathValidationReportSuite = ({sid, suiteId, mappingSuiteIdentifier, handleSelectFile}) => {
     const [validationReport, setValidationReport] = useState([])
     const [dataState, setDataState] = useState({load: true, error: false})
 

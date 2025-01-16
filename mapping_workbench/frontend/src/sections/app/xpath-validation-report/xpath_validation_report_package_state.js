@@ -4,18 +4,16 @@ import Card from '@mui/material/Card';
 
 import {ListTable} from "./list-table";
 import {CoverageFilter, TableLoadWrapper} from "./utils";
-import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
-import useItemsSearch from "../../../hooks/use-items-search";
+import useItemsSearch from "src/hooks/use-items-search";
+import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
-const XpathValidationReport = ({ validationReport,  handleSelectFile}) => {
+const XpathValidationReport = ({validationReport, handleSelectFile}) => {
     const [dataState, setDataState] = useState({load: false, error: false})
-
 
     const itemsSearch = useItemsSearch(validationReport, sectionApi)
 
-    const handleCoverageFilterChange = e => {
-        itemsSearch.handleFiltersChange({is_covered: e.target.value})
-    }
+    const handleCoverageFilterChange = e => itemsSearch.handleFiltersChange({is_covered: e.target.value})
+
 
     return (
         <Card>
