@@ -15,6 +15,8 @@ from mapping_workbench.backend.test_data_suite.models.entity import TestDataFile
     TestDataSuiteState
 from mapping_workbench.backend.test_data_suite.services import DATA_SOURCE_PATH_NAME, \
     TRANSFORMATION_PATH_NAME, MAPPINGS_PATH_NAME, RESOURCES_PATH_NAME
+from mapping_workbench.backend.test_data_suite.services.test_data_transform_history import \
+    add_test_data_transform_to_history
 from mapping_workbench.backend.test_data_suite.services.data import get_test_data_file_resources_for_project, \
     get_test_data_file_resources_for_package
 from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragment, TripleMapFragmentState, \
@@ -119,7 +121,6 @@ async def transform_test_data_file_resource(
     if not isinstance(rml_mapper, RMLMapperABC):
         rml_mapper: RMLMapper = RMLMapper(rml_mapper_path=Path(settings.RML_MAPPER_PATH))
 
-
     test_data_file_resource.rdf_manifestation = await transform_test_data_file_resource_content(
         content=test_data_file_resource.content,
         mappings=mappings,
@@ -136,6 +137,11 @@ async def transform_test_data_file_resource(
 
     if save:
         await test_data_file_resource.save()
+
+    await add_test_data_transform_to_history(
+        test_data_file_resource=test_data_file_resource,
+        project_id=project_id
+    )
 
     return test_data_file_resource
 
