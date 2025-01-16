@@ -10,7 +10,6 @@ import ResultSummaryCoverageXpath from './result-summary-coverage-xpath';
 
 const StateDetail = ({title, value}) => {
     const theme = useTheme()
-    console.log(theme)
     return (
         <Stack sx={{
             border: '1px solid #E4E7EC',

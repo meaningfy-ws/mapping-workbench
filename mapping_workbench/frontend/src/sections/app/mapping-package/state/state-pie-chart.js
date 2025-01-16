@@ -24,7 +24,7 @@ export const StatePieChart = ({items}) => {
                         innerRadius: 60,
                         outerRadius: 100,
                         cy: 100,
-                        cx: 180,
+                        cx: 144,
                     }
                 ]}
                 tooltip={{
@@ -41,7 +41,7 @@ export const StatePieChart = ({items}) => {
                         );
                     }
                 }}
-                width={368}
+                width={300}
                 height={348}/>
 }
 

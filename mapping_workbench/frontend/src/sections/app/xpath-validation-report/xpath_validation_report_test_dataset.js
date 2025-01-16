@@ -1,7 +1,9 @@
 import {useEffect, useState} from "react";
 
 import Card from '@mui/material/Card';
+import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Unstable_Grid2';
+import Typography from '@mui/material/Typography';
 
 import {ListTable} from "./list-table";
 import useItemsSearch from "src/hooks/use-items-search";
@@ -34,6 +36,11 @@ const XpathValidationReportSuite = ({sid, suiteId, mappingSuiteIdentifier, handl
 
     const handleCoverageFilterChange = e => itemsSearch.handleFiltersChange({is_covered: e.target.value})
 
+    const FILTER_VALUES = [{label: 'All', value: '', color: 'primary', count: validationReport.length},
+        {label: 'Covered', value: true, color: 'info', count: validationReport.filter(e => e.is_covered).length},
+        {label: 'Uncovered', value: false, color: 'warning', count: validationReport.filter(e => !e.is_covered).length}]
+
+
     return (
         <>
             <Grid xs={12}
@@ -47,8 +54,15 @@ const XpathValidationReportSuite = ({sid, suiteId, mappingSuiteIdentifier, handl
                 <Card>
                     <TableLoadWrapper dataState={dataState}
                                       data={validationReport}>
-                        <CoverageFilter onChange={handleCoverageFilterChange}
-                                        filterState={itemsSearch.state.filters.is_covered}/>
+                        <Stack direction='row'
+                               alignItems='center'
+                               justifyContent='space-between'
+                               sx={{mx: 3}}>
+                            <Typography fontWeight='bold'>Assertions</Typography>
+                            <CoverageFilter values={FILTER_VALUES}
+                                            onValueChange={handleCoverageFilterChange}
+                                            value={itemsSearch.state.filters.is_covered}/>
+                        </Stack>
                         <ListTable
                             items={itemsSearch.pagedItems}
                             count={itemsSearch.count}
