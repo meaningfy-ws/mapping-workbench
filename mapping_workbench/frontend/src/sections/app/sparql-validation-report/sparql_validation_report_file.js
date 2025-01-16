@@ -1,11 +1,13 @@
 import {useEffect, useState} from "react";
-import Typography from "@mui/material/Typography";
+
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Unstable_Grid2';
 
 import {ListTableFile} from "./list-table-file";
-import {QueryResultTable} from "./query-result-table";
+import ResultSummaryQuery from './result-summary-query';
 import {ResultFilter, TableLoadWrapper} from "./utils";
+import useItemsSearch from "src/hooks/use-items-search";
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
-import useItemsSearch from "../../../hooks/use-items-search";
 
 
 const SparqlFileReport = ({sid, suiteId, testId}) => {
@@ -14,7 +16,7 @@ const SparqlFileReport = ({sid, suiteId, testId}) => {
 
     useEffect(() => {
         handleValidationReportsGet(sid, suiteId, testId)
-    }, [])
+    }, [testId])
 
     const handleValidationReportsGet = (sid, suiteId, testId) => {
         setDataState({load: true, error: false})
@@ -49,46 +51,36 @@ const SparqlFileReport = ({sid, suiteId, testId}) => {
 
     const itemsSearch = useItemsSearch(validationReport, sectionApi);
 
-    const handleResultFilterChange = e => {
-        itemsSearch.handleFiltersChange({result: e.target.value})
-    }
+    const handleResultFilterChange = e => itemsSearch.handleFiltersChange({result: e.target.value})
 
     return (
         <>
-            <Typography m={2}
-                        variant="h4">
-                Results Summary
-            </Typography>
-            <TableLoadWrapper dataState={dataState}
-                              lines={6}
-                              data={validationReport}>
-                <QueryResultTable
-                    items={validationReport}
-                />
-            </TableLoadWrapper>
-            <Typography m={2}
-                        variant="h4">
-                Assertions
-            </Typography>
-            <TableLoadWrapper dataState={dataState}
-                              data={validationReport}>
-                {/*<ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>*/}
-                <ResultFilter onStateChange={handleResultFilterChange}
-                              currentState={itemsSearch.state.filters.result}/>
-                <ListTableFile
-                    items={itemsSearch.pagedItems}
-                    count={itemsSearch.count}
-                    onPageChange={itemsSearch.handlePageChange}
-                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                    page={itemsSearch.state.page}
-                    rowsPerPage={itemsSearch.state.rowsPerPage}
-                    onSort={itemsSearch.handleSort}
-                    sort={itemsSearch.state.sort}
-                    onFilter={itemsSearch.handleFiltersChange}
-                    filters={itemsSearch.state.filters}
-                    sectionApi={sectionApi}
-                />
-            </TableLoadWrapper>
+            <Grid xs={12}
+                  md={8}>
+                <ResultSummaryQuery validationReport={validationReport}/>
+            </Grid>
+            <Grid xs={12}>
+                <Paper>
+                    <TableLoadWrapper dataState={dataState}
+                                      data={validationReport}>
+                        <ResultFilter onStateChange={handleResultFilterChange}
+                                      currentState={itemsSearch.state.filters.result}/>
+                        <ListTableFile
+                            items={itemsSearch.pagedItems}
+                            count={itemsSearch.count}
+                            onPageChange={itemsSearch.handlePageChange}
+                            onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                            page={itemsSearch.state.page}
+                            rowsPerPage={itemsSearch.state.rowsPerPage}
+                            onSort={itemsSearch.handleSort}
+                            sort={itemsSearch.state.sort}
+                            onFilter={itemsSearch.handleFiltersChange}
+                            filters={itemsSearch.state.filters}
+                            sectionApi={sectionApi}
+                        />
+                    </TableLoadWrapper>
+                </Paper>
+            </Grid>
         </>)
 }
 export default SparqlFileReport

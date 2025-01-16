@@ -4,8 +4,7 @@ import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import {legendClasses, PieChart} from '@mui/x-charts';
-import StatePieChart from './state-pie-chart';
+import {StatePieChart} from './state-pie-chart';
 import getValidationColor from './validation-color';
 
 const ResultSummaryCoverageSparql = ({validationReport, handleChangeTab}) => {
@@ -31,8 +30,6 @@ const ResultSummaryCoverageSparql = ({validationReport, handleChangeTab}) => {
             color: getValidationColor(itemName)
         }
     })
-
-    console.log(itemsDisplay.length)
 
     return <Paper sx={{p: 3, height: '100%'}}>
         <Stack direction='row'

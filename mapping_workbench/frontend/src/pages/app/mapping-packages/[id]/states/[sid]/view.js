@@ -8,13 +8,11 @@ import Tab from '@mui/material/Tab';
 import Chip from '@mui/material/Chip';
 import Tabs from '@mui/material/Tabs';
 import Link from '@mui/material/Link';
-import Card from "@mui/material/Card";
 import Stack from '@mui/material/Stack';
 import Button from "@mui/material/Button";
 import SvgIcon from '@mui/material/SvgIcon';
 import {useTheme} from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import CardContent from "@mui/material/CardContent";
 import CircularProgress from "@mui/material/CircularProgress";
 
 import {paths} from 'src/paths';
@@ -264,24 +262,17 @@ const Page = () => {
                     />
                 )}
                 {currentTab === 'sparql' && (
-                    <Card>
-                        <CardContent>
-                            <SparqlValidationReport
-                                sid={sid}
-                                reportTree={validationReportTree}
-                            />
-                        </CardContent>
-                    </Card>
+                    <SparqlValidationReport
+                        sid={sid}
+                        validationReport={validationReport.sparql}
+                        reportTree={validationReportTree}
+                    />
                 )}
                 {currentTab === 'shacl' && (
-                    <Card>
-                        <CardContent>
-                            <ShaclValidationReport
-                                sid={sid}
-                                reportTree={validationReportTree}
-                            />
-                        </CardContent>
-                    </Card>
+                    <ShaclValidationReport
+                        sid={sid}
+                        reportTree={validationReportTree}
+                    />
                 )}
             </Stack>
         </>

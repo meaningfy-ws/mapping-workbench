@@ -56,19 +56,6 @@ const SparqlValidationReport = ({sid, handleSelectFile}) => {
 
     return (
         <>
-            <Typography m={2}
-                        variant="h4">
-                Results Summary
-            </Typography>
-            <TableLoadWrapper dataState={dataState}
-                              lines={6}
-                              data={validationReport}>
-                <ResultSummaryTable items={validationReport}/>
-            </TableLoadWrapper>
-            <Typography m={2}
-                        variant="h4">
-                Assertions
-            </Typography>
             <TableLoadWrapper dataState={dataState}
                               lines={6}
                               data={validationReport}>

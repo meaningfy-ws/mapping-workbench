@@ -5,7 +5,7 @@ import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
-import StatePieChart from './state-pie-chart';
+import {StatePieChart} from './state-pie-chart';
 import getValidationColor from './validation-color';
 
 const ResultSummaryCoverageShacl = ({validationReport, handleChangeTab}) => {
