@@ -3,7 +3,6 @@ import {useState} from "react";
 import Grid from '@mui/material/Unstable_Grid2';
 import FileList from '../mapping-package/state/file-list';
 
-import ResultSummaryCoverage from './result-summary-coverage';
 import XpathValidationReportTest from "./xpath_validation_report_file";
 import XpathValidationReport from "./xpath_validation_report_package_state";
 import XpathValidationReportSuite from "./xpath_validation_report_test_dataset";
@@ -26,8 +25,9 @@ const XpathValidationReportView = ({sid, reportTree, validationReport}) => {
         setSelectedPackageState(packageState)
         if (testData) {
             setSelectedTestDataset(packageState?.test_data_states.find(ps => ps.oid === testData));
-        } else
+        } else {
             setSelectedTestDataset(undefined)
+        }
     }
 
     return (
@@ -43,21 +43,11 @@ const XpathValidationReportView = ({sid, reportTree, validationReport}) => {
                           handleFileChange={handleSetTestDataset}/>
             </Grid>
             {!selectedPackageState &&
-                <>
-                    <Grid xs={12}
-                          md={8}>
-                        <ResultSummaryCoverage identifier={reportTree.identifier}
-                                               validationReport={validationReport}/>
-                    </Grid>
-
-                    <Grid xs={12}>
-                        <XpathValidationReport sid={sid}
-                                               validationReport={validationReport}
-                                               files={reportTree.test_data_suites}
-                                               handleSelectFile={handleSetTestAndPackage}
-                                               mappingSuiteIdentifier={reportTree.identifier}/>
-                    </Grid>
-                </>
+                <XpathValidationReport sid={sid}
+                                       validationReport={validationReport}
+                                       files={reportTree.test_data_suites}
+                                       handleSelectFile={handleSetTestAndPackage}
+                                       mappingSuiteIdentifier={reportTree.identifier}/>
             }
             {selectedPackageState && !selectedTestDataset &&
                 <XpathValidationReportSuite sid={sid}

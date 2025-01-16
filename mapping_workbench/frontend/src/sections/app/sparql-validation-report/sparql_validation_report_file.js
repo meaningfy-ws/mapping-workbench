@@ -4,9 +4,9 @@ import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
 
 import {ListTableFile} from "./list-table-file";
-import ResultSummaryQuery from './result-summary-query';
 import {ResultFilter, TableLoadWrapper} from "./utils";
 import useItemsSearch from "src/hooks/use-items-search";
+import {ResultSummaryQuery} from './result-summary-coverage';
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
 

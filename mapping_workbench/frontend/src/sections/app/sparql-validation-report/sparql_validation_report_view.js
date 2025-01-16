@@ -3,8 +3,6 @@ import {useState} from "react";
 import Grid from '@mui/material/Unstable_Grid2';
 
 import FileList from '../mapping-package/state/file-list';
-import ResultSummaryCoverage from './result-summary-coverage';
-
 import SparqlFileReport from "./sparql_validation_report_file";
 import SparqlTestDatasetReport from "./sparql_validation_report_test_dataset";
 import SparqlPackageStateReport from "./sparql_validation_report_package_state";
@@ -16,6 +14,7 @@ const SparqlValidationReportView = ({sid, reportTree, validationReport}) => {
 
     const handleSetPackageState = (file) => {
         setSelectedPackageState(file)
+        setSelectedTestDataset(undefined)
     }
 
     const handleSetTestDataset = (file) => {
@@ -24,14 +23,15 @@ const SparqlValidationReportView = ({sid, reportTree, validationReport}) => {
 
     const handleSetTestAndPackage = (testDataSuite, testData) => {
         const packageState = reportTree.test_data_suites.find(tds => tds.oid === testDataSuite)
+        setSelectedPackageState(packageState)
         if (testData) {
             setSelectedTestDataset(packageState?.test_data_states.find(ps => ps.oid === testData));
         } else {
-            setSelectedPackageState(packageState);
+            setSelectedPackageState(undefined);
         }
     }
 
-    console.log(selectedPackageState,selectedTestDataset)
+    console.log(selectedPackageState, selectedTestDataset)
 
     return (
         <Grid container
@@ -46,19 +46,11 @@ const SparqlValidationReportView = ({sid, reportTree, validationReport}) => {
                           handleFileChange={handleSetTestDataset}/>
             </Grid>
             {!selectedPackageState &&
-                <>
-                    <Grid xs={12}
-                          md={8}>
-                        <ResultSummaryCoverage validationReport={validationReport}/>
-                    </Grid>
-                    <Grid xs={12}>
-                        <SparqlPackageStateReport
-                            sid={sid}
-                            handleSelectFile={handleSetTestAndPackage}
-                            files={reportTree.test_data_suites}
-                        />
-                    </Grid>
-                </>
+                <SparqlPackageStateReport
+                    sid={sid}
+                    handleSelectFile={handleSetTestAndPackage}
+                    files={reportTree.test_data_suites}
+                />
             }
             {selectedPackageState && !selectedTestDataset &&
                 <SparqlTestDatasetReport

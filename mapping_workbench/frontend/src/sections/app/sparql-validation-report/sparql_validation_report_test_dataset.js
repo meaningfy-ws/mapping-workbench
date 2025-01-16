@@ -1,9 +1,10 @@
-import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Unstable_Grid2';
 import {useEffect, useState} from "react";
 
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Unstable_Grid2';
+
 import {ListTable} from "./list-table";
-import ResultSummaryCoverage from './result-summary-coverage';
+import {ResultSummaryCoverage} from './result-summary-coverage';
 import {TableLoadWrapper} from "./utils";
 import useItemsSearch from "src/hooks/use-items-search";
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";

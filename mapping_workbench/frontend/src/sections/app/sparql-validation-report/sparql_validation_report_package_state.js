@@ -1,13 +1,12 @@
 import {useEffect, useState} from "react";
-import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
+import Grid from '@mui/material/Unstable_Grid2';
 
-import Typography from "@mui/material/Typography";
-
-// import ItemSearchInput from "../file-manager/item-search-input";
 import {ListTable} from "./list-table";
-import ResultSummaryTable from "./result-summary-table";
+
 import {TableLoadWrapper} from "./utils";
-import useItemsSearch from "../../../hooks/use-items-search";
+import useItemsSearch from "src/hooks/use-items-search";
+import {ResultSummaryCoverage} from './result-summary-coverage';
+import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
 
 const SparqlValidationReport = ({sid, handleSelectFile}) => {
@@ -56,25 +55,30 @@ const SparqlValidationReport = ({sid, handleSelectFile}) => {
 
     return (
         <>
-            <TableLoadWrapper dataState={dataState}
-                              lines={6}
-                              data={validationReport}>
-                {/*<ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>*/}
-                <ListTable
-                    items={itemsSearch.pagedItems}
-                    count={itemsSearch.count}
-                    onPageChange={itemsSearch.handlePageChange}
-                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                    page={itemsSearch.state.page}
-                    rowsPerPage={itemsSearch.state.rowsPerPage}
-                    onSort={itemsSearch.handleSort}
-                    sort={itemsSearch.state.sort}
-                    onFilter={itemsSearch.handleFiltersChange}
-                    filters={itemsSearch.state.filters}
-                    sectionApi={sectionApi}
-                    handleSelectFile={handleSelectFile}
-                />
-            </TableLoadWrapper>
+            <Grid xs={12}
+                  md={8}>
+                <ResultSummaryCoverage validationReport={validationReport}/>
+            </Grid>
+            <Grid xs={12}>
+                <TableLoadWrapper dataState={dataState}
+                                  lines={6}
+                                  data={validationReport}>
+                    <ListTable
+                        items={itemsSearch.pagedItems}
+                        count={itemsSearch.count}
+                        onPageChange={itemsSearch.handlePageChange}
+                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                        page={itemsSearch.state.page}
+                        rowsPerPage={itemsSearch.state.rowsPerPage}
+                        onSort={itemsSearch.handleSort}
+                        sort={itemsSearch.state.sort}
+                        onFilter={itemsSearch.handleFiltersChange}
+                        filters={itemsSearch.state.filters}
+                        sectionApi={sectionApi}
+                        handleSelectFile={handleSelectFile}
+                    />
+                </TableLoadWrapper>
+            </Grid>
         </>)
 }
 
