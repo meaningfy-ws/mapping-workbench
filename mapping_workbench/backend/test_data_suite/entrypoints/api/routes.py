@@ -14,7 +14,8 @@ from mapping_workbench.backend.security.services.user_manager import current_act
 from mapping_workbench.backend.task_manager.services.task_wrapper import add_task
 from mapping_workbench.backend.test_data_suite.adapters.rml_mapper import RMLMapperException
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
-    TestDataFileResourceUpdateIn, TestDataFileResourceCreateIn
+    TestDataFileResourceUpdateIn, TestDataFileResourceCreateIn, TestDataManifestationHistory, \
+    TestDataManifestationHistoryOut
 from mapping_workbench.backend.test_data_suite.models.entity_api_response import \
     APIListTestDataSuitesPaginatedResponse, APIListTestDataFileResourcesPaginatedResponse
 from mapping_workbench.backend.test_data_suite.services import tasks
@@ -27,7 +28,7 @@ from mapping_workbench.backend.test_data_suite.services.api import (
     list_test_data_suite_file_resources,
     create_test_data_suite_file_resource,
     get_test_data_file_resource,
-    delete_test_data_file_resource, update_test_data_file_resource
+    delete_test_data_file_resource, update_test_data_file_resource, get_test_data_transform_history
 )
 from mapping_workbench.backend.test_data_suite.services.import_test_data_suite import \
     import_test_data_suites_from_archive
@@ -416,3 +417,15 @@ async def route_task_import_test_data_suites(
 ):
     await import_test_data_suites_from_archive(project, file, user)
     return APIEmptyContentResponse()
+
+
+@router.get(
+    "/file_resources/{id}/transform/history",
+    description=f"Get Test Data Transform History",
+    name=f"{FILE_RESOURCE_NAME_FOR_ONE}:get_transform_history",
+)
+async def route_get_test_data_file_resource_transform_history(
+        project: PydanticObjectId,
+        test_data_file_resource: TestDataFileResource = Depends(get_test_data_file_resource)
+) -> List[TestDataManifestationHistoryOut]:
+    return await get_test_data_transform_history(test_data_file_resource, project)

@@ -1,14 +1,18 @@
+from datetime import datetime
 from enum import Enum
 from typing import Optional, List
 
 import pymongo
 from beanie import Link, PydanticObjectId
-from pydantic import BaseModel
+from dateutil.tz import tzlocal
+from pydantic import BaseModel, Field
 from pymongo import IndexModel
 
+from mapping_workbench.backend.core.models.base_entity import BaseEntityOutSchema
 from mapping_workbench.backend.core.models.base_mapping_package_resource_entity import \
     BaseMappingPackagesResourceSchemaTrait
-from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
+from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
+    BaseProjectAbleResourceEntity
 from mapping_workbench.backend.file_resource.models.file_resource import FileResource, FileResourceCollection, \
     FileResourceIn, FileResourceFormat, FileResourceState
 from mapping_workbench.backend.package_validator.models.shacl_validation import SHACLTestDataValidationResult
@@ -59,6 +63,23 @@ class TestDataState(TestDataValidation, ObjectState):
     filename: Optional[str] = None
     xml_manifestation: Optional[FileResourceState] = None
     rdf_manifestation: Optional[FileResourceState] = None
+
+
+class TestDataManifestationHistory(BaseProjectAbleResourceEntity):
+    test_data_id: PydanticObjectId
+    in_manifestation: Optional[str] = None
+    out_manifestation: Optional[str] = None
+    created_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(tzlocal()))
+
+    class Settings(FileResource.Settings):
+        name = "test_data_manifestation_history"
+
+
+class TestDataManifestationHistoryOut(BaseEntityOutSchema):
+    test_data_id: PydanticObjectId
+    in_manifestation: Optional[str] = None
+    out_manifestation: Optional[str] = None
+    created_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(tzlocal()))
 
 
 class TestDataFileResource(FileResource, StatefulObjectABC):
