@@ -9,7 +9,7 @@ import ResultSummaryCoverage from './result-summary-coverage';
 import useItemsSearch from "../../../hooks/use-items-search";
 import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
 
-const XpathValidationReportTest = ({sid, suiteId, testId, mappingSuiteIdentifier}) => {
+const XpathValidationReportTest = ({sid, suiteId, testId, mappingSuiteIdentifier, handleExport}) => {
     const [validationReport, setValidationReport] = useState([])
     const [dataState, setDataState] = useState({load: true, error: false})
 
@@ -37,6 +37,7 @@ const XpathValidationReportTest = ({sid, suiteId, testId, mappingSuiteIdentifier
             <Grid xs={12}
                   md={8}>
                 <ResultSummaryCoverage load={dataState.load}
+                                       handleExport={handleExport}
                                        identifier={mappingSuiteIdentifier}
                                        validationReport={validationReport}/>
             </Grid>

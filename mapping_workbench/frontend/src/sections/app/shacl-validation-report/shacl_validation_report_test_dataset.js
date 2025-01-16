@@ -10,7 +10,7 @@ import useItemsSearch from "src/hooks/use-items-search";
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
 
-const ShaclTestDatasetReport = ({sid, suiteId, handleSelectFile}) => {
+const ShaclTestDatasetReport = ({sid, suiteId, handleSelectFile, handleExport}) => {
     const [validationReport, setValidationReport] = useState([])
     const [dataState, setDataState] = useState({load: true, error: false})
 
@@ -52,7 +52,8 @@ const ShaclTestDatasetReport = ({sid, suiteId, handleSelectFile}) => {
         <>
             <Grid xs={12}
                   md={8}>
-                <ResultSummaryCoverage validationReport={validationReport}/>
+                <ResultSummaryCoverage handleExport={handleExport}
+                                       validationReport={validationReport}/>
             </Grid>
             <Grid xs={12}>
                 <Paper>

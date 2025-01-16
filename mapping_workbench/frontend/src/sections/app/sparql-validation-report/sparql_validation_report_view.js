@@ -7,7 +7,7 @@ import SparqlFileReport from "./sparql_validation_report_file";
 import SparqlTestDatasetReport from "./sparql_validation_report_test_dataset";
 import SparqlPackageStateReport from "./sparql_validation_report_package_state";
 
-const SparqlValidationReportView = ({sid, reportTree, validationReport}) => {
+const SparqlValidationReportView = ({sid, reportTree, validationReport, handleExport}) => {
 
     const [selectedPackageState, setSelectedPackageState] = useState()
     const [selectedTestDataset, setSelectedTestDataset] = useState()
@@ -31,8 +31,6 @@ const SparqlValidationReportView = ({sid, reportTree, validationReport}) => {
         }
     }
 
-    console.log(selectedPackageState, selectedTestDataset)
-
     return (
         <Grid container
               direction='row-reverse'
@@ -48,6 +46,7 @@ const SparqlValidationReportView = ({sid, reportTree, validationReport}) => {
             {!selectedPackageState &&
                 <SparqlPackageStateReport
                     sid={sid}
+                    handleExport={handleExport}
                     validationReport={validationReport}
                     handleSelectFile={handleSetTestAndPackage}
                     files={reportTree.test_data_suites}
@@ -56,6 +55,7 @@ const SparqlValidationReportView = ({sid, reportTree, validationReport}) => {
             {selectedPackageState && !selectedTestDataset &&
                 <SparqlTestDatasetReport
                     sid={sid}
+                    handleExport={handleExport}
                     handleSelectFile={handleSetTestAndPackage}
                     suiteId={selectedPackageState.oid}
                 />
@@ -64,6 +64,7 @@ const SparqlValidationReportView = ({sid, reportTree, validationReport}) => {
             {selectedPackageState && selectedTestDataset &&
                 <SparqlFileReport
                     sid={sid}
+                    handleExport={handleExport}
                     suiteId={selectedPackageState.oid}
                     testId={selectedTestDataset.oid}
                 />

@@ -1,14 +1,12 @@
-import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
-
-import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import ExportButton from '../mapping-package/state/export-button';
 import {StatePieChartBig} from '../mapping-package/state/state-pie-chart';
 import getValidationColor from '../mapping-package/state/validation-color';
 
-const Pie = ({data}) => {
+const Pie = ({data, handleExport}) => {
     return (<Paper>
         <Stack direction='column'
                sx={{py: 2, px: 3}}
@@ -20,11 +18,7 @@ const Pie = ({data}) => {
                     <Typography fontSize='18'
                                 fontWeight='bold'>Coverage (SPARQL)</Typography>
                 </Stack>
-                <Button
-                    startIcon={<FileDownloadOutlinedIcon/>}
-                    onClick={() => handleChangeTab('xpath')}>
-                    Export State
-                </Button>
+                <ExportButton handleExport={handleExport}/>
             </Stack>
             <Stack alignItems='center'>
                 <StatePieChartBig items={data}/>
@@ -33,7 +27,7 @@ const Pie = ({data}) => {
     </Paper>)
 }
 
-export const ResultSummaryCoverage = ({validationReport}) => {
+export const ResultSummaryCoverage = ({validationReport, handleExport}) => {
 
     if (!validationReport) return null
 
@@ -59,10 +53,11 @@ export const ResultSummaryCoverage = ({validationReport}) => {
         }
     })
 
-    return <Pie data={itemsDisplay}/>
+    return <Pie data={itemsDisplay}
+                handleExport={handleExport}/>
 }
 
-export const ResultSummaryQuery = ({validationReport}) => {
+export const ResultSummaryQuery = ({validationReport, handleExport}) => {
     const itemsReduce = validationReport.reduce((acc, item) => {
         acc[item.result] = (acc[item.result] ?? 0) + 1
         return acc
@@ -79,5 +74,6 @@ export const ResultSummaryQuery = ({validationReport}) => {
         }
     })
 
-    return <Pie data={itemsDisplay}/>
+    return <Pie data={itemsDisplay}
+                handleExport={handleExport}/>
 }

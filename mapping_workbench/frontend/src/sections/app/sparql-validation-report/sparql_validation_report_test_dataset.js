@@ -4,12 +4,12 @@ import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
 
 import {ListTable} from "./list-table";
-import {ResultSummaryCoverage} from './result-summary-coverage';
 import {TableLoadWrapper} from "./utils";
 import useItemsSearch from "src/hooks/use-items-search";
+import {ResultSummaryCoverage} from './result-summary-coverage';
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
-const SparqlTestDatasetReport = ({sid, suiteId, handleSelectFile}) => {
+const SparqlTestDatasetReport = ({sid, suiteId, handleSelectFile, handleExport}) => {
     const [validationReport, setValidationReport] = useState([])
     const [dataState, setDataState] = useState({load: true, error: false})
 
@@ -58,7 +58,8 @@ const SparqlTestDatasetReport = ({sid, suiteId, handleSelectFile}) => {
         <>
             <Grid xs={12}
                   md={8}>
-                <ResultSummaryCoverage validationReport={validationReport}/>
+                <ResultSummaryCoverage handleExport={handleExport}
+                                       validationReport={validationReport}/>
             </Grid>
             <Grid xs={12}>
                 <Paper>

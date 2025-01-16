@@ -9,7 +9,7 @@ import {TableLoadWrapper} from "./utils";
 import useItemsSearch from "src/hooks/use-items-search";
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
-const ShaclPackageStateReport = ({sid, handleSelectFile, mappingSuiteIdentifier, validationReport}) => {
+const ShaclPackageStateReport = ({handleSelectFile, mappingSuiteIdentifier, validationReport, handleExport}) => {
     const [dataState, setDataState] = useState({load: false, error: false})
 
     const itemsSearch = useItemsSearch(validationReport, sectionApi);
@@ -18,7 +18,8 @@ const ShaclPackageStateReport = ({sid, handleSelectFile, mappingSuiteIdentifier,
         <>
             <Grid xs={12}
                   md={8}>
-                <ResultSummaryCoverage identifier={mappingSuiteIdentifier}
+                <ResultSummaryCoverage handleExport={handleExport}
+                                       identifier={mappingSuiteIdentifier}
                                        validationReport={validationReport}/>
             </Grid>
             <Grid xs={12}>

@@ -7,7 +7,7 @@ import XpathValidationReportTest from "./xpath_validation_report_file";
 import XpathValidationReport from "./xpath_validation_report_package_state";
 import XpathValidationReportSuite from "./xpath_validation_report_test_dataset";
 
-const XpathValidationReportView = ({sid, reportTree, validationReport}) => {
+const XpathValidationReportView = ({sid, reportTree, validationReport, handleExport}) => {
     const [selectedPackageState, setSelectedPackageState] = useState()
     const [selectedTestDataset, setSelectedTestDataset] = useState()
 
@@ -44,6 +44,7 @@ const XpathValidationReportView = ({sid, reportTree, validationReport}) => {
             </Grid>
             {!selectedPackageState &&
                 <XpathValidationReport sid={sid}
+                                       handleExport={handleExport}
                                        validationReport={validationReport}
                                        files={reportTree.test_data_suites}
                                        handleSelectFile={handleSetTestAndPackage}
@@ -51,6 +52,7 @@ const XpathValidationReportView = ({sid, reportTree, validationReport}) => {
             }
             {selectedPackageState && !selectedTestDataset &&
                 <XpathValidationReportSuite sid={sid}
+                                            handleExport={handleExport}
                                             suiteId={selectedPackageState.oid}
                                             files={selectedPackageState?.test_data_states}
                                             handleSelectFile={handleSetTestAndPackage}
@@ -58,6 +60,7 @@ const XpathValidationReportView = ({sid, reportTree, validationReport}) => {
             }
             {selectedPackageState && selectedTestDataset &&
                 <XpathValidationReportTest sid={sid}
+                                           handleExport={handleExport}
                                            suiteId={selectedPackageState.oid}
                                            testId={selectedTestDataset.oid}
                                            mappingSuiteIdentifier={reportTree.identifier}/>

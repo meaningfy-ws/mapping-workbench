@@ -1,12 +1,10 @@
-import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
-
 import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import ExportButton from '../mapping-package/state/export-button';
 import {LineProgressDouble} from '../mapping-package/state/state-line-progress';
 
-const ResultSummaryCoverage = ({identifier, validationReport, handleChangeTab, load}) => {
+const ResultSummaryCoverage = ({identifier, validationReport, handleExport, load}) => {
 
     if (!validationReport) return null
 
@@ -27,13 +25,7 @@ const ResultSummaryCoverage = ({identifier, validationReport, handleChangeTab, l
                 <Typography fontSize='18'
                             fontWeight='bold'>Coverage (XPath)</Typography>
             </Stack>
-            <Button
-                startIcon={<FileDownloadOutlinedIcon/>}
-                onClick={() => {
-                    handleChangeTab('xpath')
-                }}>
-                Export State
-            </Button>
+            <ExportButton handleExport={handleExport}/>
         </Stack>
         <Stack sx={{mt: 3, mb: 'auto'}}>
             <Stack sx={{mb: 3}}>

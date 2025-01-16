@@ -9,7 +9,7 @@ import {CoverageFilter, TableLoadWrapper} from "./utils";
 import ResultSummaryCoverage from './result-summary-coverage';
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
-const XpathValidationReportSuite = ({sid, suiteId, mappingSuiteIdentifier, handleSelectFile}) => {
+const XpathValidationReportSuite = ({sid, suiteId, mappingSuiteIdentifier, handleSelectFile, handleExport}) => {
     const [validationReport, setValidationReport] = useState([])
     const [dataState, setDataState] = useState({load: true, error: false})
 
@@ -39,6 +39,7 @@ const XpathValidationReportSuite = ({sid, suiteId, mappingSuiteIdentifier, handl
             <Grid xs={12}
                   md={8}>
                 <ResultSummaryCoverage load={dataState.load}
+                                       handleExport={handleExport}
                                        identifier={mappingSuiteIdentifier}
                                        validationReport={validationReport}/>
             </Grid>

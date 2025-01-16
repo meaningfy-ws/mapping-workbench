@@ -10,7 +10,7 @@ import {ResultSummaryQuery} from './result-summary-coverage';
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
 
-const SparqlFileReport = ({sid, suiteId, testId}) => {
+const SparqlFileReport = ({sid, suiteId, testId, handleExport}) => {
     const [validationReport, setValidationReport] = useState([])
     const [dataState, setDataState] = useState({load: true, error: false})
 
@@ -57,7 +57,8 @@ const SparqlFileReport = ({sid, suiteId, testId}) => {
         <>
             <Grid xs={12}
                   md={8}>
-                <ResultSummaryQuery validationReport={validationReport}/>
+                <ResultSummaryQuery handleExport={handleExport}
+                                    validationReport={validationReport}/>
             </Grid>
             <Grid xs={12}>
                 <Paper>

@@ -2,16 +2,12 @@ import {useEffect, useState} from 'react';
 import dynamic from "next/dynamic";
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 import Tab from '@mui/material/Tab';
-import Chip from '@mui/material/Chip';
 import Tabs from '@mui/material/Tabs';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
-import Button from "@mui/material/Button";
 import SvgIcon from '@mui/material/SvgIcon';
-import {useTheme} from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import CircularProgress from "@mui/material/CircularProgress";
 
@@ -47,14 +43,11 @@ const tabs = [
 
 const Page = () => {
     const router = useRouter();
-    const theme = useTheme()
-    console.log(theme)
 
     const {id, sid} = router.query;
 
     const [item, setItem] = useState({})
     const [currentTab, setCurrentTab] = useState('details');
-    const [isExporting, setIsExporting] = useState()
     const [validationReportTree, setValidationReportTree] = useState([])
     const [validationReport, setValidationReport] = useState({})
 
@@ -105,18 +98,14 @@ const Page = () => {
                     xpath: res.results.map(e => ({...e, notice_count: e.test_data_xpaths.length}))
                 }))
             })
-            .catch(err => {
-                console.error(err);
-            })
+            .catch(err => console.error(err))
     }
 
 
     const resultSummarySHACLGet = (sid) => {
         sectionApi.getShaclReports(sid)
             .then(res => setValidationReport(prev => ({...prev, shacl: mapShaclResults(res.summary)})))
-            .catch(err => {
-                console.error(err);
-            })
+            .catch(err => console.error(err))
     }
 
     const mapShaclResults = (result) => {
@@ -147,7 +136,7 @@ const Page = () => {
 
     const handleTabsChange = (event, value) => setCurrentTab(value)
 
-    const handleExport = (item) => exportPackage(sectionApi, id, setIsExporting, item)
+    const handleExport = (setIsExporting) => exportPackage(sectionApi, id, setIsExporting, item)
 
     return (
         <>
@@ -190,44 +179,6 @@ const Page = () => {
                             </Typography>
                         </Link>
                     </Stack>
-                    <Stack
-                        alignItems="flex-start"
-                        direction={{
-                            xs: 'column',
-                            md: 'row'
-                        }}
-                        justifyContent="space-between"
-                        spacing={4}
-                    >
-                        <Stack
-                            alignItems="center"
-                            direction="row"
-                            spacing={2}
-                        >
-                            <Stack spacing={1}>
-                                <Typography variant="h4">
-                                    {item.title}
-                                </Typography>
-                                <Stack
-                                    alignItems="center"
-                                    direction="row"
-                                    spacing={1}
-                                >
-                                    <Chip
-                                        label={item._id}
-                                        size="small"
-                                    />
-                                </Stack>
-                            </Stack>
-                        </Stack>
-                        <Button
-                            onClick={() => handleExport(item)}
-                            disabled={isExporting}
-                            startIcon={<FileDownloadIcon/>}
-                        >
-                            {isExporting ? "Exporting..." : "Export State"}
-                        </Button>
-                    </Stack>
                     <Tabs
                         indicatorColor="primary"
                         onChange={handleTabsChange}
@@ -257,6 +208,7 @@ const Page = () => {
                 {currentTab === 'xpath' && (
                     <XpathValidationReportView
                         sid={sid}
+                        handleExport={handleExport}
                         validationReport={validationReport.xpath}
                         reportTree={validationReportTree}
                     />
@@ -264,6 +216,7 @@ const Page = () => {
                 {currentTab === 'sparql' && (
                     <SparqlValidationReport
                         sid={sid}
+                        handleExport={handleExport}
                         validationReport={validationReport.sparql}
                         reportTree={validationReportTree}
                     />
@@ -271,6 +224,7 @@ const Page = () => {
                 {currentTab === 'shacl' && (
                     <ShaclValidationReport
                         sid={sid}
+                        handleExport={handleExport}
                         validationReport={validationReport.shacl}
                         reportTree={validationReportTree}
                     />
