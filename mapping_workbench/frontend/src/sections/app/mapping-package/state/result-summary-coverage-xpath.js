@@ -4,9 +4,7 @@ import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import LinearProgress, {linearProgressClasses} from '@mui/material/LinearProgress';
-import {styled} from '@mui/material/styles';
-import getValidationColor from './validation-color';
+import {LineProgress} from './state-line-progress';
 
 const ResultSummaryCoverageXpath = ({item, validationReport, handleChangeTab}) => {
     if (!validationReport) return null
@@ -18,22 +16,6 @@ const ResultSummaryCoverageXpath = ({item, validationReport, handleChangeTab}) =
 
     const coveredReportPercent = (coveredReports.length / validationReport.length * 100).toFixed(2)
     const notCoveredReportPercent = (notCoveredReports.length / validationReport.length * 100).toFixed(2)
-
-    const BorderLinearProgress = styled(LinearProgress)(({theme, lineColor}) => ({
-        height: 32,
-        borderRadius: 16,
-        [`&.${linearProgressClasses.root}`]: {
-            backgroundColor: theme.palette.grey[200],
-            ...theme.applyStyles('dark', {
-                backgroundColor: theme.palette.grey[800],
-            }),
-        },
-        [`& .${linearProgressClasses.bar}`]: {
-            borderBottomStartRadius: 16,
-            borderTopStartRadius: 16,
-            backgroundColor: getValidationColor(lineColor),
-        },
-    }));
 
     return <Paper sx={{p: 3, height: '100%'}}>
         <Stack direction='row'
@@ -60,16 +42,14 @@ const ResultSummaryCoverageXpath = ({item, validationReport, handleChangeTab}) =
             <Stack>
                 <Typography color='#667085'>XPATHs covered</Typography>
                 <Typography sx={{mb: 2}}>{`${coveredReports.length}/${coveredReportPercent}%`}</Typography>
-                <BorderLinearProgress variant="determinate"
-                                      lineColor='valid'
-                                      value={notCoveredReportPercent}/>
+                <LineProgress color='valid'
+                              value={coveredReportPercent}/>
             </Stack>
             <Stack sx={{mb: 'auto'}}>
-                <Typography color='#667085'>XPATHs covered</Typography>
+                <Typography color='#667085'>XPATHs not covered</Typography>
                 <Typography sx={{mb: 2}}>{`${notCoveredReports.length}/${notCoveredReportPercent}%`}</Typography>
-                <BorderLinearProgress variant="determinate"
-                                      value={coveredReportPercent}
-                                      lineColor='error'/>
+                <LineProgress color='error'
+                              value={notCoveredReportPercent}/>
             </Stack>
         </Stack>
     </Paper>
