@@ -1,5 +1,6 @@
 import {useState} from "react";
 
+import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
 
 import {ListTable} from "./list-table";
@@ -24,25 +25,27 @@ const XpathValidationReport = ({validationReport, handleSelectFile, mappingSuite
                                        validationReport={validationReport}/>
             </Grid>
             <Grid xs={12}>
-                <TableLoadWrapper data={validationReport}
-                                  dataState={dataState}>
-                    <CoverageFilter onChange={handleCoverageFilterChange}
-                                    filterState={itemsSearch.state.filters.is_covered}/>
-                    <ListTable
-                        items={itemsSearch.pagedItems}
-                        count={itemsSearch.count}
-                        onPageChange={itemsSearch.handlePageChange}
-                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                        page={itemsSearch.state.page}
-                        rowsPerPage={itemsSearch.state.rowsPerPage}
-                        onSort={itemsSearch.handleSort}
-                        sort={itemsSearch.state.sort}
-                        onFilter={itemsSearch.handleFiltersChange}
-                        filters={itemsSearch.state.filters}
-                        handleSelectFile={handleSelectFile}
-                        sectionApi={sectionApi}
-                    />
-                </TableLoadWrapper>
+                <Paper>
+                    <TableLoadWrapper data={validationReport}
+                                      dataState={dataState}>
+                        <CoverageFilter onChange={handleCoverageFilterChange}
+                                        filterState={itemsSearch.state.filters.is_covered}/>
+                        <ListTable
+                            items={itemsSearch.pagedItems}
+                            count={itemsSearch.count}
+                            onPageChange={itemsSearch.handlePageChange}
+                            onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                            page={itemsSearch.state.page}
+                            rowsPerPage={itemsSearch.state.rowsPerPage}
+                            onSort={itemsSearch.handleSort}
+                            sort={itemsSearch.state.sort}
+                            onFilter={itemsSearch.handleFiltersChange}
+                            filters={itemsSearch.state.filters}
+                            handleSelectFile={handleSelectFile}
+                            sectionApi={sectionApi}
+                        />
+                    </TableLoadWrapper>
+                </Paper>
             </Grid>
         </>
     )

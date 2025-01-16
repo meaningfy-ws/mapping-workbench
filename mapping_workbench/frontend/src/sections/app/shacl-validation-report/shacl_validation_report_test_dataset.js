@@ -1,13 +1,13 @@
 import {useEffect, useState} from "react";
 
-import Typography from "@mui/material/Typography";
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Unstable_Grid2';
 
 import {ListTable} from "./list-table";
 import {TableLoadWrapper} from "./utils";
-import ResultSummaryTable from "./result-summary-table";
-// import ItemSearchInput from "../file-manager/item-search-input";
+import {ResultSummaryCoverage} from './result-summary-coverage';
+import useItemsSearch from "src/hooks/use-items-search";
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
-import useItemsSearch from "../../../hooks/use-items-search";
 
 
 const ShaclTestDatasetReport = ({sid, suiteId, handleSelectFile}) => {
@@ -17,7 +17,7 @@ const ShaclTestDatasetReport = ({sid, suiteId, handleSelectFile}) => {
 
     useEffect(() => {
         handleValidationReportsGet(sid, suiteId)
-    }, [])
+    }, [suiteId])
 
     const handleValidationReportsGet = (sid, suiteId) => {
         setDataState({load: true, error: false})
@@ -50,36 +50,31 @@ const ShaclTestDatasetReport = ({sid, suiteId, handleSelectFile}) => {
 
     return (
         <>
-            <Typography m={2}
-                        variant="h4">
-                Results Summary
-            </Typography>
-            <TableLoadWrapper dataState={dataState}
-                              data={validationReport}>
-                <ResultSummaryTable items={validationReport}/>
-            </TableLoadWrapper>
-            <Typography m={2}
-                        variant="h4">
-                Assertions
-            </Typography>
-            <TableLoadWrapper dataState={dataState}
-                              data={validationReport}>
-                {/*<ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>*/}
-                <ListTable
-                    items={itemsSearch.pagedItems}
-                    count={itemsSearch.count}
-                    onPageChange={itemsSearch.handlePageChange}
-                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                    page={itemsSearch.state.page}
-                    rowsPerPage={itemsSearch.state.rowsPerPage}
-                    onSort={itemsSearch.handleSort}
-                    sort={itemsSearch.state.sort}
-                    onFilter={itemsSearch.handleFiltersChange}
-                    filters={itemsSearch.state.filters}
-                    sectionApi={sectionApi}
-                    handleSelectFile={handleSelectFile}
-                />
-            </TableLoadWrapper>
+            <Grid xs={12}
+                  md={8}>
+                <ResultSummaryCoverage validationReport={validationReport}/>
+            </Grid>
+            <Grid xs={12}>
+                <Paper>
+                    <TableLoadWrapper dataState={dataState}
+                                      data={validationReport}>
+                        <ListTable
+                            items={itemsSearch.pagedItems}
+                            count={itemsSearch.count}
+                            onPageChange={itemsSearch.handlePageChange}
+                            onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                            page={itemsSearch.state.page}
+                            rowsPerPage={itemsSearch.state.rowsPerPage}
+                            onSort={itemsSearch.handleSort}
+                            sort={itemsSearch.state.sort}
+                            onFilter={itemsSearch.handleFiltersChange}
+                            filters={itemsSearch.state.filters}
+                            sectionApi={sectionApi}
+                            handleSelectFile={handleSelectFile}
+                        />
+                    </TableLoadWrapper>
+                </Paper>
+            </Grid>
         </>
     )
 }

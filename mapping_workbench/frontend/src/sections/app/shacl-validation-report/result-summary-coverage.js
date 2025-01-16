@@ -18,7 +18,7 @@ const Pie = ({data}) => {
                    justifyContent='space-between'>
                 <Stack>
                     <Typography fontSize='18'
-                                fontWeight='bold'>Coverage (SPARQL)</Typography>
+                                fontWeight='bold'>Coverage (SHACL)</Typography>
                 </Stack>
                 <Button
                     startIcon={<FileDownloadOutlinedIcon/>}
@@ -45,11 +45,12 @@ export const ResultSummaryCoverage = ({validationReport}) => {
                 }
             )
             return acc
-        }, {valid: 0, unverifiable: 0, warning: 0, invalid: 0, error: 0, unknown: 0})
+        },{info:0, valid:0, violation:0, warning:0})
 
     const itemsDisplay = Object.entries(itemsReduce)?.map(item => {
         const [itemName, itemCount] = item
-        const percent = (itemCount / itemsTotal) * 100 ?? 0
+        console.log(item)
+        const percent =  (itemCount/itemsTotal)  * 100 ?? 0
 
         return {
             label: `${itemName[0].toUpperCase()}${itemName.slice(1)} (${percent.toFixed(2)}% - ${itemCount})`,

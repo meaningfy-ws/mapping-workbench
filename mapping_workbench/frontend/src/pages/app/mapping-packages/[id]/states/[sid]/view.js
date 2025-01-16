@@ -271,6 +271,7 @@ const Page = () => {
                 {currentTab === 'shacl' && (
                     <ShaclValidationReport
                         sid={sid}
+                        validationReport={validationReport.shacl}
                         reportTree={validationReportTree}
                     />
                 )}
