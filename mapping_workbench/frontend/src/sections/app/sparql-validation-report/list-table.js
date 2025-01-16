@@ -26,7 +26,7 @@ import {Scrollbar} from 'src/components/scrollbar';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
-import {TableFilterHeader} from "../../../layouts/app/table-filter-header/table-filter-header";
+import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", description: ""})

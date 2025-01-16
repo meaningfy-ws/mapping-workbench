@@ -1,8 +1,10 @@
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
+
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+
 import {StatePieChartBig} from '../mapping-package/state/state-pie-chart';
 import getValidationColor from '../mapping-package/state/validation-color';
 
@@ -16,13 +18,11 @@ const Pie = ({data}) => {
                    justifyContent='space-between'>
                 <Stack>
                     <Typography fontSize='18'
-                                fontWeight='bold'>Coverage (Sparql)</Typography>
+                                fontWeight='bold'>Coverage (SPARQL)</Typography>
                 </Stack>
                 <Button
                     startIcon={<FileDownloadOutlinedIcon/>}
-                    onClick={() => {
-                        handleChangeTab('xpath')
-                    }}>
+                    onClick={() => handleChangeTab('xpath')}>
                     Export State
                 </Button>
             </Stack>

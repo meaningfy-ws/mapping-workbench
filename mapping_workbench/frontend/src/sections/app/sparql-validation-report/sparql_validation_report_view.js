@@ -27,7 +27,7 @@ const SparqlValidationReportView = ({sid, reportTree, validationReport}) => {
         if (testData) {
             setSelectedTestDataset(packageState?.test_data_states.find(ps => ps.oid === testData));
         } else {
-            setSelectedPackageState(undefined);
+            setSelectedTestDataset(undefined);
         }
     }
 
@@ -48,6 +48,7 @@ const SparqlValidationReportView = ({sid, reportTree, validationReport}) => {
             {!selectedPackageState &&
                 <SparqlPackageStateReport
                     sid={sid}
+                    validationReport={validationReport}
                     handleSelectFile={handleSetTestAndPackage}
                     files={reportTree.test_data_suites}
                 />
