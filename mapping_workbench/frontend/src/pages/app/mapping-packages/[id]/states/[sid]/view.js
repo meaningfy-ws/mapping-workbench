@@ -12,6 +12,7 @@ import Card from "@mui/material/Card";
 import Stack from '@mui/material/Stack';
 import Button from "@mui/material/Button";
 import SvgIcon from '@mui/material/SvgIcon';
+import {useTheme} from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import CardContent from "@mui/material/CardContent";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -48,6 +49,8 @@ const tabs = [
 
 const Page = () => {
     const router = useRouter();
+    const theme = useTheme()
+    console.log(theme)
 
     const {id, sid} = router.query;
 
@@ -70,12 +73,8 @@ const Page = () => {
 
     const resultSummarySPARQLGet = (sid) => {
         sectionApi.getSparqlReports(sid)
-            .then(res => {
-                setValidationReport(prev => ({...prev, sparql: mapSparqlResults(res.summary)}))
-            })
-            .catch(err => {
-                console.error(err);
-            })
+            .then(res => setValidationReport(prev => ({...prev, sparql: mapSparqlResults(res.summary)})))
+            .catch(err => console.error(err))
     }
 
     const mapSparqlResults = (result) => result.map(e => {

@@ -5,6 +5,8 @@ import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import {legendClasses, PieChart} from '@mui/x-charts';
+import StatePieChart from './state-pie-chart';
+import getValidationColor from './validation-color';
 
 const ResultSummaryCoverageSparql = ({validationReport, handleChangeTab}) => {
 
@@ -22,9 +24,15 @@ const ResultSummaryCoverageSparql = ({validationReport, handleChangeTab}) => {
 
     const itemsDisplay = Object.entries(itemsReduce)?.map(item => {
         const [itemName, itemCount] = item
-        return {label: itemName, value: itemCount, itemPercent: (itemCount / itemsTotal) * 100 ?? 0, color: itemName==='valid' ? 'red' : 'blue'}
+        return {
+            label: itemName,
+            value: itemCount,
+            itemPercent: (itemCount / itemsTotal) * 100 ?? 0,
+            color: getValidationColor(itemName)
+        }
     })
 
+    console.log(itemsDisplay.length)
 
     return <Paper sx={{p: 3, height: '100%'}}>
         <Stack direction='row'
@@ -42,45 +50,7 @@ const ResultSummaryCoverageSparql = ({validationReport, handleChangeTab}) => {
         </Stack>
         <Stack sx={{mt: 3, mb: 2}}
                alignItems='center'>
-            <PieChart
-                sx={{
-                    [`& .${legendClasses.mark}`]: {
-                        ry: 10,
-                    },
-                }}
-                slotProps={{
-                    legend: {
-                        direction: 'row',
-                        position: {vertical: 'bottom', horizontal: 'middle'},
-                        itemMarkWidth: 12,
-                        itemMarkHeight: 12
-                    }
-                }}
-                series={[
-                    {
-                        data: itemsDisplay,
-                        innerRadius: 60,
-                        outerRadius: 100,
-                        cy: 100,
-                        cx: 180,
-                    }
-                ]}
-                tooltip={{
-                    trigger: 'item',
-                    itemContent: (params) => {
-                        const data = params.series.data[params.itemData.dataIndex]
-                        return (
-                            <Paper sx={{p: 1}}>
-                                <Stack direction='column'>
-                                    <strong>{data.itemPercent}%</strong>
-                                    <span>{data.data}</span>
-                                </Stack>
-                            </Paper>
-                        );
-                    }
-                }}
-                width={368}
-                height={348}/>
+            <StatePieChart items={itemsDisplay}/>
         </Stack>
     </Paper>
 }

@@ -6,9 +6,9 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import LinearProgress, {linearProgressClasses} from '@mui/material/LinearProgress';
 import {styled} from '@mui/material/styles';
+import getValidationColor from './validation-color';
 
 const ResultSummaryCoverageXpath = ({item, validationReport, handleChangeTab}) => {
-
     if (!validationReport) return null
 
     const {coveredReports, notCoveredReports} = validationReport?.reduce((acc, report) => {
@@ -19,7 +19,7 @@ const ResultSummaryCoverageXpath = ({item, validationReport, handleChangeTab}) =
     const coveredReportPercent = (coveredReports.length / validationReport.length * 100).toFixed(2)
     const notCoveredReportPercent = (notCoveredReports.length / validationReport.length * 100).toFixed(2)
 
-    const BorderLinearProgress = styled(LinearProgress)(({theme}) => ({
+    const BorderLinearProgress = styled(LinearProgress)(({theme, lineColor}) => ({
         height: 32,
         borderRadius: 16,
         [`&.${linearProgressClasses.root}`]: {
@@ -31,11 +31,11 @@ const ResultSummaryCoverageXpath = ({item, validationReport, handleChangeTab}) =
         [`& .${linearProgressClasses.bar}`]: {
             borderBottomStartRadius: 16,
             borderTopStartRadius: 16,
-            ...theme.applyStyles('dark', {}),
+            backgroundColor: getValidationColor(lineColor),
         },
     }));
 
-    return <Paper sx={{p: 3, height:'100%'}}>
+    return <Paper sx={{p: 3, height: '100%'}}>
         <Stack direction='row'
                justifyContent='space-between'
                sx={{borderBottom: '2px solid #F2F4F7', pb: 3}}>
@@ -46,13 +46,13 @@ const ResultSummaryCoverageXpath = ({item, validationReport, handleChangeTab}) =
             </Stack>
             <Button endIcon={<OpenInNewIcon/>}
                     onClick={() => {
-                        console.log('herre')
-                        handleChangeTab('xpath')}}>
+                        handleChangeTab('xpath')
+                    }}>
                 See more
             </Button>
         </Stack>
         <Stack sx={{mt: 3, mb: 'auto'}}>
-            <Stack sx={{mb: 3}} >
+            <Stack sx={{mb: 3}}>
                 <Typography fontSize='18'
                             fontWeight='bold'>Mapping suite identifier</Typography>
                 <Typography color='#667085'>{item.identifier}</Typography>
@@ -61,15 +61,15 @@ const ResultSummaryCoverageXpath = ({item, validationReport, handleChangeTab}) =
                 <Typography color='#667085'>XPATHs covered</Typography>
                 <Typography sx={{mb: 2}}>{`${coveredReports.length}/${coveredReportPercent}%`}</Typography>
                 <BorderLinearProgress variant="determinate"
-                                      color='success'
+                                      lineColor='valid'
                                       value={notCoveredReportPercent}/>
             </Stack>
-            <Stack sx={{mb:'auto'}}>
+            <Stack sx={{mb: 'auto'}}>
                 <Typography color='#667085'>XPATHs covered</Typography>
                 <Typography sx={{mb: 2}}>{`${notCoveredReports.length}/${notCoveredReportPercent}%`}</Typography>
                 <BorderLinearProgress variant="determinate"
                                       value={coveredReportPercent}
-                                      color={'error'}/>
+                                      lineColor='error'/>
             </Stack>
         </Stack>
     </Paper>

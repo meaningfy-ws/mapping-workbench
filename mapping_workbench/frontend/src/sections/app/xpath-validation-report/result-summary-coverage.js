@@ -63,7 +63,7 @@ const ResultSummaryCoverage = ({identifier, validationReport, handleChangeTab, l
                                 fontWeight='bold'>{`${coveredReports.length} / ${coveredReportPercent}%`}</Typography>
                 </Stack>
                 <Stack sx={{mb: 'auto'}}>
-                    <Typography color='#667085'>XPATHs covered</Typography>
+                    <Typography color='#667085'>XPATHs not covered</Typography>
                     <Typography sx={{mb: 2}}
                                 fontWeight='bold'>{`${notCoveredReports.length} / ${notCoveredReportPercent}%`}</Typography>
 

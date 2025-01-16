@@ -1,11 +1,8 @@
-import {useEffect, useState} from 'react';
-
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Grid from "@mui/material/Unstable_Grid2";
 
-import {mappingPackageStatesApi as sectionApi} from '../../../../api/mapping-packages/states';
 import ResultSummaryCoverageShacl from './result-summary-coverage-shacl';
 import ResultSummaryCoverageSparql from './result-summary-coverage-sparql';
 import ResultSummaryCoverageXpath from './result-summary-coverage-xpath';

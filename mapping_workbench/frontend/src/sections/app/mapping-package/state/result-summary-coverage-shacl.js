@@ -4,7 +4,9 @@ import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import {legendClasses, PieChart} from '@mui/x-charts';
+
+import StatePieChart from './state-pie-chart';
+import getValidationColor from './validation-color';
 
 const ResultSummaryCoverageShacl = ({validationReport, handleChangeTab}) => {
 
@@ -22,7 +24,12 @@ const ResultSummaryCoverageShacl = ({validationReport, handleChangeTab}) => {
 
     const itemsDisplay = Object.entries(itemsReduce)?.map(item => {
         const [itemName, itemCount] = item
-        return {label: itemName, value: itemCount, itemPercent: (itemCount / itemsTotal) * 100 ?? 0}
+        return {
+            label: itemName,
+            value: itemCount,
+            itemPercent: (itemCount / itemsTotal) * 100 ?? 0,
+            color: getValidationColor(itemName)
+        }
     })
 
     return <Paper sx={{p: 3, height: '100%'}}>
@@ -41,46 +48,7 @@ const ResultSummaryCoverageShacl = ({validationReport, handleChangeTab}) => {
         </Stack>
         <Stack sx={{mt: 3, mb: 2}}
                alignItems='center'>
-            <PieChart
-                sx={{
-                    [`& .${legendClasses.mark}`]: {
-                        ry: 10,
-                    },
-                }}
-                slotProps={{
-                    legend: {
-                        direction: 'row',
-                        position: {vertical: 'bottom', horizontal: 'middle'},
-                        itemMarkWidth: 12,
-                        itemMarkHeight: 12,
-                    }
-                }}
-                series={[
-                    {
-                        dataKey: 'value',
-                        data: itemsDisplay,
-                        innerRadius: 60,
-                        outerRadius: 100,
-                        cy: 100,
-                        cx: 180,
-                    }
-                ]}
-                tooltip={{
-                    trigger: 'item',
-                    itemContent: (params) => {
-                        const data = params.series.data[params.itemData.dataIndex]
-                        return (
-                            <Paper sx={{p: 1}}>
-                                <Stack direction='column'>
-                                    <strong>{data.itemPercent}%</strong>
-                                    <span>{data.data}</span>
-                                </Stack>
-                            </Paper>
-                        );
-                    }
-                }}
-                width={368}
-                height={348}/>
+            <StatePieChart items={itemsDisplay}/>
         </Stack>
     </Paper>
 }
