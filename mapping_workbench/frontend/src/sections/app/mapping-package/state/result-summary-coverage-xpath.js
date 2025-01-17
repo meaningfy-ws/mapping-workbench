@@ -24,7 +24,7 @@ const ResultSummaryCoverageXpath = ({item, validationReport, handleChangeTab}) =
                justifyContent='space-between'
                sx={{borderBottom: `2px solid ${theme.palette.divider}`, pb: 3}}>
             <Stack>
-                <Typography color='#667085'>Result summary</Typography>
+                <Typography variant='secondary'>Result summary</Typography>
                 <Typography fontSize='18'
                             fontWeight='bold'>Coverage (XPath)</Typography>
             </Stack>
@@ -39,16 +39,16 @@ const ResultSummaryCoverageXpath = ({item, validationReport, handleChangeTab}) =
             <Stack sx={{mb: 3}}>
                 <Typography fontSize='18'
                             fontWeight='bold'>Mapping suite identifier</Typography>
-                <Typography color='#667085'>{item.identifier}</Typography>
+                <Typography variant='secondary'>{item.identifier}</Typography>
             </Stack>
             <Stack>
-                <Typography color='#667085'>XPATHs covered</Typography>
+                <Typography variant='secondary'>XPATHs covered</Typography>
                 <Typography sx={{mb: 2}}>{`${coveredReports.length}/${coveredReportPercent}%`}</Typography>
                 <LineProgress color='valid'
                               value={coveredReportPercent}/>
             </Stack>
             <Stack sx={{mb: 'auto'}}>
-                <Typography color='#667085'>XPATHs not covered</Typography>
+                <Typography variant='secondary'>XPATHs not covered</Typography>
                 <Typography sx={{mb: 2}}>{`${notCoveredReports.length}/${notCoveredReportPercent}%`}</Typography>
                 <LineProgress color='error'
                               value={notCoveredReportPercent}/>

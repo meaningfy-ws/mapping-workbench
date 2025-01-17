@@ -38,7 +38,7 @@ const ResultSummaryCoverageShacl = ({validationReport, handleChangeTab}) => {
                justifyContent='space-between'
                sx={{borderBottom: `2px solid ${theme.palette.divider}`, pb: 3}}>
             <Stack>
-                <Typography color='#667085'>Result summary</Typography>
+                <Typography variant='secondary'>Result summary</Typography>
                 <Typography fontSize='18'
                             fontWeight='bold'>Coverage (SHALC)</Typography>
             </Stack>

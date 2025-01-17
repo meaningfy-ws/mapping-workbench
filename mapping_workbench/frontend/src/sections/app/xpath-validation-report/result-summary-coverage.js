@@ -22,6 +22,7 @@ const ResultSummaryCoverage = ({identifier, validationReport, handleExport, load
                alignItems='center'
                justifyContent='space-between'>
             <Stack>
+                <Typography variant='secondary'>Result summary</Typography>
                 <Typography fontSize='18'
                             fontWeight='bold'>Coverage (XPath)</Typography>
             </Stack>
@@ -31,17 +32,17 @@ const ResultSummaryCoverage = ({identifier, validationReport, handleExport, load
             <Stack sx={{mb: 3}}>
                 <Typography fontSize='18'
                             fontWeight='bold'>Mapping suite identifier</Typography>
-                <Typography color='#667085'>{identifier}</Typography>
+                <Typography variant='secondary'>{identifier}</Typography>
             </Stack>
             <Stack direction='row'
                    justifyContent='space-between'>
                 <Stack>
-                    <Typography color='#667085'>XPATHs covered</Typography>
+                    <Typography variant='secondary'>XPATHs covered</Typography>
                     <Typography sx={{mb: 2}}
                                 fontWeight='bold'>{`${coveredReports.length} / ${coveredReportPercent}%`}</Typography>
                 </Stack>
                 <Stack sx={{mb: 'auto'}}>
-                    <Typography color='#667085'>XPATHs not covered</Typography>
+                    <Typography variant='secondary'>XPATHs not covered</Typography>
                     <Typography sx={{mb: 2}}
                                 fontWeight='bold'>{`${notCoveredReports.length} / ${notCoveredReportPercent}%`}</Typography>
 

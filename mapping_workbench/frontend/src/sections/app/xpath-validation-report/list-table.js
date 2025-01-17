@@ -24,6 +24,8 @@ import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import TablePagination from "src/sections/components/table-pagination-pages";
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
+import validationColor from '../mapping-package/state/validation-color';
+import {ValueChip} from './utils';
 
 export const ListTable = (props) => {
     const highLighterTheme = useHighlighterTheme()
@@ -116,8 +118,7 @@ export const ListTable = (props) => {
                                     <SorterHeader fieldName="notice_count"
                                                   title="Notices"/>
                                 </TableCell>
-                                <TableCell width="10%"
-                                           align="right">
+                                <TableCell width="10%">
                                     <SorterHeader fieldName="is_covered"
                                                   title="Found"/>
                                 </TableCell>
@@ -137,56 +138,55 @@ export const ListTable = (props) => {
                                                 language="xquery"
                                                 wrapLines
                                                 style={highLighterTheme}
+                                                customStyle={{borderRadius: 12, border: '1px solid #E4E7EC'}}
                                                 lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
                                                 {item.sdk_element_xpath}
                                             </SyntaxHighlighter>
                                         </TableCell>
                                         <TableCell>
-                                            {
-                                                item.xpath_conditions?.map((xpath_condition, key) => {
-                                                    return (
-                                                        <Stack
-                                                            key={'condition' + key}
-                                                            direction="column"
-                                                            spacing={1}
-                                                        >
-                                                            <Stack
-                                                                direction="row"
-                                                                justifyContent="right"
-                                                                alignItems="center"
-                                                                spacing={2}
-                                                            >
-                                                                <SyntaxHighlighter
-                                                                    language="xquery"
-                                                                    wrapLines
-                                                                    style={highLighterTheme}
-                                                                    lineProps={{
-                                                                        style: {
-                                                                            wordBreak: 'break-all',
-                                                                            whiteSpace: 'pre-wrap'
-                                                                        }
-                                                                    }}>
-                                                                    {xpath_condition.xpath_condition || '-'}
-                                                                </SyntaxHighlighter>
-                                                                {xpath_condition.meets_xpath_condition ?
-                                                                    <CheckIcon color="success"/> :
-                                                                    <CloseIcon color="error"/>}
-                                                            </Stack>
-                                                        </Stack>
-                                                    );
-                                                })
-                                            }
+                                            {item.xpath_conditions?.map((xpath_condition, key) =>
+                                                <Stack
+                                                    key={'condition' + key}
+                                                    direction="column"
+                                                    spacing={1}
+                                                >
+                                                    <SyntaxHighlighter
+                                                        language="xquery"
+                                                        wrapLines
+                                                        style={highLighterTheme}
+                                                        customStyle={{
+                                                            borderRadius: 12,
+                                                            border: '1px solid',
+                                                            borderColor: validationColor(xpath_condition.meets_xpath_condition ?
+                                                                'valid' : 'invalid')
+                                                        }}
+                                                        lineProps={{
+                                                            style: {
+                                                                wordBreak: 'break-all',
+                                                                whiteSpace: 'pre-wrap'
+                                                            }
+                                                        }}>
+                                                        {xpath_condition.xpath_condition || '-'}
+                                                    </SyntaxHighlighter>
+                                                </Stack>)}
                                         </TableCell>
                                         <TableCell>
-                                            <Button variant='outlined'
+                                            <Button variant='contained'
+                                                    sx={{borderRadius: 10, p: .3, minWidth: 30}}
                                                     disabled={!item.notice_count}
                                                     onClick={() => handleOpenDetails(item.sdk_element_id, item.test_data_xpaths)}>
                                                 {item.notice_count}
                                             </Button>
                                         </TableCell>
-                                        <TableCell align="right">
-                                            {item.is_covered ? <CheckIcon color="success"/> :
-                                                <CloseIcon color="error"/>}
+                                        <TableCell>
+                                            {item.is_covered ? <ValueChip color='success'
+                                                                          style={{p: 0.3, width: 30}}>
+                                                    <CheckIcon/>
+                                                </ValueChip> :
+                                                <ValueChip color='error'
+                                                           style={{p: 0.3, width: 30}}>
+                                                    <CloseIcon/>
+                                                </ValueChip>}
                                         </TableCell>
                                     </TableRow>
 

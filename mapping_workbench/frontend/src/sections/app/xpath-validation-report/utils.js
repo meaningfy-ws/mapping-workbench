@@ -66,16 +66,19 @@ export const TableLoadWrapper = ({children, data, dataState, lines}) => {
 }
 
 
-export const ValueChip = ({children, value, color}) => {
+export const ValueChip = ({children, value, color, style}) => {
     const theme = useTheme()
     const themeColor = theme.palette?.[color] ?? {}
     return (
-        <Box sx={{
+        <Stack sx={{
             px: 1.4,
             py: 0.3,
+            alignItems:'center',
+            justifyContent:'center',
             backgroundColor: themeColor.alpha12,
             color: themeColor.main,
-            borderRadius: 5
-        }}>{value ?? children}</Box>
+            borderRadius: 5,
+            ...style
+        }}>{value ?? children}</Stack>
     )
 }

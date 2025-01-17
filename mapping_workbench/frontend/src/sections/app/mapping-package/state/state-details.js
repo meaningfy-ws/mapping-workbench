@@ -14,12 +14,12 @@ const StateDetail = ({title, value}) => {
         <Stack sx={{
             border: '1px solid #E4E7EC',
             backgroundColor: theme.palette.divider,
-            //                 backgroundColor:'#FCFCFD',
             borderRadius: '5px',
             py: '12px',
             px: '16px'
         }}>
-            <Typography sx={{color: '#667085', mb: '10px'}}>{title}</Typography>
+            <Typography variant='secondary'
+                        sx={{ mb: '10px'}}>{title}</Typography>
             <Typography>{value}</Typography>
         </Stack>
     )

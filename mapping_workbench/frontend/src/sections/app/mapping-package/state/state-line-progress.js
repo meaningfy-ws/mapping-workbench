@@ -3,7 +3,7 @@ import {styled} from '@mui/material/styles';
 import getValidationColor from './validation-color';
 
 export const LineProgressDouble = ({value, load, color, endColor}) => {
-    const BorderLinearProgress = styled(LinearProgress)(({linecolor, endcolor}) => ({
+    const BorderLinearProgress = styled(LinearProgress)(({linecolor}) => ({
         height: 32,
         borderRadius: 16,
         [`&.${linearProgressClasses.root}`]: {
@@ -20,7 +20,7 @@ export const LineProgressDouble = ({value, load, color, endColor}) => {
     return (<BorderLinearProgress variant={load ? "indeterminate" : "determinate"}
                                   linecolor={color}
                                   endcolor={endColor}
-                                  value={value}/>
+                                  value={parseFloat(value)}/>
     )
 };
 
@@ -45,7 +45,7 @@ export const LineProgress = ({value, load, color}) => {
     return (
         <BorderLinearProgress variant={load ? "indeterminate" : "determinate"}
                               linecolor={color}
-                              value={value}/>
+                              value={parseFloat(value)}/>
     )
 }
 
