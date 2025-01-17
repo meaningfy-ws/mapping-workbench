@@ -17,7 +17,7 @@ const XpathValidationReportSuite = ({sid, suiteId, mappingSuiteIdentifier, handl
 
     useEffect(() => {
         handleValidationReportsSuiteGet(sid, suiteId)
-    }, [suiteId])
+    }, [sid, suiteId])
 
     const handleValidationReportsSuiteGet = (sid, suiteId) => {
         setDataState({load: true, error: false})
@@ -32,9 +32,9 @@ const XpathValidationReportSuite = ({sid, suiteId, mappingSuiteIdentifier, handl
             })
     }
 
-    const itemsSearch = useItemsSearch(validationReport, sectionApi);
+    const itemsSearch = useItemsSearch(validationReport, sectionApi, [], {is_covered: ''});
 
-    const handleCoverageFilterChange = e => itemsSearch.handleFiltersChange({is_covered: e.target.value})
+    const handleCoverageFilterChange = e => itemsSearch.handleFiltersChange({is_covered: e})
 
     const FILTER_VALUES = [{label: 'All', value: '', color: 'primary', count: validationReport.length},
         {label: 'Covered', value: true, color: 'info', count: validationReport.filter(e => e.is_covered).length},

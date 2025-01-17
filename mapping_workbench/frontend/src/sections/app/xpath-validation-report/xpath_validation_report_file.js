@@ -1,13 +1,13 @@
 import {useEffect, useState} from "react";
 
-import Card from '@mui/material/Card';
+import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
 
 import {TableLoadWrapper} from "./utils";
 import {ListTable} from "./list-table-file";
 import ResultSummaryCoverage from './result-summary-coverage';
-import useItemsSearch from "../../../hooks/use-items-search";
-import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
+import useItemsSearch from "src/hooks/use-items-search";
+import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
 const XpathValidationReportTest = ({sid, suiteId, testId, mappingSuiteIdentifier, handleExport}) => {
     const [validationReport, setValidationReport] = useState([])
@@ -42,7 +42,7 @@ const XpathValidationReportTest = ({sid, suiteId, testId, mappingSuiteIdentifier
                                        validationReport={validationReport}/>
             </Grid>
             <Grid xs={12}>
-                <Card>
+                <Paper>
                     <TableLoadWrapper dataState={dataState}
                                       data={validationReport}>
                         <ListTable
@@ -59,7 +59,7 @@ const XpathValidationReportTest = ({sid, suiteId, testId, mappingSuiteIdentifier
                             sectionApi={sectionApi}
                         />
                     </TableLoadWrapper>
-                </Card>
+                </Paper>
             </Grid>
         </>
     )
