@@ -230,6 +230,9 @@ export const paths = {
         },
         authorization: {
             index: '/app/authorization'
+        },
+        demoConfig: {
+            index: '/app/demo-config'
         }
     },
     docs: 'https://material-kit-pro-react-docs.devias.io',
@@ -425,7 +428,9 @@ export const apiPaths = {
         generate_cm_assertions_queries: '/tasks/generate_cm_assertions_queries',
         transform_test_data: '/tasks/transform_test_data'
     },
-
+    demoConfig: {
+      reset: "/demo/reset"
+    },
     app: {
         settings: '/app/settings'
     }
