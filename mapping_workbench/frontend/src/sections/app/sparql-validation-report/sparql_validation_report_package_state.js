@@ -1,10 +1,12 @@
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 import {useState} from "react";
 
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
 
 import {ListTable} from "./list-table";
-import {TableLoadWrapper} from "./utils";
+import {ResultFilter, TableLoadWrapper} from "./utils";
 import useItemsSearch from "src/hooks/use-items-search";
 import {ResultSummaryCoverage} from './result-summary-coverage';
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
@@ -13,6 +15,7 @@ import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/st
 const SparqlValidationReport = ({handleSelectFile, validationReport, handleExport}) => {
     const [dataState, setDataState] = useState({load: false, error: false})
     const itemsSearch = useItemsSearch(validationReport, sectionApi);
+    const handleResultFilterChange = e => itemsSearch.handleFiltersChange({result: e.target.value})
 
     return (
         <>

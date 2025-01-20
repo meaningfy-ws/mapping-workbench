@@ -30,7 +30,6 @@ import TablePagination from "src/sections/components/table-pagination-pages";
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
 
 const ResultCell = ({item, onClick}) => {
-    console.log(item)
     const title = item.title
     return <Stack direction="column"
                   alignItems="center"
@@ -189,7 +188,6 @@ export const ListTable = (props) => {
                                                 wrapLines
                                                 style={syntaxHighlighterTheme}
                                                 customStyle={{borderRadius: 12, border: '1px solid #E4E7EC'}}
-
                                                 lineProps={{
                                                     style: {
                                                         overflowWrap: 'break-word',

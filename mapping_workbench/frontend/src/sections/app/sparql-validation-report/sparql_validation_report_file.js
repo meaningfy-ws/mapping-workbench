@@ -1,7 +1,9 @@
 import {useEffect, useState} from "react";
 
+import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
+import Typography from '@mui/material/Typography';
 
 import {ListTableFile} from "./list-table-file";
 import {ResultFilter, TableLoadWrapper} from "./utils";
@@ -64,8 +66,15 @@ const SparqlFileReport = ({sid, suiteId, testId, handleExport}) => {
                 <Paper>
                     <TableLoadWrapper dataState={dataState}
                                       data={validationReport}>
-                        <ResultFilter onStateChange={handleResultFilterChange}
-                                      currentState={itemsSearch.state.filters.result}/>
+                        <Stack direction='row'
+                                                   alignItems='center'
+                                                   justifyContent='space-between'
+                                                   sx={{mx: 3}}>
+                            <Typography fontWeight='bold'>Assertions</Typography>
+                            <ResultFilter
+                                onStateChange={handleResultFilterChange}
+                                          currentState={itemsSearch.state.filters.result}/>
+                        </Stack>
                         <ListTableFile
                             items={itemsSearch.pagedItems}
                             count={itemsSearch.count}

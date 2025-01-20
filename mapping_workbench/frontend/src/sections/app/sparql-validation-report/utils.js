@@ -1,15 +1,17 @@
 import {Box} from "@mui/system";
-import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
-import Paper from "@mui/material/Paper";
 import Radio from "@mui/material/Radio";
 import Alert from "@mui/material/Alert";
 import Tooltip from "@mui/material/Tooltip";
 import Skeleton from "@mui/material/Skeleton";
 import Typography from "@mui/material/Typography";
 import RadioGroup from "@mui/material/RadioGroup";
+import FormControl from '@mui/material/FormControl';
 import TableSortLabel from "@mui/material/TableSortLabel";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import validationColor from '../mapping-package/state/validation-color';
+
+export const capitalize = (value) => `${value[0].toUpperCase()}${value.slice(1)}`
 
 export const resultColor = (result) => {
     switch (result.toLowerCase()) {
@@ -26,10 +28,10 @@ export const resultColor = (result) => {
     }
 }
 
-export const ResultChip = ({label, color, fontColor, onClick}) => {
-    const hover = onClick ? {'&:hover': {filter: 'brightness(85%)'}, cursor: 'pointer'} : {}
+export const ResultChip = ({label, color, fontColor, onClick, clickable, children}) => {
+    const hover = onClick ?? clickable ? {'&:hover': {filter: 'brightness(85%)'}, cursor: 'pointer'} : {}
     return (
-        <Box sx={{px: 1, py: .5, borderRadius: 12, backgroundColor: color, color: fontColor, ...hover}}
+        <Box sx={{textAlign:'center',px: 1, py: .5, borderRadius: 12, backgroundColor: color, color: fontColor, ...hover}}
              onClick={onClick}
         >
             {label ?? children}
@@ -47,12 +49,15 @@ export const ResultFilter = ({currentState, onStateChange}) => {
                 checked={currentState === (value ?? label.toLowerCase())}
                 label={(
                     <Box sx={{ml: 0, mr: 1}}>
-                        <Typography
-                            variant="subtitle2"
-                        >
-                            <ResultChip clickable
-                                        label={label}/>
-                        </Typography>
+                            <Typography
+                                variant="subtitle2"
+                            >
+                                <ResultChip color={validationColor(label)}
+                                            fontColor='#fff'
+                                            clickable
+                                            label={capitalize(label)}/>
+                            </Typography>
+
                     </Box>
                 )}
                 value={value ?? label.toLowerCase()}
@@ -60,37 +65,22 @@ export const ResultFilter = ({currentState, onStateChange}) => {
     }
 
     return (
-        <Box sx={{p: 2.5, display: 'flex'}}
-             direction="row">
+        <FormControl sx={{p: 2}}>
             <Stack
+                direction='row'
                 component={RadioGroup}
                 name="terms_validity"
-                spacing={3}
                 onChange={onStateChange}
             >
-                <Paper
-                    sx={{
-                        alignItems: 'flex-start',
-                        display: 'flex',
-                        p: 2
-                    }}
-                    variant="outlined"
-                >
-                    <Box sx={{mr: 2, mt: 1}}>
-                        <b>Filter Results:</b>
-                    </Box>
-                    <FilterValue label="all"
-                                 value=""
-                                 currentState={currentState}/>
-                    {reportValues.map(value =>
-                        <FilterValue key={value}
-                                     label={value}
-                                     currentState={currentState}/>)}
-
-
-                </Paper>
+                <FilterValue label="all"
+                             value=""
+                             currentState={currentState}/>
+                {reportValues.map(value =>
+                    <FilterValue key={value}
+                                 label={value}
+                                 currentState={currentState}/>)}
             </Stack>
-        </Box>
+        </FormControl>
     )
 }
 
