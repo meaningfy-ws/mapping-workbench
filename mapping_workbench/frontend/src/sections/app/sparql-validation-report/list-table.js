@@ -33,21 +33,23 @@ const ResultCell = ({item, onClick}) => {
     const title = item.title
     return <Stack direction="column"
                   alignItems="center"
-                  justifyContent="start"
+                  justifyContent="center"
+                  gap={2}
                   height={100}>
         {Object.entries(item.result).map(([key, value]) => {
             return value.count > 0
                 ? <Stack direction='row'
+                         key={key}
                          gap={1}>
                     <ValueChip value={value.count}
                                color='primary'
-                    sx={{p:2}}/>
+                               sx={{p: 2}}/>
                     <ResultChip color={validationColor(key)}
-                              clickable
-                              fontColor='#fff'
-                              onClick={() => onClick({title, notices: value.test_datas})}
-                              label={key}
-                />
+                                clickable
+                                fontColor='#fff'
+                                onClick={() => onClick({title, notices: value.test_datas})}
+                                label={key}
+                    />
                 </Stack>
                 : null
         })

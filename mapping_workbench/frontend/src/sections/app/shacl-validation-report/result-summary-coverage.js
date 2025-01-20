@@ -43,7 +43,6 @@ export const ResultSummaryCoverage = ({validationReport, handleExport}) => {
 
     const itemsDisplay = Object.entries(itemsReduce)?.map(item => {
         const [itemName, itemCount] = item
-        console.log(item)
         const percent = (itemCount / itemsTotal) * 100 ?? 0
 
         return {

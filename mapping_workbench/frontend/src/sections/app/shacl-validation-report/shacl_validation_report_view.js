@@ -13,8 +13,6 @@ const ShaclValidationReportView = ({sid, reportTree, validationReport, handleExp
     const [selectedPackageState, setSelectedPackageState] = useState()
     const [selectedTestDataset, setSelectedTestDataset] = useState()
 
-    console.log(selectedTestDataset,selectedTestDataset)
-
     const handleSetPackageState = (file) => {
         setSelectedPackageState(file)
         setSelectedTestDataset(undefined)
