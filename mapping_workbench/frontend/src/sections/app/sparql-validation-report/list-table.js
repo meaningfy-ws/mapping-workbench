@@ -19,14 +19,42 @@ import Typography from '@mui/material/Typography';
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
+import validationColor from '../mapping-package/state/validation-color';
+import {ValueChip} from '../xpath-validation-report/utils';
 
 import {ResultChip} from "./utils";
 import {useDialog} from "src/hooks/use-dialog";
 import {Scrollbar} from 'src/components/scrollbar';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
-import TablePagination from "src/sections/components/table-pagination";
-import TableSorterHeader from "src/sections/components/table-sorter-header";
+import TablePagination from "src/sections/components/table-pagination-pages";
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
+
+const ResultCell = ({item, onClick}) => {
+    console.log(item)
+    const title = item.title
+    return <Stack direction="column"
+                  alignItems="center"
+                  justifyContent="start"
+                  height={100}>
+        {Object.entries(item.result).map(([key, value]) => {
+            return value.count > 0
+                ? <Stack direction='row'
+                         gap={1}>
+                    <ValueChip value={value.count}
+                               color='primary'
+                    sx={{p:2}}/>
+                    <ResultChip color={validationColor(key)}
+                              clickable
+                              fontColor='#fff'
+                              onClick={() => onClick({title, notices: value.test_datas})}
+                              label={key}
+                />
+                </Stack>
+                : null
+        })
+        }
+    </Stack>
+}
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", description: ""})
@@ -65,39 +93,11 @@ export const ListTable = (props) => {
         setDescriptionDialog({open: true, title, description});
     }
 
-    const handleClose = () => {
-        setDescriptionDialog(e => ({...e, open: false}));
-    };
-
-    const SorterHeader = (props) => {
-        const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
-        return (
-            <TableSorterHeader sort={{direction, column: sort.column}}
-                               onSort={onSort}
-                               {...props}
-            />
-        )
-    }
-
-    const ResultCell = ({title, result, onClick}) => {
-        return <Stack direction="column"
-                      alignItems="center"
-                      justifyContent="start"
-                      height={100}>
-            {result.count
-                ? <Button variant="outlined"
-                          onClick={() => onClick({title, notices: result.test_datas})}>
-                    {result.count}
-                </Button>
-                : <Box sx={{mt: '10px'}}>{result.count}</Box>}
-        </Stack>
-    }
+    const handleClose = () => setDescriptionDialog(e => ({...e, open: false}));
 
     const xpathConditionDialog = useDialog()
 
-    const openXPathConditionDialog = (data) => {
-        xpathConditionDialog.handleOpen(data)
-    }
+    const openXPathConditionDialog = (data) => xpathConditionDialog.handleOpen(data)
 
     return (
         <>
@@ -133,48 +133,15 @@ export const ListTable = (props) => {
                                                        title="XPath Condition"/>
                                 </TableCell>
                                 <TableCell>
-                                     <TableFilterHeader sort={sort}
+                                    <TableFilterHeader sort={sort}
                                                        onSort={onSort}
                                                        onFilter={onFilter}
                                                        filters={filters}
                                                        fieldName="query"
                                                        title="Query"/>
                                 </TableCell>
-                                <TableCell align="center">
-                                    <SorterHeader fieldName="validCount"
-                                                  title={<ResultChip label="Valid"
-                                                                     clickable/>}
-                                                  desc/>
-                                </TableCell>
-                                <TableCell align="center">
-                                    <SorterHeader fieldName="unverifiableCount"
-                                                  title={<ResultChip label="Unverifiable"
-                                                                     clickable/>}
-                                                  desc/>
-                                </TableCell>
-                                <TableCell align="center">
-                                    <SorterHeader fieldName="warningCount"
-                                                  title={<ResultChip label="Warning"
-                                                                     clickable/>}
-                                                  desc/>
-                                </TableCell>
-                                <TableCell align="center">
-                                    <SorterHeader fieldName="invalidCount"
-                                                  title={<ResultChip label="Invalid"
-                                                                     clickable/>}
-                                                  desc/>
-                                </TableCell>
-                                <TableCell align="center">
-                                    <SorterHeader fieldName="errorCount"
-                                                  title={<ResultChip label="Error"
-                                                                     clickable/>}
-                                                  desc/>
-                                </TableCell>
-                                <TableCell align="center">
-                                    <SorterHeader fieldName="unknownCount"
-                                                  title={<ResultChip label="Unknown"
-                                                                     clickable/>}
-                                                  desc/>
+                                <TableCell>
+                                    Result
                                 </TableCell>
                             </TableRow>
                         </TableHead>
@@ -205,8 +172,14 @@ export const ListTable = (props) => {
                                                             XQuery
                                                         </Button>
                                                         {item?.xpath_condition?.meets_xpath_condition ?
-                                                            <CheckIcon color="success"/> :
-                                                            <CloseIcon color="error"/>}
+                                                            <ValueChip color='success'
+                                                                       style={{p: 0.3, width: 30}}>
+                                                                <CheckIcon/>
+                                                            </ValueChip> :
+                                                            <ValueChip color='error'
+                                                                       style={{p: 0.3, width: 30}}>
+                                                                <CloseIcon/>
+                                                            </ValueChip>}
                                                     </Stack>
                                                 </Stack>}
                                         </TableCell>
@@ -215,6 +188,8 @@ export const ListTable = (props) => {
                                                 language="sparql"
                                                 wrapLines
                                                 style={syntaxHighlighterTheme}
+                                                customStyle={{borderRadius: 12, border: '1px solid #E4E7EC'}}
+
                                                 lineProps={{
                                                     style: {
                                                         overflowWrap: 'break-word',
@@ -225,40 +200,8 @@ export const ListTable = (props) => {
                                             </SyntaxHighlighter>
                                         </TableCell>
                                         <TableCell>
-                                            <ResultCell
-                                                title={item.title}
-                                                result={item.result.valid}
-                                                onClick={handleOpenDetails}/>
-                                        </TableCell>
-                                        <TableCell>
-                                            <ResultCell
-                                                title={item.title}
-                                                result={item.result.unverifiable}
-                                                onClick={handleOpenDetails}/>
-                                        </TableCell>
-                                        <TableCell>
-                                            <ResultCell
-                                                title={item.title}
-                                                result={item.result.warning}
-                                                onClick={handleOpenDetails}/>
-                                        </TableCell>
-                                        <TableCell>
-                                            <ResultCell
-                                                title={item.title}
-                                                result={item.result.invalid}
-                                                onClick={handleOpenDetails}/>
-                                        </TableCell>
-                                        <TableCell>
-                                            <ResultCell
-                                                title={item.title}
-                                                result={item.result.error}
-                                                onClick={handleOpenDetails}/>
-                                        </TableCell>
-                                        <TableCell>
-                                            <ResultCell
-                                                title={item.title}
-                                                result={item.result.unknown}
-                                                onClick={handleOpenDetails}/>
+                                            <ResultCell item={item}
+                                                        onClick={handleOpenDetails}/>
                                         </TableCell>
                                     </TableRow>
 

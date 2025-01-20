@@ -26,12 +26,14 @@ export const resultColor = (result) => {
     }
 }
 
-export const ResultChip = ({label, color, clickable}) => {
+export const ResultChip = ({label, color, fontColor, onClick}) => {
+    const hover = onClick ? {'&:hover': {filter: 'brightness(85%)'}, cursor: 'pointer'} : {}
     return (
-        <Chip label={label}
-              clickable={clickable}
-              color={resultColor(color ?? label)}
-        />
+        <Box sx={{px: 1, py: .5, borderRadius: 12, backgroundColor: color, color: fontColor, ...hover}}
+             onClick={onClick}
+        >
+            {label ?? children}
+        </Box>
     )
 }
 
