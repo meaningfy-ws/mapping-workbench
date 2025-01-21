@@ -1,3 +1,4 @@
+import {capitalize} from '@mui/material';
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 
 import {Box} from "@mui/system";
@@ -12,10 +13,12 @@ import TableHead from '@mui/material/TableHead';
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import Typography from '@mui/material/Typography';
+import validationColor from '../mapping-package/state/validation-color';
+import {ValueChip} from '../xpath-validation-report/utils';
 
-import {resultColor} from "./utils";
+import {ResultChip, resultColor} from "./utils";
 import {Scrollbar} from 'src/components/scrollbar';
-import TablePagination from "src/sections/components/table-pagination";
+import TablePagination from "src/sections/components/table-pagination-pages";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 
 import PropTypes from "prop-types";
@@ -43,7 +46,7 @@ export const ListTableFile = (props) => {
         sectionApi
     } = props;
 
-    const syntaxHightligterTheme = useHighlighterTheme()
+    const syntaxHighlighterTheme = useHighlighterTheme()
 
     const SorterHeader = (props) => {
         const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
@@ -126,7 +129,11 @@ export const ListTableFile = (props) => {
                                                         <SyntaxHighlighter
                                                             language="xquery"
                                                             wrapLines
-                                                            style={syntaxHightligterTheme}
+                                                            customStyle={{
+                                                                borderRadius: 12,
+                                                                border: '1px solid #E4E7EC'
+                                                            }}
+                                                            style={syntaxHighlighterTheme}
                                                             lineProps={{
                                                                 style: {
                                                                     wordBreak: 'break-all',
@@ -152,7 +159,11 @@ export const ListTableFile = (props) => {
                                             <SyntaxHighlighter
                                                 language="sparql"
                                                 wrapLines
-                                                style={syntaxHightligterTheme}
+                                                style={syntaxHighlighterTheme}
+                                                customStyle={{
+                                                    borderRadius: 12,
+                                                    border: '1px solid #E4E7EC'
+                                                }}
                                                 lineProps={{
                                                     style: {
                                                         overflowWrap: 'break-word',
@@ -163,8 +174,10 @@ export const ListTableFile = (props) => {
                                             </SyntaxHighlighter>
                                         </TableCell>
                                         <TableCell align="left">
-                                            <Chip label={item.result}
-                                                  color={resultColor(item.result)}/>
+                                            <ResultChip color={validationColor(item.result)}
+                                                        fontColor='#fff'>
+                                                {capitalize(item.result)}
+                                            </ResultChip>
                                         </TableCell>
                                         <TableCell align="left">
                                             <Box>

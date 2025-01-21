@@ -2,20 +2,14 @@ import {useEffect, useState} from 'react';
 import dynamic from "next/dynamic";
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import DownloadingIcon from '@mui/icons-material/Downloading';
+
 import Tab from '@mui/material/Tab';
-import Chip from '@mui/material/Chip';
 import Tabs from '@mui/material/Tabs';
 import Link from '@mui/material/Link';
-import Card from "@mui/material/Card";
 import Stack from '@mui/material/Stack';
-import Button from "@mui/material/Button";
-import Divider from '@mui/material/Divider';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
-import CardContent from "@mui/material/CardContent";
 import CircularProgress from "@mui/material/CircularProgress";
-
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
@@ -39,11 +33,12 @@ const ShaclValidationReport =
     dynamic(() => import("src/sections/app/shacl-validation-report/shacl_validation_report_view"),
         {loading: () => <Stack alignItems='center'><CircularProgress/></Stack>});
 
+
 const tabs = [
     {label: 'Details', value: 'details'},
-    {label: 'XPath Reports', value: 'xpath'},
-    {label: 'SPARQL Reports', value: 'sparql'},
-    {label: 'SHACL Reports', value: 'shacl'},
+    {label: 'Coverage (XPath)', value: 'xpath'},
+    {label: 'Correctness (SPARQL)', value: 'sparql'},
+    {label: 'Compliance (SHACL)', value: 'shacl'},
 ];
 
 const Page = () => {
@@ -53,15 +48,79 @@ const Page = () => {
 
     const [item, setItem] = useState({})
     const [currentTab, setCurrentTab] = useState('details');
-    const [isExporting, setIsExporting] = useState()
     const [validationReportTree, setValidationReportTree] = useState([])
+    const [validationReport, setValidationReport] = useState({})
 
     useEffect(() => {
         if (sid) {
             handleItemsGet(sid);
             handleValidationReportTreeGet(sid)
+            resultSummaryXPATHGet(sid)
+            resultSummarySPARQLGet(sid)
+            resultSummarySHACLGet(sid)
         }
     }, [sid]);
+
+
+    const resultSummarySPARQLGet = (sid) => {
+        sectionApi.getSparqlReports(sid)
+            .then(res => setValidationReport(prev => ({...prev, sparql: mapSparqlResults(res.summary)})))
+            .catch(err => console.error(err))
+    }
+
+    const mapSparqlResults = (result) => result.map(e => {
+        const queryAsArray = e.query.content.split("\n")
+        const values = queryAsArray.slice(0, 3)
+        const resultArray = {}
+        values.forEach(e => {
+                const res = e.split(": ")
+                resultArray[res[0].substring(1)] = res[1]
+            }
+        )
+        resultArray["query"] = queryAsArray.slice(4, queryAsArray.length).join("\n")
+        resultArray["test_suite"] = e.query.filename
+        resultArray["result"] = e.result
+        Object.entries(e.result).forEach(entrie => {
+            const [key, value] = entrie
+            resultArray[`${key}Count`] = value.count
+        })
+        resultArray["meets_xpath_condition"] = e.meets_xpath_condition
+        resultArray["xpath_condition"] = e.query?.cm_rule?.xpath_condition
+        return resultArray;
+    })
+
+
+    const resultSummaryXPATHGet = (sid) => {
+        sectionApi.getXpathReports(sid)
+            .then(res => {
+                setValidationReport(prev => ({
+                    ...prev,
+                    xpath: res.results.map(e => ({...e, notice_count: e.test_data_xpaths.length}))
+                }))
+            })
+            .catch(err => console.error(err))
+    }
+
+
+    const resultSummarySHACLGet = (sid) => {
+        sectionApi.getShaclReports(sid)
+            .then(res => setValidationReport(prev => ({...prev, shacl: mapShaclResults(res.summary)})))
+            .catch(err => console.error(err))
+    }
+
+    const mapShaclResults = (result) => {
+        return result.results.map(e => {
+            const resultArray = {}
+            resultArray["shacl_suite"] = result.shacl_suites?.[0]?.shacl_suite_id
+            resultArray["short_result_path"] = e.short_result_path
+            resultArray["result"] = e.result
+            Object.entries(e.result).forEach(entrie => {
+                const [key, value] = entrie
+                resultArray[`${key}Count`] = value.count
+            })
+            return resultArray;
+        })
+    }
 
     const handleItemsGet = (sid) => {
         sectionApi.getState(sid)
@@ -77,8 +136,12 @@ const Page = () => {
 
     const handleTabsChange = (event, value) => setCurrentTab(value)
 
-    const handleExport = (item) => {
-        return exportPackage(sectionApi, id, setIsExporting, item)
+    const handleExport = (setIsExporting) => exportPackage(sectionApi, id, setIsExporting, item)
+
+    const disabledTabs = {
+        xpath: !validationReport.xpath?.length,
+        sparql: !validationReport.sparql?.length,
+        shacl: !validationReport.shacl?.length,
     }
 
     return (
@@ -122,49 +185,6 @@ const Page = () => {
                             </Typography>
                         </Link>
                     </Stack>
-                    <Stack
-                        alignItems="flex-start"
-                        direction={{
-                            xs: 'column',
-                            md: 'row'
-                        }}
-                        justifyContent="space-between"
-                        spacing={4}
-                    >
-                        <Stack
-                            alignItems="center"
-                            direction="row"
-                            spacing={2}
-                        >
-                            <Stack spacing={1}>
-                                <Typography variant="h4">
-                                    {item.title}
-                                </Typography>
-                                <Stack
-                                    alignItems="center"
-                                    direction="row"
-                                    spacing={1}
-                                >
-                                    <Chip
-                                        label={item._id}
-                                        size="small"
-                                    />
-                                </Stack>
-                            </Stack>
-                        </Stack>
-                        <Button
-                            onClick={() => handleExport(item)}
-                            disabled={isExporting}
-                            startIcon={(
-                                <SvgIcon>
-                                    <DownloadingIcon/>
-                                </SvgIcon>
-                            )}
-                            variant="contained"
-                        >
-                            {isExporting ? "Exporting..." : "Export State"}
-                        </Button>
-                    </Stack>
                     <Tabs
                         indicatorColor="primary"
                         onChange={handleTabsChange}
@@ -180,44 +200,40 @@ const Page = () => {
                                 id={tab.value + '_reports_tab'}
                                 label={tab.label}
                                 value={tab.value}
-                                disabled={!validationReportTree.test_data_suites?.length}
+                                disabled={!validationReportTree.test_data_suites?.length || disabledTabs[tab.value]}
                             />
                         ))}
                     </Tabs>
-                    <Divider/>
                 </Stack>
                 {currentTab === 'details' && (
-                    <StateDetails item={item}/>
+                    <StateDetails sid={sid}
+                                  handleChangeTab={setCurrentTab}
+                                  item={item}
+                                  validationReport={validationReport}/>
                 )}
                 {currentTab === 'xpath' && (
-                    <Card>
-                        <CardContent>
-                            <XpathValidationReportView
-                                sid={sid}
-                                reportTree={validationReportTree}
-                            />
-                        </CardContent>
-                    </Card>
+                    <XpathValidationReportView
+                        sid={sid}
+                        handleExport={handleExport}
+                        validationReport={validationReport.xpath}
+                        reportTree={validationReportTree}
+                    />
                 )}
                 {currentTab === 'sparql' && (
-                    <Card>
-                        <CardContent>
-                            <SparqlValidationReport
-                                sid={sid}
-                                reportTree={validationReportTree}
-                            />
-                        </CardContent>
-                    </Card>
+                    <SparqlValidationReport
+                        sid={sid}
+                        handleExport={handleExport}
+                        validationReport={validationReport.sparql}
+                        reportTree={validationReportTree}
+                    />
                 )}
                 {currentTab === 'shacl' && (
-                    <Card>
-                        <CardContent>
-                            <ShaclValidationReport
-                                sid={sid}
-                                reportTree={validationReportTree}
-                            />
-                        </CardContent>
-                    </Card>
+                    <ShaclValidationReport
+                        sid={sid}
+                        handleExport={handleExport}
+                        validationReport={validationReport.shacl}
+                        reportTree={validationReportTree}
+                    />
                 )}
             </Stack>
         </>

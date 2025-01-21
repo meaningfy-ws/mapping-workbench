@@ -34,11 +34,17 @@ Then('I search for Mapping Package', () => {
 
 Then('I click on View Last State', () => {
     cy.intercept('GET', appURLPrefix + 'mapping_packages/state/*',).as('getState')
+    cy.intercept('GET', appURLPrefix + 'package_validator/xpath/state/*',).as('getXpath')
+    cy.intercept('GET', appURLPrefix + 'package_validator/sparql/state/*',).as('getSparql')
+    cy.intercept('GET', appURLPrefix + 'package_validator/shacl/state/*',).as('getShacl')
     cy.get('#view_last_state_button').click()
 })
 
 Then('I receive Mapping Packages State', () => {
     cy.wait('@getState').its('response.statusCode').should('eq', 200)
+    cy.wait('@getXpath').its('response.statusCode').should('eq', 200)
+    cy.wait('@getSparql').its('response.statusCode').should('eq', 200)
+    cy.wait('@getShacl').its('response.statusCode').should('eq', 200)
 })
 
 Then('I click on {string} Reports Tab', (tabName) => {
