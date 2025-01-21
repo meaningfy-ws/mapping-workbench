@@ -78,6 +78,9 @@ class EFormsPackageImporter(PackageImporterABC):
             )
 
             if not source_structural_element:
+                m = f"CM(sdk_id, bt_id, xpath) not imported: ({mono_rule.eforms_sdk_id}, {mono_rule.bt_id}, {mono_rule.absolute_xpath})"
+                mwb_logger.log_all_warning(m)
+                self.warnings.append(m)
                 continue
 
             if source_structural_element.name != mono_rule.field_name:
