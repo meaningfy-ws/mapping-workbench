@@ -138,6 +138,12 @@ const Page = () => {
 
     const handleExport = (setIsExporting) => exportPackage(sectionApi, id, setIsExporting, item)
 
+    const disabledTabs = {
+        xpath: !validationReport.xpath?.length,
+        sparql: !validationReport.sparql?.length,
+        shacl: !validationReport.shacl?.length,
+    }
+
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_ITEM_TITLE} View`}/>
@@ -194,7 +200,7 @@ const Page = () => {
                                 id={tab.value + '_reports_tab'}
                                 label={tab.label}
                                 value={tab.value}
-                                disabled={!validationReportTree.test_data_suites?.length}
+                                disabled={!validationReportTree.test_data_suites?.length || disabledTabs[tab.value]}
                             />
                         ))}
                     </Tabs>

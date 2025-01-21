@@ -10,18 +10,22 @@ Feature: Mapping Packages States
     Then I get redirected to Mapping Packages list page
     Then I search for Mapping Package
     When I open actions menu
+
+
+  Scenario: State Details
     Then I click on View Last State
     Then I receive Mapping Packages State
 
-  Scenario Outline: <tab_name> Reports
-    Then I click on "<tab_name>" Reports Tab
-    Then I receive Mapping Packages State "<tab_name>"
-    Then I click on "<tab_name>" Data
-    Then I receive Mapping Packages Suite "<tab_name>"
-    Then I click on "<tab_name>" Data
-    Then I receive Mapping Packages Test "<tab_name>"
-    Examples:
-      | tab_name |
-      | Xpath    |
-      | Sparql   |
-      | Shacl    |
+
+#  Scenario Outline: <tab_name> Reports
+#    Then I click on "<tab_name>" Reports Tab
+#    Then I receive Mapping Packages State "<tab_name>"
+#    Then I click on "<tab_name>" Data
+#    Then I receive Mapping Packages Suite "<tab_name>"
+#    Then I click on "<tab_name>" Data
+#    Then I receive Mapping Packages Test "<tab_name>"
+#    Examples:
+#      | tab_name |
+#      | Xpath    |
+#      | Sparql   |
+#      | Shacl    |

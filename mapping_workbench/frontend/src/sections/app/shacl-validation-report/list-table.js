@@ -44,6 +44,7 @@ export const ListTable = (props) => {
     } = props;
 
     const handleOpenDetails = ({title, notices}) => {
+        console.log('on open details')
         const description = notices.map((notice, i) =>
             <Box key={'notice' + i}>
                 <Button type='link'
