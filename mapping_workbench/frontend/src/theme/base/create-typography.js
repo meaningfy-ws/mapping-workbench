@@ -1,3 +1,5 @@
+import {neutral} from '../colors';
+
 export const createTypography = () => {
   return {
     fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"',
@@ -71,6 +73,9 @@ export const createTypography = () => {
       fontWeight: 700,
       fontSize: '1.125rem',
       lineHeight: 1.2
+    },
+    secondary: {
+      color: neutral[550]
     }
   };
 };

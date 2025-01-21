@@ -1,15 +1,15 @@
 import {useEffect, useState} from "react";
 
-import Typography from "@mui/material/Typography";
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Unstable_Grid2';
 
 import {TableLoadWrapper} from "./utils";
 import {ListTable} from "./list-table-file";
-import CoverageReport from "./coverage_report";
-// import ItemSearchInput from "../file-manager/item-search-input";
-import {mappingPackageStatesApi as sectionApi} from "../../../api/mapping-packages/states";
-import useItemsSearch from "../../../hooks/use-items-search";
+import ResultSummaryCoverage from './result-summary-coverage';
+import useItemsSearch from "src/hooks/use-items-search";
+import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
-const XpathValidationReportTest = ({sid, suiteId, testId, mappingSuiteIdentifier}) => {
+const XpathValidationReportTest = ({sid, suiteId, testId, mappingSuiteIdentifier, handleExport}) => {
     const [validationReport, setValidationReport] = useState([])
     const [dataState, setDataState] = useState({load: true, error: false})
 
@@ -34,37 +34,33 @@ const XpathValidationReportTest = ({sid, suiteId, testId, mappingSuiteIdentifier
 
     return (
         <>
-            <Typography m={2}
-                        variant="h4">
-                Summary
-            </Typography>
-            <TableLoadWrapper dataState={dataState}
-                              data={validationReport}
-                              lines={3}>
-                <CoverageReport validationReport={validationReport}
-                                mappingSuiteIdentifier={mappingSuiteIdentifier}/>
-            </TableLoadWrapper>
-            <Typography m={2}
-                        variant="h4">
-                Assertions
-            </Typography>
-            <TableLoadWrapper dataState={dataState}
-                              data={validationReport}>
-                {/*<ItemSearchInput onFiltersChange={itemsSearch.handleSearchItems}/>*/}
-                <ListTable
-                    items={itemsSearch.pagedItems}
-                    count={itemsSearch.count}
-                    onPageChange={itemsSearch.handlePageChange}
-                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                    page={itemsSearch.state.page}
-                    rowsPerPage={itemsSearch.state.rowsPerPage}
-                    onFilter={itemsSearch.handleFiltersChange}
-                    filters={itemsSearch.state.filters}
-                    onSort={itemsSearch.handleSort}
-                    sort={itemsSearch.state.sort}
-                    sectionApi={sectionApi}
-                />
-            </TableLoadWrapper>
+            <Grid xs={12}
+                  md={8}>
+                <ResultSummaryCoverage load={dataState.load}
+                                       handleExport={handleExport}
+                                       identifier={mappingSuiteIdentifier}
+                                       validationReport={validationReport}/>
+            </Grid>
+            <Grid xs={12}>
+                <Paper>
+                    <TableLoadWrapper dataState={dataState}
+                                      data={validationReport}>
+                        <ListTable
+                            items={itemsSearch.pagedItems}
+                            count={itemsSearch.count}
+                            onPageChange={itemsSearch.handlePageChange}
+                            onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                            page={itemsSearch.state.page}
+                            rowsPerPage={itemsSearch.state.rowsPerPage}
+                            onFilter={itemsSearch.handleFiltersChange}
+                            filters={itemsSearch.state.filters}
+                            onSort={itemsSearch.handleSort}
+                            sort={itemsSearch.state.sort}
+                            sectionApi={sectionApi}
+                        />
+                    </TableLoadWrapper>
+                </Paper>
+            </Grid>
         </>
     )
 }
