@@ -4,7 +4,7 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 from mapping_workbench.backend.tasks.models.task_entity import TaskEntity
-from mapping_workbench.backend.tasks.models.task_response import TaskStatus, TaskProgressData
+from mapping_workbench.backend.tasks.models.task_response import TaskStatus, TaskProgressData, TaskResultWarning
 
 
 class TaskResult:
@@ -14,7 +14,7 @@ class TaskResult:
     started_at: datetime = None
     finished_at: datetime = None
     exception_message: str = None
-    warnings: List[str] = []
+    warnings: List[TaskResultWarning] = None
     task_status: TaskStatus = TaskStatus.FINISHED
 
 
@@ -37,7 +37,7 @@ class TaskMetadata(BaseModel):
     started_at: datetime = None
     finished_at: datetime = None
     exception_message: str = None
-    warnings: List[str] = []
+    warnings: List[TaskResultWarning] = None
     progress: TaskProgressData = None
     meta: TaskMetadataMeta = None,
     created_by: Optional[str] = None

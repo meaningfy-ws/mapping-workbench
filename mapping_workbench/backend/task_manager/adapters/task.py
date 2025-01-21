@@ -8,7 +8,8 @@ from dateutil.tz import tzlocal
 from pebble import ProcessFuture
 
 from mapping_workbench.backend.config import settings
-from mapping_workbench.backend.tasks.models.task_response import TaskStatus, TaskProgressData, TaskResponse
+from mapping_workbench.backend.tasks.models.task_response import TaskStatus, TaskProgressData, TaskResponse, \
+    TaskResultWarning
 from mapping_workbench.backend.tasks.models.task_result import TaskResult, TaskMetadata, TaskMetadataMeta
 
 
@@ -162,7 +163,7 @@ class Task:
         """
         self.task_metadata.exception_message = exception_message
 
-    def update_warnings(self, warnings: List[str]):
+    def update_warnings(self, warnings: List[TaskResultWarning]):
         """
         """
         self.task_metadata.warnings = warnings

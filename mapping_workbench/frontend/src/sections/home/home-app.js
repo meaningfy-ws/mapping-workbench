@@ -62,24 +62,7 @@ export const HomeApp = () => {
                 </Typography>
                 <Typography variant="h6"
                             sx={{mb: 3}}>
-                    <ul>
-                        <li>
-                            To find out more check this short paper
-                            {<Button variant="outlined"
-                                     type="link"
-                                     target="_blank"
-                                     size='small'
-                                     color="error"
-                                     href={'/sem24_paper_182.pdf'}
-                                     sx={{py: 0, mx: '5px'}}
-                                     startIcon={<PictureAsPdfIcon/>}>
-                                sem24_paper_182.pdf
-                            </Button>}
-                        </li>
-                        <li>Visit our website
-                            <Link href={'https://meaningfy.ws/mapping-workbench/'}> Mapping Workbench</Link>
-                        </li>
-                    </ul>
+
                 </Typography>
                 <Typography variant='subtitle1'>A simplified view of the mapping lifecycle is depicted in Figure 1. Next, we provide you
                     with a wizard meant to guide through a series of concrete steps from A to Z of a successful mapping

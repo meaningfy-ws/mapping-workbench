@@ -56,9 +56,12 @@ class TaskProgressData(TaskProgressDataBase):
     actions: List[TaskProgressAction] = []
     actions_count: int = 0
 
+class TaskResultWarning(BaseModel):
+    message: str
+    type: str = None
 
 class TaskResultData(TaskProgressDataBase):
-    warnings: List[str] = []
+    warnings: List[TaskResultWarning] = None
     data: Any = None
 
 

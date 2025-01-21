@@ -42,7 +42,6 @@ const Page = () => {
                 .max(1024),
             branch_or_tag_name: Yup
                 .string()
-                .max(20)
                 .required('Branch or Tag name is required')
         }),
         onSubmit: async (values, helpers) => {
