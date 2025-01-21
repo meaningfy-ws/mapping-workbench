@@ -22,7 +22,7 @@ from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTest
 from mapping_workbench.backend.sparql_test_suite.services.data import SPARQL_CM_ASSERTIONS_SUITE_TITLE, \
     SPARQL_INTEGRATION_TESTS_SUITE_TITLE
 from mapping_workbench.backend.task_manager.adapters.task_progress import TaskProgress
-from mapping_workbench.backend.tasks.models.task_response import TaskResponse
+from mapping_workbench.backend.tasks.models.task_response import TaskResponse, TaskResultWarning
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
     TestDataFileResourceFormat
 from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragmentFormat, \
@@ -32,7 +32,7 @@ from mapping_workbench.backend.user.models.user import User
 
 class PackageImporterABC(ABC):
     package: MappingPackage
-    warnings: List[str] = []
+    warnings: List[TaskResultWarning] = []
     task_progress: TaskProgress
 
     def __init__(self, project: Project, user: User, task_response: TaskResponse = None):

@@ -8,7 +8,7 @@ from mapping_workbench.backend.mapping_rule_registry.models.entity import Mappin
 from mapping_workbench.backend.package_importer.adapters.importer_abc import PackageImporterABC
 from mapping_workbench.backend.package_importer.models.imported_mapping_suite import ImportedMappingSuite
 from mapping_workbench.backend.project.models.entity import Project
-from mapping_workbench.backend.tasks.models.task_response import TaskResponse
+from mapping_workbench.backend.tasks.models.task_response import TaskResponse, TaskResultWarning
 from mapping_workbench.backend.triple_map_fragment.models.entity import GenericTripleMapFragment
 from mapping_workbench.backend.user.models.user import User
 
@@ -71,22 +71,24 @@ class EFormsPackageImporter(PackageImporterABC):
         for mono_rule in mono_package.conceptual_rules:
             source_structural_element: StructuralElement = await get_structural_element_by_unique_fields(
                 sdk_element_id=mono_rule.eforms_sdk_id,
-                bt_id=mono_rule.bt_id,
                 absolute_xpath=mono_rule.absolute_xpath,
                 project_id=self.project.id,
+                # bt_id=mono_rule.bt_id,
                 # name=mono_rule.field_name
             )
 
             if not source_structural_element:
-                m = f"CM(sdk_id, bt_id, xpath) not imported: ({mono_rule.eforms_sdk_id}, {mono_rule.bt_id}, {mono_rule.absolute_xpath})"
-                mwb_logger.log_all_warning(m)
-                self.warnings.append(m)
                 continue
+
+            if source_structural_element.bt_id != mono_rule.bt_id:
+                m = f"{mono_rule.eforms_sdk_id}, {source_structural_element.bt_id} <> {mono_rule.bt_id}, {mono_rule.absolute_xpath}"
+                mwb_logger.log_all_warning(m)
+                self.warnings.append(TaskResultWarning(message=m, type="CM(sdk_id, sdk_bt_id <> bt_id, xpath) BT ID Mismatch"))
 
             if source_structural_element.name != mono_rule.field_name:
                 m = f"Field[{source_structural_element.sdk_element_id}] has Imported Name ({mono_rule.field_name}) <> Current Name ({source_structural_element.name})"
                 mwb_logger.log_all_warning(m)
-                self.warnings.append(m)
+                self.warnings.append(TaskResultWarning(message=m, type="Field Name Mismatch"))
 
             # A conceptual mapping rule may have same structural element but different Ontology Fragment
             rule: ConceptualMappingRule = await ConceptualMappingRule.find_one(
