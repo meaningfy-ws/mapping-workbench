@@ -42,33 +42,31 @@ export const MappingPackageFormSelect = (props) => {
     }, [mappingPackagesStore.items]);
 
     return (
-        <>
-            <TextField
-                error={!!(formik.touched.mapping_package_id && formik.errors.mapping_package_id)}
-                fullWidth
-                helperText={formik.touched.mapping_package_id && formik.errors.mapping_package_id}
-                label="Mapping Package"
-                name="mapping_package_id"
-                onBlur={formik.handleBlur}
-                onChange={handleMappingPackageChange}
-                select
-                value={formik.values.mapping_package_id}
-                required={isRequired}
-                disabled={disabled}
-            >
-                <MenuItem key=""
-                          value="">
-                    &nbsp;
+        <TextField
+            error={!!(formik.touched.mapping_package_id && formik.errors.mapping_package_id)}
+            fullWidth
+            helperText={formik.touched.mapping_package_id && formik.errors.mapping_package_id}
+            label="Mapping Package"
+            name="mapping_package_id"
+            onBlur={formik.handleBlur}
+            onChange={handleMappingPackageChange}
+            select
+            value={formik.values.mapping_package_id}
+            required={isRequired}
+            disabled={disabled}
+        >
+            <MenuItem key=""
+                      value="">
+                &nbsp;
+            </MenuItem>
+            {mappingPackagesStore.items.map((mapping_package) => (
+                <MenuItem
+                    key={mapping_package.id}
+                    value={mapping_package.id}
+                >
+                    {mapping_package.title}
                 </MenuItem>
-                {mappingPackagesStore.items.map((mapping_package) => (
-                    <MenuItem
-                        key={mapping_package.id}
-                        value={mapping_package.id}
-                    >
-                        {mapping_package.title}
-                    </MenuItem>
-                ))}
-            </TextField>
-        </>
+            ))}
+        </TextField>
     );
 };

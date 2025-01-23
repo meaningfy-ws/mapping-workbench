@@ -1,19 +1,17 @@
-import CodeMirror, {basicSetup, EditorState, EditorView} from "@uiw/react-codemirror";
+import CodeMirror, {EditorState, EditorView} from "@uiw/react-codemirror";
 import {githubDark, githubLight} from "@uiw/codemirror-themes-all";
 import {yaml} from '@codemirror/lang-yaml'
 import {xml} from '@codemirror/lang-xml'
 import {json} from '@codemirror/lang-json'
 // import rdf from '@rdfjs-elements/rdf-editor'
-import {MergeView, unifiedMergeView} from '@codemirror/merge'
 import {turtle} from 'codemirror-lang-turtle';
 import {sparql} from 'codemirror-lang-sparql';
 
 
+import {Box} from "@mui/system";
 import {useTheme} from "@mui/material/styles";
 import FormLabel from "@mui/material/FormLabel";
 import FormControl from "@mui/material/FormControl";
-import {Box} from "@mui/system";
-import {useEffect, useRef} from 'react';
 import CodeMirrorMerge from 'react-codemirror-merge';
 
 
@@ -38,7 +36,8 @@ const languageSwitch = (lang) => {
 const Original = CodeMirrorMerge.Original;
 const Modified = CodeMirrorMerge.Modified;
 
-export const CodeMirrorCompare = ({value, lang, label, style, theme,name}) => {
+export const CodeMirrorCompare = ({value, previousValue, lang, label, style, name}) => {
+    const theme = useTheme()
     return (
         <FormControl fullWidth>
             <FormLabel
@@ -54,10 +53,11 @@ export const CodeMirrorCompare = ({value, lang, label, style, theme,name}) => {
                 <CodeMirrorMerge orientation="a-b"
                                  revertControls='a-to-b'
                                  style={style}
-                                 theme={theme}>
+                                 theme={theme.palette.mode === 'dark' ? githubDark : githubLight}
+                >
                     <Original value={value}
                               extensions={[languageSwitch(lang)()]}/>
-                    <Modified value={value + 'Six'}
+                    <Modified value={previousValue}
                               extensions={[EditorView.editable.of(false), EditorState.readOnly.of(true), languageSwitch(lang)()]}/>
                 </CodeMirrorMerge>
             </Box>
@@ -65,7 +65,7 @@ export const CodeMirrorCompare = ({value, lang, label, style, theme,name}) => {
     )
 }
 
-const CodeMirrorDefault = ({value, onChange, lang, label, disabled, style}) => {
+const CodeMirrorDefault = ({value, onChange, lang, label, disabled, style, name}) => {
     const theme = useTheme();
 
     return (

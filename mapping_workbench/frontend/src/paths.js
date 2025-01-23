@@ -256,6 +256,7 @@ export const apiPaths = {
         item: '/test_data_suites/:id',
         file_resources: '/test_data_suites/:id/file_resources',
         file_resource: '/test_data_suites/file_resources/:id',
+        file_history: '/test_data_suites/file_resources/:id/transform/history',
         assign_mapping_packages: '/test_data_suites/assign_mapping_packages',
         tasks: {
             transform_test_data: '/test_data_suites/tasks/transform_test_data',

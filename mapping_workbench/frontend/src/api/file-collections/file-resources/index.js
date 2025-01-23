@@ -1,5 +1,6 @@
 import {SectionApi} from "src/api/section";
 import {appApi} from "src/api/app";
+import {sessionApi} from '../../session';
 
 export class FileResourcesApi extends SectionApi {
     get FILE_RESOURCE_FORMATS() {
@@ -33,8 +34,17 @@ export class FileResourcesApi extends SectionApi {
     }
 
     async getFileResource(id) {
-        let endpoint = this.paths['file_resource'].replace(':id', id);
-        let data = await appApi.get(endpoint);
+        const endpoint = this.paths['file_resource'].replace(':id', id);
+        const data = await appApi.get(endpoint);
+        return Promise.resolve(data);
+    }
+// http://localhost:8000/api/v1/test_data_suites/file_resources/678f5c9d607a7f61f94c11c5/transform/history?project=678f5b8d6f271a8aa40e9633
+
+    async getFileHistory(id) {
+        const filters = {};
+        filters['project'] = sessionApi.getSessionProject();
+        const endpoint = this.paths['file_history'].replace(':id', id);
+        const data = await appApi.get(endpoint, filters);
         return Promise.resolve(data);
     }
 }
