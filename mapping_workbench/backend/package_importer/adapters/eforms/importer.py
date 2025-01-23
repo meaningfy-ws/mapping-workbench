@@ -90,6 +90,16 @@ class EFormsPackageImporter(PackageImporterABC):
                 mwb_logger.log_all_warning(m)
                 self.warnings.append(TaskResultWarning(message=m, type="Field Name Mismatch"))
 
+            if not self.is_cm_rule_path_valid(mono_rule.class_path):
+                m = f"{mono_rule.class_path}"
+                mwb_logger.log_all_warning(m)
+                self.warnings.append(TaskResultWarning(message=m, type="Class Path Mismatch"))
+
+            if not self.is_cm_rule_path_valid(mono_rule.property_path):
+                m = f"{mono_rule.property_path}"
+                mwb_logger.log_all_warning(m)
+                self.warnings.append(TaskResultWarning(message=m, type="Property Path Mismatch"))
+
             # A conceptual mapping rule may have same structural element but different Ontology Fragment
             rule: ConceptualMappingRule = await ConceptualMappingRule.find_one(
                 ConceptualMappingRule.source_structural_element == StructuralElement.link_from_id(
