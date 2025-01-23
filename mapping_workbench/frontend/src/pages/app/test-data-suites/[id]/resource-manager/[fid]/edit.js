@@ -117,7 +117,7 @@ const ExtraForm = (props) => {
                 <Stack direction='row'
                        alignItems='center'
                        gap={2}>
-                    {compare_items.length && <Button sx={{my: 1}}
+                    {compare_items.length > 0 && <Button sx={{my: 1}}
                                                      onClick={() => setShowCompare(e => !e)}>{showCompare ? 'Hide Compare' : 'Show Compare'}</Button>}
 
 
@@ -128,6 +128,7 @@ const ExtraForm = (props) => {
                         onChange={handleCompareChange}
                         select
                         value={formik.values.compare_item}
+                        sx={{minWidth: 200}}
                     >
                         {compare_items.map((compare_item) => (
                             <MenuItem
@@ -180,7 +181,7 @@ const Page = () => {
     const {id, fid} = router.query;
 
     const formState = useItem(sectionApi, fid);
-    const compare_items = useFileHistory(sectionApi, fid)
+    const compare_items = useFileHistory(sectionApi, fid).slice(1)
     const item = formState.item;
 
     usePageView();

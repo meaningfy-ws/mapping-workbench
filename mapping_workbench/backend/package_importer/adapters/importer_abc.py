@@ -1,3 +1,4 @@
+import re
 from abc import ABC, abstractmethod
 from itertools import takewhile
 from pathlib import Path
@@ -42,7 +43,6 @@ class PackageImporterABC(ABC):
         self.task_response = task_response
         self.task_progress = TaskProgress(self.task_response)
         self.package = None
-
 
     @abstractmethod
     async def import_from_mono_mapping_suite(self, mono_package: ImportedMappingSuite):
@@ -365,6 +365,12 @@ class PackageImporterABC(ABC):
         self.package = package
 
         self.task_progress.finish_current_action_step()
+
+    @classmethod
+    def is_cm_rule_path_valid(cls, cm_rule_path: str) -> bool:
+        if not cm_rule_path:
+            return True
+        return len(cm_rule_path.split('/')) == len(cm_rule_path.split(" / "))
 
     @classmethod
     async def clear_project_data(cls, project: Project):

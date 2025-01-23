@@ -213,7 +213,7 @@ export const FileResourceEditForm = (props) => {
                               md={12}>
                             <Stack direction='row'
                                    gap={2}>
-                                {extra_form_fields?.compare_items.length && <Button
+                                {!!extra_form_fields?.compare_items.length && <Button
                                     onClick={() => setShowCompare(e => !e)}>{showCompare ? 'Hide compare' : 'Show compare'}</Button>}
 
                                 {showCompare && <TextField

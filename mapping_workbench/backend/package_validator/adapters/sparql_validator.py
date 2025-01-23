@@ -22,6 +22,7 @@ class SPARQLValidator(TestDataValidator):
     rdf_graph: Any = None
     test_data: Any = None
     test_data_suite: Any = None
+    errors: List[str] = None
 
     @validate_call
     def __init__(self, test_data: TestDataState, test_data_suite: TestDataSuiteState = None, **data: Any):
@@ -32,6 +33,7 @@ class SPARQLValidator(TestDataValidator):
         )
         self.test_data = test_data
         self.test_data_suite = test_data_suite
+        self.errors = []
 
     def validate(self, sparql_queries: List[SPARQLTestState]) -> SPARQLTestDataValidationResult:
         results = []
@@ -55,7 +57,7 @@ class SPARQLValidator(TestDataValidator):
             except Exception as e:
                 sparql_query_result.error = str(e)[:100]
                 sparql_query_result.result = SPARQLQueryRefinedResultType.ERROR.value
-                mwb_logger.log_all_error(message="ERROR :: SPARQL Validation :: Stack trace:", stack_trace=str(e))
+                mwb_logger.log_all_error(message=f"ERROR :: SPARQL Validation :: Q:\n{sparql_query.content}\nStack trace:", stack_trace=str(e))
 
             results.append(sparql_query_result)
 
