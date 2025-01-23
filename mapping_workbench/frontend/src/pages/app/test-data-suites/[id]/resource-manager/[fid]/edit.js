@@ -22,7 +22,7 @@ import {Layout as AppLayout} from 'src/layouts/app';
 import {RouterLink} from 'src/components/router-link';
 import {FormTextField} from "src/components/app/form/text-field";
 import {ForItemEditForm} from "src/contexts/app/section/for-item-form";
-import CodeMirrorDefault from "src/components/app/form/codeMirrorDefault";
+import CodeMirrorDefault, {CodeMirrorCompare} from "src/components/app/form/codeMirrorDefault";
 import {ForItemDataState} from "src/contexts/app/section/for-item-data-state";
 import {FileResourceEditForm} from 'src/sections/app/file-manager/file-resource-edit-form';
 import {testDataFileResourcesApi as sectionApi} from 'src/api/test-data-suites/file-resources';
@@ -101,7 +101,13 @@ const ExtraForm = (props) => {
             </Grid>
             <Grid xs={12}
                   md={12}>
-                <CodeMirrorDefault label="RDF Manifestation"
+                {/*<CodeMirrorDefault label="RDF Manifestation"*/}
+                {/*                   style={{resize: 'vertical', overflow: 'auto', height: 600}}*/}
+                {/*                   value={formik.values.rdf_manifestation}*/}
+                {/*                   onChange={value => formik.setValues('rdf_manifestation', value)}*/}
+                {/*                   lang={'TTL'}*/}
+                {/*/>*/}
+                <CodeMirrorCompare label="RDF Manifestation"
                                    style={{resize: 'vertical', overflow: 'auto', height: 600}}
                                    value={formik.values.rdf_manifestation}
                                    onChange={value => formik.setValues('rdf_manifestation', value)}
