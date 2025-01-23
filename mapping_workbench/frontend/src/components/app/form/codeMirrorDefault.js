@@ -50,8 +50,8 @@ export const CodeMirrorCompare = ({value, previousValue, lang, label, style, nam
                 {label}
             </FormLabel>
             <Box>
-                <CodeMirrorMerge orientation="a-b"
-                                 revertControls='a-to-b'
+                <CodeMirrorMerge orientation="b-a"
+                                 revertControls='b-to-a'
                                  style={style}
                                  theme={theme.palette.mode === 'dark' ? githubDark : githubLight}
                 >
