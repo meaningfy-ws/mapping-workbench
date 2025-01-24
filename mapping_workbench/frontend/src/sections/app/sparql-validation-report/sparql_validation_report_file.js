@@ -11,6 +11,7 @@ import useItemsSearch from "src/hooks/use-items-search";
 import {ResultSummaryQuery} from './result-summary-coverage';
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
+const FILTER_VALUES = ["valid", "unverifiable", "warning", "invalid", "error", "unknown"].map(e => ({value: e}))
 
 const SparqlFileReport = ({sid, suiteId, testId, handleExport}) => {
     const [validationReport, setValidationReport] = useState([])
@@ -51,9 +52,11 @@ const SparqlFileReport = ({sid, suiteId, testId, handleExport}) => {
         return resultArray;
     })
 
-    const itemsSearch = useItemsSearch(validationReport, sectionApi);
+    const itemsSearch = useItemsSearch(validationReport, sectionApi, [], {result: ''});
 
     const handleResultFilterChange = e => itemsSearch.handleFiltersChange({result: e.target.value})
+
+    console.log(itemsSearch.state.filters)
 
     return (
         <>
@@ -67,12 +70,12 @@ const SparqlFileReport = ({sid, suiteId, testId, handleExport}) => {
                     <TableLoadWrapper dataState={dataState}
                                       data={validationReport}>
                         <Stack direction='row'
-                                                   alignItems='center'
-                                                   justifyContent='space-between'
-                                                   sx={{mx: 3}}>
+                               alignItems='center'
+                               justifyContent='space-between'
+                               sx={{mx: 3}}>
                             <Typography fontWeight='bold'>Assertions</Typography>
-                            <ResultFilter
-                                onStateChange={handleResultFilterChange}
+                            <ResultFilter values={FILTER_VALUES}
+                                          onStateChange={handleResultFilterChange}
                                           currentState={itemsSearch.state.filters.result}/>
                         </Stack>
                         <ListTableFile

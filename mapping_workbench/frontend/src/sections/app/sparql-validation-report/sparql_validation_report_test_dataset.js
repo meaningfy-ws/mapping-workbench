@@ -1,22 +1,35 @@
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 import {useEffect, useState} from "react";
 
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
 
 import {ListTable} from "./list-table";
-import {TableLoadWrapper} from "./utils";
+import {ResultFilter, TableLoadWrapper} from "./utils";
 import useItemsSearch from "src/hooks/use-items-search";
 import {ResultSummaryCoverage} from './result-summary-coverage';
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
+const FILTER_VALUES = [{value: "validCount:", label: "valid"},
+    {value: "unverifiableCount", label: "unverifiable"},
+    {value: "warningCount", label: "warning"}, {value: "invalidCount", label: "invalid"},
+    {value: "errorCount", label: "error"}, {value: "unknownCount", label: "unknown"}]
+
 const SparqlTestDatasetReport = ({sid, suiteId, handleSelectFile, handleExport}) => {
     const [validationReport, setValidationReport] = useState([])
     const [dataState, setDataState] = useState({load: true, error: false})
-
+    const [resultFilter, setResultFilter] = useState('')
 
     useEffect(() => {
         handleValidationReportsGet(sid, suiteId)
-    }, [])
+    }, [sid, suiteId])
+
+    const handleResultFilterChange = e => setResultFilter(e.target.value)
+
+    const filteredItems = validationReport.filter((item) => {
+        return !resultFilter || item.result[resultFilter]?.count > 0
+    })
 
     const handleValidationReportsGet = (sid, suiteId) => {
         setDataState({load: true, error: false})
@@ -52,7 +65,7 @@ const SparqlTestDatasetReport = ({sid, suiteId, handleSelectFile, handleExport})
         return resultArray;
     })
 
-    const itemsSearch = useItemsSearch(validationReport, sectionApi);
+    const itemsSearch = useItemsSearch(filteredItems, sectionApi);
 
     return (
         <>
@@ -66,6 +79,15 @@ const SparqlTestDatasetReport = ({sid, suiteId, handleSelectFile, handleExport})
                     <TableLoadWrapper dataState={dataState}
                                       lines={6}
                                       data={validationReport}>
+                        <Stack direction='row'
+                               alignItems='center'
+                               justifyContent='space-between'
+                               sx={{mx: 3}}>
+                            <Typography fontWeight='bold'>Assertions</Typography>
+                            <ResultFilter values={FILTER_VALUES}
+                                          onStateChange={handleResultFilterChange}
+                                          currentState={resultFilter}/>
+                        </Stack>
                         <ListTable
                             items={itemsSearch.pagedItems}
                             count={itemsSearch.count}

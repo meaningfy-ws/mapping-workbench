@@ -1,7 +1,10 @@
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 import {useEffect, useState} from "react";
 
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
+import {ResultFilter} from '../sparql-validation-report/utils';
 
 import {ListTable} from "./list-table";
 import {TableLoadWrapper} from "./utils";
@@ -9,15 +12,23 @@ import {ResultSummaryCoverage} from './result-summary-coverage';
 import useItemsSearch from "src/hooks/use-items-search";
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
+const FILTER_VALUES = ['info', 'valid', 'violation', 'warning'].map(value => ({value: value + 'Count', label: value}))
 
 const ShaclTestDatasetReport = ({sid, suiteId, handleSelectFile, handleExport}) => {
     const [validationReport, setValidationReport] = useState([])
     const [dataState, setDataState] = useState({load: true, error: false})
 
-
     useEffect(() => {
         handleValidationReportsGet(sid, suiteId)
     }, [suiteId])
+
+    const [resultFilter, setResultFilter] = useState('')
+    const filteredItems = validationReport.filter((item) => {
+        return !resultFilter || item.result[resultFilter]?.count > 0
+    })
+
+    const handleResultFilterChange = e => setResultFilter(e.target.value)
+
 
     const handleValidationReportsGet = (sid, suiteId) => {
         setDataState({load: true, error: false})
@@ -46,7 +57,7 @@ const ShaclTestDatasetReport = ({sid, suiteId, handleSelectFile, handleExport}) 
         })
     }
 
-    const itemsSearch = useItemsSearch(validationReport, sectionApi);
+    const itemsSearch = useItemsSearch(filteredItems, sectionApi);
 
     return (
         <>
@@ -59,6 +70,15 @@ const ShaclTestDatasetReport = ({sid, suiteId, handleSelectFile, handleExport}) 
                 <Paper>
                     <TableLoadWrapper dataState={dataState}
                                       data={validationReport}>
+                        <Stack direction='row'
+                               alignItems='center'
+                               justifyContent='space-between'
+                               sx={{mx: 3}}>
+                            <Typography fontWeight='bold'>Assertions</Typography>
+                            <ResultFilter values={FILTER_VALUES}
+                                          onStateChange={handleResultFilterChange}
+                                          currentState={resultFilter}/>
+                        </Stack>
                         <ListTable
                             items={itemsSearch.pagedItems}
                             count={itemsSearch.count}

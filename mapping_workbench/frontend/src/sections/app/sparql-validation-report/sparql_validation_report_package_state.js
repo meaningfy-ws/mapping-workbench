@@ -11,11 +11,20 @@ import useItemsSearch from "src/hooks/use-items-search";
 import {ResultSummaryCoverage} from './result-summary-coverage';
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
+const FILTER_VALUES = [{value: "validCount:", label: "valid"}, {value: "unverifiableCount", label: "unverifiable"},
+    {value: "warningCount", label: "warning"}, {value: "invalidCount", label: "invalid"},
+    {value: "errorCount", label: "error"}, {value: "unknownCount", label: "unknown"}]
 
 const SparqlValidationReport = ({handleSelectFile, validationReport, handleExport}) => {
     const [dataState, setDataState] = useState({load: false, error: false})
-    const itemsSearch = useItemsSearch(validationReport, sectionApi);
-    const handleResultFilterChange = e => itemsSearch.handleFiltersChange({result: e.target.value})
+    const [resultFilter, setResultFilter] = useState('')
+
+    const filteredItems = validationReport.filter((item) => {
+        return !resultFilter || item.result[resultFilter]?.count > 0
+    })
+
+    const itemsSearch = useItemsSearch(filteredItems, sectionApi, [], {result: ''});
+    const handleResultFilterChange = e => setResultFilter(e.target.value)
 
     return (
         <>
@@ -29,6 +38,15 @@ const SparqlValidationReport = ({handleSelectFile, validationReport, handleExpor
                     <TableLoadWrapper dataState={dataState}
                                       lines={6}
                                       data={validationReport}>
+                        <Stack direction='row'
+                               alignItems='center'
+                               justifyContent='space-between'
+                               sx={{mx: 3}}>
+                            <Typography fontWeight='bold'>Assertions</Typography>
+                            <ResultFilter values={FILTER_VALUES}
+                                          onStateChange={handleResultFilterChange}
+                                          currentState={resultFilter}/>
+                        </Stack>
                         <ListTable
                             items={itemsSearch.pagedItems}
                             count={itemsSearch.count}

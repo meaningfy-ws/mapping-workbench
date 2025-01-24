@@ -39,8 +39,7 @@ export const ResultChip = ({label, color, fontColor, onClick, clickable, childre
     )
 }
 
-export const ResultFilter = ({currentState, onStateChange}) => {
-    const reportValues = ["valid", "unverifiable", "warning", "invalid", "error", "unknown"]
+export const ResultFilter = ({currentState, onStateChange, values}) => {
 
     const FilterValue = ({label, value, currentState}) => {
         return (
@@ -75,9 +74,9 @@ export const ResultFilter = ({currentState, onStateChange}) => {
                 <FilterValue label="all"
                              value=""
                              currentState={currentState}/>
-                {reportValues.map(value =>
-                    <FilterValue key={value}
-                                 label={value}
+                {values.map(value =>
+                    <FilterValue key={value.value}
+                                 label={value.label ?? value.value}
                                  currentState={currentState}/>)}
             </Stack>
         </FormControl>

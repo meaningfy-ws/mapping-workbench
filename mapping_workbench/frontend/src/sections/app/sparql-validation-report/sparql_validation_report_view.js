@@ -7,7 +7,9 @@ import SparqlFileReport from "./sparql_validation_report_file";
 import SparqlTestDatasetReport from "./sparql_validation_report_test_dataset";
 import SparqlPackageStateReport from "./sparql_validation_report_package_state";
 
+
 const SparqlValidationReportView = ({sid, reportTree, validationReport, handleExport}) => {
+
 
     const [selectedPackageState, setSelectedPackageState] = useState()
     const [selectedTestDataset, setSelectedTestDataset] = useState()
