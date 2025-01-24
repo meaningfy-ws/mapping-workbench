@@ -1,18 +1,26 @@
 import {useState} from "react";
 
+import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
+import Typography from '@mui/material/Typography';
+import {ResultFilter} from '../mapping-package/state/utils';
 
 import {ListTable} from "./list-table";
-import {ResultSummaryCoverage} from './result-summary-coverage';
-import {TableLoadWrapper} from "./utils";
 import useItemsSearch from "src/hooks/use-items-search";
+import {ResultSummaryCoverage} from './result-summary-coverage';
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
-const ShaclPackageStateReport = ({handleSelectFile, mappingSuiteIdentifier, validationReport, handleExport}) => {
-    const [dataState, setDataState] = useState({load: false, error: false})
+const FILTER_VALUES = ['info', 'valid', 'violation', 'warning'].map(value => ({value: value + 'Count', label: value}))
 
-    const itemsSearch = useItemsSearch(validationReport, sectionApi);
+const ShaclPackageStateReport = ({handleSelectFile, mappingSuiteIdentifier, validationReport, handleExport}) => {
+    const [resultFilter, setResultFilter] = useState('')
+
+    const filteredItems = validationReport.filter((item) => !resultFilter || item[resultFilter] > 0)
+
+    const handleResultFilterChange = e => setResultFilter(e.target.value)
+
+    const itemsSearch = useItemsSearch(filteredItems, sectionApi);
 
     return (
         <>
@@ -24,23 +32,30 @@ const ShaclPackageStateReport = ({handleSelectFile, mappingSuiteIdentifier, vali
             </Grid>
             <Grid xs={12}>
                 <Paper>
-                    <TableLoadWrapper dataState={dataState}
-                                      data={validationReport}>
-                        <ListTable
-                            items={itemsSearch.pagedItems}
-                            count={itemsSearch.count}
-                            onPageChange={itemsSearch.handlePageChange}
-                            onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                            page={itemsSearch.state.page}
-                            rowsPerPage={itemsSearch.state.rowsPerPage}
-                            onSort={itemsSearch.handleSort}
-                            sort={itemsSearch.state.sort}
-                            onFilter={itemsSearch.handleFiltersChange}
-                            filters={itemsSearch.state.filters}
-                            sectionApi={sectionApi}
-                            handleSelectFile={handleSelectFile}
-                        />
-                    </TableLoadWrapper>
+                    <Stack direction='row'
+                           alignItems='center'
+                           justifyContent='space-between'
+                           sx={{mx: 3}}>
+                        <Typography fontWeight='bold'>Assertions</Typography>
+                        <ResultFilter values={FILTER_VALUES}
+                                      count={validationReport.length}
+                                      onStateChange={handleResultFilterChange}
+                                      currentState={resultFilter}/>
+                    </Stack>
+                    <ListTable
+                        items={itemsSearch.pagedItems}
+                        count={itemsSearch.count}
+                        onPageChange={itemsSearch.handlePageChange}
+                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                        page={itemsSearch.state.page}
+                        rowsPerPage={itemsSearch.state.rowsPerPage}
+                        onSort={itemsSearch.handleSort}
+                        sort={itemsSearch.state.sort}
+                        onFilter={itemsSearch.handleFiltersChange}
+                        filters={itemsSearch.state.filters}
+                        sectionApi={sectionApi}
+                        handleSelectFile={handleSelectFile}
+                    />
                 </Paper>
             </Grid>
         </>

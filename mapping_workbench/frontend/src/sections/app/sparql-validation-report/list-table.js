@@ -19,12 +19,13 @@ import Typography from '@mui/material/Typography';
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import validationColor from '../mapping-package/state/validation-color';
-import {ValueChip} from '../xpath-validation-report/utils';
+import SorterHeader from '../../components/table-sorter-header';
 
 import {ResultChip} from "./utils";
 import {useDialog} from "src/hooks/use-dialog";
 import {Scrollbar} from 'src/components/scrollbar';
+import {ValueChip} from '../xpath-validation-report/utils';
+import {getValidationColor} from '../mapping-package/state/utils';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import TablePagination from "src/sections/components/table-pagination-pages";
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
@@ -44,7 +45,7 @@ const ResultCell = ({item, onClick}) => {
                     <ValueChip value={value.count}
                                color='primary'
                                sx={{p: 2}}/>
-                    <ResultChip color={validationColor(key)}
+                    <ResultChip color={getValidationColor(key)}
                                 clickable
                                 fontColor='#fff'
                                 onClick={() => onClick({title, notices: value.test_datas})}
@@ -72,6 +73,7 @@ export const ListTable = (props) => {
         onSort,
         filters,
         onFilter,
+        resultFilter,
         sectionApi,
         handleSelectFile
     } = props;
@@ -99,6 +101,8 @@ export const ListTable = (props) => {
     const xpathConditionDialog = useDialog()
 
     const openXPathConditionDialog = (data) => xpathConditionDialog.handleOpen(data)
+
+    console.log(resultFilter,!!resultFilter)
 
     return (
         <>
@@ -142,7 +146,13 @@ export const ListTable = (props) => {
                                                        title="Query"/>
                                 </TableCell>
                                 <TableCell>
-                                    Result
+                                    {!!resultFilter ?
+                                        <SorterHeader fieldName={resultFilter}
+                                                      title='Result'
+                                                      sort={sort}
+                                                      onSort={onSort}/>
+                                        : 'Result'
+                                    }
                                 </TableCell>
                             </TableRow>
                         </TableHead>

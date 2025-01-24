@@ -13,11 +13,11 @@ import TableHead from '@mui/material/TableHead';
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import validationColor from '../mapping-package/state/validation-color';
-import {ValueChip} from '../xpath-validation-report/utils';
+import SorterHeader from 'src/sections/components/table-sorter-header';
 
 import {ResultChip} from "./utils";
 import {Scrollbar} from 'src/components/scrollbar';
+import {ValueChip} from '../xpath-validation-report/utils';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
@@ -39,6 +39,7 @@ export const ListTable = (props) => {
         onSort,
         filters,
         onFilter,
+        resultFilter,
         sectionApi,
         handleSelectFile
     } = props;
@@ -86,7 +87,7 @@ export const ListTable = (props) => {
                         <ValueChip value={value.count}
                                    color='primary'
                                    sx={{p: 2}}/>
-                        <ResultChip color={validationColor(key)}
+                        <ResultChip color={key}
                                     clickable
                                     fontColor='#fff'
                                     onClick={() => onClick({title, notices: value.test_datas})}
@@ -137,7 +138,13 @@ export const ListTable = (props) => {
                                                        title="Result Path"/>
                                 </TableCell>
                                 <TableCell align='center'>
-                                    Result
+                                    {!!resultFilter ?
+                                        <SorterHeader fieldName={resultFilter}
+                                                      title='Result'
+                                                      sort={sort}
+                                                      onSort={onSort}/>
+                                        : 'Result'
+                                    }
                                 </TableCell>
                             </TableRow>
                         </TableHead>

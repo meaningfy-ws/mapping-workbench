@@ -1,36 +1,20 @@
-import {useState} from "react";
-
 import Grid from '@mui/material/Unstable_Grid2';
 
 import FileList from '../mapping-package/state/file-list';
-
+import {useFileNavigation} from '../mapping-package/state/utils';
 import ShaclFileReport from "./shacl_validation_report_file";
 import ShaclTestDatasetReport from "./shacl_validation_report_test_dataset";
 import ShaclPackageStateReport from "./shacl_validation_report_package_state";
 
 const ShaclValidationReportView = ({sid, reportTree, validationReport, handleExport}) => {
 
-    const [selectedPackageState, setSelectedPackageState] = useState()
-    const [selectedTestDataset, setSelectedTestDataset] = useState()
-
-    const handleSetPackageState = (file) => {
-        setSelectedPackageState(file)
-        setSelectedTestDataset(undefined)
-    }
-
-    const handleSetTestDataset = (file) => {
-        setSelectedTestDataset(file)
-    }
-
-    const handleSetTestAndPackage = (testDataSuite, testData) => {
-        const packageState = reportTree.test_data_suites.find(tds => tds.oid === testDataSuite)
-        setSelectedPackageState(packageState)
-        if (testData) {
-            setSelectedTestDataset(packageState?.test_data_states.find(ps => ps.oid === testData));
-        } else {
-            setSelectedTestDataset(undefined)
-        }
-    }
+    const {
+        selectedPackageState,
+        selectedTestDataset,
+        handleSetPackageState,
+        handleSetTestDataset,
+        handleSetTestAndPackage
+    } = useFileNavigation(reportTree)
 
     return (
 

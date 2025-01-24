@@ -4,28 +4,14 @@ import Alert from "@mui/material/Alert";
 import Tooltip from "@mui/material/Tooltip";
 import Skeleton from "@mui/material/Skeleton";
 import TableSortLabel from "@mui/material/TableSortLabel";
+import {getResultColor} from '../mapping-package/state/utils';
 
-export const resultColor = (result) => {
-    switch (result.toLowerCase()) {
-        case "error":
-        case "invalid":
-        case "violation":
-            return "error"
-        case "warning":
-            return "warning"
-        case "unverifiable":
-        case "valid":
-            return "success"
-        default:
-            return "info"
-    }
-}
 
 export const ResultChip = ({label, color, clickable, onClick}) => {
     return (
         <Chip label={label}
               clickable={clickable}
-              color={resultColor(color ?? label)}
+              color={getResultColor(color ?? label)}
               onClick={onClick}
         />
     )

@@ -1,21 +1,28 @@
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 import {useState} from "react";
 
+import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
 
 import {ListTable} from "./list-table";
-import {ResultFilter, TableLoadWrapper} from "./utils";
+import {ResultFilter} from '../mapping-package/state/utils';
 import useItemsSearch from "src/hooks/use-items-search";
 import {ResultSummaryCoverage} from './result-summary-coverage';
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
+const FILTER_VALUES = ["valid", "unverifiable", "warning", "invalid", "error", "unknown"]
+    .map(value => ({value: value + 'Count', label: value}))
 
 const SparqlValidationReport = ({handleSelectFile, validationReport, handleExport}) => {
-    const [dataState, setDataState] = useState({load: false, error: false})
-    const itemsSearch = useItemsSearch(validationReport, sectionApi);
-    const handleResultFilterChange = e => itemsSearch.handleFiltersChange({result: e.target.value})
+    const [resultFilter, setResultFilter] = useState('')
+
+    console.log(resultFilter)
+
+    const filteredItems = validationReport.filter((item) => !resultFilter || item[resultFilter] > 0)
+
+    const itemsSearch = useItemsSearch(filteredItems, sectionApi, [], {result: ''});
+    const handleResultFilterChange = e => setResultFilter(e.target.value)
 
     return (
         <>
@@ -26,24 +33,31 @@ const SparqlValidationReport = ({handleSelectFile, validationReport, handleExpor
             </Grid>
             <Grid xs={12}>
                 <Paper>
-                    <TableLoadWrapper dataState={dataState}
-                                      lines={6}
-                                      data={validationReport}>
-                        <ListTable
-                            items={itemsSearch.pagedItems}
-                            count={itemsSearch.count}
-                            onPageChange={itemsSearch.handlePageChange}
-                            onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                            page={itemsSearch.state.page}
-                            rowsPerPage={itemsSearch.state.rowsPerPage}
-                            onSort={itemsSearch.handleSort}
-                            sort={itemsSearch.state.sort}
-                            onFilter={itemsSearch.handleFiltersChange}
-                            filters={itemsSearch.state.filters}
-                            sectionApi={sectionApi}
-                            handleSelectFile={handleSelectFile}
-                        />
-                    </TableLoadWrapper>
+                    <Stack direction='row'
+                           alignItems='center'
+                           justifyContent='space-between'
+                           sx={{mx: 3}}>
+                        <Typography fontWeight='bold'>Assertions</Typography>
+                        <ResultFilter values={FILTER_VALUES}
+                                      count={validationReport.length}
+                                      onStateChange={handleResultFilterChange}
+                                      currentState={resultFilter}/>
+                    </Stack>
+                    <ListTable
+                        items={itemsSearch.pagedItems}
+                        count={itemsSearch.count}
+                        onPageChange={itemsSearch.handlePageChange}
+                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                        page={itemsSearch.state.page}
+                        rowsPerPage={itemsSearch.state.rowsPerPage}
+                        onSort={itemsSearch.handleSort}
+                        sort={itemsSearch.state.sort}
+                        onFilter={itemsSearch.handleFiltersChange}
+                        filters={itemsSearch.state.filters}
+                        resultFilter={resultFilter}
+                        sectionApi={sectionApi}
+                        handleSelectFile={handleSelectFile}
+                    />
                 </Paper>
             </Grid>
         </>)

@@ -1,23 +1,31 @@
 import {useEffect, useState} from "react";
 
 import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Unstable_Grid2';
+import Typography from '@mui/material/Typography';
 
 import {ListTable} from "./list-table";
 import {TableLoadWrapper} from "./utils";
-import {ResultSummaryCoverage} from './result-summary-coverage';
 import useItemsSearch from "src/hooks/use-items-search";
+import {ResultSummaryCoverage} from './result-summary-coverage';
+import {mapShaclResults, ResultFilter} from '../mapping-package/state/utils';
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
+const FILTER_VALUES = ['info', 'valid', 'violation', 'warning'].map(value => ({value: value + 'Count', label: value}))
 
 const ShaclTestDatasetReport = ({sid, suiteId, handleSelectFile, handleExport}) => {
     const [validationReport, setValidationReport] = useState([])
     const [dataState, setDataState] = useState({load: true, error: false})
-
+    const [resultFilter, setResultFilter] = useState('')
 
     useEffect(() => {
         handleValidationReportsGet(sid, suiteId)
     }, [suiteId])
+
+    const filteredItems = validationReport.filter((item) => !resultFilter || item[resultFilter] > 0)
+
+    const handleResultFilterChange = e => setResultFilter(e.target.value)
 
     const handleValidationReportsGet = (sid, suiteId) => {
         setDataState({load: true, error: false})
@@ -32,21 +40,8 @@ const ShaclTestDatasetReport = ({sid, suiteId, handleSelectFile, handleExport}) 
             })
     }
 
-    const mapShaclResults = (result) => {
-        return result.results.map(e => {
-            const resultArray = {}
-            resultArray["shacl_suite"] = result.shacl_suites?.[0]?.shacl_suite_id
-            resultArray["short_result_path"] = e.short_result_path
-            resultArray["result"] = e.result
-            Object.entries(e.result).forEach(entrie => {
-                const [key, value] = entrie
-                resultArray[`${key}Count`] = value.count
-            })
-            return resultArray;
-        })
-    }
+    const itemsSearch = useItemsSearch(filteredItems, sectionApi);
 
-    const itemsSearch = useItemsSearch(validationReport, sectionApi);
 
     return (
         <>
@@ -59,6 +54,16 @@ const ShaclTestDatasetReport = ({sid, suiteId, handleSelectFile, handleExport}) 
                 <Paper>
                     <TableLoadWrapper dataState={dataState}
                                       data={validationReport}>
+                        <Stack direction='row'
+                               alignItems='center'
+                               justifyContent='space-between'
+                               sx={{mx: 3}}>
+                            <Typography fontWeight='bold'>Assertions</Typography>
+                            <ResultFilter values={FILTER_VALUES}
+                                          count={validationReport.length}
+                                          onStateChange={handleResultFilterChange}
+                                          currentState={resultFilter}/>
+                        </Stack>
                         <ListTable
                             items={itemsSearch.pagedItems}
                             count={itemsSearch.count}
@@ -70,6 +75,7 @@ const ShaclTestDatasetReport = ({sid, suiteId, handleSelectFile, handleExport}) 
                             sort={itemsSearch.state.sort}
                             onFilter={itemsSearch.handleFiltersChange}
                             filters={itemsSearch.state.filters}
+                            resultFilter={resultFilter}
                             sectionApi={sectionApi}
                             handleSelectFile={handleSelectFile}
                         />

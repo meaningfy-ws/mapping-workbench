@@ -17,7 +17,7 @@ const ResultSummaryCoverage = ({identifier, validationReport, handleExport, load
     const notCoveredReportPercent = (notCoveredReports.length / validationReport.length * 100).toFixed(2)
 
 
-    return <Paper sx={{p: 3, height: '100%'}}>
+    return <Paper sx={{p: 3}}>
         <Stack direction='row'
                alignItems='center'
                justifyContent='space-between'>
@@ -28,7 +28,7 @@ const ResultSummaryCoverage = ({identifier, validationReport, handleExport, load
             </Stack>
             <ExportButton handleExport={handleExport}/>
         </Stack>
-        <Stack sx={{mt: 3, mb: 'auto'}}>
+        <Stack sx={{mt: 3}}>
             <Stack sx={{mb: 3}}>
                 <Typography fontSize='18'
                             fontWeight='bold'>Mapping suite identifier</Typography>
