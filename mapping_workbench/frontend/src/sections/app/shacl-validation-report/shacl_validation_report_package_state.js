@@ -1,21 +1,19 @@
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 import {useState} from "react";
 
+import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
-import {ResultFilter} from '../sparql-validation-report/utils';
+import Typography from '@mui/material/Typography';
 
 import {ListTable} from "./list-table";
-import {ResultSummaryCoverage} from './result-summary-coverage';
-import {TableLoadWrapper} from "./utils";
 import useItemsSearch from "src/hooks/use-items-search";
+import {ResultFilter} from '../sparql-validation-report/utils';
+import {ResultSummaryCoverage} from './result-summary-coverage';
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
 const FILTER_VALUES = ['info', 'valid', 'violation', 'warning'].map(value => ({value: value + 'Count', label: value}))
 
 const ShaclPackageStateReport = ({handleSelectFile, mappingSuiteIdentifier, validationReport, handleExport}) => {
-    const [dataState, setDataState] = useState({load: false, error: false})
 
     const [resultFilter, setResultFilter] = useState('')
     const filteredItems = validationReport.filter((item) => {
@@ -36,8 +34,6 @@ const ShaclPackageStateReport = ({handleSelectFile, mappingSuiteIdentifier, vali
             </Grid>
             <Grid xs={12}>
                 <Paper>
-                    <TableLoadWrapper dataState={dataState}
-                                      data={validationReport}>
                         <Stack direction='row'
                                alignItems='center'
                                justifyContent='space-between'
@@ -61,7 +57,6 @@ const ShaclPackageStateReport = ({handleSelectFile, mappingSuiteIdentifier, vali
                             sectionApi={sectionApi}
                             handleSelectFile={handleSelectFile}
                         />
-                    </TableLoadWrapper>
                 </Paper>
             </Grid>
         </>

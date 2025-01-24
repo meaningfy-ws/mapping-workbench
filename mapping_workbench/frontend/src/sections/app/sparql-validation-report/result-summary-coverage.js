@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography';
 
 import ExportButton from '../mapping-package/state/export-button';
 import {StatePieChartBig} from '../mapping-package/state/state-pie-chart';
-import getValidationColor from '../mapping-package/state/validation-color';
+import {getValidationColor, getValidationReportSparql} from '../mapping-package/state/utils';
 
 const Pie = ({data, handleExport}) => {
     return (<Paper>
@@ -31,15 +31,7 @@ export const ResultSummaryCoverage = ({validationReport, handleExport}) => {
 
     if (!validationReport) return null
 
-    const {itemsTotal, ...itemsReduce} =
-        validationReport.map(item => item.result).reduce((acc, report) => {
-            Object.keys(report).forEach(reportKey => {
-                    acc[reportKey] = (acc[reportKey] ?? 0) + report[reportKey].count
-                    acc["itemsTotal"] = (acc["itemsTotal"] ?? 0) + report[reportKey].count
-                }
-            )
-            return acc
-        }, {valid: 0, unverifiable: 0, warning: 0, invalid: 0, error: 0, unknown: 0})
+    const {itemsTotal, ...itemsReduce} =  getValidationReportSparql(validationReport)
 
     const itemsDisplay = Object.entries(itemsReduce)?.map(item => {
         const [itemName, itemCount] = item

@@ -23,7 +23,7 @@ import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import TablePagination from "src/sections/components/table-pagination-pages";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {TableFilterHeader} from "../../../layouts/app/table-filter-header/table-filter-header";
-import validationColor from '../mapping-package/state/validation-color';
+import {getValidationColor} from '../mapping-package/state/utils';
 import {ValueChip} from './utils';
 
 export const ListTable = (props) => {
@@ -128,7 +128,7 @@ export const ListTable = (props) => {
                                                             customStyle={{
                                                                 borderRadius: 12,
                                                                 border: '1px solid',
-                                                                borderColor: validationColor(xpath_condition.meets_xpath_condition ?
+                                                                borderColor: getValidationColor(xpath_condition.meets_xpath_condition ?
                                                                     'valid' : 'invalid')
                                                             }}
                                                             lineProps={{

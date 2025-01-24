@@ -19,8 +19,8 @@ import Typography from '@mui/material/Typography';
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import validationColor from '../mapping-package/state/validation-color';
 import {ValueChip} from '../xpath-validation-report/utils';
+import {getValidationColor} from '../mapping-package/state/utils';
 
 import {ResultChip} from "./utils";
 import {useDialog} from "src/hooks/use-dialog";
@@ -44,7 +44,7 @@ const ResultCell = ({item, onClick}) => {
                     <ValueChip value={value.count}
                                color='primary'
                                sx={{p: 2}}/>
-                    <ResultChip color={validationColor(key)}
+                    <ResultChip color={getValidationColor(key)}
                                 clickable
                                 fontColor='#fff'
                                 onClick={() => onClick({title, notices: value.test_datas})}

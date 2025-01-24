@@ -12,7 +12,7 @@ import TableHead from '@mui/material/TableHead';
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import Typography from '@mui/material/Typography';
-import validationColor from '../mapping-package/state/validation-color';
+import {getValidationColor} from '../mapping-package/state/utils';
 
 import {ResultChip} from "./utils";
 import {Scrollbar} from 'src/components/scrollbar';
@@ -171,7 +171,7 @@ export const ListTableFile = (props) => {
                                         </SyntaxHighlighter>
                                     </TableCell>
                                     <TableCell align="left">
-                                        <ResultChip color={validationColor(item.result)}
+                                        <ResultChip color={getValidationColor(item.result)}
                                                     fontColor='#fff'>
                                             {capitalize(item.result)}
                                         </ResultChip>

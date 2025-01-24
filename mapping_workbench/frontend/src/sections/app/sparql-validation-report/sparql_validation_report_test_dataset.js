@@ -1,20 +1,19 @@
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 import {useEffect, useState} from "react";
 
 import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Unstable_Grid2';
+import Typography from '@mui/material/Typography';
 
 import {ListTable} from "./list-table";
 import {ResultFilter, TableLoadWrapper} from "./utils";
 import useItemsSearch from "src/hooks/use-items-search";
+import {mapSparqlResults} from '../mapping-package/state/utils';
 import {ResultSummaryCoverage} from './result-summary-coverage';
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
-const FILTER_VALUES = [{value: "validCount:", label: "valid"},
-    {value: "unverifiableCount", label: "unverifiable"},
-    {value: "warningCount", label: "warning"}, {value: "invalidCount", label: "invalid"},
-    {value: "errorCount", label: "error"}, {value: "unknownCount", label: "unknown"}]
+const FILTER_VALUES = ["valid", "unverifiable", "warning", "invalid", "error", "unknown"]
+    .map(value => ({value: value + 'Count', label: value}))
 
 const SparqlTestDatasetReport = ({sid, suiteId, handleSelectFile, handleExport}) => {
     const [validationReport, setValidationReport] = useState([])
@@ -43,27 +42,6 @@ const SparqlTestDatasetReport = ({sid, suiteId, handleSelectFile, handleExport})
                 setDataState({load: false, error: true})
             })
     }
-
-    const mapSparqlResults = (result) => result.map(e => {
-        const queryAsArray = e.query.content.split("\n")
-        const values = queryAsArray.slice(0, 3)
-        const resultArray = {}
-        values.forEach(e => {
-                const res = e.split(": ")
-                resultArray[res[0].substring(1)] = res[1]
-            }
-        )
-        resultArray["query"] = queryAsArray.slice(4, queryAsArray.length).join("\n")
-        resultArray["test_suite"] = e.query.filename
-        resultArray["result"] = e.result
-        Object.entries(e.result).forEach(entrie => {
-            const [key, value] = entrie
-            resultArray[`${key}Count`] = value.count
-        })
-        resultArray["meets_xpath_condition"] = e.meets_xpath_condition
-        resultArray["xpath_condition"] = e.query?.cm_rule?.xpath_condition
-        return resultArray;
-    })
 
     const itemsSearch = useItemsSearch(filteredItems, sectionApi);
 

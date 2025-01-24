@@ -6,21 +6,13 @@ import Button from '@mui/material/Button';
 import {useTheme} from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import {StatePieChart} from './state-pie-chart';
-import getValidationColor from './validation-color';
+import {getItemsDisplay, getValidationColor, getValidationReportSparql} from './utils';
 
 const ResultSummaryCoverageSparql = ({validationReport, handleChangeTab}) => {
     const theme = useTheme()
     if (!validationReport) return null
 
-    const {itemsTotal, ...itemsReduce} =
-        validationReport.map(item => item.result).reduce((acc, report) => {
-            Object.keys(report).forEach(reportKey => {
-                    acc[reportKey] = (acc[reportKey] ?? 0) + report[reportKey].count
-                    acc["itemsTotal"] = (acc["itemsTotal"] ?? 0) + report[reportKey].count
-                }
-            )
-            return acc
-        }, {valid: 0, unverifiable: 0, warning: 0, invalid: 0, error: 0, unknown: 0})
+    const {itemsTotal, ...itemsReduce} = getValidationReportSparql(validationReport)
 
     const itemsDisplay = Object.entries(itemsReduce)?.map(item => {
         const [itemName, itemCount] = item

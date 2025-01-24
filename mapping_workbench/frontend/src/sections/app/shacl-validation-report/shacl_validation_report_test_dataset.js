@@ -4,6 +4,7 @@ import {useEffect, useState} from "react";
 
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
+import {mapShaclResults} from '../mapping-package/state/utils';
 import {ResultFilter} from '../sparql-validation-report/utils';
 
 import {ListTable} from "./list-table";
@@ -41,20 +42,6 @@ const ShaclTestDatasetReport = ({sid, suiteId, handleSelectFile, handleExport}) 
                 console.error(err);
                 setDataState({load: false, error: true})
             })
-    }
-
-    const mapShaclResults = (result) => {
-        return result.results.map(e => {
-            const resultArray = {}
-            resultArray["shacl_suite"] = result.shacl_suites?.[0]?.shacl_suite_id
-            resultArray["short_result_path"] = e.short_result_path
-            resultArray["result"] = e.result
-            Object.entries(e.result).forEach(entrie => {
-                const [key, value] = entrie
-                resultArray[`${key}Count`] = value.count
-            })
-            return resultArray;
-        })
     }
 
     const itemsSearch = useItemsSearch(filteredItems, sectionApi);

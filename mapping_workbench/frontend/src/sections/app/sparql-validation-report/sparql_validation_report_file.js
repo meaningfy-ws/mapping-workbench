@@ -4,6 +4,7 @@ import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
+import {mapSparqlResults} from '../mapping-package/state/utils';
 
 import {ListTableFile} from "./list-table-file";
 import {ResultFilter, TableLoadWrapper} from "./utils";
@@ -34,29 +35,8 @@ const SparqlFileReport = ({sid, suiteId, testId, handleExport}) => {
             })
     }
 
-    const mapSparqlResults = (result) => result.map(e => {
-        const queryAsArray = e.query.content.split("\n")
-        const values = queryAsArray.slice(0, 3)
-        const resultArray = {}
-        values.forEach(e => {
-                const res = e.split(": ")
-                resultArray[res[0].substring(1)] = res[1]
-            }
-        )
-        resultArray["query"] = queryAsArray.slice(4, queryAsArray.length).join("\n")
-        resultArray["query_result"] = e.query_result
-        resultArray["fields_covered"] = e.fields_covered
-        resultArray["result"] = e.result
-        resultArray["meets_xpath_condition"] = e.meets_xpath_condition
-        resultArray["xpath_condition"] = e.query?.cm_rule?.xpath_condition
-        return resultArray;
-    })
-
     const itemsSearch = useItemsSearch(validationReport, sectionApi, [], {result: ''});
-
     const handleResultFilterChange = e => itemsSearch.handleFiltersChange({result: e.target.value})
-
-    console.log(itemsSearch.state.filters)
 
     return (
         <>

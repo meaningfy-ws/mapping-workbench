@@ -1,6 +1,6 @@
 import LinearProgress, {linearProgressClasses} from '@mui/material/LinearProgress';
 import {styled} from '@mui/material/styles';
-import getValidationColor from './validation-color';
+import {getValidationColor} from './utils';
 
 export const LineProgressDouble = ({value, load, color, endColor}) => {
     const BorderLinearProgress = styled(LinearProgress)(({linecolor}) => ({

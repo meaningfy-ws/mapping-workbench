@@ -17,7 +17,6 @@ const XpathValidationReport = ({validationReport, handleSelectFile, mappingSuite
         {label: 'Covered', value: true, color: 'info', count: validationReport.filter(e => e.is_covered).length},
         {label: 'Uncovered', value: false, color: 'warning', count: validationReport.filter(e => !e.is_covered).length}]
 
-    const [dataState, setDataState] = useState({load: false, error: false})
 
     const itemsSearch = useItemsSearch(validationReport, sectionApi, [], {is_covered: ''})
 
@@ -33,32 +32,29 @@ const XpathValidationReport = ({validationReport, handleSelectFile, mappingSuite
             </Grid>
             <Grid xs={12}>
                 <Paper>
-                    <TableLoadWrapper data={validationReport}
-                                      dataState={dataState}>
-                        <Stack direction='row'
-                               alignItems='center'
-                               justifyContent='space-between'
-                               sx={{mx: 3}}>
-                            <Typography fontWeight='bold'>Assertions</Typography>
-                            <CoverageFilter values={FILTER_VALUES}
-                                            onValueChange={handleCoverageFilterChange}
-                                            value={itemsSearch.state.filters.is_covered}/>
-                        </Stack>
-                        <ListTable
-                            items={itemsSearch.pagedItems}
-                            count={itemsSearch.count}
-                            onPageChange={itemsSearch.handlePageChange}
-                            onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                            page={itemsSearch.state.page}
-                            rowsPerPage={itemsSearch.state.rowsPerPage}
-                            onSort={itemsSearch.handleSort}
-                            sort={itemsSearch.state.sort}
-                            onFilter={itemsSearch.handleFiltersChange}
-                            filters={itemsSearch.state.filters}
-                            handleSelectFile={handleSelectFile}
-                            sectionApi={sectionApi}
-                        />
-                    </TableLoadWrapper>
+                    <Stack direction='row'
+                           alignItems='center'
+                           justifyContent='space-between'
+                           sx={{mx: 3}}>
+                        <Typography fontWeight='bold'>Assertions</Typography>
+                        <CoverageFilter values={FILTER_VALUES}
+                                        onValueChange={handleCoverageFilterChange}
+                                        value={itemsSearch.state.filters.is_covered}/>
+                    </Stack>
+                    <ListTable
+                        items={itemsSearch.pagedItems}
+                        count={itemsSearch.count}
+                        onPageChange={itemsSearch.handlePageChange}
+                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                        page={itemsSearch.state.page}
+                        rowsPerPage={itemsSearch.state.rowsPerPage}
+                        onSort={itemsSearch.handleSort}
+                        sort={itemsSearch.state.sort}
+                        onFilter={itemsSearch.handleFiltersChange}
+                        filters={itemsSearch.state.filters}
+                        handleSelectFile={handleSelectFile}
+                        sectionApi={sectionApi}
+                    />
                 </Paper>
             </Grid>
         </>

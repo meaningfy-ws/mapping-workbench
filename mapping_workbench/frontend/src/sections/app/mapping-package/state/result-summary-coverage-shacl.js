@@ -7,21 +7,13 @@ import {useTheme} from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
 import {StatePieChart} from './state-pie-chart';
-import getValidationColor from './validation-color';
+import {getValidationColor, getValidationReportShacl} from './utils';
 
 const ResultSummaryCoverageShacl = ({validationReport, handleChangeTab}) => {
     const theme = useTheme()
     if (!validationReport) return null
 
-    const {itemsTotal, ...itemsReduce} =
-        validationReport.map(item => item.result).reduce((acc, report) => {
-            Object.keys(report).forEach(reportKey => {
-                    acc[reportKey] = (acc[reportKey] ?? 0) + report[reportKey].count
-                    acc["itemsTotal"] = (acc["itemsTotal"] ?? 0) + report[reportKey].count
-                }
-            )
-            return acc
-        }, {info: 0, valid: 0, violation: 0, warning: 0})
+    const {itemsTotal, ...itemsReduce} = getValidationReportShacl(validationReport)
 
     const itemsDisplay = Object.entries(itemsReduce)?.map(item => {
         const [itemName, itemCount] = item
