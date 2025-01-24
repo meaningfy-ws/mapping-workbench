@@ -13,6 +13,7 @@ import TableHead from '@mui/material/TableHead';
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
+import SorterHeader from 'src/sections/components/table-sorter-header';
 
 import {ResultChip} from "./utils";
 import {Scrollbar} from 'src/components/scrollbar';
@@ -38,6 +39,7 @@ export const ListTable = (props) => {
         onSort,
         filters,
         onFilter,
+        resultFilter,
         sectionApi,
         handleSelectFile
     } = props;
@@ -136,7 +138,13 @@ export const ListTable = (props) => {
                                                        title="Result Path"/>
                                 </TableCell>
                                 <TableCell align='center'>
-                                    Result
+                                    {!!resultFilter ?
+                                        <SorterHeader fieldName={resultFilter}
+                                                      title='Result'
+                                                      sort={sort}
+                                                      onSort={onSort}/>
+                                        : 'Result'
+                                    }
                                 </TableCell>
                             </TableRow>
                         </TableHead>

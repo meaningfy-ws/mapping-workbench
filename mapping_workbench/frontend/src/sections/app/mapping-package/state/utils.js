@@ -156,6 +156,7 @@ export const ResultFilter = ({currentState, onStateChange, values, count}) => {
                              currentState={currentState}/>
                 {values.map(value =>
                     <FilterValue key={value.value}
+                                 value={value.value}
                                  label={value.label ?? value.value}
                                  currentState={currentState}/>)}
             </Stack>

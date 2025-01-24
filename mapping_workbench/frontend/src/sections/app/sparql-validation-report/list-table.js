@@ -19,6 +19,7 @@ import Typography from '@mui/material/Typography';
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
+import SorterHeader from '../../components/table-sorter-header';
 
 import {ResultChip} from "./utils";
 import {useDialog} from "src/hooks/use-dialog";
@@ -72,6 +73,7 @@ export const ListTable = (props) => {
         onSort,
         filters,
         onFilter,
+        resultFilter,
         sectionApi,
         handleSelectFile
     } = props;
@@ -99,6 +101,8 @@ export const ListTable = (props) => {
     const xpathConditionDialog = useDialog()
 
     const openXPathConditionDialog = (data) => xpathConditionDialog.handleOpen(data)
+
+    console.log(resultFilter,!!resultFilter)
 
     return (
         <>
@@ -142,7 +146,13 @@ export const ListTable = (props) => {
                                                        title="Query"/>
                                 </TableCell>
                                 <TableCell>
-                                    Result
+                                    {!!resultFilter ?
+                                        <SorterHeader fieldName={resultFilter}
+                                                      title='Result'
+                                                      sort={sort}
+                                                      onSort={onSort}/>
+                                        : 'Result'
+                                    }
                                 </TableCell>
                             </TableRow>
                         </TableHead>

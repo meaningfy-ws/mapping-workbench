@@ -26,9 +26,7 @@ const SparqlTestDatasetReport = ({sid, suiteId, handleSelectFile, handleExport})
 
     const handleResultFilterChange = e => setResultFilter(e.target.value)
 
-    const filteredItems = validationReport.filter((item) => {
-        return !resultFilter || item.result[resultFilter]?.count > 0
-    })
+    const filteredItems = validationReport.filter((item) => !resultFilter || item[resultFilter] > 0)
 
     const handleValidationReportsGet = (sid, suiteId) => {
         setDataState({load: true, error: false})

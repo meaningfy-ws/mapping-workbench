@@ -16,7 +16,7 @@ const FILTER_VALUES = ['info', 'valid', 'violation', 'warning'].map(value => ({v
 const ShaclPackageStateReport = ({handleSelectFile, mappingSuiteIdentifier, validationReport, handleExport}) => {
     const [resultFilter, setResultFilter] = useState('')
 
-    const filteredItems = validationReport.filter((item) => !resultFilter || item.result[resultFilter]?.count > 0)
+    const filteredItems = validationReport.filter((item) => !resultFilter || item[resultFilter] > 0)
 
     const handleResultFilterChange = e => setResultFilter(e.target.value)
 

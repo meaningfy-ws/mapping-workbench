@@ -17,7 +17,9 @@ const FILTER_VALUES = ["valid", "unverifiable", "warning", "invalid", "error", "
 const SparqlValidationReport = ({handleSelectFile, validationReport, handleExport}) => {
     const [resultFilter, setResultFilter] = useState('')
 
-    const filteredItems = validationReport.filter((item) => !resultFilter || item.result[resultFilter]?.count > 0)
+    console.log(resultFilter)
+
+    const filteredItems = validationReport.filter((item) => !resultFilter || item[resultFilter] > 0)
 
     const itemsSearch = useItemsSearch(filteredItems, sectionApi, [], {result: ''});
     const handleResultFilterChange = e => setResultFilter(e.target.value)
@@ -52,6 +54,7 @@ const SparqlValidationReport = ({handleSelectFile, validationReport, handleExpor
                         sort={itemsSearch.state.sort}
                         onFilter={itemsSearch.handleFiltersChange}
                         filters={itemsSearch.state.filters}
+                        resultFilter={resultFilter}
                         sectionApi={sectionApi}
                         handleSelectFile={handleSelectFile}
                     />

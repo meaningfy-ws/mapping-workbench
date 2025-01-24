@@ -23,9 +23,7 @@ const ShaclTestDatasetReport = ({sid, suiteId, handleSelectFile, handleExport}) 
         handleValidationReportsGet(sid, suiteId)
     }, [suiteId])
 
-    const filteredItems = validationReport.filter((item) => {
-        return !resultFilter || item.result[resultFilter]?.count > 0
-    })
+    const filteredItems = validationReport.filter((item) => !resultFilter || item[resultFilter] > 0)
 
     const handleResultFilterChange = e => setResultFilter(e.target.value)
 
@@ -43,6 +41,7 @@ const ShaclTestDatasetReport = ({sid, suiteId, handleSelectFile, handleExport}) 
     }
 
     const itemsSearch = useItemsSearch(filteredItems, sectionApi);
+
 
     return (
         <>
@@ -76,6 +75,7 @@ const ShaclTestDatasetReport = ({sid, suiteId, handleSelectFile, handleExport}) 
                             sort={itemsSearch.state.sort}
                             onFilter={itemsSearch.handleFiltersChange}
                             filters={itemsSearch.state.filters}
+                            resultFilter={resultFilter}
                             sectionApi={sectionApi}
                             handleSelectFile={handleSelectFile}
                         />
