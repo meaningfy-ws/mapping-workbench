@@ -1,26 +1,23 @@
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 import {useState} from "react";
 
+import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
 
 import {ListTable} from "./list-table";
-import {ResultFilter} from "./utils";
+import {ResultFilter} from '../mapping-package/state/utils';
 import useItemsSearch from "src/hooks/use-items-search";
 import {ResultSummaryCoverage} from './result-summary-coverage';
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
-const FILTER_VALUES = [{value: "validCount:", label: "valid"}, {value: "unverifiableCount", label: "unverifiable"},
-    {value: "warningCount", label: "warning"}, {value: "invalidCount", label: "invalid"},
-    {value: "errorCount", label: "error"}, {value: "unknownCount", label: "unknown"}]
+const FILTER_VALUES = ["valid", "unverifiable", "warning", "invalid", "error", "unknown"]
+    .map(value => ({value: value + 'Count', label: value}))
 
 const SparqlValidationReport = ({handleSelectFile, validationReport, handleExport}) => {
     const [resultFilter, setResultFilter] = useState('')
 
-    const filteredItems = validationReport.filter((item) => {
-        return !resultFilter || item.result[resultFilter]?.count > 0
-    })
+    const filteredItems = validationReport.filter((item) => !resultFilter || item.result[resultFilter]?.count > 0)
 
     const itemsSearch = useItemsSearch(filteredItems, sectionApi, [], {result: ''});
     const handleResultFilterChange = e => setResultFilter(e.target.value)
@@ -40,6 +37,7 @@ const SparqlValidationReport = ({handleSelectFile, validationReport, handleExpor
                            sx={{mx: 3}}>
                         <Typography fontWeight='bold'>Assertions</Typography>
                         <ResultFilter values={FILTER_VALUES}
+                                      count={validationReport.length}
                                       onStateChange={handleResultFilterChange}
                                       currentState={resultFilter}/>
                     </Stack>

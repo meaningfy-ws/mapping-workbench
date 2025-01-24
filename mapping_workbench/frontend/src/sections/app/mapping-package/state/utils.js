@@ -1,3 +1,14 @@
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+import {Box} from '@mui/system';
+import {useState} from 'react';
+import {capitalize, ResultChip} from '../../sparql-validation-report/utils';
+import {ValueChip} from '../../xpath-validation-report/utils';
+
 export const getValidationColor = (color) => {
     switch (color) {
         case 'valid':
@@ -14,6 +25,22 @@ export const getValidationColor = (color) => {
             return '#F9C74F'
         default:
             return '#577590'
+    }
+}
+
+export const getResultColor = (result) => {
+    switch (result.toLowerCase()) {
+        case "error":
+        case "invalid":
+        case "violation":
+            return "error"
+        case "warning":
+            return "warning"
+        case "unverifiable":
+        case "valid":
+            return "success"
+        default:
+            return "info"
     }
 }
 
@@ -85,3 +112,85 @@ export const mapSparqlResults = (result) => result.map(e => {
     resultArray["xpath_condition"] = e.query?.cm_rule?.xpath_condition
     return resultArray;
 })
+
+
+export const ResultFilter = ({currentState, onStateChange, values, count}) => {
+
+    const FilterValue = ({label, value, currentState, count}) => {
+        return (
+            <FormControlLabel
+                control={<Radio/>}
+                checked={currentState === (value ?? label.toLowerCase())}
+                label={(
+                    <Box sx={{ml: 0, mr: 1}}>
+                        <Typography
+                            variant="subtitle2"
+                        >
+                            <Stack direction='row'
+                                   gap={1}>
+                                <ResultChip color={getValidationColor(label)}
+                                            fontColor='#fff'
+                                            clickable
+                                            label={capitalize(label)}/>
+                                {!!count && <ValueChip color={'primary'}>{count}</ValueChip>}
+                            </Stack>
+                        </Typography>
+
+                    </Box>
+                )}
+                value={value ?? label.toLowerCase()}
+            />)
+    }
+
+    return (
+        <FormControl sx={{p: 2}}>
+            <Stack
+                direction='row'
+                component={RadioGroup}
+                name="terms_validity"
+                onChange={onStateChange}
+            >
+                <FilterValue label="all"
+                             value=""
+                             count={count}
+                             currentState={currentState}/>
+                {values.map(value =>
+                    <FilterValue key={value.value}
+                                 label={value.label ?? value.value}
+                                 currentState={currentState}/>)}
+            </Stack>
+        </FormControl>
+    )
+}
+
+export const useFileNavigation = (reportTree) => {
+    const [selectedPackageState, setSelectedPackageState] = useState()
+    const [selectedTestDataset, setSelectedTestDataset] = useState()
+
+    const handleSetPackageState = (file) => {
+        setSelectedPackageState(file)
+        setSelectedTestDataset(undefined)
+    }
+
+    const handleSetTestDataset = (file) => {
+        setSelectedTestDataset(file)
+    }
+
+    const handleSetTestAndPackage = (testDataSuite, testData) => {
+        const packageState = reportTree.test_data_suites.find(tds => tds.oid === testDataSuite)
+        setSelectedPackageState(packageState)
+        if (testData) {
+            setSelectedTestDataset(packageState?.test_data_states.find(ps => ps.oid === testData));
+        } else {
+            setSelectedTestDataset(undefined)
+        }
+    }
+
+    return {
+        selectedPackageState,
+        selectedTestDataset,
+        handleSetPackageState,
+        handleSetTestDataset,
+        handleSetTestAndPackage
+    }
+}

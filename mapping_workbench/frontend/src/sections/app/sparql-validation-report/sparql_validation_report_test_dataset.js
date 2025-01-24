@@ -6,10 +6,10 @@ import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 
 import {ListTable} from "./list-table";
-import {ResultFilter, TableLoadWrapper} from "./utils";
+import {TableLoadWrapper} from "./utils";
 import useItemsSearch from "src/hooks/use-items-search";
-import {mapSparqlResults} from '../mapping-package/state/utils';
 import {ResultSummaryCoverage} from './result-summary-coverage';
+import {mapSparqlResults, ResultFilter} from '../mapping-package/state/utils';
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
 const FILTER_VALUES = ["valid", "unverifiable", "warning", "invalid", "error", "unknown"]
@@ -63,6 +63,7 @@ const SparqlTestDatasetReport = ({sid, suiteId, handleSelectFile, handleExport})
                                sx={{mx: 3}}>
                             <Typography fontWeight='bold'>Assertions</Typography>
                             <ResultFilter values={FILTER_VALUES}
+                                          count={validationReport.length}
                                           onStateChange={handleResultFilterChange}
                                           currentState={resultFilter}/>
                         </Stack>

@@ -19,12 +19,12 @@ import Typography from '@mui/material/Typography';
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import {ValueChip} from '../xpath-validation-report/utils';
-import {getValidationColor} from '../mapping-package/state/utils';
 
 import {ResultChip} from "./utils";
 import {useDialog} from "src/hooks/use-dialog";
 import {Scrollbar} from 'src/components/scrollbar';
+import {ValueChip} from '../xpath-validation-report/utils';
+import {getValidationColor} from '../mapping-package/state/utils';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import TablePagination from "src/sections/components/table-pagination-pages";
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";

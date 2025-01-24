@@ -8,61 +8,25 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from "@mui/material/FormControlLabel";
 import {getValidationColor} from '../mapping-package/state/utils';
+import {ValueChip} from '../xpath-validation-report/utils';
 
 export const capitalize = (value) => `${value[0].toUpperCase()}${value.slice(1)}`
 
 export const ResultChip = ({label, color, fontColor, onClick, clickable, children}) => {
     const hover = onClick ?? clickable ? {'&:hover': {filter: 'brightness(85%)'}, cursor: 'pointer'} : {}
     return (
-        <Box sx={{textAlign:'center',px: 1, py: .5, borderRadius: 12, backgroundColor: color, color: fontColor, ...hover}}
+        <Box sx={{
+            textAlign: 'center',
+            px: 1,
+            py: .5,
+            borderRadius: 12,
+            backgroundColor: color,
+            color: fontColor, ...hover
+        }}
              onClick={onClick}
         >
             {label ?? children}
         </Box>
-    )
-}
-
-export const ResultFilter = ({currentState, onStateChange, values}) => {
-
-    const FilterValue = ({label, value, currentState}) => {
-        return (
-            <FormControlLabel
-                control={<Radio/>}
-                checked={currentState === (value ?? label.toLowerCase())}
-                label={(
-                    <Box sx={{ml: 0, mr: 1}}>
-                            <Typography
-                                variant="subtitle2"
-                            >
-                                <ResultChip color={getValidationColor(label)}
-                                            fontColor='#fff'
-                                            clickable
-                                            label={capitalize(label)}/>
-                            </Typography>
-
-                    </Box>
-                )}
-                value={value ?? label.toLowerCase()}
-            />)
-    }
-
-    return (
-        <FormControl sx={{p: 2}}>
-            <Stack
-                direction='row'
-                component={RadioGroup}
-                name="terms_validity"
-                onChange={onStateChange}
-            >
-                <FilterValue label="all"
-                             value=""
-                             currentState={currentState}/>
-                {values.map(value =>
-                    <FilterValue key={value.value}
-                                 label={value.label ?? value.value}
-                                 currentState={currentState}/>)}
-            </Stack>
-        </FormControl>
     )
 }
 

@@ -33,11 +33,10 @@ const ShaclFileReport = ({sid, suiteId, testId}) => {
             })
     }
 
-    const mapShaclFileStates = (states) => {
-        return states?.results.map(e => ({
-            conforms: e.conforms, error: e.error, title: states.shacl_suite.shacl_suite_id
-        }))
-    }
+    const mapShaclFileStates = (states) => states?.results.map(e => ({
+        conforms: e.conforms, error: e.error, title: states.shacl_suite.shacl_suite_id
+    }))
+
 
     const mapShaclFileResults = (result) => result?.map(e => ({...e.binding}))
 

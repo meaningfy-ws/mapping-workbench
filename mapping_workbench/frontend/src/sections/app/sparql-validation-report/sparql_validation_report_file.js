@@ -4,15 +4,15 @@ import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
-import {mapSparqlResults} from '../mapping-package/state/utils';
-
 import {ListTableFile} from "./list-table-file";
-import {ResultFilter, TableLoadWrapper} from "./utils";
+
+import {TableLoadWrapper} from "./utils";
 import useItemsSearch from "src/hooks/use-items-search";
 import {ResultSummaryQuery} from './result-summary-coverage';
+import {mapSparqlResults, ResultFilter} from '../mapping-package/state/utils';
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
-const FILTER_VALUES = ["valid", "unverifiable", "warning", "invalid", "error", "unknown"].map(e => ({value: e}))
+const FILTER_VALUES = ["valid", "unverifiable", "warning", "invalid", "error", "unknown"].map(value => ({value}))
 
 const SparqlFileReport = ({sid, suiteId, testId, handleExport}) => {
     const [validationReport, setValidationReport] = useState([])
@@ -55,6 +55,7 @@ const SparqlFileReport = ({sid, suiteId, testId, handleExport}) => {
                                sx={{mx: 3}}>
                             <Typography fontWeight='bold'>Assertions</Typography>
                             <ResultFilter values={FILTER_VALUES}
+                                          count={validationReport.length}
                                           onStateChange={handleResultFilterChange}
                                           currentState={itemsSearch.state.filters.result}/>
                         </Stack>

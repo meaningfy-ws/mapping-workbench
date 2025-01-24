@@ -1,7 +1,8 @@
-import {capitalize} from '@mui/material';
+import PropTypes from "prop-types";
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 
 import {Box} from "@mui/system";
+import {capitalize} from '@mui/material';
 import Table from '@mui/material/Table';
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
@@ -12,16 +13,14 @@ import TableHead from '@mui/material/TableHead';
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import Typography from '@mui/material/Typography';
-import {getValidationColor} from '../mapping-package/state/utils';
 
 import {ResultChip} from "./utils";
 import {Scrollbar} from 'src/components/scrollbar';
-import TablePagination from "src/sections/components/table-pagination-pages";
+import {getValidationColor} from '../mapping-package/state/utils';
+import {useHighlighterTheme} from "src/hooks/use-highlighter-theme"
 import TableSorterHeader from "src/sections/components/table-sorter-header";
-
-import PropTypes from "prop-types";
-import {useHighlighterTheme} from "../../../hooks/use-highlighter-theme";
-import {TableFilterHeader} from "../../../layouts/app/table-filter-header/table-filter-header";
+import TablePagination from "src/sections/components/table-pagination-pages";
+import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
 
 const Condition = ({text, value}) => {
     const color = value ? 'green' : 'red'
@@ -113,38 +112,40 @@ export const ListTableFile = (props) => {
                                     </TableCell>
                                     <TableCell>
                                         {item?.xpath_condition?.xpath_condition &&
-                                            <><Stack
-                                                direction="column"
-                                                spacing={1}
-                                            >
+                                            <>
                                                 <Stack
-                                                    direction="row"
-                                                    justifyContent="left"
-                                                    alignItems="center"
-                                                    spacing={2}
+                                                    direction="column"
+                                                    spacing={1}
                                                 >
-                                                    <SyntaxHighlighter
-                                                        language="xquery"
-                                                        wrapLines
-                                                        customStyle={{
-                                                            borderRadius: 12,
-                                                            border: '1px solid #E4E7EC'
-                                                        }}
-                                                        style={syntaxHighlighterTheme}
-                                                        lineProps={{
-                                                            style: {
-                                                                wordBreak: 'break-all',
-                                                                whiteSpace: 'pre-wrap'
-                                                            }
-                                                        }}>
-                                                        {item?.xpath_condition?.xpath_condition || '-'}
-                                                    </SyntaxHighlighter>
-                                                    {item?.meets_xpath_condition ?
-                                                        <CheckIcon color="success"/> :
-                                                        <CloseIcon color="error"/>}
+                                                    <Stack
+                                                        direction="row"
+                                                        justifyContent="left"
+                                                        alignItems="center"
+                                                        spacing={2}
+                                                    >
+                                                        <SyntaxHighlighter
+                                                            language="xquery"
+                                                            wrapLines
+                                                            customStyle={{
+                                                                borderRadius: 12,
+                                                                border: '1px solid #E4E7EC'
+                                                            }}
+                                                            style={syntaxHighlighterTheme}
+                                                            lineProps={{
+                                                                style: {
+                                                                    wordBreak: 'break-all',
+                                                                    whiteSpace: 'pre-wrap'
+                                                                }
+                                                            }}>
+                                                            {item?.xpath_condition?.xpath_condition || '-'}
+                                                        </SyntaxHighlighter>
+                                                        {item?.meets_xpath_condition ?
+                                                            <CheckIcon color="success"/> :
+                                                            <CloseIcon color="error"/>}
+                                                    </Stack>
                                                 </Stack>
-                                            </Stack>
-                                                <Divider sx={{my: 1}}/></>
+                                                <Divider sx={{my: 1}}/>
+                                            </>
                                         }
                                         <Box sx={{overflowX: 'auto', width: '400px'}}>
                                             <Typography variant="subtitle3">
