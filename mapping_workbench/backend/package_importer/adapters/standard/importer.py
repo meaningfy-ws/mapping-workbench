@@ -78,8 +78,6 @@ class StandardPackageImporter(PackageImporterABC):
                 )
 
             rule.project = self.project_link
-            if source_structural_element:
-                rule.source_structural_element = source_structural_element
 
             if not rule.refers_to_mapping_package_ids:
                 rule.refers_to_mapping_package_ids = []

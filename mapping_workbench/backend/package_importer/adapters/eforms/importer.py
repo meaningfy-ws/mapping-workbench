@@ -78,6 +78,9 @@ class EFormsPackageImporter(PackageImporterABC):
             )
 
             if not source_structural_element:
+                m = f"{mono_rule.eforms_sdk_id}"
+                mwb_logger.log_all_warning(m)
+                self.warnings.append(TaskResultWarning(message=m, type="Not Found SDK Elements"))
                 continue
 
             if source_structural_element.bt_id != mono_rule.bt_id:
@@ -108,19 +111,12 @@ class EFormsPackageImporter(PackageImporterABC):
                 ConceptualMappingRule.target_class_path == mono_rule.class_path,
                 ConceptualMappingRule.target_property_path == mono_rule.property_path
             )
-            if rule:
-                mwb_logger.log_all_info(
-                    f"CM Rule with Ontology Fragment: {rule.target_class_path} | {rule.target_property_path} already exist")
-                continue
+            if not rule:
+                rule = ConceptualMappingRule(
+                    source_structural_element=StructuralElement.link_from_id(source_structural_element.id)
+                )
 
-            rule = ConceptualMappingRule(
-                source_structural_element=StructuralElement.link_from_id(source_structural_element.id)
-            )
-
-            # rule: ConceptualMappingRule = ConceptualMappingRule()
             rule.project = self.project_link
-            if source_structural_element:
-                rule.source_structural_element = source_structural_element
 
             if not rule.refers_to_mapping_package_ids:
                 rule.refers_to_mapping_package_ids = []
@@ -155,8 +151,7 @@ class EFormsPackageImporter(PackageImporterABC):
             if mono_rule.feedback_notes:
                 rule.feedback_notes = [ConceptualMappingRuleComment(comment=mono_rule.feedback_notes)]
 
-            # await rule.on_update(self.user).save() if rule.id else \
-            await rule.on_create(self.user).create()
+            await rule.on_update(self.user).save() if rule.id else await rule.on_create(self.user).create()
 
             sort_order += 1
 

@@ -89,7 +89,7 @@ const Page = () => {
             </div>
             <form onSubmit={formik.handleSubmit}>
                 <Card>
-                    <CardHeader title="Import eForms XSD"/>
+                    <CardHeader title="Import eForms SDK"/>
                     <CardContent sx={{pt: 0}}>
                         <Grid container
                               spacing={3}>

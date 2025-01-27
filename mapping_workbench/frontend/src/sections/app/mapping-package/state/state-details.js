@@ -40,7 +40,7 @@ const StateDetails = ({item, sid, handleChangeTab, validationReport}) => {
                                          value={item.title}/>
                             <StateDetail title={'Mapping / EPO Version'}
                                          value={`${item.mapping_version} / ${item.epo_version}`}/>
-                            <StateDetail title={'eForms XSD'}
+                            <StateDetail title={'eForms SDK'}
                                          value={item.eforms_sdk_versions?.join(', ')}/>
                             <StateDetail title={'eForms Subtype'}
                                          value={item.eform_subtypes?.join(', ')}/>

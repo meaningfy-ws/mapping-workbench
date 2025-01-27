@@ -125,7 +125,7 @@ const Page = () => {
                             startIcon={<UploadIcon/>}
                             variant="contained"
                         >
-                            Import eForms XSD
+                            Import eForms SDK
                         </Button>
                     </Stack>
                 </Stack>
