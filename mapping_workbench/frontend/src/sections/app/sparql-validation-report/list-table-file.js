@@ -183,7 +183,7 @@ export const ListTableFile = (props) => {
                                                        value={item.fields_covered}/>
                                             <Divider sx={{my: 1}}/>
                                             <Condition text='XPath condition fulfilled:'
-                                                       value={item.fields_covered}/>
+                                                       value={item?.meets_xpath_condition}/>
                                             <Divider sx={{my: 1}}/>
                                             <Condition text='Query result:'
                                                        value={item.query_result}/>

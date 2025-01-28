@@ -102,8 +102,6 @@ export const ListTable = (props) => {
 
     const openXPathConditionDialog = (data) => xpathConditionDialog.handleOpen(data)
 
-    console.log(resultFilter,!!resultFilter)
-
     return (
         <>
             <TablePagination

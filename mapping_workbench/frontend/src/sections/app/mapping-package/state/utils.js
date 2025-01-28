@@ -109,6 +109,8 @@ export const mapSparqlResults = (result) => result.map(e => {
         resultArray[`${key}Count`] = value.count
     })
     resultArray["meets_xpath_condition"] = e.meets_xpath_condition
+    resultArray["fields_covered"] = e?.fields_covered
+    resultArray["query_result"] = e?.query_result
     resultArray["xpath_condition"] = e.query?.cm_rule?.xpath_condition
     return resultArray;
 })

@@ -213,8 +213,8 @@ export const FileResourceEditForm = (props) => {
                               md={12}>
                             <Stack direction='row'
                                    gap={2}>
-                                {!!extra_form_fields?.compare_items.length && <Button
-                                    onClick={() => setShowCompare(e => !e)}>{showCompare ? 'Hide compare' : 'Show compare'}</Button>}
+                                {!!extra_form_fields?.compare_items?.length && <Button
+                                    onClick={() => setShowCompare(e => !e)}>{showCompare ? 'Hide Compare' : 'Show Compare'}</Button>}
 
                                 {showCompare && <TextField
                                     label="Process Date"
@@ -223,6 +223,7 @@ export const FileResourceEditForm = (props) => {
                                     onChange={handleCompareChange}
                                     select
                                     value={formik.values.compare_item}
+                                    sx={{minWidth: 200}}
                                 >
                                     {extra_form_fields?.compare_items.map((compare_item) => (
                                         <MenuItem

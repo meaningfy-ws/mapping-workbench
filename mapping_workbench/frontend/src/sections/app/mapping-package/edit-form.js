@@ -175,7 +175,7 @@ export const EditForm = (props) => {
                                   md={12}>
                                 <FormTextField formik={formik}
                                                name="eforms_sdk_versions"
-                                               label="eForms XSD version"/>
+                                               label="eForms SDK version"/>
                             </Grid>
                         </Grid>
                     </CardContent>

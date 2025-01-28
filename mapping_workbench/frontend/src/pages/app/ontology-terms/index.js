@@ -50,8 +50,6 @@ const Page = () => {
 
     usePageView();
 
-    console.log(itemsSearch)
-
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE}`}/>

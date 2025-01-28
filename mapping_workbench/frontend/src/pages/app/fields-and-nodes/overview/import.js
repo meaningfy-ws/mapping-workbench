@@ -97,7 +97,7 @@ const Page = () => {
                                   md={12}>
                                 <FormTextField formik={formik}
                                                name="branch_or_tag_name"
-                                               label="Version(s)"
+                                               label="SDK Version(s)"
                                                helperText="separated by comma (,)"
                                                required/>
                             </Grid>

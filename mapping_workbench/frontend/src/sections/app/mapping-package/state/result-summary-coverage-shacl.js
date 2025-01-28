@@ -32,7 +32,7 @@ const ResultSummaryCoverageShacl = ({validationReport, handleChangeTab}) => {
             <Stack>
                 <Typography variant='secondary'>Result summary</Typography>
                 <Typography fontSize='18'
-                            fontWeight='bold'>Coverage (SHALC)</Typography>
+                            fontWeight='bold'>Coverage (SHACL)</Typography>
             </Stack>
             <Button endIcon={<OpenInNewIcon/>}
                     onClick={() => handleChangeTab('shacl')}>
