@@ -36,6 +36,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_SCANNER_OPTS: -Dsonar.working.directory=/tmp/sonar -X
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
