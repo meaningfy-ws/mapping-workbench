@@ -402,7 +402,7 @@ export const EditForm = (props) => {
                                                                onChange={formik.handleChange}
                                                                name="import_eform.checked"/>
                                             }
-                                            label={<Typography variant='h6'>Import eForms SDK</Typography>}
+                                            label={<Typography variant='h6'>Import eForms XSD</Typography>}
                                         />
                                     </FormGroup>
                                     {formik.values.import_eform.checked &&
@@ -411,7 +411,7 @@ export const EditForm = (props) => {
                                                   md={12}>
                                                 <FormTextField formik={formik}
                                                                name="import_eform.branch_or_tag_name"
-                                                               label="Version(s)"
+                                                               label="SDK Version(s)"
                                                                disabled={!formik.values.import_eform.checked}
                                                                helperText="separated by comma (,)"
                                                                required/>
