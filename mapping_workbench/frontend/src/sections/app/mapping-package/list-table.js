@@ -31,7 +31,7 @@ import {ChevronButton} from 'src/sections/components/chevron-button';
 import {MenuActionButton, MenuActions} from 'src/components/menu-actions';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import TableSorterHeader from 'src/sections/components/table-sorter-header';
-import TablePagination from "src/sections/components/table-pagination-pages";
+import TablePagination from "src/sections/components/table-pagination";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {MappingPackageProcessForm} from './components/mapping-package-process-form';
 import {MappingPackagesBulkActions} from './components/mapping-packages-bulk-actions';

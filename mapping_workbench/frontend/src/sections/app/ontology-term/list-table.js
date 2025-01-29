@@ -12,12 +12,9 @@ import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 
 import {Scrollbar} from 'src/components/scrollbar';
-import {ListItemActions} from 'src/components/app/list/list-item-actions';
-import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
-import {MenuActions} from '../../../components/menu-actions';
-import {ChevronButton} from '../../components/chevron-button';
-import TablePagination from "../../components/table-pagination-pages";
-import TableSorterHeader from "../../components/table-sorter-header";
+import {ChevronButton} from 'src/sections/components/chevron-button';
+import TablePagination from "src/sections/components/table-pagination";
+import TableSorterHeader from "src/sections/components/table-sorter-header";
 
 
 export const ListTable = (props) => {

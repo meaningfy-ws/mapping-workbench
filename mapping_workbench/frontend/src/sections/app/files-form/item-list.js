@@ -6,11 +6,11 @@ import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 
+import {ItemListRow} from './item-list-row';
+import {ItemListCard} from './item-list-card';
 import {Scrollbar} from 'src/components/scrollbar';
 import {TableNoData} from '../shacl-validation-report/utils';
-import {ItemListCard} from './item-list-card';
-import {ItemListRow} from './item-list-row';
-import TablePagination from "../../components/table-pagination-pages";
+import TablePagination from "src/sections/components/table-pagination";
 
 export const ItemList = (props) => {
         const {

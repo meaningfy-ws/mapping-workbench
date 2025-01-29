@@ -9,7 +9,7 @@ import TableRow from '@mui/material/TableRow';
 
 import {Scrollbar} from 'src/components/scrollbar';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
-import TablePagination from 'src/sections/components/table-pagination-pages';
+import TablePagination from 'src/sections/components/table-pagination';
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
 
 const LocalHighlighter = ({text, language, theme}) => {

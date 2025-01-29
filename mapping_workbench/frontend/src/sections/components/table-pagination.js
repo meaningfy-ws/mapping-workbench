@@ -1,10 +1,10 @@
 import MuiTablePagination from '@mui/material/TablePagination'
 
 const TablePagination = (props) => {
-    const {children, ...otherProps} = props
+    const {children, showTop,...otherProps} = props
     return (
         <>
-            <MuiTablePagination {...otherProps}/>
+            {showTop && <MuiTablePagination {...otherProps}/>}
                 {children}
             <MuiTablePagination {...otherProps}/>
         </>
