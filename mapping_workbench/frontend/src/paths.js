@@ -230,6 +230,9 @@ export const paths = {
         },
         authorization: {
             index: '/app/authorization'
+        },
+        demoConfig: {
+            index: '/app/demo-config'
         }
     },
     docs: 'https://material-kit-pro-react-docs.devias.io',
@@ -253,6 +256,7 @@ export const apiPaths = {
         item: '/test_data_suites/:id',
         file_resources: '/test_data_suites/:id/file_resources',
         file_resource: '/test_data_suites/file_resources/:id',
+        file_history: '/test_data_suites/file_resources/:id/transform/history',
         assign_mapping_packages: '/test_data_suites/assign_mapping_packages',
         tasks: {
             transform_test_data: '/test_data_suites/tasks/transform_test_data',
@@ -425,7 +429,9 @@ export const apiPaths = {
         generate_cm_assertions_queries: '/tasks/generate_cm_assertions_queries',
         transform_test_data: '/tasks/transform_test_data'
     },
-
+    demoConfig: {
+      reset: "/demo/reset"
+    },
     app: {
         settings: '/app/settings'
     }

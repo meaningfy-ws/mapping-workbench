@@ -13,14 +13,16 @@ import TableHead from '@mui/material/TableHead';
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
+import SorterHeader from 'src/sections/components/table-sorter-header';
 
 import {ResultChip} from "./utils";
 import {Scrollbar} from 'src/components/scrollbar';
+import {ValueChip} from '../xpath-validation-report/utils';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
-import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
-import {TableFilterHeader} from "../../../layouts/app/table-filter-header/table-filter-header";
+import TablePagination from "src/sections/components/table-pagination";
+import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", text: ""})
@@ -37,11 +39,13 @@ export const ListTable = (props) => {
         onSort,
         filters,
         onFilter,
+        resultFilter,
         sectionApi,
         handleSelectFile
     } = props;
 
     const handleOpenDetails = ({title, notices}) => {
+        console.log('on open details')
         const description = notices.map((notice, i) =>
             <Box key={'notice' + i}>
                 <Button type='link'
@@ -67,20 +71,33 @@ export const ListTable = (props) => {
                                                        {...props}
     />
 
-    const ResultCell = ({title, result, onClick}) => {
-        return (
-            <Stack direction="column"
-                   alignItems="center"
-                   justifyContent="start"
-                   height={100}>
-                {result.count
-                    ? <Button variant="outlined"
-                              onClick={() => onClick({title, notices: result.test_datas})}>
-                        {result.count}
-                    </Button>
-                    : <Box sx={{mt: '10px'}}>{result.count}</Box>}
-            </Stack>
-        )
+
+    const ResultCell = ({item, onClick}) => {
+        const title = item.title
+        return <Stack direction="column"
+                      alignItems="center"
+                      justifyContent="center"
+                      gap={2}
+                      height={100}>
+            {Object.entries(item.result).map(([key, value]) => {
+                return value.count > 0
+                    ? <Stack direction='row'
+                             key={key}
+                             gap={1}>
+                        <ValueChip value={value.count}
+                                   color='primary'
+                                   sx={{p: 2}}/>
+                        <ResultChip color={key}
+                                    clickable
+                                    fontColor='#fff'
+                                    onClick={() => onClick({title, notices: value.test_datas})}
+                                    label={key}
+                        />
+                    </Stack>
+                    : null
+            })
+            }
+        </Stack>
     }
 
     return (
@@ -120,29 +137,14 @@ export const ListTable = (props) => {
                                                        fieldName="short_result_path"
                                                        title="Result Path"/>
                                 </TableCell>
-                                <TableCell align="center">
-                                    <SorterHeader fieldName="infoCount"
-                                                  title={<ResultChip label="Info"
-                                                                     clickable/>}
-                                                  desc/>
-                                </TableCell>
-                                <TableCell align="center">
-                                    <SorterHeader fieldName="validCount"
-                                                  title={<ResultChip label="Valid"
-                                                                     clickable/>}
-                                                  desc/>
-                                </TableCell>
-                                <TableCell align="center">
-                                    <SorterHeader fieldName="warningCount"
-                                                  title={<ResultChip label="Warning"
-                                                                     clickable/>}
-                                                  desc/>
-                                </TableCell>
-                                <TableCell align="center">
-                                    <SorterHeader fieldName="violationCount"
-                                                  title={<ResultChip label="Violation"
-                                                                     clickable/>}
-                                                  desc/>
+                                <TableCell align='center'>
+                                    {!!resultFilter ?
+                                        <SorterHeader fieldName={resultFilter}
+                                                      title='Result'
+                                                      sort={sort}
+                                                      onSort={onSort}/>
+                                        : 'Result'
+                                    }
                                 </TableCell>
                             </TableRow>
                         </TableHead>
@@ -161,6 +163,7 @@ export const ListTable = (props) => {
                                                 language="turtle"
                                                 wrapLines
                                                 style={syntaxHighlighterTheme}
+                                                customStyle={{borderRadius: 12, border: '1px solid #E4E7EC'}}
                                                 lineProps={{
                                                     style: {
                                                         overflowWrap: 'break-word',
@@ -171,28 +174,8 @@ export const ListTable = (props) => {
                                             </SyntaxHighlighter>
                                         </TableCell>
                                         <TableCell>
-                                            <ResultCell
-                                                title={item.shacl_suite}
-                                                result={item.result.info}
-                                                onClick={handleOpenDetails}/>
-                                        </TableCell>
-                                        <TableCell>
-                                            <ResultCell
-                                                title={item.shacl_suite}
-                                                result={item.result.valid}
-                                                onClick={handleOpenDetails}/>
-                                        </TableCell>
-                                        <TableCell>
-                                            <ResultCell
-                                                title={item.shacl_suite}
-                                                result={item.result.warning}
-                                                onClick={handleOpenDetails}/>
-                                        </TableCell>
-                                        <TableCell>
-                                            <ResultCell
-                                                title={item.shacl_suite}
-                                                result={item.result.violation}
-                                                onClick={handleOpenDetails}/>
+                                            <ResultCell item={item}
+                                                        onClick={handleOpenDetails}/>
                                         </TableCell>
                                     </TableRow>
 

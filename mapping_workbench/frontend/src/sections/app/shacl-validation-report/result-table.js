@@ -1,14 +1,14 @@
+import {useState} from "react";
 
 import Table from '@mui/material/Table';
+import TableRow from '@mui/material/TableRow';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Typography from '@mui/material/Typography';
 
+import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
 import {Scrollbar} from 'src/components/scrollbar';
-import {useState} from "react";
 import {SorterHeader as UtilsSortHeader, sortItems} from "./utils";
 
 export const ResultTable = (props) => {

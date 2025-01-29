@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import {useState} from 'react';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
 
@@ -18,12 +19,14 @@ import {useRouter} from 'src/hooks/use-router';
 import {RouterLink} from 'src/components/router-link';
 import {FormTextArea} from "src/components/app/form/text-area";
 import {FormTextField} from "src/components/app/form/text-field";
-import {FormCodeTextArea} from "src/components/app/form/code-text-area";
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
-import CodeMirrorDefault from "../../../components/app/form/codeMirrorDefault";
+import CodeMirrorDefault, {CodeMirrorCompare} from "src/components/app/form/codeMirrorDefault";
+import {useGlobalState} from '../../../hooks/use-global-state';
+import timeTransformer from '../../../utils/time-transformer';
 
 export const FileResourceEditForm = (props) => {
     const router = useRouter();
+    const [showCompare, setShowCompare] = useState(false)
 
     const {
         itemctx, collection_id,
@@ -46,8 +49,9 @@ export const FileResourceEditForm = (props) => {
             filename: data.filename || '',
             format: data.format || sectionApi.FILE_RESOURCE_DEFAULT_FORMAT || '',
             content: data.content || '',
-            file: null
-        }, extra_form_fields)
+            file: null,
+            compare_item: extra_form_fields.compare_items?.[0]
+        }, extra_form_fields,)
     }
 
     const initialValues = initFormValues(item);
@@ -112,6 +116,12 @@ export const FileResourceEditForm = (props) => {
     const handleFile = e => {
         formik.values.file = e.target.files[0];
     }
+
+    const handleCompareChange = e => {
+        formik.setFieldValue('compare_item', e.target.value)
+    }
+
+    const {timeSetting} = useGlobalState()
 
     return (
         <form encType="multipart/form-data"
@@ -201,12 +211,44 @@ export const FileResourceEditForm = (props) => {
                         </Grid>
                         <Grid xs={12}
                               md={12}>
-                            <CodeMirrorDefault
-                                value={formik.values.content}
-                                label='Content'
-                                lang={formik.values.format}
-                                style={{resize: 'vertical', overflow: 'auto', height: 600}}
-                                onChange={value => formik.setFieldValue('content', value)}/>
+                            <Stack direction='row'
+                                   gap={2}>
+                                {!!extra_form_fields?.compare_items?.length && <Button
+                                    onClick={() => setShowCompare(e => !e)}>{showCompare ? 'Hide Compare' : 'Show Compare'}</Button>}
+
+                                {showCompare && <TextField
+                                    label="Process Date"
+                                    name="compare_item"
+                                    onBlur={formik.handleBlur}
+                                    onChange={handleCompareChange}
+                                    select
+                                    value={formik.values.compare_item}
+                                    sx={{minWidth: 200}}
+                                >
+                                    {extra_form_fields?.compare_items.map((compare_item) => (
+                                        <MenuItem
+                                            key={compare_item.id}
+                                            value={compare_item}
+                                        >
+                                            {timeTransformer(compare_item.created_at,timeSetting)}
+                                        </MenuItem>
+                                    ))}
+                                </TextField>}
+                            </Stack>
+                            {showCompare ?
+                                <CodeMirrorCompare label='Content'
+                                                   style={{resize: 'vertical', overflow: 'auto', height: 600}}
+                                                   value={formik.values.content}
+                                                   previousValue={formik.values.compare_item?.in_manifestation}
+                                                   onChange={value => formik.setValues('rdf_manifestation', value)}
+                                                   lang={formik.values.format}
+                                /> :
+                                <CodeMirrorDefault
+                                    value={formik.values.content}
+                                    label='Content'
+                                    lang={formik.values.format}
+                                    style={{resize: 'vertical', overflow: 'auto', height: 600}}
+                                    onChange={value => formik.setFieldValue('content', value)}/>}
                         </Grid>
                         <Grid xs={12}
                               md={12}>
@@ -222,13 +264,15 @@ export const FileResourceEditForm = (props) => {
                 </CardContent>
             </Card>
 
-            {extra_form && (
-                <Card sx={{mt: 3}}>
-                    <CardContent>
-                        {extra_form({item: item, formik: formik})}
-                    </CardContent>
-                </Card>
-            )}
+            {
+                extra_form && (
+                    <Card sx={{mt: 3}}>
+                        <CardContent>
+                            {extra_form({item, formik, compare_items: extra_form_fields.compare_items})}
+                        </CardContent>
+                    </Card>
+                )
+            }
             <Card sx={{mt: 3}}>
                 <Stack
                     direction={{
@@ -270,7 +314,8 @@ export const FileResourceEditForm = (props) => {
                 </Stack>
             </Card>
         </form>
-    );
+    )
+        ;
 };
 
 FileResourceEditForm.propTypes = {

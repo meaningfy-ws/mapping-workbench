@@ -13,7 +13,7 @@ import {Scrollbar} from 'src/components/scrollbar';
 import {MenuActions} from 'src/components/menu-actions';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import TableSorterHeader from 'src/sections/components/table-sorter-header';
-import TablePagination from "src/sections/components/table-pagination-pages";
+import TablePagination from "src/sections/components/table-pagination";
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 

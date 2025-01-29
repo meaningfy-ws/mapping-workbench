@@ -23,6 +23,8 @@ import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {TableFilterHeader} from "../../../layouts/app/table-filter-header/table-filter-header";
+import {getValidationColor} from '../mapping-package/state/utils';
+import {ValueChip} from './utils';
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", text: ""})
@@ -86,8 +88,7 @@ export const ListTable = (props) => {
                                     <SorterHeader fieldName="xpath_condition"
                                                   title="XPath Condition"/>
                                 </TableCell>
-                                <TableCell width="10%"
-                                           align="right">
+                                <TableCell width="10%">
                                     <SorterHeader fieldName="is_covered"
                                                   title="Found"/>
                                 </TableCell>
@@ -107,6 +108,7 @@ export const ListTable = (props) => {
                                                 language="xquery"
                                                 wrapLines
                                                 style={highLighterTheme}
+                                                customStyle={{borderRadius: 12, border: '1px solid #E4E7EC'}}
                                                 lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
                                                 {item.sdk_element_xpath}
                                             </SyntaxHighlighter>
@@ -119,36 +121,37 @@ export const ListTable = (props) => {
                                                         direction="column"
                                                         spacing={1}
                                                     >
-                                                        <Stack
-                                                            direction="row"
-                                                            justifyContent="right"
-                                                            alignItems="center"
-                                                            spacing={2}
-                                                        >
-                                                            <SyntaxHighlighter
-                                                                language="xquery"
-                                                                wrapLines
-                                                                style={highLighterTheme}
-                                                                lineProps={{
-                                                                    style: {
-                                                                        wordBreak: 'break-all',
-                                                                        whiteSpace: 'pre-wrap'
-                                                                    }
-                                                                }}>
-                                                                {xpath_condition.xpath_condition || '-'}
-                                                            </SyntaxHighlighter>
-                                                            {xpath_condition.meets_xpath_condition ?
-                                                                <CheckIcon color="success"/> :
-                                                                <CloseIcon color="error"/>}
-                                                        </Stack>
+                                                        <SyntaxHighlighter
+                                                            language="xquery"
+                                                            wrapLines
+                                                            style={highLighterTheme}
+                                                            customStyle={{
+                                                                borderRadius: 12,
+                                                                border: '1px solid',
+                                                                borderColor: getValidationColor(xpath_condition.meets_xpath_condition ?
+                                                                    'valid' : 'invalid')
+                                                            }}
+                                                            lineProps={{
+                                                                style: {
+                                                                    wordBreak: 'break-all',
+                                                                    whiteSpace: 'pre-wrap'
+                                                                }
+                                                            }}>
+                                                            {xpath_condition.xpath_condition || '-'}
+                                                        </SyntaxHighlighter>
                                                     </Stack>
                                                 );
                                             })}
                                         </TableCell>
-                                        <TableCell align="right">
-                                            {item.is_covered
-                                                ? <CheckIcon color="success"/>
-                                                : <CloseIcon color="error"/>}
+                                        <TableCell>
+                                            {item.is_covered ? <ValueChip color='success'
+                                                                          style={{p: 0.3, width: 30}}>
+                                                    <CheckIcon/>
+                                                </ValueChip> :
+                                                <ValueChip color='error'
+                                                           style={{p: 0.3, width: 30}}>
+                                                    <CloseIcon/>
+                                                </ValueChip>}
                                         </TableCell>
                                     </TableRow>
 

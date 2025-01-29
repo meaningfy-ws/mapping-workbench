@@ -3,6 +3,9 @@ from typing import Any, List
 
 from pydantic import BaseModel, ConfigDict
 
+from mapping_workbench.backend.task_manager.services import TASK_META_ENTITY
+from mapping_workbench.backend.tasks.models.task_entity import TaskEntity
+
 
 class TaskStatus(str, Enum):
     """
@@ -53,9 +56,12 @@ class TaskProgressData(TaskProgressDataBase):
     actions: List[TaskProgressAction] = []
     actions_count: int = 0
 
+class TaskResultWarning(BaseModel):
+    message: str
+    type: str = None
 
 class TaskResultData(TaskProgressDataBase):
-    warnings: List[str] = []
+    warnings: List[TaskResultWarning] = None
     data: Any = None
 
 
@@ -69,6 +75,12 @@ class TaskResponse:
 
     def get_result(self) -> TaskResultData:
         return self.result
+
+    def get_result_data_entity(self):
+        if (self.result and self.result.data and TASK_META_ENTITY in self.result.data
+                and isinstance(self.result.data[TASK_META_ENTITY], TaskEntity)):
+            return self.result.data[TASK_META_ENTITY]
+        return None
 
     def get_progress(self) -> TaskProgressData:
         return self.progress

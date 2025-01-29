@@ -10,8 +10,18 @@ import TableRow from '@mui/material/TableRow';
 import {Scrollbar} from 'src/components/scrollbar';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import TablePagination from 'src/sections/components/table-pagination';
-import {TableFilterHeader} from "../../../layouts/app/table-filter-header/table-filter-header";
+import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
 
+const LocalHighlighter = ({text, language, theme}) => {
+    return text ? <SyntaxHighlighter
+        language={language}
+        wrapLines
+        customStyle={{borderRadius: 12, border: '1px solid #E4E7EC'}}
+        style={theme}
+        lineProps={{style: {overflowWrap: 'break-word', whiteSpace: 'pre-wrap'}}}>
+        {text}
+    </SyntaxHighlighter> : null
+}
 export const ListTableFile = (props) => {
 
     const {
@@ -91,49 +101,29 @@ export const ListTableFile = (props) => {
                             return (
                                 <TableRow key={key}>
                                     <TableCell width="25%">
-                                        <SyntaxHighlighter
-                                            language="turtle"
-                                            wrapLines
-                                            style={syntaxHighlighterTheme}
-                                            lineProps={{style: {overflowWrap: 'break-word', whiteSpace: 'pre-wrap'}}}>
-                                            {item.short_focus_node}
-                                        </SyntaxHighlighter>
+                                        <LocalHighlighter language='turtle'
+                                                          text={item.short_focus_node}
+                                                          theme={syntaxHighlighterTheme}/>
                                     </TableCell>
                                     <TableCell>
-                                        <SyntaxHighlighter
-                                            language="turtle"
-                                            wrapLines
-                                            style={syntaxHighlighterTheme}
-                                            lineProps={{style: {overflowWrap: 'break-word', whiteSpace: 'pre-wrap'}}}>
-                                            {item.message}
-                                        </SyntaxHighlighter>
+                                        <LocalHighlighter language='turtle'
+                                                          text={item.message}
+                                                          theme={syntaxHighlighterTheme}/>
                                     </TableCell>
                                     <TableCell>
-                                        <SyntaxHighlighter
-                                            language="sparql"
-                                            wrapLines
-                                            style={syntaxHighlighterTheme}
-                                            lineProps={{style: {overflowWrap: 'break-word', whiteSpace: 'pre-wrap'}}}>
-                                            {item.short_result_path}
-                                        </SyntaxHighlighter>
+                                        <LocalHighlighter language='sparql'
+                                                          text={item.short_result_path}
+                                                          theme={syntaxHighlighterTheme}/>
                                     </TableCell>
                                     <TableCell>
-                                        <SyntaxHighlighter
-                                            language="turtle"
-                                            wrapLines
-                                            style={syntaxHighlighterTheme}
-                                            lineProps={{style: {overflowWrap: 'break-word', whiteSpace: 'pre-wrap'}}}>
-                                            {item.short_result_severity}
-                                        </SyntaxHighlighter>
+                                        <LocalHighlighter language='turtle'
+                                                          text={item.short_result_severity}
+                                                          theme={syntaxHighlighterTheme}/>
                                     </TableCell>
                                     <TableCell>
-                                        <SyntaxHighlighter
-                                            language="turtle"
-                                            wrapLines
-                                            style={syntaxHighlighterTheme}
-                                            lineProps={{style: {overflowWrap: 'break-word', whiteSpace: 'pre-wrap'}}}>
-                                            {item.short_source_constraint_component}
-                                        </SyntaxHighlighter>
+                                        <LocalHighlighter language='turtle'
+                                                          text={item.short_source_constraint_component}
+                                                          theme={syntaxHighlighterTheme}/>
                                     </TableCell>
                                 </TableRow>
                             );

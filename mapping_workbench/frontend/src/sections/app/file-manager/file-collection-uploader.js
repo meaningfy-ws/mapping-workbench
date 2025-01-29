@@ -98,7 +98,7 @@ export const FileCollectionUploader = (props) => {
             </Stack>
             <DialogContent id="drop-zone">
                 <FileDropzone
-                    accept={{'*/*': []}}
+                    accept={{'application/zip': ['.zip']}}
                     caption="ZIP archive with Test Data Suites"
                     files={files}
                     onDrop={handleDrop}

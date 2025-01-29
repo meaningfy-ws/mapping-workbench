@@ -6,7 +6,6 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import Stack from '@mui/material/Stack';
 import Dialog from '@mui/material/Dialog';
-import SvgIcon from '@mui/material/SvgIcon';
 import Checkbox from "@mui/material/Checkbox";
 import MenuItem from "@mui/material/MenuItem";
 import FormGroup from "@mui/material/FormGroup";
@@ -23,9 +22,7 @@ import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import Divider from "@mui/material/Divider";
 
 
-export const PackageImporter = (props) => {
-    const {onClose, open = false, sectionApi} = props;
-
+export const PackageImporter = ({onClose, open = false, sectionApi}) => {
     const defaultPackageTypeValue = DEFAULT_PACKAGE_TYPE;
 
     const [files, setFiles] = useState([]);
@@ -143,7 +140,7 @@ export const PackageImporter = (props) => {
                     <Divider sx={{mt: 1}}/>
                 </FormGroup>
                 <FileDropzone
-                    accept={{'*/*': []}}
+                    accept={sectionApi.FILE_UPLOAD_FORMATS}
                     caption="Required name: {PACKAGE_NAME}.zip"
                     files={files}
                     onDrop={handleDrop}

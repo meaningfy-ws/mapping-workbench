@@ -28,8 +28,9 @@ import {SeverityPill} from "src/components/severity-pill";
 import {ChevronButton} from 'src/sections/components/chevron-button';
 import {MenuActionButton, MenuActions} from 'src/components/menu-actions';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
-import TablePagination from "src/sections/components/table-pagination-pages";
+import TablePagination from "src/sections/components/table-pagination";
 import {mapStatusColor, TaskActions, TaskLine, taskProgressStatus as taskStatuses} from "./task-actions";
+import {Box} from "@mui/system";
 
 
 export const ListTable = (props) => {
@@ -75,6 +76,19 @@ export const ListTable = (props) => {
 
     const handlePopoverLeave = () => {
         setPopoverShow(e => ({...e, anchor: undefined}))
+    }
+
+    const groupedWarnings = (warnings) => {
+        const result = {};
+
+        warnings.forEach(warning => {
+            if (!result[warning.type]) {
+                result[warning.type] = [];
+            }
+            result[warning.type].push(warning.message);
+        });
+
+        return result;
     }
 
     return (
@@ -245,17 +259,38 @@ export const ListTable = (props) => {
                                                                     <Typography sx={{pl: 3, pt: 1}}
                                                                                 variant="h6"
                                                                                 color="orange">
-                                                                        Warning
+                                                                        Warnings <SeverityPill
+                                                                        color="warning">
+                                                                        {item.warnings?.length}
+                                                                    </SeverityPill>
                                                                     </Typography>
                                                                     <Divider/>
-                                                                    <List sx={{pl: 3}}>
-                                                                        {item.warnings.map((warning, key) =>
-                                                                            <ListItem
-                                                                                key={'warning' + key}>
-                                                                                {warning}
-                                                                            </ListItem>
+                                                                    <Box sx={{pl: 3}}>
+                                                                        {Object.entries(groupedWarnings(item.warnings)).map(([type, warnings]) =>
+                                                                            <Box sx={{pb: 3}}>
+                                                                                <Typography
+                                                                                    variant="bod1"
+                                                                                    sx={{fontWeight: 'bold'}}
+                                                                                >
+                                                                                    {type} <SeverityPill
+                                                                                        color="warning">
+                                                                                        {warnings?.length}
+                                                                                    </SeverityPill>
+                                                                                </Typography>
+
+                                                                                <List>
+                                                                                    {warnings.map((warning, key) =>
+                                                                                        <ListItem
+                                                                                            key={'warning_' + type + '_' + key}>
+                                                                                            {warning}
+                                                                                        </ListItem>
+                                                                                    )}
+                                                                                </List>
+
+                                                                                <Divider/>
+                                                                            </Box>
                                                                         )}
-                                                                    </List>
+                                                                    </Box>
                                                                 </>}
                                                         </Grid>
                                                     </CardContent>

@@ -52,7 +52,6 @@ export const MappingPackageProcessForm = ({items, sectionApi, showExport}) => {
                 }
             }
             {
-                console.log(items)
                 items.forEach(item => {
                         const data = {
                             package_id: item._id,
@@ -64,8 +63,12 @@ export const MappingPackageProcessForm = ({items, sectionApi, showExport}) => {
                         }
                         const toastId = toastLoad(`Processing "${item.identifier}" ... This may take a while. Please, be patient.`)
                         sectionApi.processPackage(data)
-                            .then(res => toastSuccess(`${res.task_name} successfully started.`, toastId))
-                            .catch(err => toastError(err, toastId))
+                            .then(res => {
+                                return toastSuccess(`${res.task_name} successfully started.`, toastId)}
+                            )
+                            .catch(err => {
+                                return toastError(err, toastId)
+                            })
                             .finally(() => setIsProcessing(false))
                     }
                 )

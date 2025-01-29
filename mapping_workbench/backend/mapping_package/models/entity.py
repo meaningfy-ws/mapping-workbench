@@ -76,6 +76,7 @@ class MappingPackageOut(BaseProjectResourceEntityOutSchema):
     shacl_test_suites: Optional[List[Link[SHACLTestSuite]]] = None
     sparql_test_suites: Optional[List[Link[SPARQLTestSuite]]] = None
     resource_collections: Optional[List[Link[ResourceCollection]]] = None
+    process_status: Optional[str] = None
 
 
 class MappingPackageListFilters(BaseTitledEntityListFiltersSchema):

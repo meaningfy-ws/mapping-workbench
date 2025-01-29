@@ -1,5 +1,6 @@
 from typing import List
 
+import pymongo
 from beanie import PydanticObjectId
 
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
@@ -9,8 +10,10 @@ from mapping_workbench.backend.core.services.request import request_update_data,
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.mapping_package.services.link import unassign_resources_from_mapping_packages, \
     ResourceField
+from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
-    TestDataFileResourceUpdateIn, TestDataFileResourceCreateIn
+    TestDataFileResourceUpdateIn, TestDataFileResourceCreateIn, TestDataManifestationHistory, \
+    TestDataManifestationHistoryOut
 from mapping_workbench.backend.test_data_suite.services.transform_test_data import transform_test_data_file_resource
 from mapping_workbench.backend.user.models.user import User
 
@@ -136,3 +139,19 @@ async def get_test_data_file_resource(id: PydanticObjectId) -> TestDataFileResou
 
 async def delete_test_data_file_resource(test_data_file_resource: TestDataFileResource):
     return await test_data_file_resource.delete()
+
+
+async def get_test_data_transform_history(
+        test_data_file_resource: TestDataFileResource,
+        project_id: PydanticObjectId
+) -> List[TestDataManifestationHistoryOut]:
+    Project.link_from_id(project_id)
+    items: List[TestDataManifestationHistoryOut] = await TestDataManifestationHistory.find(
+        TestDataManifestationHistory.project == Project.link_from_id(project_id),
+        TestDataManifestationHistory.test_data_id == test_data_file_resource.id,
+        projection_model=TestDataManifestationHistoryOut,
+        fetch_links=False,
+        sort=[(str(TestDataManifestationHistory.created_at), pymongo.DESCENDING)]
+    ).to_list()
+
+    return items

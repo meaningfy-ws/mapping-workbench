@@ -1,91 +1,73 @@
-import Card from "@mui/material/Card";
-import Divider from "@mui/material/Divider";
+import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
+import {useTheme} from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
 import Grid from "@mui/material/Unstable_Grid2";
-import CardContent from "@mui/material/CardContent";
 
-import {PropertyList} from "src/components/property-list";
-import {PropertyListItem} from "src/components/property-list-item";
+import ResultSummaryCoverageShacl from './result-summary-coverage-shacl';
+import ResultSummaryCoverageSparql from './result-summary-coverage-sparql';
+import ResultSummaryCoverageXpath from './result-summary-coverage-xpath';
 
-const StateDetails = ({item}) => {
-    return(
+const StateDetail = ({title, value}) => {
+    const theme = useTheme()
+    return (
+        <Stack sx={{
+            border: '1px solid #E4E7EC',
+            backgroundColor: theme.palette.divider,
+            borderRadius: '5px',
+            py: '12px',
+            px: '16px'
+        }}>
+            <Typography variant='secondary'
+                        sx={{ mb: '10px'}}>{title}</Typography>
+            <Typography>{value}</Typography>
+        </Stack>
+    )
+}
+
+const StateDetails = ({item, sid, handleChangeTab, validationReport}) => {
+
+    return (
         <Grid container
               spacing={3}>
-            <Grid md={12}
-                  xs={12}>
-                <Card>
-                    <CardContent>
-                        <Grid
-                            item={item}
-                            md={12}
-                            xs={12}
-                        >
-                            <PropertyList>
-                                <PropertyListItem
-                                    label="Description"
-                                    value={item.description}
-                                    sx={{
-                                        whiteSpace: "pre-wrap",
-                                        px: 3,
-                                        py: 1.5
-                                    }}
-                                />
-                                <Divider/>
-                                <Grid container
-                                      spacing={3}>
-                                    <Grid md={6}
-                                          xs={12}>
-                                        <PropertyListItem
-                                            label="Identifier"
-                                            value={item.identifier}
-                                        />
-                                    </Grid>
-                                    <Grid md={12}
-                                          xs={12}>
-                                        <PropertyListItem
-                                            label="Mapping Version"
-                                            value={item.mapping_version}
-                                        />
-                                    </Grid>
-                                    <Grid md={12}
-                                          xs={12}>
-                                        <PropertyListItem
-                                            label="EPO Version"
-                                            value={item.epo_version}
-                                        />
-                                    </Grid>
-                                    <Grid md={12}
-                                          xs={12}>
-                                        <PropertyListItem
-                                            label="eForms Subtype"
-                                            value={item.eform_subtypes?.join(', ')}
-                                        />
-                                    </Grid>
-                                    <Grid md={12}
-                                          xs={12}>
-                                        <PropertyListItem
-                                            label="Start Date"
-                                            value={item.start_date}
-                                        />
-                                    </Grid>
-                                    <Grid md={12}
-                                          xs={12}>
-                                        <PropertyListItem
-                                            label="End Date"
-                                            value={item.end_date}
-                                        />
-                                    </Grid>
-                                    <Grid md={12}
-                                          xs={12}>
-                                        <PropertyListItem
-                                            label="eForms XSD version"
-                                            value={item.eforms_sdk_versions?.join(', ')}
-                                        />
-                                    </Grid>
-                                </Grid>
-                            </PropertyList>
-                        </Grid>
-                    </CardContent>
-                </Card>
+            <Grid xs={12}>
+                <Paper sx={{p: 3}}>
+                    <Stack gap={3}>
+                        <Typography fontWeight='bold'>Conceptual mapping for {item.title}</Typography>
+                        <Stack direction={{xs: 'column', md: 'row'}}
+                               gap={3}>
+                            <StateDetail title={item._id}
+                                         value={item.title}/>
+                            <StateDetail title={'Mapping / EPO Version'}
+                                         value={`${item.mapping_version} / ${item.epo_version}`}/>
+                            <StateDetail title={'eForms SDK'}
+                                         value={item.eforms_sdk_versions?.join(', ')}/>
+                            <StateDetail title={'eForms Subtype'}
+                                         value={item.eform_subtypes?.join(', ')}/>
+                        </Stack>
+                    </Stack>
+                </Paper>
+            </Grid>
+            <Grid xs={12}
+                  md={4}>
+                <ResultSummaryCoverageXpath item={item}
+                                            sid={sid}
+                                            handleChangeTab={handleChangeTab}
+                                            validationReport={validationReport.xpath}/>
+            </Grid>
+            <Grid xs={12}
+                  md={4}>
+                <ResultSummaryCoverageSparql item={item}
+                                             sid={sid}
+                                             handleChangeTab={handleChangeTab}
+                                             validationReport={validationReport.sparql}/>
+            </Grid>
+            <Grid xs={12}
+                  md={4}>
+                <ResultSummaryCoverageShacl item={item}
+                                            sid={sid}
+                                            handleChangeTab={handleChangeTab}
+                                            validationReport={validationReport.shacl}/>
             </Grid>
         </Grid>
     )

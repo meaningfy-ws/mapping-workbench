@@ -1,5 +1,4 @@
 import {useCallback, useEffect, useState} from "react";
-import {useFormik} from "formik";
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
@@ -7,9 +6,12 @@ import Chip from '@mui/material/Chip';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Paper from "@mui/material/Paper";
-import SvgIcon from '@mui/material/SvgIcon';
+import Button from '@mui/material/Button';
 import Divider from "@mui/material/Divider";
+import SvgIcon from '@mui/material/SvgIcon';
+import MenuItem from '@mui/material/MenuItem';
 import Checkbox from "@mui/material/Checkbox";
+import TextField from '@mui/material/TextField';
 import Grid from "@mui/material/Unstable_Grid2";
 import Typography from '@mui/material/Typography';
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -22,11 +24,13 @@ import {Layout as AppLayout} from 'src/layouts/app';
 import {RouterLink} from 'src/components/router-link';
 import {FormTextField} from "src/components/app/form/text-field";
 import {ForItemEditForm} from "src/contexts/app/section/for-item-form";
-import CodeMirrorDefault from "src/components/app/form/codeMirrorDefault";
+import CodeMirrorDefault, {CodeMirrorCompare} from "src/components/app/form/codeMirrorDefault";
 import {ForItemDataState} from "src/contexts/app/section/for-item-data-state";
 import {FileResourceEditForm} from 'src/sections/app/file-manager/file-resource-edit-form';
 import {testDataFileResourcesApi as sectionApi} from 'src/api/test-data-suites/file-resources';
 import {MappingPackageFormSelect} from 'src/sections/app/mapping-package/components/mapping-package-form-select';
+import {useGlobalState} from '../../../../../../hooks/use-global-state';
+import timeTransformer from '../../../../../../utils/time-transformer';
 
 
 const useItem = (sectionApi, id) => {
@@ -51,12 +55,21 @@ const useItem = (sectionApi, id) => {
 const ExtraForm = (props) => {
     const {
         item,
-        formik
+        formik,
+        compare_items,
     } = props;
 
+    const {timeSetting} = useGlobalState()
+
+    const [showCompare, setShowCompare] = useState(false)
+
+    const handleCompareChange = e => {
+        formik.setFieldValue('compare_item', e.target.value)
+    }
     const handleTransformTestDataChange = useCallback((event) => {
         formik.setFieldValue('transform_test_data', event.target.checked);
     }, [formik]);
+
 
     return (
         <Stack gap={3}>
@@ -101,15 +114,66 @@ const ExtraForm = (props) => {
             </Grid>
             <Grid xs={12}
                   md={12}>
-                <CodeMirrorDefault label="RDF Manifestation"
-                                   style={{resize: 'vertical', overflow: 'auto', height: 600}}
-                                   value={formik.values.rdf_manifestation}
-                                   onChange={value => formik.setValues('rdf_manifestation', value)}
-                                   lang={'TTL'}
-                />
+                <Stack direction='row'
+                       alignItems='center'
+                       gap={2}>
+                    {compare_items.length > 0 && <Button sx={{my: 1}}
+                                                     onClick={() => setShowCompare(e => !e)}>{showCompare ? 'Hide Compare' : 'Show Compare'}</Button>}
+
+
+                    {showCompare && <TextField
+                        label="Process Date"
+                        name="compare_item"
+                        onBlur={formik.handleBlur}
+                        onChange={handleCompareChange}
+                        select
+                        value={formik.values.compare_item}
+                        sx={{minWidth: 200}}
+                    >
+                        {compare_items.map((compare_item) => (
+                            <MenuItem
+                                key={compare_item.id}
+                                value={compare_item}
+                            >
+                                {timeTransformer(compare_item.created_at, timeSetting)}
+                            </MenuItem>
+                        ))}
+                    </TextField>}
+                </Stack>
+
+                {showCompare ?
+                    <CodeMirrorCompare label="RDF Manifestation"
+                                       style={{resize: 'vertical', overflow: 'auto', height: 600}}
+                                       value={formik.values.rdf_manifestation}
+                                       previousValue={formik.values.compare_item?.out_manifestation}
+                                       onChange={value => formik.setValues('rdf_manifestation', value)}
+                                       lang='TTL'
+                    /> :
+                    <CodeMirrorDefault label="RDF Manifestation"
+                                       style={{resize: 'vertical', overflow: 'auto', height: 600}}
+                                       value={formik.values.rdf_manifestation}
+                                       onChange={value => formik.setValues('rdf_manifestation', value)}
+                                       lang='TTL'
+                    />}
             </Grid>
         </Stack>
     )
+}
+
+const useFileHistory = (sectionApi, id) => {
+    const [compareItems, setCompareItems] = useState([])
+
+    useEffect(() => {
+        id && handleItemHistoryGet(id)
+    }, [id])
+
+    const handleItemHistoryGet = () => {
+        sectionApi.getFileHistory(id)
+            .then(res => setCompareItems(res))
+            .catch(err => console.error(err))
+    }
+
+    return compareItems
 }
 
 const Page = () => {
@@ -117,11 +181,8 @@ const Page = () => {
     const {id, fid} = router.query;
 
     const formState = useItem(sectionApi, fid);
+    const compare_items = useFileHistory(sectionApi, fid).slice(1)
     const item = formState.item;
-
-    const formik = useFormik({
-        initialValues: {"rdf_manifestation": item && item.rdf_manifestation}
-    });
 
     usePageView();
 
@@ -133,7 +194,8 @@ const Page = () => {
         identifier: item.identifier || '',
         rdf_manifestation: item.rdf_manifestation || '',
         transform_test_data: false,
-        mapping_package_id: null
+        mapping_package_id: null,
+        compare_items: compare_items
     }
 
     return (

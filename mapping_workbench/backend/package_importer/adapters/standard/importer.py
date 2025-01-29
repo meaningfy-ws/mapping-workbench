@@ -50,9 +50,9 @@ class StandardPackageImporter(PackageImporterABC):
         for mono_rule in mono_package.conceptual_rules:
             source_structural_element: StructuralElement = await get_structural_element_by_unique_fields(
                 sdk_element_id=mono_rule.field_name,
-                bt_id=mono_rule.bt_id,
                 absolute_xpath=mono_rule.absolute_xpath,
                 project_id=self.project.id,
+                # bt_id=mono_rule.bt_id,
                 # name=mono_rule.field_name
             )
 
@@ -78,8 +78,6 @@ class StandardPackageImporter(PackageImporterABC):
                 )
 
             rule.project = self.project_link
-            if source_structural_element:
-                rule.source_structural_element = source_structural_element
 
             if not rule.refers_to_mapping_package_ids:
                 rule.refers_to_mapping_package_ids = []

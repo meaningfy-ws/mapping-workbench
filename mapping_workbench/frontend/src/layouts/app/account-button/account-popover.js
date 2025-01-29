@@ -11,6 +11,7 @@ import Popover from '@mui/material/Popover';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import DemoConfigIcon from '@mui/icons-material/Tune';
 
 import {RouterLink} from 'src/components/router-link';
 import {useAuth} from 'src/hooks/use-auth';
@@ -139,6 +140,30 @@ export const AccountPopover = (props) => {
                         primary={(
                             <Typography variant="body1">
                                 Authorization
+                            </Typography>
+                        )}
+                    />
+                </ListItemButton>}
+                {securityApi.isUserAdmin(auth.user) && <ListItemButton
+                    id='authorization_button'
+                    component={RouterLink}
+                    href={paths.app.demoConfig.index}
+                    onClick={onClose}
+                    sx={{
+                        borderRadius: 1,
+                        px: 1,
+                        py: 0.5
+                    }}
+                >
+                    <ListItemIcon>
+                        <SvgIcon fontSize="small">
+                            <DemoConfigIcon/>
+                        </SvgIcon>
+                    </ListItemIcon>
+                    <ListItemText
+                        primary={(
+                            <Typography variant="body1">
+                                Demo Config
                             </Typography>
                         )}
                     />

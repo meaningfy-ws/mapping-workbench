@@ -34,6 +34,7 @@ class GithubDownloader:
             subprocess.run(bash_script, shell=True,
                            stdout=subprocess.DEVNULL,
                            stderr=subprocess.STDOUT)
+
             dir_contents = list(temp_dir_path.iterdir())
             mwb_logger.log_all_info(f"Downloaded path {dir_contents}")
 

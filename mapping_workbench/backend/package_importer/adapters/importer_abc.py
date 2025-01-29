@@ -1,3 +1,4 @@
+import re
 from abc import ABC, abstractmethod
 from itertools import takewhile
 from pathlib import Path
@@ -22,7 +23,7 @@ from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTest
 from mapping_workbench.backend.sparql_test_suite.services.data import SPARQL_CM_ASSERTIONS_SUITE_TITLE, \
     SPARQL_INTEGRATION_TESTS_SUITE_TITLE
 from mapping_workbench.backend.task_manager.adapters.task_progress import TaskProgress
-from mapping_workbench.backend.tasks.models.task_response import TaskResponse
+from mapping_workbench.backend.tasks.models.task_response import TaskResponse, TaskResultWarning
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
     TestDataFileResourceFormat
 from mapping_workbench.backend.triple_map_fragment.models.entity import TripleMapFragmentFormat, \
@@ -32,7 +33,7 @@ from mapping_workbench.backend.user.models.user import User
 
 class PackageImporterABC(ABC):
     package: MappingPackage
-    warnings: List[str] = []
+    warnings: List[TaskResultWarning] = []
     task_progress: TaskProgress
 
     def __init__(self, project: Project, user: User, task_response: TaskResponse = None):
@@ -42,7 +43,6 @@ class PackageImporterABC(ABC):
         self.task_response = task_response
         self.task_progress = TaskProgress(self.task_response)
         self.package = None
-
 
     @abstractmethod
     async def import_from_mono_mapping_suite(self, mono_package: ImportedMappingSuite):
@@ -365,6 +365,12 @@ class PackageImporterABC(ABC):
         self.package = package
 
         self.task_progress.finish_current_action_step()
+
+    @classmethod
+    def is_cm_rule_path_valid(cls, cm_rule_path: str) -> bool:
+        if not cm_rule_path:
+            return True
+        return len(cm_rule_path.split('/')) == len(cm_rule_path.split(" / "))
 
     @classmethod
     async def clear_project_data(cls, project: Project):

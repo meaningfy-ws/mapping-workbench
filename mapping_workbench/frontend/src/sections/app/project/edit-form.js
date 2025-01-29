@@ -411,7 +411,7 @@ export const EditForm = (props) => {
                                                   md={12}>
                                                 <FormTextField formik={formik}
                                                                name="import_eform.branch_or_tag_name"
-                                                               label="Version(s)"
+                                                               label="SDK Version(s)"
                                                                disabled={!formik.values.import_eform.checked}
                                                                helperText="separated by comma (,)"
                                                                required/>

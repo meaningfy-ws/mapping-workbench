@@ -7,14 +7,14 @@ from mapping_workbench.backend.project.models.entity import Project
 
 
 async def get_structural_element_by_unique_fields(
-        sdk_element_id, bt_id, absolute_xpath, project_id: PydanticObjectId, name: str = None
+        sdk_element_id, absolute_xpath, project_id: PydanticObjectId, bt_id: str = None, name: str = None
 ) -> StructuralElement:
     project_link = Project.link_from_id(project_id)
     return await StructuralElement.find_one(
         StructuralElement.project == project_link,
         StructuralElement.sdk_element_id == sdk_element_id,
-        #StructuralElement.name == name,
-        StructuralElement.bt_id == bt_id,
+        # StructuralElement.name == name,
+        # StructuralElement.bt_id == bt_id,
         StructuralElement.absolute_xpath == absolute_xpath
     )
 
