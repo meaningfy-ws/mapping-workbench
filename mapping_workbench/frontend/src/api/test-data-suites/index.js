@@ -25,7 +25,7 @@ class TestDataSuitesApi extends FileCollectionsApi {
     }
 
     get FILE_UPLOAD_FORMATS() {
-        return {'ZIP': 'application/zip'}
+          return {'application/zip': ['.zip']}
     }
 
     get MAPPING_PACKAGE_LINK_FIELD() {

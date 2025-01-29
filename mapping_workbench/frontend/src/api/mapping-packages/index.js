@@ -32,6 +32,10 @@ class MappingPackagesApi extends SectionApi {
         return [ACTION.VIEW, ACTION.EDIT];
     }
 
+    get FILE_UPLOAD_FORMATS() {
+        return {'application/zip': ['.zip']}
+    }
+
     constructor() {
         super("mapping_packages");
         this.isProjectResource = true;

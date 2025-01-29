@@ -6,6 +6,12 @@ class GenericTripleMapFragmentsApi extends TripleMapFragmentsApi {
         return "Triple Map Fragments";
     }
 
+    get FILE_UPLOAD_FORMATS() {
+        return {'TTL': {['text/ttl']: ['.ttl']},
+                'YAML': {['text/yaml']: ['.yaml']}
+        }
+    }
+
     get SECTION_ITEM_TITLE() {
         return "Triple Map Fragment";
     }
