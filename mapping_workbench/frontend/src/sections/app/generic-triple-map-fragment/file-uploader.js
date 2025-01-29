@@ -106,6 +106,8 @@ export const FileUploader = (props) => {
         );
     }
 
+    const acceptedFormat = sectionApi.FILE_UPLOAD_FORMATS?.[format] ?? {'*/*': []}
+
     return (
         <Dialog
             fullWidth
@@ -178,8 +180,9 @@ export const FileUploader = (props) => {
                     />
                     <Box sx={{mb: 3}}/>
                 </>}
+
                 <FileDropzone
-                    accept={{'*/*': []}}
+                    accept={acceptedFormat}
                     caption="Max file size is 3 MB"
                     disabled={uploading}
                     files={files}
