@@ -32,7 +32,7 @@ import {mappingPackagesApi} from "src/api/mapping-packages";
 import {PropertyListItem} from "src/components/property-list-item";
 import {ChevronButton} from 'src/sections/components/chevron-button';
 import ConfirmDialog from "src/components/app/dialog/confirm-dialog";
-import TablePagination from "src/sections/components/table-pagination-pages";
+import TablePagination from "src/sections/components/table-pagination";
 import {MenuActions, MenuActionButton} from 'src/components/menu-actions';
 import {ListItemActions} from "src/components/app/list/list-item-actions";
 import TableSorterHeader from 'src/sections/components/table-sorter-header';
