@@ -64,7 +64,7 @@ const useItemsSearch = (items, sectionApi, searchColumns, newFilters, sort) => {
     })
 
     const handleSearchItems = (search) => {
-        setState(prevState => ({...prevState, search}))
+        setState(prevState => ({...prevState, search, page: 0}))
     }
 
     const handleFiltersChange = (filters) => {
@@ -72,7 +72,6 @@ const useItemsSearch = (items, sectionApi, searchColumns, newFilters, sort) => {
     }
 
     const handlePageChange = (event, page) => {
-        console.log()
         setState(prevState => ({...prevState, page}));
     }
 
