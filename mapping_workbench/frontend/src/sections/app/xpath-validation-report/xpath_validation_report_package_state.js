@@ -1,13 +1,11 @@
-import {useState} from "react";
-
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
 
 import {ListTable} from "./list-table";
+import {CoverageFilter} from "./utils";
 import ResultSummaryCoverage from './result-summary-coverage';
-import {CoverageFilter, TableLoadWrapper} from "./utils";
 import useItemsSearch from "src/hooks/use-items-search";
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
