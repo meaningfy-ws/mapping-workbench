@@ -78,39 +78,39 @@ export const getValidationReportSparql = (items) => items.map(item => item.resul
 
 
 export const mapShaclResults = (result) => {
-    return result.results.map(e => {
+    return result.results?.map(e => {
         const resultArray = {}
         resultArray["shacl_suite"] = result.shacl_suites?.[0]?.shacl_suite_id
         resultArray["short_result_path"] = e.short_result_path
         resultArray["result"] = e.result
-        Object.entries(e.result).forEach(entrie => {
-            const [key, value] = entrie
+        Object.entries(e.result).forEach(entry => {
+            const [key, value] = entry
             resultArray[`${key}Count`] = value.count
         })
         return resultArray;
-    })
+    }) ?? []
 }
 
 
 export const mapSparqlResults = (result) => result.map(e => {
-    const queryAsArray = e.query.content.split("\n")
+    const queryAsArray = e.query?.content.split("\n")
     const values = queryAsArray.slice(0, 3)
     const resultArray = {}
-    values.forEach(e => {
-            const res = e.split(": ")
+    values.forEach(value => {
+            const res = value.split(": ")
             resultArray[res[0].substring(1)] = res[1]
         }
     )
     resultArray["query"] = queryAsArray.slice(4, queryAsArray.length).join("\n")
-    resultArray["test_suite"] = e.query.filename
+    resultArray["test_suite"] = e.query?.filename
     resultArray["result"] = e.result
-    Object.entries(e.result).forEach(entrie => {
-        const [key, value] = entrie
+    Object.entries(e.result).forEach(entry => {
+        const [key, value] = entry
         resultArray[`${key}Count`] = value.count
     })
     resultArray["meets_xpath_condition"] = e.meets_xpath_condition
-    resultArray["fields_covered"] = e?.fields_covered
-    resultArray["query_result"] = e?.query_result
+    resultArray["fields_covered"] = e.fields_covered
+    resultArray["query_result"] = e.query_result
     resultArray["xpath_condition"] = e.query?.cm_rule?.xpath_condition
     return resultArray;
 })

@@ -4,10 +4,10 @@ import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
-import {ResultFilter} from '../mapping-package/state/utils';
 
 import {ListTable} from "./list-table";
 import useItemsSearch from "src/hooks/use-items-search";
+import {ResultFilter} from '../mapping-package/state/utils';
 import {ResultSummaryCoverage} from './result-summary-coverage';
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
@@ -53,6 +53,7 @@ const ShaclPackageStateReport = ({handleSelectFile, mappingSuiteIdentifier, vali
                         sort={itemsSearch.state.sort}
                         onFilter={itemsSearch.handleFiltersChange}
                         filters={itemsSearch.state.filters}
+                        resultFilter={resultFilter}
                         sectionApi={sectionApi}
                         handleSelectFile={handleSelectFile}
                     />

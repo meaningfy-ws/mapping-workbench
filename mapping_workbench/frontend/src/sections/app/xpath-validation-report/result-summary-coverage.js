@@ -17,7 +17,7 @@ const ResultSummaryCoverage = ({identifier, validationReport, handleExport, load
     const notCoveredReportPercent = (notCoveredReports.length / validationReport.length * 100).toFixed(2)
 
 
-    return <Paper sx={{p: 3}}>
+    return <Paper sx={{p: 3, height:300}}>
         <Stack direction='row'
                alignItems='center'
                justifyContent='space-between'>
