@@ -17,9 +17,9 @@ import useItemsSearch from 'src/hooks/use-items-search';
 import {SourceAndTargetTabs} from 'src/sections/app/source-and-target';
 import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {testDataSuitesApi as sectionApi} from 'src/api/test-data-suites';
+import {NavigationTabsWrapper} from 'src/components/navigation-tabs-wrapper';
 import {FileCollectionUploader} from "src/sections/app/file-manager/file-collection-uploader";
 import {TestDataCollectionListTable} from "src/sections/app/file-manager/test-data-collection-list-table";
-import {NavigationTabsWrapper} from '../../../components/navigation-tabs-wrapper';
 
 const useItemsStore = () => {
     const [state, setState] = useState({

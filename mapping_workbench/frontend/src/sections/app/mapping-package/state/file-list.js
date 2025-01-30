@@ -5,24 +5,25 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import {TreeItem, treeItemClasses} from '@mui/x-tree-view';
-import {SimpleTreeView} from '@mui/x-tree-view/SimpleTreeView';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+import {SimpleTreeView} from '@mui/x-tree-view/SimpleTreeView';
 import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
-import {Scrollbar} from '../../../../components/scrollbar';
 
-const FileList = ({files, handleFileChange, handleFolderChange, selectedPackageState, selectedTestDataset}) => {
+import {Scrollbar} from 'src/components/scrollbar';
+
+const FileList = ({files, handleFileChange, handleFolderChange, selectedPackageState, selectedTestDataset, maxHeight}) => {
     const FileIcon = () => <InsertDriveFileOutlinedIcon sx={{marginLeft: '17px'}}/>
     const CollapseIcon = () => <Stack direction='row'><ExpandMoreIcon/><FolderOpenIcon/></Stack>
     const ExpandIcon = () => <Stack direction='row'><ChevronRightIcon/><FolderOpenIcon/></Stack>
 
     return (
         <Paper sx={{height: '100%'}}>
-            <Stack sx={{py: 2}}>
-                <Typography sx={{px: 2, mb: 3, fontWeight: 'bold', cursor: 'pointer'}}
-                            onClick={() => handleFolderChange(undefined)}>
-                    Test Set Summary
-                </Typography>
-                <Scrollbar>
+            <Scrollbar style={{maxHeight}}>
+                <Stack sx={{py: 2}}>
+                    <Typography sx={{px: 2, mb: 3, fontWeight: 'bold', cursor: 'pointer'}}
+                                onClick={() => handleFolderChange(undefined)}>
+                        Test Set Summary
+                    </Typography>
                     <SimpleTreeView slots={{
                         expandIcon: ExpandIcon,
                         collapseIcon: CollapseIcon,
@@ -47,8 +48,8 @@ const FileList = ({files, handleFileChange, handleFolderChange, selectedPackageS
                             </TreeItem>)}
                         </TreeItem>)}
                     </SimpleTreeView>
-                </Scrollbar>
-            </Stack>
+                </Stack>
+            </Scrollbar>
         </Paper>
     )
 }

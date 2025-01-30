@@ -1,7 +1,9 @@
 import {useContext, useState} from "react";
+import Link from 'next/link';
 
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
+import ArticleIcon from '@mui/icons-material/Article';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 import Menu from '@mui/material/Menu';
@@ -15,9 +17,10 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import {paths} from 'src/paths';
-import {useRouter} from "next/router";
 import {Scrollbar} from 'src/components/scrollbar';
 import {ProjectsContext} from "src/contexts/projects";
+import {securityApi} from '../../../api/security';
+import {useAuth} from '../../../hooks/use-auth';
 
 const colors = ['error', 'info', 'primary', 'secondary', 'success', 'warning'];
 
@@ -32,25 +35,14 @@ const Circle = ({color}) => {
 
 export const ProjectSwitch = ({small}) => {
     const [anchorEl, setAnchorEl] = useState(null);
-    const projectsStore = useContext(ProjectsContext)
     const [searchInputValue, setSearchInputValue] = useState('')
-    const router = useRouter();
+    const projectsStore = useContext(ProjectsContext)
     const theme = useTheme()
+    const auth = useAuth()
 
-    const handleProjectSelect = (value) => {
-        if (value)
-            projectsStore.handleSessionProjectChange(value)
-        else
-            router.push(paths.app.projects.create)
-    }
-
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
+    const handleProjectSelect = (value) => projectsStore.handleSessionProjectChange(value)
+    const handleClick = (event) => setAnchorEl(event.currentTarget);
+    const handleClose = () => setAnchorEl(null);
 
     const currentProject = projectsStore.items?.find(project => project._id === projectsStore.sessionProject)
 
@@ -124,7 +116,7 @@ export const ProjectSwitch = ({small}) => {
                                     <Circle color={theme.palette[getColorForId(project._id)].main}/>
 
                                     <Typography
-                                        color="#344054"
+                                        color={theme.palette.common[500]}
                                         variant="body2"
                                         marginLeft={1}
                                     >
@@ -136,7 +128,8 @@ export const ProjectSwitch = ({small}) => {
                              style={{marginTop: 16, marginBottom: 16}}/>
                     <MenuItem key='project_create'
                               id='create_project_button'
-                              onClick={() => handleProjectSelect(null)}
+                              component={Link}
+                              href={paths.app.projects.create}
                               sx={{color: theme.palette.primary.main, mb: 1}}>
                         <AddIcon fontWeight='bold'/>
                         <Typography sx={{ml: '4px'}}
@@ -144,6 +137,18 @@ export const ProjectSwitch = ({small}) => {
                             Create Project
                         </Typography>
                     </MenuItem>
+                    {securityApi.isUserAdmin(auth.user) &&
+                    <MenuItem key='go_projects'
+                              id='go_projects_button'
+                              component={Link}
+                              href={paths.app.projects.index}
+                              sx={{color: theme.palette.primary.main, mb: 1}}>
+                        <ArticleIcon fontWeight='bold'/>
+                        <Typography sx={{ml: '4px'}}
+                                    fontWeight='bold'>
+                            View Projects
+                        </Typography>
+                    </MenuItem>}
                 </Stack>
             </Menu>
         </Stack>

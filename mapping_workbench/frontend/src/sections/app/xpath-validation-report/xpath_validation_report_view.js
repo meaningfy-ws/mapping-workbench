@@ -7,7 +7,7 @@ import XpathValidationReport from "./xpath_validation_report_package_state";
 import XpathValidationReportSuite from "./xpath_validation_report_test_dataset";
 
 const XpathValidationReportView = ({sid, reportTree, validationReport, handleExport}) => {
-     const {
+    const {
         selectedPackageState,
         selectedTestDataset,
         handleSetPackageState,
@@ -21,7 +21,8 @@ const XpathValidationReportView = ({sid, reportTree, validationReport, handleExp
               spacing={3}>
             <Grid xs={12}
                   md={4}>
-                <FileList files={reportTree.test_data_suites}
+                <FileList maxHeight={300}
+                          files={reportTree.test_data_suites}
                           selectedPackageState={selectedPackageState}
                           selectedTestDataset={selectedTestDataset}
                           handleFolderChange={handleSetPackageState}

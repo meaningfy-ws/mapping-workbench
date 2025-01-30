@@ -76,6 +76,7 @@ const SparqlTestDatasetReport = ({sid, suiteId, handleSelectFile, handleExport})
                             sort={itemsSearch.state.sort}
                             onFilter={itemsSearch.handleFiltersChange}
                             filters={itemsSearch.state.filters}
+                            resultFilter={resultFilter}
                             sectionApi={sectionApi}
                             handleSelectFile={handleSelectFile}
                         />

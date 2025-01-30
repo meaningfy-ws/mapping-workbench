@@ -19,13 +19,13 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 
+import {ValueChip} from './utils';
 import {Scrollbar} from 'src/components/scrollbar';
+import {getValidationColor} from '../mapping-package/state/utils';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import TablePagination from "src/sections/components/table-pagination";
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
-import {getValidationColor} from '../mapping-package/state/utils';
-import {ValueChip} from './utils';
 
 export const ListTable = (props) => {
     const highLighterTheme = useHighlighterTheme()
