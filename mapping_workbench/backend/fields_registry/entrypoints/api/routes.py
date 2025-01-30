@@ -201,10 +201,10 @@ async def route_task_import_eforms_xsd(
 ):
     return add_task(
         tasks.task_import_eforms_xsd,
-        f"Importing eForms XSD versions: {branch_or_tag_name}",
+        f"Importing eForms SDK versions: {branch_or_tag_name}",
         None,
         user.email,
-        False,
+        True,
         github_repository_url, branch_or_tag_name, Project.link_from_id(project_id)
     ).task_metadata
 

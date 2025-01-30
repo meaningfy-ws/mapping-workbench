@@ -56,6 +56,8 @@ const progressStepColor = (stepStatus, palette) => {
             return palette.success.dark
         case taskProgressStatus.RUNNING:
             return palette.warning.main
+        case taskProgressStatus.FAILED:
+            return palette.error.main
         default:
             return palette.grey[400]
     }
