@@ -5,6 +5,11 @@ import {paths} from '../../../paths';
 
 const TABS = [
     {
+        label: 'Overview',
+        value: paths.app.fields_and_nodes.overview.index,
+        id: 'elements_define_overview_tab'
+    },
+    {
         label: 'Define',
         value: paths.app.fields_and_nodes.develop.index,
         id: 'elements_define_tab'
@@ -13,11 +18,6 @@ const TABS = [
         label: 'Tree View',
         value: paths.app.fields_and_nodes.tree_view.index,
         id: 'elements_define_tree_tab'
-    },
-    {
-        label: 'Overview',
-        value: paths.app.fields_and_nodes.overview.index,
-        id: 'elements_define_overview_tab'
     }]
 
 export const ElementsDefinitionTabs = () => {
