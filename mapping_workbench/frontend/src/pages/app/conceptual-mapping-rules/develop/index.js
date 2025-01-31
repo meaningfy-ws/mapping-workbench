@@ -17,6 +17,7 @@ import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mappin
 import AddEditDrawer from "src/sections/app/conceptual-mapping-rule/develop/add-edit-drawer";
 import {ConceptualMappingTabs} from 'src/sections/app/conceptual-mapping-rule/conceptual-mapping-tabs';
 import {NavigationTabsWrapper} from '../../../../components/navigation-tabs-wrapper';
+import {TableLoadWrapper} from '../../../../sections/components/table-load-wrapper';
 
 const SEARCH_COLUMNS = [
     "source_structural_element_sdk_element_id",
@@ -34,7 +35,8 @@ export const Page = () => {
 
     const [itemsStore, setItemsStore] = useState({
         items: [],
-        itemsCount: 0
+        itemsCount: 0,
+        load: true
     });
 
 
@@ -46,7 +48,10 @@ export const Page = () => {
     const handleItemsGet = () => {
         sectionApi.getItems({rowsPerPage: -1})
             .then(res => setItemsStore({items: res.items, itemsCount: res.count}))
-            .catch(err => console.warn(err))
+            .catch(err => {
+                setItemsStore(prev => ({...prev, error: true}))
+                console.warn(err)
+            })
     }
 
     const handleGetOntologyFragments = () => {
@@ -120,19 +125,22 @@ export const Page = () => {
                         Add
                     </Button>
                 </Stack>
-                <ListTable
-                    onPageChange={itemsSearch.handlePageChange}
-                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                    onSort={itemsSearch.handleSort}
-                    sort={itemsSearch.state.sort}
-                    page={itemsSearch.state.page}
-                    items={itemsSearch.pagedItems}
-                    count={itemsSearch.count}
-                    rowsPerPage={itemsSearch.state.rowsPerPage}
-                    sectionApi={sectionApi}
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
-                />
+                <TableLoadWrapper data={itemsStore.items}
+                                  dataState={itemsStore}>
+                    <ListTable
+                        onPageChange={itemsSearch.handlePageChange}
+                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                        onSort={itemsSearch.handleSort}
+                        sort={itemsSearch.state.sort}
+                        page={itemsSearch.state.page}
+                        items={itemsSearch.pagedItems}
+                        count={itemsSearch.count}
+                        rowsPerPage={itemsSearch.state.rowsPerPage}
+                        sectionApi={sectionApi}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
+                    />
+                </TableLoadWrapper>
                 <AddEditDrawer open={state.openDrawer}
                                onClose={handleCloseDrawer}
                                item={state.item}
