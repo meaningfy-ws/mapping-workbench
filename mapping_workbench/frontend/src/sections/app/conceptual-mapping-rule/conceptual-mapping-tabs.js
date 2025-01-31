@@ -5,20 +5,21 @@ import {paths} from '../../../paths';
 
 const TABS = [
     {
+        label: 'Overview',
+        value: paths.app.conceptual_mapping_rules.overview.index,
+        id: 'conceptual_mappings_overview_tab'
+    },
+    {
         label: 'In development',
         value: paths.app.conceptual_mapping_rules.develop.index,
-        id:'conceptual_mappings_develop_tab'
+        id: 'conceptual_mappings_develop_tab'
     },
     {
         label: 'In review',
         value: paths.app.conceptual_mapping_rules.review.index,
-        id:'conceptual_mappings_review_tab'
-    },
-    {
-        label: 'Approved',
-        value: paths.app.conceptual_mapping_rules.overview.index,
-        id:'conceptual_mappings_overview_tab'
-    }]
+        id: 'conceptual_mappings_review_tab'
+    }
+]
 
 export const ConceptualMappingTabs = () => {
     const router = useRouter()
