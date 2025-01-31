@@ -15,8 +15,6 @@ class SpecificTripleMapFragmentsApi extends TripleMapFragmentsApi {
         return [ACTION.EDIT, ACTION.DELETE]
     }
 
-    get
-
     constructor() {
         super("specific_triple_map_fragments");
         this.hasMappingPackage = true;
