@@ -11,9 +11,11 @@ export const TableLoadWrapper = ({children, data, dataState, lines}) => {
 
 
 export const TableSkeleton = ({lines = 5}) => {
-    return new Array(lines).fill("").map((e, i) =>
-        <Skeleton key={'line' + i}
-                  height={50}/>)
+    return <div>
+        {new Array(lines).fill("").map((e, i) =>
+            <Skeleton key={'line' + i}
+                      height={50}/>)}
+        </div>
 }
 
 export const TableNoData = () => {
