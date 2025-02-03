@@ -1,12 +1,11 @@
-import Card from '@mui/material/Card';
-import Stack from '@mui/material/Stack';
+import Paper from '@mui/material/Paper';
 
 import {Seo} from 'src/components/seo';
 import {Layout as AppLayout} from 'src/layouts/app';
 import TreeView from "src/sections/app/tree-view/tree-view";
 import {fieldsRegistryApi as sectionApi} from 'src/api/fields-registry';
 import {ElementsDefinitionTabs} from 'src/sections/app/elements-definition';
-import {NavigationTabsWrapper} from '../../../../components/navigation-tabs-wrapper';
+import {NavigationTabsWrapper} from 'src/components/navigation-tabs-wrapper';
 
 export const Page = () => {
     return (
@@ -15,12 +14,9 @@ export const Page = () => {
             <NavigationTabsWrapper>
                 <ElementsDefinitionTabs/>
             </NavigationTabsWrapper>
-            <Stack spacing={4}
-                   mt={5}>
-                <Card>
-                    <TreeView sectionApi={sectionApi}/>
-                </Card>
-            </Stack>
+            <Paper>
+                <TreeView sectionApi={sectionApi}/>
+            </Paper>
         </>
     )
 };
