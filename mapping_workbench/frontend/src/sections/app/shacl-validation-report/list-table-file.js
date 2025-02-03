@@ -12,7 +12,7 @@ import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import TablePagination from 'src/sections/components/table-pagination';
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
 
-const LocalHighlighter = ({text, language, theme}) => {
+export const LocalHighlighter = ({text, language, theme}) => {
     return text ? <SyntaxHighlighter
         language={language}
         wrapLines
