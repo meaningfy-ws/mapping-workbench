@@ -1,8 +1,6 @@
 import {useState} from "react";
 import PropTypes from 'prop-types';
 
-import {Box} from "@mui/system";
-import Stack from "@mui/material/Stack";
 import Table from '@mui/material/Table';
 import Button from "@mui/material/Button";
 import Dialog from '@mui/material/Dialog';
@@ -13,17 +11,15 @@ import TableHead from '@mui/material/TableHead';
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import SorterHeader from 'src/sections/components/table-sorter-header';
+import {ResultCell} from '../mapping-package/state/utils';
 
-import {ResultChip} from "./utils";
 import {Scrollbar} from 'src/components/scrollbar';
-import {ValueChip} from '../xpath-validation-report/utils';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
-import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
-import TableSorterHeader from "src/sections/components/table-sorter-header";
+import SorterHeader from 'src/sections/components/table-sorter-header';
 import TablePagination from "src/sections/components/table-pagination";
+import {LocalHighlighter} from 'src/sections/components/local-highlighter';
+import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
-import {LocalHighlighter} from "./list-table-file";
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", text: ""})
@@ -45,61 +41,12 @@ export const ListTable = (props) => {
         handleSelectFile
     } = props;
 
-    const handleOpenDetails = ({title, notices}) => {
-        console.log('on open details')
-        const description = notices.map((notice, i) =>
-            <Box key={'notice' + i}>
-                <Button type='link'
-                        onClick={() => handleSelectFile(notice.test_data_suite_oid)}
-                >
-                    {notice.test_data_suite_id}
-                </Button>
-                {' / '}
-                <Button type='link'
-                        onClick={() => handleSelectFile(notice.test_data_suite_oid, notice.test_data_oid)}
-                >
-                    {notice.test_data_id}
-                </Button>
-            </Box>)
-
-        setDescriptionDialog({open: true, title, description});
-    }
-
     const handleClose = () => setDescriptionDialog(e => ({...e, open: false}));
 
     const SorterHeader = (props) => <TableSorterHeader sort={sort}
                                                        onSort={onSort}
                                                        {...props}
     />
-
-
-    const ResultCell = ({item, onClick}) => {
-        const title = item.title
-        return <Stack direction="column"
-                      alignItems="center"
-                      justifyContent="center"
-                      gap={2}
-                      height={100}>
-            {Object.entries(item.result).map(([key, value]) => {
-                return value.count > 0
-                    ? <Stack direction='row'
-                             key={key}
-                             gap={1}>
-                        <ValueChip value={value.count}
-                                   color='primary'
-                                   sx={{p: 2}}/>
-                        <ResultChip color={key}
-                                    clickable
-                                    fontColor='#fff'
-                                    onClick={() => onClick({title, notices: value.test_datas})}
-                                    label={key}
-                        />
-                    </Stack>
-                    : null
-            })
-            }
-        </Stack>
-    }
 
     return (
         <>
@@ -127,8 +74,12 @@ export const ListTable = (props) => {
                                                        title="Test Suite"/>
                                 </TableCell>
                                 <TableCell width="25%">
-                                    <SorterHeader fieldName="short_source_constraint_component"
-                                                  title="Source Constraint Component"/>
+                                    <TableFilterHeader sort={sort}
+                                                       onSort={onSort}
+                                                       onFilter={onFilter}
+                                                       filters={filters}
+                                                       fieldName="short_source_constraint_component"
+                                                       title="Constraint Type"/>
                                 </TableCell>
                                 <TableCell>
                                     <TableFilterHeader sort={sort}
@@ -159,26 +110,17 @@ export const ListTable = (props) => {
                                         <TableCell>
                                             <LocalHighlighter language='turtle'
                                                               text={item.short_source_constraint_component}
-                                                              theme={syntaxHighlighterTheme}/>
+                                                              style={syntaxHighlighterTheme}/>
                                         </TableCell>
                                         <TableCell>
-                                            <SyntaxHighlighter
-                                                language="turtle"
-                                                wrapLines
-                                                style={syntaxHighlighterTheme}
-                                                customStyle={{borderRadius: 12, border: '1px solid #E4E7EC'}}
-                                                lineProps={{
-                                                    style: {
-                                                        overflowWrap: 'break-word',
-                                                        whiteSpace: 'pre-wrap'
-                                                    }
-                                                }}>
-                                                {item.short_result_path}
-                                            </SyntaxHighlighter>
+                                            <LocalHighlighter language='turtle'
+                                                              text={item.short_result_path}
+                                                              style={syntaxHighlighterTheme}/>
                                         </TableCell>
                                         <TableCell>
                                             <ResultCell item={item}
-                                                        onClick={handleOpenDetails}/>
+                                                        handleSelect={handleSelectFile}
+                                                        setDescription={setDescriptionDialog}/>
                                         </TableCell>
                                     </TableRow>
 

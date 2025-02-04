@@ -26,28 +26,32 @@ export const TableFilterHeader = ({fieldName, title, sort, desc, onSort, filters
     const hoverOpacity = (hover && sort.column !== fieldName) ? .7 : 1
 
     return (
-
         <Tooltip title={tooltipTitle}>
             <Stack direction='row'
                    alignItems='center'>
-                <Typography variant='h7'
-                            onMouseEnter={() => handleHover(true)}
-                            onMouseLeave={() => handleHover(false)}
-                            sx={{cursor: 'pointer', opacity: hoverOpacity, mt: .4}}
-                            onClick={() => onSort(fieldName, desc)}>
-                    {title ?? fieldName}
-                </Typography>
-                <IconButton color="inherit"
-                            sx={{rotate: 90}}
-                            onClick={() => onSort(fieldName, desc)}
-                            size="small">
-                    {(sort.column === fieldName || hover) && <ArrowDownwardIcon
-                        style={{
-                            transform: direction !== 'desc' ? 'rotate(180deg)' : '', transition: 'transform 0.4s',
-                            opacity: hoverOpacity
-                        }}
-                        fontSize='10px'/>}
-                </IconButton>
+                <Stack direction='row'
+                       alignItems='center'
+                       onMouseEnter={() => handleHover(true)}
+                       onMouseLeave={() => handleHover(false)}
+                       sx={{cursor: 'pointer', opacity: hoverOpacity}}
+                       onClick={() => onSort(fieldName, desc)}
+                >
+                    <Typography variant='h7'
+                                sx={{mt: .4}}>
+                        {title ?? fieldName}
+                    </Typography>
+                    <IconButton color="inherit"
+                                sx={{rotate: 90}}
+                                onClick={() => onSort(fieldName, desc)}
+                                size="small">
+                        {(sort.column === fieldName || hover) && <ArrowDownwardIcon
+                            style={{
+                                transform: direction !== 'desc' ? 'rotate(180deg)' : '', transition: 'transform 0.4s',
+                                opacity: hoverOpacity
+                            }}
+                            fontSize='10px'/>}
+                    </IconButton>
+                </Stack>
                 <IconButton onClick={handleClick}
                             size="small">
                     <FilterAltIcon fontSize='10px'

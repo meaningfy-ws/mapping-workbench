@@ -5,7 +5,7 @@ import Skeleton from "@mui/material/Skeleton";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from "@mui/material/FormControlLabel";
-import {useTheme} from '@mui/material/styles';
+import {ValueChip} from '../mapping-package/state/utils';
 
 export const CoverageFilter = ({value, onValueChange, values}) => {
     return (
@@ -64,20 +64,3 @@ export const TableLoadWrapper = ({children, data, dataState, lines}) => {
     return children
 }
 
-
-export const ValueChip = ({children, value, color, style}) => {
-    const theme = useTheme()
-    const themeColor = theme.palette?.[color] ?? {}
-    return (
-        <Stack sx={{
-            px: 1.4,
-            py: 0.3,
-            alignItems:'center',
-            justifyContent:'center',
-            backgroundColor: themeColor.alpha12,
-            color: themeColor.main,
-            borderRadius: 5,
-            ...style
-        }}>{value ?? children}</Stack>
-    )
-}
