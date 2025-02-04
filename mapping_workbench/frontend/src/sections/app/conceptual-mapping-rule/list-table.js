@@ -64,6 +64,7 @@ import {ListSelectorSelect as ResourceListSelector} from "src/components/app/lis
 import {
     MappingPackageCheckboxList
 } from 'src/sections/app/mapping-package/components/mapping-package-real-checkbox-list';
+import {TableLoadWrapper} from '../../components/table-load-wrapper';
 
 
 export const ListTableTripleMapFragment = (props) => {
@@ -975,146 +976,147 @@ export const ListTable = (props) => {
         )
     }
 
-    if (!isProjectDataReady) return null;
-
-
     return (
-        <TablePagination
-            component="div"
-            count={count}
-            onPageChange={onPageChange}
-            onRowsPerPageChange={onRowsPerPageChange}
-            page={page}
-            rowsPerPage={rowsPerPage}
-            rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
-            showFirstButton
-            showLastButton
-        >
-            <Paper>
-                <Stack direction='row'
-                       padding={3}>
-                    <FormControlLabel control={<Switch checked={detailedView}
-                                                       onChange={e => setDetailedView(e.target.checked)}/>}
-                                      label='Detailed View'/>
-                </Stack>
-                <Scrollbar>
-                    <Table sx={{minWidth: 1200}}>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell/>
-                                <SorterHeader fieldName='sort_order'
-                                              title='CM Rule Order'/>
-                                <TableCell width="10%">
-                                    Conceptual Field/Group
-                                </TableCell>
-                                <TableCell>
-                                    Min XSD
-                                </TableCell>
-                                <TableCell>
-                                    Max XSD
-                                </TableCell>
-                                <TableCell width="18%">
-                                    Ontology Fragment Class path
-                                </TableCell>
-                                <TableCell width="18%">
-                                    Ontology Fragment Property path
-                                </TableCell>
-                                <TableCell>
-                                    RML Triple Map
-                                </TableCell>
-                                <TableCell>
-                                    Mapping Package
-                                </TableCell>
-                                <TableCell>
-                                    SPARQL assertions
-                                </TableCell>
-                                <TableCell align="center"
-                                           title="Notes"
-                                           sx={{
-                                               whiteSpace: "nowrap"
-                                           }}
-                                >
-                                    Notes
-                                </TableCell>
-                                <TableCell align="right"
-                                           sx={{
-                                               whiteSpace: "nowrap"
-                                           }}
-                                />
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {items.map(item => {
-                                const item_id = item._id;
-                                const isCurrent = item_id === currentItem;
-                                const isHovered = item_id === hoveredItem;
+        <TableLoadWrapper dataState={{load:!isProjectDataReady}}
+                          data={items}>
+            <TablePagination
+                component="div"
+                count={count}
+                onPageChange={onPageChange}
+                onRowsPerPageChange={onRowsPerPageChange}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                rowsPerPageOptions={sectionApi.DEFAULT_ROWS_PER_PAGE_SELECTION}
+                showFirstButton
+                showLastButton
+            >
+                <Paper>
+                    <Stack direction='row'
+                           padding={3}>
+                        <FormControlLabel control={<Switch checked={detailedView}
+                                                           onChange={e => setDetailedView(e.target.checked)}/>}
+                                          label='Detailed View'/>
+                    </Stack>
+                    <Scrollbar>
+                        <Table sx={{minWidth: 1200}}>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell/>
+                                    <SorterHeader fieldName='sort_order'
+                                                  title='CM Rule Order'/>
+                                    <TableCell width="10%">
+                                        Conceptual Field/Group
+                                    </TableCell>
+                                    <TableCell>
+                                        Min XSD
+                                    </TableCell>
+                                    <TableCell>
+                                        Max XSD
+                                    </TableCell>
+                                    <TableCell width="18%">
+                                        Ontology Fragment Class path
+                                    </TableCell>
+                                    <TableCell width="18%">
+                                        Ontology Fragment Property path
+                                    </TableCell>
+                                    <TableCell>
+                                        RML Triple Map
+                                    </TableCell>
+                                    <TableCell>
+                                        Mapping Package
+                                    </TableCell>
+                                    <TableCell>
+                                        SPARQL assertions
+                                    </TableCell>
+                                    <TableCell align="center"
+                                               title="Notes"
+                                               sx={{
+                                                   whiteSpace: "nowrap"
+                                               }}
+                                    >
+                                        Notes
+                                    </TableCell>
+                                    <TableCell align="right"
+                                               sx={{
+                                                   whiteSpace: "nowrap"
+                                               }}
+                                    />
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {items.map(item => {
+                                    const item_id = item._id;
+                                    const isCurrent = item_id === currentItem;
+                                    const isHovered = item_id === hoveredItem;
 
-                                return (
-                                    <ListTableRow
-                                        key={`rules_list_row_${item_id}`}
-                                        item={item}
-                                        item_id={item_id}
-                                        isCurrent={isCurrent}
-                                        handleItemToggle={handleItemToggle}
-                                        sectionApi={sectionApi}
-                                        initProjectMappingPackages={projectMappingPackages}
-                                        initProjectTripleMapFragments={projectTripleMapFragments}
-                                        initProjectSPARQLResources={projectSPARQLResources}
-                                        onPackagesUpdate={onPackagesUpdate}
-                                        handleItemHover={handleItemHover}
-                                        isHovered={isHovered}
-                                        detailedView={detailedView}
-                                        handleNotesDialogOpen={notesDialog.handleOpen}
-                                    />)
-                            })}
-                            <Dialog
-                                id='notes_dialog'
-                                onClose={notesDialog.handleClose}
-                                open={notesDialog.open}
-                                fullWidth
-                                maxWidth="md"
-                            >
-                                <Card>
-                                    <CardHeader title="Notes"
-                                                sx={{mb: 2}}/>
-                                    <Divider/>
-                                    <CardContent sx={{pt: 1}}>
-                                        <Box style={{overflow: 'auto', maxHeight: '40vh'}}>
-                                            {notesDialog.data?.mapping_notes && <>
-                                                <Typography>Mapping Notes:</Typography>
-                                                {notesDialog.data.mapping_notes.map((mapping_note, i) => <RuleComment
-                                                        key={'mapping_note' + i}
-                                                        comment={mapping_note}
-                                                    />
-                                                )}
-                                            </>}
-                                            <Divider sx={{my: 2}}/>
-                                            {notesDialog.data?.editorial_notes && <>
-                                                <Typography>Editorial Notes:</Typography>
-                                                {notesDialog.data.editorial_notes.map((editorial_note, i) =>
-                                                    <RuleComment
-                                                        key={'editorial_notes' + i}
-                                                        comment={editorial_note}
-                                                    />
-                                                )}
-                                            </>}
-                                            <Divider sx={{my: 2}}/>
-                                            {notesDialog.data?.feedback_notes && <>
-                                                <Typography>Feedback Notes:</Typography>
-                                                {notesDialog.data.feedback_notes.map((feedback_note, i) =>
-                                                    <RuleComment key={'feedback_notes' + i}
-                                                                 comment={feedback_note}/>
-                                                )}
-                                            </>}
-                                        </Box>
-                                    </CardContent>
-                                </Card>
-                            </Dialog>
-                        </TableBody>
-                    </Table>
-                </Scrollbar>
-            </Paper>
-        </TablePagination>
+                                    return (
+                                        <ListTableRow
+                                            key={`rules_list_row_${item_id}`}
+                                            item={item}
+                                            item_id={item_id}
+                                            isCurrent={isCurrent}
+                                            handleItemToggle={handleItemToggle}
+                                            sectionApi={sectionApi}
+                                            initProjectMappingPackages={projectMappingPackages}
+                                            initProjectTripleMapFragments={projectTripleMapFragments}
+                                            initProjectSPARQLResources={projectSPARQLResources}
+                                            onPackagesUpdate={onPackagesUpdate}
+                                            handleItemHover={handleItemHover}
+                                            isHovered={isHovered}
+                                            detailedView={detailedView}
+                                            handleNotesDialogOpen={notesDialog.handleOpen}
+                                        />)
+                                })}
+                                <Dialog
+                                    id='notes_dialog'
+                                    onClose={notesDialog.handleClose}
+                                    open={notesDialog.open}
+                                    fullWidth
+                                    maxWidth="md"
+                                >
+                                    <Card>
+                                        <CardHeader title="Notes"
+                                                    sx={{mb: 2}}/>
+                                        <Divider/>
+                                        <CardContent sx={{pt: 1}}>
+                                            <Box style={{overflow: 'auto', maxHeight: '40vh'}}>
+                                                {notesDialog.data?.mapping_notes && <>
+                                                    <Typography>Mapping Notes:</Typography>
+                                                    {notesDialog.data.mapping_notes.map((mapping_note, i) =>
+                                                        <RuleComment
+                                                            key={'mapping_note' + i}
+                                                            comment={mapping_note}
+                                                        />
+                                                    )}
+                                                </>}
+                                                <Divider sx={{my: 2}}/>
+                                                {notesDialog.data?.editorial_notes && <>
+                                                    <Typography>Editorial Notes:</Typography>
+                                                    {notesDialog.data.editorial_notes.map((editorial_note, i) =>
+                                                        <RuleComment
+                                                            key={'editorial_notes' + i}
+                                                            comment={editorial_note}
+                                                        />
+                                                    )}
+                                                </>}
+                                                <Divider sx={{my: 2}}/>
+                                                {notesDialog.data?.feedback_notes && <>
+                                                    <Typography>Feedback Notes:</Typography>
+                                                    {notesDialog.data.feedback_notes.map((feedback_note, i) =>
+                                                        <RuleComment key={'feedback_notes' + i}
+                                                                     comment={feedback_note}/>
+                                                    )}
+                                                </>}
+                                            </Box>
+                                        </CardContent>
+                                    </Card>
+                                </Dialog>
+                            </TableBody>
+                        </Table>
+                    </Scrollbar>
+                </Paper>
+            </TablePagination>
+        </TableLoadWrapper>
     );
 };
 
