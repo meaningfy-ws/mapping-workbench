@@ -5,7 +5,6 @@ from beanie import PydanticObjectId
 from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState, MappingPackage
 from mapping_workbench.backend.mapping_package.services.data import get_mapping_package_state_ns_definitions
-from mapping_workbench.backend.ontology.services.terms import get_prefixed_ns_term
 from mapping_workbench.backend.ontology_suite.models.ontology_file_resource import OntologyFileResource
 from mapping_workbench.backend.package_validator.adapters.shacl_validator import SHACLValidator
 from mapping_workbench.backend.package_validator.models.shacl_validation import SHACLQueryResult, \
@@ -20,27 +19,37 @@ from mapping_workbench.backend.test_data_suite.models.entity import TestDataExce
 
 def aggregate_shacl_tests_summary(
         results: List[SHACLQueryResult],
-        ns_definitions: dict,
         use_grouping: bool = True
 ) -> List[SHACLValidationSummaryRow]:
-    def get_path_uniq_key(shacl_suite_oid, result_path):
-        return str(shacl_suite_oid) + "__" + result_path
+    def get_path_uniq_key(shacl_suite_oid, result_path, source_constraint_component = ""):
+        return str(shacl_suite_oid) + "__" + result_path + (
+            ("__" + source_constraint_component) if source_constraint_component else ""
+        )
 
     shacl_result_paths: List[ValidationSHACLQuery] = []
 
     paths_uniq_keys = set()
     for result in results:
-        result_path = result.result_path if use_grouping else ""
-        path_uniq_key = get_path_uniq_key(result.shacl_suite.shacl_suite_oid, result_path)
+        result_path = ""
+        short_result_path = ""
+
+        if use_grouping:
+            result_path = result.result_path
+            short_result_path = result.short_result_path
+
+        path_uniq_key = get_path_uniq_key(
+            result.shacl_suite.shacl_suite_oid,
+            result_path,
+            result.source_constraint_component
+        )
         if path_uniq_key not in paths_uniq_keys:
             paths_uniq_keys.add(path_uniq_key)
             shacl_result_paths.append(ValidationSHACLQuery(
                 shacl_suite=result.shacl_suite,
                 result_path=result_path,
-                short_result_path=get_prefixed_ns_term(
-                    ns_term=result_path,
-                    ns_definitions=ns_definitions
-                )
+                short_result_path=short_result_path,
+                source_constraint_component=result.short_source_constraint_component,
+                short_source_constraint_component=result.short_source_constraint_component
             ))
 
     summary_results: List[SHACLValidationSummaryRow] = []
@@ -54,10 +63,9 @@ def aggregate_shacl_tests_summary(
                 SHACLValidationSummaryRow(
                     shacl_suite=shacl_result_path.shacl_suite,
                     result_path=shacl_result_path.result_path,
-                    short_result_path=get_prefixed_ns_term(
-                        ns_term=shacl_result_path.result_path,
-                        ns_definitions=ns_definitions
-                    )
+                    short_result_path=shacl_result_path.short_result_path,
+                    source_constraint_component=shacl_result_path.short_source_constraint_component,
+                    short_source_constraint_component=shacl_result_path.short_source_constraint_component
                 )
             )
             idx = len(summary_results) - 1
@@ -141,7 +149,6 @@ async def validate_tests_data_with_shacl_test_suites(
                 shacl_suites=shacl_suites,
                 results=aggregate_shacl_tests_summary(
                     results=union_shacl_suites_results(tests_data[idx].validation.shacl.results),
-                    ns_definitions=ns_definitions,
                     use_grouping=False
                 )
             )
@@ -198,19 +205,13 @@ async def validate_mapping_package_state_with_shacl(mapping_package_state: Mappi
         mapping_package_state.test_data_suites[idx].validation.shacl = SHACLTestDataValidationResult(
             summary=SHACLValidationSummary(
                 shacl_suites=shacl_suites,
-                results=aggregate_shacl_tests_summary(
-                    results=test_data_suite_results,
-                    ns_definitions=ns_definitions
-                )
+                results=aggregate_shacl_tests_summary(results=test_data_suite_results)
             )
         )
 
     mapping_package_state.validation.shacl = SHACLTestDataValidationResult(
         summary=SHACLValidationSummary(
             shacl_suites=shacl_suites,
-            results=aggregate_shacl_tests_summary(
-                results=state_results,
-                ns_definitions=ns_definitions
-            )
+            results=aggregate_shacl_tests_summary(results=state_results)
         )
     )

@@ -33,6 +33,8 @@ class ValidationSHACLQuery(BaseModel):
     shacl_suite: Optional[SHACLValidationSuiteEntry] = None
     result_path: Optional[str] = None
     short_result_path: Optional[str] = None
+    source_constraint_component: Optional[str] = None
+    short_source_constraint_component: Optional[str] = None
 
 
 class SHACLGraphResultBindingValue(BaseModel):

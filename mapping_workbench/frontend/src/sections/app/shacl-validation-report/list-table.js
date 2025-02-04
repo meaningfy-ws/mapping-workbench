@@ -23,6 +23,7 @@ import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import TablePagination from "src/sections/components/table-pagination";
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
+import {LocalHighlighter} from "./list-table-file";
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", text: ""})
@@ -126,8 +127,8 @@ export const ListTable = (props) => {
                                                        title="Test Suite"/>
                                 </TableCell>
                                 <TableCell width="25%">
-                                    <SorterHeader fieldName="conforms"
-                                                  title="Conforms"/>
+                                    <SorterHeader fieldName="short_source_constraint_component"
+                                                  title="Source Constraint Component"/>
                                 </TableCell>
                                 <TableCell>
                                     <TableFilterHeader sort={sort}
@@ -156,7 +157,9 @@ export const ListTable = (props) => {
                                             {item.shacl_suite}
                                         </TableCell>
                                         <TableCell>
-                                            {0}
+                                            <LocalHighlighter language='turtle'
+                                                              text={item.short_source_constraint_component}
+                                                              theme={syntaxHighlighterTheme}/>
                                         </TableCell>
                                         <TableCell>
                                             <SyntaxHighlighter

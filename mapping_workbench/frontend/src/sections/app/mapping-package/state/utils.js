@@ -82,6 +82,7 @@ export const mapShaclResults = (result) => {
         const resultArray = {}
         resultArray["shacl_suite"] = result.shacl_suites?.[0]?.shacl_suite_id
         resultArray["short_result_path"] = e.short_result_path
+        resultArray["short_source_constraint_component"] = e.short_source_constraint_component
         resultArray["result"] = e.result
         Object.entries(e.result).forEach(entry => {
             const [key, value] = entry
