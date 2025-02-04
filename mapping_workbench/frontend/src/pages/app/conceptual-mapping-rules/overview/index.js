@@ -30,13 +30,13 @@ import {Filter} from 'src/sections/components/filter';
 import useItemsSearch from 'src/hooks/use-items-search';
 import {useItemsStore} from 'src/hooks/use-items-store';
 import {TableSearchBar} from 'src/sections/components/table-search-bar';
+import {TableLoadWrapper} from 'src/sections/components/table-load-wrapper';
 import {NavigationTabsWrapper} from 'src/components/navigation-tabs-wrapper';
 import {toastError, toastLoad, toastSuccess} from 'src/components/app-toast';
 import {ListTable} from "src/sections/app/conceptual-mapping-rule/list-table";
 import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
 import {ConceptualMappingTabs} from 'src/sections/app/conceptual-mapping-rule/conceptual-mapping-tabs';
 import {MappingPackageFormSelect} from 'src/sections/app/mapping-package/components/mapping-package-form-select';
-import {TableLoadWrapper} from '../../../../sections/components/table-load-wrapper';
 
 const FILTER_VALUES = [{label: 'All', value: ''},
     {label: 'Valid', value: 'valid'},

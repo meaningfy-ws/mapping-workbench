@@ -76,7 +76,6 @@ export const Page = () => {
             })
     }, [])
 
-    if (!isProjectDataReady) return null;
 
     const handleEdit = (item) => {
         setState(e => ({...e, openDrawer: true, item}))
@@ -126,7 +125,7 @@ export const Page = () => {
                     </Button>
                 </Stack>
                 <TableLoadWrapper data={itemsStore.items}
-                                  dataState={itemsStore}>
+                                  dataState={{load: !isProjectDataReady || itemsStore.load}}>
                     <ListTable
                         onPageChange={itemsSearch.handlePageChange}
                         onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
