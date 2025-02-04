@@ -13,9 +13,8 @@ import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import Typography from '@mui/material/Typography';
 
-import {ResultChip} from "./utils";
 import {Scrollbar} from 'src/components/scrollbar';
-import {getValidationColor} from '../mapping-package/state/utils';
+import {getValidationColor, ResultChip} from '../mapping-package/state/utils';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme"
 import TablePagination from "src/sections/components/table-pagination";
 import {LocalHighlighter} from 'src/sections/components/local-highlighter';

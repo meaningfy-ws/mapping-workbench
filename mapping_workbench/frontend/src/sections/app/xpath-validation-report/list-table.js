@@ -18,9 +18,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 
-import {ValueChip} from './utils';
 import {Scrollbar} from 'src/components/scrollbar';
-import {getValidationColor} from '../mapping-package/state/utils';
+import {getValidationColor, handleOpenDetails, ValueChip} from '../mapping-package/state/utils';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import {LocalHighlighter} from '../../components/local-highlighter';
 import TablePagination from "src/sections/components/table-pagination";
@@ -48,25 +47,6 @@ export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", description: ""})
 
     const handleClose = () => setDescriptionDialog(e => ({...e, open: false}));
-
-    const handleOpenDetails = (title, notices) => {
-        const description = notices.map((notice, i) =>
-            <Box key={'notice' + i}>
-                <Button type='link'
-                        onClick={() => handleSelectFile(notice.test_data_suite_oid)}
-                >
-                    {notice.test_data_suite_id}
-                </Button>
-                {' / '}
-                <Button type='link'
-                        onClick={() => handleSelectFile(notice.test_data_suite_oid, notice.test_data_oid)}
-                >
-                    {notice.test_data_id}
-                </Button>
-            </Box>)
-
-        setDescriptionDialog({open: true, title, description});
-    }
 
     const SorterHeader = (props) => {
         const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
@@ -162,7 +142,7 @@ export const ListTable = (props) => {
                                             <Button variant='contained'
                                                     sx={{borderRadius: 10, p: .3, minWidth: 30}}
                                                     disabled={!item.notice_count}
-                                                    onClick={() => handleOpenDetails(item.sdk_element_id, item.test_data_xpaths)}>
+                                                    onClick={() => handleOpenDetails(item.sdk_element_id, item.test_data_xpaths, handleSelectFile, setDescriptionDialog)}>
                                                 {item.notice_count}
                                             </Button>
                                         </TableCell>

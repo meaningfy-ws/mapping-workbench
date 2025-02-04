@@ -18,9 +18,8 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContentText from "@mui/material/DialogContentText";
 import {LocalHighlighter} from '../../components/local-highlighter';
 
-import {ValueChip} from './utils';
 import {Scrollbar} from 'src/components/scrollbar';
-import {getValidationColor} from '../mapping-package/state/utils';
+import {getValidationColor, ValueChip} from '../mapping-package/state/utils';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";

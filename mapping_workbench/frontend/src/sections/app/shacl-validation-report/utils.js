@@ -1,21 +1,9 @@
-import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
 import Alert from "@mui/material/Alert";
 import Tooltip from "@mui/material/Tooltip";
 import Skeleton from "@mui/material/Skeleton";
 import TableSortLabel from "@mui/material/TableSortLabel";
 
-import {getResultColor} from '../mapping-package/state/utils';
-
-export const ResultChip = ({label, color, clickable, onClick}) => {
-    return (
-        <Chip label={label}
-              clickable={clickable}
-              color={getResultColor(color ?? label)}
-              onClick={onClick}
-        />
-    )
-}
 
 export const SorterHeader = ({fieldName, title, desc, sort, onSort}) => {
     return <Tooltip enterDelay={300}
