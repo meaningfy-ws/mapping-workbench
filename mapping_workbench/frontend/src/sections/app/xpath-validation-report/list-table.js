@@ -1,5 +1,4 @@
 import {useState} from "react";
-import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import PropTypes from 'prop-types';
 
 import CheckIcon from '@mui/icons-material/Check';
@@ -23,12 +22,12 @@ import {ValueChip} from './utils';
 import {Scrollbar} from 'src/components/scrollbar';
 import {getValidationColor} from '../mapping-package/state/utils';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
-import TableSorterHeader from "src/sections/components/table-sorter-header";
+import {LocalHighlighter} from '../../components/local-highlighter';
 import TablePagination from "src/sections/components/table-pagination";
+import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
 
 export const ListTable = (props) => {
-    const highLighterTheme = useHighlighterTheme()
     const {
         count = 0,
         items = [],
@@ -43,6 +42,8 @@ export const ListTable = (props) => {
         onFilter,
         filters
     } = props;
+
+    const highLighterTheme = useHighlighterTheme()
 
     const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", description: ""})
 
@@ -134,14 +135,10 @@ export const ListTable = (props) => {
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            <SyntaxHighlighter
-                                                language="xquery"
-                                                wrapLines
-                                                style={highLighterTheme}
-                                                customStyle={{borderRadius: 12, border: '1px solid #E4E7EC'}}
-                                                lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
-                                                {item.sdk_element_xpath}
-                                            </SyntaxHighlighter>
+                                            <LocalHighlighter language="xquery"
+                                                              theme={highLighterTheme}
+                                                              text={item.sdk_element_xpath}
+                                            />
                                         </TableCell>
                                         <TableCell>
                                             {item.xpath_conditions?.map((xpath_condition, key) =>
@@ -150,24 +147,15 @@ export const ListTable = (props) => {
                                                     direction="column"
                                                     spacing={1}
                                                 >
-                                                    <SyntaxHighlighter
-                                                        language="xquery"
-                                                        wrapLines
-                                                        style={highLighterTheme}
-                                                        customStyle={{
-                                                            borderRadius: 12,
-                                                            border: '1px solid',
-                                                            borderColor: getValidationColor(xpath_condition.meets_xpath_condition ?
-                                                                'valid' : 'invalid')
-                                                        }}
-                                                        lineProps={{
-                                                            style: {
-                                                                wordBreak: 'break-all',
-                                                                whiteSpace: 'pre-wrap'
-                                                            }
-                                                        }}>
-                                                        {xpath_condition.xpath_condition || '-'}
-                                                    </SyntaxHighlighter>
+                                                    <LocalHighlighter language="xquery"
+                                                                      style={highLighterTheme}
+                                                                      customStyle={{
+                                                                          borderRadius: 12,
+                                                                          border: '1px solid',
+                                                                          borderColor: getValidationColor(xpath_condition.meets_xpath_condition ?
+                                                                              'valid' : 'invalid')
+                                                                      }}
+                                                                      text={xpath_condition.xpath_condition || '-'}/>
                                                 </Stack>)}
                                         </TableCell>
                                         <TableCell>

@@ -4,8 +4,8 @@ import Alert from "@mui/material/Alert";
 import Tooltip from "@mui/material/Tooltip";
 import Skeleton from "@mui/material/Skeleton";
 import TableSortLabel from "@mui/material/TableSortLabel";
-import {getResultColor} from '../mapping-package/state/utils';
 
+import {getResultColor} from '../mapping-package/state/utils';
 
 export const ResultChip = ({label, color, clickable, onClick}) => {
     return (

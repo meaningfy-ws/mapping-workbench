@@ -13,17 +13,16 @@ import TableHead from '@mui/material/TableHead';
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import SorterHeader from 'src/sections/components/table-sorter-header';
 
 import {ResultChip} from "./utils";
 import {Scrollbar} from 'src/components/scrollbar';
 import {ValueChip} from '../xpath-validation-report/utils';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
-import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
-import TableSorterHeader from "src/sections/components/table-sorter-header";
+import SorterHeader from 'src/sections/components/table-sorter-header';
 import TablePagination from "src/sections/components/table-pagination";
+import {LocalHighlighter} from 'src/sections/components/local-highlighter';
+import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
-import {LocalHighlighter} from "./list-table-file";
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", text: ""})
@@ -46,7 +45,6 @@ export const ListTable = (props) => {
     } = props;
 
     const handleOpenDetails = ({title, notices}) => {
-        console.log('on open details')
         const description = notices.map((notice, i) =>
             <Box key={'notice' + i}>
                 <Button type='link'
@@ -127,8 +125,12 @@ export const ListTable = (props) => {
                                                        title="Test Suite"/>
                                 </TableCell>
                                 <TableCell width="25%">
-                                    <SorterHeader fieldName="short_source_constraint_component"
-                                                  title="Source Constraint Component"/>
+                                    <TableFilterHeader sort={sort}
+                                                       onSort={onSort}
+                                                       onFilter={onFilter}
+                                                       filters={filters}
+                                                       fieldName="short_source_constraint_component"
+                                                       title="Constraint Type"/>
                                 </TableCell>
                                 <TableCell>
                                     <TableFilterHeader sort={sort}
@@ -159,22 +161,12 @@ export const ListTable = (props) => {
                                         <TableCell>
                                             <LocalHighlighter language='turtle'
                                                               text={item.short_source_constraint_component}
-                                                              theme={syntaxHighlighterTheme}/>
+                                                              style={syntaxHighlighterTheme}/>
                                         </TableCell>
                                         <TableCell>
-                                            <SyntaxHighlighter
-                                                language="turtle"
-                                                wrapLines
-                                                style={syntaxHighlighterTheme}
-                                                customStyle={{borderRadius: 12, border: '1px solid #E4E7EC'}}
-                                                lineProps={{
-                                                    style: {
-                                                        overflowWrap: 'break-word',
-                                                        whiteSpace: 'pre-wrap'
-                                                    }
-                                                }}>
-                                                {item.short_result_path}
-                                            </SyntaxHighlighter>
+                                            <LocalHighlighter language='turtle'
+                                                              text={item.short_result_path}
+                                                              style={syntaxHighlighterTheme}/>
                                         </TableCell>
                                         <TableCell>
                                             <ResultCell item={item}

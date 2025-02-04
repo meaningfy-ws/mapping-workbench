@@ -1,6 +1,5 @@
 import {useState} from "react";
 import PropTypes from 'prop-types';
-import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
@@ -19,13 +18,15 @@ import Typography from '@mui/material/Typography';
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import SorterHeader from '../../components/table-sorter-header';
+
 
 import {ResultChip} from "./utils";
 import {useDialog} from "src/hooks/use-dialog";
 import {Scrollbar} from 'src/components/scrollbar';
 import {ValueChip} from '../xpath-validation-report/utils';
+import SorterHeader from '../../components/table-sorter-header';
 import {getValidationColor} from '../mapping-package/state/utils';
+import {LocalHighlighter} from '../../components/local-highlighter';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import TablePagination from "src/sections/components/table-pagination";
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
@@ -193,19 +194,9 @@ export const ListTable = (props) => {
                                                 </Stack>}
                                         </TableCell>
                                         <TableCell>
-                                            <SyntaxHighlighter
-                                                language="sparql"
-                                                wrapLines
-                                                style={syntaxHighlighterTheme}
-                                                customStyle={{borderRadius: 12, border: '1px solid #E4E7EC'}}
-                                                lineProps={{
-                                                    style: {
-                                                        overflowWrap: 'break-word',
-                                                        whiteSpace: 'pre-wrap'
-                                                    }
-                                                }}>
-                                                {item.query}
-                                            </SyntaxHighlighter>
+                                            <LocalHighlighter style={syntaxHighlighterTheme}
+                                                              text={item.query}
+                                                              language="sparql"/>
                                         </TableCell>
                                         <TableCell>
                                             <ResultCell item={item}
@@ -245,13 +236,9 @@ export const ListTable = (props) => {
                     {`XPath Condition for "${xpathConditionDialog.data?.title}"`}
                 </DialogTitle>
                 <DialogContent>
-                    <SyntaxHighlighter
-                        language="xquery"
-                        wrapLines
-                        style={syntaxHighlighterTheme}
-                        lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
-                        {xpathConditionDialog.data?.xpath_condition?.xpath_condition}
-                    </SyntaxHighlighter>
+                    <LocalHighlighter language="xquery"
+                                      style={syntaxHighlighterTheme}
+                                      text={xpathConditionDialog.data?.xpath_condition?.xpath_condition}/>
                     <Divider sx={{my: 1}}/>
                     <Stack direction="row">
                         {xpathConditionDialog.data?.xpath_condition?.meets_xpath_condition ?

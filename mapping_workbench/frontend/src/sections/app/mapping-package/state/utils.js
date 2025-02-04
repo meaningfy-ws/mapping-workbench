@@ -1,3 +1,4 @@
+import Button from '@mui/material/Button';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
@@ -197,4 +198,24 @@ export const useFileNavigation = (reportTree) => {
         handleSetTestDataset,
         handleSetTestAndPackage
     }
+}
+
+
+export const handleOpenDetails = ({title, notices, handleSelect, setDescription}) => {
+    const description = notices.map((notice, i) =>
+        <Box key={'notice' + i}>
+            <Button type='link'
+                    onClick={() => handleSelect(notice.test_data_suite_oid)}
+            >
+                {notice.test_data_suite_id}
+            </Button>
+            {' / '}
+            <Button type='link'
+                    onClick={() => handleSelect(notice.test_data_suite_oid, notice.test_data_oid)}
+            >
+                {notice.test_data_id}
+            </Button>
+        </Box>)
+
+    setDescription({open: true, title, description});
 }
