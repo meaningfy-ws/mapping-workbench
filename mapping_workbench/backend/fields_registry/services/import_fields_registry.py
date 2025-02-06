@@ -5,7 +5,8 @@ from collections import defaultdict
 from datetime import datetime
 from typing import List, Union
 
-from beanie import Link
+from beanie import Link, PydanticObjectId
+from beanie.odm.operators.find.comparison import Eq
 from dateutil.tz import tzlocal
 
 from mapping_workbench.backend.fields_registry.adapters.github_download import GithubDownloader
@@ -30,6 +31,26 @@ NOTICE_TYPES_INFO_FILE_NAME = "notice-types.json"
 FIELD_CONTENT_TYPE = "field"
 GROUP_CONTENT_TYPE = "group"
 
+
+
+async def exists_eforms_versions_in_project(project_id: PydanticObjectId, versions: List[str]) -> List[str]:
+    existing_versions = []
+    for version in versions:
+        sdk_fields = await StructuralElement.find(
+            Eq(StructuralElement.versions, version),
+            StructuralElement.project == Project.link_from_id(project_id)
+        ).to_list()
+        if len(sdk_fields) > 0:
+            existing_versions.append(version)
+    return existing_versions
+
+async def exists_import_eforms_versions_in_pool(versions: List[str]) -> List[str]:
+    existing_versions = []
+    for version in versions:
+        sdk_fields = await PoolSDKField.find(PoolSDKField.version == version).to_list()
+        if len(sdk_fields) > 0:
+            existing_versions.append(version)
+    return existing_versions
 
 async def import_eforms_fields_from_pool_to_project(project_link: Link[Project], version: str) -> bool:
     """
@@ -231,6 +252,8 @@ async def import_eforms_fields_from_folder_to_pool(
                 fields_metadata=fields_metadata
             )
 
+def eforms_sdk_versions_from_str_to_list(versions_str: str) -> List[str]:
+    return [item.strip() for item in versions_str.split(',')]
 
 async def import_eforms_xsd(
         branch_or_tag_name: str,
@@ -242,7 +265,7 @@ async def import_eforms_xsd(
         task_response = TaskResponse()
 
     task_progress = TaskProgress(task_response)
-    versions = [item.strip() for item in branch_or_tag_name.split(',')]
+    versions = eforms_sdk_versions_from_str_to_list(branch_or_tag_name)
 
     task_progress.start_progress(actions_count=1)
     task_progress.start_action(name="Import EForms XSD", steps_count=len(versions))
