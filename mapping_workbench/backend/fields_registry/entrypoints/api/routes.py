@@ -9,7 +9,7 @@ from mapping_workbench.backend.core.models.api_response import APIEmptyContentWi
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement, \
     APIListStructuralElementsPaginatedResponse, APIListStructuralElementsVersionedViewPaginatedResponse, \
     StructuralElementsVersionedView, StructuralElementLabelOut, BaseStructuralElementIn, StructuralElementOut, \
-    StructuralElementIn
+    StructuralElementIn, APIValidateSDKVersionsToImportResponse
 from mapping_workbench.backend.fields_registry.services import tasks
 from mapping_workbench.backend.fields_registry.services.api import list_structural_elements_versioned_view, \
     get_structural_elements_versioned_view, \
@@ -19,6 +19,8 @@ from mapping_workbench.backend.fields_registry.services.api import list_structur
 from mapping_workbench.backend.fields_registry.services.data import tree_of_structural_elements
 from mapping_workbench.backend.fields_registry.services.generate_conceptual_mapping_rules import \
     generate_conceptual_mapping_rules
+from mapping_workbench.backend.fields_registry.services.import_fields_registry import \
+    eforms_sdk_versions_from_str_to_list, exists_eforms_versions_in_project, exists_import_eforms_versions_in_pool
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.project.services.api import get_project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
@@ -185,6 +187,28 @@ async def route_search_structural_elements_versioned_view_by_eforms_version(
         elif element.node:
             element.node = await element.node.fetch()
     return structural_elements_versioned_view
+
+
+@router.post(
+    "/check_import_eforms_xsd",
+    description=f"Check Import eForms XSD",
+    name=f"{NAME_FOR_ONE}:check_import_eforms_xsd",
+    response_model=APIValidateSDKVersionsToImportResponse
+)
+async def route_check_import_eforms_xsd(
+        github_repository_url: str = Form(default=None),
+        branch_or_tag_name: str = Form(...),
+        project_id: PydanticObjectId = Form(...),
+        user: User = Depends(current_active_user)
+):
+    versions = eforms_sdk_versions_from_str_to_list(branch_or_tag_name)
+    validated_versions = APIValidateSDKVersionsToImportResponse(
+        in_project=(await exists_eforms_versions_in_project(project_id, versions)),
+        in_pool=(await exists_import_eforms_versions_in_pool(versions))
+    )
+    validated_versions.not_in_project = [item for item in versions if item not in validated_versions.in_project]
+    validated_versions.not_in_pool = [item for item in versions if item not in validated_versions.in_pool]
+    return validated_versions
 
 
 @router.post(

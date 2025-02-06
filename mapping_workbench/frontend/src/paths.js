@@ -384,6 +384,7 @@ export const apiPaths = {
         items: '/fields_registry',
         item: '/fields_registry/:id',
         import_eforms_xsd: '/fields_registry/tasks/import_eforms_xsd',
+        check_import_eforms_xsd: '/fields_registry/check_import_eforms_xsd',
         elements: '/fields_registry/elements',
         elements_tree: '/fields_registry/elements_tree',
         element: '/fields_registry/elements/:id',
