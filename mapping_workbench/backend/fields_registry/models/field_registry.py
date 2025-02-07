@@ -189,10 +189,3 @@ class BaseStructuralElementIn(BaseModel):
     absolute_xpath: str
     relative_xpath: Optional[str] = None
     parent_node_id: Optional[str] = None
-
-
-class APIValidateSDKVersionsToImportResponse(BaseModel):
-    in_project: List[str] = [],
-    not_in_project: List[str] = [],
-    in_pool: List[str] = [],
-    not_in_pool: List[str] = [],

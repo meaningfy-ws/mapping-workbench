@@ -23,40 +23,54 @@ import {FormTextField} from "src/components/app/form/text-field";
 import {fieldsOverviewApi as sectionApi} from 'src/api/fields-overview';
 import {toastError, toastLoad, toastSuccess} from "src/components/app-toast";
 import {fieldsRegistryApi} from "src/api/fields-registry";
-import {EFormsImportValidator} from "../../../../sections/app/fields-registry/eforms-import-validation";
-import {useDialog} from "../../../../hooks/use-dialog";
+import Alert from "@mui/material/Alert";
+import Divider from "@mui/material/Divider";
+//import {EFormsImportValidator} from "../../../../sections/app/fields-registry/eforms-import-validation";
+//import {useDialog} from "../../../../hooks/use-dialog";
 
 
 const Page = () => {
-    const confirmImportFieldsDialog = useDialog();
+    //const confirmImportFieldsDialog = useDialog();
     usePageView();
 
     const [isRunning, setIsRunning] = useState(false);
+    const [errors, setErrors] = useState([]);
 
-    const handleConfirmImportFields = (validatedVersions, values) => {
-        if (!validatedVersions?.in_project?.length && !validatedVersions?.not_in_pool?.length) {
-            return true;
-        }
-        return new Promise((resolve) => {
-            confirmImportFieldsDialog.handleOpen({
-                open: true,
-                onConfirm: () => {
-                    confirmImportFieldsDialog.handleClose();
-                    resolve(true);
-                },
-                onClose: () => {
-                    confirmImportFieldsDialog.handleClose();
-                    resolve(false);
-                },
-                validatedVersions: validatedVersions,
-                values: values
-            });
-        });
-    };
+    // const handleConfirmImportFields = (validatedVersions, values) => {
+    //     if (!validatedVersions?.in_project?.length && !validatedVersions?.not_in_pool?.length) {
+    //         return true;
+    //     }
+    //     return new Promise((resolve) => {
+    //         confirmImportFieldsDialog.handleOpen({
+    //             open: true,
+    //             onConfirm: () => {
+    //                 confirmImportFieldsDialog.handleClose();
+    //                 resolve(true);
+    //             },
+    //             onClose: () => {
+    //                 confirmImportFieldsDialog.handleClose();
+    //                 resolve(false);
+    //             },
+    //             validatedVersions: validatedVersions,
+    //             values: values
+    //         });
+    //     });
+    // };
 
-    const validateImportFieldRegistry = async (values) => {
+    const validateImportFieldRegistry = async (values, formik) => {
         const validatedVersions = await fieldsRegistryApi.validateImportEFormsXSD(values);
-        return handleConfirmImportFields(validatedVersions, values);
+        let formErrors = []
+        if (validatedVersions) {
+            if (!!validatedVersions?.not_in_remote_repo?.length) {
+                formErrors.push("[" + validatedVersions.not_in_remote_repo.join(', ') + "] version(s) not found in the remote repository.");
+            }
+            if (validatedVersions?.invalid_repo_url) {
+                formErrors.push("Invalid GitHub repository URL");
+            }
+            setErrors(formErrors);
+        }
+        return formErrors.length === 0;
+        //return handleConfirmImportFields(validatedVersions, values);
     };
 
     const formik = useFormik({
@@ -77,7 +91,7 @@ const Page = () => {
             values['project_id'] = sessionApi.getSessionProject();
 
             const toastId = toastLoad(`Importing eForm Fields ... `)
-            if (await validateImportFieldRegistry(values)) {
+            if (await validateImportFieldRegistry(values, formik)) {
                 sectionApi.importEFormsXSD(values)
                     .then((res) => {
                         helpers.setStatus({success: true});
@@ -123,6 +137,13 @@ const Page = () => {
                     <Card>
                         <CardHeader title="Import eForms XSD"/>
                         <CardContent sx={{pt: 0}}>
+                            {errors.length > 0 && <>
+                                <Divider sx={{mb: 2}}/>
+                                {errors.map(error =>
+                                    <Alert severity="error">{error}</Alert>
+                                )}
+                                <Divider sx={{my: 2}}/>
+                            </>}
                             <Grid container
                                   spacing={3}>
                                 <Grid xs={12}
@@ -165,13 +186,12 @@ const Page = () => {
                     </Card>
                 </form>
             </Stack>
-            <EFormsImportValidator
-                open={confirmImportFieldsDialog.open}
-                onClose={confirmImportFieldsDialog.data?.onClose}
-                onConfirm={confirmImportFieldsDialog.data?.onConfirm}
-                validatedVersions={confirmImportFieldsDialog.data?.validatedVersions}
-                values={confirmImportFieldsDialog.data?.values}
-            />
+            {/*<EFormsImportValidator*/}
+            {/*    open={confirmImportFieldsDialog.open}*/}
+            {/*    onClose={confirmImportFieldsDialog.data?.onClose}*/}
+            {/*    onConfirm={confirmImportFieldsDialog.data?.onConfirm}*/}
+            {/*    validatedVersions={confirmImportFieldsDialog.data?.validatedVersions}*/}
+            {/*/>*/}
         </>
     );
 };

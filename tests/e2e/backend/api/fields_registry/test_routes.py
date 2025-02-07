@@ -52,3 +52,33 @@ async def test_fields_registry_crud_routes(req_headers, dummy_project, element_d
     assert response.status_code == 200
 
     assert not (await StructuralElement.get(element_id))
+
+
+@pytest.mark.asyncio
+async def test_check_import_eforms_xsd_route(req_headers, eforms_sdk_github_repository_url):
+    response = client.post(
+        api_endpoint(f"{ROUTE_PREFIX}/check_import_eforms_xsd"),
+        headers=req_headers,
+        data={
+            "github_repository_url": eforms_sdk_github_repository_url,
+            "branch_or_tag_name": "1.9.1,invalid_tag"
+        }
+    )
+    assert response.status_code == 200
+    response_data = response.json()
+    assert "1.9.1" in response_data["not_in_pool"]
+    assert "1.9.1" in response_data["in_remote_repo"]
+    assert "invalid_tag" in response_data["not_in_remote_repo"]
+    assert not response_data["invalid_repo_url"]
+
+    response = client.post(
+        api_endpoint(f"{ROUTE_PREFIX}/check_import_eforms_xsd"),
+        headers=req_headers,
+        data={
+            "github_repository_url": None,
+            "branch_or_tag_name": "1.9.1,invalid_tag"
+        }
+    )
+    assert response.status_code == 200
+    response_data = response.json()
+    assert response_data["invalid_repo_url"]
