@@ -149,3 +149,8 @@ def epo_core_shapes_file_resource() -> OntologyFileResource:
         filename=epo_core_shapes_file_name,
         content=(TEST_DATA_EPO_ONTOLOGY / epo_core_shapes_file_name).read_text()
     )
+
+
+@pytest.fixture
+def eforms_sdk_github_repository_url() -> str:
+    return "https://github.com/OP-TED/eForms-SDK"

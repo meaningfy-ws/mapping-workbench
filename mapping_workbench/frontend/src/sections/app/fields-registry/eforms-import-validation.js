@@ -12,7 +12,7 @@ import {Box} from "@mui/system";
 import Alert from "@mui/material/Alert";
 
 
-export const EFormsImportValidator = ({onClose, onConfirm, validatedVersions, values, open = false}) => {
+export const EFormsImportValidator = ({onClose, onConfirm, validatedVersions, open = false}) => {
     return (
         <Dialog
             fullWidth
@@ -23,7 +23,7 @@ export const EFormsImportValidator = ({onClose, onConfirm, validatedVersions, va
             <DialogTitle id="confirm-dialog-title">Confirm EForms XSD Import</DialogTitle>
             <Divider/>
             <DialogContent sx={{pb: 0, pt: 0}}>
-                {!!validatedVersions?.in_project?.length && (
+                {false && !!validatedVersions?.in_project?.length && (
                     <>
                         <Typography variant="h6" sx={{pt:2}}>Versions already in project:</Typography>
                         <Typography sx={{p: 2}}>{validatedVersions.in_project.join(', ')}</Typography>
@@ -33,8 +33,6 @@ export const EFormsImportValidator = ({onClose, onConfirm, validatedVersions, va
                 {!!validatedVersions?.not_in_pool?.length && (
                     <>
                         <Typography variant="h6" sx={{pt:2}}>Versions not in APP pool (will be imported from GitHub):</Typography>
-                        {!values.github_repository_url &&
-                            <Typography variant="caption">No GitHub URL provided!</Typography>}
                         <Typography sx={{p: 2}}>{validatedVersions.not_in_pool.join(', ')}</Typography>
                         <Divider/>
                     </>)}
