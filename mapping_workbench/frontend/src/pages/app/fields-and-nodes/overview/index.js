@@ -21,6 +21,7 @@ import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {fieldsOverviewApi as sectionApi} from 'src/api/fields-overview';
 import {ElementsDefinitionTabs} from 'src/sections/app/elements-definition';
 import {NavigationTabsWrapper} from '../../../../components/navigation-tabs-wrapper';
+import {TableLoadWrapper} from '../../../../sections/components/table-load-wrapper';
 
 const FILTER_VALUES = [
     {label: 'All', value: ''},
@@ -33,16 +34,17 @@ const SEARCH_COLUMNS = ["sdk_element_id", "relative_xpath", "absolute_xpath"];
 const useItemsStore = () => {
     const [state, setState] = useState({
         items: [],
-        itemsCount: 0
+        itemsCount: 0,
+        load: true
     });
 
     const handleItemsGet = () => {
         sectionApi.getItems({}, null, '/fields_registry/elements')
-            .then(res => setState({
-                items: res.items,
-                itemsCount: res.count
-            }))
-            .catch(err => console.error(err))
+            .then(res => { setState({items: res.items, itemsCount: res.count, load: false}) })
+            .catch(err => {
+                setState(prev => ({...prev, error: true}))
+                console.error(err)
+            })
     }
 
     useEffect(() => {
@@ -62,6 +64,8 @@ const Page = () => {
     const [filterPopover, setFilterPopover] = useState(null)
 
     usePageView();
+
+    // const {load,error} = itemsStore
 
     return (
         <>
@@ -129,17 +133,21 @@ const Page = () => {
                         </Button>
                     </Stack>
                 </Stack>
-                <ListTable
-                    onPageChange={itemsSearch.handlePageChange}
-                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                    sort={itemsSearch.state.sort}
-                    onSort={itemsSearch.handleSort}
-                    page={itemsSearch.state.page}
-                    items={itemsSearch.pagedItems}
-                    count={itemsSearch.count}
-                    rowsPerPage={itemsSearch.state.rowsPerPage}
-                    sectionApi={sectionApi}
-                />
+
+                <TableLoadWrapper data={itemsStore.items}
+                                  dataState={itemsStore}>
+                    <ListTable
+                        onPageChange={itemsSearch.handlePageChange}
+                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                        sort={itemsSearch.state.sort}
+                        onSort={itemsSearch.handleSort}
+                        page={itemsSearch.state.page}
+                        items={itemsSearch.pagedItems}
+                        count={itemsSearch.count}
+                        rowsPerPage={itemsSearch.state.rowsPerPage}
+                        sectionApi={sectionApi}
+                    />
+                </TableLoadWrapper>
             </Stack>
         </>
     );

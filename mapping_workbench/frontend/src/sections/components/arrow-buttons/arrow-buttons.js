@@ -47,14 +47,14 @@ export const ArrowButtons = () => {
                      active={router.pathname.includes('fields-and-nodes')}
                      icon={<ApiIcon fontSize='small'
                                                 style={{marginRight: '4px'}}/>}
-                     href={paths.app.fields_and_nodes.develop.index}>
+                     href={paths.app.fields_and_nodes.overview.index}>
             Elements Definition
         </ArrowButton>
         <ArrowButton id='conceptual_mappings'
                      active={router.pathname.includes('conceptual-mapping-rules')}
                      icon={<LightbulbCircleIcon fontSize='small'
                                                 style={{marginRight: '4px'}}/>}
-                     href={paths.app.conceptual_mapping_rules.develop.index}>
+                     href={paths.app.conceptual_mapping_rules.overview.index}>
             Conceptual Mappings
         </ArrowButton>
         <ArrowButton id='technical_mappings'

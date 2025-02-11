@@ -1,6 +1,5 @@
 import {useState} from "react";
 import PropTypes from 'prop-types';
-import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 
 import Stack from "@mui/material/Stack";
 import Table from '@mui/material/Table';
@@ -17,14 +16,14 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContentText from "@mui/material/DialogContentText";
+import {LocalHighlighter} from '../../components/local-highlighter';
 
 import {Scrollbar} from 'src/components/scrollbar';
+import {getValidationColor, ValueChip} from '../mapping-package/state/utils';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import TablePagination from "src/sections/components/table-pagination";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
-import {TableFilterHeader} from "../../../layouts/app/table-filter-header/table-filter-header";
-import {getValidationColor} from '../mapping-package/state/utils';
-import {ValueChip} from './utils';
+import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", text: ""})
@@ -104,44 +103,26 @@ export const ListTable = (props) => {
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            <SyntaxHighlighter
-                                                language="xquery"
-                                                wrapLines
-                                                style={highLighterTheme}
-                                                customStyle={{borderRadius: 12, border: '1px solid #E4E7EC'}}
-                                                lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
-                                                {item.sdk_element_xpath}
-                                            </SyntaxHighlighter>
+                                            <LocalHighlighter language="xquery"
+                                                              style={highLighterTheme}
+                                                              text={item.sdk_element_xpath}/>
                                         </TableCell>
                                         <TableCell align="right">
-                                            {item.xpath_conditions?.map((xpath_condition, key) => {
-                                                return (
-                                                    <Stack
-                                                        key={'condition' + key}
-                                                        direction="column"
-                                                        spacing={1}
-                                                    >
-                                                        <SyntaxHighlighter
-                                                            language="xquery"
-                                                            wrapLines
-                                                            style={highLighterTheme}
-                                                            customStyle={{
-                                                                borderRadius: 12,
-                                                                border: '1px solid',
-                                                                borderColor: getValidationColor(xpath_condition.meets_xpath_condition ?
-                                                                    'valid' : 'invalid')
-                                                            }}
-                                                            lineProps={{
-                                                                style: {
-                                                                    wordBreak: 'break-all',
-                                                                    whiteSpace: 'pre-wrap'
-                                                                }
-                                                            }}>
-                                                            {xpath_condition.xpath_condition || '-'}
-                                                        </SyntaxHighlighter>
-                                                    </Stack>
-                                                );
-                                            })}
+                                            {item.xpath_conditions?.map((xpath_condition, key) =>
+                                                <Stack key={'condition' + key}
+                                                       direction="column"
+                                                       spacing={1}>
+                                                    <LocalHighlighter language="xquery"
+                                                                      style={highLighterTheme}
+                                                                      customStyle={{
+                                                                          borderRadius: 12,
+                                                                          border: '1px solid',
+                                                                          borderColor: getValidationColor(xpath_condition.meets_xpath_condition ?
+                                                                              'valid' : 'invalid')
+                                                                      }}
+                                                                      text={xpath_condition.xpath_condition || '-'}/>
+                                                </Stack>
+                                            )}
                                         </TableCell>
                                         <TableCell>
                                             {item.is_covered ? <ValueChip color='success'

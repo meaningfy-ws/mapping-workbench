@@ -1,4 +1,3 @@
-import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import PropTypes from 'prop-types';
 
 import Table from '@mui/material/Table';
@@ -10,18 +9,10 @@ import TableRow from '@mui/material/TableRow';
 import {Scrollbar} from 'src/components/scrollbar';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import TablePagination from 'src/sections/components/table-pagination';
+import {LocalHighlighter} from 'src/sections/components/local-highlighter';
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
 
-const LocalHighlighter = ({text, language, theme}) => {
-    return text ? <SyntaxHighlighter
-        language={language}
-        wrapLines
-        customStyle={{borderRadius: 12, border: '1px solid #E4E7EC'}}
-        style={theme}
-        lineProps={{style: {overflowWrap: 'break-word', whiteSpace: 'pre-wrap'}}}>
-        {text}
-    </SyntaxHighlighter> : null
-}
+
 export const ListTableFile = (props) => {
 
     const {
@@ -92,7 +83,7 @@ export const ListTableFile = (props) => {
                                                    onFilter={onFilter}
                                                    filters={filters}
                                                    fieldName="short_source_constraint_component"
-                                                   title="Source Constraint Component"/>
+                                                   title="Constraint Type"/>
                             </TableCell>
                         </TableRow>
                     </TableHead>
@@ -103,27 +94,27 @@ export const ListTableFile = (props) => {
                                     <TableCell width="25%">
                                         <LocalHighlighter language='turtle'
                                                           text={item.short_focus_node}
-                                                          theme={syntaxHighlighterTheme}/>
+                                                          style={syntaxHighlighterTheme}/>
                                     </TableCell>
                                     <TableCell>
                                         <LocalHighlighter language='turtle'
                                                           text={item.message}
-                                                          theme={syntaxHighlighterTheme}/>
+                                                          style={syntaxHighlighterTheme}/>
                                     </TableCell>
                                     <TableCell>
                                         <LocalHighlighter language='sparql'
                                                           text={item.short_result_path}
-                                                          theme={syntaxHighlighterTheme}/>
+                                                          style={syntaxHighlighterTheme}/>
                                     </TableCell>
                                     <TableCell>
                                         <LocalHighlighter language='turtle'
                                                           text={item.short_result_severity}
-                                                          theme={syntaxHighlighterTheme}/>
+                                                          style={syntaxHighlighterTheme}/>
                                     </TableCell>
                                     <TableCell>
                                         <LocalHighlighter language='turtle'
                                                           text={item.short_source_constraint_component}
-                                                          theme={syntaxHighlighterTheme}/>
+                                                          style={syntaxHighlighterTheme}/>
                                     </TableCell>
                                 </TableRow>
                             );

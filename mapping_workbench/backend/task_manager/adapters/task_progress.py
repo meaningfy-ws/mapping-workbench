@@ -76,8 +76,13 @@ class TaskProgress:
         ))
         self.update_task_response()
 
-    def finish_current_action_step(self):
-        self.update_current_action_step_status(TaskProgressStatus.FINISHED)
+    def update_current_action_step_name(self, name: str):
+        if self.get_current_action_step():
+            self.get_current_action_step().name = name
+            self.update_task_response()
+
+    def finish_current_action_step(self, status: TaskProgressStatus = TaskProgressStatus.FINISHED):
+        self.update_current_action_step_status(status)
         if self.get_current_action_step():
             self.get_current_action_step().finished_at = self.current_time()
             self.get_current_action_step().duration = (

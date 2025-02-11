@@ -30,12 +30,13 @@ import {Filter} from 'src/sections/components/filter';
 import useItemsSearch from 'src/hooks/use-items-search';
 import {useItemsStore} from 'src/hooks/use-items-store';
 import {TableSearchBar} from 'src/sections/components/table-search-bar';
+import {TableLoadWrapper} from 'src/sections/components/table-load-wrapper';
+import {NavigationTabsWrapper} from 'src/components/navigation-tabs-wrapper';
 import {toastError, toastLoad, toastSuccess} from 'src/components/app-toast';
 import {ListTable} from "src/sections/app/conceptual-mapping-rule/list-table";
 import {conceptualMappingRulesApi as sectionApi} from 'src/api/conceptual-mapping-rules';
 import {ConceptualMappingTabs} from 'src/sections/app/conceptual-mapping-rule/conceptual-mapping-tabs';
 import {MappingPackageFormSelect} from 'src/sections/app/mapping-package/components/mapping-package-form-select';
-import {NavigationTabsWrapper} from '../../../../components/navigation-tabs-wrapper';
 
 const FILTER_VALUES = [{label: 'All', value: ''},
     {label: 'Valid', value: 'valid'},
@@ -157,17 +158,20 @@ const Page = () => {
                     </Stack>
                 </Stack>
 
-                <ListTable
-                    sectionApi={sectionApi}
-                    items={itemsSearch.pagedItems}
-                    count={itemsSearch.count}
-                    page={itemsSearch.state.page}
-                    onPageChange={itemsSearch.handlePageChange}
-                    onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
-                    rowsPerPage={itemsSearch.state.rowsPerPage}
-                    onSort={itemsSearch.handleSort}
-                    sort={itemsSearch.state.sort}
-                />
+                <TableLoadWrapper data={itemsStore.items}
+                                  dataState={itemsStore}>
+                    <ListTable
+                        sectionApi={sectionApi}
+                        items={itemsSearch.pagedItems}
+                        count={itemsSearch.count}
+                        page={itemsSearch.state.page}
+                        onPageChange={itemsSearch.handlePageChange}
+                        onRowsPerPageChange={itemsSearch.handleRowsPerPageChange}
+                        rowsPerPage={itemsSearch.state.rowsPerPage}
+                        onSort={itemsSearch.handleSort}
+                        sort={itemsSearch.state.sort}
+                    />
+                </TableLoadWrapper>
                 <Dialog id='shacl_generate_dialog'
                         open={generateSHACLDialog.open}
                         onClose={generateSHACLDialog.handleClose}

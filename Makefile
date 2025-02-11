@@ -268,3 +268,11 @@ create-release-tag:
 	@ git tag -a v$(V) -m "Release version $(V)"
 	@ git push origin v$(V)
 	@ echo "Release Tag `v$(V)` was successfully created and pushed."
+
+deploy-app: stop-frontend stop-backend build-backend build-frontend
+
+deploy-prod: deploy-prod-dotenv-file deploy-app
+	@ echo "Deployed App to PROD"
+
+deploy-staging: deploy-staging-dotenv-file deploy-app
+	@ echo "Deployed App to STAGING"

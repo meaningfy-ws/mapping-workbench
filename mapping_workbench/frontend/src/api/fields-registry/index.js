@@ -33,6 +33,12 @@ class FieldsRegistryApi extends SectionApi {
         }
     }
 
+    async validateImportEFormsXSD(request) {
+        let endpoint = this.paths['check_import_eforms_xsd'];
+        const headers = {"Content-Type": "multipart/form-data"};
+        return await appApi.post(endpoint, request, null, headers);
+    }
+
     async getItemsTree() {
         let filters = {}
         if (this.isProjectResource) {

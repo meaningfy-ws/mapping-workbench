@@ -6,6 +6,8 @@ from fastapi import APIRouter, Depends, status, Form, HTTPException
 from mapping_workbench.backend.conceptual_mapping_rule.entrypoints.api.routes import CM_RULE_REVIEW_PAGE_TAG
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse, \
     APIEmptyContentWithStrIdResponse
+from mapping_workbench.backend.fields_registry.adapters.github_manager import GithubManager
+from mapping_workbench.backend.fields_registry.models.api_response import APIValidateSDKVersionsToImportResponse
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement, \
     APIListStructuralElementsPaginatedResponse, APIListStructuralElementsVersionedViewPaginatedResponse, \
     StructuralElementsVersionedView, StructuralElementLabelOut, BaseStructuralElementIn, StructuralElementOut, \
@@ -19,6 +21,8 @@ from mapping_workbench.backend.fields_registry.services.api import list_structur
 from mapping_workbench.backend.fields_registry.services.data import tree_of_structural_elements
 from mapping_workbench.backend.fields_registry.services.generate_conceptual_mapping_rules import \
     generate_conceptual_mapping_rules
+from mapping_workbench.backend.fields_registry.services.import_fields_registry import \
+    eforms_sdk_versions_from_str_to_list, exists_eforms_versions_in_remote_repo, exists_import_eforms_versions_in_pool
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.project.services.api import get_project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
@@ -188,6 +192,37 @@ async def route_search_structural_elements_versioned_view_by_eforms_version(
 
 
 @router.post(
+    "/check_import_eforms_xsd",
+    description=f"Check Import eForms XSD",
+    name=f"{NAME_FOR_ONE}:check_import_eforms_xsd",
+    response_model=APIValidateSDKVersionsToImportResponse
+)
+async def route_check_import_eforms_xsd(
+        github_repository_url: str = Form(default=None),
+        branch_or_tag_name: str = Form(...)
+):
+    versions = eforms_sdk_versions_from_str_to_list(branch_or_tag_name)
+    validated_versions = APIValidateSDKVersionsToImportResponse()
+    # validated_versions.in_project=(await exists_eforms_versions_in_project(project_id, versions)),
+    validated_versions.in_pool = (await exists_import_eforms_versions_in_pool(versions))
+
+    validated_versions.not_in_pool = [item for item in versions if item not in validated_versions.in_pool]
+    # validated_versions.not_in_project = [item for item in versions if item not in validated_versions.in_project]
+
+    if validated_versions.not_in_pool:
+        if GithubManager.validate_github_url(github_repository_url):
+            validated_versions.in_remote_repo = (
+                await exists_eforms_versions_in_remote_repo(github_repository_url, validated_versions.not_in_pool)
+            )
+            validated_versions.not_in_remote_repo = [item for item in validated_versions.not_in_pool if
+                                                     item not in validated_versions.in_remote_repo]
+        else:
+            validated_versions.invalid_repo_url = True
+
+    return validated_versions
+
+
+@router.post(
     "/tasks/import_eforms_xsd",
     description=f"Task Import eForms XSD",
     name=TASK_IMPORT_EFORMS_XSD_NAME,
@@ -201,10 +236,10 @@ async def route_task_import_eforms_xsd(
 ):
     return add_task(
         tasks.task_import_eforms_xsd,
-        f"Importing eForms XSD versions: {branch_or_tag_name}",
+        f"Importing eForms SDK versions: {branch_or_tag_name}",
         None,
         user.email,
-        False,
+        True,
         github_repository_url, branch_or_tag_name, Project.link_from_id(project_id)
     ).task_metadata
 

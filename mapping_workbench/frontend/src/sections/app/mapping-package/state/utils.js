@@ -1,13 +1,15 @@
+import {useTheme} from '@mui/material/styles';
+import {useState} from 'react';
+
+import {Box} from '@mui/system';
+import Stack from '@mui/material/Stack';
+import Radio from '@mui/material/Radio';
+import {capitalize} from '@mui/material';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import RadioGroup from '@mui/material/RadioGroup';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import {Box} from '@mui/system';
-import {useState} from 'react';
-import {capitalize, ResultChip} from '../../sparql-validation-report/utils';
-import {ValueChip} from '../../xpath-validation-report/utils';
 
 export const getValidationColor = (color) => {
     switch (color) {
@@ -44,6 +46,23 @@ export const getResultColor = (result) => {
     }
 }
 
+export const ValueChip = ({children, value, color, style}) => {
+    const theme = useTheme()
+    const themeColor = theme.palette?.[color] ?? {}
+    return (
+        <Stack sx={{
+            px: 1.4,
+            py: 0.3,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: themeColor.alpha12,
+            color: themeColor.main,
+            borderRadius: 5,
+            ...style
+        }}>{value ?? children}</Stack>
+    )
+}
+
 export const getItemsDisplay = (items, total) => Object.entries(items)?.map(item => {
     const [itemName, itemCount] = item
     const percent = (itemCount / total) * 100 ?? 0
@@ -78,39 +97,40 @@ export const getValidationReportSparql = (items) => items.map(item => item.resul
 
 
 export const mapShaclResults = (result) => {
-    return result.results.map(e => {
+    return result.results?.map(e => {
         const resultArray = {}
         resultArray["shacl_suite"] = result.shacl_suites?.[0]?.shacl_suite_id
         resultArray["short_result_path"] = e.short_result_path
+        resultArray["short_source_constraint_component"] = e.short_source_constraint_component
         resultArray["result"] = e.result
-        Object.entries(e.result).forEach(entrie => {
-            const [key, value] = entrie
+        Object.entries(e.result).forEach(entry => {
+            const [key, value] = entry
             resultArray[`${key}Count`] = value.count
         })
         return resultArray;
-    })
+    }) ?? []
 }
 
 
 export const mapSparqlResults = (result) => result.map(e => {
-    const queryAsArray = e.query.content.split("\n")
+    const queryAsArray = e.query?.content.split("\n")
     const values = queryAsArray.slice(0, 3)
     const resultArray = {}
-    values.forEach(e => {
-            const res = e.split(": ")
+    values.forEach(value => {
+            const res = value.split(": ")
             resultArray[res[0].substring(1)] = res[1]
         }
     )
     resultArray["query"] = queryAsArray.slice(4, queryAsArray.length).join("\n")
-    resultArray["test_suite"] = e.query.filename
+    resultArray["test_suite"] = e.query?.filename
     resultArray["result"] = e.result
-    Object.entries(e.result).forEach(entrie => {
-        const [key, value] = entrie
+    Object.entries(e.result).forEach(entry => {
+        const [key, value] = entry
         resultArray[`${key}Count`] = value.count
     })
     resultArray["meets_xpath_condition"] = e.meets_xpath_condition
-    resultArray["fields_covered"] = e?.fields_covered
-    resultArray["query_result"] = e?.query_result
+    resultArray["fields_covered"] = e.fields_covered
+    resultArray["query_result"] = e.query_result
     resultArray["xpath_condition"] = e.query?.cm_rule?.xpath_condition
     return resultArray;
 })
@@ -196,4 +216,67 @@ export const useFileNavigation = (reportTree) => {
         handleSetTestDataset,
         handleSetTestAndPackage
     }
+}
+
+
+export const handleOpenDetails = (title, notices, handleSelect, setDescription) => {
+    const description = notices.map((notice, i) =>
+        <Box key={'notice' + i}>
+            <Button type='link'
+                    onClick={() => handleSelect(notice.test_data_suite_oid)}
+            >
+                {notice.test_data_suite_id}
+            </Button>
+            {' / '}
+            <Button type='link'
+                    onClick={() => handleSelect(notice.test_data_suite_oid, notice.test_data_oid)}
+            >
+                {notice.test_data_id}
+            </Button>
+        </Box>)
+
+    setDescription({open: true, title, description});
+}
+
+export const ResultChip = ({label, color, fontColor, onClick, clickable, children}) => {
+    const hover = onClick ?? clickable ? {'&:hover': {filter: 'brightness(85%)'}, cursor: 'pointer'} : {}
+    return (
+        <Box sx={{
+            textAlign: 'center',
+            px: 1,
+            py: .5,
+            borderRadius: 12,
+            backgroundColor: color,
+            color: fontColor, ...hover
+        }}
+             onClick={onClick}
+        >
+            {label ?? children}
+        </Box>
+    )
+}
+
+export const ResultCell = ({item, handleSelect, setDescription}) => {
+    const title = item.title
+    return <Stack direction="column"
+                  alignItems="center"
+                  justifyContent="center"
+                  gap={2}
+                  height={100}>
+        {Object.entries(item.result).map(([key, value]) => {
+            return !!value.count && <Stack direction='row'
+                                           key={key}
+                                           gap={1}>
+                <ValueChip value={value.count}
+                           color='primary'
+                           sx={{p: 2}}/>
+                <ResultChip color={getValidationColor(key)}
+                            clickable
+                            fontColor='#fff'
+                            onClick={() => handleOpenDetails(title, value.test_datas, handleSelect, setDescription)}
+                            label={key}
+                />
+            </Stack>
+        })}
+    </Stack>
 }

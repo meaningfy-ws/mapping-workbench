@@ -1,12 +1,13 @@
 import {useEffect, useState} from "react";
 
-import {SimpleTreeView} from '@mui/x-tree-view/SimpleTreeView';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {TreeItem, treeItemClasses} from "@mui/x-tree-view";
-import Stack from "@mui/material/Stack";
 import AlbumIcon from '@mui/icons-material/Album';
 import AdjustIcon from '@mui/icons-material/Adjust';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
+import Stack from "@mui/material/Stack";
+import {TreeItem, treeItemClasses} from "@mui/x-tree-view";
+import {SimpleTreeView} from '@mui/x-tree-view/SimpleTreeView';
 import CircularProgress from "@mui/material/CircularProgress";
 import {TableErrorFetching, TableNoData} from "../shacl-validation-report/utils";
 
@@ -51,6 +52,7 @@ const TreeView = (props) => {
 
     if (state.loading) {
         return <Stack justifyContent="center"
+                      padding={3}
         direction="row">
             <CircularProgress/>
         </Stack>
