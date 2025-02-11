@@ -21,9 +21,11 @@ class EFormsPackageImporter(PackageImporterABC):
 
     async def import_from_mono_mapping_suite(self, mono_package: ImportedMappingSuite):
         self.task_progress.start_progress(actions_count=1)
-        self.task_progress.start_action(name="Import EForms Package", steps_count=8)
+        steps_count = 8 if self.has_package else 7
+        self.task_progress.start_action(name="Import EForms Package", steps_count=steps_count)
 
-        await self.add_mapping_package_from_mono(mono_package)
+        if self.has_package:
+            await self.add_mapping_package_from_mono(mono_package)
         await self.add_transformation_resources_from_mono(mono_package)
         await self.add_transformation_mappings_from_mono(mono_package)
         await self.add_mapping_groups_from_mono(mono_package)
@@ -32,7 +34,8 @@ class EFormsPackageImporter(PackageImporterABC):
         await self.add_sparql_test_suites_from_mono(mono_package)
         await self.add_shacl_test_suites_from_mono(mono_package)
 
-        await self.package.save()
+        if self.has_package:
+            await self.package.save()
 
         self.task_progress.finish_current_action()
         self.task_progress.finish_progress()
@@ -121,7 +124,7 @@ class EFormsPackageImporter(PackageImporterABC):
             if not rule.refers_to_mapping_package_ids:
                 rule.refers_to_mapping_package_ids = []
 
-            if self.package:
+            if self.has_package and self.package:
                 if self.package.id not in rule.refers_to_mapping_package_ids:
                     rule.refers_to_mapping_package_ids.append(self.package.id)
 
