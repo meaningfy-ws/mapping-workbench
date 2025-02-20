@@ -20,7 +20,7 @@ import exportPackage from "src/utils/export-mapping-package";
 import {MenuActionButton, MenuActions} from 'src/components/menu-actions';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import TableSorterHeader from 'src/sections/components/table-sorter-header';
-import TablePagination from "src/sections/components/table-pagination";
+import TablePagination from "src/sections/components/table-pagination-pages";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 
 export const ListTable = (props) => {

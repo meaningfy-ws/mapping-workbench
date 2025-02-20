@@ -13,7 +13,7 @@ import CardContent from '@mui/material/CardContent';
 
 import {Scrollbar} from 'src/components/scrollbar';
 import {ChevronButton} from 'src/sections/components/chevron-button';
-import TablePagination from "src/sections/components/table-pagination";
+import TablePagination from "src/sections/components/table-pagination-pages";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 
 

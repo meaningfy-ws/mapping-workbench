@@ -20,7 +20,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 
 import {Scrollbar} from 'src/components/scrollbar';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
-import TablePagination from "src/sections/components/table-pagination";
+import TablePagination from "src/sections/components/table-pagination-pages";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {TableFilterHeader} from "../../../layouts/app/table-filter-header/table-filter-header";
 import {getValidationColor} from '../mapping-package/state/utils';

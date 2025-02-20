@@ -10,7 +10,7 @@ import {ItemListRow} from './item-list-row';
 import {ItemListCard} from './item-list-card';
 import {Scrollbar} from 'src/components/scrollbar';
 import {TableNoData} from '../shacl-validation-report/utils';
-import TablePagination from "src/sections/components/table-pagination";
+import TablePagination from "src/sections/components/table-pagination-pages";
 
 export const ItemList = (props) => {
         const {

@@ -31,7 +31,7 @@ import {ChevronButton} from 'src/sections/components/chevron-button';
 import CodeMirrorDefault from 'src/components/app/form/codeMirrorDefault';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
-import TablePagination from "src/sections/components/table-pagination";
+import TablePagination from "src/sections/components/table-pagination-pages";
 import {genericTripleMapFragmentsApi} from 'src/api/triple-map-fragments/generic';
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {

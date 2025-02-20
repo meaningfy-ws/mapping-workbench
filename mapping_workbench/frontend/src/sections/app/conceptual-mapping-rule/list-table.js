@@ -55,7 +55,7 @@ import {ChevronButton} from 'src/sections/components/chevron-button';
 import {FormCodeTextArea} from "src/components/app/form/code-text-area";
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import TableSorterHeader from 'src/sections/components/table-sorter-header';
-import TablePagination from "src/sections/components/table-pagination";
+import TablePagination from "src/sections/components/table-pagination-pages";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {genericTripleMapFragmentsApi} from "src/api/triple-map-fragments/generic";
 import {sparqlTestFileResourcesApi} from "src/api/sparql-test-suites/file-resources";
