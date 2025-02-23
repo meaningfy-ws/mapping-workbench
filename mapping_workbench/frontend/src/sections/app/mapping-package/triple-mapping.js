@@ -7,7 +7,7 @@ import FormControl from "@mui/material/FormControl";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 
-import {specificTripleMapFragmentsApi} from "../../../api/triple-map-fragments/specific";
+import {genericTripleMapFragmentsApi as tripleMapFragmentsApi} from "../../../api/triple-map-fragments/generic";
 import {ListSelectorSelect as ResourceListSelector} from "../../../components/app/list-selector/select";
 import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
 
@@ -20,7 +20,7 @@ const TripleMapping = (props) => {
     }, [id])
 
      const getTripleMapFragments = () => {
-         specificTripleMapFragmentsApi.getValuesForSelector({filters: {mapping_package_id: id}})
+         tripleMapFragmentsApi.getValuesForSelector({filters: {mapping_package_id: id}})
              .then(res => {
                  const triple_map_ids = res.map(x => x.id);
                  setTripleMapFragments(triple_map_ids)
@@ -28,9 +28,9 @@ const TripleMapping = (props) => {
     }
 
     const handleTripleMapFragmentsUpdate = async () => {
-        const toastId = toastLoad(`Updating ${specificTripleMapFragmentsApi.SECTION_TITLE}...`)
-        specificTripleMapFragmentsApi.update_specific_mapping_package(id, tripleMapFragments)
-            .then(res => toastSuccess(`${specificTripleMapFragmentsApi.SECTION_TITLE} Updated`, toastId))
+        const toastId = toastLoad(`Updating ${tripleMapFragmentsApi.SECTION_TITLE}...`)
+        tripleMapFragmentsApi.update_mapping_package(id, tripleMapFragments)
+            .then(res => toastSuccess(`${tripleMapFragmentsApi.SECTION_TITLE} Updated`, toastId))
             .catch(err => toastError(err, toastId))
     }
 
@@ -44,7 +44,7 @@ const TripleMapping = (props) => {
                     <Grid xs={12}
                           md={12}>
                         <ResourceListSelector
-                            valuesApi={specificTripleMapFragmentsApi}
+                            valuesApi={tripleMapFragmentsApi}
                             listValues={tripleMapFragments}
                             titleField="uri"
                         />

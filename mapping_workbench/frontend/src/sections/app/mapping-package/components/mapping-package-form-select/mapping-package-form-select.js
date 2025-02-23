@@ -24,11 +24,13 @@ const useMappingPackagesStore = () => {
 };
 
 export const MappingPackageFormSelect = (props) => {
-    const {formik, isRequired, disabled, withDefaultPackage = false, ...other} = props;
+    const {formik, isRequired, disabled, withDefaultPackage = false, setMappingPackageId = null, ...other} = props;
     const mappingPackagesStore = useMappingPackagesStore();
-
     const handleMappingPackageChange = event => {
         const value = event.target.value;
+        if (setMappingPackageId) {
+            setMappingPackageId(value);
+        }
         formik.setFieldValue('mapping_package_id', value);
     }
 
@@ -36,6 +38,9 @@ export const MappingPackageFormSelect = (props) => {
         if (withDefaultPackage) {
             const defaultPackage = mappingPackagesStore.items.find(pkg => pkg.identifier === 'default');
             if (defaultPackage) {
+                if (setMappingPackageId) {
+                    setMappingPackageId(defaultPackage.id);
+                }
                 formik.setFieldValue('mapping_package_id', defaultPackage.id)
             }
         }

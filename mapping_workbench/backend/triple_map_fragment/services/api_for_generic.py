@@ -3,6 +3,7 @@ from typing import List
 from beanie import PydanticObjectId
 from pymongo.errors import DuplicateKeyError
 
+from mapping_workbench.backend.core.models.api_request import APIRequestForUpdateMany
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException, DuplicateKeyException
 from mapping_workbench.backend.core.services.request import request_update_data, request_create_data, \
@@ -44,6 +45,12 @@ async def create_generic_triple_map_fragment(
         raise DuplicateKeyException(e)
     return GenericTripleMapFragmentOut(**generic_triple_map_fragment.model_dump())
 
+
+async def update_generic_triple_map_fragments(
+        request: APIRequestForUpdateMany,
+        user: User
+):
+    return await GenericTripleMapFragment.find_many(request.for_query).update_many({'$set': request.set_values})
 
 async def update_generic_triple_map_fragment(
         generic_triple_map_fragment: GenericTripleMapFragment,
