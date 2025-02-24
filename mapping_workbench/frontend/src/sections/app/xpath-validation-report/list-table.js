@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 
-import {Box} from "@mui/system";
 import Stack from "@mui/material/Stack";
 import Table from '@mui/material/Table';
 import Dialog from "@mui/material/Dialog";
@@ -22,7 +21,7 @@ import {Scrollbar} from 'src/components/scrollbar';
 import {getValidationColor, handleOpenDetails, ValueChip} from '../mapping-package/state/utils';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import {LocalHighlighter} from '../../components/local-highlighter';
-import TablePagination from "src/sections/components/table-pagination";
+import TablePagination from "src/sections/components/table-pagination-pages";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
 

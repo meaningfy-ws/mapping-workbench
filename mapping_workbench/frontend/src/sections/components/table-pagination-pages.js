@@ -1,3 +1,4 @@
+import Typography from '@mui/material/Typography';
 import {useState} from 'react';
 
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -26,6 +27,9 @@ const TablePagination = ({
         setRppAnchor(null)
     }
 
+    const startPagedItems = rowsPerPage * page + 1
+    const endPagedItems = rowsPerPage * (page + 1)
+
     return (
         <>
             {/*<Pagination color='primary'*/}
@@ -34,6 +38,11 @@ const TablePagination = ({
             <Stack direction='row'
                    alignItems='center'
                    justifyContent='end'>
+                {!!count &&
+                    <Typography sx={{
+                        fontSize: 14,
+                        mb: .1
+                    }}>{`${startPagedItems}-${endPagedItems > count ? count : endPagedItems}`}</Typography>}
                 <Tooltip title='rows per page'>
                     <Button endIcon={<KeyboardArrowDownIcon/>}
                             onClick={e => setRppAnchor(e.target)}>
@@ -60,7 +69,7 @@ const TablePagination = ({
                 </Popover>
                 <Pagination color='primary'
                             page={page + 1}
-                            onChange={(e,page) => onPageChange(e,page - 1)}
+                            onChange={(e, page) => onPageChange(e, page - 1)}
                             count={Math.ceil(count / (rowsPerPage > 0 ? rowsPerPage : count))}
                             {...otherProps}/>
             </Stack>

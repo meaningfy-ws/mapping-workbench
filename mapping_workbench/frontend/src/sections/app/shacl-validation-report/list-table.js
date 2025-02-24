@@ -16,7 +16,7 @@ import {ResultCell} from '../mapping-package/state/utils';
 import {Scrollbar} from 'src/components/scrollbar';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import SorterHeader from 'src/sections/components/table-sorter-header';
-import TablePagination from "src/sections/components/table-pagination";
+import TablePagination from "src/sections/components/table-pagination-pages";
 import {LocalHighlighter} from 'src/sections/components/local-highlighter';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";

@@ -28,7 +28,7 @@ import {SeverityPill} from "src/components/severity-pill";
 import {ChevronButton} from 'src/sections/components/chevron-button';
 import {MenuActionButton, MenuActions} from 'src/components/menu-actions';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
-import TablePagination from "src/sections/components/table-pagination";
+import TablePagination from "src/sections/components/table-pagination-pages";
 import {mapStatusColor, TaskActions, TaskLine, taskProgressStatus as taskStatuses} from "./task-actions";
 import {Box} from "@mui/system";
 
