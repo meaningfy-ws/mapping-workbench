@@ -39,7 +39,7 @@ async def reset_demo_data(
 async def clear_demo_project(project_title: str):
     project: Project = await Project.find_one(Project.title == project_title)
     if project:
-        await PackageImporterABC.clear_project_data(project)
+        await EFormsPackageImporter.clear_project_data(project)
         await project.delete()
 
 

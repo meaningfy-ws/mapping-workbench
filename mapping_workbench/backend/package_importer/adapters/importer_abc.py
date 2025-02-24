@@ -393,5 +393,4 @@ class PackageImporterABC(ABC):
         await SPARQLTestSuite.find(SPARQLTestSuite.project == project_link).delete()
         await TestDataFileResource.find(TestDataFileResource.project == project_link).delete()
         await TestDataSuite.find(TestDataSuite.project == project_link).delete()
-        await MappingGroup.find(TestDataSuite.project == project_link).delete()
         await OntologyFileResource.find(OntologyFileResource.project == project_link).delete()
