@@ -18,9 +18,13 @@ PROJECT1_TITLE = "DEMO Project 1"
 PROJECT2_TITLE = "DEMO Project 2"
 
 
-async def reset_demo_data(user: User = None, task_response: TaskResponse = None):
+async def reset_demo_data(
+        with_import_sdk_fields: bool = True,
+        user: User = None,
+        task_response: TaskResponse = None
+):
     await clear_demo_projects()
-    await import_demo_projects(user, task_response)
+    await import_demo_projects(with_import_sdk_fields, user, task_response)
 
 
 async def clear_demo_project(project_title: str):
@@ -39,6 +43,7 @@ async def import_demo_project(
         project_path: pathlib.Path,
         project_title: str,
         has_package: bool = False,
+        with_import_sdk_fields: bool = True,
         user: User = None,
         task_response: TaskResponse = None
 ):
@@ -52,13 +57,16 @@ async def import_demo_project(
     importer: EFormsPackageImporter = EFormsPackageImporter(project=project, user=user, task_response=task_response)
 
     importer.set_has_package(has_package)
-    importer.set_with_import_sdk_fields(True)
+    importer.set_with_import_sdk_fields(with_import_sdk_fields)
     importer.set_sdk_fields_github_repository_url(GITHUB_EFORMS_SDK_FIELDS_REPO_URL)
 
     await importer.import_from_mono_mapping_suite(mono_data)
 
 
-async def import_demo_projects(user: User = None, task_response: TaskResponse = None):
-    await import_demo_project(PROJECT1_PATH, PROJECT1_TITLE, False, user, task_response)
-    await import_demo_project(PROJECT2_PATH, PROJECT2_TITLE, True, user, task_response)
-    return {"message": "Demo projects imported"}
+async def import_demo_projects(
+        with_import_sdk_fields: bool = True,
+        user: User = None,
+        task_response: TaskResponse = None
+):
+    await import_demo_project(PROJECT1_PATH, PROJECT1_TITLE, False, with_import_sdk_fields, user, task_response)
+    await import_demo_project(PROJECT2_PATH, PROJECT2_TITLE, True, with_import_sdk_fields, user, task_response)
