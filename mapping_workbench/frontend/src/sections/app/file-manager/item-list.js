@@ -9,7 +9,7 @@ import TableBody from '@mui/material/TableBody';
 import {Scrollbar} from 'src/components/scrollbar';
 import {ItemListCard} from './item-list-card';
 import {ItemListRow} from './item-list-row';
-import TablePagination from "../../components/table-pagination";
+import TablePagination from "../../components/table-pagination-pages";
 
 export const ItemList = (props) => {
     const {

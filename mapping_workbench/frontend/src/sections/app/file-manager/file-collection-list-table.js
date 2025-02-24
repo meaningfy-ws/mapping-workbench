@@ -32,7 +32,7 @@ import {ChevronButton} from 'src/sections/components/chevron-button';
 import {FileUploader} from "src/sections/app/file-manager/file-uploader";
 import {MenuActionButton, MenuActions} from 'src/components/menu-actions';
 import TableSorterHeader from 'src/sections/components/table-sorter-header';
-import TablePagination from "src/sections/components/table-pagination";
+import TablePagination from "src/sections/components/table-pagination-pages";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {ListFileCollectionActions} from "src/components/app/list/list-file-collection-actions";
 import {MappingPackagesBulkAssigner} from "src/sections/app/mapping-package/components/mapping-packages-bulk-assigner";

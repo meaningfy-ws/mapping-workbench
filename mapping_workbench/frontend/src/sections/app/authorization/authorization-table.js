@@ -14,7 +14,7 @@ import Typography from '@mui/material/Typography';
 
 import {Scrollbar} from 'src/components/scrollbar';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
-import TablePagination from "../../components/table-pagination";
+import TablePagination from "../../components/table-pagination-pages";
 import {useAuth} from "../../../hooks/use-auth";
 import {securityApi} from "../../../api/security";
 

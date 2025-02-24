@@ -25,7 +25,7 @@ import {PropertyListItem} from 'src/components/property-list-item';
 import {ChevronButton} from 'src/sections/components/chevron-button';
 import {ListItemActions} from 'src/components/app/list/list-item-actions';
 import {MenuActionButton, MenuActions} from 'src/components/menu-actions';
-import TablePagination from "src/sections/components/table-pagination";
+import TablePagination from "src/sections/components/table-pagination-pages";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 
