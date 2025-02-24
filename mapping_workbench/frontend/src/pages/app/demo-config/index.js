@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -14,12 +14,27 @@ import Button from "@mui/material/Button";
 import ResetDemoIcon from "@mui/icons-material/RestartAlt";
 import Paper from "@mui/material/Paper";
 import {demoConfigApi} from "../../../api/demo-config";
+import {toastError, toastLoad, toastSuccess} from "../../../components/app-toast";
+import {tasksApi} from "../../../api/tasks";
 
 
 const Page = () => {
 
     const auth = useAuth();
     const router = useRouter();
+    const [isRunning, setIsRunning] = useState(false);
+    const handleDemoReset = () => {
+        setIsRunning(true);
+        const toastId = toastLoad(`Resetting demo data ... `)
+
+        demoConfigApi.reset()
+            .then((res) => {
+                toastSuccess(`Demo data successfully reset.`, toastId);
+                router.reload();
+            })
+            .catch(err => toastError(`"Demo data reset failed: ${err.message}.`, toastId))
+            .finally(() => setIsRunning(false))
+    }
 
     useEffect(
         () => {
@@ -48,7 +63,8 @@ const Page = () => {
                     <Paper sx={{p: 2}}>
                         <Button variant='contained'
                                 color="warning"
-                                onClick={() => demoConfigApi.reset()}
+                                onClick={handleDemoReset}
+                                disabled={isRunning}
                                 startIcon={<ResetDemoIcon/>}>
                             Reset Demo Data
                         </Button>

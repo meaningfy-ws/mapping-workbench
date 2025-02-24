@@ -1,5 +1,6 @@
 import json
 import pathlib
+import re
 import tempfile
 from collections import defaultdict
 from datetime import datetime
@@ -52,12 +53,26 @@ async def exists_import_eforms_versions_in_pool(versions: List[str]) -> List[str
     return existing_versions
 
 
-async def exists_eforms_versions_in_remote_repo(repo_url: str, versions: List[str]) -> List[str]:
+async def get_eforms_repo_tags(repo_url: str) -> List[str]:
     github_manager = GithubManager(github_repository_url=repo_url)
-    tags = github_manager.get_repo_tags()
+    return github_manager.get_repo_tags()
+
+async def exists_eforms_versions_in_remote_repo(repo_url: str, versions: List[str]) -> List[str]:
+    tags = await get_eforms_repo_tags(repo_url)
     found_versions = list(set(versions) & set(tags))
     return found_versions
 
+
+async def get_latest_eforms_versions_in_remote_repo(repo_url: str, versions: List[str]) -> List[str]:
+    tags = await get_eforms_repo_tags(repo_url)
+    latest_versions = []
+
+    for version in versions:
+        match = [tag for tag in tags if tag.startswith(version)]
+        if match:
+            latest_versions.append(max(match, key=lambda x: list(x.split('.'))))
+
+    return latest_versions
 
 async def import_eforms_fields_from_pool_to_project(project_link: Link[Project], version: str) -> bool:
     """

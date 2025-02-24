@@ -2,6 +2,8 @@ from mapping_workbench.backend.conceptual_mapping_rule.models.entity import Conc
     ConceptualMappingRuleComment
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
 from mapping_workbench.backend.fields_registry.services.data import get_structural_element_by_unique_fields
+from mapping_workbench.backend.fields_registry.services.import_fields_registry import import_eforms_xsd, \
+    get_latest_eforms_versions_in_remote_repo
 from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroup
@@ -15,9 +17,17 @@ from mapping_workbench.backend.user.models.user import User
 
 class EFormsPackageImporter(PackageImporterABC):
     package: MappingPackage
+    with_import_sdk_fields: bool = False
+    sdk_fields_github_repository_url: str = None
 
     def __init__(self, project: Project, user: User, task_response: TaskResponse = None):
         super().__init__(project, user, task_response)
+
+    def set_sdk_fields_github_repository_url(self, sdk_fields_github_repository_url: str):
+        self.sdk_fields_github_repository_url = sdk_fields_github_repository_url
+
+    def set_with_import_sdk_fields(self, with_import_sdk_fields: bool):
+        self.with_import_sdk_fields = with_import_sdk_fields
 
     async def import_from_mono_mapping_suite(self, mono_package: ImportedMappingSuite):
         self.task_progress.start_progress(actions_count=1)
@@ -26,6 +36,7 @@ class EFormsPackageImporter(PackageImporterABC):
 
         if self.has_package:
             await self.add_mapping_package_from_mono(mono_package)
+        await self.import_sdk_fields(mono_package.metadata.eforms_sdk_versions)
         await self.add_transformation_resources_from_mono(mono_package)
         await self.add_transformation_mappings_from_mono(mono_package)
         await self.add_mapping_groups_from_mono(mono_package)
@@ -41,6 +52,18 @@ class EFormsPackageImporter(PackageImporterABC):
         self.task_progress.finish_progress()
 
         return self.package
+
+    async def import_sdk_fields(self, eforms_sdk_versions: list):
+        if self.with_import_sdk_fields:
+            await import_eforms_xsd(
+                branch_or_tag_name = ', '.join(await get_latest_eforms_versions_in_remote_repo(
+                    self.sdk_fields_github_repository_url,
+                    eforms_sdk_versions
+                )),
+                github_repository_url = self.sdk_fields_github_repository_url,
+                project_link = self.project_link
+            )
+
 
     async def add_mapping_groups_from_mono(self, mono_package: ImportedMappingSuite):
         self.task_progress.start_action_step(name="add_mapping_groups")

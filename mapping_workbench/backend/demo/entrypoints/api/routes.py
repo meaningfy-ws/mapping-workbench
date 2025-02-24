@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 
 from mapping_workbench.backend.demo.services.data import reset_demo_data
 from mapping_workbench.backend.security.services.user_manager import current_active_admin_user
+from mapping_workbench.backend.user.models.user import User
 
 ROUTE_PREFIX = "/demo"
 TAG = "demo"
@@ -22,10 +23,11 @@ async def route_demo_import_project():
 @sub_router.post(
     "/reset",
     name="demo:reset",
-    dependencies=[Depends(current_active_admin_user)]
 )
-async def route_demo_reset() -> JSONResponse:
-    await reset_demo_data()
+async def route_demo_reset(
+        user: User = Depends(current_active_admin_user)
+) -> JSONResponse:
+    await reset_demo_data(user=user)
     return JSONResponse(content={
         "message": "Resetting the demo data"
     })
