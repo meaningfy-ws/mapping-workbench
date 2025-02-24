@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends
-from fastapi.responses import JSONResponse
 
 from mapping_workbench.backend.demo.services.data import reset_demo_data
 from mapping_workbench.backend.security.services.user_manager import current_active_admin_user
@@ -26,11 +25,8 @@ async def route_demo_import_project():
 )
 async def route_demo_reset(
         user: User = Depends(current_active_admin_user)
-) -> JSONResponse:
+):
     await reset_demo_data(user=user)
-    return JSONResponse(content={
-        "message": "Resetting the demo data"
-    })
 
 
 router = APIRouter()
