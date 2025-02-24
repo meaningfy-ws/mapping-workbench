@@ -43,7 +43,8 @@ class ZipArchiver(ArchiverABC, abc.ABC):
 
         return destination
 
-    def make_archive_with_folder(self, dir_name: Path, parent_dir: Path, destination: Path) -> Path:
+    @classmethod
+    def make_archive_with_folder(cls, dir_name: Path, parent_dir: Path, destination: Path) -> Path:
         shutil.make_archive(str(destination.with_suffix("")), ARCHIVE_ZIP_FORMAT, parent_dir, dir_name)
 
         return destination

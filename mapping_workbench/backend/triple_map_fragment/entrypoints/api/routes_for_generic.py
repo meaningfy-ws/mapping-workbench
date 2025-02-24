@@ -1,11 +1,13 @@
-from typing import List
-
 from beanie import PydanticObjectId
+from beanie.odm.operators.find.comparison import In
+from beanie.odm.operators.update.array import Pull, Push
 from fastapi import APIRouter, Depends, status
 
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
+from mapping_workbench.backend.triple_map_fragment.models.api_request import \
+    TripleMapFragmentRequestForMappingPackageUpdate
 from mapping_workbench.backend.triple_map_fragment.models.entity import GenericTripleMapFragmentOut, \
     GenericTripleMapFragmentCreateIn, GenericTripleMapFragmentUpdateIn, GenericTripleMapFragment
 from mapping_workbench.backend.triple_map_fragment.models.entity_api_response import \
@@ -38,6 +40,7 @@ router = APIRouter(
 )
 async def route_list_generic_triple_map_fragments(
         project: PydanticObjectId = None,
+        mapping_package_id: PydanticObjectId = None,
         page: int = None,
         limit: int = None,
         q: str = None
@@ -45,6 +48,8 @@ async def route_list_generic_triple_map_fragments(
     filters: dict = {}
     if project:
         filters['project'] = Project.link_from_id(project)
+    if mapping_package_id is not None:
+        filters[GenericTripleMapFragment.refers_to_mapping_package_ids] = mapping_package_id
     if q is not None:
         filters['q'] = q
     items, total_count = await list_generic_triple_map_fragments(filters, page, limit)
@@ -68,6 +73,30 @@ async def route_create_generic_triple_map_fragment(
     return await create_generic_triple_map_fragment(
         data,
         user=user
+    )
+
+
+@router.patch(
+    "/update_mapping_package",
+    description=f"Update {NAME_FOR_MANY}",
+    name=f"{NAME_FOR_MANY}:update_{NAME_FOR_MANY}"
+)
+async def route_update_mapping_package(
+        request: TripleMapFragmentRequestForMappingPackageUpdate,
+        user: User = Depends(current_active_user)
+):
+    mapping_package_id = request.mapping_package_id
+
+    await GenericTripleMapFragment.find(
+        GenericTripleMapFragment.refers_to_mapping_package_ids == mapping_package_id
+    ).update_many(
+        Pull({GenericTripleMapFragment.refers_to_mapping_package_ids: mapping_package_id})
+    )
+
+    await GenericTripleMapFragment.find(
+        In(GenericTripleMapFragment.id, request.triple_map_fragments)
+    ).update_many(
+        Push({GenericTripleMapFragment.refers_to_mapping_package_ids: mapping_package_id})
     )
 
 
