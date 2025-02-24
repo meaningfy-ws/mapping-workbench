@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 
 import {Box} from "@mui/system";
 import {capitalize} from '@mui/material';
@@ -14,12 +13,12 @@ import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import Typography from '@mui/material/Typography';
 
-import {ResultChip} from "./utils";
 import {Scrollbar} from 'src/components/scrollbar';
-import {getValidationColor} from '../mapping-package/state/utils';
+import {getValidationColor, ResultChip} from '../mapping-package/state/utils';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme"
-import TableSorterHeader from "src/sections/components/table-sorter-header";
 import TablePagination from "src/sections/components/table-pagination-pages";
+import {LocalHighlighter} from 'src/sections/components/local-highlighter';
+import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
 
 const Condition = ({text, value}) => {
@@ -123,22 +122,9 @@ export const ListTableFile = (props) => {
                                                         alignItems="center"
                                                         spacing={2}
                                                     >
-                                                        <SyntaxHighlighter
-                                                            language="xquery"
-                                                            wrapLines
-                                                            customStyle={{
-                                                                borderRadius: 12,
-                                                                border: '1px solid #E4E7EC'
-                                                            }}
-                                                            style={syntaxHighlighterTheme}
-                                                            lineProps={{
-                                                                style: {
-                                                                    wordBreak: 'break-all',
-                                                                    whiteSpace: 'pre-wrap'
-                                                                }
-                                                            }}>
-                                                            {item?.xpath_condition?.xpath_condition || '-'}
-                                                        </SyntaxHighlighter>
+                                                        <LocalHighlighter language="xquery"
+                                                                          text={item?.xpath_condition?.xpath_condition || '-'}
+                                                                          style={syntaxHighlighterTheme}/>
                                                         {item?.meets_xpath_condition ?
                                                             <CheckIcon color="success"/> :
                                                             <CloseIcon color="error"/>}
@@ -154,22 +140,9 @@ export const ListTableFile = (props) => {
                                         </Box>
                                     </TableCell>
                                     <TableCell>
-                                        <SyntaxHighlighter
-                                            language="sparql"
-                                            wrapLines
-                                            style={syntaxHighlighterTheme}
-                                            customStyle={{
-                                                borderRadius: 12,
-                                                border: '1px solid #E4E7EC'
-                                            }}
-                                            lineProps={{
-                                                style: {
-                                                    overflowWrap: 'break-word',
-                                                    whiteSpace: 'pre-wrap'
-                                                }
-                                            }}>
-                                            {item.query}
-                                        </SyntaxHighlighter>
+                                        <LocalHighlighter language="sparql"
+                                                          style={syntaxHighlighterTheme}
+                                                          text={item.query}/>
                                     </TableCell>
                                     <TableCell align="left">
                                         <ResultChip color={getValidationColor(item.result)}

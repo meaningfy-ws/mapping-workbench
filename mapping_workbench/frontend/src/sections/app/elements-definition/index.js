@@ -10,14 +10,14 @@ const TABS = [
         id: 'elements_define_overview_tab'
     },
     {
-        label: 'Define',
-        value: paths.app.fields_and_nodes.develop.index,
-        id: 'elements_define_tab'
-    },
-    {
         label: 'Tree View',
         value: paths.app.fields_and_nodes.tree_view.index,
         id: 'elements_define_tree_tab'
+    },
+    {
+        label: 'Define',
+        value: paths.app.fields_and_nodes.develop.index,
+        id: 'elements_define_tab'
     }]
 
 export const ElementsDefinitionTabs = () => {

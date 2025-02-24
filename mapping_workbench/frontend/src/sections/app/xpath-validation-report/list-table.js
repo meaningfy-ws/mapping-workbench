@@ -1,11 +1,9 @@
 import {useState} from "react";
-import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import PropTypes from 'prop-types';
 
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 
-import {Box} from "@mui/system";
 import Stack from "@mui/material/Stack";
 import Table from '@mui/material/Table';
 import Dialog from "@mui/material/Dialog";
@@ -19,16 +17,15 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 
-import {ValueChip} from './utils';
 import {Scrollbar} from 'src/components/scrollbar';
-import {getValidationColor} from '../mapping-package/state/utils';
+import {getValidationColor, handleOpenDetails, ValueChip} from '../mapping-package/state/utils';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
-import TableSorterHeader from "src/sections/components/table-sorter-header";
+import {LocalHighlighter} from '../../components/local-highlighter';
 import TablePagination from "src/sections/components/table-pagination-pages";
+import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
 
 export const ListTable = (props) => {
-    const highLighterTheme = useHighlighterTheme()
     const {
         count = 0,
         items = [],
@@ -44,28 +41,11 @@ export const ListTable = (props) => {
         filters
     } = props;
 
+    const highLighterTheme = useHighlighterTheme()
+
     const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", description: ""})
 
     const handleClose = () => setDescriptionDialog(e => ({...e, open: false}));
-
-    const handleOpenDetails = (title, notices) => {
-        const description = notices.map((notice, i) =>
-            <Box key={'notice' + i}>
-                <Button type='link'
-                        onClick={() => handleSelectFile(notice.test_data_suite_oid)}
-                >
-                    {notice.test_data_suite_id}
-                </Button>
-                {' / '}
-                <Button type='link'
-                        onClick={() => handleSelectFile(notice.test_data_suite_oid, notice.test_data_oid)}
-                >
-                    {notice.test_data_id}
-                </Button>
-            </Box>)
-
-        setDescriptionDialog({open: true, title, description});
-    }
 
     const SorterHeader = (props) => {
         const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
@@ -134,14 +114,10 @@ export const ListTable = (props) => {
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            <SyntaxHighlighter
-                                                language="xquery"
-                                                wrapLines
-                                                style={highLighterTheme}
-                                                customStyle={{borderRadius: 12, border: '1px solid #E4E7EC'}}
-                                                lineProps={{style: {wordBreak: 'break-all', whiteSpace: 'pre-wrap'}}}>
-                                                {item.sdk_element_xpath}
-                                            </SyntaxHighlighter>
+                                            <LocalHighlighter language="xquery"
+                                                              theme={highLighterTheme}
+                                                              text={item.sdk_element_xpath}
+                                            />
                                         </TableCell>
                                         <TableCell>
                                             {item.xpath_conditions?.map((xpath_condition, key) =>
@@ -150,31 +126,22 @@ export const ListTable = (props) => {
                                                     direction="column"
                                                     spacing={1}
                                                 >
-                                                    <SyntaxHighlighter
-                                                        language="xquery"
-                                                        wrapLines
-                                                        style={highLighterTheme}
-                                                        customStyle={{
-                                                            borderRadius: 12,
-                                                            border: '1px solid',
-                                                            borderColor: getValidationColor(xpath_condition.meets_xpath_condition ?
-                                                                'valid' : 'invalid')
-                                                        }}
-                                                        lineProps={{
-                                                            style: {
-                                                                wordBreak: 'break-all',
-                                                                whiteSpace: 'pre-wrap'
-                                                            }
-                                                        }}>
-                                                        {xpath_condition.xpath_condition || '-'}
-                                                    </SyntaxHighlighter>
+                                                    <LocalHighlighter language="xquery"
+                                                                      style={highLighterTheme}
+                                                                      customStyle={{
+                                                                          borderRadius: 12,
+                                                                          border: '1px solid',
+                                                                          borderColor: getValidationColor(xpath_condition.meets_xpath_condition ?
+                                                                              'valid' : 'invalid')
+                                                                      }}
+                                                                      text={xpath_condition.xpath_condition || '-'}/>
                                                 </Stack>)}
                                         </TableCell>
                                         <TableCell>
                                             <Button variant='contained'
                                                     sx={{borderRadius: 10, p: .3, minWidth: 30}}
                                                     disabled={!item.notice_count}
-                                                    onClick={() => handleOpenDetails(item.sdk_element_id, item.test_data_xpaths)}>
+                                                    onClick={() => handleOpenDetails(item.sdk_element_id, item.test_data_xpaths, handleSelectFile, setDescriptionDialog)}>
                                                 {item.notice_count}
                                             </Button>
                                         </TableCell>

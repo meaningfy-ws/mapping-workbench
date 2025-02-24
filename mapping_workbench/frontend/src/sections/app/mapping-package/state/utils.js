@@ -1,13 +1,15 @@
+import {useTheme} from '@mui/material/styles';
+import {useState} from 'react';
+
+import {Box} from '@mui/system';
+import Stack from '@mui/material/Stack';
+import Radio from '@mui/material/Radio';
+import {capitalize} from '@mui/material';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import RadioGroup from '@mui/material/RadioGroup';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
-import {Box} from '@mui/system';
-import {useState} from 'react';
-import {capitalize, ResultChip} from '../../sparql-validation-report/utils';
-import {ValueChip} from '../../xpath-validation-report/utils';
 
 export const getValidationColor = (color) => {
     switch (color) {
@@ -42,6 +44,23 @@ export const getResultColor = (result) => {
         default:
             return "info"
     }
+}
+
+export const ValueChip = ({children, value, color, style}) => {
+    const theme = useTheme()
+    const themeColor = theme.palette?.[color] ?? {}
+    return (
+        <Stack sx={{
+            px: 1.4,
+            py: 0.3,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: themeColor.alpha12,
+            color: themeColor.main,
+            borderRadius: 5,
+            ...style
+        }}>{value ?? children}</Stack>
+    )
 }
 
 export const getItemsDisplay = (items, total) => Object.entries(items)?.map(item => {
@@ -197,4 +216,67 @@ export const useFileNavigation = (reportTree) => {
         handleSetTestDataset,
         handleSetTestAndPackage
     }
+}
+
+
+export const handleOpenDetails = (title, notices, handleSelect, setDescription) => {
+    const description = notices.map((notice, i) =>
+        <Box key={'notice' + i}>
+            <Button type='link'
+                    onClick={() => handleSelect(notice.test_data_suite_oid)}
+            >
+                {notice.test_data_suite_id}
+            </Button>
+            {' / '}
+            <Button type='link'
+                    onClick={() => handleSelect(notice.test_data_suite_oid, notice.test_data_oid)}
+            >
+                {notice.test_data_id}
+            </Button>
+        </Box>)
+
+    setDescription({open: true, title, description});
+}
+
+export const ResultChip = ({label, color, fontColor, onClick, clickable, children}) => {
+    const hover = onClick ?? clickable ? {'&:hover': {filter: 'brightness(85%)'}, cursor: 'pointer'} : {}
+    return (
+        <Box sx={{
+            textAlign: 'center',
+            px: 1,
+            py: .5,
+            borderRadius: 12,
+            backgroundColor: color,
+            color: fontColor, ...hover
+        }}
+             onClick={onClick}
+        >
+            {label ?? children}
+        </Box>
+    )
+}
+
+export const ResultCell = ({item, handleSelect, setDescription}) => {
+    const title = item.title
+    return <Stack direction="column"
+                  alignItems="center"
+                  justifyContent="center"
+                  gap={2}
+                  height={100}>
+        {Object.entries(item.result).map(([key, value]) => {
+            return !!value.count && <Stack direction='row'
+                                           key={key}
+                                           gap={1}>
+                <ValueChip value={value.count}
+                           color='primary'
+                           sx={{p: 2}}/>
+                <ResultChip color={getValidationColor(key)}
+                            clickable
+                            fontColor='#fff'
+                            onClick={() => handleOpenDetails(title, value.test_datas, handleSelect, setDescription)}
+                            label={key}
+                />
+            </Stack>
+        })}
+    </Stack>
 }

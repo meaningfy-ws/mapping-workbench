@@ -9,6 +9,7 @@ from beanie import Link
 from dateutil.tz import tzlocal
 
 from mapping_workbench.backend.fields_registry.adapters.github_download import GithubDownloader
+from mapping_workbench.backend.fields_registry.adapters.github_manager import GithubManager
 from mapping_workbench.backend.fields_registry.models.eforms_fields_structure import EFormsSDKFields, \
     generate_project_eforms_field_hash_id
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
@@ -29,6 +30,33 @@ ID_TO_HASH_MAPPING_KEY = "id_to_hash_mapping"
 NOTICE_TYPES_INFO_FILE_NAME = "notice-types.json"
 FIELD_CONTENT_TYPE = "field"
 GROUP_CONTENT_TYPE = "group"
+
+
+# async def exists_eforms_versions_in_project(project_id: PydanticObjectId, versions: List[str]) -> List[str]:
+#     existing_versions = []
+#     for version in versions:
+#         sdk_fields = await StructuralElement.find(
+#             Eq(StructuralElement.versions, version),
+#             StructuralElement.project == Project.link_from_id(project_id)
+#         ).to_list()
+#         if len(sdk_fields) > 0:
+#             existing_versions.append(version)
+#     return existing_versions
+
+async def exists_import_eforms_versions_in_pool(versions: List[str]) -> List[str]:
+    existing_versions = []
+    for version in versions:
+        sdk_fields = await PoolSDKField.find(PoolSDKField.version == version).to_list()
+        if len(sdk_fields) > 0:
+            existing_versions.append(version)
+    return existing_versions
+
+
+async def exists_eforms_versions_in_remote_repo(repo_url: str, versions: List[str]) -> List[str]:
+    github_manager = GithubManager(github_repository_url=repo_url)
+    tags = github_manager.get_repo_tags()
+    found_versions = list(set(versions) & set(tags))
+    return found_versions
 
 
 async def import_eforms_fields_from_pool_to_project(project_link: Link[Project], version: str) -> bool:
@@ -232,6 +260,10 @@ async def import_eforms_fields_from_folder_to_pool(
             )
 
 
+def eforms_sdk_versions_from_str_to_list(versions_str: str) -> List[str]:
+    return [item.strip() for item in versions_str.split(',')]
+
+
 async def import_eforms_xsd(
         branch_or_tag_name: str,
         github_repository_url: str = None,
@@ -242,7 +274,7 @@ async def import_eforms_xsd(
         task_response = TaskResponse()
 
     task_progress = TaskProgress(task_response)
-    versions = [item.strip() for item in branch_or_tag_name.split(',')]
+    versions = eforms_sdk_versions_from_str_to_list(branch_or_tag_name)
 
     task_progress.start_progress(actions_count=1)
     task_progress.start_action(name="Import EForms XSD", steps_count=len(versions))
@@ -253,23 +285,23 @@ async def import_eforms_xsd(
         status: TaskProgressStatus = TaskProgressStatus.FINISHED
         if not await import_eforms_fields_from_pool_to_project(project_link=project_link, version=version):
             if github_repository_url:
-                task_progress.update_current_action_step_name(f"{version} (from GitHub)")
+                task_progress.update_current_action_step_name(f"{version} (from remote)")
                 await import_eforms_fields_from_github_repository(
                     github_repository_url=github_repository_url,
                     branch_or_tag_name=version,
                     project_link=project_link
                 )
-                m = f'{version} eForms SDK imported from GitHub'
+                m = f'{version} eForms SDK imported from remote'
                 warnings.append(TaskResultWarning(
                     message=m,
-                    type='SDKs imported from GitHub repository (not found in the pool)'
+                    type='SDKs imported from remote repository (not found in the pool)'
                 ))
             else:
                 task_progress.update_current_action_step_name(f"{version} (not found)")
                 m = f'{version} eForms SDK not imported'
                 warnings.append(TaskResultWarning(
                     message=m,
-                    type='SDKs not imported (not found in the pool and no GitHub repository provided)'
+                    type='SDKs not imported (not found in the pool and no remote repository provided)'
                 ))
                 mwb_logger.log_all_info(m)
                 status = TaskProgressStatus.FAILED
