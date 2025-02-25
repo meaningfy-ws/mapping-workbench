@@ -57,7 +57,7 @@ export const ListTableRow = (props) => {
 
     const {timeSetting} = useGlobalState()
     const [collectionResources, setCollectionResources] = useState([]);
-    const [confirmOpen, setConfirmOpen] = useState(false);
+    const [confirmResourceDelete, setConfirmResourceDelete] = useState(null);
     const uploadDialog = useDialog()
 
     useEffect(() => {
@@ -81,8 +81,8 @@ export const ListTableRow = (props) => {
             .then(res => getItems())
     }
 
-    const handleDeleteResourceAction = () => {
-        fileResourcesApi.deleteFileResource(item_id)
+    const handleDeleteResourceAction = (resource_id) => {
+        fileResourcesApi.deleteFileResource(resource_id)
             .then(res => getFileResources())
     }
 
@@ -98,9 +98,9 @@ export const ListTableRow = (props) => {
             />
             <ConfirmDialog
                 title="Delete It?"
-                open={!!confirmOpen}
-                setOpen={setConfirmOpen}
-                onConfirm={() => handleDeleteResourceAction()}
+                open={!!confirmResourceDelete}
+                setOpen={setConfirmResourceDelete}
+                onConfirm={() => handleDeleteResourceAction(confirmResourceDelete)}
             >
                 Are you sure you want to delete it?
             </ConfirmDialog>
@@ -250,7 +250,7 @@ export const ListTableRow = (props) => {
                                                             </Button>
                                                             <Button
                                                                 size="small"
-                                                                onClick={() => setConfirmOpen(resource._id)}
+                                                                onClick={() => setConfirmResourceDelete(resource._id)}
                                                                 color="error">
                                                                 Delete
                                                             </Button>

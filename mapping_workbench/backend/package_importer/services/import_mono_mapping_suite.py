@@ -82,7 +82,8 @@ def import_mapping_resource_file_names(conceptual_mappings_file_path: pathlib.Pa
 
 
 def import_mapping_suite_base_from_file_system(
-        mapping_suite_dir_path: pathlib.Path
+        mapping_suite_dir_path: pathlib.Path,
+        ignore_missing_resources: bool = False
 ) -> ImportedMappingSuite:
     transformation_dir_path = mapping_suite_dir_path / TRANSFORMATION_DIR_NAME
     test_data_dir_path = mapping_suite_dir_path / TEST_DATA_DIR_NAME
@@ -99,7 +100,7 @@ def import_mapping_suite_base_from_file_system(
         assert transformation_dir_path.exists(), "Transformation folder not found!"
         assert test_data_dir_path.exists(), "Test Data folder not found!"
         assert validation_dir_path.exists(), "Validation folder not found!"
-        assert conceptual_mappings_file_path.exists(), "Conceptual Mappings file not found!"
+        assert ignore_missing_resources or conceptual_mappings_file_path.exists(), "Conceptual Mappings file not found!"
         assert transformation_resources_dir_path.exists(), "Transformation Resources folder not found!"
         assert transformation_mappings_dir_path.exists(), "Transformation Mappings folder not found!"
         assert shacl_validation_dir_path.exists(), "SHACL validation folder not found!"

@@ -49,15 +49,23 @@ def import_mapping_groups(conceptual_mappings_file_path: pathlib.Path) -> List[I
 
 
 def import_eforms_mapping_suite_from_file_system(
-        mapping_suite_dir_path: pathlib.Path
+        mapping_suite_dir_path: pathlib.Path,
+        ignore_missing_resources: bool = False
 ) -> ImportedEFormsMappingSuite:
     conceptual_mappings_file_path = mapping_suite_dir_path / TRANSFORMATION_DIR_NAME / CONCEPTUAL_MAPPINGS_FILE_NAME
 
-    mapping_suite_base = import_mapping_suite_base_from_file_system(mapping_suite_dir_path)
+    mapping_suite_base = import_mapping_suite_base_from_file_system(
+        mapping_suite_dir_path,
+        ignore_missing_resources=ignore_missing_resources
+    )
 
-    mapping_suite_metadata = import_mapping_metadata(conceptual_mappings_file_path)
-    mapping_groups = import_mapping_groups(conceptual_mappings_file_path)
-    mapping_conceptual_rules = import_mapping_conceptual_rules(conceptual_mappings_file_path)
+    mapping_suite_metadata = EFormsMappingMetadata()
+    mapping_groups = []
+    mapping_conceptual_rules = []
+    if conceptual_mappings_file_path.exists():
+        mapping_suite_metadata = import_mapping_metadata(conceptual_mappings_file_path)
+        mapping_groups = import_mapping_groups(conceptual_mappings_file_path)
+        mapping_conceptual_rules = import_mapping_conceptual_rules(conceptual_mappings_file_path)
 
     mapping_suite = ImportedEFormsMappingSuite(
         **mapping_suite_base.model_dump(),

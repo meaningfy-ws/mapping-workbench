@@ -4,9 +4,12 @@ from pathlib import Path
 from typing import Dict, Tuple, List
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
+from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.mapping_package.services.api import remove_mapping_package_resources
-from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroup
+from mapping_workbench.backend.ontology.models.namespace import Namespace
+from mapping_workbench.backend.ontology.models.term import Term
+from mapping_workbench.backend.ontology_suite.models.ontology_file_resource import OntologyFileResource
 from mapping_workbench.backend.package_importer.models.imported_mapping_suite import ImportedMappingSuite
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.resource_collection.models.entity import ResourceFile, ResourceCollection, \
@@ -138,7 +141,7 @@ class PackageImporterABC(ABC):
                     project=self.project
                 )
                 if self.has_package:
-                    triple_map_fragment.refers_to_mapping_package_ids=[self.package.id]
+                    triple_map_fragment.refers_to_mapping_package_ids = [self.package.id]
 
                 await triple_map_fragment.on_create(self.user).save()
             else:
@@ -392,4 +395,7 @@ class PackageImporterABC(ABC):
         await SPARQLTestSuite.find(SPARQLTestSuite.project == project_link).delete()
         await TestDataFileResource.find(TestDataFileResource.project == project_link).delete()
         await TestDataSuite.find(TestDataSuite.project == project_link).delete()
-        await MappingGroup.find(TestDataSuite.project == project_link).delete()
+        await OntologyFileResource.find(OntologyFileResource.project == project_link).delete()
+        await Term.find(Term.project == project_link).delete()
+        await Namespace.find(Namespace.project == project_link).delete()
+        await StructuralElement.find(StructuralElement.project == project_link).delete()

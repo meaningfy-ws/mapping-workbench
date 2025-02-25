@@ -74,6 +74,9 @@ async def delete_shacl_test_suite(shacl_test_suite: SHACLTestSuite):
         resources_ids=[shacl_test_suite.id],
         resources_field=ResourceField.SHACL_TEST_SUITES
     )
+    await SHACLTestFileResource.find(
+        SHACLTestFileResource.shacl_test_suite == SHACLTestSuite.link_from_id(shacl_test_suite.id)
+    ).delete()
     return await shacl_test_suite.delete()
 
 

@@ -298,7 +298,8 @@ async def route_get_test_data_file_resource(
     response_model=APIEmptyContentWithIdResponse
 )
 async def route_delete_test_data_file_resource(
-        test_data_file_resource: TestDataFileResource = Depends(get_test_data_file_resource)):
+        test_data_file_resource: TestDataFileResource = Depends(get_test_data_file_resource)
+):
     await delete_test_data_file_resource(test_data_file_resource)
     return APIEmptyContentWithIdResponse(id=test_data_file_resource.id)
 

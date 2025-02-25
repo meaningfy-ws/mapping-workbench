@@ -130,6 +130,34 @@ class FrontendSettings(BaseSettings):
         return config_value
 
 
+class EmailSettings(BaseSettings):
+
+    @env_property()
+    def EMAIL_SMTP_SERVER(self, config_value: str) -> str:
+        return config_value
+
+    @env_property()
+    def EMAIL_SMTP_PORT(self, config_value: str) -> int:
+        return int(config_value)
+
+    @env_property()
+    def EMAIL_LOGIN(self, config_value: str) -> str:
+        return config_value
+
+    @env_property()
+    def EMAIL_PASSWORD(self, config_value: str) -> str:
+        return config_value
+
+    @env_property()
+    def EMAIL_FROM(self, config_value: str) -> str:
+        return config_value
+
+
+class DemoSettings(BaseSettings):
+    @env_property()
+    def DEMO_EMAILS(self, config_value: str) -> str:
+        return config_value
+
 class Settings(
     AppSettings,
     ServerSettings,
@@ -139,7 +167,9 @@ class Settings(
     TaskManagerSettings,
     EnvironmentSettings,
     GoogleOAuthSettings,
-    FrontendSettings
+    FrontendSettings,
+    EmailSettings,
+    DemoSettings
 ):
     """
 

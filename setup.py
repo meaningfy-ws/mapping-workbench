@@ -20,7 +20,6 @@ NAME = "mapping_workbench"
 DESCRIPTION = "Mapping Workbench"
 LONG_DESCRIPTION = pathlib.Path("README.md").read_text(encoding="utf-8")
 URL = "https://github.com/meaningfy-ws/mapping-workbench"
-TOOLCHAIN_PACKAGE = f"{NAME}.toolchain"
 
 PACKAGES = find_packages(include=[PACKAGE_DIR, f"{PACKAGE_DIR}.*"])
 
@@ -39,9 +38,6 @@ CLASSIFIERS = [
 ]
 
 kwargs = {}
-
-with pathlib.Path('requirements.toolchain.txt').open() as requirements:
-    kwargs["install_requires"] = [str(requirement) for requirement in parse_requirements(requirements)]
 
 kwargs["extras_require"] = {}
 
@@ -65,7 +61,9 @@ setup(
         NAME: PACKAGE_DIR
     },
     entry_points={
-        "console_scripts": [],
+        "console_scripts": [
+            "reset_demo_data = mapping_workbench.backend.demo.entrypoints.cli.cmd_reset_demo_data:main",
+        ],
     },
     include_package_data=True,
     tests_require=['pytest'],
