@@ -73,6 +73,9 @@ async def delete_resource_collection(resource_collection: ResourceCollection):
         resources_ids=[resource_collection.id],
         resources_field=ResourceField.RESOURCE_COLLECTIONS
     )
+    await ResourceFile.find(
+        ResourceFile.resource_collection == ResourceCollection.link_from_id(resource_collection.id)
+    ).delete()
     return await resource_collection.delete()
 
 

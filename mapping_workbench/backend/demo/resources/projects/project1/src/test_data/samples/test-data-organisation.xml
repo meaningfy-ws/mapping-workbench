@@ -17,19 +17,15 @@
 					<efac:Organizations>
 						<efac:Organization>
 							<efac:Company>
-								<!--BT-505-->
-								<!--Organisation Internet Address-->
+								<!--BT-505: "Organisation Internet Address"-->
 								<cbc:WebsiteURI>https://www.fin-adm.com</cbc:WebsiteURI>
-								<!--BT-509-->
-								<!--Organisation eDelivery Gateway-->
+								<!--BT-509: "Organisation eDelivery Gateway"-->
 								<cbc:EndpointID>https://endpoint-example.fin-adm.com</cbc:EndpointID>
 								<cac:PartyIdentification>
-									<!--OPT-200-->
-									<!--Organisation Technical Identifier-->
+									<!--OPT-200: "Organisation Technical Identifier"-->
 									<cbc:ID schemeName="organization">ORG-0001</cbc:ID>
 								</cac:PartyIdentification>
-								<!--BT-500-->
-								<!--Organisation Name-->
+								<!--BT-500: "Organisation Name"-->
 								<cac:PartyName>
 									<cbc:Name languageID="ENG">Financial Adinistration for ...</cbc:Name>
 								</cac:PartyName>
@@ -39,41 +35,31 @@
 									<cbc:StreetName>Bruce Wayne House</cbc:StreetName>
 									<!--Streetline 1-->
 									<cbc:AdditionalStreetName>2 Gotham Street</cbc:AdditionalStreetName>
-									<!--BT-16-->
-									<!--Organisation Part Name-->
+									<!--BT-16: "Organisation Part Name"-->
 									<cbc:Department>Finance Division</cbc:Department>
-									<!--BT-513-->
-									<!--Organisation City-->
+									<!--BT-513: "Organisation City"-->
 									<cbc:CityName>London</cbc:CityName>
-									<!--BT-512-->
-									<!--Organisation Post Code-->
+									<!--BT-512: "Organisation Post Code"-->
 									<cbc:PostalZone>N1 9FL</cbc:PostalZone>
-									<!--BT-507-->
-									<!--Organisation Country Subdivision-->
+									<!--BT-507: "Organisation Country Subdivision"-->
 									<cbc:CountrySubentityCode listName="nuts">UKI62</cbc:CountrySubentityCode>
-									<!--BT-514-->
-									<!--Organisation Country Code-->
+									<!--BT-514: "Organisation Country Code"-->
 									<cac:Country>
 										<cbc:IdentificationCode listName="country">GBR</cbc:IdentificationCode>
 									</cac:Country>
 								</cac:PostalAddress>
 								<cac:PartyLegalEntity>
-									<!--BT-501-->
-									<!--Organisation Identifier-->
+									<!--BT-501: "Organisation Identifier"-->
 									<cbc:CompanyID>998298</cbc:CompanyID>
 								</cac:PartyLegalEntity>
 								<cac:Contact>
-									<!--BT-502-->
-									<!--Organisation Contact Point-->
+									<!--BT-502: "Organisation Contact Point"-->
 									<cbc:Name>Info desk</cbc:Name>
-									<!--BT-503-->
-									<!--Organisation Contact Telephone Number-->
+									<!--BT-503: "Organisation Contact Telephone Number"-->
 									<cbc:Telephone>+44 123456780</cbc:Telephone>
-									<!--BT-739-->
-									<!--Organisation Contact Fax-->
+									<!--BT-739: "Organisation Contact Fax"-->
 									<cbc:Telefax>+44 123456789</cbc:Telefax>
-									<!--BT-506-->
-									<!--Organisation Contact Email Address-->
+									<!--BT-506: "Organisation Contact Email Address"-->
 									<cbc:ElectronicMail>info@fin-adm.com</cbc:ElectronicMail>
 								</cac:Contact>
 							</efac:Company>			

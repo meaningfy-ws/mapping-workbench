@@ -47,6 +47,7 @@ async def clear_demo_projects():
     await clear_demo_project(PROJECT1_TITLE)
     await clear_demo_project(PROJECT2_TITLE)
 
+
 async def import_ontologies_to_project(project_id: PydanticObjectId, user: User):
     with open(ONTOLOGY_FILE_PATH, 'r', encoding="utf-8") as file:
         await ontology_file_repository.create(
@@ -63,15 +64,20 @@ async def import_ontologies_to_project(project_id: PydanticObjectId, user: User)
         ontology_sources=None
     )
 
+
 async def import_demo_project(
         project_path: pathlib.Path,
         project_title: str,
         has_package: bool = False,
         with_import_sdk_fields: bool = True,
+        ignore_missing_resources: bool = False,
         user: User = None,
         task_response: TaskResponse = None
 ):
-    mono_data = import_eforms_mapping_suite_from_file_system(project_path)
+    mono_data = import_eforms_mapping_suite_from_file_system(
+        project_path,
+        ignore_missing_resources=ignore_missing_resources
+    )
     project = Project(
         title=project_title,
         created_at=datetime.now(tzlocal())
@@ -92,5 +98,5 @@ async def import_demo_projects(
         user: User = None,
         task_response: TaskResponse = None
 ):
-    await import_demo_project(PROJECT1_PATH, PROJECT1_TITLE, False, with_import_sdk_fields, user, task_response)
-    await import_demo_project(PROJECT2_PATH, PROJECT2_TITLE, True, with_import_sdk_fields, user, task_response)
+    await import_demo_project(PROJECT1_PATH, PROJECT1_TITLE, False, False, True, user, task_response)
+    await import_demo_project(PROJECT2_PATH, PROJECT2_TITLE, True, with_import_sdk_fields, False, user, task_response)

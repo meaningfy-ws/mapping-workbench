@@ -36,11 +36,14 @@ class EFormsPackageImporter(PackageImporterABC):
 
         if self.has_package:
             await self.add_mapping_package_from_mono(mono_package)
-        await self.import_sdk_fields(mono_package.metadata.eforms_sdk_versions)
+        if mono_package.metadata.eforms_sdk_versions:
+            await self.import_sdk_fields(mono_package.metadata.eforms_sdk_versions)
         await self.add_transformation_resources_from_mono(mono_package)
         await self.add_transformation_mappings_from_mono(mono_package)
-        await self.add_mapping_groups_from_mono(mono_package)
-        await self.add_mapping_rules_from_mono(mono_package)
+        if mono_package.mapping_groups:
+            await self.add_mapping_groups_from_mono(mono_package)
+        if mono_package.conceptual_rules:
+            await self.add_mapping_rules_from_mono(mono_package)
         await self.add_test_data_from_mono(mono_package)
         await self.add_sparql_test_suites_from_mono(mono_package)
         await self.add_shacl_test_suites_from_mono(mono_package)
