@@ -7,6 +7,7 @@ from mapping_workbench.backend.conceptual_mapping_rule.models.entity import Conc
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.mapping_package.services.api import remove_mapping_package_resources
 from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroup
+from mapping_workbench.backend.ontology.models.term import Term
 from mapping_workbench.backend.ontology_suite.models.ontology_file_resource import OntologyFileResource
 from mapping_workbench.backend.package_importer.models.imported_mapping_suite import ImportedMappingSuite
 from mapping_workbench.backend.project.models.entity import Project
@@ -394,3 +395,4 @@ class PackageImporterABC(ABC):
         await TestDataFileResource.find(TestDataFileResource.project == project_link).delete()
         await TestDataSuite.find(TestDataSuite.project == project_link).delete()
         await OntologyFileResource.find(OntologyFileResource.project == project_link).delete()
+        await Term.find(Term.project == project_link).delete()
