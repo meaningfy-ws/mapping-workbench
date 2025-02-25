@@ -1,5 +1,6 @@
 import {TripleMapFragmentsApi} from "./index";
 import {ACTION} from "../section";
+import {appApi} from "../app";
 
 class GenericTripleMapFragmentsApi extends TripleMapFragmentsApi {
     get SECTION_TITLE() {
@@ -22,6 +23,15 @@ class GenericTripleMapFragmentsApi extends TripleMapFragmentsApi {
 
     constructor() {
         super("generic_triple_map_fragments");
+    }
+
+    async update_mapping_package(mapping_package_id, triple_map_fragments) {
+        let endpoint = this.paths['items'] + '/update_mapping_package';
+        let request = {
+            mapping_package_id: mapping_package_id,
+            triple_map_fragments: triple_map_fragments
+        }
+        return await appApi.update(endpoint, request);
     }
 }
 

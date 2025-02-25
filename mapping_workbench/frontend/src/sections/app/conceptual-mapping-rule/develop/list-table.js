@@ -24,7 +24,7 @@ import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import ConfirmDialog from "src/components/app/dialog/confirm-dialog";
 import {MenuActionButton, MenuActions} from 'src/components/menu-actions';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
-import TablePagination from "src/sections/components/table-pagination";
+import TablePagination from "src/sections/components/table-pagination-pages";
 
 export const ListTableRow = (props) => {
     const {

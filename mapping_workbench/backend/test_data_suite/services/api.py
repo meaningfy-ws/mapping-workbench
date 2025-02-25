@@ -76,6 +76,11 @@ async def delete_test_data_suite(test_data_suite: TestDataSuite):
         resources_ids=[test_data_suite.id],
         resources_field=ResourceField.TEST_DATA_SUITES
     )
+
+    await TestDataFileResource.find(
+        TestDataFileResource.test_data_suite == TestDataSuite.link_from_id(test_data_suite.id)
+    ).delete()
+
     return await test_data_suite.delete()
 
 

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Contract notice with the maximum amount of information possible.
+	 Values used are fictitious, and may be redundant or inconsistent.
+-->
+<ContractNotice xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns="urn:oasis:names:specification:ubl:schema:xsd:ContractNotice-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:efac="http://data.europa.eu/p27/eforms-ubl-extension-aggregate-components/1" xmlns:efext="http://data.europa.eu/p27/eforms-ubl-extensions/1" xmlns:efbc="http://data.europa.eu/p27/eforms-ubl-extension-basic-components/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<ext:UBLExtensions>
+		<ext:UBLExtension>
+			<ext:ExtensionContent>
+				<efext:EformsExtension>
+					<!-- "id" : "BT-803(d)-notice", "name" : "Notice Dispatch Date eSender (date)"-->
+					<efbc:TransmissionDate>2023-03-23+01:00</efbc:TransmissionDate>
+					<!-- "id" : "BT-803(t)-notice", "name" : "Notice Dispatch Date eSender (time)"-->
+					<efbc:TransmissionTime>22:00:00+01:00</efbc:TransmissionTime>
+					<efac:NoticeSubType>
+						<cbc:SubTypeCode listName="notice-subtype">16</cbc:SubTypeCode>
+					</efac:NoticeSubType>
+					<efac:Organizations>
+						<efac:Organization>
+							<efac:Company>
+								<!--BT-505: "Organisation Internet Address"-->
+								<cbc:WebsiteURI>https://www.fin-adm.com</cbc:WebsiteURI>
+								<!--BT-509: "Organisation eDelivery Gateway"-->
+								<cbc:EndpointID>https://endpoint-example.fin-adm.com</cbc:EndpointID>
+								<cac:PartyIdentification>
+									<!--OPT-200: "Organisation Technical Identifier"-->
+									<cbc:ID schemeName="organization">ORG-0001</cbc:ID>
+								</cac:PartyIdentification>
+								<!--BT-500: "Organisation Name"-->
+								<cac:PartyName>
+									<cbc:Name languageID="ENG">Financial Adinistration for ...</cbc:Name>
+								</cac:PartyName>
+								<cac:PostalAddress>
+									<!--BT-510-->
+									<!--Street-->
+									<cbc:StreetName>Bruce Wayne House</cbc:StreetName>
+									<!--Streetline 1-->
+									<cbc:AdditionalStreetName>2 Gotham Street</cbc:AdditionalStreetName>
+									<!--BT-16: "Organisation Part Name"-->
+									<cbc:Department>Finance Division</cbc:Department>
+									<!--BT-513: "Organisation City"-->
+									<cbc:CityName>London</cbc:CityName>
+									<!--BT-512: "Organisation Post Code"-->
+									<cbc:PostalZone>N1 9FL</cbc:PostalZone>
+									<!--BT-507: "Organisation Country Subdivision"-->
+									<cbc:CountrySubentityCode listName="nuts">UKI62</cbc:CountrySubentityCode>
+									<!--BT-514: "Organisation Country Code"-->
+									<cac:Country>
+										<cbc:IdentificationCode listName="country">GBR</cbc:IdentificationCode>
+									</cac:Country>
+								</cac:PostalAddress>
+								<cac:PartyLegalEntity>
+									<!--BT-501: "Organisation Identifier"-->
+									<cbc:CompanyID>998298</cbc:CompanyID>
+								</cac:PartyLegalEntity>
+								<cac:Contact>
+									<!--BT-502: "Organisation Contact Point"-->
+									<cbc:Name>Info desk</cbc:Name>
+									<!--BT-503: "Organisation Contact Telephone Number"-->
+									<cbc:Telephone>+44 123456780</cbc:Telephone>
+									<!--BT-739: "Organisation Contact Fax"-->
+									<cbc:Telefax>+44 123456789</cbc:Telefax>
+									<!--BT-506: "Organisation Contact Email Address"-->
+									<cbc:ElectronicMail>info@fin-adm.com</cbc:ElectronicMail>
+								</cac:Contact>
+							</efac:Company>			
+						</efac:Organization>
+						<efac:Organization>
+							<efac:Company>
+								<!--BT-505-->
+								<cbc:WebsiteURI>https://www.fin-leg.com</cbc:WebsiteURI>
+								<!--BT-509-->
+								<cbc:EndpointID>https://contact.fin-leg.com</cbc:EndpointID>
+								<cac:PartyIdentification>
+									<!--OPT-200-->
+									<cbc:ID schemeName="organization">ORG-0002</cbc:ID>
+								</cac:PartyIdentification>
+								<cac:PartyName>
+									<!--BT-500-->
+									<cbc:Name languageID="ENG">TaxInfo Department</cbc:Name>
+								</cac:PartyName>
+								<cac:PostalAddress>
+									<!--BT-510-->
+									<cbc:StreetName>6 Main Street</cbc:StreetName>
+									<!--BT-513-->
+									<cbc:CityName>London</cbc:CityName>
+									<!--BT-512-->
+									<cbc:PostalZone>N1 9FL</cbc:PostalZone>
+									<!--BT-507-->
+									<cbc:CountrySubentityCode listName="nuts">UKI62</cbc:CountrySubentityCode>
+									<cac:Country>
+										<!--BT-514-->
+										<cbc:IdentificationCode listName="country">GBR</cbc:IdentificationCode>
+									</cac:Country>
+								</cac:PostalAddress>
+								<cac:PartyLegalEntity>
+									<!--BT-501-->
+									<cbc:CompanyID>12345</cbc:CompanyID>
+								</cac:PartyLegalEntity>
+								<cac:Contact>
+									<!--BT-502-->
+									<cbc:Name languageID="ENG">Info desk</cbc:Name>
+									<!--BT-503-->
+									<cbc:Telephone>+44 123456780</cbc:Telephone>
+									<!--BT-739-->
+									<cbc:Telefax>+44 123456789</cbc:Telefax>
+									<!--BT-506-->
+									<cbc:ElectronicMail>info@example.com</cbc:ElectronicMail>
+								</cac:Contact>
+							</efac:Company>
+						</efac:Organization>
+					
+					</efac:Organizations>
+				</efext:EformsExtension>
+			</ext:ExtensionContent>
+		</ext:UBLExtension>
+	</ext:UBLExtensions>
+	<cbc:UBLVersionID>2.3</cbc:UBLVersionID>
+	<cbc:CustomizationID>eforms-sdk-1.9</cbc:CustomizationID>
+	<!--BT-701-->
+	<cbc:ID schemeName="notice-id">14549263-b47b-4e59-96a1-2d0d13e19343</cbc:ID>
+	<!--BT-04-->
+	<cbc:ContractFolderID>aff2863e-b4cc-4e91-baba-b3b85f709117</cbc:ContractFolderID>
+	<!--BT-05-->
+	<cbc:IssueDate>2023-03-23+01:00</cbc:IssueDate>
+	<cbc:IssueTime>20:59:32+01:00</cbc:IssueTime>
+	<!--BT-757-->
+	<cbc:VersionID>03</cbc:VersionID>
+	<!--BT-01-->
+	<cbc:RegulatoryDomain>32014L0024</cbc:RegulatoryDomain>
+	<!--BT-03--> <!--BT-02-->
+	<cbc:NoticeTypeCode listName="competition">cn-standard</cbc:NoticeTypeCode>
+	<!--BT-702-->
+	<cbc:NoticeLanguageCode>ENG</cbc:NoticeLanguageCode>
+</ContractNotice>

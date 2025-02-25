@@ -21,7 +21,7 @@ import {LocalHighlighter} from '../../components/local-highlighter';
 import {Scrollbar} from 'src/components/scrollbar';
 import {getValidationColor, ValueChip} from '../mapping-package/state/utils';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
-import TablePagination from "src/sections/components/table-pagination";
+import TablePagination from "src/sections/components/table-pagination-pages";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
 

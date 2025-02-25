@@ -24,7 +24,7 @@ import SorterHeader from '../../components/table-sorter-header';
 import {ResultCell, ValueChip} from '../mapping-package/state/utils';
 import {LocalHighlighter} from '../../components/local-highlighter';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
-import TablePagination from "src/sections/components/table-pagination";
+import TablePagination from "src/sections/components/table-pagination-pages";
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
 
 

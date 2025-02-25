@@ -1,15 +1,15 @@
-import re
 from abc import ABC, abstractmethod
 from itertools import takewhile
 from pathlib import Path
 from typing import Dict, Tuple, List
 
-from beanie.odm.operators.find.comparison import Eq
-
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
+from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.mapping_package.services.api import remove_mapping_package_resources
-from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroup
+from mapping_workbench.backend.ontology.models.namespace import Namespace
+from mapping_workbench.backend.ontology.models.term import Term
+from mapping_workbench.backend.ontology_suite.models.ontology_file_resource import OntologyFileResource
 from mapping_workbench.backend.package_importer.models.imported_mapping_suite import ImportedMappingSuite
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.resource_collection.models.entity import ResourceFile, ResourceCollection, \
@@ -35,6 +35,7 @@ class PackageImporterABC(ABC):
     package: MappingPackage
     warnings: List[TaskResultWarning] = []
     task_progress: TaskProgress
+    has_package: bool = True
 
     def __init__(self, project: Project, user: User, task_response: TaskResponse = None):
         self.project = project
@@ -42,7 +43,11 @@ class PackageImporterABC(ABC):
         self.user = user
         self.task_response = task_response
         self.task_progress = TaskProgress(self.task_response)
+
         self.package = None
+
+    def set_has_package(self, has_package: bool):
+        self.has_package = has_package
 
     @abstractmethod
     async def import_from_mono_mapping_suite(self, mono_package: ImportedMappingSuite):
@@ -71,7 +76,7 @@ class PackageImporterABC(ABC):
                 await test_data_suite.on_create(self.user).save()
 
             test_data_suite_link = TestDataSuite.link_from_id(test_data_suite.id)
-            if test_data_suite_link not in self.package.test_data_suites:
+            if self.has_package and test_data_suite_link not in self.package.test_data_suites:
                 self.package.test_data_suites.append(test_data_suite_link)
 
             for mono_file_resource in mono_resource_collection.file_resources:
@@ -133,13 +138,15 @@ class PackageImporterABC(ABC):
                     triple_map_uri=resource_name,
                     triple_map_content=resource_content,
                     format=resource_format,
-                    project=self.project,
-                    refers_to_mapping_package_ids=[self.package.id]
+                    project=self.project
                 )
+                if self.has_package:
+                    triple_map_fragment.refers_to_mapping_package_ids = [self.package.id]
+
                 await triple_map_fragment.on_create(self.user).save()
             else:
                 triple_map_fragment.triple_map_content = resource_content
-                if self.package.id not in triple_map_fragment.refers_to_mapping_package_ids:
+                if self.has_package and self.package.id not in triple_map_fragment.refers_to_mapping_package_ids:
                     triple_map_fragment.refers_to_mapping_package_ids.append(self.package.id)
                 await triple_map_fragment.on_update(self.user).save()
 
@@ -188,7 +195,7 @@ class PackageImporterABC(ABC):
                 await sparql_test_suite.on_create(self.user).save()
 
             sparql_test_suite_link = SHACLTestSuite.link_from_id(sparql_test_suite.id)
-            if sparql_test_suite_link not in self.package.sparql_test_suites:
+            if self.has_package and sparql_test_suite_link not in self.package.sparql_test_suites:
                 self.package.sparql_test_suites.append(sparql_test_suite_link)
 
             for mono_file_resource in mono_resource_collection.file_resources:
@@ -254,7 +261,7 @@ class PackageImporterABC(ABC):
                 await shacl_test_suite.on_create(self.user).save()
 
             shacl_test_suite_link = SHACLTestSuite.link_from_id(shacl_test_suite.id)
-            if shacl_test_suite_link not in self.package.shacl_test_suites:
+            if self.has_package and shacl_test_suite_link not in self.package.shacl_test_suites:
                 self.package.shacl_test_suites.append(shacl_test_suite_link)
 
             for mono_file_resource in mono_resource_collection.file_resources:
@@ -306,7 +313,7 @@ class PackageImporterABC(ABC):
             await resource_collection.on_create(self.user).save()
 
         resource_collection_link = ResourceCollection.link_from_id(resource_collection.id)
-        if resource_collection_link not in self.package.resource_collections:
+        if self.has_package and resource_collection_link not in self.package.resource_collections:
             self.package.resource_collections.append(resource_collection_link)
 
         for mono_file_resource in mono_package.transformation_resources.file_resources:
@@ -388,4 +395,7 @@ class PackageImporterABC(ABC):
         await SPARQLTestSuite.find(SPARQLTestSuite.project == project_link).delete()
         await TestDataFileResource.find(TestDataFileResource.project == project_link).delete()
         await TestDataSuite.find(TestDataSuite.project == project_link).delete()
-        await MappingGroup.find(TestDataSuite.project == project_link).delete()
+        await OntologyFileResource.find(OntologyFileResource.project == project_link).delete()
+        await Term.find(Term.project == project_link).delete()
+        await Namespace.find(Namespace.project == project_link).delete()
+        await StructuralElement.find(StructuralElement.project == project_link).delete()

@@ -73,6 +73,9 @@ async def delete_sparql_test_suite(sparql_test_suite: SPARQLTestSuite):
         resources_ids=[sparql_test_suite.id],
         resources_field=ResourceField.SPARQL_TEST_SUITES
     )
+    await SPARQLTestFileResource.find(
+        SPARQLTestFileResource.sparql_test_suite == SPARQLTestSuite.link_from_id(sparql_test_suite.id)
+    ).delete()
     return await sparql_test_suite.delete()
 
 

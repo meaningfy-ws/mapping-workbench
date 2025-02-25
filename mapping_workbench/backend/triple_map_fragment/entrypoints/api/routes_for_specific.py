@@ -1,15 +1,12 @@
-from typing import List, Dict
-
-from beanie import PydanticObjectId, Link
+from beanie import PydanticObjectId
 from fastapi import APIRouter, Depends, status
 
 from mapping_workbench.backend.core.models.api_request import APIRequestForUpdateMany
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
-from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.triple_map_fragment.models.api_request import \
-    SpecificTripleMapFragmentRequestForMappingPackageUpdate
+    TripleMapFragmentRequestForMappingPackageUpdate
 from mapping_workbench.backend.triple_map_fragment.models.entity import SpecificTripleMapFragmentOut, \
     SpecificTripleMapFragmentCreateIn, SpecificTripleMapFragmentUpdateIn, SpecificTripleMapFragment
 from mapping_workbench.backend.triple_map_fragment.models.entity_api_response import \
@@ -85,7 +82,7 @@ async def route_create_specific_triple_map_fragment(
     name=f"{NAME_FOR_MANY}:update_{NAME_FOR_MANY}"
 )
 async def route_update_specific_mapping_package(
-        request: SpecificTripleMapFragmentRequestForMappingPackageUpdate,
+        request: TripleMapFragmentRequestForMappingPackageUpdate,
         user: User = Depends(current_active_user)
 ):
     update_request: APIRequestForUpdateMany

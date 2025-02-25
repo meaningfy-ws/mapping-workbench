@@ -298,7 +298,8 @@ async def route_get_test_data_file_resource(
     response_model=APIEmptyContentWithIdResponse
 )
 async def route_delete_test_data_file_resource(
-        test_data_file_resource: TestDataFileResource = Depends(get_test_data_file_resource)):
+        test_data_file_resource: TestDataFileResource = Depends(get_test_data_file_resource)
+):
     await delete_test_data_file_resource(test_data_file_resource)
     return APIEmptyContentWithIdResponse(id=test_data_file_resource.id)
 
@@ -356,12 +357,16 @@ async def route_get_test_data_file_resource_content(
 async def route_transform_test_data_file_resource_with_generic_triple_map(
         generic_triple_map_id: PydanticObjectId,
         test_data_file_resource: TestDataFileResource = Depends(get_test_data_file_resource),
+        use_this_triple_map: bool = False,
+        mapping_package_id: PydanticObjectId = None,
         user: User = Depends(current_active_user)
 ) -> dict:
+    mappings = [await get_generic_triple_map_fragment(generic_triple_map_id)] if use_this_triple_map else None
     try:
         test_data_file_resource = await transform_test_data_file_resource(
             test_data_file_resource=test_data_file_resource,
-            mappings=[await get_generic_triple_map_fragment(generic_triple_map_id)],
+            package_id=mapping_package_id,
+            mappings=mappings,
             user=user,
             silent_exception=False
         )

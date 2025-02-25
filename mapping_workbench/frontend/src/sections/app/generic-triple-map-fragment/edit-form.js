@@ -51,6 +51,7 @@ export const EditForm = (props) => {
     const [rdfResultContent, setRdfResultContent] = useState("")
     const [hasRdfResult, setHasRdfResult] = useState(false)
     const [useThisTripleMap, setUseThisTripleMap] = useState(false)
+    const [mappingPackageId, setMappingPackageId] = useState(null)
 
     const [validation, setValidation] = useState({})
 
@@ -58,8 +59,8 @@ export const EditForm = (props) => {
         triple_map_uri: item.triple_map_uri ?? '',
         triple_map_content: item.triple_map_content ?? '',
         refers_to_mapping_package_ids: item.refers_to_mapping_package_ids ?? [],
-        format: item.format ?? sectionApi.FILE_RESOURCE_DEFAULT_FORMAT ?? '',
-    };
+        format: item.format ?? sectionApi.FILE_RESOURCE_DEFAULT_FORMAT ?? ''
+        };
 
 
     const formik = useFormik({
@@ -73,7 +74,7 @@ export const EditForm = (props) => {
             format: Yup
                 .string()
                 .max(255)
-                .required('Format is required'),
+                .required('Format is required')
         }),
         onSubmit: async (values, helpers) => {
             const toastId = toastLoad("Updating...")
@@ -122,10 +123,8 @@ export const EditForm = (props) => {
     }
 
     const onUpdateAndTransform = (values, helpers) => {
-        values['project'] = sessionApi.getSessionProject();
-        const mapping_package_id = values['mapping_package_id'] || null;
         delete values['mapping_package_id'];
-
+        values['project'] = sessionApi.getSessionProject();
         values['id'] = item._id;
         formik.setSubmitting(true)
         const toastId = toastLoad("Updating Content")
@@ -144,7 +143,7 @@ export const EditForm = (props) => {
         sectionApi.updateItem(values)
             .then(res => {
                 toastLoad("Transforming Content", toastId);
-                sectionApi.getTripleMapRdfResultContent(item._id, selectedTree, useThisTripleMap, mapping_package_id)
+                sectionApi.getTripleMapRdfResultContent(item._id, selectedTree, useThisTripleMap, mappingPackageId)
                     .then(res => {
                         setRdfResultContent(res.rdf_manifestation)
                         setHasRdfResult(true);
@@ -154,7 +153,11 @@ export const EditForm = (props) => {
                             toastWarning('Empty Result!', toastId)
                         }
                     })
-                    .catch(err => catchError(err))
+                    .catch(err => {
+                        setRdfResultContent(null)
+                        setHasRdfResult(false);
+                        return catchError(err)
+                    })
                     .finally(() => formik.setSubmitting(false))
             })
             .catch(err => {
@@ -306,6 +309,7 @@ export const EditForm = (props) => {
                                     formik={formik}
                                     isRequired={false}
                                     withDefaultPackage={itemctx.isNew}
+                                    setMappingPackageId={setMappingPackageId}
                                 />
                             </Grid>
                             <Grid xs={12}

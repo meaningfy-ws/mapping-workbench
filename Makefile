@@ -154,6 +154,11 @@ stop-frontend:
 	@ echo "Stopping the FRONTEND"
 	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/frontend/docker-compose.yml --env-file ${ENV_FILE} down
 
+build-mongo: build-externals
+	@ echo "Building the Mongo services"
+	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/mongodb/docker-compose.yml --env-file ${ENV_FILE} build --progress plain --no-cache --force-rm
+	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/mongodb/docker-compose.yml --env-file ${ENV_FILE} up -d
+
 start-mongo: build-externals
 	@ echo "Starting the Mongo services"
 	@ docker-compose -p ${DOCKER_PROJECT} --file ./infra/mongodb/docker-compose.yml --env-file ${ENV_FILE} up -d

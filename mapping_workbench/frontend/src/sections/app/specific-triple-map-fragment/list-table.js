@@ -20,7 +20,7 @@ import {ListItemActions} from 'src/components/app/list/list-item-actions';
 
 import {ForListItemAction} from 'src/contexts/app/section/for-list-item-action';
 import {mappingPackagesApi} from "../../../api/mapping-packages";
-import TablePagination from "../../components/table-pagination";
+import TablePagination from "../../components/table-pagination-pages";
 import timeTransformer from "../../../utils/time-transformer";
 import {useGlobalState} from "../../../hooks/use-global-state";
 

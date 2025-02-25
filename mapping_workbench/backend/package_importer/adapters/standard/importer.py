@@ -28,7 +28,8 @@ class StandardPackageImporter(PackageImporterABC):
         self.task_progress.start_progress(actions_count=1)
         self.task_progress.start_action(name="Import Standard Package", steps_count=7)
 
-        await self.add_mapping_package_from_mono(mono_package)
+        if self.has_package:
+            await self.add_mapping_package_from_mono(mono_package)
         await self.add_transformation_resources_from_mono(mono_package)
         await self.add_transformation_mappings_from_mono(mono_package)
         await self.add_mapping_rules_from_mono(mono_package)
@@ -36,7 +37,8 @@ class StandardPackageImporter(PackageImporterABC):
         await self.add_sparql_test_suites_from_mono(mono_package)
         await self.add_shacl_test_suites_from_mono(mono_package)
 
-        await self.package.save()
+        if self.has_package:
+            await self.package.save()
 
         self.task_progress.finish_current_action()
         self.task_progress.finish_progress()
@@ -82,7 +84,7 @@ class StandardPackageImporter(PackageImporterABC):
             if not rule.refers_to_mapping_package_ids:
                 rule.refers_to_mapping_package_ids = []
 
-            if self.package:
+            if self.has_package and self.package:
                 if self.package.id not in rule.refers_to_mapping_package_ids:
                     rule.refers_to_mapping_package_ids.append(self.package.id)
 
