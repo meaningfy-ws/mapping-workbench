@@ -281,3 +281,11 @@ deploy-prod: deploy-prod-dotenv-file deploy-app
 
 deploy-staging: deploy-staging-dotenv-file deploy-app
 	@ echo "Deployed App to STAGING"
+
+checkout-latest-tag:
+	@ git checkout main
+	@ git fetch --tags
+	@ git checkout $(shell git describe --tags `git rev-list --tags --max-count=1`)
+
+deploy-latest: checkout-latest-tag deploy-app-version deploy-app
+	@ echo "Deployed App to LATEST"
