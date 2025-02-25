@@ -4,9 +4,10 @@ from pathlib import Path
 from typing import Dict, Tuple, List
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
+from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
 from mapping_workbench.backend.mapping_package.services.api import remove_mapping_package_resources
-from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroup
+from mapping_workbench.backend.ontology.models.namespace import Namespace
 from mapping_workbench.backend.ontology.models.term import Term
 from mapping_workbench.backend.ontology_suite.models.ontology_file_resource import OntologyFileResource
 from mapping_workbench.backend.package_importer.models.imported_mapping_suite import ImportedMappingSuite
@@ -396,3 +397,5 @@ class PackageImporterABC(ABC):
         await TestDataSuite.find(TestDataSuite.project == project_link).delete()
         await OntologyFileResource.find(OntologyFileResource.project == project_link).delete()
         await Term.find(Term.project == project_link).delete()
+        await Namespace.find(Namespace.project == project_link).delete()
+        await StructuralElement.find(StructuralElement.project == project_link).delete()
