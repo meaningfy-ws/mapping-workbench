@@ -128,6 +128,7 @@ async def transform_test_data_file_resource(
         rml_mapper=rml_mapper,
         test_data_title=test_data_file_resource.title or test_data_file_resource.filename
     )
+    test_data_file_resource.rdf_manifestation_mapping_package_id = package_id
 
     if not silent_exception:
         process_transform_test_data_mapper_errors(rml_mapper)
@@ -238,7 +239,8 @@ async def transform_test_data_state(
 
 
 async def transform_test_data_for_package_state(
-        mapping_package_state: MappingPackageState
+        mapping_package_state: MappingPackageState,
+        update_test_data: bool = True
 ):
     test_data_suites_states: List[TestDataSuiteState] = mapping_package_state.test_data_suites
 
@@ -258,6 +260,12 @@ async def transform_test_data_for_package_state(
                 resources=resources,
                 rml_mapper=rml_mapper
             )
+            if update_test_data:
+                test_data = await TestDataFileResource.get_for_state(test_data_state)
+                if test_data:
+                    test_data.rdf_manifestation = test_data_state.rdf_manifestation.content
+                    test_data.rdf_manifestation_mapping_package_id = mapping_package_state.mapping_package_oid
+                    await test_data.save()
 
     process_transform_test_data_mapper_errors(rml_mapper)
 

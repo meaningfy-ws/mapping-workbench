@@ -29,5 +29,6 @@ async def transform_mapping_package_state(mapping_package_state: MappingPackageS
     """
 
     await transform_test_data_for_package_state(
-        mapping_package_state=mapping_package_state
+        mapping_package_state=mapping_package_state,
+        update_test_data=True
     )
