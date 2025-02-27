@@ -1,3 +1,4 @@
+import argparse
 import subprocess
 import re
 
@@ -12,7 +13,7 @@ def get_latest_tag():
 
         return latest_tag
     except subprocess.CalledProcessError:
-        return '0.0.0'
+        return 'v0.0.0'
 
 
 def get_commits_since_last_tag():
@@ -70,27 +71,41 @@ def increment_version(version, increment):
     else:
         raise ValueError("Invalid increment type. Use 'major', 'minor', or 'patch'.")
 
+def tag_for_version(version):
+    return f"v{version}"
 
 def create_git_tag(version):
-    tag = f"v{version}"
+    tag = tag_for_version(version)
     subprocess.run(['git', 'tag', '-a', tag, '-m', f"Release {tag}"])
     print(f"Created new tag: {tag}")
 
+def parse_arguments():
+    parser = argparse.ArgumentParser(description="Script description")
+    parser.add_argument("--auto-tag", type=int, help="Automatically create the version tag")
+    parser.add_argument("--auto-version", type=int, help="Automatically increment the version")
+    return parser.parse_args()
 
 def main():
     latest_tag = get_latest_tag()
     print(f"Latest tag: {latest_tag}")
 
-    commits = get_commits_since_last_tag()
-    increment = determine_version_bump(commits)
+    args = parse_arguments()
+
+    if args.auto_version:
+        commits = get_commits_since_last_tag()
+        increment = determine_version_bump(commits)
+    else:
+        increment = input("Enter increment type (major/minor/patch): ").lower()
+
     new_version = increment_version(latest_tag, increment)
     print(f"New version: {new_version}")
 
-    confirm = input("Create new tag? (y/n): ").lower()
-    if confirm == 'y':
-        create_git_tag(new_version)
-    else:
-        print("Tag creation cancelled.")
+    if not args.auto_tag:
+        confirm = input(f"Create new tag [{tag_for_version(new_version)}]? (y/n): ").lower()
+        if confirm == 'y':
+            create_git_tag(new_version)
+        else:
+            print("Tag creation cancelled.")
 
 
 if __name__ == "__main__":

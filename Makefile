@@ -259,7 +259,9 @@ deploy-app-version:
 	@ echo MW_APP_VERSION=$$($(PYTHON) $(APP_VERSION_SCRIPT)) >> ${ENV_FILE}
 
 change-app-version:
-	@ $(PYTHON) $(CHANGE_APP_VERSION_SCRIPT)
+	$(eval VERSION ?= 1)
+	$(eval TAG ?= 0)
+	@ $(PYTHON) $(CHANGE_APP_VERSION_SCRIPT) --auto-version=$(VERSION) --auto-tag=$(TAG)
 
 deploy-env-app-settings: deploy-app-version
 	@ echo "Deployed ENV App Settings"
