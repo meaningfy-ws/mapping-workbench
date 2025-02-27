@@ -258,9 +258,6 @@ deploy-app-version:
 	@ perl -i -ne 'print unless /^MW_APP_VERSION/' ${ENV_FILE}
 	@ echo MW_APP_VERSION=$$($(PYTHON) $(APP_VERSION_SCRIPT)) >> ${ENV_FILE}
 
-get-app-version:
-	@ $(PYTHON) $(APP_VERSION_SCRIPT)
-
 change-app-version:
 	@ $(PYTHON) $(CHANGE_APP_VERSION_SCRIPT)
 
