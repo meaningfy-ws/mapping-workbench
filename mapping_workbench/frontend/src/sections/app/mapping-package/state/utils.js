@@ -1,15 +1,26 @@
-import {useTheme} from '@mui/material/styles';
 import {useState} from 'react';
 
+
+import ContentPasteIcon from '@mui/icons-material/ContentPaste';
+import FolderCopyIcon from '@mui/icons-material/FolderCopy';
+import FolderIcon from '@mui/icons-material/Folder';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+
 import {Box} from '@mui/system';
+import Menu from '@mui/material/Menu';
 import Stack from '@mui/material/Stack';
 import Radio from '@mui/material/Radio';
 import {capitalize} from '@mui/material';
 import Button from '@mui/material/Button';
+import Tooltip from '@mui/material/Tooltip';
+import {useTheme} from '@mui/material/styles';
+import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import {FileIcon} from '../../../../components/file-icon';
+import {MenuActionButton} from '../../../../components/menu-actions';
 
 export const getValidationColor = (color) => {
     switch (color) {
@@ -221,21 +232,66 @@ export const useFileNavigation = (reportTree) => {
 
 export const handleOpenDetails = (title, notices, handleSelect, setDescription) => {
     const description = notices.map((notice, i) =>
-        <Box key={'notice' + i}>
-            <Button type='link'
-                    onClick={() => handleSelect(notice.test_data_suite_oid)}
-            >
-                {notice.test_data_suite_id}
-            </Button>
-            {' / '}
-            <Button type='link'
-                    onClick={() => handleSelect(notice.test_data_suite_oid, notice.test_data_oid)}
-            >
-                {notice.test_data_id}
-            </Button>
-        </Box>)
+        <Stack direction='row'
+               key={'notice' + i}>
+            <Box>
+                <Button type='link'
+                        onClick={() => handleSelect(notice.test_data_suite_oid)}
+                >
+                    {notice.test_data_suite_id}
+                </Button>
+                {' / '}
+                <Button type='link'
+                        onClick={() => handleSelect(notice.test_data_suite_oid, notice.test_data_oid)}
+                >
+                    {notice.test_data_id}
+                </Button>
+            </Box>
+            <CopyDetailsButton notice={notice}/>
+        </Stack>)
 
     setDescription({open: true, title, description});
+}
+
+const CopyDetailsButton = ({notice}) => {
+    const [showMenu, setShowMenu] = useState(undefined)
+    const [clipBoard, setClipBoard] = useState(false)
+
+    const onCopy = (text) => {
+        navigator.clipboard.writeText(text)
+        setClipBoard(true)
+        setTimeout(() => {
+            setShowMenu(undefined)
+        }, 1000)
+    }
+
+    const onShowMenu = (e) => {
+        setShowMenu(e.target)
+        setClipBoard(false)
+    }
+
+    return (<>
+        <Tooltip title='Copy options...'>
+            <IconButton color={clipBoard ? 'primary' : 'default'}
+                        onClick={onShowMenu}><ContentPasteIcon/></IconButton>
+        </Tooltip>
+        <Menu open={!!showMenu}
+              onClose={() => setShowMenu(undefined)}
+              anchorEl={showMenu}>
+            <MenuActionButton title='Copy Full Path'
+                              icon={<FolderCopyIcon/>}
+                              onClick={() => onCopy(`${notice.test_data_suite_id}/${notice.test_data_id}`)}/>
+            <MenuActionButton title='Copy Folder Name'
+                              icon={<FolderIcon/>}
+                              onClick={() => onCopy(notice.test_data_suite_id)}/>
+            <MenuActionButton title='Copy File Name'
+                              icon={<InsertDriveFileIcon/>}
+                              onClick={() => onCopy(notice.test_data_id)}/>
+            {clipBoard && <Stack mt={2}
+                                 alignItems='center'>
+                Copied
+            </Stack>}
+        </Menu></>)
 }
 
 export const ResultChip = ({label, color, fontColor, onClick, clickable, children}) => {
