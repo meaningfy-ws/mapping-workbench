@@ -5,6 +5,7 @@ import ContentPasteIcon from '@mui/icons-material/ContentPaste';
 import FolderCopyIcon from '@mui/icons-material/FolderCopy';
 import FolderIcon from '@mui/icons-material/Folder';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import FileOpenIcon from '@mui/icons-material/FileOpen';
 
 import {Box} from '@mui/system';
 import Menu from '@mui/material/Menu';
@@ -21,6 +22,7 @@ import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import {FileIcon} from '../../../../components/file-icon';
 import {MenuActionButton} from '../../../../components/menu-actions';
+import {paths} from '../../../../paths';
 
 export const getValidationColor = (color) => {
     switch (color) {
@@ -270,6 +272,8 @@ const CopyDetailsButton = ({notice}) => {
         setClipBoard(false)
     }
 
+    console.log(notice)
+
     return (<>
         <Tooltip title='Copy options...'>
             <IconButton color={clipBoard ? 'primary' : 'default'}
@@ -287,6 +291,9 @@ const CopyDetailsButton = ({notice}) => {
             <MenuActionButton title='Copy File Name'
                               icon={<InsertDriveFileIcon/>}
                               onClick={() => onCopy(notice.test_data_id)}/>
+            <MenuActionButton title='Go To File'
+                              icon={<FileOpenIcon/>}
+                              onClick={() => window.open(paths.app.fields_and_nodes.develop.id(notice.test_data_oid), "_blank", "noreferrer")}/>
             {clipBoard && <Stack mt={2}
                                  alignItems='center'>
                 Copied
