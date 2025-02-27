@@ -15,6 +15,7 @@ RML_MAPPER_PATH = ${PROJECT_PATH}/.rmlmapper/rmlmapper.jar
 
 PYTHON := python3
 APP_VERSION_SCRIPT := ${BACKEND_INFRA_FOLDER}/core/scripts/get_app_version.py
+CHANGE_APP_VERSION_SCRIPT := ${BACKEND_INFRA_FOLDER}/core/scripts/change_version.py
 
 #-----------------------------------------------------------------------------
 # INSTALLING
@@ -256,6 +257,12 @@ setup-env-paths:
 deploy-app-version:
 	@ perl -i -ne 'print unless /^MW_APP_VERSION/' ${ENV_FILE}
 	@ echo MW_APP_VERSION=$$($(PYTHON) $(APP_VERSION_SCRIPT)) >> ${ENV_FILE}
+
+get-app-version:
+	@ $(PYTHON) $(APP_VERSION_SCRIPT)
+
+change-app-version:
+	@ $(PYTHON) $(CHANGE_APP_VERSION_SCRIPT)
 
 deploy-env-app-settings: deploy-app-version
 	@ echo "Deployed ENV App Settings"
