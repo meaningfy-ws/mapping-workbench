@@ -1,11 +1,11 @@
 import {useState} from 'react';
 
-
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
 import FolderCopyIcon from '@mui/icons-material/FolderCopy';
 import FolderIcon from '@mui/icons-material/Folder';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import FileOpenIcon from '@mui/icons-material/FileOpen';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 import {Box} from '@mui/system';
 import Menu from '@mui/material/Menu';
@@ -20,7 +20,6 @@ import Typography from '@mui/material/Typography';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import {FileIcon} from '../../../../components/file-icon';
 import {MenuActionButton} from '../../../../components/menu-actions';
 import {paths} from '../../../../paths';
 
@@ -235,6 +234,7 @@ export const useFileNavigation = (reportTree) => {
 export const handleOpenDetails = (title, notices, handleSelect, setDescription) => {
     const description = notices.map((notice, i) =>
         <Stack direction='row'
+               justifyContent='space-between'
                key={'notice' + i}>
             <Box>
                 <Button type='link'
@@ -249,11 +249,20 @@ export const handleOpenDetails = (title, notices, handleSelect, setDescription) 
                     {notice.test_data_id}
                 </Button>
             </Box>
-            <CopyDetailsButton notice={notice}/>
+            <Box>
+                <CopyDetailsButton notice={notice}/>
+                <Tooltip title='Go to file resources'>
+                    <IconButton
+                        onClick={() => window.open(paths.app.test_data_suites.resource_manager.edit.replace('[id]', notice.test_data_suite_oid).replace('[fid]', notice.test_data_oid), "_blank", "noreferrer")}>
+                        <OpenInNewIcon/>
+                    </IconButton>
+                </Tooltip>
+            </Box>
         </Stack>)
 
     setDescription({open: true, title, description});
 }
+
 
 const CopyDetailsButton = ({notice}) => {
     const [showMenu, setShowMenu] = useState(undefined)
@@ -272,8 +281,6 @@ const CopyDetailsButton = ({notice}) => {
         setClipBoard(false)
     }
 
-    console.log(notice)
-
     return (<>
         <Tooltip title='Copy options...'>
             <IconButton color={clipBoard ? 'primary' : 'default'}
@@ -291,9 +298,7 @@ const CopyDetailsButton = ({notice}) => {
             <MenuActionButton title='Copy File Name'
                               icon={<InsertDriveFileIcon/>}
                               onClick={() => onCopy(notice.test_data_id)}/>
-            <MenuActionButton title='Go To File'
-                              icon={<FileOpenIcon/>}
-                              onClick={() => window.open(paths.app.fields_and_nodes.develop.id(notice.test_data_oid), "_blank", "noreferrer")}/>
+
             {clipBoard && <Stack mt={2}
                                  alignItems='center'>
                 Copied
@@ -321,6 +326,7 @@ export const ResultChip = ({label, color, fontColor, onClick, clickable, childre
 
 export const ResultCell = ({item, handleSelect, setDescription}) => {
     const title = item.title
+    console.log(item)
     return <Stack direction="column"
                   alignItems="center"
                   justifyContent="center"
