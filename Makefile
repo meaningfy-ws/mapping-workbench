@@ -15,6 +15,7 @@ RML_MAPPER_PATH = ${PROJECT_PATH}/.rmlmapper/rmlmapper.jar
 
 PYTHON := python3
 APP_VERSION_SCRIPT := ${BACKEND_INFRA_FOLDER}/core/scripts/get_app_version.py
+CHANGE_APP_VERSION_SCRIPT := ${BACKEND_INFRA_FOLDER}/core/scripts/change_version.py
 
 #-----------------------------------------------------------------------------
 # INSTALLING
@@ -257,6 +258,11 @@ deploy-app-version:
 	@ perl -i -ne 'print unless /^MW_APP_VERSION/' ${ENV_FILE}
 	@ echo MW_APP_VERSION=$$($(PYTHON) $(APP_VERSION_SCRIPT)) >> ${ENV_FILE}
 
+change-app-version:
+	$(eval VERSION ?= 1)
+	$(eval TAG ?= 0)
+	@ $(PYTHON) $(CHANGE_APP_VERSION_SCRIPT) --auto-version=$(VERSION) --auto-tag=$(TAG)
+
 deploy-env-app-settings: deploy-app-version
 	@ echo "Deployed ENV App Settings"
 
@@ -281,3 +287,11 @@ deploy-prod: deploy-prod-dotenv-file deploy-app
 
 deploy-staging: deploy-staging-dotenv-file deploy-app
 	@ echo "Deployed App to STAGING"
+
+checkout-latest-tag:
+	@ git checkout main
+	@ git fetch --tags
+	@ git checkout $(shell git describe --tags `git rev-list --tags --max-count=1`)
+
+deploy-latest: checkout-latest-tag deploy-app-version deploy-app
+	@ echo "Deployed App to LATEST"

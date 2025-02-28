@@ -194,7 +194,7 @@ const Page = () => {
         identifier: item.identifier || '',
         rdf_manifestation: item.rdf_manifestation || '',
         transform_test_data: false,
-        mapping_package_id: null,
+        mapping_package_id: item.rdf_manifestation_mapping_package_id || null,
         compare_items: compare_items
     }
 

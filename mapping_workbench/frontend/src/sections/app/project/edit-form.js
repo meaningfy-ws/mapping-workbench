@@ -29,6 +29,7 @@ import {mappingPackagesApi} from "../../../api/mapping-packages";
 import ConfirmDialog from "../../../components/app/dialog/confirm-dialog";
 import {useState} from "react";
 import Alert from "@mui/material/Alert";
+import Divider from "@mui/material/Divider";
 
 export const EditForm = (props) => {
     const {itemctx, ...other} = props;
@@ -36,6 +37,7 @@ export const EditForm = (props) => {
     const item = itemctx.data;
     const projectsStore = useProjects()
     const [confirmOpen, setConfirmOpen] = useState(false);
+    const [fieldsErrors, setFieldsErrors] = useState([]);
 
     const sourceSchemaTypes = [
         {
@@ -111,6 +113,21 @@ export const EditForm = (props) => {
     //         .catch(err => toastError(err.message, toastId))
     // }
 
+    const validateImportFieldRegistry = async (values) => {
+        const validatedVersions = await fieldsRegistryApi.validateImportEFormsXSD(values);
+        let formFieldsErrors = []
+        if (validatedVersions) {
+            if (!!validatedVersions?.not_in_remote_repo?.length) {
+                formFieldsErrors.push("[" + validatedVersions.not_in_remote_repo.join(', ') + "] version(s) not found in the remote repository.");
+            }
+            if (validatedVersions?.invalid_repo_url) {
+                formFieldsErrors.push("Invalid GitHub repository URL");
+            }
+            setFieldsErrors(formFieldsErrors);
+        }
+        return formFieldsErrors.length === 0;
+    };
+
     const formik = useFormik({
         initialValues,
         validationSchema: Yup.object({
@@ -134,10 +151,14 @@ export const EditForm = (props) => {
             try {
                 let response;
                 if (itemctx.isNew) {
-                    response = await sectionApi.createItem(projectValues);
-                    if (formik.values.with_default_mapping_package) {
-                        await mappingPackagesApi.createDefault(response._id);
-                        toastSuccess(`Default Package created`, toastId);
+                    if (!formik.values.import_eform.checked || await validateImportFieldRegistry(import_eform)) {
+                        response = await sectionApi.createItem(projectValues);
+                        if (formik.values.with_default_mapping_package) {
+                            await mappingPackagesApi.createDefault(response._id);
+                            toastSuccess(`Default Package created`, toastId);
+                        }
+                    } else {
+                        throw new Error(`Creating Project with Importing eForm Fields canceled.`);
                     }
                 } else {
                     projectValues['id'] = item._id;
@@ -170,7 +191,6 @@ export const EditForm = (props) => {
                     }
                 }
             } catch (err) {
-                console.error(err);
                 toastError(err, toastId);
                 helpers.setStatus({success: false});
                 helpers.setErrors({submit: err.message});
@@ -407,6 +427,15 @@ export const EditForm = (props) => {
                                     </FormGroup>
                                     {formik.values.import_eform.checked &&
                                         <>
+                                            {fieldsErrors.length > 0 &&
+                                                <Grid xs={12}
+                                                      md={12}>
+                                                    <Divider sx={{mb: 2}}/>
+                                                    {fieldsErrors.map((error, idx) =>
+                                                        <Alert severity="error" key={idx}>{error}</Alert>
+                                                    )}
+                                                    <Divider sx={{mt: 2}}/>
+                                                </Grid>}
                                             <Grid xs={12}
                                                   md={12}>
                                                 <FormTextField formik={formik}

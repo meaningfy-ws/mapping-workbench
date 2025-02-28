@@ -51,7 +51,7 @@ export const FileResourceEditForm = (props) => {
             content: data.content || '',
             file: null,
             compare_item: extra_form_fields.compare_items?.[0]
-        }, extra_form_fields,)
+        }, extra_form_fields)
     }
 
     const initialValues = initFormValues(item);
@@ -76,6 +76,9 @@ export const FileResourceEditForm = (props) => {
         onSubmit: async (values, helpers) => {
             const toastId = toastLoad(itemctx.isNew ? "Creating..." : "Updating...")
             try {
+                delete values['compare_item'];
+                delete values['compare_items'];
+
                 values['path'] = (typeof values['path'] == 'string') ?
                     values['path'].split('\n').map(s => s.trim()).filter(s => s !== '').join(',') : values['path'];
                 let response;
