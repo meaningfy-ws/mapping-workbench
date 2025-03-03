@@ -1,4 +1,4 @@
-name: staging CI/CD pipeline
+name: test CI/CD pipeline
 
 on:
   push:
@@ -24,11 +24,11 @@ jobs:
 
       - name: connect, pull and build
         run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "source ~/.bashrc && cd ${{ secrets.STAGING_WORK_DIR }} && git checkout develop && git pull && make deploy-staging-dotenv-file && make stop-frontend && make build-frontend && make stop-backend && make build-backend && exit"
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "source ~/.bashrc && cd ${{ secrets.TEST_WORK_DIR }} && git checkout develop && git pull && make deploy-test-dotenv-file && make stop-frontend && make build-frontend && make stop-backend && make build-backend && exit"
 
       - name: cleanup unused containers, images, volumes, and networks
         run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.STAGING_WORK_DIR }} && make cleanup-unused-infra && exit"
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.TEST_WORK_DIR }} && make cleanup-unused-infra && exit"
 
       - name: cleanup
         run: rm -rf ~/.ssh
