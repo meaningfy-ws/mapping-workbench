@@ -201,7 +201,8 @@ export const paths = {
                 index: '/app/fields-and-nodes/tree-view'
             },
             develop: {
-                index: '/app/fields-and-nodes/develop'
+                index: '/app/fields-and-nodes/develop',
+                id: (id) => `/app/fields-and-nodes/develop/${id}`
             },
             overview: {
                 index: '/app/fields-and-nodes/overview',
@@ -431,7 +432,7 @@ export const apiPaths = {
         transform_test_data: '/tasks/transform_test_data'
     },
     demoConfig: {
-      reset: "/demo/reset"
+        reset: "/demo/reset"
     },
     app: {
         settings: '/app/settings'
