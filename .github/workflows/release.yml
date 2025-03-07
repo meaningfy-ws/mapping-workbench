@@ -1,0 +1,87 @@
+name: Release Automation
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  generate-release-info:
+    runs-on: ubuntu-latest
+    outputs:
+      changelog: ${{ steps.get_changelog.outputs.changelog }}
+      version: ${{ steps.get_version.outputs.version }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install python-semantic-release
+
+      - name: Generate Changelog
+        id: get_changelog
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          semantic-release changelog > changelog.txt
+          echo "changelog<<EOF" >> $GITHUB_ENV
+          cat changelog.txt >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Get Version
+        id: get_version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          semantic-release version > version.txt
+          echo "version=$(cat version.txt)" >> $GITHUB_ENV
+  
+
+  confirm-release:
+    needs: generate-release-info
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Display Changelog and Version Info
+        run: |
+          echo "Generated Changelog:"
+          echo "${{ env.changelog }}"
+          echo "Generated Version:"
+          echo "${{ env.version }}"
+
+      - name: Manual Approval Step
+        uses: actions/manual-approval@v1 # A custom action for manual approval (optional)
+        with:
+          message: "Please review the changelog and version above. Approve to proceed."
+
+  release:
+    needs: confirm-release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install python-semantic-release
+
+      - name: Run Semantic Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: semantic-release publish

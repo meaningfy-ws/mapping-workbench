@@ -1,0 +1,22 @@
+name: GitFlow Automation
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+      - feature/**
+      - release/**
+      - hotfix/**
+
+jobs:
+  gitflow-automation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run GitFlow Genius Action
+        uses: iamfj/gitflow-genius-action@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
