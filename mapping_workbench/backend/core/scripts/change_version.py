@@ -3,8 +3,7 @@ import os
 import re
 import subprocess
 import sys
-
-from git import Repo
+from datetime import datetime
 
 
 def get_latest_tag():
@@ -78,6 +77,7 @@ def increment_version(version, increment):
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Script description")
+    parser.add_argument("--readme", type=int, help="README")
     parser.add_argument("--release", type=int, help="Release")
     parser.add_argument("--cancel", type=int, help="Cancel")
     parser.add_argument("--auto-version", type=int, help="Automatically increment the version")
@@ -194,51 +194,83 @@ def cancel_gitflow_release():
     print(f"Release branch '{release_branch}' has been canceled successfully.")
 
 
-def generate_changelog(repo_path=".", changelog_file="CHANGELOG.md"):
+def group_commits_by_type(commits):
     """
-    Generate or update a changelog file based on Git commits.
-
-    Args:
-        repo_path (str): Path to the Git repository (default is current directory).
-        changelog_file (str): Path to the changelog file (default is CHANGELOG.md).
+    Groups commits by their types based on Conventional Commits.
     """
-    # Open the repository
-    repo = Repo(repo_path)
-    if repo.bare:
-        raise Exception("The specified directory is not a valid Git repository.")
+    grouped_commits = {
+        "feat!": [],
+        "feat": [],
+        "fix!": [],
+        "fix": [],
+        "docs": [],
+        "style": [],
+        "refactor!": [],
+        "refactor": [],
+        "perf": [],
+        "test": [],
+        "chore": [],
+        "other": []
+    }
 
-    # Get all commits from the repository
-    commits = list(repo.iter_commits("main"))  # Replace "main" with your branch name
-
-    # Group commits by type (e.g., feat, fix, chore) based on Conventional Commits
-    changelog_entries = {"feat": [], "fix": [], "chore": [], "docs": [], "refactor": []}
     for commit in commits:
-        message = commit.message.strip()
+        message = commit.strip()
+        # parts = commit.split(" ", 1)  # Split into hash and message
+        # if len(parts) < 2:
+        #     continue
+        # _, message = parts
+        # Parse the type from the message
         if ":" in message:
             commit_type, description = message.split(":", 1)
             commit_type = commit_type.strip().lower()
             description = description.strip()
-            if commit_type in changelog_entries:
-                changelog_entries[commit_type].append(f"- {description} ({commit.hexsha[:7]})")
+            if commit_type in grouped_commits:
+                grouped_commits[commit_type].append(f"- {description} ({commit})")
+            else:
+                grouped_commits["other"].append(f"- {message} ({commit})")
+        else:
+            grouped_commits["other"].append(f"- {message} ({commit})")
 
-    # Prepare the changelog content
-    changelog_content = "# Changelog\n\n"
-    for section, entries in changelog_entries.items():
+    return grouped_commits
+
+
+def generate_changelog(version, changelog_file="CHANGELOG.md"):
+    """
+    Updates the changelog with new entries for the specified version.
+
+    Args:
+        version (str): The version to be released (e.g., "v1.0.0").
+        changelog_file (str): Path to the changelog file (default is CHANGELOG.md).
+    """
+    # Get commits since the last tag
+    commits = get_commits_since_last_tag()
+    if not commits or commits == [""]:
+        print("No new commits found for this release.")
+        return
+
+    # Group commits by type
+    grouped_commits = group_commits_by_type(commits)
+
+    # Prepare new changelog content
+    release_date = datetime.now().strftime("%Y-%m-%d")
+    new_changelog_content = f"## [{version}] - {release_date}\n\n"
+
+    for section, entries in grouped_commits.items():
         if entries:
-            changelog_content += f"## {section.capitalize()}\n"
-            changelog_content += "\n".join(entries) + "\n\n"
+            new_changelog_content += f"### {section.capitalize()}\n"
+            new_changelog_content += "\n".join(entries) + "\n\n"
 
-    # Write or append to the changelog file
+    # Read existing changelog content (if it exists)
+    existing_content = ""
     if os.path.exists(changelog_file):
         with open(changelog_file, "r") as file:
             existing_content = file.read()
-        with open(changelog_file, "w") as file:
-            file.write(changelog_content + "\n" + existing_content)
-    else:
-        with open(changelog_file, "w") as file:
-            file.write(changelog_content)
 
-    print(f"Changelog updated: {changelog_file}")
+    # Write updated changelog content
+    with open(changelog_file, "w") as file:
+        file.write(new_changelog_content + existing_content)
+
+    print(f"Changelog updated successfully in {changelog_file}.")
 
 
 def main():
@@ -264,10 +296,14 @@ def main():
     new_version = increment_version(latest_tag, increment)
     print(f"New version: {new_version}")
 
+    if args.readme:
+        generate_changelog(new_version)
+        return
+
     confirm = input(f"Start pre-release [{new_version}]? (y/n): ").lower()
     if confirm == 'y':
         start_gitflow_release(new_version)
-        generate_changelog()
+        generate_changelog(new_version)
     else:
         print("Pre-release cancelled.")
 
