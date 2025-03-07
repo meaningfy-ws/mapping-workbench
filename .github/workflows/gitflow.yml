@@ -16,7 +16,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run GitFlow Genius Action
-        uses: iamfj/gitflow-genius-action@v1
+      - name: Gitflow Genius Action
+        uses: iamfj/gitflow-genius-action@0.1.0-alpha.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
