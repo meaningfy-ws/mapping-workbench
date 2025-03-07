@@ -48,6 +48,7 @@ jobs:
   confirm-release:
     needs: generate-release-info
     runs-on: ubuntu-latest
+    environment: release
 
     steps:
       - name: Display Changelog and Version Info
@@ -58,9 +59,13 @@ jobs:
           echo "${{ env.version }}"
 
       - name: Manual Approval Step
-        uses: actions/manual-approval@v1 # A custom action for manual approval (optional)
+        uses: trstringer/manual-approval@v1
         with:
-          message: "Please review the changelog and version above. Approve to proceed."
+          secret: ${{ github.TOKEN }}
+          approvers: ${{ secrets.APPROVERS }}
+          minimum-approvals: 1
+          issue-title: "Manual Approval Required"
+          issue-body: "Please approve or deny the deployment."
 
   release:
     needs: confirm-release
