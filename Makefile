@@ -270,8 +270,10 @@ deploy-app-version:
 
 change-app-version:
 	$(eval VERSION ?= 1)
-	$(eval TAG ?= 0)
-	@ $(PYTHON) $(CHANGE_APP_VERSION_SCRIPT) --auto-version=$(VERSION) --auto-tag=$(TAG)
+	@ $(PYTHON) $(CHANGE_APP_VERSION_SCRIPT) --auto-version=$(VERSION)
+
+release-app:
+	@ $(PYTHON) $(CHANGE_APP_VERSION_SCRIPT) --auto-version=$(VERSION)
 
 deploy-env-app-settings: deploy-app-version
 	@ echo "Deployed ENV App Settings"
