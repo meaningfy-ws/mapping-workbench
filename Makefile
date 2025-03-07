@@ -94,6 +94,16 @@ dev-dotenv-file:
 	@ echo RML_MAPPER_PATH=${RML_MAPPER_PATH} >> ${ENV_FILE}
 	@ vault kv get -format="json" mapping-workbench-dev/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> ${ENV_FILE}
 
+test-dotenv-file:
+	@ echo "Creating TEST .env file ... "
+	@ echo VAULT_ADDR=${VAULT_ADDR} > ${ENV_FILE}
+	@ echo VAULT_TOKEN=${VAULT_TOKEN} >> ${ENV_FILE}
+	@ echo BACKEND_INFRA_FOLDER=${BACKEND_INFRA_FOLDER} >> ${ENV_FILE}
+	@ echo FRONTEND_INFRA_FOLDER=${FRONTEND_INFRA_FOLDER} >> ${ENV_FILE}
+	@ echo NODE_ENV=development >> ${ENV_FILE}
+	@ echo RML_MAPPER_PATH=${RML_MAPPER_PATH} >> ${ENV_FILE}
+	@ vault kv get -format="json" mapping-workbench-test/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> ${ENV_FILE}
+
 staging-dotenv-file:
 	@ echo "Creating STAGING .env file ... "
 	@ echo VAULT_ADDR=${VAULT_ADDR} > ${ENV_FILE}
@@ -260,8 +270,16 @@ deploy-app-version:
 
 change-app-version:
 	$(eval VERSION ?= 1)
-	$(eval TAG ?= 0)
-	@ $(PYTHON) $(CHANGE_APP_VERSION_SCRIPT) --auto-version=$(VERSION) --auto-tag=$(TAG)
+	@ $(PYTHON) $(CHANGE_APP_VERSION_SCRIPT) --auto-version=$(VERSION)
+
+release-app:
+	@ $(PYTHON) $(CHANGE_APP_VERSION_SCRIPT) --release=1
+
+release-cancel:
+	@ $(PYTHON) $(CHANGE_APP_VERSION_SCRIPT) --cancel=1
+
+ readme:
+	@ $(PYTHON) $(CHANGE_APP_VERSION_SCRIPT) --readme=1 --auto-version=1
 
 deploy-env-app-settings: deploy-app-version
 	@ echo "Deployed ENV App Settings"
@@ -275,6 +293,9 @@ deploy-prod-dotenv-file: prod-dotenv-file deploy-env-app-settings
 deploy-staging-dotenv-file: staging-dotenv-file deploy-env-app-settings
 	@ echo "Deployed STAGING ENV file"
 
+deploy-test-dotenv-file: test-dotenv-file deploy-env-app-settings
+	@ echo "Deployed TEST ENV file"
+
 create-release-tag:
 	@ git tag -a v$(V) -m "Release version $(V)"
 	@ git push origin v$(V)
@@ -287,6 +308,9 @@ deploy-prod: deploy-prod-dotenv-file deploy-app
 
 deploy-staging: deploy-staging-dotenv-file deploy-app
 	@ echo "Deployed App to STAGING"
+
+deploy-test: deploy-test-dotenv-file deploy-app
+	@ echo "Deployed App to TEST"
 
 checkout-latest-tag:
 	@ git checkout main
