@@ -18,5 +18,3 @@ jobs:
 
       - name: Gitflow Genius Action
         uses: iamfj/gitflow-genius-action@0.1.0-alpha.0
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
