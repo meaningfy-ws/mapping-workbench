@@ -275,6 +275,9 @@ change-app-version:
 release-app:
 	@ $(PYTHON) $(CHANGE_APP_VERSION_SCRIPT) --auto-version=$(VERSION)
 
+release-cancel:
+	@ $(PYTHON) $(CHANGE_APP_VERSION_SCRIPT) --cancel=1
+
 deploy-env-app-settings: deploy-app-version
 	@ echo "Deployed ENV App Settings"
 
