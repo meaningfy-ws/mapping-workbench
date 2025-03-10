@@ -264,7 +264,7 @@ export const handleOpenDetails = (title, notices, handleSelect, setDescription) 
 }
 
 
-const CopyDetailsButton = ({notice}) => {
+export const CopyDetailsButton = ({notice}) => {
     const [showMenu, setShowMenu] = useState(undefined)
     const [clipBoard, setClipBoard] = useState(false)
 
