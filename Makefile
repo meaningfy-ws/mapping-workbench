@@ -104,6 +104,16 @@ test-dotenv-file:
 	@ echo RML_MAPPER_PATH=${RML_MAPPER_PATH} >> ${ENV_FILE}
 	@ vault kv get -format="json" mapping-workbench-test/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> ${ENV_FILE}
 
+demo-dotenv-file:
+	@ echo "Creating DEMO .env file ... "
+	@ echo VAULT_ADDR=${VAULT_ADDR} > ${ENV_FILE}
+	@ echo VAULT_TOKEN=${VAULT_TOKEN} >> ${ENV_FILE}
+	@ echo BACKEND_INFRA_FOLDER=${BACKEND_INFRA_FOLDER} >> ${ENV_FILE}
+	@ echo FRONTEND_INFRA_FOLDER=${FRONTEND_INFRA_FOLDER} >> ${ENV_FILE}
+	@ echo NODE_ENV=production >> ${ENV_FILE}
+	@ echo RML_MAPPER_PATH=${RML_MAPPER_PATH} >> ${ENV_FILE}
+	@ vault kv get -format="json" mapping-workbench-demo/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> ${ENV_FILE}
+
 staging-dotenv-file:
 	@ echo "Creating STAGING .env file ... "
 	@ echo VAULT_ADDR=${VAULT_ADDR} > ${ENV_FILE}
@@ -296,6 +306,9 @@ deploy-staging-dotenv-file: staging-dotenv-file deploy-env-app-settings
 deploy-test-dotenv-file: test-dotenv-file deploy-env-app-settings
 	@ echo "Deployed TEST ENV file"
 
+deploy-demo-dotenv-file: demo-dotenv-file deploy-env-app-settings
+	@ echo "Deployed DEMO ENV file"
+
 create-release-tag:
 	@ git tag -a v$(V) -m "Release version $(V)"
 	@ git push origin v$(V)
@@ -311,6 +324,9 @@ deploy-staging: deploy-staging-dotenv-file deploy-app
 
 deploy-test: deploy-test-dotenv-file deploy-app
 	@ echo "Deployed App to TEST"
+
+deploy-demo: deploy-demo-dotenv-file deploy-app
+	@ echo "Deployed App to DEMO"
 
 checkout-latest-tag:
 	@ git checkout main
