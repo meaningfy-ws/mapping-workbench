@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from mapping_workbench.backend.config import settings
 from mapping_workbench.backend.tracking.models.tracking import TrackedUser, ActivityType, ActivityMedata, \
     TrackedActivity
@@ -23,3 +25,29 @@ async def track_activity(activity: ActivityType, user: User, metadata: ActivityM
             metadata=metadata
         )
         await activity.save()
+
+
+async def get_tracked_users(start_date: str, end_date: str = None):
+    start_datetime = datetime.strptime(start_date, "%Y-%m-%d")
+    if end_date:
+        end_datetime = datetime.strptime(end_date, "%Y-%m-%d")
+    else:
+        end_datetime = datetime.now()
+
+    return await TrackedUser.find(
+        TrackedUser.created_at >= start_datetime,
+        TrackedUser.created_at < end_datetime
+    ).to_list()
+
+
+async def get_tracked_activities(start_date: str, end_date: str = None):
+    start_datetime = datetime.strptime(start_date, "%Y-%m-%d")
+    if end_date:
+        end_datetime = datetime.strptime(end_date, "%Y-%m-%d")
+    else:
+        end_datetime = datetime.now()
+
+    return await TrackedActivity.find(
+        TrackedActivity.created_at >= start_datetime,
+        TrackedActivity.created_at < end_datetime
+    ).to_list()

@@ -6,6 +6,7 @@ from mapping_workbench.backend.config import settings
 from mapping_workbench.backend.security.services.exceptions import throw_403_exception
 from mapping_workbench.backend.security.services.user_manager import current_active_admin_user
 from mapping_workbench.backend.tracking.models.tracking import TrackedUser, TrackedActivity
+from mapping_workbench.backend.tracking.services.tracking import get_tracked_users, get_tracked_activities
 from mapping_workbench.backend.user.models.user import User
 
 ROUTE_PREFIX = "/tracking"
@@ -24,16 +25,7 @@ async def route_tracking_users(
     if not settings.is_demo_env():
         throw_403_exception()
 
-    start_datetime = datetime.strptime(start_date, "%Y-%m-%d")
-    if end_date:
-        end_datetime = datetime.strptime(end_date, "%Y-%m-%d")
-    else:
-        end_datetime = datetime.now()
-
-    return await TrackedUser.find(
-        TrackedUser.created_at >= start_datetime,
-        TrackedUser.created_at < end_datetime
-    ).to_list()
+    return await get_tracked_users(start_date, end_date)
 
 
 @sub_router.get(
@@ -47,16 +39,7 @@ async def route_tracking_activities(
     if not settings.is_demo_env():
         throw_403_exception()
 
-    start_datetime = datetime.strptime(start_date, "%Y-%m-%d")
-    if end_date:
-        end_datetime = datetime.strptime(end_date, "%Y-%m-%d")
-    else:
-        end_datetime = datetime.now()
-
-    return await TrackedActivity.find(
-        TrackedActivity.created_at >= start_datetime,
-        TrackedActivity.created_at < end_datetime
-    ).to_list()
+    return await get_tracked_activities(start_date, end_date)
 
 
 router = APIRouter()
