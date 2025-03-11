@@ -37,6 +37,7 @@ from mapping_workbench.backend.triple_map_registry.entrypoints.api import routes
 from mapping_workbench.backend.user.entrypoints.api import routes as user_routes
 from mapping_workbench.backend.xsd_schema.entrypoints.api import routes as xsd_schema_routes
 from mapping_workbench.backend.demo.entrypoints.api import routes as demo_routes
+from mapping_workbench.backend.tracking.entrypoints.api import routes as tracking_routes
 
 ROOT_API_PATH = "/api/v1"
 
@@ -98,7 +99,8 @@ secured_routers: list = [
     fields_registry.router,
     xsd_schema_routes.router,
     cm_groups_routes.router,
-    demo_routes.router
+    demo_routes.router,
+    tracking_routes.router
 ]
 
 for secured_router in secured_routers:

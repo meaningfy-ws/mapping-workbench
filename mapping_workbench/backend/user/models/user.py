@@ -1,8 +1,10 @@
+from datetime import datetime
 from enum import Enum
 from typing import List, Optional, Dict
 
 from beanie import Document
 from beanie import PydanticObjectId
+from dateutil.tz import tzlocal
 from fastapi_users import schemas
 from fastapi_users.db import BaseOAuthAccount, BeanieBaseUser
 from fastapi_users.schemas import CreateUpdateDictModel
@@ -43,6 +45,7 @@ class User(BeanieBaseUser, Document):
     is_active: bool = True
 
     roles: List[Role] = [Role.USER]
+    created_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(tzlocal()))
 
     class Settings(BeanieBaseUser.Settings):
         name = "users"

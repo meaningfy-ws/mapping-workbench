@@ -44,13 +44,13 @@ def determine_version_bump(commits):
                 or commit.startswith('refactor!:')
                 or 'BREAKING CHANGE' in commit
         ):
-            return 'major'
-        elif (
-                commit.startswith('feat:')
-                or commit.startswith('fix:')
-                or commit.startswith('refactor:')
-        ):
-            bump = 'minor'
+            return 'minor'
+        # elif (
+        #         commit.startswith('feat:')
+        #         or commit.startswith('fix:')
+        #         or commit.startswith('refactor:')
+        # ):
+        #     bump = 'minor'
     return bump
 
 
@@ -134,6 +134,9 @@ def finish_gitflow_release():
     """
 
     version = get_current_release_version()
+
+    print(f"Commiting the changes 'release/{version}'...")
+    run_command(["git", "commit", "-a", "-m", f"release/{version}"])
 
     # Push the release branch to the remote
     print(f"Publishing the release branch 'release/{version}'...")

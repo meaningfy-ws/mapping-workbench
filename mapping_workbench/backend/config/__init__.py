@@ -100,6 +100,13 @@ class EnvironmentSettings(BaseSettings):
     def ENVIRONMENT(self, config_value: str) -> str:
         return config_value
 
+    @env_property()
+    def DEMO_ENV(self, config_value: str) -> str:
+        return config_value
+
+    def is_demo_env(self):
+        return self.DEMO_ENV == '1'
+
     def is_env_production(self):
         return self.ENVIRONMENT == ENV_PRODUCTION
 

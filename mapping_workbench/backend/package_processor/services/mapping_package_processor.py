@@ -15,6 +15,8 @@ from mapping_workbench.backend.package_validator.services.sparql_cm_assertions i
 from mapping_workbench.backend.state_manager.services.object_state_manager import save_object_state
 from mapping_workbench.backend.task_manager.adapters.task_progress import TaskProgress
 from mapping_workbench.backend.tasks.models.task_response import TaskResponse
+from mapping_workbench.backend.tracking.models.tracking import ActivityType, ActivityMedata, EntityType
+from mapping_workbench.backend.tracking.services.tracking import track_activity
 from mapping_workbench.backend.user.models.user import User
 
 
@@ -51,6 +53,13 @@ async def process_mapping_package(
     :param user:
     :return:
     """
+    mapping_package: MappingPackage = await get_mapping_package(package_id)
+
+    await track_activity(ActivityType.PROCESS, user, ActivityMedata(
+        entity_type=EntityType.PACKAGE,
+        entity_id=str(mapping_package.id),
+        entity_name=mapping_package.title or mapping_package.identifier
+    ))
 
     if not task_response:
         task_response = TaskResponse()
@@ -69,8 +78,6 @@ async def process_mapping_package(
         name="Process Package",
         steps_count=steps_count
     )
-
-    mapping_package: MappingPackage = await get_mapping_package(package_id)
 
     mwb_logger.log_all_info(f"Processing Mapping Package '{mapping_package.identifier}' ... ")
 
