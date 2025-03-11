@@ -144,7 +144,7 @@ def finish_gitflow_release():
 
     # Finish the release branch
     print(f"Finishing GitFlow release for version {version}...")
-    run_command(["git", "flow", "release", "finish", "-m", f"Release {version}", version])
+    run_command(["git", "flow", "release", "finish", "-m", f"release/{version}", version])
 
     # Push changes to 'main' and 'develop', including tags
     print("Pushing changes to 'main' and 'develop' branches...")
