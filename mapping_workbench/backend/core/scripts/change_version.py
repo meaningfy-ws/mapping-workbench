@@ -44,13 +44,13 @@ def determine_version_bump(commits):
                 or commit.startswith('refactor!:')
                 or 'BREAKING CHANGE' in commit
         ):
-            return 'major'
-        elif (
-                commit.startswith('feat:')
-                or commit.startswith('fix:')
-                or commit.startswith('refactor:')
-        ):
-            bump = 'minor'
+            return 'minor'
+        # elif (
+        #         commit.startswith('feat:')
+        #         or commit.startswith('fix:')
+        #         or commit.startswith('refactor:')
+        # ):
+        #     bump = 'minor'
     return bump
 
 
