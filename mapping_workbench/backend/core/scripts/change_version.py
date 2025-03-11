@@ -146,6 +146,13 @@ def finish_gitflow_release():
     print(f"Finishing GitFlow release for version {version}...")
     run_command(["git", "flow", "release", "finish", "-m", f"release/{version}", version])
 
+    # Push changes to 'main' and 'develop', including tags
+    print("Pushing changes to 'main' and 'develop' branches...")
+    run_command(["git", "push", "origin", "main"])
+    run_command(["git", "push", "origin", "develop"])
+
+    print("Pushing tags...")
+    run_command(["git", "push", "--tags"])
 
 def cancel_gitflow_release():
     """
