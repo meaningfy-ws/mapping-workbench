@@ -136,7 +136,7 @@ def finish_gitflow_release():
     version = get_current_release_version()
 
     print(f"Commiting the changes 'release/{version}'...")
-    run_command(["git", "commit", "-m", f"release/{version}"])
+    run_command(["git", "commit", "-a", "-m", f"release/{version}"])
 
     # Push the release branch to the remote
     print(f"Publishing the release branch 'release/{version}'...")
