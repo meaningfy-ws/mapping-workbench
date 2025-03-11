@@ -20,6 +20,7 @@ from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSu
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuite, SPARQLTestFileResource
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
     TestDataManifestationHistory
+from mapping_workbench.backend.tracking.models.tracking import TrackedUser, TrackedActivity
 from mapping_workbench.backend.triple_map_fragment.models.entity import SpecificTripleMapFragment, \
     GenericTripleMapFragment
 from mapping_workbench.backend.triple_map_registry.models.entity import TripleMapRegistry
@@ -76,6 +77,8 @@ async def init_project_models(mongodb_database: AsyncIOMotorDatabase):
             XSDFileResource,
             ConceptualMappingGroupBeanie,
             PoolSDKField,
-            PoolSDKFieldsVersionedView
+            PoolSDKFieldsVersionedView,
+            TrackedUser,
+            TrackedActivity
         ],
     )

@@ -32,8 +32,13 @@ const toastClose = (content, id) => (
 
 const ToastErrorModel = ({err, id}) => {
     const [show, setShow] = useState(false)
-    let detailStr = err.response?.data?.detail
-    detailStr = !Array.isArray(detailStr) ? detailStr : detailStr?.[0]?.msg
+    let detailStr = null;
+    if (typeof err === 'object' && err !== null) {
+        detailStr = err.response?.data?.detail;
+        detailStr = !Array.isArray(detailStr) ? detailStr : detailStr?.[0]?.msg
+    } else if (typeof err === 'string') {
+        detailStr = err;
+    }
     return (
         <Stack sx={{
             position: 'relative'
@@ -43,7 +48,7 @@ const ToastErrorModel = ({err, id}) => {
                 alignItems="center"
                 justifyContent="center">
                 <CancelIcon sx={{color: '#ff4b4b', mr:2}}/>
-                {err.message}
+                {err && err.message}
                 {id && <IconButton sx={{pr: 0}}
                                    onClick={() => toast.dismiss(id)}>
                     <CloseIcon/>

@@ -87,6 +87,11 @@ class TestDataFileResource(FileResource, StatefulObjectABC):
     format: Optional[TestDataFileResourceFormat] = None
     test_data_suite: Optional[Link["TestDataSuite"]] = None
     rdf_manifestation: Optional[str] = None
+    rdf_manifestation_mapping_package_id: Optional[PydanticObjectId] = None
+
+    @classmethod
+    async def get_for_state(cls, test_data_state: TestDataState) -> "TestDataFileResource":
+        return await cls.get(test_data_state.oid)
 
     async def get_state(self) -> TestDataState:
         oid = self.id

@@ -15,6 +15,7 @@ RML_MAPPER_PATH = ${PROJECT_PATH}/.rmlmapper/rmlmapper.jar
 
 PYTHON := python3
 APP_VERSION_SCRIPT := ${BACKEND_INFRA_FOLDER}/core/scripts/get_app_version.py
+CHANGE_APP_VERSION_SCRIPT := ${BACKEND_INFRA_FOLDER}/core/scripts/change_version.py
 
 #-----------------------------------------------------------------------------
 # INSTALLING
@@ -92,6 +93,26 @@ dev-dotenv-file:
 	@ echo NODE_ENV=development >> ${ENV_FILE}
 	@ echo RML_MAPPER_PATH=${RML_MAPPER_PATH} >> ${ENV_FILE}
 	@ vault kv get -format="json" mapping-workbench-dev/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> ${ENV_FILE}
+
+test-dotenv-file:
+	@ echo "Creating TEST .env file ... "
+	@ echo VAULT_ADDR=${VAULT_ADDR} > ${ENV_FILE}
+	@ echo VAULT_TOKEN=${VAULT_TOKEN} >> ${ENV_FILE}
+	@ echo BACKEND_INFRA_FOLDER=${BACKEND_INFRA_FOLDER} >> ${ENV_FILE}
+	@ echo FRONTEND_INFRA_FOLDER=${FRONTEND_INFRA_FOLDER} >> ${ENV_FILE}
+	@ echo NODE_ENV=development >> ${ENV_FILE}
+	@ echo RML_MAPPER_PATH=${RML_MAPPER_PATH} >> ${ENV_FILE}
+	@ vault kv get -format="json" mapping-workbench-test/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> ${ENV_FILE}
+
+demo-dotenv-file:
+	@ echo "Creating DEMO .env file ... "
+	@ echo VAULT_ADDR=${VAULT_ADDR} > ${ENV_FILE}
+	@ echo VAULT_TOKEN=${VAULT_TOKEN} >> ${ENV_FILE}
+	@ echo BACKEND_INFRA_FOLDER=${BACKEND_INFRA_FOLDER} >> ${ENV_FILE}
+	@ echo FRONTEND_INFRA_FOLDER=${FRONTEND_INFRA_FOLDER} >> ${ENV_FILE}
+	@ echo NODE_ENV=production >> ${ENV_FILE}
+	@ echo RML_MAPPER_PATH=${RML_MAPPER_PATH} >> ${ENV_FILE}
+	@ vault kv get -format="json" mapping-workbench-demo/app | jq -r ".data.data | keys[] as \$$k | \"\(\$$k)=\(.[\$$k])\"" >> ${ENV_FILE}
 
 staging-dotenv-file:
 	@ echo "Creating STAGING .env file ... "
@@ -257,6 +278,19 @@ deploy-app-version:
 	@ perl -i -ne 'print unless /^MW_APP_VERSION/' ${ENV_FILE}
 	@ echo MW_APP_VERSION=$$($(PYTHON) $(APP_VERSION_SCRIPT)) >> ${ENV_FILE}
 
+change-app-version:
+	$(eval VERSION ?= 1)
+	@ $(PYTHON) $(CHANGE_APP_VERSION_SCRIPT) --auto-version=$(VERSION)
+
+release-app:
+	@ $(PYTHON) $(CHANGE_APP_VERSION_SCRIPT) --release=1
+
+release-cancel:
+	@ $(PYTHON) $(CHANGE_APP_VERSION_SCRIPT) --cancel=1
+
+ readme:
+	@ $(PYTHON) $(CHANGE_APP_VERSION_SCRIPT) --readme=1 --auto-version=1
+
 deploy-env-app-settings: deploy-app-version
 	@ echo "Deployed ENV App Settings"
 
@@ -268,6 +302,12 @@ deploy-prod-dotenv-file: prod-dotenv-file deploy-env-app-settings
 
 deploy-staging-dotenv-file: staging-dotenv-file deploy-env-app-settings
 	@ echo "Deployed STAGING ENV file"
+
+deploy-test-dotenv-file: test-dotenv-file deploy-env-app-settings
+	@ echo "Deployed TEST ENV file"
+
+deploy-demo-dotenv-file: demo-dotenv-file deploy-env-app-settings
+	@ echo "Deployed DEMO ENV file"
 
 create-release-tag:
 	@ git tag -a v$(V) -m "Release version $(V)"
@@ -281,3 +321,17 @@ deploy-prod: deploy-prod-dotenv-file deploy-app
 
 deploy-staging: deploy-staging-dotenv-file deploy-app
 	@ echo "Deployed App to STAGING"
+
+deploy-test: deploy-test-dotenv-file deploy-app
+	@ echo "Deployed App to TEST"
+
+deploy-demo: deploy-demo-dotenv-file deploy-app
+	@ echo "Deployed App to DEMO"
+
+checkout-latest-tag:
+	@ git checkout main
+	@ git fetch --tags
+	@ git checkout $(shell git describe --tags `git rev-list --tags --max-count=1`)
+
+deploy-latest: checkout-latest-tag deploy-app-version deploy-app
+	@ echo "Deployed App to LATEST"

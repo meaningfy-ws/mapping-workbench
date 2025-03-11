@@ -78,7 +78,7 @@ export const ListTableFile = (props) => {
                                                    fieldName="title"
                                                    title="Field"/>
                             </TableCell>
-                            <TableCell align="left">
+                            <TableCell width='30%'>
                                 <TableFilterHeader sort={sort}
                                                    onSort={onSort}
                                                    onFilter={onFilter}
@@ -86,7 +86,7 @@ export const ListTableFile = (props) => {
                                                    fieldName="xpath_condition"
                                                    title="XPath Condition"/>
                             </TableCell>
-                            <TableCell>
+                            <TableCell width='30%'>
                                 <SorterHeader fieldName="description"
                                               title=""/>
                             </TableCell>
@@ -109,12 +109,13 @@ export const ListTableFile = (props) => {
                                             {item.title}
                                         </Typography>
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell width='30%'>
                                         {item?.xpath_condition?.xpath_condition &&
                                             <>
                                                 <Stack
                                                     direction="column"
                                                     spacing={1}
+                                                        width='400px'
                                                 >
                                                     <Stack
                                                         direction="row"
@@ -133,13 +134,13 @@ export const ListTableFile = (props) => {
                                                 <Divider sx={{my: 1}}/>
                                             </>
                                         }
-                                        <Box sx={{overflowX: 'auto', width: '400px'}}>
+                                        <Scrollbar sx={{overflowX: 'auto', width: '400px',pb:1}}>
                                             <Typography variant="subtitle3">
                                                 {item.description}
                                             </Typography>
-                                        </Box>
+                                        </Scrollbar>
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell width='30%'>
                                         <LocalHighlighter language="sparql"
                                                           style={syntaxHighlighterTheme}
                                                           text={item.query}/>
