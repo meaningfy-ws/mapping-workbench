@@ -104,6 +104,7 @@
     "redux": "4.2.1",
     "redux-devtools-extension": "2.13.9",
     "redux-thunk": "2.4.2",
+    "sharp": "^0.33.5",
     "simplebar-react": "3.2.4",
     "stylis": "4.2.0",
     "stylis-plugin-rtl": "2.1.1",

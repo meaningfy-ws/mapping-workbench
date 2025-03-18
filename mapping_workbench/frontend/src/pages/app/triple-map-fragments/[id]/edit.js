@@ -20,11 +20,10 @@ import {sessionApi} from "../../../../api/session";
 
 
 const Page = () => {
-    const [tripleMapFragmentTree,setTripleMapFragmentTree] = useState([])
+    const [tripleMapFragmentTree, setTripleMapFragmentTree] = useState([])
 
     const router = useRouter();
     const {id} = router.query;
-
 
     useEffect(() => {
         handleGetTripleMapFragmentTree()
@@ -34,11 +33,11 @@ const Page = () => {
     const handleGetTripleMapFragmentTree = () => {
         const project = sessionApi.getSessionProject()
         sectionApi.getTripleMapFragmentTree({project})
-            .then(res=> setTripleMapFragmentTree(res.test_data_suites))
+            .then(res => setTripleMapFragmentTree(res.test_data_suites))
     }
 
     const formState = useItem(sectionApi, id);
-    const { item } = formState;
+    const {item} = formState;
 
     usePageView();
 
@@ -92,8 +91,10 @@ const Page = () => {
                         </Stack>
                     </Stack>
                 </Stack>
-                <EditForm itemctx={new ForItemEditForm(item, sectionApi, formState.setState)}
-                          tree={tripleMapFragmentTree}/>
+                <EditForm
+                    itemctx={new ForItemEditForm(item, sectionApi, formState.setState)}
+                    tree={tripleMapFragmentTree}
+                />
             </Stack>
         </>
     );

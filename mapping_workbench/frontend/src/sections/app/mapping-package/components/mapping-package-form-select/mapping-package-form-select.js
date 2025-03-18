@@ -24,7 +24,7 @@ const useMappingPackagesStore = () => {
 };
 
 export const MappingPackageFormSelect = (props) => {
-    const {formik, isRequired, disabled, withDefaultPackage = false, setMappingPackageId = null, ...other} = props;
+    const {formik, isRequired, disabled, withDefaultPackage = false, setMappingPackageId = null, mappingPackageId = null, ...other} = props;
     const mappingPackagesStore = useMappingPackagesStore();
     const handleMappingPackageChange = event => {
         const value = event.target.value;
@@ -56,7 +56,7 @@ export const MappingPackageFormSelect = (props) => {
             onBlur={formik.handleBlur}
             onChange={handleMappingPackageChange}
             select
-            value={formik.values.mapping_package_id}
+            value={formik.values.mapping_package_id || mappingPackageId}
             required={isRequired}
             disabled={disabled}
         >

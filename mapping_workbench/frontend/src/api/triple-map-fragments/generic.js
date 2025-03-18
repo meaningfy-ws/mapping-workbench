@@ -1,6 +1,7 @@
 import {TripleMapFragmentsApi} from "./index";
 import {ACTION} from "../section";
 import {appApi} from "../app";
+import {sessionApi} from "../session";
 
 class GenericTripleMapFragmentsApi extends TripleMapFragmentsApi {
     get SECTION_TITLE() {
@@ -32,6 +33,14 @@ class GenericTripleMapFragmentsApi extends TripleMapFragmentsApi {
             triple_map_fragments: triple_map_fragments
         }
         return await appApi.update(endpoint, request);
+    }
+
+    async getTransformHistory(id) {
+        const filters = {};
+        filters['project'] = sessionApi.getSessionProject();
+        const endpoint = this.paths['transform_history'].replace(':id', id);
+        const data = await appApi.get(endpoint, filters);
+        return Promise.resolve(data);
     }
 }
 

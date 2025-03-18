@@ -31,36 +31,121 @@ import {useRouter} from 'src/hooks/use-router';
 import {RouterLink} from 'src/components/router-link';
 import turtleValidator from "src/utils/turtle-validator";
 import {FormTextField} from "src/components/app/form/text-field";
-import CodeMirrorDefault from "src/components/app/form/codeMirrorDefault";
+import CodeMirrorDefault, {CodeMirrorCompare} from "src/components/app/form/codeMirrorDefault";
 import {FormCodeReadOnlyArea} from "src/components/app/form/code-read-only-area";
 import {toastError, toastLoad, toastSuccess, toastWarning} from "src/components/app-toast";
 import {MappingPackageFormSelect} from "../mapping-package/components/mapping-package-form-select";
 import {MappingPackageCheckboxList} from '../mapping-package/components/mapping-package-real-checkbox-list';
+import {useGlobalState} from "../../../hooks/use-global-state";
+import timeTransformer from "../../../utils/time-transformer";
 
+
+const TransformForm = (props) => {
+    const {
+        formik,
+        compare_items,
+        latestRdfManifestion
+    } = props;
+    const {timeSetting} = useGlobalState()
+
+    const [showCompare, setShowCompare] = useState(false)
+    const [compareItem, setCompareItem] = useState(false)
+    const handleCompareChange = e => {
+        setCompareItem(e.target.value)
+    }
+
+    return (
+        <Stack gap={3}>
+            <Grid xs={12}
+                  md={12}>
+                <Stack direction='row'
+                       alignItems='center'
+                       gap={2}>
+                    {
+                        compare_items.length > 0 &&
+                        <Button
+                            sx={{my: 1}}
+                            onClick={() => setShowCompare(e => !e)}>{showCompare ? 'Hide Compare' : 'Show Compare'}
+                        </Button>
+                    }
+
+                    {showCompare && <TextField
+                        label="Transform Date"
+                        name="compare_item"
+                        onBlur={formik.handleBlur}
+                        onChange={handleCompareChange}
+                        select
+                        value={compareItem}
+                        sx={{minWidth: 200}}
+                    >
+                        {compare_items.map((compare_item) => (
+                            <MenuItem
+                                key={compare_item.id}
+                                value={compare_item}
+                            >
+                                {timeTransformer(compare_item.created_at, timeSetting)}
+                            </MenuItem>
+                        ))}
+                    </TextField>}
+                </Stack>
+
+                {showCompare ?
+                    <CodeMirrorCompare label="RDF Manifestation"
+                                       style={{resize: 'vertical', overflow: 'auto', height: 600}}
+                                       value={latestRdfManifestion}
+                                       previousValue={compareItem?.out_manifestation}
+                                       lang='TTL'
+                    /> :
+                    <CodeMirrorDefault label="RDF Manifestation"
+                                       style={{resize: 'vertical', overflow: 'auto', height: 600}}
+                                       value={latestRdfManifestion}
+                                       lang='TTL'
+                    />}
+            </Grid>
+        </Stack>
+    )
+}
 
 export const EditForm = (props) => {
     const {itemctx, tree, ...other} = props;
     const router = useRouter();
     const sectionApi = itemctx.api;
     const item = itemctx.data;
+    const id = item._id;
 
+    const [compareItems, setCompareItems] = useState([])
+
+    const handleTransformHistoryGet = () => {
+        sectionApi.getTransformHistory(id)
+            .then(res => setCompareItems(res))
+            .catch(err => console.error(err))
+    }
+
+    useEffect(() => {
+        id && handleTransformHistoryGet(id)
+    }, [id])
+
+    const compare_items = compareItems.slice(1)
     const [currentTab, setCurrentTab] = useState('tabEdit')
 
-    const [selectedTree, setSelectedTree] = useState(tree?.[0]?.test_datas?.[0]?.test_data_id)
+    const latestTransformedTestData = item.latest_transformed_test_data
+
+    const [selectedTree, setSelectedTree] = useState(
+        latestTransformedTestData?.test_data_id || tree?.[0]?.test_datas?.[0]?.test_data_id
+    )
     const [testDataContent, setTestDataContent] = useState("")
-    const [rdfResultContent, setRdfResultContent] = useState("")
-    const [hasRdfResult, setHasRdfResult] = useState(false)
-    const [useThisTripleMap, setUseThisTripleMap] = useState(false)
-    const [mappingPackageId, setMappingPackageId] = useState(null)
+    const [rdfResultContent, setRdfResultContent] = useState(latestTransformedTestData?.rdf_manifestation || "")
+    const [hasRdfResult, setHasRdfResult] = useState(!!latestTransformedTestData?.rdf_manifestation)
+    const [useThisTripleMap, setUseThisTripleMap] = useState(!!latestTransformedTestData?.use_this_triple_map)
+    const [mappingPackageId, setMappingPackageId] = useState(latestTransformedTestData?.mapping_package_id || null)
 
     const [validation, setValidation] = useState({})
-
     const initialValues = {
         triple_map_uri: item.triple_map_uri ?? '',
         triple_map_content: item.triple_map_content ?? '',
         refers_to_mapping_package_ids: item.refers_to_mapping_package_ids ?? [],
         format: item.format ?? sectionApi.FILE_RESOURCE_DEFAULT_FORMAT ?? ''
-        };
+    };
 
 
     const formik = useFormik({
@@ -80,6 +165,9 @@ export const EditForm = (props) => {
             const toastId = toastLoad("Updating...")
             try {
                 let response;
+                delete values['mapping_package_id'];
+                delete values['compare_item'];
+                delete values['compare_items'];
                 values['project'] = sessionApi.getSessionProject();
                 if (itemctx.isNew) {
                     response = await sectionApi.createItem(values);
@@ -124,6 +212,8 @@ export const EditForm = (props) => {
 
     const onUpdateAndTransform = (values, helpers) => {
         delete values['mapping_package_id'];
+        delete values['compare_item'];
+        delete values['compare_items'];
         values['project'] = sessionApi.getSessionProject();
         values['id'] = item._id;
         formik.setSubmitting(true)
@@ -139,7 +229,6 @@ export const EditForm = (props) => {
             catchError(Error("Select Test Data"));
             return false;
         }
-
         sectionApi.updateItem(values)
             .then(res => {
                 toastLoad("Transforming Content", toastId);
@@ -147,6 +236,7 @@ export const EditForm = (props) => {
                     .then(res => {
                         setRdfResultContent(res.rdf_manifestation)
                         setHasRdfResult(true);
+                        handleTransformHistoryGet()
                         if (res.rdf_manifestation) {
                             toastSuccess('Transformed Successfully', toastId)
                         } else {
@@ -235,9 +325,10 @@ export const EditForm = (props) => {
                                     <CardHeader sx={{mt: 0, pt: 0, pb: 0}}
                                                 title="Mapping Packages"/>
                                     <Box sx={{ml: 2, mt: 2}}>
-                                        <MappingPackageCheckboxList handleUpdate={values => formik.setFieldValue('refers_to_mapping_package_ids',values)}
-                                                                    mappingPackages={formik.values.refers_to_mapping_package_ids}
-                                                                    withDefaultPackage={itemctx.isNew}
+                                        <MappingPackageCheckboxList
+                                            handleUpdate={values => formik.setFieldValue('refers_to_mapping_package_ids', values)}
+                                            mappingPackages={formik.values.refers_to_mapping_package_ids}
+                                            withDefaultPackage={itemctx.isNew}
                                         />
                                     </Box>
                                 </Card>
@@ -258,7 +349,7 @@ export const EditForm = (props) => {
                     </CardContent>
                 </Card>
             }
-            {currentTab === 'tabTest' &&
+            {currentTab === 'tabTest' && <>
                 <Card sx={{mt: 3}}>
                     <CardHeader title={'Test ' + sectionApi.SECTION_ITEM_TITLE}/>
                     <CardContent sx={{pt: 0}}>
@@ -310,6 +401,7 @@ export const EditForm = (props) => {
                                     isRequired={false}
                                     withDefaultPackage={itemctx.isNew}
                                     setMappingPackageId={setMappingPackageId}
+                                    mappingPackageId={mappingPackageId}
                                 />
                             </Grid>
                             <Grid xs={12}
@@ -357,7 +449,18 @@ export const EditForm = (props) => {
                             </Grid>
                         </Grid>
                     </CardContent>
-                </Card>}
+                </Card>
+                <Card sx={{mt: 3}}>
+                    <CardContent>
+                        <TransformForm
+                            formik={formik}
+                            compare_items={compare_items}
+                            latestRdfManifestion={rdfResultContent}
+                        />
+                    </CardContent>
+                </Card>
+            </>
+            }
 
 
             <Card sx={{mt: 3}}>
