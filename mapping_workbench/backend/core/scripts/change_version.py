@@ -102,6 +102,10 @@ def start_gitflow_release(version):
     """
     Automates the creation of a GitFlow release branch.
     """
+
+    run_command(["git", "checkout", "main"])
+    run_command(["git", "pull"])
+
     # Ensure we are on the latest 'develop' branch
     print("Checking out 'develop' branch...")
     run_command(["git", "checkout", "develop"])
@@ -153,6 +157,8 @@ def finish_gitflow_release():
 
     print("Pushing tags...")
     run_command(["git", "push", "--tags"])
+
+    run_command(["git", "branch", "-d", f"release/{version}"])
 
 def cancel_gitflow_release():
     """

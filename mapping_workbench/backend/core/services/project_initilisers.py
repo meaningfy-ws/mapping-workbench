@@ -22,7 +22,7 @@ from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuit
     TestDataManifestationHistory
 from mapping_workbench.backend.tracking.models.tracking import TrackedUser, TrackedActivity
 from mapping_workbench.backend.triple_map_fragment.models.entity import SpecificTripleMapFragment, \
-    GenericTripleMapFragment
+    GenericTripleMapFragment, GenericTripleMapFragmentTransformHistory
 from mapping_workbench.backend.triple_map_registry.models.entity import TripleMapRegistry
 from mapping_workbench.backend.user.models.user import User, Role
 from mapping_workbench.backend.xsd_schema.models.xsd_file_resource import XSDFileResource
@@ -69,6 +69,7 @@ async def init_project_models(mongodb_database: AsyncIOMotorDatabase):
             TripleMapRegistry,
             SpecificTripleMapFragment,
             GenericTripleMapFragment,
+            GenericTripleMapFragmentTransformHistory,
             Namespace,
             NamespaceCustom,
             Term,

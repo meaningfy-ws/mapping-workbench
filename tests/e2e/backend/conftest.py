@@ -12,10 +12,13 @@ from mapping_workbench.backend.mapping_package.models.entity import MappingPacka
 from mapping_workbench.backend.ontology.models.term import Term, TermType
 from mapping_workbench.backend.ontology_suite.models.ontology_file_resource import OntologyFileResource
 from mapping_workbench.backend.project.models.entity import Project
+from mapping_workbench.backend.resource_collection.models.entity import ResourceFile
 from mapping_workbench.backend.security.services.user_manager import get_jwt_strategy
-from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite
+from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource, \
+    TestDataFileResourceFormat
+from mapping_workbench.backend.triple_map_fragment.models.entity import GenericTripleMapFragment
 from mapping_workbench.backend.user.models.user import User
-from tests import TEST_DATA_EPO_ONTOLOGY
+from tests import TEST_DATA_EPO_ONTOLOGY, TEST_TRIPLE_MAP_PATH, TEST_VOC_RESOURCE_PATH, TEST_TEST_DATE_RESOURCE_PATH
 
 async_mongodb_database_mock = AsyncMongoMockClient()["test_e2e_database"]
 AsyncGridFSStorage.set_mongo_database(async_mongodb_database_mock)
@@ -154,3 +157,34 @@ def epo_core_shapes_file_resource() -> OntologyFileResource:
 @pytest.fixture
 def eforms_sdk_github_repository_url() -> str:
     return "https://github.com/OP-TED/eForms-SDK"
+
+
+@pytest.fixture
+def dummy_test_data_file_resource(dummy_project, dummy_mapping_package) -> TestDataFileResource:
+    return TestDataFileResource(
+        content=(TEST_TEST_DATE_RESOURCE_PATH / "test_data.xml").read_text(encoding="utf-8"),
+        filename="dummy_test_data_file",
+        format=TestDataFileResourceFormat.XML,
+        identifier="dummy_identifier",
+        project=dummy_project
+    )
+
+
+@pytest.fixture
+def dummy_generic_triple_map(dummy_project, dummy_mapping_package) -> GenericTripleMapFragment:
+    return GenericTripleMapFragment(
+        triple_map_content=(TEST_TRIPLE_MAP_PATH / "test_triple_map.ttl").read_text(encoding="utf-8"),
+        refers_to_mapping_package_ids=[dummy_mapping_package.id],
+        project=dummy_project
+    )
+
+
+@pytest.fixture
+def dummy_voc_resource_country(dummy_project, dummy_mapping_package) -> ResourceFile:
+    return ResourceFile(
+        title="country.json",
+        filename="country.json",
+        content=(TEST_VOC_RESOURCE_PATH / "country.json").read_text(encoding="utf-8"),
+        refers_to_mapping_package_ids=[dummy_mapping_package.id],
+        project=dummy_project
+    )

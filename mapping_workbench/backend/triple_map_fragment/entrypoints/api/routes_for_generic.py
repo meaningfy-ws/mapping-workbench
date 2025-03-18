@@ -1,3 +1,5 @@
+from typing import List
+
 from beanie import PydanticObjectId
 from beanie.odm.operators.find.comparison import In
 from beanie.odm.operators.update.array import Pull, Push
@@ -9,7 +11,8 @@ from mapping_workbench.backend.security.services.user_manager import current_act
 from mapping_workbench.backend.triple_map_fragment.models.api_request import \
     TripleMapFragmentRequestForMappingPackageUpdate
 from mapping_workbench.backend.triple_map_fragment.models.entity import GenericTripleMapFragmentOut, \
-    GenericTripleMapFragmentCreateIn, GenericTripleMapFragmentUpdateIn, GenericTripleMapFragment
+    GenericTripleMapFragmentCreateIn, GenericTripleMapFragmentUpdateIn, GenericTripleMapFragment, \
+    GenericTripleMapFragmentTransformHistoryOut
 from mapping_workbench.backend.triple_map_fragment.models.entity_api_response import \
     APIListGenericTripleMapFragmentsPaginatedResponse
 from mapping_workbench.backend.triple_map_fragment.services.api_for_generic import (
@@ -17,7 +20,8 @@ from mapping_workbench.backend.triple_map_fragment.services.api_for_generic impo
     create_generic_triple_map_fragment,
     update_generic_triple_map_fragment,
     get_generic_triple_map_fragment,
-    delete_generic_triple_map_fragment, get_generic_triple_map_fragment_out
+    delete_generic_triple_map_fragment, get_generic_triple_map_fragment_out,
+    get_generic_triple_map_fragment_transform_history
 )
 from mapping_workbench.backend.user.models.user import User
 
@@ -139,3 +143,15 @@ async def route_delete_generic_triple_map_fragment(
         generic_triple_map_fragment: GenericTripleMapFragment = Depends(get_generic_triple_map_fragment)):
     await delete_generic_triple_map_fragment(generic_triple_map_fragment)
     return APIEmptyContentWithIdResponse(id=generic_triple_map_fragment.id)
+
+
+@router.get(
+    "/{id}/transform/history",
+    description=f"Get Generic Triple Map Fragment Transform History",
+    name=f"{NAME_FOR_ONE}:get_transform_history",
+)
+async def route_get_generic_triple_map_fragment_transform_history(
+        project: PydanticObjectId,
+        generic_triple_map_fragment: GenericTripleMapFragment = Depends(get_generic_triple_map_fragment)
+) -> List[GenericTripleMapFragmentTransformHistoryOut]:
+    return await get_generic_triple_map_fragment_transform_history(generic_triple_map_fragment, project)

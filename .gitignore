@@ -137,7 +137,6 @@ junit_report.xml
 
 .DS_Store
 node_modules
-package-lock.json
 infra/backend/src
 .rmlmapper
 activate_venv.sh
