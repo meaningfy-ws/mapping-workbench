@@ -61,6 +61,12 @@ const Page = () => {
         const validatedVersions = await fieldsRegistryApi.validateImportEFormsXSD(values);
         let formErrors = []
         if (validatedVersions) {
+            if (!!validatedVersions?.duplicates_found?.length) {
+                formErrors.push("[" + validatedVersions.duplicates_found.join(', ') + "]: Duplicate(s)");
+            }
+            if (!!validatedVersions?.invalid_formats?.length) {
+                formErrors.push("[" + validatedVersions.invalid_formats.join(', ') + "]: Invalid version(s)");
+            }
             if (!!validatedVersions?.not_in_remote_repo?.length) {
                 formErrors.push("[" + validatedVersions.not_in_remote_repo.join(', ') + "] version(s) not found in the remote repository.");
             }
