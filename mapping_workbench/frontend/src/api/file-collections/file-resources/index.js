@@ -38,7 +38,6 @@ export class FileResourcesApi extends SectionApi {
         const data = await appApi.get(endpoint);
         return Promise.resolve(data);
     }
-// http://localhost:8000/api/v1/test_data_suites/file_resources/678f5c9d607a7f61f94c11c5/transform/history?project=678f5b8d6f271a8aa40e9633
 
     async getFileHistory(id) {
         const filters = {};

@@ -92,7 +92,8 @@ class XPATHValidator(TestDataValidator):
             ns, url = elem
             if ns == '':
                 ns = self.DEFAULT_XML_NS_PREFIX
-            namespaces[ns] = url
+            if url:
+                namespaces[ns] = url
         return namespaces
 
     def init_xp_processors(self, xml_content: str):

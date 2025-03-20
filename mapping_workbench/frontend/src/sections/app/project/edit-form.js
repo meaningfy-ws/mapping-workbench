@@ -117,6 +117,12 @@ export const EditForm = (props) => {
         const validatedVersions = await fieldsRegistryApi.validateImportEFormsXSD(values);
         let formFieldsErrors = []
         if (validatedVersions) {
+            if (!!validatedVersions?.duplicates_found?.length) {
+                formFieldsErrors.push("[" + validatedVersions.duplicates_found.join(', ') + "]: Duplicates");
+            }
+            if (!!validatedVersions?.invalid_formats?.length) {
+                formFieldsErrors.push("[" + validatedVersions.invalid_formats.join(', ') + "]: Invalid versions");
+            }
             if (!!validatedVersions?.not_in_remote_repo?.length) {
                 formFieldsErrors.push("[" + validatedVersions.not_in_remote_repo.join(', ') + "] version(s) not found in the remote repository.");
             }

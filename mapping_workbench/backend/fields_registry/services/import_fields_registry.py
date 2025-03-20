@@ -275,8 +275,15 @@ async def import_eforms_fields_from_folder_to_pool(
             )
 
 
+
+def find_invalid_eforms_sdk_version_formats(elements: list) -> list:
+    pattern = re.compile(r'^\d+\.\d+\.\d+([^.\s]\S*)?$')
+    invalid_elements = [element for element in elements if not pattern.match(element)]
+    return invalid_elements
+
+
 def eforms_sdk_versions_from_str_to_list(versions_str: str) -> List[str]:
-    return [item.strip() for item in versions_str.split(',')]
+    return [item.strip() for item in versions_str.split(',')] if versions_str else []
 
 
 async def import_eforms_xsd(
