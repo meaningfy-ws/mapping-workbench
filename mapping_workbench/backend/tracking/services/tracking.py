@@ -2,7 +2,7 @@ from datetime import datetime
 
 from mapping_workbench.backend.config import settings
 from mapping_workbench.backend.tracking.models.tracking import TrackedUser, ActivityType, ActivityMedata, \
-    TrackedActivity
+    TrackedActivity, TrackedUserLink
 from mapping_workbench.backend.user.models.user import User
 
 
@@ -21,7 +21,10 @@ async def track_activity(activity: ActivityType, user: User, metadata: ActivityM
     if settings.is_demo_env():
         activity = TrackedActivity(
             activity=activity,
-            user=TrackedUser.link_from_id(user.id) if user else None,
+            user=TrackedUserLink(
+                user_id=user.id,
+                email=user.email
+            ) if user else None,
             metadata=metadata
         )
         await activity.save()

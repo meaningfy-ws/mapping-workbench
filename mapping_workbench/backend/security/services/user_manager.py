@@ -9,6 +9,7 @@ from fastapi_users.authentication import (
     JWTStrategy,
 )
 from fastapi_users.db import BeanieUserDatabase, ObjectIDIDMixin
+from jose import jwt
 
 from mapping_workbench.backend.config import settings
 from mapping_workbench.backend.security.adapters.user_session import get_user_db
@@ -36,11 +37,12 @@ class UserManager(ObjectIDIDMixin, BaseUserManager[User, PydanticObjectId]):
             request: Optional[Request] = None,
             response: Optional[Response] = None
     ):
-        await track_activity(ActivityType.LOGIN, user, ActivityMedata(
-            entity_type=EntityType.USER,
-            entity_id=str(user.id),
-            entity_name=user.email
-        ))
+        if Role.API not in user.roles:
+            await track_activity(ActivityType.LOGIN, user, ActivityMedata(
+                entity_type=EntityType.USER,
+                entity_id=str(user.id),
+                entity_name=user.email
+            ))
         print(f"User {user.id} has logged in.")
 
     async def on_after_forgot_password(
@@ -86,3 +88,23 @@ async def get_current_active_admin_user(
 
 
 current_active_admin_user = get_current_active_admin_user
+
+
+async def generate_jwt_token(username: str):
+    user = await User.find_one(User.email == username)
+    if not user:
+        raise ValueError("User not found")
+    lifetime_seconds = 60 * 60 * 24 * 365  # 1 year
+    jwt_strategy = JWTStrategy(secret=JWT_SECRET, lifetime_seconds=lifetime_seconds, algorithm=JWT_ALGORITHM)
+    return await jwt_strategy.write_token(user)
+
+
+def decode_jwt_token(token: str):
+    decoded = jwt.decode(
+        token,
+        JWT_SECRET,
+        algorithms=[JWT_ALGORITHM],
+        options={"verify_signature": True},
+        audience="fastapi-users:auth"
+    )
+    return decoded

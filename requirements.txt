@@ -1,5 +1,5 @@
 # BACKEND dependencies
-python-multipart~=0.0.9
+python-multipart~=0.0.20
 motor==3.5.3
 pymongo==4.8.0
 python-dotenv~=1.0.0
@@ -7,8 +7,8 @@ pydantic~=2.4
 pydantic-settings~=2.0
 beanie==1.22
 #python-jose~=3.3
-fastapi~=0.110
-fastapi-users[beanie,oauth]~=13.0
+fastapi~=0.115
+fastapi-users[beanie,oauth]~=14.0
 uvicorn[standard]
 requests-toolbelt~=1.0.0
 xlrd~=2.0.1
