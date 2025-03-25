@@ -1,9 +1,5 @@
-from sys import prefix
-
-from beanie import PydanticObjectId
 from fastapi import APIRouter, Depends
 from httpx_oauth.clients.google import GoogleOAuth2
-from jose import jwt
 
 from mapping_workbench.backend.config import settings
 from mapping_workbench.backend.security.services.user_manager import auth_backend, fastapi_users, current_active_user, \
@@ -11,6 +7,7 @@ from mapping_workbench.backend.security.services.user_manager import auth_backen
 from mapping_workbench.backend.user.models.user import UserRead, UserCreate, User
 
 ROUTE_PREFIX = "/auth"
+ROUTE_SECURITY_PREFIX = "/security"
 TAGS = ["auth"]
 google_oauth_client = GoogleOAuth2(settings.GOOGLE_ID, settings.GOOGLE_SECRET)
 
@@ -80,4 +77,4 @@ async def route_token_generate(
     return {"access_token": await generate_jwt_token(username)}
 
 
-router.include_router(sub_router, prefix="/security", tags=["security"])
+router.include_router(sub_router, prefix=ROUTE_SECURITY_PREFIX, tags=["security"])
