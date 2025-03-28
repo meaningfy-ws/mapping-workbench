@@ -29,6 +29,7 @@ import {FileUploader} from "src/sections/app/generic-triple-map-fragment/file-up
 import {genericTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/generic';
 import CodeMirrorDefault from '../../../components/app/form/codeMirrorDefault';
 import {NavigationTabsWrapper} from '../../../components/navigation-tabs-wrapper';
+import TripleMap from '../../../sections/app/triple-map-fragments/triple-map';
 
 const Page = () => {
     const [technicalMappingsTabs, setTechnicalMappingsTabs] = useState([{label: 'TM1', value: 'tm1'}])
@@ -55,6 +56,13 @@ const Page = () => {
     // const technicalMappingsTabs = [{label: 'TM1', value: 'tm1'}]
 
     console.log(technicalMappingsTabs)
+
+    const formik = useFormik({
+         initialValues: {
+            github_repository_url: "",
+            branch_or_tag_name: ""
+        },
+    })
 
     return (
         <>
@@ -126,6 +134,7 @@ const Page = () => {
                                              ])
                                          }}/>
                                 </Tabs>
+                                <TripleMap formik={formik}></TripleMap>
                                 <CodeMirrorDefault/>
                             </Card>
                         </Grid>
