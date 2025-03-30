@@ -13,7 +13,7 @@ module.exports = defineConfig({
         appURLPrefix: process.env.MW_BACKEND_SERVER_HOST + '/api/v1/',
         homeURL: process.env.MW_FRONTEND_ADDRESS,
         tripleMapFragment: 'test_triple_map.ttl',
-        mappingPacakgeName: 'Package EF10-EF24, SDK v1.3',
+        mappingPackageName: 'Package EF10-EF24, SDK v1.3',
         packageFile: 'package_cn_v1.3_minimal.zip',
         homePageLabel: 'Mapping Workbench'
     },

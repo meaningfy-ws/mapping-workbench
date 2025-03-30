@@ -15,6 +15,7 @@ from mapping_workbench.backend.ontology.models.term import Term
 from mapping_workbench.backend.ontology_suite.models.ontology_file_resource import OntologyFileResource
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.resource_collection.models.entity import ResourceCollection, ResourceFile
+from mapping_workbench.backend.security import API_ADMIN_USER_USERNAME
 from mapping_workbench.backend.security.models.security import AccessToken
 from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestFileResource
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuite, SPARQLTestFileResource
@@ -41,6 +42,22 @@ async def init_admin_user() -> None:
 
     if await User.find_one(User.email == admin_user.email).count() == 0:
         await admin_user.create()
+    return
+
+
+async def init_api_admin_user() -> None:
+    api_admin_user: User = User(
+        email=API_ADMIN_USER_USERNAME,
+        hashed_password="",
+        name=API_ADMIN_USER_USERNAME,
+        is_active=True,
+        is_superuser=True,
+        is_verified=True,
+        roles=[Role.API, Role.ADMIN]
+    )
+
+    if await User.find_one(User.email == api_admin_user.email).count() == 0:
+        await api_admin_user.create()
     return
 
 
