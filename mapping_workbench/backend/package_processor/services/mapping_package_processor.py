@@ -7,6 +7,7 @@ from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState, MappingPackage, \
     MappingPackageStateGate
 from mapping_workbench.backend.mapping_package.services.api import get_mapping_package
+from mapping_workbench.backend.package_processor.services import TaskToRun
 from mapping_workbench.backend.package_transformer.services.mapping_package_transformer import \
     transform_mapping_package_state
 from mapping_workbench.backend.package_validator.services.mapping_package_validator import validate_mapping_package
@@ -19,16 +20,6 @@ from mapping_workbench.backend.tracking.models.tracking import ActivityType, Act
 from mapping_workbench.backend.tracking.services.tracking import track_activity
 from mapping_workbench.backend.user.models.user import User
 
-
-class TaskToRun(Enum):
-    TRANSFORM_TEST_DATA = "transform_test_data"
-    GENERATE_CM_ASSERTIONS = "generate_cm_assertions"
-    VALIDATE_PACKAGE = "validate_package"
-    VALIDATE_PACKAGE_XPATH = "validate_package_xpath"
-    VALIDATE_PACKAGE_SPARQL = "validate_package_sparql"
-    VALIDATE_PACKAGE_SHACL = "validate_package_shacl"
-
-
 COMPOUND_TASKS = [TaskToRun.VALIDATE_PACKAGE]
 COMPOUND_TASKS_COUNT = len(COMPOUND_TASKS)
 
@@ -40,6 +31,7 @@ async def create_mapping_package_state(mapping_package: MappingPackage):
 async def process_mapping_package(
         package_id: PydanticObjectId,
         use_only_package_state: bool = False,
+        include_package_assertions: bool = True,
         tasks_to_run: List[str] = None,
         user: User = None,
         task_response: TaskResponse = None
@@ -104,7 +96,11 @@ async def process_mapping_package(
 
         if tasks_to_run is None or TaskToRun.VALIDATE_PACKAGE.value in tasks_to_run:
             mwb_logger.log_all_info("Validating Package State ...")
-            await validate_mapping_package(mapping_package_state, tasks_to_run, task_progress=task_progress)
+            await validate_mapping_package(
+                mapping_package_state, tasks_to_run,
+                include_package_assertions=include_package_assertions,
+                task_progress=task_progress
+            )
             mwb_logger.log_all_info("Validating Package State ... DONE")
 
     mwb_logger.log_all_info("Saving Package State ...")
