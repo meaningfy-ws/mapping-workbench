@@ -26,27 +26,41 @@ const Predicate = ({formik}) => {
                 <Card sx={{border: '1px solid #E4E7EC', p: 2}}>
                     <Typography>Type</Typography>
                     <FormControl fullWidth>
-                        <Select variant='standard'>
+                        <Select variant='outlined'
+                                sx={{
+                                    height: 40,
+                                    borderRadius: '12px'
+                                }}>
                             <MenuItem>text</MenuItem>
                         </Select>
                     </FormControl>
                     <Typography>Property</Typography>
                     <FormControl fullWidth>
-                        <Select variant='standard'>
+                        <Select variant='outlined'
+                                sx={{
+                                    height: 40,
+                                    borderRadius: '12px'
+                                }}>
                             <MenuItem>text</MenuItem>
                         </Select>
                     </FormControl>
                     <Typography sx={{mt: 2}}>Label</Typography>
                     <FormControl fullWidth>
-                        <InputLabel>Age</InputLabel>
-                        <Select variant='standard'>
+                        <Select variant='outlined'
+                                sx={{
+                                    height: 40,
+                                    borderRadius: '12px'
+                                }}>
                             <MenuItem>text</MenuItem>
                         </Select>
                     </FormControl>
                     <Typography sx={{mt: 2}}>Comment</Typography>
                     <FormControl fullWidth>
-                        <InputLabel>Age</InputLabel>
-                        <Select variant='standard'>
+                        <Select variant='outlined'
+                                sx={{
+                                    height: 40,
+                                    borderRadius: '12px'
+                                }}>
                             <MenuItem>text</MenuItem>
                         </Select>
                     </FormControl>

@@ -2,8 +2,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Accordion from "@mui/material/Accordion"
 import {AccordionDetails} from "@mui/material";
 import Typography from '@mui/material/Typography';
-import {FormTextField} from '../../../components/app/form/text-field';
 import CustomAccordionSummary from './custom-accordion-summary';
+import CustomTextField from './custom-text-field';
 
 const TripleMap = ({formik}) => {
     return (
@@ -14,13 +14,14 @@ const TripleMap = ({formik}) => {
                     alignItems: 'center', justifyContent: 'space-between'
                 }
             }}
-                              expandIcon={<ExpandMoreIcon/>}>
+                                    expandIcon={<ExpandMoreIcon/>}>
                 <Typography>Triple Map</Typography>
             </CustomAccordionSummary>
             <AccordionDetails>
-                <FormTextField formik={formik}
-                               label='Uri'
-                               variant='standard'/>
+                <CustomTextField
+                    formik={formik}
+                    label='Uri'
+                />
             </AccordionDetails>
         </Accordion>
     )

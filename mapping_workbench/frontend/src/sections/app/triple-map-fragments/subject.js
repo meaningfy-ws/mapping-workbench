@@ -40,21 +40,31 @@ const Subject = ({formik}) => {
                     <Card sx={{border: '1px solid #E4E7EC', p: 2, mt: 2}}>
                         <Typography>Class</Typography>
                         <FormControl fullWidth>
-                            <Select variant='standard'>
+                            <Select variant='outlined'
+                                    sx={{
+                                        height: 40,
+                                        borderRadius: '12px'
+                                    }}>
                                 <MenuItem>text</MenuItem>
                             </Select>
                         </FormControl>
                         <Typography sx={{mt: 2}}>Template</Typography>
                         <FormControl fullWidth>
-                            <InputLabel>Age</InputLabel>
-                            <Select variant='standard'>
+                            <Select variant='outlined'
+                                    sx={{
+                                        height: 40,
+                                        borderRadius: '12px'
+                                    }}>
                                 <MenuItem>text</MenuItem>
                             </Select>
                         </FormControl>
                         <Typography sx={{mt: 2}}>Label</Typography>
                         <FormControl fullWidth>
-                            <InputLabel>Age</InputLabel>
-                            <Select variant='standard'>
+                            <Select variant='outlined'
+                                    sx={{
+                                        height: 40,
+                                        borderRadius: '12px'
+                                    }}>>
                                 <MenuItem>text</MenuItem>
                             </Select>
                         </FormControl>

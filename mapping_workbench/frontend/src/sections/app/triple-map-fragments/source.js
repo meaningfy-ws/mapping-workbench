@@ -23,21 +23,32 @@ const Source = ({formik}) => {
                 <Card sx={{border: '1px solid #E4E7EC', p: 2}}>
                     <Typography>Type</Typography>
                     <FormControl fullWidth>
-                        <InputLabel>Age</InputLabel>
-                        <Select variant='standard'>
+                        <Select variant='outlined'
+                                sx={{
+                                    height: 40,
+                                    borderRadius: '12px'
+                                }}>
                             <MenuItem>text</MenuItem>
                         </Select>
                     </FormControl>
                     <Card sx={{border: '1px solid #E4E7EC', p: 2, mt: 2}}>
                         <Typography>File</Typography>
                         <FormControl fullWidth>
-                            <Select variant='standard'>
+                            <Select variant='outlined'
+                                    sx={{
+                                        height: 40,
+                                        borderRadius: '12px'
+                                    }}>
                                 <MenuItem>text</MenuItem>
                             </Select>
                         </FormControl>
-                        <Typography sx={{mt:2}}>Iterator</Typography>
+                        <Typography sx={{mt: 2}}>Iterator</Typography>
                         <FormControl fullWidth>
-                            <Select variant='standard'>
+                            <Select variant='outlined'
+                                    sx={{
+                                        height: 40,
+                                        borderRadius: '12px'
+                                    }}>
                                 <MenuItem>text</MenuItem>
                             </Select>
                         </FormControl>
