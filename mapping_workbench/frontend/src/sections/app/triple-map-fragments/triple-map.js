@@ -7,7 +7,7 @@ import CustomTextField from './custom-text-field';
 
 const TripleMap = ({formik}) => {
     return (
-        <Accordion sx={{backgroundColor: '#F9FAFB', borderRadius: '12px'}}>
+        <Accordion sx={{backgroundColor: '#F9FAFB', borderRadius: '12px', m: "0 !important", mb: "16px !important"}}>
             <CustomAccordionSummary sx={{
                 flexDirection: 'row-reverse', gap: 1,
                 "& .MuiAccordionSummary-content": {

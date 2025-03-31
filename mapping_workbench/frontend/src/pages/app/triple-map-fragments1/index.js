@@ -1,4 +1,7 @@
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import Card from '@mui/material/Card';
+import MenuItem from '@mui/material/MenuItem';
+import Popover from '@mui/material/Popover';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
@@ -35,12 +38,14 @@ import Subject from '../../../sections/app/triple-map-fragments/subject';
 import TripleMap from '../../../sections/app/triple-map-fragments/triple-map';
 
 const Page = () => {
-    const [technicalMappingsTabs, setTechnicalMappingsTabs] = useState([{label: 'TM1', value: 'tm1'}])
-    const [selectedTMTab, setSelectedTMTab] = useState('tm1')
+    // const [technicalMappingsTabs, setTechnicalMappingsTabs] = useState([{label: 'TM1', value: 'tm1'}])
+    // const [selectedTMTab, setSelectedTMTab] = useState('tm1')
 
     const uploadDialog = useDialog();
     const itemsStore = useItemsStore(sectionApi);
     const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['triple_map_uri']);
+
+    const [addAnchor, setAddAnchor] = useState(null)
 
     usePageView();
 
@@ -56,9 +61,9 @@ const Page = () => {
     });
 
     const formTabs = [{label: 'Form', value: 'form'}, {label: 'Code', value: 'code'}]
+    const [selectedFormTab, setSelectedFormTab] = useState('form')
     // const technicalMappingsTabs = [{label: 'TM1', value: 'tm1'}]
 
-    console.log(technicalMappingsTabs)
 
     const formik = useFormik({
         initialValues: {
@@ -66,6 +71,8 @@ const Page = () => {
             branch_or_tag_name: ""
         },
     })
+
+    const handleAdd = () => {}
 
     return (
         <>
@@ -113,37 +120,68 @@ const Page = () => {
                               md={6}
                               sm={12}>
                             <Card>
-                                <Tabs>
+                                <Tabs onChange={(e, v) => setSelectedFormTab(v)}
+                                      value={selectedFormTab}
+                                      sx={{mx: 2, my: 1}}>
                                     {formTabs.map(formTab =>
                                         <Tab key={formTab.value}
                                              {...formTab}/>)}
 
                                 </Tabs>
-                                <Tabs value={selectedTMTab}>
-                                    {technicalMappingsTabs.map((technicalMappingsTab, index) =>
-                                        <Tab key={technicalMappingsTab.value}
-                                             label={technicalMappingsTab.label}
-                                             onClick={() => setSelectedTMTab(technicalMappingsTab.value)}
-                                             value={technicalMappingsTab.value}/>
-                                    )}
-                                    <Tab label={<AddIcon/>}
-                                         onClick={() => {
-                                             setSelectedTMTab(`tm${technicalMappingsTabs.length + 1}`)
-                                             setTechnicalMappingsTabs(e => [...e,
-                                                 {
-                                                     label: `TM${technicalMappingsTabs.length + 1}`,
-                                                     value: `tm${technicalMappingsTabs.length + 1}`
-                                                 }
-                                             ])
-                                         }}/>
-                                </Tabs>
-                                <Stack sx={{p:1}}>
-                                    <TripleMap formik={formik}></TripleMap>
-                                    <Source formik={formik}></Source>
-                                    <Subject formik={formik}/>
-                                    <Predicate formik={formik}/>
-                                </Stack>
-                                <CodeMirrorDefault/>
+                                {/*<Tabs value={selectedTMTab}>*/}
+                                {/*    {technicalMappingsTabs.map((technicalMappingsTab, index) =>*/}
+                                {/*        <Tab key={technicalMappingsTab.value}*/}
+                                {/*             label={technicalMappingsTab.label}*/}
+                                {/*             onClick={() => setSelectedTMTab(technicalMappingsTab.value)}*/}
+                                {/*             value={technicalMappingsTab.value}/>*/}
+                                {/*    )}*/}
+                                {/*    <Tab label={<AddIcon/>}*/}
+                                {/*         onClick={() => {*/}
+                                {/*             setSelectedTMTab(`tm${technicalMappingsTabs.length + 1}`)*/}
+                                {/*             setTechnicalMappingsTabs(e => [...e,*/}
+                                {/*                 {*/}
+                                {/*                     label: `TM${technicalMappingsTabs.length + 1}`,*/}
+                                {/*                     value: `tm${technicalMappingsTabs.length + 1}`*/}
+                                {/*                 }*/}
+                                {/*             ])*/}
+                                {/*         }}/>*/}
+                                {/*</Tabs>*/}
+                                {selectedFormTab === 'form' && <Stack sx={{p: 1}}>
+                                    <Card sx={{p: 1, border: "1px solid #E4E7EC"}}>
+                                        <TripleMap formik={formik}></TripleMap>
+                                        <Source formik={formik}></Source>
+                                        <Subject formik={formik}/>
+                                        <Predicate formik={formik}/>
+                                        <Stack alignItems='end'>
+                                            <Button onClick={(e) => setAddAnchor(e.target)}
+                                                    startIcon={<AddIcon/>}
+                                                    endIcon={<KeyboardArrowDownIcon/>}>
+                                                Add
+                                            </Button>
+                                            <Popover
+                                                id='addButton'
+                                                open={!!addAnchor}
+                                                anchorEl={addAnchor}
+                                                onClose={() => setAddAnchor(null)}
+                                                anchorOrigin={{
+                                                    vertical: 'bottom',
+                                                    horizontal: 'left',
+                                                }}
+                                            >
+                                                <MenuItem onClick={handleAdd}>
+                                                    Subject
+                                                </MenuItem>
+                                                <MenuItem onClick={handleAdd}>
+                                                    Predicate
+                                                </MenuItem>
+                                                <MenuItem onClick={handleAdd}>
+                                                    Source
+                                                </MenuItem>
+                                            </Popover>
+                                        </Stack>
+                                    </Card>
+                                </Stack>}
+                                {selectedFormTab === 'code' && <CodeMirrorDefault/>}
                             </Card>
                         </Grid>
                         <Grid item
