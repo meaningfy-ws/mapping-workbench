@@ -82,3 +82,16 @@ async def test_check_import_eforms_xsd_route(req_headers, eforms_sdk_github_repo
     assert response.status_code == 200
     response_data = response.json()
     assert response_data["invalid_repo_url"]
+
+
+@pytest.mark.asyncio
+async def test_fields_registry_elements_tree_route(req_headers, dummy_project):
+    response = client.get(
+        api_endpoint(f"{ROUTE_PREFIX}/elements_tree"),
+        headers=req_headers,
+        params={
+            "project": dummy_project.id,
+            "wcm": True
+        }
+    )
+    assert response.status_code == 200

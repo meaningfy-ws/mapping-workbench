@@ -1,10 +1,12 @@
 from typing import List
 
-from beanie import PydanticObjectId
+from beanie import PydanticObjectId, Link
+from beanie.odm.operators.find.comparison import In
 from beanie.odm.operators.update.general import Set
 from pymongo.errors import DuplicateKeyError
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
+from mapping_workbench.backend.conceptual_mapping_rule.services.data import get_conceptual_mapping_rules_for_project
 from mapping_workbench.backend.core.models.base_entity import BaseEntityFiltersSchema
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException, DuplicateKeyException
 from mapping_workbench.backend.core.services.request import api_entity_is_found, prepare_search_param, \
@@ -35,10 +37,19 @@ async def list_structural_elements(filters: dict = None, page: int = None, limit
     return items, total_count
 
 
-async def get_project_structural_elements(project_id: PydanticObjectId) -> List[StructuralElementOut]:
-    project_link = Project.link_from_id(project_id)
+async def get_project_structural_elements(
+        project_id: PydanticObjectId, with_conceptual_mappings: bool = False
+) -> List[StructuralElementOut]:
+    query_filters = {StructuralElement.project: Project.link_from_id(project_id)}
+
+    if with_conceptual_mappings:
+        cm_rules: List[ConceptualMappingRule] = await get_conceptual_mapping_rules_for_project(project_id)
+        cm_rule_ids = [rule.source_structural_element.to_ref().id for rule in cm_rules if
+                       rule.source_structural_element and isinstance(rule.source_structural_element, Link)]
+        query_filters[StructuralElement.id] = {In.operator: cm_rule_ids}
+
     items: List[StructuralElementOut] = await StructuralElement.find(
-        StructuralElement.project == project_link,
+        query_filters,
         projection_model=StructuralElementOut,
         fetch_links=False
     ).to_list()

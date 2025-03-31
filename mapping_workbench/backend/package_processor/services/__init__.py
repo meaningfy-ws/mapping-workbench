@@ -1,3 +1,5 @@
+from enum import Enum
+
 MS_METADATA_FILE_NAME = "metadata.json"
 MS_TRANSFORM_FOLDER_NAME = "transformation"
 MS_MAPPINGS_FOLDER_NAME = "mappings"
@@ -14,3 +16,11 @@ VERSION_FIELD = 'Mapping Version'
 
 TASK_ENTITY_ACTION = "process"
 TASK_ENTITY_TYPE = "mapping_package"
+
+class TaskToRun(Enum):
+    TRANSFORM_TEST_DATA = "transform_test_data"
+    VALIDATE_PACKAGE = "validate_package"
+    VALIDATE_PACKAGE_XPATH = "validate_package_xpath"
+    VALIDATE_PACKAGE_SPARQL = "validate_package_sparql"
+    GENERATE_CM_ASSERTIONS = "generate_cm_assertions"
+    VALIDATE_PACKAGE_SHACL = "validate_package_shacl"

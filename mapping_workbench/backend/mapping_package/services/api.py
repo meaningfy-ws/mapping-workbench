@@ -11,15 +11,47 @@ from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundE
 from mapping_workbench.backend.core.services.request import request_update_data, request_create_data, \
     api_entity_is_found, prepare_search_param, pagination_params
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageCreateIn, \
-    MappingPackageUpdateIn, MappingPackageOut, MappingPackageStateGate
+    MappingPackageUpdateIn, MappingPackageOut, MappingPackageStateGate, MappingPackageResourcesMetadata
 from mapping_workbench.backend.mapping_package.services.data import mapping_package_process_status
 from mapping_workbench.backend.package_processor.services import TASK_ENTITY_TYPE, TASK_ENTITY_ACTION
+from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuite, SPARQLTestFileResource
 from mapping_workbench.backend.state_manager.services.object_state_manager import delete_object_state
 from mapping_workbench.backend.task_manager.entrypoints import AppTaskManager
 from mapping_workbench.backend.tasks.models.task_result import TaskMetadataMeta
+from mapping_workbench.backend.test_data_suite.models.entity import TestDataSuite, TestDataFileResource
 from mapping_workbench.backend.triple_map_fragment.models.entity import SpecificTripleMapFragment, \
     GenericTripleMapFragment
 from mapping_workbench.backend.user.models.user import User
+
+
+async def mapping_package_has_assertions(mapping_package) -> bool:
+    for suite_link in mapping_package.sparql_test_suites:
+        if (await SPARQLTestFileResource.find(
+                SPARQLTestFileResource.sparql_test_suite == SPARQLTestSuite.link_from_id(suite_link.to_ref().id)
+        ).count()) > 0:
+            return True
+    return False
+
+
+async def mapping_package_has_test_data(mapping_package) -> bool:
+    for suite_link in mapping_package.test_data_suites:
+        if (await TestDataFileResource.find(
+                TestDataFileResource.test_data_suite == TestDataSuite.link_from_id(suite_link.to_ref().id)
+        ).count()) > 0:
+            return True
+    return False
+
+
+async def mapping_package_has_cm_rules(mapping_package_id: PydanticObjectId) -> bool:
+    return (await ConceptualMappingRule.find(
+        ConceptualMappingRule.refers_to_mapping_package_ids == mapping_package_id
+    ).count()) > 0
+
+
+async def mapping_package_has_mappings(mapping_package_id: PydanticObjectId) -> bool:
+    return (await GenericTripleMapFragment.find(
+        GenericTripleMapFragment.refers_to_mapping_package_ids == mapping_package_id
+    ).count()) > 0
 
 
 async def list_mapping_packages(filters: dict = None, page: int = None, limit: int = None) -> \
@@ -55,6 +87,11 @@ async def list_mapping_packages(filters: dict = None, page: int = None, limit: i
             tasks_status = tasks_statuses[item_id]
 
         item.process_status = mapping_package_process_status(tasks_status)
+        item.resources_metadata = MappingPackageResourcesMetadata()
+        item.resources_metadata.has_assertions = await mapping_package_has_assertions(item)
+        item.resources_metadata.has_cm_rules = await mapping_package_has_cm_rules(item.id)
+        item.resources_metadata.has_test_data = await mapping_package_has_test_data(item)
+        item.resources_metadata.has_mappings = await mapping_package_has_mappings(item.id)
 
     total_count: int = await MappingPackage.find(query_filters).count()
     return items, total_count

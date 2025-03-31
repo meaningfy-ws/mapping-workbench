@@ -89,7 +89,10 @@ def aggregate_sparql_tests_summary(
     return summary
 
 
-def validate_mapping_package_state_with_sparql(mapping_package_state: MappingPackageState):
+def validate_mapping_package_state_with_sparql(
+        mapping_package_state: MappingPackageState,
+        include_package_assertions: bool = True
+):
     sparql_assertions = []
 
     for conceptual_mapping_rule_state in mapping_package_state.conceptual_mapping_rules:
@@ -97,10 +100,12 @@ def validate_mapping_package_state_with_sparql(mapping_package_state: MappingPac
             continue
         sparql_assertions.extend(conceptual_mapping_rule_state.sparql_assertions)
 
-    for sparql_test_suite in mapping_package_state.sparql_test_suites:
-        if not sparql_test_suite.sparql_test_states:
-            continue
-        sparql_assertions.extend(sparql_test_suite.sparql_test_states)
+    if include_package_assertions:
+        mwb_logger.log_all_info("Including Package Assertions ...")
+        for sparql_test_suite in mapping_package_state.sparql_test_suites:
+            if not sparql_test_suite.sparql_test_states:
+                continue
+            sparql_assertions.extend(sparql_test_suite.sparql_test_states)
 
     seen = set()
     sparql_assertions = [x for x in sparql_assertions if x.oid not in seen and not seen.add(x.oid)]

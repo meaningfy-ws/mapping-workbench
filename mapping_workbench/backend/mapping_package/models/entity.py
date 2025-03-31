@@ -62,6 +62,12 @@ class MappingPackageImportIn(MappingPackageIn):
     created_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(tzlocal()))
 
 
+class MappingPackageResourcesMetadata(BaseModel):
+    has_assertions: bool = False
+    has_cm_rules: bool = False
+    has_test_data: bool = False
+    has_mappings: bool = False
+
 class MappingPackageOut(BaseProjectResourceEntityOutSchema):
     title: Optional[str] = None
     description: Optional[str] = None
@@ -77,6 +83,7 @@ class MappingPackageOut(BaseProjectResourceEntityOutSchema):
     sparql_test_suites: Optional[List[Link[SPARQLTestSuite]]] = None
     resource_collections: Optional[List[Link[ResourceCollection]]] = None
     process_status: Optional[str] = None
+    resources_metadata: Optional[MappingPackageResourcesMetadata] = None
 
 
 class MappingPackageListFilters(BaseTitledEntityListFiltersSchema):
