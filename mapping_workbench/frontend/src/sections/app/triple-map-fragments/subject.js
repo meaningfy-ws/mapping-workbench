@@ -1,24 +1,32 @@
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import Accordion from "@mui/material/Accordion"
-import {AccordionDetails} from "@mui/material";
+
 import Card from '@mui/material/Card';
+import Radio from '@mui/material/Radio';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import Accordion from "@mui/material/Accordion"
+import IconButton from '@mui/material/IconButton';
+import RadioGroup from '@mui/material/RadioGroup';
+import Typography from '@mui/material/Typography';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import IconButton from '@mui/material/IconButton';
-import MenuItem from '@mui/material/MenuItem';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import Select from '@mui/material/Select';
-import Typography from '@mui/material/Typography';
+import AccordionDetails from "@mui/material/AccordionDetails";
+
 import CustomAccordionSummary from './custom-accordion-summary';
 
 const Subject = ({formik}) => {
+
+    const onDelete = (e) => {
+        e.stopPropagation()
+        console.log(e)
+    }
+
     return (
         <Accordion sx={{backgroundColor: '#F9FAFB', borderRadius: '12px', m: "0 !important", mb: "16px !important"}}>
             <CustomAccordionSummary expandIcon={<ExpandMoreIcon/>}>
                 <Typography>Subject</Typography>
-                <IconButton><DeleteOutlineIcon color='error'/></IconButton>
+                <IconButton onClick={onDelete}><DeleteOutlineIcon color='error'/></IconButton>
             </CustomAccordionSummary>
             <AccordionDetails>
                 <Card sx={{border: '1px solid #E4E7EC', p: 2}}>
@@ -62,7 +70,7 @@ const Subject = ({formik}) => {
                                     sx={{
                                         height: 40,
                                         borderRadius: '12px'
-                                    }}>>
+                                    }}>
                                 <MenuItem>text</MenuItem>
                             </Select>
                         </FormControl>
