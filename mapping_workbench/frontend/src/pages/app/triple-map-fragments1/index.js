@@ -29,7 +29,9 @@ import {FileUploader} from "src/sections/app/generic-triple-map-fragment/file-up
 import {genericTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/generic';
 import CodeMirrorDefault from '../../../components/app/form/codeMirrorDefault';
 import {NavigationTabsWrapper} from '../../../components/navigation-tabs-wrapper';
+import Predicate from '../../../sections/app/triple-map-fragments/predicate';
 import Source from '../../../sections/app/triple-map-fragments/source';
+import Subject from '../../../sections/app/triple-map-fragments/subject';
 import TripleMap from '../../../sections/app/triple-map-fragments/triple-map';
 
 const Page = () => {
@@ -138,6 +140,8 @@ const Page = () => {
                                 <Stack sx={{p:1}}>
                                     <TripleMap formik={formik}></TripleMap>
                                     <Source formik={formik}></Source>
+                                    <Subject formik={formik}/>
+                                    <Predicate formik={formik}/>
                                 </Stack>
                                 <CodeMirrorDefault/>
                             </Card>

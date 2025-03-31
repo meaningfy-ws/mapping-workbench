@@ -6,7 +6,7 @@ const CustomAccordionSummary = ({children}) => {
         <AccordionSummary sx={{
                 flexDirection: 'row-reverse', gap: 1,
                 "& .MuiAccordionSummary-content": {
-                    alignItems: 'center', justifyContent: 'space-between'
+                    alignItems: 'center', justifyContent: 'space-between', m:0
                 }
             }}
                               expandIcon={<ExpandMoreIcon sx={{fontSize:30}}/>}>
