@@ -33,7 +33,9 @@ const Source = ({formik}) => {
                                     height: 40,
                                     borderRadius: '12px'
                                 }}>
-                            <MenuItem>text</MenuItem>
+                            <MenuItem>XML</MenuItem>
+                            <MenuItem>CSV</MenuItem>
+                            <MenuItem>JSON</MenuItem>
                         </Select>
                     </FormControl>
                     <Card sx={{border: '1px solid #E4E7EC', p: 2, mt: 2}}>

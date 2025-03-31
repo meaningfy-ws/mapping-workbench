@@ -14,7 +14,7 @@ export const Page = () => {
             <NavigationTabsWrapper>
                 <ElementsDefinitionTabs/>
             </NavigationTabsWrapper>
-            <Paper>
+            <Paper sx={{mt: 3}}>
                 <TreeView sectionApi={sectionApi}/>
             </Paper>
         </>

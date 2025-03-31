@@ -38,6 +38,7 @@ import {MappingPackageFormSelect} from "../mapping-package/components/mapping-pa
 import {MappingPackageCheckboxList} from '../mapping-package/components/mapping-package-real-checkbox-list';
 import {useGlobalState} from "../../../hooks/use-global-state";
 import timeTransformer from "../../../utils/time-transformer";
+import BuildForm from './build-form';
 
 
 const TransformForm = (props) => {
@@ -280,6 +281,8 @@ export const EditForm = (props) => {
                      value='tabEdit'></Tab>
                 <Tab label='Test Triple Map Fragment'
                      value='tabTest'></Tab>
+                <Tab label='Build Triple Map Fragment'
+                     value='tabBuild'></Tab>
             </Tabs>}
 
 
@@ -461,7 +464,10 @@ export const EditForm = (props) => {
                 </Card>
             </>
             }
-
+            {currentTab === 'tabBuild' && <>
+                <BuildForm/>
+            </>
+            }
 
             <Card sx={{mt: 3}}>
                 <Stack

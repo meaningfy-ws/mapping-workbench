@@ -27,11 +27,13 @@ import useItemsSearch from 'src/hooks/use-items-search';
 import {useItemsStore} from 'src/hooks/use-items-store';
 import {TableSearchBar} from "src/sections/components/table-search-bar";
 import {TechnicalMappingsTabs} from 'src/sections/app/technical-mappings';
-import {ListTable} from "src/sections/app/generic-triple-map-fragment/list-table";
+import {fieldsRegistryApi as treeViewApi} from 'src/api/fields-registry';
+
 import {FileUploader} from "src/sections/app/generic-triple-map-fragment/file-uploader";
 import {genericTripleMapFragmentsApi as sectionApi} from 'src/api/triple-map-fragments/generic';
 import CodeMirrorDefault from '../../../components/app/form/codeMirrorDefault';
 import {NavigationTabsWrapper} from '../../../components/navigation-tabs-wrapper';
+import TreeView from '../../../sections/app/tree-view/tree-view';
 import Predicate from '../../../sections/app/triple-map-fragments/predicate';
 import Source from '../../../sections/app/triple-map-fragments/source';
 import Subject from '../../../sections/app/triple-map-fragments/subject';
@@ -189,6 +191,7 @@ const Page = () => {
                               sm={12}>
                             <Card>
                                 <Typography>Conceptual Mapping Browser</Typography>
+                                <TreeView sectionApi={treeViewApi}/>
                             </Card>
                         </Grid>
                     </Grid>
