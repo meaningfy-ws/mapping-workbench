@@ -2,28 +2,28 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import Card from '@mui/material/Card';
-import Checkbox from '@mui/material/Checkbox';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormGroup from '@mui/material/FormGroup';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import Accordion from "@mui/material/Accordion"
+import Checkbox from '@mui/material/Checkbox';
+import FormGroup from '@mui/material/FormGroup';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import AccordionDetails from "@mui/material/AccordionDetails";
 
-import CustomAccordionSummary from './custom-accordion-summary';
+import CustomAccordion from './custom-accordion';
 import CustomTextField from './custom-text-field';
+import CustomAccordionSummary from './custom-accordion-summary';
 
-const Predicate = ({formik}) => {
+const PredicateForm = ({formik}) => {
     const onDelete = (e) => {
         e.stopPropagation()
         console.log(e)
     }
 
     return (
-        <Accordion sx={{backgroundColor: '#F9FAFB', borderRadius: '12px', m: "0 !important", mb: "8px !important"}}>
+        <CustomAccordion>
             <CustomAccordionSummary expandIcon={<ExpandMoreIcon/>}>
                 <Typography>Predicate</Typography>
                 <IconButton onClick={onDelete}><DeleteOutlineIcon color='error'/></IconButton>
@@ -76,8 +76,8 @@ const Predicate = ({formik}) => {
                     </FormGroup>
                 </Card>
             </AccordionDetails>
-        </Accordion>
+        </CustomAccordion>
     )
 }
 
-export default Predicate
+export default PredicateForm

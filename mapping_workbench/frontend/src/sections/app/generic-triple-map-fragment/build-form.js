@@ -21,10 +21,10 @@ import CodeMirrorDefault from '../../../components/app/form/codeMirrorDefault';
 import {useDialog} from '../../../hooks/use-dialog';
 import {usePageView} from '../../../hooks/use-page-view';
 import TreeView from '../tree-view/tree-view';
-import Predicate from '../triple-map-fragments/predicate';
-import Source from '../triple-map-fragments/source';
-import Subject from '../triple-map-fragments/subject';
-import TripleMap from '../triple-map-fragments/triple-map';
+import PredicateForm from '../triple-map-fragments/predicate-form';
+import SourceForm from '../triple-map-fragments/source-form';
+import SubjectForm from '../triple-map-fragments/subject-form';
+import TripleMapForm from '../triple-map-fragments/triple-map-form';
 import {FileUploader} from './file-uploader';
 
 const BuildForm = () => {
@@ -95,10 +95,10 @@ const BuildForm = () => {
                             {/*</Tabs>*/}
                             {selectedFormTab === 'form' && <Stack sx={{p: 1}}>
                                 <Card sx={{p: 1, border: "1px solid #E4E7EC"}}>
-                                    <TripleMap formik={formik}></TripleMap>
-                                    <Source formik={formik}></Source>
-                                    <Subject formik={formik}/>
-                                    <Predicate formik={formik}/>
+                                    <TripleMapForm formik={formik}></TripleMapForm>
+                                    <SourceForm formik={formik}></SourceForm>
+                                    <SubjectForm formik={formik}/>
+                                    <PredicateForm formik={formik}/>
                                     <Stack alignItems='end'>
                                         <Button onClick={(e) => setAddAnchor(e.target)}
                                                 startIcon={<AddIcon/>}

@@ -2,44 +2,49 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import Card from '@mui/material/Card';
+import Radio from '@mui/material/Radio';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import Accordion from "@mui/material/Accordion"
-import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
+import RadioGroup from '@mui/material/RadioGroup';
+import Typography from '@mui/material/Typography';
 import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import AccordionDetails from "@mui/material/AccordionDetails";
 
+import CustomAccordion from './custom-accordion';
 import CustomAccordionSummary from './custom-accordion-summary';
 
-const Source = ({formik}) => {
+const SubjectForm = ({formik}) => {
+
     const onDelete = (e) => {
         e.stopPropagation()
         console.log(e)
     }
 
     return (
-        <Accordion sx={{backgroundColor: '#F9FAFB', borderRadius: '12px', m: "0 !important", mb: "16px !important"}}>
+        <CustomAccordion>
             <CustomAccordionSummary expandIcon={<ExpandMoreIcon/>}>
-                <Typography>Source</Typography>
+                <Typography>Subject</Typography>
                 <IconButton onClick={onDelete}><DeleteOutlineIcon color='error'/></IconButton>
             </CustomAccordionSummary>
             <AccordionDetails>
                 <Card sx={{border: '1px solid #E4E7EC', p: 2}}>
                     <Typography>Type</Typography>
                     <FormControl fullWidth>
-                        <Select variant='outlined'
-                                sx={{
-                                    height: 40,
-                                    borderRadius: '12px'
-                                }}>
-                            <MenuItem>XML</MenuItem>
-                            <MenuItem>CSV</MenuItem>
-                            <MenuItem>JSON</MenuItem>
-                        </Select>
+                        <RadioGroup row>
+                            <FormControlLabel value="plain"
+                                              control={<Radio/>}
+                                              label="Plain"/>
+                            <FormControlLabel value="conditional"
+                                              control={<Radio/>}
+                                              label="Conditional"/>
+                        </RadioGroup>
+
+
                     </FormControl>
                     <Card sx={{border: '1px solid #E4E7EC', p: 2, mt: 2}}>
-                        <Typography>File</Typography>
+                        <Typography>Class</Typography>
                         <FormControl fullWidth>
                             <Select variant='outlined'
                                     sx={{
@@ -49,7 +54,17 @@ const Source = ({formik}) => {
                                 <MenuItem>text</MenuItem>
                             </Select>
                         </FormControl>
-                        <Typography sx={{mt: 2}}>Iterator</Typography>
+                        <Typography sx={{mt: 2}}>Template</Typography>
+                        <FormControl fullWidth>
+                            <Select variant='outlined'
+                                    sx={{
+                                        height: 40,
+                                        borderRadius: '12px'
+                                    }}>
+                                <MenuItem>text</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <Typography sx={{mt: 2}}>Label</Typography>
                         <FormControl fullWidth>
                             <Select variant='outlined'
                                     sx={{
@@ -62,8 +77,8 @@ const Source = ({formik}) => {
                     </Card>
                 </Card>
             </AccordionDetails>
-        </Accordion>
+        </CustomAccordion>
     )
 }
 
-export default Source
+export default SubjectForm
