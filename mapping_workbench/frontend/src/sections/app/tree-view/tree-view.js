@@ -22,7 +22,7 @@ const TreeView = (props) => {
 
     const getTheTree = () => {
         setState(e => ({...e, loading: true, error: false}))
-        sectionApi.getItemsTree()
+        sectionApi.getItemsTree(false)
             .then(res => setState(e => ({...e, items: res, loading: false})))
             .catch(err => {
                 setState(e => ({...e, error: true}))
