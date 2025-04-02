@@ -1,29 +1,32 @@
-import AddIcon from '@mui/icons-material/Add';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormGroup from '@mui/material/FormGroup';
-import MenuItem from '@mui/material/MenuItem';
-import Popover from '@mui/material/Popover';
-import Stack from '@mui/material/Stack';
-import Switch from '@mui/material/Switch';
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
-import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Unstable_Grid2';
-import {useFormik} from 'formik';
 import {useState} from 'react';
 import * as Yup from 'yup';
+import {useFormik} from 'formik';
+
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import AddIcon from '@mui/icons-material/Add';
+
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+import Card from '@mui/material/Card';
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import Switch from '@mui/material/Switch';
+import Popover from '@mui/material/Popover';
+import MenuItem from '@mui/material/MenuItem';
+import FormGroup from '@mui/material/FormGroup';
+import Grid from '@mui/material/Unstable_Grid2';
+import Typography from '@mui/material/Typography';
+import FormControlLabel from '@mui/material/FormControlLabel';
+
 import {fieldsRegistryApi as treeViewApi} from '../../../api/fields-registry';
 import {genericTripleMapFragmentsApi as sectionApi} from '../../../api/triple-map-fragments/generic';
 import CodeMirrorDefault from '../../../components/app/form/codeMirrorDefault';
 import {useDialog} from '../../../hooks/use-dialog';
 import {usePageView} from '../../../hooks/use-page-view';
-import TreeView from '../tree-view/tree-view';
 import PredicateForm from '../triple-map-fragments/predicate-form';
 import SourceForm from '../triple-map-fragments/source-form';
 import SubjectForm from '../triple-map-fragments/subject-form';
+import TreeView from '../triple-map-fragments/tree-view-form';
 import TripleMapForm from '../triple-map-fragments/triple-map-form';
 import {FileUploader} from './file-uploader';
 
@@ -31,6 +34,7 @@ const BuildForm = () => {
     const uploadDialog = useDialog();
 
     const [addAnchor, setAddAnchor] = useState(null)
+    const [wcmStatus, setWcmStatus] = useState(true)
 
     usePageView();
 
@@ -138,10 +142,12 @@ const BuildForm = () => {
                             <Typography sx={{m: 3}}>Conceptual Mapping Browser</Typography>
                             <FormGroup>
                                 <FormControlLabel sx={{flexDirection: 'row-reverse', justifyContent: 'end'}}
-                                                  control={<Switch defaultChecked/>}
+                                                  control={<Switch checked={wcmStatus}
+                                                                   onChange={e => setWcmStatus(e.target.checked)}/>}
                                                   label="Elements with Conceptual Mappings"/>
                             </FormGroup>
-                            <TreeView sectionApi={treeViewApi}/>
+                            <TreeView sectionApi={treeViewApi}
+                                      wcm={wcmStatus}/>
                         </Card>
                     </Grid>
                 </Grid>
