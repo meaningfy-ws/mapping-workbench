@@ -465,7 +465,7 @@ export const EditForm = (props) => {
             </>
             }
             {currentTab === 'tabBuild' && <>
-                <BuildForm/>
+                <BuildForm rdfContent={rdfResultContent}/>
             </>
             }
 

@@ -30,7 +30,7 @@ import TreeView from '../triple-map-fragments/tree-view-form';
 import TripleMapForm from '../triple-map-fragments/triple-map-form';
 import {FileUploader} from './file-uploader';
 
-const BuildForm = () => {
+const BuildForm = ({rdfContent}) => {
     const uploadDialog = useDialog();
 
     const [addAnchor, setAddAnchor] = useState(null)
@@ -132,7 +132,13 @@ const BuildForm = () => {
                                     </Stack>
                                 </Card>
                             </Stack>}
-                            {selectedFormTab === 'code' && <CodeMirrorDefault/>}
+                            {selectedFormTab === 'code' && <CodeMirrorDefault value={rdfContent}
+                                                                              style={{
+                                                                                  resize: 'vertical',
+                                                                                  overflow: 'auto',
+                                                                                  height: 600
+                                                                              }}
+                            lang={'TTL'}/>}
                         </Card>
                     </Grid>
                     <Grid item
