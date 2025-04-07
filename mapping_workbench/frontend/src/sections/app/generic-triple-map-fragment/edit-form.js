@@ -465,7 +465,7 @@ export const EditForm = (props) => {
             </>
             }
             {currentTab === 'tabBuild' && <>
-                <BuildForm rdfContent={rdfResultContent}/>
+                <BuildForm rdfContent={item.triple_map_content}/>
             </>
             }
 

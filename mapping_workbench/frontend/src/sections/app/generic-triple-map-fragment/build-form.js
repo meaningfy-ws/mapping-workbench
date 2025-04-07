@@ -28,11 +28,15 @@ import SourceForm from '../triple-map-fragments/source-form';
 import SubjectForm from '../triple-map-fragments/subject-form';
 import TreeView from '../triple-map-fragments/tree-view-form';
 import TripleMapForm from '../triple-map-fragments/triple-map-form';
+import comunicaQuery from './comunica-query';
 import {FileUploader} from './file-uploader';
+import rdfToJson from './rdf-to-json';
+import rdflibConverter from './rdflib-converter';
 
 const BuildForm = ({rdfContent}) => {
     const uploadDialog = useDialog();
 
+    rdfToJson(rdfContent)
     const [addAnchor, setAddAnchor] = useState(null)
     const [wcmStatus, setWcmStatus] = useState(true)
 
