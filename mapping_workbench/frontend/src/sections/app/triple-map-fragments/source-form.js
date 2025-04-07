@@ -11,13 +11,11 @@ import FormControl from '@mui/material/FormControl';
 import AccordionDetails from "@mui/material/AccordionDetails";
 
 import CustomAccordion from './custom-accordion';
-
 import CustomAccordionSummary from './custom-accordion-summary';
 
 const SourceForm = (props) => {
     const {file, iterator, type} = props
 
-    console.log(file, iterator, type)
 
     const onDelete = (e) => {
         e.stopPropagation()

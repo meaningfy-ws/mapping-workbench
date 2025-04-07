@@ -29,7 +29,7 @@ import SubjectForm from '../triple-map-fragments/subject-form';
 import TreeView from '../triple-map-fragments/tree-view-form';
 import TripleMapForm from '../triple-map-fragments/triple-map-form';
 import {FileUploader} from './file-uploader';
-import {getSource, getTripleMap} from './rdflib-converter';
+import {getSource, getSubject, getTripleMap} from './rdflib-converter';
 
 const BuildForm = ({rdfContent}) => {
     const uploadDialog = useDialog();
@@ -53,8 +53,13 @@ const BuildForm = ({rdfContent}) => {
 
 
     useEffect(() => {
-        formik.values.selectedTripleMap && getSource(rdfContent, formik.values.selectedTripleMap)
-            .then(res => formik.setFieldValue('sources', res))
+        if (formik.values.selectedTripleMap) {
+            getSource(rdfContent, formik.values.selectedTripleMap)
+                .then(res => formik.setFieldValue('sources', res))
+            getSubject(rdfContent, formik.values.selectedTripleMap)
+                .then(res => console.log('res',res))
+                .catch(err => console.error(err))
+        }
     }, [formik.values.selectedTripleMap])
 
 
