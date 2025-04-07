@@ -34,14 +34,28 @@ import {getSource, getTripleMap} from './rdflib-converter';
 const BuildForm = ({rdfContent}) => {
     const uploadDialog = useDialog();
 
+    const formik = useFormik({
+        initialValues: {
+            tripleMaps: [],
+            selectedTripleMap: "",
+            sources: []
+        },
+    })
+
+
     useEffect(() => {
         getTripleMap(rdfContent)
             .then(res => {
                 formik.setFieldValue('tripleMaps', res)
                 formik.setFieldValue('selectedTripleMap', res[0])
-                getSource(rdfContent, res[0])
             })
     }, []);
+
+
+    useEffect(() => {
+        formik.values.selectedTripleMap && getSource(rdfContent, formik.values.selectedTripleMap)
+            .then(res => formik.setFieldValue('sources', res))
+    }, [formik.values.selectedTripleMap])
 
 
     const [addAnchor, setAddAnchor] = useState(null)
@@ -64,13 +78,6 @@ const BuildForm = ({rdfContent}) => {
     const [selectedFormTab, setSelectedFormTab] = useState('form')
     // const technicalMappingsTabs = [{label: 'TM1', value: 'tm1'}]
 
-
-    const formik = useFormik({
-        initialValues: {
-            tripleMaps: [],
-            selectedTripleMap: ""
-        },
-    })
 
     const handleAdd = () => {}
 
@@ -112,7 +119,9 @@ const BuildForm = ({rdfContent}) => {
                                 <Card sx={{p: 1, border: "1px solid #E4E7EC"}}>
                                     <TripleMapForm formik={formik}
                                                    rdfContent={rdfContent}></TripleMapForm>
-                                    <SourceForm formik={formik}></SourceForm>
+                                    {formik.values.sources.map(source =>
+                                        <SourceForm key={source.iterator}
+                                                    {...source}/>)}
                                     <SubjectForm formik={formik}/>
                                     <PredicateForm formik={formik}/>
                                     <Stack alignItems='end'>

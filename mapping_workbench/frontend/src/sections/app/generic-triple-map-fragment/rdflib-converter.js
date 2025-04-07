@@ -1,7 +1,6 @@
 const $rdf = require('rdflib');
 
-export const getSource = (rdfData, uri) => {
-    let tmap = []
+export const getSource = async (rdfData, uri) => {
     const store = $rdf.graph();
     const baseURI = 'https://example.org/'
     const contentType = 'text/turtle';
@@ -19,6 +18,8 @@ export const getSource = (rdfData, uri) => {
             rml:referenceFormulation ?type .
         }`
 
+    console.log(queryStr)
+
 
     const queryEngine = $rdf.SPARQLToQuery(queryStr, false, store);
 
@@ -29,23 +30,42 @@ export const getSource = (rdfData, uri) => {
         console.error(err)
     }
 
-    store.query(queryEngine, (bindings) => {
-        return bindings
-    });
+
+    const queryToArray = (store, query) => {
+        return new Promise((resolve, reject) => {
+            const results = [];
+
+            try {
+                store.query(query, result => {
+                    results.push({
+                        file: result['?file'].value,
+                        type: result['?type'].value,
+                        iterator: result['?iterator'].value
+                    });
+                }, null, () => {
+                    resolve(results); // Called after the query completes
+                });
+            } catch (err) {
+                reject(err);
+            }
+        });
+    }
+
+
+    return queryToArray(store, queryEngine)
 }
 
 
 export const getTripleMap = async (rdfData) => {
-    let tmap = []
     const store = $rdf.graph();
     const baseURI = 'https://example.org/'
     const contentType = 'text/turtle';
 
     const queryStr =
         `PREFIX rr: <http://www.w3.org/ns/r2rml#>
-        SELECT * where {
-     ?newTMap a rr:TriplesMap .
- }`
+            SELECT * where {
+                ?newTMap a rr:TriplesMap .
+            }`
 
 
     const queryEngine = $rdf.SPARQLToQuery(queryStr, false, store);
