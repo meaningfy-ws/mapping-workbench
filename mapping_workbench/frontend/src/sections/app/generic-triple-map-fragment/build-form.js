@@ -36,7 +36,7 @@ import rdflibConverter from './rdflib-converter';
 const BuildForm = ({rdfContent}) => {
     const uploadDialog = useDialog();
 
-    rdfToJson(rdfContent)
+    rdflibConverter(rdfContent)
     const [addAnchor, setAddAnchor] = useState(null)
     const [wcmStatus, setWcmStatus] = useState(true)
 
@@ -103,7 +103,8 @@ const BuildForm = ({rdfContent}) => {
                             {/*</Tabs>*/}
                             {selectedFormTab === 'form' && <Stack sx={{p: 1}}>
                                 <Card sx={{p: 1, border: "1px solid #E4E7EC"}}>
-                                    <TripleMapForm formik={formik}></TripleMapForm>
+                                    <TripleMapForm formik={formik}
+                                                   rdfContent={rdfContent}></TripleMapForm>
                                     <SourceForm formik={formik}></SourceForm>
                                     <SubjectForm formik={formik}/>
                                     <PredicateForm formik={formik}/>
