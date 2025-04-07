@@ -1,6 +1,6 @@
 const $rdf = require('rdflib');
 
-export const getSource = (rdfData,uri) => {
+export const getSource = (rdfData, uri) => {
     let tmap = []
     const store = $rdf.graph();
     const baseURI = 'https://example.org/'
@@ -35,7 +35,7 @@ export const getSource = (rdfData,uri) => {
 }
 
 
-export const getTripleMap = (rdfData) => {
+export const getTripleMap = async (rdfData) => {
     let tmap = []
     const store = $rdf.graph();
     const baseURI = 'https://example.org/'
@@ -50,6 +50,24 @@ export const getTripleMap = (rdfData) => {
 
     const queryEngine = $rdf.SPARQLToQuery(queryStr, false, store);
 
+    const queryToArray = (store, query) => {
+        return new Promise((resolve, reject) => {
+            const results = [];
+
+            try {
+                store.query(query, result => {
+                    const value = {...result['?newTMap']}.value
+                    const tedm = 'http://data.europa.eu/a4g/mapping/sf-rml/'
+                    const replaceValue = value.replace(tedm, 'tedm:')
+                    results.push(replaceValue);
+                }, null, () => {
+                    resolve(results); // Called after the query completes
+                });
+            } catch (err) {
+                reject(err);
+            }
+        });
+    }
 
     try {
         $rdf.parse(rdfData, store, baseURI, contentType);
@@ -57,14 +75,8 @@ export const getTripleMap = (rdfData) => {
         console.error(err)
     }
 
-    store.query(queryEngine, (bindings) => {
-        const value = {...bindings['?newTMap']}.value
-        const tedm = 'http://data.europa.eu/a4g/mapping/sf-rml/'
-        const replaceValue = value.replace(tedm, 'tedm:')
-        tmap.push(replaceValue); // Output the results
-        // tmap.push(bindings.value)
-    });
-    return tmap
+    return queryToArray(store, queryEngine)
+
 }
 
 

@@ -1,20 +1,14 @@
-import {useEffect, useState} from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import AccordionDetails from "@mui/material/AccordionDetails";
-import {getTripleMap} from '../generic-triple-map-fragment/rdflib-converter';
 
 import CustomAccordion from './custom-accordion';
 import CustomAccordionSummary from './custom-accordion-summary';
 
-const TripleMapForm = ({formik, rdfContent}) => {
-    const [tmap, setTmap] = useState([])
-    useEffect(() => {
-        setTmap(getTripleMap(rdfContent))
-    }, []);
+const TripleMapForm = ({formik,}) => {
 
-    console.log(tmap)
+
 
     return (
         <CustomAccordion>
@@ -23,11 +17,13 @@ const TripleMapForm = ({formik, rdfContent}) => {
             </CustomAccordionSummary>
             <AccordionDetails>
                 <Autocomplete
+                    id='triple_map'
+                    fullWidth
                     disablePortal
-                    options={tmap}
-                    sx={{width: 300}}
+                    options={formik.values.tripleMaps}
+                    value={formik.values.selectedTripleMap}
+                    onChange={(e,v) => formik.setFieldValue('selectedTripleMap',v)}
                     renderInput={(params) => <TextField
-                        fullWidth
                         {...params}
                         label="URI"/>}
                 />

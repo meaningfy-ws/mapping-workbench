@@ -29,14 +29,20 @@ import SubjectForm from '../triple-map-fragments/subject-form';
 import TreeView from '../triple-map-fragments/tree-view-form';
 import TripleMapForm from '../triple-map-fragments/triple-map-form';
 import {FileUploader} from './file-uploader';
-import {getSource} from './rdflib-converter';
+import {getSource, getTripleMap} from './rdflib-converter';
 
 const BuildForm = ({rdfContent}) => {
     const uploadDialog = useDialog();
 
     useEffect(() => {
-        getSource(rdfContent,'tedm:MG-SubcontractTerm-foreseesContractSpecificTerm-Lot_ND-SubcontractingObligation')
+        getTripleMap(rdfContent)
+            .then(res => {
+                formik.setFieldValue('tripleMaps', res)
+                formik.setFieldValue('selectedTripleMap', res[0])
+                getSource(rdfContent, res[0])
+            })
     }, []);
+
 
     const [addAnchor, setAddAnchor] = useState(null)
     const [wcmStatus, setWcmStatus] = useState(true)
@@ -61,8 +67,8 @@ const BuildForm = ({rdfContent}) => {
 
     const formik = useFormik({
         initialValues: {
-            github_repository_url: "",
-            branch_or_tag_name: ""
+            tripleMaps: [],
+            selectedTripleMap: ""
         },
     })
 
@@ -144,7 +150,7 @@ const BuildForm = ({rdfContent}) => {
                                                                                   overflow: 'auto',
                                                                                   height: 600
                                                                               }}
-                            lang={'TTL'}/>}
+                                                                              lang={'TTL'}/>}
                         </Card>
                     </Grid>
                     <Grid item
