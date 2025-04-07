@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
 
@@ -28,15 +28,16 @@ import SourceForm from '../triple-map-fragments/source-form';
 import SubjectForm from '../triple-map-fragments/subject-form';
 import TreeView from '../triple-map-fragments/tree-view-form';
 import TripleMapForm from '../triple-map-fragments/triple-map-form';
-import comunicaQuery from './comunica-query';
 import {FileUploader} from './file-uploader';
-import rdfToJson from './rdf-to-json';
-import rdflibConverter from './rdflib-converter';
+import {getSource} from './rdflib-converter';
 
 const BuildForm = ({rdfContent}) => {
     const uploadDialog = useDialog();
 
-    rdflibConverter(rdfContent)
+    useEffect(() => {
+        getSource(rdfContent,'tedm:MG-SubcontractTerm-foreseesContractSpecificTerm-Lot_ND-SubcontractingObligation')
+    }, []);
+
     const [addAnchor, setAddAnchor] = useState(null)
     const [wcmStatus, setWcmStatus] = useState(true)
 
