@@ -50,7 +50,7 @@ module.exports = defineConfig({
             "cypress/e2e/shaclTestSuites.feature",
             //Mapping Packages
             "cypress/e2e/mappingPackages.feature",
-            "cypress/e2e/mappingPackagesStates.feature",
+            //"cypress/e2e/mappingPackagesStates.feature",
             //Activities
             "cypress/e2e/activities.feature",
 

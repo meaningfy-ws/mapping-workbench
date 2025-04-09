@@ -44,11 +44,12 @@ async def route_clear_project_data(
 async def route_import_package_archive(
         project: PydanticObjectId = Form(...),
         package_type: PackageType = Form(default=DEFAULT_PACKAGE_TYPE),
+        cleanup_project: bool = Form(default=False),
         file: UploadFile = Form(...),
         user: User = Depends(current_active_user)
 ):
     imported_mapping_package: ImportedMappingSuiteResponse = await import_mapping_package_from_archive(
-        file.file.read(), await get_project(project), package_type, False, user
+        file.file.read(), await get_project(project), package_type, cleanup_project, user
     )
 
     return imported_mapping_package
@@ -68,17 +69,23 @@ async def route_task_import_package(
         file: UploadFile = Form(...),
         user: User = Depends(current_active_user)
 ):
-    task_name = f"Importing & Processing Package from {file.filename} archive" \
-        if trigger_package_processing else f"Importing Package from {file.filename} archive"
-
-    task: Task = add_task(
-        tasks.task_import_mapping_package,
-        task_name,
-        None,
-        user.email,
-        True,
-        file.file.read(), await get_project(project), package_type, trigger_package_processing, cleanup_project,
-        user
+    imported_mapping_package: ImportedMappingSuiteResponse = await import_mapping_package_from_archive(
+        file.file.read(), await get_project(project), package_type, cleanup_project, user
     )
 
-    return task.task_metadata
+    return imported_mapping_package
+
+    # task_name = f"Importing & Processing Package from {file.filename} archive" \
+    #     if trigger_package_processing else f"Importing Package from {file.filename} archive"
+    #
+    # task: Task = add_task(
+    #     tasks.task_import_mapping_package,
+    #     task_name,
+    #     None,
+    #     user.email,
+    #     True,
+    #     file.file.read(), await get_project(project), package_type, trigger_package_processing, cleanup_project,
+    #     user
+    # )
+    #
+    # return task.task_metadata

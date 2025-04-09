@@ -17,7 +17,7 @@ import {sessionApi} from '../../../../api/session';
 import {toastError, toastLoad, toastSuccess} from '../../../../components/app-toast';
 import Tooltip from "@mui/material/Tooltip";
 
-export const MappingPackageProcessForm = ({items, sectionApi, showExport}) => {
+export const MappingPackageProcessForm = ({items, sectionApi, showExport, forBulkActions = false}) => {
     const [isProcessing, setIsProcessing] = useState(false);
     const [isExporting, setIsExporting] = useState(false);
 
@@ -31,6 +31,13 @@ export const MappingPackageProcessForm = ({items, sectionApi, showExport}) => {
     if (items.length === 1) {
         item = items[0];
         resources_metadata = item.resources_metadata;
+    } else if (items.length > 1) {
+        resources_metadata = {
+            has_assertions: items.every(item => item.resources_metadata?.has_assertions),
+            has_cm_rules: items.every(item => item.resources_metadata?.has_cm_rules),
+            has_test_data: items.every(item => item.resources_metadata?.has_test_data),
+            has_mappings: items.every(item => item.resources_metadata?.has_mappings)
+        }
     }
 
     const is_test_data_transformable = resources_metadata.has_test_data && resources_metadata.has_mappings;
@@ -50,7 +57,6 @@ export const MappingPackageProcessForm = ({items, sectionApi, showExport}) => {
         initialValues: initialValues,
         validationSchema: Yup.object({}),
         onSubmit: async (values, helpers) => {
-            setIsProcessing(true)
             const tasks_to_run = [];
             if (values['transform_test_data']) {
                 tasks_to_run.push('transform_test_data');
@@ -72,28 +78,27 @@ export const MappingPackageProcessForm = ({items, sectionApi, showExport}) => {
                 }
             }
             {
-                items.forEach(item => {
-                        const data = {
-                            package_id: item._id,
-                            project_id: sessionApi.getSessionProject(),
-                            use_only_package_state: values['use_only_package_state'],
-                            include_package_assertions: values['include_package_assertions']
-                        }
-                        if (tasks_to_run.length > 0) {
-                            data.tasks_to_run = tasks_to_run.join(',');
-                        }
-                        const toastId = toastLoad(`Processing "${item.identifier}" ... This may take a while. Please, be patient.`)
-                        sectionApi.processPackage(data)
-                            .then(res => {
-                                    return toastSuccess(`${res.task_name} successfully started.`, toastId)
-                                }
-                            )
-                            .catch(err => {
-                                return toastError(err, toastId)
-                            })
-                            .finally(() => setIsProcessing(false))
+                for (const item of items) {
+                    const data = {
+                        package_id: item._id,
+                        project_id: sessionApi.getSessionProject(),
+                        use_only_package_state: values['use_only_package_state'],
+                        include_package_assertions: values['include_package_assertions']
                     }
-                )
+                    if (tasks_to_run.length > 0) {
+                        data.tasks_to_run = tasks_to_run.join(',');
+                    }
+                    setIsProcessing(true);
+                    const toastId = toastLoad(`Processing "${item.identifier}" ... This may take a while. Please, be patient.`)
+                    try {
+                        const res = await sectionApi.processPackage(data);
+                        toastSuccess(`${res.task_name} successfully started.`, toastId);
+                    } catch (err) {
+                        toastError(err, toastId);
+                    } finally {
+                        setIsProcessing(false);
+                    }
+                }
             }
         }
     });
@@ -135,7 +140,7 @@ export const MappingPackageProcessForm = ({items, sectionApi, showExport}) => {
                 </Alert>}
                 <form onSubmit={formik.handleSubmit}>
                     <Stack
-                        direction={{
+                        direction={forBulkActions ? "column" : {
                             xs: 'column',
                             sm: 'row'
                         }}
@@ -153,6 +158,7 @@ export const MappingPackageProcessForm = ({items, sectionApi, showExport}) => {
                             {!isProcessing && "Process"}
                             {isProcessing && "Processing ..."}
                         </Button>
+                        {forBulkActions && <Divider/>}
                         <Box>
                             <FormControlLabel
                                 sx={{

@@ -49,11 +49,19 @@ export const ListTableMappingPackages = (props) => {
         isHovered,
         itemFilteredMappingPackages
     } = props;
+
     const [mappingPackages, setMappingPackages] = useState(itemFilteredMappingPackages);
     const [projectMappingPackages, setProjectMappingPackages] = useState(initProjectMappingPackages ?? []);
     const [tempMappingPackages, setTempMappingPackages] = useState(itemFilteredMappingPackages);
-
     const mappingPackagesDialog = useDialog();
+
+    useEffect(() => {
+        setProjectMappingPackages(initProjectMappingPackages);
+    }, [initProjectMappingPackages])
+
+    useEffect(() => {
+        setMappingPackages(itemFilteredMappingPackages);
+    }, [itemFilteredMappingPackages])
 
     const handleMappingPackagesUpdate = () => {
         const values = {}

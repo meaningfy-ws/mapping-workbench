@@ -34,8 +34,9 @@ export const PackageImporter = ({onClose, open = false, sectionApi}) => {
         setFiles([]);
     }, [open]);
 
-    const handleUpload = useCallback(() => {
+    const handleUpload = async () => {
         nProgress.start();
+
         const incStep = 100 / files.length;
         let formData;
         for (let file of files) {
@@ -46,15 +47,30 @@ export const PackageImporter = ({onClose, open = false, sectionApi}) => {
             formData.append("cleanup_project", cleanupProject);
             formData.append("project", sessionApi.getSessionProject());
             const toastId = toastLoad(`Importing "${file.name}" ... `)
-            sectionApi.importPackage(formData)
-                .then(res => toastSuccess(`${res.task_name} successfully started.`, toastId))
-                .catch(err => toastError(`Importing "${file.name}" failed: ${err.message}.`, toastId))
-
+            try {
+                const res = await sectionApi.importPackage(formData);
+                toastSuccess(`"${res?.mapping_package?.title}" successfully imported.`, toastId);
+                if (triggerPackageProcessing && res?.mapping_package && res.mapping_package?._id) {
+                    const procToastId = toastLoad(`Processing "${res.mapping_package.identifier}" ... This may take a while. Please, be patient.`)
+                    try {
+                        const procData = {
+                            package_id: res.mapping_package._id,
+                            project_id: sessionApi.getSessionProject()
+                        }
+                        const procRes = await sectionApi.processPackage(procData);
+                        toastSuccess(`${procRes.task_name} successfully started.`, procToastId);
+                    } catch (err) {
+                        toastError(err, procToastId);
+                    }
+                }
+            } catch (err) {
+                toastError(`Importing "${file.name}" failed: ${err.message}.`, toastId);
+            }
             nProgress.inc(incStep);
         }
         nProgress.done();
         onClose();
-    }, [files])
+    }
 
     const handleDrop = useCallback((newFiles) => {
         setFiles((prevFiles) => {

@@ -27,7 +27,7 @@ router = APIRouter(
 )
 async def route_task_process_package(
         package_id: PydanticObjectId = Form(...),
-        use_only_package_state: bool = Form(...),
+        use_only_package_state: bool = Form(default=False),
         include_package_assertions: bool = Form(default=True),
         tasks_to_run: Optional[str] = Form(default=None),
         user: User = Depends(current_active_user)
