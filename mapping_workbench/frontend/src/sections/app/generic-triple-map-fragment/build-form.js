@@ -51,7 +51,6 @@ const BuildForm = ({rdfContent}) => {
             })
     }, []);
 
-
     useEffect(() => {
         if (formik.values.selectedTripleMap) {
             getSource(rdfContent, formik.values.selectedTripleMap)

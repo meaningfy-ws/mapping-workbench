@@ -16,15 +16,14 @@ import CustomAccordionSummary from './custom-accordion-summary';
 const SourceForm = (props) => {
     const {file, iterator, type} = props
 
-
     const onDelete = (e) => {
         e.stopPropagation()
         console.log(e)
     }
 
     const currentType = (type) => {
-        if (type.endsWith('ql#Xpath'))
-            return 'ql#Xpath'
+        if (type.endsWith('ql#XPath'))
+            return 'ql#XPath'
         if (type.endsWith('ql#JSONPath'))
             return 'ql#JSONPath'
         return 'ql#CSV'
