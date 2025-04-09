@@ -42,7 +42,7 @@ const TablePagination = ({
                     <Typography sx={{
                         fontSize: 14,
                         mb: .1
-                    }}>{`${startPagedItems}-${endPagedItems > count ? count : endPagedItems}`}</Typography>}
+                    }}>{`Showing ${startPagedItems}-${endPagedItems > count ? count : endPagedItems} of ${count} items`}</Typography>}
                 <Tooltip title='rows per page'>
                     <Button endIcon={<KeyboardArrowDownIcon/>}
                             onClick={e => setRppAnchor(e.target)}>
