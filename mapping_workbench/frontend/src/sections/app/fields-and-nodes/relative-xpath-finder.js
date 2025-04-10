@@ -37,7 +37,6 @@ const RelativeXPath = ({xmlContent, xpath, absolute_xpath, formik}) => {
             }
             node = node.parentNode;
         }
-        parts.shift()
         return parts.join('/');
     }
 
@@ -56,33 +55,27 @@ const RelativeXPath = ({xmlContent, xpath, absolute_xpath, formik}) => {
         }
 
         try {
-            // console.log(xmlDoc.evaluate(xpathExpr,xmlDoc,nsResolver,XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null))
-
             const contextResult = xmlDoc.evaluate(contextNodeExpr, xmlDoc, nsResolver, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
             const contextNode = contextResult.singleNodeValue;
+
             if (contextNode) {
                 const result = xmlDoc.evaluate(xpathExpr, xmlDoc, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+
                 if (result.snapshotLength > 0) {
                     for (let i = 0; i < result.snapshotLength; i++) {
                         const node = result.snapshotItem(i);
-                        // console.log(node)
                         const relativeXPath = getRelativeXPath(node, contextNode);
-                        // console.log(`Node found: ${node.textContent}`);
-                        // console.log(`Relative XPath: ${relativeXPath}`);
                         formik.setFieldValue('relative_xpath', relativeXPath)
 
                     }
                 } else {
                     formik.setErrors({relative_xpath: 'No nodes found.'})
-                    // console.log('No nodes found.');
                 }
             } else {
                 formik.setErrors({relative_xpath: 'Context node not found.'})
-                // console.log('Context node not found.');
             }
         } catch (err) {
             formik.setErrors({relative_xpath: 'Unable to process xpath.'})
-            // console.error(err)
         }
     }
 

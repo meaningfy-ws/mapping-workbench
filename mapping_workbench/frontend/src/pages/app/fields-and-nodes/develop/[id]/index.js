@@ -34,7 +34,6 @@ const SECTION_TITLE = 'Fields Develop'
 
 const Page = () => {
     const router = useRouter()
-
     const [files, setFiles] = useState([])
     const [selectedFile, setSelectedFile] = useState('')
     const [fileError, setFileError] = useState('')
@@ -58,7 +57,12 @@ const Page = () => {
                 .catch(err => console.error(err))
 
             fieldsRegistry.getXpathsList()
-                .then(res => setXPaths(res))
+                .then(res => {
+                    if (res.length > 0) {
+                        res.sort((a, b) => a.absolute_xpath.localeCompare(b.absolute_xpath));
+                        setXPaths(res);
+                    }
+                })
                 .catch(err => console.error(err))
         }
     }, [id])
@@ -136,7 +140,7 @@ const Page = () => {
             const {id, label, parent_node, absolute_xpath, relative_xpath} = values
             fieldsRegistry.addElement({id, label, parent_node_id: parent_node.id, absolute_xpath, relative_xpath})
                 .then(res => {
-                    toastSuccess("Element Created", toastId);
+                    toastSuccess("Element Saved", toastId);
                     helpers.setStatus({success: true});
                 })
                 .catch(err => {
