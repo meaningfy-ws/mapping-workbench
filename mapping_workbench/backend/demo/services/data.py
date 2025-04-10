@@ -9,6 +9,7 @@ from mapping_workbench.backend.demo.resources import PROJECT1_PATH, PROJECT2_PAT
     ONTOLOGY_FILE_NAME
 from mapping_workbench.backend.demo.services.clear import drop_collections_except
 from mapping_workbench.backend.demo.services.notification import send_demo_reset_notifications
+from mapping_workbench.backend.fields_registry.models.pool import PoolSDKField, PoolSDKFieldsVersionedView
 from mapping_workbench.backend.ontology.models.namespace import NamespaceCustom
 from mapping_workbench.backend.ontology.services.terms import discover_and_save_terms
 from mapping_workbench.backend.ontology_suite.entrypoints.api.routes import ontology_file_repository
@@ -23,8 +24,8 @@ from mapping_workbench.backend.user.models.user import User
 
 GITHUB_EFORMS_SDK_FIELDS_REPO_URL = "https://github.com/OP-TED/eForms-SDK"
 
-PROJECT1_TITLE = "DEMO Project 1"
-PROJECT2_TITLE = "DEMO Project 2"
+PROJECT1_TITLE = "Empty Project"
+PROJECT2_TITLE = "Loaded Project"
 
 
 async def reset_demo_data(
@@ -37,6 +38,8 @@ async def reset_demo_data(
     collections_to_keep = [
         User.get_collection_name(),
         NamespaceCustom.get_collection_name(),
+        PoolSDKField.get_collection_name(),
+        PoolSDKFieldsVersionedView.get_collection_name(),
         TrackedUser.get_collection_name(),
         TrackedActivity.get_collection_name()
     ]  # Collections to keep

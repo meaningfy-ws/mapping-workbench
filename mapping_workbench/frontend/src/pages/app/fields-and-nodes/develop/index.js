@@ -40,15 +40,23 @@ const Page = () => {
     const [xmlContent, setXmlContent] = useState('')
     const [fileContent, setFileContent] = useState()
 
+    const retrieveStructuralElements = () => {
+        fieldsRegistry.getXpathsList()
+            .then(res => {
+                if (res.length > 0) {
+                    res.sort((a, b) => a.absolute_xpath.localeCompare(b.absolute_xpath));
+                    setXPaths(res);
+                }
+            })
+            .catch(err => console.error(err))
+    }
     useEffect(() => {
         const project = sessionApi.getSessionProject()
         tripleMapFragments.getTripleMapFragmentTree({project})
             .then(res => setFiles(res.test_data_suites))
             .catch(err => console.error(err))
 
-        fieldsRegistry.getXpathsList()
-            .then(res => setXPaths(res))
-            .catch(err => console.error(err))
+        retrieveStructuralElements();
     }, [])
 
     useEffect(() => {
@@ -124,7 +132,8 @@ const Page = () => {
             const {id, label, parent_node, absolute_xpath, relative_xpath} = values
             fieldsRegistry.addElement({id, label, parent_node_id: parent_node.id, absolute_xpath, relative_xpath})
                 .then(res => {
-                    toastSuccess("Element Created", toastId);
+                    retrieveStructuralElements();
+                    toastSuccess("Element Saved", toastId);
                     helpers.setStatus({success: true});
                 })
                 .catch(err => {

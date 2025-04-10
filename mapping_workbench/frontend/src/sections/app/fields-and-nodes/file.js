@@ -179,7 +179,7 @@ const File = ({xmlContent, fileContent, fileError, relativeXPath, xmlNodes, xPat
         if (fileContent && xmlContent && !fileError) {
             setXPathsInFile(executeXPaths(xmlContent, xPaths).map(e => e.resolved_xpath).filter(e => !['/*', ''].includes(e)))
         }
-    }, [xmlContent, fileContent, fileError])
+    }, [xmlContent, fileContent, fileError, xPaths])
 
     return (
         <>
