@@ -172,6 +172,14 @@ const Page = () => {
                         sort={itemsSearch.state.sort}
                     />
                 </TableLoadWrapper>
+                {!itemsStore.items.length && <Stack alignItems='center'>
+                    <Button startIcon={<AddIcon/>}
+                            variant='contained'
+                            href={`${paths.app.conceptual_mapping_rules.develop.index}/?add=1`}
+                            component={RouterLink}>
+                        Create Conceptual Rule
+                    </Button>
+                </Stack>}
                 <Dialog id='shacl_generate_dialog'
                         open={generateSHACLDialog.open}
                         onClose={generateSHACLDialog.handleClose}
@@ -220,6 +228,7 @@ const Page = () => {
                     </form>
                 </Dialog>
             </Stack>
+
         </>
     );
 };
