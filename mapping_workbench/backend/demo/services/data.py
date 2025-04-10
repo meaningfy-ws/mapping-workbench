@@ -23,8 +23,8 @@ from mapping_workbench.backend.user.models.user import User
 
 GITHUB_EFORMS_SDK_FIELDS_REPO_URL = "https://github.com/OP-TED/eForms-SDK"
 
-PROJECT1_TITLE = "DEMO Project 1"
-PROJECT2_TITLE = "DEMO Project 2"
+PROJECT1_TITLE = "Empty Project"
+PROJECT2_TITLE = "Loaded Project"
 
 
 async def reset_demo_data(
