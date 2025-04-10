@@ -1,3 +1,4 @@
+import {useRouter} from 'next/router';
 import {useEffect, useState} from 'react';
 
 import AddIcon from '@mui/icons-material/Add';
@@ -32,12 +33,17 @@ const SEARCH_COLUMNS = [
 export const Page = () => {
     const [state, setState] = useState({})
     const [ontologyFragments, setOntologyFragments] = useState([])
+    const router = useRouter()
 
     const [itemsStore, setItemsStore] = useState({
         items: [],
         itemsCount: 0,
         load: true
     });
+
+    useEffect(() => {
+        router.query.add === '1' && handleEdit()
+    }, [router.query.add])
 
 
     useEffect(() => {

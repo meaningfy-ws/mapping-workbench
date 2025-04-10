@@ -109,7 +109,7 @@ const Page = () => {
                             id="src_export_button"
                             startIcon={<UploadIcon/>}
                         >
-                            Export SRC
+                            Export Sources
                         </Button>
                         <Button
                             onClick={importDialog.handleOpen}
