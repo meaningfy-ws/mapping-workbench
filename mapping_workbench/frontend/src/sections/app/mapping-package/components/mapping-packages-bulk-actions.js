@@ -76,8 +76,11 @@ export const MappingPackagesBulkActions = (props) => {
                 <Typography variant="h6">
                     Mapping Packages Bulk Actions
                 </Typography>
-                <MappingPackageProcessForm sectionApi={sectionApi}
-                                           items={items}/>
+                <MappingPackageProcessForm
+                    sectionApi={sectionApi}
+                    items={items}
+                    forBulkActions={true}
+                />
                 <LoadingButton
                     variant="contained"
                     size="small"
