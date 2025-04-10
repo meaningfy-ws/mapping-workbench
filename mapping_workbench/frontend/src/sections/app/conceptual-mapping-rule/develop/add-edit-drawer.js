@@ -46,6 +46,7 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
 
     }
 
+
     const updateItem = (requestValues, resetForm) => {
         const toastId = toastLoad('Updating item...')
         requestValues['id'] = item._id;
@@ -97,19 +98,20 @@ const AddEditDrawer = ({open, onClose, item, sectionApi, structuralElements, aft
         enableReinitialize: true
     })
 
-
     useEffect(() => {
         const autocompleteValue = formik.values.autocomplete_cm
         if (formik.values.autocomplete_cm_checked) {
             const cmProperties = autocompleteValue.filter(e => e.type === 'PROPERTY').map(e => e.value).join(' / ')
+            const cmClasses = autocompleteValue.filter(e => e.type === 'CLASS').map(e => e.value).join(' / ')
 
             formik.setFieldValue('target_class_path',
                 autocompleteValue.filter(e => ['DATA_TYPE', 'CLASS'].includes(e.type)).map(e => e.value).join(' / '))
-            formik.setFieldValue('target_property_path', cmProperties.length ? `?this ${cmProperties} ?value` : '')
+            formik.setFieldValue('target_property_path', cmProperties.length ? `?this ${cmProperties} ?value` : cmClasses.length ? `?this a ${cmClasses}` : '')
         }
     }, [formik.values.autocomplete_cm]);
 
     const handleAutocompleteChange = (type, value) => {
+
         const autocompleteValue = type === 'classOrList'
             ? [...formik.values.autocomplete_cm, {type: value.type, value: value.title}]
             : [...formik.values.autocomplete_cm, {type, value}]
