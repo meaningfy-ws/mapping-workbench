@@ -25,6 +25,8 @@ from mapping_workbench.backend.user.models.user import User
 
 
 async def mapping_package_has_assertions(mapping_package) -> bool:
+    if not mapping_package.sparql_test_suites:
+        return False
     for suite_link in mapping_package.sparql_test_suites:
         if (await SPARQLTestFileResource.find(
                 SPARQLTestFileResource.sparql_test_suite == SPARQLTestSuite.link_from_id(suite_link.to_ref().id)
@@ -34,6 +36,8 @@ async def mapping_package_has_assertions(mapping_package) -> bool:
 
 
 async def mapping_package_has_test_data(mapping_package) -> bool:
+    if not mapping_package.test_data_suites:
+        return False
     for suite_link in mapping_package.test_data_suites:
         if (await TestDataFileResource.find(
                 TestDataFileResource.test_data_suite == TestDataSuite.link_from_id(suite_link.to_ref().id)
