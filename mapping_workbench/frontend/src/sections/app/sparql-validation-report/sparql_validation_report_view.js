@@ -1,3 +1,5 @@
+import CircularProgress from '@mui/material/CircularProgress';
+import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Unstable_Grid2';
 
 import FileList from '../mapping-package/state/file-list';
@@ -16,6 +18,8 @@ const SparqlValidationReportView = ({sid, reportTree, validationReport, handleEx
         handleSetTestDataset,
         handleSetTestAndPackage
     } = useFileNavigation(reportTree)
+
+    if (!validationReport) return <Stack alignItems='center'><CircularProgress/></Stack>
 
     return (
         <Grid container

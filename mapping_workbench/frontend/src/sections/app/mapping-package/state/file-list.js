@@ -63,11 +63,11 @@ const FileList = ({
                                       onClick={() => handleFolderChange(item)}>
 
                                 {item.test_data_states?.map(child =>
-                                    <Stack direction='row'
+                                    <Stack key={child.oid}
+                                           direction='row'
                                            alignItems='center'
                                            justifyContent='space-between'>
-                                        <TreeItem key={child.oid}
-                                                  itemId={child.oid}
+                                        <TreeItem itemId={child.oid}
                                                   label={child.title}
                                                   onClick={() => {
                                                       handleFolderChange(item)

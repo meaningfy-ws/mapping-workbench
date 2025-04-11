@@ -1,3 +1,5 @@
+import CircularProgress from '@mui/material/CircularProgress';
+import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Unstable_Grid2';
 
 import FileList from '../mapping-package/state/file-list';
@@ -14,6 +16,8 @@ const XpathValidationReportView = ({sid, reportTree, validationReport, handleExp
         handleSetTestDataset,
         handleSetTestAndPackage
     } = useFileNavigation(reportTree)
+
+    if (!validationReport) return <Stack alignItems='center'><CircularProgress/></Stack>
 
     return (
         <Grid container

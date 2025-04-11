@@ -44,11 +44,10 @@ const tabs = [
 
 const Page = () => {
     const router = useRouter();
-
-    const {id, sid} = router.query;
+    const {id, sid, tab, folder, file} = router.query;
 
     const [item, setItem] = useState({})
-    const [currentTab, setCurrentTab] = useState('details');
+    // const [currentTab, setCurrentTab] = useState(tab ?? 'details');
     const [validationReportTree, setValidationReportTree] = useState([])
     const [validationReport, setValidationReport] = useState({})
 
@@ -99,7 +98,7 @@ const Page = () => {
             .catch(err => console.error(err))
     }
 
-    const handleTabsChange = (event, value) => setCurrentTab(value)
+    const handleTabsChange = (event, value) => router.push(`${paths.app.mapping_packages.states.view(id, sid)}?tab=${value}`)
 
     const handleExport = (setIsExporting) => exportPackage(sectionApi, id, setIsExporting, item)
 
@@ -156,7 +155,7 @@ const Page = () => {
                         scrollButtons="auto"
                         sx={{mt: 3}}
                         textColor="primary"
-                        value={currentTab}
+                        value={tab ?? 'details'}
                         variant="scrollable"
                     >
                         {tabs.map((tab) => (
@@ -170,13 +169,13 @@ const Page = () => {
                         ))}
                     </Tabs>
                 </Stack>
-                {currentTab === 'details' && (
+                {(!tab || tab === 'details') && (
                     <StateDetails sid={sid}
-                                  handleChangeTab={setCurrentTab}
+                                  handleChangeTab={(v) => handleTabsChange(_, v)}
                                   item={item}
                                   validationReport={validationReport}/>
                 )}
-                {currentTab === 'xpath' && (
+                {tab === 'xpath' && (
                     <XpathValidationReportView
                         sid={sid}
                         handleExport={handleExport}
@@ -184,7 +183,7 @@ const Page = () => {
                         reportTree={validationReportTree}
                     />
                 )}
-                {currentTab === 'sparql' && (
+                {tab === 'sparql' && (
                     <SparqlValidationReport
                         sid={sid}
                         handleExport={handleExport}
@@ -192,7 +191,7 @@ const Page = () => {
                         reportTree={validationReportTree}
                     />
                 )}
-                {currentTab === 'shacl' && (
+                {tab === 'shacl' && (
                     <ShaclValidationReport
                         sid={sid}
                         handleExport={handleExport}

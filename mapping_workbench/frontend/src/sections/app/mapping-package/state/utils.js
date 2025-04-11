@@ -326,7 +326,6 @@ export const ResultChip = ({label, color, fontColor, onClick, clickable, childre
 
 export const ResultCell = ({item, handleSelect, setDescription}) => {
     const title = item.title
-    console.log(item)
     return <Stack direction="column"
                   alignItems="center"
                   justifyContent="center"
