@@ -47,7 +47,6 @@ const Page = () => {
     const {id, sid, tab, folder, file} = router.query;
 
     const [item, setItem] = useState({})
-    // const [currentTab, setCurrentTab] = useState(tab ?? 'details');
     const [validationReportTree, setValidationReportTree] = useState([])
     const [validationReport, setValidationReport] = useState({})
 
@@ -102,10 +101,12 @@ const Page = () => {
 
     const handleExport = (setIsExporting) => exportPackage(sectionApi, id, setIsExporting, item)
 
+    console.log(validationReport)
+
     const disabledTabs = {
-        xpath: !validationReport.xpath?.length,
-        sparql: !validationReport.sparql?.length,
-        shacl: !validationReport.shacl?.length,
+        xpath: !validationReportTree || !validationReport.xpath?.length,
+        sparql: !validationReportTree || !validationReport.sparql?.length,
+        shacl: !validationReportTree || !validationReport.shacl?.length,
     }
 
     return (
@@ -171,7 +172,7 @@ const Page = () => {
                 </Stack>
                 {(!tab || tab === 'details') && (
                     <StateDetails sid={sid}
-                                  handleChangeTab={(v) => handleTabsChange(_, v)}
+                                  handleChangeTab={(value, id) => handleTabsChange(id, value)}
                                   item={item}
                                   validationReport={validationReport}/>
                 )}

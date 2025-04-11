@@ -30,6 +30,14 @@ const FileList = ({
     const CollapseIcon = () => <Stack direction='row'><ExpandMoreIcon/><FolderOpenIcon/></Stack>
     const ExpandIcon = () => <Stack direction='row'><ChevronRightIcon/><FolderOpenIcon/></Stack>
 
+    console.log({
+        files,
+        handleFileChange,
+        handleFolderChange,
+        selectedPackageState,
+        selectedTestDataset,
+    })
+
     return (
         <Paper sx={{height: '100%'}}>
             <Scrollbar style={{maxHeight}}>
@@ -47,11 +55,12 @@ const FileList = ({
                             </IconButton>
                         </Tooltip>}
                     </Stack>
-                    <SimpleTreeView slots={{
-                        expandIcon: ExpandIcon,
-                        collapseIcon: CollapseIcon,
-                        endIcon: FileIcon
-                    }}
+                    <SimpleTreeView expandedItems={[selectedPackageState?.oid]}
+                                    slots={{
+                                        expandIcon: ExpandIcon,
+                                        collapseIcon: CollapseIcon,
+                                        endIcon: FileIcon
+                                    }}
                                     selectedItems={selectedTestDataset?.oid ?? selectedPackageState?.oid ?? ''}
                                     sx={{
                                         [`& .${treeItemClasses.iconContainer}`]: {minWidth: 40, color: 'gray'}
