@@ -124,9 +124,10 @@ def update_xpath_assertion_test_data_entry_xpaths(
             test_data_entry.xpaths.append(xpath)
 
 
-def remove_target_attribute_from_xpath(xpath: str) -> str:
-    # Regex to match any attribute at the end of the XPath string
-    return re.sub(r"/@[\w\-]+$", '', xpath)
+def remove_relative_from_xpath(structural_element) -> str:
+    if structural_element.absolute_xpath == structural_element.relative_xpath:
+        return structural_element.absolute_xpath
+    return structural_element.absolute_xpath.removesuffix(structural_element.relative_xpath).rstrip('/')
 
 
 def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingPackageState):
@@ -154,13 +155,12 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
                     xpaths = matching_elements.xpath_assertions
                 except Exception as e:
                     validation_message = str(e)
-
                 cm_xpath_condition = conceptual_mapping_rule_state.xpath_condition
                 meets_xpath_condition: bool = True
                 if cm_xpath_condition:
                     meets_xpath_condition = False
                     if TRY_TO_MEET_XPATH_CONDITION:
-                        node_xpath = remove_target_attribute_from_xpath(cm_xpath)
+                        node_xpath = remove_relative_from_xpath(structural_element)
                         cond_xpath_validator: XPATHValidator = XPATHValidator(
                             xml_content=xml_content,
                             namespaces=xpath_validator.namespaces

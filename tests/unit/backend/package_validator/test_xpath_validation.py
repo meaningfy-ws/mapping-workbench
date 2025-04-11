@@ -37,6 +37,7 @@ async def test_compute_xpath_assertions_for_mapping_package(
     assert xpath_assertion_condition.meets_xpath_condition
 
     xpath_assertion = dummy_test_data_state.validation.xpath.results[1]
+
     assert xpath_assertion.test_data_xpaths
     assert xpath_assertion.is_covered
     assert xpath_assertion.xpath_conditions
