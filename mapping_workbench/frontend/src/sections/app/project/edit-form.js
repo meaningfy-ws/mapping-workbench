@@ -40,11 +40,12 @@ export const EditForm = (props) => {
 
     const sourceSchemaTypes = [
         {
-            value: 'JSON',
-            label: 'XML (eForms)'
+            value: 'XML',
+            label: 'XML'
         },
         {
-            label: <span>XML (XSD)<i>(In development)</i></span>
+            value: 'JSON',
+            label: 'XML (eForms)'
         },
         {
             label: <span>JSON<i>(In development)</i></span>

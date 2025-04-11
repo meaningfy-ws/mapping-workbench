@@ -145,7 +145,13 @@ const Page = () => {
     });
 
     const parentNodeSelect = xmlContent && xPaths ? executeXPaths(xmlContent, xPaths)
-        .filter(e => !["", "/*"].includes(e.resolved_xpath) && formik.values.absolute_xpath.includes(e.resolved_xpath))
+        .filter(e => {
+                console.log(formik.values.absolute_xpath, e.resolved_xpath);
+                return !["", "/*"].includes(e.resolved_xpath)
+                    && formik.values.absolute_xpath.includes(e.resolved_xpath)
+                    && formik.values.absolute_xpath !== "/*/" + e.resolved_xpath
+            }
+        )
         .map(e => ({...e, label: e.absolute_xpath})) : [];
 
     return (
