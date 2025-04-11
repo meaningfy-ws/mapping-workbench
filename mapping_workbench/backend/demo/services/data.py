@@ -17,7 +17,7 @@ from mapping_workbench.backend.ontology_suite.models.ontology_file_resource impo
 from mapping_workbench.backend.package_importer.adapters.eforms.importer import EFormsPackageImporter
 from mapping_workbench.backend.package_importer.services.import_mono_eforms_mapping_suite import \
     import_eforms_mapping_suite_from_file_system
-from mapping_workbench.backend.project.models.entity import Project
+from mapping_workbench.backend.project.models.entity import Project, SourceSchema, SourceSchemaType
 from mapping_workbench.backend.tasks.models.task_response import TaskResponse
 from mapping_workbench.backend.tracking.models.tracking import TrackedUser, TrackedActivity
 from mapping_workbench.backend.user.models.user import User
@@ -94,7 +94,10 @@ async def import_demo_project(
     )
     project = Project(
         title=project_title,
-        created_at=datetime.now(tzlocal())
+        created_at=datetime.now(tzlocal()),
+        source_schema=SourceSchema(
+            type=SourceSchemaType.JSON if has_package else SourceSchemaType.XSD
+        )
     )
     await project.save()
     await import_ontologies_to_project(project.id, user)

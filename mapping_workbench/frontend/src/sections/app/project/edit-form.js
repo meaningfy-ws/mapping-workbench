@@ -40,7 +40,7 @@ export const EditForm = (props) => {
 
     const sourceSchemaTypes = [
         {
-            value: 'XML',
+            value: 'XSD',
             label: 'XML'
         },
         {
