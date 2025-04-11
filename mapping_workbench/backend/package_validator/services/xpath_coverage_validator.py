@@ -127,7 +127,7 @@ def update_xpath_assertion_test_data_entry_xpaths(
 def remove_relative_from_xpath(structural_element) -> str:
     if structural_element.absolute_xpath == structural_element.relative_xpath:
         return structural_element.absolute_xpath
-    return structural_element.absolute_xpath.removesuffix(structural_element.relative_xpath).rstrip('/')
+    return (structural_element.absolute_xpath or "").removesuffix(structural_element.relative_xpath or "").rstrip('/')
 
 
 def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingPackageState):
