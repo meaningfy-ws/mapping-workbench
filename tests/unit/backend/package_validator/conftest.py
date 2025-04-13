@@ -84,6 +84,33 @@ def dummy_cm_rule_states():
                 relative_xpath=""
             ),
             xpath_condition=None
+        ),
+        ConceptualMappingRuleState(
+            source_structural_element=StructuralElementState(
+                id="dummy_id4",
+                sdk_element_id="OPT-030-Procedure-SProvider",
+                absolute_xpath="/*/cac:ContractingParty/cac:Party/cac:ServiceProviderParty/cac:Party/cac:PartyIdentification",
+                relative_xpath="cac:Party/cac:PartyIdentification"
+            ),
+            xpath_condition="cac:Party/cac:PartyIdentification/cbc:ID[@schemeName='organization']/text()='ORG-0007'"
+        ),
+        ConceptualMappingRuleState(
+            source_structural_element=StructuralElementState(
+                id="dummy_id5",
+                sdk_element_id="OPT-NaN",
+                absolute_xpath="/*/cac:ContractingParty/cac:Party/cac:ServiceProviderParty/cac:Party/cac:PartyIdentification-NaN",
+                relative_xpath="cac:PartyIdentification-NaN"
+            ),
+            xpath_condition="cac:Party/cac:PartyIdentification/cbc:ID[@schemeName='organization']/text()='ORG-0007'"
+        ),
+        ConceptualMappingRuleState(
+            source_structural_element=StructuralElementState(
+                id="dummy_id6",
+                sdk_element_id="OPT-030-Cond-False",
+                absolute_xpath="/*/cac:ContractingParty/cac:Party/cac:ServiceProviderParty",
+                relative_xpath="cac:Party/cac:ServiceProviderParty"
+            ),
+            xpath_condition="cac:ContractingActivity/cbc:ActivityTypeCode[@listName='authority-activity']/text()='econ-aff-NaN'"
         )
     ]
 
