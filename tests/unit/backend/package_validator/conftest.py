@@ -120,6 +120,15 @@ def dummy_cm_rule_states():
                 relative_xpath="cbc:BuyerProfileURI"
             ),
             xpath_condition="../cbc:NoticeLanguageCode/text()='ENG'"
+        ),
+        ConceptualMappingRuleState(
+            source_structural_element=StructuralElementState(
+                id="dummy_id8",
+                sdk_element_id="OPT-030-Rel-Cond",
+                absolute_xpath="/*/cac:ContractingParty/cbc:BuyerProfileURI",
+                relative_xpath="cbc:BuyerProfileURI"
+            ),
+            xpath_condition="../cbc:NoticeLanguageCode/text()='RO'"
         )
     ]
 
