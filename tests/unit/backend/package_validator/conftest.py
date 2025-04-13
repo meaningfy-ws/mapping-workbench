@@ -111,6 +111,15 @@ def dummy_cm_rule_states():
                 relative_xpath="cac:Party/cac:ServiceProviderParty"
             ),
             xpath_condition="cac:ContractingActivity/cbc:ActivityTypeCode[@listName='authority-activity']/text()='econ-aff-NaN'"
+        ),
+        ConceptualMappingRuleState(
+            source_structural_element=StructuralElementState(
+                id="dummy_id7",
+                sdk_element_id="OPT-030-Rel-Cond",
+                absolute_xpath="/*/cac:ContractingParty/cbc:BuyerProfileURI",
+                relative_xpath="cbc:BuyerProfileURI"
+            ),
+            xpath_condition="../cbc:NoticeLanguageCode/text()='ENG'"
         )
     ]
 
