@@ -78,7 +78,9 @@ const FileList = ({
                                                 notice={{test_data_suite_id: item.title, test_data_id: child.title}}/>
                                             <Tooltip title='Go to file resources'>
                                                 <IconButton
-                                                    onClick={() => window.open(paths.app.test_data_suites.resource_manager.edit.replace('[id]', files.oid).replace('[fid]', child.oid), "_blank", "noreferrer")}>
+                                                    href={paths.app.test_data_suites.resource_manager.edit.replace('[id]', item.oid).replace('[fid]', child.oid)}
+                                                    target='_blank'
+                                                >
                                                     <OpenInNewIcon/>
                                                 </IconButton>
                                             </Tooltip>

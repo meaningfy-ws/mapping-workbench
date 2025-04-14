@@ -181,7 +181,6 @@ const Page = () => {
                 )}
                 {tab === 'xpath' && (
                     <XpathValidationReportView
-                        id={id}
                         sid={sid}
                         handleExport={handleExport}
                         validationReport={validationReport.xpath}
