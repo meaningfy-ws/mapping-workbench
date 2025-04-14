@@ -7,6 +7,7 @@ class PoolSDKField(Document):
     """
 
     """
+    # type, legalType, privacy.code, codeList.value.id
     element_id: str = None
     sdk_element_id: Optional[str] = None
     absolute_xpath: Optional[str] = None
@@ -22,6 +23,13 @@ class PoolSDKField(Document):
     legal_type: Optional[str] = None
     element_type: Literal["node", "field"] = "field"
     order: Optional[int] = None
+    privacy_code: Optional[str] = None
+    privacy_unpublished_field_id: Optional[str] = None
+    privacy_reason_code_field_id: Optional[str] = None
+    privacy_reason_description_field_id: Optional[str] = None
+    privacy_publication_date_field_id: Optional[str] = None
+    code_list_value_id: Optional[str] = None
+    attributes: Optional[List[str]] = None
 
     class Settings:
         name = "pool_sdk_fields"
@@ -38,4 +46,3 @@ class PoolSDKFieldsVersionedView(Document):
 
     class Settings:
         name = "pool_sdk_fields_versioned_view"
-
