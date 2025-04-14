@@ -14,6 +14,7 @@ const XpathValidationReportTest = ({sid, suiteId, testId, mappingSuiteIdentifier
     const [dataState, setDataState] = useState({load: true, error: false})
 
     useEffect(() => {
+        console.log({sid, suiteId, testId})
         handleValidationReportsTestGet(sid, suiteId, testId)
     }, [testId])
 

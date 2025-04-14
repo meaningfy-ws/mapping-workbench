@@ -11,11 +11,12 @@ import {CoverageFilter, TableLoadWrapper} from "./utils";
 import ResultSummaryCoverage from './result-summary-coverage';
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
-const XpathValidationReportSuite = ({sid, suiteId, mappingSuiteIdentifier, handleSelectFile, handleExport}) => {
+const XpathValidationReportSuite = ({sid, suiteId, mappingSuiteIdentifier, handleFolderAndFileChange, handleExport}) => {
     const [validationReport, setValidationReport] = useState([])
     const [dataState, setDataState] = useState({load: true, error: false})
 
     useEffect(() => {
+        console.log(sid,suiteId)
         handleValidationReportsSuiteGet(sid, suiteId)
     }, [sid, suiteId])
 
@@ -23,6 +24,7 @@ const XpathValidationReportSuite = ({sid, suiteId, mappingSuiteIdentifier, handl
         setDataState({load: true, error: false})
         sectionApi.getXpathReportsSuite(sid, suiteId)
             .then(res => {
+                console.log(res)
                 setValidationReport(res.results.map(e => ({...e, notice_count: e.test_data_xpaths.length})))
                 setDataState(e => ({...e, load: false}))
             })
@@ -74,7 +76,7 @@ const XpathValidationReportSuite = ({sid, suiteId, mappingSuiteIdentifier, handl
                             sort={itemsSearch.state.sort}
                             onFilter={itemsSearch.handleFiltersChange}
                             filters={itemsSearch.state.filters}
-                            handleSelectFile={handleSelectFile}
+                            handleSelectFile={handleFolderAndFileChange}
                             sectionApi={sectionApi}
                         />
                     </TableLoadWrapper>

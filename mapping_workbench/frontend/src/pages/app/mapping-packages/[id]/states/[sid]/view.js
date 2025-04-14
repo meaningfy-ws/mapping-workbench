@@ -44,7 +44,7 @@ const tabs = [
 
 const Page = () => {
     const router = useRouter();
-    const {id, sid, tab, folder, file} = router.query;
+    const {id, sid, tab} = router.query;
 
     const [item, setItem] = useState({})
     const [validationReportTree, setValidationReportTree] = useState([])
@@ -97,11 +97,14 @@ const Page = () => {
             .catch(err => console.error(err))
     }
 
-    const handleTabsChange = (event, value) => router.push(`${paths.app.mapping_packages.states.view(id, sid)}?tab=${value}`)
+    const handleTabsChange = (event, value) =>
+        router.push({
+            pathname: paths.app.mapping_packages.states.view(id, sid),
+            query: {tab: value}
+        })
+
 
     const handleExport = (setIsExporting) => exportPackage(sectionApi, id, setIsExporting, item)
-
-    console.log(validationReport)
 
     const disabledTabs = {
         xpath: !validationReportTree || !validationReport.xpath?.length,
@@ -178,6 +181,7 @@ const Page = () => {
                 )}
                 {tab === 'xpath' && (
                     <XpathValidationReportView
+                        id={id}
                         sid={sid}
                         handleExport={handleExport}
                         validationReport={validationReport.xpath}

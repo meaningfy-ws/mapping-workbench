@@ -20,8 +20,9 @@ import {CopyDetailsButton} from './utils';
 
 const FileList = ({
                       files,
-                      handleFileChange,
-                      handleFolderChange,
+                      // handleFileChange,
+                      // handleFolderChange,
+                      handleFolderAndFileChange,
                       selectedPackageState,
                       selectedTestDataset,
                       maxHeight
@@ -32,8 +33,8 @@ const FileList = ({
 
     console.log({
         files,
-        handleFileChange,
-        handleFolderChange,
+        // handleFileChange,
+        // handleFolderChange,
         selectedPackageState,
         selectedTestDataset,
     })
@@ -50,18 +51,18 @@ const FileList = ({
                             Test Set Summary
                         </Typography>
                         {(selectedPackageState || selectedTestDataset) && <Tooltip title='Return to summary'>
-                            <IconButton onClick={() => handleFolderChange(undefined)}>
+                            <IconButton onClick={() => handleFolderAndFileChange()}>
                                 <DriveFolderUploadIcon color='primary'/>
                             </IconButton>
                         </Tooltip>}
                     </Stack>
-                    <SimpleTreeView expandedItems={[selectedPackageState?.oid]}
+                    <SimpleTreeView expandedItems={[selectedPackageState]}
                                     slots={{
                                         expandIcon: ExpandIcon,
                                         collapseIcon: CollapseIcon,
                                         endIcon: FileIcon
                                     }}
-                                    selectedItems={selectedTestDataset?.oid ?? selectedPackageState?.oid ?? ''}
+                                    selectedItems={selectedTestDataset ?? selectedPackageState ?? ''}
                                     sx={{
                                         [`& .${treeItemClasses.iconContainer}`]: {minWidth: 40, color: 'gray'}
                                     }}>
@@ -69,7 +70,7 @@ const FileList = ({
                             <TreeItem key={item.oid}
                                       itemId={item.oid}
                                       label={item.title}
-                                      onClick={() => handleFolderChange(item)}>
+                                      onClick={() => handleFolderAndFileChange(item.oid)}>
 
                                 {item.test_data_states?.map(child =>
                                     <Stack key={child.oid}
@@ -79,8 +80,7 @@ const FileList = ({
                                         <TreeItem itemId={child.oid}
                                                   label={child.title}
                                                   onClick={() => {
-                                                      handleFolderChange(item)
-                                                      handleFileChange(child)
+                                                      handleFolderAndFileChange(item.oid, child.oid)
                                                   }}>
                                         </TreeItem>
                                         <Box>

@@ -1,3 +1,4 @@
+import {useRouter} from 'next/router';
 import {useState} from 'react';
 
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
@@ -198,34 +199,27 @@ export const ResultFilter = ({currentState, onStateChange, values, count}) => {
     )
 }
 
-export const useFileNavigation = (reportTree) => {
-    const [selectedPackageState, setSelectedPackageState] = useState()
-    const [selectedTestDataset, setSelectedTestDataset] = useState()
+export const useFileNavigation = (reportTree, tab, packageId, datasetId) => {
+    const router = useRouter()
+    const {id, sid} = router.query
 
-    const handleSetPackageState = (file) => {
-        setSelectedPackageState(file)
-        setSelectedTestDataset(undefined)
-    }
-
-    const handleSetTestDataset = (file) => {
-        setSelectedTestDataset(file)
-    }
-
-    const handleSetTestAndPackage = (testDataSuite, testData) => {
-        const packageState = reportTree.test_data_suites.find(tds => tds.oid === testDataSuite)
-        setSelectedPackageState(packageState)
-        if (testData) {
-            setSelectedTestDataset(packageState?.test_data_states.find(ps => ps.oid === testData));
-        } else {
-            setSelectedTestDataset(undefined)
-        }
+    const handleSetTestAndPackage = (packageid, datasetid) => {
+        let others = {}
+        if (packageid)
+            others = {packageid}
+        if (datasetid)
+            others = {...others, datasetid}
+        router.push({
+            pathname: paths.app.mapping_packages.states.view(id, sid), query: {
+                tab,
+                ...others,
+            }
+        })
     }
 
     return {
-        selectedPackageState,
-        selectedTestDataset,
-        handleSetPackageState,
-        handleSetTestDataset,
+        selectedPackageState: packageId,
+        selectedTestDataset: datasetId,
         handleSetTestAndPackage
     }
 }
