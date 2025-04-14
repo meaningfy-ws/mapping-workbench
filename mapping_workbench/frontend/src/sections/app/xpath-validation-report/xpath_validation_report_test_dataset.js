@@ -16,7 +16,6 @@ const XpathValidationReportSuite = ({sid, suiteId, mappingSuiteIdentifier, handl
     const [dataState, setDataState] = useState({load: true, error: false})
 
     useEffect(() => {
-        console.log(sid,suiteId)
         handleValidationReportsSuiteGet(sid, suiteId)
     }, [sid, suiteId])
 
@@ -24,7 +23,6 @@ const XpathValidationReportSuite = ({sid, suiteId, mappingSuiteIdentifier, handl
         setDataState({load: true, error: false})
         sectionApi.getXpathReportsSuite(sid, suiteId)
             .then(res => {
-                console.log(res)
                 setValidationReport(res.results.map(e => ({...e, notice_count: e.test_data_xpaths.length})))
                 setDataState(e => ({...e, load: false}))
             })

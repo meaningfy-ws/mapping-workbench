@@ -14,8 +14,6 @@ const XpathValidationReportView = ({reportTree, validationReport, handleExport})
     const router = useRouter();
     const {sid, packageid, datasetid} = router.query
 
-    console.log(packageid, datasetid)
-
     const {
         selectedPackageState,
         selectedTestDataset,
