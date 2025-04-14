@@ -1,13 +1,13 @@
+import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
-import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import {TreeItem, treeItemClasses} from '@mui/x-tree-view';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
@@ -20,24 +20,14 @@ import {CopyDetailsButton} from './utils';
 
 const FileList = ({
                       files,
-                      // handleFileChange,
-                      // handleFolderChange,
-                      handleFolderAndFileChange,
                       selectedPackageState,
                       selectedTestDataset,
+                      handleFolderAndFileChange,
                       maxHeight
                   }) => {
     const FileIcon = () => <InsertDriveFileOutlinedIcon sx={{marginLeft: '17px'}}/>
     const CollapseIcon = () => <Stack direction='row'><ExpandMoreIcon/><FolderOpenIcon/></Stack>
     const ExpandIcon = () => <Stack direction='row'><ChevronRightIcon/><FolderOpenIcon/></Stack>
-
-    console.log({
-        files,
-        // handleFileChange,
-        // handleFolderChange,
-        selectedPackageState,
-        selectedTestDataset,
-    })
 
     return (
         <Paper sx={{height: '100%'}}>

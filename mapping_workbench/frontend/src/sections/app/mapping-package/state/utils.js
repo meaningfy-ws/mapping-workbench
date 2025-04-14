@@ -1,12 +1,11 @@
 import {useRouter} from 'next/router';
 import {useState} from 'react';
 
-import ContentPasteIcon from '@mui/icons-material/ContentPaste';
-import FolderCopyIcon from '@mui/icons-material/FolderCopy';
 import FolderIcon from '@mui/icons-material/Folder';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
-import FileOpenIcon from '@mui/icons-material/FileOpen';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import FolderCopyIcon from '@mui/icons-material/FolderCopy';
+import ContentPasteIcon from '@mui/icons-material/ContentPaste';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 
 import {Box} from '@mui/system';
 import Menu from '@mui/material/Menu';
@@ -21,8 +20,9 @@ import Typography from '@mui/material/Typography';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import {MenuActionButton} from '../../../../components/menu-actions';
-import {paths} from '../../../../paths';
+
+import {MenuActionButton} from 'src/components/menu-actions';
+import {paths} from 'src/paths';
 
 export const getValidationColor = (color) => {
     switch (color) {

@@ -19,8 +19,6 @@ const XpathValidationReportView = ({reportTree, validationReport, handleExport})
     const {
         selectedPackageState,
         selectedTestDataset,
-        // handleSetPackageState,
-        // handleSetTestDataset,
         handleSetTestAndPackage
     } = useFileNavigation(reportTree, 'xpath', packageid, datasetid)
 
@@ -36,9 +34,7 @@ const XpathValidationReportView = ({reportTree, validationReport, handleExport})
                           files={reportTree.test_data_suites}
                           selectedPackageState={selectedPackageState}
                           selectedTestDataset={selectedTestDataset}
-                          handleFolderAndFileChange={handleSetTestAndPackage}
-                          // handleFileChange={handleSetTestDataset}
-                />
+                          handleFolderAndFileChange={handleSetTestAndPackage}/>
             </Grid>
             {!selectedPackageState &&
                 <XpathValidationReport handleExport={handleExport}
