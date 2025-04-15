@@ -7,6 +7,7 @@ import pathlib
 import re
 from typing import Tuple, List
 
+from mapping_workbench.backend.package_exporter.models.exported_mapping_suite import MappingSuiteType
 from mapping_workbench.backend.package_importer.services.import_mono_mapping_suite import TRANSFORMATION_DIR_NAME, \
     TRANSFORMATION_MAPPINGS_DIR_NAME, TRANSFORMATION_RESOURCES_DIR_NAME
 from mapping_workbench.backend.package_processor.services import MS_TRANSFORM_FOLDER_NAME, \
@@ -23,6 +24,12 @@ class MappingPackageHasher:
         self.package_metadata = mapping_package_metadata.copy()
         self.package_metadata.pop(MAPPING_SUITE_HASH, None)
 
+    def is_for_eforms(self):
+        return (
+                self.package_metadata and
+                "mapping_type" in self.package_metadata and
+                self.package_metadata.get("mapping_type") == MappingSuiteType.ELECTRONIC_FORMS
+        )
 
     def hash_a_file(self, file_path: pathlib.Path) -> Tuple[str, str]:
         """
@@ -44,7 +51,7 @@ class MappingPackageHasher:
                 ensure a deterministic order.
         """
 
-        files_to_hash = [
+        files_to_hash = [] if self.is_for_eforms() else [
             self.package_path / MS_TRANSFORM_FOLDER_NAME / MS_CONCEPTUAL_MAPPING_FILE_NAME,
         ]
 
@@ -83,7 +90,11 @@ class MappingPackageHasher:
         """
         list_of_hashes = self.hash_critical_mapping_files()
         signatures = [signature[1] for signature in list_of_hashes]
-        signatures.append(self.hash_mapping_metadata())
+
+        if self.is_for_eforms():
+            signatures.append(self.hash_mapping_metadata())
+
         if with_version:
             signatures += with_version
+
         return hashlib.sha256(str.encode(",".join(signatures))).hexdigest()
