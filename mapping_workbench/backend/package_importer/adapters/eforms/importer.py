@@ -95,7 +95,8 @@ class EFormsPackageImporter(PackageImporterABC):
 
         self.task_progress.finish_current_action_step()
 
-    def get_mapping_rule_sdk_version(self, cm_rule: EFormsMappingConceptualRule, versions: list):
+    @classmethod
+    def get_mapping_rule_sdk_version(cls, cm_rule: EFormsMappingConceptualRule, versions: list):
         if cm_rule.max_sdk_version:
             return cm_rule.max_sdk_version
 
