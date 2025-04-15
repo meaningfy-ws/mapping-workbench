@@ -62,7 +62,7 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "reset_demo_data = mapping_workbench.backend.demo.entrypoints.cli.cmd_reset_demo_data:main",
+            # "reset_demo_data = mapping_workbench.backend.demo.entrypoints.cli.cmd_reset_demo_data:main",
         ],
     },
     include_package_data=True,
