@@ -8,6 +8,7 @@ from typing import List, Union
 
 from beanie import Link
 from dateutil.tz import tzlocal
+from packaging.version import Version, InvalidVersion
 
 from mapping_workbench.backend.fields_registry.adapters.github_download import GithubDownloader
 from mapping_workbench.backend.fields_registry.adapters.github_manager import GithubManager
@@ -88,6 +89,10 @@ async def import_eforms_fields_from_pool_to_project(project_link: Link[Project],
             parent_node_id=sdk_field.parent_node_id,
             absolute_xpath=sdk_field.absolute_xpath,
             relative_xpath=sdk_field.relative_xpath,
+            value_type=sdk_field.value_type,
+            legal_type=sdk_field.legal_type,
+            privacy_code=sdk_field.privacy_code,
+            code_list_value_id=sdk_field.code_list_value_id,
             project_id=project_id
         )
         structural_node = await StructuralElement.find_one(
@@ -106,6 +111,13 @@ async def import_eforms_fields_from_pool_to_project(project_link: Link[Project],
                 value_type=sdk_field.value_type,
                 legal_type=sdk_field.legal_type,
                 parent_node_id=sdk_field.parent_node_id,
+                privacy_code=sdk_field.privacy_code,
+                privacy_unpublished_field_id=sdk_field.privacy_unpublished_field_id,
+                privacy_reason_code_field_id=sdk_field.privacy_reason_code_field_id,
+                privacy_reason_description_field_id=sdk_field.privacy_reason_description_field_id,
+                privacy_publication_date_field_id=sdk_field.privacy_publication_date_field_id,
+                code_list_value_id=sdk_field.code_list_value_id,
+                attributes=sdk_field.attributes,
                 project=project_link,
                 element_type=sdk_field.element_type,
                 created_at=datetime.now(tzlocal())
@@ -173,6 +185,13 @@ async def import_eforms_fields_to_pool(eforms_fields_content: dict) -> dict:
                 bt_id=eforms_field.bt_id,
                 value_type=eforms_field.value_type,
                 legal_type=eforms_field.legal_type,
+                privacy_code=eforms_field.privacy.code if eforms_field.privacy else None,
+                privacy_unpublished_field_id=eforms_field.privacy.unpublished_field_id if eforms_field.privacy else None,
+                privacy_reason_code_field_id=eforms_field.privacy.reason_code_field_id if eforms_field.privacy else None,
+                privacy_reason_description_field_id=eforms_field.privacy.reason_description_field_id if eforms_field.privacy else None,
+                privacy_publication_date_field_id=eforms_field.privacy.publication_date_field_id if eforms_field.privacy else None,
+                code_list_value_id=eforms_field.code_list.value.id if eforms_field.code_list and eforms_field.code_list.value else None,
+                attributes=eforms_field.attributes,
                 parent_node_id=eforms_field.parent_node_id,
                 sdk_version=eforms_sdk_version,
                 version=field_version
@@ -274,11 +293,15 @@ async def import_eforms_fields_from_folder_to_pool(
                 fields_metadata=fields_metadata
             )
 
-
+def validate_version(version_str):
+    try:
+        Version(version_str)
+        return True
+    except InvalidVersion:
+        return False
 
 def find_invalid_eforms_sdk_version_formats(elements: list) -> list:
-    pattern = re.compile(r'^\d+\.\d+\.\d+([^.\s]\S*)?$')
-    invalid_elements = [element for element in elements if not pattern.match(element)]
+    invalid_elements = [element for element in elements if not validate_version(element)]
     return invalid_elements
 
 

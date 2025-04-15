@@ -4,11 +4,11 @@ from datetime import datetime
 from beanie import PydanticObjectId
 from dateutil.tz import tzlocal
 
-from mapping_workbench.backend.config import settings
+# from mapping_workbench.backend.config import settings
 from mapping_workbench.backend.demo.resources import PROJECT1_PATH, PROJECT2_PATH, ONTOLOGY_FILE_PATH, \
     ONTOLOGY_FILE_NAME
 from mapping_workbench.backend.demo.services.clear import drop_collections_except
-from mapping_workbench.backend.demo.services.notification import send_demo_reset_notifications
+# from mapping_workbench.backend.demo.services.notification import send_demo_reset_notifications
 from mapping_workbench.backend.fields_registry.models.pool import PoolSDKField, PoolSDKFieldsVersionedView
 from mapping_workbench.backend.ontology.models.namespace import NamespaceCustom
 from mapping_workbench.backend.ontology.services.terms import discover_and_save_terms
@@ -46,8 +46,8 @@ async def reset_demo_data(
     await drop_collections_except(collections_to_keep)
 
     await import_demo_projects(with_import_sdk_fields, user, task_response)
-    if settings.is_demo_env():
-        send_demo_reset_notifications()
+    # if settings.is_demo_env():
+    #     send_demo_reset_notifications()
 
 
 async def clear_demo_project(project_title: str):

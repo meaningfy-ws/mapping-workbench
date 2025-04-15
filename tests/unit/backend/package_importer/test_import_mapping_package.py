@@ -58,12 +58,11 @@ async def check_imported_data(project, package, package_identifier):
         assert await resource_model.find(resource_model.project == project_link).count() > 0
 
 
-async def check_cleared_imported_data(project):
+async def check_cleared_imported_data(project, package_type: PackageType):
     project_link = Project.link_from_id(project.id)
 
     resource_models = [
         MappingPackage,
-        MappingGroup,
         ConceptualMappingRule,
         ResourceCollection,
         ResourceFile,
@@ -76,6 +75,9 @@ async def check_cleared_imported_data(project):
         SHACLTestSuite,
         SHACLTestFileResource
     ]
+
+    if package_type == PackageType.EFORMS:
+        resource_models.append(MappingGroup)
 
     for resource_model in resource_models:
         assert await resource_model.find(resource_model.project == project_link).count() == 0
@@ -102,7 +104,7 @@ async def test_import_eforms_mapping_package(dummy_project, dummy_structural_ele
     await dummy_structural_element.delete()
 
     await clear_project_data(dummy_project, PackageType.EFORMS)
-    await check_cleared_imported_data(dummy_project)
+    await check_cleared_imported_data(dummy_project, PackageType.EFORMS)
 
 
 @pytest.mark.asyncio
@@ -121,7 +123,7 @@ async def test_import_standard_mapping_package(dummy_project, dummy_structural_e
     assert standard_package.end_date is None
 
     await clear_project_data(dummy_project, PackageType.STANDARD)
-    await check_cleared_imported_data(dummy_project)
+    await check_cleared_imported_data(dummy_project, PackageType.STANDARD)
 
 
 @pytest.mark.asyncio
