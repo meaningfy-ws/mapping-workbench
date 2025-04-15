@@ -36,11 +36,12 @@ def dummy_project_link(dummy_project) -> Link:
 @pytest.fixture
 def dummy_structural_element(dummy_project_link):
     return StructuralElement(
-        sdk_element_id="ND-Root",
-        absolute_xpath="/*",
-        relative_xpath="/*",
+        sdk_element_id="BT-531-Procedure",
+        absolute_xpath="/*/cac:ProcurementProject/cac:ProcurementAdditionalType/cbc:ProcurementTypeCode[not(@listName='transport-service')]",
+        relative_xpath="cbc:ProcurementTypeCode[not(@listName='transport-service')]",
         project=dummy_project_link,
         repeatable=False,
+        versions=["1.5.2", "1.7.0"],
         id=str(PydanticObjectId())
     )
 
