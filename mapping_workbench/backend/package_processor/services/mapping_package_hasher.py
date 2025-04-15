@@ -91,7 +91,9 @@ class MappingPackageHasher:
         list_of_hashes = self.hash_critical_mapping_files()
         signatures = [signature[1] for signature in list_of_hashes]
 
-        signatures.append(self.hash_mapping_metadata())
+        if self.is_for_eforms():
+            signatures.append(self.hash_mapping_metadata())
+
         if with_version:
             signatures += with_version
 
