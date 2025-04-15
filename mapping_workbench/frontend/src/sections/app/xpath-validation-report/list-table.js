@@ -74,7 +74,7 @@ export const ListTable = (props) => {
                     <Table sx={{minWidth: 1200}}>
                         <TableHead>
                             <TableRow>
-                                <TableCell width="25%">
+                                <TableCell>
                                     <TableFilterHeader sort={sort}
                                                        onSort={onSort}
                                                        onFilter={onFilter}
@@ -82,7 +82,7 @@ export const ListTable = (props) => {
                                                        fieldName="sdk_element_id"
                                                        title="Field"/>
                                 </TableCell>
-                                <TableCell>
+                                <TableCell width='30%'>
                                     <TableFilterHeader sort={sort}
                                                        onSort={onSort}
                                                        onFilter={onFilter}
@@ -94,11 +94,11 @@ export const ListTable = (props) => {
                                     <SorterHeader fieldName="xpath_condition"
                                                   title="XPath Condition"/>
                                 </TableCell>
-                                <TableCell width="10%">
+                                <TableCell>
                                     <SorterHeader fieldName="notice_count"
                                                   title="Notices"/>
                                 </TableCell>
-                                <TableCell width="10%">
+                                <TableCell>
                                     <SorterHeader fieldName="is_covered"
                                                   title="Found"/>
                                 </TableCell>
@@ -108,7 +108,7 @@ export const ListTable = (props) => {
                             {items?.map((item, key) => {
                                 return (
                                     <TableRow key={key}>
-                                        <TableCell width="25%">
+                                        <TableCell>
                                             <Typography variant="subtitle3">
                                                 {item.sdk_element_id}
                                             </Typography>

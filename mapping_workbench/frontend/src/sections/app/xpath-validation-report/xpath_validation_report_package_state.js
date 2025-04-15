@@ -10,7 +10,7 @@ import useItemsSearch from "src/hooks/use-items-search";
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 
 
-const XpathValidationReport = ({validationReport, handleSelectFile, mappingSuiteIdentifier, handleExport}) => {
+const XpathValidationReport = ({validationReport, handleFolderAndFileChange, mappingSuiteIdentifier, handleExport}) => {
     const FILTER_VALUES = [{label: 'All', value: '', color: 'primary', count: validationReport.length},
         {label: 'Covered', value: true, color: 'info', count: validationReport.filter(e => e.is_covered).length},
         {label: 'Uncovered', value: false, color: 'warning', count: validationReport.filter(e => !e.is_covered).length}]
@@ -50,7 +50,7 @@ const XpathValidationReport = ({validationReport, handleSelectFile, mappingSuite
                         sort={itemsSearch.state.sort}
                         onFilter={itemsSearch.handleFiltersChange}
                         filters={itemsSearch.state.filters}
-                        handleSelectFile={handleSelectFile}
+                        handleSelectFile={handleFolderAndFileChange}
                         sectionApi={sectionApi}
                     />
                 </Paper>
