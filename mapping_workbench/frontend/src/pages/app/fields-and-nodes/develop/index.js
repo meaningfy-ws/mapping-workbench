@@ -40,6 +40,8 @@ const Page = () => {
     const [xmlContent, setXmlContent] = useState('')
     const [fileContent, setFileContent] = useState()
 
+    console.log({fileContent,fileError})
+
     useEffect(() => {
         const project = sessionApi.getSessionProject()
         tripleMapFragments.getTripleMapFragmentTree({project})

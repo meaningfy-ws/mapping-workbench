@@ -83,11 +83,10 @@ export const getSubject = (rdfData, uri) => {
 
 
     try {
-       $rdf.parse(rdfData, store, baseURI, contentType);
+        $rdf.parse(rdfData, store, baseURI, contentType);
     } catch (err) {
         console.error(err)
     }
-
 
 
     const queryToArray = (store, query) => {
@@ -96,8 +95,13 @@ export const getSubject = (rdfData, uri) => {
 
             try {
                 store.query(query, result => {
-                    console.log('rr',result)
-                    results.push(result);
+                    console.log('rr', result)
+                    results.push({
+                        label: result['?sMapLabel']?.value,
+                        sclass: result['?class']?.value,
+                        template: result['?sRef']?.value,
+                        ...result
+                    });
                 }, null, () => {
                     resolve(results); // Called after the query completes
                 });
@@ -110,7 +114,6 @@ export const getSubject = (rdfData, uri) => {
 
     return queryToArray(store, queryEngine)
 }
-
 
 
 export const getPredicate = (rdfData, uri) => {
@@ -144,11 +147,10 @@ export const getPredicate = (rdfData, uri) => {
 
 
     try {
-       $rdf.parse(rdfData, store, baseURI, contentType);
+        $rdf.parse(rdfData, store, baseURI, contentType);
     } catch (err) {
         console.error(err)
     }
-
 
 
     const queryToArray = (store, query) => {
@@ -157,7 +159,7 @@ export const getPredicate = (rdfData, uri) => {
 
             try {
                 store.query(query, result => {
-                    console.log('rr',result)
+                    console.log('rr', result)
                     results.push(result);
                 }, null, () => {
                     resolve(results); // Called after the query completes

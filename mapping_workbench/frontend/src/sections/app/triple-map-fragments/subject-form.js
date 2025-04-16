@@ -7,6 +7,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import RadioGroup from '@mui/material/RadioGroup';
+import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -15,7 +16,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import CustomAccordion from './custom-accordion';
 import CustomAccordionSummary from './custom-accordion-summary';
 
-const SubjectForm = ({formik}) => {
+const SubjectForm = ({template, sclass, label}) => {
 
     const onDelete = (e) => {
         e.stopPropagation()
@@ -37,6 +38,7 @@ const SubjectForm = ({formik}) => {
                                               control={<Radio/>}
                                               label="Plain"/>
                             <FormControlLabel value="conditional"
+                                              defaultChecked={!!template}
                                               control={<Radio/>}
                                               label="Conditional"/>
                         </RadioGroup>
@@ -46,33 +48,51 @@ const SubjectForm = ({formik}) => {
                     <Card sx={{border: '1px solid #E4E7EC', p: 2, mt: 2}}>
                         <Typography>Class</Typography>
                         <FormControl fullWidth>
-                            <Select variant='outlined'
-                                    sx={{
-                                        height: 40,
-                                        borderRadius: '12px'
-                                    }}>
-                                <MenuItem>text</MenuItem>
-                            </Select>
+                            <TextField
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: "12px",
+                                        backgroundColor: "white",
+                                        height: 40
+                                    }
+                                }}
+                                variant='outlined'
+                                fullWidth
+                                value={sclass}
+                                required
+                            />
                         </FormControl>
                         <Typography sx={{mt: 2}}>Template</Typography>
                         <FormControl fullWidth>
-                            <Select variant='outlined'
-                                    sx={{
-                                        height: 40,
-                                        borderRadius: '12px'
-                                    }}>
-                                <MenuItem>text</MenuItem>
-                            </Select>
+                            <TextField
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: "12px",
+                                        backgroundColor: "white",
+                                        height: 40
+                                    }
+                                }}
+                                variant='outlined'
+                                fullWidth
+                                value={template}
+                                required
+                            />
                         </FormControl>
                         <Typography sx={{mt: 2}}>Label</Typography>
                         <FormControl fullWidth>
-                            <Select variant='outlined'
-                                    sx={{
-                                        height: 40,
-                                        borderRadius: '12px'
-                                    }}>
-                                <MenuItem>text</MenuItem>
-                            </Select>
+                            <TextField
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: "12px",
+                                        backgroundColor: "white",
+                                        height: 40
+                                    }
+                                }}
+                                variant='outlined'
+                                fullWidth
+                                value={label}
+                                required
+                            />
                         </FormControl>
                     </Card>
                 </Card>

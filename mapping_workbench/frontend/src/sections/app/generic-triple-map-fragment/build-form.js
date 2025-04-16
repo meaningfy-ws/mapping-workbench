@@ -28,6 +28,7 @@ import SourceForm from '../triple-map-fragments/source-form';
 import SubjectForm from '../triple-map-fragments/subject-form';
 import TreeView from '../triple-map-fragments/tree-view-form';
 import TripleMapForm from '../triple-map-fragments/triple-map-form';
+import buildFile from './build-file';
 import {FileUploader} from './file-uploader';
 import {getPredicate, getSource, getSubject, getTripleMap} from './rdflib-converter';
 
@@ -58,7 +59,7 @@ const BuildForm = ({rdfContent}) => {
 
     useEffect(() => {
         selectedTripleMap && processedTripleMaps && formik.setFieldValue('tripleFile', processedTripleMaps[selectedTripleMap])
-    }, [selectedTripleMap,processedTripleMaps])
+    }, [selectedTripleMap, processedTripleMaps])
 
     const getTripleMapData = async (triples) => {
         if (!!triples.length)
@@ -73,7 +74,9 @@ const BuildForm = ({rdfContent}) => {
     }
 
     console.log(processedTripleMaps)
-    console.log('formik',formik.values)
+    console.log('formik', formik.values)
+
+    buildFile()
 
     const [addAnchor, setAddAnchor] = useState(null)
     const [wcmStatus, setWcmStatus] = useState(true)
@@ -141,8 +144,11 @@ const BuildForm = ({rdfContent}) => {
                                     {formik.values.tripleFile?.sources?.map(source =>
                                         <SourceForm key={source.iterator}
                                                     {...source}/>)}
-                                    <SubjectForm formik={formik}/>
-                                    <PredicateForm formik={formik}/>
+                                    {formik.values.tripleFile?.subjects?.map(subject =>
+                                        <SubjectForm {...subject}/>)}
+                                    {formik.values.tripleFile?.predicates?.map(predicate =>
+                                        <PredicateForm formik={formik} {...predicate}/>)
+                                    }
                                     <Stack alignItems='end'>
                                         <Button onClick={(e) => setAddAnchor(e.target)}
                                                 startIcon={<AddIcon/>}
