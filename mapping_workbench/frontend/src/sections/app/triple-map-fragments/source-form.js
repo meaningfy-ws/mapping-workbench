@@ -30,12 +30,12 @@ const SourceForm = (props) => {
     }
 
     return (
-        <CustomAccordion>
+        <CustomAccordion defaultExpanded>
             <CustomAccordionSummary expandIcon={<ExpandMoreIcon/>}>
                 <Typography>Source</Typography>
                 <IconButton onClick={onDelete}><DeleteOutlineIcon color='error'/></IconButton>
             </CustomAccordionSummary>
-            <AccordionDetails>
+            <AccordionDetails >
                 <Card sx={{border: '1px solid #E4E7EC', p: 2}}>
                     <Typography>Type</Typography>
                     <FormControl fullWidth>

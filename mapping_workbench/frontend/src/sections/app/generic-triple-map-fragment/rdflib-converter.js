@@ -56,7 +56,7 @@ export const getSource = async (rdfData, uri) => {
 }
 
 
-export const getSubject = async (rdfData, uri) => {
+export const getSubject = (rdfData, uri) => {
     const store = $rdf.graph();
     const baseURI = 'https://example.org/'
     const contentType = 'text/turtle';
@@ -83,7 +83,7 @@ export const getSubject = async (rdfData, uri) => {
 
 
     try {
-        $rdf.parse(rdfData, store, baseURI, contentType);
+       $rdf.parse(rdfData, store, baseURI, contentType);
     } catch (err) {
         console.error(err)
     }
@@ -113,7 +113,7 @@ export const getSubject = async (rdfData, uri) => {
 
 
 
-export const getPredicate = async (rdfData, uri) => {
+export const getPredicate = (rdfData, uri) => {
     const store = $rdf.graph();
     const baseURI = 'https://example.org/'
     const contentType = 'text/turtle';
@@ -144,7 +144,7 @@ export const getPredicate = async (rdfData, uri) => {
 
 
     try {
-        $rdf.parse(rdfData, store, baseURI, contentType);
+       $rdf.parse(rdfData, store, baseURI, contentType);
     } catch (err) {
         console.error(err)
     }
@@ -172,7 +172,7 @@ export const getPredicate = async (rdfData, uri) => {
     return queryToArray(store, queryEngine)
 }
 
-export const getTripleMap = async (rdfData) => {
+export const getTripleMap = (rdfData) => {
     const store = $rdf.graph();
     const baseURI = 'https://example.org/'
     const contentType = 'text/turtle';

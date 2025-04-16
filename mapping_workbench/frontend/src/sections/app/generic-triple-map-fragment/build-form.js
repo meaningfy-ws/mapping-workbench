@@ -33,12 +33,13 @@ import {getPredicate, getSource, getSubject, getTripleMap} from './rdflib-conver
 
 const BuildForm = ({rdfContent}) => {
     const uploadDialog = useDialog();
+    const [tripleMaps, setTripleMaps] = useState([])
+    const [selectedTripleMap, setSelectedTripleMap] = useState({})
+    const [processedTripleMaps, setProcessedTripleMaps] = useState({})
 
     const formik = useFormik({
         initialValues: {
-            tripleMaps: [],
-            selectedTripleMap: "",
-            sources: []
+            tripleFile: {}
         },
     })
 
@@ -46,25 +47,33 @@ const BuildForm = ({rdfContent}) => {
     useEffect(() => {
         getTripleMap(rdfContent)
             .then(res => {
-                formik.setFieldValue('tripleMaps', res)
-                formik.setFieldValue('selectedTripleMap', res[0])
+                !!res.length && getTripleMapData(res)
+
+                setTripleMaps(res)
+                setSelectedTripleMap(res[0])
             })
     }, []);
 
-    useEffect(() => {
-        if (formik.values.selectedTripleMap) {
-            getSource(rdfContent, formik.values.selectedTripleMap)
-                .then(res => formik.setFieldValue('sources', res))
-            getSubject(rdfContent, formik.values.selectedTripleMap)
-                .then(res => console.log('res',res))
-                .catch(err => console.error(err))
-            getPredicate(rdfContent, formik.values.selectedTripleMap)
-                .then(res => console.log('res',res))
-                .catch(err => console.error(err))
-        }
-    }, [formik.values.selectedTripleMap])
+    console.log({selectedTripleMap})
 
-    console.log(formik.values)
+    useEffect(() => {
+        selectedTripleMap && processedTripleMaps && formik.setFieldValue('tripleFile', processedTripleMaps[selectedTripleMap])
+    }, [selectedTripleMap,processedTripleMaps])
+
+    const getTripleMapData = async (triples) => {
+        if (!!triples.length)
+            for (const tripleMap of triples) {
+                const sources = await getSource(rdfContent, tripleMap)
+                const subjects = await getSubject(rdfContent, tripleMap)
+                const predicates = await getPredicate(rdfContent, tripleMap)
+
+                setProcessedTripleMaps(e => ({...e, [tripleMap]: {subjects, sources, predicates}}))
+                // formik.setFieldValue(tripleMap, {subjects, sources, predicates})
+            }
+    }
+
+    console.log(processedTripleMaps)
+    console.log('formik',formik.values)
 
     const [addAnchor, setAddAnchor] = useState(null)
     const [wcmStatus, setWcmStatus] = useState(true)
@@ -125,9 +134,11 @@ const BuildForm = ({rdfContent}) => {
                             {/*</Tabs>*/}
                             {selectedFormTab === 'form' && <Stack sx={{p: 1}}>
                                 <Card sx={{p: 1, border: "1px solid #E4E7EC"}}>
-                                    <TripleMapForm formik={formik}
+                                    <TripleMapForm selectedTripleMap={selectedTripleMap}
+                                                   setSelectedTripleMap={setSelectedTripleMap}
+                                                   tripleMaps={tripleMaps}
                                                    rdfContent={rdfContent}></TripleMapForm>
-                                    {formik.values.sources.map(source =>
+                                    {formik.values.tripleFile?.sources?.map(source =>
                                         <SourceForm key={source.iterator}
                                                     {...source}/>)}
                                     <SubjectForm formik={formik}/>

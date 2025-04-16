@@ -6,8 +6,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import CustomAccordion from './custom-accordion';
 import CustomAccordionSummary from './custom-accordion-summary';
 
-const TripleMapForm = ({formik,}) => {
-
+const TripleMapForm = ({selectedTripleMap, setSelectedTripleMap,tripleMaps}) => {
 
 
     return (
@@ -20,9 +19,9 @@ const TripleMapForm = ({formik,}) => {
                     id='triple_map'
                     fullWidth
                     disablePortal
-                    options={formik.values.tripleMaps}
-                    value={formik.values.selectedTripleMap}
-                    onChange={(e,v) => formik.setFieldValue('selectedTripleMap',v)}
+                    options={tripleMaps}
+                    value={selectedTripleMap}
+                    onChange={(e, v) => setSelectedTripleMap(v)}
                     renderInput={(params) => <TextField
                         {...params}
                         label="URI"/>}
