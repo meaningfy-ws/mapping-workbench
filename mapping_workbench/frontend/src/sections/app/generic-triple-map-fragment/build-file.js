@@ -52,15 +52,25 @@ const buildPredicate = (predicate) => {
         predicateValues += `\n              rdfs:label "${predicate.label}" ;`
     if (predicate.comment)
         predicateValues += `\n              rdfs:comment "${predicate.comment}" ;`
-    if(predicate.predicate) {
+    if (predicate.predicate) {
         predicateValues += `\n              rr:predicate epo:${predicate.predicate} ;`
     }
-    if(predicate.parent){
-        predicateObject +=`\n                       rdfs:label "at-voc:${predicate.parent}" ;`
-        predicateObject +=`\n                       rr:parentTriplesMap tedm:${predicate.parent} ;`
-        }
-    if(predicateObject)
-        predicateValues +=`\n              rr:objectMap\n                   [${predicateObject}\n                   ];`
+
+    if (predicate.oMapMinSDK)
+        predicateObject += `\n                       tedm:minSDKVersion "${predicate.oMapMinSDK}" ;`
+    if (predicate.oMapMaxSDK)
+        predicateObject += `\n                       tedm:maxSDKVersion "${predicate.oMapMaxSDK}" ;`
+    if (predicate.oMapLabel)
+        predicateObject += `\n                       rdfs:label "${predicate.oMapLabel}" ;`
+    if (predicate.parent)
+        predicateObject += `\n                       rr:parentTriplesMap tedm:${predicate.parent} ;`
+    if (predicate.oMapReference)
+        predicateObject += `\n                       rml:reference "${predicate.oMapReference}" ;`
+    if (predicate.oMapDatatype)
+        predicateObject += `\n                       rr:datatype xsd:${predicate.oMapDatatype} ;`
+    if (predicateObject)
+        predicateValues += `\n              rr:objectMap\n                   [${predicateObject}\n                   ];`
+
     return `\n    rr:predicateObjectMap\n        [${predicateValues}\n        ];`
 }
 

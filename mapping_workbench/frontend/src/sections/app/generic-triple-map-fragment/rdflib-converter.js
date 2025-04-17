@@ -82,12 +82,9 @@ export const getSubject = (rdfData, uri) => {
         OPTIONAL { ?sMap rml:reference ?sRef . }
         OPTIONAL { ?sMap rr:class ?class . }
 }`
-
     console.log(queryStr)
 
-
     const queryEngine = $rdf.SPARQLToQuery(queryStr, false, store);
-
 
     try {
         $rdf.parse(rdfData, store, baseURI, contentType);
@@ -135,24 +132,27 @@ export const getPredicate = (rdfData, uri) => {
     PREFIX rr: <http://www.w3.org/ns/r2rml#>
     PREFIX tedm: <http://data.europa.eu/a4g/mapping/sf-rml/>
     
-    SELECT ?predicate ?pOMapLabel ?pOMapComment ?reference ?parent WHERE {
+    SELECT ?predicate ?pOMapLabel ?pOMapComment ?reference ?parent ?oLabel ?condition WHERE {
         ${uri} a rr:TriplesMap ;
             rr:predicateObjectMap ?pOMap .
             
         ?pOMap rr:predicate ?predicate ;
             rr:objectMap ?oMap .
-    
+            
         OPTIONAL { ?pOMap rdfs:label ?pOMapLabel . }
         OPTIONAL { ?pOMap rdfs:comment ?pOMapComment . }
         OPTIONAL { ?oMap rml:reference ?reference . }
         OPTIONAL { ?oMap rr:parentTriplesMap ?parent . }
+        OPTIONAL { ?oMap rdfs:label ?oLabel . }
+        OPTIONAL { ?oMap rr:joinCondition ?condition . }
+        OPTIONAL { ?oMap  tedm:minSDKVersion ?minSDKVersion . }
+        OPTIONAL { ?oMap  tedm:maxSDKVersion ?maxSDKVersion . }
+        OPTIONAL { ?oMap  rr:datatype  ?datatype . }
     }`
 
     console.log(queryStr)
 
-
     const queryEngine = $rdf.SPARQLToQuery(queryStr, false, store);
-
 
     try {
         $rdf.parse(rdfData, store, baseURI, contentType);
@@ -169,11 +169,17 @@ export const getPredicate = (rdfData, uri) => {
                 store.query(query, result => {
                     const predicate = result['?predicate']?.value
                     const parent = result['?parent']?.value
+                    const datatype = result['?datatype']?.value
                     results.push({
                         predicate: predicate?.substring(predicate.lastIndexOf('#') + 1),
                         label: result['?pOMapLabel']?.value,
                         comment: result['?pOMapComment']?.value,
                         parent: parent?.substring(parent.lastIndexOf('/') + 1),
+                        oMapLabel: result['?oLabel']?.value,
+                        oMapMinSDK: result['?minSDKVersion']?.value,
+                        oMapMaxSDK: result['?maxSDKVersion']?.value,
+                        oMapReference: result['?reference']?.value,
+                        oMapDatatype: datatype?.substring(datatype.lastIndexOf('#') + 1),
                         ...result
                     });
                 }, null, () => {
