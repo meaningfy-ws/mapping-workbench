@@ -102,7 +102,6 @@ export const getSubject = (rdfData, uri) => {
 
             try {
                 store.query(query, result => {
-                    console.log('rr', result)
                     const sclass = result['?class']?.value
                     results.push({
                         label: result['?sMapLabel']?.value,
@@ -168,8 +167,15 @@ export const getPredicate = (rdfData, uri) => {
 
             try {
                 store.query(query, result => {
-                    console.log('rr', result)
-                    results.push(result);
+                    const predicate = result['?predicate']?.value
+                    const parent = result['?parent']?.value
+                    results.push({
+                        predicate: predicate?.substring(predicate.lastIndexOf('#') + 1),
+                        label: result['?pOMapLabel']?.value,
+                        comment: result['?pOMapComment']?.value,
+                        parent: parent?.substring(parent.lastIndexOf('/') + 1),
+                        ...result
+                    });
                 }, null, () => {
                     resolve(results); // Called after the query completes
                 });

@@ -26,23 +26,42 @@ const defaultPrefixes = "@prefix owl: <http://www.w3.org/2002/07/owl#> .\n" +
 const buildSource = (source) => {
     let sourceValues = ''
     if (source.file)
-        sourceValues += `\n     rml:source "${source.file}" ;`
+        sourceValues += `\n             rml:source "${source.file}" ;`
     if (source.iterator)
-        sourceValues += `\n     rml:iterator "${source.iterator}" ;`
+        sourceValues += `\n             rml:iterator "${source.iterator}" ;`
     if (source.type)
-        sourceValues += `\n     rml:referenceFormulation ${source.type}`
-    return `\n    rml:logicalSource\n         [${sourceValues}\n        ];`
+        sourceValues += `\n             rml:referenceFormulation ${source.type}`
+    return `\n    rml:logicalSource\n        [${sourceValues}\n        ];`
 }
 
 const buildSubject = (subject) => {
-    let sourceValues = ''
+    let subjectValues = ''
     if (subject.label)
-        sourceValues += `\n     rdfs:label "${subject.label}" ;`
+        subjectValues += `\n              rdfs:label "${subject.label}" ;`
     if (subject.template)
-        sourceValues += `\n     rml:reference "${subject.template}" ;`
+        subjectValues += `\n              rml:reference "${subject.template}" ;`
     if (subject.sclass)
-        sourceValues += `\n     rr:class cccev:${subject.sclass}`
-    return `\n    rr:subjectMap\n         [${sourceValues}\n        ];`
+        subjectValues += `\n              rr:class cccev:${subject.sclass}`
+    return `\n    rr:subjectMap\n        [${subjectValues}\n        ];`
+}
+
+const buildPredicate = (predicate) => {
+    let predicateValues = ''
+    let predicateObject = ''
+    if (predicate.label)
+        predicateValues += `\n              rdfs:label "${predicate.label}" ;`
+    if (predicate.comment)
+        predicateValues += `\n              rdfs:comment "${predicate.comment}" ;`
+    if(predicate.predicate) {
+        predicateValues += `\n              rr:predicate epo:${predicate.predicate} ;`
+    }
+    if(predicate.parent){
+        predicateObject +=`\n                       rdfs:label "at-voc:${predicate.parent}" ;`
+        predicateObject +=`\n                       rr:parentTriplesMap tedm:${predicate.parent} ;`
+        }
+    if(predicateObject)
+        predicateValues +=`\n              rr:objectMap\n                   [${predicateObject}\n                   ];`
+    return `\n    rr:predicateObjectMap\n        [${predicateValues}\n        ];`
 }
 
 const buildFile = (processedTripleMaps) => {
@@ -57,6 +76,9 @@ const buildFile = (processedTripleMaps) => {
         })
         values.subjects.forEach(subject => {
             outStr += buildSubject(subject)
+        })
+        values.predicates.forEach(predicate => {
+            outStr += buildPredicate(predicate)
         })
     })
 
