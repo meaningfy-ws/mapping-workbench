@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {memo, useEffect, useMemo, useState} from 'react';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
 
@@ -32,11 +32,13 @@ import buildFile from './build-file';
 import {FileUploader} from './file-uploader';
 import {getPredicate, getSource, getSubject, getTripleMap} from './rdflib-converter';
 
+
 const BuildForm = ({rdfContent}) => {
     const uploadDialog = useDialog();
     const [tripleMaps, setTripleMaps] = useState([])
     const [selectedTripleMap, setSelectedTripleMap] = useState({})
     const [processedTripleMaps, setProcessedTripleMaps] = useState({})
+    const [tripleFile, setTripleFile] = useState({})
 
     const formik = useFormik({
         initialValues: {
@@ -74,12 +76,10 @@ const BuildForm = ({rdfContent}) => {
     }
 
     console.log(processedTripleMaps)
-    console.log('formik', formik.values)
-
-    buildFile()
 
     const [addAnchor, setAddAnchor] = useState(null)
     const [wcmStatus, setWcmStatus] = useState(true)
+
 
     usePageView();
 
@@ -97,9 +97,26 @@ const BuildForm = ({rdfContent}) => {
     const formTabs = [{label: 'Form', value: 'form'}, {label: 'Code', value: 'code'}]
     const [selectedFormTab, setSelectedFormTab] = useState('form')
     // const technicalMappingsTabs = [{label: 'TM1', value: 'tm1'}]
-
+const [buildedFile,setBuildedFile]=useState()
 
     const handleAdd = () => {}
+
+    const handleSave = () => {
+        setBuildedFile(buildFile(processedTripleMaps))
+    }
+
+    const handleUpdate = (values, index, type) => {
+        const currentTypeObj = {...formik.values.tripleFile}
+        currentTypeObj[type][index] = values
+        formik.setFieldValue('tripleFile', currentTypeObj)
+    }
+
+    console.log(tripleFile)
+
+    const handleDelete = (index, type) => {
+        console.log('delete')
+    }
+
 
     return (
         <>
@@ -141,15 +158,21 @@ const BuildForm = ({rdfContent}) => {
                                                    setSelectedTripleMap={setSelectedTripleMap}
                                                    tripleMaps={tripleMaps}
                                                    rdfContent={rdfContent}></TripleMapForm>
-                                    {formik.values.tripleFile?.sources?.map(source =>
-                                        <SourceForm key={source.iterator}
-                                                    {...source}/>)}
+                                    {formik.values.tripleFile?.sources?.map((source, index) =>
+                                        <SourceForm key={index}
+                                                    handleUpdate={(values) => handleUpdate(values, index, 'sources')}
+                                                    handleDelete={handleDelete}
+                                                    tripleMap={selectedTripleMap}
+                                                    id={index}
+                                                    {...source}/>
+                                    )}
                                     {formik.values.tripleFile?.subjects?.map(subject =>
                                         <SubjectForm {...subject}/>)}
                                     {formik.values.tripleFile?.predicates?.map(predicate =>
                                         <PredicateForm formik={formik} {...predicate}/>)
                                     }
                                     <Stack alignItems='end'>
+                                        <Button onClick={handleSave}>Save</Button>
                                         <Button onClick={(e) => setAddAnchor(e.target)}
                                                 startIcon={<AddIcon/>}
                                                 endIcon={<KeyboardArrowDownIcon/>}>
@@ -191,15 +214,22 @@ const BuildForm = ({rdfContent}) => {
                           md={6}
                           sm={12}>
                         <Card>
-                            <Typography sx={{m: 3}}>Conceptual Mapping Browser</Typography>
-                            <FormGroup>
-                                <FormControlLabel sx={{flexDirection: 'row-reverse', justifyContent: 'end'}}
-                                                  control={<Switch checked={wcmStatus}
-                                                                   onChange={e => setWcmStatus(e.target.checked)}/>}
-                                                  label="Elements with Conceptual Mappings"/>
-                            </FormGroup>
-                            <TreeView sectionApi={treeViewApi}
-                                      wcm={wcmStatus}/>
+                            <CodeMirrorDefault value={buildedFile}
+                                                                              style={{
+                                                                                  resize: 'vertical',
+                                                                                  overflow: 'auto',
+                                                                                  height: 600
+                                                                              }}
+                                                                              lang={'TTL'}/>
+                            {/*<Typography sx={{m: 3}}>Conceptual Mapping Browser</Typography>*/}
+                            {/*<FormGroup>*/}
+                            {/*    <FormControlLabel sx={{flexDirection: 'row-reverse', justifyContent: 'end'}}*/}
+                            {/*                      control={<Switch checked={wcmStatus}*/}
+                            {/*                                       onChange={e => setWcmStatus(e.target.checked)}/>}*/}
+                            {/*                      label="Elements with Conceptual Mappings"/>*/}
+                            {/*</FormGroup>*/}
+                            {/*<TreeView sectionApi={treeViewApi}*/}
+                            {/*          wcm={wcmStatus}/>*/}
                         </Card>
                     </Grid>
                 </Grid>

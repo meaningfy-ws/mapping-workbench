@@ -30,6 +30,13 @@ export const getSource = async (rdfData, uri) => {
         console.error(err)
     }
 
+    const currentType = (type) => {
+        if (type.endsWith('ql#XPath'))
+            return 'ql:XPath'
+        if (type.endsWith('ql#JSONPath'))
+            return 'ql:JSONPath'
+        return 'ql:CSV'
+    }
 
     const queryToArray = (store, query) => {
         return new Promise((resolve, reject) => {
@@ -39,7 +46,7 @@ export const getSource = async (rdfData, uri) => {
                 store.query(query, result => {
                     results.push({
                         file: result['?file'].value,
-                        type: result['?type'].value,
+                        type: currentType(result['?type'].value),
                         iterator: result['?iterator'].value
                     });
                 }, null, () => {
@@ -96,12 +103,14 @@ export const getSubject = (rdfData, uri) => {
             try {
                 store.query(query, result => {
                     console.log('rr', result)
+                    const sclass = result['?class']?.value
                     results.push({
                         label: result['?sMapLabel']?.value,
-                        sclass: result['?class']?.value,
+                        sclass: sclass?.substring(sclass.lastIndexOf('/') + 1),
                         template: result['?sRef']?.value,
                         ...result
-                    });
+                    })
+                    ;
                 }, null, () => {
                     resolve(results); // Called after the query completes
                 });

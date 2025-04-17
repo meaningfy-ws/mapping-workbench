@@ -13,20 +13,16 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import CustomAccordion from './custom-accordion';
 import CustomAccordionSummary from './custom-accordion-summary';
 
-const SourceForm = (props) => {
-    const {file, iterator, type} = props
+const SourceForm = ({file, iterator, type, handleUpdate, handleDelete}) => {
 
     const onDelete = (e) => {
         e.stopPropagation()
         console.log(e)
     }
 
-    const currentType = (type) => {
-        if (type.endsWith('ql#XPath'))
-            return 'ql#XPath'
-        if (type.endsWith('ql#JSONPath'))
-            return 'ql#JSONPath'
-        return 'ql#CSV'
+    const handleSourceChange = (value) => {
+        console.log(value)
+        handleUpdate({file, iterator, type, ...value})
     }
 
     return (
@@ -35,19 +31,20 @@ const SourceForm = (props) => {
                 <Typography>Source</Typography>
                 <IconButton onClick={onDelete}><DeleteOutlineIcon color='error'/></IconButton>
             </CustomAccordionSummary>
-            <AccordionDetails >
+            <AccordionDetails>
                 <Card sx={{border: '1px solid #E4E7EC', p: 2}}>
                     <Typography>Type</Typography>
                     <FormControl fullWidth>
                         <Select variant='outlined'
-                                value={currentType(type)}
+                                value={type}
+                                onChange={(e) => handleSourceChange({type: e.target.value})}
                                 sx={{
                                     height: 40,
                                     borderRadius: '12px'
                                 }}>
-                            <MenuItem value='ql#XPath'>XML</MenuItem>
-                            <MenuItem value='ql#CSV'>CSV</MenuItem>
-                            <MenuItem value='ql#JSONPath'>JSON</MenuItem>
+                            <MenuItem value='ql:XPath'>XML</MenuItem>
+                            <MenuItem value='ql:CSV'>CSV</MenuItem>
+                            <MenuItem value='ql:JSONPath'>JSON</MenuItem>
                         </Select>
                     </FormControl>
                     <Card sx={{border: '1px solid #E4E7EC', p: 2, mt: 2}}>
@@ -64,12 +61,13 @@ const SourceForm = (props) => {
                                 variant='outlined'
                                 // error={!!(formik.touched[name] && formik.errors[name])}
                                 fullWidth
-                                disabled={file === 'data/source.xml'}
+                                // disabled={file === 'data/source.xml'}
                                 // helperText={formik.touched[name] && formik.errors[name]}
                                 // label={label}
                                 // name={name}
                                 // onBlur={formik.handleBlur}
-                                // onChange={formik.handleChange}
+                                onChange={e => handleSourceChange({file: e.target.value})}
+
                                 value={file}
                                 required
                                 type={type}
@@ -77,7 +75,7 @@ const SourceForm = (props) => {
                         </FormControl>
                         <Typography sx={{mt: 2}}>Iterator</Typography>
                         <FormControl fullWidth>
-                              <TextField
+                            <TextField
                                 sx={{
                                     "& .MuiOutlinedInput-root": {
                                         borderRadius: "12px",
@@ -92,7 +90,7 @@ const SourceForm = (props) => {
                                 // label={label}
                                 // name={name}
                                 // onBlur={formik.handleBlur}
-                                // onChange={formik.handleChange}
+                                onChange={e => handleSourceChange({iterator: e.target.value})}
                                 value={iterator}
                                 required
                                 type={type}
