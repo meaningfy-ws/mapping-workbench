@@ -18,6 +18,9 @@ import {sparqlTestSuitesApi as sectionApi} from 'src/api/sparql-test-suites';
 import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
 import {sparqlTestFileResourcesApi as fileResourcesApi} from "src/api/sparql-test-suites/file-resources";
 import {NavigationTabsWrapper} from '../../../components/navigation-tabs-wrapper';
+import {FileCollectionUploader} from "../../../sections/app/file-manager/file-collection-uploader";
+import UploadIcon from "@mui/icons-material/Upload";
+import {useDialog} from "../../../hooks/use-dialog";
 
 const useItemsStore = () => {
     const [state, setState] = useState({
@@ -47,10 +50,16 @@ const useItemsStore = () => {
 };
 
 const Page = () => {
+    const uploadDialog = useDialog()
     const itemsStore = useItemsStore();
     const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['title']);
 
     usePageView();
+
+    const onUploadEnd = () => {
+        itemsStore.handleItemsGet();
+        uploadDialog.handleClose();
+    }
 
     const selectable = (item) => item.title !== sectionApi.CM_ASSERTIONS_SUITE_TITLE
 
@@ -77,6 +86,16 @@ const Page = () => {
                         spacing={3}
                     >
                         <Button
+                            type='link'
+                            onClick={uploadDialog.handleOpen}
+                            startIcon={(
+                                <UploadIcon/>
+                            )}
+                            id="import-test-data_button"
+                        >
+                            Import {sectionApi.SECTION_TITLE}
+                        </Button>
+                        <Button
                             id="add_button"
                             component={RouterLink}
                             href={paths.app[sectionApi.section].create}
@@ -101,6 +120,11 @@ const Page = () => {
                     getItems={itemsStore.handleItemsGet}
                     selectable={selectable}
                     fileResourceApi={fileResourcesApi}
+                />
+                <FileCollectionUploader
+                    onClose={onUploadEnd}
+                    open={uploadDialog.open}
+                    sectionApi={sectionApi}
                 />
             </Stack>
         </>

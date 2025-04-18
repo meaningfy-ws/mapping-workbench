@@ -38,11 +38,11 @@ const StateDetails = ({item, sid, handleChangeTab, validationReport}) => {
                                gap={3}>
                             <StateDetail title={item._id}
                                          value={item.title}/>
-                            <StateDetail title={'Mapping / EPO Version'}
+                            <StateDetail title={'Mapping / Ontology Version'}
                                          value={`${item.mapping_version} / ${item.epo_version}`}/>
-                            <StateDetail title={'eForms SDK'}
+                            <StateDetail title={'Source Model Version'}
                                          value={item.eforms_sdk_versions?.join(', ')}/>
-                            <StateDetail title={'eForms Subtype'}
+                            <StateDetail title={'Document Subtypes'}
                                          value={item.eform_subtypes?.join(', ')}/>
                         </Stack>
                     </Stack>

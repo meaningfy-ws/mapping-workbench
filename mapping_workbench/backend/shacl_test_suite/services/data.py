@@ -4,7 +4,8 @@ from beanie import PydanticObjectId
 from beanie.odm.operators.find.comparison import Eq
 
 from mapping_workbench.backend.project.models.entity import Project
-from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestFileResource
+from mapping_workbench.backend.shacl_test_suite.models.entity import SHACLTestSuite, SHACLTestFileResource, \
+    SHACLTestFileResourceFormat
 
 SHACL_CM_RULES_SUITE_TITLE = "cm_shacl_shapes"
 
@@ -24,3 +25,6 @@ async def get_shacl_tests_for_suite(project_id: PydanticObjectId, suite_id: Pyda
     ).to_list()
 
     return items
+
+def is_valid_shacl_format(test_format: str):
+    return test_format in [e.value for e in SHACLTestFileResourceFormat]

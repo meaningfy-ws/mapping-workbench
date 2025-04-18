@@ -26,3 +26,6 @@ async def get_sparql_tests_for_suite(project_id: PydanticObjectId, suite_id: Pyd
     ).to_list()
 
     return items
+
+def is_valid_sparql_format(test_format: str):
+    return True

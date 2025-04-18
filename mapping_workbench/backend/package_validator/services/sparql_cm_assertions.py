@@ -79,7 +79,8 @@ def get_sparql_content_for_cm_assertion(
             f"{f'“{sparql_description}” ' if sparql_description else ''}"
             f"The corresponding XML element is "
             f"{sparql_xpath}. "
-            f"The expected ontology instances are epo: {cm_rule.target_class_path} .\n"
+            #f"The expected ontology instances are epo: {cm_rule.target_class_path} ."
+            f"\n"
             f"#xpath: {sparql_xpath}"
             "\n" + "\n" + "\n".join(prefixes) +
             "\n\n" +

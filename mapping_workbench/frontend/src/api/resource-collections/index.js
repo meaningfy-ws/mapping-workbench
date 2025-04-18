@@ -13,6 +13,10 @@ class ResourceCollectionsApi extends FileCollectionsApi {
         return "resource_collections"
     }
 
+    get DEFAULT_RESOURCES_COLLECTION_NAME() {
+        return "Default";
+    }
+
     constructor() {
         super("value_mapping_resources");
         this.isProjectResource = true;

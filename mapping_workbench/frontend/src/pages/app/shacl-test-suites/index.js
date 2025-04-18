@@ -18,6 +18,9 @@ import {shaclTestSuitesApi as sectionApi} from 'src/api/shacl-test-suites';
 import {FileCollectionListTable} from 'src/sections/app/file-manager/file-collection-list-table';
 import {shaclTestFileResourcesApi as fileResourceApi} from 'src/api/shacl-test-suites/file-resources'
 import {NavigationTabsWrapper} from '../../../components/navigation-tabs-wrapper';
+import UploadIcon from "@mui/icons-material/Upload";
+import {FileCollectionUploader} from "../../../sections/app/file-manager/file-collection-uploader";
+import {useDialog} from "../../../hooks/use-dialog";
 
 const useItemsStore = () => {
     const [state, setState] = useState({
@@ -50,10 +53,16 @@ const useItemsStore = () => {
 };
 
 const Page = () => {
+    const uploadDialog = useDialog()
     const itemsStore = useItemsStore();
     const itemsSearch = useItemsSearch(itemsStore.items, sectionApi, ['title']);
 
     usePageView();
+
+    const onUploadEnd = () => {
+        itemsStore.handleItemsGet();
+        uploadDialog.handleClose();
+    }
 
     return (
         <>
@@ -78,6 +87,16 @@ const Page = () => {
                         spacing={3}
                     >
                         <Button
+                            type='link'
+                            onClick={uploadDialog.handleOpen}
+                            startIcon={(
+                                <UploadIcon/>
+                            )}
+                            id="import-test-data_button"
+                        >
+                            Import {sectionApi.SECTION_TITLE}
+                        </Button>
+                        <Button
                             id="add_button"
                             component={RouterLink}
                             href={paths.app[sectionApi.section].create}
@@ -101,6 +120,11 @@ const Page = () => {
                     sectionApi={sectionApi}
                     fileResourceApi={fileResourceApi}
                     getItems={itemsStore.handleItemsGet}
+                />
+                <FileCollectionUploader
+                    onClose={onUploadEnd}
+                    open={uploadDialog.open}
+                    sectionApi={sectionApi}
                 />
             </Stack>
         </>

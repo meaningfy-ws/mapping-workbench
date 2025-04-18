@@ -217,3 +217,4 @@ class BaseStructuralElementIn(BaseModel):
     absolute_xpath: str
     relative_xpath: Optional[str] = None
     parent_node_id: Optional[str] = None
+    element_type: Literal["node", "field"] = "field"
