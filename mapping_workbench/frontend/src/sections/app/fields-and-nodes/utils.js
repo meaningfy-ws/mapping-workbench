@@ -4,13 +4,19 @@ export const extractNamespaces = (doc) => {
     const namespaces = {};
 
     for (let attr of attributes) {
-        if (attr.name.startsWith('xmlns:')) {
+        if (attr.name === 'xmlns') {
+            namespaces[''] = attr.value;
+        } else if (attr.name.startsWith('xmlns:')) {
             const prefix = attr.name.split(':')[1];
             namespaces[prefix] = attr.value;
         }
     }
 
     return namespaces;
+}
+
+export const addNsPrefix = (xpath, prefix = 'ns') => {
+    return xpath.replace(/\/(?!\*)(?![a-zA-Z0-9_-]+:)([a-zA-Z0-9_-]+)/g, `/${prefix}:$1`);
 }
 
 export const getAbsoluteXPath = (node) => {
@@ -29,20 +35,19 @@ export const getAbsoluteXPath = (node) => {
 export const executeXPaths = (doc, xPaths) => {
     const namespaces = extractNamespaces(doc);
 
-    const nsResolver = (prefix) => namespaces[prefix] || null;
+    const nsResolver = (prefix) => namespaces[prefix] || namespaces[""] || null;
 
     const evaluatedNamespaces = []
 
     xPaths.forEach(xPath => {
         try {
             const evaluated = doc.evaluate(
-                xPath.absolute_xpath,
+                addNsPrefix(xPath.absolute_xpath),
                 doc,
                 nsResolver,
                 XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
                 null,
             );
-
 
             if (evaluated.snapshotLength > 0) {
                 // for (let i = 0; i < evaluated.snapshotLength; i++) {
@@ -54,7 +59,7 @@ export const executeXPaths = (doc, xPaths) => {
                 const absoluteXPath = getAbsoluteXPath(node);
                 evaluatedNamespaces.push({...xPath, resolved_xpath: absoluteXPath})
             } else {
-                // console.log('No nodes found.');
+                console.log('No nodes found.');
             }
 
         } catch (err) {

@@ -31,6 +31,17 @@ import {NavigationTabsWrapper} from '../../../../components/navigation-tabs-wrap
 
 const SECTION_TITLE = 'Fields Develop'
 
+const elementTypes = [
+    {
+        value: 'node',
+        label: 'Node'
+    },
+    {
+        value: 'field',
+        label: 'Field'
+    }
+];
+
 const Page = () => {
     const [files, setFiles] = useState([])
     const [selectedFile, setSelectedFile] = useState('')
@@ -91,11 +102,12 @@ const Page = () => {
         [selectedFile]
     )
 
-    const onChangeXPath = (value) => {
+    const onChangeXPath = (value, isField=false) => {
         value.shift()
         formik.setFieldValue('parent_node', '')
         formik.setFieldValue('relative_xpath', '')
         formik.setFieldValue('absolute_xpath', ['/*', ...value].join('/'))
+        formik.setFieldValue('element_type', isField ? 'field' : 'node')
     }
 
     const handleClear = () => formik.setValues(initialValues)
@@ -105,7 +117,8 @@ const Page = () => {
         label: '',
         absolute_xpath: '',
         relative_xpath: '',
-        parent_node: ''
+        parent_node: '',
+        element_type: 'field'
     };
 
     const formik = useFormik({
@@ -129,8 +142,8 @@ const Page = () => {
             const toastId = toastLoad("Creating Element...")
             helpers.setSubmitting(true);
 
-            const {id, label, parent_node, absolute_xpath, relative_xpath} = values
-            fieldsRegistry.addElement({id, label, parent_node_id: parent_node.id, absolute_xpath, relative_xpath})
+            const {id, label, parent_node, absolute_xpath, relative_xpath, element_type} = values
+            fieldsRegistry.addElement({id, label, parent_node_id: parent_node.id, absolute_xpath, relative_xpath, element_type})
                 .then(res => {
                     retrieveStructuralElements();
                     toastSuccess("Element Saved", toastId);
@@ -146,7 +159,6 @@ const Page = () => {
 
     const parentNodeSelect = xmlContent && xPaths ? executeXPaths(xmlContent, xPaths)
         .filter(e => {
-                console.log(formik.values.absolute_xpath, e.resolved_xpath);
                 return !["", "/*"].includes(e.resolved_xpath)
                     && formik.values.absolute_xpath.includes(e.resolved_xpath)
                     && formik.values.absolute_xpath !== "/*/" + e.resolved_xpath
@@ -269,6 +281,27 @@ const Page = () => {
                                                              xmlContent={xmlContent}
                                                              absolute_xpath={formik.values.absolute_xpath}
                                                              xpath={formik.values?.parent_node?.absolute_xpath}/>
+                                        <TextField
+                                            error={!!(formik.touched.element_type && formik.errors.element_type)}
+                                            id="element_type"
+                                            fullWidth
+                                            select
+                                            defaultValue="field"
+                                            helperText={formik.touched.element_type && formik.errors.element_type}
+                                            label="Type"
+                                            name="element_type"
+                                            onBlur={formik.handleBlur}
+                                            onChange={formik.handleChange}
+                                            value={formik.values.element_type}
+                                        >
+                                            {elementTypes.map(option => (
+                                                <MenuItem key={option.value}
+                                                          disabled={!option.value}
+                                                          value={option.value}>
+                                                    {option.label}
+                                                </MenuItem>
+                                            ))}
+                                        </TextField>
                                         <XpathEvaluator xmlDoc={xmlContent}
                                                         xpath={formik.values?.parent_node?.absolute_xpath}
                                                         absolute_xpath={formik.values.absolute_xpath}/>

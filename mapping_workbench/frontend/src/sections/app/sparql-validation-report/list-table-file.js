@@ -21,8 +21,8 @@ import {LocalHighlighter} from 'src/sections/components/local-highlighter';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
 
-const Condition = ({text, value}) => {
-    const color = value ? 'green' : 'red'
+const Condition = ({text, value, na = false}) => {
+    const color = value ? (na ? 'black' : 'green') : 'red'
     return <span style={{textWrap: 'nowrap'}}>{`${text} `}<b style={{color}}>{`${value}`}</b></span>
 }
 
@@ -157,7 +157,9 @@ export const ListTableFile = (props) => {
                                                        value={item.fields_covered}/>
                                             <Divider sx={{my: 1}}/>
                                             <Condition text='XPath condition fulfilled:'
-                                                       value={item?.meets_xpath_condition}/>
+                                                       value={item?.xpath_condition?.xpath_condition ? item?.meets_xpath_condition : 'N/A'}
+                                                       na={!item?.xpath_condition?.xpath_condition}
+                                            />
                                             <Divider sx={{my: 1}}/>
                                             <Condition text='Query result:'
                                                        value={item.query_result}/>

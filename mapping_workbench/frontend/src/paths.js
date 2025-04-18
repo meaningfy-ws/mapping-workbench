@@ -271,14 +271,20 @@ export const apiPaths = {
         file_resources: '/sparql_test_suites/:id/file_resources',
         file_resource: '/sparql_test_suites/file_resources/:id',
         project_file_resources: '/sparql_test_suites/project/file_resources',
-        assign_mapping_packages: '/sparql_test_suites/assign_mapping_packages'
+        assign_mapping_packages: '/sparql_test_suites/assign_mapping_packages',
+        tasks: {
+            import: '/sparql_test_suites/tasks/import',
+        },
     },
     shacl_test_suites: {
         items: '/shacl_test_suites',
         item: '/shacl_test_suites/:id',
         file_resources: '/shacl_test_suites/:id/file_resources',
         file_resource: '/shacl_test_suites/file_resources/:id',
-        assign_mapping_packages: '/shacl_test_suites/assign_mapping_packages'
+        assign_mapping_packages: '/shacl_test_suites/assign_mapping_packages',
+        tasks: {
+            import: '/shacl_test_suites/tasks/import',
+        },
     },
     detailed_view_cm: {
         items: '/conceptual_mapping_group'

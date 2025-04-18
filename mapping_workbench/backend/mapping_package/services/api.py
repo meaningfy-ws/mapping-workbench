@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 
 import pymongo
 from beanie import PydanticObjectId
@@ -12,8 +12,10 @@ from mapping_workbench.backend.core.services.request import request_update_data,
     api_entity_is_found, prepare_search_param, pagination_params
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageCreateIn, \
     MappingPackageUpdateIn, MappingPackageOut, MappingPackageStateGate, MappingPackageResourcesMetadata
-from mapping_workbench.backend.mapping_package.services.data import mapping_package_process_status
+from mapping_workbench.backend.mapping_package.services.data import mapping_package_process_status, \
+    DEFAULT_PACKAGE_IDENTIFIER
 from mapping_workbench.backend.package_processor.services import TASK_ENTITY_TYPE, TASK_ENTITY_ACTION
+from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestSuite, SPARQLTestFileResource
 from mapping_workbench.backend.state_manager.services.object_state_manager import delete_object_state
 from mapping_workbench.backend.task_manager.entrypoints import AppTaskManager
@@ -130,6 +132,16 @@ async def get_mapping_package(id: PydanticObjectId) -> MappingPackage:
     mapping_package: MappingPackage = await MappingPackage.get(id)
     if not api_entity_is_found(mapping_package):
         raise ResourceNotFoundException()
+    return mapping_package
+
+
+async def get_default_mapping_package(project_id: PydanticObjectId) -> Union[MappingPackage, None]:
+    mapping_package: MappingPackage = await MappingPackage.find_one(
+        MappingPackage.project == Project.link_from_id(project_id),
+        MappingPackage.identifier == DEFAULT_PACKAGE_IDENTIFIER
+    )
+    if not mapping_package:
+        return None
     return mapping_package
 
 

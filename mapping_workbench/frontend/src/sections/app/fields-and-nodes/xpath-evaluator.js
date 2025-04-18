@@ -13,6 +13,7 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 
 import {TableNoData} from "../shacl-validation-report/utils";
+import {addNsPrefix, extractNamespaces} from "./utils";
 
 const XpathEvaluator = ({xmlDoc, absolute_xpath}) => {
     const [nodes, setNodes] = useState([])
@@ -23,21 +24,6 @@ const XpathEvaluator = ({xmlDoc, absolute_xpath}) => {
             evaluateXPAthExpression(absolute_xpath, xmlDoc)
     }, [xmlDoc, absolute_xpath]);
 
-    const extractNamespaces = (doc) => {
-        const root = doc.documentElement;
-        const attributes = root.attributes;
-        const namespaces = {};
-
-        for (let attr of attributes) {
-            if (attr.name.startsWith('xmlns:')) {
-                const prefix = attr.name.split(':')[1];
-                namespaces[prefix] = attr.value;
-            }
-        }
-
-        return namespaces;
-    }
-
 
     const evaluateXPAthExpression = (xpathExpr, xmlDoc) => {
 
@@ -46,13 +32,13 @@ const XpathEvaluator = ({xmlDoc, absolute_xpath}) => {
         const namespaces = extractNamespaces(xmlDoc);
 
         // Function to resolve namespaces in XPath expressions
-        const nsResolver = (prefix) => namespaces[prefix] || null;
+        const nsResolver = (prefix) => namespaces[prefix] || namespaces[""] || null;
 
         try {
             // console.log(xmlDoc.evaluate(xpathExpr,xmlDoc,nsResolver,XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null))
             const allNodes = []
 
-            const result = xmlDoc.evaluate(xpathExpr, xmlDoc, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+            const result = xmlDoc.evaluate(addNsPrefix(xpathExpr), xmlDoc, nsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
             if (result.snapshotLength > 0) {
                 for (let i = 0; i < result.snapshotLength; i++) {
                     const node = result.snapshotItem(i);
@@ -63,7 +49,6 @@ const XpathEvaluator = ({xmlDoc, absolute_xpath}) => {
                 // formik.setErrors({relative_xpath: 'No nodes found.'})
                 console.log('No nodes found.');
             }
-
             setNodes(allNodes)
         } catch (err) {
             // formik.setErrors({relative_xpath: 'Unable to process xpath.'})

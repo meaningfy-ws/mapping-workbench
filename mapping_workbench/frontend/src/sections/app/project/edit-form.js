@@ -55,9 +55,7 @@ export const EditForm = (props) => {
         },
         {
             label: <span>SQL (MySQL/PostgreSQL)<i>(In development)</i></span>
-        },
-
-
+        }
     ];
 
     const initialValues = {
