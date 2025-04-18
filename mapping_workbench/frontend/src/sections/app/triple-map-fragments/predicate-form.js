@@ -6,6 +6,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
 import FormGroup from '@mui/material/FormGroup';
+import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import FormControl from '@mui/material/FormControl';
@@ -16,7 +17,7 @@ import CustomAccordion from './custom-accordion';
 import CustomTextField from './custom-text-field';
 import CustomAccordionSummary from './custom-accordion-summary';
 
-const PredicateForm = ({formik}) => {
+const PredicateForm = ({label,comment}) => {
     const onDelete = (e) => {
         e.stopPropagation()
         console.log(e)
@@ -50,11 +51,38 @@ const PredicateForm = ({formik}) => {
                             <MenuItem>text</MenuItem>
                         </Select>
                     </FormControl>
-                    <CustomTextField label='Label'
-                                     formik={formik}/>
-                    <CustomTextField label='Comment'
-                                     formik={formik}/>
-
+                    {/*<CustomTextField label='Label'*/}
+                    {/*                 formik={formik}/>*/}
+                    <Typography>Label</Typography>
+                    <TextField
+                        sx={{
+                            "& .MuiOutlinedInput-root": {
+                                borderRadius: "12px",
+                                backgroundColor: "white",
+                                height: 40
+                            }
+                        }}
+                        variant='outlined'
+                        fullWidth
+                        value={label}
+                        required
+                    />
+                    {/*<CustomTextField label='Comment'*/}
+                    {/*                 formik={formik}/>*/}
+                    <Typography>Comment</Typography>
+                    <TextField
+                        sx={{
+                            "& .MuiOutlinedInput-root": {
+                                borderRadius: "12px",
+                                backgroundColor: "white",
+                                height: 40
+                            }
+                        }}
+                        variant='outlined'
+                        fullWidth
+                        value={comment}
+                        required
+                    />
                     <Typography sx={{mt: 2}}>Target</Typography>
                     <FormControl fullWidth>
                         <Select variant='outlined'
@@ -65,10 +93,10 @@ const PredicateForm = ({formik}) => {
                             <MenuItem>text</MenuItem>
                         </Select>
                     </FormControl>
-                    <CustomTextField label='Source Reference'
-                                     formik={formik}/>
-                    <CustomTextField label='Join With'
-                                     formik={formik}/>
+                    {/*<CustomTextField label='Source Reference'*/}
+                    {/*                 formik={formik}/>*/}
+                    {/*<CustomTextField label='Join With'*/}
+                    {/*                 formik={formik}/>*/}
                     <FormGroup>
                         <FormControlLabel
                             control={<Checkbox/>}

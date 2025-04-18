@@ -1,11 +1,18 @@
 const $rdf = require('rdflib');
 
-export const getSource = async (rdfData, uri) => {
-    const store = $rdf.graph();
-    const baseURI = 'https://example.org/'
-    const contentType = 'text/turtle';
+const tripleMapQuery = (uri) => `PREFIX rr: <http://www.w3.org/ns/r2rml#>
+            SELECT * where {
+                ?newTMap a rr:TriplesMap .
+            }`
+const tripleMapResults = (results, result) => {
+    const value = {...result['?newTMap']}.value
+    const tedm = 'http://data.europa.eu/a4g/mapping/sf-rml/'
+    const replaceValue = value.replace(tedm, 'tedm:')
 
-    const queryStr = `
+    return results.push(replaceValue);
+}
+
+const sourceQuery = (uri) => `
         PREFIX rml: <http://semweb.mmlab.be/ns/rml#>
         PREFIX rr: <http://www.w3.org/ns/r2rml#>
         PREFIX ql: <http://semweb.mmlab.be/ns/ql#>
@@ -18,18 +25,7 @@ export const getSource = async (rdfData, uri) => {
             rml:referenceFormulation ?type .
         }`
 
-    console.log(queryStr)
-
-
-    const queryEngine = $rdf.SPARQLToQuery(queryStr, false, store);
-
-
-    try {
-        $rdf.parse(rdfData, store, baseURI, contentType);
-    } catch (err) {
-        console.error(err)
-    }
-
+const sourceResults = (results, result) => {
     const currentType = (type) => {
         if (type.endsWith('ql#XPath'))
             return 'ql:XPath'
@@ -38,38 +34,15 @@ export const getSource = async (rdfData, uri) => {
         return 'ql:CSV'
     }
 
-    const queryToArray = (store, query) => {
-        return new Promise((resolve, reject) => {
-            const results = [];
-
-            try {
-                store.query(query, result => {
-                    results.push({
-                        file: result['?file'].value,
-                        type: currentType(result['?type'].value),
-                        iterator: result['?iterator'].value
-                    });
-                }, null, () => {
-                    resolve(results); // Called after the query completes
-                });
-            } catch (err) {
-                reject(err);
-            }
-        });
-    }
-
-
-    return queryToArray(store, queryEngine)
+    return results.push({
+        file: result['?file'].value,
+        type: currentType(result['?type'].value),
+        iterator: result['?iterator'].value
+    });
 }
 
 
-export const getSubject = (rdfData, uri) => {
-    const store = $rdf.graph();
-    const baseURI = 'https://example.org/'
-    const contentType = 'text/turtle';
-
-    //we may need to make sMap optional for versioned mappings
-    const queryStr = `
+const subjectQuery = (uri) => `
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         PREFIX rml: <http://semweb.mmlab.be/ns/rml#>
         PREFIX rr: <http://www.w3.org/ns/r2rml#>
@@ -82,51 +55,18 @@ export const getSubject = (rdfData, uri) => {
         OPTIONAL { ?sMap rml:reference ?sRef . }
         OPTIONAL { ?sMap rr:class ?class . }
 }`
-    console.log(queryStr)
 
-    const queryEngine = $rdf.SPARQLToQuery(queryStr, false, store);
-
-    try {
-        $rdf.parse(rdfData, store, baseURI, contentType);
-    } catch (err) {
-        console.error(err)
-    }
-
-
-    const queryToArray = (store, query) => {
-        return new Promise((resolve, reject) => {
-            const results = [];
-
-            try {
-                store.query(query, result => {
-                    const sclass = result['?class']?.value
-                    results.push({
-                        label: result['?sMapLabel']?.value,
-                        sclass: sclass?.substring(sclass.lastIndexOf('/') + 1),
-                        template: result['?sRef']?.value,
-                        ...result
-                    })
-                    ;
-                }, null, () => {
-                    resolve(results); // Called after the query completes
-                });
-            } catch (err) {
-                reject(err);
-            }
-        });
-    }
-
-
-    return queryToArray(store, queryEngine)
+const subjectResults = (results, result) => {
+    const sclass = result['?class']?.value
+    return results.push({
+        label: result['?sMapLabel']?.value,
+        sclass: sclass?.substring(sclass.lastIndexOf('/') + 1),
+        template: result['?sRef']?.value,
+        ...result
+    })
 }
 
-
-export const getPredicate = (rdfData, uri) => {
-    const store = $rdf.graph();
-    const baseURI = 'https://example.org/'
-    const contentType = 'text/turtle';
-
-    const queryStr = `
+const predicateQuery = (uri) => `
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     PREFIX rml: <http://semweb.mmlab.be/ns/rml#>
     PREFIX rr: <http://www.w3.org/ns/r2rml#>
@@ -150,64 +90,37 @@ export const getPredicate = (rdfData, uri) => {
         OPTIONAL { ?oMap  rr:datatype  ?datatype . }
     }`
 
-    console.log(queryStr)
-
-    const queryEngine = $rdf.SPARQLToQuery(queryStr, false, store);
-
-    try {
-        $rdf.parse(rdfData, store, baseURI, contentType);
-    } catch (err) {
-        console.error(err)
-    }
-
-
-    const queryToArray = (store, query) => {
-        return new Promise((resolve, reject) => {
-            const results = [];
-
-            try {
-                store.query(query, result => {
-                    const predicate = result['?predicate']?.value
-                    const parent = result['?parent']?.value
-                    const datatype = result['?datatype']?.value
-                    results.push({
-                        predicate: predicate?.substring(predicate.lastIndexOf('#') + 1),
-                        label: result['?pOMapLabel']?.value,
-                        comment: result['?pOMapComment']?.value,
-                        parent: parent?.substring(parent.lastIndexOf('/') + 1),
-                        oMapLabel: result['?oLabel']?.value,
-                        oMapMinSDK: result['?minSDKVersion']?.value,
-                        oMapMaxSDK: result['?maxSDKVersion']?.value,
-                        oMapReference: result['?reference']?.value,
-                        oMapDatatype: datatype?.substring(datatype.lastIndexOf('#') + 1),
-                        ...result
-                    });
-                }, null, () => {
-                    resolve(results); // Called after the query completes
-                });
-            } catch (err) {
-                reject(err);
-            }
-        });
-    }
-
-
-    return queryToArray(store, queryEngine)
+const predicateResults = (results, result) => {
+    const predicate = result['?predicate']?.value
+    const parent = result['?parent']?.value
+    const datatype = result['?datatype']?.value
+    return results.push({
+        predicate: predicate?.substring(predicate.lastIndexOf('#') + 1),
+        label: result['?pOMapLabel']?.value,
+        comment: result['?pOMapComment']?.value,
+        parent: parent?.substring(parent.lastIndexOf('/') + 1),
+        oMapLabel: result['?oLabel']?.value,
+        oMapMinSDK: result['?minSDKVersion']?.value,
+        oMapMaxSDK: result['?maxSDKVersion']?.value,
+        oMapReference: result['?reference']?.value,
+        oMapDatatype: datatype?.substring(datatype.lastIndexOf('#') + 1),
+        ...result
+    });
 }
 
-export const getTripleMap = (rdfData) => {
+
+export const getGraph = async (rdfData, query, mapResults) => {
     const store = $rdf.graph();
     const baseURI = 'https://example.org/'
     const contentType = 'text/turtle';
 
-    const queryStr =
-        `PREFIX rr: <http://www.w3.org/ns/r2rml#>
-            SELECT * where {
-                ?newTMap a rr:TriplesMap .
-            }`
+    const queryEngine = $rdf.SPARQLToQuery(query, false, store);
 
-
-    const queryEngine = $rdf.SPARQLToQuery(queryStr, false, store);
+    try {
+        $rdf.parse(rdfData, store, baseURI, contentType);
+    } catch (err) {
+        console.error(err)
+    }
 
     const queryToArray = (store, query) => {
         return new Promise((resolve, reject) => {
@@ -215,10 +128,7 @@ export const getTripleMap = (rdfData) => {
 
             try {
                 store.query(query, result => {
-                    const value = {...result['?newTMap']}.value
-                    const tedm = 'http://data.europa.eu/a4g/mapping/sf-rml/'
-                    const replaceValue = value.replace(tedm, 'tedm:')
-                    results.push(replaceValue);
+                    mapResults(results, result)
                 }, null, () => {
                     resolve(results); // Called after the query completes
                 });
@@ -228,14 +138,16 @@ export const getTripleMap = (rdfData) => {
         });
     }
 
-    try {
-        $rdf.parse(rdfData, store, baseURI, contentType);
-    } catch (err) {
-        console.error(err)
-    }
-
     return queryToArray(store, queryEngine)
-
 }
+
+export const getTripleMap = (rdfData, uri) => getGraph(rdfData, tripleMapQuery(uri), tripleMapResults)
+
+export const getSource = (rdfData, uri) => getGraph(rdfData, sourceQuery(uri), sourceResults)
+
+export const getSubject = (rdfData, uri) => getGraph(rdfData, subjectQuery(uri), subjectResults)
+
+export const getPredicate = (rdfData, uri) => getGraph(rdfData, predicateQuery(uri), predicateResults)
+
 
 

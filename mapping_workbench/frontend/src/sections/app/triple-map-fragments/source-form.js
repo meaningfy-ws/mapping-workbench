@@ -21,7 +21,6 @@ const SourceForm = ({file, iterator, type, handleUpdate, handleDelete}) => {
     }
 
     const handleSourceChange = (value) => {
-        console.log(value)
         handleUpdate({file, iterator, type, ...value})
     }
 

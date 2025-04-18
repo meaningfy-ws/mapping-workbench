@@ -16,11 +16,16 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import CustomAccordion from './custom-accordion';
 import CustomAccordionSummary from './custom-accordion-summary';
 
-const SubjectForm = ({template, sclass, label}) => {
+const SubjectForm = ({template, sclass, label, handleUpdate}) => {
 
     const onDelete = (e) => {
         e.stopPropagation()
         console.log(e)
+    }
+
+
+    const handleSubjectChange = (value) => {
+        handleUpdate({template, sclass, label, ...value})
     }
 
     return (
@@ -58,6 +63,7 @@ const SubjectForm = ({template, sclass, label}) => {
                                 }}
                                 variant='outlined'
                                 fullWidth
+                                onChange={(e) => handleSubjectChange({sclass:e.target.value})}
                                 value={sclass}
                                 required
                             />

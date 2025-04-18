@@ -23,6 +23,7 @@ import {genericTripleMapFragmentsApi as sectionApi} from '../../../api/triple-ma
 import CodeMirrorDefault from '../../../components/app/form/codeMirrorDefault';
 import {useDialog} from '../../../hooks/use-dialog';
 import {usePageView} from '../../../hooks/use-page-view';
+import turtleValidator from '../../../utils/turtle-validator';
 import PredicateForm from '../triple-map-fragments/predicate-form';
 import SourceForm from '../triple-map-fragments/source-form';
 import SubjectForm from '../triple-map-fragments/subject-form';
@@ -38,7 +39,6 @@ const BuildForm = ({rdfContent}) => {
     const [tripleMaps, setTripleMaps] = useState([])
     const [selectedTripleMap, setSelectedTripleMap] = useState({})
     const [processedTripleMaps, setProcessedTripleMaps] = useState({})
-    const [tripleFile, setTripleFile] = useState({})
 
     const formik = useFormik({
         initialValues: {
@@ -57,7 +57,7 @@ const BuildForm = ({rdfContent}) => {
             })
     }, []);
 
-    console.log({selectedTripleMap})
+    console.log({selectedTripleMap, processedTripleMaps})
 
     useEffect(() => {
         selectedTripleMap && processedTripleMaps && formik.setFieldValue('tripleFile', processedTripleMaps[selectedTripleMap])
@@ -97,12 +97,13 @@ const BuildForm = ({rdfContent}) => {
     const formTabs = [{label: 'Form', value: 'form'}, {label: 'Code', value: 'code'}]
     const [selectedFormTab, setSelectedFormTab] = useState('form')
     // const technicalMappingsTabs = [{label: 'TM1', value: 'tm1'}]
-const [buildedFile,setBuildedFile]=useState()
+    const [buildedFile, setBuildedFile] = useState()
 
     const handleAdd = () => {}
 
     const handleSave = () => {
         setBuildedFile(buildFile(processedTripleMaps))
+        console.log(turtleValidator(buildFile(processedTripleMaps)))
     }
 
     const handleUpdate = (values, index, type) => {
@@ -111,7 +112,7 @@ const [buildedFile,setBuildedFile]=useState()
         formik.setFieldValue('tripleFile', currentTypeObj)
     }
 
-    console.log(tripleFile)
+    console.log(formik.values.tripleFile)
 
     const handleDelete = (index, type) => {
         console.log('delete')
@@ -159,17 +160,20 @@ const [buildedFile,setBuildedFile]=useState()
                                                    tripleMaps={tripleMaps}
                                                    rdfContent={rdfContent}></TripleMapForm>
                                     {formik.values.tripleFile?.sources?.map((source, index) =>
-                                        <SourceForm key={index}
+                                        <SourceForm key={'source' + index}
                                                     handleUpdate={(values) => handleUpdate(values, index, 'sources')}
                                                     handleDelete={handleDelete}
                                                     tripleMap={selectedTripleMap}
                                                     id={index}
                                                     {...source}/>
                                     )}
-                                    {formik.values.tripleFile?.subjects?.map(subject =>
-                                        <SubjectForm {...subject}/>)}
-                                    {formik.values.tripleFile?.predicates?.map(predicate =>
-                                        <PredicateForm formik={formik} {...predicate}/>)
+                                    {formik.values.tripleFile?.subjects?.map((subject, index) =>
+                                        <SubjectForm key={'subject' + index}
+                                                     handleUpdate={(values) => handleUpdate(values, index, 'subjects')}
+                                                     {...subject}/>)}
+                                    {formik.values.tripleFile?.predicates?.map((predicate, index) =>
+                                        <PredicateForm key={'predicate' + index}
+                                                       {...predicate}/>)
                                     }
                                     <Stack alignItems='end'>
                                         <Button onClick={handleSave}>Save</Button>
@@ -215,12 +219,12 @@ const [buildedFile,setBuildedFile]=useState()
                           sm={12}>
                         <Card>
                             <CodeMirrorDefault value={buildedFile}
-                                                                              style={{
-                                                                                  resize: 'vertical',
-                                                                                  overflow: 'auto',
-                                                                                  height: 600
-                                                                              }}
-                                                                              lang={'TTL'}/>
+                                               style={{
+                                                   resize: 'vertical',
+                                                   overflow: 'auto',
+                                                   height: 600
+                                               }}
+                                               lang={'TTL'}/>
                             {/*<Typography sx={{m: 3}}>Conceptual Mapping Browser</Typography>*/}
                             {/*<FormGroup>*/}
                             {/*    <FormControlLabel sx={{flexDirection: 'row-reverse', justifyContent: 'end'}}*/}

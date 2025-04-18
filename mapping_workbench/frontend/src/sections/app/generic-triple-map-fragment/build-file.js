@@ -21,7 +21,7 @@ const defaultPrefixes = "@prefix owl: <http://www.w3.org/2002/07/owl#> .\n" +
     "@prefix skos: <http://www.w3.org/2004/02/skos/core#> .\n" +
     "@prefix fnml:   <http://semweb.mmlab.be/ns/fnml#> .\n" +
     "@prefix fno: <https://w3id.org/function/ontology#> .\n" +
-    "@prefix idlab-fn: <http://example.com/idlab/function/> .\n"
+    "@prefix idlab-fn: <http://example.com/idlab/function/> ."
 
 const buildSource = (source) => {
     let sourceValues = ''
@@ -80,7 +80,7 @@ const buildFile = (processedTripleMaps) => {
     Object.entries(processedTripleMaps).forEach(processedTriple => {
         console.log(processedTriple)
         const [tripleName, values] = processedTriple
-        outStr += `\n${tripleName}`
+        outStr += `\n\n${tripleName}`
         values.sources.forEach(source => {
             outStr += buildSource(source)
         })
@@ -90,6 +90,7 @@ const buildFile = (processedTripleMaps) => {
         values.predicates.forEach(predicate => {
             outStr += buildPredicate(predicate)
         })
+        outStr += '\n.'
     })
 
     return outStr
