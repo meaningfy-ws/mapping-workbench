@@ -75,10 +75,8 @@ const buildPredicate = (predicate) => {
 }
 
 const buildFile = (processedTripleMaps) => {
-    console.log(processedTripleMaps)
     let outStr = defaultPrefixes
     Object.entries(processedTripleMaps).forEach(processedTriple => {
-        console.log(processedTriple)
         const [tripleName, values] = processedTriple
         outStr += `\n\n${tripleName}`
         values.sources.forEach(source => {

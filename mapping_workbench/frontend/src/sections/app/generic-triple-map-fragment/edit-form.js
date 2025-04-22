@@ -464,11 +464,9 @@ export const EditForm = (props) => {
                 </Card>
             </>
             }
-            {currentTab === 'tabBuild' && <>
-                <BuildForm rdfContent={item.triple_map_content}/>
-            </>
-            }
+            {currentTab === 'tabBuild' && <BuildForm rdfContent={item.triple_map_content}/>}
 
+            {currentTab !== 'tabBuild' &&
             <Card sx={{mt: 3}}>
                 <Stack
                     direction={{
@@ -505,10 +503,9 @@ export const EditForm = (props) => {
                         Cancel
                     </Button>
                 </Stack>
-            </Card>
+            </Card>}
         </form>
-    )
-        ;
+    );
 };
 
 EditForm.propTypes = {

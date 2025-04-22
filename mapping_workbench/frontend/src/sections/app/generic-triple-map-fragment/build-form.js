@@ -1,4 +1,5 @@
-import {memo, useEffect, useMemo, useState} from 'react';
+import {Box} from '@mui/system';
+import {useEffect, useState} from 'react';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
 
@@ -17,22 +18,24 @@ import FormGroup from '@mui/material/FormGroup';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import {RouterLink} from '../../../components/router-link';
+import {paths} from '../../../paths';
 
-import {fieldsRegistryApi as treeViewApi} from '../../../api/fields-registry';
-import {genericTripleMapFragmentsApi as sectionApi} from '../../../api/triple-map-fragments/generic';
-import ConfirmDialog from '../../../components/app/dialog/confirm-dialog';
-import CodeMirrorDefault from '../../../components/app/form/codeMirrorDefault';
+import buildFile from './build-file';
+import {FileUploader} from './file-uploader';
 import {useDialog} from '../../../hooks/use-dialog';
 import {usePageView} from '../../../hooks/use-page-view';
 import turtleValidator from '../../../utils/turtle-validator';
-import PredicateForm from '../triple-map-fragments/predicate-form';
 import SourceForm from '../triple-map-fragments/source-form';
 import SubjectForm from '../triple-map-fragments/subject-form';
 import TreeView from '../triple-map-fragments/tree-view-form';
+import PredicateForm from '../triple-map-fragments/predicate-form';
 import TripleMapForm from '../triple-map-fragments/triple-map-form';
-import buildFile from './build-file';
-import {FileUploader} from './file-uploader';
+import ConfirmDialog from '../../../components/app/dialog/confirm-dialog';
+import {fieldsRegistryApi as treeViewApi} from '../../../api/fields-registry';
+import CodeMirrorDefault from '../../../components/app/form/codeMirrorDefault';
 import {getPredicate, getSource, getSubject, getTripleMap} from './rdflib-converter';
+import {genericTripleMapFragmentsApi as sectionApi} from '../../../api/triple-map-fragments/generic';
 
 
 const BuildForm = ({rdfContent}) => {
@@ -41,13 +44,14 @@ const BuildForm = ({rdfContent}) => {
     const [selectedTripleMap, setSelectedTripleMap] = useState({})
     const [processedTripleMaps, setProcessedTripleMaps] = useState({})
     const [confirmOpen, setConfirmOpen] = useState(false)
+    const [showCode, setShowCode] = useState(false)
+    const [validation, setValidation] = useState({})
 
     const formik = useFormik({
         initialValues: {
             tripleFile: {}
         },
     })
-
 
     useEffect(() => {
         getTripleMap(rdfContent)
@@ -58,8 +62,6 @@ const BuildForm = ({rdfContent}) => {
                 setSelectedTripleMap(res[0])
             })
     }, []);
-
-    console.log({selectedTripleMap, processedTripleMaps})
 
     useEffect(() => {
         selectedTripleMap && processedTripleMaps && formik.setFieldValue('tripleFile', processedTripleMaps[selectedTripleMap])
@@ -77,11 +79,8 @@ const BuildForm = ({rdfContent}) => {
             }
     }
 
-    console.log(processedTripleMaps)
-
     const [addAnchor, setAddAnchor] = useState(null)
     const [wcmStatus, setWcmStatus] = useState(true)
-
 
     usePageView();
 
@@ -98,17 +97,18 @@ const BuildForm = ({rdfContent}) => {
 
     const formTabs = [{label: 'Form', value: 'form'}, {label: 'Code', value: 'code'}]
     const [selectedFormTab, setSelectedFormTab] = useState('form')
-    // const technicalMappingsTabs = [{label: 'TM1', value: 'tm1'}]
     const [buildedFile, setBuildedFile] = useState()
 
     const handleAdd = (type) => {
         const currentTypeObj = {...formik.values.tripleFile}
         currentTypeObj[type].push({})
+        setAddAnchor(null)
     }
 
     const handleSave = () => {
-        setBuildedFile(buildFile(processedTripleMaps))
-        console.log(turtleValidator(buildFile(processedTripleMaps)))
+        const buildedFile = buildFile(processedTripleMaps)
+
+        setBuildedFile(buildedFile)
     }
 
     const handleUpdate = (values, index, type) => {
@@ -116,8 +116,6 @@ const BuildForm = ({rdfContent}) => {
         currentTypeObj[type][index] = values
         formik.setFieldValue('tripleFile', currentTypeObj)
     }
-
-    console.log(formik.values.tripleFile)
 
     const handleDelete = (index, type) => {
         setConfirmOpen({index, type})
@@ -130,6 +128,13 @@ const BuildForm = ({rdfContent}) => {
         // formik.setFieldValue('tripleFile', currentTypeObj)
     }
 
+    const handleTurtleValidate = () => {
+        const buildedFile = buildFile(processedTripleMaps)
+        setBuildedFile(buildedFile)
+        turtleValidator(buildedFile)
+            .then(res => setValidation(res))
+            .catch(err => setValidation({error: err}))
+    }
 
     return (
         <>
@@ -191,7 +196,7 @@ const BuildForm = ({rdfContent}) => {
                                                        {...predicate}/>)
                                     }
                                     <Stack alignItems='end'>
-                                        <Button onClick={handleSave}>Save</Button>
+                                        {/*<Button onClick={handleSave}>Save</Button>*/}
                                         <Button onClick={(e) => setAddAnchor(e.target)}
                                                 startIcon={<AddIcon/>}
                                                 endIcon={<KeyboardArrowDownIcon/>}>
@@ -233,25 +238,66 @@ const BuildForm = ({rdfContent}) => {
                           md={6}
                           sm={12}>
                         <Card>
-                            <CodeMirrorDefault value={buildedFile}
-                                               style={{
-                                                   resize: 'vertical',
-                                                   overflow: 'auto',
-                                                   height: 600
-                                               }}
-                                               lang={'TTL'}/>
-                            {/*<Typography sx={{m: 3}}>Conceptual Mapping Browser</Typography>*/}
-                            {/*<FormGroup>*/}
-                            {/*    <FormControlLabel sx={{flexDirection: 'row-reverse', justifyContent: 'end'}}*/}
-                            {/*                      control={<Switch checked={wcmStatus}*/}
-                            {/*                                       onChange={e => setWcmStatus(e.target.checked)}/>}*/}
-                            {/*                      label="Elements with Conceptual Mappings"/>*/}
-                            {/*</FormGroup>*/}
-                            {/*<TreeView sectionApi={treeViewApi}*/}
-                            {/*          wcm={wcmStatus}/>*/}
+                            <FormGroup>
+                                <FormControlLabel sx={{flexDirection: 'row-reverse', justifyContent: 'end'}}
+                                                  control={<Switch checked={showCode}
+                                                                   onChange={e => setShowCode(e.target.checked)}/>}
+                                                  label="Show File"/>
+                            </FormGroup>
+                            {showCode ?
+                                <>
+                                    <CodeMirrorDefault value={buildedFile}
+                                                       style={{
+                                                           resize: 'vertical',
+                                                           overflow: 'auto',
+                                                           height: 600
+                                                       }}
+                                                       lang={'TTL'}/>
+                                    <Box sx={{color: 'green'}}>{validation.success}</Box>
+                                    <Box sx={{color: 'red'}}>{validation.error}</Box>
+                                </>
+                                : <>
+                                    <Typography sx={{m: 3}}>Conceptual Mapping Browser</Typography>
+                                    <FormGroup>
+                                        <FormControlLabel sx={{flexDirection: 'row-reverse', justifyContent: 'end'}}
+                                                          control={<Switch checked={wcmStatus}
+                                                                           onChange={e => setWcmStatus(e.target.checked)}/>}
+                                                          label="Elements with Conceptual Mappings"/>
+                                    </FormGroup>
+                                    <TreeView sectionApi={treeViewApi}
+                                              wcm={wcmStatus}/>
+                                </>}
                         </Card>
                     </Grid>
                 </Grid>
+            </Card>
+            <Card sx={{mt: 3}}>
+                <Stack
+                    direction={{
+                        xs: 'column',
+                        sm: 'row'
+                    }}
+                    flexWrap="wrap"
+                    spacing={3}
+                    sx={{p: 3}}
+                >
+                    <Button
+                        disabled={formik.isSubmitting}
+                        type="submit"
+                        variant="contained"
+                    >
+                        Update
+                    </Button>
+                    <Button onClick={handleTurtleValidate}>Validate</Button>
+                    <Button
+                        color="inherit"
+                        component={RouterLink}
+                        disabled={formik.isSubmitting}
+                        href={paths.app.specific_triple_map_fragments.index}
+                    >
+                        Cancel
+                    </Button>
+                </Stack>
             </Card>
             <FileUploader
                 onClose={uploadDialog.handleClose}

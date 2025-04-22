@@ -20,7 +20,6 @@ const PredicateForm = ({label, comment,type, handleUpdate, handleDelete}) => {
     const onDelete = (e) => {
         e.stopPropagation()
         handleDelete()
-        console.log(e)
     }
 
     const handlePredicateChange = (value) => {
