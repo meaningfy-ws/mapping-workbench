@@ -17,7 +17,7 @@ const SourceForm = ({file, iterator, type, handleUpdate, handleDelete}) => {
 
     const onDelete = (e) => {
         e.stopPropagation()
-        console.log(e)
+        handleDelete()
     }
 
     const handleSourceChange = (value) => {
@@ -58,15 +58,8 @@ const SourceForm = ({file, iterator, type, handleUpdate, handleDelete}) => {
                                     }
                                 }}
                                 variant='outlined'
-                                // error={!!(formik.touched[name] && formik.errors[name])}
                                 fullWidth
-                                // disabled={file === 'data/source.xml'}
-                                // helperText={formik.touched[name] && formik.errors[name]}
-                                // label={label}
-                                // name={name}
-                                // onBlur={formik.handleBlur}
                                 onChange={e => handleSourceChange({file: e.target.value})}
-
                                 value={file}
                                 required
                                 type={type}
@@ -83,12 +76,7 @@ const SourceForm = ({file, iterator, type, handleUpdate, handleDelete}) => {
                                     }
                                 }}
                                 variant='outlined'
-                                // error={!!(formik.touched[name] && formik.errors[name])}
                                 fullWidth
-                                // helperText={formik.touched[name] && formik.errors[name]}
-                                // label={label}
-                                // name={name}
-                                // onBlur={formik.handleBlur}
                                 onChange={e => handleSourceChange({iterator: e.target.value})}
                                 value={iterator}
                                 required

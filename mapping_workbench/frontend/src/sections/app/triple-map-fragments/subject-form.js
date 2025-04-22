@@ -16,11 +16,11 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import CustomAccordion from './custom-accordion';
 import CustomAccordionSummary from './custom-accordion-summary';
 
-const SubjectForm = ({template, sclass, label, handleUpdate}) => {
+const SubjectForm = ({template, sclass, label, handleUpdate, handleDelete}) => {
 
     const onDelete = (e) => {
         e.stopPropagation()
-        console.log(e)
+        handleDelete()
     }
 
 

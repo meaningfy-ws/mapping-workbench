@@ -14,13 +14,17 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import AccordionDetails from "@mui/material/AccordionDetails";
 
 import CustomAccordion from './custom-accordion';
-import CustomTextField from './custom-text-field';
 import CustomAccordionSummary from './custom-accordion-summary';
 
-const PredicateForm = ({label,comment}) => {
+const PredicateForm = ({label, comment,type, handleUpdate, handleDelete}) => {
     const onDelete = (e) => {
         e.stopPropagation()
+        handleDelete()
         console.log(e)
+    }
+
+    const handlePredicateChange = (value) => {
+        handleUpdate({label, comment, ...value})
     }
 
     return (
@@ -34,11 +38,14 @@ const PredicateForm = ({label,comment}) => {
                     <Typography>Type</Typography>
                     <FormControl fullWidth>
                         <Select variant='outlined'
+                                value={type}
+                                onChange={(e) => handlePredicateChange({type: e.target.value})}
                                 sx={{
                                     height: 40,
                                     borderRadius: '12px'
                                 }}>
-                            <MenuItem>text</MenuItem>
+                            <MenuItem value='attribute'>Attribute</MenuItem>
+                            <MenuItem value='reference'>Reference</MenuItem>
                         </Select>
                     </FormControl>
                     <Typography>Property</Typography>
@@ -51,8 +58,6 @@ const PredicateForm = ({label,comment}) => {
                             <MenuItem>text</MenuItem>
                         </Select>
                     </FormControl>
-                    {/*<CustomTextField label='Label'*/}
-                    {/*                 formik={formik}/>*/}
                     <Typography>Label</Typography>
                     <TextField
                         sx={{
@@ -64,11 +69,10 @@ const PredicateForm = ({label,comment}) => {
                         }}
                         variant='outlined'
                         fullWidth
+                        onChange={(e) => handlePredicateChange({label: e.target.value})}
                         value={label}
                         required
                     />
-                    {/*<CustomTextField label='Comment'*/}
-                    {/*                 formik={formik}/>*/}
                     <Typography>Comment</Typography>
                     <TextField
                         sx={{
@@ -80,6 +84,7 @@ const PredicateForm = ({label,comment}) => {
                         }}
                         variant='outlined'
                         fullWidth
+                        onChange={(e) => handlePredicateChange({comment: e.target.value})}
                         value={comment}
                         required
                     />
@@ -93,13 +98,10 @@ const PredicateForm = ({label,comment}) => {
                             <MenuItem>text</MenuItem>
                         </Select>
                     </FormControl>
-                    {/*<CustomTextField label='Source Reference'*/}
-                    {/*                 formik={formik}/>*/}
-                    {/*<CustomTextField label='Join With'*/}
-                    {/*                 formik={formik}/>*/}
                     <FormGroup>
                         <FormControlLabel
-                            control={<Checkbox/>}
+                            disabled
+                            control={<Checkbox checked={true}/>}
                             label="No join condition"/>
                     </FormGroup>
                 </Card>

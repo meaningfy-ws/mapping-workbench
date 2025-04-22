@@ -20,6 +20,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 
 import {fieldsRegistryApi as treeViewApi} from '../../../api/fields-registry';
 import {genericTripleMapFragmentsApi as sectionApi} from '../../../api/triple-map-fragments/generic';
+import ConfirmDialog from '../../../components/app/dialog/confirm-dialog';
 import CodeMirrorDefault from '../../../components/app/form/codeMirrorDefault';
 import {useDialog} from '../../../hooks/use-dialog';
 import {usePageView} from '../../../hooks/use-page-view';
@@ -39,6 +40,7 @@ const BuildForm = ({rdfContent}) => {
     const [tripleMaps, setTripleMaps] = useState([])
     const [selectedTripleMap, setSelectedTripleMap] = useState({})
     const [processedTripleMaps, setProcessedTripleMaps] = useState({})
+    const [confirmOpen, setConfirmOpen] = useState(false)
 
     const formik = useFormik({
         initialValues: {
@@ -99,7 +101,10 @@ const BuildForm = ({rdfContent}) => {
     // const technicalMappingsTabs = [{label: 'TM1', value: 'tm1'}]
     const [buildedFile, setBuildedFile] = useState()
 
-    const handleAdd = () => {}
+    const handleAdd = (type) => {
+        const currentTypeObj = {...formik.values.tripleFile}
+        currentTypeObj[type].push({})
+    }
 
     const handleSave = () => {
         setBuildedFile(buildFile(processedTripleMaps))
@@ -115,7 +120,14 @@ const BuildForm = ({rdfContent}) => {
     console.log(formik.values.tripleFile)
 
     const handleDelete = (index, type) => {
-        console.log('delete')
+        setConfirmOpen({index, type})
+    }
+
+    const handleConfirm = () => {
+        const {index, type} = confirmOpen
+        const currentTypeObj = {...formik.values.tripleFile}
+        currentTypeObj[type].splice(index, 1)
+        // formik.setFieldValue('tripleFile', currentTypeObj)
     }
 
 
@@ -162,7 +174,7 @@ const BuildForm = ({rdfContent}) => {
                                     {formik.values.tripleFile?.sources?.map((source, index) =>
                                         <SourceForm key={'source' + index}
                                                     handleUpdate={(values) => handleUpdate(values, index, 'sources')}
-                                                    handleDelete={handleDelete}
+                                                    handleDelete={() => handleDelete(index, 'sources')}
                                                     tripleMap={selectedTripleMap}
                                                     id={index}
                                                     {...source}/>
@@ -170,9 +182,12 @@ const BuildForm = ({rdfContent}) => {
                                     {formik.values.tripleFile?.subjects?.map((subject, index) =>
                                         <SubjectForm key={'subject' + index}
                                                      handleUpdate={(values) => handleUpdate(values, index, 'subjects')}
+                                                     handleDelete={() => handleDelete(index, 'subjects')}
                                                      {...subject}/>)}
                                     {formik.values.tripleFile?.predicates?.map((predicate, index) =>
                                         <PredicateForm key={'predicate' + index}
+                                                       handleUpdate={(values) => handleUpdate(values, index, 'predicates')}
+                                                       handleDelete={() => handleDelete(index, 'predicates')}
                                                        {...predicate}/>)
                                     }
                                     <Stack alignItems='end'>
@@ -192,13 +207,13 @@ const BuildForm = ({rdfContent}) => {
                                                 horizontal: 'left',
                                             }}
                                         >
-                                            <MenuItem onClick={handleAdd}>
+                                            <MenuItem onClick={() => handleAdd('subjects')}>
                                                 Subject
                                             </MenuItem>
-                                            <MenuItem onClick={handleAdd}>
+                                            <MenuItem onClick={() => handleAdd('predicates')}>
                                                 Predicate
                                             </MenuItem>
-                                            <MenuItem onClick={handleAdd}>
+                                            <MenuItem onClick={() => handleAdd('sources')}>
                                                 Source
                                             </MenuItem>
                                         </Popover>
@@ -244,6 +259,14 @@ const BuildForm = ({rdfContent}) => {
                 sectionApi={sectionApi}
                 formik={uploadFormik}
             />
+            <ConfirmDialog
+                title="Delete It?"
+                open={confirmOpen}
+                setOpen={setConfirmOpen}
+                onConfirm={handleConfirm}
+            >
+                Are you sure you want to delete it?
+            </ConfirmDialog>
         </>
     );
 };

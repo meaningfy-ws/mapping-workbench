@@ -104,6 +104,7 @@ const predicateResults = (results, result) => {
         oMapMaxSDK: result['?maxSDKVersion']?.value,
         oMapReference: result['?reference']?.value,
         oMapDatatype: datatype?.substring(datatype.lastIndexOf('#') + 1),
+        type: parent ? 'attribute' : 'reference',
         ...result
     });
 }
