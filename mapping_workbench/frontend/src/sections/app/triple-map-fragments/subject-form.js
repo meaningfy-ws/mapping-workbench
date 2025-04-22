@@ -3,8 +3,6 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import Card from '@mui/material/Card';
 import Radio from '@mui/material/Radio';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import RadioGroup from '@mui/material/RadioGroup';
 import TextField from '@mui/material/TextField';
@@ -16,16 +14,15 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import CustomAccordion from './custom-accordion';
 import CustomAccordionSummary from './custom-accordion-summary';
 
-const SubjectForm = ({template, sclass, label, handleUpdate, handleDelete}) => {
+const SubjectForm = ({template, sclass, label, type, handleUpdate, handleDelete}) => {
+
+    const handleSubjectChange = (value) => {
+        handleUpdate({template, sclass, label, ...value})
+    }
 
     const onDelete = (e) => {
         e.stopPropagation()
         handleDelete()
-    }
-
-
-    const handleSubjectChange = (value) => {
-        handleUpdate({template, sclass, label, ...value})
     }
 
     return (
@@ -38,7 +35,9 @@ const SubjectForm = ({template, sclass, label, handleUpdate, handleDelete}) => {
                 <Card sx={{border: '1px solid #E4E7EC', p: 2}}>
                     <Typography>Type</Typography>
                     <FormControl fullWidth>
-                        <RadioGroup row>
+                        <RadioGroup row
+                                    onChange={e => handleSubjectChange({type: e.target.value})}
+                                    value={type}>
                             <FormControlLabel value="plain"
                                               control={<Radio/>}
                                               label="Plain"/>
@@ -63,7 +62,7 @@ const SubjectForm = ({template, sclass, label, handleUpdate, handleDelete}) => {
                                 }}
                                 variant='outlined'
                                 fullWidth
-                                onChange={(e) => handleSubjectChange({sclass:e.target.value})}
+                                onChange={(e) => handleSubjectChange({sclass: e.target.value})}
                                 value={sclass}
                                 required
                             />

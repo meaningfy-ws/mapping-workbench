@@ -62,6 +62,7 @@ const subjectResults = (results, result) => {
         label: result['?sMapLabel']?.value,
         sclass: sclass?.substring(sclass.lastIndexOf('/') + 1),
         template: result['?sRef']?.value,
+        type: result['?sRef']?.value ? 'conditional' : 'plain',
         ...result
     })
 }
