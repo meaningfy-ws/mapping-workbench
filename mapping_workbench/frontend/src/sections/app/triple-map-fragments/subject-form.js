@@ -79,6 +79,7 @@ const SubjectForm = ({template, sclass, label, type, handleUpdate, handleDelete}
                                 }}
                                 variant='outlined'
                                 fullWidth
+                                onChange={(e) => handleSubjectChange({template: e.target.value})}
                                 value={template}
                                 required
                             />
@@ -95,6 +96,7 @@ const SubjectForm = ({template, sclass, label, type, handleUpdate, handleDelete}
                                 }}
                                 variant='outlined'
                                 fullWidth
+                                onChange={(e) => handleSubjectChange({label: e.target.value})}
                                 value={label}
                                 required
                             />

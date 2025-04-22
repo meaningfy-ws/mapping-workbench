@@ -1,4 +1,3 @@
-import {Box} from '@mui/system';
 import {useEffect, useState} from 'react';
 import * as Yup from 'yup';
 import {useFormik} from 'formik';
@@ -6,6 +5,7 @@ import {useFormik} from 'formik';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import AddIcon from '@mui/icons-material/Add';
 
+import Box from '@mui/system/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Card from '@mui/material/Card';
@@ -18,13 +18,15 @@ import FormGroup from '@mui/material/FormGroup';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import {RouterLink} from '../../../components/router-link';
-import {paths} from '../../../paths';
+import {sessionApi} from '../../../api/session';
+import {toastError, toastLoad, toastSuccess} from '../../../components/app-toast';
 
+import {paths} from '../../../paths';
 import buildFile from './build-file';
 import {FileUploader} from './file-uploader';
 import {useDialog} from '../../../hooks/use-dialog';
 import {usePageView} from '../../../hooks/use-page-view';
+import {RouterLink} from '../../../components/router-link';
 import turtleValidator from '../../../utils/turtle-validator';
 import SourceForm from '../triple-map-fragments/source-form';
 import SubjectForm from '../triple-map-fragments/subject-form';
@@ -38,20 +40,51 @@ import {getPredicate, getSource, getSubject, getTripleMap} from './rdflib-conver
 import {genericTripleMapFragmentsApi as sectionApi} from '../../../api/triple-map-fragments/generic';
 
 
-const BuildForm = ({rdfContent}) => {
-    const uploadDialog = useDialog();
+const BuildForm = ({rdfContent, id, format, refers_to_mapping_package_ids, triple_map_uri}) => {
     const [tripleMaps, setTripleMaps] = useState([])
     const [selectedTripleMap, setSelectedTripleMap] = useState({})
     const [processedTripleMaps, setProcessedTripleMaps] = useState({})
     const [confirmOpen, setConfirmOpen] = useState(false)
     const [showCode, setShowCode] = useState(false)
     const [validation, setValidation] = useState({})
+    const [addAnchor, setAddAnchor] = useState(null)
+    const [wcmStatus, setWcmStatus] = useState(true)
 
     const formik = useFormik({
-        initialValues: {
-            tripleFile: {}
-        },
-    })
+            initialValues: {
+                tripleFile: {}
+            }
+        }
+    )
+
+    const onUpdate = async (triple_map_content) => {
+        const toastId = toastLoad("Updating...")
+        try {
+            let response;
+            const project = sessionApi.getSessionProject()
+            response = await sectionApi.updateItem({
+                id,
+                format,
+                project,
+                refers_to_mapping_package_ids,
+                triple_map_uri,
+                triple_map_content
+            });
+
+            formik.setStatus({success: true});
+            formik.setSubmitting(false);
+            toastSuccess(sectionApi.SECTION_ITEM_TITLE + ' ' + "updated", toastId);
+
+        } catch (err) {
+            console.error(err);
+            toastError(err, toastId);
+            formik.setStatus({success: false});
+            formik.setErrors({submit: err.message});
+            formik.setSubmitting(false);
+        }
+    }
+
+    const uploadDialog = useDialog();
 
     useEffect(() => {
         getTripleMap(rdfContent)
@@ -79,8 +112,6 @@ const BuildForm = ({rdfContent}) => {
             }
     }
 
-    const [addAnchor, setAddAnchor] = useState(null)
-    const [wcmStatus, setWcmStatus] = useState(true)
 
     usePageView();
 
@@ -95,6 +126,8 @@ const BuildForm = ({rdfContent}) => {
         })
     });
 
+    console.log(formik.values.tripleFile)
+
     const formTabs = [{label: 'Form', value: 'form'}, {label: 'Code', value: 'code'}]
     const [selectedFormTab, setSelectedFormTab] = useState('form')
     const [buildedFile, setBuildedFile] = useState()
@@ -107,8 +140,13 @@ const BuildForm = ({rdfContent}) => {
 
     const handleSave = () => {
         const buildedFile = buildFile(processedTripleMaps)
-
         setBuildedFile(buildedFile)
+        turtleValidator(buildedFile)
+            .then(res => {
+                setValidation(res)
+                onUpdate(buildedFile)
+            })
+            .catch(err => setValidation({error: err}))
     }
 
     const handleUpdate = (values, index, type) => {
@@ -283,7 +321,8 @@ const BuildForm = ({rdfContent}) => {
                 >
                     <Button
                         disabled={formik.isSubmitting}
-                        type="submit"
+                        // type="submit"
+                        onClick={handleSave}
                         variant="contained"
                     >
                         Update
