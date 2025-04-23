@@ -1,9 +1,10 @@
 const $rdf = require('rdflib');
 
-const tripleMapQuery = (uri) => `PREFIX rr: <http://www.w3.org/ns/r2rml#>
+const tripleMapQuery = `PREFIX rr: <http://www.w3.org/ns/r2rml#>
             SELECT * where {
                 ?newTMap a rr:TriplesMap .
             }`
+
 const tripleMapResults = (results, result) => {
     const value = {...result['?newTMap']}.value
     const tedm = 'http://data.europa.eu/a4g/mapping/sf-rml/'
@@ -143,7 +144,7 @@ export const getGraph = async (rdfData, query, mapResults) => {
     return queryToArray(store, queryEngine)
 }
 
-export const getTripleMap = (rdfData, uri) => getGraph(rdfData, tripleMapQuery(uri), tripleMapResults)
+export const getTripleMap = (rdfData) => getGraph(rdfData, tripleMapQuery, tripleMapResults)
 
 export const getSource = (rdfData, uri) => getGraph(rdfData, sourceQuery(uri), sourceResults)
 

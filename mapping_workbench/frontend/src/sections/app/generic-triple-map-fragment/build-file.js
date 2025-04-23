@@ -47,15 +47,14 @@ const buildSubject = (subject) => {
 
 const buildPredicate = (predicate) => {
     let predicateValues = ''
-    let predicateObject = ''
     if (predicate.label)
         predicateValues += `\n              rdfs:label "${predicate.label}" ;`
     if (predicate.comment)
         predicateValues += `\n              rdfs:comment "${predicate.comment}" ;`
-    if (predicate.predicate) {
+    if (predicate.predicate)
         predicateValues += `\n              rr:predicate epo:${predicate.predicate} ;`
-    }
 
+    let predicateObject = ''
     if (predicate.oMapMinSDK)
         predicateObject += `\n                       tedm:minSDKVersion "${predicate.oMapMinSDK}" ;`
     if (predicate.oMapMaxSDK)
@@ -78,16 +77,13 @@ const buildFile = (processedTripleMaps) => {
     let outStr = defaultPrefixes
     Object.entries(processedTripleMaps).forEach(processedTriple => {
         const [tripleName, values] = processedTriple
+
         outStr += `\n\n${tripleName}`
-        values.sources.forEach(source => {
-            outStr += buildSource(source)
-        })
-        values.subjects.forEach(subject => {
-            outStr += buildSubject(subject)
-        })
-        values.predicates.forEach(predicate => {
-            outStr += buildPredicate(predicate)
-        })
+
+        values.sources.forEach(source => outStr += buildSource(source))
+        values.subjects.forEach(subject => outStr += buildSubject(subject))
+        values.predicates.forEach(predicate => outStr += buildPredicate(predicate))
+
         outStr += '\n.'
     })
 
