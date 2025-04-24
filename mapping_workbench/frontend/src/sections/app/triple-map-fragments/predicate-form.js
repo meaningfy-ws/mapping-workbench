@@ -16,7 +16,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import CustomAccordion from './custom-accordion';
 import CustomAccordionSummary from './custom-accordion-summary';
 
-const PredicateForm = ({label, comment,type, handleUpdate, handleDelete}) => {
+const PredicateForm = ({label, comment, type, predicate, handleUpdate, handleDelete}) => {
     const onDelete = (e) => {
         e.stopPropagation()
         handleDelete()
@@ -48,15 +48,20 @@ const PredicateForm = ({label, comment,type, handleUpdate, handleDelete}) => {
                         </Select>
                     </FormControl>
                     <Typography>Property</Typography>
-                    <FormControl fullWidth>
-                        <Select variant='outlined'
-                                sx={{
-                                    height: 40,
-                                    borderRadius: '12px'
-                                }}>
-                            <MenuItem>text</MenuItem>
-                        </Select>
-                    </FormControl>
+                    <TextField
+                        sx={{
+                            "& .MuiOutlinedInput-root": {
+                                borderRadius: "12px",
+                                backgroundColor: "white",
+                                height: 40
+                            }
+                        }}
+                        variant='outlined'
+                        fullWidth
+                        onChange={(e) => handlePredicateChange({predicate: e.target.value})}
+                        value={predicate}
+                        required
+                    />
                     <Typography>Label</Typography>
                     <TextField
                         sx={{
@@ -90,6 +95,7 @@ const PredicateForm = ({label, comment,type, handleUpdate, handleDelete}) => {
                     <Typography sx={{mt: 2}}>Target</Typography>
                     <FormControl fullWidth>
                         <Select variant='outlined'
+                                disabled
                                 sx={{
                                     height: 40,
                                     borderRadius: '12px'

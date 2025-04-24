@@ -97,7 +97,7 @@ const predicateResults = (results, result) => {
     const parent = result['?parent']?.value
     const datatype = result['?datatype']?.value
     return results.push({
-        predicate: predicate?.substring(predicate.lastIndexOf('#') + 1),
+        predicate: 'epo:' + predicate?.substring(predicate.lastIndexOf('#') + 1),
         label: result['?pOMapLabel']?.value,
         comment: result['?pOMapComment']?.value,
         parent: parent?.substring(parent.lastIndexOf('/') + 1),

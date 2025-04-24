@@ -52,7 +52,7 @@ const buildPredicate = (predicate) => {
     if (predicate.comment)
         predicateValues += `\n              rdfs:comment "${predicate.comment}" ;`
     if (predicate.predicate)
-        predicateValues += `\n              rr:predicate epo:${predicate.predicate} ;`
+        predicateValues += `\n              rr:predicate ${predicate.predicate} ;`
 
     let predicateObject = ''
     if (predicate.oMapMinSDK)
