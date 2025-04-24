@@ -281,7 +281,7 @@ export const EditForm = (props) => {
                      value='tabEdit'></Tab>
                 <Tab label='Test Triple Map Fragment'
                      value='tabTest'></Tab>
-                <Tab label='Build Triple Map Fragment'
+                <Tab label='Triple Map Editor (experimental)'
                      value='tabBuild'></Tab>
             </Tabs>}
 

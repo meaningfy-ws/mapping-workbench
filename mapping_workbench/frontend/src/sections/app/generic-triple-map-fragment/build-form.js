@@ -51,6 +51,8 @@ const BuildForm = ({rdfContent, id, format, refers_to_mapping_package_ids, tripl
     const [addAnchor, setAddAnchor] = useState(null)
     const [wcmStatus, setWcmStatus] = useState(true)
 
+    console.log(processedTripleMaps)
+
     const formik = useFormik({
             initialValues: {
                 tripleFile: {}
@@ -60,29 +62,26 @@ const BuildForm = ({rdfContent, id, format, refers_to_mapping_package_ids, tripl
 
     const onUpdate = async (triple_map_content) => {
         const toastId = toastLoad("Updating...")
-        try {
-            let response;
-            const project = sessionApi.getSessionProject()
-            response = await sectionApi.updateItem({
-                id,
-                format,
-                project,
-                refers_to_mapping_package_ids,
-                triple_map_uri,
-                triple_map_content
-            });
-
+        const project = sessionApi.getSessionProject()
+        sectionApi.updateItem({
+            id,
+            format,
+            project,
+            refers_to_mapping_package_ids,
+            triple_map_uri,
+            triple_map_content
+        }).then(res => {
             formik.setStatus({success: true});
             formik.setSubmitting(false);
             toastSuccess(sectionApi.SECTION_ITEM_TITLE + ' ' + "updated", toastId);
-
-        } catch (err) {
-            console.error(err);
-            toastError(err, toastId);
-            formik.setStatus({success: false});
-            formik.setErrors({submit: err.message});
-            formik.setSubmitting(false);
-        }
+        }).catch(err => {
+                console.error(err);
+                toastError(err, toastId);
+                formik.setStatus({success: false});
+                formik.setErrors({submit: err.message});
+                formik.setSubmitting(false);
+            }
+        )
     }
 
     const uploadDialog = useDialog();
@@ -90,6 +89,7 @@ const BuildForm = ({rdfContent, id, format, refers_to_mapping_package_ids, tripl
     useEffect(() => {
         getTripleMap(rdfContent)
             .then(res => {
+                console.log('res', res)
                 !!res.length && getTripleMapData(res)
 
                 setTripleMaps(res)
@@ -175,6 +175,11 @@ const BuildForm = ({rdfContent, id, format, refers_to_mapping_package_ids, tripl
             .catch(err => setValidation({error: err}))
     }
 
+    const handleAddTripleMap = (value) => {
+        setTripleMaps(e => [...e, value])
+        setProcessedTripleMaps(e => ({...e, [value]: {subjects: [], sources: [], predicates: []}}))
+    }
+
     return (
         <>
             <Card sx={{mt: 3}}>
@@ -214,7 +219,9 @@ const BuildForm = ({rdfContent, id, format, refers_to_mapping_package_ids, tripl
                                     <TripleMapForm selectedTripleMap={selectedTripleMap}
                                                    setSelectedTripleMap={setSelectedTripleMap}
                                                    tripleMaps={tripleMaps}
-                                                   rdfContent={rdfContent}></TripleMapForm>
+                                                   addTripleMap={handleAddTripleMap}
+                                                   rdfContent={rdfContent}>
+                                    </TripleMapForm>
                                     {formik.values.tripleFile?.sources?.map((source, index) =>
                                         <SourceForm key={'source' + index}
                                                     handleUpdate={(values) => handleUpdate(values, index, 'sources')}
