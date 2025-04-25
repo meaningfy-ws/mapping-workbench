@@ -1,31 +1,5 @@
 const $rdf = require('rdflib');
-
-const prefixes = {
-    owl: 'http://www.w3.org/2002/07/owl#',
-    rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-    rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
-    xsd: 'http://www.w3.org/2001/XMLSchema#',
-    rr: 'http://www.w3.org/ns/r2rml#',
-    rml: 'http://semweb.mmlab.be/ns/rml#',
-    ql: 'http://semweb.mmlab.be/ns/ql#',
-    locn: 'http://www.w3.org/ns/locn#',
-    dct: 'http://purl.org/dc/terms/',
-    tedm: 'http://data.europa.eu/a4g/mapping/sf-rml/',
-    epd: 'http://data.europa.eu/a4g/resource/',
-    epo: 'http://data.europa.eu/a4g/ontology#',
-    'epo-not': 'http://data.europa.eu/a4g/ontology#',
-    cv: 'http://data.europa.eu/m8g/',
-    cccev: 'http://data.europa.eu/m8g/',
-    org: 'http://www.w3.org/ns/org#',
-    cpov: 'http://data.europa.eu/m8g/',
-    foaf: 'http://xmlns.com/foaf/0.1/',
-    time: 'http://www.w3.org/2006/time#',
-    adms: '<http://www.w3.org/ns/adms#',
-    skos: 'http://www.w3.org/2004/02/skos/core#>',
-    fnml: 'http://semweb.mmlab.be/ns/fnml#',
-    fno: 'https://w3id.org/function/ontology#',
-    'idlab-fn': 'http://example.com/idlab/function/'
-}
+import prefixes from './prefixes.json'
 
 
 const injectPrefix = (value) => {
