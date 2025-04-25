@@ -16,7 +16,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import CustomAccordion from './custom-accordion';
 import CustomAccordionSummary from './custom-accordion-summary';
 
-const PredicateForm = ({label, comment, type, predicate, handleUpdate, handleDelete}) => {
+const PredicateForm = ({label, comment, type, predicate, parent, handleUpdate, handleDelete}) => {
     const onDelete = (e) => {
         e.stopPropagation()
         handleDelete()
@@ -44,7 +44,9 @@ const PredicateForm = ({label, comment, type, predicate, handleUpdate, handleDel
                                     borderRadius: '12px'
                                 }}>
                             <MenuItem value='attribute'>Attribute</MenuItem>
-                            <MenuItem value='reference'>Reference</MenuItem>
+                            <MenuItem value='relationship'>Relationship</MenuItem>
+                            <MenuItem value='vocabulary'>Vocabulary</MenuItem>
+                            <MenuItem value='uri'>URI</MenuItem>
                         </Select>
                     </FormControl>
                     <Typography>Property</Typography>
@@ -92,17 +94,22 @@ const PredicateForm = ({label, comment, type, predicate, handleUpdate, handleDel
                         value={comment}
                         required
                     />
-                    <Typography sx={{mt: 2}}>Target</Typography>
-                    <FormControl fullWidth>
-                        <Select variant='outlined'
-                                disabled
-                                sx={{
-                                    height: 40,
-                                    borderRadius: '12px'
-                                }}>
-                            <MenuItem>text</MenuItem>
-                        </Select>
-                    </FormControl>
+                    {['relationship', 'vocabulary'].includes(type) && <><Typography sx={{mt: 2}}>Target</Typography>
+                        <TextField
+                            sx={{
+                                "& .MuiOutlinedInput-root": {
+                                    borderRadius: "12px",
+                                    backgroundColor: "white",
+                                    height: 40
+                                }
+                            }}
+                            variant='outlined'
+                            fullWidth
+                            onChange={(e) => handlePredicateChange({parent: e.target.value})}
+                            value={parent}
+                            required
+                        />
+                    </>}
                     <FormGroup>
                         <FormControlLabel
                             disabled

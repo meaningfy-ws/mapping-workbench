@@ -1,5 +1,43 @@
 const $rdf = require('rdflib');
 
+const prefixes = {
+    owl: 'http://www.w3.org/2002/07/owl#',
+    rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+    rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
+    xsd: 'http://www.w3.org/2001/XMLSchema#',
+    rr: 'http://www.w3.org/ns/r2rml#',
+    rml: 'http://semweb.mmlab.be/ns/rml#',
+    ql: 'http://semweb.mmlab.be/ns/ql#',
+    locn: 'http://www.w3.org/ns/locn#',
+    dct: 'http://purl.org/dc/terms/',
+    tedm: 'http://data.europa.eu/a4g/mapping/sf-rml/',
+    epd: 'http://data.europa.eu/a4g/resource/',
+    epo: 'http://data.europa.eu/a4g/ontology#',
+    'epo-not': 'http://data.europa.eu/a4g/ontology#',
+    cv: 'http://data.europa.eu/m8g/',
+    cccev: 'http://data.europa.eu/m8g/',
+    org: 'http://www.w3.org/ns/org#',
+    cpov: 'http://data.europa.eu/m8g/',
+    foaf: 'http://xmlns.com/foaf/0.1/',
+    time: 'http://www.w3.org/2006/time#',
+    adms: '<http://www.w3.org/ns/adms#',
+    skos: 'http://www.w3.org/2004/02/skos/core#>',
+    fnml: 'http://semweb.mmlab.be/ns/fnml#',
+    fno: 'https://w3id.org/function/ontology#',
+    'idlab-fn': 'http://example.com/idlab/function/'
+}
+
+
+const injectPrefix = (value) => {
+    let res = ""
+    Object.entries(prefixes).some(([prefix, uri]) => {
+        if (value?.includes(uri)) {
+            res = value.replace(uri, prefix + ":")
+        }
+    })
+    return res ?? value
+}
+
 const tripleMapQuery = `PREFIX rr: <http://www.w3.org/ns/r2rml#>
             SELECT * where {
                 ?newTMap a rr:TriplesMap .
@@ -61,7 +99,7 @@ const subjectResults = (results, result) => {
     const sclass = result['?class']?.value
     return results.push({
         label: result['?sMapLabel']?.value,
-        sclass: sclass?.substring(sclass.lastIndexOf('/') + 1),
+        sclass: injectPrefix(sclass),
         template: result['?sRef']?.value,
         type: result['?sRef']?.value ? 'conditional' : 'plain',
         ...result
@@ -92,21 +130,24 @@ const predicateQuery = (uri) => `
         OPTIONAL { ?oMap  rr:datatype  ?datatype . }
     }`
 
+
 const predicateResults = (results, result) => {
     const predicate = result['?predicate']?.value
     const parent = result['?parent']?.value
     const datatype = result['?datatype']?.value
+    injectPrefix(parent ?? "")
+
     return results.push({
-        predicate: 'epo:' + predicate?.substring(predicate.lastIndexOf('#') + 1),
+        predicate:  injectPrefix(predicate),
         label: result['?pOMapLabel']?.value,
         comment: result['?pOMapComment']?.value,
-        parent: parent?.substring(parent.lastIndexOf('/') + 1),
+        parent: injectPrefix(parent ?? ""),
         oMapLabel: result['?oLabel']?.value,
         oMapMinSDK: result['?minSDKVersion']?.value,
         oMapMaxSDK: result['?maxSDKVersion']?.value,
         oMapReference: result['?reference']?.value,
-        oMapDatatype: datatype?.substring(datatype.lastIndexOf('#') + 1),
-        type: parent ? 'attribute' : 'reference',
+        oMapDatatype: injectPrefix(datatype),
+        type: parent ? 'relationship' : 'attribute',
         ...result
     });
 }
