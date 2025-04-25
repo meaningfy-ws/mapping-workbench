@@ -41,7 +41,7 @@ const buildSubject = (subject) => {
     if (subject.template)
         subjectValues += `\n              rml:reference "${subject.template}" ;`
     if (subject.sclass)
-        subjectValues += `\n              rr:class cccev:${subject.sclass}`
+        subjectValues += `\n              rr:class ${subject.sclass}`
     return `\n    rr:subjectMap\n        [${subjectValues}\n        ];`
 }
 
@@ -62,13 +62,20 @@ const buildPredicate = (predicate) => {
     if (predicate.oMapLabel)
         predicateObject += `\n                       rdfs:label "${predicate.oMapLabel}" ;`
     if (predicate.parent)
-        predicateObject += `\n                       rr:parentTriplesMap tedm:${predicate.parent} ;`
+        predicateObject += `\n                       rr:parentTriplesMap ${predicate.parent} ;`
     if (predicate.oMapReference)
         predicateObject += `\n                       rml:reference "${predicate.oMapReference}" ;`
     if (predicate.oMapDatatype)
-        predicateObject += `\n                       rr:datatype xsd:${predicate.oMapDatatype} ;`
+        predicateObject += `\n                       rr:datatype ${predicate.oMapDatatype} ;`
+    if (predicate.joinChild && predicate.joinParent) {
+        predicateObject += `\n                       rr:joinCondition [
+                           rr:child "${predicate.joinChild}" ;
+                           rr:parent "${predicate.joinParent}" ;
+                       ] ;`
+    }
     if (predicateObject)
         predicateValues += `\n              rr:objectMap\n                   [${predicateObject}\n                   ];`
+
 
     return `\n    rr:predicateObjectMap\n        [${predicateValues}\n        ];`
 }

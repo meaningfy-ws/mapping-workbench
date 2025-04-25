@@ -46,8 +46,6 @@ const SubjectForm = ({template, sclass, label, type, handleUpdate, handleDelete}
                                               control={<Radio/>}
                                               label="Conditional"/>
                         </RadioGroup>
-
-
                     </FormControl>
                     <Card sx={{border: '1px solid #E4E7EC', p: 2, mt: 2}}>
                         <Typography>Class</Typography>

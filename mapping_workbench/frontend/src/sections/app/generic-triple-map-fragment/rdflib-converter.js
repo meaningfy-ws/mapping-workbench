@@ -119,16 +119,21 @@ const predicateQuery = (uri) => `
         ?pOMap rr:predicate ?predicate ;
             rr:objectMap ?oMap .
             
+            
         OPTIONAL { ?pOMap rdfs:label ?pOMapLabel . }
         OPTIONAL { ?pOMap rdfs:comment ?pOMapComment . }
         OPTIONAL { ?oMap rml:reference ?reference . }
         OPTIONAL { ?oMap rr:parentTriplesMap ?parent . }
         OPTIONAL { ?oMap rdfs:label ?oLabel . }
-        OPTIONAL { ?oMap rr:joinCondition ?condition . }
+        OPTIONAL {  ?oMap rr:joinCondition ?condition .
+        ?condition rr:child ?conditionChild . 
+        ?condition rr:parent ?conditionParent . } 
         OPTIONAL { ?oMap  tedm:minSDKVersion ?minSDKVersion . }
         OPTIONAL { ?oMap  tedm:maxSDKVersion ?maxSDKVersion . }
         OPTIONAL { ?oMap  rr:datatype  ?datatype . }
     }`
+
+// tedm:MG-AccessTerm-isSubjectToLotSpecificTerm-Lot_ND-LotProcurementDocument
 
 
 const predicateResults = (results, result) => {
@@ -148,6 +153,8 @@ const predicateResults = (results, result) => {
         oMapReference: result['?reference']?.value,
         oMapDatatype: injectPrefix(datatype),
         type: parent ? 'relationship' : 'attribute',
+        joinChild : result['?conditionChild']?.value,
+        joinParent : result['?conditionParent']?.value,
         ...result
     });
 }
