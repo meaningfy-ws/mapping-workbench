@@ -53,7 +53,6 @@ export const EditForm = (props) => {
                 toastSuccess(sectionApi.SECTION_ITEM_TITLE + ' ' + (itemctx.isNew ? "Created" : "Updated"), toastId);
                 if (response) {
                     if (itemctx.isNew) {
-                        console.log(response);
                         router.push({
                             pathname: paths.app[sectionApi.section].edit,
                             query: {id: response._id}

@@ -5,7 +5,7 @@ from xml.etree import ElementTree
 
 from pydantic import validate_call
 from saxonche import PySaxonProcessor, PySaxonApiError, PyXPathProcessor, PyXdmNode, PyXdmValue, XdmNodeKind, \
-    PyXQueryProcessor
+    PyXQueryProcessor, PyXdmItem
 
 from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.package_validator.adapters.data_validator import TestDataValidator
@@ -96,8 +96,10 @@ class XPATHValidator(TestDataValidator):
                 namespaces[ns] = url
         return namespaces
 
-    def init_xp_processors(self, xml_content: str):
+    def set_context_node(self, context_node: PyXdmItem):
+        self.xqp.set_context(xdm_item=context_node)
 
+    def init_xp_processors(self, xml_content: str):
         self.xpp: PyXPathProcessor = self.xp.new_xpath_processor()
         self.xqp: PyXQueryProcessor = self.xp.new_xquery_processor()
 

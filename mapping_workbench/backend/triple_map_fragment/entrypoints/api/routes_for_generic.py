@@ -6,6 +6,7 @@ from beanie.odm.operators.update.array import Pull, Push
 from fastapi import APIRouter, Depends, status
 
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
+from mapping_workbench.backend.mapping_package.services.api import get_default_mapping_package
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.triple_map_fragment.models.api_request import \
@@ -74,6 +75,11 @@ async def route_create_generic_triple_map_fragment(
         data: GenericTripleMapFragmentCreateIn,
         user: User = Depends(current_active_user)
 ):
+    if data.refers_to_mapping_package_ids is None:
+        default_package = await get_default_mapping_package(data.project.to_ref().id)
+        if default_package:
+            data.refers_to_mapping_package_ids = [default_package.id]
+
     return await create_generic_triple_map_fragment(
         data,
         user=user

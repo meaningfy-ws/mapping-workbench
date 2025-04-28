@@ -31,6 +31,7 @@ class Settings(BaseModel):
 class Role(Enum):
     ADMIN = "admin"
     USER = "user"
+    API = "api"
 
 
 class User(BeanieBaseUser, Document):

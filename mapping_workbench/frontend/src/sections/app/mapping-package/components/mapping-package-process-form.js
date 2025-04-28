@@ -15,63 +15,90 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 
 import {sessionApi} from '../../../../api/session';
 import {toastError, toastLoad, toastSuccess} from '../../../../components/app-toast';
+import Tooltip from "@mui/material/Tooltip";
 
-export const MappingPackageProcessForm = ({items, sectionApi, showExport}) => {
-
+export const MappingPackageProcessForm = ({items, sectionApi, showExport, forBulkActions = false}) => {
     const [isProcessing, setIsProcessing] = useState(false);
     const [isExporting, setIsExporting] = useState(false);
 
+    let item = null;
+    let resources_metadata = {
+        has_assertions: false,
+        has_cm_rules: false,
+        has_test_data: false,
+        has_mappings: false
+    };
+    if (items.length === 1) {
+        item = items[0];
+        resources_metadata = item.resources_metadata;
+    } else if (items.length > 1) {
+        resources_metadata = {
+            has_assertions: items.every(item => item.resources_metadata?.has_assertions),
+            has_cm_rules: items.every(item => item.resources_metadata?.has_cm_rules),
+            has_test_data: items.every(item => item.resources_metadata?.has_test_data),
+            has_mappings: items.every(item => item.resources_metadata?.has_mappings)
+        }
+    }
+
+    const is_test_data_transformable = resources_metadata.has_test_data && resources_metadata.has_mappings;
+
+    const initialValues = {
+        use_only_package_state: false,
+        transform_test_data: is_test_data_transformable,
+        validate_package: true,
+        validate_package_xpath: true,
+        validate_package_sparql: is_test_data_transformable,
+        generate_cm_assertions: resources_metadata.has_cm_rules,
+        include_package_assertions: resources_metadata.has_assertions,
+        validate_package_shacl: is_test_data_transformable
+    }
+
     const formik = useFormik({
-        initialValues: {
-            use_only_package_state: false,
-            transform_test_data: true,
-            generate_cm_assertions: true,
-            validate_package: true,
-            validate_package_xpath_sparql: true,
-            validate_package_shacl: true
-        },
+        initialValues: initialValues,
         validationSchema: Yup.object({}),
         onSubmit: async (values, helpers) => {
-            setIsProcessing(true)
             const tasks_to_run = [];
             if (values['transform_test_data']) {
                 tasks_to_run.push('transform_test_data');
             }
-            if (values['generate_cm_assertions']) {
-                tasks_to_run.push('generate_cm_assertions');
-            }
             if (values['validate_package']) {
                 tasks_to_run.push('validate_package');
 
-                if (values['validate_package_xpath_sparql']) {
+                if (values['validate_package_xpath']) {
                     tasks_to_run.push('validate_package_xpath');
-                    tasks_to_run.push('validate_package_sparql');
+                    if (values['validate_package_sparql'] && values['transform_test_data']) {
+                        tasks_to_run.push('validate_package_sparql');
+                        if (values['generate_cm_assertions']) {
+                            tasks_to_run.push('generate_cm_assertions');
+                        }
+                    }
                 }
-                if (values['validate_package_shacl']) {
+                if (values['validate_package_shacl'] && values['transform_test_data']) {
                     tasks_to_run.push('validate_package_shacl');
                 }
             }
             {
-                items.forEach(item => {
-                        const data = {
-                            package_id: item._id,
-                            project_id: sessionApi.getSessionProject(),
-                            use_only_package_state: values['use_only_package_state']
-                        }
-                        if (tasks_to_run.length > 0) {
-                            data.tasks_to_run = tasks_to_run.join(',');
-                        }
-                        const toastId = toastLoad(`Processing "${item.identifier}" ... This may take a while. Please, be patient.`)
-                        sectionApi.processPackage(data)
-                            .then(res => {
-                                return toastSuccess(`${res.task_name} successfully started.`, toastId)}
-                            )
-                            .catch(err => {
-                                return toastError(err, toastId)
-                            })
-                            .finally(() => setIsProcessing(false))
+                for (const item of items) {
+                    const data = {
+                        package_id: item._id,
+                        project_id: sessionApi.getSessionProject(),
+                        use_only_package_state: values['use_only_package_state'],
+                        include_package_assertions: values['include_package_assertions']
                     }
-                )
+                    if (tasks_to_run.length > 0) {
+                        data.tasks_to_run = tasks_to_run.join(',');
+                    }
+                    setIsProcessing(true);
+                    const toastId = toastLoad(`Processing "${item.identifier}" ... This may take a while. Please, be patient.`)
+                    try {
+                        const res = await sectionApi.processPackage(data);
+                        toastSuccess(`${res.task_name} successfully started.`, toastId);
+                    } catch (err) {
+                        toastError(err, toastId);
+                    } finally {
+                        setIsProcessing(false);
+                    }
+                }
             }
         }
     });
@@ -96,6 +123,11 @@ export const MappingPackageProcessForm = ({items, sectionApi, showExport}) => {
             .finally(() => setIsExporting(false))
     }
 
+    const setValidateXPATH = (event) => {
+        const checked = event.target.checked
+        formik.setFieldValue('validate_package_xpath', checked)
+    }
+
     return (<>
             <Card sx={{px: 3}}>
                 <Alert severity="warning"
@@ -108,7 +140,7 @@ export const MappingPackageProcessForm = ({items, sectionApi, showExport}) => {
                 </Alert>}
                 <form onSubmit={formik.handleSubmit}>
                     <Stack
-                        direction={{
+                        direction={forBulkActions ? "column" : {
                             xs: 'column',
                             sm: 'row'
                         }}
@@ -126,6 +158,7 @@ export const MappingPackageProcessForm = ({items, sectionApi, showExport}) => {
                             {!isProcessing && "Process"}
                             {isProcessing && "Processing ..."}
                         </Button>
+                        {forBulkActions && <Divider/>}
                         <Box>
                             <FormControlLabel
                                 sx={{
@@ -143,34 +176,22 @@ export const MappingPackageProcessForm = ({items, sectionApi, showExport}) => {
                             <b>Processing a Mapping Package includes:</b>
                             <ul style={{listStyleType: "none", padding: 0}}>
                                 <li>
-                                    <FormControlLabel
-                                        sx={{
-                                            width: '100%'
-                                        }}
-                                        control={
-                                            <Switch
-                                                disabled={!processTasksEnabled()}
-                                                checked={processTasksEnabled() && formik.values.transform_test_data}
-                                                onChange={(event) => formik.setFieldValue('transform_test_data', event.target.checked)}
-                                            />
-                                        }
-                                        label="Transform Test Data"
-                                    />
-                                </li>
-                                <li>
-                                    <FormControlLabel
-                                        sx={{
-                                            width: '100%'
-                                        }}
-                                        control={
-                                            <Switch
-                                                disabled={!processTasksEnabled()}
-                                                checked={processTasksEnabled() && formik.values.generate_cm_assertions}
-                                                onChange={(event) => formik.setFieldValue('generate_cm_assertions', event.target.checked)}
-                                            />
-                                        }
-                                        label="Generate CM Assertions Queries"
-                                    />
+                                    <Tooltip
+                                        title={!is_test_data_transformable ? "No RML mappings OR test data found" : ""}>
+                                        <FormControlLabel
+                                            sx={{
+                                                width: '100%'
+                                            }}
+                                            control={
+                                                <Switch
+                                                    disabled={!is_test_data_transformable || !processTasksEnabled()}
+                                                    checked={is_test_data_transformable && processTasksEnabled() && formik.values.transform_test_data}
+                                                    onChange={(event) => formik.setFieldValue('transform_test_data', event.target.checked)}
+                                                />
+                                            }
+                                            label="Transform Test Data"
+                                        />
+                                    </Tooltip>
                                 </li>
                                 <li>
                                     <FormControlLabel
@@ -194,8 +215,8 @@ export const MappingPackageProcessForm = ({items, sectionApi, showExport}) => {
                                                 }}
                                                 control={
                                                     <Switch
-                                                        checked={processTasksEnabled() && formik.values.validate_package_shacl && formik.values.validate_package}
-                                                        disabled={!processTasksEnabled() || !formik.values.validate_package}
+                                                        checked={is_test_data_transformable && processTasksEnabled() && formik.values.transform_test_data && formik.values.validate_package_shacl && formik.values.validate_package}
+                                                        disabled={!is_test_data_transformable || !processTasksEnabled() || !formik.values.validate_package || !formik.values.transform_test_data}
                                                         onChange={(event) => formik.setFieldValue('validate_package_shacl', event.target.checked)}
                                                     />
                                                 }
@@ -209,13 +230,74 @@ export const MappingPackageProcessForm = ({items, sectionApi, showExport}) => {
                                                 }}
                                                 control={
                                                     <Switch
-                                                        checked={processTasksEnabled() && formik.values.validate_package_xpath_sparql && formik.values.validate_package}
+                                                        checked={processTasksEnabled() && formik.values.validate_package_xpath && formik.values.validate_package}
                                                         disabled={!processTasksEnabled() || !formik.values.validate_package}
-                                                        onChange={(event) => formik.setFieldValue('validate_package_xpath_sparql', event.target.checked)}
+                                                        onChange={
+                                                            (event) => {
+                                                                setValidateXPATH(event);
+                                                            }
+                                                        }
                                                     />
                                                 }
-                                                label="XPATH / SPARQL"
+                                                label="XPATH"
                                             />
+                                        </li>
+                                        <li>
+                                            <FormControlLabel
+                                                sx={{
+                                                    width: '100%'
+                                                }}
+                                                control={
+                                                    <Switch
+                                                        checked={is_test_data_transformable && processTasksEnabled() && formik.values.transform_test_data && formik.values.validate_package_sparql && formik.values.validate_package && formik.values.validate_package_xpath}
+                                                        disabled={!is_test_data_transformable || !processTasksEnabled() || !formik.values.validate_package || !formik.values.validate_package_xpath || !formik.values.transform_test_data}
+                                                        onChange={
+                                                            (event) => {
+                                                                formik.setFieldValue('validate_package_sparql', event.target.checked)
+                                                            }
+                                                        }
+                                                    />
+                                                }
+                                                label="SPARQL"
+                                            />
+                                            <ul style={{listStyleType: "none"}}>
+                                                <li>
+                                                    <Tooltip
+                                                        title={!resources_metadata.has_cm_rules ? "No CM rules found" : ""}>
+                                                        <FormControlLabel
+                                                            sx={{
+                                                                width: '100%'
+                                                            }}
+                                                            control={
+                                                                <Switch
+                                                                    disabled={!is_test_data_transformable || !resources_metadata.has_cm_rules || !processTasksEnabled() || !formik.values.validate_package || !formik.values.validate_package_sparql || !formik.values.validate_package_xpath || !formik.values.transform_test_data}
+                                                                    checked={is_test_data_transformable && resources_metadata.has_cm_rules && processTasksEnabled() && formik.values.generate_cm_assertions && formik.values.validate_package && formik.values.validate_package_sparql && formik.values.validate_package_xpath && formik.values.transform_test_data}
+                                                                    onChange={(event) => formik.setFieldValue('generate_cm_assertions', event.target.checked)}
+                                                                />
+                                                            }
+                                                            label="Generate CM Assertions Queries"
+                                                        />
+                                                    </Tooltip>
+                                                </li>
+                                                <li>
+                                                    <Tooltip
+                                                        title={!resources_metadata.has_assertions ? "No SPARQL validations found" : ""}>
+                                                        <FormControlLabel
+                                                            sx={{
+                                                                width: '100%'
+                                                            }}
+                                                            control={
+                                                                <Switch
+                                                                    disabled={!is_test_data_transformable || !resources_metadata.has_assertions || !processTasksEnabled() || !formik.values.validate_package || !formik.values.validate_package_sparql || !formik.values.validate_package_xpath || !formik.values.transform_test_data}
+                                                                    checked={is_test_data_transformable && resources_metadata.has_assertions && processTasksEnabled() && formik.values.include_package_assertions && formik.values.validate_package && formik.values.validate_package_sparql && formik.values.validate_package_xpath && formik.values.transform_test_data}
+                                                                    onChange={(event) => formik.setFieldValue('include_package_assertions', event.target.checked)}
+                                                                />
+                                                            }
+                                                            label="Include Package Assertions Queries"
+                                                        />
+                                                    </Tooltip>
+                                                </li>
+                                            </ul>
                                         </li>
                                     </ul>
                                 </li>
@@ -228,7 +310,7 @@ export const MappingPackageProcessForm = ({items, sectionApi, showExport}) => {
                                 type="button"
                                 variant="contained"
                                 color="primary"
-                                onClick={() => handleExport(items[0])}
+                                onClick={() => handleExport(item)}
                             >
                                 {isExporting ? "Exporting Latest ..." : "Export Latest"}
                             </Button>}
@@ -241,6 +323,6 @@ export const MappingPackageProcessForm = ({items, sectionApi, showExport}) => {
 
 
 MappingPackageProcessForm.propTypes = {
-    item: PropTypes.array,
+    items: PropTypes.array,
     sectionApi: PropTypes.object
 }

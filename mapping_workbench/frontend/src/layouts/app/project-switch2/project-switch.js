@@ -128,6 +128,7 @@ export const ProjectSwitch = ({small}) => {
                              style={{marginTop: 16, marginBottom: 16}}/>
                     <MenuItem key='project_create'
                               id='create_project_button'
+                              onClick={handleClose}
                               component={Link}
                               href={paths.app.projects.create}
                               sx={{color: theme.palette.primary.main, mb: 1}}>
@@ -141,6 +142,7 @@ export const ProjectSwitch = ({small}) => {
                     <MenuItem key='go_projects'
                               id='go_projects_button'
                               component={Link}
+                              onClick={handleClose}
                               href={paths.app.projects.index}
                               sx={{color: theme.palette.primary.main, mb: 1}}>
                         <ArticleIcon fontWeight='bold'/>

@@ -1,3 +1,4 @@
+import re
 from typing import List
 
 from mapping_workbench.backend.logger.services import mwb_logger
@@ -123,6 +124,12 @@ def update_xpath_assertion_test_data_entry_xpaths(
             test_data_entry.xpaths.append(xpath)
 
 
+def remove_relative_from_xpath(structural_element) -> str:
+    if structural_element.absolute_xpath == structural_element.relative_xpath:
+        return structural_element.absolute_xpath
+    return (structural_element.absolute_xpath or "").removesuffix(structural_element.relative_xpath or "").rstrip('/')
+
+
 def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingPackageState):
     test_data_suites: List[TestDataSuiteState] = mapping_package_state.test_data_suites
     conceptual_mapping_rule_states = mapping_package_state.conceptual_mapping_rules
@@ -148,18 +155,20 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
                     xpaths = matching_elements.xpath_assertions
                 except Exception as e:
                     validation_message = str(e)
-
                 cm_xpath_condition = conceptual_mapping_rule_state.xpath_condition
                 meets_xpath_condition: bool = True
                 if cm_xpath_condition:
                     meets_xpath_condition = False
                     if TRY_TO_MEET_XPATH_CONDITION:
-                        for matching_element in matching_elements.elements:
-                            element_xpath_validator: XPATHValidator = XPATHValidator(
-                                xml_content=str(matching_element),
-                                namespaces=xpath_validator.namespaces
-                            )
-                            meets_xpath_condition = element_xpath_validator.check_xpath_condition(cm_xpath_condition)
+                        node_xpath = remove_relative_from_xpath(structural_element)
+                        cond_xpath_validator: XPATHValidator = XPATHValidator(
+                            xml_content=xml_content,
+                            namespaces=xpath_validator.namespaces
+                        )
+                        cond_matching_elements: XPATHMatchingElements = cond_xpath_validator.validate(node_xpath)
+                        for matching_element in cond_matching_elements.elements:
+                            cond_xpath_validator.set_context_node(matching_element)
+                            meets_xpath_condition = cond_xpath_validator.check_xpath_condition(cm_xpath_condition)
                             if meets_xpath_condition:
                                 break
                     if not meets_xpath_condition:

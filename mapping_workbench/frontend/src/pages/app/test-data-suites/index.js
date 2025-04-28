@@ -58,6 +58,10 @@ const Page = () => {
 
     usePageView();
 
+    const onUploadEnd = () => {
+        itemsStore.handleItemsGet();
+        uploadDialog.handleClose();
+    }
     return (
         <>
             <Seo title={`App: ${sectionApi.SECTION_TITLE} List`}/>
@@ -115,7 +119,7 @@ const Page = () => {
                     getItems={itemsStore.handleItemsGet}
                 />
                 <FileCollectionUploader
-                    onClose={uploadDialog.handleClose}
+                    onClose={onUploadEnd}
                     open={uploadDialog.open}
                     sectionApi={sectionApi}
                 />

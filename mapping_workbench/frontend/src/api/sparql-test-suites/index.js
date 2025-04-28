@@ -1,4 +1,5 @@
 import {FileCollectionsApi} from "../file-collections";
+import {appApi} from "../app";
 
 class SPARQLTestSuitesApi extends FileCollectionsApi {
     get SECTION_TITLE() {
@@ -39,6 +40,15 @@ class SPARQLTestSuitesApi extends FileCollectionsApi {
         return valuesStore.items.filter(value => value.title !== this.CM_ASSERTIONS_SUITE_TITLE).map(
             value => ({id: value._id, title: value.title})
         ).sort((a, b) => a.title.localeCompare(b.title));
+    }
+
+    importFileCollections(request) {
+        try {
+            let endpoint = this.paths['tasks']['import'];
+            const headers = {"Content-Type": "multipart/form-data"};
+            return appApi.post(endpoint, request, null, headers);
+        } catch (err) {
+        }
     }
 }
 

@@ -44,11 +44,9 @@ const tabs = [
 
 const Page = () => {
     const router = useRouter();
-
-    const {id, sid} = router.query;
+    const {id, sid, tab} = router.query;
 
     const [item, setItem] = useState({})
-    const [currentTab, setCurrentTab] = useState('details');
     const [validationReportTree, setValidationReportTree] = useState([])
     const [validationReport, setValidationReport] = useState({})
 
@@ -99,14 +97,19 @@ const Page = () => {
             .catch(err => console.error(err))
     }
 
-    const handleTabsChange = (event, value) => setCurrentTab(value)
+    const handleTabsChange = (event, value) =>
+        router.push({
+            pathname: paths.app.mapping_packages.states.view(id, sid),
+            query: {tab: value}
+        })
+
 
     const handleExport = (setIsExporting) => exportPackage(sectionApi, id, setIsExporting, item)
 
     const disabledTabs = {
-        xpath: !validationReport.xpath?.length,
-        sparql: !validationReport.sparql?.length,
-        shacl: !validationReport.shacl?.length,
+        xpath: !validationReportTree || !validationReport.xpath?.length,
+        sparql: !validationReportTree || !validationReport.sparql?.length,
+        shacl: !validationReportTree || !validationReport.shacl?.length,
     }
 
     return (
@@ -156,7 +159,7 @@ const Page = () => {
                         scrollButtons="auto"
                         sx={{mt: 3}}
                         textColor="primary"
-                        value={currentTab}
+                        value={tab ?? 'details'}
                         variant="scrollable"
                     >
                         {tabs.map((tab) => (
@@ -170,13 +173,13 @@ const Page = () => {
                         ))}
                     </Tabs>
                 </Stack>
-                {currentTab === 'details' && (
+                {(!tab || tab === 'details') && (
                     <StateDetails sid={sid}
-                                  handleChangeTab={setCurrentTab}
+                                  handleChangeTab={(value, id) => handleTabsChange(id, value)}
                                   item={item}
                                   validationReport={validationReport}/>
                 )}
-                {currentTab === 'xpath' && (
+                {tab === 'xpath' && (
                     <XpathValidationReportView
                         sid={sid}
                         handleExport={handleExport}
@@ -184,7 +187,7 @@ const Page = () => {
                         reportTree={validationReportTree}
                     />
                 )}
-                {currentTab === 'sparql' && (
+                {tab === 'sparql' && (
                     <SparqlValidationReport
                         sid={sid}
                         handleExport={handleExport}
@@ -192,7 +195,7 @@ const Page = () => {
                         reportTree={validationReportTree}
                     />
                 )}
-                {currentTab === 'shacl' && (
+                {tab === 'shacl' && (
                     <ShaclValidationReport
                         sid={sid}
                         handleExport={handleExport}

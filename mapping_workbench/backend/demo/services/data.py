@@ -4,11 +4,12 @@ from datetime import datetime
 from beanie import PydanticObjectId
 from dateutil.tz import tzlocal
 
-from mapping_workbench.backend.config import settings
+# from mapping_workbench.backend.config import settings
 from mapping_workbench.backend.demo.resources import PROJECT1_PATH, PROJECT2_PATH, ONTOLOGY_FILE_PATH, \
     ONTOLOGY_FILE_NAME
 from mapping_workbench.backend.demo.services.clear import drop_collections_except
-from mapping_workbench.backend.demo.services.notification import send_demo_reset_notifications
+# from mapping_workbench.backend.demo.services.notification import send_demo_reset_notifications
+from mapping_workbench.backend.fields_registry.models.pool import PoolSDKField, PoolSDKFieldsVersionedView
 from mapping_workbench.backend.ontology.models.namespace import NamespaceCustom
 from mapping_workbench.backend.ontology.services.terms import discover_and_save_terms
 from mapping_workbench.backend.ontology_suite.entrypoints.api.routes import ontology_file_repository
@@ -16,15 +17,15 @@ from mapping_workbench.backend.ontology_suite.models.ontology_file_resource impo
 from mapping_workbench.backend.package_importer.adapters.eforms.importer import EFormsPackageImporter
 from mapping_workbench.backend.package_importer.services.import_mono_eforms_mapping_suite import \
     import_eforms_mapping_suite_from_file_system
-from mapping_workbench.backend.project.models.entity import Project
+from mapping_workbench.backend.project.models.entity import Project, SourceSchema, SourceSchemaType
 from mapping_workbench.backend.tasks.models.task_response import TaskResponse
 from mapping_workbench.backend.tracking.models.tracking import TrackedUser, TrackedActivity
 from mapping_workbench.backend.user.models.user import User
 
 GITHUB_EFORMS_SDK_FIELDS_REPO_URL = "https://github.com/OP-TED/eForms-SDK"
 
-PROJECT1_TITLE = "DEMO Project 1"
-PROJECT2_TITLE = "DEMO Project 2"
+PROJECT1_TITLE = "Empty Project"
+PROJECT2_TITLE = "Loaded Project"
 
 
 async def reset_demo_data(
@@ -37,14 +38,16 @@ async def reset_demo_data(
     collections_to_keep = [
         User.get_collection_name(),
         NamespaceCustom.get_collection_name(),
+        PoolSDKField.get_collection_name(),
+        PoolSDKFieldsVersionedView.get_collection_name(),
         TrackedUser.get_collection_name(),
         TrackedActivity.get_collection_name()
     ]  # Collections to keep
     await drop_collections_except(collections_to_keep)
 
     await import_demo_projects(with_import_sdk_fields, user, task_response)
-    if settings.is_demo_env():
-        send_demo_reset_notifications()
+    # if settings.is_demo_env():
+    #     send_demo_reset_notifications()
 
 
 async def clear_demo_project(project_title: str):
@@ -91,7 +94,10 @@ async def import_demo_project(
     )
     project = Project(
         title=project_title,
-        created_at=datetime.now(tzlocal())
+        created_at=datetime.now(tzlocal()),
+        source_schema=SourceSchema(
+            type=SourceSchemaType.JSON if has_package else SourceSchemaType.XSD
+        )
     )
     await project.save()
     await import_ontologies_to_project(project.id, user)

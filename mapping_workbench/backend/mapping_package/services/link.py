@@ -40,21 +40,24 @@ async def assign_resources_to_mapping_packages(
         resources_field: ResourceField,
         mapping_packages_ids: List[PydanticObjectId]
 ):
-    query_filter: dict = {
-        MappingPackage.project: Project.link_from_id(project_id).to_ref(),
-        MappingPackage.id: {In.operator: mapping_packages_ids}
-    }
-
-    await MappingPackage.get_motor_collection().update_many(
-        query_filter,
-        {
-            Set.operator: {
-                resources_field.value: [
-                    resource_link_from_id(resources_field, resource_id).to_ref() for resource_id in resources_ids
-                ]
-            }
+    try:
+        query_filter: dict = {
+            MappingPackage.project: Project.link_from_id(project_id).to_ref(),
+            MappingPackage.id: {In.operator: mapping_packages_ids}
         }
-    )
+
+        await MappingPackage.get_motor_collection().update_many(
+            query_filter,
+            {
+                Set.operator: {
+                    resources_field.value: [
+                        resource_link_from_id(resources_field, resource_id).to_ref() for resource_id in resources_ids
+                    ]
+                }
+            }
+        )
+    except Exception as e:
+        pass
 
 
 async def unassign_resources_from_mapping_packages(
@@ -63,19 +66,23 @@ async def unassign_resources_from_mapping_packages(
         resources_field: ResourceField,
         mapping_packages_ids: List[PydanticObjectId] = None
 ):
-    query_filter: dict = {
-        MappingPackage.project: Project.link_from_id(project_id).to_ref()
-    }
-    if mapping_packages_ids:
-        query_filter[MappingPackage.id] = {In.operator: mapping_packages_ids}
-
-    await MappingPackage.get_motor_collection().update_many(
-        query_filter,
-        {
-            Pull.operator: {
-                resources_field.value: {In.operator: [
-                    resource_link_from_id(resources_field, resource_id).to_ref() for resource_id in resources_ids
-                ]}
-            }
+    try:
+        query_filter: dict = {
+            MappingPackage.project: Project.link_from_id(project_id).to_ref()
         }
-    )
+        if mapping_packages_ids:
+            query_filter[MappingPackage.id] = {In.operator: mapping_packages_ids}
+
+        await MappingPackage.get_motor_collection().update_many(
+            query_filter,
+            {
+                Pull.operator: {
+                    resources_field.value: {In.operator: [
+                        resource_link_from_id(resources_field, resource_id).to_ref() for resource_id in resources_ids
+                    ]}
+                }
+            }
+        )
+    except Exception as e:
+        pass
+

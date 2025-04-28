@@ -68,6 +68,7 @@ async def get_project_out(id: PydanticObjectId) -> ProjectOut:
 
 
 async def delete_project(project: Project):
+    # TODO: remove all project resources
     return await project.delete()
 
 

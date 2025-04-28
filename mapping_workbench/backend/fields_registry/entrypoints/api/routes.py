@@ -270,9 +270,10 @@ async def route_generate_conceptual_mapping_rules(
     name=f"fields:elements_tree"
 )
 async def route_tree_structural_elements(
-        project: PydanticObjectId = None
+        project: PydanticObjectId = None,
+        wcm: bool = False # with conceptual mappings
 ):
-    elements = await get_project_structural_elements(project)
+    elements = await get_project_structural_elements(project, with_conceptual_mappings=wcm)
     return tree_of_structural_elements(elements)
 
 

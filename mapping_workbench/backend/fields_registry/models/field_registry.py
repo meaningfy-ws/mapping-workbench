@@ -77,6 +77,13 @@ class StructuralElementState(ObjectState, StructuralElementABC):
     value_type: Optional[str] = None
     legal_type: Optional[str] = None
     element_type: Literal["node", "field"] = "field"
+    privacy_code: Optional[str] = None
+    privacy_unpublished_field_id: Optional[str] = None
+    privacy_reason_code_field_id:Optional[str] = None
+    privacy_reason_description_field_id: Optional[str] = None
+    privacy_publication_date_field_id: Optional[str] = None
+    code_list_value_id: Optional[str] = None
+    attributes: Optional[List[str]] = None
 
 
 class StructuralElement(BaseProjectResourceEntity, StatefulObjectABC, StructuralElementABC):
@@ -97,6 +104,13 @@ class StructuralElement(BaseProjectResourceEntity, StatefulObjectABC, Structural
     value_type: Optional[str] = None
     legal_type: Optional[str] = None
     element_type: Literal["node", "field"] = "field"
+    privacy_code: Optional[str] = None
+    privacy_unpublished_field_id: Optional[str] = None
+    privacy_reason_code_field_id: Optional[str] = None
+    privacy_reason_description_field_id: Optional[str] = None
+    privacy_publication_date_field_id: Optional[str] = None
+    code_list_value_id: Optional[str] = None
+    attributes: Optional[List[str]] = None
 
     async def get_state(self) -> StructuralElementState:
         return StructuralElementState(
@@ -113,7 +127,14 @@ class StructuralElement(BaseProjectResourceEntity, StatefulObjectABC, Structural
             bt_id=self.bt_id,
             value_type=self.value_type,
             legal_type=self.legal_type,
-            element_type=self.element_type
+            element_type=self.element_type,
+            privacy_code=self.privacy_code,
+            privacy_unpublished_field_id=self.privacy_unpublished_field_id,
+            privacy_reason_code_field_id=self.privacy_reason_code_field_id,
+            privacy_reason_description_field_id=self.privacy_reason_description_field_id,
+            privacy_publication_date_field_id= self.privacy_publication_date_field_id,
+            code_list_value_id=self.code_list_value_id,
+            attributes=self.attributes
         )
 
     def set_state(self, state: StructuralElementState):
@@ -133,6 +154,13 @@ class StructuralElement(BaseProjectResourceEntity, StatefulObjectABC, Structural
             value_type=sdk_field.value_type,
             legal_type=sdk_field.legal_type,
             element_type=sdk_field.element_type,
+            privacy_code=sdk_field.privacy_code,
+            privacy_unpublished_field_id=sdk_field.privacy_unpublished_field_id,
+            privacy_reason_code_field_id=sdk_field.privacy_reason_code_field_id,
+            privacy_reason_description_field_id=sdk_field.privacy_reason_description_field_id,
+            privacy_publication_date_field_id= sdk_field.privacy_publication_date_field_id,
+            code_list_value_id=sdk_field.code_list_value_id,
+            attributes=sdk_field.attributes,
             descriptions=sdk_field.descriptions or [],
             is_used_in_conceptual_mapping_rules=False,
             versions=[sdk_field.version],
@@ -189,3 +217,4 @@ class BaseStructuralElementIn(BaseModel):
     absolute_xpath: str
     relative_xpath: Optional[str] = None
     parent_node_id: Optional[str] = None
+    element_type: Literal["node", "field"] = "field"

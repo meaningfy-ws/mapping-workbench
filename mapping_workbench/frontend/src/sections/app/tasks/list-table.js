@@ -186,7 +186,7 @@ export const ListTable = (props) => {
                                                 {timeTransformer(item.finished_at, timeSetting)}
                                             </TableCell>
                                             <TableCell>
-                                                {item?.finished_at ? moment.utc(moment(item?.finished_at).diff(moment(item?.started_at))).format("HH:mm:ss") : '-'}
+                                                {item?.started_at && item?.finished_at ? moment.utc(moment(item?.finished_at).diff(moment(item?.started_at))).format("HH:mm:ss") : '-'}
                                             </TableCell>
                                             <TableCell align="left">
                                                 <Stack onMouseEnter={(event) => handlePopoverEnter(event, item)}

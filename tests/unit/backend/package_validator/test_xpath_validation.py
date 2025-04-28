@@ -37,6 +37,7 @@ async def test_compute_xpath_assertions_for_mapping_package(
     assert xpath_assertion_condition.meets_xpath_condition
 
     xpath_assertion = dummy_test_data_state.validation.xpath.results[1]
+
     assert xpath_assertion.test_data_xpaths
     assert xpath_assertion.is_covered
     assert xpath_assertion.xpath_conditions
@@ -49,3 +50,32 @@ async def test_compute_xpath_assertions_for_mapping_package(
     assert xpath_assertion.xpath_conditions
     xpath_assertion_condition = xpath_assertion.xpath_conditions[0]
     assert xpath_assertion_condition.meets_xpath_condition
+
+    xpath_assertion = dummy_test_data_state.validation.xpath.results[3]
+    assert xpath_assertion.test_data_xpaths
+    assert xpath_assertion.is_covered
+    assert xpath_assertion.xpath_conditions
+    xpath_assertion_condition = xpath_assertion.xpath_conditions[0]
+    assert xpath_assertion_condition.meets_xpath_condition
+
+    xpath_assertion = dummy_test_data_state.validation.xpath.results[4]
+    assert not xpath_assertion.test_data_xpaths
+    assert not xpath_assertion.is_covered
+
+    xpath_assertion = dummy_test_data_state.validation.xpath.results[5]
+    assert xpath_assertion.test_data_xpaths
+    assert xpath_assertion.is_covered
+    assert xpath_assertion.xpath_conditions
+    xpath_assertion_condition = xpath_assertion.xpath_conditions[0]
+    assert not xpath_assertion_condition.meets_xpath_condition
+
+    xpath_assertion = dummy_test_data_state.validation.xpath.results[6]
+    assert xpath_assertion.test_data_xpaths
+    assert xpath_assertion.is_covered
+    assert xpath_assertion.xpath_conditions
+    xpath_assertion_condition = xpath_assertion.xpath_conditions[0]
+    assert xpath_assertion_condition.meets_xpath_condition
+    xpath_assertion_condition2 = xpath_assertion.xpath_conditions[1]
+    assert not xpath_assertion_condition2.meets_xpath_condition
+
+

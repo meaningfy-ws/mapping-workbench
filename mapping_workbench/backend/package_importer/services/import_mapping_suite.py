@@ -61,25 +61,25 @@ async def import_mapping_package(
     )
 
 
-async def import_and_process_mapping_package_from_archive(
-        file_content: bytes, project: Project, package_type: PackageType,
-        cleanup_project: bool = False,
-        user: User = None,
-        task_response: TaskResponse = None
-) -> ImportedMappingSuiteResponse:
-    if not task_response:
-        task_response = TaskResponse()
-    result = await import_mapping_package_from_archive(
-        file_content, project, package_type, cleanup_project, user, task_response
-    )
-
-    await process_mapping_package(
-        package_id=result.mapping_package.id,
-        user=user,
-        task_response=task_response
-    )
-
-    return result
+# async def import_and_process_mapping_package_from_archive(
+#         file_content: bytes, project: Project, package_type: PackageType,
+#         cleanup_project: bool = False,
+#         user: User = None,
+#         task_response: TaskResponse = None
+# ) -> ImportedMappingSuiteResponse:
+#     if not task_response:
+#         task_response = TaskResponse()
+#     result = await import_mapping_package_from_archive(
+#         file_content, project, package_type, cleanup_project, user, task_response
+#     )
+#
+#     await process_mapping_package(
+#         package_id=result.mapping_package.id,
+#         user=user,
+#         task_response=task_response
+#     )
+#
+#     return result
 
 
 async def import_mapping_package_from_archive(
