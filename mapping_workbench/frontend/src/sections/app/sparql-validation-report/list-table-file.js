@@ -115,7 +115,7 @@ export const ListTableFile = (props) => {
                                                 <Stack
                                                     direction="column"
                                                     spacing={1}
-                                                        width='400px'
+                                                    width='400px'
                                                 >
                                                     <Stack
                                                         direction="row"
@@ -134,7 +134,7 @@ export const ListTableFile = (props) => {
                                                 <Divider sx={{my: 1}}/>
                                             </>
                                         }
-                                        <Scrollbar sx={{overflowX: 'auto', width: '400px',pb:1}}>
+                                        <Scrollbar sx={{overflowX: 'auto', width: '400px', pb: 1}}>
                                             <Typography variant="subtitle3">
                                                 {item.description}
                                             </Typography>
@@ -177,14 +177,9 @@ export const ListTableFile = (props) => {
 
 ListTableFile.propTypes = {
     count: PropTypes.number,
-    items:
-    PropTypes.array,
-    onPageChange:
-    PropTypes.func,
-    onRowsPerPageChange:
-    PropTypes.func,
-    page:
-    PropTypes.number,
-    rowsPerPage:
-    PropTypes.number
+    items: PropTypes.array,
+    onPageChange: PropTypes.func,
+    onRowsPerPageChange: PropTypes.func,
+    page: PropTypes.number,
+    rowsPerPage: PropTypes.number
 };

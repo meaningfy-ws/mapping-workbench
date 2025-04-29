@@ -38,6 +38,7 @@ import {MappingPackageFormSelect} from "../mapping-package/components/mapping-pa
 import {MappingPackageCheckboxList} from '../mapping-package/components/mapping-package-real-checkbox-list';
 import {useGlobalState} from "../../../hooks/use-global-state";
 import timeTransformer from "../../../utils/time-transformer";
+import BuildForm from './build-form';
 
 
 const TransformForm = (props) => {
@@ -280,6 +281,8 @@ export const EditForm = (props) => {
                      value='tabEdit'></Tab>
                 <Tab label='Test Triple Map Fragment'
                      value='tabTest'></Tab>
+                <Tab label='Triple Map Editor (experimental)'
+                     value='tabBuild'></Tab>
             </Tabs>}
 
 
@@ -461,48 +464,50 @@ export const EditForm = (props) => {
                 </Card>
             </>
             }
+            {currentTab === 'tabBuild' && <BuildForm rdfContent={item.triple_map_content}
+                                                     id={id}
+                                                     {...formik.values}/>}
 
-
-            <Card sx={{mt: 3}}>
-                <Stack
-                    direction={{
-                        xs: 'column',
-                        sm: 'row'
-                    }}
-                    flexWrap="wrap"
-                    spacing={3}
-                    sx={{p: 3}}
-                >
-                    <Button
-                        disabled={formik.isSubmitting}
-                        type="submit"
-                        variant="contained"
+            {currentTab !== 'tabBuild' &&
+                <Card sx={{mt: 3}}>
+                    <Stack
+                        direction={{
+                            xs: 'column',
+                            sm: 'row'
+                        }}
+                        flexWrap="wrap"
+                        spacing={3}
+                        sx={{p: 3}}
                     >
-                        {itemctx.isNew ? 'Create' : 'Update'}
-                    </Button>
-                    {!itemctx.isNew && <Button
-                        disabled={formik.isSubmitting}
-                        variant="outlined"
-                        onClick={handleUpdateAndSubmit}
-                        id="update_and_transform_button"
-                    >
-                        Update and Transform
-                    </Button>}
-                    {formik.values.format === 'TTL' && currentTab === 'tabEdit' &&
-                        <Button onClick={handleTurtleValidate}>Validate</Button>}
-                    <Button
-                        color="inherit"
-                        component={RouterLink}
-                        disabled={formik.isSubmitting}
-                        href={paths.app.specific_triple_map_fragments.index}
-                    >
-                        Cancel
-                    </Button>
-                </Stack>
-            </Card>
+                        <Button
+                            disabled={formik.isSubmitting}
+                            type="submit"
+                            variant="contained"
+                        >
+                            {itemctx.isNew ? 'Create' : 'Update'}
+                        </Button>
+                        {!itemctx.isNew && <Button
+                            disabled={formik.isSubmitting}
+                            variant="outlined"
+                            onClick={handleUpdateAndSubmit}
+                            id="update_and_transform_button"
+                        >
+                            Update and Transform
+                        </Button>}
+                        {formik.values.format === 'TTL' && currentTab === 'tabEdit' &&
+                            <Button onClick={handleTurtleValidate}>Validate</Button>}
+                        <Button
+                            color="inherit"
+                            component={RouterLink}
+                            disabled={formik.isSubmitting}
+                            href={paths.app.specific_triple_map_fragments.index}
+                        >
+                            Cancel
+                        </Button>
+                    </Stack>
+                </Card>}
         </form>
-    )
-        ;
+    );
 };
 
 EditForm.propTypes = {

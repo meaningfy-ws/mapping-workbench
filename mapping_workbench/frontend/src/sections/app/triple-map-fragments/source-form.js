@@ -1,0 +1,93 @@
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
+import Card from '@mui/material/Card';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import FormControl from '@mui/material/FormControl';
+import AccordionDetails from "@mui/material/AccordionDetails";
+
+import CustomAccordion from './custom-accordion';
+import CustomAccordionSummary from './custom-accordion-summary';
+
+const SourceForm = ({file, iterator, type, handleUpdate, handleDelete}) => {
+
+    const onDelete = (e) => {
+        e.stopPropagation()
+        handleDelete()
+    }
+
+    const handleSourceChange = (value) => {
+        handleUpdate({file, iterator, type, ...value})
+    }
+
+    return (
+        <CustomAccordion defaultExpanded>
+            <CustomAccordionSummary expandIcon={<ExpandMoreIcon/>}>
+                <Typography>Source</Typography>
+                <IconButton onClick={onDelete}><DeleteOutlineIcon color='error'/></IconButton>
+            </CustomAccordionSummary>
+            <AccordionDetails>
+                <Card sx={{border: '1px solid #E4E7EC', p: 2}}>
+                    <Typography>Type</Typography>
+                    <FormControl fullWidth>
+                        <Select variant='outlined'
+                                value={type}
+                                onChange={(e) => handleSourceChange({type: e.target.value})}
+                                sx={{
+                                    height: 40,
+                                    borderRadius: '12px'
+                                }}>
+                            <MenuItem value='ql:XPath'>XML</MenuItem>
+                            <MenuItem value='ql:CSV'>CSV</MenuItem>
+                            <MenuItem value='ql:JSONPath'>JSON</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <Card sx={{border: '1px solid #E4E7EC', p: 2, mt: 2}}>
+                        <Typography>File</Typography>
+                        <FormControl fullWidth>
+                            <TextField
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: "12px",
+                                        backgroundColor: "white",
+                                        height: 40
+                                    }
+                                }}
+                                variant='outlined'
+                                fullWidth
+                                onChange={e => handleSourceChange({file: e.target.value})}
+                                value={file}
+                                required
+                                type={type}
+                            />
+                        </FormControl>
+                        <Typography sx={{mt: 2}}>Iterator</Typography>
+                        <FormControl fullWidth>
+                            <TextField
+                                sx={{
+                                    "& .MuiOutlinedInput-root": {
+                                        borderRadius: "12px",
+                                        backgroundColor: "white",
+                                        height: 40
+                                    }
+                                }}
+                                variant='outlined'
+                                fullWidth
+                                onChange={e => handleSourceChange({iterator: e.target.value})}
+                                value={iterator}
+                                required
+                                type={type}
+                            />
+                        </FormControl>
+                    </Card>
+                </Card>
+            </AccordionDetails>
+        </CustomAccordion>
+    )
+}
+
+export default SourceForm
