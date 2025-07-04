@@ -16,7 +16,7 @@ const Pie = ({data, handleExport}) => {
                    justifyContent='space-between'>
                 <Stack>
                     <Typography fontSize='18'
-                                fontWeight='bold'>Coverage (SPARQL)</Typography>
+                                fontWeight='bold'>Correctness (SPARQL)</Typography>
                 </Stack>
                 <ExportButton handleExport={handleExport}/>
             </Stack>

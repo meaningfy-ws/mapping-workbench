@@ -31,7 +31,7 @@ const ResultSummaryCoverageSparql = ({validationReport, handleChangeTab}) => {
             <Stack>
                 <Typography variant='secondary'>Result summary</Typography>
                 <Typography fontSize='18'
-                            fontWeight='bold'>Coverage (SPARQL)</Typography>
+                            fontWeight='bold'>Correctness (SPARQL)</Typography>
             </Stack>
             <Button endIcon={<OpenInNewIcon/>}
                     onClick={() => handleChangeTab('sparql')}>
