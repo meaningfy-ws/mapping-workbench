@@ -75,8 +75,10 @@ class SPARQLValidator(TestDataValidator):
             xpath_validation = self.test_data.validation.xpath
         if xpath_validation and xpath_validation.results:
             xpath_validation_results = xpath_validation.results
+            sparql_query_element_id = sparql_query_result.query.cm_rule.sdk_element_id.strip() \
+                if sparql_query_result.query.cm_rule and sparql_query_result.query.cm_rule.sdk_element_id else None
             sparql_query_xpath = sparql_query_result.query.cm_rule.sdk_element_xpath.strip() \
-                if sparql_query_result.query.cm_rule else None
+                if sparql_query_result.query.cm_rule and sparql_query_result.query.cm_rule.sdk_element_xpath else None
             sparql_xpath_condition = sparql_query_result.query.cm_rule.xpath_condition.xpath_condition.strip() \
                 if (sparql_query_result.query.cm_rule and
                     sparql_query_result.query.cm_rule.xpath_condition and
@@ -86,8 +88,12 @@ class SPARQLValidator(TestDataValidator):
             validation_xpath_conditions = set()
             for xpath_assertion in xpath_validation_results:
                 if xpath_assertion.is_covered:
-                    validation_xpaths.add(xpath_assertion.sdk_element_xpath.strip())
-                if xpath_assertion.xpath_conditions:
+                    validation_xpaths.add((xpath_assertion.sdk_element_xpath or '').strip())
+                if (
+                        xpath_assertion.sdk_element_xpath == sparql_query_xpath
+                        and xpath_assertion.sdk_element_id == sparql_query_element_id
+                        and xpath_assertion.xpath_conditions
+                ):
                     validation_xpath_conditions |= set([
                         (xpath_condition.xpath_condition or '').strip()
                         for xpath_condition in xpath_assertion.xpath_conditions
