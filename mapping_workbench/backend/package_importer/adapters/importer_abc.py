@@ -5,8 +5,9 @@ from typing import Dict, Tuple, List
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement
-from mapping_workbench.backend.mapping_package.models.entity import MappingPackage
-from mapping_workbench.backend.mapping_package.services.api import remove_mapping_package_resources
+from mapping_workbench.backend.mapping_package.models.entity import MappingPackage, MappingPackageStateGate
+from mapping_workbench.backend.mapping_package.services.api import remove_mapping_package_resources, \
+    delete_mapping_package_state
 from mapping_workbench.backend.ontology.models.namespace import Namespace
 from mapping_workbench.backend.ontology.models.term import Term
 from mapping_workbench.backend.ontology_suite.models.ontology_file_resource import OntologyFileResource
@@ -387,6 +388,10 @@ class PackageImporterABC(ABC):
         await SpecificTripleMapFragment.find(SpecificTripleMapFragment.project == project_link).delete()
         await GenericTripleMapFragment.find(GenericTripleMapFragment.project == project_link).delete()
         await MappingPackage.find(MappingPackage.project == project_link).delete()
+        mapping_package_states = await MappingPackageStateGate.find(MappingPackageStateGate.project == project_link).to_list()
+        for mapping_package_state in mapping_package_states:
+            await delete_mapping_package_state(mapping_package_state)
+            await mapping_package_state.delete()
         await ResourceCollection.find(ResourceCollection.project == project_link).delete()
         await ResourceFile.find(ResourceFile.project == project_link).delete()
         await SHACLTestFileResource.find(SHACLTestFileResource.project == project_link).delete()

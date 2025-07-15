@@ -1,4 +1,4 @@
-FROM docker.io/python:3.10-slim-buster
+FROM docker.io/python:3.10-slim-bullseye
 
 ARG ENVIRONMENT
 ARG PORT

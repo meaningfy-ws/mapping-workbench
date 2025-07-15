@@ -52,7 +52,7 @@ class TestDataValidationContainer(BaseModel):
 
 
 class TestDataValidation(BaseModel):
-    validation: Optional[TestDataValidationContainer] = TestDataValidationContainer()
+    validation: Optional[TestDataValidationContainer] = Field(default_factory=TestDataValidationContainer)
 
 
 class TestDataState(TestDataValidation, ObjectState):
@@ -146,7 +146,7 @@ class TestDataSuiteState(TestDataValidation, ObjectState):
     title: Optional[str] = None
     description: Optional[str] = None
     path: Optional[List[str]] = None
-    test_data_states: Optional[List[TestDataState]] = []
+    test_data_states: Optional[List[TestDataState]] = Field(default_factory=list)
 
 
 class TestDataSuite(
@@ -154,7 +154,7 @@ class TestDataSuite(
     BaseMappingPackagesResourceSchemaTrait,
     StatefulObjectABC
 ):
-    file_resources: Optional[List[Link[TestDataFileResource]]] = []
+    file_resources: Optional[List[Link[TestDataFileResource]]] = Field(default_factory=list)
 
     async def get_test_data_states(self) -> List[TestDataState]:
         test_data_file_resources = await TestDataFileResource.find(
