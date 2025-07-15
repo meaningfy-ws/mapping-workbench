@@ -10,9 +10,9 @@ from pymongo import IndexModel
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRuleState, \
     ConceptualMappingRule
-from mapping_workbench.backend.core.models.base_entity import BaseTitledEntityListFiltersSchema, BaseEntity
+from mapping_workbench.backend.core.models.base_entity import BaseTitledEntityListFiltersSchema
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity, \
-    BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema
+    BaseProjectResourceEntityInSchema, BaseProjectResourceEntityOutSchema, BaseProjectAbleResourceEntity
 from mapping_workbench.backend.mapping_package import PackageType
 from mapping_workbench.backend.mapping_rule_registry.models.entity import MappingGroupState, MappingGroup
 from mapping_workbench.backend.ontology.models.namespace import NamespaceState, Namespace
@@ -136,7 +136,7 @@ class MappingPackageValidationTree(BaseModel):
     test_data_suites: Optional[List[MappingPackageTestDataSuiteValidationTree]] = []
 
 
-class MappingPackageStateGate(BaseEntity):
+class MappingPackageStateGate(BaseProjectAbleResourceEntity):
     id: Optional[PydanticObjectId] = None
     mapping_package_oid: Optional[PydanticObjectId] = None
     title: Optional[str] = None
