@@ -173,8 +173,6 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
                             meets_xpath_condition = cond_xpath_validator.check_xpath_condition(cm_xpath_condition)
                             if meets_xpath_condition:
                                 break
-                    if not meets_xpath_condition:
-                        meets_xpath_condition = xpath_validator.check_xpath_condition(cm_xpath_condition)
 
                 xpath_condition = XPathAssertionCondition(
                     xpath_condition=cm_xpath_condition or '',
