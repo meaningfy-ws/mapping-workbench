@@ -38,11 +38,15 @@ class XPATHValidator(TestDataValidator):
     def check_xpath_condition(self, xquery_expression) -> bool:
         if not xquery_expression:
             return True
-
         try:
             self.xqp.set_query_content(xquery_expression)
             result: PyXdmValue = self.xqp.run_query_to_value()
-            return str(result) == 'true'
+            if not result or result.size == 0:
+                return False
+            if hasattr(result.head, "boolean_value"):
+                return result.head.boolean_value
+            # Fallback: non-empty sequence is considered True
+            return True
         except PySaxonApiError as e:
             mwb_logger.log_all_error(str(e), str(e))
             return False
