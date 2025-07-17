@@ -162,7 +162,9 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
                 if cm_xpath_condition:
                     meets_xpath_condition = False
                     if TRY_TO_MEET_XPATH_CONDITION:
-                        node_xpath = remove_relative_from_xpath(structural_element)
+                        node_xpath = structural_element.absolute_xpath # for nodes the query context is absolute xpath
+                        if structural_element.element_type == 'field':
+                            node_xpath = remove_relative_from_xpath(structural_element)
                         cond_xpath_validator: XPATHValidator = XPATHValidator(
                             xml_content=xml_content,
                             namespaces=xpath_validator.namespaces
