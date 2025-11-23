@@ -6,6 +6,9 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import FolderCopyIcon from '@mui/icons-material/FolderCopy';
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import FileResourceIcon from '@mui/icons-material/InsertDriveFile';
+import TestSuiteReportIcon from '@mui/icons-material/AnalyticsOutlined';
+import TestDataReportIcon from '@mui/icons-material/Analytics';
 
 import {Box} from '@mui/system';
 import Menu from '@mui/material/Menu';
@@ -62,18 +65,15 @@ export const getResultColor = (result) => {
 export const ValueChip = ({children, value, color, style}) => {
     const theme = useTheme()
     const themeColor = theme.palette?.[color] ?? {}
-    return (
-        <Stack sx={{
+    return (<Stack sx={{
             px: 1.4,
             py: 0.3,
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: themeColor.alpha12,
             color: themeColor.main,
-            borderRadius: 5,
-            ...style
-        }}>{value ?? children}</Stack>
-    )
+            borderRadius: 5, ...style
+        }}>{value ?? children}</Stack>)
 }
 
 export const getItemsDisplay = (items, total) => Object.entries(items)?.map(item => {
@@ -91,20 +91,18 @@ export const getItemsDisplay = (items, total) => Object.entries(items)?.map(item
 
 export const getValidationReportShacl = (items) => items.map(item => item.result).reduce((acc, report) => {
     Object.keys(report).forEach(reportKey => {
-            acc[reportKey] = (acc[reportKey] ?? 0) + report[reportKey].count
-            acc["itemsTotal"] = (acc["itemsTotal"] ?? 0) + report[reportKey].count
-        }
-    )
+        acc[reportKey] = (acc[reportKey] ?? 0) + report[reportKey].count
+        acc["itemsTotal"] = (acc["itemsTotal"] ?? 0) + report[reportKey].count
+    })
     return acc
 }, {info: 0, valid: 0, violation: 0, warning: 0})
 
 
 export const getValidationReportSparql = (items) => items.map(item => item.result).reduce((acc, report) => {
     Object.keys(report).forEach(reportKey => {
-            acc[reportKey] = (acc[reportKey] ?? 0) + report[reportKey].count
-            acc["itemsTotal"] = (acc["itemsTotal"] ?? 0) + report[reportKey].count
-        }
-    )
+        acc[reportKey] = (acc[reportKey] ?? 0) + report[reportKey].count
+        acc["itemsTotal"] = (acc["itemsTotal"] ?? 0) + report[reportKey].count
+    })
     return acc
 }, {valid: 0, unverifiable: 0, warning: 0, invalid: 0, error: 0, unknown: 0})
 
@@ -130,10 +128,9 @@ export const mapSparqlResults = (result) => result.map(e => {
     const values = queryAsArray.slice(0, 3)
     const resultArray = {}
     values.forEach(value => {
-            const res = value.split(": ")
-            resultArray[res[0].substring(1)] = res[1]
-        }
-    )
+        const res = value.split(": ")
+        resultArray[res[0].substring(1)] = res[1]
+    })
     resultArray["query"] = queryAsArray.slice(4, queryAsArray.length).join("\n")
     resultArray["test_suite"] = e.query?.filename
     resultArray["result"] = e.result
@@ -152,33 +149,29 @@ export const mapSparqlResults = (result) => result.map(e => {
 export const ResultFilter = ({currentState, onStateChange, values, count}) => {
 
     const FilterValue = ({label, value, currentState, count}) => {
-        return (
-            <FormControlLabel
-                control={<Radio/>}
-                checked={currentState === (value ?? label.toLowerCase())}
-                label={(
-                    <Box sx={{ml: 0, mr: 1}}>
-                        <Typography
-                            variant="subtitle2"
-                        >
-                            <Stack direction='row'
-                                   gap={1}>
-                                <ResultChip color={getValidationColor(label)}
-                                            fontColor='#fff'
-                                            clickable
-                                            label={capitalize(label)}/>
-                                {!!count && <ValueChip color={'primary'}>{count}</ValueChip>}
-                            </Stack>
-                        </Typography>
+        return (<FormControlLabel
+            control={<Radio/>}
+            checked={currentState === (value ?? label.toLowerCase())}
+            label={(<Box sx={{ml: 0, mr: 1}}>
+                    <Typography
+                        variant="subtitle2"
+                    >
+                        <Stack direction='row'
+                               gap={1}>
+                            <ResultChip color={getValidationColor(label)}
+                                        fontColor='#fff'
+                                        clickable
+                                        label={capitalize(label)}/>
+                            {!!count && <ValueChip color={'primary'}>{count}</ValueChip>}
+                        </Stack>
+                    </Typography>
 
-                    </Box>
-                )}
-                value={value ?? label.toLowerCase()}
-            />)
+                </Box>)}
+            value={value ?? label.toLowerCase()}
+        />)
     }
 
-    return (
-        <FormControl sx={{p: 2}}>
+    return (<FormControl sx={{p: 2}}>
             <Stack
                 direction='row'
                 component={RadioGroup}
@@ -189,70 +182,65 @@ export const ResultFilter = ({currentState, onStateChange, values, count}) => {
                              value=""
                              count={count}
                              currentState={currentState}/>
-                {values.map(value =>
-                    <FilterValue key={value.value}
-                                 value={value.value}
-                                 label={value.label ?? value.value}
-                                 currentState={currentState}/>)}
+                {values.map(value => <FilterValue key={value.value}
+                                                  value={value.value}
+                                                  label={value.label ?? value.value}
+                                                  currentState={currentState}/>)}
             </Stack>
-        </FormControl>
-    )
+        </FormControl>)
 }
 
 export const useFileNavigation = (reportTree, tab, packageId, datasetId) => {
     const router = useRouter()
     const {id, sid} = router.query
 
-    const handleSetTestAndPackage = (packageid, datasetid) => {
+    const handleSetTestAndPackage = (packageid, datasetid, openInNewWindow = false) => {
         let others = {}
-        if (packageid)
-            others = {packageid}
-        if (datasetid)
-            others = {...others, datasetid}
-        router.push({
-            pathname: paths.app.mapping_packages.states.view(id, sid), query: {
-                tab,
-                ...others,
-            }
-        })
+        if (packageid) others = {packageid}
+        if (datasetid) others = {...others, datasetid}
+        const query = { tab, ...others }
+        const pathname = paths.app.mapping_packages.states.view(id, sid)
+
+        if (openInNewWindow && typeof window !== 'undefined') {
+            const url = new URL(window.location.origin + pathname);
+            Object.entries(query).forEach(([k, v]) => {
+                if (v !== undefined && v !== '') url.searchParams.set(k, v)
+            });
+            window.open(url.toString(), '_blank', 'noopener,noreferrer');
+            return;
+        }
+
+        router.push({ pathname, query })
     }
 
     return {
-        selectedPackageState: packageId,
-        selectedTestDataset: datasetId,
-        handleSetTestAndPackage
+        selectedPackageState: packageId, selectedTestDataset: datasetId, handleSetTestAndPackage
     }
 }
 
 
 export const handleOpenDetails = (title, notices, handleSelect, setDescription) => {
-    const description = notices.map((notice, i) =>
-        <Stack direction='row'
-               justifyContent='space-between'
-               key={'notice' + i}>
-            <Box>
-                <Button type='link'
-                        onClick={() => handleSelect(notice.test_data_suite_oid)}
-                >
-                    {notice.test_data_suite_id}
-                </Button>
-                {' / '}
-                <Button type='link'
-                        onClick={() => handleSelect(notice.test_data_suite_oid, notice.test_data_oid)}
-                >
-                    {notice.test_data_id}
-                </Button>
-            </Box>
-            <Box>
-                <CopyDetailsButton notice={notice}/>
-                <Tooltip title='Go to file resources'>
-                    <IconButton
-                        onClick={() => window.open(paths.app.test_data_suites.resource_manager.edit.replace('[id]', notice.test_data_suite_oid).replace('[fid]', notice.test_data_oid), "_blank", "noreferrer")}>
-                        <OpenInNewIcon/>
-                    </IconButton>
-                </Tooltip>
-            </Box>
-        </Stack>)
+    const description = notices.map((notice, i) => <Stack direction='row'
+                                                          justifyContent='space-between'
+                                                          key={'notice' + i}>
+        <Box>
+            <Button type='link'
+                    onClick={() => handleSelect(notice.test_data_suite_oid)}
+            >
+                {notice.test_data_suite_id}
+            </Button>
+            {' / '}
+            <Button type='link'
+                    onClick={() => handleSelect(notice.test_data_suite_oid, notice.test_data_oid)}
+            >
+                {notice.test_data_id}
+            </Button>
+        </Box>
+        <Box>
+            <CopyDetailsButton notice={notice}/>
+            <GoToButton notice={notice} handleSelect={handleSelect}/>
+        </Box>
+    </Stack>)
 
     setDescription({open: true, title, description});
 }
@@ -300,22 +288,51 @@ export const CopyDetailsButton = ({notice}) => {
         </Menu></>)
 }
 
+export const GoToButton = ({notice, handleSelect}) => {
+    const [showMenu, setShowMenu] = useState(undefined)
+    const [clipBoard, setClipBoard] = useState(false)
+
+    const onShowMenu = (e) => {
+        setShowMenu(e.target)
+        setClipBoard(false)
+    }
+
+    return (<>
+        <Tooltip title='Go To options...'>
+            <IconButton color={clipBoard ? 'primary' : 'default'}
+                        onClick={onShowMenu}><OpenInNewIcon/></IconButton>
+        </Tooltip>
+        <Menu open={!!showMenu}
+              onClose={() => setShowMenu(undefined)}
+              anchorEl={showMenu}>
+            <MenuActionButton
+                title='Go To Test Suite Report'
+                icon={<TestSuiteReportIcon/>}
+                onClick={() => handleSelect(notice.test_data_suite_oid, null, true)}
+            />
+            <MenuActionButton
+                title='Go To Test Data Report'
+                icon={<TestDataReportIcon/>}
+                onClick={() => handleSelect(notice.test_data_suite_oid, notice.test_data_oid, true)}
+            />
+            <MenuActionButton
+                title='Go To File Resource'
+                icon={<FileResourceIcon/>}
+                onClick={() => window.open(paths.app.test_data_suites.resource_manager.edit.replace('[id]', notice.test_data_suite_oid).replace('[fid]', notice.test_data_oid), "_blank", "noreferrer")}
+            />
+            {clipBoard && <Stack mt={2} alignItems='center'>Copied</Stack>}
+        </Menu></>)
+}
+
 export const ResultChip = ({label, color, fontColor, onClick, clickable, children}) => {
     const hover = onClick ?? clickable ? {'&:hover': {filter: 'brightness(85%)'}, cursor: 'pointer'} : {}
-    return (
-        <Box sx={{
-            textAlign: 'center',
-            px: 1,
-            py: .5,
-            borderRadius: 12,
-            backgroundColor: color,
-            color: fontColor, ...hover
+    return (<Box sx={{
+            textAlign: 'center', px: 1, py: .5, borderRadius: 12, backgroundColor: color, color: fontColor, ...hover
         }}
-             onClick={onClick}
+                 onClick={onClick}
         >
             {label ?? children}
-        </Box>
-    )
+        </Box>)
 }
 
 export const ResultCell = ({item, handleSelect, setDescription}) => {
