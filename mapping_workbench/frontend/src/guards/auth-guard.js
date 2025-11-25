@@ -21,7 +21,8 @@ export const AuthGuard = (props) => {
   const check = async () => {
     //await auth.verifyAuth();
     if (!auth.isAuthenticated) {
-      const searchParams = new URLSearchParams({ returnTo: window.location.pathname }).toString();
+      const returnTo = window.location.pathname + window.location.search + window.location.hash;
+      const searchParams = new URLSearchParams({ returnTo }).toString();
       const href = loginPaths[auth.issuer] + `?${searchParams}`;
       await router.replace(href);
     } else {
