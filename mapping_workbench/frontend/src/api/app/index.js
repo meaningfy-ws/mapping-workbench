@@ -27,6 +27,10 @@ class AppApi {
         this.apiClient = this.getApiClient(this.config);
     }
 
+    storage() {
+        return this.localStorage();
+    }
+
     sessionStorage() {
         return window.sessionStorage;
     }
@@ -40,19 +44,19 @@ class AppApi {
     }
 
     getAccessToken() {
-        return this.sessionStorage().getItem(ACCESS_TOKEN_STORAGE_KEY);
+        return this.storage().getItem(ACCESS_TOKEN_STORAGE_KEY);
     }
 
     setAccessToken(data) {
-        return this.sessionStorage().setItem(ACCESS_TOKEN_STORAGE_KEY, data);
+        return this.storage().setItem(ACCESS_TOKEN_STORAGE_KEY, data);
     }
 
     removeAccessToken() {
-        return this.sessionStorage().removeItem(ACCESS_TOKEN_STORAGE_KEY);
+        return this.storage().removeItem(ACCESS_TOKEN_STORAGE_KEY);
     }
 
     removeProject() {
-        return this.sessionStorage().removeItem(SESSION_PROJECT_KEY);
+        return this.storage().removeItem(SESSION_PROJECT_KEY);
     }
 
     addAuth(headers = null) {
