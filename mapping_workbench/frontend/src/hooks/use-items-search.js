@@ -11,7 +11,6 @@ const useItemsSearch = (items, sectionApi, searchColumns, newFilters, sort) => {
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
     });
-
     const {show, ...filters} = state.filters
 
     const searchItems = state.search.length ? items.filter(item => {
@@ -71,6 +70,11 @@ const useItemsSearch = (items, sectionApi, searchColumns, newFilters, sort) => {
         setState(prevState => ({...prevState, filters, page: 0}));
     }
 
+    const handleFilterResultChange = () => {
+        setState(prevState => ({...prevState, page: 0}));
+    }
+
+
     const handlePageChange = (event, page) => {
         setState(prevState => ({...prevState, page}));
     }
@@ -95,7 +99,8 @@ const useItemsSearch = (items, sectionApi, searchColumns, newFilters, sort) => {
         handleSearchItems,
         pagedItems,
         count: filteredItems.length,
-        state
+        state,
+        handleFilterResultChange
     };
 };
 

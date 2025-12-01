@@ -5,7 +5,7 @@ from mapping_workbench.backend.mapping_package.models.entity import MappingPacka
 from mapping_workbench.backend.package_validator.adapters.sparql_validator import SPARQLValidator
 from mapping_workbench.backend.package_validator.models.sparql_validation import SPARQLQueryResult, \
     SPARQLValidationSummary, SPARQLQueryRefinedResultType, SPARQLTestDataValidationResult
-from mapping_workbench.backend.package_validator.services.validation import add_summary_result_test_data
+from mapping_workbench.backend.package_validator.services.validation import add_summary_sparql_result_test_data
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestState
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataException, TestDataState, TestDataSuiteState
 
@@ -58,30 +58,29 @@ def aggregate_sparql_tests_summary(
         for result in results:
             if result.query.oid != summary[idx].query.oid:
                 continue
-
             if result.result == SPARQLQueryRefinedResultType.VALID.value:
-                if add_summary_result_test_data(summary[idx].result.valid.test_datas,
-                                                result.test_data) or not use_grouping:
+                if add_summary_sparql_result_test_data(summary[idx].result.valid.test_datas,
+                                                result) or not use_grouping:
                     summary[idx].result.valid.count += 1
             elif result.result == SPARQLQueryRefinedResultType.UNVERIFIABLE.value:
-                if add_summary_result_test_data(summary[idx].result.unverifiable.test_datas,
-                                                result.test_data) or not use_grouping:
+                if add_summary_sparql_result_test_data(summary[idx].result.unverifiable.test_datas,
+                                                result) or not use_grouping:
                     summary[idx].result.unverifiable.count += 1
             elif result.result == SPARQLQueryRefinedResultType.WARNING.value:
-                if add_summary_result_test_data(summary[idx].result.warning.test_datas,
-                                                result.test_data) or not use_grouping:
+                if add_summary_sparql_result_test_data(summary[idx].result.warning.test_datas,
+                                                result) or not use_grouping:
                     summary[idx].result.warning.count += 1
             elif result.result == SPARQLQueryRefinedResultType.INVALID.value:
-                if add_summary_result_test_data(summary[idx].result.invalid.test_datas,
-                                                result.test_data) or not use_grouping:
+                if add_summary_sparql_result_test_data(summary[idx].result.invalid.test_datas,
+                                                result) or not use_grouping:
                     summary[idx].result.invalid.count += 1
             elif result.result == SPARQLQueryRefinedResultType.ERROR.value:
-                if add_summary_result_test_data(summary[idx].result.error.test_datas,
-                                                result.test_data) or not use_grouping:
+                if add_summary_sparql_result_test_data(summary[idx].result.error.test_datas,
+                                                result) or not use_grouping:
                     summary[idx].result.error.count += 1
             elif result.result == SPARQLQueryRefinedResultType.UNKNOWN.value:
-                if add_summary_result_test_data(summary[idx].result.unknown.test_datas,
-                                                result.test_data) or not use_grouping:
+                if add_summary_sparql_result_test_data(summary[idx].result.unknown.test_datas,
+                                                result) or not use_grouping:
                     summary[idx].result.unknown.count += 1
 
             if result and summary[idx].query.cm_rule and summary[idx].query.cm_rule.xpath_condition:

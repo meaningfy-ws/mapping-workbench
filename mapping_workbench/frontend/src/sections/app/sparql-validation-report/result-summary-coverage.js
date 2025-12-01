@@ -5,8 +5,9 @@ import Typography from '@mui/material/Typography';
 import ExportButton from '../mapping-package/state/export-button';
 import {StatePieChartBig} from '../mapping-package/state/state-pie-chart';
 import {getValidationColor, getValidationReportSparql} from '../mapping-package/state/utils';
+import {ResultFilters} from "./result-filters";
 
-const Pie = ({data, handleExport}) => {
+const Pie = ({data, handleExport, setDispatchShowMatchedXPATHsOnly}) => {
     return (<Paper>
         <Stack direction='column'
                sx={{py: 2, px: 3}}
@@ -15,9 +16,9 @@ const Pie = ({data, handleExport}) => {
                    alignItems='center'
                    justifyContent='space-between'>
                 <Stack>
-                    <Typography fontSize='18'
-                                fontWeight='bold'>Coverage (SPARQL)</Typography>
+                    <Typography fontSize='18' fontWeight='bold'>Coverage (SPARQL)</Typography>
                 </Stack>
+                <ResultFilters setDispatchShowMatchedXPATHsOnly={setDispatchShowMatchedXPATHsOnly}/>
                 <ExportButton handleExport={handleExport}/>
             </Stack>
             <Stack alignItems='center'>
@@ -27,11 +28,10 @@ const Pie = ({data, handleExport}) => {
     </Paper>)
 }
 
-export const ResultSummaryCoverage = ({validationReport, handleExport}) => {
+export const ResultSummaryCoverage = ({validationReport, handleExport, setDispatchShowMatchedXPATHsOnly}) => {
 
     if (!validationReport) return null
-
-    const {itemsTotal, ...itemsReduce} =  getValidationReportSparql(validationReport)
+    const {itemsTotal, ...itemsReduce} = getValidationReportSparql(validationReport)
 
     const itemsDisplay = Object.entries(itemsReduce)?.map(item => {
         const [itemName, itemCount] = item
@@ -45,11 +45,14 @@ export const ResultSummaryCoverage = ({validationReport, handleExport}) => {
         }
     })
 
-    return <Pie data={itemsDisplay}
-                handleExport={handleExport}/>
+    return <Pie
+        data={itemsDisplay}
+        handleExport={handleExport}
+        setDispatchShowMatchedXPATHsOnly={setDispatchShowMatchedXPATHsOnly}
+    />
 }
 
-export const ResultSummaryQuery = ({validationReport, handleExport}) => {
+export const ResultSummaryQuery = ({validationReport, handleExport, setDispatchShowMatchedXPATHsOnly}) => {
     const itemsReduce = validationReport.reduce((acc, item) => {
         acc[item.result] = (acc[item.result] ?? 0) + 1
         return acc
@@ -65,7 +68,9 @@ export const ResultSummaryQuery = ({validationReport, handleExport}) => {
             color: getValidationColor(itemName)
         }
     })
-
-    return <Pie data={itemsDisplay}
-                handleExport={handleExport}/>
+    return <Pie
+        data={itemsDisplay}
+        handleExport={handleExport}
+        setDispatchShowMatchedXPATHsOnly={setDispatchShowMatchedXPATHsOnly}
+    />
 }

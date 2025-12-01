@@ -66,14 +66,14 @@ export const ValueChip = ({children, value, color, style}) => {
     const theme = useTheme()
     const themeColor = theme.palette?.[color] ?? {}
     return (<Stack sx={{
-            px: 1.4,
-            py: 0.3,
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: themeColor.alpha12,
-            color: themeColor.main,
-            borderRadius: 5, ...style
-        }}>{value ?? children}</Stack>)
+        px: 1.4,
+        py: 0.3,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: themeColor.alpha12,
+        color: themeColor.main,
+        borderRadius: 5, ...style
+    }}>{value ?? children}</Stack>)
 }
 
 export const getItemsDisplay = (items, total) => Object.entries(items)?.map(item => {
@@ -100,8 +100,9 @@ export const getValidationReportShacl = (items) => items.map(item => item.result
 
 export const getValidationReportSparql = (items) => items.map(item => item.result).reduce((acc, report) => {
     Object.keys(report).forEach(reportKey => {
-        acc[reportKey] = (acc[reportKey] ?? 0) + report[reportKey].count
-        acc["itemsTotal"] = (acc["itemsTotal"] ?? 0) + report[reportKey].count
+        const count = report[reportKey].count;
+        acc[reportKey] = (acc[reportKey] ?? 0) + count;
+        acc["itemsTotal"] = (acc["itemsTotal"] ?? 0) + count;
     })
     return acc
 }, {valid: 0, unverifiable: 0, warning: 0, invalid: 0, error: 0, unknown: 0})
@@ -134,10 +135,10 @@ export const mapSparqlResults = (result) => result.map(e => {
     resultArray["query"] = queryAsArray.slice(4, queryAsArray.length).join("\n")
     resultArray["test_suite"] = e.query?.filename
     resultArray["result"] = e.result
-    Object.entries(e.result).forEach(entry => {
-        const [key, value] = entry
-        resultArray[`${key}Count`] = value.count
-    })
+    // Object.entries(e.result).forEach(entry => {
+    //     const [key, value] = entry
+    //     resultArray[`${key}Count`] = value.count
+    // })
     resultArray["meets_xpath_condition"] = e.meets_xpath_condition
     resultArray["fields_covered"] = e.fields_covered
     resultArray["query_result"] = e.query_result
@@ -153,41 +154,41 @@ export const ResultFilter = ({currentState, onStateChange, values, count}) => {
             control={<Radio/>}
             checked={currentState === (value ?? label.toLowerCase())}
             label={(<Box sx={{ml: 0, mr: 1}}>
-                    <Typography
-                        variant="subtitle2"
-                    >
-                        <Stack direction='row'
-                               gap={1}>
-                            <ResultChip color={getValidationColor(label)}
-                                        fontColor='#fff'
-                                        clickable
-                                        label={capitalize(label)}/>
-                            {!!count && <ValueChip color={'primary'}>{count}</ValueChip>}
-                        </Stack>
-                    </Typography>
+                <Typography
+                    variant="subtitle2"
+                >
+                    <Stack direction='row'
+                           gap={1}>
+                        <ResultChip color={getValidationColor(label)}
+                                    fontColor='#fff'
+                                    clickable
+                                    label={capitalize(label)}/>
+                        {!!count && <ValueChip color={'primary'}>{count}</ValueChip>}
+                    </Stack>
+                </Typography>
 
-                </Box>)}
+            </Box>)}
             value={value ?? label.toLowerCase()}
         />)
     }
 
     return (<FormControl sx={{p: 2}}>
-            <Stack
-                direction='row'
-                component={RadioGroup}
-                name="terms_validity"
-                onChange={onStateChange}
-            >
-                <FilterValue label="all"
-                             value=""
-                             count={count}
-                             currentState={currentState}/>
-                {values.map(value => <FilterValue key={value.value}
-                                                  value={value.value}
-                                                  label={value.label ?? value.value}
-                                                  currentState={currentState}/>)}
-            </Stack>
-        </FormControl>)
+        <Stack
+            direction='row'
+            component={RadioGroup}
+            name="terms_validity"
+            onChange={onStateChange}
+        >
+            <FilterValue label="all"
+                         value=""
+                         count={count}
+                         currentState={currentState}/>
+            {values.map(value => <FilterValue key={value.value}
+                                              value={value.value}
+                                              label={value.label ?? value.value}
+                                              currentState={currentState}/>)}
+        </Stack>
+    </FormControl>)
 }
 
 export const useFileNavigation = (reportTree, tab, packageId, datasetId) => {
@@ -198,7 +199,7 @@ export const useFileNavigation = (reportTree, tab, packageId, datasetId) => {
         let others = {}
         if (packageid) others = {packageid}
         if (datasetid) others = {...others, datasetid}
-        const query = { tab, ...others }
+        const query = {tab, ...others}
         const pathname = paths.app.mapping_packages.states.view(id, sid)
 
         if (openInNewWindow && typeof window !== 'undefined') {
@@ -210,7 +211,7 @@ export const useFileNavigation = (reportTree, tab, packageId, datasetId) => {
             return;
         }
 
-        router.push({ pathname, query })
+        router.push({pathname, query})
     }
 
     return {
@@ -327,12 +328,12 @@ export const GoToButton = ({notice, handleSelect}) => {
 export const ResultChip = ({label, color, fontColor, onClick, clickable, children}) => {
     const hover = onClick ?? clickable ? {'&:hover': {filter: 'brightness(85%)'}, cursor: 'pointer'} : {}
     return (<Box sx={{
-            textAlign: 'center', px: 1, py: .5, borderRadius: 12, backgroundColor: color, color: fontColor, ...hover
-        }}
+        textAlign: 'center', px: 1, py: .5, borderRadius: 12, backgroundColor: color, color: fontColor, ...hover
+    }}
                  onClick={onClick}
-        >
-            {label ?? children}
-        </Box>)
+    >
+        {label ?? children}
+    </Box>)
 }
 
 export const ResultCell = ({item, handleSelect, setDescription}) => {
@@ -358,4 +359,27 @@ export const ResultCell = ({item, handleSelect, setDescription}) => {
             </Stack>
         })}
     </Stack>
+}
+
+export const filterXPATHFieldsCoveredResults = (validationReport, showMatchedXPATHsOnly) => {
+    return validationReport.map(item => ({
+            ...item,
+            result: Object.fromEntries(
+                Object.entries(item.result).map(([key, value]) => {
+                    let testDatas = value.test_datas;
+                    if (showMatchedXPATHsOnly) {
+                        testDatas = testDatas.filter(td => td.fields_covered !== false);
+                    }
+                    return [
+                        key,
+                        {
+                            ...value,
+                            test_datas: testDatas,
+                            count: testDatas.length
+                        }
+                    ];
+                })
+            )
+        })
+    ).filter(item => Object.values(item.result).some(r => r.count > 0));
 }
