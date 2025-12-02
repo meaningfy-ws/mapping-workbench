@@ -124,6 +124,17 @@ export const mapShaclResults = (result) => {
 }
 
 
+export const sparqlResultEntryCountKey = (resultFilter) => {
+    return `${resultFilter}Count`;
+};
+
+export const mapSparqlResultEntry = (resultEntry) => {
+    Object.entries(resultEntry.result).forEach(entry => {
+        const [key, value] = entry
+        resultEntry[sparqlResultEntryCountKey(key)] = value.count
+    })
+}
+
 export const mapSparqlResults = (result) => result.map(e => {
     const queryAsArray = e.query?.content.split("\n")
     const values = queryAsArray.slice(0, 3)

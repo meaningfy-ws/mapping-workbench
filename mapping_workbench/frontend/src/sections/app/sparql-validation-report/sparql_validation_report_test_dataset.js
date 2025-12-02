@@ -9,7 +9,12 @@ import {ListTable} from "./list-table";
 import {TableLoadWrapper} from "./utils";
 import useItemsSearch from "src/hooks/use-items-search";
 import {ResultSummaryCoverage} from './result-summary-coverage';
-import {filterXPATHFieldsCoveredResults, mapSparqlResults, ResultFilter} from '../mapping-package/state/utils';
+import {
+    filterXPATHFieldsCoveredResults,
+    mapSparqlResultEntry,
+    mapSparqlResults,
+    ResultFilter
+} from '../mapping-package/state/utils';
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 import {sparqlReportFiltersApi} from "../../../api/mapping-packages/reports/sparql/filters";
 
@@ -30,7 +35,15 @@ const SparqlTestDatasetReport = (
     useEffect(() => {
             const fResults = filterXPATHFieldsCoveredResults(validationReport, showMatchedXPATHsOnly);
             setResults(fResults);
-            setFilteredItems(fResults.filter((item) => { return !resultFilter || (item?.result[resultFilter]?.count || 0) > 0 }));
+            setFilteredItems(
+                fResults.reduce((acc, item) => {
+                    if (!resultFilter || (item?.result[resultFilter]?.count || 0) > 0) {
+                        mapSparqlResultEntry(item);
+                        acc.push(item);
+                    }
+                    return acc;
+                }, [])
+            )
         }, [showMatchedXPATHsOnly, validationReport, resultFilter]
     )
 
