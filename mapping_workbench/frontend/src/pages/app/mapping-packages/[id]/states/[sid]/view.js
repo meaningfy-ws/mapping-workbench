@@ -36,10 +36,10 @@ const ShaclValidationReport =
 
 
 const tabs = [
-    {label: 'Details', value: 'details'},
+    {label: 'Overview', value: 'details'},
     {label: 'Coverage (XPath)', value: 'xpath'},
     {label: 'Correctness (SPARQL)', value: 'sparql'},
-    {label: 'Compliance (SHACL)', value: 'shacl'},
+    {label: 'Completeness (SHACL)', value: 'shacl'},
 ];
 
 const Page = () => {
