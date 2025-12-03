@@ -39,7 +39,8 @@ export const ListTableFile = (props) => {
         onSort,
         filters,
         onFilter,
-        sectionApi
+        sectionApi,
+        isResultSortable = true
     } = props;
 
     const syntaxHighlighterTheme = useHighlighterTheme()
@@ -95,8 +96,8 @@ export const ListTableFile = (props) => {
                                               title="Query"/>
                             </TableCell>
                             <TableCell align="left">
-                                <SorterHeader fieldName="result"
-                                              title="result"/>
+                                {isResultSortable  ? <SorterHeader fieldName="result"
+                                              title="result"/> : 'Result'}
                             </TableCell>
                         </TableRow>
                     </TableHead>

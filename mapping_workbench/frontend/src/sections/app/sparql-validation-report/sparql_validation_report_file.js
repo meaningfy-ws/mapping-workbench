@@ -9,14 +9,22 @@ import {ListTableFile} from "./list-table-file";
 import {TableLoadWrapper} from "./utils";
 import useItemsSearch from "src/hooks/use-items-search";
 import {ResultSummaryQuery} from './result-summary-coverage';
-import {mapSparqlResults, ResultFilter} from '../mapping-package/state/utils';
+import {filterXPATHFieldsCoveredResults, mapSparqlResults, ResultFilter} from '../mapping-package/state/utils';
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
+import {sparqlReportFiltersApi} from "../../../api/mapping-packages/reports/sparql/filters";
 
 const FILTER_VALUES = ["valid", "unverifiable", "warning", "invalid", "error", "unknown"].map(value => ({value}))
 
 const SparqlFileReport = ({sid, suiteId, testId, handleExport}) => {
     const [validationReport, setValidationReport] = useState([])
     const [dataState, setDataState] = useState({load: true, error: false})
+    const showSessMatchedXPATHsOnly = sparqlReportFiltersApi.getShowMatchedXPATHsOnly();
+    const [showMatchedXPATHsOnly, setShowMatchedXPATHsOnly] = useState(showSessMatchedXPATHsOnly)
+    const [results, setResults] = useState([]);
+    useEffect(() => {
+            setResults(validationReport.filter(item => !showMatchedXPATHsOnly || item.fields_covered));
+        }, [showMatchedXPATHsOnly, validationReport]
+    )
 
     useEffect(() => {
         handleValidationReportsGet(sid, suiteId, testId)
@@ -34,28 +42,31 @@ const SparqlFileReport = ({sid, suiteId, testId, handleExport}) => {
                 setDataState({load: false, error: true})
             })
     }
+    const itemsSearch = useItemsSearch(results, sectionApi, [], {result: ''});
 
-    const itemsSearch = useItemsSearch(validationReport, sectionApi, [], {result: ''});
     const handleResultFilterChange = e => itemsSearch.handleFiltersChange({result: e.target.value})
 
     return (
         <>
             <Grid xs={12}
                   md={8}>
-                <ResultSummaryQuery handleExport={handleExport}
-                                    validationReport={validationReport}/>
+                <ResultSummaryQuery
+                    handleExport={handleExport}
+                    validationReport={results}
+                    setDispatchShowMatchedXPATHsOnly={setShowMatchedXPATHsOnly}
+                />
             </Grid>
             <Grid xs={12}>
                 <Paper>
                     <TableLoadWrapper dataState={dataState}
-                                      data={validationReport}>
+                                      data={results}>
                         <Stack direction='row'
                                alignItems='center'
                                justifyContent='space-between'
                                sx={{mx: 3}}>
                             <Typography fontWeight='bold'>Assertions</Typography>
                             <ResultFilter values={FILTER_VALUES}
-                                          count={validationReport.length}
+                                          count={results.length}
                                           onStateChange={handleResultFilterChange}
                                           currentState={itemsSearch.state.filters.result}/>
                         </Stack>
@@ -71,6 +82,7 @@ const SparqlFileReport = ({sid, suiteId, testId, handleExport}) => {
                             onFilter={itemsSearch.handleFiltersChange}
                             filters={itemsSearch.state.filters}
                             sectionApi={sectionApi}
+                            isResultSortable={false}
                         />
                     </TableLoadWrapper>
                 </Paper>

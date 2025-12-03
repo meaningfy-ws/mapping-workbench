@@ -21,7 +21,7 @@ import DialogActions from "@mui/material/DialogActions";
 import {useDialog} from "src/hooks/use-dialog";
 import {Scrollbar} from 'src/components/scrollbar';
 import SorterHeader from '../../components/table-sorter-header';
-import {ResultCell, ValueChip} from '../mapping-package/state/utils';
+import {mapSparqlResultEntry, ResultCell, sparqlResultEntryCountKey, ValueChip} from '../mapping-package/state/utils';
 import {LocalHighlighter} from '../../components/local-highlighter';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import TablePagination from "src/sections/components/table-pagination-pages";
@@ -44,6 +44,7 @@ export const ListTable = (props) => {
         filters,
         onFilter,
         resultFilter,
+        isResultSortable = true,
         sectionApi,
         handleSelectFile
     } = props;
@@ -96,8 +97,8 @@ export const ListTable = (props) => {
                                                        title="Query"/>
                                 </TableCell>
                                 <TableCell>
-                                    {!!resultFilter ?
-                                        <SorterHeader fieldName={resultFilter}
+                                    {!!resultFilter && isResultSortable ?
+                                        <SorterHeader fieldName={sparqlResultEntryCountKey(resultFilter)}
                                                       title='Result'
                                                       sort={sort}
                                                       onSort={onSort}/>

@@ -22,8 +22,8 @@ class SPARQLQueryRefinedResultType(Enum):
 
 class SPARQLQueryTestDataEntry(ValidationTestDataEntry):
     """
-
     """
+    fields_covered: Optional[bool] = True
 
 
 class ValidationSPARQLQuery(BaseModel):
