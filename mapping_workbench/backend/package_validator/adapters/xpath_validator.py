@@ -134,7 +134,8 @@ class XPATHValidator(TestDataValidator):
                 if xpath:
                     xpath_assertions.append(XPathAssertionEntry(
                         xpath=xpath,
-                        value=self.get_node_text_value(xpath_node)
+                        value=self.get_node_text_value(xpath_node),
+                        element=str(element)
                     ))
 
         return XPATHMatchingElements(

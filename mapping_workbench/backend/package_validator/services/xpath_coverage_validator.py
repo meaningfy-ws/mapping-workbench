@@ -153,6 +153,7 @@ def compute_xpath_assertions_for_mapping_package(mapping_package_state: MappingP
                 validation_message = None
                 xpaths: List[XPathAssertionEntry] = []
                 matching_elements: XPATHMatchingElements = xpath_validator.validate(cm_xpath)
+
                 try:
                     xpaths = matching_elements.xpath_assertions
                 except Exception as e:

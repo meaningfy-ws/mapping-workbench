@@ -24,6 +24,8 @@ import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import TablePagination from "src/sections/components/table-pagination-pages";
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
+import XPathElements from "./xpath-elements";
+import Box from "@mui/system/Box";
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", text: ""})
@@ -103,9 +105,22 @@ export const ListTable = (props) => {
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            <LocalHighlighter language="xquery"
-                                                              style={highLighterTheme}
-                                                              text={item.sdk_element_xpath}/>
+                                            <Stack
+                                                direction="row"
+                                                justifyContent="left"
+                                                alignItems="center"
+                                                spacing={2}
+                                            >
+                                                <LocalHighlighter language="xquery"
+                                                                  style={highLighterTheme}
+                                                                  text={item.sdk_element_xpath}/>
+                                                {item?.test_data_xpaths && item.test_data_xpaths.length > 0 &&
+                                                    <Box align="left">
+                                                        <XPathElements element_xpath={item.sdk_element_xpath}
+                                                                       test_data_xpaths={item.test_data_xpaths}/>
+                                                    </Box>
+                                                }
+                                            </Stack>
                                         </TableCell>
                                         <TableCell align="right">
                                             {item.xpath_conditions?.map((xpath_condition, key) =>

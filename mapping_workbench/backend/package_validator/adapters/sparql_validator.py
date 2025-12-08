@@ -85,10 +85,21 @@ class SPARQLValidator(TestDataValidator):
                     sparql_query_result.query.cm_rule.xpath_condition.xpath_condition) \
                 else None
             validation_xpaths = set()
+            found_xpaths = []
             validation_xpath_conditions = set()
             for xpath_assertion in xpath_validation_results:
                 if xpath_assertion.is_covered:
                     validation_xpaths.add((xpath_assertion.sdk_element_xpath or '').strip())
+                    if xpath_assertion.sdk_element_xpath == sparql_query_xpath:
+                        test_data_found_xpaths = [
+                            xpath_entry
+                            for test_data_xpath in xpath_assertion.test_data_xpaths
+                            if test_data_xpath.test_data_oid == sparql_query_result.test_data.test_data_oid
+                            for xpath_entry in test_data_xpath.xpaths
+                        ]
+                        if test_data_found_xpaths:
+                            found_xpaths.extend(test_data_found_xpaths)
+
                 if (
                         xpath_assertion.sdk_element_xpath == sparql_query_xpath
                         and xpath_assertion.sdk_element_id == sparql_query_element_id
@@ -105,11 +116,14 @@ class SPARQLValidator(TestDataValidator):
             sparql_query_result.meets_xpath_condition = (not sparql_xpath_condition or (
                     sparql_xpath_condition in validation_xpath_conditions
             ))
+            if found_xpaths:
+                sparql_query_result.test_data.xpaths = found_xpaths
 
             # Refined result
             result = self.refined_result(ask_answer, sparql_query_result)
 
         sparql_query_result.result = result
+
 
     @classmethod
     def refined_result(cls, ask_answer, sparql_query_result: SPARQLQueryResult) \

@@ -21,11 +21,19 @@ import DialogActions from "@mui/material/DialogActions";
 import {useDialog} from "src/hooks/use-dialog";
 import {Scrollbar} from 'src/components/scrollbar';
 import SorterHeader from '../../components/table-sorter-header';
-import {mapSparqlResultEntry, ResultCell, sparqlResultEntryCountKey, ValueChip} from '../mapping-package/state/utils';
+import {
+    CopyButton,
+    mapSparqlResultEntry,
+    ResultCell,
+    sparqlResultEntryCountKey,
+    ValueChip
+} from '../mapping-package/state/utils';
 import {LocalHighlighter} from '../../components/local-highlighter';
 import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import TablePagination from "src/sections/components/table-pagination-pages";
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
+import {Box} from "@mui/system";
+import XPathElements from "../xpath-validation-report/xpath-elements";
 
 
 export const ListTable = (props) => {
@@ -143,7 +151,8 @@ export const ListTable = (props) => {
                                                                 <CloseIcon/>
                                                             </ValueChip>}
                                                     </Stack>
-                                                </Stack>}
+                                                </Stack>
+                                            }
                                         </TableCell>
                                         <TableCell>
                                             <LocalHighlighter style={syntaxHighlighterTheme}

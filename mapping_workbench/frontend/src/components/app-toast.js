@@ -77,8 +77,8 @@ export const toastError = (err, id) => (
                            id={id} />,{id, duration: defaultDuration})
 )
 
-export const toastSuccess = (content, id) => (
-    toast.success(toastClose(content, id), {id, duration: defaultDuration})
+export const toastSuccess = (content, id, duration = defaultDuration) => (
+    toast.success(toastClose(content, id), {id, duration: duration})
 )
 
 export const toastWarning = (content, id) => (
