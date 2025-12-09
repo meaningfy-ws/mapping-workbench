@@ -9,6 +9,7 @@ import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import FileResourceIcon from '@mui/icons-material/InsertDriveFile';
 import TestSuiteReportIcon from '@mui/icons-material/AnalyticsOutlined';
 import TestDataReportIcon from '@mui/icons-material/Analytics';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 import {Box} from '@mui/system';
 import Menu from '@mui/material/Menu';
@@ -26,6 +27,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 
 import {MenuActionButton} from 'src/components/menu-actions';
 import {paths} from 'src/paths';
+import {toastLoad, toastSuccess} from "../../../../components/app-toast";
 
 export const getValidationColor = (color) => {
     switch (color) {
@@ -136,6 +138,7 @@ export const mapSparqlResultEntry = (resultEntry) => {
 }
 
 export const mapSparqlResults = (result) => result.map(e => {
+    console.log(e);
     const queryAsArray = e.query?.content.split("\n")
     const values = queryAsArray.slice(0, 3)
     const resultArray = {}
@@ -154,6 +157,9 @@ export const mapSparqlResults = (result) => result.map(e => {
     resultArray["fields_covered"] = e.fields_covered
     resultArray["query_result"] = e.query_result
     resultArray["xpath_condition"] = e.query?.cm_rule?.xpath_condition
+    resultArray["element_xpath"] = e.query?.cm_rule?.sdk_element_xpath
+    resultArray["sdk_element_id"] = e.query?.cm_rule?.sdk_element_id
+    resultArray["test_data"] = e.test_data
     return resultArray;
 })
 
@@ -394,3 +400,17 @@ export const filterXPATHFieldsCoveredResults = (validationReport, showMatchedXPA
         })
     ).filter(item => Object.values(item.result).some(r => r.count > 0));
 }
+
+export const CopyButton = ({ text, title = "" }) => {
+    const handleCopy = () => {
+        const toastId = toastLoad("Copying...")
+        navigator.clipboard.writeText(text);
+        toastSuccess("Text copied to clipboard.", toastId);
+    };
+
+    return (
+        <IconButton onClick={handleCopy} aria-label="copy to clipboard" title={title}>
+            <ContentCopyIcon />
+        </IconButton>
+    );
+};

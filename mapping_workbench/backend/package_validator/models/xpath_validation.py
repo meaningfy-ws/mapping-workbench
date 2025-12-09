@@ -10,6 +10,7 @@ from mapping_workbench.backend.package_validator.models.test_data_validation imp
 class XPathAssertionEntry(BaseModel):
     xpath: Optional[str] = None
     value: Optional[str] = None
+    element: Optional[str] = None
 
 
 class XPathAssertionTestDataEntry(ValidationTestDataEntry):

@@ -5,6 +5,7 @@ from pydantic import BaseModel, ConfigDict
 
 from mapping_workbench.backend.package_validator.models.test_data_validation import TestDataValidationResult, \
     ValidationTestDataEntry, CMRuleSDKElement
+from mapping_workbench.backend.package_validator.models.xpath_validation import XPathAssertionEntry
 from mapping_workbench.backend.sparql_test_suite.models.entity import SPARQLTestState
 
 
@@ -23,6 +24,7 @@ class SPARQLQueryRefinedResultType(Enum):
 class SPARQLQueryTestDataEntry(ValidationTestDataEntry):
     """
     """
+    xpaths: Optional[List[XPathAssertionEntry]] = None
     fields_covered: Optional[bool] = True
 
 

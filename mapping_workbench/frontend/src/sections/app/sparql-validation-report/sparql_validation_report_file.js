@@ -9,7 +9,7 @@ import {ListTableFile} from "./list-table-file";
 import {TableLoadWrapper} from "./utils";
 import useItemsSearch from "src/hooks/use-items-search";
 import {ResultSummaryQuery} from './result-summary-coverage';
-import {filterXPATHFieldsCoveredResults, mapSparqlResults, ResultFilter} from '../mapping-package/state/utils';
+import {mapSparqlResults, ResultFilter} from '../mapping-package/state/utils';
 import {mappingPackageStatesApi as sectionApi} from "src/api/mapping-packages/states";
 import {sparqlReportFiltersApi} from "../../../api/mapping-packages/reports/sparql/filters";
 
