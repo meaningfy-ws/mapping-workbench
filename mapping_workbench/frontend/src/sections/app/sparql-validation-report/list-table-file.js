@@ -104,7 +104,6 @@ export const ListTableFile = (props) => {
                     </TableHead>
                     <TableBody>
                         {items?.map((item, key) => {
-                            console.log(item);
                             return (
                                 <TableRow key={key}>
                                     <TableCell width="15%">
@@ -113,32 +112,34 @@ export const ListTableFile = (props) => {
                                         </Typography>
                                     </TableCell>
                                     <TableCell width='30%'>
-                                        {item?.xpath_condition?.xpath_condition &&
-                                            <>
+                                        <>
+                                            <Stack
+                                                direction="column"
+                                                spacing={1}
+                                            >
                                                 <Stack
-                                                    direction="column"
-                                                    spacing={1}
+                                                    direction="row"
+                                                    justifyContent="left"
+                                                    alignItems="center"
+                                                    spacing={2}
                                                 >
-                                                    <Stack
-                                                        direction="row"
-                                                        justifyContent="left"
-                                                        alignItems="center"
-                                                        spacing={2}
-                                                    >
-                                                        <LocalHighlighter language="xquery"
-                                                                          text={item?.xpath_condition?.xpath_condition || '-'}
-                                                                          width='400px'
-                                                                          style={syntaxHighlighterTheme}/>
-                                                        <Box sx={{p: 1}}>
-                                                            {item?.meets_xpath_condition ?
+                                                    <LocalHighlighter language="xquery"
+                                                                      text={item?.xpath_condition?.xpath_condition || '-'}
+                                                                      width='400px'
+                                                                      style={syntaxHighlighterTheme}/>
+                                                    <Box sx={{p: 1}}>
+                                                        {item?.xpath_condition?.xpath_condition ?
+                                                            <>{item?.meets_xpath_condition ?
                                                                 <CheckIcon color="success"/> :
-                                                                <CloseIcon color="error"/>}
-                                                        </Box>
-                                                    </Stack>
+                                                                <CloseIcon color="error"/>
+                                                            }</> : <b>N/A</b>
+                                                        }
+                                                    </Box>
                                                 </Stack>
-                                                <Divider sx={{my: 1}}/>
-                                            </>
-                                        }
+                                            </Stack>
+                                            <Divider sx={{my: 1}}/>
+                                        </>
+
                                         <Stack
                                             direction="row"
                                             justifyContent="left"
@@ -147,14 +148,15 @@ export const ListTableFile = (props) => {
                                         >
                                             <Scrollbar sx={{overflowX: 'auto', width: '350px', pb: 1}}>
                                                 <Typography variant="subtitle3">
-                                                    {item.description}
+                                                    {item.element_xpath}
                                                 </Typography>
                                             </Scrollbar>
                                             {item?.element_xpath && <CopyButton text={item.element_xpath}
                                                                                 title="Copy XPATH to clipboard"/>}
                                             {item?.test_data && item.test_data.xpaths && item.test_data.xpaths.length > 0 &&
                                                 <Box align="left">
-                                                    <XPathElements element_xpath={item.element_xpath}
+                                                    <XPathElements element_id={item.sdk_element_id}
+                                                                   element_xpath={item.element_xpath}
                                                                    test_data_xpaths={[item.test_data]}/>
                                                 </Box>
                                             }
