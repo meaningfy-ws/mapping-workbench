@@ -1,11 +1,12 @@
 import re
-from typing import List, Dict
+from typing import List, Dict, Union
 
 from beanie import PydanticObjectId
 
 from mapping_workbench.backend.conceptual_mapping_rule.models.entity import ConceptualMappingRule, \
     ConceptualMappingRuleState, ConceptualMappingRuleABC
 from mapping_workbench.backend.conceptual_mapping_rule.services.data import get_conceptual_mapping_rules_for_project
+from mapping_workbench.backend.core.services.io import sanitize_filename
 from mapping_workbench.backend.fields_registry.models.field_registry import StructuralElement, StructuralElementState, \
     StructuralElementABC
 from mapping_workbench.backend.file_resource.models.file_resource import FileResourceFormat
@@ -21,7 +22,7 @@ from mapping_workbench.backend.user.models.user import User
 
 DEFAULT_RQ_NAME = 'cm_assertion_'
 
-SPARQL_PREFIX_PATTERN = re.compile('(?:\\s+|^)([\\w\\-]+)?:') # NOSONAR
+SPARQL_PREFIX_PATTERN = re.compile('(?:\\s+|^)([\\w\\-]+)?:')  # NOSONAR
 SPARQL_PREFIX_LINE = 'PREFIX {prefix}: <{value}>'
 
 SPARQL_XPATH_SEPARATOR = " ;; "
@@ -79,7 +80,7 @@ def get_sparql_content_for_cm_assertion(
             f"{f'“{sparql_description}” ' if sparql_description else ''}"
             f"The corresponding XML element is "
             f"{sparql_xpath}. "
-            #f"The expected ontology instances are epo: {cm_rule.target_class_path} ."
+            # f"The expected ontology instances are epo: {cm_rule.target_class_path} ."
             f"\n"
             f"#xpath: {sparql_xpath}"
             "\n" + "\n" + "\n".join(prefixes) +
@@ -147,15 +148,15 @@ async def generate_and_save_cm_assertions_queries(
         if cm_rule.source_structural_element:
             structural_element = await cm_rule.source_structural_element.fetch()
             if structural_element:
-                sparql_idx = cm_rule.id
+                # sparql_idx = cm_rule.id
+                sparql_idx = generate_sparql_file_idx(cm_rule, structural_element)
                 sparql_identifier = f"{structural_element.sdk_element_id}-{cm_rule.id}"
                 sparql_title = f"{structural_element.sdk_element_id}"
                 structural_element_exists = True
 
         if not structural_element_exists:
             continue
-
-        file_name = f"{rq_name}{sparql_idx}.rq"
+        file_name = f"{sanitize_filename(rq_name + sparql_idx)}.rq"
         file_content = get_sparql_content_for_cm_assertion(
             cm_rule=cm_rule,
             structural_element=structural_element,
@@ -220,6 +221,13 @@ async def clean_sparql_cm_assertions_queries_for_project(project_id: PydanticObj
         ).delete()
 
 
+def generate_sparql_file_idx(
+        cm_rule: Union[ConceptualMappingRule, ConceptualMappingRuleState],
+        structural_element: Union[StructuralElement, StructuralElementState]
+):
+    return f"{structural_element.sdk_element_id}_{cm_rule.sort_order}"
+
+
 async def generate_cm_assertions_queries_for_package_state(mapping_package_state: MappingPackageState):
     """
     """
@@ -252,10 +260,11 @@ async def generate_cm_assertions_queries_for_package_state(mapping_package_state
 
         structural_element: StructuralElementState = cm_rule.source_structural_element
 
-        sparql_idx = cm_rule.oid
+        # sparql_idx = cm_rule.oid
+        sparql_idx = generate_sparql_file_idx(cm_rule, structural_element)
         sparql_title = f"{structural_element.sdk_element_id}"
 
-        file_name = f"{rq_name}{sparql_idx}.rq"
+        file_name = f"{sanitize_filename(rq_name + sparql_idx)}.rq"
         file_content = get_sparql_content_for_cm_assertion(
             cm_rule=cm_rule,
             structural_element=structural_element,

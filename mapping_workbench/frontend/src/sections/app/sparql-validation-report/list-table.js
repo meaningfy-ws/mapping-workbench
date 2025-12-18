@@ -93,7 +93,7 @@ export const ListTable = (props) => {
                                                        onSort={onSort}
                                                        onFilter={onFilter}
                                                        filters={filters}
-                                                       fieldName="xpath_condition"
+                                                       fieldName="xpath_condition_query"
                                                        title="XPath Condition"/>
                                 </TableCell>
                                 <TableCell>

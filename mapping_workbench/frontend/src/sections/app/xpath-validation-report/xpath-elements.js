@@ -69,7 +69,10 @@ const XPathElements = (props) => {
                                 <i>{test_data_xpath?.xpaths?.length || 0} result(s)</i>
                                 <Divider sx={{my: 1}}/>
                                 {test_data_xpath.xpaths.map((xpath, i) =>
-                                    <Box sx={{pl: 2}}>
+                                    <Box
+                                        key={i}
+                                        sx={{pl: 2}}
+                                    >
                                         <Typography variant="h8"><b>{i + 1}.</b></Typography>
                                         <Box sx={{pl: 4}}>
                                             <Box sx={{pt: 1}}>

@@ -138,7 +138,6 @@ export const mapSparqlResultEntry = (resultEntry) => {
 }
 
 export const mapSparqlResults = (result) => result.map(e => {
-    console.log(e);
     const queryAsArray = e.query?.content.split("\n")
     const values = queryAsArray.slice(0, 3)
     const resultArray = {}
@@ -157,6 +156,7 @@ export const mapSparqlResults = (result) => result.map(e => {
     resultArray["fields_covered"] = e.fields_covered
     resultArray["query_result"] = e.query_result
     resultArray["xpath_condition"] = e.query?.cm_rule?.xpath_condition
+    resultArray["xpath_condition_query"] = e.query?.cm_rule?.xpath_condition?.xpath_condition
     resultArray["element_xpath"] = e.query?.cm_rule?.sdk_element_xpath
     resultArray["sdk_element_id"] = e.query?.cm_rule?.sdk_element_id
     resultArray["test_data"] = e.test_data

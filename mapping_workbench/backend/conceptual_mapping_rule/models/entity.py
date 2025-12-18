@@ -133,7 +133,7 @@ class ConceptualMappingRuleOut(BaseProjectResourceEntityOutSchema, BaseMappingPa
     mapping_notes: Optional[List[ConceptualMappingRuleComment]] = None
     editorial_notes: Optional[List[ConceptualMappingRuleComment]] = None
     feedback_notes: Optional[List[ConceptualMappingRuleComment]] = None
-    sort_order: Optional[float] = None
+    sort_order: Optional[int] = None
 
 
 class ConceptualMappingRuleState(ObjectState, ConceptualMappingRuleABC):
@@ -151,7 +151,7 @@ class ConceptualMappingRuleState(ObjectState, ConceptualMappingRuleABC):
     mapping_notes: Optional[List[ConceptualMappingRuleComment]] = None
     editorial_notes: Optional[List[ConceptualMappingRuleComment]] = None
     feedback_notes: Optional[List[ConceptualMappingRuleComment]] = None
-    sort_order: Optional[float] = None
+    sort_order: Optional[int] = None
 
 
 class ConceptualMappingRule(
@@ -186,7 +186,7 @@ class ConceptualMappingRule(
     terms_validity: Optional[ConceptualMappingRuleTermsValidity] | Optional[str] = None
     triple_map_fragment: Optional[Link[GenericTripleMapFragment]] = None
     sparql_assertions: Optional[List[Link[SPARQLTestFileResource]]] = None
-    sort_order: Optional[float] = None
+    sort_order: Optional[int] = None
 
     async def get_state(self) -> ConceptualMappingRuleState:
         source_structural_element = await self.source_structural_element.fetch() \

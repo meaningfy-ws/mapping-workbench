@@ -93,8 +93,7 @@ export const ListTable = (props) => {
                                                        title="XPath"/>
                                 </TableCell>
                                 <TableCell align="left">
-                                    <SorterHeader fieldName="xpath_condition"
-                                                  title="XPath Condition"/>
+                                    XPath Condition
                                 </TableCell>
                                 <TableCell>
                                     <SorterHeader fieldName="notice_count"
