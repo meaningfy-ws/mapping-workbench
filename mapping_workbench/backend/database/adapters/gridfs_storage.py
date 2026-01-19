@@ -1,3 +1,4 @@
+from io import BytesIO
 import gzip
 from typing import Optional
 
@@ -55,11 +56,10 @@ class AsyncGridFSStorage:
         mongo_db = cls.get_mongo_database()
         grid_fs = AsyncIOMotorGridFSBucket(mongo_db)
         try:
-            grid_out = await grid_fs.open_download_stream(file_id)
-            reader = AsyncStreamReader(grid_out)
-            await reader.prepare()
-            with gzip.GzipFile(fileobj=reader, mode="rb") as gz:
-                result_data = gz.read().decode("utf-8")
+            with BytesIO() as tmp_stream:
+                await grid_fs.download_to_stream(file_id, tmp_stream)
+                compressed_data = tmp_stream.getvalue()
+                result_data = gzip.decompress(compressed_data).decode("utf-8")
             return result_data
         except Exception as e:
             print("GridFS :: ERROR ::", e)
@@ -75,27 +75,3 @@ class AsyncGridFSStorage:
         mongo_db = cls.get_mongo_database()
         grid_fs = AsyncIOMotorGridFSBucket(mongo_db)
         await grid_fs.delete(file_id)
-
-
-class AsyncStreamReader:
-    def __init__(self, grid_out, chunk_size=65536):
-        self.grid_out = grid_out
-        self.chunk_size = chunk_size
-        self._buffer = None
-
-    def read(self, size=-1):
-        # This method will be called by gzip.GzipFile synchronously,
-        # so we need to buffer the data in advance.
-        if not hasattr(self, "_buffer") or self._buffer is None:
-            raise RuntimeError("Call 'prepare' before reading")
-        if size == -1:
-            data = self._buffer
-            self._buffer = b""
-            return data
-        data = self._buffer[:size]
-        self._buffer = self._buffer[size:]
-        return data
-
-    async def prepare(self):
-        # Read all data from grid_out asynchronously and buffer it
-        self._buffer = await self.grid_out.read()
