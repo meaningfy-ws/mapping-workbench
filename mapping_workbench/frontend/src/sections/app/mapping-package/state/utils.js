@@ -40,7 +40,7 @@ export const getValidationColor = (color) => {
         case 'violation':
             return '#F94144'
         case 'error':
-            return '#F8961E'
+            return '#A0522D'
         case 'warning':
             return '#F9C74F'
         default:
@@ -146,7 +146,7 @@ export const mapSparqlResults = (result) => result.map(e => {
         resultArray[res[0].substring(1)] = res[1]
     })
     resultArray["query"] = queryAsArray.slice(4, queryAsArray.length).join("\n")
-    resultArray["validation_element_id"] = e.validation_element_id
+    //resultArray["validation_element_id"] = e.validation_element_id
     resultArray["test_suite"] = e.query?.filename
     resultArray["result"] = e.result
     // Object.entries(e.result).forEach(entry => {

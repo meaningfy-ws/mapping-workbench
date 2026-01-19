@@ -42,11 +42,11 @@ class SPARQLValidator(TestDataValidator):
         for sparql_query in sparql_queries:
             mwb_logger.log_all_info(f"Running assertion for {sparql_query.cm_rule.sdk_element_title}")
             sparql_query_result: SPARQLQueryResult = SPARQLQueryResult(
-                validation_element_id=unique_hash(
-                    sparql_query.cm_rule.sdk_element_id if sparql_query.cm_rule else "",
-                    sparql_query.cm_rule.xpath_condition if sparql_query.cm_rule else "",
-                    sparql_query.content
-                ),
+                # validation_element_id=unique_hash(
+                #     sparql_query.cm_rule.sdk_element_id if sparql_query.cm_rule else "",
+                #     sparql_query.cm_rule.xpath_condition if sparql_query.cm_rule else "",
+                #     sparql_query.content
+                # ),
                 query=sparql_query,
                 result=None,
                 missing_fields=[],

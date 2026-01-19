@@ -39,7 +39,7 @@ def update_xpath_assertion(
     if idx < 0:
         state.validation.xpath.results.append(
             XPathAssertion(
-                validation_element_id=unique_hash(xpath, element_id),
+                #validation_element_id=unique_hash(xpath, element_id),
                 sdk_element_id=element_id,
                 sdk_element_xpath=xpath,
                 sdk_element_title=element_title,
