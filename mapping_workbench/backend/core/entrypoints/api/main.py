@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 
 from mapping_workbench.backend.conceptual_mapping_rule.entrypoints.api import routes as conceptual_mapping_rule_routes
@@ -59,6 +60,10 @@ app.add_middleware(
     allow_methods=['*'],
     allow_headers=['*']
 )
+app.add_middleware(
+    GZipMiddleware,
+    minimum_size=51200
+)  # compress responses >50KB
 
 
 @app.on_event("startup")
