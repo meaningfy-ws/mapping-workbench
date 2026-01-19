@@ -36,6 +36,7 @@ class SPARQLQueryResult(ValidationSPARQLQuery, BaseModel):
     """
     Stores SPARQL query execution result
     """
+    validation_element_id: str = None
     result: Optional[SPARQLQueryRefinedResultType] = None
     query_result: Optional[bool] = None
     fields_covered: Optional[bool] = True

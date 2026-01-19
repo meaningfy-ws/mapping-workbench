@@ -99,7 +99,7 @@ export class MappingPackageStatesApi extends SectionApi {
         return Promise.resolve(data);
     }
 
-    async getSparqlReportsFile(sid, suiteId, testId) {
+    async getShaclReportsFile(sid, suiteId, testId) {
         const endpoint = this.paths['shacl_reports_test']
         const data = await appApi.get(endpoint(sid, suiteId, testId));
         return Promise.resolve(data);

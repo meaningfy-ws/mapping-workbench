@@ -9,6 +9,8 @@ import {useFileNavigation} from '../mapping-package/state/utils';
 import XpathValidationReportTest from "./xpath_validation_report_file";
 import XpathValidationReport from "./xpath_validation_report_package_state";
 import XpathValidationReportSuite from "./xpath_validation_report_test_dataset";
+import Paper from "@mui/material/Paper";
+import {DataLoader} from "../../../components/app/loading/data-loader";
 
 const XpathValidationReportView = ({reportTree, validationReport, handleExport}) => {
     const router = useRouter();
@@ -20,7 +22,7 @@ const XpathValidationReportView = ({reportTree, validationReport, handleExport})
         handleSetTestAndPackage
     } = useFileNavigation(reportTree, 'xpath', packageid, datasetid)
 
-    if (!validationReport) return <Stack alignItems='center'><CircularProgress/></Stack>
+    if (!validationReport) return <DataLoader />
 
     return (
         <Grid container

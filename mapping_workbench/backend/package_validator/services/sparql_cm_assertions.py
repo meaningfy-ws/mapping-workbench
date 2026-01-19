@@ -1,4 +1,5 @@
 import re
+from collections import defaultdict
 from typing import List, Dict, Union
 
 from beanie import PydanticObjectId
@@ -132,7 +133,8 @@ async def generate_and_save_cm_assertions_queries(
         prefixes_definitions = await get_prefixes_definitions(project_id)
 
     cm_rules: List[ConceptualMappingRule] = await get_conceptual_mapping_rules_for_project(project_id=project_id)
-    for index, cm_rule in enumerate(cm_rules):
+    grouped_cm_rules = defaultdict(list)
+    for cm_rule in cm_rules:
         if not is_cm_rule_assertable(cm_rule):
             cm_rule.sparql_assertions = None
             await cm_rule.save()
@@ -148,14 +150,18 @@ async def generate_and_save_cm_assertions_queries(
         if cm_rule.source_structural_element:
             structural_element = await cm_rule.source_structural_element.fetch()
             if structural_element:
+                sdk_id = structural_element.sdk_element_id
+                grouped_cm_rules[sdk_id].append(cm_rule)
+                rule_element_idx = len(grouped_cm_rules[sdk_id])
                 # sparql_idx = cm_rule.id
-                sparql_idx = generate_sparql_file_idx(cm_rule, structural_element)
-                sparql_identifier = f"{structural_element.sdk_element_id}-{cm_rule.id}"
-                sparql_title = f"{structural_element.sdk_element_id}"
+                sparql_idx = generate_sparql_file_idx(cm_rule, structural_element, rule_element_idx)
+                sparql_identifier = f"{sdk_id}-{cm_rule.id}"
+                sparql_title = f"{sdk_id}"
                 structural_element_exists = True
 
         if not structural_element_exists:
             continue
+
         file_name = f"{sanitize_filename(rq_name + sparql_idx)}.rq"
         file_content = get_sparql_content_for_cm_assertion(
             cm_rule=cm_rule,
@@ -223,9 +229,10 @@ async def clean_sparql_cm_assertions_queries_for_project(project_id: PydanticObj
 
 def generate_sparql_file_idx(
         cm_rule: Union[ConceptualMappingRule, ConceptualMappingRuleState],
-        structural_element: Union[StructuralElement, StructuralElementState]
+        structural_element: Union[StructuralElement, StructuralElementState],
+        rule_element_idx: int = None
 ):
-    return f"{structural_element.sdk_element_id}_{cm_rule.sort_order}"
+    return f"{structural_element.sdk_element_id}_{rule_element_idx or cm_rule.sort_order}"
 
 
 async def generate_cm_assertions_queries_for_package_state(mapping_package_state: MappingPackageState):
@@ -250,7 +257,8 @@ async def generate_cm_assertions_queries_for_package_state(mapping_package_state
     cm_assertions_suite.sparql_test_states = []
 
     cm_rules: List[ConceptualMappingRuleState] = mapping_package_state.conceptual_mapping_rules
-    for index, cm_rule in enumerate(cm_rules):
+    grouped_cm_rules = defaultdict(list)
+    for cm_rule in cm_rules:
         if not is_cm_rule_assertable(cm_rule):
             cm_rule.sparql_assertions = None
             continue
@@ -260,9 +268,12 @@ async def generate_cm_assertions_queries_for_package_state(mapping_package_state
 
         structural_element: StructuralElementState = cm_rule.source_structural_element
 
+        sdk_id = structural_element.sdk_element_id
+        grouped_cm_rules[sdk_id].append(cm_rule)
+        rule_element_idx = len(grouped_cm_rules[sdk_id])
         # sparql_idx = cm_rule.oid
-        sparql_idx = generate_sparql_file_idx(cm_rule, structural_element)
-        sparql_title = f"{structural_element.sdk_element_id}"
+        sparql_idx = generate_sparql_file_idx(cm_rule, structural_element, rule_element_idx)
+        sparql_title = f"{sdk_id}"
 
         file_name = f"{sanitize_filename(rq_name + sparql_idx)}.rq"
         file_content = get_sparql_content_for_cm_assertion(
@@ -273,7 +284,7 @@ async def generate_cm_assertions_queries_for_package_state(mapping_package_state
         )
 
         cm_rule_sdk_element = SPARQLCMRule(
-            sdk_element_id=structural_element.sdk_element_id,
+            sdk_element_id=sdk_id,
             sdk_element_title=structural_element.name,
             sdk_element_xpath=structural_element.absolute_xpath,
             xpath_condition=XPathAssertionCondition(

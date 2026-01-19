@@ -1,5 +1,6 @@
 from typing import List
 
+from mapping_workbench.backend.core.services.io import unique_hash
 from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState
 from mapping_workbench.backend.package_validator.adapters.xpath_validator import XPATHValidator
@@ -38,6 +39,7 @@ def update_xpath_assertion(
     if idx < 0:
         state.validation.xpath.results.append(
             XPathAssertion(
+                validation_element_id=unique_hash(xpath, element_id),
                 sdk_element_id=element_id,
                 sdk_element_xpath=xpath,
                 sdk_element_title=element_title,

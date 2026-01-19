@@ -7,6 +7,7 @@ import Grid from "@mui/material/Unstable_Grid2";
 import ResultSummaryCoverageShacl from './result-summary-coverage-shacl';
 import ResultSummaryCoverageSparql from './result-summary-coverage-sparql';
 import ResultSummaryCoverageXpath from './result-summary-coverage-xpath';
+import CircularProgress from "@mui/material/CircularProgress";
 
 const StateDetail = ({title, value}) => {
     const theme = useTheme()
@@ -19,7 +20,7 @@ const StateDetail = ({title, value}) => {
             px: '16px'
         }}>
             <Typography variant='secondary'
-                        sx={{ mb: '10px'}}>{title}</Typography>
+                        sx={{mb: '10px'}}>{title}</Typography>
             <Typography>{value}</Typography>
         </Stack>
     )
@@ -62,6 +63,7 @@ const StateDetails = ({item, sid, handleChangeTab, validationReport}) => {
                                              handleChangeTab={handleChangeTab}
                                              validationReport={validationReport.sparql}/>
             </Grid>
+
             <Grid xs={12}
                   md={4}>
                 <ResultSummaryCoverageShacl item={item}

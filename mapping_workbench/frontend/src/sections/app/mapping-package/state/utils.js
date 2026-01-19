@@ -146,6 +146,7 @@ export const mapSparqlResults = (result) => result.map(e => {
         resultArray[res[0].substring(1)] = res[1]
     })
     resultArray["query"] = queryAsArray.slice(4, queryAsArray.length).join("\n")
+    resultArray["validation_element_id"] = e.validation_element_id
     resultArray["test_suite"] = e.query?.filename
     resultArray["result"] = e.result
     // Object.entries(e.result).forEach(entry => {

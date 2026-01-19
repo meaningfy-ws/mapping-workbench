@@ -20,19 +20,21 @@ import exportPackage from "src/utils/export-mapping-package";
 import {mappingPackagesApi as previousSectionApi} from 'src/api/mapping-packages';
 import {mappingPackageStatesApi as sectionApi} from 'src/api/mapping-packages/states';
 import {mapShaclResults, mapSparqlResults} from 'src/sections/app/mapping-package/state/utils';
+import Paper from "@mui/material/Paper";
+import {DataLoader} from "../../../../../../components/app/loading/data-loader";
 
 const StateDetails =
     dynamic(() => import("src/sections/app/mapping-package/state/state-details"),
-        {loading: () => <Stack alignItems='center'><CircularProgress/></Stack>});
+        {loading: () => <DataLoader />});
 const XpathValidationReportView =
     dynamic(() => import("src/sections/app/xpath-validation-report/xpath_validation_report_view"),
-        {loading: () => <Stack alignItems='center'><CircularProgress/></Stack>});
+        {loading: () => <DataLoader />});
 const SparqlValidationReport =
     dynamic(() => import("src/sections/app/sparql-validation-report/sparql_validation_report_view"),
-        {loading: () => <Stack alignItems='center'><CircularProgress/></Stack>});
+                {loading: () => <DataLoader />});
 const ShaclValidationReport =
     dynamic(() => import("src/sections/app/shacl-validation-report/shacl_validation_report_view"),
-        {loading: () => <Stack alignItems='center'><CircularProgress/></Stack>});
+                {loading: () => <DataLoader />});
 
 
 const tabs = [

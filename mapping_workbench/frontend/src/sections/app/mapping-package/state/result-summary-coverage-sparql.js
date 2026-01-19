@@ -6,11 +6,12 @@ import Button from '@mui/material/Button';
 import {useTheme} from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import {StatePieChart} from './state-pie-chart';
-import {getItemsDisplay, getValidationColor, getValidationReportSparql} from './utils';
+import {getValidationColor, getValidationReportSparql} from './utils';
+import {DataLoader} from "../../../../components/app/loading/data-loader";
 
 const ResultSummaryCoverageSparql = ({validationReport, handleChangeTab}) => {
     const theme = useTheme()
-    if (!validationReport) return null
+    if (!validationReport) return <DataLoader />
 
     const {itemsTotal, ...itemsReduce} = getValidationReportSparql(validationReport)
 
