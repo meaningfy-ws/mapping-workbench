@@ -26,6 +26,20 @@ router = APIRouter(
 
 
 @router.get(
+    "/reports/state/{id}",
+    description=f"Get {NAME_FOR_ONE} state validation reports",
+    name=f"{NAME_FOR_ONE}:get_{NAME_FOR_ONE}_state_validation_reports",
+    response_model=TestDataValidationContainer
+)
+async def route_get_mapping_package_state_validation_reports(
+        mapping_package_state: MappingPackageStateGate = Depends(get_mapping_package_state)
+):
+    state: MappingPackageState = await get_specific_mapping_package_state(mapping_package_state.id)
+    validation: TestDataValidationContainer = state.validation
+    return validation
+
+
+@router.get(
     "/xpath/state/{id}",
     description=f"Get {NAME_FOR_ONE} state XPATH validation",
     name=f"{NAME_FOR_ONE}:get_{NAME_FOR_ONE}_state_xpath_validation",

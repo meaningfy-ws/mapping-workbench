@@ -313,6 +313,7 @@ export const apiPaths = {
         xpath_reports: (sid) => `/package_validator/xpath/state/${sid}`,
         xpath_reports_suite: (sid, suiteId) => `/package_validator/xpath/state/${sid}/suite/${suiteId}`,
         xpath_reports_test: (sid, suiteId, testId) => `/package_validator/xpath/state/${sid}/suite/${suiteId}/test/${testId}`,
+        reports: (sid) => `/package_validator/reports/state/${sid}`,
         sparql_reports: (sid) => `/package_validator/sparql/state/${sid}`,
         sparql_reports_suite: (sid, suiteId) => `/package_validator/sparql/state/${sid}/suite/${suiteId}`,
         sparql_reports_test: (sid, suiteId, testId) => `/package_validator/sparql/state/${sid}/suite/${suiteId}/test/${testId}`,

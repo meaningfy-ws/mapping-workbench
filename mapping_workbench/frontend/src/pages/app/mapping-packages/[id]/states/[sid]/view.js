@@ -56,12 +56,20 @@ const Page = () => {
         if (sid) {
             handleItemsGet(sid);
             handleValidationReportTreeGet(sid)
-            resultSummaryXPATHGet(sid)
-            resultSummarySPARQLGet(sid)
-            resultSummarySHACLGet(sid)
+            resultReportsGet(sid)
         }
     }, [sid]);
 
+    const resultReportsGet = (sid) => {
+        sectionApi.getReports(sid)
+            .then(res => setValidationReport(prev => ({
+                ...prev,
+                sparql: mapSparqlResults(res.sparql.summary ?? []),
+                xpath: res.xpath.results.map(e => ({...e, notice_count: e.test_data_xpaths.length})),
+                shacl: mapShaclResults(res.shacl.summary ?? [])
+            })))
+            .catch(err => console.error(err))
+    }
 
     const resultSummarySPARQLGet = (sid) => {
         sectionApi.getSparqlReports(sid)
@@ -79,7 +87,6 @@ const Page = () => {
             })
             .catch(err => console.error(err))
     }
-
 
     const resultSummarySHACLGet = (sid) => {
         sectionApi.getShaclReports(sid)

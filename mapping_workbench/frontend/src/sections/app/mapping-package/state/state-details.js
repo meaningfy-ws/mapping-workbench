@@ -7,7 +7,6 @@ import Grid from "@mui/material/Unstable_Grid2";
 import ResultSummaryCoverageShacl from './result-summary-coverage-shacl';
 import ResultSummaryCoverageSparql from './result-summary-coverage-sparql';
 import ResultSummaryCoverageXpath from './result-summary-coverage-xpath';
-import CircularProgress from "@mui/material/CircularProgress";
 
 const StateDetail = ({title, value}) => {
     const theme = useTheme()
