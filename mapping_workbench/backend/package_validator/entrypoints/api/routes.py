@@ -29,13 +29,14 @@ router = APIRouter(
     "/reports/state/{id}",
     description=f"Get {NAME_FOR_ONE} state validation reports",
     name=f"{NAME_FOR_ONE}:get_{NAME_FOR_ONE}_state_validation_reports",
-    response_model=TestDataValidationContainer
+    #response_model=TestDataValidationContainer
 )
 async def route_get_mapping_package_state_validation_reports(
         mapping_package_state: MappingPackageStateGate = Depends(get_mapping_package_state)
 ):
     state: MappingPackageState = await get_specific_mapping_package_state(mapping_package_state.id)
-    validation: TestDataValidationContainer = state.validation
+    validation = state.validation.model_dump()
+    validation["validation_reports_tree"] = await generate_validation_reports_tree(state, mapping_package_state.id)
     return validation
 
 

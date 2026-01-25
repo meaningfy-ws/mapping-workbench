@@ -50,24 +50,34 @@ const Page = () => {
 
     const [item, setItem] = useState({})
     const [validationReportTree, setValidationReportTree] = useState([])
-    const [validationReport, setValidationReport] = useState({})
+    const [validationReport, setValidationReport] = useState({
+        xpath: [],
+        shacl: [],
+        sparql: []
+    })
 
     useEffect(() => {
         if (sid) {
             handleItemsGet(sid);
-            handleValidationReportTreeGet(sid)
-            resultReportsGet(sid)
+            //handleValidationReportTreeGet(sid)
+            resultReportsGet(sid);
+            //resultSummaryXPATHGet(sid);
+            //resultSummarySPARQLGet(sid);
+            //resultSummarySHACLGet(sid);
         }
     }, [sid]);
 
     const resultReportsGet = (sid) => {
         sectionApi.getReports(sid)
-            .then(res => setValidationReport(prev => ({
-                ...prev,
-                sparql: mapSparqlResults(res.sparql.summary ?? []),
-                xpath: res.xpath.results.map(e => ({...e, notice_count: e.test_data_xpaths.length})),
-                shacl: mapShaclResults(res.shacl.summary ?? [])
-            })))
+            .then(res => {
+                setValidationReport(prev => ({
+                    ...prev,
+                    sparql: mapSparqlResults(res.sparql.summary ?? []),
+                    xpath: res.xpath.results.map(e => ({...e, notice_count: e.test_data_xpaths.length})),
+                    shacl: mapShaclResults(res.shacl.summary ?? [])
+                }));
+                setValidationReportTree(res.validation_reports_tree)
+            })
             .catch(err => console.error(err))
     }
 

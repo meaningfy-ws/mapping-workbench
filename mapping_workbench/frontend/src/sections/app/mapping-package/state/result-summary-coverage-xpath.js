@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import {LineProgress} from './state-line-progress';
 import CircularProgress from "@mui/material/CircularProgress";
 import {DataLoader} from "../../../../components/app/loading/data-loader";
+import Divider from "@mui/material/Divider";
 
 const ResultSummaryCoverageXpath = ({item, validationReport, handleChangeTab}) => {
     const theme = useTheme()
@@ -49,6 +50,7 @@ const ResultSummaryCoverageXpath = ({item, validationReport, handleChangeTab}) =
                 <LineProgress color='valid'
                               value={coveredReportPercent}/>
             </Stack>
+            <Divider sx={{ my: 2 }} />
             <Stack sx={{mb: 'auto'}}>
                 <Typography variant='secondary'>XPATHs not covered</Typography>
                 <Typography sx={{mb: 2}}>{`${notCoveredReports.length}/${notCoveredReportPercent}%`}</Typography>

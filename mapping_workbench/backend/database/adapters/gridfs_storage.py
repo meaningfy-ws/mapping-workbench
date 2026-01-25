@@ -56,10 +56,11 @@ class AsyncGridFSStorage:
         mongo_db = cls.get_mongo_database()
         grid_fs = AsyncIOMotorGridFSBucket(mongo_db)
         try:
-            with BytesIO() as tmp_stream:
-                await grid_fs.download_to_stream(file_id, tmp_stream)
-                compressed_data = tmp_stream.getvalue()
-                result_data = gzip.decompress(compressed_data).decode("utf-8")
+            with BytesIO() as compressed_stream:
+                await grid_fs.download_to_stream(file_id, compressed_stream)
+                compressed_stream.seek(0)
+                with gzip.GzipFile(fileobj=compressed_stream, mode="rb") as gz:
+                    result_data = gz.read().decode("utf-8")
             return result_data
         except Exception as e:
             print("GridFS :: ERROR ::", e)
