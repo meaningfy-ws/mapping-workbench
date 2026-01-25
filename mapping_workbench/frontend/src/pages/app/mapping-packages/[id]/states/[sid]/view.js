@@ -51,9 +51,9 @@ const Page = () => {
     const [item, setItem] = useState({})
     const [validationReportTree, setValidationReportTree] = useState([])
     const [validationReport, setValidationReport] = useState({
-        xpath: [],
-        shacl: [],
-        sparql: []
+        xpath: null,
+        shacl: null,
+        sparql: null
     })
 
     useEffect(() => {
