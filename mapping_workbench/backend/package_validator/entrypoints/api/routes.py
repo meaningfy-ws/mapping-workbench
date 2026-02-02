@@ -1,7 +1,9 @@
+from datetime import datetime
 from typing import List
 
 from beanie import PydanticObjectId
-from fastapi import APIRouter, Depends
+from dateutil.tz import tzlocal
+from fastapi import APIRouter, Depends, status
 
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageStateGate, MappingPackageState, \
     MappingPackageValidationTree
@@ -9,11 +11,15 @@ from mapping_workbench.backend.mapping_package.services.api import get_mapping_p
 from mapping_workbench.backend.mapping_package.services.data import get_specific_mapping_package_state
 from mapping_workbench.backend.package_validator.models.shacl_validation import SHACLTestDataValidationResult
 from mapping_workbench.backend.package_validator.models.sparql_validation import SPARQLTestDataValidationResult
+from mapping_workbench.backend.package_validator.models.validation_comments import ValidationCommentIn, \
+    ValidationComment
 from mapping_workbench.backend.package_validator.models.xpath_validation import XPathAssertion, \
     XPATHTestDataValidationResult
 from mapping_workbench.backend.package_validator.services.mapping_package_validator import \
     generate_validation_reports_tree, get_state_test_data_validatiton, get_state_test_data_suite_validatiton
+from mapping_workbench.backend.security.services.user_manager import current_active_user
 from mapping_workbench.backend.test_data_suite.models.entity import TestDataValidationContainer
+from mapping_workbench.backend.user.models.user import User
 
 ROUTE_PREFIX = "/package_validator"
 TAG = "package_validator"
@@ -196,3 +202,25 @@ async def route_get_mapping_package_state_reports_tree(
     validation_reports_tree = await generate_validation_reports_tree(state, mapping_package_state.id)
 
     return validation_reports_tree or {}
+
+
+@router.post(
+    path="/{state_id}/validation_comment",
+    description="Add validation comment for a specific validation row",
+    response_model=None,
+    status_code=status.HTTP_201_CREATED
+)
+async def route_add_validation_comment(
+        project_id: PydanticObjectId,
+        validation_element_id: str,
+        comment: ValidationCommentIn,
+        user: User = Depends(current_active_user)
+) -> None:
+    vcomment: ValidationComment = ValidationComment(**comment.model_dump())
+    vcomment.created_by = User.link_from_id(user.id)
+    vcomment.created_at = datetime.now(tzlocal())
+    vcomment.comment = comment.comment
+    vcomment.state_id = state_id
+    vcomment.project_id = project_id
+    vcomment.validation_element_id = validation_element_id
+    await comment.save()

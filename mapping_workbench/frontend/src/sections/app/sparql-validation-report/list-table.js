@@ -121,7 +121,8 @@ export const ListTable = (props) => {
                                     <TableRow key={'row' + i}>
                                         <TableCell width="25%">
                                             <Typography variant="subtitle3">
-                                                {item.title}
+                                                {item.title}assa
+                                                {item.validation_element_id}
                                             </Typography>
                                         </TableCell>
                                         <TableCell>

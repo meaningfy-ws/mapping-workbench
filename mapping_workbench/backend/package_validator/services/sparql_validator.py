@@ -1,5 +1,6 @@
 from typing import List
 
+from mapping_workbench.backend.core.services.io import unique_hash
 from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState
 from mapping_workbench.backend.package_validator.adapters.sparql_validator import SPARQLValidator
@@ -50,6 +51,11 @@ def aggregate_sparql_tests_summary(
         if idx < 0:
             summary.append(
                 SPARQLValidationSummary(
+                    validation_element_id=unique_hash(
+                        sparql_query.cm_rule.sdk_element_id if sparql_query.cm_rule else "",
+                        sparql_query.cm_rule.xpath_condition if sparql_query.cm_rule else "",
+                        sparql_query.content
+                    ),
                     query=sparql_query
                 )
             )

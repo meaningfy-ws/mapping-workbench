@@ -111,9 +111,11 @@ export const getValidationReportSparql = (items) => items.map(item => item.resul
 
 
 export const mapShaclResults = (result) => {
+    console.log("K ::", result)
     return result.results?.map(e => {
         const resultArray = {}
         resultArray["shacl_suite"] = result.shacl_suites?.[0]?.shacl_suite_id
+        resultArray["validation_element_id"] = e.validation_element_id
         resultArray["short_result_path"] = e.short_result_path
         resultArray["short_source_constraint_component"] = e.short_source_constraint_component
         resultArray["result"] = e.result
@@ -146,7 +148,7 @@ export const mapSparqlResults = (result) => result.map(e => {
         resultArray[res[0].substring(1)] = res[1]
     })
     resultArray["query"] = queryAsArray.slice(4, queryAsArray.length).join("\n")
-    //resultArray["validation_element_id"] = e.validation_element_id
+    resultArray["validation_element_id"] = e.validation_element_id
     resultArray["test_suite"] = e.query?.filename
     resultArray["result"] = e.result
     // Object.entries(e.result).forEach(entry => {

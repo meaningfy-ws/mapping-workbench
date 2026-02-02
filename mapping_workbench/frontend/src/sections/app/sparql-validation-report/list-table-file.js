@@ -108,7 +108,8 @@ export const ListTableFile = (props) => {
                                 <TableRow key={key}>
                                     <TableCell width="15%">
                                         <Typography variant="subtitle3">
-                                            {item.title}
+                                            {item.title}assa
+                                            {item.validation_element_id}
                                         </Typography>
                                     </TableCell>
                                     <TableCell width='30%'>

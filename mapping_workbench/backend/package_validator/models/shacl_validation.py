@@ -30,6 +30,7 @@ class SHACLQueryTestDataEntry(ValidationTestDataEntry):
 
 
 class ValidationSHACLQuery(BaseModel):
+    validation_element_id: Optional[str] = None
     shacl_suite: Optional[SHACLValidationSuiteEntry] = None
     result_path: Optional[str] = None
     short_result_path: Optional[str] = None
@@ -70,7 +71,6 @@ class SHACLQueryResult(ValidationSHACLQuery, BaseModel):
 
 
 class SHACLQueryTestDataResult(BaseModel):
-    #validation_element_id: str = None
     conforms: Optional[bool] = None
     results: Optional[List[SHACLQueryResult]] = []
     test_data: Optional[SHACLQueryTestDataEntry] = None

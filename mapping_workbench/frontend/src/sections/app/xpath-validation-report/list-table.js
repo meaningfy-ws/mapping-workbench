@@ -112,6 +112,7 @@ export const ListTable = (props) => {
                                         <TableCell>
                                             <Typography variant="subtitle3">
                                                 {item.sdk_element_id}
+                                                {item.validation_element_id}
                                             </Typography>
                                         </TableCell>
                                         <TableCell>

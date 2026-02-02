@@ -106,6 +106,7 @@ export const ListTable = (props) => {
                                     <TableRow key={key}>
                                         <TableCell>
                                             {item.shacl_suite}
+                                            {item.validation_element_id}
                                         </TableCell>
                                         <TableCell>
                                             <LocalHighlighter language='turtle'
