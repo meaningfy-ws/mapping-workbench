@@ -17,6 +17,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Radio from "@mui/material/Radio";
 import Typography from "@mui/material/Typography";
 import Checkbox from "@mui/material/Checkbox";
+import Chip from "@mui/material/Chip";
 
 export const validationCommentSeverity = (comment) => {
     switch (comment?.priority) {
@@ -30,10 +31,9 @@ export const validationCommentSeverity = (comment) => {
 }
 
 const ValidationComment = (props) => {
-    const {comment, ...other} = props;
+    const {comment, state_id, ...other} = props;
 
     let severity = validationCommentSeverity(comment);
-
     return (
         <Alert severity={severity}
                sx={{
@@ -43,7 +43,14 @@ const ValidationComment = (props) => {
             <Box>
                 {comment?.title && <Box><b>{comment.title}</b></Box>}
                 <Box sx={{pb: 1}}>{comment.comment}</Box>
-                <small><b>by</b> {comment.created_by_username} <b>on</b> {comment.created_at}</small>
+                <Box>
+                    <Chip
+                        label={<small><b>by</b> {comment.created_by_username} <b>on</b> {comment.created_at}</small>}
+                        color={comment.state_id === state_id ? "success" : "warning"}
+                        title={comment.state_id === state_id ? "Native State comment" : "Foreign State comment"}
+                        size="small"
+                    />
+                </Box>
             </Box>
         </Alert>
     )
@@ -102,6 +109,7 @@ export const ValidationComments = (props) => {
                         (comment, idx) => <ValidationComment
                             key={idx}
                             comment={comment}
+                            state_id={state_id}
                         />
                     )}
                     <Divider sx={{my: 2}}/>
@@ -190,7 +198,7 @@ export const ValidationComments = (props) => {
                                 checked={formik.values.priority === COMMENT_PRIORITY.LOW}
                             />
                         </Box>
-                        <Divider />
+                        <Divider/>
                         <FormControlLabel
                             sx={{width: '100%', p: 0, m: 0}}
                             control={
@@ -202,7 +210,7 @@ export const ValidationComments = (props) => {
                             label="Use in this State"
                             value=""
                         />
-                        <Divider />
+                        <Divider/>
                     </Stack>
                     <Stack
                         direction={{

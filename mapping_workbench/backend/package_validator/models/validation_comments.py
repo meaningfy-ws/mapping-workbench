@@ -29,6 +29,7 @@ class ValidationComment(BaseProjectResourceEntity):
 class ValidationCommentOut(BaseModel):
     title: Optional[str] = None
     comment: str
+    state_id: Optional[str] = None
     # created_by: Optional[UserRef] = None
     priority: ValidationCommentPriority
     created_by_username: Optional[str] = None
