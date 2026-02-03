@@ -1,8 +1,9 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import PropTypes from 'prop-types';
 
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
+import CommentsIcon from '@mui/icons-material/CommentBankOutlined';
 
 import Stack from "@mui/material/Stack";
 import Table from '@mui/material/Table';
@@ -26,6 +27,8 @@ import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
 import Box from "@mui/system/Box";
 import XPathElements from "./xpath-elements";
+import ValidationCommentView from "../mapping-package/state/components/vcomment-view";
+import {useRouter} from "src/hooks/use-router";
 
 export const ListTable = (props) => {
     const {
@@ -42,6 +45,23 @@ export const ListTable = (props) => {
         onFilter,
         filters
     } = props;
+
+    const router = useRouter();
+    const {id, sid, tab} = router.query;
+
+    const [existingComments, setExistingComments] = useState({})
+    const getExistingValidationComments = () => {
+        sectionApi.getExistingValidationComments(sid, items.map(item => item.validation_element_id))
+            .then(res => {
+                setExistingComments(res)
+            })
+            .catch(err => {
+                console.error(err);
+            })
+    }
+    useEffect(() => {
+        getExistingValidationComments();
+    }, []);
 
     const highLighterTheme = useHighlighterTheme()
 
@@ -76,6 +96,9 @@ export const ListTable = (props) => {
                     <Table sx={{minWidth: 1200}}>
                         <TableHead>
                             <TableRow>
+                                <TableCell align="center">
+                                    <CommentsIcon/>
+                                </TableCell>
                                 <TableCell>
                                     <TableFilterHeader sort={sort}
                                                        onSort={onSort}
@@ -109,10 +132,17 @@ export const ListTable = (props) => {
                             {items?.map((item, key) => {
                                 return (
                                     <TableRow key={key}>
+                                        <TableCell align="center">
+                                            <ValidationCommentView
+                                                state_id={sid}
+                                                validation_element_id={item.validation_element_id}
+                                                comments_count={existingComments[item.validation_element_id]}
+                                                handleUpdate={getExistingValidationComments}
+                                            />
+                                        </TableCell>
                                         <TableCell>
                                             <Typography variant="subtitle3">
                                                 {item.sdk_element_id}
-                                                {item.validation_element_id}
                                             </Typography>
                                         </TableCell>
                                         <TableCell>

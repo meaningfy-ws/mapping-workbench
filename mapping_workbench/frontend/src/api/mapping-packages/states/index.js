@@ -1,5 +1,12 @@
 import {ACTION, SectionApi} from "src/api/section";
 import {appApi} from "src/api/app";
+import {sessionApi} from "../../session";
+
+export const COMMENT_PRIORITY = {
+    HIGH: 'high',
+    NORMAL: 'normal',
+    LOW: 'low'
+};
 
 export class MappingPackageStatesApi extends SectionApi {
 
@@ -124,6 +131,34 @@ export class MappingPackageStatesApi extends SectionApi {
          return appApi.get(endpoint, params, headers, {
             responseType: 'blob'
         });
+    }
+
+    async getComments(sid, vid) {
+        let endpoint = this.paths["validation_comments"]
+            .replace(':sid', sid)
+            .replace(':vid', vid);
+        let params = {'project_id': sessionApi.getSessionProject()}
+        return appApi.get(endpoint, params);
+    }
+
+    async getExistingValidationComments(sid, vids) {
+        let endpoint = this.paths["existing_validation_comments"]
+            .replace(':sid', sid);
+        let data = {}
+        data['validation_element_ids'] = vids
+        let params = {'project_id': sessionApi.getSessionProject()}
+        return appApi.post(endpoint, data, params);
+    }
+
+    async addComment(sid, vid, comment, priority, use_in_state) {
+        let endpoint = this.paths["validation_comments"]
+            .replace(':sid', sid)
+            .replace(':vid', vid);
+        let data = {}
+        data['comment'] = comment
+        data['priority'] = priority
+        data['use_in_state'] = use_in_state
+        return appApi.post(endpoint, data, {'project_id': sessionApi.getSessionProject()});
     }
 }
 

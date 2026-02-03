@@ -111,7 +111,6 @@ export const getValidationReportSparql = (items) => items.map(item => item.resul
 
 
 export const mapShaclResults = (result) => {
-    console.log("K ::", result)
     return result.results?.map(e => {
         const resultArray = {}
         resultArray["shacl_suite"] = result.shacl_suites?.[0]?.shacl_suite_id

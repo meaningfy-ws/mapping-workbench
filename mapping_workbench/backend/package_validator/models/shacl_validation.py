@@ -51,6 +51,7 @@ class SHACLGraphResultBinding(BaseModel):
 
 
 class SHACLQueryResultBinding(BaseModel):
+    validation_element_id: Optional[str] = None
     focus_node: Optional[str] = None
     short_focus_node: Optional[str] = None
     result_path: Optional[str] = None

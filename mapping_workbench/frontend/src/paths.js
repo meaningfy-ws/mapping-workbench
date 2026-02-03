@@ -321,7 +321,10 @@ export const apiPaths = {
         shacl_reports_suite: (sid, suiteId) => `/package_validator/shacl/state/${sid}/suite/${suiteId}`,
         shacl_reports_test: (sid, suiteId, testId) => `/package_validator/shacl/state/${sid}/suite/${suiteId}/test/${testId}`,
 
-        validation_report_files: '/package_exporter/get_validation_report_files'
+        validation_report_files: '/package_exporter/get_validation_report_files',
+
+        validation_comments: '/package_validator/:sid/:vid/validation_comments',
+        existing_validation_comments: '/package_validator/:sid/validation_comments/exists',
     },
 
     conceptual_mapping_rules: {

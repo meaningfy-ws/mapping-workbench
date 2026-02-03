@@ -1,5 +1,7 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import PropTypes from 'prop-types';
+
+import CommentsIcon from '@mui/icons-material/CommentBankOutlined';
 
 import Stack from "@mui/material/Stack";
 import Table from '@mui/material/Table';
@@ -26,6 +28,8 @@ import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
 import XPathElements from "./xpath-elements";
 import Box from "@mui/system/Box";
+import ValidationCommentView from "../mapping-package/state/components/vcomment-view";
+import {useRouter} from "../../../hooks/use-router";
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", text: ""})
@@ -44,6 +48,23 @@ export const ListTable = (props) => {
         onFilter,
         filters
     } = props;
+
+    const router = useRouter();
+    const {id, sid, tab} = router.query;
+
+    const [existingComments, setExistingComments] = useState({})
+    const getExistingValidationComments = () => {
+        sectionApi.getExistingValidationComments(sid, items.map(item => item.validation_element_id))
+            .then(res => {
+                setExistingComments(res)
+            })
+            .catch(err => {
+                console.error(err);
+            })
+    }
+    useEffect(() => {
+        getExistingValidationComments();
+    }, []);
 
     const handleClose = () => setDescriptionDialog(e => ({...e, open: false}));
 
@@ -69,6 +90,9 @@ export const ListTable = (props) => {
                     <Table sx={{minWidth: 1200}}>
                         <TableHead>
                             <TableRow>
+                                <TableCell align="center">
+                                    <CommentsIcon/>
+                                </TableCell>
                                 <TableCell width="25%">
                                     <TableFilterHeader sort={sort}
                                                        onSort={onSort}
@@ -98,10 +122,17 @@ export const ListTable = (props) => {
                             {items?.map((item, key) => {
                                 return (
                                     <TableRow key={key}>
+                                        <TableCell align="center">
+                                            <ValidationCommentView
+                                                state_id={sid}
+                                                validation_element_id={item.validation_element_id}
+                                                comments_count={existingComments[item.validation_element_id]}
+                                                handleUpdate={getExistingValidationComments}
+                                            />
+                                        </TableCell>
                                         <TableCell width="25%">
                                             <Typography variant="subtitle3">
                                                 {item.sdk_element_id}
-                                                {item.validation_element_id}
                                             </Typography>
                                         </TableCell>
                                         <TableCell>

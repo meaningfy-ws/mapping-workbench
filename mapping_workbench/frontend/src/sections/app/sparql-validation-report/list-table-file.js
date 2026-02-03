@@ -21,6 +21,10 @@ import {LocalHighlighter} from 'src/sections/components/local-highlighter';
 import TableSorterHeader from "src/sections/components/table-sorter-header";
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
 import XPathElements from "../xpath-validation-report/xpath-elements";
+import {useRouter} from "../../../hooks/use-router";
+import {useEffect, useState} from "react";
+import CommentsIcon from "@mui/icons-material/CommentBankOutlined";
+import ValidationCommentView from "../mapping-package/state/components/vcomment-view";
 
 const Condition = ({text, value, na = false}) => {
     const color = value ? (na ? 'black' : 'green') : 'red'
@@ -43,6 +47,23 @@ export const ListTableFile = (props) => {
         sectionApi,
         isResultSortable = true
     } = props;
+
+    const router = useRouter();
+    const {id, sid, tab} = router.query;
+
+    const [existingComments, setExistingComments] = useState({})
+    const getExistingValidationComments = () => {
+        sectionApi.getExistingValidationComments(sid, items.map(item => item.validation_element_id))
+            .then(res => {
+                setExistingComments(res)
+            })
+            .catch(err => {
+                console.error(err);
+            })
+    }
+    useEffect(() => {
+        getExistingValidationComments();
+    }, []);
 
     const syntaxHighlighterTheme = useHighlighterTheme()
 
@@ -72,6 +93,9 @@ export const ListTableFile = (props) => {
                 <Table sx={{minWidth: 1200}}>
                     <TableHead>
                         <TableRow>
+                            <TableCell align="center">
+                                <CommentsIcon/>
+                            </TableCell>
                             <TableCell width="15%">
                                 <TableFilterHeader sort={sort}
                                                    onSort={onSort}
@@ -106,10 +130,17 @@ export const ListTableFile = (props) => {
                         {items?.map((item, key) => {
                             return (
                                 <TableRow key={key}>
+                                    <TableCell align="center">
+                                        <ValidationCommentView
+                                            state_id={sid}
+                                            validation_element_id={item.validation_element_id}
+                                            comments_count={existingComments[item.validation_element_id]}
+                                            handleUpdate={getExistingValidationComments}
+                                        />
+                                    </TableCell>
                                     <TableCell width="15%">
                                         <Typography variant="subtitle3">
-                                            {item.title}assa
-                                            {item.validation_element_id}
+                                            {item.title}
                                         </Typography>
                                     </TableCell>
                                     <TableCell width='30%'>

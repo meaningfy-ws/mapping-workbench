@@ -1,12 +1,11 @@
 from datetime import datetime
 from enum import Enum
-from typing import Optional
+from typing import Optional, List
 
-from beanie import Link, Document
-from dateutil.tz import tzlocal
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
-from mapping_workbench.backend.user.models.user import User, UserRef
+from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
+from mapping_workbench.backend.user.models.user import UserRef
 
 
 class ValidationCommentPriority(Enum):
@@ -15,23 +14,32 @@ class ValidationCommentPriority(Enum):
     LOW = "low"
 
 
-class ValidationComment(Document):
-    project_id: str
-    state_id: str
+class ValidationComment(BaseProjectResourceEntity):
+    state_id: Optional[str] = None
     validation_element_id: str
     title: Optional[str] = None
-    comment: Optional[str] = None
-    priority: Optional[ValidationCommentPriority] | Optional[str] = ValidationCommentPriority.NORMAL
-    created_at: Optional[datetime] = Field(default_factory=lambda: datetime.now(tzlocal()))
-    created_by: Optional[Link[User]] = None
-    updated_at: Optional[datetime] = None
-    updated_by: Optional[Link[User]] = None
+    comment: str
+    priority: Optional[ValidationCommentPriority] = ValidationCommentPriority.NORMAL
+    created_by_username: Optional[str] = None
+
+    class Settings:
+        name = "validation_comments"
 
 
 class ValidationCommentOut(BaseModel):
+    title: Optional[str] = None
     comment: str
-    created_by: Optional[UserRef]
+    # created_by: Optional[UserRef] = None
+    priority: ValidationCommentPriority
+    created_by_username: Optional[str] = None
+    created_at: Optional[datetime] = None
 
 
 class ValidationCommentIn(BaseModel):
+    priority: ValidationCommentPriority
     comment: str
+    use_in_state: Optional[bool]
+
+
+class ValidationCommentsExistData(BaseModel):
+    validation_element_ids: List[str]

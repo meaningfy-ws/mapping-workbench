@@ -76,8 +76,8 @@ class SHACLValidator(TestDataValidator):
                 js=False,
                 debug=False,
 
-                #FIXME: For the moment without inference param until we figure out how to use it correctly
-                #inference="rdfs" if len(shacl_files) > 0 else None
+                # FIXME: For the moment without inference param until we figure out how to use it correctly
+                # inference="rdfs" if len(shacl_files) > 0 else None
             )
 
             shacl_validation_result.conforms = conforms or False
@@ -156,6 +156,12 @@ class SHACLValidator(TestDataValidator):
                         result_test_data.test_data_id,
                         shacl_result.source_constraint_component,
                         shacl_result.result_path
+                    )
+
+                    shacl_result.binding.validation_element_id = unique_hash(
+                        shacl_result.binding.focus_node,
+                        shacl_result.binding.result_path,
+                        shacl_result.binding.source_constraint_component
                     )
 
                     results.append(shacl_result)
