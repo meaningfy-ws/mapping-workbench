@@ -2,10 +2,10 @@ from datetime import datetime
 from enum import Enum
 from typing import Optional, List
 
-from pydantic import BaseModel
+from beanie import PydanticObjectId
+from pydantic import BaseModel, Field
 
 from mapping_workbench.backend.core.models.base_project_resource_entity import BaseProjectResourceEntity
-from mapping_workbench.backend.user.models.user import UserRef
 
 
 class ValidationCommentPriority(Enum):
@@ -14,10 +14,34 @@ class ValidationCommentPriority(Enum):
     LOW = "low"
 
 
+class ValidationReportType(Enum):
+    XPATH = "xpath"
+    SPARQL = "sparql"
+    SHACL = "shacl"
+
+
+class ValidationReportContext(Enum):
+    STATE = "state"
+    SUITE = "suite"
+    DATA = "data"
+
+
+class ValidationReportContextEntity(BaseModel):
+    id: Optional[PydanticObjectId]
+    name: Optional[str]
+
+
+class ValidationCommentContext(BaseModel):
+    report_type: Optional[ValidationReportType] = None
+    report_context: Optional[ValidationReportContext] = None
+    context_entity: Optional[ValidationReportContextEntity] = None
+
+
 class ValidationComment(BaseProjectResourceEntity):
     state_id: Optional[str] = None
     validation_element_id: str
     title: Optional[str] = None
+    context: Optional[ValidationCommentContext] = None
     comment: str
     priority: Optional[ValidationCommentPriority] = ValidationCommentPriority.NORMAL
     created_by_username: Optional[str] = None
@@ -27,9 +51,11 @@ class ValidationComment(BaseProjectResourceEntity):
 
 
 class ValidationCommentOut(BaseModel):
+    id: PydanticObjectId = Field(..., alias='_id')
     title: Optional[str] = None
     comment: str
     state_id: Optional[str] = None
+    context: Optional[ValidationCommentContext] = None
     # created_by: Optional[UserRef] = None
     priority: ValidationCommentPriority
     created_by_username: Optional[str] = None
@@ -40,6 +66,7 @@ class ValidationCommentIn(BaseModel):
     priority: ValidationCommentPriority
     comment: str
     use_in_state: Optional[bool]
+    context: Optional[ValidationCommentContext] = None
 
 
 class ValidationCommentsExistData(BaseModel):

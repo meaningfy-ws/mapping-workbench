@@ -324,6 +324,7 @@ export const apiPaths = {
         validation_report_files: '/package_exporter/get_validation_report_files',
 
         validation_comments: '/package_validator/:sid/:vid/validation_comments',
+        validation_comment: (id) => `/package_validator/validation_comments/${id}`,
         existing_validation_comments: '/package_validator/:sid/validation_comments/exists',
     },
 

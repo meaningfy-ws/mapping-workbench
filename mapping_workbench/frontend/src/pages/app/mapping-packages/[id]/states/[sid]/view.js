@@ -68,7 +68,6 @@ const Page = () => {
     const resultReportsGet = (sid) => {
         sectionApi.getReports(sid)
             .then(res => {
-                console.log(res.shacl)
                 setValidationReport(prev => ({
                     ...prev,
                     sparql: mapSparqlResults(res.sparql?.summary ?? []),

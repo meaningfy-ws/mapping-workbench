@@ -18,6 +18,9 @@ import Radio from "@mui/material/Radio";
 import Typography from "@mui/material/Typography";
 import Checkbox from "@mui/material/Checkbox";
 import Chip from "@mui/material/Chip";
+import CloseIcon from "@mui/icons-material/Close";
+import IconButton from "@mui/material/IconButton";
+import {useRouter} from "../../../../../hooks/use-router";
 
 export const validationCommentSeverity = (comment) => {
     switch (comment?.priority) {
@@ -31,13 +34,27 @@ export const validationCommentSeverity = (comment) => {
 }
 
 const ValidationComment = (props) => {
-    const {comment, state_id, ...other} = props;
-
+    const {comment, state_id, onDelete, ...other} = props;
     let severity = validationCommentSeverity(comment);
+
+    const handleDeleteComment = (id) => {
+        const toastId = toastLoad('Deleting comment...')
+        mappingPackageStatesApi.deleteComment(id)
+            .then(res => {
+                toastSuccess("Comment deleted", toastId);
+                onDelete();
+            })
+            .catch(err => {
+                toastError(err, toastId);
+            });
+    }
+
     return (
         <Alert severity={severity}
                sx={{
-                   mb: 2
+                   mb: 2,
+                   position: "relative",
+                   paddingRight: "20%"
                }}
         >
             <Box>
@@ -51,6 +68,18 @@ const ValidationComment = (props) => {
                         size="small"
                     />
                 </Box>
+                <IconButton
+                    onClick={(e) => handleDeleteComment(comment._id)}
+                    size="small"
+                    title="Delete Comment"
+                    sx={{
+                        position: "absolute",
+                        top: "5px",
+                        right: "5px"
+                    }}
+                >
+                    <CloseIcon fontSize="small"/>
+                </IconButton>
             </Box>
         </Alert>
     )
@@ -58,6 +87,10 @@ const ValidationComment = (props) => {
 
 export const ValidationComments = (props) => {
     const {state_id, validation_element_id, handleUpdate, ...other} = props;
+
+    const router = useRouter();
+    const {id, sid, tab, packageid = null, datasetid = null} = router.query;
+
     const [comments, setComments] = useState([])
 
     const getComments = () => {
@@ -68,6 +101,10 @@ export const ValidationComments = (props) => {
     useEffect(() => {
         getComments()
     }, []);
+
+    const handleDeleteComment = () => {
+        getComments()
+    }
 
     const formik = useFormik({
         initialValues: {
@@ -83,7 +120,15 @@ export const ValidationComments = (props) => {
         onSubmit: (values, helpers) => {
             const toastId = toastLoad('Adding comment...')
             mappingPackageStatesApi.addComment(
-                state_id, validation_element_id, values.comment, values.priority, values.use_in_state
+                state_id, validation_element_id, values.comment, values.priority, values.use_in_state,
+                {
+                    report_type: tab,
+                    report_context: datasetid !== null ? 'data' : (packageid !== null ? 'suite' : 'state'),
+                    context_entity: {
+                        id: datasetid || packageid || sid,
+                        name: null
+                    }
+                }
             )
                 .then(res => {
                     toastSuccess("Comment added", toastId);
@@ -110,6 +155,7 @@ export const ValidationComments = (props) => {
                             key={idx}
                             comment={comment}
                             state_id={state_id}
+                            onDelete={handleDeleteComment}
                         />
                     )}
                     <Divider sx={{my: 2}}/>

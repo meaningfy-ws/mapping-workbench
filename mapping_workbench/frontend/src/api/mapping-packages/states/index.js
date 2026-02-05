@@ -150,7 +150,7 @@ export class MappingPackageStatesApi extends SectionApi {
         return appApi.post(endpoint, data, params);
     }
 
-    async addComment(sid, vid, comment, priority, use_in_state) {
+    async addComment(sid, vid, comment, priority, use_in_state, validation_context) {
         let endpoint = this.paths["validation_comments"]
             .replace(':sid', sid)
             .replace(':vid', vid);
@@ -158,7 +158,13 @@ export class MappingPackageStatesApi extends SectionApi {
         data['comment'] = comment
         data['priority'] = priority
         data['use_in_state'] = use_in_state
+        data['context'] = validation_context
         return appApi.post(endpoint, data, {'project_id': sessionApi.getSessionProject()});
+    }
+
+    async deleteComment(id) {
+        let endpoint = this.paths.validation_comment(id);
+        return appApi.delete(endpoint);
     }
 }
 
