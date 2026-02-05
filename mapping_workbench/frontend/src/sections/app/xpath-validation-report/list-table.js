@@ -60,8 +60,8 @@ export const ListTable = (props) => {
             })
     }
     useEffect(() => {
-        getExistingValidationComments();
-    }, []);
+        (items.length > 0) && getExistingValidationComments();
+    }, [items]);
 
     const highLighterTheme = useHighlighterTheme()
 

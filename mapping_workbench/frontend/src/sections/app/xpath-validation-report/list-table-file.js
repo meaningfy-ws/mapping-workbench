@@ -63,8 +63,8 @@ export const ListTable = (props) => {
             })
     }
     useEffect(() => {
-        getExistingValidationComments();
-    }, []);
+        (items.length > 0) && getExistingValidationComments();
+    }, [items]);
 
     const handleClose = () => setDescriptionDialog(e => ({...e, open: false}));
 

@@ -62,8 +62,8 @@ export const ListTableFile = (props) => {
             })
     }
     useEffect(() => {
-        getExistingValidationComments();
-    }, []);
+        (items.length > 0) && getExistingValidationComments();
+    }, [items]);
 
     const syntaxHighlighterTheme = useHighlighterTheme()
 
