@@ -13,6 +13,7 @@ from mapping_workbench.backend.mapping_rule_registry.models.entity import Mappin
 from mapping_workbench.backend.ontology.models.namespace import Namespace, NamespaceCustom
 from mapping_workbench.backend.ontology.models.term import Term
 from mapping_workbench.backend.ontology_suite.models.ontology_file_resource import OntologyFileResource
+from mapping_workbench.backend.package_validator.models.validation_comments import ValidationComment
 from mapping_workbench.backend.project.models.entity import Project
 from mapping_workbench.backend.resource_collection.models.entity import ResourceCollection, ResourceFile
 from mapping_workbench.backend.security import API_ADMIN_USER_USERNAME
@@ -80,6 +81,7 @@ async def init_project_models(mongodb_database: AsyncIOMotorDatabase):
             TestDataManifestationHistory,
             MappingPackage,
             MappingPackageStateGate,
+            ValidationComment,
             MappingRuleRegistry,
             MappingGroup,
             ConceptualMappingRule,

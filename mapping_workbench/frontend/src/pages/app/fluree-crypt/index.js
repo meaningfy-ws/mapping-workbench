@@ -78,7 +78,6 @@ const Page = () => {
   })
     .then((res) => res.json())
     .then((res) =>{
-        console.log(res)
         if(!res.status)
             setItems(res)
       console.log('QUERY AS ROOT:\n\n', JSON.stringify(res, null, 2))
@@ -162,8 +161,6 @@ const Page = () => {
               .then(() => sectionApi.transactSeedData(user,authority))
                 .then(setState({load:false}))
     }
-
-    console.log('items',items)
 
     const formik = useFormik({
         initialValues: {

@@ -19,7 +19,7 @@ const StateDetail = ({title, value}) => {
             px: '16px'
         }}>
             <Typography variant='secondary'
-                        sx={{ mb: '10px'}}>{title}</Typography>
+                        sx={{mb: '10px'}}>{title}</Typography>
             <Typography>{value}</Typography>
         </Stack>
     )
@@ -62,6 +62,7 @@ const StateDetails = ({item, sid, handleChangeTab, validationReport}) => {
                                              handleChangeTab={handleChangeTab}
                                              validationReport={validationReport.sparql}/>
             </Grid>
+
             <Grid xs={12}
                   md={4}>
                 <ResultSummaryCoverageShacl item={item}

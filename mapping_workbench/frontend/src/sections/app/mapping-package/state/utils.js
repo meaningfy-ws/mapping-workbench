@@ -40,7 +40,7 @@ export const getValidationColor = (color) => {
         case 'violation':
             return '#F94144'
         case 'error':
-            return '#F8961E'
+            return '#A0522D'
         case 'warning':
             return '#F9C74F'
         default:
@@ -114,6 +114,7 @@ export const mapShaclResults = (result) => {
     return result.results?.map(e => {
         const resultArray = {}
         resultArray["shacl_suite"] = result.shacl_suites?.[0]?.shacl_suite_id
+        resultArray["validation_element_id"] = e.validation_element_id
         resultArray["short_result_path"] = e.short_result_path
         resultArray["short_source_constraint_component"] = e.short_source_constraint_component
         resultArray["result"] = e.result
@@ -138,7 +139,6 @@ export const mapSparqlResultEntry = (resultEntry) => {
 }
 
 export const mapSparqlResults = (result) => result.map(e => {
-    console.log(e);
     const queryAsArray = e.query?.content.split("\n")
     const values = queryAsArray.slice(0, 3)
     const resultArray = {}
@@ -147,6 +147,7 @@ export const mapSparqlResults = (result) => result.map(e => {
         resultArray[res[0].substring(1)] = res[1]
     })
     resultArray["query"] = queryAsArray.slice(4, queryAsArray.length).join("\n")
+    resultArray["validation_element_id"] = e.validation_element_id
     resultArray["test_suite"] = e.query?.filename
     resultArray["result"] = e.result
     // Object.entries(e.result).forEach(entry => {
@@ -157,6 +158,7 @@ export const mapSparqlResults = (result) => result.map(e => {
     resultArray["fields_covered"] = e.fields_covered
     resultArray["query_result"] = e.query_result
     resultArray["xpath_condition"] = e.query?.cm_rule?.xpath_condition
+    resultArray["xpath_condition_query"] = e.query?.cm_rule?.xpath_condition?.xpath_condition
     resultArray["element_xpath"] = e.query?.cm_rule?.sdk_element_xpath
     resultArray["sdk_element_id"] = e.query?.cm_rule?.sdk_element_id
     resultArray["test_data"] = e.test_data

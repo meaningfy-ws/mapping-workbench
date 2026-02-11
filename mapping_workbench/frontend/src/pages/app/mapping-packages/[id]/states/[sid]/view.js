@@ -9,7 +9,6 @@ import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
-import CircularProgress from "@mui/material/CircularProgress";
 
 import {paths} from 'src/paths';
 import {Seo} from 'src/components/seo';
@@ -20,19 +19,20 @@ import exportPackage from "src/utils/export-mapping-package";
 import {mappingPackagesApi as previousSectionApi} from 'src/api/mapping-packages';
 import {mappingPackageStatesApi as sectionApi} from 'src/api/mapping-packages/states';
 import {mapShaclResults, mapSparqlResults} from 'src/sections/app/mapping-package/state/utils';
+import {DataLoader} from "../../../../../../components/app/loading/data-loader";
 
 const StateDetails =
     dynamic(() => import("src/sections/app/mapping-package/state/state-details"),
-        {loading: () => <Stack alignItems='center'><CircularProgress/></Stack>});
+        {loading: () => <DataLoader/>});
 const XpathValidationReportView =
     dynamic(() => import("src/sections/app/xpath-validation-report/xpath_validation_report_view"),
-        {loading: () => <Stack alignItems='center'><CircularProgress/></Stack>});
+        {loading: () => <DataLoader/>});
 const SparqlValidationReport =
     dynamic(() => import("src/sections/app/sparql-validation-report/sparql_validation_report_view"),
-        {loading: () => <Stack alignItems='center'><CircularProgress/></Stack>});
+        {loading: () => <DataLoader/>});
 const ShaclValidationReport =
     dynamic(() => import("src/sections/app/shacl-validation-report/shacl_validation_report_view"),
-        {loading: () => <Stack alignItems='center'><CircularProgress/></Stack>});
+        {loading: () => <DataLoader/>});
 
 
 const tabs = [
@@ -48,18 +48,38 @@ const Page = () => {
 
     const [item, setItem] = useState({})
     const [validationReportTree, setValidationReportTree] = useState([])
-    const [validationReport, setValidationReport] = useState({})
+    const [validationReport, setValidationReport] = useState({
+        xpath: null,
+        shacl: null,
+        sparql: null
+    })
 
     useEffect(() => {
         if (sid) {
             handleItemsGet(sid);
-            handleValidationReportTreeGet(sid)
-            resultSummaryXPATHGet(sid)
-            resultSummarySPARQLGet(sid)
-            resultSummarySHACLGet(sid)
+            //handleValidationReportTreeGet(sid)
+            resultReportsGet(sid);
+            //resultSummaryXPATHGet(sid);
+            //resultSummarySPARQLGet(sid);
+            //resultSummarySHACLGet(sid);
         }
     }, [sid]);
 
+    const resultReportsGet = (sid) => {
+        sectionApi.getReports(sid)
+            .then(res => {
+                setValidationReport(prev => ({
+                    ...prev,
+                    sparql: mapSparqlResults(res.sparql?.summary ?? []),
+                    xpath: res.xpath && res.xpath.results ? res.xpath.results.map(
+                        e => ({...e, notice_count: e.test_data_xpaths.length})
+                    ) : [],
+                    shacl: mapShaclResults(res.shacl?.summary ?? [])
+                }));
+                setValidationReportTree(res.validation_reports_tree)
+            })
+            .catch(err => console.error(err))
+    }
 
     const resultSummarySPARQLGet = (sid) => {
         sectionApi.getSparqlReports(sid)
@@ -77,7 +97,6 @@ const Page = () => {
             })
             .catch(err => console.error(err))
     }
-
 
     const resultSummarySHACLGet = (sid) => {
         sectionApi.getShaclReports(sid)

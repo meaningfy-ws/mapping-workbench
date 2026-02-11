@@ -11,6 +11,10 @@ import {useHighlighterTheme} from "src/hooks/use-highlighter-theme";
 import TablePagination from 'src/sections/components/table-pagination-pages';
 import {LocalHighlighter} from 'src/sections/components/local-highlighter';
 import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filter-header";
+import {useRouter} from "../../../hooks/use-router";
+import {useEffect, useState} from "react";
+import CommentsIcon from "@mui/icons-material/CommentBankOutlined";
+import ValidationCommentView from "../mapping-package/state/components/vcomment-view";
 
 
 export const ListTableFile = (props) => {
@@ -29,6 +33,23 @@ export const ListTableFile = (props) => {
         sectionApi
     } = props;
 
+    const router = useRouter();
+    const {id, sid, tab} = router.query;
+
+    const [existingComments, setExistingComments] = useState({})
+    const getExistingValidationComments = () => {
+        sectionApi.getExistingValidationComments(sid, items.map(item => item.validation_element_id))
+            .then(res => {
+                setExistingComments(res)
+            })
+            .catch(err => {
+                console.error(err);
+            })
+    }
+    useEffect(() => {
+        (items.length > 0) && getExistingValidationComments();
+    }, [items]);
+
     const syntaxHighlighterTheme = useHighlighterTheme()
 
     return (
@@ -45,6 +66,9 @@ export const ListTableFile = (props) => {
                 <Table sx={{minWidth: 1200}}>
                     <TableHead>
                         <TableRow>
+                            <TableCell align="center">
+                                <CommentsIcon/>
+                            </TableCell>
                             <TableCell>
                                 <TableFilterHeader sort={sort}
                                                    onSort={onSort}
@@ -91,6 +115,14 @@ export const ListTableFile = (props) => {
                         {items?.map((item, key) => {
                             return (
                                 <TableRow key={key}>
+                                    <TableCell align="center">
+                                        <ValidationCommentView
+                                            state_id={sid}
+                                            validation_element_id={item.validation_element_id}
+                                            comments_count={existingComments[item.validation_element_id]}
+                                            handleUpdate={getExistingValidationComments}
+                                        />
+                                    </TableCell>
                                     <TableCell width="25%">
                                         <LocalHighlighter language='turtle'
                                                           text={item.short_focus_node}

@@ -1,4 +1,4 @@
-import json
+import orjson
 from hashlib import sha1
 from typing import Type, Optional
 
@@ -31,7 +31,7 @@ async def load_object_state(state_id: ObjectId, object_class: Type[ObjectStateTy
 
     if state_content_dump is None:
         return None
-    return object_class(**json.loads(state_content_dump))
+    return object_class(**orjson.loads(state_content_dump))
 
 
 async def delete_object_state(state_id: ObjectId):

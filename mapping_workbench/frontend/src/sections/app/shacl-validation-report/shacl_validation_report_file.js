@@ -21,7 +21,7 @@ const ShaclFileReport = ({sid, suiteId, testId}) => {
 
     const handleValidationReportsGet = (sid, suiteId, testId) => {
         setDataState({load: true, error: false})
-        sectionApi.getSparqlReportsFile(sid, suiteId, testId)
+        sectionApi.getShaclReportsFile(sid, suiteId, testId)
             .then(res => {
                 setValidationReport(mapShaclFileResults(res.results?.[0]?.results?.[0]?.results) ?? [])
                 setValidationResult(mapShaclFileStates(res.results?.[0]) ?? []);

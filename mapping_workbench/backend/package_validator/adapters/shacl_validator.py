@@ -5,6 +5,7 @@ import rdflib
 from pydantic import validate_call
 from pyshacl import validate
 
+from mapping_workbench.backend.core.services.io import unique_hash
 from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.ontology.services.terms import get_prefixed_ns_term
 from mapping_workbench.backend.ontology_suite.models.ontology_file_resource import OntologyFileResource
@@ -75,9 +76,10 @@ class SHACLValidator(TestDataValidator):
                 js=False,
                 debug=False,
 
-                #FIXME: For the moment without inference param until we figure out how to use it correctly
-                #inference="rdfs" if len(shacl_files) > 0 else None
+                # FIXME: For the moment without inference param until we figure out how to use it correctly
+                # inference="rdfs" if len(shacl_files) > 0 else None
             )
+
             shacl_validation_result.conforms = conforms or False
             result_test_data = SHACLQueryTestDataEntry(
                 test_data_suite_oid=(self.test_data_suite.oid if self.test_data_suite else None),
@@ -137,6 +139,7 @@ class SHACLValidator(TestDataValidator):
                             ns_definitions=self.ns_definitions
                         )
                         shacl_result.short_source_constraint_component = shacl_result.binding.short_source_constraint_component
+
                     shacl_refined_result = None
                     if shacl_result.binding.result_severity.endswith("#Violation"):
                         shacl_refined_result = SHACLQueryRefinedResultType.VIOLATION.value
@@ -148,6 +151,19 @@ class SHACLValidator(TestDataValidator):
                         shacl_refined_result = SHACLQueryRefinedResultType.VALID.value
 
                     shacl_result.result = shacl_refined_result
+
+                    shacl_result.validation_element_id = unique_hash(
+                        result_test_data.test_data_id,
+                        shacl_result.source_constraint_component,
+                        shacl_result.result_path
+                    )
+
+                    shacl_result.binding.validation_element_id = unique_hash(
+                        shacl_result.binding.focus_node,
+                        shacl_result.binding.result_path,
+                        shacl_result.binding.source_constraint_component
+                    )
+
                     results.append(shacl_result)
                 shacl_validation_result.results = results
 

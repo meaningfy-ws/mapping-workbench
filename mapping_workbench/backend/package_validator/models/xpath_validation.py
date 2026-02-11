@@ -22,6 +22,7 @@ class XPathAssertionCondition(BaseModel):
     meets_xpath_condition: Optional[bool] = True
 
 class XPathAssertion(CMRuleSDKElement):
+    validation_element_id: Optional[str] = None
     test_data_xpaths: Optional[List[XPathAssertionTestDataEntry]] = None
     is_covered: Optional[bool] = False
     xpath_conditions: Optional[List[XPathAssertionCondition]] = None

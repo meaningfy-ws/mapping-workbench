@@ -1,5 +1,12 @@
 import {ACTION, SectionApi} from "src/api/section";
 import {appApi} from "src/api/app";
+import {sessionApi} from "../../session";
+
+export const COMMENT_PRIORITY = {
+    HIGH: 'high',
+    NORMAL: 'normal',
+    LOW: 'low'
+};
 
 export class MappingPackageStatesApi extends SectionApi {
 
@@ -68,6 +75,12 @@ export class MappingPackageStatesApi extends SectionApi {
         return Promise.resolve(data);
     }
 
+    async getReports(sid) {
+        const endpoint = this.paths['reports']
+        const data = await appApi.get(endpoint(sid));
+        return Promise.resolve(data);
+    }
+
     async getSparqlReports(sid) {
         const endpoint = this.paths['sparql_reports']
         const data = await appApi.get(endpoint(sid));
@@ -99,7 +112,7 @@ export class MappingPackageStatesApi extends SectionApi {
         return Promise.resolve(data);
     }
 
-    async getSparqlReportsFile(sid, suiteId, testId) {
+    async getShaclReportsFile(sid, suiteId, testId) {
         const endpoint = this.paths['shacl_reports_test']
         const data = await appApi.get(endpoint(sid, suiteId, testId));
         return Promise.resolve(data);
@@ -118,6 +131,40 @@ export class MappingPackageStatesApi extends SectionApi {
          return appApi.get(endpoint, params, headers, {
             responseType: 'blob'
         });
+    }
+
+    async getComments(sid, vid) {
+        let endpoint = this.paths["validation_comments"]
+            .replace(':sid', sid)
+            .replace(':vid', vid);
+        let params = {'project_id': sessionApi.getSessionProject()}
+        return appApi.get(endpoint, params);
+    }
+
+    async getExistingValidationComments(sid, vids) {
+        let endpoint = this.paths["existing_validation_comments"]
+            .replace(':sid', sid);
+        let data = {}
+        data['validation_element_ids'] = vids
+        let params = {'project_id': sessionApi.getSessionProject()}
+        return appApi.post(endpoint, data, params);
+    }
+
+    async addComment(sid, vid, comment, priority, use_in_state, validation_context) {
+        let endpoint = this.paths["validation_comments"]
+            .replace(':sid', sid)
+            .replace(':vid', vid);
+        let data = {}
+        data['comment'] = comment
+        data['priority'] = priority
+        data['use_in_state'] = use_in_state
+        data['context'] = validation_context
+        return appApi.post(endpoint, data, {'project_id': sessionApi.getSessionProject()});
+    }
+
+    async deleteComment(id) {
+        let endpoint = this.paths.validation_comment(id);
+        return appApi.delete(endpoint);
     }
 }
 

@@ -36,6 +36,7 @@ class SPARQLQueryResult(ValidationSPARQLQuery, BaseModel):
     """
     Stores SPARQL query execution result
     """
+    validation_element_id: Optional[str] = None
     result: Optional[SPARQLQueryRefinedResultType] = None
     query_result: Optional[bool] = None
     fields_covered: Optional[bool] = True
@@ -63,6 +64,7 @@ class SPARQLValidationSummaryResult(BaseModel):
 
 
 class SPARQLValidationSummary(ValidationSPARQLQuery, BaseModel):
+    validation_element_id: Optional[str] = None
     result: Optional[SPARQLValidationSummaryResult] = SPARQLValidationSummaryResult()
 
 

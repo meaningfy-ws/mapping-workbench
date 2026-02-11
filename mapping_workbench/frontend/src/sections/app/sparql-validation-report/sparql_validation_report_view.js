@@ -1,14 +1,12 @@
 import {useRouter} from 'next/router';
-
-import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Unstable_Grid2';
-import CircularProgress from '@mui/material/CircularProgress';
 
 import FileList from '../mapping-package/state/file-list';
 import {useFileNavigation} from '../mapping-package/state/utils';
 import SparqlFileReport from "./sparql_validation_report_file";
 import SparqlTestDatasetReport from "./sparql_validation_report_test_dataset";
 import SparqlPackageStateReport from "./sparql_validation_report_package_state";
+import {DataLoader} from "../../../components/app/loading/data-loader";
 
 
 const SparqlValidationReportView = ({reportTree, validationReport, handleExport}) => {
@@ -22,7 +20,7 @@ const SparqlValidationReportView = ({reportTree, validationReport, handleExport}
         handleSetTestAndPackage
     } = useFileNavigation(reportTree, 'sparql', packageid, datasetid)
 
-    if (!validationReport) return <Stack alignItems='center'><CircularProgress/></Stack>
+    if (!validationReport) return <DataLoader />
 
     return (
         <Grid container

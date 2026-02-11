@@ -313,6 +313,7 @@ export const apiPaths = {
         xpath_reports: (sid) => `/package_validator/xpath/state/${sid}`,
         xpath_reports_suite: (sid, suiteId) => `/package_validator/xpath/state/${sid}/suite/${suiteId}`,
         xpath_reports_test: (sid, suiteId, testId) => `/package_validator/xpath/state/${sid}/suite/${suiteId}/test/${testId}`,
+        reports: (sid) => `/package_validator/reports/state/${sid}`,
         sparql_reports: (sid) => `/package_validator/sparql/state/${sid}`,
         sparql_reports_suite: (sid, suiteId) => `/package_validator/sparql/state/${sid}/suite/${suiteId}`,
         sparql_reports_test: (sid, suiteId, testId) => `/package_validator/sparql/state/${sid}/suite/${suiteId}/test/${testId}`,
@@ -320,7 +321,11 @@ export const apiPaths = {
         shacl_reports_suite: (sid, suiteId) => `/package_validator/shacl/state/${sid}/suite/${suiteId}`,
         shacl_reports_test: (sid, suiteId, testId) => `/package_validator/shacl/state/${sid}/suite/${suiteId}/test/${testId}`,
 
-        validation_report_files: '/package_exporter/get_validation_report_files'
+        validation_report_files: '/package_exporter/get_validation_report_files',
+
+        validation_comments: '/package_validator/:sid/:vid/validation_comments',
+        validation_comment: (id) => `/package_validator/validation_comments/${id}`,
+        existing_validation_comments: '/package_validator/:sid/validation_comments/exists',
     },
 
     conceptual_mapping_rules: {
