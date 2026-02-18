@@ -42,7 +42,9 @@ const SparqlFileReport = ({sid, suiteId, testId, handleExport}) => {
                 setDataState({load: false, error: true})
             })
     }
-    const itemsSearch = useItemsSearch(results, sectionApi, [], {result: ''});
+    const itemsSearch = useItemsSearch(results, sectionApi, [], {result: ''}, null,  {
+        "nb_comments": "desc"
+    });
 
     const handleResultFilterChange = e => itemsSearch.handleFiltersChange({result: e.target.value})
 
@@ -83,6 +85,8 @@ const SparqlFileReport = ({sid, suiteId, testId, handleExport}) => {
                             filters={itemsSearch.state.filters}
                             sectionApi={sectionApi}
                             isResultSortable={false}
+                            updateItems={setValidationReport}
+                            listItems={itemsSearch.filteredItems}
                         />
                     </TableLoadWrapper>
                 </Paper>

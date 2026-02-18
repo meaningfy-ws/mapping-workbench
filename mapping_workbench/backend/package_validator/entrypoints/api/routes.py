@@ -6,8 +6,8 @@ from fastapi import APIRouter, Depends, status
 
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageStateGate, MappingPackageState, \
-    MappingPackageValidationTree
-from mapping_workbench.backend.mapping_package.services.api import get_mapping_package_state
+    MappingPackageValidationTree, MappingPackage
+from mapping_workbench.backend.mapping_package.services.api import get_mapping_package_state, get_mapping_package
 from mapping_workbench.backend.mapping_package.services.data import get_specific_mapping_package_state
 from mapping_workbench.backend.package_validator.models.shacl_validation import SHACLTestDataValidationResult
 from mapping_workbench.backend.package_validator.models.sparql_validation import SPARQLTestDataValidationResult
@@ -234,7 +234,7 @@ async def route_get_validation_comments(
     status_code=status.HTTP_201_CREATED
 )
 async def route_add_validation_comment(
-        state_id: str,
+        state_id: PydanticObjectId,
         validation_element_id: str,
         project_id: PydanticObjectId,
         comment_data: ValidationCommentIn,
@@ -252,11 +252,19 @@ async def route_add_validation_comment(
 
     if comment_data.context:
         vcomment.context = comment_data.context
+        mapping_package: MappingPackage = await get_mapping_package(vcomment.context.package_id)
+        vcomment.context.package_name = mapping_package.identifier
+        vcomment.context.state_id = state_id
         context_entity_id = vcomment.context.context_entity.id
         if context_entity_id:
             context_entity_name = None
             if vcomment.context.report_context == ValidationReportContext.DATA:
                 entity: TestDataFileResource = await get_test_data_file_resource(context_entity_id)
+                if vcomment.context.parents:
+                    for parent in vcomment.context.parents:
+                        if parent.context_entity and parent.context_entity.id:
+                            parent_entity: TestDataSuite = await get_test_data_suite(parent.context_entity.id)
+                            parent.context_entity.name = parent_entity.title if parent_entity else None
                 context_entity_name = entity.title
             elif vcomment.context.report_context == ValidationReportContext.SUITE:
                 entity: TestDataSuite = await get_test_data_suite(context_entity_id)

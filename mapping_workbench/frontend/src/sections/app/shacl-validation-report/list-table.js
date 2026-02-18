@@ -23,6 +23,7 @@ import {TableFilterHeader} from "src/layouts/app/table-filter-header/table-filte
 import {useRouter} from "../../../hooks/use-router";
 import CommentsIcon from "@mui/icons-material/CommentBankOutlined";
 import ValidationCommentView from "../mapping-package/state/components/vcomment-view";
+import {prepareExistingValidationComments} from "../mapping-package/state/validation/render-list-comments";
 
 export const ListTable = (props) => {
     const [descriptionDialog, setDescriptionDialog] = useState({open: false, title: "", text: ""})
@@ -41,25 +42,22 @@ export const ListTable = (props) => {
         onFilter,
         resultFilter,
         sectionApi,
-        handleSelectFile
+        handleSelectFile,
+        updateItems = null,
+        listItems = []
     } = props;
 
     const router = useRouter();
     const {id, sid, tab} = router.query;
 
     const [existingComments, setExistingComments] = useState({})
+    const [existingCommentsReady, setExistingCommentsReady] = useState(false)
     const getExistingValidationComments = () => {
-        sectionApi.getExistingValidationComments(sid, items.map(item => item.validation_element_id))
-            .then(res => {
-                setExistingComments(res)
-            })
-            .catch(err => {
-                console.error(err);
-            })
+        prepareExistingValidationComments(sectionApi, sid, listItems, setExistingComments, setExistingCommentsReady, updateItems);
     }
     useEffect(() => {
-        (items.length > 0) && getExistingValidationComments();
-    }, [items]);
+        (!existingCommentsReady && listItems.length > 0) && getExistingValidationComments();
+    }, [listItems, existingCommentsReady]);
 
     const handleClose = () => setDescriptionDialog(e => ({...e, open: false}));
 
@@ -86,7 +84,10 @@ export const ListTable = (props) => {
                         <TableHead>
                             <TableRow>
                                 <TableCell align="center">
-                                    <CommentsIcon/>
+                                    <SorterHeader fieldName="nb_comments"
+                                                  title={<CommentsIcon/>}
+                                                  defaultSortDirection="desc"
+                                    />
                                 </TableCell>
                                 <TableCell>
                                     <TableFilterHeader sort={sort}

@@ -32,6 +32,7 @@ const SparqlTestDatasetReport = (
     const [showMatchedXPATHsOnly, setShowMatchedXPATHsOnly] = useState(showSessMatchedXPATHsOnly)
     const [filteredItems, setFilteredItems] = useState([]);
     const [results, setResults] = useState([]);
+
     useEffect(() => {
             const fResults = filterXPATHFieldsCoveredResults(validationReport, showMatchedXPATHsOnly);
             setResults(fResults);
@@ -69,7 +70,9 @@ const SparqlTestDatasetReport = (
             })
     }
 
-    const itemsSearch = useItemsSearch(filteredItems, sectionApi);
+    const itemsSearch = useItemsSearch(filteredItems, sectionApi, [], {}, null, {
+        "nb_comments": "desc"
+    });
 
     return (
         <>
@@ -110,6 +113,8 @@ const SparqlTestDatasetReport = (
                             resultFilter={resultFilter}
                             sectionApi={sectionApi}
                             handleSelectFile={handleSelectFile}
+                            updateItems={setValidationReport}
+                            listItems={itemsSearch.filteredItems}
                         />
                     </TableLoadWrapper>
                 </Paper>

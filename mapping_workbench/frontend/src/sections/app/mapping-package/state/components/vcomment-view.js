@@ -5,6 +5,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import {ValidationComments, validationCommentSeverity} from "./vcomment";
+import Badge from "@mui/material/Badge";
 
 const ValidationCommentView = (props) => {
     const {state_id, validation_element_id, comments_count, handleUpdate, ...other} = props;
@@ -21,14 +22,18 @@ const ValidationCommentView = (props) => {
             />
         })
     }
-
+    const iconColor = validationCommentSeverity(comments_count?.latest_comment);
+    const nb_comments = comments_count && comments_count.count || 0;
     return (
         <>
             <Button onClick={openValidationCommentsDialog}
-                    title={(comments_count && comments_count.count || 0) + " comment(s)"}>
-                <CommentIcon
-                    color={comments_count && comments_count.latest_comment ? validationCommentSeverity(comments_count.latest_comment) : 'action'}
-                />
+                    title={nb_comments + " comment(s)"}>
+                {comments_count?.latest_comment && <Badge badgeContent={nb_comments} color={iconColor}
+                       overlap="circular"
+                       anchorOrigin={{vertical: 'top', horizontal: 'right'}}>
+                    <CommentIcon color={iconColor}/>
+                </Badge>}
+                {!comments_count?.latest_comment && <CommentIcon color='action'/>}
             </Button>
             <Dialog
                 open={commentsDialog.open}

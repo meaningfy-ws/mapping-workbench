@@ -20,7 +20,8 @@ import Checkbox from "@mui/material/Checkbox";
 import Chip from "@mui/material/Chip";
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
-import {useRouter} from "../../../../../hooks/use-router";
+import {useRouter} from "src/hooks/use-router";
+import ValidationCommentContext from "./vcomment-context";
 
 export const validationCommentSeverity = (comment) => {
     switch (comment?.priority) {
@@ -68,6 +69,7 @@ const ValidationComment = (props) => {
                         size="small"
                     />
                 </Box>
+                <ValidationCommentContext comment={comment} />
                 <IconButton
                     onClick={(e) => handleDeleteComment(comment._id)}
                     size="small"
@@ -104,6 +106,7 @@ export const ValidationComments = (props) => {
 
     const handleDeleteComment = () => {
         getComments()
+        handleUpdate()
     }
 
     const formik = useFormik({
@@ -119,15 +122,29 @@ export const ValidationComments = (props) => {
         }),
         onSubmit: (values, helpers) => {
             const toastId = toastLoad('Adding comment...')
+            let comment_context_parents = null
+            if (datasetid !== null) {
+                comment_context_parents = [
+                    {
+                        report_context: 'suite',
+                        context_entity: {
+                            id: packageid,
+                            name: null
+                        }
+                    }
+                ]
+            }
             mappingPackageStatesApi.addComment(
                 state_id, validation_element_id, values.comment, values.priority, values.use_in_state,
                 {
+                    package_id: id,
                     report_type: tab,
                     report_context: datasetid !== null ? 'data' : (packageid !== null ? 'suite' : 'state'),
                     context_entity: {
                         id: datasetid || packageid || sid,
                         name: null
-                    }
+                    },
+                    parents: comment_context_parents
                 }
             )
                 .then(res => {
