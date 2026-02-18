@@ -49,7 +49,7 @@ async def route_get_mapping_package_state_validation_reports(
     validation = state.validation.model_dump()
     validation["validation_reports_tree"] = await generate_validation_reports_tree(state, mapping_package_state.id)
     validation_state_res = MappingPackageValidationState(
-        test_data_suites=state.test_data_suites
+        #test_data_suites=state.test_data_suites
     ).model_dump()
 
     validation_state_res['validation'] = validation
