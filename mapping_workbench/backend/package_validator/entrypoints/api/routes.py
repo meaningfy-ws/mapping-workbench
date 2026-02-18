@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, status
 
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageStateGate, MappingPackageState, \
-    MappingPackageValidationTree, MappingPackage
+    MappingPackageValidationTree, MappingPackage, MappingPackageValidationState
 from mapping_workbench.backend.mapping_package.services.api import get_mapping_package_state, get_mapping_package
 from mapping_workbench.backend.mapping_package.services.data import get_specific_mapping_package_state
 from mapping_workbench.backend.package_validator.models.shacl_validation import SHACLTestDataValidationResult
@@ -45,9 +45,15 @@ async def route_get_mapping_package_state_validation_reports(
         mapping_package_state: MappingPackageStateGate = Depends(get_mapping_package_state)
 ):
     state: MappingPackageState = await get_specific_mapping_package_state(mapping_package_state.id)
+
     validation = state.validation.model_dump()
     validation["validation_reports_tree"] = await generate_validation_reports_tree(state, mapping_package_state.id)
-    return validation
+    validation_state_res = MappingPackageValidationState(
+        test_data_suites=state.test_data_suites
+    ).model_dump()
+
+    validation_state_res['validation'] = validation
+    return validation_state_res
 
 
 @router.get(
