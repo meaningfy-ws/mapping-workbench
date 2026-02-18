@@ -167,6 +167,7 @@ export class MappingPackageStatesApi extends SectionApi {
         }
         const endpoint = this.paths['reports']
         const validationData = await appApi.get(endpoint(sid));
+        console.log("K ::", validationData);
         await this.setValidationReportInCache(sid, validationData);
         return Promise.resolve(validationData.validation);
     }
