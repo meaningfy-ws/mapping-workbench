@@ -319,7 +319,7 @@ export class MappingPackageStatesApi extends SectionApi {
 
     async setValidationReportInCache(stateId, value) {
         // Store as string for safety
-        await this.setInCache(stateId, JSON.stringify(value), DB_STORE.VALIDATION_REPORTS,
+        await this.setInCache(stateId, value, DB_STORE.VALIDATION_REPORTS,
             'Not enough storage space available for this report. Remove older States.'
         )
     }
@@ -330,8 +330,7 @@ export class MappingPackageStatesApi extends SectionApi {
     }
 
     async getValidationReportFromCache(stateId) {
-        const res = await this.getFromCache(stateId, DB_STORE.VALIDATION_REPORTS);
-        return res ? JSON.parse(res) : null;
+        return await this.getFromCache(stateId, DB_STORE.VALIDATION_REPORTS);
     }
 
     async getValidationReportDataFromCache(stateId) {
