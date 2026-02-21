@@ -1,12 +1,12 @@
 import {useState} from "react";
 
-const useItemsSearch = (items, sectionApi, searchColumns, newFilters, sort) => {
+const useItemsSearch = (items, sectionApi, searchColumns, newFilters, sort, defaultSortDirections = {}) => {
     const [state, setState] = useState({
         search: [],
         filters: newFilters ?? {},
         sort: sort ?? {
-            column: "",
-            direction: "desc"
+            column: '',
+            direction: ''
         },
         page: sectionApi.DEFAULT_PAGE,
         rowsPerPage: sectionApi.DEFAULT_ROWS_PER_PAGE
@@ -29,7 +29,7 @@ const useItemsSearch = (items, sectionApi, searchColumns, newFilters, sort) => {
         let returnItem = item;
         Object.entries(filters).forEach(filter => {
             const [key, value] = filter
-            if (value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value == "true"))
+            if (value !== "" && value !== undefined && typeof item[key] === "boolean" && item[key] !== (value === "true"))
                 returnItem = null
             if (value !== "" && value !== undefined && typeof item[key] === "string" && !item[key].toLowerCase().includes(value.toLowerCase()))
                 returnItem = null
@@ -80,15 +80,26 @@ const useItemsSearch = (items, sectionApi, searchColumns, newFilters, sort) => {
     }
 
     const handleSort = (column) => {
-        setState(prevState => ({
-            ...prevState, sort: {
-                column,
-                direction: prevState.sort.column === column && prevState.sort.direction === "asc" ? "desc" : "asc"
+        setState(prevState => {
+            const isSameColumn = prevState.sort.column === column;
+            let direction;
+            if (isSameColumn) {
+                direction = prevState.sort.direction === "asc" ? "desc" : "asc";
+            } else {
+                direction = defaultSortDirections[column] || "asc";
             }
-        }))
-    }
+            return {
+                ...prevState,
+                sort: {
+                    column,
+                    direction
+                }
+            };
+        });
+    };
+
     const handleRowsPerPageChange = (event) => {
-        setState(prevState => ({...prevState, rowsPerPage: parseInt(event.target.value, 10)}));
+        setState(prevState => ({...prevState, rowsPerPage: parseInt(event.target.value, 10), page: 0}));
     }
 
     return {
@@ -100,6 +111,7 @@ const useItemsSearch = (items, sectionApi, searchColumns, newFilters, sort) => {
         pagedItems,
         count: filteredItems.length,
         state,
+        filteredItems,
         handleFilterResultChange
     };
 };

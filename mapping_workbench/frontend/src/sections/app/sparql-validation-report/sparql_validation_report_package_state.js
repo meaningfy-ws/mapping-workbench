@@ -22,8 +22,15 @@ const SparqlValidationReport = (
     const [showMatchedXPATHsOnly, setShowMatchedXPATHsOnly] = useState(showSessMatchedXPATHsOnly)
     const [filteredItems, setFilteredItems] = useState([]);
     const [results, setResults] = useState([]);
+
+    const [listItems, setListItems] = useState(validationReport);
+
     useEffect(() => {
-            const fResults = filterXPATHFieldsCoveredResults(validationReport, showMatchedXPATHsOnly);
+        setListItems(validationReport);
+    }, [validationReport]);
+
+    useEffect(() => {
+            const fResults = filterXPATHFieldsCoveredResults(listItems, showMatchedXPATHsOnly);
             setResults(fResults);
             setFilteredItems(
                 fResults.reduce((acc, item) => {
@@ -34,10 +41,12 @@ const SparqlValidationReport = (
                     return acc;
                 }, [])
             )
-        }, [showMatchedXPATHsOnly, validationReport, resultFilter]
+        }, [showMatchedXPATHsOnly, listItems, resultFilter]
     )
 
-    const itemsSearch = useItemsSearch(filteredItems, sectionApi, [], {result: ''});
+    const itemsSearch = useItemsSearch(filteredItems, sectionApi, [], {result: ''}, null, {
+        "nb_comments": "desc"
+    });
     const handleResultFilterChange = e => {
         setResultFilter(e.target.value);
         itemsSearch.handleFilterResultChange();
@@ -79,6 +88,8 @@ const SparqlValidationReport = (
                         resultFilter={resultFilter}
                         sectionApi={sectionApi}
                         handleSelectFile={handleSelectFile}
+                        updateItems={setListItems}
+                        listItems={itemsSearch.filteredItems}
                     />
                 </Paper>
             </Grid>

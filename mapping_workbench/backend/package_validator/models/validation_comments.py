@@ -31,14 +31,21 @@ class ValidationReportContextEntity(BaseModel):
     name: Optional[str]
 
 
-class ValidationCommentContext(BaseModel):
-    report_type: Optional[ValidationReportType] = None
+class ValidationReportContextEntityData(BaseModel):
     report_context: Optional[ValidationReportContext] = None
     context_entity: Optional[ValidationReportContextEntity] = None
 
 
+class ValidationCommentContext(ValidationReportContextEntityData):
+    package_id: Optional[PydanticObjectId] = None
+    package_name: Optional[str] = None
+    state_id: Optional[PydanticObjectId] = None
+    report_type: Optional[ValidationReportType] = None
+    parents: Optional[List[ValidationReportContextEntityData]] = None
+
+
 class ValidationComment(BaseProjectResourceEntity):
-    state_id: Optional[str] = None
+    state_id: Optional[PydanticObjectId] = None
     validation_element_id: str
     title: Optional[str] = None
     context: Optional[ValidationCommentContext] = None
@@ -54,7 +61,7 @@ class ValidationCommentOut(BaseModel):
     id: PydanticObjectId = Field(..., alias='_id')
     title: Optional[str] = None
     comment: str
-    state_id: Optional[str] = None
+    state_id: Optional[PydanticObjectId] = None
     context: Optional[ValidationCommentContext] = None
     # created_by: Optional[UserRef] = None
     priority: ValidationCommentPriority

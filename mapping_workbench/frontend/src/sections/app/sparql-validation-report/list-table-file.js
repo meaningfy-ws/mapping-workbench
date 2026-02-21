@@ -25,6 +25,7 @@ import {useRouter} from "../../../hooks/use-router";
 import {useEffect, useState} from "react";
 import CommentsIcon from "@mui/icons-material/CommentBankOutlined";
 import ValidationCommentView from "../mapping-package/state/components/vcomment-view";
+import {prepareExistingValidationComments} from "../mapping-package/state/validation/render-list-comments";
 
 const Condition = ({text, value, na = false}) => {
     const color = value ? (na ? 'black' : 'green') : 'red'
@@ -45,32 +46,28 @@ export const ListTableFile = (props) => {
         filters,
         onFilter,
         sectionApi,
-        isResultSortable = true
+        isResultSortable = true,
+        updateItems = null,
+        listItems = []
     } = props;
 
     const router = useRouter();
     const {id, sid, tab} = router.query;
 
     const [existingComments, setExistingComments] = useState({})
+    const [existingCommentsReady, setExistingCommentsReady] = useState(false)
     const getExistingValidationComments = () => {
-        sectionApi.getExistingValidationComments(sid, items.map(item => item.validation_element_id))
-            .then(res => {
-                setExistingComments(res)
-            })
-            .catch(err => {
-                console.error(err);
-            })
+        prepareExistingValidationComments(sectionApi, sid, listItems, setExistingComments, setExistingCommentsReady, updateItems);
     }
     useEffect(() => {
-        (items.length > 0) && getExistingValidationComments();
-    }, [items]);
+        (!existingCommentsReady && listItems.length > 0) && getExistingValidationComments();
+    }, [listItems, existingCommentsReady]);
 
     const syntaxHighlighterTheme = useHighlighterTheme()
 
     const SorterHeader = (props) => {
-        const direction = props.fieldName === sort.column && sort.direction === 'desc' ? 'asc' : 'desc';
         return (
-            <TableSorterHeader sort={{direction, column: sort.column}}
+            <TableSorterHeader sort={sort}
                                onSort={onSort}
                                {...props}
             />
@@ -94,7 +91,10 @@ export const ListTableFile = (props) => {
                     <TableHead>
                         <TableRow>
                             <TableCell align="center">
-                                <CommentsIcon/>
+                                <SorterHeader fieldName="nb_comments"
+                                              title={<CommentsIcon/>}
+                                              defaultSortDirection="desc"
+                                />
                             </TableCell>
                             <TableCell width="15%">
                                 <TableFilterHeader sort={sort}

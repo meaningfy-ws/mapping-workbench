@@ -9,6 +9,7 @@ import Collapse from "@mui/material/Collapse";
 import Button from "@mui/material/Button";
 import CancelIcon from '@mui/icons-material/Cancel';
 import WarningIcon from '@mui/icons-material/Warning';
+import ErrorIcon from '@mui/icons-material/Error';
 
 const defaultDuration = 60000
 

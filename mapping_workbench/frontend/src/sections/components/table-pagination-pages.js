@@ -26,9 +26,8 @@ const TablePagination = ({
         onRowsPerPageChange(event)
         setRppAnchor(null)
     }
-
     const startPagedItems = rowsPerPage * page + 1
-    const endPagedItems = rowsPerPage * (page + 1)
+    const endPagedItems = rowsPerPage === -1 ? count : Math.min(rowsPerPage * (page + 1), count)
 
     return (
         <>
@@ -42,7 +41,7 @@ const TablePagination = ({
                     <Typography sx={{
                         fontSize: 14,
                         mb: .1
-                    }}>{`Showing ${startPagedItems}-${endPagedItems > count ? count : endPagedItems} of ${count} items`}</Typography>}
+                    }}>{`Showing ${startPagedItems}-${endPagedItems} of ${count} items`}</Typography>}
                 <Tooltip title='rows per page'>
                     <Button endIcon={<KeyboardArrowDownIcon/>}
                             onClick={e => setRppAnchor(e.target)}>

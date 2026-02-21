@@ -28,6 +28,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import {MenuActionButton} from 'src/components/menu-actions';
 import {paths} from 'src/paths';
 import {toastLoad, toastSuccess} from "../../../../components/app-toast";
+import ArchiveIcon from "@mui/icons-material/Archive";
 
 export const getValidationColor = (color) => {
     switch (color) {
@@ -210,16 +211,22 @@ export const ResultFilter = ({currentState, onStateChange, values, count}) => {
     </FormControl>)
 }
 
-export const useFileNavigation = (reportTree, tab, packageId, datasetId) => {
+export const useFileNavigation = (reportTree, tab, packageId, datasetId, state_id = null, mapping_package_id = null) => {
     const router = useRouter()
     const {id, sid} = router.query
+    if (!state_id) {
+        state_id = sid;
+    }
+    if (!mapping_package_id) {
+        mapping_package_id = id;
+    }
 
     const handleSetTestAndPackage = (packageid, datasetid, openInNewWindow = false) => {
         let others = {}
         if (packageid) others = {packageid}
         if (datasetid) others = {...others, datasetid}
         const query = {tab, ...others}
-        const pathname = paths.app.mapping_packages.states.view(id, sid)
+        const pathname = paths.app.mapping_packages.states.view(mapping_package_id, state_id)
 
         if (openInNewWindow && typeof window !== 'undefined') {
             const url = new URL(window.location.origin + pathname);
@@ -308,7 +315,7 @@ export const CopyDetailsButton = ({notice}) => {
         </Menu></>)
 }
 
-export const GoToButton = ({notice, handleSelect}) => {
+export const GoToButton = ({notice, handleSelect, size="inherit"}) => {
     const [showMenu, setShowMenu] = useState(undefined)
     const [clipBoard, setClipBoard] = useState(false)
 
@@ -320,26 +327,31 @@ export const GoToButton = ({notice, handleSelect}) => {
     return (<>
         <Tooltip title='Go To options...'>
             <IconButton color={clipBoard ? 'primary' : 'default'}
-                        onClick={onShowMenu}><OpenInNewIcon/></IconButton>
+                        onClick={onShowMenu}><OpenInNewIcon fontSize={size}/></IconButton>
         </Tooltip>
         <Menu open={!!showMenu}
               onClose={() => setShowMenu(undefined)}
               anchorEl={showMenu}>
-            <MenuActionButton
+            {notice.state_oid && <MenuActionButton
+                title='Go To State Report'
+                icon={<ArchiveIcon/>}
+                onClick={() => handleSelect(null, null, true)}
+            />}
+            {notice.test_data_suite_oid && <MenuActionButton
                 title='Go To Test Suite Report'
                 icon={<TestSuiteReportIcon/>}
                 onClick={() => handleSelect(notice.test_data_suite_oid, null, true)}
-            />
-            <MenuActionButton
+            />}
+            {notice.test_data_oid && <MenuActionButton
                 title='Go To Test Data Report'
                 icon={<TestDataReportIcon/>}
                 onClick={() => handleSelect(notice.test_data_suite_oid, notice.test_data_oid, true)}
-            />
-            <MenuActionButton
+            />}
+            {notice.test_data_oid && <MenuActionButton
                 title='Go To File Resource'
                 icon={<FileResourceIcon/>}
                 onClick={() => window.open(paths.app.test_data_suites.resource_manager.edit.replace('[id]', notice.test_data_suite_oid).replace('[fid]', notice.test_data_oid), "_blank", "noreferrer")}
-            />
+            />}
             {clipBoard && <Stack mt={2} alignItems='center'>Copied</Stack>}
         </Menu></>)
 }

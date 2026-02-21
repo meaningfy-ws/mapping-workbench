@@ -68,6 +68,7 @@ class MappingPackageResourcesMetadata(BaseModel):
     has_test_data: bool = False
     has_mappings: bool = False
 
+
 class MappingPackageOut(BaseProjectResourceEntityOutSchema):
     title: Optional[str] = None
     description: Optional[str] = None
@@ -88,6 +89,10 @@ class MappingPackageOut(BaseProjectResourceEntityOutSchema):
 
 class MappingPackageListFilters(BaseTitledEntityListFiltersSchema):
     pass
+
+
+class MappingPackageValidationState(TestDataValidation):
+    test_data_suites: Optional[List[TestDataSuiteState]] = []
 
 
 class MappingPackageState(TestDataValidation, ObjectState):

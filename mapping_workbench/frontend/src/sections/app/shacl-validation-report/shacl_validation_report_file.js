@@ -40,7 +40,9 @@ const ShaclFileReport = ({sid, suiteId, testId}) => {
 
     const mapShaclFileResults = (result) => result?.map(e => ({...e.binding}))
 
-    const itemsSearch = useItemsSearch(validationReport, sectionApi);
+    const itemsSearch = useItemsSearch(validationReport, sectionApi, [], {}, null, {
+        "nb_comments": "desc"
+    });
 
     return (
         <>
@@ -71,6 +73,8 @@ const ShaclFileReport = ({sid, suiteId, testId}) => {
                             onFilter={itemsSearch.handleFiltersChange}
                             filters={itemsSearch.state.filters}
                             sectionApi={sectionApi}
+                            updateItems={setValidationReport}
+                            listItems={itemsSearch.filteredItems}
                         />
                     </TableLoadWrapper>
                 </Paper>

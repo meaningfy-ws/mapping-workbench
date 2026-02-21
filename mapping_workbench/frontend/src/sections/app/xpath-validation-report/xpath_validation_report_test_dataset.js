@@ -32,7 +32,10 @@ const XpathValidationReportSuite = ({sid, suiteId, mappingSuiteIdentifier, handl
             })
     }
 
-    const itemsSearch = useItemsSearch(validationReport, sectionApi, [], {is_covered: ''});
+    const itemsSearch = useItemsSearch(validationReport, sectionApi, [], {is_covered: ''}, null, {
+        "nb_comments": "desc",
+        "notice_count": "desc"
+    });
 
     const handleCoverageFilterChange = e => itemsSearch.handleFiltersChange({is_covered: e})
 
@@ -76,6 +79,8 @@ const XpathValidationReportSuite = ({sid, suiteId, mappingSuiteIdentifier, handl
                             filters={itemsSearch.state.filters}
                             handleSelectFile={handleFolderAndFileChange}
                             sectionApi={sectionApi}
+                            updateItems={setValidationReport}
+                            listItems={itemsSearch.filteredItems}
                         />
                     </TableLoadWrapper>
                 </Card>

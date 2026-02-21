@@ -25,7 +25,10 @@ const ShaclTestDatasetReport = ({sid, suiteId, handleSelectFile, handleExport}) 
 
     const filteredItems = validationReport.filter((item) => !resultFilter || item[resultFilter] > 0)
 
-    const handleResultFilterChange = e => setResultFilter(e.target.value)
+    const handleResultFilterChange = e => {
+        setResultFilter(e.target.value);
+        itemsSearch.handleFilterResultChange();
+    }
 
     const handleValidationReportsGet = (sid, suiteId) => {
         setDataState({load: true, error: false})
@@ -40,7 +43,9 @@ const ShaclTestDatasetReport = ({sid, suiteId, handleSelectFile, handleExport}) 
             })
     }
 
-    const itemsSearch = useItemsSearch(filteredItems, sectionApi);
+    const itemsSearch = useItemsSearch(filteredItems, sectionApi, [], {}, null, {
+        "nb_comments": "desc"
+    });
 
 
     return (
@@ -78,6 +83,8 @@ const ShaclTestDatasetReport = ({sid, suiteId, handleSelectFile, handleExport}) 
                             resultFilter={resultFilter}
                             sectionApi={sectionApi}
                             handleSelectFile={handleSelectFile}
+                            updateItems={setValidationReport}
+                            listItems={itemsSearch.filteredItems}
                         />
                     </TableLoadWrapper>
                 </Paper>
