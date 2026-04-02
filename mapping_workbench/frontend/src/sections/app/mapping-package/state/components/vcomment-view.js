@@ -6,6 +6,11 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import {ValidationComments, validationCommentSeverity} from "./vcomment";
 import Badge from "@mui/material/Badge";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import Stack from "@mui/material/Stack";
+import Box from "@mui/system/Box";
 
 const ValidationCommentView = (props) => {
     const {state_id, validation_element_id, comments_count, handleUpdate, ...other} = props;
@@ -29,8 +34,8 @@ const ValidationCommentView = (props) => {
             <Button onClick={openValidationCommentsDialog}
                     title={nb_comments + " comment(s)"}>
                 {comments_count?.latest_comment && <Badge badgeContent={nb_comments} color={iconColor}
-                       overlap="circular"
-                       anchorOrigin={{vertical: 'top', horizontal: 'right'}}>
+                                                          overlap="circular"
+                                                          anchorOrigin={{vertical: 'top', horizontal: 'right'}}>
                     <CommentIcon color={iconColor}/>
                 </Badge>}
                 {!comments_count?.latest_comment && <CommentIcon color='action'/>}
@@ -42,7 +47,21 @@ const ValidationCommentView = (props) => {
                 maxWidth='md'
             >
                 <DialogTitle>
-                    {commentsDialog.data?.title}
+                    <Stack
+                        alignItems="center"
+                        direction="row"
+                        justifyContent="space-between"
+                        spacing={3}
+                    >
+                        <Box>{commentsDialog.data?.title}</Box>
+                        <IconButton
+                            title="Close Comments"
+                            color="inherit"
+                            onClick={commentsDialog.handleClose}
+                        >
+                            <CloseIcon/>
+                        </IconButton>
+                    </Stack>
                 </DialogTitle>
                 <DialogContent>
                     {commentsDialog.data?.content}

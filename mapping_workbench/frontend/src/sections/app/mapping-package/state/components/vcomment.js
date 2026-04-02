@@ -18,10 +18,11 @@ import Radio from "@mui/material/Radio";
 import Typography from "@mui/material/Typography";
 import Checkbox from "@mui/material/Checkbox";
 import Chip from "@mui/material/Chip";
-import CloseIcon from "@mui/icons-material/Close";
+import DeleteIcon from "@mui/icons-material/DeleteForever";
 import IconButton from "@mui/material/IconButton";
 import {useRouter} from "src/hooks/use-router";
 import ValidationCommentContext from "./vcomment-context";
+import ConfirmDialog from "src/components/app/dialog/confirm-dialog";
 
 export const validationCommentSeverity = (comment) => {
     switch (comment?.priority) {
@@ -38,6 +39,8 @@ const ValidationComment = (props) => {
     const {comment, state_id, onDelete, ...other} = props;
     let severity = validationCommentSeverity(comment);
 
+    const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false)
+
     const handleDeleteComment = (id) => {
         const toastId = toastLoad('Deleting comment...')
         mappingPackageStatesApi.deleteComment(id)
@@ -51,39 +54,50 @@ const ValidationComment = (props) => {
     }
 
     return (
-        <Alert severity={severity}
-               sx={{
-                   mb: 2,
-                   position: "relative",
-                   paddingRight: "20%"
-               }}
-        >
-            <Box>
-                {comment?.title && <Box><b>{comment.title}</b></Box>}
-                <Box sx={{pb: 1}}>{comment.comment}</Box>
+        <>
+            <Alert severity={severity}
+                   sx={{
+                       mb: 2,
+                       position: "relative",
+                       paddingRight: "20%"
+                   }}
+            >
                 <Box>
-                    <Chip
-                        label={<small><b>by</b> {comment.created_by_username} <b>on</b> {comment.created_at}</small>}
-                        color={comment.state_id === state_id ? "success" : "warning"}
-                        title={comment.state_id === state_id ? "Native State comment" : "Foreign State comment"}
+                    {comment?.title && <Box><b>{comment.title}</b></Box>}
+                    <Box sx={{pb: 1}}>{comment.comment}</Box>
+                    <Box>
+                        <Chip
+                            label={<small><b>by</b> {comment.created_by_username} <b>on</b> {comment.created_at}
+                            </small>}
+                            color={comment.state_id === state_id ? "success" : "warning"}
+                            title={comment.state_id === state_id ? "Native State comment" : "Foreign State comment"}
+                            size="small"
+                        />
+                    </Box>
+                    <ValidationCommentContext comment={comment}/>
+                    <IconButton
+                        onClick={(e) => setConfirmDeleteOpen(true)}
                         size="small"
-                    />
+                        title="Delete Comment"
+                        sx={{
+                            position: "absolute",
+                            top: "5px",
+                            right: "5px"
+                        }}
+                    >
+                        <DeleteIcon fontSize="small"/>
+                    </IconButton>
                 </Box>
-                <ValidationCommentContext comment={comment} />
-                <IconButton
-                    onClick={(e) => handleDeleteComment(comment._id)}
-                    size="small"
-                    title="Delete Comment"
-                    sx={{
-                        position: "absolute",
-                        top: "5px",
-                        right: "5px"
-                    }}
-                >
-                    <CloseIcon fontSize="small"/>
-                </IconButton>
-            </Box>
-        </Alert>
+            </Alert>
+            <ConfirmDialog
+                title={`Delete comment`}
+                open={confirmDeleteOpen}
+                setOpen={setConfirmDeleteOpen}
+                onConfirm={() => handleDeleteComment(comment._id)}
+            >
+                Are you sure you want to delete it?
+            </ConfirmDialog>
+        </>
     )
 }
 
