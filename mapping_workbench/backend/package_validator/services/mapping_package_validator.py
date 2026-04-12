@@ -4,7 +4,8 @@ from beanie import PydanticObjectId
 
 from mapping_workbench.backend.core.services.exceptions import ResourceNotFoundException
 from mapping_workbench.backend.logger.services import mwb_logger
-from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState, MappingPackageValidationTree
+from mapping_workbench.backend.mapping_package.models.entity import MappingPackageState, MappingPackageValidationTree, \
+    MappingPackageTestDataSuiteValidationTree, MappingPackageTestDataValidationTree
 from mapping_workbench.backend.mapping_package.services.data import get_specific_mapping_package_state
 from mapping_workbench.backend.package_processor.services import TaskToRun
 from mapping_workbench.backend.package_validator.services.shacl_validator import \
@@ -66,13 +67,34 @@ async def validate_mapping_package(
 async def generate_validation_reports_tree(
         state: MappingPackageState, state_id: PydanticObjectId
 ) -> MappingPackageValidationTree:
-    tree = MappingPackageValidationTree(**state.model_dump())
-    tree.mapping_package_oid = state.mapping_package_oid
-    tree.mapping_package_state_oid = state_id
+    # Build tree manually to avoid expensive model_dump() of entire state
+    test_data_suites = []
+    for suite in (state.test_data_suites or []):
+        test_data_states = [
+            MappingPackageTestDataValidationTree(
+                oid=td.oid,
+                identifier=td.identifier,
+                title=td.title
+            )
+            for td in (suite.test_data_states or [])
+        ]
+        test_data_suites.append(
+            MappingPackageTestDataSuiteValidationTree(
+                oid=suite.oid,
+                identifier=suite.title,  # Using title as identifier per original logic
+                title=suite.title,
+                test_data_states=test_data_states
+            )
+        )
 
-    for idx, suite in enumerate(tree.test_data_suites):
-        tree.test_data_suites[idx].identifier = suite.title
-    return tree
+    return MappingPackageValidationTree(
+        mapping_package_oid=state.mapping_package_oid,
+        mapping_package_state_oid=state_id,
+        identifier=state.identifier,
+        title=state.title,
+        description=state.description,
+        test_data_suites=test_data_suites
+    )
 
 
 async def get_state_test_data_suite_validatiton(mapping_package_state,

@@ -1,9 +1,13 @@
 from io import BytesIO
 import gzip
+import logging
 from typing import Optional
 
 from bson import ObjectId
+from gridfs.errors import NoFile
 from motor.motor_asyncio import AsyncIOMotorGridFSBucket, AsyncIOMotorDatabase
+
+logger = logging.getLogger(__name__)
 
 
 class AsyncGridFSStorage:
@@ -52,6 +56,7 @@ class AsyncGridFSStorage:
         Downloads a file from the gridfs storage.
         :param file_id: The id of the file to download.
         :return: The content of the downloaded file.
+        :raises: Re-raises exceptions for actual errors (not file-not-found)
         """
         mongo_db = cls.get_mongo_database()
         grid_fs = AsyncIOMotorGridFSBucket(mongo_db)
@@ -62,9 +67,12 @@ class AsyncGridFSStorage:
                 with gzip.GzipFile(fileobj=compressed_stream, mode="rb") as gz:
                     result_data = gz.read().decode("utf-8")
             return result_data
-        except Exception as e:
-            print("GridFS :: ERROR ::", e)
+        except NoFile:
+            logger.warning(f"GridFS file not found: {file_id}")
             return None
+        except Exception as e:
+            logger.error(f"GridFS download error for {file_id}: {type(e).__name__}: {e}")
+            raise
 
     @classmethod
     async def delete_file(cls, file_id: ObjectId):
