@@ -3,8 +3,10 @@ from typing import List, Dict
 from beanie import PydanticObjectId
 from beanie.odm.operators.find.comparison import In
 from fastapi import APIRouter, Depends, status
+from fastapi.responses import StreamingResponse
 
 from mapping_workbench.backend.core.models.api_response import APIEmptyContentWithIdResponse
+from mapping_workbench.backend.core.services.io import json_streamer
 from mapping_workbench.backend.mapping_package.models.entity import MappingPackageStateGate, MappingPackageState, \
     MappingPackageValidationTree, MappingPackage, MappingPackageValidationState
 from mapping_workbench.backend.mapping_package.services.api import get_mapping_package_state, get_mapping_package
@@ -49,11 +51,11 @@ async def route_get_mapping_package_state_validation_reports(
     validation = state.validation.model_dump()
     validation["validation_reports_tree"] = await generate_validation_reports_tree(state, mapping_package_state.id)
     validation_state_res = MappingPackageValidationState(
-        #test_data_suites=state.test_data_suites
+        # test_data_suites=state.test_data_suites
     ).model_dump()
 
     validation_state_res['validation'] = validation
-    return validation_state_res
+    return StreamingResponse(json_streamer(validation_state_res), media_type="application/json")
 
 
 @router.get(
