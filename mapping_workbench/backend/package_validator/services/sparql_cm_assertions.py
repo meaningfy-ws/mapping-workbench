@@ -86,7 +86,7 @@ def get_sparql_content_for_cm_assertion(
             f"#xpath: {sparql_xpath}"
             "\n" + "\n" + "\n".join(prefixes) +
             "\n\n" +
-            f"ASK WHERE {{ "
+            f"SELECT * WHERE {{ "
             f"{subject_type_display}"
             f"\n\t{cm_rule.target_property_path} \n}}"
     )

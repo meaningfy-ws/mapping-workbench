@@ -58,6 +58,18 @@ class SPARQLValidator(TestDataValidator):
                 )
             )
             try:
+                query_result = self.rdf_graph.query(sparql_query.content)
+
+                print("K0 :: Query type:", query_result.type)
+                if query_result.type == 'SELECT':
+                    for row in query_result:
+                        print(row)
+                elif query_result.type == 'ASK':
+                    print(bool(query_result))
+                elif query_result.type in ('CONSTRUCT', 'DESCRIBE'):
+                    print(query_result.serialize(format="turtle").decode())
+                print("K1 ::")
+
                 sparql_query_result.query_result = bool(self.rdf_graph.query(sparql_query.content))
                 self.process_sparql_result(sparql_query_result)
             except Exception as e:

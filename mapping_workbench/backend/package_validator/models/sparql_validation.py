@@ -39,6 +39,7 @@ class SPARQLQueryResult(ValidationSPARQLQuery, BaseModel):
     validation_element_id: Optional[str] = None
     result: Optional[SPARQLQueryRefinedResultType] = None
     query_result: Optional[bool] = None
+    query_results: Optional[List[str]] = None
     fields_covered: Optional[bool] = True
     meets_xpath_condition: Optional[bool] = True
     missing_fields: Optional[List[CMRuleSDKElement]] = []
