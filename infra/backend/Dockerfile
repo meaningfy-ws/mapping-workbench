@@ -2,10 +2,8 @@ FROM docker.io/python:3.10-slim-bullseye
 
 ARG ENVIRONMENT
 ARG PORT
-ARG WORKERS=1
 
 ENV PORT=$PORT
-ENV WORKERS=$WORKERS
 
 RUN apt update && apt install -y make wget git default-jre
 
