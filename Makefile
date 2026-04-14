@@ -235,7 +235,10 @@ start-frontend-console-mode:
 	@ cd ${FRONTEND_HOME} && make start-dev-frontend
 
 start-backend-console-mode:
-	uvicorn mapping_workbench.backend.core.entrypoints.api.main:app --reload --log-level debug
+	uvicorn mapping_workbench.backend.core.entrypoints.api.main:app --reload --log-level debug --workers 4
+
+start-backend-console-multi-mode:
+	uvicorn mapping_workbench.backend.core.entrypoints.api.main:app --log-level debug --workers 4
 
 start-mongo-console-mode:
 	mongod --dbpath=/usr/local/var/mongodb/data/

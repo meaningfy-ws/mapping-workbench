@@ -11,6 +11,7 @@ class AsyncGridFSStorage:
     This class is a wrapper for the AsyncIOMotorGridFSBucket class.
     """
     _mongo_database: AsyncIOMotorDatabase = None
+    chunk_size_bytes = 4096 * 1024
 
     @classmethod
     def set_mongo_database(cls, mongo_database: AsyncIOMotorDatabase):
@@ -41,7 +42,7 @@ class AsyncGridFSStorage:
         :return: The id of the uploaded file.
         """
         mongo_db = cls.get_mongo_database()
-        grid_fs = AsyncIOMotorGridFSBucket(mongo_db)
+        grid_fs = AsyncIOMotorGridFSBucket(mongo_db, chunk_size_bytes=cls.chunk_size_bytes)
         compressed_data = gzip.compress(file_content.encode("utf-8"))
         file_id = await grid_fs.upload_from_stream(file_name, compressed_data)
         return file_id
@@ -54,7 +55,7 @@ class AsyncGridFSStorage:
         :return: The content of the downloaded file.
         """
         mongo_db = cls.get_mongo_database()
-        grid_fs = AsyncIOMotorGridFSBucket(mongo_db)
+        grid_fs = AsyncIOMotorGridFSBucket(mongo_db, chunk_size_bytes=cls.chunk_size_bytes)
         try:
             with BytesIO() as compressed_stream:
                 await grid_fs.download_to_stream(file_id, compressed_stream)
@@ -74,5 +75,5 @@ class AsyncGridFSStorage:
         :return: None
         """
         mongo_db = cls.get_mongo_database()
-        grid_fs = AsyncIOMotorGridFSBucket(mongo_db)
+        grid_fs = AsyncIOMotorGridFSBucket(mongo_db, chunk_size_bytes=cls.chunk_size_bytes)
         await grid_fs.delete(file_id)
