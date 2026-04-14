@@ -303,8 +303,8 @@ export class MappingPackageStatesApi extends SectionApi {
         await db.delete(storeName, key);
     }
 
-    async deleteValidationReportFromCache(stateId) {
-        await this.deleteFromCache(DB_STORE.VALIDATION_REPORTS, stateId)
+    async deleteValidationReportFromCache(key) {
+        await this.deleteFromCache(DB_STORE.VALIDATION_REPORTS, key)
     }
 
     async setInCache(key, value, storeName, noSpaceMessage = null) {
@@ -357,8 +357,8 @@ export class MappingPackageStatesApi extends SectionApi {
         }
     }
 
-    async hasValidationReportInCache(stateId) {
-        return await this.hasInCache(stateId, DB_STORE.VALIDATION_REPORTS);
+    async hasValidationReportInCache(key) {
+        return await this.hasInCache(key, DB_STORE.VALIDATION_REPORTS);
     }
 
     async clearStoreFromCache(storeName) {
