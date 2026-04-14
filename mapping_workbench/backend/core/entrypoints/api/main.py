@@ -11,6 +11,7 @@ from mapping_workbench.backend.core.entrypoints.api import routes as core_routes
 from mapping_workbench.backend.core.services.project_initilisers import init_project_models, init_admin_user, \
     init_api_admin_user
 from mapping_workbench.backend.database.adapters.mongodb import DB
+from mapping_workbench.backend.database.adapters.gridfs_storage import AsyncGridFSStorage
 from mapping_workbench.backend.fields_registry.entrypoints.api import routes as fields_registry
 from mapping_workbench.backend.logger.services import mwb_logger
 from mapping_workbench.backend.mapping_package.entrypoints.api import routes as mapping_package_routes
