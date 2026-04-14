@@ -64,7 +64,8 @@ export class MappingPackageStatesApi extends SectionApi {
     }
 
     async getState(sid) {
-        const key = sid;
+        const reportType = 'state';
+        const key = sid + '.' + reportType;
         if (await this.hasValidationReportInCache(key)) {
             const state = await this.getValidationReportFromCache(key);
             if (state) {
@@ -74,7 +75,7 @@ export class MappingPackageStatesApi extends SectionApi {
 
         const endpoint = this.paths['state'].replace(':id', sid);
         const data = await appApi.get(endpoint);
-        await this.setValidationReportInCache(sid, data);
+        await this.setValidationReportInCache(sid, data, reportType);
         return Promise.resolve(data);
     }
 
