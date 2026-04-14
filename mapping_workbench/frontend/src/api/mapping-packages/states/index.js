@@ -64,8 +64,17 @@ export class MappingPackageStatesApi extends SectionApi {
     }
 
     async getState(sid) {
+        const key = sid;
+        if (await this.hasValidationReportInCache(key)) {
+            const state = await this.getValidationReportFromCache(key);
+            if (state) {
+                return state;
+            }
+        }
+
         const endpoint = this.paths['state'].replace(':id', sid);
         const data = await appApi.get(endpoint);
+        await this.setValidationReportInCache(sid, data);
         return Promise.resolve(data);
     }
 
@@ -319,7 +328,7 @@ export class MappingPackageStatesApi extends SectionApi {
         }
     }
 
-    async setValidationReportInCache(stateId, value, reportType = null) {
+    async setValidationReportInCache(stateId, value, reportType = '') {
         // Store as string for safety
         let cacheKey = stateId + (reportType ? '.' + reportType : '')
         await this.setInCache(cacheKey, value, DB_STORE.VALIDATION_REPORTS,
