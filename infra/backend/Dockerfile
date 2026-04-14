@@ -24,4 +24,4 @@ RUN make install-backend
 
 EXPOSE ${PORT}
 
-ENTRYPOINT ["uvicorn", "mapping_workbench.backend.core.entrypoints.api.main:app", "--proxy-headers", "--workers", "${WORKERS}", "--host", "0.0.0.0", "--port", "${PORT}"]
+ENTRYPOINT uvicorn mapping_workbench.backend.core.entrypoints.api.main:app --proxy-headers --workers ${WORKERS} --host 0.0.0.0 --port ${PORT}
