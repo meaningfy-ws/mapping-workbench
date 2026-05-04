@@ -185,11 +185,14 @@ export const ListTableFile = (props) => {
                                             </Scrollbar>
                                             {item?.element_xpath && <CopyButton text={item.element_xpath}
                                                                                 title="Copy XPATH to clipboard"/>}
-                                            {item?.test_data && item.test_data.xpaths && item.test_data.xpaths.length > 0 &&
+                                            {(item?.test_data && item.test_data.xpaths && item.test_data.xpaths.length > 0 || item.query_results) &&
                                                 <Box align="left">
                                                     <XPathElements element_id={item.sdk_element_id}
                                                                    element_xpath={item.element_xpath}
-                                                                   test_data_xpaths={[item.test_data]}/>
+                                                                   test_data_xpaths={[item.test_data]}
+                                                                   sparql_query={item.query}
+                                                                   sparql_query_results={item.query_results}
+                                                    />
                                                 </Box>
                                             }
                                         </Stack>
@@ -216,7 +219,7 @@ export const ListTableFile = (props) => {
                                             />
                                             <Divider sx={{my: 1}}/>
                                             <Condition text='Query result:'
-                                                       value={item.query_result}/>
+                                                       value={item.query_result + (item.query_results && item.query_results.length > 0 ? " (" + item.query_results.length + ")" : "")}/>
                                         </Box>
                                     </TableCell>
                                 </TableRow>

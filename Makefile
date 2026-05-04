@@ -235,7 +235,7 @@ start-frontend-console-mode:
 	@ cd ${FRONTEND_HOME} && make start-dev-frontend
 
 start-backend-console-mode:
-	uvicorn mapping_workbench.backend.core.entrypoints.api.main:app --reload --log-level debug --workers 4
+	uvicorn mapping_workbench.backend.core.entrypoints.api.main:app --reload --log-level debug
 
 start-backend-console-multi-mode:
 	uvicorn mapping_workbench.backend.core.entrypoints.api.main:app --log-level debug --workers 4

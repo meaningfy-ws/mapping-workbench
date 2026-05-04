@@ -161,7 +161,8 @@ export const ListTable = (props) => {
                                                 <Box align="left">
                                                     <XPathElements element_id={item.sdk_element_id}
                                                                    element_xpath={item.sdk_element_xpath}
-                                                                   test_data_xpaths={item.test_data_xpaths}/>
+                                                                   test_data_xpaths={item.test_data_xpaths}
+                                                    />
                                                 </Box>}
                                         </Stack>
                                     </TableCell>

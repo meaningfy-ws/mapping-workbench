@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 from pydantic import BaseModel, ConfigDict
 
@@ -39,7 +39,7 @@ class SPARQLQueryResult(ValidationSPARQLQuery, BaseModel):
     validation_element_id: Optional[str] = None
     result: Optional[SPARQLQueryRefinedResultType] = None
     query_result: Optional[bool] = None
-    query_results: Optional[List[str]] = None
+    query_results: Optional[List[Dict]] = None
     fields_covered: Optional[bool] = True
     meets_xpath_condition: Optional[bool] = True
     missing_fields: Optional[List[CMRuleSDKElement]] = []
