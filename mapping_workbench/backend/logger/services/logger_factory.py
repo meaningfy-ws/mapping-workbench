@@ -29,7 +29,7 @@ class LoggerFactory:
             raise LoggerException(f"Logger {logger_name} not found")
         del self.loggers[logger_name]
 
-    def log_all_error(self, message: str, stack_trace: str):
+    def log_all_error(self, message: str, stack_trace: str = None):
         log_record = LogRecord(
             log_severity=LogSeverity.ERROR,
             message=message,
