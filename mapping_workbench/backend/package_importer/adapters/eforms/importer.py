@@ -122,7 +122,7 @@ class EFormsPackageImporter(PackageImporterABC):
 
             if not source_structural_element:
                 m = f"{mono_rule.eforms_sdk_id}"
-                mwb_logger.log_all_warning(m)
+                mwb_logger.log_all_warning(f"Not Found SDK Element: {m}")
                 self.warnings.append(TaskResultWarning(message=m, type="Not Found SDK Elements"))
                 continue
 
@@ -134,17 +134,17 @@ class EFormsPackageImporter(PackageImporterABC):
 
             if source_structural_element.name != mono_rule.field_name:
                 m = f"Field[{source_structural_element.sdk_element_id}] has Imported Name ({mono_rule.field_name}) <> Current Name ({source_structural_element.name})"
-                mwb_logger.log_all_warning(m)
+                mwb_logger.log_all_warning(f"Field Name Mismatch: {m}")
                 self.warnings.append(TaskResultWarning(message=m, type="Field Name Mismatch"))
 
             if not self.is_cm_rule_path_valid(mono_rule.class_path):
                 m = f"{mono_rule.class_path}"
-                mwb_logger.log_all_warning(m)
+                mwb_logger.log_all_warning(f"Class Path Mismatch: {m}")
                 self.warnings.append(TaskResultWarning(message=m, type="Class Path Mismatch"))
 
             if not self.is_cm_rule_path_valid(mono_rule.property_path):
                 m = f"{mono_rule.property_path}"
-                mwb_logger.log_all_warning(m)
+                mwb_logger.log_all_warning(f"Property Path Mismatch: {m}")
                 self.warnings.append(TaskResultWarning(message=m, type="Property Path Mismatch"))
 
             # A conceptual mapping rule may have same structural element but different Ontology Fragment

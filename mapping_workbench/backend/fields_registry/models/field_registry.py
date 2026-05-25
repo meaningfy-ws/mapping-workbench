@@ -55,6 +55,7 @@ class StructuralElementOut(BaseProjectResourceEntityOutSchema):
 
 
 class StructuralElementABC(ABC):
+    sdk_element_id: Optional[str]
     absolute_xpath: Optional[str]
     descriptions: Optional[List[str]]
 
