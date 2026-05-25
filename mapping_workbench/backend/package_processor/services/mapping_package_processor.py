@@ -105,6 +105,7 @@ async def process_mapping_package(
     mwb_logger.log_all_info("Saving Package State ...")
     task_progress.start_action_step(name="save_package_state")
     state_id = await save_object_state(mapping_package_state.on_create(user=user))
+    mwb_logger.log_all_info("Saving Package State ... ...")
     mapping_package_state_gate: MappingPackageStateGate = MappingPackageStateGate(
         project=mapping_package.project,
         **mapping_package_state.model_dump()

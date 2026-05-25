@@ -57,11 +57,11 @@ const Page = () => {
     useEffect(() => {
         if (sid) {
             handleItemsGet(sid);
-            //handleValidationReportTreeGet(sid)
-            resultReportsGet(sid);
-            //resultSummaryXPATHGet(sid);
-            //resultSummarySPARQLGet(sid);
-            //resultSummarySHACLGet(sid);
+            handleValidationReportTreeGet(sid)
+            resultSummaryXPATHGet(sid);
+            resultSummarySPARQLGet(sid);
+            resultSummarySHACLGet(sid);
+            //resultReportsGet(sid);
         }
     }, [sid]);
 

@@ -69,23 +69,22 @@ async def route_task_import_package(
         file: UploadFile = Form(...),
         user: User = Depends(current_active_user)
 ):
-    imported_mapping_package: ImportedMappingSuiteResponse = await import_mapping_package_from_archive(
-        file.file.read(), await get_project(project), package_type, cleanup_project, user
-    )
+    if trigger_package_processing:
+        imported_mapping_package: ImportedMappingSuiteResponse = await import_mapping_package_from_archive(
+            file.file.read(), await get_project(project), package_type, cleanup_project, user
+        )
+        return imported_mapping_package
+    else:
+        task_name = f"Importing Package from {file.filename} archive"
 
-    return imported_mapping_package
+        task: Task = add_task(
+            tasks.task_import_mapping_package,
+            task_name,
+            None,
+            user.email,
+            True,
+            file.file.read(), await get_project(project), package_type, trigger_package_processing, cleanup_project,
+            user
+        )
 
-    # task_name = f"Importing & Processing Package from {file.filename} archive" \
-    #     if trigger_package_processing else f"Importing Package from {file.filename} archive"
-    #
-    # task: Task = add_task(
-    #     tasks.task_import_mapping_package,
-    #     task_name,
-    #     None,
-    #     user.email,
-    #     True,
-    #     file.file.read(), await get_project(project), package_type, trigger_package_processing, cleanup_project,
-    #     user
-    # )
-    #
-    # return task.task_metadata
+        return task.task_metadata

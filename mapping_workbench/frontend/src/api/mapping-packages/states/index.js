@@ -64,8 +64,18 @@ export class MappingPackageStatesApi extends SectionApi {
     }
 
     async getState(sid) {
+        const reportType = 'state';
+        const key = sid + '.' + reportType;
+        if (await this.hasValidationReportInCache(key)) {
+            const state = await this.getValidationReportFromCache(key);
+            if (state) {
+                return state;
+            }
+        }
+
         const endpoint = this.paths['state'].replace(':id', sid);
         const data = await appApi.get(endpoint);
+        await this.setValidationReportInCache(sid, data, reportType);
         return Promise.resolve(data);
     }
 
@@ -75,86 +85,65 @@ export class MappingPackageStatesApi extends SectionApi {
         return Promise.resolve(data);
     }
 
-    async getValidationReportTestDataSuiteFromCache(sid, id) {
-        if (await this.hasValidationReportInCache(sid)) {
-            const state = await this.getValidationReportFromCache(sid);
-            if (state && Object.hasOwn(state, 'test_data_suites')) {
-                const testDataSuite = state.test_data_suites.find(
-                    suite => suite.oid === id
-                ) || false;
-                if (testDataSuite) {
-                    return testDataSuite;
-                }
-            }
-        }
-        return null;
-    }
-
-    async getValidationReportTestDataSuiteDataFromCache(sid, id) {
-        const testDataSuite = await this.getValidationReportTestDataSuiteFromCache(sid, id);
-        if (testDataSuite && Object.hasOwn(testDataSuite, 'validation')) {
-            return testDataSuite.validation;
-        }
-        return null;
-    }
-
-    async getValidationReportTestDataFromCache(sid, suiteId, id) {
-        const testDataSuite = await this.getValidationReportTestDataSuiteFromCache(sid, suiteId);
-        if (testDataSuite && Object.hasOwn(testDataSuite, 'test_data_states')) {
-            const testData = testDataSuite.test_data_states.find(
-                data => data.oid === id
-            ) || false;
-            if (testData) {
-                return testData;
-            }
-        }
-        return null;
-    }
-
-    async getValidationReportTestDataDataFromCache(sid, suiteId, id) {
-        const testData = await this.getValidationReportTestDataFromCache(sid, suiteId, id);
-        if (testData && Object.hasOwn(testData, 'validation')) {
-            return testData.validation;
-        }
-        return null;
-    }
-
     async getXpathReports(sid) {
-        if (await this.hasValidationReportInCache(sid)) {
-            const reports = await this.getValidationReportDataFromCache(sid);
-            if (reports && Object.hasOwn(reports, 'xpath')) {
-                return reports.xpath;
+        const reportType = 'validation.xpath';
+        const key = sid + '.' + reportType;
+        if (await this.hasValidationReportInCache(key)) {
+            const reports = await this.getValidationReportFromCache(key);
+            if (reports) {
+                return reports;
             }
         }
         const endpoint = this.paths['xpath_reports']
         const data = await appApi.get(endpoint(sid));
+        await this.setValidationReportInCache(sid, data, reportType);
         return Promise.resolve(data);
     }
 
     async getXpathReportsSuite(sid, suiteId) {
-        const suiteValidationReport = await this.getValidationReportTestDataSuiteDataFromCache(sid, suiteId);
-
-        if (suiteValidationReport && Object.hasOwn(suiteValidationReport, 'xpath')) {
-            return suiteValidationReport.xpath;
+        const reportType = 'test_data_suites.' + suiteId + '.validation.xpath';
+        const key = sid + '.' + reportType;
+        if (await this.hasValidationReportInCache(key)) {
+            const reports = await this.getValidationReportFromCache(key);
+            if (reports) {
+                return reports;
+            }
         }
+
         const endpoint = this.paths['xpath_reports_suite']
         const data = await appApi.get(endpoint(sid, suiteId));
+        await this.setValidationReportInCache(sid, data, reportType);
         return Promise.resolve(data);
     }
 
     async getXpathReportsTest(sid, suiteId, testId) {
-        const testValidationReport = await this.getValidationReportTestDataDataFromCache(sid, suiteId, testId);
-        if (testValidationReport && Object.hasOwn(testValidationReport, 'xpath')) {
-            return testValidationReport.xpath;
+        const reportType = 'test_data_suites.' + suiteId + '.test_data_states.' + testId + '.validation.xpath';
+        const key = sid + '.' + reportType;
+        if (await this.hasValidationReportInCache(key)) {
+            const reports = await this.getValidationReportFromCache(key);
+            if (reports) {
+                return reports;
+            }
         }
+
         const endpoint = this.paths['xpath_reports_test']
         const data = await appApi.get(endpoint(sid, suiteId, testId));
+        await this.setValidationReportInCache(sid, data, reportType);
         return Promise.resolve(data);
     }
 
     async getValidationReportTree(sid) {
+        const reportType = 'validation.validation_reports_tree';
+        const key = sid + '.' + reportType;
+        if (await this.hasValidationReportInCache(key)) {
+            const reports = await this.getValidationReportFromCache(key);
+            if (reports) {
+                return reports;
+            }
+        }
         const endpoint = this.paths['validation_reports_tree']
         const data = await appApi.get(endpoint(sid))
+        await this.setValidationReportInCache(sid, data, reportType);
         return Promise.resolve(data);
     }
 
@@ -172,73 +161,96 @@ export class MappingPackageStatesApi extends SectionApi {
     }
 
     async getSparqlReports(sid) {
-        if (await this.hasValidationReportInCache(sid)) {
-            const reports = await this.getValidationReportDataFromCache(sid);
-            if (reports && Object.hasOwn(reports, 'sparql')) {
-                return reports.sparql;
+        const reportType = 'validation.sparql';
+        const key = sid + '.' + reportType;
+        if (await this.hasValidationReportInCache(key)) {
+            const reports = await this.getValidationReportFromCache(key);
+            if (reports) {
+                return reports;
             }
         }
         const endpoint = this.paths['sparql_reports']
         const data = await appApi.get(endpoint(sid));
+        await this.setValidationReportInCache(sid, data, reportType);
         return Promise.resolve(data);
     }
 
 
     async getSparqlReportsSuite(sid, suiteId) {
-        const suiteValidationReport = await this.getValidationReportTestDataSuiteDataFromCache(sid, suiteId);
-        if (suiteValidationReport && Object.hasOwn(suiteValidationReport, 'sparql')) {
-            return suiteValidationReport.sparql;
+        const reportType = 'test_data_suites.' + suiteId + '.validation.sparql';
+        const key = sid + '.' + reportType;
+        if (await this.hasValidationReportInCache(key)) {
+            const reports = await this.getValidationReportFromCache(key);
+            if (reports) {
+                return reports;
+            }
         }
+
         const endpoint = this.paths['sparql_reports_suite']
         const data = await appApi.get(endpoint(sid, suiteId));
+        await this.setValidationReportInCache(sid, data, reportType);
         return Promise.resolve(data);
     }
 
     async getSparqlReportsTest(sid, suiteId, testId) {
-        const testValidationReport = await this.getValidationReportTestDataDataFromCache(sid, suiteId, testId);
-        if (testValidationReport && Object.hasOwn(testValidationReport, 'sparql')) {
-            return testValidationReport.sparql;
+        const reportType = 'test_data_suites.' + suiteId + '.test_data_states.' + testId + '.validation.sparql';
+        const key = sid + '.' + reportType;
+        if (await this.hasValidationReportInCache(key)) {
+            const reports = await this.getValidationReportFromCache(key);
+            if (reports) {
+                return reports;
+            }
         }
+
         const endpoint = this.paths['sparql_reports_test']
         const data = await appApi.get(endpoint(sid, suiteId, testId));
+        await this.setValidationReportInCache(sid, data, reportType);
         return Promise.resolve(data);
     }
 
     async getShaclReports(sid) {
-        if (await this.hasValidationReportInCache(sid)) {
-            const reports = await this.getValidationReportDataFromCache(sid);
-            if (reports && Object.hasOwn(reports, 'shacl')) {
-                return reports.shacl;
+        const reportType = 'validation.shacl';
+        const key = sid + '.' + reportType;
+        if (await this.hasValidationReportInCache(key)) {
+            const reports = await this.getValidationReportFromCache(key);
+            if (reports) {
+                return reports;
             }
         }
         const endpoint = this.paths['shacl_reports']
         const data = await appApi.get(endpoint(sid));
+        await this.setValidationReportInCache(sid, data, reportType);
         return Promise.resolve(data);
     }
 
     async getShaclReportsSuite(sid, suiteId) {
-        const suiteValidationReport = await this.getValidationReportTestDataSuiteDataFromCache(sid, suiteId);
-        if (suiteValidationReport && Object.hasOwn(suiteValidationReport, 'shacl')) {
-            return suiteValidationReport.shacl;
+        const reportType = 'test_data_suites.' + suiteId + '.validation.shacl';
+        const key = sid + '.' + reportType;
+        if (await this.hasValidationReportInCache(key)) {
+            const reports = await this.getValidationReportFromCache(key);
+            if (reports) {
+                return reports;
+            }
         }
+
         const endpoint = this.paths['shacl_reports_suite']
         const data = await appApi.get(endpoint(sid, suiteId));
+        await this.setValidationReportInCache(sid, data, reportType);
         return Promise.resolve(data);
     }
 
     async getShaclReportsFile(sid, suiteId, testId) {
-        const testValidationReport = await this.getValidationReportTestDataDataFromCache(sid, suiteId, testId);
-        if (testValidationReport && Object.hasOwn(testValidationReport, 'shacl')) {
-            return testValidationReport.shacl;
+        const reportType = 'test_data_suites.' + suiteId + '.test_data_states.' + testId + '.validation.shacl';
+        const key = sid + '.' + reportType;
+        if (await this.hasValidationReportInCache(key)) {
+            const reports = await this.getValidationReportFromCache(key);
+            if (reports) {
+                return reports;
+            }
         }
         const endpoint = this.paths['shacl_reports_test']
         const data = await appApi.get(endpoint(sid, suiteId, testId));
-        return Promise.resolve(data);
-    }
-
-    async getValidationReportFiles(params) {
-        const endpoint = this.paths['validation_report_files']
-        const data = await appApi.get(endpoint, params);
+        await this.setValidationReportInCache(sid, data, reportType);
         return Promise.resolve(data);
     }
 
@@ -291,8 +303,8 @@ export class MappingPackageStatesApi extends SectionApi {
         await db.delete(storeName, key);
     }
 
-    async deleteValidationReportFromCache(stateId) {
-        await this.deleteFromCache(DB_STORE.VALIDATION_REPORTS, stateId)
+    async deleteValidationReportFromCache(key) {
+        await this.deleteFromCache(DB_STORE.VALIDATION_REPORTS, key)
     }
 
     async setInCache(key, value, storeName, noSpaceMessage = null) {
@@ -317,9 +329,10 @@ export class MappingPackageStatesApi extends SectionApi {
         }
     }
 
-    async setValidationReportInCache(stateId, value) {
+    async setValidationReportInCache(stateId, value, reportType = '') {
         // Store as string for safety
-        await this.setInCache(stateId, value, DB_STORE.VALIDATION_REPORTS,
+        let cacheKey = stateId + (reportType ? '.' + reportType : '')
+        await this.setInCache(cacheKey, value, DB_STORE.VALIDATION_REPORTS,
             'Not enough storage space available for this report. Remove older States.'
         )
     }
@@ -329,15 +342,8 @@ export class MappingPackageStatesApi extends SectionApi {
         return await db.get(storeName, key);
     }
 
-    async getValidationReportFromCache(stateId) {
-        return await this.getFromCache(stateId, DB_STORE.VALIDATION_REPORTS);
-    }
-
-    async getValidationReportDataFromCache(stateId) {
-        const validationReport = await this.getValidationReportFromCache(stateId);
-        if (validationReport && Object.hasOwn(validationReport, 'validation')) {
-            return validationReport.validation;
-        }
+    async getValidationReportFromCache(key) {
+        return await this.getFromCache(key, DB_STORE.VALIDATION_REPORTS);
     }
 
     async hasInCache(key, storeName) {
@@ -351,8 +357,8 @@ export class MappingPackageStatesApi extends SectionApi {
         }
     }
 
-    async hasValidationReportInCache(stateId) {
-        return await this.hasInCache(stateId, DB_STORE.VALIDATION_REPORTS);
+    async hasValidationReportInCache(key) {
+        return await this.hasInCache(key, DB_STORE.VALIDATION_REPORTS);
     }
 
     async clearStoreFromCache(storeName) {
